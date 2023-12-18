@@ -16,6 +16,7 @@ class BrandProfile
     public string $color;
     public string $secondaryColor;
     public ?Image $logo = null;
+    public ?Image $favicon = null;
     public ?string $vat;
     public ?string $companyId;
     public ?string $analytics;

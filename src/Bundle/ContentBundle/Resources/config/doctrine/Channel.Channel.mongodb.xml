@@ -10,8 +10,6 @@
 
         <id field-name="id" strategy="NONE" />
         <field field-name="name" type="string" />
-        <field field-name="color" type="string" />
-        <field field-name="secondarycolor" type="string" />
         <field field-name="domains" type="collection" />
         <field field-name="primaryDomain" type="string" />
         <field field-name="primaryDomainRedirect" type="bool" />
@@ -22,18 +20,15 @@
         <field field-name="scope" type="string" />
 
         <reference-one
-                field="logo"
-                target-document="Integrated\Bundle\ContentBundle\Document\Content\Image"
-        />
-
-        <reference-one
-            field="favicon"
-            target-document="Integrated\Bundle\ContentBundle\Document\Content\Image"
-        />
+            field="type"
+            target-document="Integrated\Bundle\ContentBundle\Document\Channel\ChannelType"
+        >
+            <cascade><persist/><remove/></cascade>
+        </reference-one>
 
         <embed-many
-                field="permissions"
-                target-document="Integrated\Bundle\ContentBundle\Document\Permission\Embedded\Permission"
+            field="permissions"
+            target-document="Integrated\Bundle\ContentBundle\Document\Permission\Embedded\Permission"
         />
 
         <lifecycle-callbacks>

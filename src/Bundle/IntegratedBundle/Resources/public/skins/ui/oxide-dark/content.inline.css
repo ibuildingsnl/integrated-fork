@@ -272,6 +272,15 @@ div.mce-footnotes li > a.mce-footnotes-backlink {
 .mce-preview-object[data-mce-selected="2"] .mce-shim {
   display: none;
 }
+<<<<<<< HEAD
+=======
+.mce-content-body .mce-mergetag {
+  cursor: default !important;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+>>>>>>> feature/publication-datetimetype
 .mce-content-body .mce-mergetag:hover {
   background-color: rgba(0, 108, 231, 0.1);
 }
@@ -505,7 +514,12 @@ div.mce-footnotes li > a.mce-footnotes-backlink {
 .mce-content-body audio[data-mce-selected],
 .mce-content-body object[data-mce-selected],
 .mce-content-body embed[data-mce-selected],
+<<<<<<< HEAD
 .mce-content-body table[data-mce-selected] {
+=======
+.mce-content-body table[data-mce-selected],
+.mce-content-body details[data-mce-selected] {
+>>>>>>> feature/publication-datetimetype
   outline: 3px solid #b4d7ff;
 }
 .mce-content-body hr[data-mce-selected] {
@@ -613,7 +627,11 @@ div.mce-footnotes li > a.mce-footnotes-backlink {
 .mce-toc h2 {
   margin: 4px;
 }
+<<<<<<< HEAD
 .mce-toc li {
+=======
+.mce-toc ul > li {
+>>>>>>> feature/publication-datetimetype
   list-style-type: none;
 }
 [data-mce-block] {

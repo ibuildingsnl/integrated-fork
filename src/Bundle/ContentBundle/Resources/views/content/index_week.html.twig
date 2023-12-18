@@ -134,14 +134,14 @@
                                     <div
                                         class="channel-favicons {% if document.channels|length > 3 %}popout{% endif %}">
                                         {% for channel in document.channels %}
-                                            {% if channel.favicon.file is defined %}
+                                            {% if channel|integrated_brand.favicon.file is defined %}
                                                 <div class="channel-favicon"
-                                                     style="background-image:url('{{ image(channel.favicon.file).cropResize(36, 36)|default }}')"
+                                                     style="background-image:url('{{ image(channel|integrated_brand.favicon.file).cropResize(36, 36)|default }}')"
                                                      title="{{ channel.name }}">
 
                                                 </div>
                                             {% else %}
-                                                <div class="channel-favicon font-bold" title="{{ channel.name }}" style="background-color: {{ channel.color|default('gray') }}">
+                                                <div class="channel-favicon font-bold" title="{{ channel.name }}" style="background-color: {{ channel|integrated_brand.color|default('gray') }}">
                                                     {{ channel.name|first }}
                                                 </div>
                                             {% endif %}

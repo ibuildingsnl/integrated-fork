@@ -71,7 +71,7 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
 
         $request->content = new \stdClass();
         $request->state = self::TEST_STATE;
-        $request->channel = new \stdClass();
+        $request->channel = null;
 
         $this->serializer->expects($this->once())
             ->method('serialize')
@@ -138,7 +138,7 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
 
         $this->manager->expects($this->once())
             ->method('find')
-            ->willReturn(new \stdClass());
+            ->willReturn(null);
 
         self::assertNull($this->getInstance()->deserialize($this->getSerialized()));
     }
@@ -158,7 +158,7 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
      */
     protected function getChannel($id)
     {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\ChannelInterface');
+        $mock = $this->createMock(ChannelInterface::class);
         $mock->expects($this->any())
             ->method('getId')
             ->willReturn($id);
@@ -178,6 +178,7 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
             ],
             'state' => self::TEST_STATE,
             'channel' => 'channel',
+            'settings' => [],
         ];
 
         return json_encode(array_merge($data, $overwrite));

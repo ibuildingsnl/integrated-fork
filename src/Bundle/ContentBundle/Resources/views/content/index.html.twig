@@ -10,10 +10,10 @@
         </a>
         <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
             {% set sort_default = params.q ? 'rel' : 'time' %}
-            {% for sort in integrated_search_sorting_options()|filter(v => v.name != 'rel' or params.q) %}
-                <li {% if sort.name == params.sort %}class="active"
+            {% for sort in integrated_search_sorting_options()|filter(v => v.field != 'score' or params.q) %}
+                <li {% if sort.field == params.sort %}class="active"
                     {% endif %}role="presentation">
-                    <a href="{{ path(route, queryParams|merge({'sort': sort.name == sort_default ? null : sort.name })) }}"
+                    <a href="{{ path(route, queryParams|merge({'sort': sort.field == sort_default ? null : sort.field })) }}"
                        tabindex="-1" role="menuitem">{{ sort.label|trans|capitalize }}</a>
                 </li>
             {% endfor %}
@@ -101,21 +101,21 @@
                     <td class="channels">
                         {% if document.channels is defined and document.channels is not null %}
                         <div
-                            class="favicon-wrapper {% if document.channels|length > 3 %}hover-popout{% endif %}" style="--color: {{ type.options.color|default('gray') }})">
+                            class="favicon-wrapper {% if document.channels|length > 3 %}hover-popout{% endif %}" style="--color: {{ type.options.color|default('gray') }}">
                             {% if document.channels|length > 3 %}
                                 <span class="channel-popout">3+</span>
                             {% endif %}
                             <div
                                 class="channel-favicons {% if document.channels|length > 3 %}popout{% endif %}">
                                 {% for channel in document.channels %}
-                                    {% if channel.favicon.file is defined %}
+                                    {% if channel|integrated_brand.favicon.file is defined %}
                                         <div class="channel-favicon"
-                                         style="background-image:url('{{ image(channel.favicon.file).cropResize(36, 36)|default }}')"
+                                         style="background-image:url('{{ image(channel|integrated_brand.favicon.file).cropResize(36, 36)|default }}')"
                                          title="{{ channel.name }}">
 
                                         </div>
                                     {% else %}
-                                        <div class="channel-favicon font-bold" title="{{ channel.name }}" style="background-color: {{ channel.color|default('gray') }}">
+                                        <div class="channel-favicon font-bold" title="{{ channel.name }}" style="background-color: {{ channel|integrated_brand.color|default('gray') }}">
                                             {{ channel.name|first }}
                                         </div>
                                     {% endif %}
@@ -153,11 +153,11 @@
                                 {% trans %}Planned{% endtrans %}
                             </div>
                         {% endif %}
-                        {% if content.workflow_state is not defined and content.pub_active == true %}
+                        {% if content.workflow_state is not defined and content.published == "true" %}
                             <div class="workflow-status" style="background-color:#00ae93;">
                                 {% trans %}Published{% endtrans %}
                             </div>
-                        {% elseif content.workflow_state is not defined and content.pub_active == false %}
+                        {% elseif content.workflow_state is not defined and content.published == "false" %}
                             <div class="workflow-status" style="background-color:#ababab;">
                                 {% trans %}Concept{% endtrans %}
                             </div>

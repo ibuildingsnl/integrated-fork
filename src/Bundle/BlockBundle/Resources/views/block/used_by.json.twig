@@ -1,0 +1,18 @@
+{% apply spaceless %}
+    {% set items = [] %}
+
+    {% for block in pagination %}
+        {% set item = {
+            'id': block.id,
+            'title': block.__toString(),
+            'href': path('integrated_block_block_edit',
+            {'id': block.id})
+        } %}
+        {% set items = items|merge([item]) %}
+    {% endfor %}
+    {% set data = {
+        'pagination': pagination|json_pagination,
+        'items': items
+    } %}
+{% endapply %}
+{{ data|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}

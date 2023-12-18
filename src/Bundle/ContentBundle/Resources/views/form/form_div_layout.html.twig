@@ -307,6 +307,89 @@
     </script>
 {% endblock %}
 
+
+{% block integrated_seo_meta_widget %}
+
+    {% set documentNode = form.parent.vars.data %}
+
+    {% if documentNode.featuredImage.file is defined and documentNode.featuredImage.file is not null %}
+        {% set featuredImage = image(documentNode.featuredImage.file).cropResize(512, 512).__toString %}
+    {% else %}
+        {% set featuredImage = asset('bundles/integratedintegrated/images/favicon/apple-touch-icon.png') %}
+    {% endif %}
+
+    {% if documentNode.primaryChannel|integrated_brand.favicon.file is defined and documentNode.primaryChannel|integrated_brand.favicon.file is not null %}
+        {% set faviconSrc = image(documentNode.primaryChannel|integrated_brand.favicon.file).cropResize(50, 50).__toString %}
+    {% else %}
+        {% set faviconSrc = asset('bundles/integratedintegrated/images/favicon/favicon-32x32.png') %}
+    {% endif %}
+
+    {% if documentNode.primaryChannel is defined and documentNode.primaryChannel is not null %}
+        {% set primaryDomain = documentNode.primaryChannel.primaryDomain %}
+        {% set brandName = documentNode.primaryChannel.name|default|replace({' Website': ''}) %}
+    {% else %}
+        {% set primaryDomain = '' %}
+        {% set brandName = '' %}
+    {% endif %}
+
+
+    {% if documentNode.id is defined and documentNode.id is not null %}
+        {% set documentUrl = integrated_url(documentNode)|default("") %}
+        {% set documentSlug = documentNode.slug|default("") %}
+        {% set articleTitle = documentNode.title|default("") %}
+        {% set titleOverride = documentNode.seoMetadata.metaTitle|default(documentNode.title|default("")) %}
+        {% set description = documentNode.seoMetadata.metaDescription|default(documentNode.intro|default("")) %}
+        {% set focusKeyword = documentNode.seoMetadata.focusKeyphrase|default("") %}
+        {% set uriPathSegment = documentNode.slug|default("/") %}
+    {% else %}
+        {% set documentUrl = 'https://temporary.domain/temporary-slug' %}
+        {% set documentSlug = 'sla-het-artikel-op-om-een-slug-te-genereren' %}
+        {% set articleTitle = '' %}
+        {% set titleOverride = '' %}
+        {% set description = '' %}
+        {% set focusKeyword = '' %}
+        {% set uriPathSegment = '' %}
+    {% endif %}
+
+    <div class="aside-options publication-settings-aside seo-settings">
+        <div class="publication-settings-popup aside-item-wrapper show">
+            <div class="yoast-seo__application" id="yoast-app"
+                 data-configuration="{{ {
+                'title': articleTitle,
+                'titleOverride': titleOverride,
+                'description': description,
+                'focusKeyword': focusKeyword,
+                'isCornerstone': false,
+                'isAmp': false,
+                'uiLocale': 'nl_NL',
+                'translationsUrl': '/admin/_yoastseo/fetch-translations',
+                'workerUrl': asset('bundles/integratedcontent/js/webWorker.js'),
+                'baseUrl': 'https://' ~ primaryDomain,
+                'siteUrl': 'https://' ~ primaryDomain,
+                'brandName': brandName,
+                'pageUrl': documentUrl,
+                'uriPathSegment': uriPathSegment,
+                'faviconSrc': faviconSrc,
+                'featuredImageSrc': featuredImage,
+                'twitterFallbackImage': asset('bundles/integratedcontent/twitter.svg'),
+                'openGraphFallbackImage': asset('bundles/integratedcontent/facebook.svg')
+            }|json_encode }}">
+            </div>
+
+            <div class="seo-metadata-fields">
+                {{ form_widget(form) }}
+            </div>
+        </div>
+    </div>
+
+    {% integrated_javascripts mode='append' 'bundles/integratedcontent/js/seo_settings.js' %}
+    {% endintegrated_javascripts %}
+    {% integrated_javascripts mode='append' 'bundles/integratedcontent/js/yoastSeoApp.js' %}
+    {% endintegrated_javascripts %}
+    {% integrated_javascripts mode='append' 'bundles/integratedcontent/js/YoastSeo.js' %}
+    {% endintegrated_javascripts %}
+{% endblock %}
+
 {% block integrated_publishtime_widget %}
     {% apply spaceless %}
         <div class="w-full sm:w-1/2">
@@ -412,6 +495,58 @@
     {% endintegrated_javascripts %}
 
     {{ block('integrated_collection_widget') }}
+{% endblock %}
+
+{% block integrated_publication_settings_container_row %}
+
+    <div class="publication-settings-container">
+        {{ form_widget(form) }}
+    </div>
+
+    <script>
+        const pubSettings = {
+            'applyTo': '{% trans %}Apply to{% endtrans %}',
+            'applyToAll': '{% trans %}Apply to all{% endtrans %}',
+            'applyToSpecific': '{% trans %}Apply to specific{% endtrans %}',
+            'channels': '{% trans %}Channels{% endtrans %}',
+            'searchIn': '{% trans %}Search in{% endtrans %}',
+            'brands': '{% trans %}Brands{% endtrans %}',
+        }
+    </script>
+
+    {% integrated_javascripts mode='append'
+        'bundles/integratedcontent/js/publication_settings.js' %}
+    {% endintegrated_javascripts %}
+    {% integrated_javascripts mode='append'
+        'bundles/integratedcontent/js/publication_popup.js' %}
+    {% endintegrated_javascripts %}
+{% endblock %}
+
+{% block integrated_publication_settings_row %}
+    <div class="aside-options publication-settings-aside">
+        <div class="publication-settings-popup aside-item-wrapper show">
+            <div class="aside-item-header">
+                <h3 class="aside-item-title">
+                    <i class="iconoir-telegram"></i>
+                    <span class="aside-item-icon">{% trans %}Publish to{% endtrans %} {{ form_label(form) }}</span>
+                </h3>
+            </div>
+            <div class="aside-item-list-container">
+                <div class="aside-item-list">
+                    {{ form_widget(form) }}
+                    <div class="settings-apply-to-menu">
+                        <select data-apply-to class="form-control mt-4 mb-4">
+                            <option value="this">{% trans %}Apply to{% endtrans %} {{ form_label(form) }}</option>
+                        </select>
+                        <div class="hidden settings-channels-choice mb-4">
+                            <select class="select2" data-apply-channels multiple></select>
+                        </div>
+                    </div>
+                    <a class="btn btn-green" href="#">{% trans %}Apply{% endtrans %}</a>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block integrated_content_bulk_actions_row %}

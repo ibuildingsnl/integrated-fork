@@ -24,7 +24,7 @@ trait PermissionTrait
     /**
      * @return ArrayCollection
      */
-    public function getPermissions()
+    public function getPermissions(): iterable
     {
         if (!$this->permissions instanceof Collection) {
             $this->permissions = new ArrayCollection();

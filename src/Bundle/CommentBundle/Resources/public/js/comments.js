@@ -254,7 +254,7 @@ $(function () {
     /**
      * Remove comment modal
      */
-    $(document).on('click', '.comment-holder .cancel-comment .iconoir-cancel', function(e) {
+    $(document).on('click', '.comment-holder .cancel-comment .iconoir-xmark', function(e) {
         e.preventDefault();
 
         removeControls();

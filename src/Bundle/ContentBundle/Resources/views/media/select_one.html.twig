@@ -17,6 +17,7 @@
 {% block webpack_js %}
     <script>
         const path = '{{ path('integrated_content_media_manage_relations') }}';
+        const bulkdelete_path = '{{ path('integrated_content_media_bulkdelete') }}'
         const selected_modus = '{{ selected_modus|default('select_one') }}';
     </script>
 

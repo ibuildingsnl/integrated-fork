@@ -46,8 +46,8 @@ class IntegratedSearchExtension extends AbstractExtension
 
     public function getSortingOption(string $name): ?SortOption
     {
-        if ($this->options->has($name)) {
-            return $this->options->get($name);
+        if ($this->options->hasByField($name)) {
+            return $this->options->getByField($name);
         }
 
         return null;

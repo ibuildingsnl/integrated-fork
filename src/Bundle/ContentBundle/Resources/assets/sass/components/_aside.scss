@@ -291,8 +291,9 @@
         background-color: #ecf6fe;
         display: flex;
         justify-content: space-between;
-        padding: 0.5rem 1rem;
+        padding: 0.5rem 20px;
         position: relative;
+        margin-bottom: 0.5rem;
 
         input {
             border: 1px solid #dee3e9;
@@ -404,6 +405,7 @@ body.hide-options {
     margin-top: -1px;
     position: absolute;
     right: 0;
+    z-index: 90;
 
     @include media(max-lg) {
         display: none;

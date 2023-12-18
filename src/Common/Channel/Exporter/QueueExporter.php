@@ -11,15 +11,15 @@
 
 namespace Integrated\Common\Channel\Exporter;
 
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Exporter\Queue\RequestSerializerInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Queue\QueueMessageInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class QueueExporter implements ExporterInterface
+class QueueExporter implements ExporterInterface, QueueExporterInterface
 {
     private \Closure $retryDelay;
 
@@ -57,13 +57,18 @@ class QueueExporter implements ExporterInterface
         return $this->exporter;
     }
 
+    public function hasMessages(): bool
+    {
+        return $this->queue->count() > 0;
+    }
+
     /**
      * Execute a queued exporter run.
      */
-    public function execute(): int
+    public function exportMessages(int $limit = 1000): int
     {
         $i = 0;
-        foreach ($this->queue->pull(1000) as $message) {
+        foreach ($this->queue->pull($limit) as $message) {
             try {
                 $this->process($message)->delete();
             } catch (\Throwable $e) {
@@ -96,7 +101,7 @@ class QueueExporter implements ExporterInterface
             throw new \InvalidArgumentException('Failed to deserialize the request message.');
         }
 
-        $this->export($request->content, $request->state, $request->channel);
+        $this->export($request->content, $request->state, $request->channel, $request->settings);
 
         return $message;
     }
@@ -104,8 +109,8 @@ class QueueExporter implements ExporterInterface
     /**
      * {@inheritdoc}
      */
-    public function export($content, $state, ChannelInterface $channel)
+    public function export($content, $state, ChannelInterface $channel, array $settings = [])
     {
-        $this->exporter->export($content, $state, $channel);
+        $this->exporter->export($content, $state, $channel, $settings);
     }
 }

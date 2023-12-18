@@ -13,8 +13,9 @@ namespace Integrated\Bundle\ContentBundle\Form\Type;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\MaxDateTimeTransformer;
-use Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType;
+use Integrated\Common\Content\PublishTimeInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Callback;
@@ -30,11 +31,20 @@ class PublishTimeType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('startDate', DateTimeType::class);
+        $builder->add('startDate', DateTimeType::class, [
+            'placeholder' => ' ',
+            'attr' => [
+                'data-set-date-text' => 'Set publication date'
+            ]
+        ]);
 
         $builder->add(
-            $builder->create('endDate', DateTimeType::class)
-                ->addModelTransformer(new MaxDateTimeTransformer())
+            $builder->create('endDate', DateTimeType::class, [
+                'placeholder' => ' ',
+                'attr' => [
+                    'data-set-date-text' => 'Set depublication date'
+                ]
+        ])->addModelTransformer(new MaxDateTimeTransformer())
         );
     }
 
@@ -45,9 +55,20 @@ class PublishTimeType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => 'Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime',
-            'constraints' => new Callback(function (PublishTime $publishTime, ExecutionContextInterface $context) {
-                $startDate = $publishTime->getStartDate();
+            'constraints' => new Callback(function (?PublishTime $publishTime, ExecutionContextInterface $context) {
+                if (!$publishTime) {
+                    return;
+                }
+                $startDate = $publishTime->getStartDate() ?: new \DateTime();
                 $endDate = $publishTime->getEndDate();
+
+                if (!$startDate instanceof \DateTime) {
+                    $publishTime->setStartDate(new \DateTime());
+                }
+
+                if (!$endDate instanceof \DateTime) {
+                    $publishTime->setEndDate(new \DateTime(PublishTimeInterface::DATE_MAX));
+                }
 
                 if ($startDate instanceof \DateTime && $endDate instanceof \DateTime) {
                     if ($endDate < $startDate) {

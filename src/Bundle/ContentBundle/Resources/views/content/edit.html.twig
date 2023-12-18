@@ -20,13 +20,13 @@
                         <div class="aside-header">
                             <button class="toggle-filters toggle-options-sidebar" data-target="aside-options"
                                     type="button">
-                                <i class="iconoir-cancel"></i></button>
+                                <i class="iconoir-xmark"></i></button>
                             <span>{% trans %}Options{% endtrans %}</span>
                         </div>
                         <div class="aside-item-wrapper show">
                             <div class="aside-item-header">
                                 <h3 class="aside-item-title">
-                                    <i class="iconoir-info-empty"></i>
+                                    <i class="iconoir-info-circle"></i>
                                     <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
                                 </h3>
                                 <i class="iconoir-nav-arrow-up"></i>
@@ -204,6 +204,7 @@
             </aside>
         </div>
         <div class="editor-wrapper">
+            <div class="editor-overlay"></div>
             <section class="editor">
                 {% block content_form %}
                     {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR')) %}
@@ -308,7 +309,7 @@
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"><i class="iconoir-cancel"></i></span><span class="sr-only">{% endverbatim %}{% trans %}Close{% endtrans %}{% verbatim %}</span></button>
+                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"><i class="iconoir-xmark"></i></span><span class="sr-only">{% endverbatim %}{% trans %}Close{% endtrans %}{% verbatim %}</span></button>
                                 <h4 class="modal-title">{% endverbatim %}{% trans %}Add{% endtrans %}{% verbatim %}</h4>
                             </div>
                             <iframe width="100%" height="400">{% endverbatim %}{% trans %}Loading{% endtrans %}{% verbatim %}</iframe>
@@ -362,12 +363,16 @@
         autoResize();
 
         function autoResize() {
+            textarea.style.height = 'auto';
+
             if (textarea.scrollHeight > 0) {
                 textarea.style.height = textarea.scrollHeight + 'px';
             }
         }
 
-        setTimeout(function() {
+        window.addEventListener('tinyMCEInitialized', observeResize);
+
+        function observeResize() {
             const resize_ob = new ResizeObserver(function(entries) {
                 // since we are observing only a single element, so we access the first element in entries array
                 const rect = entries[0].contentRect;
@@ -384,13 +389,14 @@
 
             // start observing for resize
             resize_ob.observe(document.querySelector('.title_tinymce_input'));
-        }, 1000);
+        }
     }
 </script>
 
 {% if content is defined %}
     <script>
         usedByUrl = '{{ path('integrated_content_content_used_by', {'id': content.id, '_format': 'json'}) }}';
+        usedByBlockUrl = '{{ path('integrated_block_block_used_by', {'id': content.id, '_format': 'json'}) }}';
     </script>
 {% endif %}
 {% if editable %}

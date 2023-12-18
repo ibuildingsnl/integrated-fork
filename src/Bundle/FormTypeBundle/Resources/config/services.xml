@@ -8,12 +8,6 @@
 
         <defaults autowire="true" autoconfigure="true"/>
 
-        <service id="integrated_form_type.form_type.date_time_type" class="Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType">
-            <argument type="service" id="integrated_asset.manager.stylesheet_manager" />
-            <argument type="service" id="integrated_asset.manager.javascript_manager" />
-            <tag name="form.type" />
-        </service>
-
         <service id="integrated_formtype_form_type_ace" class="Integrated\Bundle\FormTypeBundle\Form\Type\AceType">
             <tag name="form.type" alias="integrated_ace" />
         </service>

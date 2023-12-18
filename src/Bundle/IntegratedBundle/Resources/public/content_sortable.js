@@ -72,14 +72,22 @@ this._delay(function(){n===this.counter&&this.refreshPositions(!s)})},_clear:fun
 /***/ (function(module, exports) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+<<<<<<< HEAD
  * jQuery JavaScript Library v3.7.0
+=======
+ * jQuery JavaScript Library v3.7.1
+>>>>>>> feature/publication-datetimetype
  * https://jquery.com/
  *
  * Copyright OpenJS Foundation and other contributors
  * Released under the MIT license
  * https://jquery.org/license
  *
+<<<<<<< HEAD
  * Date: 2023-05-11T18:29Z
+=======
+ * Date: 2023-08-28T13:37Z
+>>>>>>> feature/publication-datetimetype
  */
 ( function( global, factory ) {
 
@@ -220,7 +228,11 @@ function toType( obj ) {
 
 
 
+<<<<<<< HEAD
 var version = "3.7.0",
+=======
+var version = "3.7.1",
+>>>>>>> feature/publication-datetimetype
 
 	rhtmlSuffix = /HTML$/i,
 
@@ -484,9 +496,20 @@ jQuery.extend( {
 				// Do not traverse comment nodes
 				ret += jQuery.text( node );
 			}
+<<<<<<< HEAD
 		} else if ( nodeType === 1 || nodeType === 9 || nodeType === 11 ) {
 			return elem.textContent;
 		} else if ( nodeType === 3 || nodeType === 4 ) {
+=======
+		}
+		if ( nodeType === 1 || nodeType === 11 ) {
+			return elem.textContent;
+		}
+		if ( nodeType === 9 ) {
+			return elem.documentElement.textContent;
+		}
+		if ( nodeType === 3 || nodeType === 4 ) {
+>>>>>>> feature/publication-datetimetype
 			return elem.nodeValue;
 		}
 
@@ -1199,12 +1222,26 @@ function setDocument( node ) {
 		documentElement.msMatchesSelector;
 
 	// Support: IE 9 - 11+, Edge 12 - 18+
+<<<<<<< HEAD
 	// Accessing iframe documents after unload throws "permission denied" errors (see trac-13936)
 	// Support: IE 11+, Edge 17 - 18+
 	// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
 	// two documents; shallow comparisons work.
 	// eslint-disable-next-line eqeqeq
 	if ( preferredDoc != document &&
+=======
+	// Accessing iframe documents after unload throws "permission denied" errors
+	// (see trac-13936).
+	// Limit the fix to IE & Edge Legacy; despite Edge 15+ implementing `matches`,
+	// all IE 9+ and Edge Legacy versions implement `msMatchesSelector` as well.
+	if ( documentElement.msMatchesSelector &&
+
+		// Support: IE 11+, Edge 17 - 18+
+		// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+		// two documents; shallow comparisons work.
+		// eslint-disable-next-line eqeqeq
+		preferredDoc != document &&
+>>>>>>> feature/publication-datetimetype
 		( subWindow = document.defaultView ) && subWindow.top !== subWindow ) {
 
 		// Support: IE 9 - 11+, Edge 12 - 18+
@@ -2767,12 +2804,21 @@ jQuery.find = find;
 jQuery.expr[ ":" ] = jQuery.expr.pseudos;
 jQuery.unique = jQuery.uniqueSort;
 
+<<<<<<< HEAD
 // These have always been private, but they used to be documented
 // as part of Sizzle so let's maintain them in the 3.x line
 // for backwards compatibility purposes.
 find.compile = compile;
 find.select = select;
 find.setDocument = setDocument;
+=======
+// These have always been private, but they used to be documented as part of
+// Sizzle so let's maintain them for now for backwards compatibility purposes.
+find.compile = compile;
+find.select = select;
+find.setDocument = setDocument;
+find.tokenize = tokenize;
+>>>>>>> feature/publication-datetimetype
 
 find.escape = jQuery.escapeSelector;
 find.getText = jQuery.text;
@@ -5986,7 +6032,11 @@ function domManip( collection, args, callback, ignored ) {
 			if ( hasScripts ) {
 				doc = scripts[ scripts.length - 1 ].ownerDocument;
 
+<<<<<<< HEAD
 				// Reenable scripts
+=======
+				// Re-enable scripts
+>>>>>>> feature/publication-datetimetype
 				jQuery.map( scripts, restoreScript );
 
 				// Evaluate executable scripts on first document insertion
@@ -6443,7 +6493,11 @@ var rboxStyle = new RegExp( cssExpand.join( "|" ), "i" );
 				trChild = document.createElement( "div" );
 
 				table.style.cssText = "position:absolute;left:-11111px;border-collapse:separate";
+<<<<<<< HEAD
 				tr.style.cssText = "border:1px solid";
+=======
+				tr.style.cssText = "box-sizing:content-box;border:1px solid";
+>>>>>>> feature/publication-datetimetype
 
 				// Support: Chrome 86+
 				// Height set through cssText does not get applied.
@@ -6455,7 +6509,11 @@ var rboxStyle = new RegExp( cssExpand.join( "|" ), "i" );
 				// In our bodyBackground.html iframe,
 				// display for all div elements is set to "inline",
 				// which causes a problem only in Android 8 Chrome 86.
+<<<<<<< HEAD
 				// Ensuring the div is display: block
+=======
+				// Ensuring the div is `display: block`
+>>>>>>> feature/publication-datetimetype
 				// gets around this issue.
 				trChild.style.display = "block";
 
@@ -10623,7 +10681,13 @@ jQuery.fn.extend( {
 	},
 
 	hover: function( fnOver, fnOut ) {
+<<<<<<< HEAD
 		return this.mouseenter( fnOver ).mouseleave( fnOut || fnOver );
+=======
+		return this
+			.on( "mouseenter", fnOver )
+			.on( "mouseleave", fnOut || fnOver );
+>>>>>>> feature/publication-datetimetype
 	}
 } );
 

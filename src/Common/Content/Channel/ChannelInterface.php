@@ -11,13 +11,26 @@
 
 namespace Integrated\Common\Content\Channel;
 
-use Integrated\Common\Channel\ChannelInterface as BaseChannelInterface;
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
+use Integrated\Common\Security\PermissionInterface;
 
-/**
- * Interface for Channel documents.
- *
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- */
-interface ChannelInterface extends BaseChannelInterface
+interface ChannelInterface
 {
+    public function getId(): ?string;
+
+    public function getName(): ?string;
+
+    public function getType(): ?ChannelType;
+
+    /** @return PermissionInterface[] */
+    public function getPermissions(): iterable;
+
+    public function getPrimaryDomain(): ?string;
+
+    public function getPrimaryDomainRedirect(): bool;
+
+    public function getLogo(): ?Image;
+
+    public function getColor(): ?string;
 }

@@ -2,13 +2,15 @@
 
 namespace Integrated\Bundle\BrandBundle\Controller;
 
+use Doctrine\Persistence\ObjectManager;
 use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Bundle\BrandBundle\Event\BrandAddedEvent;
 use Integrated\Bundle\BrandBundle\Event\BrandRemovedEvent;
 use Integrated\Bundle\BrandBundle\Event\BrandUpdatedEvent;
 use Integrated\Bundle\BrandBundle\Form\Type\BrandType;
-use Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeRegistry;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Common\Services\Flusher;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,7 +22,7 @@ class BrandController extends AbstractController
 {
     public function __construct(
         private readonly BrandRepository $brands,
-        private readonly LinkTypeRegistry $linkTypeRegistry,
+        private readonly ChannelTypeRegistry $linkTypeRegistry,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly Flusher $flusher,
     ) {
@@ -72,6 +74,7 @@ class BrandController extends AbstractController
 
         $form = $this->createForm(BrandType::class, $brand, ['method' => 'PUT']);
         $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
+        $oldName = $brand->getName();
         $form->handleRequest($request);
 
         if ($form->get('actions')->getData() == 'cancel') {
@@ -79,6 +82,14 @@ class BrandController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $newName = $brand->getName();
+            if ($oldName !== $newName) {
+                foreach ($brand->getChannelLinks() as $channelLink) {
+                    if ($channelLink->channel instanceof Channel && str_contains($channelLink->channel->getName(), $oldName)) {
+                        $channelLink->channel->setName(str_replace($oldName, $newName, $channelLink->channel->getName()));
+                    }
+                }
+            }
             $this->dispatcher->dispatch(new BrandUpdatedEvent($brand));
 
             $this->flusher->flush();

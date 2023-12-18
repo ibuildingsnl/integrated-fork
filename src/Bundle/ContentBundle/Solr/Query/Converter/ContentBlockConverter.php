@@ -17,6 +17,7 @@ class ContentBlockConverter
             'exclude' => false,
             'q' => '',
             'channels' => [$channel],
+            'pub_channels' => [$channel],
         ];
 
         if ($search = $request->query->get($block->getId().'-search')) {
@@ -29,13 +30,15 @@ class ContentBlockConverter
             $settings['facets_search_selection'] = $this->getFacets($block, $filters);
             $settings['relation_search_selection'] = $filters['relation'] ?? [];
             $settings['params'] = $selection->getInternalParams();
+            $settings['sort'] = $filters['sort'] ?? '';
+            $settings['order'] = $filters['sort'] ?? '';
         }
 
         $settings['facets'] = $this->getFacets($block, $request->query->all());
         $settings['filters'] = $options['filters'] ?? [];
         $settings['relation'] = $request->query->get('relation', []);
 
-        if ($options['exclude'] && !$settings['q'] && 0 === \count(array_filter($settings['facets']))) {
+        if (($options['exclude'] ?? false) && !$settings['q'] && 0 === \count(array_filter($settings['facets']))) {
             $settings['exclude'] = true;
         }
 

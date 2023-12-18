@@ -13,13 +13,12 @@ namespace Integrated\Bundle\ContentBundle\Document\Content;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Metadata;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\ChannelableInterface;
-use Integrated\Common\Content\ConnectorInterface;
+use Integrated\Common\Content\ConnectableInterface;
 use Integrated\Common\Content\ConnectorTrait;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Embedded\RelationInterface;
@@ -33,7 +32,7 @@ use Integrated\Common\Content\PublishTimeInterface;
 use Integrated\Common\Content\RegistryInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
 
-abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface, PublishableInterface, ConnectorInterface, FeaturedInterface, PremiumInterface
+abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface, PublishableInterface, ConnectableInterface, FeaturedInterface, PremiumInterface
 {
     use ConnectorTrait;
     use ExtensibleTrait;
@@ -49,7 +48,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     protected $channels;
 
     /**
-     * @var Channel
+     * @var ChannelInterface
      */
     protected $primaryChannel;
 
@@ -151,6 +150,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         $this->publishTime = new PublishTime();
         $this->channels = new ArrayCollection();
         $this->connectors = new ArrayCollection();
+        $this->disabled = false;
     }
 
     /**
@@ -460,9 +460,9 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $published && !$this->disabled;
     }
 
-    public function isPremium(): bool
+    public function isPremium(): ?bool
     {
-        return $this->premium ?: false;
+        return $this->premium;
     }
 
     public function setPremium(bool $premium): static
@@ -472,9 +472,9 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $this;
     }
 
-    public function isFeatured(): bool
+    public function isFeatured(): ?bool
     {
-        return $this->featured ?: false;
+        return $this->featured;
     }
 
     public function setFeatured(bool $featured): static
@@ -484,9 +484,9 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $this;
     }
 
-    public function isDisabled(): bool
+    public function isDisabled(): ?bool
     {
-        return $this->disabled ?: false;
+        return $this->disabled;
     }
 
     /**
@@ -585,11 +585,12 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * @return Channel|null
+     * @return ChannelInterface|null
      */
     public function getPrimaryChannel()
     {
-        if (null === $this->primaryChannel && $this->channels->count()) {
+        if (null === $this->primaryChannel && $this->channels->count() ||
+            !$this->channels->contains($this->primaryChannel) && $this->channels->count()) {
             return $this->channels->first();
         }
 
@@ -601,6 +602,10 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      */
     public function setPrimaryChannel(ChannelInterface $primaryChannel = null)
     {
+        if (!$this->channels->contains($this->primaryChannel)) {
+            $primaryChannel = $this->channels->first();
+        }
+
         $this->primaryChannel = $primaryChannel;
 
         return $this;

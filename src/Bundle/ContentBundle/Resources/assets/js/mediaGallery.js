@@ -109,7 +109,23 @@ $('.uppy-close').on('click', function() {
     window.popupShown = true;
 });
 
-$('#bulkselection').on('click', async function() {
+$("#confirm_delete").on("click", async function() {
+    await confirmBulkDelete()
+})
+
+$(".single_delete").on("click", async function(event) {
+    await singleDelete(event)
+})
+
+$("#bulkselection_delete").on("click", async function() {
+    await askForConfirmation()
+})
+
+$("#cancel_delete").on("click", async function() {
+    await hideBulkdeletionPopup()
+})
+
+$("#bulkselection").on("click", async function () {
     if (bulkSelectionEnabled) {
         await disableBulkSelection();
     } else {
@@ -148,8 +164,9 @@ function handleMediaEditClose(event) {
 }
 
 async function enableBulkSelection() {
-    $('.bulkselectionbutton').removeClass('bulkselected');
-    $('.media-container').addClass('mode-select');
+    $('.single_delete').addClass('hidden')
+    $('.bulkselectionbutton').removeClass('bulkselected')
+    $('.media-container').addClass('mode-select')
 }
 
 function getAdditionalInfo(media_id) {
@@ -167,6 +184,10 @@ window.send_message_to_parent = function() {
 
     window.parent.postMessage(JSON.stringify(selection), '*');
 };
+
+window.onlyUnique = function(value, index, self) {
+    return self.indexOf(value) === index;
+}
 
 function handleBulkItemClick(event) {
     if (modi[selected_modus].selectOnlyOneEnabled) {
@@ -211,16 +232,108 @@ function handleBulkItemClick(event) {
         }
     }
 
-    latestBulkSelectionItemClicked = event.currentTarget.getAttribute(
-        'data-media_id');
-    draggingAmountOfItems = bulkSelection.length;
+    if (bulkSelection.length > 0) {
+        bulkSelection = bulkSelection.filter(onlyUnique);
+        document.querySelector('#bulkselection_delete').style.display = ""
+        document.querySelector('#amount_of_files_to_delete').textContent = '('+bulkSelection.length+')'
+    } else {
+        document.querySelector('#bulkselection_delete').style.display = "none"
+        document.querySelector('#amount_of_files_to_delete').textContent = ''
+    }
+
+    latestBulkSelectionItemClicked = event.currentTarget.getAttribute('data-media_id')
+    draggingAmountOfItems = bulkSelection.length
+}
+
+async function askForConfirmation() {
+    if (bulkSelection.length === 0) {
+        return
+    }
+    document.querySelector('#bulkdelete_confirm_popup').style.display = 'block'
+    await confirmDelete(false)
+}
+
+async function singleDelete(event) {
+    bulkSelection = [event.target.parentElement.dataset.id]
+    await askForConfirmation()
+}
+
+async function hideBulkdeletionPopup() {
+    document.querySelector('#bulkdelete_confirm_popup').style.display = 'none'
+    document.querySelector('#used_images').innerHTML = ''
+}
+
+async function confirmBulkDelete() {
+    await confirmDelete(true)
+}
+
+function showUsedByPopup(json_response) {
+    if (json_response?.used_by?.length > 0) {
+        showUsedByToUser(json_response)
+    }
+}
+
+function showUsedByToUser(json_response) {
+    for (let to_delete_item of json_response.used_by) {
+
+        let new_item = document.querySelector('#used_image').cloneNode(true)
+        new_item.removeAttribute('id');
+
+        let new_p = document.createElement('p');
+        new_p.textContent = to_delete_item.title + ' is used in:'
+        new_p.style.marginBottom = "0px";
+        new_item.classList.add('used_image_copy')
+        new_item.appendChild(new_p)
+
+        for (let used_by_item of to_delete_item.usedBy) {
+            let new_div = document.createElement('div');
+            let new_link = document.createElement('a');
+            new_link.style.color = "rgb(1, 131, 213)"
+            new_link.textContent = used_by_item.title
+            new_link.href = used_by_item.link
+            new_div.appendChild(new_link)
+            new_item.appendChild(new_div)
+        }
+
+        document.querySelector('#used_images').appendChild(new_item);
+    }
+}
+
+async function confirmDelete(confirmed_by_user) {
+    const json_content = JSON.stringify({
+        csrf: document.querySelector('#media_category_csrf').value,
+        bulkselection: bulkSelection,
+        confirmed_by_user: confirmed_by_user,
+    })
+
+    const response = await deleteData(bulkdelete_path, json_content)
+    const json_response = await response.json()
+
+    document.querySelector('#used_images').innerHTML = ''
+    if (confirmed_by_user === false) {
+        showUsedByPopup(json_response)
+    } else {
+        document.querySelector('#bulkdelete_confirm_popup').classList.add('hidden')
+        window.location.reload();
+    }
+
+    async function deleteData(url = '', data = {}) {
+        const response = await fetch(url, {
+            method: 'PUT',
+            body: data
+        });
+
+        return response;
+    }
 }
 
 async function disableBulkSelection() {
-    bulkSelection = [];
-    $('.media-container').removeClass('mode-select');
-    $('.media-item').removeClass('selected');
-    draggingAmountOfItems = 1;
+    bulkSelection = []
+    $('.media-container').removeClass('mode-select')
+    $('.single_delete').removeClass('hidden')
+    $('.media-item').removeClass('selected')
+    draggingAmountOfItems = 1
+    document.querySelector('#bulkselection_delete').style.display = "none"
 }
 
 window.asideFolderSearch = function(elem) {
@@ -287,7 +400,7 @@ $(function() {
         //So here we want to send something to the server
         if (bulkSelection.length > 0) {
             const duplicatesRemoved = bulkSelection.filter(onlyUnique);
-            sendAjaxRequest(category_id, duplicatesRemoved);
+            sendAjaxRequest(category_id, duplicatesRemoved)
         } else {
             sendAjaxRequest(category_id, [media_id]);
         }

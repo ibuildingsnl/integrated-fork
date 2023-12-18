@@ -259,6 +259,13 @@ button::-moz-focus-inner {
   display: flex;
   flex: 0 0 auto;
 }
+<<<<<<< HEAD
+=======
+.tox .tox-bottom-anchorbar {
+  display: flex;
+  flex: 0 0 auto;
+}
+>>>>>>> feature/publication-datetimetype
 .tox .tox-bar {
   display: flex;
   flex: 0 0 auto;
@@ -734,6 +741,10 @@ button::-moz-focus-inner {
   font-style: normal;
   font-weight: normal;
   line-height: 24px;
+<<<<<<< HEAD
+=======
+  max-width: 100%;
+>>>>>>> feature/publication-datetimetype
   text-transform: none;
   word-break: break-all;
 }
@@ -933,6 +944,13 @@ button::-moz-focus-inner {
 .tox .tox-hue-slider-spectrum {
   width: 20px;
 }
+<<<<<<< HEAD
+=======
+.tox .tox-hue-slider-spectrum:focus,
+.tox .tox-sv-palette-spectrum:focus {
+  outline: #08f solid;
+}
+>>>>>>> feature/publication-datetimetype
 .tox .tox-hue-slider-thumb {
   background: white;
   border: 1px solid black;
@@ -1380,8 +1398,19 @@ button::-moz-focus-inner {
   align-items: flex-start;
   display: flex;
   flex-direction: column;
+<<<<<<< HEAD
   padding: 16px 16px;
 }
+=======
+  flex-shrink: 0;
+  padding: 16px 16px;
+}
+@media only screen and (min-width: 768px ) {
+  .tox .tox-dialog__body-nav {
+    max-width: 11em;
+  }
+}
+>>>>>>> feature/publication-datetimetype
 @media only screen and (max-width: 767px ) {
   body:not(.tox-force-desktop) .tox .tox-dialog__body-nav {
     flex-direction: row;
@@ -1394,25 +1423,43 @@ button::-moz-focus-inner {
   border-bottom: 2px solid transparent;
   color: rgba(255, 255, 255, 0.5);
   display: inline-block;
+<<<<<<< HEAD
   font-size: 14px;
   line-height: 1.3;
   margin-bottom: 8px;
   text-decoration: none;
   white-space: nowrap;
+=======
+  flex-shrink: 0;
+  font-size: 14px;
+  line-height: 1.3;
+  margin-bottom: 8px;
+  max-width: 13em;
+  text-decoration: none;
+>>>>>>> feature/publication-datetimetype
 }
 .tox .tox-dialog__body-nav-item:focus {
   background-color: rgba(0, 108, 231, 0.1);
 }
 .tox .tox-dialog__body-nav-item--active {
+<<<<<<< HEAD
   border-bottom: 2px solid #006ce7;
   color: #006ce7;
+=======
+  border-bottom: 2px solid #67aeff;
+  color: #67aeff;
+>>>>>>> feature/publication-datetimetype
 }
 .tox .tox-dialog__body-content {
   box-sizing: border-box;
   display: flex;
   flex: 1;
   flex-direction: column;
+<<<<<<< HEAD
   max-height: 650px;
+=======
+  max-height: min(650px, calc(100vh - 110px));
+>>>>>>> feature/publication-datetimetype
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   padding: 16px 16px;
@@ -1432,6 +1479,7 @@ button::-moz-focus-inner {
   margin-top: 0;
 }
 .tox .tox-dialog__body-content a {
+<<<<<<< HEAD
   color: #006ce7;
   cursor: pointer;
   text-decoration: none;
@@ -1444,10 +1492,30 @@ button::-moz-focus-inner {
 .tox .tox-dialog__body-content a:active {
   color: #0054b4;
   text-decoration: none;
+=======
+  color: #67aeff;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.tox .tox-dialog__body-content a:hover,
+.tox .tox-dialog__body-content a:focus {
+  color: #cde5ff;
+  text-decoration: underline;
+}
+.tox .tox-dialog__body-content a:focus-visible {
+  border-radius: 1px;
+  outline: 2px solid #67aeff;
+  outline-offset: 2px;
+}
+.tox .tox-dialog__body-content a:active {
+  color: #ffffff;
+  text-decoration: underline;
+>>>>>>> feature/publication-datetimetype
 }
 .tox .tox-dialog__body-content svg {
   fill: #fff;
 }
+<<<<<<< HEAD
 .tox .tox-dialog__body-content ul {
   display: block;
   list-style-type: disc;
@@ -1455,6 +1523,32 @@ button::-moz-focus-inner {
   margin-inline-end: 0;
   margin-inline-start: 0;
   padding-inline-start: 2.5rem;
+=======
+.tox .tox-dialog__body-content strong {
+  font-weight: bold;
+}
+.tox .tox-dialog__body-content ul {
+  list-style-type: disc;
+}
+.tox .tox-dialog__body-content ul,
+.tox .tox-dialog__body-content ol,
+.tox .tox-dialog__body-content dd {
+  padding-inline-start: 2.5rem;
+}
+.tox .tox-dialog__body-content ul,
+.tox .tox-dialog__body-content ol,
+.tox .tox-dialog__body-content dl {
+  margin-bottom: 16px;
+}
+.tox .tox-dialog__body-content ul,
+.tox .tox-dialog__body-content ol,
+.tox .tox-dialog__body-content dl,
+.tox .tox-dialog__body-content dd,
+.tox .tox-dialog__body-content dt {
+  display: block;
+  margin-inline-end: 0;
+  margin-inline-start: 0;
+>>>>>>> feature/publication-datetimetype
 }
 .tox .tox-dialog__body-content .tox-form__group h1 {
   color: #fff;
@@ -1495,6 +1589,15 @@ button::-moz-focus-inner {
   margin-bottom: 0;
   margin-top: 0;
 }
+<<<<<<< HEAD
+=======
+.tox .tox-dialog__body-content .tox-form__group .tox-label.tox-label--center {
+  text-align: center;
+}
+.tox .tox-dialog__body-content .tox-form__group .tox-label.tox-label--end {
+  text-align: end;
+}
+>>>>>>> feature/publication-datetimetype
 .tox .tox-dialog--width-lg {
   height: 650px;
   max-width: 1200px;
@@ -1563,9 +1666,36 @@ button::-moz-focus-inner {
 .tox .tox-dialog__table td:first-child {
   padding-right: 8px;
 }
+<<<<<<< HEAD
 .tox .tox-dialog__iframe.tox-dialog__iframe--opaque {
   background: #fff;
 }
+=======
+.tox .tox-dialog__iframe {
+  min-height: 200px;
+}
+.tox .tox-dialog__iframe.tox-dialog__iframe--opaque {
+  background: #fff;
+}
+.tox .tox-navobj-bordered {
+  position: relative;
+}
+.tox .tox-navobj-bordered::before {
+  border: 1px solid #161f29;
+  border-radius: 6px;
+  content: '';
+  inset: 0;
+  opacity: 1;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+.tox .tox-navobj-bordered-focus.tox-navobj-bordered::before {
+  border-color: #006ce7;
+  box-shadow: 0 0 0 2px rgba(0, 108, 231, 0.25);
+  outline: none;
+}
+>>>>>>> feature/publication-datetimetype
 .tox .tox-dialog__popups {
   position: absolute;
   width: 100%;
@@ -2296,6 +2426,12 @@ body.tox-dialog__disable-scroll {
     overflow-wrap: break-word;
     word-break: normal;
   }
+<<<<<<< HEAD
+=======
+  .tox .tox-dialog__popups .tox-menu .tox-collection__item-label {
+    word-break: break-all;
+  }
+>>>>>>> feature/publication-datetimetype
 }
 .tox .tox-menu__label h1,
 .tox .tox-menu__label h2,
@@ -2798,6 +2934,7 @@ body.tox-dialog__disable-scroll {
   position: relative;
   text-transform: none;
 }
+<<<<<<< HEAD
 .tox .tox-statusbar__text-container {
   display: flex;
   flex: 1 1 auto;
@@ -2808,10 +2945,48 @@ body.tox-dialog__disable-scroll {
   display: flex;
   flex: 1 1 auto;
   margin-right: auto;
+=======
+.tox .tox-statusbar__path {
+  display: flex;
+  flex: 1 1 auto;
+>>>>>>> feature/publication-datetimetype
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+<<<<<<< HEAD
+=======
+.tox .tox-statusbar__right-container {
+  display: flex;
+  justify-content: flex-end;
+  white-space: nowrap;
+}
+.tox .tox-statusbar__help-text {
+  text-align: center;
+}
+.tox .tox-statusbar__text-container {
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: space-between;
+  overflow: hidden;
+}
+@media only screen and (min-width: 768px ) {
+  .tox .tox-statusbar__text-container.tox-statusbar__text-container-3-cols > .tox-statusbar__help-text,
+  .tox .tox-statusbar__text-container.tox-statusbar__text-container-3-cols > .tox-statusbar__right-container,
+  .tox .tox-statusbar__text-container.tox-statusbar__text-container-3-cols > .tox-statusbar__path {
+    flex: 0 0 calc(100% / 3);
+  }
+}
+.tox .tox-statusbar__text-container.tox-statusbar__text-container--flex-end {
+  justify-content: flex-end;
+}
+.tox .tox-statusbar__text-container.tox-statusbar__text-container--flex-start {
+  justify-content: flex-start;
+}
+.tox .tox-statusbar__text-container.tox-statusbar__text-container--space-around {
+  justify-content: space-around;
+}
+>>>>>>> feature/publication-datetimetype
 .tox .tox-statusbar__path > * {
   display: inline;
   white-space: nowrap;
@@ -2820,6 +2995,17 @@ body.tox-dialog__disable-scroll {
   flex: 0 0 auto;
   margin-left: 1ch;
 }
+<<<<<<< HEAD
+=======
+@media only screen and (max-width: 767px ) {
+  .tox .tox-statusbar__text-container .tox-statusbar__help-text {
+    display: none;
+  }
+  .tox .tox-statusbar__text-container .tox-statusbar__help-text:only-child {
+    display: block;
+  }
+}
+>>>>>>> feature/publication-datetimetype
 .tox .tox-statusbar a,
 .tox .tox-statusbar__path-item,
 .tox .tox-statusbar__wordcount {
@@ -2946,6 +3132,12 @@ body.tox-dialog__disable-scroll {
 .tox .tox-tbtn:active svg {
   fill: #fff;
 }
+<<<<<<< HEAD
+=======
+.tox .tox-tbtn--disabled .tox-tbtn--enabled svg {
+  fill: rgba(255, 255, 255, 0.5);
+}
+>>>>>>> feature/publication-datetimetype
 .tox .tox-tbtn--disabled,
 .tox .tox-tbtn--disabled:hover,
 .tox .tox-tbtn:disabled,
@@ -2979,6 +3171,13 @@ body.tox-dialog__disable-scroll {
   /* stylelint-disable-line no-descending-specificity */
   fill: #fff;
 }
+<<<<<<< HEAD
+=======
+.tox .tox-tbtn--enabled.tox-tbtn--disabled svg,
+.tox .tox-tbtn--enabled:hover.tox-tbtn--disabled svg {
+  fill: rgba(255, 255, 255, 0.5);
+}
+>>>>>>> feature/publication-datetimetype
 .tox .tox-tbtn:focus:not(.tox-tbtn--disabled) {
   color: #fff;
 }
@@ -3046,6 +3245,16 @@ body.tox-dialog__disable-scroll {
   background: #fff;
   color: #222f3e;
 }
+<<<<<<< HEAD
+=======
+.tox .tox-number-input input:disabled {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+}
+>>>>>>> feature/publication-datetimetype
 .tox .tox-number-input button {
   background: #2f4055;
   color: #fff;
@@ -3080,6 +3289,19 @@ body.tox-dialog__disable-scroll {
 .tox .tox-number-input button:active svg {
   fill: #fff;
 }
+<<<<<<< HEAD
+=======
+.tox .tox-number-input button:disabled {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+}
+.tox .tox-number-input button:disabled svg {
+  fill: rgba(255, 255, 255, 0.5);
+}
+>>>>>>> feature/publication-datetimetype
 .tox .tox-number-input button.minus {
   border-radius: 3px 0 0 3px;
 }
@@ -3125,6 +3347,13 @@ body.tox-dialog__disable-scroll {
   white-space: nowrap;
   width: 7em;
 }
+<<<<<<< HEAD
+=======
+.tox .tox-tbtn--disabled .tox-tbtn__select-label,
+.tox .tox-tbtn--select:disabled .tox-tbtn__select-label {
+  cursor: not-allowed;
+}
+>>>>>>> feature/publication-datetimetype
 .tox .tox-split-button {
   border: 0;
   border-radius: 3px;
@@ -3170,6 +3399,13 @@ body.tox-dialog__disable-scroll {
 .tox.tox-platform-touch .tox-split-button__chevron {
   width: 20px;
 }
+<<<<<<< HEAD
+=======
+.tox .tox-split-button.tox-tbtn--disabled svg #tox-icon-text-color__color,
+.tox .tox-split-button.tox-tbtn--disabled svg #tox-icon-highlight-bg-color__color {
+  opacity: 0.6;
+}
+>>>>>>> feature/publication-datetimetype
 .tox .tox-toolbar-overlord {
   background-color: #222F3E;
 }
@@ -3452,9 +3688,12 @@ body.tox-dialog__disable-scroll {
   flex-direction: column;
   /* stylelint-disable no-descending-specificity */
 }
+<<<<<<< HEAD
 .tox .tox-tree .tox-tree--directory.tox-tree--directory--expanded > .tox-tree--directory__label .tox-chevron {
   transform: rotate(90deg);
 }
+=======
+>>>>>>> feature/publication-datetimetype
 .tox .tox-tree .tox-tree--directory .tox-tree--directory__label {
   font-weight: bold;
 }
@@ -3481,9 +3720,19 @@ body.tox-dialog__disable-scroll {
 }
 .tox .tox-tree .tox-tree--directory .tox-tree--directory__label .tox-chevron {
   margin-right: 6px;
+<<<<<<< HEAD
   transition: transform 0.5s ease-in-out;
 }
 .tox .tox-tree .tox-tree--directory .tox-tree--directory__label.tox-tree--directory__label--active .tox-chevron {
+=======
+}
+.tox .tox-tree .tox-tree--directory .tox-tree--directory__label:has(+ .tox-tree--directory__children--growing) .tox-chevron,
+.tox .tox-tree .tox-tree--directory .tox-tree--directory__label:has(+ .tox-tree--directory__children--shrinking) .tox-chevron {
+  transition: transform 0.5s ease-in-out;
+}
+.tox .tox-tree .tox-tree--directory .tox-tree--directory__label:has(+ .tox-tree--directory__children--growing) .tox-chevron,
+.tox .tox-tree .tox-tree--directory .tox-tree--directory__label:has(+ .tox-tree--directory__children--open) .tox-chevron {
+>>>>>>> feature/publication-datetimetype
   transform: rotate(90deg);
 }
 .tox .tox-tree .tox-tree--leaf__label {

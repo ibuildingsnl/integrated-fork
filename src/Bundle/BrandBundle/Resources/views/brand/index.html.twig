@@ -8,10 +8,12 @@
                 <ul class="create">
                     <li>
                         <a class="btn btn-create-new" href="{{ path('integrated_content_brand_new') }}">
-                            <span>{% trans %}New{% endtrans %} {% trans %}brand{% endtrans %}</span>
+                            <span>{% trans %}New brand{% endtrans %}</span>
                             <i class="iconoir-plus"></i>
                         </a>
                     </li>
+                    <li><a class="btn btn-create-new" href="{{ path('integrated_content_channel_index') }}">{% trans %}All channels{% endtrans %}</a></li>
+                    <li><a class="btn btn-create-new" href="{{ path('integrated_channel_config_index') }}">{% trans %}All connectors{% endtrans %}</a></li>
                 </ul>
             </div>
 
@@ -60,13 +62,6 @@
                     </tbody>
                 </table>
             </section>
-            <div style="font-size: smaller; display: block; text-align: right; padding-top: 2em">
-                {% trans %}View full (uncategorized) reference for:{% endtrans %}
-                <ul>
-                    <li><a href="{{ path('integrated_content_channel_index') }}">{% trans %}All channels{% endtrans %}</a></li>
-                    <li><a href="{{ path('integrated_channel_config_index') }}">{% trans %}All connectors{% endtrans %}</a></li>
-                </ul>
-            </div>
         </div>
     </div>
 {% endblock %}

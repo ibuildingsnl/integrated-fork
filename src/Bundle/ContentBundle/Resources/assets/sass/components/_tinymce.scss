@@ -1,6 +1,9 @@
 /*TINEMCE*/
 .tox-tinymce {
     border-radius: 0 !important;
+    &.tox .tox-throbber {
+        z-index:10;
+    }
 }
 
 .tinymce-inline .tox-tinymce {

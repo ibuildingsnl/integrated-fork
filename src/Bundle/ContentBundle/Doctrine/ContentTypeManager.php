@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Doctrine;
 
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\Exception\InvalidArgumentException;
+use Integrated\Common\ContentType\Exception\UnexpectedTypeException;
 use Integrated\Common\ContentType\Iterator;
 use Integrated\Common\ContentType\IteratorInterface;
 use Integrated\Common\ContentType\Resolver\PriorityResolver;
@@ -73,6 +74,7 @@ class ContentTypeManager
         return $this->contentTypes;
     }
 
+    /** @throws InvalidArgumentException if the content type can not be found */
     public function getType(string $type): ContentTypeInterface
     {
         return $this->resolver->getType($type);

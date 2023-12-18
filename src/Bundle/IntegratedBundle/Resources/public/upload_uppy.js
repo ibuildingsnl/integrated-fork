@@ -3776,6 +3776,356 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
 /***/ }),
 
+<<<<<<< HEAD
+=======
+/***/ "./node_modules/eventemitter3/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/eventemitter3/index.js ***!
+  \*********************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+var has = Object.prototype.hasOwnProperty
+  , prefix = '~';
+
+/**
+ * Constructor to create a storage for our `EE` objects.
+ * An `Events` instance is a plain object whose properties are event names.
+ *
+ * @constructor
+ * @private
+ */
+function Events() {}
+
+//
+// We try to not inherit from `Object.prototype`. In some engines creating an
+// instance in this way is faster than calling `Object.create(null)` directly.
+// If `Object.create(null)` is not supported we prefix the event names with a
+// character to make sure that the built-in object properties are not
+// overridden or used as an attack vector.
+//
+if (Object.create) {
+  Events.prototype = Object.create(null);
+
+  //
+  // This hack is needed because the `__proto__` property is still inherited in
+  // some old browsers like Android 4, iPhone 5.1, Opera 11 and Safari 5.
+  //
+  if (!new Events().__proto__) prefix = false;
+}
+
+/**
+ * Representation of a single event listener.
+ *
+ * @param {Function} fn The listener function.
+ * @param {*} context The context to invoke the listener with.
+ * @param {Boolean} [once=false] Specify if the listener is a one-time listener.
+ * @constructor
+ * @private
+ */
+function EE(fn, context, once) {
+  this.fn = fn;
+  this.context = context;
+  this.once = once || false;
+}
+
+/**
+ * Add a listener for a given event.
+ *
+ * @param {EventEmitter} emitter Reference to the `EventEmitter` instance.
+ * @param {(String|Symbol)} event The event name.
+ * @param {Function} fn The listener function.
+ * @param {*} context The context to invoke the listener with.
+ * @param {Boolean} once Specify if the listener is a one-time listener.
+ * @returns {EventEmitter}
+ * @private
+ */
+function addListener(emitter, event, fn, context, once) {
+  if (typeof fn !== 'function') {
+    throw new TypeError('The listener must be a function');
+  }
+
+  var listener = new EE(fn, context || emitter, once)
+    , evt = prefix ? prefix + event : event;
+
+  if (!emitter._events[evt]) emitter._events[evt] = listener, emitter._eventsCount++;
+  else if (!emitter._events[evt].fn) emitter._events[evt].push(listener);
+  else emitter._events[evt] = [emitter._events[evt], listener];
+
+  return emitter;
+}
+
+/**
+ * Clear event by name.
+ *
+ * @param {EventEmitter} emitter Reference to the `EventEmitter` instance.
+ * @param {(String|Symbol)} evt The Event name.
+ * @private
+ */
+function clearEvent(emitter, evt) {
+  if (--emitter._eventsCount === 0) emitter._events = new Events();
+  else delete emitter._events[evt];
+}
+
+/**
+ * Minimal `EventEmitter` interface that is molded against the Node.js
+ * `EventEmitter` interface.
+ *
+ * @constructor
+ * @public
+ */
+function EventEmitter() {
+  this._events = new Events();
+  this._eventsCount = 0;
+}
+
+/**
+ * Return an array listing the events for which the emitter has registered
+ * listeners.
+ *
+ * @returns {Array}
+ * @public
+ */
+EventEmitter.prototype.eventNames = function eventNames() {
+  var names = []
+    , events
+    , name;
+
+  if (this._eventsCount === 0) return names;
+
+  for (name in (events = this._events)) {
+    if (has.call(events, name)) names.push(prefix ? name.slice(1) : name);
+  }
+
+  if (Object.getOwnPropertySymbols) {
+    return names.concat(Object.getOwnPropertySymbols(events));
+  }
+
+  return names;
+};
+
+/**
+ * Return the listeners registered for a given event.
+ *
+ * @param {(String|Symbol)} event The event name.
+ * @returns {Array} The registered listeners.
+ * @public
+ */
+EventEmitter.prototype.listeners = function listeners(event) {
+  var evt = prefix ? prefix + event : event
+    , handlers = this._events[evt];
+
+  if (!handlers) return [];
+  if (handlers.fn) return [handlers.fn];
+
+  for (var i = 0, l = handlers.length, ee = new Array(l); i < l; i++) {
+    ee[i] = handlers[i].fn;
+  }
+
+  return ee;
+};
+
+/**
+ * Return the number of listeners listening to a given event.
+ *
+ * @param {(String|Symbol)} event The event name.
+ * @returns {Number} The number of listeners.
+ * @public
+ */
+EventEmitter.prototype.listenerCount = function listenerCount(event) {
+  var evt = prefix ? prefix + event : event
+    , listeners = this._events[evt];
+
+  if (!listeners) return 0;
+  if (listeners.fn) return 1;
+  return listeners.length;
+};
+
+/**
+ * Calls each of the listeners registered for a given event.
+ *
+ * @param {(String|Symbol)} event The event name.
+ * @returns {Boolean} `true` if the event had listeners, else `false`.
+ * @public
+ */
+EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
+  var evt = prefix ? prefix + event : event;
+
+  if (!this._events[evt]) return false;
+
+  var listeners = this._events[evt]
+    , len = arguments.length
+    , args
+    , i;
+
+  if (listeners.fn) {
+    if (listeners.once) this.removeListener(event, listeners.fn, undefined, true);
+
+    switch (len) {
+      case 1: return listeners.fn.call(listeners.context), true;
+      case 2: return listeners.fn.call(listeners.context, a1), true;
+      case 3: return listeners.fn.call(listeners.context, a1, a2), true;
+      case 4: return listeners.fn.call(listeners.context, a1, a2, a3), true;
+      case 5: return listeners.fn.call(listeners.context, a1, a2, a3, a4), true;
+      case 6: return listeners.fn.call(listeners.context, a1, a2, a3, a4, a5), true;
+    }
+
+    for (i = 1, args = new Array(len -1); i < len; i++) {
+      args[i - 1] = arguments[i];
+    }
+
+    listeners.fn.apply(listeners.context, args);
+  } else {
+    var length = listeners.length
+      , j;
+
+    for (i = 0; i < length; i++) {
+      if (listeners[i].once) this.removeListener(event, listeners[i].fn, undefined, true);
+
+      switch (len) {
+        case 1: listeners[i].fn.call(listeners[i].context); break;
+        case 2: listeners[i].fn.call(listeners[i].context, a1); break;
+        case 3: listeners[i].fn.call(listeners[i].context, a1, a2); break;
+        case 4: listeners[i].fn.call(listeners[i].context, a1, a2, a3); break;
+        default:
+          if (!args) for (j = 1, args = new Array(len -1); j < len; j++) {
+            args[j - 1] = arguments[j];
+          }
+
+          listeners[i].fn.apply(listeners[i].context, args);
+      }
+    }
+  }
+
+  return true;
+};
+
+/**
+ * Add a listener for a given event.
+ *
+ * @param {(String|Symbol)} event The event name.
+ * @param {Function} fn The listener function.
+ * @param {*} [context=this] The context to invoke the listener with.
+ * @returns {EventEmitter} `this`.
+ * @public
+ */
+EventEmitter.prototype.on = function on(event, fn, context) {
+  return addListener(this, event, fn, context, false);
+};
+
+/**
+ * Add a one-time listener for a given event.
+ *
+ * @param {(String|Symbol)} event The event name.
+ * @param {Function} fn The listener function.
+ * @param {*} [context=this] The context to invoke the listener with.
+ * @returns {EventEmitter} `this`.
+ * @public
+ */
+EventEmitter.prototype.once = function once(event, fn, context) {
+  return addListener(this, event, fn, context, true);
+};
+
+/**
+ * Remove the listeners of a given event.
+ *
+ * @param {(String|Symbol)} event The event name.
+ * @param {Function} fn Only remove the listeners that match this function.
+ * @param {*} context Only remove the listeners that have this context.
+ * @param {Boolean} once Only remove one-time listeners.
+ * @returns {EventEmitter} `this`.
+ * @public
+ */
+EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once) {
+  var evt = prefix ? prefix + event : event;
+
+  if (!this._events[evt]) return this;
+  if (!fn) {
+    clearEvent(this, evt);
+    return this;
+  }
+
+  var listeners = this._events[evt];
+
+  if (listeners.fn) {
+    if (
+      listeners.fn === fn &&
+      (!once || listeners.once) &&
+      (!context || listeners.context === context)
+    ) {
+      clearEvent(this, evt);
+    }
+  } else {
+    for (var i = 0, events = [], length = listeners.length; i < length; i++) {
+      if (
+        listeners[i].fn !== fn ||
+        (once && !listeners[i].once) ||
+        (context && listeners[i].context !== context)
+      ) {
+        events.push(listeners[i]);
+      }
+    }
+
+    //
+    // Reset the array, or remove it completely if we have no more listeners.
+    //
+    if (events.length) this._events[evt] = events.length === 1 ? events[0] : events;
+    else clearEvent(this, evt);
+  }
+
+  return this;
+};
+
+/**
+ * Remove all listeners, or those of the specified event.
+ *
+ * @param {(String|Symbol)} [event] The event name.
+ * @returns {EventEmitter} `this`.
+ * @public
+ */
+EventEmitter.prototype.removeAllListeners = function removeAllListeners(event) {
+  var evt;
+
+  if (event) {
+    evt = prefix ? prefix + event : event;
+    if (this._events[evt]) clearEvent(this, evt);
+  } else {
+    this._events = new Events();
+    this._eventsCount = 0;
+  }
+
+  return this;
+};
+
+//
+// Alias methods names because people roll like that.
+//
+EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
+EventEmitter.prototype.addListener = EventEmitter.prototype.on;
+
+//
+// Expose the prefix.
+//
+EventEmitter.prefixed = prefix;
+
+//
+// Allow `EventEmitter` to be imported as module namespace.
+//
+EventEmitter.EventEmitter = EventEmitter;
+
+//
+// Expose the module.
+//
+if (true) {
+  module.exports = EventEmitter;
+}
+
+
+/***/ }),
+
+>>>>>>> feature/publication-datetimetype
 /***/ "./node_modules/is-shallow-equal/index.js":
 /*!************************************************!*\
   !*** ./node_modules/is-shallow-equal/index.js ***!
@@ -3799,14 +4149,22 @@ module.exports = function isShallowEqual (a, b) {
 /***/ (function(module, exports) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+<<<<<<< HEAD
  * jQuery JavaScript Library v3.7.0
+=======
+ * jQuery JavaScript Library v3.7.1
+>>>>>>> feature/publication-datetimetype
  * https://jquery.com/
  *
  * Copyright OpenJS Foundation and other contributors
  * Released under the MIT license
  * https://jquery.org/license
  *
+<<<<<<< HEAD
  * Date: 2023-05-11T18:29Z
+=======
+ * Date: 2023-08-28T13:37Z
+>>>>>>> feature/publication-datetimetype
  */
 ( function( global, factory ) {
 
@@ -3947,7 +4305,11 @@ function toType( obj ) {
 
 
 
+<<<<<<< HEAD
 var version = "3.7.0",
+=======
+var version = "3.7.1",
+>>>>>>> feature/publication-datetimetype
 
 	rhtmlSuffix = /HTML$/i,
 
@@ -4211,9 +4573,20 @@ jQuery.extend( {
 				// Do not traverse comment nodes
 				ret += jQuery.text( node );
 			}
+<<<<<<< HEAD
 		} else if ( nodeType === 1 || nodeType === 9 || nodeType === 11 ) {
 			return elem.textContent;
 		} else if ( nodeType === 3 || nodeType === 4 ) {
+=======
+		}
+		if ( nodeType === 1 || nodeType === 11 ) {
+			return elem.textContent;
+		}
+		if ( nodeType === 9 ) {
+			return elem.documentElement.textContent;
+		}
+		if ( nodeType === 3 || nodeType === 4 ) {
+>>>>>>> feature/publication-datetimetype
 			return elem.nodeValue;
 		}
 
@@ -4926,12 +5299,26 @@ function setDocument( node ) {
 		documentElement.msMatchesSelector;
 
 	// Support: IE 9 - 11+, Edge 12 - 18+
+<<<<<<< HEAD
 	// Accessing iframe documents after unload throws "permission denied" errors (see trac-13936)
 	// Support: IE 11+, Edge 17 - 18+
 	// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
 	// two documents; shallow comparisons work.
 	// eslint-disable-next-line eqeqeq
 	if ( preferredDoc != document &&
+=======
+	// Accessing iframe documents after unload throws "permission denied" errors
+	// (see trac-13936).
+	// Limit the fix to IE & Edge Legacy; despite Edge 15+ implementing `matches`,
+	// all IE 9+ and Edge Legacy versions implement `msMatchesSelector` as well.
+	if ( documentElement.msMatchesSelector &&
+
+		// Support: IE 11+, Edge 17 - 18+
+		// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+		// two documents; shallow comparisons work.
+		// eslint-disable-next-line eqeqeq
+		preferredDoc != document &&
+>>>>>>> feature/publication-datetimetype
 		( subWindow = document.defaultView ) && subWindow.top !== subWindow ) {
 
 		// Support: IE 9 - 11+, Edge 12 - 18+
@@ -6494,12 +6881,21 @@ jQuery.find = find;
 jQuery.expr[ ":" ] = jQuery.expr.pseudos;
 jQuery.unique = jQuery.uniqueSort;
 
+<<<<<<< HEAD
 // These have always been private, but they used to be documented
 // as part of Sizzle so let's maintain them in the 3.x line
 // for backwards compatibility purposes.
 find.compile = compile;
 find.select = select;
 find.setDocument = setDocument;
+=======
+// These have always been private, but they used to be documented as part of
+// Sizzle so let's maintain them for now for backwards compatibility purposes.
+find.compile = compile;
+find.select = select;
+find.setDocument = setDocument;
+find.tokenize = tokenize;
+>>>>>>> feature/publication-datetimetype
 
 find.escape = jQuery.escapeSelector;
 find.getText = jQuery.text;
@@ -9713,7 +10109,11 @@ function domManip( collection, args, callback, ignored ) {
 			if ( hasScripts ) {
 				doc = scripts[ scripts.length - 1 ].ownerDocument;
 
+<<<<<<< HEAD
 				// Reenable scripts
+=======
+				// Re-enable scripts
+>>>>>>> feature/publication-datetimetype
 				jQuery.map( scripts, restoreScript );
 
 				// Evaluate executable scripts on first document insertion
@@ -10170,7 +10570,11 @@ var rboxStyle = new RegExp( cssExpand.join( "|" ), "i" );
 				trChild = document.createElement( "div" );
 
 				table.style.cssText = "position:absolute;left:-11111px;border-collapse:separate";
+<<<<<<< HEAD
 				tr.style.cssText = "border:1px solid";
+=======
+				tr.style.cssText = "box-sizing:content-box;border:1px solid";
+>>>>>>> feature/publication-datetimetype
 
 				// Support: Chrome 86+
 				// Height set through cssText does not get applied.
@@ -10182,7 +10586,11 @@ var rboxStyle = new RegExp( cssExpand.join( "|" ), "i" );
 				// In our bodyBackground.html iframe,
 				// display for all div elements is set to "inline",
 				// which causes a problem only in Android 8 Chrome 86.
+<<<<<<< HEAD
 				// Ensuring the div is display: block
+=======
+				// Ensuring the div is `display: block`
+>>>>>>> feature/publication-datetimetype
 				// gets around this issue.
 				trChild.style.display = "block";
 
@@ -14350,7 +14758,13 @@ jQuery.fn.extend( {
 	},
 
 	hover: function( fnOver, fnOut ) {
+<<<<<<< HEAD
 		return this.mouseenter( fnOver ).mouseleave( fnOut || fnOver );
+=======
+		return this
+			.on( "mouseenter", fnOver )
+			.on( "mouseleave", fnOut || fnOver );
+>>>>>>> feature/publication-datetimetype
 	}
 } );
 
@@ -14507,6 +14921,7 @@ return jQuery;
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "./node_modules/lodash.debounce/index.js":
 /*!***********************************************!*\
   !*** ./node_modules/lodash.debounce/index.js ***!
@@ -14545,15 +14960,174 @@ var reIsOctal = /^0o[0-7]+$/i;
 
 /** Built-in method references without a dependency on `root`. */
 var freeParseInt = parseInt;
+=======
+/***/ "./node_modules/lodash/_Symbol.js":
+/*!****************************************!*\
+  !*** ./node_modules/lodash/_Symbol.js ***!
+  \****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var root = __webpack_require__(/*! ./_root */ "./node_modules/lodash/_root.js");
+
+/** Built-in value references. */
+var Symbol = root.Symbol;
+
+module.exports = Symbol;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_baseGetTag.js":
+/*!********************************************!*\
+  !*** ./node_modules/lodash/_baseGetTag.js ***!
+  \********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var Symbol = __webpack_require__(/*! ./_Symbol */ "./node_modules/lodash/_Symbol.js"),
+    getRawTag = __webpack_require__(/*! ./_getRawTag */ "./node_modules/lodash/_getRawTag.js"),
+    objectToString = __webpack_require__(/*! ./_objectToString */ "./node_modules/lodash/_objectToString.js");
+
+/** `Object#toString` result references. */
+var nullTag = '[object Null]',
+    undefinedTag = '[object Undefined]';
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * The base implementation of `getTag` without fallbacks for buggy environments.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+function baseGetTag(value) {
+  if (value == null) {
+    return value === undefined ? undefinedTag : nullTag;
+  }
+  return (symToStringTag && symToStringTag in Object(value))
+    ? getRawTag(value)
+    : objectToString(value);
+}
+
+module.exports = baseGetTag;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_baseTrim.js":
+/*!******************************************!*\
+  !*** ./node_modules/lodash/_baseTrim.js ***!
+  \******************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var trimmedEndIndex = __webpack_require__(/*! ./_trimmedEndIndex */ "./node_modules/lodash/_trimmedEndIndex.js");
+
+/** Used to match leading whitespace. */
+var reTrimStart = /^\s+/;
+
+/**
+ * The base implementation of `_.trim`.
+ *
+ * @private
+ * @param {string} string The string to trim.
+ * @returns {string} Returns the trimmed string.
+ */
+function baseTrim(string) {
+  return string
+    ? string.slice(0, trimmedEndIndex(string) + 1).replace(reTrimStart, '')
+    : string;
+}
+
+module.exports = baseTrim;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_freeGlobal.js":
+/*!********************************************!*\
+  !*** ./node_modules/lodash/_freeGlobal.js ***!
+  \********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+>>>>>>> feature/publication-datetimetype
 
 /** Detect free variable `global` from Node.js. */
 var freeGlobal = typeof __webpack_require__.g == 'object' && __webpack_require__.g && __webpack_require__.g.Object === Object && __webpack_require__.g;
 
+<<<<<<< HEAD
 /** Detect free variable `self`. */
 var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
 
 /** Used as a reference to the global object. */
 var root = freeGlobal || freeSelf || Function('return this')();
+=======
+module.exports = freeGlobal;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_getRawTag.js":
+/*!*******************************************!*\
+  !*** ./node_modules/lodash/_getRawTag.js ***!
+  \*******************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var Symbol = __webpack_require__(/*! ./_Symbol */ "./node_modules/lodash/_Symbol.js");
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the raw `toStringTag`.
+ */
+function getRawTag(value) {
+  var isOwn = hasOwnProperty.call(value, symToStringTag),
+      tag = value[symToStringTag];
+
+  try {
+    value[symToStringTag] = undefined;
+    var unmasked = true;
+  } catch (e) {}
+
+  var result = nativeObjectToString.call(value);
+  if (unmasked) {
+    if (isOwn) {
+      value[symToStringTag] = tag;
+    } else {
+      delete value[symToStringTag];
+    }
+  }
+  return result;
+}
+
+module.exports = getRawTag;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_objectToString.js":
+/*!************************************************!*\
+  !*** ./node_modules/lodash/_objectToString.js ***!
+  \************************************************/
+/***/ ((module) => {
+>>>>>>> feature/publication-datetimetype
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -14563,13 +15137,95 @@ var objectProto = Object.prototype;
  * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
  * of values.
  */
+<<<<<<< HEAD
 var objectToString = objectProto.toString;
+=======
+var nativeObjectToString = objectProto.toString;
+
+/**
+ * Converts `value` to a string using `Object.prototype.toString`.
+ *
+ * @private
+ * @param {*} value The value to convert.
+ * @returns {string} Returns the converted string.
+ */
+function objectToString(value) {
+  return nativeObjectToString.call(value);
+}
+
+module.exports = objectToString;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_root.js":
+/*!**************************************!*\
+  !*** ./node_modules/lodash/_root.js ***!
+  \**************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var freeGlobal = __webpack_require__(/*! ./_freeGlobal */ "./node_modules/lodash/_freeGlobal.js");
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
+module.exports = root;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_trimmedEndIndex.js":
+/*!*************************************************!*\
+  !*** ./node_modules/lodash/_trimmedEndIndex.js ***!
+  \*************************************************/
+/***/ ((module) => {
+
+/** Used to match a single whitespace character. */
+var reWhitespace = /\s/;
+
+/**
+ * Used by `_.trim` and `_.trimEnd` to get the index of the last non-whitespace
+ * character of `string`.
+ *
+ * @private
+ * @param {string} string The string to inspect.
+ * @returns {number} Returns the index of the last non-whitespace character.
+ */
+function trimmedEndIndex(string) {
+  var index = string.length;
+
+  while (index-- && reWhitespace.test(string.charAt(index))) {}
+  return index;
+}
+
+module.exports = trimmedEndIndex;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/debounce.js":
+/*!*****************************************!*\
+  !*** ./node_modules/lodash/debounce.js ***!
+  \*****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var isObject = __webpack_require__(/*! ./isObject */ "./node_modules/lodash/isObject.js"),
+    now = __webpack_require__(/*! ./now */ "./node_modules/lodash/now.js"),
+    toNumber = __webpack_require__(/*! ./toNumber */ "./node_modules/lodash/toNumber.js");
+
+/** Error message constants. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+>>>>>>> feature/publication-datetimetype
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeMax = Math.max,
     nativeMin = Math.min;
 
 /**
+<<<<<<< HEAD
  * Gets the timestamp of the number of milliseconds that have elapsed since
  * the Unix epoch (1 January 1970 00:00:00 UTC).
  *
@@ -14590,6 +15246,8 @@ var now = function() {
 };
 
 /**
+=======
+>>>>>>> feature/publication-datetimetype
  * Creates a debounced function that delays invoking `func` until after `wait`
  * milliseconds have elapsed since the last time the debounced function was
  * invoked. The debounced function comes with a `cancel` method to cancel
@@ -14688,9 +15346,17 @@ function debounce(func, wait, options) {
   function remainingWait(time) {
     var timeSinceLastCall = time - lastCallTime,
         timeSinceLastInvoke = time - lastInvokeTime,
+<<<<<<< HEAD
         result = wait - timeSinceLastCall;
 
     return maxing ? nativeMin(result, maxWait - timeSinceLastInvoke) : result;
+=======
+        timeWaiting = wait - timeSinceLastCall;
+
+    return maxing
+      ? nativeMin(timeWaiting, maxWait - timeSinceLastInvoke)
+      : timeWaiting;
+>>>>>>> feature/publication-datetimetype
   }
 
   function shouldInvoke(time) {
@@ -14751,6 +15417,10 @@ function debounce(func, wait, options) {
       }
       if (maxing) {
         // Handle invocations in a tight loop.
+<<<<<<< HEAD
+=======
+        clearTimeout(timerId);
+>>>>>>> feature/publication-datetimetype
         timerId = setTimeout(timerExpired, wait);
         return invokeFunc(lastCallTime);
       }
@@ -14765,6 +15435,20 @@ function debounce(func, wait, options) {
   return debounced;
 }
 
+<<<<<<< HEAD
+=======
+module.exports = debounce;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/isObject.js":
+/*!*****************************************!*\
+  !*** ./node_modules/lodash/isObject.js ***!
+  \*****************************************/
+/***/ ((module) => {
+
+>>>>>>> feature/publication-datetimetype
 /**
  * Checks if `value` is the
  * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
@@ -14792,9 +15476,26 @@ function debounce(func, wait, options) {
  */
 function isObject(value) {
   var type = typeof value;
+<<<<<<< HEAD
   return !!value && (type == 'object' || type == 'function');
 }
 
+=======
+  return value != null && (type == 'object' || type == 'function');
+}
+
+module.exports = isObject;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/isObjectLike.js":
+/*!*********************************************!*\
+  !*** ./node_modules/lodash/isObjectLike.js ***!
+  \*********************************************/
+/***/ ((module) => {
+
+>>>>>>> feature/publication-datetimetype
 /**
  * Checks if `value` is object-like. A value is object-like if it's not `null`
  * and has a `typeof` result of "object".
@@ -14820,9 +15521,32 @@ function isObject(value) {
  * // => false
  */
 function isObjectLike(value) {
+<<<<<<< HEAD
   return !!value && typeof value == 'object';
 }
 
+=======
+  return value != null && typeof value == 'object';
+}
+
+module.exports = isObjectLike;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/isSymbol.js":
+/*!*****************************************!*\
+  !*** ./node_modules/lodash/isSymbol.js ***!
+  \*****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var baseGetTag = __webpack_require__(/*! ./_baseGetTag */ "./node_modules/lodash/_baseGetTag.js"),
+    isObjectLike = __webpack_require__(/*! ./isObjectLike */ "./node_modules/lodash/isObjectLike.js");
+
+/** `Object#toString` result references. */
+var symbolTag = '[object Symbol]';
+
+>>>>>>> feature/publication-datetimetype
 /**
  * Checks if `value` is classified as a `Symbol` primitive or object.
  *
@@ -14842,6 +15566,7 @@ function isObjectLike(value) {
  */
 function isSymbol(value) {
   return typeof value == 'symbol' ||
+<<<<<<< HEAD
     (isObjectLike(value) && objectToString.call(value) == symbolTag);
 }
 
@@ -14890,10 +15615,17 @@ function toNumber(value) {
 }
 
 module.exports = debounce;
+=======
+    (isObjectLike(value) && baseGetTag(value) == symbolTag);
+}
+
+module.exports = isSymbol;
+>>>>>>> feature/publication-datetimetype
 
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "./node_modules/lodash.throttle/index.js":
 /*!***********************************************!*\
   !*** ./node_modules/lodash.throttle/index.js ***!
@@ -14955,6 +15687,15 @@ var objectToString = objectProto.toString;
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeMax = Math.max,
     nativeMin = Math.min;
+=======
+/***/ "./node_modules/lodash/now.js":
+/*!************************************!*\
+  !*** ./node_modules/lodash/now.js ***!
+  \************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var root = __webpack_require__(/*! ./_root */ "./node_modules/lodash/_root.js");
+>>>>>>> feature/publication-datetimetype
 
 /**
  * Gets the timestamp of the number of milliseconds that have elapsed since
@@ -14976,6 +15717,7 @@ var now = function() {
   return root.Date.now();
 };
 
+<<<<<<< HEAD
 /**
  * Creates a debounced function that delays invoking `func` until after `wait`
  * milliseconds have elapsed since the last time the debounced function was
@@ -15151,6 +15893,24 @@ function debounce(func, wait, options) {
   debounced.flush = flush;
   return debounced;
 }
+=======
+module.exports = now;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/throttle.js":
+/*!*****************************************!*\
+  !*** ./node_modules/lodash/throttle.js ***!
+  \*****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var debounce = __webpack_require__(/*! ./debounce */ "./node_modules/lodash/debounce.js"),
+    isObject = __webpack_require__(/*! ./isObject */ "./node_modules/lodash/isObject.js");
+
+/** Error message constants. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+>>>>>>> feature/publication-datetimetype
 
 /**
  * Creates a throttled function that only invokes `func` at most once per
@@ -15214,6 +15974,7 @@ function throttle(func, wait, options) {
   });
 }
 
+<<<<<<< HEAD
 /**
  * Checks if `value` is the
  * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
@@ -15293,6 +16054,37 @@ function isSymbol(value) {
   return typeof value == 'symbol' ||
     (isObjectLike(value) && objectToString.call(value) == symbolTag);
 }
+=======
+module.exports = throttle;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/toNumber.js":
+/*!*****************************************!*\
+  !*** ./node_modules/lodash/toNumber.js ***!
+  \*****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var baseTrim = __webpack_require__(/*! ./_baseTrim */ "./node_modules/lodash/_baseTrim.js"),
+    isObject = __webpack_require__(/*! ./isObject */ "./node_modules/lodash/isObject.js"),
+    isSymbol = __webpack_require__(/*! ./isSymbol */ "./node_modules/lodash/isSymbol.js");
+
+/** Used as references for various `Number` constants. */
+var NAN = 0 / 0;
+
+/** Used to detect bad signed hexadecimal string values. */
+var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+
+/** Used to detect binary string values. */
+var reIsBinary = /^0b[01]+$/i;
+
+/** Used to detect octal string values. */
+var reIsOctal = /^0o[0-7]+$/i;
+
+/** Built-in method references without a dependency on `root`. */
+var freeParseInt = parseInt;
+>>>>>>> feature/publication-datetimetype
 
 /**
  * Converts `value` to a number.
@@ -15331,14 +16123,22 @@ function toNumber(value) {
   if (typeof value != 'string') {
     return value === 0 ? value : +value;
   }
+<<<<<<< HEAD
   value = value.replace(reTrim, '');
+=======
+  value = baseTrim(value);
+>>>>>>> feature/publication-datetimetype
   var isBinary = reIsBinary.test(value);
   return (isBinary || reIsOctal.test(value))
     ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
     : (reIsBadHex.test(value) ? NAN : +value);
 }
 
+<<<<<<< HEAD
 module.exports = throttle;
+=======
+module.exports = toNumber;
+>>>>>>> feature/publication-datetimetype
 
 
 /***/ }),
@@ -15599,6 +16399,7 @@ module.exports = function createNamespaceEmitter () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Component: () => (/* binding */ b),
+<<<<<<< HEAD
 /* harmony export */   Fragment: () => (/* binding */ k),
 /* harmony export */   cloneElement: () => (/* binding */ F),
 /* harmony export */   createContext: () => (/* binding */ G),
@@ -15612,6 +16413,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   toChildArray: () => (/* binding */ S)
 /* harmony export */ });
 var n,l,u,i,t,o,r,f,e,c={},s=[],a=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i,v=Array.isArray;function h(n,l){for(var u in l)n[u]=l[u];return n}function p(n){var l=n.parentNode;l&&l.removeChild(n)}function y(l,u,i){var t,o,r,f={};for(r in u)"key"==r?t=u[r]:"ref"==r?o=u[r]:f[r]=u[r];if(arguments.length>2&&(f.children=arguments.length>3?n.call(arguments,2):i),"function"==typeof l&&null!=l.defaultProps)for(r in l.defaultProps)void 0===f[r]&&(f[r]=l.defaultProps[r]);return d(l,f,t,o,null)}function d(n,i,t,o,r){var f={type:n,props:i,key:t,ref:o,__k:null,__:null,__b:0,__e:null,__d:void 0,__c:null,__h:null,constructor:void 0,__v:null==r?++u:r};return null==r&&null!=l.vnode&&l.vnode(f),f}function _(){return{current:null}}function k(n){return n.children}function b(n,l){this.props=n,this.context=l}function g(n,l){if(null==l)return n.__?g(n.__,n.__.__k.indexOf(n)+1):null;for(var u;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e)return u.__e;return"function"==typeof n.type?g(n):null}function m(n){var l,u;if(null!=(n=n.__)&&null!=n.__c){for(n.__e=n.__c.base=null,l=0;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e){n.__e=n.__c.base=u.__e;break}return m(n)}}function w(n){(!n.__d&&(n.__d=!0)&&t.push(n)&&!x.__r++||o!==l.debounceRendering)&&((o=l.debounceRendering)||r)(x)}function x(){var n,l,u,i,o,r,e,c;for(t.sort(f);n=t.shift();)n.__d&&(l=t.length,i=void 0,o=void 0,e=(r=(u=n).__v).__e,(c=u.__P)&&(i=[],(o=h({},r)).__v=r.__v+1,L(c,r,o,u.__n,void 0!==c.ownerSVGElement,null!=r.__h?[e]:null,i,null==e?g(r):e,r.__h),M(i,r),r.__e!=e&&m(r)),t.length>l&&t.sort(f));x.__r=0}function P(n,l,u,i,t,o,r,f,e,a){var h,p,y,_,b,m,w,x=i&&i.__k||s,P=x.length;for(u.__k=[],h=0;h<l.length;h++)if(null!=(_=u.__k[h]=null==(_=l[h])||"boolean"==typeof _||"function"==typeof _?null:"string"==typeof _||"number"==typeof _||"bigint"==typeof _?d(null,_,null,null,_):v(_)?d(k,{children:_},null,null,null):_.__b>0?d(_.type,_.props,_.key,_.ref?_.ref:null,_.__v):_)){if(_.__=u,_.__b=u.__b+1,null===(y=x[h])||y&&_.key==y.key&&_.type===y.type)x[h]=void 0;else for(p=0;p<P;p++){if((y=x[p])&&_.key==y.key&&_.type===y.type){x[p]=void 0;break}y=null}L(n,_,y=y||c,t,o,r,f,e,a),b=_.__e,(p=_.ref)&&y.ref!=p&&(w||(w=[]),y.ref&&w.push(y.ref,null,_),w.push(p,_.__c||b,_)),null!=b?(null==m&&(m=b),"function"==typeof _.type&&_.__k===y.__k?_.__d=e=C(_,e,n):e=$(n,_,y,x,b,e),"function"==typeof u.type&&(u.__d=e)):e&&y.__e==e&&e.parentNode!=n&&(e=g(y))}for(u.__e=m,h=P;h--;)null!=x[h]&&("function"==typeof u.type&&null!=x[h].__e&&x[h].__e==u.__d&&(u.__d=A(i).nextSibling),q(x[h],x[h]));if(w)for(h=0;h<w.length;h++)O(w[h],w[++h],w[++h])}function C(n,l,u){for(var i,t=n.__k,o=0;t&&o<t.length;o++)(i=t[o])&&(i.__=n,l="function"==typeof i.type?C(i,l,u):$(u,i,i,t,i.__e,l));return l}function S(n,l){return l=l||[],null==n||"boolean"==typeof n||(v(n)?n.some(function(n){S(n,l)}):l.push(n)),l}function $(n,l,u,i,t,o){var r,f,e;if(void 0!==l.__d)r=l.__d,l.__d=void 0;else if(null==u||t!=o||null==t.parentNode)n:if(null==o||o.parentNode!==n)n.appendChild(t),r=null;else{for(f=o,e=0;(f=f.nextSibling)&&e<i.length;e+=1)if(f==t)break n;n.insertBefore(t,o),r=o}return void 0!==r?r:t.nextSibling}function A(n){var l,u,i;if(null==n.type||"string"==typeof n.type)return n.__e;if(n.__k)for(l=n.__k.length-1;l>=0;l--)if((u=n.__k[l])&&(i=A(u)))return i;return null}function H(n,l,u,i,t){var o;for(o in u)"children"===o||"key"===o||o in l||T(n,o,null,u[o],i);for(o in l)t&&"function"!=typeof l[o]||"children"===o||"key"===o||"value"===o||"checked"===o||u[o]===l[o]||T(n,o,l[o],u[o],i)}function I(n,l,u){"-"===l[0]?n.setProperty(l,null==u?"":u):n[l]=null==u?"":"number"!=typeof u||a.test(l)?u:u+"px"}function T(n,l,u,i,t){var o;n:if("style"===l)if("string"==typeof u)n.style.cssText=u;else{if("string"==typeof i&&(n.style.cssText=i=""),i)for(l in i)u&&l in u||I(n.style,l,"");if(u)for(l in u)i&&u[l]===i[l]||I(n.style,l,u[l])}else if("o"===l[0]&&"n"===l[1])o=l!==(l=l.replace(/Capture$/,"")),l=l.toLowerCase()in n?l.toLowerCase().slice(2):l.slice(2),n.l||(n.l={}),n.l[l+o]=u,u?i||n.addEventListener(l,o?z:j,o):n.removeEventListener(l,o?z:j,o);else if("dangerouslySetInnerHTML"!==l){if(t)l=l.replace(/xlink(H|:h)/,"h").replace(/sName$/,"s");else if("width"!==l&&"height"!==l&&"href"!==l&&"list"!==l&&"form"!==l&&"tabIndex"!==l&&"download"!==l&&"rowSpan"!==l&&"colSpan"!==l&&l in n)try{n[l]=null==u?"":u;break n}catch(n){}"function"==typeof u||(null==u||!1===u&&"-"!==l[4]?n.removeAttribute(l):n.setAttribute(l,u))}}function j(n){return this.l[n.type+!1](l.event?l.event(n):n)}function z(n){return this.l[n.type+!0](l.event?l.event(n):n)}function L(n,u,i,t,o,r,f,e,c){var s,a,p,y,d,_,g,m,w,x,C,S,$,A,H,I=u.type;if(void 0!==u.constructor)return null;null!=i.__h&&(c=i.__h,e=u.__e=i.__e,u.__h=null,r=[e]),(s=l.__b)&&s(u);try{n:if("function"==typeof I){if(m=u.props,w=(s=I.contextType)&&t[s.__c],x=s?w?w.props.value:s.__:t,i.__c?g=(a=u.__c=i.__c).__=a.__E:("prototype"in I&&I.prototype.render?u.__c=a=new I(m,x):(u.__c=a=new b(m,x),a.constructor=I,a.render=B),w&&w.sub(a),a.props=m,a.state||(a.state={}),a.context=x,a.__n=t,p=a.__d=!0,a.__h=[],a._sb=[]),null==a.__s&&(a.__s=a.state),null!=I.getDerivedStateFromProps&&(a.__s==a.state&&(a.__s=h({},a.__s)),h(a.__s,I.getDerivedStateFromProps(m,a.__s))),y=a.props,d=a.state,a.__v=u,p)null==I.getDerivedStateFromProps&&null!=a.componentWillMount&&a.componentWillMount(),null!=a.componentDidMount&&a.__h.push(a.componentDidMount);else{if(null==I.getDerivedStateFromProps&&m!==y&&null!=a.componentWillReceiveProps&&a.componentWillReceiveProps(m,x),!a.__e&&null!=a.shouldComponentUpdate&&!1===a.shouldComponentUpdate(m,a.__s,x)||u.__v===i.__v){for(u.__v!==i.__v&&(a.props=m,a.state=a.__s,a.__d=!1),a.__e=!1,u.__e=i.__e,u.__k=i.__k,u.__k.forEach(function(n){n&&(n.__=u)}),C=0;C<a._sb.length;C++)a.__h.push(a._sb[C]);a._sb=[],a.__h.length&&f.push(a);break n}null!=a.componentWillUpdate&&a.componentWillUpdate(m,a.__s,x),null!=a.componentDidUpdate&&a.__h.push(function(){a.componentDidUpdate(y,d,_)})}if(a.context=x,a.props=m,a.__P=n,S=l.__r,$=0,"prototype"in I&&I.prototype.render){for(a.state=a.__s,a.__d=!1,S&&S(u),s=a.render(a.props,a.state,a.context),A=0;A<a._sb.length;A++)a.__h.push(a._sb[A]);a._sb=[]}else do{a.__d=!1,S&&S(u),s=a.render(a.props,a.state,a.context),a.state=a.__s}while(a.__d&&++$<25);a.state=a.__s,null!=a.getChildContext&&(t=h(h({},t),a.getChildContext())),p||null==a.getSnapshotBeforeUpdate||(_=a.getSnapshotBeforeUpdate(y,d)),P(n,v(H=null!=s&&s.type===k&&null==s.key?s.props.children:s)?H:[H],u,i,t,o,r,f,e,c),a.base=u.__e,u.__h=null,a.__h.length&&f.push(a),g&&(a.__E=a.__=null),a.__e=!1}else null==r&&u.__v===i.__v?(u.__k=i.__k,u.__e=i.__e):u.__e=N(i.__e,u,i,t,o,r,f,c);(s=l.diffed)&&s(u)}catch(n){u.__v=null,(c||null!=r)&&(u.__e=e,u.__h=!!c,r[r.indexOf(e)]=null),l.__e(n,u,i)}}function M(n,u){l.__c&&l.__c(u,n),n.some(function(u){try{n=u.__h,u.__h=[],n.some(function(n){n.call(u)})}catch(n){l.__e(n,u.__v)}})}function N(l,u,i,t,o,r,f,e){var s,a,h,y=i.props,d=u.props,_=u.type,k=0;if("svg"===_&&(o=!0),null!=r)for(;k<r.length;k++)if((s=r[k])&&"setAttribute"in s==!!_&&(_?s.localName===_:3===s.nodeType)){l=s,r[k]=null;break}if(null==l){if(null===_)return document.createTextNode(d);l=o?document.createElementNS("http://www.w3.org/2000/svg",_):document.createElement(_,d.is&&d),r=null,e=!1}if(null===_)y===d||e&&l.data===d||(l.data=d);else{if(r=r&&n.call(l.childNodes),a=(y=i.props||c).dangerouslySetInnerHTML,h=d.dangerouslySetInnerHTML,!e){if(null!=r)for(y={},k=0;k<l.attributes.length;k++)y[l.attributes[k].name]=l.attributes[k].value;(h||a)&&(h&&(a&&h.__html==a.__html||h.__html===l.innerHTML)||(l.innerHTML=h&&h.__html||""))}if(H(l,d,y,o,e),h)u.__k=[];else if(P(l,v(k=u.props.children)?k:[k],u,i,t,o&&"foreignObject"!==_,r,f,r?r[0]:i.__k&&g(i,0),e),null!=r)for(k=r.length;k--;)null!=r[k]&&p(r[k]);e||("value"in d&&void 0!==(k=d.value)&&(k!==l.value||"progress"===_&&!k||"option"===_&&k!==y.value)&&T(l,"value",k,y.value,!1),"checked"in d&&void 0!==(k=d.checked)&&k!==l.checked&&T(l,"checked",k,y.checked,!1))}return l}function O(n,u,i){try{"function"==typeof n?n(u):n.current=u}catch(n){l.__e(n,i)}}function q(n,u,i){var t,o;if(l.unmount&&l.unmount(n),(t=n.ref)&&(t.current&&t.current!==n.__e||O(t,null,u)),null!=(t=n.__c)){if(t.componentWillUnmount)try{t.componentWillUnmount()}catch(n){l.__e(n,u)}t.base=t.__P=null,n.__c=void 0}if(t=n.__k)for(o=0;o<t.length;o++)t[o]&&q(t[o],u,i||"function"!=typeof n.type);i||null==n.__e||p(n.__e),n.__=n.__e=n.__d=void 0}function B(n,l,u){return this.constructor(n,u)}function D(u,i,t){var o,r,f;l.__&&l.__(u,i),r=(o="function"==typeof t)?null:t&&t.__k||i.__k,f=[],L(i,u=(!o&&t||i).__k=y(k,null,[u]),r||c,c,void 0!==i.ownerSVGElement,!o&&t?[t]:r?null:i.firstChild?n.call(i.childNodes):null,f,!o&&t?t:r?r.__e:i.firstChild,o),M(f,u)}function E(n,l){D(n,l,E)}function F(l,u,i){var t,o,r,f,e=h({},l.props);for(r in l.type&&l.type.defaultProps&&(f=l.type.defaultProps),u)"key"==r?t=u[r]:"ref"==r?o=u[r]:e[r]=void 0===u[r]&&void 0!==f?f[r]:u[r];return arguments.length>2&&(e.children=arguments.length>3?n.call(arguments,2):i),d(l.type,e,t||l.key,o||l.ref,null)}function G(n,l){var u={__c:l="__cC"+e++,__:n,Consumer:function(n,l){return n.children(l)},Provider:function(n){var u,i;return this.getChildContext||(u=[],(i={})[l]=this,this.getChildContext=function(){return i},this.shouldComponentUpdate=function(n){this.props.value!==n.value&&u.some(function(n){n.__e=!0,w(n)})},this.sub=function(n){u.push(n);var l=n.componentWillUnmount;n.componentWillUnmount=function(){u.splice(u.indexOf(n),1),l&&l.call(n)}}),n.children}};return u.Provider.__=u.Consumer.contextType=u}n=s.slice,l={__e:function(n,l,u,i){for(var t,o,r;l=l.__;)if((t=l.__c)&&!t.__)try{if((o=t.constructor)&&null!=o.getDerivedStateFromError&&(t.setState(o.getDerivedStateFromError(n)),r=t.__d),null!=t.componentDidCatch&&(t.componentDidCatch(n,i||{}),r=t.__d),r)return t.__E=t}catch(l){n=l}throw n}},u=0,i=function(n){return null!=n&&void 0===n.constructor},b.prototype.setState=function(n,l){var u;u=null!=this.__s&&this.__s!==this.state?this.__s:this.__s=h({},this.state),"function"==typeof n&&(n=n(h({},u),this.props)),n&&h(u,n),null!=n&&this.__v&&(l&&this._sb.push(l),w(this))},b.prototype.forceUpdate=function(n){this.__v&&(this.__e=!0,n&&this.__h.push(n),w(this))},b.prototype.render=k,t=[],r="function"==typeof Promise?Promise.prototype.then.bind(Promise.resolve()):setTimeout,f=function(n,l){return n.__v.__b-l.__v.__b},x.__r=0,e=0;
+=======
+/* harmony export */   Fragment: () => (/* binding */ g),
+/* harmony export */   cloneElement: () => (/* binding */ E),
+/* harmony export */   createContext: () => (/* binding */ F),
+/* harmony export */   createElement: () => (/* binding */ y),
+/* harmony export */   createRef: () => (/* binding */ _),
+/* harmony export */   h: () => (/* binding */ y),
+/* harmony export */   hydrate: () => (/* binding */ B),
+/* harmony export */   isValidElement: () => (/* binding */ t),
+/* harmony export */   options: () => (/* binding */ l),
+/* harmony export */   render: () => (/* binding */ q),
+/* harmony export */   toChildArray: () => (/* binding */ $)
+/* harmony export */ });
+var n,l,u,t,i,o,r,f,e,c={},s=[],a=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i,h=Array.isArray;function v(n,l){for(var u in l)n[u]=l[u];return n}function p(n){var l=n.parentNode;l&&l.removeChild(n)}function y(l,u,t){var i,o,r,f={};for(r in u)"key"==r?i=u[r]:"ref"==r?o=u[r]:f[r]=u[r];if(arguments.length>2&&(f.children=arguments.length>3?n.call(arguments,2):t),"function"==typeof l&&null!=l.defaultProps)for(r in l.defaultProps)void 0===f[r]&&(f[r]=l.defaultProps[r]);return d(l,f,i,o,null)}function d(n,t,i,o,r){var f={type:n,props:t,key:i,ref:o,__k:null,__:null,__b:0,__e:null,__d:void 0,__c:null,constructor:void 0,__v:null==r?++u:r,__i:-1,__u:0};return null==r&&null!=l.vnode&&l.vnode(f),f}function _(){return{current:null}}function g(n){return n.children}function b(n,l){this.props=n,this.context=l}function m(n,l){if(null==l)return n.__?m(n.__,n.__i+1):null;for(var u;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e)return u.__e;return"function"==typeof n.type?m(n):null}function k(n){var l,u;if(null!=(n=n.__)&&null!=n.__c){for(n.__e=n.__c.base=null,l=0;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e){n.__e=n.__c.base=u.__e;break}return k(n)}}function w(n){(!n.__d&&(n.__d=!0)&&i.push(n)&&!x.__r++||o!==l.debounceRendering)&&((o=l.debounceRendering)||r)(x)}function x(){var n,u,t,o,r,e,c,s,a;for(i.sort(f);n=i.shift();)n.__d&&(u=i.length,o=void 0,e=(r=(t=n).__v).__e,s=[],a=[],(c=t.__P)&&((o=v({},r)).__v=r.__v+1,l.vnode&&l.vnode(o),L(c,o,r,t.__n,void 0!==c.ownerSVGElement,32&r.__u?[e]:null,s,null==e?m(r):e,!!(32&r.__u),a),o.__.__k[o.__i]=o,M(s,o,a),o.__e!=e&&k(o)),i.length>u&&i.sort(f));x.__r=0}function C(n,l,u,t,i,o,r,f,e,a,h){var v,p,y,d,_,g=t&&t.__k||s,b=l.length;for(u.__d=e,P(u,l,g),e=u.__d,v=0;v<b;v++)null!=(y=u.__k[v])&&"boolean"!=typeof y&&"function"!=typeof y&&(p=-1===y.__i?c:g[y.__i]||c,y.__i=v,L(n,y,p,i,o,r,f,e,a,h),d=y.__e,y.ref&&p.ref!=y.ref&&(p.ref&&z(p.ref,null,y),h.push(y.ref,y.__c||d,y)),null==_&&null!=d&&(_=d),65536&y.__u||p.__k===y.__k?e=S(y,e,n):"function"==typeof y.type&&void 0!==y.__d?e=y.__d:d&&(e=d.nextSibling),y.__d=void 0,y.__u&=-196609);u.__d=e,u.__e=_}function P(n,l,u){var t,i,o,r,f,e=l.length,c=u.length,s=c,a=0;for(n.__k=[],t=0;t<e;t++)null!=(i=n.__k[t]=null==(i=l[t])||"boolean"==typeof i||"function"==typeof i?null:"string"==typeof i||"number"==typeof i||"bigint"==typeof i||i.constructor==String?d(null,i,null,null,i):h(i)?d(g,{children:i},null,null,null):i.__b>0?d(i.type,i.props,i.key,i.ref?i.ref:null,i.__v):i)?(i.__=n,i.__b=n.__b+1,f=H(i,u,r=t+a,s),i.__i=f,o=null,-1!==f&&(s--,(o=u[f])&&(o.__u|=131072)),null==o||null===o.__v?(-1==f&&a--,"function"!=typeof i.type&&(i.__u|=65536)):f!==r&&(f===r+1?a++:f>r?s>e-r?a+=f-r:a--:a=f<r&&f==r-1?f-r:0,f!==t+a&&(i.__u|=65536))):(o=u[t])&&null==o.key&&o.__e&&(o.__e==n.__d&&(n.__d=m(o)),N(o,o,!1),u[t]=null,s--);if(s)for(t=0;t<c;t++)null!=(o=u[t])&&0==(131072&o.__u)&&(o.__e==n.__d&&(n.__d=m(o)),N(o,o))}function S(n,l,u){var t,i;if("function"==typeof n.type){for(t=n.__k,i=0;t&&i<t.length;i++)t[i]&&(t[i].__=n,l=S(t[i],l,u));return l}return n.__e!=l&&(u.insertBefore(n.__e,l||null),l=n.__e),l&&l.nextSibling}function $(n,l){return l=l||[],null==n||"boolean"==typeof n||(h(n)?n.some(function(n){$(n,l)}):l.push(n)),l}function H(n,l,u,t){var i=n.key,o=n.type,r=u-1,f=u+1,e=l[u];if(null===e||e&&i==e.key&&o===e.type)return u;if(t>(null!=e&&0==(131072&e.__u)?1:0))for(;r>=0||f<l.length;){if(r>=0){if((e=l[r])&&0==(131072&e.__u)&&i==e.key&&o===e.type)return r;r--}if(f<l.length){if((e=l[f])&&0==(131072&e.__u)&&i==e.key&&o===e.type)return f;f++}}return-1}function I(n,l,u){"-"===l[0]?n.setProperty(l,null==u?"":u):n[l]=null==u?"":"number"!=typeof u||a.test(l)?u:u+"px"}function T(n,l,u,t,i){var o;n:if("style"===l)if("string"==typeof u)n.style.cssText=u;else{if("string"==typeof t&&(n.style.cssText=t=""),t)for(l in t)u&&l in u||I(n.style,l,"");if(u)for(l in u)t&&u[l]===t[l]||I(n.style,l,u[l])}else if("o"===l[0]&&"n"===l[1])o=l!==(l=l.replace(/(PointerCapture)$|Capture$/,"$1")),l=l.toLowerCase()in n?l.toLowerCase().slice(2):l.slice(2),n.l||(n.l={}),n.l[l+o]=u,u?t?u.u=t.u:(u.u=Date.now(),n.addEventListener(l,o?D:A,o)):n.removeEventListener(l,o?D:A,o);else{if(i)l=l.replace(/xlink(H|:h)/,"h").replace(/sName$/,"s");else if("width"!==l&&"height"!==l&&"href"!==l&&"list"!==l&&"form"!==l&&"tabIndex"!==l&&"download"!==l&&"rowSpan"!==l&&"colSpan"!==l&&"role"!==l&&l in n)try{n[l]=null==u?"":u;break n}catch(n){}"function"==typeof u||(null==u||!1===u&&"-"!==l[4]?n.removeAttribute(l):n.setAttribute(l,u))}}function A(n){var u=this.l[n.type+!1];if(n.t){if(n.t<=u.u)return}else n.t=Date.now();return u(l.event?l.event(n):n)}function D(n){return this.l[n.type+!0](l.event?l.event(n):n)}function L(n,u,t,i,o,r,f,e,c,s){var a,p,y,d,_,m,k,w,x,P,S,$,H,I,T,A=u.type;if(void 0!==u.constructor)return null;128&t.__u&&(c=!!(32&t.__u),r=[e=u.__e=t.__e]),(a=l.__b)&&a(u);n:if("function"==typeof A)try{if(w=u.props,x=(a=A.contextType)&&i[a.__c],P=a?x?x.props.value:a.__:i,t.__c?k=(p=u.__c=t.__c).__=p.__E:("prototype"in A&&A.prototype.render?u.__c=p=new A(w,P):(u.__c=p=new b(w,P),p.constructor=A,p.render=O),x&&x.sub(p),p.props=w,p.state||(p.state={}),p.context=P,p.__n=i,y=p.__d=!0,p.__h=[],p._sb=[]),null==p.__s&&(p.__s=p.state),null!=A.getDerivedStateFromProps&&(p.__s==p.state&&(p.__s=v({},p.__s)),v(p.__s,A.getDerivedStateFromProps(w,p.__s))),d=p.props,_=p.state,p.__v=u,y)null==A.getDerivedStateFromProps&&null!=p.componentWillMount&&p.componentWillMount(),null!=p.componentDidMount&&p.__h.push(p.componentDidMount);else{if(null==A.getDerivedStateFromProps&&w!==d&&null!=p.componentWillReceiveProps&&p.componentWillReceiveProps(w,P),!p.__e&&(null!=p.shouldComponentUpdate&&!1===p.shouldComponentUpdate(w,p.__s,P)||u.__v===t.__v)){for(u.__v!==t.__v&&(p.props=w,p.state=p.__s,p.__d=!1),u.__e=t.__e,u.__k=t.__k,u.__k.forEach(function(n){n&&(n.__=u)}),S=0;S<p._sb.length;S++)p.__h.push(p._sb[S]);p._sb=[],p.__h.length&&f.push(p);break n}null!=p.componentWillUpdate&&p.componentWillUpdate(w,p.__s,P),null!=p.componentDidUpdate&&p.__h.push(function(){p.componentDidUpdate(d,_,m)})}if(p.context=P,p.props=w,p.__P=n,p.__e=!1,$=l.__r,H=0,"prototype"in A&&A.prototype.render){for(p.state=p.__s,p.__d=!1,$&&$(u),a=p.render(p.props,p.state,p.context),I=0;I<p._sb.length;I++)p.__h.push(p._sb[I]);p._sb=[]}else do{p.__d=!1,$&&$(u),a=p.render(p.props,p.state,p.context),p.state=p.__s}while(p.__d&&++H<25);p.state=p.__s,null!=p.getChildContext&&(i=v(v({},i),p.getChildContext())),y||null==p.getSnapshotBeforeUpdate||(m=p.getSnapshotBeforeUpdate(d,_)),C(n,h(T=null!=a&&a.type===g&&null==a.key?a.props.children:a)?T:[T],u,t,i,o,r,f,e,c,s),p.base=u.__e,u.__u&=-161,p.__h.length&&f.push(p),k&&(p.__E=p.__=null)}catch(n){u.__v=null,c||null!=r?(u.__e=e,u.__u|=c?160:32,r[r.indexOf(e)]=null):(u.__e=t.__e,u.__k=t.__k),l.__e(n,u,t)}else null==r&&u.__v===t.__v?(u.__k=t.__k,u.__e=t.__e):u.__e=j(t.__e,u,t,i,o,r,f,c,s);(a=l.diffed)&&a(u)}function M(n,u,t){u.__d=void 0;for(var i=0;i<t.length;i++)z(t[i],t[++i],t[++i]);l.__c&&l.__c(u,n),n.some(function(u){try{n=u.__h,u.__h=[],n.some(function(n){n.call(u)})}catch(n){l.__e(n,u.__v)}})}function j(l,u,t,i,o,r,f,e,s){var a,v,y,d,_,g,b,k=t.props,w=u.props,x=u.type;if("svg"===x&&(o=!0),null!=r)for(a=0;a<r.length;a++)if((_=r[a])&&"setAttribute"in _==!!x&&(x?_.localName===x:3===_.nodeType)){l=_,r[a]=null;break}if(null==l){if(null===x)return document.createTextNode(w);l=o?document.createElementNS("http://www.w3.org/2000/svg",x):document.createElement(x,w.is&&w),r=null,e=!1}if(null===x)k===w||e&&l.data===w||(l.data=w);else{if(r=r&&n.call(l.childNodes),k=t.props||c,!e&&null!=r)for(k={},a=0;a<l.attributes.length;a++)k[(_=l.attributes[a]).name]=_.value;for(a in k)_=k[a],"children"==a||("dangerouslySetInnerHTML"==a?y=_:"key"===a||a in w||T(l,a,null,_,o));for(a in w)_=w[a],"children"==a?d=_:"dangerouslySetInnerHTML"==a?v=_:"value"==a?g=_:"checked"==a?b=_:"key"===a||e&&"function"!=typeof _||k[a]===_||T(l,a,_,k[a],o);if(v)e||y&&(v.__html===y.__html||v.__html===l.innerHTML)||(l.innerHTML=v.__html),u.__k=[];else if(y&&(l.innerHTML=""),C(l,h(d)?d:[d],u,t,i,o&&"foreignObject"!==x,r,f,r?r[0]:t.__k&&m(t,0),e,s),null!=r)for(a=r.length;a--;)null!=r[a]&&p(r[a]);e||(a="value",void 0!==g&&(g!==l[a]||"progress"===x&&!g||"option"===x&&g!==k[a])&&T(l,a,g,k[a],!1),a="checked",void 0!==b&&b!==l[a]&&T(l,a,b,k[a],!1))}return l}function z(n,u,t){try{"function"==typeof n?n(u):n.current=u}catch(n){l.__e(n,t)}}function N(n,u,t){var i,o;if(l.unmount&&l.unmount(n),(i=n.ref)&&(i.current&&i.current!==n.__e||z(i,null,u)),null!=(i=n.__c)){if(i.componentWillUnmount)try{i.componentWillUnmount()}catch(n){l.__e(n,u)}i.base=i.__P=null,n.__c=void 0}if(i=n.__k)for(o=0;o<i.length;o++)i[o]&&N(i[o],u,t||"function"!=typeof n.type);t||null==n.__e||p(n.__e),n.__=n.__e=n.__d=void 0}function O(n,l,u){return this.constructor(n,u)}function q(u,t,i){var o,r,f,e;l.__&&l.__(u,t),r=(o="function"==typeof i)?null:i&&i.__k||t.__k,f=[],e=[],L(t,u=(!o&&i||t).__k=y(g,null,[u]),r||c,c,void 0!==t.ownerSVGElement,!o&&i?[i]:r?null:t.firstChild?n.call(t.childNodes):null,f,!o&&i?i:r?r.__e:t.firstChild,o,e),M(f,u,e)}function B(n,l){q(n,l,B)}function E(l,u,t){var i,o,r,f,e=v({},l.props);for(r in l.type&&l.type.defaultProps&&(f=l.type.defaultProps),u)"key"==r?i=u[r]:"ref"==r?o=u[r]:e[r]=void 0===u[r]&&void 0!==f?f[r]:u[r];return arguments.length>2&&(e.children=arguments.length>3?n.call(arguments,2):t),d(l.type,e,i||l.key,o||l.ref,null)}function F(n,l){var u={__c:l="__cC"+e++,__:n,Consumer:function(n,l){return n.children(l)},Provider:function(n){var u,t;return this.getChildContext||(u=[],(t={})[l]=this,this.getChildContext=function(){return t},this.shouldComponentUpdate=function(n){this.props.value!==n.value&&u.some(function(n){n.__e=!0,w(n)})},this.sub=function(n){u.push(n);var l=n.componentWillUnmount;n.componentWillUnmount=function(){u.splice(u.indexOf(n),1),l&&l.call(n)}}),n.children}};return u.Provider.__=u.Consumer.contextType=u}n=s.slice,l={__e:function(n,l,u,t){for(var i,o,r;l=l.__;)if((i=l.__c)&&!i.__)try{if((o=i.constructor)&&null!=o.getDerivedStateFromError&&(i.setState(o.getDerivedStateFromError(n)),r=i.__d),null!=i.componentDidCatch&&(i.componentDidCatch(n,t||{}),r=i.__d),r)return i.__E=i}catch(l){n=l}throw n}},u=0,t=function(n){return null!=n&&null==n.constructor},b.prototype.setState=function(n,l){var u;u=null!=this.__s&&this.__s!==this.state?this.__s:this.__s=v({},this.state),"function"==typeof n&&(n=n(v({},u),this.props)),n&&v(u,n),null!=n&&this.__v&&(l&&this._sb.push(l),w(this))},b.prototype.forceUpdate=function(n){this.__v&&(this.__e=!0,n&&this.__h.push(n),w(this))},b.prototype.render=g,i=[],r="function"==typeof Promise?Promise.prototype.then.bind(Promise.resolve()):setTimeout,f=function(n,l){return n.__v.__b-l.__v.__b},x.__r=0,e=0;
+>>>>>>> feature/publication-datetimetype
 //# sourceMappingURL=preact.module.js.map
 
 
@@ -15750,6 +16566,7 @@ module.exports = function(text, test, separator) {
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "./node_modules/@uppy/companion-client/lib/AuthError.js":
 /*!**************************************************************!*\
   !*** ./node_modules/@uppy/companion-client/lib/AuthError.js ***!
@@ -16481,6 +17298,8 @@ function removeItem(key) {
 
 /***/ }),
 
+=======
+>>>>>>> feature/publication-datetimetype
 /***/ "./node_modules/@uppy/core/lib/BasePlugin.js":
 /*!***************************************************!*\
   !*** ./node_modules/@uppy/core/lib/BasePlugin.js ***!
@@ -16502,35 +17321,56 @@ __webpack_require__.r(__webpack_exports__);
  * See `Plugin` for the extended version with Preact rendering for interfaces.
  */
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/publication-datetimetype
 class BasePlugin {
   constructor(uppy, opts) {
     if (opts === void 0) {
       opts = {};
     }
+<<<<<<< HEAD
 
     this.uppy = uppy;
     this.opts = opts;
   }
 
+=======
+    this.uppy = uppy;
+    this.opts = opts;
+  }
+>>>>>>> feature/publication-datetimetype
   getPluginState() {
     const {
       plugins
     } = this.uppy.getState();
     return plugins[this.id] || {};
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   setPluginState(update) {
     const {
       plugins
     } = this.uppy.getState();
     this.uppy.setState({
+<<<<<<< HEAD
       plugins: { ...plugins,
         [this.id]: { ...plugins[this.id],
+=======
+      plugins: {
+        ...plugins,
+        [this.id]: {
+          ...plugins[this.id],
+>>>>>>> feature/publication-datetimetype
           ...update
         }
       }
     });
   }
+<<<<<<< HEAD
 
   setOptions(newOpts) {
     this.opts = { ...this.opts,
@@ -16541,18 +17381,33 @@ class BasePlugin {
     this.i18nInit();
   }
 
+=======
+  setOptions(newOpts) {
+    this.opts = {
+      ...this.opts,
+      ...newOpts
+    };
+    this.setPluginState(); // so that UI re-renders with new options
+    this.i18nInit();
+  }
+>>>>>>> feature/publication-datetimetype
   i18nInit() {
     const translator = new _uppy_utils_lib_Translator__WEBPACK_IMPORTED_MODULE_0__["default"]([this.defaultLocale, this.uppy.locale, this.opts.locale]);
     this.i18n = translator.translate.bind(translator);
     this.i18nArray = translator.translateArray.bind(translator);
     this.setPluginState(); // so that UI re-renders and we see the updated locale
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/publication-datetimetype
   /**
    * Extendable methods
    * ==================
    * These methods are here to serve as an overview of the extendable methods as well as
    * making them not conditional in use, such as `if (this.afterUpdate)`.
    */
+<<<<<<< HEAD
   // eslint-disable-next-line class-methods-use-this
 
 
@@ -16565,12 +17420,27 @@ class BasePlugin {
 
 
   uninstall() {}
+=======
+
+  // eslint-disable-next-line class-methods-use-this
+  addTarget() {
+    throw new Error('Extend the addTarget method to add your plugin to another plugin\'s target');
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  install() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  uninstall() {}
+
+>>>>>>> feature/publication-datetimetype
   /**
    * Called when plugin is mounted, whether in DOM or into another plugin.
    * Needed because sometimes plugins are mounted separately/after `install`,
    * so this.el and this.parent might not be available in `install`.
    * This is the case with @uppy/react plugins, for example.
    */
+<<<<<<< HEAD
 
 
   render() {
@@ -16584,6 +17454,18 @@ class BasePlugin {
 
   afterUpdate() {}
 
+=======
+  render() {
+    throw new Error('Extend the render method to add your plugin to a DOM element');
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  update() {}
+
+  // Called after every state update, after everything's mounted. Debounced.
+  // eslint-disable-next-line class-methods-use-this
+  afterUpdate() {}
+>>>>>>> feature/publication-datetimetype
 }
 
 /***/ }),
@@ -16615,7 +17497,10 @@ const defaultOptions = {
   allowedFileTypes: null,
   requiredMetaFields: []
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 class RestrictionError extends Error {
   constructor(message, _temp) {
     let {
@@ -16627,12 +17512,16 @@ class RestrictionError extends Error {
     this.isUserFacing = isUserFacing;
     if (file != null) this.file = file; // only some restriction errors are related to a particular file
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 }
 
 class Restricter {
   constructor(getOpts, i18n) {
     this.i18n = i18n;
+<<<<<<< HEAD
 
     this.getOpts = () => {
       const opts = getOpts();
@@ -16646,30 +17535,55 @@ class Restricter {
   } // Because these operations are slow, we cannot run them for every file (if we are adding multiple files)
 
 
+=======
+    this.getOpts = () => {
+      const opts = getOpts();
+      if (opts.restrictions.allowedFileTypes != null && !Array.isArray(opts.restrictions.allowedFileTypes)) {
+        throw new TypeError('`restrictions.allowedFileTypes` must be an array');
+      }
+      return opts;
+    };
+  }
+
+  // Because these operations are slow, we cannot run them for every file (if we are adding multiple files)
+>>>>>>> feature/publication-datetimetype
   validateAggregateRestrictions(existingFiles, addingFiles) {
     const {
       maxTotalFileSize,
       maxNumberOfFiles
     } = this.getOpts().restrictions;
+<<<<<<< HEAD
 
     if (maxNumberOfFiles) {
       const nonGhostFiles = existingFiles.filter(f => !f.isGhost);
 
+=======
+    if (maxNumberOfFiles) {
+      const nonGhostFiles = existingFiles.filter(f => !f.isGhost);
+>>>>>>> feature/publication-datetimetype
       if (nonGhostFiles.length + addingFiles.length > maxNumberOfFiles) {
         throw new RestrictionError(`${this.i18n('youCanOnlyUploadX', {
           smart_count: maxNumberOfFiles
         })}`);
       }
     }
+<<<<<<< HEAD
 
     if (maxTotalFileSize) {
       let totalFilesSize = existingFiles.reduce((total, f) => total + f.size, 0);
 
+=======
+    if (maxTotalFileSize) {
+      let totalFilesSize = existingFiles.reduce((total, f) => total + f.size, 0);
+>>>>>>> feature/publication-datetimetype
       for (const addingFile of addingFiles) {
         if (addingFile.size != null) {
           // We can't check maxTotalFileSize if the size is unknown.
           totalFilesSize += addingFile.size;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
           if (totalFilesSize > maxTotalFileSize) {
             throw new RestrictionError(this.i18n('exceedsSize', {
               size: _transloadit_prettier_bytes__WEBPACK_IMPORTED_MODULE_0__(maxTotalFileSize),
@@ -16680,20 +17594,27 @@ class Restricter {
       }
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   validateSingleFile(file) {
     const {
       maxFileSize,
       minFileSize,
       allowedFileTypes
     } = this.getOpts().restrictions;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (allowedFileTypes) {
       const isCorrectFileType = allowedFileTypes.some(type => {
         // check if this is a mime-type
         if (type.includes('/')) {
           if (!file.type) return false;
           return mime_match__WEBPACK_IMPORTED_MODULE_1__(file.type.replace(/;.*?$/, ''), type);
+<<<<<<< HEAD
         } // otherwise this is likely an extension
 
 
@@ -16704,6 +17625,16 @@ class Restricter {
         return false;
       });
 
+=======
+        }
+
+        // otherwise this is likely an extension
+        if (type[0] === '.' && file.extension) {
+          return file.extension.toLowerCase() === type.slice(1).toLowerCase();
+        }
+        return false;
+      });
+>>>>>>> feature/publication-datetimetype
       if (!isCorrectFileType) {
         const allowedFileTypesString = allowedFileTypes.join(', ');
         throw new RestrictionError(this.i18n('youCanOnlyUploadFileTypes', {
@@ -16712,9 +17643,15 @@ class Restricter {
           file
         });
       }
+<<<<<<< HEAD
     } // We can't check maxFileSize if the size is unknown.
 
 
+=======
+    }
+
+    // We can't check maxFileSize if the size is unknown.
+>>>>>>> feature/publication-datetimetype
     if (maxFileSize && file.size != null && file.size > maxFileSize) {
       throw new RestrictionError(this.i18n('exceedsSize', {
         size: _transloadit_prettier_bytes__WEBPACK_IMPORTED_MODULE_0__(maxFileSize),
@@ -16722,9 +17659,15 @@ class Restricter {
       }), {
         file
       });
+<<<<<<< HEAD
     } // We can't check minFileSize if the size is unknown.
 
 
+=======
+    }
+
+    // We can't check minFileSize if the size is unknown.
+>>>>>>> feature/publication-datetimetype
     if (minFileSize && file.size != null && file.size < minFileSize) {
       throw new RestrictionError(this.i18n('inferiorSize', {
         size: _transloadit_prettier_bytes__WEBPACK_IMPORTED_MODULE_0__(minFileSize)
@@ -16733,26 +17676,38 @@ class Restricter {
       });
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   validate(existingFiles, addingFiles) {
     addingFiles.forEach(addingFile => {
       this.validateSingleFile(addingFile);
     });
     this.validateAggregateRestrictions(existingFiles, addingFiles);
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   validateMinNumberOfFiles(files) {
     const {
       minNumberOfFiles
     } = this.getOpts().restrictions;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (Object.keys(files).length < minNumberOfFiles) {
       throw new RestrictionError(this.i18n('youHaveToAtLeastSelectX', {
         smart_count: minNumberOfFiles
       }));
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   getMissingRequiredMetaFields(file) {
     const error = new RestrictionError(this.i18n('missingRequiredMetaFieldOnFile', {
       fileName: file.name
@@ -16761,23 +17716,35 @@ class Restricter {
       requiredMetaFields
     } = this.getOpts().restrictions;
     const missingFields = [];
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     for (const field of requiredMetaFields) {
       if (!Object.hasOwn(file.meta, field) || file.meta[field] === '') {
         missingFields.push(field);
       }
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     return {
       missingFields,
       error
     };
   }
+<<<<<<< HEAD
 
 }
 
 
 
+=======
+}
+
+
+>>>>>>> feature/publication-datetimetype
 /***/ }),
 
 /***/ "./node_modules/@uppy/core/lib/UIPlugin.js":
@@ -16796,9 +17763,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _uppy_utils_lib_getTextDirection__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/utils/lib/getTextDirection */ "./node_modules/@uppy/utils/lib/getTextDirection.js");
 /* harmony import */ var _BasePlugin_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./BasePlugin.js */ "./node_modules/@uppy/core/lib/BasePlugin.js");
 function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+<<<<<<< HEAD
 
 var id = 0;
 
+=======
+var id = 0;
+>>>>>>> feature/publication-datetimetype
 function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
 
 
@@ -16811,7 +17782,10 @@ function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + n
  * @param {() => T} fn
  * @returns {Promise<T>}
  */
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function debounce(fn) {
   let calling = null;
   let latestArgs = null;
@@ -16819,6 +17793,7 @@ function debounce(fn) {
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
+<<<<<<< HEAD
 
     latestArgs = args;
 
@@ -16836,16 +17811,37 @@ function debounce(fn) {
     return calling;
   };
 }
+=======
+    latestArgs = args;
+    if (!calling) {
+      calling = Promise.resolve().then(() => {
+        calling = null;
+        // At this point `args` may be different from the most
+        // recent state, if multiple calls happened since this task
+        // was queued. So we use the `latestArgs`, which definitely
+        // is the most recent call.
+        return fn(...latestArgs);
+      });
+    }
+    return calling;
+  };
+}
+
+>>>>>>> feature/publication-datetimetype
 /**
  * UIPlugin is the extended version of BasePlugin to incorporate rendering with Preact.
  * Use this for plugins that need a user interface.
  *
  * For plugins without an user interface, see BasePlugin.
  */
+<<<<<<< HEAD
 
 
 var _updateUI = /*#__PURE__*/_classPrivateFieldLooseKey("updateUI");
 
+=======
+var _updateUI = /*#__PURE__*/_classPrivateFieldLooseKey("updateUI");
+>>>>>>> feature/publication-datetimetype
 class UIPlugin extends _BasePlugin_js__WEBPACK_IMPORTED_MODULE_3__["default"] {
   constructor() {
     super(...arguments);
@@ -16854,31 +17850,48 @@ class UIPlugin extends _BasePlugin_js__WEBPACK_IMPORTED_MODULE_3__["default"] {
       value: void 0
     });
   }
+<<<<<<< HEAD
 
   getTargetPlugin(target) {
     let targetPlugin;
 
+=======
+  getTargetPlugin(target) {
+    let targetPlugin;
+>>>>>>> feature/publication-datetimetype
     if (typeof target === 'object' && target instanceof UIPlugin) {
       // Targeting a plugin *instance*
       targetPlugin = target;
     } else if (typeof target === 'function') {
       // Targeting a plugin type
+<<<<<<< HEAD
       const Target = target; // Find the target plugin instance.
 
+=======
+      const Target = target;
+      // Find the target plugin instance.
+>>>>>>> feature/publication-datetimetype
       this.uppy.iteratePlugins(p => {
         if (p instanceof Target) {
           targetPlugin = p;
         }
       });
     }
+<<<<<<< HEAD
 
     return targetPlugin;
   }
+=======
+    return targetPlugin;
+  }
+
+>>>>>>> feature/publication-datetimetype
   /**
    * Check if supplied `target` is a DOM element or an `object`.
    * If it’s an object — target is a plugin, and we search `plugins`
    * for a plugin with same name and return its target.
    */
+<<<<<<< HEAD
 
 
   mount(target, plugin) {
@@ -16893,6 +17906,20 @@ class UIPlugin extends _BasePlugin_js__WEBPACK_IMPORTED_MODULE_3__["default"] {
       const uppyRootElement = document.createElement('div');
       uppyRootElement.classList.add('uppy-Root'); // API for plugins that require a synchronous rerender.
 
+=======
+  mount(target, plugin) {
+    const callerPluginName = plugin.id;
+    const targetElement = (0,_uppy_utils_lib_findDOMElement__WEBPACK_IMPORTED_MODULE_1__["default"])(target);
+    if (targetElement) {
+      this.isTargetDOMEl = true;
+      // When target is <body> with a single <div> element,
+      // Preact thinks it’s the Uppy root element in there when doing a diff,
+      // and destroys it. So we are creating a fragment (could be empty div)
+      const uppyRootElement = document.createElement('div');
+      uppyRootElement.classList.add('uppy-Root');
+
+      // API for plugins that require a synchronous rerender.
+>>>>>>> feature/publication-datetimetype
       _classPrivateFieldLooseBase(this, _updateUI)[_updateUI] = debounce(state => {
         // plugin could be removed, but this.rerender is debounced below,
         // so it could still be called even after uppy.removePlugin or uppy.close
@@ -16902,25 +17929,40 @@ class UIPlugin extends _BasePlugin_js__WEBPACK_IMPORTED_MODULE_3__["default"] {
         this.afterUpdate();
       });
       this.uppy.log(`Installing ${callerPluginName} to a DOM element '${target}'`);
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       if (this.opts.replaceTargetContent) {
         // Doing render(h(null), targetElement), which should have been
         // a better way, since because the component might need to do additional cleanup when it is removed,
         // stopped working — Preact just adds null into target, not replacing
         targetElement.innerHTML = '';
       }
+<<<<<<< HEAD
 
       (0,preact__WEBPACK_IMPORTED_MODULE_0__.render)(this.render(this.uppy.getState()), uppyRootElement);
       this.el = uppyRootElement;
       targetElement.appendChild(uppyRootElement); // Set the text direction if the page has not defined one.
 
+=======
+      (0,preact__WEBPACK_IMPORTED_MODULE_0__.render)(this.render(this.uppy.getState()), uppyRootElement);
+      this.el = uppyRootElement;
+      targetElement.appendChild(uppyRootElement);
+
+      // Set the text direction if the page has not defined one.
+>>>>>>> feature/publication-datetimetype
       uppyRootElement.dir = this.opts.direction || (0,_uppy_utils_lib_getTextDirection__WEBPACK_IMPORTED_MODULE_2__["default"])(uppyRootElement) || 'ltr';
       this.onMount();
       return this.el;
     }
+<<<<<<< HEAD
 
     const targetPlugin = this.getTargetPlugin(target);
 
+=======
+    const targetPlugin = this.getTargetPlugin(target);
+>>>>>>> feature/publication-datetimetype
     if (targetPlugin) {
       this.uppy.log(`Installing ${callerPluginName} to ${targetPlugin.id}`);
       this.parent = targetPlugin;
@@ -16928,15 +17970,21 @@ class UIPlugin extends _BasePlugin_js__WEBPACK_IMPORTED_MODULE_3__["default"] {
       this.onMount();
       return this.el;
     }
+<<<<<<< HEAD
 
     this.uppy.log(`Not installing ${callerPluginName}`);
     let message = `Invalid target option given to ${callerPluginName}.`;
 
+=======
+    this.uppy.log(`Not installing ${callerPluginName}`);
+    let message = `Invalid target option given to ${callerPluginName}.`;
+>>>>>>> feature/publication-datetimetype
     if (typeof target === 'function') {
       message += ' The given target is not a Plugin class. ' + 'Please check that you\'re not specifying a React Component instead of a plugin. ' + 'If you are using @uppy/* packages directly, make sure you have only 1 version of @uppy/core installed: ' + 'run `npm ls @uppy/core` on the command line and verify that all the versions match and are deduped correctly.';
     } else {
       message += 'If you meant to target an HTML element, please make sure that the element exists. ' + 'Check that the <script> tag initializing Uppy is right before the closing </body> tag at the end of the page. ' + '(see https://github.com/transloadit/uppy/issues/1042)\n\n' + 'If you meant to target a plugin, please confirm that your `import` statements or `require` calls are correct.';
     }
+<<<<<<< HEAD
 
     throw new Error(message);
   }
@@ -16967,6 +18015,30 @@ class UIPlugin extends _BasePlugin_js__WEBPACK_IMPORTED_MODULE_3__["default"] {
 
 }
 
+=======
+    throw new Error(message);
+  }
+  update(state) {
+    if (this.el != null) {
+      var _classPrivateFieldLoo, _classPrivateFieldLoo2;
+      (_classPrivateFieldLoo = (_classPrivateFieldLoo2 = _classPrivateFieldLooseBase(this, _updateUI))[_updateUI]) == null ? void 0 : _classPrivateFieldLoo.call(_classPrivateFieldLoo2, state);
+    }
+  }
+  unmount() {
+    if (this.isTargetDOMEl) {
+      var _this$el;
+      (_this$el = this.el) == null ? void 0 : _this$el.remove();
+    }
+    this.onUnmount();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  onMount() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  onUnmount() {}
+}
+>>>>>>> feature/publication-datetimetype
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (UIPlugin);
 
 /***/ }),
@@ -16985,11 +18057,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _uppy_utils_lib_Translator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/utils/lib/Translator */ "./node_modules/@uppy/utils/lib/Translator.js");
 /* harmony import */ var namespace_emitter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! namespace-emitter */ "./node_modules/namespace-emitter/index.js");
 /* harmony import */ var nanoid_non_secure__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! nanoid/non-secure */ "./node_modules/@uppy/core/node_modules/nanoid/non-secure/index.js");
+<<<<<<< HEAD
 /* harmony import */ var lodash_throttle__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lodash.throttle */ "./node_modules/lodash.throttle/index.js");
+=======
+/* harmony import */ var lodash_throttle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lodash/throttle.js */ "./node_modules/lodash/throttle.js");
+>>>>>>> feature/publication-datetimetype
 /* harmony import */ var _uppy_store_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/store-default */ "./node_modules/@uppy/store-default/lib/index.js");
 /* harmony import */ var _uppy_utils_lib_getFileType__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @uppy/utils/lib/getFileType */ "./node_modules/@uppy/utils/lib/getFileType.js");
 /* harmony import */ var _uppy_utils_lib_getFileNameAndExtension__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @uppy/utils/lib/getFileNameAndExtension */ "./node_modules/@uppy/utils/lib/getFileNameAndExtension.js");
 /* harmony import */ var _uppy_utils_lib_generateFileID__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @uppy/utils/lib/generateFileID */ "./node_modules/@uppy/utils/lib/generateFileID.js");
+<<<<<<< HEAD
 /* harmony import */ var _supportsUploadProgress_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./supportsUploadProgress.js */ "./node_modules/@uppy/core/lib/supportsUploadProgress.js");
 /* harmony import */ var _getFileName_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./getFileName.js */ "./node_modules/@uppy/core/lib/getFileName.js");
 /* harmony import */ var _loggers_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./loggers.js */ "./node_modules/@uppy/core/lib/loggers.js");
@@ -17005,6 +18082,18 @@ function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + n
 
 /* eslint-disable max-classes-per-file */
 
+=======
+/* harmony import */ var _supportsUploadProgress_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./supportsUploadProgress.js */ "./node_modules/@uppy/core/lib/supportsUploadProgress.js");
+/* harmony import */ var _getFileName_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./getFileName.js */ "./node_modules/@uppy/core/lib/getFileName.js");
+/* harmony import */ var _loggers_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./loggers.js */ "./node_modules/@uppy/core/lib/loggers.js");
+/* harmony import */ var _Restricter_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./Restricter.js */ "./node_modules/@uppy/core/lib/Restricter.js");
+/* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/core/lib/locale.js");
+let _Symbol$for, _Symbol$for2;
+function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+var id = 0;
+function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
+/* eslint-disable max-classes-per-file */
+>>>>>>> feature/publication-datetimetype
 /* global AggregateError */
 
 
@@ -17018,15 +18107,31 @@ function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + n
 
 
 
+<<<<<<< HEAD
 const packageJson = {
   "version": "3.2.0"
 };
 
+=======
+
+const packageJson = {
+  "version": "3.7.1"
+};
+
+const getDefaultUploadState = () => ({
+  totalProgress: 0,
+  allowNewUpload: true,
+  error: null,
+  recoveredState: null
+});
+
+>>>>>>> feature/publication-datetimetype
 /**
  * Uppy Core module.
  * Manages plugins, state updates, acts as an event bus,
  * adds/removes files and metadata.
  */
+<<<<<<< HEAD
 
 var _plugins = /*#__PURE__*/_classPrivateFieldLooseKey("plugins");
 
@@ -17074,33 +18179,100 @@ _Symbol$for2 = Symbol.for('uppy test: createUpload');
 class Uppy {
   /** @type {Record<string, BasePlugin[]>} */
 
+=======
+var _plugins = /*#__PURE__*/_classPrivateFieldLooseKey("plugins");
+var _restricter = /*#__PURE__*/_classPrivateFieldLooseKey("restricter");
+var _storeUnsubscribe = /*#__PURE__*/_classPrivateFieldLooseKey("storeUnsubscribe");
+var _emitter = /*#__PURE__*/_classPrivateFieldLooseKey("emitter");
+var _preProcessors = /*#__PURE__*/_classPrivateFieldLooseKey("preProcessors");
+var _uploaders = /*#__PURE__*/_classPrivateFieldLooseKey("uploaders");
+var _postProcessors = /*#__PURE__*/_classPrivateFieldLooseKey("postProcessors");
+var _informAndEmit = /*#__PURE__*/_classPrivateFieldLooseKey("informAndEmit");
+var _checkRequiredMetaFieldsOnFile = /*#__PURE__*/_classPrivateFieldLooseKey("checkRequiredMetaFieldsOnFile");
+var _checkRequiredMetaFields = /*#__PURE__*/_classPrivateFieldLooseKey("checkRequiredMetaFields");
+var _assertNewUploadAllowed = /*#__PURE__*/_classPrivateFieldLooseKey("assertNewUploadAllowed");
+var _transformFile = /*#__PURE__*/_classPrivateFieldLooseKey("transformFile");
+var _startIfAutoProceed = /*#__PURE__*/_classPrivateFieldLooseKey("startIfAutoProceed");
+var _checkAndUpdateFileState = /*#__PURE__*/_classPrivateFieldLooseKey("checkAndUpdateFileState");
+var _addListeners = /*#__PURE__*/_classPrivateFieldLooseKey("addListeners");
+var _updateOnlineStatus = /*#__PURE__*/_classPrivateFieldLooseKey("updateOnlineStatus");
+var _createUpload = /*#__PURE__*/_classPrivateFieldLooseKey("createUpload");
+var _getUpload = /*#__PURE__*/_classPrivateFieldLooseKey("getUpload");
+var _removeUpload = /*#__PURE__*/_classPrivateFieldLooseKey("removeUpload");
+var _runUpload = /*#__PURE__*/_classPrivateFieldLooseKey("runUpload");
+_Symbol$for = Symbol.for('uppy test: getPlugins');
+_Symbol$for2 = Symbol.for('uppy test: createUpload');
+class Uppy {
+>>>>>>> feature/publication-datetimetype
   /**
    * Instantiate Uppy
    *
    * @param {object} opts — Uppy options
    */
   constructor(_opts) {
+<<<<<<< HEAD
     Object.defineProperty(this, _runUpload, {
       value: _runUpload2
     });
+=======
+    /**
+     * Run an upload. This picks up where it left off in case the upload is being restored.
+     *
+     * @private
+     */
+    Object.defineProperty(this, _runUpload, {
+      value: _runUpload2
+    });
+    /**
+     * Remove an upload, eg. if it has been canceled or completed.
+     *
+     * @param {string} uploadID The ID of the upload.
+     */
+>>>>>>> feature/publication-datetimetype
     Object.defineProperty(this, _removeUpload, {
       value: _removeUpload2
     });
     Object.defineProperty(this, _getUpload, {
       value: _getUpload2
     });
+<<<<<<< HEAD
     Object.defineProperty(this, _createUpload, {
       value: _createUpload2
     });
+=======
+    /**
+     * Create an upload for a bunch of files.
+     *
+     * @param {Array<string>} fileIDs File IDs to include in this upload.
+     * @returns {string} ID of this upload.
+     */
+    Object.defineProperty(this, _createUpload, {
+      value: _createUpload2
+    });
+    /**
+     * Registers listeners for all global actions, like:
+     * `error`, `file-removed`, `upload-progress`
+     */
+>>>>>>> feature/publication-datetimetype
     Object.defineProperty(this, _addListeners, {
       value: _addListeners2
     });
     Object.defineProperty(this, _checkAndUpdateFileState, {
       value: _checkAndUpdateFileState2
     });
+<<<<<<< HEAD
     Object.defineProperty(this, _startIfAutoProceed, {
       value: _startIfAutoProceed2
     });
+=======
+    // Schedule an upload if `autoProceed` is enabled.
+    Object.defineProperty(this, _startIfAutoProceed, {
+      value: _startIfAutoProceed2
+    });
+    /**
+     * Create a file state object based on user-provided `addFile()` options.
+     */
+>>>>>>> feature/publication-datetimetype
     Object.defineProperty(this, _transformFile, {
       value: _transformFile2
     });
@@ -17113,9 +18285,25 @@ class Uppy {
     Object.defineProperty(this, _checkRequiredMetaFieldsOnFile, {
       value: _checkRequiredMetaFieldsOnFile2
     });
+<<<<<<< HEAD
     Object.defineProperty(this, _informAndEmit, {
       value: _informAndEmit2
     });
+=======
+    /*
+    * @constructs
+    * @param { Error[] } errors
+    * @param { undefined } file
+    */
+    /*
+    * @constructs
+    * @param { RestrictionError } error
+    */
+    Object.defineProperty(this, _informAndEmit, {
+      value: _informAndEmit2
+    });
+    /** @type {Record<string, BasePlugin[]>} */
+>>>>>>> feature/publication-datetimetype
     Object.defineProperty(this, _plugins, {
       writable: true,
       value: Object.create(null)
@@ -17144,6 +18332,7 @@ class Uppy {
       writable: true,
       value: new Set()
     });
+<<<<<<< HEAD
     Object.defineProperty(this, _updateOnlineStatus, {
       writable: true,
       value: this.updateOnlineStatus.bind(this)
@@ -17180,12 +18369,16 @@ class Uppy {
 
     this.log(`Using Core v${this.constructor.VERSION}`);
     this.i18nInit(); // ___Why throttle at 500ms?
+=======
+    // ___Why throttle at 500ms?
+>>>>>>> feature/publication-datetimetype
     //    - We must throttle at >250ms for superfocus in Dashboard to work well
     //    (because animation takes 0.25s, and we want to wait for all animations to be over before refocusing).
     //    [Practical Check]: if thottle is at 100ms, then if you are uploading a file,
     //    and click 'ADD MORE FILES', - focus won't activate in Firefox.
     //    - We must throttle at around >500ms to avoid performance lags.
     //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
+<<<<<<< HEAD
 
     this.calculateProgress = lodash_throttle__WEBPACK_IMPORTED_MODULE_2__(this.calculateProgress.bind(this), 500, {
       leading: true,
@@ -17221,10 +18414,106 @@ class Uppy {
     _classPrivateFieldLooseBase(this, _addListeners)[_addListeners]();
   }
 
+=======
+    this.calculateProgress = lodash_throttle_js__WEBPACK_IMPORTED_MODULE_2__((file, data) => {
+      const fileInState = this.getFile(file == null ? void 0 : file.id);
+      if (file == null || !fileInState) {
+        this.log(`Not setting progress for a file that has been removed: ${file == null ? void 0 : file.id}`);
+        return;
+      }
+      if (fileInState.progress.percentage === 100) {
+        this.log(`Not setting progress for a file that has been already uploaded: ${file.id}`);
+        return;
+      }
+
+      // bytesTotal may be null or zero; in that case we can't divide by it
+      const canHavePercentage = Number.isFinite(data.bytesTotal) && data.bytesTotal > 0;
+      this.setFileState(file.id, {
+        progress: {
+          ...fileInState.progress,
+          bytesUploaded: data.bytesUploaded,
+          bytesTotal: data.bytesTotal,
+          percentage: canHavePercentage ? Math.round(data.bytesUploaded / data.bytesTotal * 100) : 0
+        }
+      });
+      this.calculateTotalProgress();
+    }, 500, {
+      leading: true,
+      trailing: true
+    });
+    Object.defineProperty(this, _updateOnlineStatus, {
+      writable: true,
+      value: this.updateOnlineStatus.bind(this)
+    });
+    this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_7__["default"];
+    const defaultOptions = {
+      id: 'uppy',
+      autoProceed: false,
+      allowMultipleUploadBatches: true,
+      debug: false,
+      restrictions: _Restricter_js__WEBPACK_IMPORTED_MODULE_8__.defaultOptions,
+      meta: {},
+      onBeforeFileAdded: (file, files) => !Object.hasOwn(files, file.id),
+      onBeforeUpload: files => files,
+      store: new _uppy_store_default__WEBPACK_IMPORTED_MODULE_3__["default"](),
+      logger: _loggers_js__WEBPACK_IMPORTED_MODULE_9__.justErrorsLogger,
+      infoTimeout: 5000
+    };
+
+    // Merge default options with the ones set by user,
+    // making sure to merge restrictions too
+    this.opts = {
+      ...defaultOptions,
+      ..._opts,
+      restrictions: {
+        ...defaultOptions.restrictions,
+        ...(_opts && _opts.restrictions)
+      }
+    };
+
+    // Support debug: true for backwards-compatability, unless logger is set in opts
+    // opts instead of this.opts to avoid comparing objects — we set logger: justErrorsLogger in defaultOptions
+    if (_opts && _opts.logger && _opts.debug) {
+      this.log('You are using a custom `logger`, but also set `debug: true`, which uses built-in logger to output logs to console. Ignoring `debug: true` and using your custom `logger`.', 'warning');
+    } else if (_opts && _opts.debug) {
+      this.opts.logger = _loggers_js__WEBPACK_IMPORTED_MODULE_9__.debugLogger;
+    }
+    this.log(`Using Core v${this.constructor.VERSION}`);
+    this.i18nInit();
+    this.store = this.opts.store;
+    this.setState({
+      ...getDefaultUploadState(),
+      plugins: {},
+      files: {},
+      currentUploads: {},
+      capabilities: {
+        uploadProgress: (0,_supportsUploadProgress_js__WEBPACK_IMPORTED_MODULE_10__["default"])(),
+        individualCancellation: true,
+        resumableUploads: false
+      },
+      meta: {
+        ...this.opts.meta
+      },
+      info: []
+    });
+    _classPrivateFieldLooseBase(this, _restricter)[_restricter] = new _Restricter_js__WEBPACK_IMPORTED_MODULE_8__.Restricter(() => this.opts, this.i18n);
+    _classPrivateFieldLooseBase(this, _storeUnsubscribe)[_storeUnsubscribe] = this.store.subscribe((prevState, nextState, patch) => {
+      this.emit('state-update', prevState, nextState, patch);
+      this.updateAll(nextState);
+    });
+
+    // Exposing uppy object on window for debugging and testing
+    if (this.opts.debug && typeof window !== 'undefined') {
+      window[this.opts.id] = this;
+    }
+    _classPrivateFieldLooseBase(this, _addListeners)[_addListeners]();
+  }
+>>>>>>> feature/publication-datetimetype
   emit(event) {
     for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
       args[_key - 1] = arguments[_key];
     }
+<<<<<<< HEAD
 
     _classPrivateFieldLooseBase(this, _emitter)[_emitter].emit(event, ...args);
   }
@@ -17246,33 +18535,65 @@ class Uppy {
 
     return this;
   }
+=======
+    _classPrivateFieldLooseBase(this, _emitter)[_emitter].emit(event, ...args);
+  }
+  on(event, callback) {
+    _classPrivateFieldLooseBase(this, _emitter)[_emitter].on(event, callback);
+    return this;
+  }
+  once(event, callback) {
+    _classPrivateFieldLooseBase(this, _emitter)[_emitter].once(event, callback);
+    return this;
+  }
+  off(event, callback) {
+    _classPrivateFieldLooseBase(this, _emitter)[_emitter].off(event, callback);
+    return this;
+  }
+
+>>>>>>> feature/publication-datetimetype
   /**
    * Iterate on all plugins and run `update` on them.
    * Called each time state changes.
    *
    */
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> feature/publication-datetimetype
   updateAll(state) {
     this.iteratePlugins(plugin => {
       plugin.update(state);
     });
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/publication-datetimetype
   /**
    * Updates state with a patch
    *
    * @param {object} patch {foo: 'bar'}
    */
+<<<<<<< HEAD
 
 
   setState(patch) {
     this.store.setState(patch);
   }
+=======
+  setState(patch) {
+    this.store.setState(patch);
+  }
+
+>>>>>>> feature/publication-datetimetype
   /**
    * Returns current state.
    *
    * @returns {object}
    */
+<<<<<<< HEAD
 
 
   getState() {
@@ -17286,33 +18607,61 @@ class Uppy {
         ...Object.fromEntries(Object.entries(filesWithNewState).map(_ref => {
           let [fileID, newFileState] = _ref;
           return [fileID, { ...existingFilesState[fileID],
+=======
+  getState() {
+    return this.store.getState();
+  }
+  patchFilesState(filesWithNewState) {
+    const existingFilesState = this.getState().files;
+    this.setState({
+      files: {
+        ...existingFilesState,
+        ...Object.fromEntries(Object.entries(filesWithNewState).map(_ref => {
+          let [fileID, newFileState] = _ref;
+          return [fileID, {
+            ...existingFilesState[fileID],
+>>>>>>> feature/publication-datetimetype
             ...newFileState
           }];
         }))
       }
     });
   }
+<<<<<<< HEAD
   /**
    * Shorthand to set state for a specific file.
    */
 
 
+=======
+
+  /**
+   * Shorthand to set state for a specific file.
+   */
+>>>>>>> feature/publication-datetimetype
   setFileState(fileID, state) {
     if (!this.getState().files[fileID]) {
       throw new Error(`Can’t set state for ${fileID} (the file could have been removed)`);
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.patchFilesState({
       [fileID]: state
     });
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   i18nInit() {
     const translator = new _uppy_utils_lib_Translator__WEBPACK_IMPORTED_MODULE_0__["default"]([this.defaultLocale, this.opts.locale]);
     this.i18n = translator.translate.bind(translator);
     this.i18nArray = translator.translateArray.bind(translator);
     this.locale = translator.locale;
   }
+<<<<<<< HEAD
 
   setOptions(newOpts) {
     this.opts = { ...this.opts,
@@ -17328,16 +18677,41 @@ class Uppy {
 
     this.i18nInit();
 
+=======
+  setOptions(newOpts) {
+    this.opts = {
+      ...this.opts,
+      ...newOpts,
+      restrictions: {
+        ...this.opts.restrictions,
+        ...(newOpts && newOpts.restrictions)
+      }
+    };
+    if (newOpts.meta) {
+      this.setMeta(newOpts.meta);
+    }
+    this.i18nInit();
+>>>>>>> feature/publication-datetimetype
     if (newOpts.locale) {
       this.iteratePlugins(plugin => {
         plugin.setOptions(newOpts);
       });
+<<<<<<< HEAD
     } // Note: this is not the preact `setState`, it's an internal function that has the same name.
 
 
     this.setState(); // so that UI re-renders with new options
   }
 
+=======
+    }
+
+    // Note: this is not the preact `setState`, it's an internal function that has the same name.
+    this.setState(); // so that UI re-renders with new options
+  }
+
+  // todo next major: rename to something better? (it doesn't just reset progress)
+>>>>>>> feature/publication-datetimetype
   resetProgress() {
     const defaultProgress = {
       percentage: 0,
@@ -17345,26 +18719,43 @@ class Uppy {
       uploadComplete: false,
       uploadStarted: null
     };
+<<<<<<< HEAD
     const files = { ...this.getState().files
     };
     const updatedFiles = {};
     Object.keys(files).forEach(fileID => {
       updatedFiles[fileID] = { ...files[fileID],
         progress: { ...files[fileID].progress,
+=======
+    const files = {
+      ...this.getState().files
+    };
+    const updatedFiles = {};
+    Object.keys(files).forEach(fileID => {
+      updatedFiles[fileID] = {
+        ...files[fileID],
+        progress: {
+          ...files[fileID].progress,
+>>>>>>> feature/publication-datetimetype
           ...defaultProgress
         }
       };
     });
     this.setState({
       files: updatedFiles,
+<<<<<<< HEAD
       totalProgress: 0,
       allowNewUpload: true,
       error: null,
       recoveredState: null
+=======
+      ...getDefaultUploadState()
+>>>>>>> feature/publication-datetimetype
     });
     this.emit('reset-progress');
   }
 
+<<<<<<< HEAD
   addPreProcessor(fn) {
     _classPrivateFieldLooseBase(this, _preProcessors)[_preProcessors].add(fn);
   }
@@ -17398,6 +18789,46 @@ class Uppy {
     Object.keys(updatedFiles).forEach(fileID => {
       updatedFiles[fileID] = { ...updatedFiles[fileID],
         meta: { ...updatedFiles[fileID].meta,
+=======
+  /** @protected */
+  clearUploadedFiles() {
+    this.setState({
+      ...getDefaultUploadState(),
+      files: {}
+    });
+  }
+  addPreProcessor(fn) {
+    _classPrivateFieldLooseBase(this, _preProcessors)[_preProcessors].add(fn);
+  }
+  removePreProcessor(fn) {
+    return _classPrivateFieldLooseBase(this, _preProcessors)[_preProcessors].delete(fn);
+  }
+  addPostProcessor(fn) {
+    _classPrivateFieldLooseBase(this, _postProcessors)[_postProcessors].add(fn);
+  }
+  removePostProcessor(fn) {
+    return _classPrivateFieldLooseBase(this, _postProcessors)[_postProcessors].delete(fn);
+  }
+  addUploader(fn) {
+    _classPrivateFieldLooseBase(this, _uploaders)[_uploaders].add(fn);
+  }
+  removeUploader(fn) {
+    return _classPrivateFieldLooseBase(this, _uploaders)[_uploaders].delete(fn);
+  }
+  setMeta(data) {
+    const updatedMeta = {
+      ...this.getState().meta,
+      ...data
+    };
+    const updatedFiles = {
+      ...this.getState().files
+    };
+    Object.keys(updatedFiles).forEach(fileID => {
+      updatedFiles[fileID] = {
+        ...updatedFiles[fileID],
+        meta: {
+          ...updatedFiles[fileID].meta,
+>>>>>>> feature/publication-datetimetype
           ...data
         }
       };
@@ -17409,31 +18840,52 @@ class Uppy {
       files: updatedFiles
     });
   }
+<<<<<<< HEAD
 
   setFileMeta(fileID, data) {
     const updatedFiles = { ...this.getState().files
     };
 
+=======
+  setFileMeta(fileID, data) {
+    const updatedFiles = {
+      ...this.getState().files
+    };
+>>>>>>> feature/publication-datetimetype
     if (!updatedFiles[fileID]) {
       this.log('Was trying to set metadata for a file that has been removed: ', fileID);
       return;
     }
+<<<<<<< HEAD
 
     const newMeta = { ...updatedFiles[fileID].meta,
       ...data
     };
     updatedFiles[fileID] = { ...updatedFiles[fileID],
+=======
+    const newMeta = {
+      ...updatedFiles[fileID].meta,
+      ...data
+    };
+    updatedFiles[fileID] = {
+      ...updatedFiles[fileID],
+>>>>>>> feature/publication-datetimetype
       meta: newMeta
     };
     this.setState({
       files: updatedFiles
     });
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/publication-datetimetype
   /**
    * Get a file object.
    *
    * @param {string} fileID The ID of the file object to return.
    */
+<<<<<<< HEAD
 
 
   getFile(fileID) {
@@ -17444,17 +18896,32 @@ class Uppy {
    */
 
 
+=======
+  getFile(fileID) {
+    return this.getState().files[fileID];
+  }
+
+  /**
+   * Get all files in an array.
+   */
+>>>>>>> feature/publication-datetimetype
   getFiles() {
     const {
       files
     } = this.getState();
     return Object.values(files);
   }
+<<<<<<< HEAD
 
   getFilesByIds(ids) {
     return ids.map(id => this.getFile(id));
   }
 
+=======
+  getFilesByIds(ids) {
+    return ids.map(id => this.getFile(id));
+  }
+>>>>>>> feature/publication-datetimetype
   getObjectOfFilesPerState() {
     const {
       files: filesObject,
@@ -17494,6 +18961,7 @@ class Uppy {
       isSomeGhost: files.some(file => file.isGhost)
     };
   }
+<<<<<<< HEAD
   /*
   * @constructs
   * @param { Error[] } errors
@@ -17506,24 +18974,35 @@ class Uppy {
   */
 
 
+=======
+>>>>>>> feature/publication-datetimetype
   validateRestrictions(file, files) {
     if (files === void 0) {
       files = this.getFiles();
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     try {
       _classPrivateFieldLooseBase(this, _restricter)[_restricter].validate(files, [file]);
     } catch (err) {
       return err;
     }
+<<<<<<< HEAD
 
     return null;
   }
 
+=======
+    return null;
+  }
+>>>>>>> feature/publication-datetimetype
   checkIfFileAlreadyExists(fileID) {
     const {
       files
     } = this.getState();
+<<<<<<< HEAD
 
     if (files[fileID] && !files[fileID].isGhost) {
       return true;
@@ -17537,6 +19016,14 @@ class Uppy {
 
 
   /**
+=======
+    if (files[fileID] && !files[fileID].isGhost) {
+      return true;
+    }
+    return false;
+  }
+  /**
+>>>>>>> feature/publication-datetimetype
    * Add a new file to `state.files`. This will run `onBeforeFileAdded`,
    * try to guess file type in a clever way, check file against restrictions,
    * and start an upload if `autoProceed === true`.
@@ -17546,17 +19033,25 @@ class Uppy {
    */
   addFile(file) {
     _classPrivateFieldLooseBase(this, _assertNewUploadAllowed)[_assertNewUploadAllowed](file);
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     const {
       nextFilesState,
       validFilesToAdd,
       errors
     } = _classPrivateFieldLooseBase(this, _checkAndUpdateFileState)[_checkAndUpdateFileState]([file]);
+<<<<<<< HEAD
 
     const restrictionErrors = errors.filter(error => error.isRestriction);
 
     _classPrivateFieldLooseBase(this, _informAndEmit)[_informAndEmit](restrictionErrors);
 
+=======
+    const restrictionErrors = errors.filter(error => error.isRestriction);
+    _classPrivateFieldLooseBase(this, _informAndEmit)[_informAndEmit](restrictionErrors);
+>>>>>>> feature/publication-datetimetype
     if (errors.length > 0) throw errors[0];
     this.setState({
       files: nextFilesState
@@ -17565,11 +19060,18 @@ class Uppy {
     this.emit('file-added', firstValidFileToAdd);
     this.emit('files-added', validFilesToAdd);
     this.log(`Added file: ${firstValidFileToAdd.name}, ${firstValidFileToAdd.id}, mime type: ${firstValidFileToAdd.type}`);
+<<<<<<< HEAD
 
     _classPrivateFieldLooseBase(this, _startIfAutoProceed)[_startIfAutoProceed]();
 
     return firstValidFileToAdd.id;
   }
+=======
+    _classPrivateFieldLooseBase(this, _startIfAutoProceed)[_startIfAutoProceed]();
+    return firstValidFileToAdd.id;
+  }
+
+>>>>>>> feature/publication-datetimetype
   /**
    * Add multiple files to `state.files`. See the `addFile()` documentation.
    *
@@ -17577,16 +19079,22 @@ class Uppy {
    * This is good for UI plugins, but not for programmatic use.
    * Programmatic users should usually still use `addFile()` on individual files.
    */
+<<<<<<< HEAD
 
 
   addFiles(fileDescriptors) {
     _classPrivateFieldLooseBase(this, _assertNewUploadAllowed)[_assertNewUploadAllowed]();
 
+=======
+  addFiles(fileDescriptors) {
+    _classPrivateFieldLooseBase(this, _assertNewUploadAllowed)[_assertNewUploadAllowed]();
+>>>>>>> feature/publication-datetimetype
     const {
       nextFilesState,
       validFilesToAdd,
       errors
     } = _classPrivateFieldLooseBase(this, _checkAndUpdateFileState)[_checkAndUpdateFileState](fileDescriptors);
+<<<<<<< HEAD
 
     const restrictionErrors = errors.filter(error => error.isRestriction);
 
@@ -17594,6 +19102,11 @@ class Uppy {
 
     const nonRestrictionErrors = errors.filter(error => !error.isRestriction);
 
+=======
+    const restrictionErrors = errors.filter(error => error.isRestriction);
+    _classPrivateFieldLooseBase(this, _informAndEmit)[_informAndEmit](restrictionErrors);
+    const nonRestrictionErrors = errors.filter(error => !error.isRestriction);
+>>>>>>> feature/publication-datetimetype
     if (nonRestrictionErrors.length > 0) {
       let message = 'Multiple errors occurred while adding files:\n';
       nonRestrictionErrors.forEach(subError => {
@@ -17605,7 +19118,10 @@ class Uppy {
         }),
         details: message
       }, 'error', this.opts.infoTimeout);
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       if (typeof AggregateError === 'function') {
         throw new AggregateError(nonRestrictionErrors, message);
       } else {
@@ -17613,8 +19129,14 @@ class Uppy {
         err.errors = nonRestrictionErrors;
         throw err;
       }
+<<<<<<< HEAD
     } // OK, we haven't thrown an error, we can start updating state and emitting events now:
 
+=======
+    }
+
+    // OK, we haven't thrown an error, we can start updating state and emitting events now:
+>>>>>>> feature/publication-datetimetype
 
     this.setState({
       files: nextFilesState
@@ -17623,7 +19145,10 @@ class Uppy {
       this.emit('file-added', file);
     });
     this.emit('files-added', validFilesToAdd);
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (validFilesToAdd.length > 5) {
       this.log(`Added batch of ${validFilesToAdd.length} files`);
     } else {
@@ -17631,20 +19156,34 @@ class Uppy {
         this.log(`Added file: ${file.name}\n id: ${file.id}\n type: ${file.type}`);
       });
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (validFilesToAdd.length > 0) {
       _classPrivateFieldLooseBase(this, _startIfAutoProceed)[_startIfAutoProceed]();
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   removeFiles(fileIDs, reason) {
     const {
       files,
       currentUploads
     } = this.getState();
+<<<<<<< HEAD
     const updatedFiles = { ...files
     };
     const updatedUploads = { ...currentUploads
+=======
+    const updatedFiles = {
+      ...files
+    };
+    const updatedUploads = {
+      ...currentUploads
+>>>>>>> feature/publication-datetimetype
     };
     const removedFiles = Object.create(null);
     fileIDs.forEach(fileID => {
@@ -17652,6 +19191,7 @@ class Uppy {
         removedFiles[fileID] = files[fileID];
         delete updatedFiles[fileID];
       }
+<<<<<<< HEAD
     }); // Remove files from the `fileIDs` list in each upload.
 
     function fileIsNotRemoved(uploadFileID) {
@@ -17661,10 +19201,23 @@ class Uppy {
     Object.keys(updatedUploads).forEach(uploadID => {
       const newFileIDs = currentUploads[uploadID].fileIDs.filter(fileIsNotRemoved); // Remove the upload if no files are associated with it anymore.
 
+=======
+    });
+
+    // Remove files from the `fileIDs` list in each upload.
+    function fileIsNotRemoved(uploadFileID) {
+      return removedFiles[uploadFileID] === undefined;
+    }
+    Object.keys(updatedUploads).forEach(uploadID => {
+      const newFileIDs = currentUploads[uploadID].fileIDs.filter(fileIsNotRemoved);
+
+      // Remove the upload if no files are associated with it anymore.
+>>>>>>> feature/publication-datetimetype
       if (newFileIDs.length === 0) {
         delete updatedUploads[uploadID];
         return;
       }
+<<<<<<< HEAD
 
       const {
         capabilities
@@ -17675,48 +19228,82 @@ class Uppy {
       }
 
       updatedUploads[uploadID] = { ...currentUploads[uploadID],
+=======
+      const {
+        capabilities
+      } = this.getState();
+      if (newFileIDs.length !== currentUploads[uploadID].fileIDs.length && !capabilities.individualCancellation) {
+        throw new Error('individualCancellation is disabled');
+      }
+      updatedUploads[uploadID] = {
+        ...currentUploads[uploadID],
+>>>>>>> feature/publication-datetimetype
         fileIDs: newFileIDs
       };
     });
     const stateUpdate = {
       currentUploads: updatedUploads,
       files: updatedFiles
+<<<<<<< HEAD
     }; // If all files were removed - allow new uploads,
     // and clear recoveredState
 
+=======
+    };
+
+    // If all files were removed - allow new uploads,
+    // and clear recoveredState
+>>>>>>> feature/publication-datetimetype
     if (Object.keys(updatedFiles).length === 0) {
       stateUpdate.allowNewUpload = true;
       stateUpdate.error = null;
       stateUpdate.recoveredState = null;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.setState(stateUpdate);
     this.calculateTotalProgress();
     const removedFileIDs = Object.keys(removedFiles);
     removedFileIDs.forEach(fileID => {
       this.emit('file-removed', removedFiles[fileID], reason);
     });
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (removedFileIDs.length > 5) {
       this.log(`Removed ${removedFileIDs.length} files`);
     } else {
       this.log(`Removed files: ${removedFileIDs.join(', ')}`);
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   removeFile(fileID, reason) {
     if (reason === void 0) {
       reason = null;
     }
+<<<<<<< HEAD
 
     this.removeFiles([fileID], reason);
   }
 
+=======
+    this.removeFiles([fileID], reason);
+  }
+>>>>>>> feature/publication-datetimetype
   pauseResume(fileID) {
     if (!this.getState().capabilities.resumableUploads || this.getFile(fileID).uploadComplete) {
       return undefined;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     const wasPaused = this.getFile(fileID).isPaused || false;
     const isPaused = !wasPaused;
     this.setFileState(fileID, {
@@ -17725,15 +19312,26 @@ class Uppy {
     this.emit('upload-pause', fileID, isPaused);
     return isPaused;
   }
+<<<<<<< HEAD
 
   pauseAll() {
     const updatedFiles = { ...this.getState().files
+=======
+  pauseAll() {
+    const updatedFiles = {
+      ...this.getState().files
+>>>>>>> feature/publication-datetimetype
     };
     const inProgressUpdatedFiles = Object.keys(updatedFiles).filter(file => {
       return !updatedFiles[file].progress.uploadComplete && updatedFiles[file].progress.uploadStarted;
     });
     inProgressUpdatedFiles.forEach(file => {
+<<<<<<< HEAD
       const updatedFile = { ...updatedFiles[file],
+=======
+      const updatedFile = {
+        ...updatedFiles[file],
+>>>>>>> feature/publication-datetimetype
         isPaused: true
       };
       updatedFiles[file] = updatedFile;
@@ -17743,15 +19341,26 @@ class Uppy {
     });
     this.emit('pause-all');
   }
+<<<<<<< HEAD
 
   resumeAll() {
     const updatedFiles = { ...this.getState().files
+=======
+  resumeAll() {
+    const updatedFiles = {
+      ...this.getState().files
+>>>>>>> feature/publication-datetimetype
     };
     const inProgressUpdatedFiles = Object.keys(updatedFiles).filter(file => {
       return !updatedFiles[file].progress.uploadComplete && updatedFiles[file].progress.uploadStarted;
     });
     inProgressUpdatedFiles.forEach(file => {
+<<<<<<< HEAD
       const updatedFile = { ...updatedFiles[file],
+=======
+      const updatedFile = {
+        ...updatedFiles[file],
+>>>>>>> feature/publication-datetimetype
         isPaused: false,
         error: null
       };
@@ -17762,15 +19371,26 @@ class Uppy {
     });
     this.emit('resume-all');
   }
+<<<<<<< HEAD
 
   retryAll() {
     const updatedFiles = { ...this.getState().files
+=======
+  retryAll() {
+    const updatedFiles = {
+      ...this.getState().files
+>>>>>>> feature/publication-datetimetype
     };
     const filesToRetry = Object.keys(updatedFiles).filter(file => {
       return updatedFiles[file].error;
     });
     filesToRetry.forEach(file => {
+<<<<<<< HEAD
       const updatedFile = { ...updatedFiles[file],
+=======
+      const updatedFile = {
+        ...updatedFiles[file],
+>>>>>>> feature/publication-datetimetype
         isPaused: false,
         error: null
       };
@@ -17781,35 +19401,53 @@ class Uppy {
       error: null
     });
     this.emit('retry-all', filesToRetry);
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (filesToRetry.length === 0) {
       return Promise.resolve({
         successful: [],
         failed: []
       });
     }
+<<<<<<< HEAD
 
     const uploadID = _classPrivateFieldLooseBase(this, _createUpload)[_createUpload](filesToRetry, {
       forceAllowNewUpload: true // create new upload even if allowNewUpload: false
 
+=======
+    const uploadID = _classPrivateFieldLooseBase(this, _createUpload)[_createUpload](filesToRetry, {
+      forceAllowNewUpload: true // create new upload even if allowNewUpload: false
+>>>>>>> feature/publication-datetimetype
     });
 
     return _classPrivateFieldLooseBase(this, _runUpload)[_runUpload](uploadID);
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   cancelAll(_temp) {
     let {
       reason = 'user'
     } = _temp === void 0 ? {} : _temp;
     this.emit('cancel-all', {
       reason
+<<<<<<< HEAD
     }); // Only remove existing uploads if user is canceling
 
+=======
+    });
+
+    // Only remove existing uploads if user is canceling
+>>>>>>> feature/publication-datetimetype
     if (reason === 'user') {
       const {
         files
       } = this.getState();
       const fileIDs = Object.keys(files);
+<<<<<<< HEAD
 
       if (fileIDs.length) {
         this.removeFiles(fileIDs, 'cancel-all');
@@ -17820,6 +19458,13 @@ class Uppy {
         error: null,
         recoveredState: null
       });
+=======
+      if (fileIDs.length) {
+        this.removeFiles(fileIDs, 'cancel-all');
+      }
+      this.setState(getDefaultUploadState());
+      // todo should we call this.emit('reset-progress') like we do for resetProgress?
+>>>>>>> feature/publication-datetimetype
     }
   }
 
@@ -17829,15 +19474,23 @@ class Uppy {
       isPaused: false
     });
     this.emit('upload-retry', fileID);
+<<<<<<< HEAD
 
     const uploadID = _classPrivateFieldLooseBase(this, _createUpload)[_createUpload]([fileID], {
       forceAllowNewUpload: true // create new upload even if allowNewUpload: false
 
+=======
+    const uploadID = _classPrivateFieldLooseBase(this, _createUpload)[_createUpload]([fileID], {
+      forceAllowNewUpload: true // create new upload even if allowNewUpload: false
+>>>>>>> feature/publication-datetimetype
     });
 
     return _classPrivateFieldLooseBase(this, _runUpload)[_runUpload](uploadID);
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   logout() {
     this.iteratePlugins(plugin => {
       if (plugin.provider && plugin.provider.logout) {
@@ -17845,6 +19498,7 @@ class Uppy {
       }
     });
   }
+<<<<<<< HEAD
 
   calculateProgress(file, data) {
     if (file == null || !this.getFile(file.id)) {
@@ -17864,6 +19518,8 @@ class Uppy {
     this.calculateTotalProgress();
   }
 
+=======
+>>>>>>> feature/publication-datetimetype
   calculateTotalProgress() {
     // calculate total progress, using the number of files currently uploading,
     // multiplied by 100 and the summ of individual progress of each file
@@ -17871,7 +19527,10 @@ class Uppy {
     const inProgress = files.filter(file => {
       return file.progress.uploadStarted || file.progress.preprocess || file.progress.postprocess;
     });
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (inProgress.length === 0) {
       this.emit('progress', 0);
       this.setState({
@@ -17879,10 +19538,15 @@ class Uppy {
       });
       return;
     }
+<<<<<<< HEAD
 
     const sizedFiles = inProgress.filter(file => file.progress.bytesTotal != null);
     const unsizedFiles = inProgress.filter(file => file.progress.bytesTotal == null);
 
+=======
+    const sizedFiles = inProgress.filter(file => file.progress.bytesTotal != null);
+    const unsizedFiles = inProgress.filter(file => file.progress.bytesTotal == null);
+>>>>>>> feature/publication-datetimetype
     if (sizedFiles.length === 0) {
       const progressMax = inProgress.length * 100;
       const currentProgress = unsizedFiles.reduce((acc, file) => {
@@ -17894,7 +19558,10 @@ class Uppy {
       });
       return;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     let totalSize = sizedFiles.reduce((acc, file) => {
       return acc + file.progress.bytesTotal;
     }, 0);
@@ -17907,6 +19574,7 @@ class Uppy {
     unsizedFiles.forEach(file => {
       uploadedSize += averageSize * (file.progress.percentage || 0) / 100;
     });
+<<<<<<< HEAD
     let totalProgress = totalSize === 0 ? 0 : Math.round(uploadedSize / totalSize * 100); // hot fix, because:
     // uploadedSize ended up larger than totalSize, resulting in 1325% total
 
@@ -17914,11 +19582,21 @@ class Uppy {
       totalProgress = 100;
     }
 
+=======
+    let totalProgress = totalSize === 0 ? 0 : Math.round(uploadedSize / totalSize * 100);
+
+    // hot fix, because:
+    // uploadedSize ended up larger than totalSize, resulting in 1325% total
+    if (totalProgress > 100) {
+      totalProgress = 100;
+    }
+>>>>>>> feature/publication-datetimetype
     this.setState({
       totalProgress
     });
     this.emit('progress', totalProgress);
   }
+<<<<<<< HEAD
   /**
    * Registers listeners for all global actions, like:
    * `error`, `file-removed`, `upload-progress`
@@ -17928,13 +19606,20 @@ class Uppy {
   updateOnlineStatus() {
     const online = typeof window.navigator.onLine !== 'undefined' ? window.navigator.onLine : true;
 
+=======
+  updateOnlineStatus() {
+    const online = typeof window.navigator.onLine !== 'undefined' ? window.navigator.onLine : true;
+>>>>>>> feature/publication-datetimetype
     if (!online) {
       this.emit('is-offline');
       this.info(this.i18n('noInternetConnection'), 'error', 0);
       this.wasOffline = true;
     } else {
       this.emit('is-online');
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       if (this.wasOffline) {
         this.emit('back-online');
         this.info(this.i18n('connectedToInternet'), 'success', 3000);
@@ -17942,10 +19627,17 @@ class Uppy {
       }
     }
   }
+<<<<<<< HEAD
 
   getID() {
     return this.opts.id;
   }
+=======
+  getID() {
+    return this.opts.id;
+  }
+
+>>>>>>> feature/publication-datetimetype
   /**
    * Registers a plugin with Core.
    *
@@ -17954,12 +19646,16 @@ class Uppy {
    * @returns {object} self for chaining
    */
   // eslint-disable-next-line no-shadow
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> feature/publication-datetimetype
   use(Plugin, opts) {
     if (typeof Plugin !== 'function') {
       const msg = `Expected a plugin class, but got ${Plugin === null ? 'null' : typeof Plugin}.` + ' Please verify that the plugin was imported and spelled correctly.';
       throw new TypeError(msg);
+<<<<<<< HEAD
     } // Instantiate
 
 
@@ -17976,37 +19672,69 @@ class Uppy {
 
     const existsPluginAlready = this.getPlugin(pluginId);
 
+=======
+    }
+
+    // Instantiate
+    const plugin = new Plugin(this, opts);
+    const pluginId = plugin.id;
+    if (!pluginId) {
+      throw new Error('Your plugin must have an id');
+    }
+    if (!plugin.type) {
+      throw new Error('Your plugin must have a type');
+    }
+    const existsPluginAlready = this.getPlugin(pluginId);
+>>>>>>> feature/publication-datetimetype
     if (existsPluginAlready) {
       const msg = `Already found a plugin named '${existsPluginAlready.id}'. ` + `Tried to use: '${pluginId}'.\n` + 'Uppy plugins must have unique `id` options. See https://uppy.io/docs/plugins/#id.';
       throw new Error(msg);
     }
+<<<<<<< HEAD
 
     if (Plugin.VERSION) {
       this.log(`Using ${pluginId} v${Plugin.VERSION}`);
     }
 
+=======
+    if (Plugin.VERSION) {
+      this.log(`Using ${pluginId} v${Plugin.VERSION}`);
+    }
+>>>>>>> feature/publication-datetimetype
     if (plugin.type in _classPrivateFieldLooseBase(this, _plugins)[_plugins]) {
       _classPrivateFieldLooseBase(this, _plugins)[_plugins][plugin.type].push(plugin);
     } else {
       _classPrivateFieldLooseBase(this, _plugins)[_plugins][plugin.type] = [plugin];
     }
+<<<<<<< HEAD
 
     plugin.install();
     return this;
   }
+=======
+    plugin.install();
+    this.emit('plugin-added', plugin);
+    return this;
+  }
+
+>>>>>>> feature/publication-datetimetype
   /**
    * Find one Plugin by name.
    *
    * @param {string} id plugin id
    * @returns {BasePlugin|undefined}
    */
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> feature/publication-datetimetype
   getPlugin(id) {
     for (const plugins of Object.values(_classPrivateFieldLooseBase(this, _plugins)[_plugins])) {
       const foundPlugin = plugins.find(plugin => plugin.id === id);
       if (foundPlugin != null) return foundPlugin;
     }
+<<<<<<< HEAD
 
     return undefined;
   }
@@ -18014,21 +19742,37 @@ class Uppy {
   [_Symbol$for](type) {
     return _classPrivateFieldLooseBase(this, _plugins)[_plugins][type];
   }
+=======
+    return undefined;
+  }
+  [_Symbol$for](type) {
+    return _classPrivateFieldLooseBase(this, _plugins)[_plugins][type];
+  }
+
+>>>>>>> feature/publication-datetimetype
   /**
    * Iterate through all `use`d plugins.
    *
    * @param {Function} method that will be run on each plugin
    */
+<<<<<<< HEAD
 
 
   iteratePlugins(method) {
     Object.values(_classPrivateFieldLooseBase(this, _plugins)[_plugins]).flat(1).forEach(method);
   }
+=======
+  iteratePlugins(method) {
+    Object.values(_classPrivateFieldLooseBase(this, _plugins)[_plugins]).flat(1).forEach(method);
+  }
+
+>>>>>>> feature/publication-datetimetype
   /**
    * Uninstall and remove a plugin.
    *
    * @param {object} instance The plugin instance to remove.
    */
+<<<<<<< HEAD
 
 
   removePlugin(instance) {
@@ -18053,16 +19797,43 @@ class Uppy {
     const state = this.getState();
     const updatedState = {
       plugins: { ...state.plugins,
+=======
+  removePlugin(instance) {
+    this.log(`Removing plugin ${instance.id}`);
+    this.emit('plugin-remove', instance);
+    if (instance.uninstall) {
+      instance.uninstall();
+    }
+    const list = _classPrivateFieldLooseBase(this, _plugins)[_plugins][instance.type];
+    // list.indexOf failed here, because Vue3 converted the plugin instance
+    // to a Proxy object, which failed the strict comparison test:
+    // obj !== objProxy
+    const index = list.findIndex(item => item.id === instance.id);
+    if (index !== -1) {
+      list.splice(index, 1);
+    }
+    const state = this.getState();
+    const updatedState = {
+      plugins: {
+        ...state.plugins,
+>>>>>>> feature/publication-datetimetype
         [instance.id]: undefined
       }
     };
     this.setState(updatedState);
   }
+<<<<<<< HEAD
   /**
    * Uninstall all plugins and close down this Uppy instance.
    */
 
 
+=======
+
+  /**
+   * Uninstall all plugins and close down this Uppy instance.
+   */
+>>>>>>> feature/publication-datetimetype
   close(_temp2) {
     let {
       reason
@@ -18071,6 +19842,7 @@ class Uppy {
     this.cancelAll({
       reason
     });
+<<<<<<< HEAD
 
     _classPrivateFieldLooseBase(this, _storeUnsubscribe)[_storeUnsubscribe]();
 
@@ -18078,12 +19850,21 @@ class Uppy {
       this.removePlugin(plugin);
     });
 
+=======
+    _classPrivateFieldLooseBase(this, _storeUnsubscribe)[_storeUnsubscribe]();
+    this.iteratePlugins(plugin => {
+      this.removePlugin(plugin);
+    });
+>>>>>>> feature/publication-datetimetype
     if (typeof window !== 'undefined' && window.removeEventListener) {
       window.removeEventListener('online', _classPrivateFieldLooseBase(this, _updateOnlineStatus)[_updateOnlineStatus]);
       window.removeEventListener('offline', _classPrivateFieldLooseBase(this, _updateOnlineStatus)[_updateOnlineStatus]);
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   hideInfo() {
     const {
       info
@@ -18093,6 +19874,10 @@ class Uppy {
     });
     this.emit('info-hidden');
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/publication-datetimetype
   /**
    * Set info message in `state.info`, so that UI plugins like `Informer`
    * can display the message.
@@ -18101,17 +19886,26 @@ class Uppy {
    * @param {string} [type]
    * @param {number} [duration]
    */
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> feature/publication-datetimetype
   info(message, type, duration) {
     if (type === void 0) {
       type = 'info';
     }
+<<<<<<< HEAD
 
     if (duration === void 0) {
       duration = 3000;
     }
 
+=======
+    if (duration === void 0) {
+      duration = 3000;
+    }
+>>>>>>> feature/publication-datetimetype
     const isComplexMessage = typeof message === 'object';
     this.setState({
       info: [...this.getState().info, {
@@ -18123,6 +19917,10 @@ class Uppy {
     setTimeout(() => this.hideInfo(), duration);
     this.emit('info-visible');
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/publication-datetimetype
   /**
    * Passes messages to a function, provided in `opts.logger`.
    * If `opts.logger: Uppy.debugLogger` or `opts.debug: true`, logs to the browser console.
@@ -18130,27 +19928,40 @@ class Uppy {
    * @param {string|object} message to log
    * @param {string} [type] optional `error` or `warning`
    */
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> feature/publication-datetimetype
   log(message, type) {
     const {
       logger
     } = this.opts;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     switch (type) {
       case 'error':
         logger.error(message);
         break;
+<<<<<<< HEAD
 
       case 'warning':
         logger.warn(message);
         break;
 
+=======
+      case 'warning':
+        logger.warn(message);
+        break;
+>>>>>>> feature/publication-datetimetype
       default:
         logger.debug(message);
         break;
     }
   }
+<<<<<<< HEAD
   /**
    * Restore an upload by its ID.
    */
@@ -18179,6 +19990,23 @@ class Uppy {
     return _classPrivateFieldLooseBase(this, _createUpload)[_createUpload](...arguments);
   }
 
+=======
+
+  /**
+   * Restore an upload by its ID.
+   */
+  restore(uploadID) {
+    this.log(`Core: attempting to restore upload "${uploadID}"`);
+    if (!this.getState().currentUploads[uploadID]) {
+      _classPrivateFieldLooseBase(this, _removeUpload)[_removeUpload](uploadID);
+      return Promise.reject(new Error('Nonexistent upload'));
+    }
+    return _classPrivateFieldLooseBase(this, _runUpload)[_runUpload](uploadID);
+  }
+  [_Symbol$for2]() {
+    return _classPrivateFieldLooseBase(this, _createUpload)[_createUpload](...arguments);
+  }
+>>>>>>> feature/publication-datetimetype
   /**
    * Add data to an upload's result object.
    *
@@ -18190,22 +20018,38 @@ class Uppy {
       this.log(`Not setting result for an upload that has been removed: ${uploadID}`);
       return;
     }
+<<<<<<< HEAD
 
     const {
       currentUploads
     } = this.getState();
     const currentUpload = { ...currentUploads[uploadID],
       result: { ...currentUploads[uploadID].result,
+=======
+    const {
+      currentUploads
+    } = this.getState();
+    const currentUpload = {
+      ...currentUploads[uploadID],
+      result: {
+        ...currentUploads[uploadID].result,
+>>>>>>> feature/publication-datetimetype
         ...data
       }
     };
     this.setState({
+<<<<<<< HEAD
       currentUploads: { ...currentUploads,
+=======
+      currentUploads: {
+        ...currentUploads,
+>>>>>>> feature/publication-datetimetype
         [uploadID]: currentUpload
       }
     });
   }
   /**
+<<<<<<< HEAD
    * Remove an upload, eg. if it has been canceled or completed.
    *
    * @param {string} uploadID The ID of the upload.
@@ -18213,21 +20057,30 @@ class Uppy {
 
 
   /**
+=======
+>>>>>>> feature/publication-datetimetype
    * Start an upload for all the files that are not currently being uploaded.
    *
    * @returns {Promise}
    */
   upload() {
     var _classPrivateFieldLoo;
+<<<<<<< HEAD
 
     if (!((_classPrivateFieldLoo = _classPrivateFieldLooseBase(this, _plugins)[_plugins].uploader) != null && _classPrivateFieldLoo.length)) {
       this.log('No uploader type plugins are used', 'warning');
     }
 
+=======
+    if (!((_classPrivateFieldLoo = _classPrivateFieldLooseBase(this, _plugins)[_plugins].uploader) != null && _classPrivateFieldLoo.length)) {
+      this.log('No uploader type plugins are used', 'warning');
+    }
+>>>>>>> feature/publication-datetimetype
     let {
       files
     } = this.getState();
     const onBeforeUploadResult = this.opts.onBeforeUpload(files);
+<<<<<<< HEAD
 
     if (onBeforeUploadResult === false) {
       return Promise.reject(new Error('Not starting the upload because onBeforeUpload returned false'));
@@ -18237,10 +20090,20 @@ class Uppy {
       files = onBeforeUploadResult; // Updating files in state, because uploader plugins receive file IDs,
       // and then fetch the actual file object from state
 
+=======
+    if (onBeforeUploadResult === false) {
+      return Promise.reject(new Error('Not starting the upload because onBeforeUpload returned false'));
+    }
+    if (onBeforeUploadResult && typeof onBeforeUploadResult === 'object') {
+      files = onBeforeUploadResult;
+      // Updating files in state, because uploader plugins receive file IDs,
+      // and then fetch the actual file object from state
+>>>>>>> feature/publication-datetimetype
       this.setState({
         files
       });
     }
+<<<<<<< HEAD
 
     return Promise.resolve().then(() => _classPrivateFieldLooseBase(this, _restricter)[_restricter].validateMinNumberOfFiles(files)).catch(err => {
       _classPrivateFieldLooseBase(this, _informAndEmit)[_informAndEmit]([err]);
@@ -18249,6 +20112,14 @@ class Uppy {
     }).then(() => {
       if (!_classPrivateFieldLooseBase(this, _checkRequiredMetaFields)[_checkRequiredMetaFields](files)) {
         throw new _Restricter_js__WEBPACK_IMPORTED_MODULE_10__.RestrictionError(this.i18n('missingRequiredMetaField'));
+=======
+    return Promise.resolve().then(() => _classPrivateFieldLooseBase(this, _restricter)[_restricter].validateMinNumberOfFiles(files)).catch(err => {
+      _classPrivateFieldLooseBase(this, _informAndEmit)[_informAndEmit]([err]);
+      throw err;
+    }).then(() => {
+      if (!_classPrivateFieldLooseBase(this, _checkRequiredMetaFields)[_checkRequiredMetaFields](files)) {
+        throw new _Restricter_js__WEBPACK_IMPORTED_MODULE_8__.RestrictionError(this.i18n('missingRequiredMetaField'));
+>>>>>>> feature/publication-datetimetype
       }
     }).catch(err => {
       // Doing this in a separate catch because we already emited and logged
@@ -18258,6 +20129,7 @@ class Uppy {
     }).then(() => {
       const {
         currentUploads
+<<<<<<< HEAD
       } = this.getState(); // get a list of files that are currently assigned to uploads
 
       const currentlyUploadingFiles = Object.values(currentUploads).flatMap(curr => curr.fileIDs);
@@ -18265,13 +20137,26 @@ class Uppy {
       Object.keys(files).forEach(fileID => {
         const file = this.getFile(fileID); // if the file hasn't started uploading and hasn't already been assigned to an upload..
 
+=======
+      } = this.getState();
+      // get a list of files that are currently assigned to uploads
+      const currentlyUploadingFiles = Object.values(currentUploads).flatMap(curr => curr.fileIDs);
+      const waitingFileIDs = [];
+      Object.keys(files).forEach(fileID => {
+        const file = this.getFile(fileID);
+        // if the file hasn't started uploading and hasn't already been assigned to an upload..
+>>>>>>> feature/publication-datetimetype
         if (!file.progress.uploadStarted && currentlyUploadingFiles.indexOf(fileID) === -1) {
           waitingFileIDs.push(file.id);
         }
       });
+<<<<<<< HEAD
 
       const uploadID = _classPrivateFieldLooseBase(this, _createUpload)[_createUpload](waitingFileIDs);
 
+=======
+      const uploadID = _classPrivateFieldLooseBase(this, _createUpload)[_createUpload](waitingFileIDs);
+>>>>>>> feature/publication-datetimetype
       return _classPrivateFieldLooseBase(this, _runUpload)[_runUpload](uploadID);
     }).catch(err => {
       this.emit('error', err);
@@ -18279,27 +20164,42 @@ class Uppy {
       throw err;
     });
   }
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> feature/publication-datetimetype
 function _informAndEmit2(errors) {
   for (const error of errors) {
     const {
       file,
       isRestriction
     } = error;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (isRestriction) {
       this.emit('restriction-failed', file, error);
     } else {
       this.emit('error', error);
     }
+<<<<<<< HEAD
 
     this.log(error, 'warning');
   }
 
   const userFacingErrors = errors.filter(error => error.isUserFacing); // don't flood the user: only show the first 4 toasts
 
+=======
+    this.log(error, 'warning');
+  }
+  const userFacingErrors = errors.filter(error => error.isUserFacing);
+
+  // don't flood the user: only show the first 4 toasts
+>>>>>>> feature/publication-datetimetype
   const maxNumToShow = 4;
   const firstErrors = userFacingErrors.slice(0, maxNumToShow);
   const additionalErrors = userFacingErrors.slice(maxNumToShow);
@@ -18313,7 +20213,10 @@ function _informAndEmit2(errors) {
       details
     }, 'error', this.opts.infoTimeout);
   });
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   if (additionalErrors.length > 0) {
     this.info({
       message: this.i18n('additionalRestrictionsFailed', {
@@ -18322,13 +20225,19 @@ function _informAndEmit2(errors) {
     });
   }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function _checkRequiredMetaFieldsOnFile2(file) {
   const {
     missingFields,
     error
   } = _classPrivateFieldLooseBase(this, _restricter)[_restricter].getMissingRequiredMetaFields(file);
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   if (missingFields.length > 0) {
     this.setFileState(file.id, {
       missingRequiredMetaFields: missingFields
@@ -18337,6 +20246,7 @@ function _checkRequiredMetaFieldsOnFile2(file) {
     this.emit('restriction-failed', file, error);
     return false;
   }
+<<<<<<< HEAD
 
   return true;
 }
@@ -18344,19 +20254,31 @@ function _checkRequiredMetaFieldsOnFile2(file) {
 function _checkRequiredMetaFields2(files) {
   let success = true;
 
+=======
+  return true;
+}
+function _checkRequiredMetaFields2(files) {
+  let success = true;
+>>>>>>> feature/publication-datetimetype
   for (const file of Object.values(files)) {
     if (!_classPrivateFieldLooseBase(this, _checkRequiredMetaFieldsOnFile)[_checkRequiredMetaFieldsOnFile](file)) {
       success = false;
     }
   }
+<<<<<<< HEAD
 
   return success;
 }
 
+=======
+  return success;
+}
+>>>>>>> feature/publication-datetimetype
 function _assertNewUploadAllowed2(file) {
   const {
     allowNewUpload
   } = this.getState();
+<<<<<<< HEAD
 
   if (allowNewUpload === false) {
     const error = new _Restricter_js__WEBPACK_IMPORTED_MODULE_10__.RestrictionError(this.i18n('noMoreFilesAllowed'), {
@@ -18369,6 +20291,16 @@ function _assertNewUploadAllowed2(file) {
   }
 }
 
+=======
+  if (allowNewUpload === false) {
+    const error = new _Restricter_js__WEBPACK_IMPORTED_MODULE_8__.RestrictionError(this.i18n('noMoreFilesAllowed'), {
+      file
+    });
+    _classPrivateFieldLooseBase(this, _informAndEmit)[_informAndEmit]([error]);
+    throw error;
+  }
+}
+>>>>>>> feature/publication-datetimetype
 function _transformFile2(fileDescriptorOrFile) {
   // Uppy expects files in { name, type, size, data } format.
   // If the actual File object is passed from input[type=file] or drag-drop,
@@ -18380,21 +20312,36 @@ function _transformFile2(fileDescriptorOrFile) {
     data: fileDescriptorOrFile
   } : fileDescriptorOrFile;
   const fileType = (0,_uppy_utils_lib_getFileType__WEBPACK_IMPORTED_MODULE_4__["default"])(fileDescriptor);
+<<<<<<< HEAD
   const fileName = (0,_getFileName_js__WEBPACK_IMPORTED_MODULE_8__["default"])(fileType, fileDescriptor);
+=======
+  const fileName = (0,_getFileName_js__WEBPACK_IMPORTED_MODULE_11__["default"])(fileType, fileDescriptor);
+>>>>>>> feature/publication-datetimetype
   const fileExtension = (0,_uppy_utils_lib_getFileNameAndExtension__WEBPACK_IMPORTED_MODULE_5__["default"])(fileName).extension;
   const isRemote = Boolean(fileDescriptor.isRemote);
   const id = (0,_uppy_utils_lib_generateFileID__WEBPACK_IMPORTED_MODULE_6__.getSafeFileId)(fileDescriptor);
   const meta = fileDescriptor.meta || {};
   meta.name = fileName;
+<<<<<<< HEAD
   meta.type = fileType; // `null` means the size is unknown.
 
+=======
+  meta.type = fileType;
+
+  // `null` means the size is unknown.
+>>>>>>> feature/publication-datetimetype
   const size = Number.isFinite(fileDescriptor.data.size) ? fileDescriptor.data.size : null;
   return {
     source: fileDescriptor.source || '',
     id,
     name: fileName,
     extension: fileExtension || '',
+<<<<<<< HEAD
     meta: { ...this.getState().meta,
+=======
+    meta: {
+      ...this.getState().meta,
+>>>>>>> feature/publication-datetimetype
       ...meta
     },
     type: fileType,
@@ -18412,7 +20359,10 @@ function _transformFile2(fileDescriptorOrFile) {
     preview: fileDescriptor.preview
   };
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function _startIfAutoProceed2() {
   if (this.opts.autoProceed && !this.scheduledAutoProceed) {
     this.scheduledAutoProceed = setTimeout(() => {
@@ -18425,6 +20375,7 @@ function _startIfAutoProceed2() {
     }, 4);
   }
 }
+<<<<<<< HEAD
 
 function _checkAndUpdateFileState2(filesToAdd) {
   const {
@@ -18446,68 +20397,128 @@ function _checkAndUpdateFileState2(filesToAdd) {
       // but we replace `data`, and we remove `isGhost`, because the file is no longer a ghost now
 
 
+=======
+function _checkAndUpdateFileState2(filesToAdd) {
+  const {
+    files: existingFiles
+  } = this.getState();
+
+  // create a copy of the files object only once
+  const nextFilesState = {
+    ...existingFiles
+  };
+  const validFilesToAdd = [];
+  const errors = [];
+  for (const fileToAdd of filesToAdd) {
+    try {
+      var _existingFiles$newFil;
+      let newFile = _classPrivateFieldLooseBase(this, _transformFile)[_transformFile](fileToAdd);
+
+      // If a file has been recovered (Golden Retriever), but we were unable to recover its data (probably too large),
+      // users are asked to re-select these half-recovered files and then this method will be called again.
+      // In order to keep the progress, meta and everthing else, we keep the existing file,
+      // but we replace `data`, and we remove `isGhost`, because the file is no longer a ghost now
+>>>>>>> feature/publication-datetimetype
       if ((_existingFiles$newFil = existingFiles[newFile.id]) != null && _existingFiles$newFil.isGhost) {
         const {
           isGhost,
           ...existingFileState
         } = existingFiles[newFile.id];
+<<<<<<< HEAD
         newFile = { ...existingFileState,
+=======
+        newFile = {
+          ...existingFileState,
+>>>>>>> feature/publication-datetimetype
           data: fileToAdd.data
         };
         this.log(`Replaced the blob in the restored ghost file: ${newFile.name}, ${newFile.id}`);
       }
+<<<<<<< HEAD
 
       if (this.checkIfFileAlreadyExists(newFile.id)) {
         throw new _Restricter_js__WEBPACK_IMPORTED_MODULE_10__.RestrictionError(this.i18n('noDuplicates', {
+=======
+      const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, nextFilesState);
+      if (!onBeforeFileAddedResult && this.checkIfFileAlreadyExists(newFile.id)) {
+        throw new _Restricter_js__WEBPACK_IMPORTED_MODULE_8__.RestrictionError(this.i18n('noDuplicates', {
+>>>>>>> feature/publication-datetimetype
           fileName: newFile.name
         }), {
           file: fileToAdd
         });
       }
+<<<<<<< HEAD
 
       const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, nextFilesState);
 
       if (onBeforeFileAddedResult === false) {
         // Don’t show UI info for this error, as it should be done by the developer
         throw new _Restricter_js__WEBPACK_IMPORTED_MODULE_10__.RestrictionError('Cannot add the file because onBeforeFileAdded returned false.', {
+=======
+      if (onBeforeFileAddedResult === false) {
+        // Don’t show UI info for this error, as it should be done by the developer
+        throw new _Restricter_js__WEBPACK_IMPORTED_MODULE_8__.RestrictionError('Cannot add the file because onBeforeFileAdded returned false.', {
+>>>>>>> feature/publication-datetimetype
           isUserFacing: false,
           file: fileToAdd
         });
       } else if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult !== null) {
         newFile = onBeforeFileAddedResult;
       }
+<<<<<<< HEAD
 
       _classPrivateFieldLooseBase(this, _restricter)[_restricter].validateSingleFile(newFile); // need to add it to the new local state immediately, so we can use the state to validate the next files too
 
 
+=======
+      _classPrivateFieldLooseBase(this, _restricter)[_restricter].validateSingleFile(newFile);
+
+      // need to add it to the new local state immediately, so we can use the state to validate the next files too
+>>>>>>> feature/publication-datetimetype
       nextFilesState[newFile.id] = newFile;
       validFilesToAdd.push(newFile);
     } catch (err) {
       errors.push(err);
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   try {
     // need to run this separately because it's much more slow, so if we run it inside the for-loop it will be very slow
     // when many files are added
     _classPrivateFieldLooseBase(this, _restricter)[_restricter].validateAggregateRestrictions(Object.values(existingFiles), validFilesToAdd);
   } catch (err) {
+<<<<<<< HEAD
     errors.push(err); // If we have any aggregate error, don't allow adding this batch
 
+=======
+    errors.push(err);
+
+    // If we have any aggregate error, don't allow adding this batch
+>>>>>>> feature/publication-datetimetype
     return {
       nextFilesState: existingFiles,
       validFilesToAdd: [],
       errors
     };
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   return {
     nextFilesState,
     validFilesToAdd,
     errors
   };
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function _addListeners2() {
   /**
    * @param {Error} error
@@ -18516,6 +20527,7 @@ function _addListeners2() {
    */
   const errorHandler = (error, file, response) => {
     let errorMsg = error.message || 'Unknown error';
+<<<<<<< HEAD
 
     if (error.details) {
       errorMsg += ` ${error.details}`;
@@ -18525,6 +20537,14 @@ function _addListeners2() {
       error: errorMsg
     });
 
+=======
+    if (error.details) {
+      errorMsg += ` ${error.details}`;
+    }
+    this.setState({
+      error: errorMsg
+    });
+>>>>>>> feature/publication-datetimetype
     if (file != null && file.id in this.getState().files) {
       this.setFileState(file.id, {
         error: errorMsg,
@@ -18532,6 +20552,7 @@ function _addListeners2() {
       });
     }
   };
+<<<<<<< HEAD
 
   this.on('error', errorHandler);
   this.on('upload-error', (file, error, response) => {
@@ -18551,6 +20572,21 @@ function _addListeners2() {
         file: file == null ? void 0 : file.name
       });
 
+=======
+  this.on('error', errorHandler);
+  this.on('upload-error', (file, error, response) => {
+    errorHandler(error, file, response);
+    if (typeof error === 'object' && error.message) {
+      this.log(error.message, 'error');
+      const newError = new Error(this.i18n('failedToUpload', {
+        file: file == null ? void 0 : file.name
+      }));
+      newError.isUserFacing = true; // todo maybe don't do this with all errors?
+      newError.details = error.message;
+      if (error.details) {
+        newError.details += ` ${error.details}`;
+      }
+>>>>>>> feature/publication-datetimetype
       _classPrivateFieldLooseBase(this, _informAndEmit)[_informAndEmit]([newError]);
     } else {
       _classPrivateFieldLooseBase(this, _informAndEmit)[_informAndEmit]([error]);
@@ -18562,7 +20598,10 @@ function _addListeners2() {
       message
     } = error;
     const details = files.map(file => file.meta.name).join(', ');
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (!uploadStalledWarningRecentlyEmitted) {
       this.info({
         message,
@@ -18572,7 +20611,10 @@ function _addListeners2() {
         uploadStalledWarningRecentlyEmitted = null;
       }, this.opts.infoTimeout);
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.log(`${message} ${details}`.trim(), 'warning');
   });
   this.on('upload', () => {
@@ -18580,7 +20622,10 @@ function _addListeners2() {
       error: null
     });
   });
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   const onUploadStarted = files => {
     const filesFiltered = files.filter(file => {
       const exists = file != null && this.getFile(file.id);
@@ -18598,7 +20643,10 @@ function _addListeners2() {
     }]));
     this.patchFilesState(filesState);
   };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   this.on('upload-start', files => {
     files.forEach(file => {
       // todo backward compat, remove this event in a next major
@@ -18612,10 +20660,17 @@ function _addListeners2() {
       this.log(`Not setting progress for a file that has been removed: ${file == null ? void 0 : file.id}`);
       return;
     }
+<<<<<<< HEAD
 
     const currentProgress = this.getFile(file.id).progress;
     this.setFileState(file.id, {
       progress: { ...currentProgress,
+=======
+    const currentProgress = this.getFile(file.id).progress;
+    this.setFileState(file.id, {
+      progress: {
+        ...currentProgress,
+>>>>>>> feature/publication-datetimetype
         postprocess: _classPrivateFieldLooseBase(this, _postProcessors)[_postProcessors].size > 0 ? {
           mode: 'indeterminate'
         } : null,
@@ -18626,15 +20681,25 @@ function _addListeners2() {
       response: uploadResp,
       uploadURL: uploadResp.uploadURL,
       isPaused: false
+<<<<<<< HEAD
     }); // Remote providers sometimes don't tell us the file size,
     // but we can know how many bytes we uploaded once the upload is complete.
 
+=======
+    });
+
+    // Remote providers sometimes don't tell us the file size,
+    // but we can know how many bytes we uploaded once the upload is complete.
+>>>>>>> feature/publication-datetimetype
     if (file.size == null) {
       this.setFileState(file.id, {
         size: uploadResp.bytesUploaded || currentProgress.bytesTotal
       });
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.calculateTotalProgress();
   });
   this.on('preprocess-progress', (file, progress) => {
@@ -18642,9 +20707,15 @@ function _addListeners2() {
       this.log(`Not setting progress for a file that has been removed: ${file == null ? void 0 : file.id}`);
       return;
     }
+<<<<<<< HEAD
 
     this.setFileState(file.id, {
       progress: { ...this.getFile(file.id).progress,
+=======
+    this.setFileState(file.id, {
+      progress: {
+        ...this.getFile(file.id).progress,
+>>>>>>> feature/publication-datetimetype
         preprocess: progress
       }
     });
@@ -18654,11 +20725,21 @@ function _addListeners2() {
       this.log(`Not setting progress for a file that has been removed: ${file == null ? void 0 : file.id}`);
       return;
     }
+<<<<<<< HEAD
 
     const files = { ...this.getState().files
     };
     files[file.id] = { ...files[file.id],
       progress: { ...files[file.id].progress
+=======
+    const files = {
+      ...this.getState().files
+    };
+    files[file.id] = {
+      ...files[file.id],
+      progress: {
+        ...files[file.id].progress
+>>>>>>> feature/publication-datetimetype
       }
     };
     delete files[file.id].progress.preprocess;
@@ -18671,9 +20752,15 @@ function _addListeners2() {
       this.log(`Not setting progress for a file that has been removed: ${file == null ? void 0 : file.id}`);
       return;
     }
+<<<<<<< HEAD
 
     this.setFileState(file.id, {
       progress: { ...this.getState().files[file.id].progress,
+=======
+    this.setFileState(file.id, {
+      progress: {
+        ...this.getState().files[file.id].progress,
+>>>>>>> feature/publication-datetimetype
         postprocess: progress
       }
     });
@@ -18683,11 +20770,21 @@ function _addListeners2() {
       this.log(`Not setting progress for a file that has been removed: ${file == null ? void 0 : file.id}`);
       return;
     }
+<<<<<<< HEAD
 
     const files = { ...this.getState().files
     };
     files[file.id] = { ...files[file.id],
       progress: { ...files[file.id].progress
+=======
+    const files = {
+      ...this.getState().files
+    };
+    files[file.id] = {
+      ...files[file.id],
+      progress: {
+        ...files[file.id].progress
+>>>>>>> feature/publication-datetimetype
       }
     };
     delete files[file.id].progress.postprocess;
@@ -18703,20 +20800,32 @@ function _addListeners2() {
     if (file) {
       _classPrivateFieldLooseBase(this, _checkRequiredMetaFieldsOnFile)[_checkRequiredMetaFieldsOnFile](file);
     }
+<<<<<<< HEAD
   }); // show informer if offline
 
+=======
+  });
+
+  // show informer if offline
+>>>>>>> feature/publication-datetimetype
   if (typeof window !== 'undefined' && window.addEventListener) {
     window.addEventListener('online', _classPrivateFieldLooseBase(this, _updateOnlineStatus)[_updateOnlineStatus]);
     window.addEventListener('offline', _classPrivateFieldLooseBase(this, _updateOnlineStatus)[_updateOnlineStatus]);
     setTimeout(_classPrivateFieldLooseBase(this, _updateOnlineStatus)[_updateOnlineStatus], 3000);
   }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function _createUpload2(fileIDs, opts) {
   if (opts === void 0) {
     opts = {};
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   // uppy.retryAll sets this to true — when retrying we want to ignore `allowNewUpload: false`
   const {
     forceAllowNewUpload = false
@@ -18725,11 +20834,17 @@ function _createUpload2(fileIDs, opts) {
     allowNewUpload,
     currentUploads
   } = this.getState();
+<<<<<<< HEAD
 
   if (!allowNewUpload && !forceAllowNewUpload) {
     throw new Error('Cannot create a new upload: already uploading.');
   }
 
+=======
+  if (!allowNewUpload && !forceAllowNewUpload) {
+    throw new Error('Cannot create a new upload: already uploading.');
+  }
+>>>>>>> feature/publication-datetimetype
   const uploadID = (0,nanoid_non_secure__WEBPACK_IMPORTED_MODULE_12__.nanoid)();
   this.emit('upload', {
     id: uploadID,
@@ -18737,7 +20852,12 @@ function _createUpload2(fileIDs, opts) {
   });
   this.setState({
     allowNewUpload: this.opts.allowMultipleUploadBatches !== false && this.opts.allowMultipleUploads !== false,
+<<<<<<< HEAD
     currentUploads: { ...currentUploads,
+=======
+    currentUploads: {
+      ...currentUploads,
+>>>>>>> feature/publication-datetimetype
       [uploadID]: {
         fileIDs,
         step: 0,
@@ -18747,23 +20867,35 @@ function _createUpload2(fileIDs, opts) {
   });
   return uploadID;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function _getUpload2(uploadID) {
   const {
     currentUploads
   } = this.getState();
   return currentUploads[uploadID];
 }
+<<<<<<< HEAD
 
 function _removeUpload2(uploadID) {
   const currentUploads = { ...this.getState().currentUploads
+=======
+function _removeUpload2(uploadID) {
+  const currentUploads = {
+    ...this.getState().currentUploads
+>>>>>>> feature/publication-datetimetype
   };
   delete currentUploads[uploadID];
   this.setState({
     currentUploads
   });
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 async function _runUpload2(uploadID) {
   const getCurrentUpload = () => {
     const {
@@ -18771,40 +20903,71 @@ async function _runUpload2(uploadID) {
     } = this.getState();
     return currentUploads[uploadID];
   };
+<<<<<<< HEAD
 
   let currentUpload = getCurrentUpload();
   const steps = [..._classPrivateFieldLooseBase(this, _preProcessors)[_preProcessors], ..._classPrivateFieldLooseBase(this, _uploaders)[_uploaders], ..._classPrivateFieldLooseBase(this, _postProcessors)[_postProcessors]];
 
+=======
+  let currentUpload = getCurrentUpload();
+  const steps = [..._classPrivateFieldLooseBase(this, _preProcessors)[_preProcessors], ..._classPrivateFieldLooseBase(this, _uploaders)[_uploaders], ..._classPrivateFieldLooseBase(this, _postProcessors)[_postProcessors]];
+>>>>>>> feature/publication-datetimetype
   try {
     for (let step = currentUpload.step || 0; step < steps.length; step++) {
       if (!currentUpload) {
         break;
       }
+<<<<<<< HEAD
 
       const fn = steps[step];
       this.setState({
         currentUploads: { ...this.getState().currentUploads,
           [uploadID]: { ...currentUpload,
+=======
+      const fn = steps[step];
+      this.setState({
+        currentUploads: {
+          ...this.getState().currentUploads,
+          [uploadID]: {
+            ...currentUpload,
+>>>>>>> feature/publication-datetimetype
             step
           }
         }
       });
       const {
         fileIDs
+<<<<<<< HEAD
       } = currentUpload; // TODO give this the `updatedUpload` object as its only parameter maybe?
       // Otherwise when more metadata may be added to the upload this would keep getting more parameters
 
       await fn(fileIDs, uploadID); // Update currentUpload value in case it was modified asynchronously.
 
+=======
+      } = currentUpload;
+
+      // TODO give this the `updatedUpload` object as its only parameter maybe?
+      // Otherwise when more metadata may be added to the upload this would keep getting more parameters
+      await fn(fileIDs, uploadID);
+
+      // Update currentUpload value in case it was modified asynchronously.
+>>>>>>> feature/publication-datetimetype
       currentUpload = getCurrentUpload();
     }
   } catch (err) {
     _classPrivateFieldLooseBase(this, _removeUpload)[_removeUpload](uploadID);
+<<<<<<< HEAD
 
     throw err;
   } // Set result data.
 
 
+=======
+    throw err;
+  }
+
+  // Set result data.
+>>>>>>> feature/publication-datetimetype
   if (currentUpload) {
     // Mark postprocessing step as complete if necessary; this addresses a case where we might get
     // stuck in the postprocessing UI while the upload is fully complete.
@@ -18818,7 +20981,10 @@ async function _runUpload2(uploadID) {
     // postprocessing completion, we do it instead.
     currentUpload.fileIDs.forEach(fileID => {
       const file = this.getFile(fileID);
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       if (file && file.progress.postprocess) {
         this.emit('postprocess-complete', file);
       }
@@ -18830,6 +20996,7 @@ async function _runUpload2(uploadID) {
       successful,
       failed,
       uploadID
+<<<<<<< HEAD
     }); // Update currentUpload value in case it was modified asynchronously.
 
     currentUpload = getCurrentUpload();
@@ -18855,6 +21022,28 @@ async function _runUpload2(uploadID) {
   return result;
 }
 
+=======
+    });
+
+    // Update currentUpload value in case it was modified asynchronously.
+    currentUpload = getCurrentUpload();
+  }
+  // Emit completion events.
+  // This is in a separate function so that the `currentUploads` variable
+  // always refers to the latest state. In the handler right above it refers
+  // to an outdated object without the `.result` property.
+  let result;
+  if (currentUpload) {
+    result = currentUpload.result;
+    this.emit('complete', result);
+    _classPrivateFieldLooseBase(this, _removeUpload)[_removeUpload](uploadID);
+  }
+  if (result == null) {
+    this.log(`Not setting result for an upload that has been removed: ${uploadID}`);
+  }
+  return result;
+}
+>>>>>>> feature/publication-datetimetype
 Uppy.VERSION = packageJson.version;
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Uppy);
 
@@ -18875,16 +21064,23 @@ function getFileName(fileType, fileDescriptor) {
   if (fileDescriptor.name) {
     return fileDescriptor.name;
   }
+<<<<<<< HEAD
 
   if (fileType.split('/')[0] === 'image') {
     return `${fileType.split('/')[0]}.${fileType.split('/')[1]}`;
   }
 
+=======
+  if (fileType.split('/')[0] === 'image') {
+    return `${fileType.split('/')[0]}.${fileType.split('/')[1]}`;
+  }
+>>>>>>> feature/publication-datetimetype
   return 'noname';
 }
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "./node_modules/@uppy/core/lib/index.js":
 /*!**********************************************!*\
   !*** ./node_modules/@uppy/core/lib/index.js ***!
@@ -18912,6 +21108,8 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+=======
+>>>>>>> feature/publication-datetimetype
 /***/ "./node_modules/@uppy/core/lib/locale.js":
 /*!***********************************************!*\
   !*** ./node_modules/@uppy/core/lib/locale.js ***!
@@ -18964,6 +21162,10 @@ __webpack_require__.r(__webpack_exports__);
     filter: 'Filter',
     resetFilter: 'Reset filter',
     loading: 'Loading...',
+<<<<<<< HEAD
+=======
+    loadedXFiles: 'Loaded %{numFiles} files',
+>>>>>>> feature/publication-datetimetype
     authenticateWithTitle: 'Please authenticate with %{pluginName} to select files',
     authenticateWith: 'Connect to %{pluginName}',
     signInWithGoogle: 'Sign in with Google',
@@ -18998,9 +21200,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _uppy_utils_lib_getTimeStamp__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/utils/lib/getTimeStamp */ "./node_modules/@uppy/utils/lib/getTimeStamp.js");
 /* eslint-disable no-console */
+<<<<<<< HEAD
  // Swallow all logs, except errors.
 // default if logger is not set or debug: false
 
+=======
+
+
+// Swallow all logs, except errors.
+// default if logger is not set or debug: false
+>>>>>>> feature/publication-datetimetype
 const justErrorsLogger = {
   debug: () => {},
   warn: () => {},
@@ -19008,32 +21217,50 @@ const justErrorsLogger = {
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
+<<<<<<< HEAD
 
     return console.error(`[Uppy] [${(0,_uppy_utils_lib_getTimeStamp__WEBPACK_IMPORTED_MODULE_0__["default"])()}]`, ...args);
   }
 }; // Print logs to console with namespace + timestamp,
 // set by logger: Uppy.debugLogger or debug: true
 
+=======
+    return console.error(`[Uppy] [${(0,_uppy_utils_lib_getTimeStamp__WEBPACK_IMPORTED_MODULE_0__["default"])()}]`, ...args);
+  }
+};
+
+// Print logs to console with namespace + timestamp,
+// set by logger: Uppy.debugLogger or debug: true
+>>>>>>> feature/publication-datetimetype
 const debugLogger = {
   debug: function () {
     for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
       args[_key2] = arguments[_key2];
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     return console.debug(`[Uppy] [${(0,_uppy_utils_lib_getTimeStamp__WEBPACK_IMPORTED_MODULE_0__["default"])()}]`, ...args);
   },
   warn: function () {
     for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
       args[_key3] = arguments[_key3];
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     return console.warn(`[Uppy] [${(0,_uppy_utils_lib_getTimeStamp__WEBPACK_IMPORTED_MODULE_0__["default"])()}]`, ...args);
   },
   error: function () {
     for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
       args[_key4] = arguments[_key4];
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     return console.error(`[Uppy] [${(0,_uppy_utils_lib_getTimeStamp__WEBPACK_IMPORTED_MODULE_0__["default"])()}]`, ...args);
   }
 };
@@ -19060,15 +21287,21 @@ function supportsUploadProgress(userAgent) {
   if (userAgent == null && typeof navigator !== 'undefined') {
     // eslint-disable-next-line no-param-reassign
     userAgent = navigator.userAgent;
+<<<<<<< HEAD
   } // Assume it works because basically everything supports progress events.
 
 
+=======
+  }
+  // Assume it works because basically everything supports progress events.
+>>>>>>> feature/publication-datetimetype
   if (!userAgent) return true;
   const m = /Edge\/(\d+\.\d+)/.exec(userAgent);
   if (!m) return true;
   const edgeVersion = m[1];
   let [major, minor] = edgeVersion.split('.');
   major = parseInt(major, 10);
+<<<<<<< HEAD
   minor = parseInt(minor, 10); // Worked before:
   // Edge 40.15063.0.0
   // Microsoft EdgeHTML 15.15063
@@ -19084,6 +21317,24 @@ function supportsUploadProgress(userAgent) {
   } // other versions don't work.
 
 
+=======
+  minor = parseInt(minor, 10);
+
+  // Worked before:
+  // Edge 40.15063.0.0
+  // Microsoft EdgeHTML 15.15063
+  if (major < 15 || major === 15 && minor < 15063) {
+    return true;
+  }
+
+  // Fixed in:
+  // Microsoft EdgeHTML 18.18218
+  if (major > 18 || major === 18 && minor >= 18218) {
+    return true;
+  }
+
+  // other versions don't work.
+>>>>>>> feature/publication-datetimetype
   return false;
 }
 
@@ -19136,6 +21387,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Dashboard)
 /* harmony export */ });
+<<<<<<< HEAD
 /* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
 /* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/index.js");
 /* harmony import */ var _uppy_status_bar__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/status-bar */ "./node_modules/@uppy/status-bar/lib/index.js");
@@ -19154,6 +21406,24 @@ function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototy
 
 var id = 0;
 
+=======
+/* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/UIPlugin.js");
+/* harmony import */ var _uppy_status_bar__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/status-bar */ "./node_modules/@uppy/status-bar/lib/index.js");
+/* harmony import */ var _uppy_informer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/informer */ "./node_modules/@uppy/informer/lib/index.js");
+/* harmony import */ var _uppy_thumbnail_generator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/thumbnail-generator */ "./node_modules/@uppy/thumbnail-generator/lib/index.js");
+/* harmony import */ var _uppy_utils_lib_findAllDOMElements__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/utils/lib/findAllDOMElements */ "./node_modules/@uppy/utils/lib/findAllDOMElements.js");
+/* harmony import */ var _uppy_utils_lib_toArray__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @uppy/utils/lib/toArray */ "./node_modules/@uppy/utils/lib/toArray.js");
+/* harmony import */ var _uppy_utils_lib_getDroppedFiles__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @uppy/utils/lib/getDroppedFiles */ "./node_modules/@uppy/utils/lib/getDroppedFiles/index.js");
+/* harmony import */ var _uppy_provider_views__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @uppy/provider-views */ "./node_modules/@uppy/provider-views/lib/index.js");
+/* harmony import */ var nanoid_non_secure__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! nanoid/non-secure */ "./node_modules/@uppy/dashboard/node_modules/nanoid/non-secure/index.js");
+/* harmony import */ var memoize_one__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! memoize-one */ "./node_modules/memoize-one/dist/memoize-one.esm.js");
+/* harmony import */ var _utils_trapFocus_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./utils/trapFocus.js */ "./node_modules/@uppy/dashboard/lib/utils/trapFocus.js");
+/* harmony import */ var _utils_createSuperFocus_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./utils/createSuperFocus.js */ "./node_modules/@uppy/dashboard/lib/utils/createSuperFocus.js");
+/* harmony import */ var _components_Dashboard_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/Dashboard.js */ "./node_modules/@uppy/dashboard/lib/components/Dashboard.js");
+/* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/dashboard/lib/locale.js");
+function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+var id = 0;
+>>>>>>> feature/publication-datetimetype
 function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
 
 
@@ -19168,6 +21438,7 @@ function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + n
 
 
 
+<<<<<<< HEAD
 
 const packageJson = {
   "version": "3.4.0"
@@ -19177,6 +21448,15 @@ const memoize = memoize_one__WEBPACK_IMPORTED_MODULE_12__["default"]["default"] 
 const TAB_KEY = 9;
 const ESC_KEY = 27;
 
+=======
+const packageJson = {
+  "version": "3.7.1"
+};
+
+const memoize = memoize_one__WEBPACK_IMPORTED_MODULE_11__["default"]["default"] || memoize_one__WEBPACK_IMPORTED_MODULE_11__["default"];
+const TAB_KEY = 9;
+const ESC_KEY = 27;
+>>>>>>> feature/publication-datetimetype
 function createPromise() {
   const o = {};
   o.promise = new Promise((resolve, reject) => {
@@ -19186,6 +21466,7 @@ function createPromise() {
   return o;
 }
 
+<<<<<<< HEAD
 function defaultPickerIcon() {
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
     "aria-hidden": "true",
@@ -19222,33 +21503,67 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
   constructor(uppy, _opts) {
     var _this;
 
+=======
+/**
+ * Dashboard UI with previews, metadata editing, tabs for various services and more
+ */
+var _disabledNodes = /*#__PURE__*/_classPrivateFieldLooseKey("disabledNodes");
+var _generateLargeThumbnailIfSingleFile = /*#__PURE__*/_classPrivateFieldLooseKey("generateLargeThumbnailIfSingleFile");
+var _openFileEditorWhenFilesAdded = /*#__PURE__*/_classPrivateFieldLooseKey("openFileEditorWhenFilesAdded");
+var _attachRenderFunctionToTarget = /*#__PURE__*/_classPrivateFieldLooseKey("attachRenderFunctionToTarget");
+var _isTargetSupported = /*#__PURE__*/_classPrivateFieldLooseKey("isTargetSupported");
+var _getAcquirers = /*#__PURE__*/_classPrivateFieldLooseKey("getAcquirers");
+var _getProgressIndicators = /*#__PURE__*/_classPrivateFieldLooseKey("getProgressIndicators");
+var _getEditors = /*#__PURE__*/_classPrivateFieldLooseKey("getEditors");
+var _addSpecifiedPluginsFromOptions = /*#__PURE__*/_classPrivateFieldLooseKey("addSpecifiedPluginsFromOptions");
+var _autoDiscoverPlugins = /*#__PURE__*/_classPrivateFieldLooseKey("autoDiscoverPlugins");
+var _addSupportedPluginIfNoTarget = /*#__PURE__*/_classPrivateFieldLooseKey("addSupportedPluginIfNoTarget");
+class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
+  constructor(uppy, _opts) {
+    var _this;
+>>>>>>> feature/publication-datetimetype
     super(uppy, _opts);
     _this = this;
     Object.defineProperty(this, _disabledNodes, {
       writable: true,
       value: null
     });
+<<<<<<< HEAD
 
     this.removeTarget = plugin => {
       const pluginState = this.getPluginState(); // filter out the one we want to remove
 
+=======
+    this.removeTarget = plugin => {
+      const pluginState = this.getPluginState();
+      // filter out the one we want to remove
+>>>>>>> feature/publication-datetimetype
       const newTargets = pluginState.targets.filter(target => target.id !== plugin.id);
       this.setPluginState({
         targets: newTargets
       });
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.addTarget = plugin => {
       const callerPluginId = plugin.id || plugin.constructor.name;
       const callerPluginName = plugin.title || callerPluginId;
       const callerPluginType = plugin.type;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       if (callerPluginType !== 'acquirer' && callerPluginType !== 'progressindicator' && callerPluginType !== 'editor') {
         const msg = 'Dashboard: can only be targeted by plugins of types: acquirer, progressindicator, editor';
         this.uppy.log(msg, 'error');
         return undefined;
       }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       const target = {
         id: callerPluginId,
         name: callerPluginName,
@@ -19262,7 +21577,10 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       });
       return this.el;
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.hideAllPanels = () => {
       const state = this.getPluginState();
       const update = {
@@ -19272,15 +21590,24 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
         fileCardFor: null,
         showFileEditor: false
       };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       if (state.activePickerPanel === update.activePickerPanel && state.showAddFilesPanel === update.showAddFilesPanel && state.showFileEditor === update.showFileEditor && state.activeOverlayType === update.activeOverlayType) {
         // avoid doing a state update if nothing changed
         return;
       }
+<<<<<<< HEAD
 
       this.setPluginState(update);
     };
 
+=======
+      this.setPluginState(update);
+      this.uppy.emit('dashboard:close-panel', state.activePickerPanel.id);
+    };
+>>>>>>> feature/publication-datetimetype
     this.showPanel = id => {
       const {
         targets
@@ -19294,24 +21621,37 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       });
       this.uppy.emit('dashboard:show-panel', id);
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.canEditFile = file => {
       const {
         targets
       } = this.getPluginState();
+<<<<<<< HEAD
 
       const editors = _classPrivateFieldLooseBase(this, _getEditors)[_getEditors](targets);
 
       return editors.some(target => this.uppy.getPlugin(target.id).canEditFile(file));
     };
 
+=======
+      const editors = _classPrivateFieldLooseBase(this, _getEditors)[_getEditors](targets);
+      return editors.some(target => this.uppy.getPlugin(target.id).canEditFile(file));
+    };
+>>>>>>> feature/publication-datetimetype
     this.openFileEditor = file => {
       const {
         targets
       } = this.getPluginState();
+<<<<<<< HEAD
 
       const editors = _classPrivateFieldLooseBase(this, _getEditors)[_getEditors](targets);
 
+=======
+      const editors = _classPrivateFieldLooseBase(this, _getEditors)[_getEditors](targets);
+>>>>>>> feature/publication-datetimetype
       this.setPluginState({
         showFileEditor: true,
         fileCardFor: file.id || null,
@@ -19321,24 +21661,35 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
         this.uppy.getPlugin(editor.id).selectFile(file);
       });
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.saveFileEditor = () => {
       const {
         targets
       } = this.getPluginState();
+<<<<<<< HEAD
 
       const editors = _classPrivateFieldLooseBase(this, _getEditors)[_getEditors](targets);
 
+=======
+      const editors = _classPrivateFieldLooseBase(this, _getEditors)[_getEditors](targets);
+>>>>>>> feature/publication-datetimetype
       editors.forEach(editor => {
         this.uppy.getPlugin(editor.id).save();
       });
       this.hideAllPanels();
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.openModal = () => {
       const {
         promise,
         resolve
+<<<<<<< HEAD
       } = createPromise(); // save scroll position
 
       this.savedScrollPosition = window.pageYOffset; // save active element, so we can restore focus when modal is closed
@@ -19349,6 +21700,16 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
         document.body.classList.add('uppy-Dashboard-isFixed');
       }
 
+=======
+      } = createPromise();
+      // save scroll position
+      this.savedScrollPosition = window.pageYOffset;
+      // save active element, so we can restore focus when modal is closed
+      this.savedActiveElement = document.activeElement;
+      if (this.opts.disablePageScrollWhenModalOpen) {
+        document.body.classList.add('uppy-Dashboard-isFixed');
+      }
+>>>>>>> feature/publication-datetimetype
       if (this.opts.animateOpenClose && this.getPluginState().isClosing) {
         const handler = () => {
           this.setPluginState({
@@ -19357,7 +21718,10 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
           this.el.removeEventListener('animationend', handler, false);
           resolve();
         };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
         this.el.addEventListener('animationend', handler, false);
       } else {
         this.setPluginState({
@@ -19365,56 +21729,89 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
         });
         resolve();
       }
+<<<<<<< HEAD
 
       if (this.opts.browserBackButtonClose) {
         this.updateBrowserHistory();
       } // handle ESC and TAB keys in modal dialog
 
 
+=======
+      if (this.opts.browserBackButtonClose) {
+        this.updateBrowserHistory();
+      }
+
+      // handle ESC and TAB keys in modal dialog
+>>>>>>> feature/publication-datetimetype
       document.addEventListener('keydown', this.handleKeyDownInModal);
       this.uppy.emit('dashboard:modal-open');
       return promise;
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.closeModal = function (opts) {
       if (opts === void 0) {
         opts = {};
       }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       const {
         // Whether the modal is being closed by the user (`true`) or by other means (e.g. browser back button)
         manualClose = true
       } = opts;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       const {
         isHidden,
         isClosing
       } = _this.getPluginState();
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       if (isHidden || isClosing) {
         // short-circuit if animation is ongoing
         return undefined;
       }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       const {
         promise,
         resolve
       } = createPromise();
+<<<<<<< HEAD
 
       if (_this.opts.disablePageScrollWhenModalOpen) {
         document.body.classList.remove('uppy-Dashboard-isFixed');
       }
 
+=======
+      if (_this.opts.disablePageScrollWhenModalOpen) {
+        document.body.classList.remove('uppy-Dashboard-isFixed');
+      }
+>>>>>>> feature/publication-datetimetype
       if (_this.opts.animateOpenClose) {
         _this.setPluginState({
           isClosing: true
         });
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
         const handler = () => {
           _this.setPluginState({
             isHidden: true,
             isClosing: false
           });
+<<<<<<< HEAD
 
           _this.superFocus.cancel();
 
@@ -19425,11 +21822,19 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
           resolve();
         };
 
+=======
+          _this.superFocus.cancel();
+          _this.savedActiveElement.focus();
+          _this.el.removeEventListener('animationend', handler, false);
+          resolve();
+        };
+>>>>>>> feature/publication-datetimetype
         _this.el.addEventListener('animationend', handler, false);
       } else {
         _this.setPluginState({
           isHidden: true
         });
+<<<<<<< HEAD
 
         _this.superFocus.cancel();
 
@@ -19445,6 +21850,18 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
         if (_this.opts.browserBackButtonClose) {
           var _history$state;
 
+=======
+        _this.superFocus.cancel();
+        _this.savedActiveElement.focus();
+        resolve();
+      }
+
+      // handle ESC and TAB keys in modal dialog
+      document.removeEventListener('keydown', _this.handleKeyDownInModal);
+      if (manualClose) {
+        if (_this.opts.browserBackButtonClose) {
+          var _history$state;
+>>>>>>> feature/publication-datetimetype
           // Make sure that the latest entry in the history state is our modal name
           // eslint-disable-next-line no-restricted-globals
           if ((_history$state = history.state) != null && _history$state[_this.modalName]) {
@@ -19454,6 +21871,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
           }
         }
       }
+<<<<<<< HEAD
 
       _this.uppy.emit('dashboard:modal-closed');
 
@@ -19464,53 +21882,88 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       return !this.getPluginState().isHidden || false;
     };
 
+=======
+      _this.uppy.emit('dashboard:modal-closed');
+      return promise;
+    };
+    this.isModalOpen = () => {
+      return !this.getPluginState().isHidden || false;
+    };
+>>>>>>> feature/publication-datetimetype
     this.requestCloseModal = () => {
       if (this.opts.onRequestCloseModal) {
         return this.opts.onRequestCloseModal();
       }
+<<<<<<< HEAD
 
       return this.closeModal();
     };
 
+=======
+      return this.closeModal();
+    };
+>>>>>>> feature/publication-datetimetype
     this.setDarkModeCapability = isDarkModeOn => {
       const {
         capabilities
       } = this.uppy.getState();
       this.uppy.setState({
+<<<<<<< HEAD
         capabilities: { ...capabilities,
+=======
+        capabilities: {
+          ...capabilities,
+>>>>>>> feature/publication-datetimetype
           darkMode: isDarkModeOn
         }
       });
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.handleSystemDarkModeChange = event => {
       const isDarkModeOnNow = event.matches;
       this.uppy.log(`[Dashboard] Dark mode is ${isDarkModeOnNow ? 'on' : 'off'}`);
       this.setDarkModeCapability(isDarkModeOnNow);
     };
+<<<<<<< HEAD
 
     this.toggleFileCard = (show, fileID) => {
       const file = this.uppy.getFile(fileID);
 
+=======
+    this.toggleFileCard = (show, fileID) => {
+      const file = this.uppy.getFile(fileID);
+>>>>>>> feature/publication-datetimetype
       if (show) {
         this.uppy.emit('dashboard:file-edit-start', file);
       } else {
         this.uppy.emit('dashboard:file-edit-complete', file);
       }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       this.setPluginState({
         fileCardFor: show ? fileID : null,
         activeOverlayType: show ? 'FileCard' : null
       });
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.toggleAddFilesPanel = show => {
       this.setPluginState({
         showAddFilesPanel: show,
         activeOverlayType: show ? 'AddFiles' : null
       });
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.addFiles = files => {
       const descriptors = files.map(file => ({
         source: this.id,
@@ -19523,14 +21976,26 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
           relativePath: file.relativePath || file.webkitRelativePath || null
         }
       }));
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       try {
         this.uppy.addFiles(descriptors);
       } catch (err) {
         this.uppy.log(err);
       }
     };
+<<<<<<< HEAD
 
+=======
+    // ___Why make insides of Dashboard invisible until first ResizeObserver event is emitted?
+    //    ResizeOberserver doesn't emit the first resize event fast enough, users can see the jump from one .uppy-size-- to
+    //    another (e.g. in Safari)
+    // ___Why not apply visibility property to .uppy-Dashboard-inner?
+    //    Because ideally, acc to specs, ResizeObserver should see invisible elements as of width 0. So even though applying
+    //    invisibility to .uppy-Dashboard-inner works now, it may not work in the future.
+>>>>>>> feature/publication-datetimetype
     this.startListeningToResize = () => {
       // Watch for Dashboard container (`.uppy-Dashboard-inner`) resize
       // and update containerWidth/containerHeight in plugin state accordingly.
@@ -19547,6 +22012,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
           areInsidesReadyToBeVisible: true
         });
       });
+<<<<<<< HEAD
       this.resizeObserver.observe(this.el.querySelector('.uppy-Dashboard-inner')); // If ResizeObserver fails to emit an event telling us what size to use - default to the mobile view
 
       this.makeDashboardInsidesVisibleAnywayTimeout = setTimeout(() => {
@@ -19556,6 +22022,20 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
         if ( // We might want to enable this in the future
         // if ResizeObserver hasn't yet fired,
         !pluginState.areInsidesReadyToBeVisible // and it's not due to the modal being closed
+=======
+      this.resizeObserver.observe(this.el.querySelector('.uppy-Dashboard-inner'));
+
+      // If ResizeObserver fails to emit an event telling us what size to use - default to the mobile view
+      this.makeDashboardInsidesVisibleAnywayTimeout = setTimeout(() => {
+        const pluginState = this.getPluginState();
+        const isModalAndClosed = !this.opts.inline && pluginState.isHidden;
+        if (
+        // We might want to enable this in the future
+
+        // if ResizeObserver hasn't yet fired,
+        !pluginState.areInsidesReadyToBeVisible
+        // and it's not due to the modal being closed
+>>>>>>> feature/publication-datetimetype
         && !isModalAndClosed) {
           this.uppy.log('[Dashboard] resize event didn’t fire on time: defaulted to mobile layout', 'warning');
           this.setPluginState({
@@ -19564,16 +22044,25 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
         }
       }, 1000);
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.stopListeningToResize = () => {
       this.resizeObserver.disconnect();
       clearTimeout(this.makeDashboardInsidesVisibleAnywayTimeout);
     };
+<<<<<<< HEAD
 
+=======
+    // Records whether we have been interacting with uppy right now,
+    // which is then used to determine whether state updates should trigger a refocusing.
+>>>>>>> feature/publication-datetimetype
     this.recordIfFocusedOnUppyRecently = event => {
       if (this.el.contains(event.target)) {
         this.ifFocusedOnUppyRecently = true;
       } else {
+<<<<<<< HEAD
         this.ifFocusedOnUppyRecently = false; // ___Why run this.superFocus.cancel here when it already runs in superFocusOnEachUpdate?
         //    Because superFocus is debounced, when we move from Uppy to some other element on the page,
         //    previously run superFocus sometimes hits and moves focus back to Uppy.
@@ -19588,6 +22077,19 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       const NODES_TO_DISABLE = ['a[href]', 'input:not([disabled])', 'select:not([disabled])', 'textarea:not([disabled])', 'button:not([disabled])', '[role="button"]:not([disabled])'];
       const nodesToDisable = (_classPrivateFieldLoo = _classPrivateFieldLooseBase(this, _disabledNodes)[_disabledNodes]) != null ? _classPrivateFieldLoo : (0,_uppy_utils_lib_toArray__WEBPACK_IMPORTED_MODULE_6__["default"])(this.el.querySelectorAll(NODES_TO_DISABLE)).filter(node => !node.classList.contains('uppy-Dashboard-close'));
 
+=======
+        this.ifFocusedOnUppyRecently = false;
+        // ___Why run this.superFocus.cancel here when it already runs in superFocusOnEachUpdate?
+        //    Because superFocus is debounced, when we move from Uppy to some other element on the page,
+        //    previously run superFocus sometimes hits and moves focus back to Uppy.
+        this.superFocus.cancel();
+      }
+    };
+    this.disableInteractiveElements = disable => {
+      var _classPrivateFieldLoo;
+      const NODES_TO_DISABLE = ['a[href]', 'input:not([disabled])', 'select:not([disabled])', 'textarea:not([disabled])', 'button:not([disabled])', '[role="button"]:not([disabled])'];
+      const nodesToDisable = (_classPrivateFieldLoo = _classPrivateFieldLooseBase(this, _disabledNodes)[_disabledNodes]) != null ? _classPrivateFieldLoo : (0,_uppy_utils_lib_toArray__WEBPACK_IMPORTED_MODULE_4__["default"])(this.el.querySelectorAll(NODES_TO_DISABLE)).filter(node => !node.classList.contains('uppy-Dashboard-close'));
+>>>>>>> feature/publication-datetimetype
       for (const node of nodesToDisable) {
         // Links can’t have `disabled` attr, so we use `aria-disabled` for a11y
         if (node.tagName === 'A') {
@@ -19596,12 +22098,16 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
           node.disabled = disable;
         }
       }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       if (disable) {
         _classPrivateFieldLooseBase(this, _disabledNodes)[_disabledNodes] = nodesToDisable;
       } else {
         _classPrivateFieldLooseBase(this, _disabledNodes)[_disabledNodes] = null;
       }
+<<<<<<< HEAD
 
       this.dashboardIsDisabled = disable;
     };
@@ -19609,11 +22115,18 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
     this.updateBrowserHistory = () => {
       var _history$state2;
 
+=======
+      this.dashboardIsDisabled = disable;
+    };
+    this.updateBrowserHistory = () => {
+      var _history$state2;
+>>>>>>> feature/publication-datetimetype
       // Ensure history state does not already contain our modal name to avoid double-pushing
       // eslint-disable-next-line no-restricted-globals
       if (!((_history$state2 = history.state) != null && _history$state2[this.modalName])) {
         // Push to history so that the page is not lost on browser back button press
         // eslint-disable-next-line no-restricted-globals
+<<<<<<< HEAD
         history.pushState({ // eslint-disable-next-line no-restricted-globals
           ...history.state,
           [this.modalName]: true
@@ -19627,24 +22140,48 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
     this.handlePopState = event => {
       var _event$state;
 
+=======
+        history.pushState({
+          // eslint-disable-next-line no-restricted-globals
+          ...history.state,
+          [this.modalName]: true
+        }, '');
+      }
+
+      // Listen for back button presses
+      window.addEventListener('popstate', this.handlePopState, false);
+    };
+    this.handlePopState = event => {
+      var _event$state;
+>>>>>>> feature/publication-datetimetype
       // Close the modal if the history state no longer contains our modal name
       if (this.isModalOpen() && (!event.state || !event.state[this.modalName])) {
         this.closeModal({
           manualClose: false
         });
+<<<<<<< HEAD
       } // When the browser back button is pressed and uppy is now the latest entry
+=======
+      }
+
+      // When the browser back button is pressed and uppy is now the latest entry
+>>>>>>> feature/publication-datetimetype
       // in the history but the modal is closed, fix the history by removing the
       // uppy history entry.
       // This occurs when another entry is added into the history state while the
       // modal is open, and then the modal gets manually closed.
       // Solves PR #575 (https://github.com/transloadit/uppy/pull/575)
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> feature/publication-datetimetype
       if (!this.isModalOpen() && (_event$state = event.state) != null && _event$state[this.modalName]) {
         // eslint-disable-next-line no-restricted-globals
         history.back();
       }
     };
+<<<<<<< HEAD
 
     this.handleKeyDownInModal = event => {
       // close modal on esc key press
@@ -19657,6 +22194,17 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       if (this.opts.closeModalOnClickOutside) this.requestCloseModal();
     };
 
+=======
+    this.handleKeyDownInModal = event => {
+      // close modal on esc key press
+      if (event.keyCode === ESC_KEY) this.requestCloseModal(event);
+      // trap focus on tab key press
+      if (event.keyCode === TAB_KEY) _utils_trapFocus_js__WEBPACK_IMPORTED_MODULE_7__.forModal(event, this.getPluginState().activeOverlayType, this.el);
+    };
+    this.handleClickOutside = () => {
+      if (this.opts.closeModalOnClickOutside) this.requestCloseModal();
+    };
+>>>>>>> feature/publication-datetimetype
     this.handlePaste = event => {
       // Let any acquirer plugin (Url/Webcam/etc.) handle pastes to the root
       this.uppy.iteratePlugins(plugin => {
@@ -19664,25 +22212,39 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
           // Every Plugin with .type acquirer can define handleRootPaste(event)
           plugin.handleRootPaste == null ? void 0 : plugin.handleRootPaste(event);
         }
+<<<<<<< HEAD
       }); // Add all dropped files
 
       const files = (0,_uppy_utils_lib_toArray__WEBPACK_IMPORTED_MODULE_6__["default"])(event.clipboardData.files);
 
+=======
+      });
+
+      // Add all dropped files
+      const files = (0,_uppy_utils_lib_toArray__WEBPACK_IMPORTED_MODULE_4__["default"])(event.clipboardData.files);
+>>>>>>> feature/publication-datetimetype
       if (files.length > 0) {
         this.uppy.log('[Dashboard] Files pasted');
         this.addFiles(files);
       }
     };
+<<<<<<< HEAD
 
     this.handleInputChange = event => {
       event.preventDefault();
       const files = (0,_uppy_utils_lib_toArray__WEBPACK_IMPORTED_MODULE_6__["default"])(event.target.files);
 
+=======
+    this.handleInputChange = event => {
+      event.preventDefault();
+      const files = (0,_uppy_utils_lib_toArray__WEBPACK_IMPORTED_MODULE_4__["default"])(event.target.files);
+>>>>>>> feature/publication-datetimetype
       if (files.length > 0) {
         this.uppy.log('[Dashboard] Files selected through input');
         this.addFiles(files);
       }
     };
+<<<<<<< HEAD
 
     this.handleDragOver = event => {
       var _this$opts$onDragOver, _this$opts;
@@ -19691,6 +22253,15 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       event.stopPropagation(); // Check if some plugin can handle the datatransfer without files —
       // for instance, the Url plugin can import a url
 
+=======
+    this.handleDragOver = event => {
+      var _this$opts$onDragOver, _this$opts;
+      event.preventDefault();
+      event.stopPropagation();
+
+      // Check if some plugin can handle the datatransfer without files —
+      // for instance, the Url plugin can import a url
+>>>>>>> feature/publication-datetimetype
       const canSomePluginHandleRootDrop = () => {
         let somePluginCanHandleRootDrop = true;
         this.uppy.iteratePlugins(plugin => {
@@ -19699,14 +22270,21 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
           }
         });
         return somePluginCanHandleRootDrop;
+<<<<<<< HEAD
       }; // Check if the "type" of the datatransfer object includes files
 
 
+=======
+      };
+
+      // Check if the "type" of the datatransfer object includes files
+>>>>>>> feature/publication-datetimetype
       const doesEventHaveFiles = () => {
         const {
           types
         } = event.dataTransfer;
         return types.some(type => type === 'Files');
+<<<<<<< HEAD
       }; // Deny drop, if no plugins can handle datatransfer, there are no files,
       // or when opts.disabled is set, or new uploads are not allowed
 
@@ -19726,6 +22304,26 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       // browser, https://github.com/transloadit/uppy/issues/1978).
 
 
+=======
+      };
+
+      // Deny drop, if no plugins can handle datatransfer, there are no files,
+      // or when opts.disabled is set, or new uploads are not allowed
+      const somePluginCanHandleRootDrop = canSomePluginHandleRootDrop(event);
+      const hasFiles = doesEventHaveFiles(event);
+      if (!somePluginCanHandleRootDrop && !hasFiles || this.opts.disabled
+      // opts.disableLocalFiles should only be taken into account if no plugins
+      // can handle the datatransfer
+      || this.opts.disableLocalFiles && (hasFiles || !somePluginCanHandleRootDrop) || !this.uppy.getState().allowNewUpload) {
+        event.dataTransfer.dropEffect = 'none'; // eslint-disable-line no-param-reassign
+        clearTimeout(this.removeDragOverClassTimeout);
+        return;
+      }
+
+      // Add a small (+) icon on drop
+      // (and prevent browsers from interpreting this as files being _moved_ into the
+      // browser, https://github.com/transloadit/uppy/issues/1978).
+>>>>>>> feature/publication-datetimetype
       event.dataTransfer.dropEffect = 'copy'; // eslint-disable-line no-param-reassign
 
       clearTimeout(this.removeDragOverClassTimeout);
@@ -19734,6 +22332,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       });
       (_this$opts$onDragOver = (_this$opts = this.opts).onDragOver) == null ? void 0 : _this$opts$onDragOver.call(_this$opts, event);
     };
+<<<<<<< HEAD
 
     this.handleDragLeave = event => {
       var _this$opts$onDragLeav, _this$opts2;
@@ -19743,6 +22342,15 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       clearTimeout(this.removeDragOverClassTimeout); // Timeout against flickering, this solution is taken from drag-drop library.
       // Solution with 'pointer-events: none' didn't work across browsers.
 
+=======
+    this.handleDragLeave = event => {
+      var _this$opts$onDragLeav, _this$opts2;
+      event.preventDefault();
+      event.stopPropagation();
+      clearTimeout(this.removeDragOverClassTimeout);
+      // Timeout against flickering, this solution is taken from drag-drop library.
+      // Solution with 'pointer-events: none' didn't work across browsers.
+>>>>>>> feature/publication-datetimetype
       this.removeDragOverClassTimeout = setTimeout(() => {
         this.setPluginState({
           isDraggingOver: false
@@ -19750,22 +22358,34 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       }, 50);
       (_this$opts$onDragLeav = (_this$opts2 = this.opts).onDragLeave) == null ? void 0 : _this$opts$onDragLeav.call(_this$opts2, event);
     };
+<<<<<<< HEAD
 
     this.handleDrop = async event => {
       var _this$opts$onDrop, _this$opts3;
 
+=======
+    this.handleDrop = async event => {
+      var _this$opts$onDrop, _this$opts3;
+>>>>>>> feature/publication-datetimetype
       event.preventDefault();
       event.stopPropagation();
       clearTimeout(this.removeDragOverClassTimeout);
       this.setPluginState({
         isDraggingOver: false
+<<<<<<< HEAD
       }); // Let any acquirer plugin (Url/Webcam/etc.) handle drops to the root
 
+=======
+      });
+
+      // Let any acquirer plugin (Url/Webcam/etc.) handle drops to the root
+>>>>>>> feature/publication-datetimetype
       this.uppy.iteratePlugins(plugin => {
         if (plugin.type === 'acquirer') {
           // Every Plugin with .type acquirer can define handleRootDrop(event)
           plugin.handleRootDrop == null ? void 0 : plugin.handleRootDrop(event);
         }
+<<<<<<< HEAD
       }); // Add all dropped files
 
       let executedDropErrorOnce = false;
@@ -19774,11 +22394,23 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
         this.uppy.log(error, 'error'); // In practice all drop errors are most likely the same,
         // so let's just show one to avoid overwhelming the user
 
+=======
+      });
+
+      // Add all dropped files
+      let executedDropErrorOnce = false;
+      const logDropError = error => {
+        this.uppy.log(error, 'error');
+
+        // In practice all drop errors are most likely the same,
+        // so let's just show one to avoid overwhelming the user
+>>>>>>> feature/publication-datetimetype
         if (!executedDropErrorOnce) {
           this.uppy.info(error.message, 'error');
           executedDropErrorOnce = true;
         }
       };
+<<<<<<< HEAD
 
       this.uppy.log('[Dashboard] Processing dropped files'); // Add all dropped files
 
@@ -19786,25 +22418,46 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
         logDropError
       });
 
+=======
+      this.uppy.log('[Dashboard] Processing dropped files');
+
+      // Add all dropped files
+      const files = await (0,_uppy_utils_lib_getDroppedFiles__WEBPACK_IMPORTED_MODULE_5__["default"])(event.dataTransfer, {
+        logDropError
+      });
+>>>>>>> feature/publication-datetimetype
       if (files.length > 0) {
         this.uppy.log('[Dashboard] Files dropped');
         this.addFiles(files);
       }
+<<<<<<< HEAD
 
       (_this$opts$onDrop = (_this$opts3 = this.opts).onDrop) == null ? void 0 : _this$opts$onDrop.call(_this$opts3, event);
     };
 
+=======
+      (_this$opts$onDrop = (_this$opts3 = this.opts).onDrop) == null ? void 0 : _this$opts$onDrop.call(_this$opts3, event);
+    };
+>>>>>>> feature/publication-datetimetype
     this.handleRequestThumbnail = file => {
       if (!this.opts.waitForThumbnailsBeforeUpload) {
         this.uppy.emit('thumbnail:request', file);
       }
     };
+<<<<<<< HEAD
 
+=======
+    /**
+     * We cancel thumbnail requests when a file item component unmounts to avoid
+     * clogging up the queue when the user scrolls past many elements.
+     */
+>>>>>>> feature/publication-datetimetype
     this.handleCancelThumbnail = file => {
       if (!this.opts.waitForThumbnailsBeforeUpload) {
         this.uppy.emit('thumbnail:cancel', file);
       }
     };
+<<<<<<< HEAD
 
     this.handleKeyDownInInline = event => {
       // Trap focus on tab key press.
@@ -19814,42 +22467,81 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
     this.handlePasteOnBody = event => {
       const isFocusInOverlay = this.el.contains(document.activeElement);
 
+=======
+    this.handleKeyDownInInline = event => {
+      // Trap focus on tab key press.
+      if (event.keyCode === TAB_KEY) _utils_trapFocus_js__WEBPACK_IMPORTED_MODULE_7__.forInline(event, this.getPluginState().activeOverlayType, this.el);
+    };
+    // ___Why do we listen to the 'paste' event on a document instead of onPaste={props.handlePaste} prop,
+    //    or this.el.addEventListener('paste')?
+    //    Because (at least) Chrome doesn't handle paste if focus is on some button, e.g. 'My Device'.
+    //    => Therefore, the best option is to listen to all 'paste' events, and only react to them when we are focused on our
+    //       particular Uppy instance.
+    // ___Why do we still need onPaste={props.handlePaste} for the DashboardUi?
+    //    Because if we click on the 'Drop files here' caption e.g., `document.activeElement` will be 'body'. Which means our
+    //    standard determination of whether we're pasting into our Uppy instance won't work.
+    //    => Therefore, we need a traditional onPaste={props.handlePaste} handler too.
+    this.handlePasteOnBody = event => {
+      const isFocusInOverlay = this.el.contains(document.activeElement);
+>>>>>>> feature/publication-datetimetype
       if (isFocusInOverlay) {
         this.handlePaste(event);
       }
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.handleComplete = _ref => {
       let {
         failed
       } = _ref;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       if (this.opts.closeAfterFinish && failed.length === 0) {
         // All uploads are done
         this.requestCloseModal();
       }
     };
+<<<<<<< HEAD
 
     this.handleCancelRestore = () => {
       this.uppy.emit('restore-canceled');
     };
 
+=======
+    this.handleCancelRestore = () => {
+      this.uppy.emit('restore-canceled');
+    };
+>>>>>>> feature/publication-datetimetype
     Object.defineProperty(this, _generateLargeThumbnailIfSingleFile, {
       writable: true,
       value: () => {
         if (this.opts.disableThumbnailGenerator) {
           return;
         }
+<<<<<<< HEAD
 
         const LARGE_THUMBNAIL = 600;
         const files = this.uppy.getFiles();
 
+=======
+        const LARGE_THUMBNAIL = 600;
+        const files = this.uppy.getFiles();
+>>>>>>> feature/publication-datetimetype
         if (files.length === 1) {
           const thumbnailGenerator = this.uppy.getPlugin(`${this.id}:ThumbnailGenerator`);
           thumbnailGenerator == null ? void 0 : thumbnailGenerator.setOptions({
             thumbnailWidth: LARGE_THUMBNAIL
           });
+<<<<<<< HEAD
           const fileForThumbnail = { ...files[0],
+=======
+          const fileForThumbnail = {
+            ...files[0],
+>>>>>>> feature/publication-datetimetype
             preview: undefined
           };
           thumbnailGenerator.requestThumbnail(fileForThumbnail).then(() => {
@@ -19864,33 +22556,50 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       writable: true,
       value: files => {
         const firstFile = files[0];
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
         if (this.canEditFile(firstFile)) {
           this.openFileEditor(firstFile);
         }
       }
     });
+<<<<<<< HEAD
 
     this.initEvents = () => {
       // Modal open button
       if (this.opts.trigger && !this.opts.inline) {
         const showModalTrigger = (0,_uppy_utils_lib_findAllDOMElements__WEBPACK_IMPORTED_MODULE_5__["default"])(this.opts.trigger);
 
+=======
+    this.initEvents = () => {
+      // Modal open button
+      if (this.opts.trigger && !this.opts.inline) {
+        const showModalTrigger = (0,_uppy_utils_lib_findAllDOMElements__WEBPACK_IMPORTED_MODULE_3__["default"])(this.opts.trigger);
+>>>>>>> feature/publication-datetimetype
         if (showModalTrigger) {
           showModalTrigger.forEach(trigger => trigger.addEventListener('click', this.openModal));
         } else {
           this.uppy.log('Dashboard modal trigger not found. Make sure `trigger` is set in Dashboard options, unless you are planning to call `dashboard.openModal()` method yourself', 'warning');
         }
       }
+<<<<<<< HEAD
 
       this.startListeningToResize();
       document.addEventListener('paste', this.handlePasteOnBody);
+=======
+      this.startListeningToResize();
+      document.addEventListener('paste', this.handlePasteOnBody);
+      this.uppy.on('plugin-added', _classPrivateFieldLooseBase(this, _addSupportedPluginIfNoTarget)[_addSupportedPluginIfNoTarget]);
+>>>>>>> feature/publication-datetimetype
       this.uppy.on('plugin-remove', this.removeTarget);
       this.uppy.on('file-added', this.hideAllPanels);
       this.uppy.on('dashboard:modal-closed', this.hideAllPanels);
       this.uppy.on('file-editor:complete', this.hideAllPanels);
       this.uppy.on('complete', this.handleComplete);
       this.uppy.on('files-added', _classPrivateFieldLooseBase(this, _generateLargeThumbnailIfSingleFile)[_generateLargeThumbnailIfSingleFile]);
+<<<<<<< HEAD
       this.uppy.on('file-removed', _classPrivateFieldLooseBase(this, _generateLargeThumbnailIfSingleFile)[_generateLargeThumbnailIfSingleFile]); // ___Why fire on capture?
       //    Because this.ifFocusedOnUppyRecently needs to change before onUpdate() fires.
 
@@ -19901,10 +22610,22 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
         this.el.addEventListener('keydown', this.handleKeyDownInInline);
       }
 
+=======
+      this.uppy.on('file-removed', _classPrivateFieldLooseBase(this, _generateLargeThumbnailIfSingleFile)[_generateLargeThumbnailIfSingleFile]);
+
+      // ___Why fire on capture?
+      //    Because this.ifFocusedOnUppyRecently needs to change before onUpdate() fires.
+      document.addEventListener('focus', this.recordIfFocusedOnUppyRecently, true);
+      document.addEventListener('click', this.recordIfFocusedOnUppyRecently, true);
+      if (this.opts.inline) {
+        this.el.addEventListener('keydown', this.handleKeyDownInInline);
+      }
+>>>>>>> feature/publication-datetimetype
       if (this.opts.autoOpenFileEditor) {
         this.uppy.on('files-added', _classPrivateFieldLooseBase(this, _openFileEditorWhenFilesAdded)[_openFileEditorWhenFilesAdded]);
       }
     };
+<<<<<<< HEAD
 
     this.removeEvents = () => {
       const showModalTrigger = (0,_uppy_utils_lib_findAllDOMElements__WEBPACK_IMPORTED_MODULE_5__["default"])(this.opts.trigger);
@@ -19916,6 +22637,17 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       this.stopListeningToResize();
       document.removeEventListener('paste', this.handlePasteOnBody);
       window.removeEventListener('popstate', this.handlePopState, false);
+=======
+    this.removeEvents = () => {
+      const showModalTrigger = (0,_uppy_utils_lib_findAllDOMElements__WEBPACK_IMPORTED_MODULE_3__["default"])(this.opts.trigger);
+      if (!this.opts.inline && showModalTrigger) {
+        showModalTrigger.forEach(trigger => trigger.removeEventListener('click', this.openModal));
+      }
+      this.stopListeningToResize();
+      document.removeEventListener('paste', this.handlePasteOnBody);
+      window.removeEventListener('popstate', this.handlePopState, false);
+      this.uppy.off('plugin-added', _classPrivateFieldLooseBase(this, _addSupportedPluginIfNoTarget)[_addSupportedPluginIfNoTarget]);
+>>>>>>> feature/publication-datetimetype
       this.uppy.off('plugin-remove', this.removeTarget);
       this.uppy.off('file-added', this.hideAllPanels);
       this.uppy.off('dashboard:modal-closed', this.hideAllPanels);
@@ -19925,15 +22657,22 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       this.uppy.off('file-removed', _classPrivateFieldLooseBase(this, _generateLargeThumbnailIfSingleFile)[_generateLargeThumbnailIfSingleFile]);
       document.removeEventListener('focus', this.recordIfFocusedOnUppyRecently);
       document.removeEventListener('click', this.recordIfFocusedOnUppyRecently);
+<<<<<<< HEAD
 
       if (this.opts.inline) {
         this.el.removeEventListener('keydown', this.handleKeyDownInInline);
       }
 
+=======
+      if (this.opts.inline) {
+        this.el.removeEventListener('keydown', this.handleKeyDownInInline);
+      }
+>>>>>>> feature/publication-datetimetype
       if (this.opts.autoOpenFileEditor) {
         this.uppy.off('files-added', _classPrivateFieldLooseBase(this, _openFileEditorWhenFilesAdded)[_openFileEditorWhenFilesAdded]);
       }
     };
+<<<<<<< HEAD
 
     this.superFocusOnEachUpdate = () => {
       const isFocusInUppy = this.el.contains(document.activeElement); // When focus is lost on the page (== focus is on body for most browsers, or focus is null for IE11)
@@ -19947,6 +22686,23 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       // on the page (user is unlikely to want to interact with the rest of the page)
       isModal // If we are already inside of Uppy, or
       || isFocusInUppy // If we are not focused on anything BUT we have already, at least once, focused on uppy
+=======
+    this.superFocusOnEachUpdate = () => {
+      const isFocusInUppy = this.el.contains(document.activeElement);
+      // When focus is lost on the page (== focus is on body for most browsers, or focus is null for IE11)
+      const isFocusNowhere = document.activeElement === document.body || document.activeElement === null;
+      const isInformerHidden = this.uppy.getState().info.length === 0;
+      const isModal = !this.opts.inline;
+      if (
+      // If update is connected to showing the Informer - let the screen reader calmly read it.
+      isInformerHidden && (
+      // If we are in a modal - always superfocus without concern for other elements
+      // on the page (user is unlikely to want to interact with the rest of the page)
+      isModal
+      // If we are already inside of Uppy, or
+      || isFocusInUppy
+      // If we are not focused on anything BUT we have already, at least once, focused on uppy
+>>>>>>> feature/publication-datetimetype
       //   1. We focus when isFocusNowhere, because when the element we were focused
       //      on disappears (e.g. an overlay), - focus gets lost. If user is typing
       //      something somewhere else on the page, - focus won't be 'nowhere'.
@@ -19961,12 +22717,16 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
         this.superFocus.cancel();
       }
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.afterUpdate = () => {
       if (this.opts.disabled && !this.dashboardIsDisabled) {
         this.disableInteractiveElements(true);
         return;
       }
+<<<<<<< HEAD
 
       if (!this.opts.disabled && this.dashboardIsDisabled) {
         this.disableInteractiveElements(false);
@@ -19975,16 +22735,31 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       this.superFocusOnEachUpdate();
     };
 
+=======
+      if (!this.opts.disabled && this.dashboardIsDisabled) {
+        this.disableInteractiveElements(false);
+      }
+      this.superFocusOnEachUpdate();
+    };
+>>>>>>> feature/publication-datetimetype
     this.saveFileCard = (meta, fileID) => {
       this.uppy.setFileMeta(fileID, meta);
       this.toggleFileCard(false, fileID);
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     Object.defineProperty(this, _attachRenderFunctionToTarget, {
       writable: true,
       value: target => {
         const plugin = this.uppy.getPlugin(target.id);
+<<<<<<< HEAD
         return { ...target,
+=======
+        return {
+          ...target,
+>>>>>>> feature/publication-datetimetype
           icon: plugin.icon || this.opts.defaultPickerIcon,
           render: plugin.render
         };
@@ -19993,12 +22768,20 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
     Object.defineProperty(this, _isTargetSupported, {
       writable: true,
       value: target => {
+<<<<<<< HEAD
         const plugin = this.uppy.getPlugin(target.id); // If the plugin does not provide a `supported` check, assume the plugin works everywhere.
 
         if (typeof plugin.isSupported !== 'function') {
           return true;
         }
 
+=======
+        const plugin = this.uppy.getPlugin(target.id);
+        // If the plugin does not provide a `supported` check, assume the plugin works everywhere.
+        if (typeof plugin.isSupported !== 'function') {
+          return true;
+        }
+>>>>>>> feature/publication-datetimetype
         return plugin.isSupported();
       }
     });
@@ -20020,7 +22803,10 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
         return targets.filter(target => target.type === 'editor').map(_classPrivateFieldLooseBase(this, _attachRenderFunctionToTarget)[_attachRenderFunctionToTarget]);
       })
     });
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.render = state => {
       const pluginState = this.getPluginState();
       const {
@@ -20041,6 +22827,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
         isAllErrored,
         isAllPaused
       } = this.uppy.getObjectOfFilesPerState();
+<<<<<<< HEAD
 
       const acquirers = _classPrivateFieldLooseBase(this, _getAcquirers)[_getAcquirers](pluginState.targets);
 
@@ -20050,11 +22837,18 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
 
       let theme;
 
+=======
+      const acquirers = _classPrivateFieldLooseBase(this, _getAcquirers)[_getAcquirers](pluginState.targets);
+      const progressindicators = _classPrivateFieldLooseBase(this, _getProgressIndicators)[_getProgressIndicators](pluginState.targets);
+      const editors = _classPrivateFieldLooseBase(this, _getEditors)[_getEditors](pluginState.targets);
+      let theme;
+>>>>>>> feature/publication-datetimetype
       if (this.opts.theme === 'auto') {
         theme = capabilities.darkMode ? 'dark' : 'light';
       } else {
         theme = this.opts.theme;
       }
+<<<<<<< HEAD
 
       if (['files', 'folders', 'both'].indexOf(this.opts.fileManagerSelectionType) < 0) {
         this.opts.fileManagerSelectionType = 'files'; // eslint-disable-next-line no-console
@@ -20063,6 +22857,14 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       }
 
       return (0,_components_Dashboard_js__WEBPACK_IMPORTED_MODULE_10__["default"])({
+=======
+      if (['files', 'folders', 'both'].indexOf(this.opts.fileManagerSelectionType) < 0) {
+        this.opts.fileManagerSelectionType = 'files';
+        // eslint-disable-next-line no-console
+        console.warn(`Unsupported option for "fileManagerSelectionType". Using default of "${this.opts.fileManagerSelectionType}".`);
+      }
+      return (0,_components_Dashboard_js__WEBPACK_IMPORTED_MODULE_9__["default"])({
+>>>>>>> feature/publication-datetimetype
         state,
         isHidden: pluginState.isHidden,
         files,
@@ -20150,6 +22952,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
         handleDrop: this.handleDrop
       });
     };
+<<<<<<< HEAD
 
     this.discoverProviderPlugins = () => {
       this.uppy.iteratePlugins(plugin => {
@@ -20159,6 +22962,43 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       });
     };
 
+=======
+    Object.defineProperty(this, _addSpecifiedPluginsFromOptions, {
+      writable: true,
+      value: () => {
+        const plugins = this.opts.plugins || [];
+        plugins.forEach(pluginID => {
+          const plugin = this.uppy.getPlugin(pluginID);
+          if (plugin) {
+            plugin.mount(this, plugin);
+          } else {
+            this.uppy.log(`[Uppy] Dashboard could not find plugin '${pluginID}', make sure to uppy.use() the plugins you are specifying`, 'warning');
+          }
+        });
+      }
+    });
+    Object.defineProperty(this, _autoDiscoverPlugins, {
+      writable: true,
+      value: () => {
+        this.uppy.iteratePlugins(_classPrivateFieldLooseBase(this, _addSupportedPluginIfNoTarget)[_addSupportedPluginIfNoTarget]);
+      }
+    });
+    Object.defineProperty(this, _addSupportedPluginIfNoTarget, {
+      writable: true,
+      value: plugin => {
+        var _plugin$opts;
+        // Only these types belong on the Dashboard,
+        // we wouldn’t want to try and mount Compressor or Tus, for example.
+        const typesAllowed = ['acquirer', 'editor'];
+        if (plugin && !((_plugin$opts = plugin.opts) != null && _plugin$opts.target) && typesAllowed.includes(plugin.type)) {
+          const pluginAlreadyAdded = this.getPluginState().targets.some(installedPlugin => plugin.id === installedPlugin.id);
+          if (!pluginAlreadyAdded) {
+            plugin.mount(this, plugin);
+          }
+        }
+      }
+    });
+>>>>>>> feature/publication-datetimetype
     this.install = () => {
       // Set default state for Dashboard
       this.setPluginState({
@@ -20178,15 +23018,22 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
         inline,
         closeAfterFinish
       } = this.opts;
+<<<<<<< HEAD
 
       if (inline && closeAfterFinish) {
         throw new Error('[Dashboard] `closeAfterFinish: true` cannot be used on an inline Dashboard, because an inline Dashboard cannot be closed at all. Either set `inline: false`, or disable the `closeAfterFinish` option.');
       }
 
+=======
+      if (inline && closeAfterFinish) {
+        throw new Error('[Dashboard] `closeAfterFinish: true` cannot be used on an inline Dashboard, because an inline Dashboard cannot be closed at all. Either set `inline: false`, or disable the `closeAfterFinish` option.');
+      }
+>>>>>>> feature/publication-datetimetype
       const {
         allowMultipleUploads,
         allowMultipleUploadBatches
       } = this.uppy.opts;
+<<<<<<< HEAD
 
       if ((allowMultipleUploads || allowMultipleUploadBatches) && closeAfterFinish) {
         this.uppy.log('[Dashboard] When using `closeAfterFinish`, we recommended setting the `allowMultipleUploadBatches` option to `false` in the Uppy constructor. See https://uppy.io/docs/uppy/#allowMultipleUploads-true', 'warning');
@@ -20211,6 +23058,19 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
 
       if (!this.opts.disableStatusBar) {
         this.uppy.use(_uppy_status_bar__WEBPACK_IMPORTED_MODULE_2__["default"], {
+=======
+      if ((allowMultipleUploads || allowMultipleUploadBatches) && closeAfterFinish) {
+        this.uppy.log('[Dashboard] When using `closeAfterFinish`, we recommended setting the `allowMultipleUploadBatches` option to `false` in the Uppy constructor. See https://uppy.io/docs/uppy/#allowMultipleUploads-true', 'warning');
+      }
+      const {
+        target
+      } = this.opts;
+      if (target) {
+        this.mount(target, this);
+      }
+      if (!this.opts.disableStatusBar) {
+        this.uppy.use(_uppy_status_bar__WEBPACK_IMPORTED_MODULE_0__["default"], {
+>>>>>>> feature/publication-datetimetype
           id: `${this.id}:StatusBar`,
           target: this,
           hideUploadButton: this.opts.hideUploadButton,
@@ -20223,16 +23083,26 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
           doneButtonHandler: this.opts.doneButtonHandler
         });
       }
+<<<<<<< HEAD
 
       if (!this.opts.disableInformer) {
         this.uppy.use(_uppy_informer__WEBPACK_IMPORTED_MODULE_3__["default"], {
+=======
+      if (!this.opts.disableInformer) {
+        this.uppy.use(_uppy_informer__WEBPACK_IMPORTED_MODULE_1__["default"], {
+>>>>>>> feature/publication-datetimetype
           id: `${this.id}:Informer`,
           target: this
         });
       }
+<<<<<<< HEAD
 
       if (!this.opts.disableThumbnailGenerator) {
         this.uppy.use(_uppy_thumbnail_generator__WEBPACK_IMPORTED_MODULE_4__["default"], {
+=======
+      if (!this.opts.disableThumbnailGenerator) {
+        this.uppy.use(_uppy_thumbnail_generator__WEBPACK_IMPORTED_MODULE_2__["default"], {
+>>>>>>> feature/publication-datetimetype
           id: `${this.id}:ThumbnailGenerator`,
           thumbnailWidth: this.opts.thumbnailWidth,
           thumbnailHeight: this.opts.thumbnailHeight,
@@ -20241,13 +23111,20 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
           // If we don't block on thumbnails, we can lazily generate them
           lazy: !this.opts.waitForThumbnailsBeforeUpload
         });
+<<<<<<< HEAD
       } // Dark Mode / theme
 
 
+=======
+      }
+
+      // Dark Mode / theme
+>>>>>>> feature/publication-datetimetype
       this.darkModeMediaQuery = typeof window !== 'undefined' && window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
       const isDarkModeOnFromTheStart = this.darkModeMediaQuery ? this.darkModeMediaQuery.matches : false;
       this.uppy.log(`[Dashboard] Dark mode is ${isDarkModeOnFromTheStart ? 'on' : 'off'}`);
       this.setDarkModeCapability(isDarkModeOnFromTheStart);
+<<<<<<< HEAD
 
       if (this.opts.theme === 'auto') {
         this.darkModeMediaQuery.addListener(this.handleSystemDarkModeChange);
@@ -20265,21 +23142,44 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
         if (informer) this.uppy.removePlugin(informer);
       }
 
+=======
+      if (this.opts.theme === 'auto') {
+        this.darkModeMediaQuery.addListener(this.handleSystemDarkModeChange);
+      }
+      _classPrivateFieldLooseBase(this, _addSpecifiedPluginsFromOptions)[_addSpecifiedPluginsFromOptions]();
+      _classPrivateFieldLooseBase(this, _autoDiscoverPlugins)[_autoDiscoverPlugins]();
+      this.initEvents();
+    };
+    this.uninstall = () => {
+      if (!this.opts.disableInformer) {
+        const informer = this.uppy.getPlugin(`${this.id}:Informer`);
+        // Checking if this plugin exists, in case it was removed by uppy-core
+        // before the Dashboard was.
+        if (informer) this.uppy.removePlugin(informer);
+      }
+>>>>>>> feature/publication-datetimetype
       if (!this.opts.disableStatusBar) {
         const statusBar = this.uppy.getPlugin(`${this.id}:StatusBar`);
         if (statusBar) this.uppy.removePlugin(statusBar);
       }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       if (!this.opts.disableThumbnailGenerator) {
         const thumbnail = this.uppy.getPlugin(`${this.id}:ThumbnailGenerator`);
         if (thumbnail) this.uppy.removePlugin(thumbnail);
       }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       const plugins = this.opts.plugins || [];
       plugins.forEach(pluginID => {
         const plugin = this.uppy.getPlugin(pluginID);
         if (plugin) plugin.unmount();
       });
+<<<<<<< HEAD
 
       if (this.opts.theme === 'auto') {
         this.darkModeMediaQuery.removeListener(this.handleSystemDarkModeChange);
@@ -20289,12 +23189,29 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       this.removeEvents();
     };
 
+=======
+      if (this.opts.theme === 'auto') {
+        this.darkModeMediaQuery.removeListener(this.handleSystemDarkModeChange);
+      }
+      if (this.opts.disablePageScrollWhenModalOpen) {
+        document.body.classList.remove('uppy-Dashboard-isFixed');
+      }
+      this.unmount();
+      this.removeEvents();
+    };
+>>>>>>> feature/publication-datetimetype
     this.id = this.opts.id || 'Dashboard';
     this.title = 'Dashboard';
     this.type = 'orchestrator';
     this.modalName = `uppy-Dashboard-${(0,nanoid_non_secure__WEBPACK_IMPORTED_MODULE_13__.nanoid)()}`;
+<<<<<<< HEAD
     this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_11__["default"]; // set default options, must be kept in sync with packages/@uppy/react/src/DashboardModal.js
 
+=======
+    this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_10__["default"];
+
+    // set default options, must be kept in sync with packages/@uppy/react/src/DashboardModal.js
+>>>>>>> feature/publication-datetimetype
     const defaultOptions = {
       target: 'body',
       metaFields: [],
@@ -20305,7 +23222,11 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       thumbnailWidth: 280,
       thumbnailType: 'image/jpeg',
       waitForThumbnailsBeforeUpload: false,
+<<<<<<< HEAD
       defaultPickerIcon,
+=======
+      defaultPickerIcon: _uppy_provider_views__WEBPACK_IMPORTED_MODULE_6__.defaultPickerIcon,
+>>>>>>> feature/publication-datetimetype
       showLinkToFileUploadResult: false,
       showProgressDetails: false,
       hideUploadButton: false,
@@ -20314,7 +23235,11 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       hidePauseResumeButton: false,
       hideProgressAfterFinish: false,
       doneButtonHandler: () => {
+<<<<<<< HEAD
         this.uppy.cancelAll();
+=======
+        this.uppy.clearUploadedFiles();
+>>>>>>> feature/publication-datetimetype
         this.requestCloseModal();
       },
       note: null,
@@ -20338,6 +23263,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       autoOpenFileEditor: false,
       disabled: false,
       disableLocalFiles: false
+<<<<<<< HEAD
     }; // merge default options with the ones set by user
 
     this.opts = { ...defaultOptions,
@@ -20351,6 +23277,23 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
     this.removeDragOverClassTimeout = null;
   }
 
+=======
+    };
+
+    // merge default options with the ones set by user
+    this.opts = {
+      ...defaultOptions,
+      ..._opts
+    };
+    this.i18nInit();
+    this.superFocus = (0,_utils_createSuperFocus_js__WEBPACK_IMPORTED_MODULE_8__["default"])();
+    this.ifFocusedOnUppyRecently = false;
+
+    // Timeouts
+    this.makeDashboardInsidesVisibleAnywayTimeout = null;
+    this.removeDragOverClassTimeout = null;
+  }
+>>>>>>> feature/publication-datetimetype
 }
 Dashboard.VERSION = packageJson.version;
 
@@ -20370,6 +23313,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
 let _Symbol$for;
 
+<<<<<<< HEAD
 
 _Symbol$for = Symbol.for('uppy test: disable unused locale key warning');
 
@@ -20395,15 +23339,42 @@ class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
 
     this.onFileInputChange = event => {
       this.props.handleInputChange(event); // We clear the input after a file is selected, because otherwise
+=======
+_Symbol$for = Symbol.for('uppy test: disable unused locale key warning');
+class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
+  constructor() {
+    super(...arguments);
+    this.triggerFileInputClick = () => {
+      this.fileInput.click();
+    };
+    this.triggerFolderInputClick = () => {
+      this.folderInput.click();
+    };
+    this.triggerVideoCameraInputClick = () => {
+      this.mobileVideoFileInput.click();
+    };
+    this.triggerPhotoCameraInputClick = () => {
+      this.mobilePhotoFileInput.click();
+    };
+    this.onFileInputChange = event => {
+      this.props.handleInputChange(event);
+
+      // We clear the input after a file is selected, because otherwise
+>>>>>>> feature/publication-datetimetype
       // change event is not fired in Chrome and Safari when a file
       // with the same name is selected.
       // ___Why not use value="" on <input/> instead?
       //    Because if we use that method of clearing the input,
       //    Chrome will not trigger change if we drop the same file twice (Issue #768).
+<<<<<<< HEAD
 
       event.target.value = null; // eslint-disable-line no-param-reassign
     };
 
+=======
+      event.target.value = null; // eslint-disable-line no-param-reassign
+    };
+>>>>>>> feature/publication-datetimetype
     this.renderHiddenInput = (isFolder, refCallback) => {
       return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("input", {
         className: "uppy-Dashboard-input",
@@ -20419,7 +23390,10 @@ class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
         ref: refCallback
       });
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.renderHiddenCameraInput = (type, nativeCameraFacingMode, refCallback) => {
       const typeToAccept = {
         photo: 'image/*',
@@ -20439,7 +23413,10 @@ class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
         ref: refCallback
       });
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.renderMyDeviceAcquirer = () => {
       return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
         className: "uppy-DashboardTab",
@@ -20469,7 +23446,10 @@ class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
         className: "uppy-DashboardTab-name"
       }, this.props.i18n('myDevice'))));
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.renderPhotoCamera = () => {
       return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
         className: "uppy-DashboardTab",
@@ -20498,7 +23478,10 @@ class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
         className: "uppy-DashboardTab-name"
       }, this.props.i18n('takePictureBtn'))));
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.renderVideoCamera = () => {
       return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
         className: "uppy-DashboardTab",
@@ -20526,7 +23509,10 @@ class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
         className: "uppy-DashboardTab-name"
       }, this.props.i18n('recordVideoBtn'))));
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.renderBrowseButton = (text, onClickFn) => {
       const numberOfAcquirers = this.props.acquirers.length;
       return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("button", {
@@ -20536,17 +23522,31 @@ class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
         "data-uppy-super-focusable": numberOfAcquirers === 0
       }, text);
     };
+<<<<<<< HEAD
 
     this.renderDropPasteBrowseTagline = numberOfAcquirers => {
       const browseFiles = this.renderBrowseButton(this.props.i18n('browseFiles'), this.triggerFileInputClick);
       const browseFolders = this.renderBrowseButton(this.props.i18n('browseFolders'), this.triggerFolderInputClick); // in order to keep the i18n CamelCase and options lower (as are defaults) we will want to transform a lower
       // to Camel
 
+=======
+    this.renderDropPasteBrowseTagline = numberOfAcquirers => {
+      const browseFiles = this.renderBrowseButton(this.props.i18n('browseFiles'), this.triggerFileInputClick);
+      const browseFolders = this.renderBrowseButton(this.props.i18n('browseFolders'), this.triggerFolderInputClick);
+
+      // in order to keep the i18n CamelCase and options lower (as are defaults) we will want to transform a lower
+      // to Camel
+>>>>>>> feature/publication-datetimetype
       const lowerFMSelectionType = this.props.fileManagerSelectionType;
       const camelFMSelectionType = lowerFMSelectionType.charAt(0).toUpperCase() + lowerFMSelectionType.slice(1);
       return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
         class: "uppy-Dashboard-AddFiles-title"
+<<<<<<< HEAD
       }, // eslint-disable-next-line no-nested-ternary
+=======
+      },
+      // eslint-disable-next-line no-nested-ternary
+>>>>>>> feature/publication-datetimetype
       this.props.disableLocalFiles ? this.props.i18n('importFiles') : numberOfAcquirers > 0 ? this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, {
         browseFiles,
         browseFolders,
@@ -20557,7 +23557,10 @@ class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
         browse: browseFiles
       }));
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.renderAcquirer = acquirer => {
       return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
         className: "uppy-DashboardTab",
@@ -20579,7 +23582,10 @@ class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
         className: "uppy-DashboardTab-name"
       }, acquirer.name)));
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.renderAcquirers = acquirers => {
       // Group last two buttons, so we don’t end up with
       // just one button on a new line
@@ -20592,7 +23598,10 @@ class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
         }
       }, lastTwoAcquirers.map(acquirer => this.renderAcquirer(acquirer))));
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.renderSourcesList = (acquirers, disableLocalFiles) => {
       const {
         showNativePhotoCameraButton,
@@ -20600,7 +23609,10 @@ class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
       } = this.props;
       let list = [];
       const myDeviceKey = 'myDevice';
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       if (!disableLocalFiles) {
         list.push({
           key: myDeviceKey,
@@ -20615,6 +23627,7 @@ class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
           elements: this.renderVideoCamera()
         });
       }
+<<<<<<< HEAD
 
       list.push(...acquirers.map(acquirer => ({
         key: acquirer.id,
@@ -20628,6 +23641,21 @@ class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
       const listWithoutLastTwo = [...list];
       const lastTwo = listWithoutLastTwo.splice(list.length - 2, list.length);
 
+=======
+      list.push(...acquirers.map(acquirer => ({
+        key: acquirer.id,
+        elements: this.renderAcquirer(acquirer)
+      })));
+
+      // doesn't make sense to show only a lonely "My Device"
+      const hasOnlyMyDevice = list.length === 1 && list[0].key === myDeviceKey;
+      if (hasOnlyMyDevice) list = [];
+
+      // Group last two buttons, so we don’t end up with
+      // just one button on a new line
+      const listWithoutLastTwo = [...list];
+      const lastTwo = listWithoutLastTwo.splice(list.length - 2, list.length);
+>>>>>>> feature/publication-datetimetype
       const renderList = l => l.map(_ref => {
         let {
           key,
@@ -20637,7 +23665,10 @@ class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
           key: key
         }, elements);
       });
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(preact__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, this.renderDropPasteBrowseTagline(list.length), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
         className: "uppy-Dashboard-AddFiles-list",
         role: "tablist"
@@ -20649,7 +23680,10 @@ class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
       }, renderList(lastTwo))));
     };
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   [_Symbol$for]() {
     // Those are actually used in `renderDropPasteBrowseTagline` method.
     this.props.i18nArray('dropPasteBoth');
@@ -20659,7 +23693,10 @@ class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
     this.props.i18nArray('dropPasteImportFiles');
     this.props.i18nArray('dropPasteImportFolders');
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   renderPoweredByUppy() {
     const {
       i18nArray
@@ -20688,7 +23725,10 @@ class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
       className: "uppy-Dashboard-poweredBy"
     }, linkText);
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   render() {
     const {
       showNativePhotoCameraButton,
@@ -20711,9 +23751,13 @@ class AddFiles extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
       className: "uppy-Dashboard-note"
     }, this.props.note), this.props.proudlyDisplayPoweredByUppy && this.renderPoweredByUppy(this.props)));
   }
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> feature/publication-datetimetype
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (AddFiles);
 
 /***/ }),
@@ -20735,12 +23779,19 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 const AddFilesPanel = props => {
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
     className: classnames__WEBPACK_IMPORTED_MODULE_1__('uppy-Dashboard-AddFilesPanel', props.className),
     "data-uppy-panelType": "AddFiles",
+<<<<<<< HEAD
     "aria-hidden": props.showAddFilesPanel
+=======
+    "aria-hidden": !props.showAddFilesPanel
+>>>>>>> feature/publication-datetimetype
   }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
     className: "uppy-DashboardContent-bar"
   }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
@@ -20753,7 +23804,10 @@ const AddFilesPanel = props => {
     onClick: () => props.toggleAddFilesPanel(false)
   }, props.i18n('back'))), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_AddFiles_js__WEBPACK_IMPORTED_MODULE_2__["default"], props));
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (AddFilesPanel);
 
 /***/ }),
@@ -20792,13 +23846,23 @@ function _extends() { _extends = Object.assign ? Object.assign.bind() : function
 
 
 
+<<<<<<< HEAD
  // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
+=======
+
+// http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
+>>>>>>> feature/publication-datetimetype
 // https://github.com/ghosh/micromodal
 
 const WIDTH_XL = 900;
 const WIDTH_LG = 700;
 const WIDTH_MD = 576;
+<<<<<<< HEAD
 const HEIGHT_MD = 330; // We might want to enable this in the future
+=======
+const HEIGHT_MD = 330;
+// We might want to enable this in the future
+>>>>>>> feature/publication-datetimetype
 // const HEIGHT_LG = 400
 // const HEIGHT_XL = 460
 
@@ -20825,10 +23889,17 @@ function Dashboard(props) {
     'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible,
     // Only enable “centered single file” mode when Dashboard is tall enough
     'uppy-Dashboard--singleFile': props.singleFileFullScreen && isSingleFile && isSizeHeightMD
+<<<<<<< HEAD
   }); // Important: keep these in sync with the percent width values in `src/components/FileItem/index.scss`.
 
   let itemsPerRow = 1; // mobile
 
+=======
+  });
+
+  // Important: keep these in sync with the percent width values in `src/components/FileItem/index.scss`.
+  let itemsPerRow = 1; // mobile
+>>>>>>> feature/publication-datetimetype
   if (props.containerWidth > WIDTH_XL) {
     itemsPerRow = 5;
   } else if (props.containerWidth > WIDTH_LG) {
@@ -20836,21 +23907,32 @@ function Dashboard(props) {
   } else if (props.containerWidth > WIDTH_MD) {
     itemsPerRow = 3;
   }
+<<<<<<< HEAD
 
   const showFileList = props.showSelectedFiles && !isNoFiles;
   const numberOfFilesForRecovery = props.recoveredState ? Object.keys(props.recoveredState.files).length : null;
   const numberOfGhosts = props.files ? Object.keys(props.files).filter(fileID => props.files[fileID].isGhost).length : null;
 
+=======
+  const showFileList = props.showSelectedFiles && !isNoFiles;
+  const numberOfFilesForRecovery = props.recoveredState ? Object.keys(props.recoveredState.files).length : null;
+  const numberOfGhosts = props.files ? Object.keys(props.files).filter(fileID => props.files[fileID].isGhost).length : null;
+>>>>>>> feature/publication-datetimetype
   const renderRestoredText = () => {
     if (numberOfGhosts > 0) {
       return props.i18n('recoveredXFiles', {
         smart_count: numberOfGhosts
       });
     }
+<<<<<<< HEAD
 
     return props.i18n('recoveredAllFiles');
   };
 
+=======
+    return props.i18n('recoveredAllFiles');
+  };
+>>>>>>> feature/publication-datetimetype
   const dashboard = (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
     className: dashboardClassName,
     "data-uppy-theme": props.theme,
@@ -20941,7 +24023,12 @@ function Dashboard(props) {
     toggleAddFilesPanel: props.toggleAddFilesPanel,
     isSingleFile: isSingleFile,
     itemsPerRow: itemsPerRow
+<<<<<<< HEAD
   }) : // eslint-disable-next-line react/jsx-props-no-spreading
+=======
+  }) :
+  // eslint-disable-next-line react/jsx-props-no-spreading
+>>>>>>> feature/publication-datetimetype
   (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_AddFiles_js__WEBPACK_IMPORTED_MODULE_4__["default"], _extends({}, props, {
     isSizeMD: isSizeMD
   })), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_Slide_js__WEBPACK_IMPORTED_MODULE_10__["default"], null, props.showAddFilesPanel ? (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_AddFilesPanel_js__WEBPACK_IMPORTED_MODULE_5__["default"], _extends({
@@ -20979,9 +24066,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
 
 
+<<<<<<< HEAD
 
 function EditorPanel(props) {
   const file = props.files[props.fileCardFor];
+=======
+function EditorPanel(props) {
+  const file = props.files[props.fileCardFor];
+  const handleCancel = () => {
+    props.uppy.emit('file-editor:cancel', file);
+    props.hideAllPanels();
+  };
+>>>>>>> feature/publication-datetimetype
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
     className: classnames__WEBPACK_IMPORTED_MODULE_1__('uppy-DashboardContent-panel', props.className),
     role: "tabpanel",
@@ -21000,7 +24096,11 @@ function EditorPanel(props) {
   })), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("button", {
     className: "uppy-DashboardContent-back",
     type: "button",
+<<<<<<< HEAD
     onClick: props.hideAllPanels
+=======
+    onClick: handleCancel
+>>>>>>> feature/publication-datetimetype
   }, props.i18n('cancel')), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("button", {
     className: "uppy-DashboardContent-save",
     type: "button",
@@ -21011,7 +24111,10 @@ function EditorPanel(props) {
     return props.uppy.getPlugin(target.id).render(props.state);
   })));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (EditorPanel);
 
 /***/ }),
@@ -21100,9 +24203,13 @@ __webpack_require__.r(__webpack_exports__);
 
 function FileCard(props) {
   var _getMetaFields;
+<<<<<<< HEAD
 
   const {
     uppy,
+=======
+  const {
+>>>>>>> feature/publication-datetimetype
     files,
     fileCardFor,
     toggleFileCard,
@@ -21115,18 +24222,27 @@ function FileCard(props) {
     className,
     canEditFile
   } = props;
+<<<<<<< HEAD
 
   const getMetaFields = () => {
     return typeof metaFields === 'function' ? metaFields(files[fileCardFor]) : metaFields;
   };
 
+=======
+  const getMetaFields = () => {
+    return typeof metaFields === 'function' ? metaFields(files[fileCardFor]) : metaFields;
+  };
+>>>>>>> feature/publication-datetimetype
   const file = files[fileCardFor];
   const computedMetaFields = (_getMetaFields = getMetaFields()) != null ? _getMetaFields : [];
   const showEditButton = canEditFile(file);
   const storedMetaData = {};
   computedMetaFields.forEach(field => {
     var _file$meta$field$id;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     storedMetaData[field.id] = (_file$meta$field$id = file.meta[field.id]) != null ? _file$meta$field$id : '';
   });
   const [formState, setFormState] = (0,preact_hooks__WEBPACK_IMPORTED_MODULE_1__.useState)(storedMetaData);
@@ -21134,6 +24250,7 @@ function FileCard(props) {
     ev.preventDefault();
     saveFileCard(formState, fileCardFor);
   }, [saveFileCard, formState, fileCardFor]);
+<<<<<<< HEAD
 
   const updateMeta = (newVal, name) => {
     setFormState({
@@ -21146,6 +24263,17 @@ function FileCard(props) {
     toggleFileCard(false);
   };
 
+=======
+  const updateMeta = (newVal, name) => {
+    setFormState({
+      ...formState,
+      [name]: newVal
+    });
+  };
+  const handleCancel = () => {
+    toggleFileCard(false);
+  };
+>>>>>>> feature/publication-datetimetype
   const [form] = (0,preact_hooks__WEBPACK_IMPORTED_MODULE_1__.useState)(() => {
     const formEl = document.createElement('form');
     formEl.setAttribute('tabindex', '-1');
@@ -21214,7 +24342,12 @@ function FileCard(props) {
   })), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
     className: "uppy-Dashboard-FileCard-actions"
   }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("button", {
+<<<<<<< HEAD
     className: "uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn" // If `form` attribute is supported, we want a submit button to trigger the form validation.
+=======
+    className: "uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn"
+    // If `form` attribute is supported, we want a submit button to trigger the form validation.
+>>>>>>> feature/publication-datetimetype
     // Otherwise, fallback to a classic button with a onClick event handler.
     ,
     type: "submit",
@@ -21244,7 +24377,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_copyToClipboard_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../utils/copyToClipboard.js */ "./node_modules/@uppy/dashboard/lib/utils/copyToClipboard.js");
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function EditButton(_ref) {
   let {
     file,
@@ -21254,7 +24390,10 @@ function EditButton(_ref) {
     i18n,
     onClick
   } = _ref;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   if (!uploadInProgressOrComplete && metaFields && metaFields.length > 0 || !uploadInProgressOrComplete && canEditFile(file)) {
     return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("button", {
       className: "uppy-u-reset uppy-c-btn uppy-Dashboard-Item-action uppy-Dashboard-Item-action--edit",
@@ -21289,10 +24428,15 @@ function EditButton(_ref) {
       d: "M6.793 2.5L9.5 5.207l.707-.707L7.5 1.793z"
     }))));
   }
+<<<<<<< HEAD
 
   return null;
 }
 
+=======
+  return null;
+}
+>>>>>>> feature/publication-datetimetype
 function RemoveButton(_ref2) {
   let {
     i18n,
@@ -21323,17 +24467,28 @@ function RemoveButton(_ref2) {
     d: "M13 12.222l-.778.778L9 9.778 5.778 13 5 12.222 8.222 9 5 5.778 5.778 5 9 8.222 12.222 5l.778.778L9.778 9z"
   })));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 const copyLinkToClipboard = (event, props) => {
   (0,_utils_copyToClipboard_js__WEBPACK_IMPORTED_MODULE_1__["default"])(props.file.uploadURL, props.i18n('copyLinkToClipboardFallback')).then(() => {
     props.uppy.log('Link copied to clipboard.');
     props.uppy.info(props.i18n('copyLinkToClipboardSuccess'), 'info', 3000);
+<<<<<<< HEAD
   }).catch(props.uppy.log) // avoid losing focus
+=======
+  }).catch(props.uppy.log)
+  // avoid losing focus
+>>>>>>> feature/publication-datetimetype
   .then(() => event.target.focus({
     preventScroll: true
   }));
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function CopyLinkButton(props) {
   const {
     i18n
@@ -21355,7 +24510,10 @@ function CopyLinkButton(props) {
     d: "M7.94 7.703a2.613 2.613 0 0 1-.626 2.681l-.852.851a2.597 2.597 0 0 1-1.849.766A2.616 2.616 0 0 1 2.764 7.54l.852-.852a2.596 2.596 0 0 1 2.69-.625L5.267 7.099a1.44 1.44 0 0 0-.833.407l-.852.851a1.458 1.458 0 0 0 1.03 2.486c.39 0 .755-.152 1.03-.426l.852-.852c.231-.231.363-.522.406-.824l1.04-1.038zm4.295-5.937A2.596 2.596 0 0 0 10.387 1c-.698 0-1.355.272-1.849.766l-.852.851a2.614 2.614 0 0 0-.624 2.688l1.036-1.036c.041-.304.173-.6.407-.833l.852-.852c.275-.275.64-.426 1.03-.426a1.458 1.458 0 0 1 1.03 2.486l-.852.851a1.442 1.442 0 0 1-.824.406l-1.04 1.04a2.596 2.596 0 0 0 2.683-.628l.851-.85a2.616 2.616 0 0 0 0-3.697zm-6.88 6.883a.577.577 0 0 0 .82 0l3.474-3.474a.579.579 0 1 0-.819-.82L5.355 7.83a.579.579 0 0 0 0 .819z"
   })));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function Buttons(props) {
   const {
     uppy,
@@ -21369,7 +24527,10 @@ function Buttons(props) {
     toggleFileCard,
     openFileEditor
   } = props;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   const editAction = () => {
     if (metaFields && metaFields.length > 0) {
       toggleFileCard(true, file.id);
@@ -21377,7 +24538,10 @@ function Buttons(props) {
       openFileEditor(file);
     }
   };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
     className: "uppy-Dashboard-Item-actionWrapper"
   }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(EditButton, {
@@ -21420,17 +24584,24 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 const renderFileName = props => {
   const {
     author,
     name
   } = props.file.meta;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   function getMaxNameLength() {
     if (props.isSingleFile && props.containerHeight >= 350) {
       return 90;
     }
+<<<<<<< HEAD
 
     if (props.containerWidth <= 352) {
       return 35;
@@ -21446,12 +24617,28 @@ const renderFileName = props => {
     return author ? 20 : 30;
   }
 
+=======
+    if (props.containerWidth <= 352) {
+      return 35;
+    }
+    if (props.containerWidth <= 576) {
+      return 60;
+    }
+    // When `author` is present, we want to make sure
+    // the file name fits on one line so we can place
+    // the author on the second line.
+    return author ? 20 : 30;
+  }
+>>>>>>> feature/publication-datetimetype
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
     className: "uppy-Dashboard-Item-name",
     title: name
   }, (0,_uppy_utils_lib_truncateString__WEBPACK_IMPORTED_MODULE_2__["default"])(name, getMaxNameLength()));
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 const renderAuthor = props => {
   const {
     author
@@ -21460,11 +24647,17 @@ const renderAuthor = props => {
     providerName
   } = props.file.remote;
   const dot = `\u00B7`;
+<<<<<<< HEAD
 
   if (!author) {
     return null;
   }
 
+=======
+  if (!author) {
+    return null;
+  }
+>>>>>>> feature/publication-datetimetype
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
     className: "uppy-Dashboard-Item-author"
   }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("a", {
@@ -21473,23 +24666,35 @@ const renderAuthor = props => {
     rel: "noopener noreferrer"
   }, (0,_uppy_utils_lib_truncateString__WEBPACK_IMPORTED_MODULE_2__["default"])(author.name, 13)), providerName ? (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(preact__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, ` ${dot} `, providerName, ` ${dot} `) : null);
 };
+<<<<<<< HEAD
 
 const renderFileSize = props => props.file.size && (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
   className: "uppy-Dashboard-Item-statusSize"
 }, _transloadit_prettier_bytes__WEBPACK_IMPORTED_MODULE_1__(props.file.size));
 
+=======
+const renderFileSize = props => props.file.size && (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+  className: "uppy-Dashboard-Item-statusSize"
+}, _transloadit_prettier_bytes__WEBPACK_IMPORTED_MODULE_1__(props.file.size));
+>>>>>>> feature/publication-datetimetype
 const ReSelectButton = props => props.file.isGhost && (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("span", null, ' \u2022 ', (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("button", {
   className: "uppy-u-reset uppy-c-btn uppy-Dashboard-Item-reSelect",
   type: "button",
   onClick: props.toggleAddFilesPanel
 }, props.i18n('reSelect')));
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 const ErrorButton = _ref => {
   let {
     file,
     onClick
   } = _ref;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   if (file.error) {
     return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("button", {
       className: "uppy-u-reset uppy-c-btn uppy-Dashboard-Item-errorDetails",
@@ -21500,10 +24705,15 @@ const ErrorButton = _ref => {
       type: "button"
     }, "?");
   }
+<<<<<<< HEAD
 
   return null;
 };
 
+=======
+  return null;
+};
+>>>>>>> feature/publication-datetimetype
 function FileInfo(props) {
   const {
     file
@@ -21514,10 +24724,17 @@ function FileInfo(props) {
   }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
     className: "uppy-Dashboard-Item-fileName"
   }, renderFileName(props), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(ErrorButton, {
+<<<<<<< HEAD
     file: props.file // eslint-disable-next-line no-alert
     ,
     onClick: () => alert(props.file.error) // TODO: move to a custom alert implementation
 
+=======
+    file: props.file
+    // eslint-disable-next-line no-alert
+    ,
+    onClick: () => alert(props.file.error) // TODO: move to a custom alert implementation
+>>>>>>> feature/publication-datetimetype
   })), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
     className: "uppy-Dashboard-Item-status"
   }, renderAuthor(props), renderFileSize(props), ReSelectButton(props)), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_MetaErrorMessage_js__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -21597,35 +24814,53 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
 
+<<<<<<< HEAD
 
 function onPauseResumeCancelRetry(props) {
   if (props.isUploaded) return;
 
+=======
+function onPauseResumeCancelRetry(props) {
+  if (props.isUploaded) return;
+>>>>>>> feature/publication-datetimetype
   if (props.error && !props.hideRetryButton) {
     props.uppy.retryUpload(props.file.id);
     return;
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   if (props.resumableUploads && !props.hidePauseResumeButton) {
     props.uppy.pauseResume(props.file.id);
   } else if (props.individualCancellation && !props.hideCancelButton) {
     props.uppy.removeFile(props.file.id);
   }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function progressIndicatorTitle(props) {
   if (props.isUploaded) {
     return props.i18n('uploadComplete');
   }
+<<<<<<< HEAD
 
   if (props.error) {
     return props.i18n('retryUpload');
   }
 
+=======
+  if (props.error) {
+    return props.i18n('retryUpload');
+  }
+>>>>>>> feature/publication-datetimetype
   if (props.resumableUploads) {
     if (props.file.isPaused) {
       return props.i18n('resumeUpload');
     }
+<<<<<<< HEAD
 
     return props.i18n('pauseUpload');
   }
@@ -21637,6 +24872,15 @@ function progressIndicatorTitle(props) {
   return '';
 }
 
+=======
+    return props.i18n('pauseUpload');
+  }
+  if (props.individualCancellation) {
+    return props.i18n('cancelUpload');
+  }
+  return '';
+}
+>>>>>>> feature/publication-datetimetype
 function ProgressIndicatorButton(props) {
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
     className: "uppy-Dashboard-Item-progress"
@@ -21648,7 +24892,10 @@ function ProgressIndicatorButton(props) {
     onClick: () => onPauseResumeCancelRetry(props)
   }, props.children));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function ProgressCircleContainer(_ref) {
   let {
     children
@@ -21662,7 +24909,10 @@ function ProgressCircleContainer(_ref) {
     className: "uppy-c-icon uppy-Dashboard-Item-progressIcon--circle"
   }, children);
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function ProgressCircle(_ref2) {
   let {
     progress
@@ -21688,14 +24938,23 @@ function ProgressCircle(_ref2) {
     "stroke-dashoffset": circleLength - circleLength / 100 * progress
   }));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function FileProgress(props) {
   // Nothing if upload has not started
   if (!props.file.progress.uploadStarted) {
     return null;
+<<<<<<< HEAD
   } // Green checkmark when complete
 
 
+=======
+  }
+
+  // Green checkmark when complete
+>>>>>>> feature/publication-datetimetype
   if (props.isUploaded) {
     return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
       className: "uppy-Dashboard-Item-progress"
@@ -21712,6 +24971,7 @@ function FileProgress(props) {
       points: "14 22.5 7 15.2457065 8.99985857 13.1732815 14 18.3547104 22.9729883 9 25 11.1005634"
     }))));
   }
+<<<<<<< HEAD
 
   if (props.recoveredState) {
     return undefined;
@@ -21720,6 +24980,16 @@ function FileProgress(props) {
 
   if (props.error && !props.hideRetryButton) {
     return (// eslint-disable-next-line react/jsx-props-no-spreading
+=======
+  if (props.recoveredState) {
+    return undefined;
+  }
+
+  // Retry button for error
+  if (props.error && !props.hideRetryButton) {
+    return (
+      // eslint-disable-next-line react/jsx-props-no-spreading
+>>>>>>> feature/publication-datetimetype
       (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(ProgressIndicatorButton, props, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
         "aria-hidden": "true",
         focusable: "false",
@@ -21737,11 +25007,20 @@ function FileProgress(props) {
         d: "M10.657 2.621l1.414 1.415L8.536 7.57 7.12 6.157z"
       })))
     );
+<<<<<<< HEAD
   } // Pause/resume button for resumable uploads
 
 
   if (props.resumableUploads && !props.hidePauseResumeButton) {
     return (// eslint-disable-next-line react/jsx-props-no-spreading
+=======
+  }
+
+  // Pause/resume button for resumable uploads
+  if (props.resumableUploads && !props.hidePauseResumeButton) {
+    return (
+      // eslint-disable-next-line react/jsx-props-no-spreading
+>>>>>>> feature/publication-datetimetype
       (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(ProgressIndicatorButton, props, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(ProgressCircleContainer, null, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(ProgressCircle, {
         progress: props.file.progress.percentage
       }), props.file.isPaused ? (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("polygon", {
@@ -21765,11 +25044,20 @@ function FileProgress(props) {
         rx: "0"
       }))))
     );
+<<<<<<< HEAD
   } // Cancel button for non-resumable uploads if individualCancellation is supported (not bundled)
 
 
   if (!props.resumableUploads && props.individualCancellation && !props.hideCancelButton) {
     return (// eslint-disable-next-line react/jsx-props-no-spreading
+=======
+  }
+
+  // Cancel button for non-resumable uploads if individualCancellation is supported (not bundled)
+  if (!props.resumableUploads && props.individualCancellation && !props.hideCancelButton) {
+    return (
+      // eslint-disable-next-line react/jsx-props-no-spreading
+>>>>>>> feature/publication-datetimetype
       (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(ProgressIndicatorButton, props, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(ProgressCircleContainer, null, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(ProgressCircle, {
         progress: props.file.progress.percentage
       }), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("polygon", {
@@ -21778,9 +25066,15 @@ function FileProgress(props) {
         points: "19.8856516 11.0625 16 14.9481516 12.1019737 11.0625 11.0625 12.1143484 14.9481516 16 11.0625 19.8980263 12.1019737 20.9375 16 17.0518484 19.8856516 20.9375 20.9375 19.8980263 17.0518484 16 20.9375 12"
       })))
     );
+<<<<<<< HEAD
   } // Just progress when buttons are disabled
 
 
+=======
+  }
+
+  // Just progress when buttons are disabled
+>>>>>>> feature/publication-datetimetype
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
     className: "uppy-Dashboard-Item-progress"
   }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
@@ -21805,13 +25099,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 const metaFieldIdToName = (metaFieldId, metaFields) => {
   const fields = typeof metaFields === 'function' ? metaFields() : metaFields;
   const field = fields.filter(f => f.id === metaFieldId);
   return field[0].name;
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function renderMissingMetaFieldsError(props) {
   const {
     file,
@@ -21822,11 +25122,17 @@ function renderMissingMetaFieldsError(props) {
   const {
     missingRequiredMetaFields
   } = file;
+<<<<<<< HEAD
 
   if (!(missingRequiredMetaFields != null && missingRequiredMetaFields.length)) {
     return null;
   }
 
+=======
+  if (!(missingRequiredMetaFields != null && missingRequiredMetaFields.length)) {
+    return null;
+  }
+>>>>>>> feature/publication-datetimetype
   const metaFieldsString = missingRequiredMetaFields.map(missingMetaField => metaFieldIdToName(missingMetaField, metaFields)).join(', ');
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
     className: "uppy-Dashboard-Item-errorMessage"
@@ -21872,11 +25178,15 @@ class FileItem extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
     const {
       file
     } = this.props;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (!file.preview) {
       this.props.handleRequestThumbnail(file);
     }
   }
+<<<<<<< HEAD
 
   shouldComponentUpdate(nextProps) {
     return !is_shallow_equal__WEBPACK_IMPORTED_MODULE_2__(this.props, nextProps);
@@ -21884,26 +25194,46 @@ class FileItem extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
   // Otherwise thumbnails are broken or missing after Golden Retriever restores files
 
 
+=======
+  shouldComponentUpdate(nextProps) {
+    return !is_shallow_equal__WEBPACK_IMPORTED_MODULE_2__(this.props, nextProps);
+  }
+
+  // VirtualList mounts FileItems again and they emit `thumbnail:request`
+  // Otherwise thumbnails are broken or missing after Golden Retriever restores files
+>>>>>>> feature/publication-datetimetype
   componentDidUpdate() {
     const {
       file
     } = this.props;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (!file.preview) {
       this.props.handleRequestThumbnail(file);
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   componentWillUnmount() {
     const {
       file
     } = this.props;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (!file.preview) {
       this.props.handleCancelThumbnail(file);
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   render() {
     const {
       file
@@ -21912,18 +25242,31 @@ class FileItem extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
     const isUploaded = file.progress.uploadComplete && !isProcessing && !file.error;
     const uploadInProgressOrComplete = file.progress.uploadStarted || isProcessing;
     const uploadInProgress = file.progress.uploadStarted && !file.progress.uploadComplete || isProcessing;
+<<<<<<< HEAD
     const error = file.error || false; // File that Golden Retriever was able to partly restore (only meta, not blob),
     // users still need to re-add it, so it’s a ghost
 
+=======
+    const error = file.error || false;
+
+    // File that Golden Retriever was able to partly restore (only meta, not blob),
+    // users still need to re-add it, so it’s a ghost
+>>>>>>> feature/publication-datetimetype
     const {
       isGhost
     } = file;
     let showRemoveButton = this.props.individualCancellation ? !isUploaded : !uploadInProgress && !isUploaded;
+<<<<<<< HEAD
 
     if (isUploaded && this.props.showRemoveButtonAfterComplete) {
       showRemoveButton = true;
     }
 
+=======
+    if (isUploaded && this.props.showRemoveButtonAfterComplete) {
+      showRemoveButton = true;
+    }
+>>>>>>> feature/publication-datetimetype
     const dashboardItemClass = classnames__WEBPACK_IMPORTED_MODULE_1__({
       'uppy-Dashboard-Item': true,
       'is-inprogress': uploadInProgress && !this.props.recoveredState,
@@ -21985,7 +25328,10 @@ class FileItem extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
       i18n: this.props.i18n
     })));
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 }
 
 /***/ }),
@@ -22003,9 +25349,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
 /* harmony import */ var preact_hooks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! preact/hooks */ "./node_modules/preact/hooks/dist/hooks.module.js");
+<<<<<<< HEAD
 /* harmony import */ var _FileItem_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./FileItem/index.js */ "./node_modules/@uppy/dashboard/lib/components/FileItem/index.js");
 /* harmony import */ var _VirtualList_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./VirtualList.js */ "./node_modules/@uppy/dashboard/lib/components/VirtualList.js");
 
+=======
+/* harmony import */ var _uppy_utils_lib_VirtualList__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/utils/lib/VirtualList */ "./node_modules/@uppy/utils/lib/VirtualList.js");
+/* harmony import */ var _FileItem_index_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./FileItem/index.js */ "./node_modules/@uppy/dashboard/lib/components/FileItem/index.js");
+>>>>>>> feature/publication-datetimetype
 
 
 
@@ -22024,7 +25375,10 @@ function chunks(list, size) {
   if (currentChunk.length) chunked.push(currentChunk);
   return chunked;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_ref => {
   let {
     id,
@@ -22056,6 +25410,7 @@ function chunks(list, size) {
   } = _ref;
   // It's not great that this is hardcoded!
   // It's ESPECIALLY not great that this is checking against `itemsPerRow`!
+<<<<<<< HEAD
   const rowHeight = itemsPerRow === 1 // Mobile
   ? 71 // 190px height + 2 * 5px margin
   : 200; // Sort files by file.isGhost, ghost files first, only if recoveredState is present
@@ -22063,18 +25418,35 @@ function chunks(list, size) {
   const rows = (0,preact_hooks__WEBPACK_IMPORTED_MODULE_1__.useMemo)(() => {
     const sortByGhostComesFirst = (file1, file2) => files[file2].isGhost - files[file1].isGhost;
 
+=======
+  const rowHeight = itemsPerRow === 1
+  // Mobile
+  ? 71
+  // 190px height + 2 * 5px margin
+  : 200;
+
+  // Sort files by file.isGhost, ghost files first, only if recoveredState is present
+  const rows = (0,preact_hooks__WEBPACK_IMPORTED_MODULE_1__.useMemo)(() => {
+    const sortByGhostComesFirst = (file1, file2) => files[file2].isGhost - files[file1].isGhost;
+>>>>>>> feature/publication-datetimetype
     const fileIds = Object.keys(files);
     if (recoveredState) fileIds.sort(sortByGhostComesFirst);
     return chunks(fileIds, itemsPerRow);
   }, [files, itemsPerRow, recoveredState]);
+<<<<<<< HEAD
 
   const renderRow = row => // The `role="presentation` attribute ensures that the list items are properly
+=======
+  const renderRow = row =>
+  // The `role="presentation` attribute ensures that the list items are properly
+>>>>>>> feature/publication-datetimetype
   // associated with the `VirtualList` element.
   // We use the first file ID as the key—this should not change across scroll rerenders
   (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
     class: "uppy-Dashboard-filesInner",
     role: "presentation",
     key: row[0]
+<<<<<<< HEAD
   }, row.map(fileID => (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_FileItem_index_js__WEBPACK_IMPORTED_MODULE_2__["default"], {
     key: fileID,
     uppy: uppy // FIXME This is confusing, it's actually the Dashboard's plugin ID
@@ -22087,6 +25459,24 @@ function chunks(list, size) {
     acquirers: acquirers,
     resumableUploads: resumableUploads,
     individualCancellation: individualCancellation // visual options
+=======
+  }, row.map(fileID => (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_FileItem_index_js__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    key: fileID,
+    uppy: uppy
+    // FIXME This is confusing, it's actually the Dashboard's plugin ID
+    ,
+    id: id,
+    error: error
+    // TODO move this to context
+    ,
+    i18n: i18n
+    // features
+    ,
+    acquirers: acquirers,
+    resumableUploads: resumableUploads,
+    individualCancellation: individualCancellation
+    // visual options
+>>>>>>> feature/publication-datetimetype
     ,
     hideRetryButton: hideRetryButton,
     hidePauseResumeButton: hidePauseResumeButton,
@@ -22098,7 +25488,12 @@ function chunks(list, size) {
     recoveredState: recoveredState,
     isSingleFile: isSingleFile,
     containerWidth: containerWidth,
+<<<<<<< HEAD
     containerHeight: containerHeight // callbacks
+=======
+    containerHeight: containerHeight
+    // callbacks
+>>>>>>> feature/publication-datetimetype
     ,
     toggleFileCard: toggleFileCard,
     handleRequestThumbnail: handleRequestThumbnail,
@@ -22109,14 +25504,21 @@ function chunks(list, size) {
     toggleAddFilesPanel: toggleAddFilesPanel,
     file: files[fileID]
   })));
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   if (isSingleFile) {
     return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
       class: "uppy-Dashboard-files"
     }, renderRow(rows[0]));
   }
+<<<<<<< HEAD
 
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_VirtualList_js__WEBPACK_IMPORTED_MODULE_3__["default"], {
+=======
+  return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_uppy_utils_lib_VirtualList__WEBPACK_IMPORTED_MODULE_2__["default"], {
+>>>>>>> feature/publication-datetimetype
     class: "uppy-Dashboard-files",
     role: "list",
     data: rows,
@@ -22146,7 +25548,10 @@ function FilePreview(props) {
   const {
     file
   } = props;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   if (file.preview) {
     return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("img", {
       className: "uppy-Dashboard-Item-previewImg",
@@ -22154,7 +25559,10 @@ function FilePreview(props) {
       src: file.preview
     });
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   const {
     color,
     icon
@@ -22201,7 +25609,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function PickerPanelContent(_ref) {
   let {
     activePickerPanel,
@@ -22236,7 +25647,10 @@ function PickerPanelContent(_ref) {
     className: "uppy-DashboardContent-panelBody"
   }, uppy.getPlugin(activePickerPanel.id).render(state)));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (PickerPanelContent);
 
 /***/ }),
@@ -22263,11 +25677,15 @@ const uploadStates = {
   STATE_COMPLETE: 'complete',
   STATE_PAUSED: 'paused'
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function getUploadingState(isAllErrored, isAllComplete, isAllPaused, files) {
   if (files === void 0) {
     files = {};
   }
+<<<<<<< HEAD
 
   if (isAllErrored) {
     return uploadStates.STATE_ERROR;
@@ -22301,14 +25719,47 @@ function getUploadingState(isAllErrored, isAllComplete, isAllPaused, files) {
     // being postprocessed, show the postprocess state.
 
 
+=======
+  if (isAllErrored) {
+    return uploadStates.STATE_ERROR;
+  }
+  if (isAllComplete) {
+    return uploadStates.STATE_COMPLETE;
+  }
+  if (isAllPaused) {
+    return uploadStates.STATE_PAUSED;
+  }
+  let state = uploadStates.STATE_WAITING;
+  const fileIDs = Object.keys(files);
+  for (let i = 0; i < fileIDs.length; i++) {
+    const {
+      progress
+    } = files[fileIDs[i]];
+    // If ANY files are being uploaded right now, show the uploading state.
+    if (progress.uploadStarted && !progress.uploadComplete) {
+      return uploadStates.STATE_UPLOADING;
+    }
+    // If files are being preprocessed AND postprocessed at this time, we show the
+    // preprocess state. If any files are being uploaded we show uploading.
+    if (progress.preprocess && state !== uploadStates.STATE_UPLOADING) {
+      state = uploadStates.STATE_PREPROCESSING;
+    }
+    // If NO files are being preprocessed or uploaded right now, but some files are
+    // being postprocessed, show the postprocess state.
+>>>>>>> feature/publication-datetimetype
     if (progress.postprocess && state !== uploadStates.STATE_UPLOADING && state !== uploadStates.STATE_PREPROCESSING) {
       state = uploadStates.STATE_POSTPROCESSING;
     }
   }
+<<<<<<< HEAD
 
   return state;
 }
 
+=======
+  return state;
+}
+>>>>>>> feature/publication-datetimetype
 function UploadStatus(_ref) {
   let {
     files,
@@ -22321,26 +25772,38 @@ function UploadStatus(_ref) {
     processingFiles
   } = _ref;
   const uploadingState = getUploadingState(isAllErrored, isAllComplete, isAllPaused, files);
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   switch (uploadingState) {
     case 'uploading':
       return i18n('uploadingXFiles', {
         smart_count: inProgressNotPausedFiles.length
       });
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     case 'preprocessing':
     case 'postprocessing':
       return i18n('processingXFiles', {
         smart_count: processingFiles.length
       });
+<<<<<<< HEAD
 
     case 'paused':
       return i18n('uploadPaused');
 
+=======
+    case 'paused':
+      return i18n('uploadPaused');
+>>>>>>> feature/publication-datetimetype
     case 'waiting':
       return i18n('xFilesSelected', {
         smart_count: newFiles.length
       });
+<<<<<<< HEAD
 
     case 'complete':
       return i18n('uploadComplete');
@@ -22352,6 +25815,15 @@ function UploadStatus(_ref) {
   }
 }
 
+=======
+    case 'complete':
+      return i18n('uploadComplete');
+    case 'error':
+      return i18n('error');
+    default:
+  }
+}
+>>>>>>> feature/publication-datetimetype
 function PanelTopBar(props) {
   const {
     i18n,
@@ -22363,13 +25835,21 @@ function PanelTopBar(props) {
   } = props;
   let {
     allowNewUpload
+<<<<<<< HEAD
   } = props; // TODO maybe this should be done in ../Dashboard.jsx, then just pass that down as `allowNewUpload`
 
+=======
+  } = props;
+  // TODO maybe this should be done in ../Dashboard.jsx, then just pass that down as `allowNewUpload`
+>>>>>>> feature/publication-datetimetype
   if (allowNewUpload && maxNumberOfFiles) {
     // eslint-disable-next-line react/destructuring-assignment
     allowNewUpload = props.totalFileCount < props.maxNumberOfFiles;
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
     className: "uppy-DashboardContent-bar"
   }, !isAllComplete && !hideCancelButton ? (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("button", {
@@ -22399,7 +25879,10 @@ function PanelTopBar(props) {
     className: "uppy-DashboardContent-addMoreCaption"
   }, i18n('addMore'))) : (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", null));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (PanelTopBar);
 
 /***/ }),
@@ -22421,6 +25904,10 @@ __webpack_require__.r(__webpack_exports__);
 
 const transitionName = 'uppy-transition-slideDownUp';
 const duration = 250;
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/publication-datetimetype
 /**
  * Vertical slide transition.
  *
@@ -22430,7 +25917,10 @@ const duration = 250;
  * but it should be simple to extend this for any type of single-element
  * transition by setting the CSS name and duration as props.
  */
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 class Slide extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
     super(props);
@@ -22438,10 +25928,17 @@ class Slide extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
       cachedChildren: null,
       className: ''
     };
+<<<<<<< HEAD
   } // TODO: refactor to stable lifecycle method
   // eslint-disable-next-line
 
 
+=======
+  }
+
+  // TODO: refactor to stable lifecycle method
+  // eslint-disable-next-line
+>>>>>>> feature/publication-datetimetype
   componentWillUpdate(nextProps) {
     const {
       cachedChildren
@@ -22450,8 +25947,14 @@ class Slide extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
     if (cachedChildren === child) return null;
     const patch = {
       cachedChildren: child
+<<<<<<< HEAD
     }; // Enter transition
 
+=======
+    };
+
+    // Enter transition
+>>>>>>> feature/publication-datetimetype
     if (child && !cachedChildren) {
       patch.className = `${transitionName}-enter`;
       cancelAnimationFrame(this.animationFrame);
@@ -22460,6 +25963,10 @@ class Slide extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
       this.animationFrame = requestAnimationFrame(() => {
         // Force it to render before we add the active class
         // this.base.getBoundingClientRect()
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/publication-datetimetype
         this.setState({
           className: `${transitionName}-enter ${transitionName}-enter-active`
         });
@@ -22469,9 +25976,15 @@ class Slide extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
           });
         }, duration);
       });
+<<<<<<< HEAD
     } // Leave transition
 
 
+=======
+    }
+
+    // Leave transition
+>>>>>>> feature/publication-datetimetype
     if (cachedChildren && !child && this.leaveTimeout === undefined) {
       patch.cachedChildren = cachedChildren;
       patch.className = `${transitionName}-leave`;
@@ -22489,33 +26002,52 @@ class Slide extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
           });
         }, duration);
       });
+<<<<<<< HEAD
     } // eslint-disable-next-line
 
 
     this.setState(patch);
   }
 
+=======
+    }
+
+    // eslint-disable-next-line
+    this.setState(patch);
+  }
+>>>>>>> feature/publication-datetimetype
   render() {
     const {
       cachedChildren,
       className
     } = this.state;
+<<<<<<< HEAD
 
     if (!cachedChildren) {
       return null;
     }
 
+=======
+    if (!cachedChildren) {
+      return null;
+    }
+>>>>>>> feature/publication-datetimetype
     return (0,preact__WEBPACK_IMPORTED_MODULE_0__.cloneElement)(cachedChildren, {
       className: classnames__WEBPACK_IMPORTED_MODULE_1__(className, cachedChildren.props.className)
     });
   }
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> feature/publication-datetimetype
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Slide);
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "./node_modules/@uppy/dashboard/lib/components/VirtualList.js":
 /*!********************************************************************!*\
   !*** ./node_modules/@uppy/dashboard/lib/components/VirtualList.js ***!
@@ -22695,6 +26227,8 @@ class VirtualList extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
 
 /***/ }),
 
+=======
+>>>>>>> feature/publication-datetimetype
 /***/ "./node_modules/@uppy/dashboard/lib/index.js":
 /*!***************************************************!*\
   !*** ./node_modules/@uppy/dashboard/lib/index.js ***!
@@ -22842,7 +26376,10 @@ function copyToClipboard(textToCopy, fallbackString) {
   if (fallbackString === void 0) {
     fallbackString = 'Copy the URL below';
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   return new Promise(resolve => {
     const textArea = document.createElement('textarea');
     textArea.setAttribute('style', {
@@ -22860,6 +26397,7 @@ function copyToClipboard(textToCopy, fallbackString) {
     textArea.value = textToCopy;
     document.body.appendChild(textArea);
     textArea.select();
+<<<<<<< HEAD
 
     const magicCopyFailed = () => {
       document.body.removeChild(textArea); // eslint-disable-next-line no-alert
@@ -22875,6 +26413,19 @@ function copyToClipboard(textToCopy, fallbackString) {
         return magicCopyFailed('copy command unavailable');
       }
 
+=======
+    const magicCopyFailed = () => {
+      document.body.removeChild(textArea);
+      // eslint-disable-next-line no-alert
+      window.prompt(fallbackString, textToCopy);
+      resolve();
+    };
+    try {
+      const successful = document.execCommand('copy');
+      if (!successful) {
+        return magicCopyFailed('copy command unavailable');
+      }
+>>>>>>> feature/publication-datetimetype
       document.body.removeChild(textArea);
       return resolve();
     } catch (err) {
@@ -22897,12 +26448,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ createSuperFocus)
 /* harmony export */ });
+<<<<<<< HEAD
 /* harmony import */ var lodash_debounce__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash.debounce */ "./node_modules/lodash.debounce/index.js");
+=======
+/* harmony import */ var lodash_debounce_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash/debounce.js */ "./node_modules/lodash/debounce.js");
+>>>>>>> feature/publication-datetimetype
 /* harmony import */ var _uppy_utils_lib_FOCUSABLE_ELEMENTS__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/utils/lib/FOCUSABLE_ELEMENTS */ "./node_modules/@uppy/utils/lib/FOCUSABLE_ELEMENTS.js");
 /* harmony import */ var _getActiveOverlayEl_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./getActiveOverlayEl.js */ "./node_modules/@uppy/dashboard/lib/utils/getActiveOverlayEl.js");
 
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/publication-datetimetype
 /*
   Focuses on some element in the currently topmost overlay.
 
@@ -22913,6 +26472,7 @@ __webpack_require__.r(__webpack_exports__);
   2. If there are no [data-uppy-super-focusable] elements yet (or ever) - focuses
      on the first focusable element, but switches focus if superfocusable elements appear on next render.
 */
+<<<<<<< HEAD
 
 function createSuperFocus() {
   let lastFocusWasOnSuperFocusableEl = false;
@@ -22930,6 +26490,22 @@ function createSuperFocus() {
 
     if (isFocusInOverlay && !superFocusableEl) return;
 
+=======
+function createSuperFocus() {
+  let lastFocusWasOnSuperFocusableEl = false;
+  const superFocus = (dashboardEl, activeOverlayType) => {
+    const overlayEl = (0,_getActiveOverlayEl_js__WEBPACK_IMPORTED_MODULE_2__["default"])(dashboardEl, activeOverlayType);
+    const isFocusInOverlay = overlayEl.contains(document.activeElement);
+    // If focus is already in the topmost overlay, AND on last update we focused on the superfocusable
+    // element - then leave focus up to the user.
+    // [Practical check] without this line, typing in the search input in googledrive overlay won't work.
+    if (isFocusInOverlay && lastFocusWasOnSuperFocusableEl) return;
+    const superFocusableEl = overlayEl.querySelector('[data-uppy-super-focusable]');
+    // If we are already in the topmost overlay, AND there are no super focusable elements yet, - leave focus up to the user.
+    // [Practical check] without this line, if you are in an empty folder in google drive, and something's uploading in the
+    // bg, - focus will be jumping to Done all the time.
+    if (isFocusInOverlay && !superFocusableEl) return;
+>>>>>>> feature/publication-datetimetype
     if (superFocusableEl) {
       superFocusableEl.focus({
         preventScroll: true
@@ -22942,15 +26518,25 @@ function createSuperFocus() {
       });
       lastFocusWasOnSuperFocusableEl = false;
     }
+<<<<<<< HEAD
   }; // ___Why do we need to debounce?
+=======
+  };
+
+  // ___Why do we need to debounce?
+>>>>>>> feature/publication-datetimetype
   //    1. To deal with animations: overlay changes via animations, which results in the DOM updating AFTER plugin.update()
   //       already executed.
   //    [Practical check] without debounce, if we open the Url overlay, and click 'Done', Dashboard won't get focused again.
   //    [Practical check] if we delay 250ms instead of 260ms - IE11 won't get focused in same situation.
   //    2. Performance: there can be many state update()s in a second, and this function is called every time.
+<<<<<<< HEAD
 
 
   return lodash_debounce__WEBPACK_IMPORTED_MODULE_0__(superFocus, 260);
+=======
+  return lodash_debounce_js__WEBPACK_IMPORTED_MODULE_0__(superFocus, 260);
+>>>>>>> feature/publication-datetimetype
 }
 
 /***/ }),
@@ -22971,11 +26557,18 @@ __webpack_require__.r(__webpack_exports__);
  */
 function getActiveOverlayEl(dashboardEl, activeOverlayType) {
   if (activeOverlayType) {
+<<<<<<< HEAD
     const overlayEl = dashboardEl.querySelector(`[data-uppy-paneltype="${activeOverlayType}"]`); // if an overlay is already mounted
 
     if (overlayEl) return overlayEl;
   }
 
+=======
+    const overlayEl = dashboardEl.querySelector(`[data-uppy-paneltype="${activeOverlayType}"]`);
+    // if an overlay is already mounted
+    if (overlayEl) return overlayEl;
+  }
+>>>>>>> feature/publication-datetimetype
   return dashboardEl;
 }
 
@@ -22994,7 +26587,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function iconImage() {
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
     "aria-hidden": "true",
@@ -23017,7 +26613,10 @@ function iconImage() {
     r: "1.5"
   })));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function iconAudio() {
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
     "aria-hidden": "true",
@@ -23032,7 +26631,10 @@ function iconAudio() {
     fillRule: "nonzero"
   }));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function iconVideo() {
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
     "aria-hidden": "true",
@@ -23047,7 +26649,10 @@ function iconVideo() {
     fillRule: "nonzero"
   }));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function iconPDF() {
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
     "aria-hidden": "true",
@@ -23062,7 +26667,10 @@ function iconPDF() {
     fillRule: "nonzero"
   }));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function iconArchive() {
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
     "aria-hidden": "true",
@@ -23076,7 +26684,10 @@ function iconArchive() {
     fillRule: "nonzero"
   }));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function iconFile() {
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
     "aria-hidden": "true",
@@ -23094,7 +26705,10 @@ function iconFile() {
     d: "M15 4v3a1 1 0 0 0 1 1h3V7h-3V4h-1z"
   })));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function iconText() {
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
     "aria-hidden": "true",
@@ -23109,7 +26723,10 @@ function iconText() {
     fillRule: "nonzero"
   }));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function getIconByMime(fileType) {
   const defaultChoice = {
     color: '#838999',
@@ -23117,57 +26734,97 @@ function getIconByMime(fileType) {
   };
   if (!fileType) return defaultChoice;
   const fileTypeGeneral = fileType.split('/')[0];
+<<<<<<< HEAD
   const fileTypeSpecific = fileType.split('/')[1]; // Text
 
+=======
+  const fileTypeSpecific = fileType.split('/')[1];
+
+  // Text
+>>>>>>> feature/publication-datetimetype
   if (fileTypeGeneral === 'text') {
     return {
       color: '#5a5e69',
       icon: iconText()
     };
+<<<<<<< HEAD
   } // Image
 
 
+=======
+  }
+
+  // Image
+>>>>>>> feature/publication-datetimetype
   if (fileTypeGeneral === 'image') {
     return {
       color: '#686de0',
       icon: iconImage()
     };
+<<<<<<< HEAD
   } // Audio
 
 
+=======
+  }
+
+  // Audio
+>>>>>>> feature/publication-datetimetype
   if (fileTypeGeneral === 'audio') {
     return {
       color: '#068dbb',
       icon: iconAudio()
     };
+<<<<<<< HEAD
   } // Video
 
 
+=======
+  }
+
+  // Video
+>>>>>>> feature/publication-datetimetype
   if (fileTypeGeneral === 'video') {
     return {
       color: '#19af67',
       icon: iconVideo()
     };
+<<<<<<< HEAD
   } // PDF
 
 
+=======
+  }
+
+  // PDF
+>>>>>>> feature/publication-datetimetype
   if (fileTypeGeneral === 'application' && fileTypeSpecific === 'pdf') {
     return {
       color: '#e25149',
       icon: iconPDF()
     };
+<<<<<<< HEAD
   } // Archive
 
 
   const archiveTypes = ['zip', 'x-7z-compressed', 'x-rar-compressed', 'x-tar', 'x-gzip', 'x-apple-diskimage'];
 
+=======
+  }
+
+  // Archive
+  const archiveTypes = ['zip', 'x-7z-compressed', 'x-rar-compressed', 'x-tar', 'x-gzip', 'x-apple-diskimage'];
+>>>>>>> feature/publication-datetimetype
   if (fileTypeGeneral === 'application' && archiveTypes.indexOf(fileTypeSpecific) !== -1) {
     return {
       color: '#00C469',
       icon: iconArchive()
     };
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   return defaultChoice;
 }
 
@@ -23188,20 +26845,33 @@ __webpack_require__.r(__webpack_exports__);
 // otherwise when Url plugin adds drop/paste listeners to this.el,
 // draging UI elements or pasting anything into any field triggers those events —
 // Url treats them as URLs that need to be imported
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/publication-datetimetype
 function ignoreEvent(ev) {
   const {
     tagName
   } = ev.target;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   if (tagName === 'INPUT' || tagName === 'TEXTAREA') {
     ev.stopPropagation();
     return;
   }
+<<<<<<< HEAD
 
   ev.preventDefault();
   ev.stopPropagation();
 }
 
+=======
+  ev.preventDefault();
+  ev.stopPropagation();
+}
+>>>>>>> feature/publication-datetimetype
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ignoreEvent);
 
 /***/ }),
@@ -23224,16 +26894,29 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+<<<<<<< HEAD
 
 function focusOnFirstNode(event, nodes) {
   const node = nodes[0];
 
+=======
+function focusOnFirstNode(event, nodes) {
+  const node = nodes[0];
+  if (node) {
+    node.focus();
+    event.preventDefault();
+  }
+}
+function focusOnLastNode(event, nodes) {
+  const node = nodes[nodes.length - 1];
+>>>>>>> feature/publication-datetimetype
   if (node) {
     node.focus();
     event.preventDefault();
   }
 }
 
+<<<<<<< HEAD
 function focusOnLastNode(event, nodes) {
   const node = nodes[nodes.length - 1];
 
@@ -23242,11 +26925,15 @@ function focusOnLastNode(event, nodes) {
     event.preventDefault();
   }
 } // ___Why not just use (focusedItemIndex === -1)?
+=======
+// ___Why not just use (focusedItemIndex === -1)?
+>>>>>>> feature/publication-datetimetype
 //    Firefox thinks <ul> is focusable, but we don't have <ul>s in our FOCUSABLE_ELEMENTS. Which means that if we tab into
 //    the <ul>, code will think that we are not in the active overlay, and we should focusOnFirstNode() of the currently
 //    active overlay!
 //    [Practical check] if we use (focusedItemIndex === -1), instagram provider in firefox will never get focus on its pics
 //    in the <ul>.
+<<<<<<< HEAD
 
 
 function isFocusInOverlay(activeOverlayEl) {
@@ -23277,6 +26964,40 @@ function trapFocus(event, activeOverlayType, dashboardEl) {
 function forInline(event, activeOverlayType, dashboardEl) {
   // ___When we're in the bare 'Drop files here, paste, browse or import from' screen
   if (activeOverlayType === null) {// Do nothing and let the browser handle it, user can tab away from Uppy to other elements on the page
+=======
+function isFocusInOverlay(activeOverlayEl) {
+  return activeOverlayEl.contains(document.activeElement);
+}
+function trapFocus(event, activeOverlayType, dashboardEl) {
+  const activeOverlayEl = (0,_getActiveOverlayEl_js__WEBPACK_IMPORTED_MODULE_2__["default"])(dashboardEl, activeOverlayType);
+  const focusableNodes = (0,_uppy_utils_lib_toArray__WEBPACK_IMPORTED_MODULE_0__["default"])(activeOverlayEl.querySelectorAll(_uppy_utils_lib_FOCUSABLE_ELEMENTS__WEBPACK_IMPORTED_MODULE_1__["default"]));
+  const focusedItemIndex = focusableNodes.indexOf(document.activeElement);
+
+  // If we pressed tab, and focus is not yet within the current overlay - focus on
+  // the first element within the current overlay.
+  // This is a safety measure (for when user returns from another tab e.g.), most
+  // plugins will try to focus on some important element as it loads.
+  if (!isFocusInOverlay(activeOverlayEl)) {
+    focusOnFirstNode(event, focusableNodes);
+    // If we pressed shift + tab, and we're on the first element of a modal
+  } else if (event.shiftKey && focusedItemIndex === 0) {
+    focusOnLastNode(event, focusableNodes);
+    // If we pressed tab, and we're on the last element of the modal
+  } else if (!event.shiftKey && focusedItemIndex === focusableNodes.length - 1) {
+    focusOnFirstNode(event, focusableNodes);
+  }
+}
+
+// Traps focus inside of the currently open overlay (e.g. Dashboard, or e.g. Instagram),
+// never lets focus disappear from the modal.
+
+
+// Traps focus inside of the currently open overlay, unless overlay is null - then let the user tab away.
+function forInline(event, activeOverlayType, dashboardEl) {
+  // ___When we're in the bare 'Drop files here, paste, browse or import from' screen
+  if (activeOverlayType === null) {
+    // Do nothing and let the browser handle it, user can tab away from Uppy to other elements on the page
+>>>>>>> feature/publication-datetimetype
     // ___When there is some overlay with 'Done' button
   } else {
     // Trap the focus inside this overlay!
@@ -23336,11 +27057,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var cropperjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cropperjs */ "./node_modules/cropperjs/dist/cropper.js");
 /* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+<<<<<<< HEAD
+=======
+/* harmony import */ var _utils_getCanvasDataThatFitsPerfectlyIntoContainer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils/getCanvasDataThatFitsPerfectlyIntoContainer.js */ "./node_modules/@uppy/image-editor/lib/utils/getCanvasDataThatFitsPerfectlyIntoContainer.js");
+/* harmony import */ var _utils_getScaleFactorThatRemovesDarkCorners_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils/getScaleFactorThatRemovesDarkCorners.js */ "./node_modules/@uppy/image-editor/lib/utils/getScaleFactorThatRemovesDarkCorners.js");
+/* harmony import */ var _utils_limitCropboxMovementOnMove_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils/limitCropboxMovementOnMove.js */ "./node_modules/@uppy/image-editor/lib/utils/limitCropboxMovementOnMove.js");
+/* harmony import */ var _utils_limitCropboxMovementOnResize_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./utils/limitCropboxMovementOnResize.js */ "./node_modules/@uppy/image-editor/lib/utils/limitCropboxMovementOnResize.js");
+/* eslint-disable jsx-a11y/label-has-associated-control */
+
+
+
+
+>>>>>>> feature/publication-datetimetype
 
 
 class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
   constructor(props) {
     super(props);
+<<<<<<< HEAD
 
     this.granularRotateOnChange = ev => {
       const {
@@ -23364,12 +27098,69 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
     };
   }
 
+=======
+    this.onRotate90Deg = () => {
+      // 1. Set state
+      const {
+        angle90Deg
+      } = this.state;
+      const newAngle = angle90Deg - 90;
+      this.setState({
+        angle90Deg: newAngle,
+        angleGranular: 0
+      });
+
+      // 2. Rotate the image
+      // Important to reset scale here, or cropper will get confused on further rotations
+      this.cropper.scale(1);
+      this.cropper.rotateTo(newAngle);
+
+      // 3. Fit the rotated image into the view
+      const canvasData = this.cropper.getCanvasData();
+      const containerData = this.cropper.getContainerData();
+      const newCanvasData = (0,_utils_getCanvasDataThatFitsPerfectlyIntoContainer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(containerData, canvasData);
+      this.cropper.setCanvasData(newCanvasData);
+
+      // 4. Make cropbox fully wrap the image
+      this.cropper.setCropBoxData(newCanvasData);
+    };
+    this.onRotateGranular = ev => {
+      //  1. Set state
+      const newGranularAngle = Number(ev.target.value);
+      this.setState({
+        angleGranular: newGranularAngle
+      });
+
+      // 2. Rotate the image
+      const {
+        angle90Deg
+      } = this.state;
+      const newAngle = angle90Deg + newGranularAngle;
+      this.cropper.rotateTo(newAngle);
+
+      // 3. Scale the image so that it fits into the cropbox
+      const image = this.cropper.getImageData();
+      const scaleFactor = (0,_utils_getScaleFactorThatRemovesDarkCorners_js__WEBPACK_IMPORTED_MODULE_3__["default"])(image.naturalWidth, image.naturalHeight, newGranularAngle);
+      // Preserve flip
+      const scaleFactorX = this.cropper.getImageData().scaleX < 0 ? -scaleFactor : scaleFactor;
+      this.cropper.scale(scaleFactorX, scaleFactor);
+    };
+    this.state = {
+      angle90Deg: 0,
+      angleGranular: 0,
+      prevCropboxData: null
+    };
+    this.storePrevCropboxData = this.storePrevCropboxData.bind(this);
+    this.limitCropboxMovement = this.limitCropboxMovement.bind(this);
+  }
+>>>>>>> feature/publication-datetimetype
   componentDidMount() {
     const {
       opts,
       storeCropperInstance
     } = this.props;
     this.cropper = new cropperjs__WEBPACK_IMPORTED_MODULE_0__(this.imgElement, opts.cropperOptions);
+<<<<<<< HEAD
     storeCropperInstance(this.cropper);
 
     if (opts.actions.granularRotate) {
@@ -23388,11 +27179,47 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
     this.cropper.destroy();
   }
 
+=======
+    this.imgElement.addEventListener('cropstart', this.storePrevCropboxData);
+    this.imgElement.addEventListener('cropend', this.limitCropboxMovement);
+    storeCropperInstance(this.cropper);
+  }
+  componentWillUnmount() {
+    this.cropper.destroy();
+    this.imgElement.removeEventListener('cropstart', this.storePrevCropboxData);
+    this.imgElement.removeEventListener('cropend', this.limitCropboxMovement);
+  }
+
+  // eslint-disable-next-line react/sort-comp
+  storePrevCropboxData() {
+    this.setState({
+      prevCropboxData: this.cropper.getCropBoxData()
+    });
+  }
+  limitCropboxMovement(event) {
+    const canvasData = this.cropper.getCanvasData();
+    const cropboxData = this.cropper.getCropBoxData();
+    const {
+      prevCropboxData
+    } = this.state;
+
+    // 1. When we grab the cropbox in the middle and move it
+    if (event.detail.action === 'all') {
+      const newCropboxData = (0,_utils_limitCropboxMovementOnMove_js__WEBPACK_IMPORTED_MODULE_4__["default"])(canvasData, cropboxData, prevCropboxData);
+      if (newCropboxData) this.cropper.setCropBoxData(newCropboxData);
+      // When we stretch the cropbox by one of its sides
+    } else {
+      const newCropboxData = (0,_utils_limitCropboxMovementOnResize_js__WEBPACK_IMPORTED_MODULE_5__["default"])(canvasData, cropboxData, prevCropboxData);
+      if (newCropboxData) this.cropper.setCropBoxData(newCropboxData);
+    }
+  }
+>>>>>>> feature/publication-datetimetype
   renderGranularRotate() {
     const {
       i18n
     } = this.props;
     const {
+<<<<<<< HEAD
       rotationDelta,
       rotationAngle
     } = this.state;
@@ -23415,10 +27242,31 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
     );
   }
 
+=======
+      angleGranular
+    } = this.state;
+    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
+      role: "tooltip",
+      "aria-label": `${angleGranular}º`,
+      "data-microtip-position": "top",
+      className: "uppy-ImageCropper-rangeWrapper"
+    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("input", {
+      className: "uppy-ImageCropper-range uppy-u-reset",
+      type: "range",
+      onInput: this.onRotateGranular,
+      onChange: this.onRotateGranular,
+      value: angleGranular,
+      min: "-45",
+      max: "45",
+      "aria-label": i18n('rotate')
+    }));
+  }
+>>>>>>> feature/publication-datetimetype
   renderRevert() {
     const {
       i18n
     } = this.props;
+<<<<<<< HEAD
     return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
       type: "button",
       className: "uppy-u-reset uppy-c-btn",
@@ -23427,6 +27275,22 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
       onClick: () => {
         this.cropper.reset();
         this.cropper.setAspectRatio(0);
+=======
+    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
+      role: "tooltip",
+      "aria-label": i18n('revert'),
+      "data-microtip-position": "top"
+    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
+      type: "button",
+      className: "uppy-u-reset uppy-c-btn",
+      onClick: () => {
+        this.cropper.reset();
+        this.cropper.setAspectRatio(0);
+        this.setState({
+          angle90Deg: 0,
+          angleGranular: 0
+        });
+>>>>>>> feature/publication-datetimetype
       }
     }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("svg", {
       "aria-hidden": "true",
@@ -23439,19 +27303,35 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
       fill: "none"
     }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("path", {
       d: "M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"
+<<<<<<< HEAD
     })));
   }
 
+=======
+    }))));
+  }
+>>>>>>> feature/publication-datetimetype
   renderRotate() {
     const {
       i18n
     } = this.props;
+<<<<<<< HEAD
     return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
       type: "button",
       className: "uppy-u-reset uppy-c-btn",
       onClick: () => this.cropper.rotate(-90),
       "aria-label": i18n('rotate'),
       "data-microtip-position": "top"
+=======
+    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
+      role: "tooltip",
+      "aria-label": i18n('rotate'),
+      "data-microtip-position": "top"
+    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
+      type: "button",
+      className: "uppy-u-reset uppy-c-btn",
+      onClick: this.onRotate90Deg
+>>>>>>> feature/publication-datetimetype
     }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("svg", {
       "aria-hidden": "true",
       className: "uppy-c-icon",
@@ -23463,18 +27343,33 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
       fill: "none"
     }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("path", {
       d: "M14 10a2 2 0 012 2v7a2 2 0 01-2 2H6a2 2 0 01-2-2v-7a2 2 0 012-2h8zm0 1.75H6a.25.25 0 00-.243.193L5.75 12v7a.25.25 0 00.193.243L6 19.25h8a.25.25 0 00.243-.193L14.25 19v-7a.25.25 0 00-.193-.243L14 11.75zM12 .76V4c2.3 0 4.61.88 6.36 2.64a8.95 8.95 0 012.634 6.025L21 13a1 1 0 01-1.993.117L19 13h-.003a6.979 6.979 0 00-2.047-4.95 6.97 6.97 0 00-4.652-2.044L12 6v3.24L7.76 5 12 .76z"
+<<<<<<< HEAD
     })));
   }
 
+=======
+    }))));
+  }
+>>>>>>> feature/publication-datetimetype
   renderFlip() {
     const {
       i18n
     } = this.props;
+<<<<<<< HEAD
     return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
       type: "button",
       className: "uppy-u-reset uppy-c-btn",
       "aria-label": i18n('flipHorizontal'),
       "data-microtip-position": "top",
+=======
+    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
+      role: "tooltip",
+      "aria-label": i18n('flipHorizontal'),
+      "data-microtip-position": "top"
+    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
+      type: "button",
+      className: "uppy-u-reset uppy-c-btn",
+>>>>>>> feature/publication-datetimetype
       onClick: () => this.cropper.scaleX(-this.cropper.getData().scaleX || -1)
     }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("svg", {
       "aria-hidden": "true",
@@ -23487,18 +27382,33 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
       fill: "none"
     }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("path", {
       d: "M15 21h2v-2h-2v2zm4-12h2V7h-2v2zM3 5v14c0 1.1.9 2 2 2h4v-2H5V5h4V3H5c-1.1 0-2 .9-2 2zm16-2v2h2c0-1.1-.9-2-2-2zm-8 20h2V1h-2v22zm8-6h2v-2h-2v2zM15 5h2V3h-2v2zm4 8h2v-2h-2v2zm0 8c1.1 0 2-.9 2-2h-2v2z"
+<<<<<<< HEAD
     })));
   }
 
+=======
+    }))));
+  }
+>>>>>>> feature/publication-datetimetype
   renderZoomIn() {
     const {
       i18n
     } = this.props;
+<<<<<<< HEAD
     return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
       type: "button",
       className: "uppy-u-reset uppy-c-btn",
       "aria-label": i18n('zoomIn'),
       "data-microtip-position": "top",
+=======
+    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
+      role: "tooltip",
+      "aria-label": i18n('zoomIn'),
+      "data-microtip-position": "top"
+    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
+      type: "button",
+      className: "uppy-u-reset uppy-c-btn",
+>>>>>>> feature/publication-datetimetype
       onClick: () => this.cropper.zoom(0.1)
     }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("svg", {
       "aria-hidden": "true",
@@ -23513,18 +27423,33 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
       d: "M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
     }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("path", {
       d: "M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"
+<<<<<<< HEAD
     })));
   }
 
+=======
+    }))));
+  }
+>>>>>>> feature/publication-datetimetype
   renderZoomOut() {
     const {
       i18n
     } = this.props;
+<<<<<<< HEAD
     return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
       type: "button",
       className: "uppy-u-reset uppy-c-btn",
       "aria-label": i18n('zoomOut'),
       "data-microtip-position": "top",
+=======
+    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
+      role: "tooltip",
+      "aria-label": i18n('zoomOut'),
+      "data-microtip-position": "top"
+    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
+      type: "button",
+      className: "uppy-u-reset uppy-c-btn",
+>>>>>>> feature/publication-datetimetype
       onClick: () => this.cropper.zoom(-0.1)
     }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("svg", {
       "aria-hidden": "true",
@@ -23537,18 +27462,33 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
       fill: "none"
     }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("path", {
       d: "M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zM7 9h5v1H7z"
+<<<<<<< HEAD
     })));
   }
 
+=======
+    }))));
+  }
+>>>>>>> feature/publication-datetimetype
   renderCropSquare() {
     const {
       i18n
     } = this.props;
+<<<<<<< HEAD
     return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
       type: "button",
       className: "uppy-u-reset uppy-c-btn",
       "aria-label": i18n('aspectRatioSquare'),
       "data-microtip-position": "top",
+=======
+    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
+      role: "tooltip",
+      "aria-label": i18n('aspectRatioSquare'),
+      "data-microtip-position": "top"
+    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
+      type: "button",
+      className: "uppy-u-reset uppy-c-btn",
+>>>>>>> feature/publication-datetimetype
       onClick: () => this.cropper.setAspectRatio(1)
     }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("svg", {
       "aria-hidden": "true",
@@ -23561,18 +27501,33 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
       fill: "none"
     }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("path", {
       d: "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+<<<<<<< HEAD
     })));
   }
 
+=======
+    }))));
+  }
+>>>>>>> feature/publication-datetimetype
   renderCropWidescreen() {
     const {
       i18n
     } = this.props;
+<<<<<<< HEAD
     return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
       type: "button",
       className: "uppy-u-reset uppy-c-btn",
       "aria-label": i18n('aspectRatioLandscape'),
       "data-microtip-position": "top",
+=======
+    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
+      role: "tooltip",
+      "aria-label": i18n('aspectRatioLandscape'),
+      "data-microtip-position": "top"
+    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
+      type: "button",
+      className: "uppy-u-reset uppy-c-btn",
+>>>>>>> feature/publication-datetimetype
       onClick: () => this.cropper.setAspectRatio(16 / 9)
     }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("svg", {
       "aria-hidden": "true",
@@ -23585,18 +27540,33 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
     }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("path", {
       fill: "none",
       d: "M0 0h24v24H0z"
+<<<<<<< HEAD
     })));
   }
 
+=======
+    }))));
+  }
+>>>>>>> feature/publication-datetimetype
   renderCropWidescreenVertical() {
     const {
       i18n
     } = this.props;
+<<<<<<< HEAD
     return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
       type: "button",
       className: "uppy-u-reset uppy-c-btn",
       "aria-label": i18n('aspectRatioPortrait'),
       "data-microtip-position": "top",
+=======
+    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
+      role: "tooltip",
+      "aria-label": i18n('aspectRatioPortrait'),
+      "data-microtip-position": "top"
+    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
+      type: "button",
+      className: "uppy-u-reset uppy-c-btn",
+>>>>>>> feature/publication-datetimetype
       onClick: () => this.cropper.setAspectRatio(9 / 16)
     }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("svg", {
       "aria-hidden": "true",
@@ -23609,9 +27579,14 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
     }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("path", {
       d: "M0 0h24v24H0z",
       fill: "none"
+<<<<<<< HEAD
     })));
   }
 
+=======
+    }))));
+  }
+>>>>>>> feature/publication-datetimetype
   render() {
     const {
       currentImage,
@@ -23636,7 +27611,10 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
       className: "uppy-ImageCropper-controls"
     }, actions.revert && this.renderRevert(), actions.rotate && this.renderRotate(), actions.granularRotate && this.renderGranularRotate(), actions.flip && this.renderFlip(), actions.zoomIn && this.renderZoomIn(), actions.zoomOut && this.renderZoomOut(), actions.cropSquare && this.renderCropSquare(), actions.cropWidescreen && this.renderCropWidescreen(), actions.cropWidescreenVertical && this.renderCropWidescreenVertical()));
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 }
 
 /***/ }),
@@ -23652,14 +27630,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ImageEditor)
 /* harmony export */ });
+<<<<<<< HEAD
 /* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/index.js");
 /* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
 /* harmony import */ var _Editor_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Editor.js */ "./node_modules/@uppy/image-editor/lib/Editor.js");
 /* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/image-editor/lib/locale.js");
+=======
+/* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/UIPlugin.js");
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+/* harmony import */ var _Editor_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Editor.js */ "./node_modules/@uppy/image-editor/lib/Editor.js");
+/* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/image-editor/lib/locale.js");
+>>>>>>> feature/publication-datetimetype
 
 
 
 const packageJson = {
+<<<<<<< HEAD
   "version": "2.1.2"
 };
 
@@ -23667,6 +27653,14 @@ class ImageEditor extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
   constructor(uppy, opts) {
     super(uppy, opts);
 
+=======
+  "version": "2.3.0"
+};
+
+class ImageEditor extends _uppy_core__WEBPACK_IMPORTED_MODULE_3__["default"] {
+  constructor(uppy, opts) {
+    super(uppy, opts);
+>>>>>>> feature/publication-datetimetype
     this.save = () => {
       const saveBlobCallback = blob => {
         const {
@@ -23684,6 +27678,7 @@ class ImageEditor extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
         });
         this.uppy.emit('file-editor:complete', updatedFile);
       };
+<<<<<<< HEAD
 
       const {
         currentImage
@@ -23695,12 +27690,38 @@ class ImageEditor extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
       this.cropper = cropper;
     };
 
+=======
+      const {
+        currentImage
+      } = this.getPluginState();
+
+      // Fixes black 1px lines on odd-width images.
+      // This should be removed when cropperjs fixes this issue.
+      // (See https://github.com/transloadit/uppy/issues/4305 and https://github.com/fengyuanchen/cropperjs/issues/551).
+      const croppedCanvas = this.cropper.getCroppedCanvas({});
+      if (croppedCanvas.width % 2 !== 0) {
+        this.cropper.setData({
+          width: croppedCanvas.width - 1
+        });
+      }
+      if (croppedCanvas.height % 2 !== 0) {
+        this.cropper.setData({
+          height: croppedCanvas.height - 1
+        });
+      }
+      this.cropper.getCroppedCanvas(this.opts.cropperOptions.croppedCanvasOptions).toBlob(saveBlobCallback, currentImage.type, this.opts.quality);
+    };
+    this.storeCropperInstance = cropper => {
+      this.cropper = cropper;
+    };
+>>>>>>> feature/publication-datetimetype
     this.selectFile = file => {
       this.uppy.emit('file-editor:start', file);
       this.setPluginState({
         currentImage: file
       });
     };
+<<<<<<< HEAD
 
     this.id = this.opts.id || 'ImageEditor';
     this.title = 'Image Editor';
@@ -23711,6 +27732,19 @@ class ImageEditor extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
       background: false,
       autoCropArea: 1,
       responsive: true,
+=======
+    this.id = this.opts.id || 'ImageEditor';
+    this.title = 'Image Editor';
+    this.type = 'editor';
+    this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_2__["default"];
+    const defaultCropperOptions = {
+      viewMode: 0,
+      background: false,
+      autoCropArea: 1,
+      responsive: true,
+      minCropBoxWidth: 70,
+      minCropBoxHeight: 70,
+>>>>>>> feature/publication-datetimetype
       croppedCanvasOptions: {}
     };
     const defaultActions = {
@@ -23724,6 +27758,7 @@ class ImageEditor extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
       cropWidescreen: true,
       cropWidescreenVertical: true
     };
+<<<<<<< HEAD
     const defaultOptions = {
       quality: 0.8
     };
@@ -23740,10 +27775,36 @@ class ImageEditor extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
   } // eslint-disable-next-line class-methods-use-this
 
 
+=======
+
+    // Why is the default quality smaller than 1?
+    // Because `quality: 1` increases the image size by orders of magnitude - 0.8 seems to be the sweet spot.
+    // (see https://github.com/fengyuanchen/cropperjs/issues/538#issuecomment-1776279427)
+    const defaultOptions = {
+      quality: 0.8
+    };
+    this.opts = {
+      ...defaultOptions,
+      ...opts,
+      actions: {
+        ...defaultActions,
+        ...(opts == null ? void 0 : opts.actions)
+      },
+      cropperOptions: {
+        ...defaultCropperOptions,
+        ...(opts == null ? void 0 : opts.cropperOptions)
+      }
+    };
+    this.i18nInit();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+>>>>>>> feature/publication-datetimetype
   canEditFile(file) {
     if (!file.type || file.isRemote) {
       return false;
     }
+<<<<<<< HEAD
 
     const fileTypeSpecific = file.type.split('/')[1];
 
@@ -23754,6 +27815,14 @@ class ImageEditor extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
     return false;
   }
 
+=======
+    const fileTypeSpecific = file.type.split('/')[1];
+    if (/^(jpe?g|gif|png|bmp|webp)$/.test(fileTypeSpecific)) {
+      return true;
+    }
+    return false;
+  }
+>>>>>>> feature/publication-datetimetype
   install() {
     this.setPluginState({
       currentImage: null
@@ -23761,35 +27830,56 @@ class ImageEditor extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
     const {
       target
     } = this.opts;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (target) {
       this.mount(target, this);
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   uninstall() {
     const {
       currentImage
     } = this.getPluginState();
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (currentImage) {
       const file = this.uppy.getFile(currentImage.id);
       this.uppy.emit('file-editor:cancel', file);
     }
+<<<<<<< HEAD
 
     this.unmount();
   }
 
+=======
+    this.unmount();
+  }
+>>>>>>> feature/publication-datetimetype
   render() {
     const {
       currentImage
     } = this.getPluginState();
+<<<<<<< HEAD
 
     if (currentImage === null || currentImage.isRemote) {
       return null;
     }
 
     return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)(_Editor_js__WEBPACK_IMPORTED_MODULE_2__["default"], {
+=======
+    if (currentImage === null || currentImage.isRemote) {
+      return null;
+    }
+    return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_Editor_js__WEBPACK_IMPORTED_MODULE_1__["default"], {
+>>>>>>> feature/publication-datetimetype
       currentImage: currentImage,
       storeCropperInstance: this.storeCropperInstance,
       save: this.save,
@@ -23797,7 +27887,10 @@ class ImageEditor extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
       i18n: this.i18n
     });
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 }
 ImageEditor.VERSION = packageJson.version;
 
@@ -23832,11 +27925,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   strings: {
+<<<<<<< HEAD
     revert: 'Revert',
     rotate: 'Rotate',
     zoomIn: 'Zoom in',
     zoomOut: 'Zoom out',
     flipHorizontal: 'Flip horizontal',
+=======
+    revert: 'Reset',
+    rotate: 'Rotate 90°',
+    zoomIn: 'Zoom in',
+    zoomOut: 'Zoom out',
+    flipHorizontal: 'Flip horizontally',
+>>>>>>> feature/publication-datetimetype
     aspectRatioSquare: 'Crop square',
     aspectRatioLandscape: 'Crop landscape (16:9)',
     aspectRatioPortrait: 'Crop portrait (9:16)'
@@ -23845,6 +27946,165 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+<<<<<<< HEAD
+=======
+/***/ "./node_modules/@uppy/image-editor/lib/utils/getCanvasDataThatFitsPerfectlyIntoContainer.js":
+/*!**************************************************************************************************!*\
+  !*** ./node_modules/@uppy/image-editor/lib/utils/getCanvasDataThatFitsPerfectlyIntoContainer.js ***!
+  \**************************************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// See this cropperjs image to understand how container/image/canavas/cropbox relate to each other.
+// (https://github.com/fengyuanchen/cropperjs/blob/9b528a8baeaae876dc090085e37992a1683c6f34/docs/images/layers.jpg)
+function getCanvasDataThatFitsPerfectlyIntoContainer(containerData, canvasData) {
+  // 1. Scale our canvas as much as possible
+  const widthRatio = containerData.width / canvasData.width;
+  const heightRatio = containerData.height / canvasData.height;
+  const scaleFactor = Math.min(widthRatio, heightRatio);
+  const newWidth = canvasData.width * scaleFactor;
+  const newHeight = canvasData.height * scaleFactor;
+
+  // 2. Center our canvas
+  const newLeft = (containerData.width - newWidth) / 2;
+  const newTop = (containerData.height - newHeight) / 2;
+  return {
+    width: newWidth,
+    height: newHeight,
+    left: newLeft,
+    top: newTop
+  };
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (getCanvasDataThatFitsPerfectlyIntoContainer);
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/image-editor/lib/utils/getScaleFactorThatRemovesDarkCorners.js":
+/*!*******************************************************************************************!*\
+  !*** ./node_modules/@uppy/image-editor/lib/utils/getScaleFactorThatRemovesDarkCorners.js ***!
+  \*******************************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function toRadians(angle) {
+  return angle * (Math.PI / 180);
+}
+function getScaleFactorThatRemovesDarkCorners(w, h, granularAngle) {
+  const α = Math.abs(toRadians(granularAngle));
+  const scaleFactor = Math.max((Math.sin(α) * w + Math.cos(α) * h) / h, (Math.sin(α) * h + Math.cos(α) * w) / w);
+  return scaleFactor;
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (getScaleFactorThatRemovesDarkCorners);
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/image-editor/lib/utils/limitCropboxMovementOnMove.js":
+/*!*********************************************************************************!*\
+  !*** ./node_modules/@uppy/image-editor/lib/utils/limitCropboxMovementOnMove.js ***!
+  \*********************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function limitCropboxMovementOnMove(canvas, cropbox, prevCropbox) {
+  // For the left boundary
+  if (cropbox.left < canvas.left) {
+    return {
+      left: canvas.left,
+      width: prevCropbox.width
+    };
+  }
+
+  // For the top boundary
+  if (cropbox.top < canvas.top) {
+    return {
+      top: canvas.top,
+      height: prevCropbox.height
+    };
+  }
+
+  // For the right boundary
+  if (cropbox.left + cropbox.width > canvas.left + canvas.width) {
+    return {
+      left: canvas.left + canvas.width - prevCropbox.width,
+      width: prevCropbox.width
+    };
+  }
+
+  // For the bottom boundary
+  if (cropbox.top + cropbox.height > canvas.top + canvas.height) {
+    return {
+      top: canvas.top + canvas.height - prevCropbox.height,
+      height: prevCropbox.height
+    };
+  }
+  return null;
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (limitCropboxMovementOnMove);
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/image-editor/lib/utils/limitCropboxMovementOnResize.js":
+/*!***********************************************************************************!*\
+  !*** ./node_modules/@uppy/image-editor/lib/utils/limitCropboxMovementOnResize.js ***!
+  \***********************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function limitCropboxMovementOnResize(canvas, cropboxData, prevCropbox) {
+  // For the left boundary
+  if (cropboxData.left < canvas.left) {
+    return {
+      left: canvas.left,
+      width: prevCropbox.left + prevCropbox.width - canvas.left
+    };
+  }
+
+  // For the top boundary
+  if (cropboxData.top < canvas.top) {
+    return {
+      top: canvas.top,
+      height: prevCropbox.top + prevCropbox.height - canvas.top
+    };
+  }
+
+  // For the right boundary
+  if (cropboxData.left + cropboxData.width > canvas.left + canvas.width) {
+    return {
+      left: prevCropbox.left,
+      width: canvas.left + canvas.width - prevCropbox.left
+    };
+  }
+
+  // For the bottom boundary
+  if (cropboxData.top + cropboxData.height > canvas.top + canvas.height) {
+    return {
+      top: prevCropbox.top,
+      height: canvas.top + canvas.height - prevCropbox.top
+    };
+  }
+  return null;
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (limitCropboxMovementOnResize);
+
+/***/ }),
+
+>>>>>>> feature/publication-datetimetype
 /***/ "./node_modules/@uppy/informer/lib/FadeIn.js":
 /*!***************************************************!*\
   !*** ./node_modules/@uppy/informer/lib/FadeIn.js ***!
@@ -23864,19 +28124,28 @@ class FadeIn extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
     super(...arguments);
     this.ref = (0,preact__WEBPACK_IMPORTED_MODULE_0__.createRef)();
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   componentWillEnter(callback) {
     this.ref.current.style.opacity = '1';
     this.ref.current.style.transform = 'none';
     setTimeout(callback, TRANSITION_MS);
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   componentWillLeave(callback) {
     this.ref.current.style.opacity = '0';
     this.ref.current.style.transform = 'translateY(350%)';
     setTimeout(callback, TRANSITION_MS);
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   render() {
     const {
       children
@@ -23886,7 +28155,10 @@ class FadeIn extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
       ref: this.ref
     }, children);
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 }
 
 /***/ }),
@@ -23903,18 +28175,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ Informer)
 /* harmony export */ });
 /* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+<<<<<<< HEAD
 /* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/index.js");
 /* harmony import */ var _FadeIn_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./FadeIn.js */ "./node_modules/@uppy/informer/lib/FadeIn.js");
 /* harmony import */ var _TransitionGroup_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./TransitionGroup.js */ "./node_modules/@uppy/informer/lib/TransitionGroup.js");
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions  */
 
+=======
+/* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/UIPlugin.js");
+/* harmony import */ var _FadeIn_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./FadeIn.js */ "./node_modules/@uppy/informer/lib/FadeIn.js");
+/* harmony import */ var _TransitionGroup_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./TransitionGroup.js */ "./node_modules/@uppy/informer/lib/TransitionGroup.js");
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions  */
+>>>>>>> feature/publication-datetimetype
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
 
 
 
 const packageJson = {
+<<<<<<< HEAD
   "version": "3.0.2"
+=======
+  "version": "3.0.4"
+>>>>>>> feature/publication-datetimetype
 };
 /**
  * Informer
@@ -23923,6 +28206,7 @@ const packageJson = {
  * or for errors: `uppy.info('Error uploading img.jpg', 'error', 5000)`
  *
  */
+<<<<<<< HEAD
 
 class Informer extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
   constructor(uppy, opts) {
@@ -23932,6 +28216,15 @@ class Informer extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
       return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
         className: "uppy uppy-Informer"
       }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_TransitionGroup_js__WEBPACK_IMPORTED_MODULE_3__["default"], null, state.info.map(info => (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_FadeIn_js__WEBPACK_IMPORTED_MODULE_2__["default"], {
+=======
+class Informer extends _uppy_core__WEBPACK_IMPORTED_MODULE_3__["default"] {
+  constructor(uppy, opts) {
+    super(uppy, opts);
+    this.render = state => {
+      return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+        className: "uppy uppy-Informer"
+      }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_TransitionGroup_js__WEBPACK_IMPORTED_MODULE_2__["default"], null, state.info.map(info => (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_FadeIn_js__WEBPACK_IMPORTED_MODULE_1__["default"], {
+>>>>>>> feature/publication-datetimetype
         key: info.message
       }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("p", {
         role: "alert"
@@ -23939,11 +28232,17 @@ class Informer extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
         "aria-label": info.details,
         "data-microtip-position": "top-left",
         "data-microtip-size": "medium",
+<<<<<<< HEAD
         role: "tooltip" // eslint-disable-next-line no-alert
+=======
+        role: "tooltip"
+        // eslint-disable-next-line no-alert
+>>>>>>> feature/publication-datetimetype
         ,
         onClick: () => alert(`${info.message} \n\n ${info.details}`)
       }, "?"))))));
     };
+<<<<<<< HEAD
 
     this.type = 'progressindicator';
     this.id = this.opts.id || 'Informer';
@@ -23956,16 +28255,36 @@ class Informer extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
     };
   }
 
+=======
+    this.type = 'progressindicator';
+    this.id = this.opts.id || 'Informer';
+    this.title = 'Informer';
+
+    // set default options
+    const defaultOptions = {};
+    // merge default options with the ones set by user
+    this.opts = {
+      ...defaultOptions,
+      ...opts
+    };
+  }
+>>>>>>> feature/publication-datetimetype
   install() {
     const {
       target
     } = this.opts;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (target) {
       this.mount(target, this);
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 }
 Informer.VERSION = packageJson.version;
 
@@ -23984,7 +28303,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
 /* eslint-disable */
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 /**
  * @source https://github.com/developit/preact-transition-group
  */
@@ -23993,6 +28315,7 @@ __webpack_require__.r(__webpack_exports__);
 function assign(obj, props) {
   return Object.assign(obj, props);
 }
+<<<<<<< HEAD
 
 function getKey(vnode, fallback) {
   var _vnode$key;
@@ -24000,22 +28323,34 @@ function getKey(vnode, fallback) {
   return (_vnode$key = vnode == null ? void 0 : vnode.key) != null ? _vnode$key : fallback;
 }
 
+=======
+function getKey(vnode, fallback) {
+  var _vnode$key;
+  return (_vnode$key = vnode == null ? void 0 : vnode.key) != null ? _vnode$key : fallback;
+}
+>>>>>>> feature/publication-datetimetype
 function linkRef(component, name) {
   const cache = component._ptgLinkedRefs || (component._ptgLinkedRefs = {});
   return cache[name] || (cache[name] = c => {
     component.refs[name] = c;
   });
 }
+<<<<<<< HEAD
 
 function getChildMapping(children) {
   const out = {};
 
+=======
+function getChildMapping(children) {
+  const out = {};
+>>>>>>> feature/publication-datetimetype
   for (let i = 0; i < children.length; i++) {
     if (children[i] != null) {
       const key = getKey(children[i], i.toString(36));
       out[key] = children[i];
     }
   }
+<<<<<<< HEAD
 
   return out;
 }
@@ -24031,6 +28366,19 @@ function mergeChildMappings(prev, next) {
   const nextKeysPending = {};
   let pendingKeys = [];
 
+=======
+  return out;
+}
+function mergeChildMappings(prev, next) {
+  prev = prev || {};
+  next = next || {};
+  const getValueForKey = key => next.hasOwnProperty(key) ? next[key] : prev[key];
+
+  // For each key of `next`, the list of keys to insert before that key in
+  // the combined list
+  const nextKeysPending = {};
+  let pendingKeys = [];
+>>>>>>> feature/publication-datetimetype
   for (const prevKey in prev) {
     if (next.hasOwnProperty(prevKey)) {
       if (pendingKeys.length) {
@@ -24041,9 +28389,13 @@ function mergeChildMappings(prev, next) {
       pendingKeys.push(prevKey);
     }
   }
+<<<<<<< HEAD
 
   const childMapping = {};
 
+=======
+  const childMapping = {};
+>>>>>>> feature/publication-datetimetype
   for (const nextKey in next) {
     if (nextKeysPending.hasOwnProperty(nextKey)) {
       for (let i = 0; i < nextKeysPending[nextKey].length; i++) {
@@ -24051,6 +28403,7 @@ function mergeChildMappings(prev, next) {
         childMapping[nextKeysPending[nextKey][i]] = getValueForKey(pendingNextKey);
       }
     }
+<<<<<<< HEAD
 
     childMapping[nextKey] = getValueForKey(nextKey);
   } // Finally, add the keys which didn't appear before any key in `next`
@@ -24065,6 +28418,18 @@ function mergeChildMappings(prev, next) {
 
 const identity = i => i;
 
+=======
+    childMapping[nextKey] = getValueForKey(nextKey);
+  }
+
+  // Finally, add the keys which didn't appear before any key in `next`
+  for (let i = 0; i < pendingKeys.length; i++) {
+    childMapping[pendingKeys[i]] = getValueForKey(pendingKeys[i]);
+  }
+  return childMapping;
+}
+const identity = i => i;
+>>>>>>> feature/publication-datetimetype
 class TransitionGroup extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props, context) {
     super(props, context);
@@ -24076,17 +28441,25 @@ class TransitionGroup extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
     this.performEnter = this.performEnter.bind(this);
     this.performLeave = this.performLeave.bind(this);
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   componentWillMount() {
     this.currentlyTransitioningKeys = {};
     this.keysToAbortLeave = [];
     this.keysToEnter = [];
     this.keysToLeave = [];
   }
+<<<<<<< HEAD
 
   componentDidMount() {
     const initialChildMapping = this.state.children;
 
+=======
+  componentDidMount() {
+    const initialChildMapping = this.state.children;
+>>>>>>> feature/publication-datetimetype
     for (const key in initialChildMapping) {
       if (initialChildMapping[key]) {
         // this.performAppear(getKey(initialChildMapping[key], key));
@@ -24094,7 +28467,10 @@ class TransitionGroup extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
       }
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   componentWillReceiveProps(nextProps) {
     const nextChildMapping = getChildMapping((0,preact__WEBPACK_IMPORTED_MODULE_0__.toChildArray)(nextProps.children) || []);
     const prevChildMapping = this.state.children;
@@ -24102,11 +28478,18 @@ class TransitionGroup extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
       children: mergeChildMappings(prevState.children, nextChildMapping)
     }));
     let key;
+<<<<<<< HEAD
 
     for (key in nextChildMapping) {
       if (nextChildMapping.hasOwnProperty(key)) {
         const hasPrev = prevChildMapping && prevChildMapping.hasOwnProperty(key); // We should re-enter the component and abort its leave function
 
+=======
+    for (key in nextChildMapping) {
+      if (nextChildMapping.hasOwnProperty(key)) {
+        const hasPrev = prevChildMapping && prevChildMapping.hasOwnProperty(key);
+        // We should re-enter the component and abort its leave function
+>>>>>>> feature/publication-datetimetype
         if (nextChildMapping[key] && hasPrev && this.currentlyTransitioningKeys[key]) {
           this.keysToEnter.push(key);
           this.keysToAbortLeave.push(key);
@@ -24115,18 +28498,27 @@ class TransitionGroup extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
         }
       }
     }
+<<<<<<< HEAD
 
     for (key in prevChildMapping) {
       if (prevChildMapping.hasOwnProperty(key)) {
         const hasNext = nextChildMapping && nextChildMapping.hasOwnProperty(key);
 
+=======
+    for (key in prevChildMapping) {
+      if (prevChildMapping.hasOwnProperty(key)) {
+        const hasNext = nextChildMapping && nextChildMapping.hasOwnProperty(key);
+>>>>>>> feature/publication-datetimetype
         if (prevChildMapping[key] && !hasNext && !this.currentlyTransitioningKeys[key]) {
           this.keysToLeave.push(key);
         }
       }
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   componentDidUpdate() {
     const {
       keysToEnter
@@ -24139,25 +28531,37 @@ class TransitionGroup extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
     this.keysToLeave = [];
     keysToLeave.forEach(this.performLeave);
   }
+<<<<<<< HEAD
 
   _finishAbort(key) {
     const idx = this.keysToAbortLeave.indexOf(key);
 
+=======
+  _finishAbort(key) {
+    const idx = this.keysToAbortLeave.indexOf(key);
+>>>>>>> feature/publication-datetimetype
     if (idx !== -1) {
       this.keysToAbortLeave.splice(idx, 1);
     }
   }
+<<<<<<< HEAD
 
   performAppear(key) {
     this.currentlyTransitioningKeys[key] = true;
     const component = this.refs[key];
 
+=======
+  performAppear(key) {
+    this.currentlyTransitioningKeys[key] = true;
+    const component = this.refs[key];
+>>>>>>> feature/publication-datetimetype
     if (component != null && component.componentWillAppear) {
       component.componentWillAppear(this._handleDoneAppearing.bind(this, key));
     } else {
       this._handleDoneAppearing(key);
     }
   }
+<<<<<<< HEAD
 
   _handleDoneAppearing(key) {
     const component = this.refs[key];
@@ -24172,22 +28576,39 @@ class TransitionGroup extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
 
     const currentChildMapping = getChildMapping((0,preact__WEBPACK_IMPORTED_MODULE_0__.toChildArray)(this.props.children) || []);
 
+=======
+  _handleDoneAppearing(key) {
+    const component = this.refs[key];
+    if (component != null && component.componentDidAppear) {
+      component.componentDidAppear();
+    }
+    delete this.currentlyTransitioningKeys[key];
+    this._finishAbort(key);
+    const currentChildMapping = getChildMapping((0,preact__WEBPACK_IMPORTED_MODULE_0__.toChildArray)(this.props.children) || []);
+>>>>>>> feature/publication-datetimetype
     if (!currentChildMapping || !currentChildMapping.hasOwnProperty(key)) {
       // This was removed before it had fully appeared. Remove it.
       this.performLeave(key);
     }
   }
+<<<<<<< HEAD
 
   performEnter(key) {
     this.currentlyTransitioningKeys[key] = true;
     const component = this.refs[key];
 
+=======
+  performEnter(key) {
+    this.currentlyTransitioningKeys[key] = true;
+    const component = this.refs[key];
+>>>>>>> feature/publication-datetimetype
     if (component != null && component.componentWillEnter) {
       component.componentWillEnter(this._handleDoneEntering.bind(this, key));
     } else {
       this._handleDoneEntering(key);
     }
   }
+<<<<<<< HEAD
 
   _handleDoneEntering(key) {
     const component = this.refs[key];
@@ -24202,16 +28623,30 @@ class TransitionGroup extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
 
     const currentChildMapping = getChildMapping((0,preact__WEBPACK_IMPORTED_MODULE_0__.toChildArray)(this.props.children) || []);
 
+=======
+  _handleDoneEntering(key) {
+    const component = this.refs[key];
+    if (component != null && component.componentDidEnter) {
+      component.componentDidEnter();
+    }
+    delete this.currentlyTransitioningKeys[key];
+    this._finishAbort(key);
+    const currentChildMapping = getChildMapping((0,preact__WEBPACK_IMPORTED_MODULE_0__.toChildArray)(this.props.children) || []);
+>>>>>>> feature/publication-datetimetype
     if (!currentChildMapping || !currentChildMapping.hasOwnProperty(key)) {
       // This was removed before it had fully entered. Remove it.
       this.performLeave(key);
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   performLeave(key) {
     // If we should immediately abort this leave function,
     // don't run the leave transition at all.
     const idx = this.keysToAbortLeave.indexOf(key);
+<<<<<<< HEAD
 
     if (idx !== -1) {
       return;
@@ -24220,6 +28655,13 @@ class TransitionGroup extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
     this.currentlyTransitioningKeys[key] = true;
     const component = this.refs[key];
 
+=======
+    if (idx !== -1) {
+      return;
+    }
+    this.currentlyTransitioningKeys[key] = true;
+    const component = this.refs[key];
+>>>>>>> feature/publication-datetimetype
     if (component != null && component.componentWillLeave) {
       component.componentWillLeave(this._handleDoneLeaving.bind(this, key));
     } else {
@@ -24229,11 +28671,15 @@ class TransitionGroup extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
       this._handleDoneLeaving(key);
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   _handleDoneLeaving(key) {
     // If we should immediately abort the leave,
     // then skip this altogether
     const idx = this.keysToAbortLeave.indexOf(key);
+<<<<<<< HEAD
 
     if (idx !== -1) {
       return;
@@ -24248,6 +28694,17 @@ class TransitionGroup extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
     delete this.currentlyTransitioningKeys[key];
     const currentChildMapping = getChildMapping((0,preact__WEBPACK_IMPORTED_MODULE_0__.toChildArray)(this.props.children) || []);
 
+=======
+    if (idx !== -1) {
+      return;
+    }
+    const component = this.refs[key];
+    if (component != null && component.componentDidLeave) {
+      component.componentDidLeave();
+    }
+    delete this.currentlyTransitioningKeys[key];
+    const currentChildMapping = getChildMapping((0,preact__WEBPACK_IMPORTED_MODULE_0__.toChildArray)(this.props.children) || []);
+>>>>>>> feature/publication-datetimetype
     if (currentChildMapping && currentChildMapping.hasOwnProperty(key)) {
       // This entered again before it fully left. Add it again.
       this.performEnter(key);
@@ -24259,7 +28716,10 @@ class TransitionGroup extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
       });
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   render(_ref, _ref2) {
     let {
       childFactory,
@@ -24289,9 +28749,13 @@ class TransitionGroup extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
     }).filter(Boolean);
     return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(component, props, childrenToRender);
   }
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> feature/publication-datetimetype
 TransitionGroup.defaultProps = {
   component: 'span',
   childFactory: identity
@@ -24316,6 +28780,2038 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+<<<<<<< HEAD
+=======
+/***/ "./node_modules/@uppy/provider-views/lib/Breadcrumbs.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/Breadcrumbs.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+
+const Breadcrumb = props => {
+  const {
+    getFolder,
+    title,
+    isLast
+  } = props;
+  return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(preact__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("button", {
+    type: "button",
+    className: "uppy-u-reset uppy-c-btn",
+    onClick: getFolder
+  }, title), !isLast ? ' / ' : '');
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (props => {
+  const {
+    getFolder,
+    title,
+    breadcrumbsIcon,
+    breadcrumbs
+  } = props;
+  return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+    className: "uppy-Provider-breadcrumbs"
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+    className: "uppy-Provider-breadcrumbsIcon"
+  }, breadcrumbsIcon), breadcrumbs.map((directory, i) => (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(Breadcrumb, {
+    key: directory.id,
+    getFolder: () => getFolder(directory.requestPath),
+    title: i === 0 ? title : directory.name,
+    isLast: i + 1 === breadcrumbs.length
+  })));
+});
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/lib/Browser.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/Browser.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var _uppy_utils_lib_remoteFileObjToLocal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/utils/lib/remoteFileObjToLocal */ "./node_modules/@uppy/utils/lib/remoteFileObjToLocal.js");
+/* harmony import */ var preact_hooks__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! preact/hooks */ "./node_modules/preact/hooks/dist/hooks.module.js");
+/* harmony import */ var _uppy_utils_lib_VirtualList__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @uppy/utils/lib/VirtualList */ "./node_modules/@uppy/utils/lib/VirtualList.js");
+/* harmony import */ var _SearchFilterInput_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./SearchFilterInput.js */ "./node_modules/@uppy/provider-views/lib/SearchFilterInput.js");
+/* harmony import */ var _FooterActions_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./FooterActions.js */ "./node_modules/@uppy/provider-views/lib/FooterActions.js");
+/* harmony import */ var _Item_index_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./Item/index.js */ "./node_modules/@uppy/provider-views/lib/Item/index.js");
+
+
+
+
+
+
+
+
+const VIRTUAL_SHARED_DIR = 'shared-with-me';
+function ListItem(props) {
+  const {
+    currentSelection,
+    uppyFiles,
+    viewType,
+    isChecked,
+    toggleCheckbox,
+    recordShiftKeyPress,
+    showTitles,
+    i18n,
+    validateRestrictions,
+    getNextFolder,
+    columns,
+    f
+  } = props;
+  if (f.isFolder) {
+    var _isChecked;
+    return (0,_Item_index_js__WEBPACK_IMPORTED_MODULE_7__["default"])({
+      columns,
+      showTitles,
+      viewType,
+      i18n,
+      id: f.id,
+      title: f.name,
+      getItemIcon: () => f.icon,
+      isChecked: isChecked(f),
+      toggleCheckbox: event => toggleCheckbox(event, f),
+      recordShiftKeyPress,
+      type: 'folder',
+      isDisabled: (_isChecked = isChecked(f)) == null ? void 0 : _isChecked.loading,
+      isCheckboxDisabled: f.id === VIRTUAL_SHARED_DIR,
+      handleFolderClick: () => getNextFolder(f)
+    });
+  }
+  const restrictionError = validateRestrictions((0,_uppy_utils_lib_remoteFileObjToLocal__WEBPACK_IMPORTED_MODULE_2__["default"])(f), [...uppyFiles, ...currentSelection]);
+  return (0,_Item_index_js__WEBPACK_IMPORTED_MODULE_7__["default"])({
+    id: f.id,
+    title: f.name,
+    author: f.author,
+    getItemIcon: () => f.icon,
+    isChecked: isChecked(f),
+    toggleCheckbox: event => toggleCheckbox(event, f),
+    recordShiftKeyPress,
+    columns,
+    showTitles,
+    viewType,
+    i18n,
+    type: 'file',
+    isDisabled: restrictionError && !isChecked(f),
+    restrictionError
+  });
+}
+function Browser(props) {
+  const {
+    currentSelection,
+    folders,
+    files,
+    uppyFiles,
+    viewType,
+    headerComponent,
+    showBreadcrumbs,
+    isChecked,
+    toggleCheckbox,
+    recordShiftKeyPress,
+    handleScroll,
+    showTitles,
+    i18n,
+    validateRestrictions,
+    isLoading,
+    showSearchFilter,
+    search,
+    searchTerm,
+    clearSearch,
+    searchOnInput,
+    searchInputLabel,
+    clearSearchLabel,
+    getNextFolder,
+    cancel,
+    done,
+    columns,
+    noResultsLabel,
+    loadAllFiles
+  } = props;
+  const selected = currentSelection.length;
+  const rows = (0,preact_hooks__WEBPACK_IMPORTED_MODULE_3__.useMemo)(() => [...folders, ...files], [folders, files]);
+  return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+    className: classnames__WEBPACK_IMPORTED_MODULE_1__('uppy-ProviderBrowser', `uppy-ProviderBrowser-viewType--${viewType}`)
+  }, headerComponent && (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+    className: "uppy-ProviderBrowser-header"
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+    className: classnames__WEBPACK_IMPORTED_MODULE_1__('uppy-ProviderBrowser-headerBar', !showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple')
+  }, headerComponent)), showSearchFilter && (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+    class: "uppy-ProviderBrowser-searchFilter"
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_SearchFilterInput_js__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    search: search,
+    searchTerm: searchTerm,
+    clearSearch: clearSearch,
+    inputLabel: searchInputLabel,
+    clearSearchLabel: clearSearchLabel,
+    inputClassName: "uppy-ProviderBrowser-searchFilterInput",
+    searchOnInput: searchOnInput
+  })), (() => {
+    if (isLoading) {
+      return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+        className: "uppy-Provider-loading"
+      }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("span", null, i18n('loading')));
+    }
+    if (!folders.length && !files.length) {
+      return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+        className: "uppy-Provider-empty"
+      }, noResultsLabel);
+    }
+    if (loadAllFiles) {
+      return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+        className: "uppy-ProviderBrowser-body"
+      }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("ul", {
+        className: "uppy-ProviderBrowser-list"
+      }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_uppy_utils_lib_VirtualList__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        data: rows,
+        renderRow: f => (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(ListItem, {
+          currentSelection: currentSelection,
+          uppyFiles: uppyFiles,
+          viewType: viewType,
+          isChecked: isChecked,
+          toggleCheckbox: toggleCheckbox,
+          recordShiftKeyPress: recordShiftKeyPress,
+          showTitles: showTitles,
+          i18n: i18n,
+          validateRestrictions: validateRestrictions,
+          getNextFolder: getNextFolder,
+          columns: columns,
+          f: f
+        }),
+        rowHeight: 31
+      })));
+    }
+    return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+      className: "uppy-ProviderBrowser-body"
+    }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("ul", {
+      className: "uppy-ProviderBrowser-list",
+      onScroll: handleScroll,
+      role: "listbox"
+      // making <ul> not focusable for firefox
+      ,
+      tabIndex: "-1"
+    }, rows.map(f => (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(ListItem, {
+      currentSelection: currentSelection,
+      uppyFiles: uppyFiles,
+      viewType: viewType,
+      isChecked: isChecked,
+      toggleCheckbox: toggleCheckbox,
+      recordShiftKeyPress: recordShiftKeyPress,
+      showTitles: showTitles,
+      i18n: i18n,
+      validateRestrictions: validateRestrictions,
+      getNextFolder: getNextFolder,
+      columns: columns,
+      f: f
+    }))));
+  })(), selected > 0 && (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_FooterActions_js__WEBPACK_IMPORTED_MODULE_6__["default"], {
+    selected: selected,
+    done: done,
+    cancel: cancel,
+    i18n: i18n
+  }));
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Browser);
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/lib/CloseWrapper.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/CloseWrapper.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ CloseWrapper)
+/* harmony export */ });
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+
+class CloseWrapper extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
+  componentWillUnmount() {
+    const {
+      onUnmount
+    } = this.props;
+    onUnmount();
+  }
+  render() {
+    const {
+      children
+    } = this.props;
+    return (0,preact__WEBPACK_IMPORTED_MODULE_0__.toChildArray)(children)[0];
+  }
+}
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/lib/FooterActions.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/FooterActions.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_ref => {
+  let {
+    cancel,
+    done,
+    i18n,
+    selected
+  } = _ref;
+  return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+    className: "uppy-ProviderBrowser-footer"
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("button", {
+    className: "uppy-u-reset uppy-c-btn uppy-c-btn-primary",
+    onClick: done,
+    type: "button"
+  }, i18n('selectX', {
+    smart_count: selected
+  })), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("button", {
+    className: "uppy-u-reset uppy-c-btn uppy-c-btn-link",
+    onClick: cancel,
+    type: "button"
+  }, i18n('cancel')));
+});
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/lib/Item/components/GridLi.js":
+/*!*************************************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/Item/components/GridLi.js ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+
+
+function GridListItem(props) {
+  const {
+    className,
+    isDisabled,
+    restrictionError,
+    isChecked,
+    title,
+    itemIconEl,
+    showTitles,
+    toggleCheckbox,
+    recordShiftKeyPress,
+    id,
+    children
+  } = props;
+  const checkBoxClassName = classnames__WEBPACK_IMPORTED_MODULE_1__('uppy-u-reset', 'uppy-ProviderBrowserItem-checkbox', 'uppy-ProviderBrowserItem-checkbox--grid', {
+    'uppy-ProviderBrowserItem-checkbox--is-checked': isChecked
+  });
+  return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("li", {
+    className: className,
+    title: isDisabled ? restrictionError == null ? void 0 : restrictionError.message : null
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("input", {
+    type: "checkbox",
+    className: checkBoxClassName,
+    onChange: toggleCheckbox,
+    onKeyDown: recordShiftKeyPress,
+    onMouseDown: recordShiftKeyPress,
+    name: "listitem",
+    id: id,
+    checked: isChecked,
+    disabled: isDisabled,
+    "data-uppy-super-focusable": true
+  }), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("label", {
+    htmlFor: id,
+    "aria-label": title,
+    className: "uppy-u-reset uppy-ProviderBrowserItem-inner"
+  }, itemIconEl, showTitles && title, children));
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (GridListItem);
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/lib/Item/components/ItemIcon.js":
+/*!***************************************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/Item/components/ItemIcon.js ***!
+  \***************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+
+function FileIcon() {
+  return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
+    "aria-hidden": "true",
+    focusable: "false",
+    className: "uppy-c-icon",
+    width: 11,
+    height: 14.5,
+    viewBox: "0 0 44 58"
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("path", {
+    d: "M27.437.517a1 1 0 0 0-.094.03H4.25C2.037.548.217 2.368.217 4.58v48.405c0 2.212 1.82 4.03 4.03 4.03H39.03c2.21 0 4.03-1.818 4.03-4.03V15.61a1 1 0 0 0-.03-.28 1 1 0 0 0 0-.093 1 1 0 0 0-.03-.032 1 1 0 0 0 0-.03 1 1 0 0 0-.032-.063 1 1 0 0 0-.03-.063 1 1 0 0 0-.032 0 1 1 0 0 0-.03-.063 1 1 0 0 0-.032-.03 1 1 0 0 0-.03-.063 1 1 0 0 0-.063-.062l-14.593-14a1 1 0 0 0-.062-.062A1 1 0 0 0 28 .708a1 1 0 0 0-.374-.157 1 1 0 0 0-.156 0 1 1 0 0 0-.03-.03l-.003-.003zM4.25 2.547h22.218v9.97c0 2.21 1.82 4.03 4.03 4.03h10.564v36.438a2.02 2.02 0 0 1-2.032 2.032H4.25c-1.13 0-2.032-.9-2.032-2.032V4.58c0-1.13.902-2.032 2.03-2.032zm24.218 1.345l10.375 9.937.75.718H30.5c-1.13 0-2.032-.9-2.032-2.03V3.89z"
+  }));
+}
+function FolderIcon() {
+  return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
+    "aria-hidden": "true",
+    focusable: "false",
+    className: "uppy-c-icon",
+    style: {
+      minWidth: 16,
+      marginRight: 3
+    },
+    viewBox: "0 0 276.157 276.157"
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("path", {
+    d: "M273.08 101.378c-3.3-4.65-8.86-7.32-15.254-7.32h-24.34V67.59c0-10.2-8.3-18.5-18.5-18.5h-85.322c-3.63 0-9.295-2.875-11.436-5.805l-6.386-8.735c-4.982-6.814-15.104-11.954-23.546-11.954H58.73c-9.292 0-18.638 6.608-21.737 15.372l-2.033 5.752c-.958 2.71-4.72 5.37-7.596 5.37H18.5C8.3 49.09 0 57.39 0 67.59v167.07c0 .886.16 1.73.443 2.52.152 3.306 1.18 6.424 3.053 9.064 3.3 4.652 8.86 7.32 15.255 7.32h188.487c11.395 0 23.27-8.425 27.035-19.18l40.677-116.188c2.11-6.035 1.43-12.164-1.87-16.816zM18.5 64.088h8.864c9.295 0 18.64-6.607 21.738-15.37l2.032-5.75c.96-2.712 4.722-5.373 7.597-5.373h29.565c3.63 0 9.295 2.876 11.437 5.806l6.386 8.735c4.982 6.815 15.104 11.954 23.546 11.954h85.322c1.898 0 3.5 1.602 3.5 3.5v26.47H69.34c-11.395 0-23.27 8.423-27.035 19.178L15 191.23V67.59c0-1.898 1.603-3.5 3.5-3.5zm242.29 49.15l-40.676 116.188c-1.674 4.78-7.812 9.135-12.877 9.135H18.75c-1.447 0-2.576-.372-3.02-.997-.442-.625-.422-1.814.057-3.18l40.677-116.19c1.674-4.78 7.812-9.134 12.877-9.134h188.487c1.448 0 2.577.372 3.02.997.443.625.423 1.814-.056 3.18z"
+  }));
+}
+function VideoIcon() {
+  return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
+    "aria-hidden": "true",
+    focusable: "false",
+    style: {
+      width: 16,
+      marginRight: 4
+    },
+    viewBox: "0 0 58 58"
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("path", {
+    d: "M36.537 28.156l-11-7a1.005 1.005 0 0 0-1.02-.033C24.2 21.3 24 21.635 24 22v14a1 1 0 0 0 1.537.844l11-7a1.002 1.002 0 0 0 0-1.688zM26 34.18V23.82L34.137 29 26 34.18z"
+  }), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("path", {
+    d: "M57 6H1a1 1 0 0 0-1 1v44a1 1 0 0 0 1 1h56a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1zM10 28H2v-9h8v9zm-8 2h8v9H2v-9zm10 10V8h34v42H12V40zm44-12h-8v-9h8v9zm-8 2h8v9h-8v-9zm8-22v9h-8V8h8zM2 8h8v9H2V8zm0 42v-9h8v9H2zm54 0h-8v-9h8v9z"
+  }));
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (props => {
+  const {
+    itemIconString
+  } = props;
+  if (itemIconString === null) return undefined;
+  switch (itemIconString) {
+    case 'file':
+      return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(FileIcon, null);
+    case 'folder':
+      return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(FolderIcon, null);
+    case 'video':
+      return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(VideoIcon, null);
+    default:
+      {
+        const {
+          alt
+        } = props;
+        return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("img", {
+          src: itemIconString,
+          alt: alt,
+          loading: "lazy",
+          width: 16,
+          height: 16
+        });
+      }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/lib/Item/components/ListLi.js":
+/*!*************************************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/Item/components/ListLi.js ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+
+
+// if folder:
+//   + checkbox (selects all files from folder)
+//   + folder name (opens folder)
+// if file:
+//   + checkbox (selects file)
+//   + file name (selects file)
+
+function ListItem(props) {
+  const {
+    className,
+    isDisabled,
+    restrictionError,
+    isCheckboxDisabled,
+    isChecked,
+    toggleCheckbox,
+    recordShiftKeyPress,
+    type,
+    id,
+    itemIconEl,
+    title,
+    handleFolderClick,
+    showTitles,
+    i18n
+  } = props;
+  return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("li", {
+    className: className,
+    title: isDisabled ? restrictionError == null ? void 0 : restrictionError.message : null
+  }, !isCheckboxDisabled ? (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("input", {
+    type: "checkbox",
+    className: `uppy-u-reset uppy-ProviderBrowserItem-checkbox ${isChecked ? 'uppy-ProviderBrowserItem-checkbox--is-checked' : ''}`,
+    onChange: toggleCheckbox,
+    onKeyDown: recordShiftKeyPress,
+    onMouseDown: recordShiftKeyPress
+    // for the <label/>
+    ,
+    name: "listitem",
+    id: id,
+    checked: isChecked,
+    "aria-label": type === 'file' ? null : i18n('allFilesFromFolderNamed', {
+      name: title
+    }),
+    disabled: isDisabled,
+    "data-uppy-super-focusable": true
+  }) : null, type === 'file' ?
+  // label for a checkbox
+  (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("label", {
+    htmlFor: id,
+    className: "uppy-u-reset uppy-ProviderBrowserItem-inner"
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+    className: "uppy-ProviderBrowserItem-iconWrap"
+  }, itemIconEl), showTitles && title) :
+  // button to open a folder
+  (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("button", {
+    type: "button",
+    className: "uppy-u-reset uppy-c-btn uppy-ProviderBrowserItem-inner",
+    onClick: handleFolderClick,
+    "aria-label": i18n('openFolderNamed', {
+      name: title
+    })
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+    className: "uppy-ProviderBrowserItem-iconWrap"
+  }, itemIconEl), showTitles && (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("span", null, title)));
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ListItem);
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/lib/Item/index.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/Item/index.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var _components_ItemIcon_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/ItemIcon.js */ "./node_modules/@uppy/provider-views/lib/Item/components/ItemIcon.js");
+/* harmony import */ var _components_GridLi_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/GridLi.js */ "./node_modules/@uppy/provider-views/lib/Item/components/GridLi.js");
+/* harmony import */ var _components_ListLi_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/ListLi.js */ "./node_modules/@uppy/provider-views/lib/Item/components/ListLi.js");
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (props => {
+  const {
+    author,
+    getItemIcon,
+    isChecked,
+    isDisabled,
+    viewType
+  } = props;
+  const itemIconString = getItemIcon();
+  const className = classnames__WEBPACK_IMPORTED_MODULE_1__('uppy-ProviderBrowserItem', {
+    'uppy-ProviderBrowserItem--selected': isChecked
+  }, {
+    'uppy-ProviderBrowserItem--disabled': isDisabled
+  }, {
+    'uppy-ProviderBrowserItem--noPreview': itemIconString === 'video'
+  });
+  const itemIconEl = (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_components_ItemIcon_js__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    itemIconString: itemIconString
+  });
+  switch (viewType) {
+    case 'grid':
+      return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_components_GridLi_js__WEBPACK_IMPORTED_MODULE_3__["default"]
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      , _extends({}, props, {
+        className: className,
+        itemIconEl: itemIconEl
+      }));
+    case 'list':
+      return (
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_components_ListLi_js__WEBPACK_IMPORTED_MODULE_4__["default"], _extends({}, props, {
+          className: className,
+          itemIconEl: itemIconEl
+        }))
+      );
+    case 'unsplash':
+      return (
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_components_GridLi_js__WEBPACK_IMPORTED_MODULE_3__["default"], _extends({}, props, {
+          className: className,
+          itemIconEl: itemIconEl
+        }), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("a", {
+          href: `${author.url}?utm_source=Companion&utm_medium=referral`,
+          target: "_blank",
+          rel: "noopener noreferrer",
+          className: "uppy-ProviderBrowserItem-author",
+          tabIndex: "-1"
+        }, author.name))
+      );
+    default:
+      throw new Error(`There is no such type ${viewType}`);
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/lib/Loader.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/Loader.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_ref => {
+  let {
+    i18n,
+    loading
+  } = _ref;
+  return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+    className: "uppy-Provider-loading"
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("span", null, i18n('loading')), typeof loading === 'string' &&
+  // todo improve this, see discussion in https://github.com/transloadit/uppy/pull/4399#discussion_r1162564445
+  (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("span", {
+    style: {
+      marginTop: '.7em'
+    }
+  }, loading));
+});
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/lib/ProviderView/AuthView.js":
+/*!************************************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/ProviderView/AuthView.js ***!
+  \************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+
+function GoogleIcon() {
+  return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
+    width: "26",
+    height: "26",
+    viewBox: "0 0 26 26",
+    xmlns: "http://www.w3.org/2000/svg"
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("g", {
+    fill: "none",
+    "fill-rule": "evenodd"
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("circle", {
+    fill: "#FFF",
+    cx: "13",
+    cy: "13",
+    r: "13"
+  }), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("path", {
+    d: "M21.64 13.205c0-.639-.057-1.252-.164-1.841H13v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z",
+    fill: "#4285F4",
+    "fill-rule": "nonzero"
+  }), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("path", {
+    d: "M13 22c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H4.957v2.332A8.997 8.997 0 0013 22z",
+    fill: "#34A853",
+    "fill-rule": "nonzero"
+  }), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("path", {
+    d: "M7.964 14.71A5.41 5.41 0 017.682 13c0-.593.102-1.17.282-1.71V8.958H4.957A8.996 8.996 0 004 13c0 1.452.348 2.827.957 4.042l3.007-2.332z",
+    fill: "#FBBC05",
+    "fill-rule": "nonzero"
+  }), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("path", {
+    d: "M13 7.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C17.463 4.891 15.426 4 13 4a8.997 8.997 0 00-8.043 4.958l3.007 2.332C8.672 9.163 10.656 7.58 13 7.58z",
+    fill: "#EA4335",
+    "fill-rule": "nonzero"
+  }), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("path", {
+    d: "M4 4h18v18H4z"
+  })));
+}
+function AuthView(props) {
+  const {
+    pluginName,
+    pluginIcon,
+    i18nArray,
+    handleAuth
+  } = props;
+  // In order to comply with Google's brand we need to create a different button
+  // for the Google Drive plugin
+  const isGoogleDrive = pluginName === 'Google Drive';
+  const pluginNameComponent = (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("span", {
+    className: "uppy-Provider-authTitleName"
+  }, pluginName, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("br", null));
+  return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+    className: "uppy-Provider-auth"
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+    className: "uppy-Provider-authIcon"
+  }, pluginIcon()), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+    className: "uppy-Provider-authTitle"
+  }, i18nArray('authenticateWithTitle', {
+    pluginName: pluginNameComponent
+  })), isGoogleDrive ? (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("button", {
+    type: "button",
+    className: "uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn uppy-Provider-btn-google",
+    onClick: handleAuth,
+    "data-uppy-super-focusable": true
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(GoogleIcon, null), i18nArray('signInWithGoogle')) : (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("button", {
+    type: "button",
+    className: "uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn",
+    onClick: handleAuth,
+    "data-uppy-super-focusable": true
+  }, i18nArray('authenticateWith', {
+    pluginName
+  })));
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (AuthView);
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/lib/ProviderView/Header.js":
+/*!**********************************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/ProviderView/Header.js ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _User_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./User.js */ "./node_modules/@uppy/provider-views/lib/ProviderView/User.js");
+/* harmony import */ var _Breadcrumbs_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Breadcrumbs.js */ "./node_modules/@uppy/provider-views/lib/Breadcrumbs.js");
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (props => {
+  const components = [];
+  if (props.showBreadcrumbs) {
+    components.push((0,_Breadcrumbs_js__WEBPACK_IMPORTED_MODULE_1__["default"])({
+      getFolder: props.getFolder,
+      breadcrumbs: props.breadcrumbs,
+      breadcrumbsIcon: props.pluginIcon && props.pluginIcon(),
+      title: props.title
+    }));
+  }
+  components.push((0,_User_js__WEBPACK_IMPORTED_MODULE_0__["default"])({
+    logout: props.logout,
+    username: props.username,
+    i18n: props.i18n
+  }));
+  return components;
+});
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/lib/ProviderView/ProviderView.js":
+/*!****************************************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/ProviderView/ProviderView.js ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ProviderView),
+/* harmony export */   defaultPickerIcon: () => (/* binding */ defaultPickerIcon)
+/* harmony export */ });
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+/* harmony import */ var p_queue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! p-queue */ "./node_modules/p-queue/dist/index.js");
+/* harmony import */ var _uppy_utils_lib_generateFileID__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/utils/lib/generateFileID */ "./node_modules/@uppy/utils/lib/generateFileID.js");
+/* harmony import */ var _AuthView_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./AuthView.js */ "./node_modules/@uppy/provider-views/lib/ProviderView/AuthView.js");
+/* harmony import */ var _Header_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Header.js */ "./node_modules/@uppy/provider-views/lib/ProviderView/Header.js");
+/* harmony import */ var _Browser_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Browser.js */ "./node_modules/@uppy/provider-views/lib/Browser.js");
+/* harmony import */ var _Loader_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../Loader.js */ "./node_modules/@uppy/provider-views/lib/Loader.js");
+/* harmony import */ var _CloseWrapper_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../CloseWrapper.js */ "./node_modules/@uppy/provider-views/lib/CloseWrapper.js");
+/* harmony import */ var _View_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../View.js */ "./node_modules/@uppy/provider-views/lib/View.js");
+function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+var id = 0;
+function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
+
+
+
+
+
+
+
+
+
+const packageJson = {
+  "version": "3.7.0"
+};
+function formatBreadcrumbs(breadcrumbs) {
+  return breadcrumbs.slice(1).map(directory => directory.name).join('/');
+}
+function prependPath(path, component) {
+  if (!path) return component;
+  return `${path}/${component}`;
+}
+function defaultPickerIcon() {
+  return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
+    "aria-hidden": "true",
+    focusable: "false",
+    width: "30",
+    height: "30",
+    viewBox: "0 0 30 30"
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("path", {
+    d: "M15 30c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15C6.716 0 0 6.716 0 15c0 8.284 6.716 15 15 15zm4.258-12.676v6.846h-8.426v-6.846H5.204l9.82-12.364 9.82 12.364H19.26z"
+  }));
+}
+
+/**
+ * Class to easily generate generic views for Provider plugins
+ */
+var _abortController = /*#__PURE__*/_classPrivateFieldLooseKey("abortController");
+var _withAbort = /*#__PURE__*/_classPrivateFieldLooseKey("withAbort");
+var _list = /*#__PURE__*/_classPrivateFieldLooseKey("list");
+var _listFilesAndFolders = /*#__PURE__*/_classPrivateFieldLooseKey("listFilesAndFolders");
+var _recursivelyListAllFiles = /*#__PURE__*/_classPrivateFieldLooseKey("recursivelyListAllFiles");
+class ProviderView extends _View_js__WEBPACK_IMPORTED_MODULE_8__["default"] {
+  /**
+   * @param {object} plugin instance of the plugin
+   * @param {object} opts
+   */
+  constructor(plugin, opts) {
+    super(plugin, opts);
+    // set default options
+    Object.defineProperty(this, _recursivelyListAllFiles, {
+      value: _recursivelyListAllFiles2
+    });
+    Object.defineProperty(this, _listFilesAndFolders, {
+      value: _listFilesAndFolders2
+    });
+    Object.defineProperty(this, _list, {
+      value: _list2
+    });
+    Object.defineProperty(this, _withAbort, {
+      value: _withAbort2
+    });
+    Object.defineProperty(this, _abortController, {
+      writable: true,
+      value: void 0
+    });
+    const defaultOptions = {
+      viewType: 'list',
+      showTitles: true,
+      showFilter: true,
+      showBreadcrumbs: true,
+      loadAllFiles: false
+    };
+
+    // merge default options with the ones set by user
+    this.opts = {
+      ...defaultOptions,
+      ...opts
+    };
+
+    // Logic
+    this.filterQuery = this.filterQuery.bind(this);
+    this.clearFilter = this.clearFilter.bind(this);
+    this.getFolder = this.getFolder.bind(this);
+    this.getNextFolder = this.getNextFolder.bind(this);
+    this.logout = this.logout.bind(this);
+    this.handleAuth = this.handleAuth.bind(this);
+    this.handleScroll = this.handleScroll.bind(this);
+    this.donePicking = this.donePicking.bind(this);
+
+    // Visual
+    this.render = this.render.bind(this);
+
+    // Set default state for the plugin
+    this.plugin.setPluginState({
+      authenticated: false,
+      files: [],
+      folders: [],
+      breadcrumbs: [],
+      filterInput: '',
+      isSearchVisible: false,
+      currentSelection: []
+    });
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  tearDown() {
+    // Nothing.
+  }
+  /**
+   * Select a folder based on its id: fetches the folder and then updates state with its contents
+   * TODO rename to something better like selectFolder or navigateToFolder (breaking change?)
+   *
+   * @param  {string} requestPath
+   * the path we need to use when sending list request to companion (for some providers it's different from ID)
+   * @param  {string} name used in the UI and to build the absDirPath
+   * @returns {Promise}   Folders/files in folder
+   */
+  async getFolder(requestPath, name) {
+    this.setLoading(true);
+    try {
+      await _classPrivateFieldLooseBase(this, _withAbort)[_withAbort](async signal => {
+        this.lastCheckbox = undefined;
+        let {
+          breadcrumbs
+        } = this.plugin.getPluginState();
+        const index = breadcrumbs.findIndex(dir => requestPath === dir.requestPath);
+        if (index !== -1) {
+          // means we navigated back to a known directory (already in the stack), so cut the stack off there
+          breadcrumbs = breadcrumbs.slice(0, index + 1);
+        } else {
+          // we have navigated into a new (unknown) folder, add it to the stack
+          breadcrumbs = [...breadcrumbs, {
+            requestPath,
+            name
+          }];
+        }
+        this.nextPagePath = requestPath;
+        let files = [];
+        let folders = [];
+        do {
+          const {
+            files: newFiles,
+            folders: newFolders
+          } = await _classPrivateFieldLooseBase(this, _listFilesAndFolders)[_listFilesAndFolders]({
+            breadcrumbs,
+            signal
+          });
+          files = files.concat(newFiles);
+          folders = folders.concat(newFolders);
+          this.setLoading(this.plugin.uppy.i18n('loadedXFiles', {
+            numFiles: files.length + folders.length
+          }));
+        } while (this.opts.loadAllFiles && this.nextPagePath);
+        this.plugin.setPluginState({
+          folders,
+          files,
+          breadcrumbs,
+          filterInput: ''
+        });
+      });
+    } catch (err) {
+      this.handleError(err);
+    } finally {
+      this.setLoading(false);
+    }
+  }
+
+  /**
+   * Fetches new folder
+   *
+   * @param  {object} folder
+   */
+  getNextFolder(folder) {
+    this.getFolder(folder.requestPath, folder.name);
+    this.lastCheckbox = undefined;
+  }
+
+  /**
+   * Removes session token on client side.
+   */
+  async logout() {
+    try {
+      await _classPrivateFieldLooseBase(this, _withAbort)[_withAbort](async signal => {
+        const res = await this.provider.logout({
+          signal
+        });
+        if (res.ok) {
+          if (!res.revoked) {
+            const message = this.plugin.uppy.i18n('companionUnauthorizeHint', {
+              provider: this.plugin.title,
+              url: res.manual_revoke_url
+            });
+            this.plugin.uppy.info(message, 'info', 7000);
+          }
+          const newState = {
+            authenticated: false,
+            files: [],
+            folders: [],
+            breadcrumbs: [],
+            filterInput: ''
+          };
+          this.plugin.setPluginState(newState);
+        }
+      });
+    } catch (err) {
+      this.handleError(err);
+    }
+  }
+  filterQuery(input) {
+    this.plugin.setPluginState({
+      filterInput: input
+    });
+  }
+  clearFilter() {
+    this.plugin.setPluginState({
+      filterInput: ''
+    });
+  }
+  async handleAuth() {
+    const clientVersion = `@uppy/provider-views=${ProviderView.VERSION}`;
+    try {
+      await this.provider.login({
+        uppyVersions: clientVersion
+      });
+      this.plugin.setPluginState({
+        authenticated: true
+      });
+      this.preFirstRender();
+    } catch (e) {
+      this.plugin.uppy.log(`login failed: ${e.message}`);
+    }
+  }
+  async handleScroll(event) {
+    if (this.shouldHandleScroll(event) && this.nextPagePath) {
+      this.isHandlingScroll = true;
+      try {
+        await _classPrivateFieldLooseBase(this, _withAbort)[_withAbort](async signal => {
+          const {
+            files,
+            folders,
+            breadcrumbs
+          } = this.plugin.getPluginState();
+          const {
+            files: newFiles,
+            folders: newFolders
+          } = await _classPrivateFieldLooseBase(this, _listFilesAndFolders)[_listFilesAndFolders]({
+            breadcrumbs,
+            signal
+          });
+          const combinedFiles = files.concat(newFiles);
+          const combinedFolders = folders.concat(newFolders);
+          this.plugin.setPluginState({
+            folders: combinedFolders,
+            files: combinedFiles
+          });
+        });
+      } catch (error) {
+        this.handleError(error);
+      } finally {
+        this.isHandlingScroll = false;
+      }
+    }
+  }
+  async donePicking() {
+    this.setLoading(true);
+    try {
+      await _classPrivateFieldLooseBase(this, _withAbort)[_withAbort](async signal => {
+        const {
+          currentSelection
+        } = this.plugin.getPluginState();
+        const messages = [];
+        const newFiles = [];
+        for (const selectedItem of currentSelection) {
+          const {
+            requestPath
+          } = selectedItem;
+          const withRelDirPath = newItem => ({
+            ...newItem,
+            // calculate the file's path relative to the user's selected item's path
+            // see https://github.com/transloadit/uppy/pull/4537#issuecomment-1614236655
+            relDirPath: newItem.absDirPath.replace(selectedItem.absDirPath, '').replace(/^\//, '')
+          });
+          if (selectedItem.isFolder) {
+            let isEmpty = true;
+            let numNewFiles = 0;
+            const queue = new p_queue__WEBPACK_IMPORTED_MODULE_1__["default"]({
+              concurrency: 6
+            });
+            const onFiles = files => {
+              for (const newFile of files) {
+                const tagFile = this.getTagFile(newFile);
+                const id = (0,_uppy_utils_lib_generateFileID__WEBPACK_IMPORTED_MODULE_2__.getSafeFileId)(tagFile);
+                // If the same folder is added again, we don't want to send
+                // X amount of duplicate file notifications, we want to say
+                // the folder was already added. This checks if all files are duplicate,
+                // if that's the case, we don't add the files.
+                if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
+                  newFiles.push(withRelDirPath(newFile));
+                  numNewFiles++;
+                  this.setLoading(this.plugin.uppy.i18n('addedNumFiles', {
+                    numFiles: numNewFiles
+                  }));
+                }
+                isEmpty = false;
+              }
+            };
+            await _classPrivateFieldLooseBase(this, _recursivelyListAllFiles)[_recursivelyListAllFiles]({
+              requestPath,
+              absDirPath: prependPath(selectedItem.absDirPath, selectedItem.name),
+              relDirPath: selectedItem.name,
+              queue,
+              onFiles,
+              signal
+            });
+            await queue.onIdle();
+            let message;
+            if (isEmpty) {
+              message = this.plugin.uppy.i18n('emptyFolderAdded');
+            } else if (numNewFiles === 0) {
+              message = this.plugin.uppy.i18n('folderAlreadyAdded', {
+                folder: selectedItem.name
+              });
+            } else {
+              // TODO we don't really know at this point whether any files were actually added
+              // (only later after addFiles has been called) so we should probably rewrite this.
+              // Example: If all files fail to add due to restriction error, it will still say "Added 100 files from folder"
+              message = this.plugin.uppy.i18n('folderAdded', {
+                smart_count: numNewFiles,
+                folder: selectedItem.name
+              });
+            }
+            messages.push(message);
+          } else {
+            newFiles.push(withRelDirPath(selectedItem));
+          }
+        }
+
+        // Note: this.plugin.uppy.addFiles must be only run once we are done fetching all files,
+        // because it will cause the loading screen to disappear,
+        // and that will allow the user to start the upload, so we need to make sure we have
+        // finished all async operations before we add any file
+        // see https://github.com/transloadit/uppy/pull/4384
+        this.plugin.uppy.log('Adding files from a remote provider');
+        this.plugin.uppy.addFiles(newFiles.map(file => this.getTagFile(file)));
+        this.plugin.setPluginState({
+          filterInput: ''
+        });
+        messages.forEach(message => this.plugin.uppy.info(message));
+        this.clearSelection();
+      });
+    } catch (err) {
+      this.handleError(err);
+    } finally {
+      this.setLoading(false);
+    }
+  }
+  render(state, viewOptions) {
+    var _this = this;
+    if (viewOptions === void 0) {
+      viewOptions = {};
+    }
+    const {
+      authenticated,
+      didFirstRender
+    } = this.plugin.getPluginState();
+    const {
+      i18n
+    } = this.plugin.uppy;
+    if (!didFirstRender) {
+      this.preFirstRender();
+    }
+    const targetViewOptions = {
+      ...this.opts,
+      ...viewOptions
+    };
+    const {
+      files,
+      folders,
+      filterInput,
+      loading,
+      currentSelection
+    } = this.plugin.getPluginState();
+    const {
+      isChecked,
+      toggleCheckbox,
+      recordShiftKeyPress,
+      filterItems
+    } = this;
+    const hasInput = filterInput !== '';
+    const pluginIcon = this.plugin.icon || defaultPickerIcon;
+    const headerProps = {
+      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
+      getFolder: this.getFolder,
+      breadcrumbs: this.plugin.getPluginState().breadcrumbs,
+      pluginIcon,
+      title: this.plugin.title,
+      logout: this.logout,
+      username: this.username,
+      i18n
+    };
+    const browserProps = {
+      isChecked,
+      toggleCheckbox,
+      recordShiftKeyPress,
+      currentSelection,
+      files: hasInput ? filterItems(files) : files,
+      folders: hasInput ? filterItems(folders) : folders,
+      username: this.username,
+      getNextFolder: this.getNextFolder,
+      getFolder: this.getFolder,
+      loadAllFiles: this.opts.loadAllFiles,
+      // For SearchFilterInput component
+      showSearchFilter: targetViewOptions.showFilter,
+      search: this.filterQuery,
+      clearSearch: this.clearFilter,
+      searchTerm: filterInput,
+      searchOnInput: true,
+      searchInputLabel: i18n('filter'),
+      clearSearchLabel: i18n('resetFilter'),
+      noResultsLabel: i18n('noFilesFound'),
+      logout: this.logout,
+      handleScroll: this.handleScroll,
+      done: this.donePicking,
+      cancel: this.cancelPicking,
+      headerComponent: (0,_Header_js__WEBPACK_IMPORTED_MODULE_4__["default"])(headerProps),
+      title: this.plugin.title,
+      viewType: targetViewOptions.viewType,
+      showTitles: targetViewOptions.showTitles,
+      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
+      pluginIcon,
+      i18n: this.plugin.uppy.i18n,
+      uppyFiles: this.plugin.uppy.getFiles(),
+      validateRestrictions: function () {
+        return _this.plugin.uppy.validateRestrictions(...arguments);
+      }
+    };
+    if (loading) {
+      return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_CloseWrapper_js__WEBPACK_IMPORTED_MODULE_7__["default"], {
+        onUnmount: this.clearSelection
+      }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_Loader_js__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        i18n: this.plugin.uppy.i18n,
+        loading: loading
+      }));
+    }
+    if (!authenticated) {
+      return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_CloseWrapper_js__WEBPACK_IMPORTED_MODULE_7__["default"], {
+        onUnmount: this.clearSelection
+      }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_AuthView_js__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        pluginName: this.plugin.title,
+        pluginIcon: pluginIcon,
+        handleAuth: this.handleAuth,
+        i18n: this.plugin.uppy.i18n,
+        i18nArray: this.plugin.uppy.i18nArray
+      }));
+    }
+    return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_CloseWrapper_js__WEBPACK_IMPORTED_MODULE_7__["default"], {
+      onUnmount: this.clearSelection
+    }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_Browser_js__WEBPACK_IMPORTED_MODULE_5__["default"], browserProps));
+  }
+}
+async function _withAbort2(op) {
+  var _classPrivateFieldLoo;
+  // prevent multiple requests in parallel from causing race conditions
+  (_classPrivateFieldLoo = _classPrivateFieldLooseBase(this, _abortController)[_abortController]) == null ? void 0 : _classPrivateFieldLoo.abort();
+  const abortController = new AbortController();
+  _classPrivateFieldLooseBase(this, _abortController)[_abortController] = abortController;
+  const cancelRequest = () => {
+    abortController.abort();
+    this.clearSelection();
+  };
+  try {
+    this.plugin.uppy.on('dashboard:close-panel', cancelRequest);
+    this.plugin.uppy.on('cancel-all', cancelRequest);
+    await op(abortController.signal);
+  } finally {
+    this.plugin.uppy.off('dashboard:close-panel', cancelRequest);
+    this.plugin.uppy.off('cancel-all', cancelRequest);
+    _classPrivateFieldLooseBase(this, _abortController)[_abortController] = undefined;
+  }
+}
+async function _list2(_ref) {
+  let {
+    requestPath,
+    absDirPath,
+    signal
+  } = _ref;
+  const {
+    username,
+    nextPagePath,
+    items
+  } = await this.provider.list(requestPath, {
+    signal
+  });
+  this.username = username || this.username;
+  return {
+    items: items.map(item => ({
+      ...item,
+      absDirPath
+    })),
+    nextPagePath
+  };
+}
+async function _listFilesAndFolders2(_ref2) {
+  let {
+    breadcrumbs,
+    signal
+  } = _ref2;
+  const absDirPath = formatBreadcrumbs(breadcrumbs);
+  const {
+    items,
+    nextPagePath
+  } = await _classPrivateFieldLooseBase(this, _list)[_list]({
+    requestPath: this.nextPagePath,
+    absDirPath,
+    signal
+  });
+  this.nextPagePath = nextPagePath;
+  const files = [];
+  const folders = [];
+  items.forEach(item => {
+    if (item.isFolder) {
+      folders.push(item);
+    } else {
+      files.push(item);
+    }
+  });
+  return {
+    files,
+    folders
+  };
+}
+async function _recursivelyListAllFiles2(_ref3) {
+  let {
+    requestPath,
+    absDirPath,
+    relDirPath,
+    queue,
+    onFiles,
+    signal
+  } = _ref3;
+  let curPath = requestPath;
+  while (curPath) {
+    const res = await _classPrivateFieldLooseBase(this, _list)[_list]({
+      requestPath: curPath,
+      absDirPath,
+      signal
+    });
+    curPath = res.nextPagePath;
+    const files = res.items.filter(item => !item.isFolder);
+    const folders = res.items.filter(item => item.isFolder);
+    onFiles(files);
+
+    // recursively queue call to self for each folder
+    const promises = folders.map(async folder => queue.add(async () => _classPrivateFieldLooseBase(this, _recursivelyListAllFiles)[_recursivelyListAllFiles]({
+      requestPath: folder.requestPath,
+      absDirPath: prependPath(absDirPath, folder.name),
+      relDirPath: prependPath(relDirPath, folder.name),
+      queue,
+      onFiles,
+      signal
+    })));
+    await Promise.all(promises); // in case we get an error
+  }
+}
+ProviderView.VERSION = packageJson.version;
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/lib/ProviderView/User.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/ProviderView/User.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_ref => {
+  let {
+    i18n,
+    logout,
+    username
+  } = _ref;
+  return [(0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("span", {
+    className: "uppy-ProviderBrowser-user",
+    key: "username"
+  }, username), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("button", {
+    type: "button",
+    onClick: logout,
+    className: "uppy-u-reset uppy-c-btn uppy-ProviderBrowser-userLogout",
+    key: "logout"
+  }, i18n('logOut'))];
+});
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/lib/ProviderView/index.js":
+/*!*********************************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/ProviderView/index.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _ProviderView_js__WEBPACK_IMPORTED_MODULE_0__["default"]),
+/* harmony export */   defaultPickerIcon: () => (/* reexport safe */ _ProviderView_js__WEBPACK_IMPORTED_MODULE_0__.defaultPickerIcon)
+/* harmony export */ });
+/* harmony import */ var _ProviderView_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ProviderView.js */ "./node_modules/@uppy/provider-views/lib/ProviderView/ProviderView.js");
+
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/lib/SearchFilterInput.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/SearchFilterInput.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ SearchFilterInput)
+/* harmony export */ });
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+/* harmony import */ var preact_hooks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! preact/hooks */ "./node_modules/preact/hooks/dist/hooks.module.js");
+/* harmony import */ var nanoid_non_secure__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! nanoid/non-secure */ "./node_modules/@uppy/provider-views/node_modules/nanoid/non-secure/index.js");
+
+
+
+// import debounce from 'lodash.debounce'
+
+function SearchFilterInput(props) {
+  const {
+    search,
+    searchOnInput,
+    searchTerm,
+    showButton,
+    inputLabel,
+    clearSearchLabel,
+    buttonLabel,
+    clearSearch,
+    inputClassName,
+    buttonCSSClassName
+  } = props;
+  const [searchText, setSearchText] = (0,preact_hooks__WEBPACK_IMPORTED_MODULE_1__.useState)(searchTerm != null ? searchTerm : '');
+  // const debouncedSearch = debounce((q) => search(q), 1000)
+
+  const validateAndSearch = (0,preact_hooks__WEBPACK_IMPORTED_MODULE_1__.useCallback)(ev => {
+    ev.preventDefault();
+    search(searchText);
+  }, [search, searchText]);
+  const handleInput = (0,preact_hooks__WEBPACK_IMPORTED_MODULE_1__.useCallback)(ev => {
+    const inputValue = ev.target.value;
+    setSearchText(inputValue);
+    if (searchOnInput) search(inputValue);
+  }, [setSearchText, searchOnInput, search]);
+  const handleReset = () => {
+    setSearchText('');
+    if (clearSearch) clearSearch();
+  };
+  const [form] = (0,preact_hooks__WEBPACK_IMPORTED_MODULE_1__.useState)(() => {
+    const formEl = document.createElement('form');
+    formEl.setAttribute('tabindex', '-1');
+    formEl.id = (0,nanoid_non_secure__WEBPACK_IMPORTED_MODULE_2__.nanoid)();
+    return formEl;
+  });
+  (0,preact_hooks__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
+    document.body.appendChild(form);
+    form.addEventListener('submit', validateAndSearch);
+    return () => {
+      form.removeEventListener('submit', validateAndSearch);
+      document.body.removeChild(form);
+    };
+  }, [form, validateAndSearch]);
+  return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(preact__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("input", {
+    className: `uppy-u-reset ${inputClassName}`,
+    type: "search",
+    "aria-label": inputLabel,
+    placeholder: inputLabel,
+    value: searchText,
+    onInput: handleInput,
+    form: form.id,
+    "data-uppy-super-focusable": true
+  }), !showButton && (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
+    "aria-hidden": "true",
+    focusable: "false",
+    class: "uppy-c-icon uppy-ProviderBrowser-searchFilterIcon",
+    width: "12",
+    height: "12",
+    viewBox: "0 0 12 12"
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("path", {
+    d: "M8.638 7.99l3.172 3.172a.492.492 0 1 1-.697.697L7.91 8.656a4.977 4.977 0 0 1-2.983.983C2.206 9.639 0 7.481 0 4.819 0 2.158 2.206 0 4.927 0c2.721 0 4.927 2.158 4.927 4.82a4.74 4.74 0 0 1-1.216 3.17zm-3.71.685c2.176 0 3.94-1.726 3.94-3.856 0-2.129-1.764-3.855-3.94-3.855C2.75.964.984 2.69.984 4.819c0 2.13 1.765 3.856 3.942 3.856z"
+  })), !showButton && searchText && (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("button", {
+    className: "uppy-u-reset uppy-ProviderBrowser-searchFilterReset",
+    type: "button",
+    "aria-label": clearSearchLabel,
+    title: clearSearchLabel,
+    onClick: handleReset
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
+    "aria-hidden": "true",
+    focusable: "false",
+    className: "uppy-c-icon",
+    viewBox: "0 0 19 19"
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("path", {
+    d: "M17.318 17.232L9.94 9.854 9.586 9.5l-.354.354-7.378 7.378h.707l-.62-.62v.706L9.318 9.94l.354-.354-.354-.354L1.94 1.854v.707l.62-.62h-.706l7.378 7.378.354.354.354-.354 7.378-7.378h-.707l.622.62v-.706L9.854 9.232l-.354.354.354.354 7.378 7.378.708-.707-7.38-7.378v.708l7.38-7.38.353-.353-.353-.353-.622-.622-.353-.353-.354.352-7.378 7.38h.708L2.56 1.23 2.208.88l-.353.353-.622.62-.353.355.352.353 7.38 7.38v-.708l-7.38 7.38-.353.353.352.353.622.622.353.353.354-.353 7.38-7.38h-.708l7.38 7.38z"
+  }))), showButton && (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("button", {
+    className: `uppy-u-reset uppy-c-btn uppy-c-btn-primary ${buttonCSSClassName}`,
+    type: "submit",
+    form: form.id
+  }, buttonLabel));
+}
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/lib/SearchProviderView/SearchProviderView.js":
+/*!****************************************************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/SearchProviderView/SearchProviderView.js ***!
+  \****************************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ SearchProviderView)
+/* harmony export */ });
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+/* harmony import */ var _SearchFilterInput_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../SearchFilterInput.js */ "./node_modules/@uppy/provider-views/lib/SearchFilterInput.js");
+/* harmony import */ var _Browser_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Browser.js */ "./node_modules/@uppy/provider-views/lib/Browser.js");
+/* harmony import */ var _CloseWrapper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../CloseWrapper.js */ "./node_modules/@uppy/provider-views/lib/CloseWrapper.js");
+/* harmony import */ var _View_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../View.js */ "./node_modules/@uppy/provider-views/lib/View.js");
+function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+var id = 0;
+function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
+
+
+
+
+
+const packageJson = {
+  "version": "3.7.0"
+};
+/**
+ * SearchProviderView, used for Unsplash and future image search providers.
+ * Extends generic View, shared with regular providers like Google Drive and Instagram.
+ */
+var _updateFilesAndInputMode = /*#__PURE__*/_classPrivateFieldLooseKey("updateFilesAndInputMode");
+class SearchProviderView extends _View_js__WEBPACK_IMPORTED_MODULE_4__["default"] {
+  /**
+   * @param {object} plugin instance of the plugin
+   * @param {object} opts
+   */
+  constructor(plugin, opts) {
+    super(plugin, opts);
+
+    // set default options
+    Object.defineProperty(this, _updateFilesAndInputMode, {
+      value: _updateFilesAndInputMode2
+    });
+    const defaultOptions = {
+      viewType: 'grid',
+      showTitles: false,
+      showFilter: false,
+      showBreadcrumbs: false
+    };
+
+    // merge default options with the ones set by user
+    this.opts = {
+      ...defaultOptions,
+      ...opts
+    };
+
+    // Logic
+    this.search = this.search.bind(this);
+    this.clearSearch = this.clearSearch.bind(this);
+    this.resetPluginState = this.resetPluginState.bind(this);
+    this.handleScroll = this.handleScroll.bind(this);
+    this.donePicking = this.donePicking.bind(this);
+
+    // Visual
+    this.render = this.render.bind(this);
+    this.defaultState = {
+      isInputMode: true,
+      files: [],
+      folders: [],
+      breadcrumbs: [],
+      filterInput: '',
+      currentSelection: [],
+      searchTerm: null
+    };
+
+    // Set default state for the plugin
+    this.plugin.setPluginState(this.defaultState);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  tearDown() {
+    // Nothing.
+  }
+  resetPluginState() {
+    this.plugin.setPluginState(this.defaultState);
+  }
+  async search(query) {
+    const {
+      searchTerm
+    } = this.plugin.getPluginState();
+    if (query && query === searchTerm) {
+      // no need to search again as this is the same as the previous search
+      return;
+    }
+    this.setLoading(true);
+    try {
+      const res = await this.provider.search(query);
+      _classPrivateFieldLooseBase(this, _updateFilesAndInputMode)[_updateFilesAndInputMode](res, []);
+    } catch (err) {
+      this.handleError(err);
+    } finally {
+      this.setLoading(false);
+    }
+  }
+  clearSearch() {
+    this.plugin.setPluginState({
+      currentSelection: [],
+      files: [],
+      searchTerm: null
+    });
+  }
+  async handleScroll(event) {
+    const query = this.nextPageQuery || null;
+    if (this.shouldHandleScroll(event) && query) {
+      this.isHandlingScroll = true;
+      try {
+        const {
+          files,
+          searchTerm
+        } = this.plugin.getPluginState();
+        const response = await this.provider.search(searchTerm, query);
+        _classPrivateFieldLooseBase(this, _updateFilesAndInputMode)[_updateFilesAndInputMode](response, files);
+      } catch (error) {
+        this.handleError(error);
+      } finally {
+        this.isHandlingScroll = false;
+      }
+    }
+  }
+  donePicking() {
+    const {
+      currentSelection
+    } = this.plugin.getPluginState();
+    this.plugin.uppy.log('Adding remote search provider files');
+    this.plugin.uppy.addFiles(currentSelection.map(file => this.getTagFile(file)));
+    this.resetPluginState();
+  }
+  render(state, viewOptions) {
+    var _this = this;
+    if (viewOptions === void 0) {
+      viewOptions = {};
+    }
+    const {
+      didFirstRender,
+      isInputMode,
+      searchTerm
+    } = this.plugin.getPluginState();
+    const {
+      i18n
+    } = this.plugin.uppy;
+    if (!didFirstRender) {
+      this.preFirstRender();
+    }
+    const targetViewOptions = {
+      ...this.opts,
+      ...viewOptions
+    };
+    const {
+      files,
+      folders,
+      filterInput,
+      loading,
+      currentSelection
+    } = this.plugin.getPluginState();
+    const {
+      isChecked,
+      toggleCheckbox,
+      filterItems,
+      recordShiftKeyPress
+    } = this;
+    const hasInput = filterInput !== '';
+    const browserProps = {
+      isChecked,
+      toggleCheckbox,
+      recordShiftKeyPress,
+      currentSelection,
+      files: hasInput ? filterItems(files) : files,
+      folders: hasInput ? filterItems(folders) : folders,
+      handleScroll: this.handleScroll,
+      done: this.donePicking,
+      cancel: this.cancelPicking,
+      // For SearchFilterInput component
+      showSearchFilter: targetViewOptions.showFilter,
+      search: this.search,
+      clearSearch: this.clearSearch,
+      searchTerm,
+      searchOnInput: false,
+      searchInputLabel: i18n('search'),
+      clearSearchLabel: i18n('resetSearch'),
+      noResultsLabel: i18n('noSearchResults'),
+      title: this.plugin.title,
+      viewType: targetViewOptions.viewType,
+      showTitles: targetViewOptions.showTitles,
+      showFilter: targetViewOptions.showFilter,
+      isLoading: loading,
+      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
+      pluginIcon: this.plugin.icon,
+      i18n,
+      uppyFiles: this.plugin.uppy.getFiles(),
+      validateRestrictions: function () {
+        return _this.plugin.uppy.validateRestrictions(...arguments);
+      }
+    };
+    if (isInputMode) {
+      return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_CloseWrapper_js__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        onUnmount: this.resetPluginState
+      }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+        className: "uppy-SearchProvider"
+      }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_SearchFilterInput_js__WEBPACK_IMPORTED_MODULE_1__["default"], {
+        search: this.search,
+        clearSelection: this.clearSelection,
+        inputLabel: i18n('enterTextToSearch'),
+        buttonLabel: i18n('searchImages'),
+        inputClassName: "uppy-c-textInput uppy-SearchProvider-input",
+        buttonCSSClassName: "uppy-SearchProvider-searchButton",
+        showButton: true
+      })));
+    }
+    return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_CloseWrapper_js__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      onUnmount: this.resetPluginState
+    }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_Browser_js__WEBPACK_IMPORTED_MODULE_2__["default"], browserProps));
+  }
+}
+function _updateFilesAndInputMode2(res, files) {
+  this.nextPageQuery = res.nextPageQuery;
+  res.items.forEach(item => {
+    files.push(item);
+  });
+  this.plugin.setPluginState({
+    currentSelection: [],
+    isInputMode: false,
+    files,
+    searchTerm: res.searchedFor
+  });
+}
+SearchProviderView.VERSION = packageJson.version;
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/lib/SearchProviderView/index.js":
+/*!***************************************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/SearchProviderView/index.js ***!
+  \***************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _SearchProviderView_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _SearchProviderView_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SearchProviderView.js */ "./node_modules/@uppy/provider-views/lib/SearchProviderView/SearchProviderView.js");
+
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/lib/View.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/View.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ View)
+/* harmony export */ });
+/* harmony import */ var _uppy_utils_lib_getFileType__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/utils/lib/getFileType */ "./node_modules/@uppy/utils/lib/getFileType.js");
+/* harmony import */ var _uppy_utils_lib_isPreviewSupported__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/utils/lib/isPreviewSupported */ "./node_modules/@uppy/utils/lib/isPreviewSupported.js");
+/* harmony import */ var _uppy_utils_lib_remoteFileObjToLocal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/utils/lib/remoteFileObjToLocal */ "./node_modules/@uppy/utils/lib/remoteFileObjToLocal.js");
+
+
+
+class View {
+  constructor(plugin, opts) {
+    this.filterItems = items => {
+      const state = this.plugin.getPluginState();
+      if (!state.filterInput || state.filterInput === '') {
+        return items;
+      }
+      return items.filter(folder => {
+        return folder.name.toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1;
+      });
+    };
+    this.recordShiftKeyPress = e => {
+      this.isShiftKeyPressed = e.shiftKey;
+    };
+    /**
+     * Toggles file/folder checkbox to on/off state while updating files list.
+     *
+     * Note that some extra complexity comes from supporting shift+click to
+     * toggle multiple checkboxes at once, which is done by getting all files
+     * in between last checked file and current one.
+     */
+    this.toggleCheckbox = (e, file) => {
+      e.stopPropagation();
+      e.preventDefault();
+      e.currentTarget.focus();
+      const {
+        folders,
+        files
+      } = this.plugin.getPluginState();
+      const items = this.filterItems(folders.concat(files));
+      // Shift-clicking selects a single consecutive list of items
+      // starting at the previous click.
+      if (this.lastCheckbox && this.isShiftKeyPressed) {
+        const {
+          currentSelection
+        } = this.plugin.getPluginState();
+        const prevIndex = items.indexOf(this.lastCheckbox);
+        const currentIndex = items.indexOf(file);
+        const newSelection = prevIndex < currentIndex ? items.slice(prevIndex, currentIndex + 1) : items.slice(currentIndex, prevIndex + 1);
+        const reducedNewSelection = [];
+
+        // Check restrictions on each file in currentSelection,
+        // reduce it to only contain files that pass restrictions
+        for (const item of newSelection) {
+          const {
+            uppy
+          } = this.plugin;
+          const restrictionError = uppy.validateRestrictions((0,_uppy_utils_lib_remoteFileObjToLocal__WEBPACK_IMPORTED_MODULE_2__["default"])(item), [...uppy.getFiles(), ...reducedNewSelection]);
+          if (!restrictionError) {
+            reducedNewSelection.push(item);
+          } else {
+            uppy.info({
+              message: restrictionError.message
+            }, 'error', uppy.opts.infoTimeout);
+          }
+        }
+        this.plugin.setPluginState({
+          currentSelection: [...new Set([...currentSelection, ...reducedNewSelection])]
+        });
+        return;
+      }
+      this.lastCheckbox = file;
+      const {
+        currentSelection
+      } = this.plugin.getPluginState();
+      if (this.isChecked(file)) {
+        this.plugin.setPluginState({
+          currentSelection: currentSelection.filter(item => item.id !== file.id)
+        });
+      } else {
+        this.plugin.setPluginState({
+          currentSelection: currentSelection.concat([file])
+        });
+      }
+    };
+    this.isChecked = file => {
+      const {
+        currentSelection
+      } = this.plugin.getPluginState();
+      // comparing id instead of the file object, because the reference to the object
+      // changes when we switch folders, and the file list is updated
+      return currentSelection.some(item => item.id === file.id);
+    };
+    this.plugin = plugin;
+    this.provider = opts.provider;
+    this.isHandlingScroll = false;
+    this.preFirstRender = this.preFirstRender.bind(this);
+    this.handleError = this.handleError.bind(this);
+    this.clearSelection = this.clearSelection.bind(this);
+    this.cancelPicking = this.cancelPicking.bind(this);
+  }
+  preFirstRender() {
+    this.plugin.setPluginState({
+      didFirstRender: true
+    });
+    this.plugin.onFirstRender();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  shouldHandleScroll(event) {
+    const {
+      scrollHeight,
+      scrollTop,
+      offsetHeight
+    } = event.target;
+    const scrollPosition = scrollHeight - (scrollTop + offsetHeight);
+    return scrollPosition < 50 && !this.isHandlingScroll;
+  }
+  clearSelection() {
+    this.plugin.setPluginState({
+      currentSelection: [],
+      filterInput: ''
+    });
+  }
+  cancelPicking() {
+    this.clearSelection();
+    const dashboard = this.plugin.uppy.getPlugin('Dashboard');
+    if (dashboard) {
+      dashboard.hideAllPanels();
+    }
+  }
+  handleError(error) {
+    var _error$cause;
+    const {
+      uppy
+    } = this.plugin;
+    const message = uppy.i18n('companionError');
+    uppy.log(error.toString());
+    if (error.isAuthError || ((_error$cause = error.cause) == null ? void 0 : _error$cause.name) === 'AbortError') {
+      // authError just means we're not authenticated, don't show to user
+      // AbortError means the user has clicked "cancel" on an operation
+      return;
+    }
+    uppy.info({
+      message,
+      details: error.toString()
+    }, 'error', 5000);
+  }
+
+  // todo document what is a "tagFile" or get rid of this concept
+  getTagFile(file) {
+    const tagFile = {
+      id: file.id,
+      source: this.plugin.id,
+      data: file,
+      name: file.name || file.id,
+      type: file.mimeType,
+      isRemote: true,
+      meta: {},
+      body: {
+        fileId: file.id
+      },
+      remote: {
+        companionUrl: this.plugin.opts.companionUrl,
+        url: `${this.provider.fileUrl(file.requestPath)}`,
+        body: {
+          fileId: file.id
+        },
+        providerName: this.provider.name,
+        provider: this.provider.provider
+      }
+    };
+
+    // all properties on this object get saved into the Uppy store.
+    // Some users might serialize their store (for example using JSON.stringify),
+    // or when using Golden Retriever it will serialize state into e.g. localStorage.
+    // However RequestClient is not serializable so we need to prevent it from being serialized.
+    Object.defineProperty(tagFile.remote, 'requestClient', {
+      value: this.provider,
+      enumerable: false
+    });
+    const fileType = (0,_uppy_utils_lib_getFileType__WEBPACK_IMPORTED_MODULE_0__["default"])(tagFile);
+
+    // TODO Should we just always use the thumbnail URL if it exists?
+    if (fileType && (0,_uppy_utils_lib_isPreviewSupported__WEBPACK_IMPORTED_MODULE_1__["default"])(fileType)) {
+      tagFile.preview = file.thumbnail;
+    }
+    if (file.author) {
+      if (file.author.name != null) tagFile.meta.authorName = String(file.author.name);
+      if (file.author.url) tagFile.meta.authorUrl = file.author.url;
+    }
+
+    // add relativePath similar to non-remote files: https://github.com/transloadit/uppy/pull/4486#issuecomment-1579203717
+    if (file.relDirPath != null) tagFile.meta.relativePath = file.relDirPath ? `${file.relDirPath}/${tagFile.name}` : null;
+    // and absolutePath (with leading slash) https://github.com/transloadit/uppy/pull/4537#issuecomment-1614236655
+    if (file.absDirPath != null) tagFile.meta.absolutePath = file.absDirPath ? `/${file.absDirPath}/${tagFile.name}` : `/${tagFile.name}`;
+    return tagFile;
+  }
+  setLoading(loading) {
+    this.plugin.setPluginState({
+      loading
+    });
+  }
+}
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/lib/index.js":
+/*!********************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/lib/index.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ProviderViews: () => (/* reexport safe */ _ProviderView_index_js__WEBPACK_IMPORTED_MODULE_0__["default"]),
+/* harmony export */   SearchProviderViews: () => (/* reexport safe */ _SearchProviderView_index_js__WEBPACK_IMPORTED_MODULE_1__["default"]),
+/* harmony export */   defaultPickerIcon: () => (/* reexport safe */ _ProviderView_index_js__WEBPACK_IMPORTED_MODULE_0__.defaultPickerIcon)
+/* harmony export */ });
+/* harmony import */ var _ProviderView_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ProviderView/index.js */ "./node_modules/@uppy/provider-views/lib/ProviderView/index.js");
+/* harmony import */ var _SearchProviderView_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SearchProviderView/index.js */ "./node_modules/@uppy/provider-views/lib/SearchProviderView/index.js");
+
+
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/provider-views/node_modules/nanoid/non-secure/index.js":
+/*!***********************************************************************************!*\
+  !*** ./node_modules/@uppy/provider-views/node_modules/nanoid/non-secure/index.js ***!
+  \***********************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   customAlphabet: () => (/* binding */ customAlphabet),
+/* harmony export */   nanoid: () => (/* binding */ nanoid)
+/* harmony export */ });
+let urlAlphabet =
+  'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
+let customAlphabet = (alphabet, defaultSize = 21) => {
+  return (size = defaultSize) => {
+    let id = ''
+    let i = size
+    while (i--) {
+      id += alphabet[(Math.random() * alphabet.length) | 0]
+    }
+    return id
+  }
+}
+let nanoid = (size = 21) => {
+  let id = ''
+  let i = size
+  while (i--) {
+    id += urlAlphabet[(Math.random() * 64) | 0]
+  }
+  return id
+}
+
+
+/***/ }),
+
+>>>>>>> feature/publication-datetimetype
 /***/ "./node_modules/@uppy/status-bar/lib/Components.js":
 /*!*********************************************************!*\
   !*** ./node_modules/@uppy/status-bar/lib/Components.js ***!
@@ -24339,20 +30835,30 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+<<<<<<< HEAD
 /* harmony import */ var lodash_throttle__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lodash.throttle */ "./node_modules/lodash.throttle/index.js");
 /* harmony import */ var _transloadit_prettier_bytes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @transloadit/prettier-bytes */ "./node_modules/@transloadit/prettier-bytes/prettierBytes.js");
 /* harmony import */ var _uppy_utils_lib_prettyETA__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @uppy/utils/lib/prettyETA */ "./node_modules/@uppy/utils/lib/prettyETA.js");
 /* harmony import */ var _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./StatusBarStates.js */ "./node_modules/@uppy/status-bar/lib/StatusBarStates.js");
 
+=======
+/* harmony import */ var _transloadit_prettier_bytes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @transloadit/prettier-bytes */ "./node_modules/@transloadit/prettier-bytes/prettierBytes.js");
+/* harmony import */ var _uppy_utils_lib_prettyETA__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/utils/lib/prettyETA */ "./node_modules/@uppy/utils/lib/prettyETA.js");
+/* harmony import */ var _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./StatusBarStates.js */ "./node_modules/@uppy/status-bar/lib/StatusBarStates.js");
+>>>>>>> feature/publication-datetimetype
 
 
 
 
 
 const DOT = `\u00B7`;
+<<<<<<< HEAD
 
 const renderDot = () => ` ${DOT} `;
 
+=======
+const renderDot = () => ` ${DOT} `;
+>>>>>>> feature/publication-datetimetype
 function UploadBtn(props) {
   const {
     newFiles,
@@ -24364,7 +30870,11 @@ function UploadBtn(props) {
     startUpload
   } = props;
   const uploadBtnClassNames = classnames__WEBPACK_IMPORTED_MODULE_1__('uppy-u-reset', 'uppy-c-btn', 'uppy-StatusBar-actionBtn', 'uppy-StatusBar-actionBtn--upload', {
+<<<<<<< HEAD
     'uppy-c-btn-primary': uploadState === _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_5__["default"].STATE_WAITING
+=======
+    'uppy-c-btn-primary': uploadState === _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_4__["default"].STATE_WAITING
+>>>>>>> feature/publication-datetimetype
   }, {
     'uppy-StatusBar-actionBtn--disabled': isSomeGhost
   });
@@ -24384,7 +30894,10 @@ function UploadBtn(props) {
     "data-uppy-super-focusable": true
   }, uploadBtnText);
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function RetryBtn(props) {
   const {
     i18n,
@@ -24394,10 +30907,16 @@ function RetryBtn(props) {
     type: "button",
     className: "uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry",
     "aria-label": i18n('retryUpload'),
+<<<<<<< HEAD
     onClick: () => uppy.retryAll().catch(() => {
       /* Error reported and handled via an event */
     }),
     "data-uppy-super-focusable": true
+=======
+    onClick: () => uppy.retryAll().catch(() => {/* Error reported and handled via an event */}),
+    "data-uppy-super-focusable": true,
+    "data-cy": "retry"
+>>>>>>> feature/publication-datetimetype
   }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
     "aria-hidden": "true",
     focusable: "false",
@@ -24409,7 +30928,10 @@ function RetryBtn(props) {
     d: "M4 2.408a2.75 2.75 0 1 0 2.75 2.75.626.626 0 0 1 1.25.018v.023a4 4 0 1 1-4-4.041V.25a.25.25 0 0 1 .389-.208l2.299 1.533a.25.25 0 0 1 0 .416l-2.3 1.533A.25.25 0 0 1 4 3.316v-.908z"
   })), i18n('retry'));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function CancelBtn(props) {
   const {
     i18n,
@@ -24443,7 +30965,10 @@ function CancelBtn(props) {
     d: "M9.283 8l2.567 2.567-1.283 1.283L8 9.283 5.433 11.85 4.15 10.567 6.717 8 4.15 5.433 5.433 4.15 8 6.717l2.567-2.567 1.283 1.283z"
   }))));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function PauseResumeButton(props) {
   const {
     isAllPaused,
@@ -24453,6 +30978,7 @@ function PauseResumeButton(props) {
     uppy
   } = props;
   const title = isAllPaused ? i18n('resume') : i18n('pause');
+<<<<<<< HEAD
 
   function togglePauseResume() {
     if (isAllComplete) return null;
@@ -24468,12 +30994,28 @@ function PauseResumeButton(props) {
     return uppy.pauseAll();
   }
 
+=======
+  function togglePauseResume() {
+    if (isAllComplete) return null;
+    if (!resumableUploads) {
+      return uppy.cancelAll();
+    }
+    if (isAllPaused) {
+      return uppy.resumeAll();
+    }
+    return uppy.pauseAll();
+  }
+>>>>>>> feature/publication-datetimetype
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("button", {
     title: title,
     "aria-label": title,
     className: "uppy-u-reset uppy-StatusBar-actionCircleBtn",
     type: "button",
     onClick: togglePauseResume,
+<<<<<<< HEAD
+=======
+    "data-cy": "togglePauseResume",
+>>>>>>> feature/publication-datetimetype
     "data-uppy-super-focusable": true
   }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
     "aria-hidden": "true",
@@ -24495,7 +31037,10 @@ function PauseResumeButton(props) {
     d: isAllPaused ? 'M6 4.25L11.5 8 6 11.75z' : 'M5 4.5h2v7H5v-7zm4 0h2v7H9v-7z'
   }))));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function DoneBtn(props) {
   const {
     i18n,
@@ -24508,7 +31053,10 @@ function DoneBtn(props) {
     "data-uppy-super-focusable": true
   }, i18n('done'));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function LoadingSpinner() {
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("svg", {
     className: "uppy-StatusBar-spinner",
@@ -24521,7 +31069,10 @@ function LoadingSpinner() {
     fillRule: "evenodd"
   }));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function ProgressBarProcessing(props) {
   const {
     progress
@@ -24537,7 +31088,10 @@ function ProgressBarProcessing(props) {
     className: "uppy-StatusBar-content"
   }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(LoadingSpinner, null), mode === 'determinate' ? `${roundedValue}% ${dot} ` : '', message);
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function ProgressDetails(props) {
   const {
     numUploads,
@@ -24556,6 +31110,7 @@ function ProgressDetails(props) {
   }), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("span", {
     className: "uppy-StatusBar-additionalInfo"
   }, ifShowFilesUploadedOfTotal && renderDot(), i18n('dataUploadedOfTotal', {
+<<<<<<< HEAD
     complete: _transloadit_prettier_bytes__WEBPACK_IMPORTED_MODULE_3__(totalUploadedSize),
     total: _transloadit_prettier_bytes__WEBPACK_IMPORTED_MODULE_3__(totalSize)
   }), renderDot(), i18n('xTimeLeft', {
@@ -24563,6 +31118,14 @@ function ProgressDetails(props) {
   })));
 }
 
+=======
+    complete: _transloadit_prettier_bytes__WEBPACK_IMPORTED_MODULE_2__(totalUploadedSize),
+    total: _transloadit_prettier_bytes__WEBPACK_IMPORTED_MODULE_2__(totalSize)
+  }), renderDot(), i18n('xTimeLeft', {
+    time: (0,_uppy_utils_lib_prettyETA__WEBPACK_IMPORTED_MODULE_3__["default"])(totalETA)
+  })));
+}
+>>>>>>> feature/publication-datetimetype
 function FileUploadCount(props) {
   const {
     i18n,
@@ -24576,7 +31139,10 @@ function FileUploadCount(props) {
     smart_count: numUploads
   }));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function UploadNewlyAddedFiles(props) {
   const {
     i18n,
@@ -24599,12 +31165,15 @@ function UploadNewlyAddedFiles(props) {
     onClick: startUpload
   }, i18n('upload')));
 }
+<<<<<<< HEAD
 
 const ThrottledProgressDetails = lodash_throttle__WEBPACK_IMPORTED_MODULE_2__(ProgressDetails, 500, {
   leading: true,
   trailing: true
 });
 
+=======
+>>>>>>> feature/publication-datetimetype
 function ProgressBarUploading(props) {
   const {
     i18n,
@@ -24623,6 +31192,7 @@ function ProgressBarUploading(props) {
     startUpload
   } = props;
   const showUploadNewlyAddedFiles = newFiles && isUploadStarted;
+<<<<<<< HEAD
 
   if (!isUploadStarted || isAllComplete) {
     return null;
@@ -24634,6 +31204,16 @@ function ProgressBarUploading(props) {
     if (!isAllPaused && !showUploadNewlyAddedFiles && showProgressDetails) {
       if (supportsUploadProgress) {
         return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(ThrottledProgressDetails, {
+=======
+  if (!isUploadStarted || isAllComplete) {
+    return null;
+  }
+  const title = isAllPaused ? i18n('paused') : i18n('uploading');
+  function renderProgressDetails() {
+    if (!isAllPaused && !showUploadNewlyAddedFiles && showProgressDetails) {
+      if (supportsUploadProgress) {
+        return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(ProgressDetails, {
+>>>>>>> feature/publication-datetimetype
           numUploads: numUploads,
           complete: complete,
           totalUploadedSize: totalUploadedSize,
@@ -24642,17 +31222,25 @@ function ProgressBarUploading(props) {
           i18n: i18n
         });
       }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(FileUploadCount, {
         i18n: i18n,
         complete: complete,
         numUploads: numUploads
       });
     }
+<<<<<<< HEAD
 
     return null;
   }
 
+=======
+    return null;
+  }
+>>>>>>> feature/publication-datetimetype
   return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
     className: "uppy-StatusBar-content",
     "aria-label": title,
@@ -24667,7 +31255,10 @@ function ProgressBarUploading(props) {
     startUpload: startUpload
   }) : null));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function ProgressBarComplete(props) {
   const {
     i18n
@@ -24691,7 +31282,10 @@ function ProgressBarComplete(props) {
     d: "M.414 5.843L1.627 4.63l3.472 3.472L13.202 0l1.212 1.213L5.1 10.528z"
   })), i18n('complete'))));
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function ProgressBarError(props) {
   const {
     error,
@@ -24699,10 +31293,16 @@ function ProgressBarError(props) {
     complete,
     numUploads
   } = props;
+<<<<<<< HEAD
 
   function displayErrorAlert() {
     const errorMessage = `${i18n('uploadFailed')} \n\n ${error}`; // eslint-disable-next-line no-alert
 
+=======
+  function displayErrorAlert() {
+    const errorMessage = `${i18n('uploadFailed')} \n\n ${error}`;
+    // eslint-disable-next-line no-alert
+>>>>>>> feature/publication-datetimetype
     alert(errorMessage); // TODO: move to custom alert implementation
   }
 
@@ -24737,7 +31337,10 @@ function ProgressBarError(props) {
 }
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 /***/ }),
 
 /***/ "./node_modules/@uppy/status-bar/lib/StatusBar.js":
@@ -24751,6 +31354,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ StatusBar)
 /* harmony export */ });
+<<<<<<< HEAD
 /* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/index.js");
 /* harmony import */ var _uppy_utils_lib_getSpeed__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/utils/lib/getSpeed */ "./node_modules/@uppy/utils/lib/getSpeed.js");
 /* harmony import */ var _uppy_utils_lib_getBytesRemaining__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/utils/lib/getBytesRemaining */ "./node_modules/@uppy/utils/lib/getBytesRemaining.js");
@@ -24759,12 +31363,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _StatusBarUI_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./StatusBarUI.js */ "./node_modules/@uppy/status-bar/lib/StatusBarUI.js");
 /* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/status-bar/lib/locale.js");
 
+=======
+/* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/UIPlugin.js");
+/* harmony import */ var _uppy_utils_lib_emaFilter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/utils/lib/emaFilter */ "./node_modules/@uppy/utils/lib/emaFilter.js");
+/* harmony import */ var _uppy_utils_lib_getTextDirection__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/utils/lib/getTextDirection */ "./node_modules/@uppy/utils/lib/getTextDirection.js");
+/* harmony import */ var _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./StatusBarStates.js */ "./node_modules/@uppy/status-bar/lib/StatusBarStates.js");
+/* harmony import */ var _StatusBarUI_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./StatusBarUI.js */ "./node_modules/@uppy/status-bar/lib/StatusBarUI.js");
+/* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/status-bar/lib/locale.js");
+function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+var id = 0;
+function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
+>>>>>>> feature/publication-datetimetype
 
 
 
 
 
 const packageJson = {
+<<<<<<< HEAD
   "version": "3.1.2"
 };
 
@@ -24830,10 +31446,52 @@ function getUploadingState(error, isAllComplete, recoveredState, files) {
 
   return state;
 }
+=======
+  "version": "3.2.5"
+};
+
+const speedFilterHalfLife = 2000;
+const ETAFilterHalfLife = 2000;
+function getUploadingState(error, isAllComplete, recoveredState, files) {
+  if (error) {
+    return _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_ERROR;
+  }
+  if (isAllComplete) {
+    return _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_COMPLETE;
+  }
+  if (recoveredState) {
+    return _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_WAITING;
+  }
+  let state = _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_WAITING;
+  const fileIDs = Object.keys(files);
+  for (let i = 0; i < fileIDs.length; i++) {
+    const {
+      progress
+    } = files[fileIDs[i]];
+    // If ANY files are being uploaded right now, show the uploading state.
+    if (progress.uploadStarted && !progress.uploadComplete) {
+      return _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_UPLOADING;
+    }
+    // If files are being preprocessed AND postprocessed at this time, we show the
+    // preprocess state. If any files are being uploaded we show uploading.
+    if (progress.preprocess && state !== _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_UPLOADING) {
+      state = _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_PREPROCESSING;
+    }
+    // If NO files are being preprocessed or uploaded right now, but some files are
+    // being postprocessed, show the postprocess state.
+    if (progress.postprocess && state !== _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_UPLOADING && state !== _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_PREPROCESSING) {
+      state = _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_POSTPROCESSING;
+    }
+  }
+  return state;
+}
+
+>>>>>>> feature/publication-datetimetype
 /**
  * StatusBar: renders a status bar with upload/pause/resume/cancel/retry buttons,
  * progress percentage and time remaining.
  */
+<<<<<<< HEAD
 
 
 class StatusBar extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
@@ -24859,6 +31517,73 @@ class StatusBar extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
     this.type = 'progressindicator';
     this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_6__["default"]; // set default options, must be kept in sync with @uppy/react/src/StatusBar.js
 
+=======
+var _lastUpdateTime = /*#__PURE__*/_classPrivateFieldLooseKey("lastUpdateTime");
+var _previousUploadedBytes = /*#__PURE__*/_classPrivateFieldLooseKey("previousUploadedBytes");
+var _previousSpeed = /*#__PURE__*/_classPrivateFieldLooseKey("previousSpeed");
+var _previousETA = /*#__PURE__*/_classPrivateFieldLooseKey("previousETA");
+var _computeSmoothETA = /*#__PURE__*/_classPrivateFieldLooseKey("computeSmoothETA");
+var _onUploadStart = /*#__PURE__*/_classPrivateFieldLooseKey("onUploadStart");
+class StatusBar extends _uppy_core__WEBPACK_IMPORTED_MODULE_5__["default"] {
+  constructor(uppy, opts) {
+    super(uppy, opts);
+    Object.defineProperty(this, _computeSmoothETA, {
+      value: _computeSmoothETA2
+    });
+    Object.defineProperty(this, _lastUpdateTime, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _previousUploadedBytes, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _previousSpeed, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _previousETA, {
+      writable: true,
+      value: void 0
+    });
+    this.startUpload = () => {
+      return this.uppy.upload().catch(() => {
+        // Error logged in Core
+      });
+    };
+    Object.defineProperty(this, _onUploadStart, {
+      writable: true,
+      value: () => {
+        const {
+          recoveredState
+        } = this.uppy.getState();
+        _classPrivateFieldLooseBase(this, _previousSpeed)[_previousSpeed] = null;
+        _classPrivateFieldLooseBase(this, _previousETA)[_previousETA] = null;
+        if (recoveredState) {
+          _classPrivateFieldLooseBase(this, _previousUploadedBytes)[_previousUploadedBytes] = Object.values(recoveredState.files).reduce((pv, _ref) => {
+            let {
+              progress
+            } = _ref;
+            return pv + progress.bytesUploaded;
+          }, 0);
+
+          // We don't set `#lastUpdateTime` at this point because the upload won't
+          // actually resume until the user asks for it.
+
+          this.uppy.emit('restore-confirmed');
+          return;
+        }
+        _classPrivateFieldLooseBase(this, _lastUpdateTime)[_lastUpdateTime] = performance.now();
+        _classPrivateFieldLooseBase(this, _previousUploadedBytes)[_previousUploadedBytes] = 0;
+      }
+    });
+    this.id = this.opts.id || 'StatusBar';
+    this.title = 'StatusBar';
+    this.type = 'progressindicator';
+    this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_4__["default"];
+
+    // set default options, must be kept in sync with @uppy/react/src/StatusBar.js
+>>>>>>> feature/publication-datetimetype
     const defaultOptions = {
       target: 'body',
       hideUploadButton: false,
@@ -24869,14 +31594,22 @@ class StatusBar extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
       hideAfterFinish: true,
       doneButtonHandler: null
     };
+<<<<<<< HEAD
     this.opts = { ...defaultOptions,
+=======
+    this.opts = {
+      ...defaultOptions,
+>>>>>>> feature/publication-datetimetype
       ...opts
     };
     this.i18nInit();
     this.render = this.render.bind(this);
     this.install = this.install.bind(this);
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   render(state) {
     const {
       capabilities,
@@ -24890,19 +31623,31 @@ class StatusBar extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
       newFiles,
       startedFiles,
       completeFiles,
+<<<<<<< HEAD
       inProgressNotPausedFiles,
+=======
+>>>>>>> feature/publication-datetimetype
       isUploadStarted,
       isAllComplete,
       isAllErrored,
       isAllPaused,
       isUploadInProgress,
       isSomeGhost
+<<<<<<< HEAD
     } = this.uppy.getObjectOfFilesPerState(); // If some state was recovered, we want to show Upload button/counter
     // for all the files, because in this case it’s not an Upload button,
     // but “Confirm Restore Button”
 
     const newFilesOrRecovered = recoveredState ? Object.values(files) : newFiles;
     const totalETA = getTotalETA(inProgressNotPausedFiles);
+=======
+    } = this.uppy.getObjectOfFilesPerState();
+
+    // If some state was recovered, we want to show Upload button/counter
+    // for all the files, because in this case it’s not an Upload button,
+    // but “Confirm Restore Button”
+    const newFilesOrRecovered = recoveredState ? Object.values(files) : newFiles;
+>>>>>>> feature/publication-datetimetype
     const resumableUploads = !!capabilities.resumableUploads;
     const supportsUploadProgress = capabilities.uploadProgress !== false;
     let totalSize = 0;
@@ -24911,7 +31656,16 @@ class StatusBar extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
       totalSize += file.progress.bytesTotal || 0;
       totalUploadedSize += file.progress.bytesUploaded || 0;
     });
+<<<<<<< HEAD
     return (0,_StatusBarUI_js__WEBPACK_IMPORTED_MODULE_5__["default"])({
+=======
+    const totalETA = _classPrivateFieldLooseBase(this, _computeSmoothETA)[_computeSmoothETA]({
+      uploaded: totalUploadedSize,
+      total: totalSize,
+      remaining: totalSize - totalUploadedSize
+    });
+    return (0,_StatusBarUI_js__WEBPACK_IMPORTED_MODULE_3__["default"])({
+>>>>>>> feature/publication-datetimetype
       error,
       uploadState: getUploadingState(error, isAllComplete, recoveredState, state.files || {}),
       allowNewUpload,
@@ -24945,21 +31699,32 @@ class StatusBar extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
       isTargetDOMEl: this.isTargetDOMEl
     });
   }
+<<<<<<< HEAD
 
   onMount() {
     // Set the text direction if the page has not defined one.
     const element = this.el;
     const direction = (0,_uppy_utils_lib_getTextDirection__WEBPACK_IMPORTED_MODULE_3__["default"])(element);
 
+=======
+  onMount() {
+    // Set the text direction if the page has not defined one.
+    const element = this.el;
+    const direction = (0,_uppy_utils_lib_getTextDirection__WEBPACK_IMPORTED_MODULE_1__["default"])(element);
+>>>>>>> feature/publication-datetimetype
     if (!direction) {
       element.dir = 'ltr';
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   install() {
     const {
       target
     } = this.opts;
+<<<<<<< HEAD
 
     if (target) {
       this.mount(target, this);
@@ -24970,6 +31735,54 @@ class StatusBar extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
     this.unmount();
   }
 
+=======
+    if (target) {
+      this.mount(target, this);
+    }
+    this.uppy.on('upload', _classPrivateFieldLooseBase(this, _onUploadStart)[_onUploadStart]);
+
+    // To cover the use case where the status bar is installed while the upload
+    // has started, we set `lastUpdateTime` right away.
+    _classPrivateFieldLooseBase(this, _lastUpdateTime)[_lastUpdateTime] = performance.now();
+    _classPrivateFieldLooseBase(this, _previousUploadedBytes)[_previousUploadedBytes] = this.uppy.getFiles().reduce((pv, file) => pv + file.progress.bytesUploaded, 0);
+  }
+  uninstall() {
+    this.unmount();
+    this.uppy.off('upload', _classPrivateFieldLooseBase(this, _onUploadStart)[_onUploadStart]);
+  }
+}
+function _computeSmoothETA2(totalBytes) {
+  var _classPrivateFieldLoo, _classPrivateFieldLoo2;
+  if (totalBytes.total === 0 || totalBytes.remaining === 0) {
+    return 0;
+  }
+
+  // When state is restored, lastUpdateTime is still nullish at this point.
+  (_classPrivateFieldLoo2 = (_classPrivateFieldLoo = _classPrivateFieldLooseBase(this, _lastUpdateTime))[_lastUpdateTime]) != null ? _classPrivateFieldLoo2 : _classPrivateFieldLoo[_lastUpdateTime] = performance.now();
+  const dt = performance.now() - _classPrivateFieldLooseBase(this, _lastUpdateTime)[_lastUpdateTime];
+  if (dt === 0) {
+    var _classPrivateFieldLoo3;
+    return Math.round(((_classPrivateFieldLoo3 = _classPrivateFieldLooseBase(this, _previousETA)[_previousETA]) != null ? _classPrivateFieldLoo3 : 0) / 100) / 10;
+  }
+  const uploadedBytesSinceLastTick = totalBytes.uploaded - _classPrivateFieldLooseBase(this, _previousUploadedBytes)[_previousUploadedBytes];
+  _classPrivateFieldLooseBase(this, _previousUploadedBytes)[_previousUploadedBytes] = totalBytes.uploaded;
+
+  // uploadedBytesSinceLastTick can be negative in some cases (packet loss?)
+  // in which case, we wait for next tick to update ETA.
+  if (uploadedBytesSinceLastTick <= 0) {
+    var _classPrivateFieldLoo4;
+    return Math.round(((_classPrivateFieldLoo4 = _classPrivateFieldLooseBase(this, _previousETA)[_previousETA]) != null ? _classPrivateFieldLoo4 : 0) / 100) / 10;
+  }
+  const currentSpeed = uploadedBytesSinceLastTick / dt;
+  const filteredSpeed = _classPrivateFieldLooseBase(this, _previousSpeed)[_previousSpeed] == null ? currentSpeed : (0,_uppy_utils_lib_emaFilter__WEBPACK_IMPORTED_MODULE_0__["default"])(currentSpeed, _classPrivateFieldLooseBase(this, _previousSpeed)[_previousSpeed], speedFilterHalfLife, dt);
+  _classPrivateFieldLooseBase(this, _previousSpeed)[_previousSpeed] = filteredSpeed;
+  const instantETA = totalBytes.remaining / filteredSpeed;
+  const updatedPreviousETA = Math.max(_classPrivateFieldLooseBase(this, _previousETA)[_previousETA] - dt, 0);
+  const filteredETA = _classPrivateFieldLooseBase(this, _previousETA)[_previousETA] == null ? instantETA : (0,_uppy_utils_lib_emaFilter__WEBPACK_IMPORTED_MODULE_0__["default"])(instantETA, updatedPreviousETA, ETAFilterHalfLife, dt);
+  _classPrivateFieldLooseBase(this, _previousETA)[_previousETA] = filteredETA;
+  _classPrivateFieldLooseBase(this, _lastUpdateTime)[_lastUpdateTime] = performance.now();
+  return Math.round(filteredETA / 100) / 10;
+>>>>>>> feature/publication-datetimetype
 }
 StatusBar.VERSION = packageJson.version;
 
@@ -25025,8 +31838,14 @@ const {
   STATE_UPLOADING,
   STATE_POSTPROCESSING,
   STATE_COMPLETE
+<<<<<<< HEAD
 } = _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"]; // TODO: rename the function to StatusBarUI on the next major.
 
+=======
+} = _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"];
+
+// TODO: rename the function to StatusBarUI on the next major.
+>>>>>>> feature/publication-datetimetype
 function StatusBar(props) {
   const {
     newFiles,
@@ -25059,13 +31878,17 @@ function StatusBar(props) {
     totalETA,
     totalUploadedSize
   } = props;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   function getProgressValue() {
     switch (uploadState) {
       case STATE_POSTPROCESSING:
       case STATE_PREPROCESSING:
         {
           const progress = (0,_calculateProcessingProgress_js__WEBPACK_IMPORTED_MODULE_3__["default"])(files);
+<<<<<<< HEAD
 
           if (progress.mode === 'determinate') {
             return progress.value * 100;
@@ -25074,25 +31897,43 @@ function StatusBar(props) {
           return totalProgress;
         }
 
+=======
+          if (progress.mode === 'determinate') {
+            return progress.value * 100;
+          }
+          return totalProgress;
+        }
+>>>>>>> feature/publication-datetimetype
       case STATE_ERROR:
         {
           return null;
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       case STATE_UPLOADING:
         {
           if (!supportsUploadProgress) {
             return null;
           }
+<<<<<<< HEAD
 
           return totalProgress;
         }
 
+=======
+          return totalProgress;
+        }
+>>>>>>> feature/publication-datetimetype
       default:
         return totalProgress;
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   function getIsIndeterminate() {
     switch (uploadState) {
       case STATE_POSTPROCESSING:
@@ -25103,25 +31944,37 @@ function StatusBar(props) {
           } = (0,_calculateProcessingProgress_js__WEBPACK_IMPORTED_MODULE_3__["default"])(files);
           return mode === 'indeterminate';
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       case STATE_UPLOADING:
         {
           if (!supportsUploadProgress) {
             return true;
           }
+<<<<<<< HEAD
 
           return false;
         }
 
+=======
+          return false;
+        }
+>>>>>>> feature/publication-datetimetype
       default:
         return false;
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   function getIsHidden() {
     if (recoveredState) {
       return false;
     }
+<<<<<<< HEAD
 
     switch (uploadState) {
       case STATE_WAITING:
@@ -25130,11 +31983,21 @@ function StatusBar(props) {
       case STATE_COMPLETE:
         return hideAfterFinish;
 
+=======
+    switch (uploadState) {
+      case STATE_WAITING:
+        return hideUploadButton || newFiles === 0;
+      case STATE_COMPLETE:
+        return hideAfterFinish;
+>>>>>>> feature/publication-datetimetype
       default:
         return false;
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   const progressValue = getProgressValue();
   const isHidden = getIsHidden();
   const width = progressValue != null ? progressValue : 100;
@@ -25170,12 +32033,18 @@ function StatusBar(props) {
         return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_Components_js__WEBPACK_IMPORTED_MODULE_4__.ProgressBarProcessing, {
           progress: (0,_calculateProcessingProgress_js__WEBPACK_IMPORTED_MODULE_3__["default"])(files)
         });
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       case STATE_COMPLETE:
         return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_Components_js__WEBPACK_IMPORTED_MODULE_4__.ProgressBarComplete, {
           i18n: i18n
         });
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       case STATE_ERROR:
         return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_Components_js__WEBPACK_IMPORTED_MODULE_4__.ProgressBarError, {
           error: error,
@@ -25183,7 +32052,10 @@ function StatusBar(props) {
           numUploads: numUploads,
           complete: complete
         });
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       case STATE_UPLOADING:
         return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_Components_js__WEBPACK_IMPORTED_MODULE_4__.ProgressBarUploading, {
           i18n: i18n,
@@ -25201,7 +32073,10 @@ function StatusBar(props) {
           totalETA: totalETA,
           startUpload: startUpload
         });
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       default:
         return null;
     }
@@ -25250,27 +32125,42 @@ function calculateProcessingProgress(files) {
   const values = [];
   let mode;
   let message;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   for (const {
     progress
   } of Object.values(files)) {
     const {
       preprocess,
       postprocess
+<<<<<<< HEAD
     } = progress; // In the future we should probably do this differently. For now we'll take the
     // mode and message from the first file…
 
+=======
+    } = progress;
+    // In the future we should probably do this differently. For now we'll take the
+    // mode and message from the first file…
+>>>>>>> feature/publication-datetimetype
     if (message == null && (preprocess || postprocess)) {
       ({
         mode,
         message
       } = preprocess || postprocess);
     }
+<<<<<<< HEAD
 
     if ((preprocess == null ? void 0 : preprocess.mode) === 'determinate') values.push(preprocess.value);
     if ((postprocess == null ? void 0 : postprocess.mode) === 'determinate') values.push(postprocess.value);
   }
 
+=======
+    if ((preprocess == null ? void 0 : preprocess.mode) === 'determinate') values.push(preprocess.value);
+    if ((postprocess == null ? void 0 : postprocess.mode) === 'determinate') values.push(postprocess.value);
+  }
+>>>>>>> feature/publication-datetimetype
   const value = values.reduce((total, progressValue) => {
     return total + progressValue / values.length;
   }, 0);
@@ -25374,6 +32264,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+<<<<<<< HEAD
 
 var id = 0;
 
@@ -25390,15 +32281,34 @@ var _callbacks = /*#__PURE__*/_classPrivateFieldLooseKey("callbacks");
 
 var _publish = /*#__PURE__*/_classPrivateFieldLooseKey("publish");
 
+=======
+var id = 0;
+function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore We don't want TS to generate types for the package.json
+const packageJson = {
+  "version": "3.1.0"
+};
+var _callbacks = /*#__PURE__*/_classPrivateFieldLooseKey("callbacks");
+var _publish = /*#__PURE__*/_classPrivateFieldLooseKey("publish");
+/**
+ * Default store that keeps state in a simple object.
+ */
+>>>>>>> feature/publication-datetimetype
 class DefaultStore {
   constructor() {
     Object.defineProperty(this, _publish, {
       value: _publish2
     });
+<<<<<<< HEAD
+=======
+    this.state = {};
+>>>>>>> feature/publication-datetimetype
     Object.defineProperty(this, _callbacks, {
       writable: true,
       value: new Set()
     });
+<<<<<<< HEAD
     this.state = {};
   }
 
@@ -25420,23 +32330,52 @@ class DefaultStore {
   subscribe(listener) {
     _classPrivateFieldLooseBase(this, _callbacks)[_callbacks].add(listener);
 
+=======
+  }
+  getState() {
+    return this.state;
+  }
+  setState(patch) {
+    const prevState = {
+      ...this.state
+    };
+    const nextState = {
+      ...this.state,
+      ...patch
+    };
+    this.state = nextState;
+    _classPrivateFieldLooseBase(this, _publish)[_publish](prevState, nextState, patch);
+  }
+  subscribe(listener) {
+    _classPrivateFieldLooseBase(this, _callbacks)[_callbacks].add(listener);
+>>>>>>> feature/publication-datetimetype
     return () => {
       _classPrivateFieldLooseBase(this, _callbacks)[_callbacks].delete(listener);
     };
   }
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> feature/publication-datetimetype
 function _publish2() {
   for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
     args[_key] = arguments[_key];
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   _classPrivateFieldLooseBase(this, _callbacks)[_callbacks].forEach(listener => {
     listener(...args);
   });
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 DefaultStore.VERSION = packageJson.version;
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (DefaultStore);
 
@@ -25453,12 +32392,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ThumbnailGenerator)
 /* harmony export */ });
+<<<<<<< HEAD
 /* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/index.js");
 /* harmony import */ var _uppy_utils_lib_dataURItoBlob__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/utils/lib/dataURItoBlob */ "./node_modules/@uppy/utils/lib/dataURItoBlob.js");
 /* harmony import */ var _uppy_utils_lib_isObjectURL__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/utils/lib/isObjectURL */ "./node_modules/@uppy/utils/lib/isObjectURL.js");
 /* harmony import */ var _uppy_utils_lib_isPreviewSupported__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/utils/lib/isPreviewSupported */ "./node_modules/@uppy/utils/lib/isPreviewSupported.js");
 /* harmony import */ var exifr_dist_mini_esm_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! exifr/dist/mini.esm.mjs */ "./node_modules/exifr/dist/mini.esm.mjs");
 /* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/thumbnail-generator/lib/locale.js");
+=======
+/* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/UIPlugin.js");
+/* harmony import */ var _uppy_utils_lib_dataURItoBlob__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/utils/lib/dataURItoBlob */ "./node_modules/@uppy/utils/lib/dataURItoBlob.js");
+/* harmony import */ var _uppy_utils_lib_isObjectURL__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/utils/lib/isObjectURL */ "./node_modules/@uppy/utils/lib/isObjectURL.js");
+/* harmony import */ var _uppy_utils_lib_isPreviewSupported__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/utils/lib/isPreviewSupported */ "./node_modules/@uppy/utils/lib/isPreviewSupported.js");
+/* harmony import */ var exifr_dist_mini_esm_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! exifr/dist/mini.esm.mjs */ "./node_modules/exifr/dist/mini.esm.mjs");
+/* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/thumbnail-generator/lib/locale.js");
+>>>>>>> feature/publication-datetimetype
 
 
 
@@ -25466,7 +32414,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const packageJson = {
+<<<<<<< HEAD
   "version": "3.0.3"
+=======
+  "version": "3.0.6"
+>>>>>>> feature/publication-datetimetype
 };
 /**
  * Save a <canvas> element's content to a Blob object.
@@ -25474,7 +32426,10 @@ const packageJson = {
  * @param {HTMLCanvasElement} canvas
  * @returns {Promise}
  */
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function canvasToBlob(canvas, type, quality) {
   try {
     canvas.getContext('2d').getImageData(0, 0, 1, 1);
@@ -25483,7 +32438,10 @@ function canvasToBlob(canvas, type, quality) {
       return Promise.reject(new Error('cannot read image, probably an svg with external resources'));
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   if (canvas.toBlob) {
     return new Promise(resolve => {
       canvas.toBlob(resolve, type, quality);
@@ -25491,6 +32449,7 @@ function canvasToBlob(canvas, type, quality) {
       if (blob === null) {
         throw new Error('cannot read image, probably an svg with external resources');
       }
+<<<<<<< HEAD
 
       return blob;
     });
@@ -25498,10 +32457,18 @@ function canvasToBlob(canvas, type, quality) {
 
   return Promise.resolve().then(() => {
     return (0,_uppy_utils_lib_dataURItoBlob__WEBPACK_IMPORTED_MODULE_1__["default"])(canvas.toDataURL(type, quality), {});
+=======
+      return blob;
+    });
+  }
+  return Promise.resolve().then(() => {
+    return (0,_uppy_utils_lib_dataURItoBlob__WEBPACK_IMPORTED_MODULE_0__["default"])(canvas.toDataURL(type, quality), {});
+>>>>>>> feature/publication-datetimetype
   }).then(blob => {
     if (blob === null) {
       throw new Error('could not extract blob, probably an old browser');
     }
+<<<<<<< HEAD
 
     return blob;
   });
@@ -25511,29 +32478,51 @@ function rotateImage(image, translate) {
   let w = image.width;
   let h = image.height;
 
+=======
+    return blob;
+  });
+}
+function rotateImage(image, translate) {
+  let w = image.width;
+  let h = image.height;
+>>>>>>> feature/publication-datetimetype
   if (translate.deg === 90 || translate.deg === 270) {
     w = image.height;
     h = image.width;
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   const canvas = document.createElement('canvas');
   canvas.width = w;
   canvas.height = h;
   const context = canvas.getContext('2d');
   context.translate(w / 2, h / 2);
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   if (translate.canvas) {
     context.rotate(translate.rad);
     context.scale(translate.scaleX, translate.scaleY);
   }
+<<<<<<< HEAD
 
   context.drawImage(image, -image.width / 2, -image.height / 2, image.width, image.height);
   return canvas;
 }
+=======
+  context.drawImage(image, -image.width / 2, -image.height / 2, image.width, image.height);
+  return canvas;
+}
+
+>>>>>>> feature/publication-datetimetype
 /**
  * Make sure the image doesn’t exceed browser/device canvas limits.
  * For ios with 256 RAM and ie
  */
+<<<<<<< HEAD
 
 
 function protect(image) {
@@ -25541,21 +32530,37 @@ function protect(image) {
   const ratio = image.width / image.height;
   const maxSquare = 5000000; // ios max canvas square
 
+=======
+function protect(image) {
+  // https://stackoverflow.com/questions/6081483/maximum-size-of-a-canvas-element
+
+  const ratio = image.width / image.height;
+  const maxSquare = 5000000; // ios max canvas square
+>>>>>>> feature/publication-datetimetype
   const maxSize = 4096; // ie max canvas dimensions
 
   let maxW = Math.floor(Math.sqrt(maxSquare * ratio));
   let maxH = Math.floor(maxSquare / Math.sqrt(maxSquare * ratio));
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   if (maxW > maxSize) {
     maxW = maxSize;
     maxH = Math.round(maxW / ratio);
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   if (maxH > maxSize) {
     maxH = maxSize;
     maxW = Math.round(ratio * maxH);
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   if (image.width > maxW) {
     const canvas = document.createElement('canvas');
     canvas.width = maxW;
@@ -25563,13 +32568,20 @@ function protect(image) {
     canvas.getContext('2d').drawImage(image, 0, 0, maxW, maxH);
     return canvas;
   }
+<<<<<<< HEAD
 
   return image;
 }
+=======
+  return image;
+}
+
+>>>>>>> feature/publication-datetimetype
 /**
  * The Thumbnail Generator plugin
  */
 
+<<<<<<< HEAD
 
 class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
   constructor(uppy, opts) {
@@ -25584,10 +32596,26 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugi
     this.onCancelRequest = file => {
       const index = this.queue.indexOf(file.id);
 
+=======
+class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_5__["default"] {
+  constructor(uppy, opts) {
+    super(uppy, opts);
+    this.onFileAdded = file => {
+      if (!file.preview && file.data && (0,_uppy_utils_lib_isPreviewSupported__WEBPACK_IMPORTED_MODULE_2__["default"])(file.type) && !file.isRemote) {
+        this.addToQueue(file.id);
+      }
+    };
+    /**
+     * Cancel a lazy request for a thumbnail if the thumbnail has not yet been generated.
+     */
+    this.onCancelRequest = file => {
+      const index = this.queue.indexOf(file.id);
+>>>>>>> feature/publication-datetimetype
       if (index !== -1) {
         this.queue.splice(index, 1);
       }
     };
+<<<<<<< HEAD
 
     this.onFileRemoved = file => {
       const index = this.queue.indexOf(file.id);
@@ -25602,20 +32630,46 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugi
       }
     };
 
+=======
+    /**
+     * Clean up the thumbnail for a file. Cancel lazy requests and free the thumbnail URL.
+     */
+    this.onFileRemoved = file => {
+      const index = this.queue.indexOf(file.id);
+      if (index !== -1) {
+        this.queue.splice(index, 1);
+      }
+
+      // Clean up object URLs.
+      if (file.preview && (0,_uppy_utils_lib_isObjectURL__WEBPACK_IMPORTED_MODULE_1__["default"])(file.preview)) {
+        URL.revokeObjectURL(file.preview);
+      }
+    };
+>>>>>>> feature/publication-datetimetype
     this.onRestored = () => {
       const restoredFiles = this.uppy.getFiles().filter(file => file.isRestored);
       restoredFiles.forEach(file => {
         // Only add blob URLs; they are likely invalid after being restored.
+<<<<<<< HEAD
         if (!file.preview || (0,_uppy_utils_lib_isObjectURL__WEBPACK_IMPORTED_MODULE_2__["default"])(file.preview)) {
+=======
+        if (!file.preview || (0,_uppy_utils_lib_isObjectURL__WEBPACK_IMPORTED_MODULE_1__["default"])(file.preview)) {
+>>>>>>> feature/publication-datetimetype
           this.addToQueue(file.id);
         }
       });
     };
+<<<<<<< HEAD
 
     this.onAllFilesRemoved = () => {
       this.queue = [];
     };
 
+=======
+    this.onAllFilesRemoved = () => {
+      this.queue = [];
+    };
+>>>>>>> feature/publication-datetimetype
     this.waitUntilAllProcessed = fileIDs => {
       fileIDs.forEach(fileID => {
         const file = this.uppy.getFile(fileID);
@@ -25624,14 +32678,20 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugi
           message: this.i18n('generatingThumbnails')
         });
       });
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       const emitPreprocessCompleteForAll = () => {
         fileIDs.forEach(fileID => {
           const file = this.uppy.getFile(fileID);
           this.uppy.emit('preprocess-complete', file);
         });
       };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       return new Promise(resolve => {
         if (this.queueProcessing) {
           this.uppy.once('thumbnail:all-generated', () => {
@@ -25644,7 +32704,10 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugi
         }
       });
     };
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     this.type = 'modifier';
     this.id = this.opts.id || 'ThumbnailGenerator';
     this.title = 'Thumbnail Generator';
@@ -25652,22 +32715,38 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugi
     this.queueProcessing = false;
     this.defaultThumbnailDimension = 200;
     this.thumbnailType = this.opts.thumbnailType || 'image/jpeg';
+<<<<<<< HEAD
     this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_5__["default"];
+=======
+    this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_4__["default"];
+>>>>>>> feature/publication-datetimetype
     const defaultOptions = {
       thumbnailWidth: null,
       thumbnailHeight: null,
       waitForThumbnailsBeforeUpload: false,
       lazy: false
     };
+<<<<<<< HEAD
     this.opts = { ...defaultOptions,
       ...opts
     };
     this.i18nInit();
 
+=======
+    this.opts = {
+      ...defaultOptions,
+      ...opts
+    };
+    this.i18nInit();
+>>>>>>> feature/publication-datetimetype
     if (this.opts.lazy && this.opts.waitForThumbnailsBeforeUpload) {
       throw new Error('ThumbnailGenerator: The `lazy` and `waitForThumbnailsBeforeUpload` options are mutually exclusive. Please ensure at most one of them is set to `true`.');
     }
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/publication-datetimetype
   /**
    * Create a thumbnail for the given Uppy file object.
    *
@@ -25676,8 +32755,11 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugi
    * @param {number} targetHeight
    * @returns {Promise}
    */
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> feature/publication-datetimetype
   createThumbnail(file, targetWidth, targetHeight) {
     const originalUrl = URL.createObjectURL(file.data);
     const onload = new Promise((resolve, reject) => {
@@ -25692,7 +32774,11 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugi
         reject(event.error || new Error('Could not create thumbnail'));
       });
     });
+<<<<<<< HEAD
     const orientationPromise = (0,exifr_dist_mini_esm_mjs__WEBPACK_IMPORTED_MODULE_4__.rotation)(file.data).catch(() => 1);
+=======
+    const orientationPromise = (0,exifr_dist_mini_esm_mjs__WEBPACK_IMPORTED_MODULE_3__.rotation)(file.data).catch(() => 1);
+>>>>>>> feature/publication-datetimetype
     return Promise.all([onload, orientationPromise]).then(_ref => {
       let [image, orientation] = _ref;
       const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight, orientation.deg);
@@ -25703,12 +32789,17 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugi
       return URL.createObjectURL(blob);
     });
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/publication-datetimetype
   /**
    * Get the new calculated dimensions for the given image and a target width
    * or height. If both width and height are given, only width is taken into
    * account. If neither width nor height are given, the default dimension
    * is used.
    */
+<<<<<<< HEAD
 
 
   getProportionalDimensions(img, width, height, rotation) {
@@ -25719,31 +32810,50 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugi
       aspect = img.height / img.width;
     }
 
+=======
+  getProportionalDimensions(img, width, height, rotation) {
+    // eslint-disable-line no-shadow
+    let aspect = img.width / img.height;
+    if (rotation === 90 || rotation === 270) {
+      aspect = img.height / img.width;
+    }
+>>>>>>> feature/publication-datetimetype
     if (width != null) {
       return {
         width,
         height: Math.round(width / aspect)
       };
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (height != null) {
       return {
         width: Math.round(height * aspect),
         height
       };
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     return {
       width: this.defaultThumbnailDimension,
       height: Math.round(this.defaultThumbnailDimension / aspect)
     };
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/publication-datetimetype
   /**
    * Resize an image to the target `width` and `height`.
    *
    * Returns a Canvas with the resized image on it.
    */
   // eslint-disable-next-line class-methods-use-this
+<<<<<<< HEAD
 
 
   resizeImage(image, targetWidth, targetHeight) {
@@ -25760,6 +32870,20 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugi
     let sH = targetHeight * 2 ** (steps - 1);
     const x = 2;
 
+=======
+  resizeImage(image, targetWidth, targetHeight) {
+    // Resizing in steps refactored to use a solution from
+    // https://blog.uploadcare.com/image-resize-in-browsers-is-broken-e38eed08df01
+
+    let img = protect(image);
+    let steps = Math.ceil(Math.log2(img.width / targetWidth));
+    if (steps < 1) {
+      steps = 1;
+    }
+    let sW = targetWidth * 2 ** (steps - 1);
+    let sH = targetHeight * 2 ** (steps - 1);
+    const x = 2;
+>>>>>>> feature/publication-datetimetype
     while (steps--) {
       const canvas = document.createElement('canvas');
       canvas.width = sW;
@@ -25769,6 +32893,7 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugi
       sW = Math.round(sW / x);
       sH = Math.round(sH / x);
     }
+<<<<<<< HEAD
 
     return img;
   }
@@ -25777,19 +32902,33 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugi
    */
 
 
+=======
+    return img;
+  }
+
+  /**
+   * Set the preview URL for a file.
+   */
+>>>>>>> feature/publication-datetimetype
   setPreviewURL(fileID, preview) {
     this.uppy.setFileState(fileID, {
       preview
     });
   }
+<<<<<<< HEAD
 
   addToQueue(item) {
     this.queue.push(item);
 
+=======
+  addToQueue(item) {
+    this.queue.push(item);
+>>>>>>> feature/publication-datetimetype
     if (this.queueProcessing === false) {
       this.processQueue();
     }
   }
+<<<<<<< HEAD
 
   processQueue() {
     this.queueProcessing = true;
@@ -25797,23 +32936,40 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugi
     if (this.queue.length > 0) {
       const current = this.uppy.getFile(this.queue.shift());
 
+=======
+  processQueue() {
+    this.queueProcessing = true;
+    if (this.queue.length > 0) {
+      const current = this.uppy.getFile(this.queue.shift());
+>>>>>>> feature/publication-datetimetype
       if (!current) {
         this.uppy.log('[ThumbnailGenerator] file was removed before a thumbnail could be generated, but not removed from the queue. This is probably a bug', 'error');
         return Promise.resolve();
       }
+<<<<<<< HEAD
 
       return this.requestThumbnail(current).catch(() => {}) // eslint-disable-line node/handle-callback-err
       .then(() => this.processQueue());
     }
 
+=======
+      return this.requestThumbnail(current).catch(() => {}) // eslint-disable-line node/handle-callback-err
+      .then(() => this.processQueue());
+    }
+>>>>>>> feature/publication-datetimetype
     this.queueProcessing = false;
     this.uppy.log('[ThumbnailGenerator] Emptied thumbnail queue');
     this.uppy.emit('thumbnail:all-generated');
     return Promise.resolve();
   }
+<<<<<<< HEAD
 
   requestThumbnail(file) {
     if ((0,_uppy_utils_lib_isPreviewSupported__WEBPACK_IMPORTED_MODULE_3__["default"])(file.type) && !file.isRemote) {
+=======
+  requestThumbnail(file) {
+    if ((0,_uppy_utils_lib_isPreviewSupported__WEBPACK_IMPORTED_MODULE_2__["default"])(file.type) && !file.isRemote) {
+>>>>>>> feature/publication-datetimetype
       return this.createThumbnail(file, this.opts.thumbnailWidth, this.opts.thumbnailHeight).then(preview => {
         this.setPreviewURL(file.id, preview);
         this.uppy.log(`[ThumbnailGenerator] Generated thumbnail for ${file.id}`);
@@ -25824,6 +32980,7 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugi
         this.uppy.emit('thumbnail:error', this.uppy.getFile(file.id), err);
       });
     }
+<<<<<<< HEAD
 
     return Promise.resolve();
   }
@@ -25832,6 +32989,13 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugi
     this.uppy.on('file-removed', this.onFileRemoved);
     this.uppy.on('cancel-all', this.onAllFilesRemoved);
 
+=======
+    return Promise.resolve();
+  }
+  install() {
+    this.uppy.on('file-removed', this.onFileRemoved);
+    this.uppy.on('cancel-all', this.onAllFilesRemoved);
+>>>>>>> feature/publication-datetimetype
     if (this.opts.lazy) {
       this.uppy.on('thumbnail:request', this.onFileAdded);
       this.uppy.on('thumbnail:cancel', this.onCancelRequest);
@@ -25839,16 +33003,25 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugi
       this.uppy.on('file-added', this.onFileAdded);
       this.uppy.on('restored', this.onRestored);
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (this.opts.waitForThumbnailsBeforeUpload) {
       this.uppy.addPreProcessor(this.waitUntilAllProcessed);
     }
   }
+<<<<<<< HEAD
 
   uninstall() {
     this.uppy.off('file-removed', this.onFileRemoved);
     this.uppy.off('cancel-all', this.onAllFilesRemoved);
 
+=======
+  uninstall() {
+    this.uppy.off('file-removed', this.onFileRemoved);
+    this.uppy.off('cancel-all', this.onAllFilesRemoved);
+>>>>>>> feature/publication-datetimetype
     if (this.opts.lazy) {
       this.uppy.off('thumbnail:request', this.onFileAdded);
       this.uppy.off('thumbnail:cancel', this.onCancelRequest);
@@ -25856,12 +33029,18 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugi
       this.uppy.off('file-added', this.onFileAdded);
       this.uppy.off('restored', this.onRestored);
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (this.opts.waitForThumbnailsBeforeUpload) {
       this.uppy.removePreProcessor(this.waitUntilAllProcessed);
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 }
 ThumbnailGenerator.VERSION = packageJson.version;
 
@@ -25886,6 +33065,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "./node_modules/@uppy/utils/lib/ErrorWithCause.js":
 /*!********************************************************!*\
   !*** ./node_modules/@uppy/utils/lib/ErrorWithCause.js ***!
@@ -25923,12 +33103,18 @@ class ErrorWithCause extends Error {
 /***/ "./node_modules/@uppy/utils/lib/EventTracker.js":
 /*!******************************************************!*\
   !*** ./node_modules/@uppy/utils/lib/EventTracker.js ***!
+=======
+/***/ "./node_modules/@uppy/utils/lib/EventManager.js":
+/*!******************************************************!*\
+  !*** ./node_modules/@uppy/utils/lib/EventManager.js ***!
+>>>>>>> feature/publication-datetimetype
   \******************************************************/
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+<<<<<<< HEAD
 /* harmony export */   "default": () => (/* binding */ EventTracker)
 /* harmony export */ });
 function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
@@ -25941,13 +33127,28 @@ var _emitter = /*#__PURE__*/_classPrivateFieldLooseKey("emitter");
 
 var _events = /*#__PURE__*/_classPrivateFieldLooseKey("events");
 
+=======
+/* harmony export */   "default": () => (/* binding */ EventManager)
+/* harmony export */ });
+function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+var id = 0;
+function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
+var _uppy = /*#__PURE__*/_classPrivateFieldLooseKey("uppy");
+var _events = /*#__PURE__*/_classPrivateFieldLooseKey("events");
+>>>>>>> feature/publication-datetimetype
 /**
  * Create a wrapper around an event emitter with a `remove` method to remove
  * all events that were added using the wrapped emitter.
  */
+<<<<<<< HEAD
 class EventTracker {
   constructor(emitter) {
     Object.defineProperty(this, _emitter, {
+=======
+class EventManager {
+  constructor(uppy) {
+    Object.defineProperty(this, _uppy, {
+>>>>>>> feature/publication-datetimetype
       writable: true,
       value: void 0
     });
@@ -25955,6 +33156,7 @@ class EventTracker {
       writable: true,
       value: []
     });
+<<<<<<< HEAD
     _classPrivateFieldLooseBase(this, _emitter)[_emitter] = emitter;
   }
 
@@ -25970,6 +33172,71 @@ class EventTracker {
     }
   }
 
+=======
+    _classPrivateFieldLooseBase(this, _uppy)[_uppy] = uppy;
+  }
+  on(event, fn) {
+    _classPrivateFieldLooseBase(this, _events)[_events].push([event, fn]);
+    return _classPrivateFieldLooseBase(this, _uppy)[_uppy].on(event, fn);
+  }
+  remove() {
+    for (const [event, fn] of _classPrivateFieldLooseBase(this, _events)[_events].splice(0)) {
+      _classPrivateFieldLooseBase(this, _uppy)[_uppy].off(event, fn);
+    }
+  }
+  onFilePause(fileID, cb) {
+    this.on('upload-pause', (targetFileID, isPaused) => {
+      if (fileID === targetFileID) {
+        cb(isPaused);
+      }
+    });
+  }
+  onFileRemove(fileID, cb) {
+    this.on('file-removed', file => {
+      if (fileID === file.id) cb(file.id);
+    });
+  }
+  onPause(fileID, cb) {
+    this.on('upload-pause', (targetFileID, isPaused) => {
+      if (fileID === targetFileID) {
+        // const isPaused = this.#uppy.pauseResume(fileID)
+        cb(isPaused);
+      }
+    });
+  }
+  onRetry(fileID, cb) {
+    this.on('upload-retry', targetFileID => {
+      if (fileID === targetFileID) {
+        cb();
+      }
+    });
+  }
+  onRetryAll(fileID, cb) {
+    this.on('retry-all', () => {
+      if (!_classPrivateFieldLooseBase(this, _uppy)[_uppy].getFile(fileID)) return;
+      cb();
+    });
+  }
+  onPauseAll(fileID, cb) {
+    this.on('pause-all', () => {
+      if (!_classPrivateFieldLooseBase(this, _uppy)[_uppy].getFile(fileID)) return;
+      cb();
+    });
+  }
+  onCancelAll(fileID, eventHandler) {
+    var _this = this;
+    this.on('cancel-all', function () {
+      if (!_classPrivateFieldLooseBase(_this, _uppy)[_uppy].getFile(fileID)) return;
+      eventHandler(...arguments);
+    });
+  }
+  onResumeAll(fileID, cb) {
+    this.on('resume-all', () => {
+      if (!_classPrivateFieldLooseBase(this, _uppy)[_uppy].getFile(fileID)) return;
+      cb();
+    });
+  }
+>>>>>>> feature/publication-datetimetype
 }
 
 /***/ }),
@@ -26005,15 +33272,22 @@ class NetworkError extends Error {
     if (xhr === void 0) {
       xhr = null;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     super(`This looks like a network error, the endpoint might be blocked by an internet provider or a firewall.`);
     this.cause = error;
     this.isNetworkError = true;
     this.request = xhr;
   }
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> feature/publication-datetimetype
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (NetworkError);
 
 /***/ }),
@@ -26030,6 +33304,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+<<<<<<< HEAD
 
 var id = 0;
 
@@ -26043,6 +33318,14 @@ var _onTimedOut = /*#__PURE__*/_classPrivateFieldLooseKey("onTimedOut");
 
 var _timeout = /*#__PURE__*/_classPrivateFieldLooseKey("timeout");
 
+=======
+var id = 0;
+function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
+var _aliveTimer = /*#__PURE__*/_classPrivateFieldLooseKey("aliveTimer");
+var _isDone = /*#__PURE__*/_classPrivateFieldLooseKey("isDone");
+var _onTimedOut = /*#__PURE__*/_classPrivateFieldLooseKey("onTimedOut");
+var _timeout = /*#__PURE__*/_classPrivateFieldLooseKey("timeout");
+>>>>>>> feature/publication-datetimetype
 /**
  * Helper to abort upload requests if there has not been any progress for `timeout` ms.
  * Create an instance using `timer = new ProgressTimeout(10000, onTimeout)`
@@ -26070,18 +33353,25 @@ class ProgressTimeout {
     _classPrivateFieldLooseBase(this, _timeout)[_timeout] = timeout;
     _classPrivateFieldLooseBase(this, _onTimedOut)[_onTimedOut] = timeoutHandler;
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   progress() {
     // Some browsers fire another progress event when the upload is
     // cancelled, so we have to ignore progress after the timer was
     // told to stop.
     if (_classPrivateFieldLooseBase(this, _isDone)[_isDone]) return;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (_classPrivateFieldLooseBase(this, _timeout)[_timeout] > 0) {
       clearTimeout(_classPrivateFieldLooseBase(this, _aliveTimer)[_aliveTimer]);
       _classPrivateFieldLooseBase(this, _aliveTimer)[_aliveTimer] = setTimeout(_classPrivateFieldLooseBase(this, _onTimedOut)[_onTimedOut], _classPrivateFieldLooseBase(this, _timeout)[_timeout]);
     }
   }
+<<<<<<< HEAD
 
   done() {
     if (!_classPrivateFieldLooseBase(this, _isDone)[_isDone]) {
@@ -26093,6 +33383,16 @@ class ProgressTimeout {
 
 }
 
+=======
+  done() {
+    if (!_classPrivateFieldLooseBase(this, _isDone)[_isDone]) {
+      clearTimeout(_classPrivateFieldLooseBase(this, _aliveTimer)[_aliveTimer]);
+      _classPrivateFieldLooseBase(this, _aliveTimer)[_aliveTimer] = undefined;
+      _classPrivateFieldLooseBase(this, _isDone)[_isDone] = true;
+    }
+  }
+}
+>>>>>>> feature/publication-datetimetype
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ProgressTimeout);
 
 /***/ }),
@@ -26110,16 +33410,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   internalRateLimitedQueue: () => (/* binding */ internalRateLimitedQueue)
 /* harmony export */ });
 function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+<<<<<<< HEAD
 
 var id = 0;
 
 function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
 
+=======
+var id = 0;
+function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
+>>>>>>> feature/publication-datetimetype
 function createCancelError(cause) {
   return new Error('Cancelled', {
     cause
   });
 }
+<<<<<<< HEAD
 
 function abortOn(signal) {
   if (signal != null) {
@@ -26167,6 +33473,36 @@ var _resume = /*#__PURE__*/_classPrivateFieldLooseKey("resume");
 
 var _increaseLimit = /*#__PURE__*/_classPrivateFieldLooseKey("increaseLimit");
 
+=======
+function abortOn(signal) {
+  if (signal != null) {
+    var _this$then;
+    const abortPromise = () => this.abort(signal.reason);
+    signal.addEventListener('abort', abortPromise, {
+      once: true
+    });
+    const removeAbortListener = () => {
+      signal.removeEventListener('abort', abortPromise);
+    };
+    (_this$then = this.then) == null ? void 0 : _this$then.call(this, removeAbortListener, removeAbortListener);
+  }
+  return this;
+}
+var _activeRequests = /*#__PURE__*/_classPrivateFieldLooseKey("activeRequests");
+var _queuedHandlers = /*#__PURE__*/_classPrivateFieldLooseKey("queuedHandlers");
+var _paused = /*#__PURE__*/_classPrivateFieldLooseKey("paused");
+var _pauseTimer = /*#__PURE__*/_classPrivateFieldLooseKey("pauseTimer");
+var _downLimit = /*#__PURE__*/_classPrivateFieldLooseKey("downLimit");
+var _upperLimit = /*#__PURE__*/_classPrivateFieldLooseKey("upperLimit");
+var _rateLimitingTimer = /*#__PURE__*/_classPrivateFieldLooseKey("rateLimitingTimer");
+var _call = /*#__PURE__*/_classPrivateFieldLooseKey("call");
+var _queueNext = /*#__PURE__*/_classPrivateFieldLooseKey("queueNext");
+var _next = /*#__PURE__*/_classPrivateFieldLooseKey("next");
+var _queue = /*#__PURE__*/_classPrivateFieldLooseKey("queue");
+var _dequeue = /*#__PURE__*/_classPrivateFieldLooseKey("dequeue");
+var _resume = /*#__PURE__*/_classPrivateFieldLooseKey("resume");
+var _increaseLimit = /*#__PURE__*/_classPrivateFieldLooseKey("increaseLimit");
+>>>>>>> feature/publication-datetimetype
 class RateLimitedQueue {
   constructor(limit) {
     Object.defineProperty(this, _dequeue, {
@@ -26223,6 +33559,7 @@ class RateLimitedQueue {
           _classPrivateFieldLooseBase(this, _rateLimitingTimer)[_rateLimitingTimer] = setTimeout(_classPrivateFieldLooseBase(this, _increaseLimit)[_increaseLimit], 0);
           return;
         }
+<<<<<<< HEAD
 
         _classPrivateFieldLooseBase(this, _downLimit)[_downLimit] = this.limit;
         this.limit = Math.ceil((_classPrivateFieldLooseBase(this, _upperLimit)[_upperLimit] + _classPrivateFieldLooseBase(this, _downLimit)[_downLimit]) / 2);
@@ -26231,6 +33568,13 @@ class RateLimitedQueue {
           _classPrivateFieldLooseBase(this, _queueNext)[_queueNext]();
         }
 
+=======
+        _classPrivateFieldLooseBase(this, _downLimit)[_downLimit] = this.limit;
+        this.limit = Math.ceil((_classPrivateFieldLooseBase(this, _upperLimit)[_upperLimit] + _classPrivateFieldLooseBase(this, _downLimit)[_downLimit]) / 2);
+        for (let i = _classPrivateFieldLooseBase(this, _downLimit)[_downLimit]; i <= this.limit; i++) {
+          _classPrivateFieldLooseBase(this, _queueNext)[_queueNext]();
+        }
+>>>>>>> feature/publication-datetimetype
         if (_classPrivateFieldLooseBase(this, _upperLimit)[_upperLimit] - _classPrivateFieldLooseBase(this, _downLimit)[_downLimit] > 3) {
           _classPrivateFieldLooseBase(this, _rateLimitingTimer)[_rateLimitingTimer] = setTimeout(_classPrivateFieldLooseBase(this, _increaseLimit)[_increaseLimit], 2000);
         } else {
@@ -26238,18 +33582,25 @@ class RateLimitedQueue {
         }
       }
     });
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (typeof limit !== 'number' || limit === 0) {
       this.limit = Infinity;
     } else {
       this.limit = limit;
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   run(fn, queueOptions) {
     if (!_classPrivateFieldLooseBase(this, _paused)[_paused] && _classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] < this.limit) {
       return _classPrivateFieldLooseBase(this, _call)[_call](fn);
     }
+<<<<<<< HEAD
 
     return _classPrivateFieldLooseBase(this, _queue)[_queue](fn, queueOptions);
   }
@@ -26257,10 +33608,17 @@ class RateLimitedQueue {
   wrapPromiseFunction(fn, queueOptions) {
     var _this = this;
 
+=======
+    return _classPrivateFieldLooseBase(this, _queue)[_queue](fn, queueOptions);
+  }
+  wrapSyncFunction(fn, queueOptions) {
+    var _this = this;
+>>>>>>> feature/publication-datetimetype
     return function () {
       for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
         args[_key] = arguments[_key];
       }
+<<<<<<< HEAD
 
       let queuedRequest;
       const outerPromise = new Promise((resolve, reject) => {
@@ -26268,12 +33626,41 @@ class RateLimitedQueue {
           let cancelError;
           let innerPromise;
 
+=======
+      const queuedRequest = _this.run(() => {
+        fn(...args);
+        queueMicrotask(() => queuedRequest.done());
+        return () => {};
+      }, queueOptions);
+      return {
+        abortOn,
+        abort() {
+          queuedRequest.abort();
+        }
+      };
+    };
+  }
+  wrapPromiseFunction(fn, queueOptions) {
+    var _this2 = this;
+    return function () {
+      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+      let queuedRequest;
+      const outerPromise = new Promise((resolve, reject) => {
+        queuedRequest = _this2.run(() => {
+          let cancelError;
+          let innerPromise;
+>>>>>>> feature/publication-datetimetype
           try {
             innerPromise = Promise.resolve(fn(...args));
           } catch (err) {
             innerPromise = Promise.reject(err);
           }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
           innerPromise.then(result => {
             if (cancelError) {
               reject(cancelError);
@@ -26294,25 +33681,40 @@ class RateLimitedQueue {
           };
         }, queueOptions);
       });
+<<<<<<< HEAD
 
       outerPromise.abort = cause => {
         queuedRequest.abort(cause);
       };
 
+=======
+      outerPromise.abort = cause => {
+        queuedRequest.abort(cause);
+      };
+>>>>>>> feature/publication-datetimetype
       outerPromise.abortOn = abortOn;
       return outerPromise;
     };
   }
+<<<<<<< HEAD
 
   resume() {
     _classPrivateFieldLooseBase(this, _paused)[_paused] = false;
     clearTimeout(_classPrivateFieldLooseBase(this, _pauseTimer)[_pauseTimer]);
 
+=======
+  resume() {
+    _classPrivateFieldLooseBase(this, _paused)[_paused] = false;
+    clearTimeout(_classPrivateFieldLooseBase(this, _pauseTimer)[_pauseTimer]);
+>>>>>>> feature/publication-datetimetype
     for (let i = 0; i < this.limit; i++) {
       _classPrivateFieldLooseBase(this, _queueNext)[_queueNext]();
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   /**
    * Freezes the queue for a while or indefinitely.
    *
@@ -26323,14 +33725,23 @@ class RateLimitedQueue {
     if (duration === void 0) {
       duration = null;
     }
+<<<<<<< HEAD
 
     _classPrivateFieldLooseBase(this, _paused)[_paused] = true;
     clearTimeout(_classPrivateFieldLooseBase(this, _pauseTimer)[_pauseTimer]);
 
+=======
+    _classPrivateFieldLooseBase(this, _paused)[_paused] = true;
+    clearTimeout(_classPrivateFieldLooseBase(this, _pauseTimer)[_pauseTimer]);
+>>>>>>> feature/publication-datetimetype
     if (duration != null) {
       _classPrivateFieldLooseBase(this, _pauseTimer)[_pauseTimer] = setTimeout(_classPrivateFieldLooseBase(this, _resume)[_resume], duration);
     }
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/publication-datetimetype
   /**
    * Pauses the queue for a duration, and lower the limit of concurrent requests
    * when the queue resumes. When the queue resumes, it tries to progressively
@@ -26341,18 +33752,25 @@ class RateLimitedQueue {
    *
    * @param {number} duration in milliseconds.
    */
+<<<<<<< HEAD
 
 
   rateLimit(duration) {
     clearTimeout(_classPrivateFieldLooseBase(this, _rateLimitingTimer)[_rateLimitingTimer]);
     this.pause(duration);
 
+=======
+  rateLimit(duration) {
+    clearTimeout(_classPrivateFieldLooseBase(this, _rateLimitingTimer)[_rateLimitingTimer]);
+    this.pause(duration);
+>>>>>>> feature/publication-datetimetype
     if (this.limit > 1 && Number.isFinite(this.limit)) {
       _classPrivateFieldLooseBase(this, _upperLimit)[_upperLimit] = this.limit - 1;
       this.limit = _classPrivateFieldLooseBase(this, _downLimit)[_downLimit];
       _classPrivateFieldLooseBase(this, _rateLimitingTimer)[_rateLimitingTimer] = setTimeout(_classPrivateFieldLooseBase(this, _increaseLimit)[_increaseLimit], duration);
     }
   }
+<<<<<<< HEAD
 
   get isPaused() {
     return _classPrivateFieldLooseBase(this, _paused)[_paused];
@@ -26360,48 +33778,74 @@ class RateLimitedQueue {
 
 }
 
+=======
+  get isPaused() {
+    return _classPrivateFieldLooseBase(this, _paused)[_paused];
+  }
+}
+>>>>>>> feature/publication-datetimetype
 function _call2(fn) {
   _classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] += 1;
   let done = false;
   let cancelActive;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   try {
     cancelActive = fn();
   } catch (err) {
     _classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] -= 1;
     throw err;
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   return {
     abort: cause => {
       if (done) return;
       done = true;
       _classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] -= 1;
+<<<<<<< HEAD
       cancelActive(cause);
 
+=======
+      cancelActive == null ? void 0 : cancelActive(cause);
+>>>>>>> feature/publication-datetimetype
       _classPrivateFieldLooseBase(this, _queueNext)[_queueNext]();
     },
     done: () => {
       if (done) return;
       done = true;
       _classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] -= 1;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       _classPrivateFieldLooseBase(this, _queueNext)[_queueNext]();
     }
   };
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function _queueNext2() {
   // Do it soon but not immediately, this allows clearing out the entire queue synchronously
   // one by one without continuously _advancing_ it (and starting new tasks before immediately
   // aborting them)
   queueMicrotask(() => _classPrivateFieldLooseBase(this, _next)[_next]());
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function _next2() {
   if (_classPrivateFieldLooseBase(this, _paused)[_paused] || _classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] >= this.limit) {
     return;
   }
+<<<<<<< HEAD
 
   if (_classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].length === 0) {
     return;
@@ -26418,11 +33862,28 @@ function _next2() {
   next.done = handler.done;
 }
 
+=======
+  if (_classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].length === 0) {
+    return;
+  }
+
+  // Dispatch the next request, and update the abort/done handlers
+  // so that cancelling it does the Right Thing (and doesn't just try
+  // to dequeue an already-running request).
+  const next = _classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].shift();
+  const handler = _classPrivateFieldLooseBase(this, _call)[_call](next.fn);
+  next.abort = handler.abort;
+  next.done = handler.done;
+}
+>>>>>>> feature/publication-datetimetype
 function _queue2(fn, options) {
   if (options === void 0) {
     options = {};
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   const handler = {
     fn,
     priority: options.priority || 0,
@@ -26433,16 +33894,23 @@ function _queue2(fn, options) {
       throw new Error('Cannot mark a queued request as done: this indicates a bug');
     }
   };
+<<<<<<< HEAD
 
   const index = _classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].findIndex(other => {
     return handler.priority > other.priority;
   });
 
+=======
+  const index = _classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].findIndex(other => {
+    return handler.priority > other.priority;
+  });
+>>>>>>> feature/publication-datetimetype
   if (index === -1) {
     _classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].push(handler);
   } else {
     _classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].splice(index, 0, handler);
   }
+<<<<<<< HEAD
 
   return handler;
 }
@@ -26450,11 +33918,20 @@ function _queue2(fn, options) {
 function _dequeue2(handler) {
   const index = _classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].indexOf(handler);
 
+=======
+  return handler;
+}
+function _dequeue2(handler) {
+  const index = _classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].indexOf(handler);
+>>>>>>> feature/publication-datetimetype
   if (index !== -1) {
     _classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].splice(index, 1);
   }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 const internalRateLimitedQueue = Symbol('__queue');
 
 /***/ }),
@@ -26472,12 +33949,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _hasProperty_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./hasProperty.js */ "./node_modules/@uppy/utils/lib/hasProperty.js");
 function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+<<<<<<< HEAD
 
 var id = 0;
 
 function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
 
 
+=======
+var id = 0;
+function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
+
+
+// We're using a generic because languages have different plural rules.
+>>>>>>> feature/publication-datetimetype
 
 function insertReplacement(source, rx, replacement) {
   const newParts = [];
@@ -26489,6 +33974,7 @@ function insertReplacement(source, rx, replacement) {
     if (typeof chunk !== 'string') {
       return newParts.push(chunk);
     }
+<<<<<<< HEAD
 
     return rx[Symbol.split](chunk).forEach((raw, i, list) => {
       if (raw !== '') {
@@ -26496,6 +33982,14 @@ function insertReplacement(source, rx, replacement) {
       } // Interlace with the `replacement` value
 
 
+=======
+    return rx[Symbol.split](chunk).forEach((raw, i, list) => {
+      if (raw !== '') {
+        newParts.push(raw);
+      }
+
+      // Interlace with the `replacement` value
+>>>>>>> feature/publication-datetimetype
       if (i < list.length - 1) {
         newParts.push(replacement);
       }
@@ -26503,6 +33997,10 @@ function insertReplacement(source, rx, replacement) {
   });
   return newParts;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/publication-datetimetype
 /**
  * Takes a string with placeholder variables like `%{smart_count} file selected`
  * and replaces it with values from options `{smart_count: 5}`
@@ -26510,24 +34008,34 @@ function insertReplacement(source, rx, replacement) {
  * @license https://github.com/airbnb/polyglot.js/blob/master/LICENSE
  * taken from https://github.com/airbnb/polyglot.js/blob/master/lib/polyglot.js#L299
  *
+<<<<<<< HEAD
  * @param {string} phrase that needs interpolation, with placeholders
  * @param {object} options with values that will be used to replace placeholders
  * @returns {any[]} interpolated
  */
 
 
+=======
+ * @param phrase that needs interpolation, with placeholders
+ * @param options with values that will be used to replace placeholders
+ */
+>>>>>>> feature/publication-datetimetype
 function interpolate(phrase, options) {
   const dollarRegex = /\$/g;
   const dollarBillsYall = '$$$$';
   let interpolated = [phrase];
   if (options == null) return interpolated;
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   for (const arg of Object.keys(options)) {
     if (arg !== '_') {
       // Ensure replacement value is escaped to prevent special $-prefixed
       // regex replace tokens. the "$$$$" is needed because each "$" needs to
       // be escaped with "$" itself, and we need two in the resulting output.
       let replacement = options[arg];
+<<<<<<< HEAD
 
       if (typeof replacement === 'string') {
         replacement = dollarRegex[Symbol.replace](replacement, dollarBillsYall);
@@ -26542,6 +34050,20 @@ function interpolate(phrase, options) {
 
   return interpolated;
 }
+=======
+      if (typeof replacement === 'string') {
+        replacement = dollarRegex[Symbol.replace](replacement, dollarBillsYall);
+      }
+      // We create a new `RegExp` each time instead of using a more-efficient
+      // string replace so that the same argument can be replaced multiple times
+      // in the same phrase.
+      interpolated = insertReplacement(interpolated, new RegExp(`%\\{${arg}\\}`, 'g'), replacement);
+    }
+  }
+  return interpolated;
+}
+
+>>>>>>> feature/publication-datetimetype
 /**
  * Translates strings with interpolation & pluralization support.
  * Extensible with custom dictionaries and pluralization functions.
@@ -26553,6 +34075,7 @@ function interpolate(phrase, options) {
  *
  * Usage example: `translator.translate('files_chosen', {smart_count: 3})`
  */
+<<<<<<< HEAD
 
 
 var _apply = /*#__PURE__*/_classPrivateFieldLooseKey("apply");
@@ -26561,29 +34084,43 @@ class Translator {
   /**
    * @param {object|Array<object>} locales - locale or list of locales.
    */
+=======
+var _apply = /*#__PURE__*/_classPrivateFieldLooseKey("apply");
+class Translator {
+>>>>>>> feature/publication-datetimetype
   constructor(locales) {
     Object.defineProperty(this, _apply, {
       value: _apply2
     });
     this.locale = {
       strings: {},
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       pluralize(n) {
         if (n === 1) {
           return 0;
         }
+<<<<<<< HEAD
 
         return 1;
       }
 
     };
 
+=======
+        return 1;
+      }
+    };
+>>>>>>> feature/publication-datetimetype
     if (Array.isArray(locales)) {
       locales.forEach(_classPrivateFieldLooseBase(this, _apply)[_apply], this);
     } else {
       _classPrivateFieldLooseBase(this, _apply)[_apply](locales);
     }
   }
+<<<<<<< HEAD
 
   /**
    * Public translate method
@@ -26591,10 +34128,19 @@ class Translator {
    * @param {string} key
    * @param {object} options with values that will be used later to replace placeholders in string
    * @returns {string} translated (and interpolated)
+=======
+  /**
+   * Public translate method
+   *
+   * @param key
+   * @param options with values that will be used later to replace placeholders in string
+   * @returns string translated (and interpolated)
+>>>>>>> feature/publication-datetimetype
    */
   translate(key, options) {
     return this.translateArray(key, options).join('');
   }
+<<<<<<< HEAD
   /**
    * Get a translation and return the translated and interpolated parts as an array.
    *
@@ -26604,19 +34150,33 @@ class Translator {
    */
 
 
+=======
+
+  /**
+   * Get a translation and return the translated and interpolated parts as an array.
+   *
+   * @returns The translated and interpolated parts, in order.
+   */
+>>>>>>> feature/publication-datetimetype
   translateArray(key, options) {
     if (!(0,_hasProperty_js__WEBPACK_IMPORTED_MODULE_0__["default"])(this.locale.strings, key)) {
       throw new Error(`missing string: ${key}`);
     }
+<<<<<<< HEAD
 
     const string = this.locale.strings[key];
     const hasPluralForms = typeof string === 'object';
 
+=======
+    const string = this.locale.strings[key];
+    const hasPluralForms = typeof string === 'object';
+>>>>>>> feature/publication-datetimetype
     if (hasPluralForms) {
       if (options && typeof options.smart_count !== 'undefined') {
         const plural = this.locale.pluralize(options.smart_count);
         return interpolate(string[plural], options);
       }
+<<<<<<< HEAD
 
       throw new Error('Attempted to use a string with plural forms, but no value was given for %{smart_count}');
     }
@@ -26626,14 +34186,29 @@ class Translator {
 
 }
 
+=======
+      throw new Error('Attempted to use a string with plural forms, but no value was given for %{smart_count}');
+    }
+    return interpolate(string, options);
+  }
+}
+>>>>>>> feature/publication-datetimetype
 function _apply2(locale) {
   if (!(locale != null && locale.strings)) {
     return;
   }
+<<<<<<< HEAD
 
   const prevLocale = this.locale;
   this.locale = { ...prevLocale,
     strings: { ...prevLocale.strings,
+=======
+  const prevLocale = this.locale;
+  this.locale = {
+    ...prevLocale,
+    strings: {
+      ...prevLocale.strings,
+>>>>>>> feature/publication-datetimetype
       ...locale.strings
     }
   };
@@ -26642,6 +34217,184 @@ function _apply2(locale) {
 
 /***/ }),
 
+<<<<<<< HEAD
+=======
+/***/ "./node_modules/@uppy/utils/lib/VirtualList.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/@uppy/utils/lib/VirtualList.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+/**
+ * Adapted from preact-virtual-list: https://github.com/developit/preact-virtual-list
+ *
+ * © 2016 Jason Miller
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * Adaptations:
+ * - Added role=presentation to helper elements
+ * - Tweaked styles for Uppy's Dashboard use case
+ */
+
+
+const STYLE_INNER = {
+  position: 'relative',
+  // Disabled for our use case: the wrapper elements around FileList already deal with overflow,
+  // and this additional property would hide things that we want to show.
+  //
+  // overflow: 'hidden',
+  width: '100%',
+  minHeight: '100%'
+};
+const STYLE_CONTENT = {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  // Because the `top` value gets set to some offset, this `height` being 100% would make the scrollbar
+  // stretch far beyond the content. For our use case, the content div actually can get its height from
+  // the elements inside it, so we don't need to specify a `height` property at all.
+  //
+  // height: '100%',
+  width: '100%',
+  overflow: 'visible'
+};
+class VirtualList extends preact__WEBPACK_IMPORTED_MODULE_0__.Component {
+  constructor(props) {
+    super(props);
+
+    // The currently focused node, used to retain focus when the visible rows change.
+    // To avoid update loops, this should not cause state updates, so it's kept as a plain property.
+    this.handleScroll = () => {
+      this.setState({
+        offset: this.base.scrollTop
+      });
+    };
+    this.handleResize = () => {
+      this.resize();
+    };
+    this.focusElement = null;
+    this.state = {
+      offset: 0,
+      height: 0
+    };
+  }
+  componentDidMount() {
+    this.resize();
+    window.addEventListener('resize', this.handleResize);
+  }
+
+  // TODO: refactor to stable lifecycle method
+  // eslint-disable-next-line
+  componentWillUpdate() {
+    if (this.base.contains(document.activeElement)) {
+      this.focusElement = document.activeElement;
+    }
+  }
+  componentDidUpdate() {
+    // Maintain focus when rows are added and removed.
+    if (this.focusElement && this.focusElement.parentNode && document.activeElement !== this.focusElement) {
+      this.focusElement.focus();
+    }
+    this.focusElement = null;
+    this.resize();
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize);
+  }
+  resize() {
+    const {
+      height
+    } = this.state;
+    if (height !== this.base.offsetHeight) {
+      this.setState({
+        height: this.base.offsetHeight
+      });
+    }
+  }
+  render(_ref) {
+    let {
+      data,
+      rowHeight,
+      renderRow,
+      overscanCount = 10,
+      ...props
+    } = _ref;
+    const {
+      offset,
+      height
+    } = this.state;
+    // first visible row index
+    let start = Math.floor(offset / rowHeight);
+
+    // actual number of visible rows (without overscan)
+    let visibleRowCount = Math.floor(height / rowHeight);
+
+    // Overscan: render blocks of rows modulo an overscan row count
+    // This dramatically reduces DOM writes during scrolling
+    if (overscanCount) {
+      start = Math.max(0, start - start % overscanCount);
+      visibleRowCount += overscanCount;
+    }
+
+    // last visible + overscan row index + padding to allow keyboard focus to travel past the visible area
+    const end = start + visibleRowCount + 4;
+
+    // data slice currently in viewport plus overscan items
+    const selection = data.slice(start, end);
+    const styleInner = {
+      ...STYLE_INNER,
+      height: data.length * rowHeight
+    };
+    const styleContent = {
+      ...STYLE_CONTENT,
+      top: start * rowHeight
+    };
+
+    // The `role="presentation"` attributes ensure that these wrapper elements are not treated as list
+    // items by accessibility and outline tools.
+    return (
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", _extends({
+        onScroll: this.handleScroll
+      }, props), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+        role: "presentation",
+        style: styleInner
+      }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
+        role: "presentation",
+        style: styleContent
+      }, selection.map(renderRow))))
+    );
+  }
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (VirtualList);
+
+/***/ }),
+
+>>>>>>> feature/publication-datetimetype
 /***/ "./node_modules/@uppy/utils/lib/dataURItoBlob.js":
 /*!*******************************************************!*\
   !*** ./node_modules/@uppy/utils/lib/dataURItoBlob.js ***!
@@ -26656,6 +34409,7 @@ __webpack_require__.r(__webpack_exports__);
 const DATA_URL_PATTERN = /^data:([^/]+\/[^,;]+(?:[^,]*?))(;base64)?,([\s\S]*)$/;
 function dataURItoBlob(dataURI, opts, toFile) {
   var _ref, _opts$mimeType;
+<<<<<<< HEAD
 
   // get the base64 data
   const dataURIData = DATA_URL_PATTERN.exec(dataURI); // user may provide mime type, if not get it from data URI
@@ -26677,12 +34431,35 @@ function dataURItoBlob(dataURI, opts, toFile) {
   } // Convert to a File?
 
 
+=======
+  // get the base64 data
+  const dataURIData = DATA_URL_PATTERN.exec(dataURI);
+
+  // user may provide mime type, if not get it from data URI
+  const mimeType = (_ref = (_opts$mimeType = opts.mimeType) != null ? _opts$mimeType : dataURIData == null ? void 0 : dataURIData[1]) != null ? _ref : 'plain/text';
+  let data; // We add `!` to tell TS we're OK with `data` being not defined when the dataURI is invalid.
+  if ((dataURIData == null ? void 0 : dataURIData[2]) != null) {
+    const binary = atob(decodeURIComponent(dataURIData[3]));
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    data = [bytes];
+  } else if ((dataURIData == null ? void 0 : dataURIData[3]) != null) {
+    data = [decodeURIComponent(dataURIData[3])];
+  }
+
+  // Convert to a File?
+>>>>>>> feature/publication-datetimetype
   if (toFile) {
     return new File(data, opts.name || '', {
       type: mimeType
     });
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   return new Blob(data, {
     type: mimeType
   });
@@ -26690,15 +34467,23 @@ function dataURItoBlob(dataURI, opts, toFile) {
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "./node_modules/@uppy/utils/lib/emitSocketProgress.js":
 /*!************************************************************!*\
   !*** ./node_modules/@uppy/utils/lib/emitSocketProgress.js ***!
   \************************************************************/
+=======
+/***/ "./node_modules/@uppy/utils/lib/emaFilter.js":
+/*!***************************************************!*\
+  !*** ./node_modules/@uppy/utils/lib/emaFilter.js ***!
+  \***************************************************/
+>>>>>>> feature/publication-datetimetype
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+<<<<<<< HEAD
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var lodash_throttle__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash.throttle */ "./node_modules/lodash.throttle/index.js");
@@ -26753,6 +34538,25 @@ function fetchWithNetworkError() {
       throw new _NetworkError_js__WEBPACK_IMPORTED_MODULE_0__["default"](err);
     }
   });
+=======
+/* harmony export */   "default": () => (/* binding */ emaFilter)
+/* harmony export */ });
+/**
+ * Low-pass filter using Exponential Moving Averages (aka exponential smoothing)
+ * Filters a sequence of values by updating the mixing the previous output value
+ * with the new input using the exponential window function
+ *
+ * @param newValue the n-th value of the sequence
+ * @param previousSmoothedValue the exponential average of the first n-1 values
+ * @param halfLife value of `dt` to move the smoothed value halfway between `previousFilteredValue` and `newValue`
+ * @param dt time elapsed between adding the (n-1)th and the n-th values
+ * @returns the exponential average of the first n values
+ */
+function emaFilter(newValue, previousSmoothedValue, halfLife, dt) {
+  if (halfLife === 0 || newValue === previousSmoothedValue) return newValue;
+  if (dt === 0) return previousSmoothedValue;
+  return newValue + (previousSmoothedValue - newValue) * 2 ** (-dt / halfLife);
+>>>>>>> feature/publication-datetimetype
 }
 
 /***/ }),
@@ -26770,6 +34574,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   filterNonFailedFiles: () => (/* binding */ filterNonFailedFiles)
 /* harmony export */ });
 function filterNonFailedFiles(files) {
+<<<<<<< HEAD
   const hasError = file => 'error' in file && file.error;
 
   return files.filter(file => !hasError(file));
@@ -26777,6 +34582,18 @@ function filterNonFailedFiles(files) {
 
 function filterFilesToEmitUploadStarted(files) {
   return files.filter(file => !file.progress.uploadStarted || !file.isRestored);
+=======
+  const hasError = file => 'error' in file && !!file.error;
+  return files.filter(file => !hasError(file));
+}
+
+// Don't double-emit upload-started for Golden Retriever-restored files that were already started
+function filterFilesToEmitUploadStarted(files) {
+  return files.filter(file => {
+    var _file$progress;
+    return !((_file$progress = file.progress) != null && _file$progress.uploadStarted) || !file.isRestored;
+  });
+>>>>>>> feature/publication-datetimetype
 }
 
 /***/ }),
@@ -26794,6 +34611,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _isDOMElement_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./isDOMElement.js */ "./node_modules/@uppy/utils/lib/isDOMElement.js");
 
+<<<<<<< HEAD
 /**
  * Find one or more DOM elements.
  *
@@ -26801,16 +34619,28 @@ __webpack_require__.r(__webpack_exports__);
  * @returns {Node[]|null}
  */
 
+=======
+
+/**
+ * Find one or more DOM elements.
+ */
+>>>>>>> feature/publication-datetimetype
 function findAllDOMElements(element) {
   if (typeof element === 'string') {
     const elements = document.querySelectorAll(element);
     return elements.length === 0 ? null : Array.from(elements);
   }
+<<<<<<< HEAD
 
   if (typeof element === 'object' && (0,_isDOMElement_js__WEBPACK_IMPORTED_MODULE_0__["default"])(element)) {
     return [element];
   }
 
+=======
+  if (typeof element === 'object' && (0,_isDOMElement_js__WEBPACK_IMPORTED_MODULE_0__["default"])(element)) {
+    return [element];
+  }
+>>>>>>> feature/publication-datetimetype
   return null;
 }
 
@@ -26829,6 +34659,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _isDOMElement_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./isDOMElement.js */ "./node_modules/@uppy/utils/lib/isDOMElement.js");
 
+<<<<<<< HEAD
 /**
  * Find a DOM element.
  *
@@ -26836,10 +34667,17 @@ __webpack_require__.r(__webpack_exports__);
  * @returns {Node|null}
  */
 
+=======
+
+/**
+ * Find a DOM element.
+ */
+>>>>>>> feature/publication-datetimetype
 function findDOMElement(element, context) {
   if (context === void 0) {
     context = document;
   }
+<<<<<<< HEAD
 
   if (typeof element === 'string') {
     return context.querySelector(element);
@@ -26849,6 +34687,14 @@ function findDOMElement(element, context) {
     return element;
   }
 
+=======
+  if (typeof element === 'string') {
+    return context.querySelector(element);
+  }
+  if ((0,_isDOMElement_js__WEBPACK_IMPORTED_MODULE_0__["default"])(element)) {
+    return element;
+  }
+>>>>>>> feature/publication-datetimetype
   return null;
 }
 
@@ -26868,6 +34714,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _getFileType_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./getFileType.js */ "./node_modules/@uppy/utils/lib/getFileType.js");
 
+<<<<<<< HEAD
 
 function encodeCharacter(character) {
   return character.charCodeAt(0).toString(32);
@@ -26876,10 +34723,19 @@ function encodeCharacter(character) {
 function encodeFilename(name) {
   let suffix = '';
   return name.replace(/[^A-Z0-9]/ig, character => {
+=======
+function encodeCharacter(character) {
+  return character.charCodeAt(0).toString(32);
+}
+function encodeFilename(name) {
+  let suffix = '';
+  return name.replace(/[^A-Z0-9]/gi, character => {
+>>>>>>> feature/publication-datetimetype
     suffix += `-${encodeCharacter(character)}`;
     return '/';
   }) + suffix;
 }
+<<<<<<< HEAD
 /**
  * Takes a file object and turns it into fileID, by converting file.name to lowercase,
  * removing extra characters and adding type, size and lastModified
@@ -26929,12 +34785,56 @@ function getSafeFileId(file) {
   if (hasFileStableId(file)) return file.id;
   const fileType = (0,_getFileType_js__WEBPACK_IMPORTED_MODULE_0__["default"])(file);
   return generateFileID({ ...file,
+=======
+
+/**
+ * Takes a file object and turns it into fileID, by converting file.name to lowercase,
+ * removing extra characters and adding type, size and lastModified
+ */
+function generateFileID(file) {
+  // It's tempting to do `[items].filter(Boolean).join('-')` here, but that
+  // is slower! simple string concatenation is fast
+
+  let id = 'uppy';
+  if (typeof file.name === 'string') {
+    id += `-${encodeFilename(file.name.toLowerCase())}`;
+  }
+  if (file.type !== undefined) {
+    id += `-${file.type}`;
+  }
+  if (file.meta && typeof file.meta.relativePath === 'string') {
+    id += `-${encodeFilename(file.meta.relativePath.toLowerCase())}`;
+  }
+  if (file.data.size !== undefined) {
+    id += `-${file.data.size}`;
+  }
+  if (file.data.lastModified !== undefined) {
+    id += `-${file.data.lastModified}`;
+  }
+  return id;
+}
+
+// If the provider has a stable, unique ID, then we can use that to identify the file.
+// Then we don't have to generate our own ID, and we can add the same file many times if needed (different path)
+function hasFileStableId(file) {
+  if (!file.isRemote || !file.remote) return false;
+  // These are the providers that it seems like have stable IDs for their files. The other's I haven't checked yet.
+  const stableIdProviders = new Set(['box', 'dropbox', 'drive', 'facebook', 'unsplash']);
+  return stableIdProviders.has(file.remote.provider);
+}
+function getSafeFileId(file) {
+  if (hasFileStableId(file)) return file.id;
+  const fileType = (0,_getFileType_js__WEBPACK_IMPORTED_MODULE_0__["default"])(file);
+  return generateFileID({
+    ...file,
+>>>>>>> feature/publication-datetimetype
     type: fileType
   });
 }
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "./node_modules/@uppy/utils/lib/getBytesRemaining.js":
 /*!***********************************************************!*\
   !*** ./node_modules/@uppy/utils/lib/getBytesRemaining.js ***!
@@ -26952,6 +34852,8 @@ function getBytesRemaining(fileProgress) {
 
 /***/ }),
 
+=======
+>>>>>>> feature/publication-datetimetype
 /***/ "./node_modules/@uppy/utils/lib/getDroppedFiles/index.js":
 /*!***************************************************************!*\
   !*** ./node_modules/@uppy/utils/lib/getDroppedFiles/index.js ***!
@@ -26967,6 +34869,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_fallbackApi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils/fallbackApi.js */ "./node_modules/@uppy/utils/lib/getDroppedFiles/utils/fallbackApi.js");
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/publication-datetimetype
 /**
  * Returns a promise that resolves to the array of dropped files (if a folder is
  * dropped, and browser supports folder parsing - promise resolves to the flat
@@ -26974,13 +34880,20 @@ __webpack_require__.r(__webpack_exports__);
  * Each file has .relativePath prop appended to it (e.g. "/docs/Prague/ticket_from_prague_to_ufa.pdf")
  * if browser supports it. Otherwise it's undefined.
  *
+<<<<<<< HEAD
  * @param {DataTransfer} dataTransfer
  * @param {Function} logDropError - a function that's called every time some
+=======
+ * @param dataTransfer
+ * @param options
+ * @param options.logDropError - a function that's called every time some
+>>>>>>> feature/publication-datetimetype
  * folder or some file error out (e.g. because of the folder name being too long
  * on Windows). Notice that resulting promise will always be resolved anyway.
  *
  * @returns {Promise} - Array<File>
  */
+<<<<<<< HEAD
 
 async function getDroppedFiles(dataTransfer, _temp) {
   let {
@@ -26996,6 +34909,19 @@ async function getDroppedFiles(dataTransfer, _temp) {
     }
 
     return accumulator; // Otherwise just return all first-order files
+=======
+async function getDroppedFiles(dataTransfer, options) {
+  var _options$logDropError;
+  // Get all files from all subdirs. Works (at least) in Chrome, Mozilla, and Safari
+  const logDropError = (_options$logDropError = options == null ? void 0 : options.logDropError) != null ? _options$logDropError : Function.prototype;
+  try {
+    const accumulator = [];
+    for await (const file of (0,_utils_webkitGetAsEntryApi_index_js__WEBPACK_IMPORTED_MODULE_0__["default"])(dataTransfer, logDropError)) {
+      accumulator.push(file);
+    }
+    return accumulator;
+    // Otherwise just return all first-order files
+>>>>>>> feature/publication-datetimetype
   } catch {
     return (0,_utils_fallbackApi_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dataTransfer);
   }
@@ -27015,8 +34941,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ fallbackApi)
 /* harmony export */ });
 /* harmony import */ var _toArray_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../toArray.js */ "./node_modules/@uppy/utils/lib/toArray.js");
+<<<<<<< HEAD
  // .files fallback, should be implemented in any browser
 
+=======
+
+
+// .files fallback, should be implemented in any browser
+>>>>>>> feature/publication-datetimetype
 function fallbackApi(dataTransfer) {
   const files = (0,_toArray_js__WEBPACK_IMPORTED_MODULE_0__["default"])(dataTransfer.files);
   return Promise.resolve(files);
@@ -27037,30 +34969,49 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /**
  * Recursive function, calls the original callback() when the directory is entirely parsed.
+<<<<<<< HEAD
  *
  * @param {FileSystemDirectoryReader} directoryReader
  * @param {Array} oldEntries
  * @param {Function} logDropError
  * @param {Function} callback - called with ([ all files and directories in that directoryReader ])
+=======
+>>>>>>> feature/publication-datetimetype
  */
 function getFilesAndDirectoriesFromDirectory(directoryReader, oldEntries, logDropError, _ref) {
   let {
     onSuccess
   } = _ref;
   directoryReader.readEntries(entries => {
+<<<<<<< HEAD
     const newEntries = [...oldEntries, ...entries]; // According to the FileSystem API spec, getFilesAndDirectoriesFromDirectory()
     // must be called until it calls the onSuccess with an empty array.
 
+=======
+    const newEntries = [...oldEntries, ...entries];
+    // According to the FileSystem API spec, getFilesAndDirectoriesFromDirectory()
+    // must be called until it calls the onSuccess with an empty array.
+>>>>>>> feature/publication-datetimetype
     if (entries.length) {
       queueMicrotask(() => {
         getFilesAndDirectoriesFromDirectory(directoryReader, newEntries, logDropError, {
           onSuccess
         });
+<<<<<<< HEAD
       }); // Done iterating this particular directory
     } else {
       onSuccess(newEntries);
     }
   }, // Make sure we resolve on error anyway, it's fine if only one directory couldn't be parsed!
+=======
+      });
+      // Done iterating this particular directory
+    } else {
+      onSuccess(newEntries);
+    }
+  },
+  // Make sure we resolve on error anyway, it's fine if only one directory couldn't be parsed!
+>>>>>>> feature/publication-datetimetype
   error => {
     logDropError(error);
     onSuccess(oldEntries);
@@ -27086,23 +35037,33 @@ __webpack_require__.r(__webpack_exports__);
  * Polyfill for the new (experimental) getAsFileSystemHandle API (using the popular webkitGetAsEntry behind the scenes)
  * so that we can switch to the getAsFileSystemHandle API once it (hopefully) becomes standard
  */
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
 function getAsFileSystemHandleFromEntry(entry, logDropError) {
   if (entry == null) return entry;
   return {
     // eslint-disable-next-line no-nested-ternary
     kind: entry.isFile ? 'file' : entry.isDirectory ? 'directory' : undefined,
     name: entry.name,
+<<<<<<< HEAD
 
     getFile() {
       return new Promise((resolve, reject) => entry.file(resolve, reject));
     },
 
+=======
+    getFile() {
+      return new Promise((resolve, reject) => entry.file(resolve, reject));
+    },
+>>>>>>> feature/publication-datetimetype
     async *values() {
       // If the file is a directory.
       const directoryReader = entry.createReader();
       const entries = await new Promise(resolve => {
         (0,_getFilesAndDirectoriesFromDirectory_js__WEBPACK_IMPORTED_MODULE_0__["default"])(directoryReader, [], logDropError, {
+<<<<<<< HEAD
           onSuccess: dirEntries => resolve(dirEntries.map(file => getAsFileSystemHandleFromEntry(file, logDropError)))
         });
       });
@@ -27132,6 +35093,46 @@ async function* createPromiseToAddFileOrParseDirectory(entry, relativePath, last
     }
   } else if (lastResortFile != null) yield lastResortFile;
 }
+=======
+          onSuccess: dirEntries => resolve(dirEntries.map(
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          file => getAsFileSystemHandleFromEntry(file, logDropError)))
+        });
+      });
+      yield* entries;
+    },
+    isSameEntry: undefined
+  };
+}
+function createPromiseToAddFileOrParseDirectory(entry, relativePath, lastResortFile) {
+  try {
+    if (lastResortFile === void 0) {
+      lastResortFile = undefined;
+    }
+    return async function* () {
+      const getNextRelativePath = () => `${relativePath}/${entry.name}`;
+
+      // For each dropped item, - make sure it's a file/directory, and start deepening in!
+      if (entry.kind === 'file') {
+        const file = await entry.getFile();
+        if (file != null) {
+          ;
+          file.relativePath = relativePath ? getNextRelativePath() : null;
+          yield file;
+        } else if (lastResortFile != null) yield lastResortFile;
+      } else if (entry.kind === 'directory') {
+        for await (const handle of entry.values()) {
+          // Recurse on the directory, appending the dir name to the relative path
+          yield* createPromiseToAddFileOrParseDirectory(handle, relativePath ? getNextRelativePath() : entry.name);
+        }
+      } else if (lastResortFile != null) yield lastResortFile;
+    }();
+  } catch (e) {
+    return Promise.reject(e);
+  }
+}
+
+>>>>>>> feature/publication-datetimetype
 /**
  * Load all files from data transfer, and recursively read any directories.
  * Note that IE is not supported for drag-drop, because IE doesn't support Data Transfers
@@ -27139,14 +35140,18 @@ async function* createPromiseToAddFileOrParseDirectory(entry, relativePath, last
  * @param {DataTransfer} dataTransfer
  * @param {*} logDropError on error
  */
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> feature/publication-datetimetype
 async function* getFilesFromDataTransfer(dataTransfer, logDropError) {
   // Retrieving the dropped items must happen synchronously
   // otherwise only the first item gets treated and the other ones are garbage collected.
   // https://github.com/transloadit/uppy/pull/3998
   const fileSystemHandles = await Promise.all(Array.from(dataTransfer.items, async item => {
     var _fileSystemHandle;
+<<<<<<< HEAD
 
     let fileSystemHandle; // TODO enable getAsFileSystemHandle API once we can get it working with subdirectories
     // IMPORTANT: Need to check isSecureContext *before* calling getAsFileSystemHandle
@@ -27159,11 +35164,29 @@ async function* getFilesFromDataTransfer(dataTransfer, logDropError) {
     const getAsEntry = () => typeof item.getAsEntry === 'function' ? item.getAsEntry() : item.webkitGetAsEntry(); // eslint-disable-next-line prefer-const
 
 
+=======
+    let fileSystemHandle;
+
+    // TODO enable getAsFileSystemHandle API once we can get it working with subdirectories
+    // IMPORTANT: Need to check isSecureContext *before* calling getAsFileSystemHandle
+    // or else Chrome will crash when running in HTTP: https://github.com/transloadit/uppy/issues/4133
+    // if (window.isSecureContext && item.getAsFileSystemHandle != null)
+    // fileSystemHandle = await item.getAsFileSystemHandle()
+
+    // `webkitGetAsEntry` exists in all popular browsers (including non-WebKit browsers),
+    // however it may be renamed to getAsEntry() in the future, so you should code defensively, looking for both.
+    // from https://developer.mozilla.org/en-US/docs/Web/API/DataTransferItem/webkitGetAsEntry
+    const getAsEntry = () => typeof item.getAsEntry === 'function' ? item.getAsEntry() : item.webkitGetAsEntry();
+    // eslint-disable-next-line prefer-const
+>>>>>>> feature/publication-datetimetype
     (_fileSystemHandle = fileSystemHandle) != null ? _fileSystemHandle : fileSystemHandle = getAsFileSystemHandleFromEntry(getAsEntry(), logDropError);
     return {
       fileSystemHandle,
       lastResortFile: item.getAsFile() // can be used as a fallback in case other methods fail
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     };
   }));
 
@@ -27204,6 +35227,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /**
  * Takes a full filename string and returns an object {name, extension}
+<<<<<<< HEAD
  *
  * @param {string} fullFileName
  * @returns {object} {name, extension}
@@ -27211,13 +35235,22 @@ __webpack_require__.r(__webpack_exports__);
 function getFileNameAndExtension(fullFileName) {
   const lastDot = fullFileName.lastIndexOf('.'); // these count as no extension: "no-dot", "trailing-dot."
 
+=======
+ */
+function getFileNameAndExtension(fullFileName) {
+  const lastDot = fullFileName.lastIndexOf('.');
+  // these count as no extension: "no-dot", "trailing-dot."
+>>>>>>> feature/publication-datetimetype
   if (lastDot === -1 || lastDot === fullFileName.length - 1) {
     return {
       name: fullFileName,
       extension: undefined
     };
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
   return {
     name: fullFileName.slice(0, lastDot),
     extension: fullFileName.slice(lastDot + 1)
@@ -27243,6 +35276,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function getFileType(file) {
   var _getFileNameAndExtens;
+<<<<<<< HEAD
 
   if (file.type) return file.type;
   const fileExtension = file.name ? (_getFileNameAndExtens = (0,_getFileNameAndExtension_js__WEBPACK_IMPORTED_MODULE_0__["default"])(file.name).extension) == null ? void 0 : _getFileNameAndExtens.toLowerCase() : null;
@@ -27253,11 +35287,21 @@ function getFileType(file) {
   } // if all fails, fall back to a generic byte stream type
 
 
+=======
+  if (file.type) return file.type;
+  const fileExtension = file.name ? (_getFileNameAndExtens = (0,_getFileNameAndExtension_js__WEBPACK_IMPORTED_MODULE_0__["default"])(file.name).extension) == null ? void 0 : _getFileNameAndExtens.toLowerCase() : null;
+  if (fileExtension && fileExtension in _mimeTypes_js__WEBPACK_IMPORTED_MODULE_1__["default"]) {
+    // else, see if we can map extension to a mime type
+    return _mimeTypes_js__WEBPACK_IMPORTED_MODULE_1__["default"][fileExtension];
+  }
+  // if all fails, fall back to a generic byte stream type
+>>>>>>> feature/publication-datetimetype
   return 'application/octet-stream';
 }
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "./node_modules/@uppy/utils/lib/getSocketHost.js":
 /*!*******************************************************!*\
   !*** ./node_modules/@uppy/utils/lib/getSocketHost.js ***!
@@ -27299,6 +35343,8 @@ function getSpeed(fileProgress) {
 
 /***/ }),
 
+=======
+>>>>>>> feature/publication-datetimetype
 /***/ "./node_modules/@uppy/utils/lib/getTextDirection.js":
 /*!**********************************************************!*\
   !*** ./node_modules/@uppy/utils/lib/getTextDirection.js ***!
@@ -27312,6 +35358,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /**
  * Get the declared text direction for an element.
+<<<<<<< HEAD
  *
  * @param {Node} element
  * @returns {string|undefined}
@@ -27319,6 +35366,12 @@ __webpack_require__.r(__webpack_exports__);
 function getTextDirection(element) {
   var _element;
 
+=======
+ */
+
+function getTextDirection(element) {
+  var _element;
+>>>>>>> feature/publication-datetimetype
   // There is another way to determine text direction using getComputedStyle(), as done here:
   // https://github.com/pencil-js/text-direction/blob/2a235ce95089b3185acec3b51313cbba921b3811/text-direction.js
   //
@@ -27329,10 +35382,15 @@ function getTextDirection(element) {
     // eslint-disable-next-line no-param-reassign
     element = element.parentNode;
   }
+<<<<<<< HEAD
 
   return (_element = element) == null ? void 0 : _element.dir;
 }
 
+=======
+  return (_element = element) == null ? void 0 : _element.dir;
+}
+>>>>>>> feature/publication-datetimetype
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (getTextDirection);
 
 /***/ }),
@@ -27350,18 +35408,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /**
  * Adds zero to strings shorter than two characters.
+<<<<<<< HEAD
  *
  * @param {number} number
  * @returns {string}
+=======
+>>>>>>> feature/publication-datetimetype
  */
 function pad(number) {
   return number < 10 ? `0${number}` : number.toString();
 }
+<<<<<<< HEAD
 /**
  * Returns a timestamp in the format of `hours:minutes:seconds`
  */
 
 
+=======
+
+/**
+ * Returns a timestamp in the format of `hours:minutes:seconds`
+ */
+>>>>>>> feature/publication-datetimetype
 function getTimeStamp() {
   const date = new Date();
   const hours = pad(date.getHours());
@@ -27402,11 +35470,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /**
  * Check if an object is a DOM element. Duck-typing based on `nodeType`.
+<<<<<<< HEAD
  *
  * @param {*} obj
  */
 function isDOMElement(obj) {
   return (obj == null ? void 0 : obj.nodeType) === Node.ELEMENT_NODE;
+=======
+ */
+function isDOMElement(obj) {
+  if (typeof obj !== 'object' || obj === null) return false;
+  if (!('nodeType' in obj)) return false;
+  return obj.nodeType === Node.ELEMENT_NODE;
+>>>>>>> feature/publication-datetimetype
 }
 
 /***/ }),
@@ -27424,6 +35500,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /**
  * Checks if the browser supports Drag & Drop (not supported on mobile devices, for example).
+<<<<<<< HEAD
  *
  * @returns {boolean}
  */
@@ -27442,6 +35519,20 @@ function isDragDropSupported() {
     return false;
   }
 
+=======
+ */
+function isDragDropSupported() {
+  const div = document.body;
+  if (!('draggable' in div) || !('ondragstart' in div && 'ondrop' in div)) {
+    return false;
+  }
+  if (!('FormData' in window)) {
+    return false;
+  }
+  if (!('FileReader' in window)) {
+    return false;
+  }
+>>>>>>> feature/publication-datetimetype
   return true;
 }
 
@@ -27462,10 +35553,15 @@ function isNetworkError(xhr) {
   if (!xhr) {
     return false;
   }
+<<<<<<< HEAD
 
   return xhr.readyState !== 0 && xhr.readyState !== 4 || xhr.status === 0;
 }
 
+=======
+  return xhr.readyState !== 0 && xhr.readyState !== 4 || xhr.status === 0;
+}
+>>>>>>> feature/publication-datetimetype
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (isNetworkError);
 
 /***/ }),
@@ -27483,9 +35579,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /**
  * Check if a URL string is an object URL from `URL.createObjectURL`.
+<<<<<<< HEAD
  *
  * @param {string} url
  * @returns {boolean}
+=======
+>>>>>>> feature/publication-datetimetype
  */
 function isObjectURL(url) {
   return url.startsWith('blob:');
@@ -27505,8 +35604,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ isPreviewSupported)
 /* harmony export */ });
 function isPreviewSupported(fileType) {
+<<<<<<< HEAD
   if (!fileType) return false; // list of images that browsers can preview
 
+=======
+  if (!fileType) return false;
+  // list of images that browsers can preview
+>>>>>>> feature/publication-datetimetype
   return /^[^/]+\/(jpe?g|gif|png|svg|svg\+xml|bmp|webp|avif)$/.test(fileType);
 }
 
@@ -27527,7 +35631,13 @@ __webpack_require__.r(__webpack_exports__);
 //    It's 19.7kB gzipped, and we only need mime types for well-known extensions (for file previews).
 // ___Where to take new extensions from?
 //    https://github.com/jshttp/mime-db/blob/master/db.json
+<<<<<<< HEAD
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+=======
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __proto__: null,
+>>>>>>> feature/publication-datetimetype
   md: 'text/markdown',
   markdown: 'text/markdown',
   mp4: 'video/mp4',
@@ -27597,10 +35707,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _secondsToTime_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./secondsToTime.js */ "./node_modules/@uppy/utils/lib/secondsToTime.js");
 
 function prettyETA(seconds) {
+<<<<<<< HEAD
   const time = (0,_secondsToTime_js__WEBPACK_IMPORTED_MODULE_0__["default"])(seconds); // Only display hours and minutes if they are greater than 0 but always
   // display minutes if hours is being displayed
   // Display a leading zero if the there is a preceding unit: 1m 05s, but 5s
 
+=======
+  const time = (0,_secondsToTime_js__WEBPACK_IMPORTED_MODULE_0__["default"])(seconds);
+
+  // Only display hours and minutes if they are greater than 0 but always
+  // display minutes if hours is being displayed
+  // Display a leading zero if the there is a preceding unit: 1m 05s, but 5s
+>>>>>>> feature/publication-datetimetype
   const hoursStr = time.hours === 0 ? '' : `${time.hours}h`;
   const minutesStr = time.minutes === 0 ? '' : `${time.hours === 0 ? time.minutes : ` ${time.minutes.toString(10).padStart(2, '0')}`}m`;
   const secondsStr = time.hours !== 0 ? '' : `${time.minutes === 0 ? time.seconds : ` ${time.seconds.toString(10).padStart(2, '0')}`}s`;
@@ -27609,6 +35727,32 @@ function prettyETA(seconds) {
 
 /***/ }),
 
+<<<<<<< HEAD
+=======
+/***/ "./node_modules/@uppy/utils/lib/remoteFileObjToLocal.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/@uppy/utils/lib/remoteFileObjToLocal.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ remoteFileObjToLocal)
+/* harmony export */ });
+/* harmony import */ var _getFileNameAndExtension_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./getFileNameAndExtension.js */ "./node_modules/@uppy/utils/lib/getFileNameAndExtension.js");
+
+function remoteFileObjToLocal(file) {
+  return {
+    ...file,
+    type: file.mimeType,
+    extension: file.name ? (0,_getFileNameAndExtension_js__WEBPACK_IMPORTED_MODULE_0__["default"])(file.name).extension : null
+  };
+}
+
+/***/ }),
+
+>>>>>>> feature/publication-datetimetype
 /***/ "./node_modules/@uppy/utils/lib/secondsToTime.js":
 /*!*******************************************************!*\
   !*** ./node_modules/@uppy/utils/lib/secondsToTime.js ***!
@@ -27665,18 +35809,28 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * Truncates a string to the given number of chars (maxLength) by inserting '...' in the middle of that string.
  * Partially taken from https://stackoverflow.com/a/5723274/3192470.
+<<<<<<< HEAD
  *
  * @param {string} string - string to be truncated
  * @param {number} maxLength - maximum size of the resulting string
  * @returns {string}
+=======
+>>>>>>> feature/publication-datetimetype
  */
 const separator = '...';
 function truncateString(string, maxLength) {
   // Return the empty string if maxLength is zero
+<<<<<<< HEAD
   if (maxLength === 0) return ''; // Return original string if it's already shorter than maxLength
 
   if (string.length <= maxLength) return string; // Return truncated substring appended of the ellipsis char if string can't be meaningfully truncated
 
+=======
+  if (maxLength === 0) return '';
+  // Return original string if it's already shorter than maxLength
+  if (string.length <= maxLength) return string;
+  // Return truncated substring appended of the ellipsis char if string can't be meaningfully truncated
+>>>>>>> feature/publication-datetimetype
   if (maxLength <= separator.length + 1) return `${string.slice(0, maxLength - 1)}…`;
   const charsToShow = maxLength - separator.length;
   const frontChars = Math.ceil(charsToShow / 2);
@@ -27697,6 +35851,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ XHRUpload)
 /* harmony export */ });
+<<<<<<< HEAD
 /* harmony import */ var _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/core/lib/BasePlugin.js */ "./node_modules/@uppy/core/lib/BasePlugin.js");
 /* harmony import */ var nanoid_non_secure__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! nanoid/non-secure */ "./node_modules/@uppy/xhr-upload/node_modules/nanoid/non-secure/index.js");
 /* harmony import */ var _uppy_companion_client__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/companion-client */ "./node_modules/@uppy/companion-client/lib/index.js");
@@ -27713,6 +35868,19 @@ function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototy
 
 var id = 0;
 
+=======
+/* harmony import */ var _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @uppy/core/lib/BasePlugin.js */ "./node_modules/@uppy/core/lib/BasePlugin.js");
+/* harmony import */ var nanoid_non_secure__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! nanoid/non-secure */ "./node_modules/@uppy/xhr-upload/node_modules/nanoid/non-secure/index.js");
+/* harmony import */ var _uppy_utils_lib_EventManager__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/utils/lib/EventManager */ "./node_modules/@uppy/utils/lib/EventManager.js");
+/* harmony import */ var _uppy_utils_lib_ProgressTimeout__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/utils/lib/ProgressTimeout */ "./node_modules/@uppy/utils/lib/ProgressTimeout.js");
+/* harmony import */ var _uppy_utils_lib_RateLimitedQueue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/utils/lib/RateLimitedQueue */ "./node_modules/@uppy/utils/lib/RateLimitedQueue.js");
+/* harmony import */ var _uppy_utils_lib_NetworkError__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/utils/lib/NetworkError */ "./node_modules/@uppy/utils/lib/NetworkError.js");
+/* harmony import */ var _uppy_utils_lib_isNetworkError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @uppy/utils/lib/isNetworkError */ "./node_modules/@uppy/utils/lib/isNetworkError.js");
+/* harmony import */ var _uppy_utils_lib_fileFilters__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @uppy/utils/lib/fileFilters */ "./node_modules/@uppy/utils/lib/fileFilters.js");
+/* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/xhr-upload/lib/locale.js");
+function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+var id = 0;
+>>>>>>> feature/publication-datetimetype
 function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
 
 
@@ -27722,6 +35890,7 @@ function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + n
 
 
 
+<<<<<<< HEAD
 
 
 
@@ -27738,11 +35907,25 @@ function buildResponseError(xhr, err) {
 
   if (typeof error === 'string') error = new Error(error); // Got something else
 
+=======
+const packageJson = {
+  "version": "3.5.0"
+};
+
+function buildResponseError(xhr, err) {
+  let error = err;
+  // No error message
+  if (!error) error = new Error('Upload error');
+  // Got an error message string
+  if (typeof error === 'string') error = new Error(error);
+  // Got something else
+>>>>>>> feature/publication-datetimetype
   if (!(error instanceof Error)) {
     error = Object.assign(new Error('Upload error'), {
       data: error
     });
   }
+<<<<<<< HEAD
 
   if ((0,_uppy_utils_lib_isNetworkError__WEBPACK_IMPORTED_MODULE_8__["default"])(xhr)) {
     error = new _uppy_utils_lib_NetworkError__WEBPACK_IMPORTED_MODULE_7__["default"](error, xhr);
@@ -27752,6 +35935,16 @@ function buildResponseError(xhr, err) {
   error.request = xhr;
   return error;
 }
+=======
+  if ((0,_uppy_utils_lib_isNetworkError__WEBPACK_IMPORTED_MODULE_4__["default"])(xhr)) {
+    error = new _uppy_utils_lib_NetworkError__WEBPACK_IMPORTED_MODULE_3__["default"](error, xhr);
+    return error;
+  }
+  error.request = xhr;
+  return error;
+}
+
+>>>>>>> feature/publication-datetimetype
 /**
  * Set `data.type` in the blob to `file.meta.type`,
  * because we might have detected a more accurate file type in Uppy
@@ -27760,12 +35953,16 @@ function buildResponseError(xhr, err) {
  * @param {object} file File object with `data`, `size` and `meta` properties
  * @returns {object} blob updated with the new `type` set from `file.meta.type`
  */
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> feature/publication-datetimetype
 function setTypeInBlob(file) {
   const dataWithUpdatedType = file.data.slice(0, file.data.size, file.meta.type);
   return dataWithUpdatedType;
 }
+<<<<<<< HEAD
 
 var _queueRequestSocketToken = /*#__PURE__*/_classPrivateFieldLooseKey("queueRequestSocketToken");
 
@@ -27783,11 +35980,20 @@ var _handleUpload = /*#__PURE__*/_classPrivateFieldLooseKey("handleUpload");
 
 class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
   // eslint-disable-next-line global-require
+=======
+var _uploadLocalFile = /*#__PURE__*/_classPrivateFieldLooseKey("uploadLocalFile");
+var _uploadBundle = /*#__PURE__*/_classPrivateFieldLooseKey("uploadBundle");
+var _getCompanionClientArgs = /*#__PURE__*/_classPrivateFieldLooseKey("getCompanionClientArgs");
+var _uploadFiles = /*#__PURE__*/_classPrivateFieldLooseKey("uploadFiles");
+var _handleUpload = /*#__PURE__*/_classPrivateFieldLooseKey("handleUpload");
+class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_7__["default"] {
+>>>>>>> feature/publication-datetimetype
   constructor(uppy, _opts) {
     super(uppy, _opts);
     Object.defineProperty(this, _uploadFiles, {
       value: _uploadFiles2
     });
+<<<<<<< HEAD
     Object.defineProperty(this, _uploadBundle, {
       value: _uploadBundle2
     });
@@ -27821,6 +36027,16 @@ class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_0_
         });
         return res.token;
       }
+=======
+    Object.defineProperty(this, _getCompanionClientArgs, {
+      value: _getCompanionClientArgs2
+    });
+    Object.defineProperty(this, _uploadBundle, {
+      value: _uploadBundle2
+    });
+    Object.defineProperty(this, _uploadLocalFile, {
+      value: _uploadLocalFile2
+>>>>>>> feature/publication-datetimetype
     });
     Object.defineProperty(this, _handleUpload, {
       writable: true,
@@ -27828,6 +36044,7 @@ class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_0_
         if (fileIDs.length === 0) {
           this.uppy.log('[XHRUpload] No files to upload!');
           return;
+<<<<<<< HEAD
         } // No limit configured by the user, and no RateLimitedQueue passed in by a "parent" plugin
         // (basically just AwsS3) using the internal symbol
 
@@ -27854,6 +36071,29 @@ class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_0_
             throw new TypeError('`headers` may not be a function when the `bundle: true` option is set');
           }
 
+=======
+        }
+
+        // No limit configured by the user, and no RateLimitedQueue passed in by a "parent" plugin
+        // (basically just AwsS3) using the internal symbol
+        if (this.opts.limit === 0 && !this.opts[_uppy_utils_lib_RateLimitedQueue__WEBPACK_IMPORTED_MODULE_2__.internalRateLimitedQueue]) {
+          this.uppy.log('[XHRUpload] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/xhr-upload/#limit-0', 'warning');
+        }
+        this.uppy.log('[XHRUpload] Uploading...');
+        const files = this.uppy.getFilesByIds(fileIDs);
+        const filesFiltered = (0,_uppy_utils_lib_fileFilters__WEBPACK_IMPORTED_MODULE_5__.filterNonFailedFiles)(files);
+        const filesToEmit = (0,_uppy_utils_lib_fileFilters__WEBPACK_IMPORTED_MODULE_5__.filterFilesToEmitUploadStarted)(filesFiltered);
+        this.uppy.emit('upload-start', filesToEmit);
+        if (this.opts.bundle) {
+          // if bundle: true, we don’t support remote uploads
+          const isSomeFileRemote = filesFiltered.some(file => file.isRemote);
+          if (isSomeFileRemote) {
+            throw new Error('Can’t upload remote files when the `bundle: true` option is set');
+          }
+          if (typeof this.opts.headers === 'function') {
+            throw new TypeError('`headers` may not be a function when the `bundle: true` option is set');
+          }
+>>>>>>> feature/publication-datetimetype
           await _classPrivateFieldLooseBase(this, _uploadBundle)[_uploadBundle](filesFiltered);
         } else {
           await _classPrivateFieldLooseBase(this, _uploadFiles)[_uploadFiles](filesFiltered);
@@ -27863,8 +36103,14 @@ class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_0_
     this.type = 'uploader';
     this.id = this.opts.id || 'XHRUpload';
     this.title = 'XHRUpload';
+<<<<<<< HEAD
     this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_10__["default"]; // Default options
 
+=======
+    this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_6__["default"];
+
+    // Default options
+>>>>>>> feature/publication-datetimetype
     const defaultOptions = {
       formData: true,
       fieldName: _opts.bundle ? 'files[]' : 'file',
@@ -27877,22 +36123,33 @@ class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_0_
       limit: 5,
       withCredentials: false,
       responseType: '',
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       /**
        * @param {string} responseText the response body string
        */
       getResponseData(responseText) {
         let parsedResponse = {};
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
         try {
           parsedResponse = JSON.parse(responseText);
         } catch (err) {
           uppy.log(err);
         }
+<<<<<<< HEAD
 
         return parsedResponse;
       },
 
+=======
+        return parsedResponse;
+      },
+>>>>>>> feature/publication-datetimetype
       /**
        *
        * @param {string} _ the response body string
@@ -27900,6 +36157,7 @@ class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_0_
        */
       getResponseError(_, response) {
         let error = new Error('Upload error');
+<<<<<<< HEAD
 
         if ((0,_uppy_utils_lib_isNetworkError__WEBPACK_IMPORTED_MODULE_8__["default"])(response)) {
           error = new _uppy_utils_lib_NetworkError__WEBPACK_IMPORTED_MODULE_7__["default"](error, response);
@@ -27908,6 +36166,13 @@ class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_0_
         return error;
       },
 
+=======
+        if ((0,_uppy_utils_lib_isNetworkError__WEBPACK_IMPORTED_MODULE_4__["default"])(response)) {
+          error = new _uppy_utils_lib_NetworkError__WEBPACK_IMPORTED_MODULE_3__["default"](error, response);
+        }
+        return error;
+      },
+>>>>>>> feature/publication-datetimetype
       /**
        * Check if the response from the upload endpoint indicates that the upload was successful.
        *
@@ -27916,6 +36181,7 @@ class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_0_
       validateStatus(status) {
         return status >= 200 && status < 300;
       }
+<<<<<<< HEAD
 
     };
     this.opts = { ...defaultOptions,
@@ -27943,27 +36209,64 @@ class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_0_
     });
   }
 
+=======
+    };
+    this.opts = {
+      ...defaultOptions,
+      ..._opts
+    };
+    this.i18nInit();
+
+    // Simultaneous upload limiting is shared across all uploads with this plugin.
+    if (_uppy_utils_lib_RateLimitedQueue__WEBPACK_IMPORTED_MODULE_2__.internalRateLimitedQueue in this.opts) {
+      this.requests = this.opts[_uppy_utils_lib_RateLimitedQueue__WEBPACK_IMPORTED_MODULE_2__.internalRateLimitedQueue];
+    } else {
+      this.requests = new _uppy_utils_lib_RateLimitedQueue__WEBPACK_IMPORTED_MODULE_2__.RateLimitedQueue(this.opts.limit);
+    }
+    if (this.opts.bundle && !this.opts.formData) {
+      throw new Error('`opts.formData` must be true when `opts.bundle` is enabled.');
+    }
+    if ((_opts == null ? void 0 : _opts.allowedMetaFields) === undefined && 'metaFields' in this.opts) {
+      throw new Error('The `metaFields` option has been renamed to `allowedMetaFields`.');
+    }
+    this.uploaderEvents = Object.create(null);
+  }
+>>>>>>> feature/publication-datetimetype
   getOptions(file) {
     const overrides = this.uppy.getState().xhrUpload;
     const {
       headers
     } = this.opts;
+<<<<<<< HEAD
     const opts = { ...this.opts,
       ...(overrides || {}),
       ...(file.xhrUpload || {}),
       headers: {}
     }; // Support for `headers` as a function, only in the XHRUpload settings.
+=======
+    const opts = {
+      ...this.opts,
+      ...(overrides || {}),
+      ...(file.xhrUpload || {}),
+      headers: {}
+    };
+    // Support for `headers` as a function, only in the XHRUpload settings.
+>>>>>>> feature/publication-datetimetype
     // Options set by other plugins in Uppy state or on the files themselves are still merged in afterward.
     //
     // ```js
     // headers: (file) => ({ expires: file.meta.expires })
     // ```
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (typeof headers === 'function') {
       opts.headers = headers(file);
     } else {
       Object.assign(opts.headers, this.opts.headers);
     }
+<<<<<<< HEAD
 
     if (overrides) {
       Object.assign(opts.headers, overrides.headers);
@@ -27977,28 +36280,60 @@ class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_0_
   } // eslint-disable-next-line class-methods-use-this
 
 
+=======
+    if (overrides) {
+      Object.assign(opts.headers, overrides.headers);
+    }
+    if (file.xhrUpload) {
+      Object.assign(opts.headers, file.xhrUpload.headers);
+    }
+    return opts;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+>>>>>>> feature/publication-datetimetype
   addMetadata(formData, meta, opts) {
     const allowedMetaFields = Array.isArray(opts.allowedMetaFields) ? opts.allowedMetaFields : Object.keys(meta); // Send along all fields by default.
 
     allowedMetaFields.forEach(item => {
+<<<<<<< HEAD
       formData.append(item, meta[item]);
     });
   }
 
+=======
+      if (Array.isArray(meta[item])) {
+        // In this case we don't transform `item` to add brackets, it's up to
+        // the user to add the brackets so it won't be overridden.
+        meta[item].forEach(subItem => formData.append(item, subItem));
+      } else {
+        formData.append(item, meta[item]);
+      }
+    });
+  }
+>>>>>>> feature/publication-datetimetype
   createFormDataUpload(file, opts) {
     const formPost = new FormData();
     this.addMetadata(formPost, file.meta, opts);
     const dataWithUpdatedType = setTypeInBlob(file);
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
     if (file.name) {
       formPost.append(opts.fieldName, dataWithUpdatedType, file.meta.name);
     } else {
       formPost.append(opts.fieldName, dataWithUpdatedType);
     }
+<<<<<<< HEAD
 
     return formPost;
   }
 
+=======
+    return formPost;
+  }
+>>>>>>> feature/publication-datetimetype
   createBundledUpload(files, opts) {
     const formPost = new FormData();
     const {
@@ -28008,7 +36343,10 @@ class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_0_
     files.forEach(file => {
       const options = this.getOptions(file);
       const dataWithUpdatedType = setTypeInBlob(file);
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       if (file.name) {
         formPost.append(options.fieldName, dataWithUpdatedType, file.name);
       } else {
@@ -28017,6 +36355,7 @@ class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_0_
     });
     return formPost;
   }
+<<<<<<< HEAD
 
   async connectToServerSocket(file) {
     return new Promise((resolve, reject) => {
@@ -28161,32 +36500,50 @@ class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_0_
     });
   }
 
+=======
+>>>>>>> feature/publication-datetimetype
   install() {
     if (this.opts.bundle) {
       const {
         capabilities
       } = this.uppy.getState();
       this.uppy.setState({
+<<<<<<< HEAD
         capabilities: { ...capabilities,
+=======
+        capabilities: {
+          ...capabilities,
+>>>>>>> feature/publication-datetimetype
           individualCancellation: false
         }
       });
     }
+<<<<<<< HEAD
 
     this.uppy.addUploader(_classPrivateFieldLooseBase(this, _handleUpload)[_handleUpload]);
   }
 
+=======
+    this.uppy.addUploader(_classPrivateFieldLooseBase(this, _handleUpload)[_handleUpload]);
+  }
+>>>>>>> feature/publication-datetimetype
   uninstall() {
     if (this.opts.bundle) {
       const {
         capabilities
       } = this.uppy.getState();
       this.uppy.setState({
+<<<<<<< HEAD
         capabilities: { ...capabilities,
+=======
+        capabilities: {
+          ...capabilities,
+>>>>>>> feature/publication-datetimetype
           individualCancellation: true
         }
       });
     }
+<<<<<<< HEAD
 
     this.uppy.removeUploader(_classPrivateFieldLooseBase(this, _handleUpload)[_handleUpload]);
   }
@@ -28194,29 +36551,53 @@ class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_0_
 }
 
 async function _upload2(file, current, total) {
+=======
+    this.uppy.removeUploader(_classPrivateFieldLooseBase(this, _handleUpload)[_handleUpload]);
+  }
+}
+async function _uploadLocalFile2(file, current, total) {
+>>>>>>> feature/publication-datetimetype
   const opts = this.getOptions(file);
   this.uppy.log(`uploading ${current} of ${total}`);
   return new Promise((resolve, reject) => {
     const data = opts.formData ? this.createFormDataUpload(file, opts) : file.data;
     const xhr = new XMLHttpRequest();
+<<<<<<< HEAD
     this.uploaderEvents[file.id] = new _uppy_utils_lib_EventTracker__WEBPACK_IMPORTED_MODULE_4__["default"](this.uppy);
     let queuedRequest;
     const timer = new _uppy_utils_lib_ProgressTimeout__WEBPACK_IMPORTED_MODULE_5__["default"](opts.timeout, () => {
+=======
+    const eventManager = new _uppy_utils_lib_EventManager__WEBPACK_IMPORTED_MODULE_0__["default"](this.uppy);
+    this.uploaderEvents[file.id] = eventManager;
+    let queuedRequest;
+    const timer = new _uppy_utils_lib_ProgressTimeout__WEBPACK_IMPORTED_MODULE_1__["default"](opts.timeout, () => {
+>>>>>>> feature/publication-datetimetype
       const error = new Error(this.i18n('uploadStalled', {
         seconds: Math.ceil(opts.timeout / 1000)
       }));
       this.uppy.emit('upload-stalled', error, [file]);
     });
+<<<<<<< HEAD
     const id = (0,nanoid_non_secure__WEBPACK_IMPORTED_MODULE_11__.nanoid)();
+=======
+    const id = (0,nanoid_non_secure__WEBPACK_IMPORTED_MODULE_8__.nanoid)();
+>>>>>>> feature/publication-datetimetype
     xhr.upload.addEventListener('loadstart', () => {
       this.uppy.log(`[XHRUpload] ${id} started`);
     });
     xhr.upload.addEventListener('progress', ev => {
+<<<<<<< HEAD
       this.uppy.log(`[XHRUpload] ${id} progress: ${ev.loaded} / ${ev.total}`); // Begin checking for timeouts when progress starts, instead of loading,
       // to avoid timing out requests on browser concurrency queue
 
       timer.progress();
 
+=======
+      this.uppy.log(`[XHRUpload] ${id} progress: ${ev.loaded} / ${ev.total}`);
+      // Begin checking for timeouts when progress starts, instead of loading,
+      // to avoid timing out requests on browser concurrency queue
+      timer.progress();
+>>>>>>> feature/publication-datetimetype
       if (ev.lengthComputable) {
         this.uppy.emit('upload-progress', file, {
           uploader: this,
@@ -28229,12 +36610,18 @@ async function _upload2(file, current, total) {
       this.uppy.log(`[XHRUpload] ${id} finished`);
       timer.done();
       queuedRequest.done();
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       if (this.uploaderEvents[file.id]) {
         this.uploaderEvents[file.id].remove();
         this.uploaderEvents[file.id] = null;
       }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       if (opts.validateStatus(xhr.status, xhr.responseText, xhr)) {
         const body = opts.getResponseData(xhr.responseText, xhr);
         const uploadURL = body[opts.responseUrlFieldName];
@@ -28244,6 +36631,7 @@ async function _upload2(file, current, total) {
           uploadURL
         };
         this.uppy.emit('upload-success', file, uploadResp);
+<<<<<<< HEAD
 
         if (uploadURL) {
           this.uppy.log(`Download ${file.name} from ${uploadURL}`);
@@ -28252,6 +36640,13 @@ async function _upload2(file, current, total) {
         return resolve(file);
       }
 
+=======
+        if (uploadURL) {
+          this.uppy.log(`Download ${file.name} from ${uploadURL}`);
+        }
+        return resolve(file);
+      }
+>>>>>>> feature/publication-datetimetype
       const body = opts.getResponseData(xhr.responseText, xhr);
       const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr));
       const response = {
@@ -28265,16 +36660,23 @@ async function _upload2(file, current, total) {
       this.uppy.log(`[XHRUpload] ${id} errored`);
       timer.done();
       queuedRequest.done();
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       if (this.uploaderEvents[file.id]) {
         this.uploaderEvents[file.id].remove();
         this.uploaderEvents[file.id] = null;
       }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr));
       this.uppy.emit('upload-error', file, error);
       return reject(error);
     });
+<<<<<<< HEAD
     xhr.open(opts.method.toUpperCase(), opts.endpoint, true); // IE10 does not allow setting `withCredentials` and `responseType`
     // before `open()` is called.
 
@@ -28284,6 +36686,15 @@ async function _upload2(file, current, total) {
       xhr.responseType = opts.responseType;
     }
 
+=======
+    xhr.open(opts.method.toUpperCase(), opts.endpoint, true);
+    // IE10 does not allow setting `withCredentials` and `responseType`
+    // before `open()` is called.
+    xhr.withCredentials = opts.withCredentials;
+    if (opts.responseType !== '') {
+      xhr.responseType = opts.responseType;
+    }
+>>>>>>> feature/publication-datetimetype
     queuedRequest = this.requests.run(() => {
       // When using an authentication system like JWT, the bearer token goes as a header. This
       // header needs to be fresh each time the token is refreshed so computing and setting the
@@ -28299,6 +36710,7 @@ async function _upload2(file, current, total) {
         xhr.abort();
       };
     });
+<<<<<<< HEAD
     this.onFileRemove(file.id, () => {
       queuedRequest.abort();
       reject(new Error('File removed'));
@@ -28312,10 +36724,24 @@ async function _upload2(file, current, total) {
         queuedRequest.abort();
       }
 
+=======
+    eventManager.onFileRemove(file.id, () => {
+      queuedRequest.abort();
+      reject(new Error('File removed'));
+    });
+    eventManager.onCancelAll(file.id, _ref => {
+      let {
+        reason
+      } = _ref;
+      if (reason === 'user') {
+        queuedRequest.abort();
+      }
+>>>>>>> feature/publication-datetimetype
       reject(new Error('Upload cancelled'));
     });
   });
 }
+<<<<<<< HEAD
 
 async function _uploadRemote2(file) {
   // TODO: we could rewrite this to use server-sent events instead of creating WebSockets.
@@ -28339,6 +36765,8 @@ async function _uploadRemote2(file) {
   }
 }
 
+=======
+>>>>>>> feature/publication-datetimetype
 function _uploadBundle2(files) {
   return new Promise((resolve, reject) => {
     const {
@@ -28348,18 +36776,30 @@ function _uploadBundle2(files) {
       method
     } = this.opts;
     const optsFromState = this.uppy.getState().xhrUpload;
+<<<<<<< HEAD
     const formData = this.createBundledUpload(files, { ...this.opts,
       ...(optsFromState || {})
     });
     const xhr = new XMLHttpRequest();
 
+=======
+    const formData = this.createBundledUpload(files, {
+      ...this.opts,
+      ...(optsFromState || {})
+    });
+    const xhr = new XMLHttpRequest();
+>>>>>>> feature/publication-datetimetype
     const emitError = error => {
       files.forEach(file => {
         this.uppy.emit('upload-error', file, error);
       });
     };
+<<<<<<< HEAD
 
     const timer = new _uppy_utils_lib_ProgressTimeout__WEBPACK_IMPORTED_MODULE_5__["default"](this.opts.timeout, () => {
+=======
+    const timer = new _uppy_utils_lib_ProgressTimeout__WEBPACK_IMPORTED_MODULE_1__["default"](this.opts.timeout, () => {
+>>>>>>> feature/publication-datetimetype
       const error = new Error(this.i18n('uploadStalled', {
         seconds: Math.ceil(this.opts.timeout / 1000)
       }));
@@ -28382,7 +36822,10 @@ function _uploadBundle2(files) {
     });
     xhr.addEventListener('load', ev => {
       timer.done();
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       if (this.opts.validateStatus(ev.target.status, xhr.responseText, xhr)) {
         const body = this.opts.getResponseData(xhr.responseText, xhr);
         const uploadResp = {
@@ -28394,7 +36837,10 @@ function _uploadBundle2(files) {
         });
         return resolve();
       }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/publication-datetimetype
       const error = this.opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error');
       error.request = xhr;
       emitError(error);
@@ -28406,14 +36852,22 @@ function _uploadBundle2(files) {
       emitError(error);
       return reject(error);
     });
+<<<<<<< HEAD
     this.uppy.on('cancel-all', function (_temp2) {
       let {
         reason
       } = _temp2 === void 0 ? {} : _temp2;
+=======
+    this.uppy.on('cancel-all', function (_temp) {
+      let {
+        reason
+      } = _temp === void 0 ? {} : _temp;
+>>>>>>> feature/publication-datetimetype
       if (reason !== 'user') return;
       timer.done();
       xhr.abort();
     });
+<<<<<<< HEAD
     xhr.open(method.toUpperCase(), endpoint, true); // IE10 does not allow setting `withCredentials` and `responseType`
     // before `open()` is called.
 
@@ -28423,17 +36877,47 @@ function _uploadBundle2(files) {
       xhr.responseType = this.opts.responseType;
     }
 
+=======
+    xhr.open(method.toUpperCase(), endpoint, true);
+    // IE10 does not allow setting `withCredentials` and `responseType`
+    // before `open()` is called.
+    xhr.withCredentials = this.opts.withCredentials;
+    if (this.opts.responseType !== '') {
+      xhr.responseType = this.opts.responseType;
+    }
+>>>>>>> feature/publication-datetimetype
     Object.keys(this.opts.headers).forEach(header => {
       xhr.setRequestHeader(header, this.opts.headers[header]);
     });
     xhr.send(formData);
   });
 }
+<<<<<<< HEAD
 
+=======
+function _getCompanionClientArgs2(file) {
+  const opts = this.getOptions(file);
+  const allowedMetaFields = Array.isArray(opts.allowedMetaFields) ? opts.allowedMetaFields
+  // Send along all fields by default.
+  : Object.keys(file.meta);
+  return {
+    ...file.remote.body,
+    protocol: 'multipart',
+    endpoint: opts.endpoint,
+    size: file.data.size,
+    fieldname: opts.fieldName,
+    metadata: Object.fromEntries(allowedMetaFields.map(name => [name, file.meta[name]])),
+    httpMethod: opts.method,
+    useFormData: opts.formData,
+    headers: opts.headers
+  };
+}
+>>>>>>> feature/publication-datetimetype
 async function _uploadFiles2(files) {
   await Promise.allSettled(files.map((file, i) => {
     const current = parseInt(i, 10) + 1;
     const total = files.length;
+<<<<<<< HEAD
 
     if (file.isRemote) {
       return _classPrivateFieldLooseBase(this, _uploadRemote)[_uploadRemote](file, current, total);
@@ -28443,6 +36927,30 @@ async function _uploadFiles2(files) {
   }));
 }
 
+=======
+    if (file.isRemote) {
+      const getQueue = () => this.requests;
+      const controller = new AbortController();
+      const removedHandler = removedFile => {
+        if (removedFile.id === file.id) controller.abort();
+      };
+      this.uppy.on('file-removed', removedHandler);
+      const uploadPromise = file.remote.requestClient.uploadRemoteFile(file, _classPrivateFieldLooseBase(this, _getCompanionClientArgs)[_getCompanionClientArgs](file), {
+        signal: controller.signal,
+        getQueue
+      });
+      this.requests.wrapSyncFunction(() => {
+        this.uppy.off('file-removed', removedHandler);
+      }, {
+        priority: -1
+      })();
+      return uploadPromise;
+    }
+    return _classPrivateFieldLooseBase(this, _uploadLocalFile)[_uploadLocalFile](file, current, total);
+  }));
+}
+// eslint-disable-next-line global-require
+>>>>>>> feature/publication-datetimetype
 XHRUpload.VERSION = packageJson.version;
 
 /***/ }),
@@ -28503,6 +37011,30 @@ let nanoid = (size = 21) => {
 
 /***/ }),
 
+<<<<<<< HEAD
+=======
+/***/ "./node_modules/eventemitter3/index.mjs":
+/*!**********************************************!*\
+  !*** ./node_modules/eventemitter3/index.mjs ***!
+  \**********************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EventEmitter: () => (/* reexport default export from named module */ _index_js__WEBPACK_IMPORTED_MODULE_0__),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./index.js */ "./node_modules/eventemitter3/index.js");
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_index_js__WEBPACK_IMPORTED_MODULE_0__);
+
+
+/***/ }),
+
+>>>>>>> feature/publication-datetimetype
 /***/ "./node_modules/exifr/dist/mini.esm.mjs":
 /*!**********************************************!*\
   !*** ./node_modules/exifr/dist/mini.esm.mjs ***!
@@ -28549,6 +37081,570 @@ __webpack_require__.r(__webpack_exports__);
 function e(e,t,s){return t in e?Object.defineProperty(e,t,{value:s,enumerable:!0,configurable:!0,writable:!0}):e[t]=s,e}var t="undefined"!=typeof self?self:global;const s="undefined"!=typeof navigator,i=s&&"undefined"==typeof HTMLImageElement,n=!("undefined"==typeof global||"undefined"==typeof process||!process.versions||!process.versions.node),r=t.Buffer,a=!!r,h=e=>void 0!==e;function f(e){return void 0===e||(e instanceof Map?0===e.size:0===Object.values(e).filter(h).length)}function l(e){let t=new Error(e);throw delete t.stack,t}function o(e){let t=function(e){let t=0;return e.ifd0.enabled&&(t+=1024),e.exif.enabled&&(t+=2048),e.makerNote&&(t+=2048),e.userComment&&(t+=1024),e.gps.enabled&&(t+=512),e.interop.enabled&&(t+=100),e.ifd1.enabled&&(t+=1024),t+2048}(e);return e.jfif.enabled&&(t+=50),e.xmp.enabled&&(t+=2e4),e.iptc.enabled&&(t+=14e3),e.icc.enabled&&(t+=6e3),t}const u=e=>String.fromCharCode.apply(null,e),d="undefined"!=typeof TextDecoder?new TextDecoder("utf-8"):void 0;class c{static from(e,t){return e instanceof this&&e.le===t?e:new c(e,void 0,void 0,t)}constructor(e,t=0,s,i){if("boolean"==typeof i&&(this.le=i),Array.isArray(e)&&(e=new Uint8Array(e)),0===e)this.byteOffset=0,this.byteLength=0;else if(e instanceof ArrayBuffer){void 0===s&&(s=e.byteLength-t);let i=new DataView(e,t,s);this._swapDataView(i)}else if(e instanceof Uint8Array||e instanceof DataView||e instanceof c){void 0===s&&(s=e.byteLength-t),(t+=e.byteOffset)+s>e.byteOffset+e.byteLength&&l("Creating view outside of available memory in ArrayBuffer");let i=new DataView(e.buffer,t,s);this._swapDataView(i)}else if("number"==typeof e){let t=new DataView(new ArrayBuffer(e));this._swapDataView(t)}else l("Invalid input argument for BufferView: "+e)}_swapArrayBuffer(e){this._swapDataView(new DataView(e))}_swapBuffer(e){this._swapDataView(new DataView(e.buffer,e.byteOffset,e.byteLength))}_swapDataView(e){this.dataView=e,this.buffer=e.buffer,this.byteOffset=e.byteOffset,this.byteLength=e.byteLength}_lengthToEnd(e){return this.byteLength-e}set(e,t,s=c){return e instanceof DataView||e instanceof c?e=new Uint8Array(e.buffer,e.byteOffset,e.byteLength):e instanceof ArrayBuffer&&(e=new Uint8Array(e)),e instanceof Uint8Array||l("BufferView.set(): Invalid data argument."),this.toUint8().set(e,t),new s(this,t,e.byteLength)}subarray(e,t){return t=t||this._lengthToEnd(e),new c(this,e,t)}toUint8(){return new Uint8Array(this.buffer,this.byteOffset,this.byteLength)}getUint8Array(e,t){return new Uint8Array(this.buffer,this.byteOffset+e,t)}getString(e=0,t=this.byteLength){let s=this.getUint8Array(e,t);return i=s,d?d.decode(i):a?Buffer.from(i).toString("utf8"):decodeURIComponent(escape(u(i)));var i}getLatin1String(e=0,t=this.byteLength){let s=this.getUint8Array(e,t);return u(s)}getUnicodeString(e=0,t=this.byteLength){const s=[];for(let i=0;i<t&&e+i<this.byteLength;i+=2)s.push(this.getUint16(e+i));return u(s)}getInt8(e){return this.dataView.getInt8(e)}getUint8(e){return this.dataView.getUint8(e)}getInt16(e,t=this.le){return this.dataView.getInt16(e,t)}getInt32(e,t=this.le){return this.dataView.getInt32(e,t)}getUint16(e,t=this.le){return this.dataView.getUint16(e,t)}getUint32(e,t=this.le){return this.dataView.getUint32(e,t)}getFloat32(e,t=this.le){return this.dataView.getFloat32(e,t)}getFloat64(e,t=this.le){return this.dataView.getFloat64(e,t)}getFloat(e,t=this.le){return this.dataView.getFloat32(e,t)}getDouble(e,t=this.le){return this.dataView.getFloat64(e,t)}getUintBytes(e,t,s){switch(t){case 1:return this.getUint8(e,s);case 2:return this.getUint16(e,s);case 4:return this.getUint32(e,s);case 8:return this.getUint64&&this.getUint64(e,s)}}getUint(e,t,s){switch(t){case 8:return this.getUint8(e,s);case 16:return this.getUint16(e,s);case 32:return this.getUint32(e,s);case 64:return this.getUint64&&this.getUint64(e,s)}}toString(e){return this.dataView.toString(e,this.constructor.name)}ensureChunk(){}}function p(e,t){l(`${e} '${t}' was not loaded, try using full build of exifr.`)}class g extends Map{constructor(e){super(),this.kind=e}get(e,t){return this.has(e)||p(this.kind,e),t&&(e in t||function(e,t){l(`Unknown ${e} '${t}'.`)}(this.kind,e),t[e].enabled||p(this.kind,e)),super.get(e)}keyList(){return Array.from(this.keys())}}var m=new g("file parser"),y=new g("segment parser"),b=new g("file reader");let w=t.fetch;function k(e,t){return(i=e).startsWith("data:")||i.length>1e4?v(e,t,"base64"):n&&e.includes("://")?O(e,t,"url",S):n?v(e,t,"fs"):s?O(e,t,"url",S):void l("Invalid input argument");var i}async function O(e,t,s,i){return b.has(s)?v(e,t,s):i?async function(e,t){let s=await t(e);return new c(s)}(e,i):void l(`Parser ${s} is not loaded`)}async function v(e,t,s){let i=new(b.get(s))(e,t);return await i.read(),i}const S=e=>w(e).then((e=>e.arrayBuffer())),A=e=>new Promise(((t,s)=>{let i=new FileReader;i.onloadend=()=>t(i.result||new ArrayBuffer),i.onerror=s,i.readAsArrayBuffer(e)}));class U extends Map{get tagKeys(){return this.allKeys||(this.allKeys=Array.from(this.keys())),this.allKeys}get tagValues(){return this.allValues||(this.allValues=Array.from(this.values())),this.allValues}}function x(e,t,s){let i=new U;for(let[e,t]of s)i.set(e,t);if(Array.isArray(t))for(let s of t)e.set(s,i);else e.set(t,i);return i}function C(e,t,s){let i,n=e.get(t);for(i of s)n.set(i[0],i[1])}const B=new Map,V=new Map,I=new Map,L=["chunked","firstChunkSize","firstChunkSizeNode","firstChunkSizeBrowser","chunkSize","chunkLimit"],T=["jfif","xmp","icc","iptc","ihdr"],z=["tiff",...T],P=["ifd0","ifd1","exif","gps","interop"],F=[...z,...P],j=["makerNote","userComment"],E=["translateKeys","translateValues","reviveValues","multiSegment"],M=[...E,"sanitize","mergeOutput","silentErrors"];class _{get translate(){return this.translateKeys||this.translateValues||this.reviveValues}}class D extends _{get needed(){return this.enabled||this.deps.size>0}constructor(t,s,i,n){if(super(),e(this,"enabled",!1),e(this,"skip",new Set),e(this,"pick",new Set),e(this,"deps",new Set),e(this,"translateKeys",!1),e(this,"translateValues",!1),e(this,"reviveValues",!1),this.key=t,this.enabled=s,this.parse=this.enabled,this.applyInheritables(n),this.canBeFiltered=P.includes(t),this.canBeFiltered&&(this.dict=B.get(t)),void 0!==i)if(Array.isArray(i))this.parse=this.enabled=!0,this.canBeFiltered&&i.length>0&&this.translateTagSet(i,this.pick);else if("object"==typeof i){if(this.enabled=!0,this.parse=!1!==i.parse,this.canBeFiltered){let{pick:e,skip:t}=i;e&&e.length>0&&this.translateTagSet(e,this.pick),t&&t.length>0&&this.translateTagSet(t,this.skip)}this.applyInheritables(i)}else!0===i||!1===i?this.parse=this.enabled=i:l(`Invalid options argument: ${i}`)}applyInheritables(e){let t,s;for(t of E)s=e[t],void 0!==s&&(this[t]=s)}translateTagSet(e,t){if(this.dict){let s,i,{tagKeys:n,tagValues:r}=this.dict;for(s of e)"string"==typeof s?(i=r.indexOf(s),-1===i&&(i=n.indexOf(Number(s))),-1!==i&&t.add(Number(n[i]))):t.add(s)}else for(let s of e)t.add(s)}finalizeFilters(){!this.enabled&&this.deps.size>0?(this.enabled=!0,X(this.pick,this.deps)):this.enabled&&this.pick.size>0&&X(this.pick,this.deps)}}var N={jfif:!1,tiff:!0,xmp:!1,icc:!1,iptc:!1,ifd0:!0,ifd1:!1,exif:!0,gps:!0,interop:!1,ihdr:void 0,makerNote:!1,userComment:!1,multiSegment:!1,skip:[],pick:[],translateKeys:!0,translateValues:!0,reviveValues:!0,sanitize:!0,mergeOutput:!0,silentErrors:!0,chunked:!0,firstChunkSize:void 0,firstChunkSizeNode:512,firstChunkSizeBrowser:65536,chunkSize:65536,chunkLimit:5},$=new Map;class R extends _{static useCached(e){let t=$.get(e);return void 0!==t||(t=new this(e),$.set(e,t)),t}constructor(e){super(),!0===e?this.setupFromTrue():void 0===e?this.setupFromUndefined():Array.isArray(e)?this.setupFromArray(e):"object"==typeof e?this.setupFromObject(e):l(`Invalid options argument ${e}`),void 0===this.firstChunkSize&&(this.firstChunkSize=s?this.firstChunkSizeBrowser:this.firstChunkSizeNode),this.mergeOutput&&(this.ifd1.enabled=!1),this.filterNestedSegmentTags(),this.traverseTiffDependencyTree(),this.checkLoadedPlugins()}setupFromUndefined(){let e;for(e of L)this[e]=N[e];for(e of M)this[e]=N[e];for(e of j)this[e]=N[e];for(e of F)this[e]=new D(e,N[e],void 0,this)}setupFromTrue(){let e;for(e of L)this[e]=N[e];for(e of M)this[e]=N[e];for(e of j)this[e]=!0;for(e of F)this[e]=new D(e,!0,void 0,this)}setupFromArray(e){let t;for(t of L)this[t]=N[t];for(t of M)this[t]=N[t];for(t of j)this[t]=N[t];for(t of F)this[t]=new D(t,!1,void 0,this);this.setupGlobalFilters(e,void 0,P)}setupFromObject(e){let t;for(t of(P.ifd0=P.ifd0||P.image,P.ifd1=P.ifd1||P.thumbnail,Object.assign(this,e),L))this[t]=W(e[t],N[t]);for(t of M)this[t]=W(e[t],N[t]);for(t of j)this[t]=W(e[t],N[t]);for(t of z)this[t]=new D(t,N[t],e[t],this);for(t of P)this[t]=new D(t,N[t],e[t],this.tiff);this.setupGlobalFilters(e.pick,e.skip,P,F),!0===e.tiff?this.batchEnableWithBool(P,!0):!1===e.tiff?this.batchEnableWithUserValue(P,e):Array.isArray(e.tiff)?this.setupGlobalFilters(e.tiff,void 0,P):"object"==typeof e.tiff&&this.setupGlobalFilters(e.tiff.pick,e.tiff.skip,P)}batchEnableWithBool(e,t){for(let s of e)this[s].enabled=t}batchEnableWithUserValue(e,t){for(let s of e){let e=t[s];this[s].enabled=!1!==e&&void 0!==e}}setupGlobalFilters(e,t,s,i=s){if(e&&e.length){for(let e of i)this[e].enabled=!1;let t=K(e,s);for(let[e,s]of t)X(this[e].pick,s),this[e].enabled=!0}else if(t&&t.length){let e=K(t,s);for(let[t,s]of e)X(this[t].skip,s)}}filterNestedSegmentTags(){let{ifd0:e,exif:t,xmp:s,iptc:i,icc:n}=this;this.makerNote?t.deps.add(37500):t.skip.add(37500),this.userComment?t.deps.add(37510):t.skip.add(37510),s.enabled||e.skip.add(700),i.enabled||e.skip.add(33723),n.enabled||e.skip.add(34675)}traverseTiffDependencyTree(){let{ifd0:e,exif:t,gps:s,interop:i}=this;i.needed&&(t.deps.add(40965),e.deps.add(40965)),t.needed&&e.deps.add(34665),s.needed&&e.deps.add(34853),this.tiff.enabled=P.some((e=>!0===this[e].enabled))||this.makerNote||this.userComment;for(let e of P)this[e].finalizeFilters()}get onlyTiff(){return!T.map((e=>this[e].enabled)).some((e=>!0===e))&&this.tiff.enabled}checkLoadedPlugins(){for(let e of z)this[e].enabled&&!y.has(e)&&p("segment parser",e)}}function K(e,t){let s,i,n,r,a=[];for(n of t){for(r of(s=B.get(n),i=[],s))(e.includes(r[0])||e.includes(r[1]))&&i.push(r[0]);i.length&&a.push([n,i])}return a}function W(e,t){return void 0!==e?e:void 0!==t?t:void 0}function X(e,t){for(let s of t)e.add(s)}e(R,"default",N);class H{constructor(t){e(this,"parsers",{}),e(this,"output",{}),e(this,"errors",[]),e(this,"pushToErrors",(e=>this.errors.push(e))),this.options=R.useCached(t)}async read(e){this.file=await function(e,t){return"string"==typeof e?k(e,t):s&&!i&&e instanceof HTMLImageElement?k(e.src,t):e instanceof Uint8Array||e instanceof ArrayBuffer||e instanceof DataView?new c(e):s&&e instanceof Blob?O(e,t,"blob",A):void l("Invalid input argument")}(e,this.options)}setup(){if(this.fileParser)return;let{file:e}=this,t=e.getUint16(0);for(let[s,i]of m)if(i.canHandle(e,t))return this.fileParser=new i(this.options,this.file,this.parsers),e[s]=!0;this.file.close&&this.file.close(),l("Unknown file format")}async parse(){let{output:e,errors:t}=this;return this.setup(),this.options.silentErrors?(await this.executeParsers().catch(this.pushToErrors),t.push(...this.fileParser.errors)):await this.executeParsers(),this.file.close&&this.file.close(),this.options.silentErrors&&t.length>0&&(e.errors=t),f(s=e)?void 0:s;var s}async executeParsers(){let{output:e}=this;await this.fileParser.parse();let t=Object.values(this.parsers).map((async t=>{let s=await t.parse();t.assignToOutput(e,s)}));this.options.silentErrors&&(t=t.map((e=>e.catch(this.pushToErrors)))),await Promise.all(t)}async extractThumbnail(){this.setup();let{options:e,file:t}=this,s=y.get("tiff",e);var i;if(t.tiff?i={start:0,type:"tiff"}:t.jpeg&&(i=await this.fileParser.getOrFindSegment("tiff")),void 0===i)return;let n=await this.fileParser.ensureSegmentChunk(i),r=this.parsers.tiff=new s(n,e,t),a=await r.extractThumbnail();return t.close&&t.close(),a}}async function Y(e,t){let s=new H(t);return await s.read(e),s.parse()}var G=Object.freeze({__proto__:null,parse:Y,Exifr:H,fileParsers:m,segmentParsers:y,fileReaders:b,tagKeys:B,tagValues:V,tagRevivers:I,createDictionary:x,extendDictionary:C,fetchUrlAsArrayBuffer:S,readBlobAsArrayBuffer:A,chunkedProps:L,otherSegments:T,segments:z,tiffBlocks:P,segmentsAndBlocks:F,tiffExtractables:j,inheritables:E,allFormatters:M,Options:R});class J{static findPosition(e,t){let s=e.getUint16(t+2)+2,i="function"==typeof this.headerLength?this.headerLength(e,t,s):this.headerLength,n=t+i,r=s-i;return{offset:t,length:s,headerLength:i,start:n,size:r,end:n+r}}static parse(e,t={}){return new this(e,new R({[this.type]:t}),e).parse()}normalizeInput(e){return e instanceof c?e:new c(e)}constructor(t,s={},i){e(this,"errors",[]),e(this,"raw",new Map),e(this,"handleError",(e=>{if(!this.options.silentErrors)throw e;this.errors.push(e.message)})),this.chunk=this.normalizeInput(t),this.file=i,this.type=this.constructor.type,this.globalOptions=this.options=s,this.localOptions=s[this.type],this.canTranslate=this.localOptions&&this.localOptions.translate}translate(){this.canTranslate&&(this.translated=this.translateBlock(this.raw,this.type))}get output(){return this.translated?this.translated:this.raw?Object.fromEntries(this.raw):void 0}translateBlock(e,t){let s=I.get(t),i=V.get(t),n=B.get(t),r=this.options[t],a=r.reviveValues&&!!s,h=r.translateValues&&!!i,f=r.translateKeys&&!!n,l={};for(let[t,r]of e)a&&s.has(t)?r=s.get(t)(r):h&&i.has(t)&&(r=this.translateValue(r,i.get(t))),f&&n.has(t)&&(t=n.get(t)||t),l[t]=r;return l}translateValue(e,t){return t[e]||t.DEFAULT||e}assignToOutput(e,t){this.assignObjectToOutput(e,this.constructor.type,t)}assignObjectToOutput(e,t,s){if(this.globalOptions.mergeOutput)return Object.assign(e,s);e[t]?Object.assign(e[t],s):e[t]=s}}e(J,"headerLength",4),e(J,"type",void 0),e(J,"multiSegment",!1),e(J,"canHandle",(()=>!1));function q(e){return 192===e||194===e||196===e||219===e||221===e||218===e||254===e}function Q(e){return e>=224&&e<=239}function Z(e,t,s){for(let[i,n]of y)if(n.canHandle(e,t,s))return i}class ee extends class{constructor(t,s,i){e(this,"errors",[]),e(this,"ensureSegmentChunk",(async e=>{let t=e.start,s=e.size||65536;if(this.file.chunked)if(this.file.available(t,s))e.chunk=this.file.subarray(t,s);else try{e.chunk=await this.file.readChunk(t,s)}catch(t){l(`Couldn't read segment: ${JSON.stringify(e)}. ${t.message}`)}else this.file.byteLength>t+s?e.chunk=this.file.subarray(t,s):void 0===e.size?e.chunk=this.file.subarray(t):l("Segment unreachable: "+JSON.stringify(e));return e.chunk})),this.extendOptions&&this.extendOptions(t),this.options=t,this.file=s,this.parsers=i}injectSegment(e,t){this.options[e].enabled&&this.createParser(e,t)}createParser(e,t){let s=new(y.get(e))(t,this.options,this.file);return this.parsers[e]=s}createParsers(e){for(let t of e){let{type:e,chunk:s}=t,i=this.options[e];if(i&&i.enabled){let t=this.parsers[e];t&&t.append||t||this.createParser(e,s)}}}async readSegments(e){let t=e.map(this.ensureSegmentChunk);await Promise.all(t)}}{constructor(...t){super(...t),e(this,"appSegments",[]),e(this,"jpegSegments",[]),e(this,"unknownSegments",[])}static canHandle(e,t){return 65496===t}async parse(){await this.findAppSegments(),await this.readSegments(this.appSegments),this.mergeMultiSegments(),this.createParsers(this.mergedAppSegments||this.appSegments)}setupSegmentFinderArgs(e){!0===e?(this.findAll=!0,this.wanted=new Set(y.keyList())):(e=void 0===e?y.keyList().filter((e=>this.options[e].enabled)):e.filter((e=>this.options[e].enabled&&y.has(e))),this.findAll=!1,this.remaining=new Set(e),this.wanted=new Set(e)),this.unfinishedMultiSegment=!1}async findAppSegments(e=0,t){this.setupSegmentFinderArgs(t);let{file:s,findAll:i,wanted:n,remaining:r}=this;if(!i&&this.file.chunked&&(i=Array.from(n).some((e=>{let t=y.get(e),s=this.options[e];return t.multiSegment&&s.multiSegment})),i&&await this.file.readWhole()),e=this.findAppSegmentsInRange(e,s.byteLength),!this.options.onlyTiff&&s.chunked){let t=!1;for(;r.size>0&&!t&&(s.canReadNextChunk||this.unfinishedMultiSegment);){let{nextChunkOffset:i}=s,n=this.appSegments.some((e=>!this.file.available(e.offset||e.start,e.length||e.size)));if(t=e>i&&!n?!await s.readNextChunk(e):!await s.readNextChunk(i),void 0===(e=this.findAppSegmentsInRange(e,s.byteLength)))return}}}findAppSegmentsInRange(e,t){t-=2;let s,i,n,r,a,h,{file:f,findAll:l,wanted:o,remaining:u,options:d}=this;for(;e<t;e++)if(255===f.getUint8(e))if(s=f.getUint8(e+1),Q(s)){if(i=f.getUint16(e+2),n=Z(f,e,i),n&&o.has(n)&&(r=y.get(n),a=r.findPosition(f,e),h=d[n],a.type=n,this.appSegments.push(a),!l&&(r.multiSegment&&h.multiSegment?(this.unfinishedMultiSegment=a.chunkNumber<a.chunkCount,this.unfinishedMultiSegment||u.delete(n)):u.delete(n),0===u.size)))break;d.recordUnknownSegments&&(a=J.findPosition(f,e),a.marker=s,this.unknownSegments.push(a)),e+=i+1}else if(q(s)){if(i=f.getUint16(e+2),218===s&&!1!==d.stopAfterSos)return;d.recordJpegSegments&&this.jpegSegments.push({offset:e,length:i,marker:s}),e+=i+1}return e}mergeMultiSegments(){if(!this.appSegments.some((e=>e.multiSegment)))return;let e=function(e,t){let s,i,n,r=new Map;for(let a=0;a<e.length;a++)s=e[a],i=s[t],r.has(i)?n=r.get(i):r.set(i,n=[]),n.push(s);return Array.from(r)}(this.appSegments,"type");this.mergedAppSegments=e.map((([e,t])=>{let s=y.get(e,this.options);if(s.handleMultiSegments){return{type:e,chunk:s.handleMultiSegments(t)}}return t[0]}))}getSegment(e){return this.appSegments.find((t=>t.type===e))}async getOrFindSegment(e){let t=this.getSegment(e);return void 0===t&&(await this.findAppSegments(0,[e]),t=this.getSegment(e)),t}}e(ee,"type","jpeg"),m.set("jpeg",ee);const te=[void 0,1,1,2,4,8,1,1,2,4,8,4,8,4];class se extends J{parseHeader(){var e=this.chunk.getUint16();18761===e?this.le=!0:19789===e&&(this.le=!1),this.chunk.le=this.le,this.headerParsed=!0}parseTags(e,t,s=new Map){let{pick:i,skip:n}=this.options[t];i=new Set(i);let r=i.size>0,a=0===n.size,h=this.chunk.getUint16(e);e+=2;for(let f=0;f<h;f++){let h=this.chunk.getUint16(e);if(r){if(i.has(h)&&(s.set(h,this.parseTag(e,h,t)),i.delete(h),0===i.size))break}else!a&&n.has(h)||s.set(h,this.parseTag(e,h,t));e+=12}return s}parseTag(e,t,s){let{chunk:i}=this,n=i.getUint16(e+2),r=i.getUint32(e+4),a=te[n];if(a*r<=4?e+=8:e=i.getUint32(e+8),(n<1||n>13)&&l(`Invalid TIFF value type. block: ${s.toUpperCase()}, tag: ${t.toString(16)}, type: ${n}, offset ${e}`),e>i.byteLength&&l(`Invalid TIFF value offset. block: ${s.toUpperCase()}, tag: ${t.toString(16)}, type: ${n}, offset ${e} is outside of chunk size ${i.byteLength}`),1===n)return i.getUint8Array(e,r);if(2===n)return""===(h=function(e){for(;e.endsWith("\0");)e=e.slice(0,-1);return e}(h=i.getString(e,r)).trim())?void 0:h;var h;if(7===n)return i.getUint8Array(e,r);if(1===r)return this.parseTagValue(n,e);{let t=new(function(e){switch(e){case 1:return Uint8Array;case 3:return Uint16Array;case 4:return Uint32Array;case 5:return Array;case 6:return Int8Array;case 8:return Int16Array;case 9:return Int32Array;case 10:return Array;case 11:return Float32Array;case 12:return Float64Array;default:return Array}}(n))(r),s=a;for(let i=0;i<r;i++)t[i]=this.parseTagValue(n,e),e+=s;return t}}parseTagValue(e,t){let{chunk:s}=this;switch(e){case 1:return s.getUint8(t);case 3:return s.getUint16(t);case 4:return s.getUint32(t);case 5:return s.getUint32(t)/s.getUint32(t+4);case 6:return s.getInt8(t);case 8:return s.getInt16(t);case 9:return s.getInt32(t);case 10:return s.getInt32(t)/s.getInt32(t+4);case 11:return s.getFloat(t);case 12:return s.getDouble(t);case 13:return s.getUint32(t);default:l(`Invalid tiff type ${e}`)}}}class ie extends se{static canHandle(e,t){return 225===e.getUint8(t+1)&&1165519206===e.getUint32(t+4)&&0===e.getUint16(t+8)}async parse(){this.parseHeader();let{options:e}=this;return e.ifd0.enabled&&await this.parseIfd0Block(),e.exif.enabled&&await this.safeParse("parseExifBlock"),e.gps.enabled&&await this.safeParse("parseGpsBlock"),e.interop.enabled&&await this.safeParse("parseInteropBlock"),e.ifd1.enabled&&await this.safeParse("parseThumbnailBlock"),this.createOutput()}safeParse(e){let t=this[e]();return void 0!==t.catch&&(t=t.catch(this.handleError)),t}findIfd0Offset(){void 0===this.ifd0Offset&&(this.ifd0Offset=this.chunk.getUint32(4))}findIfd1Offset(){if(void 0===this.ifd1Offset){this.findIfd0Offset();let e=this.chunk.getUint16(this.ifd0Offset),t=this.ifd0Offset+2+12*e;this.ifd1Offset=this.chunk.getUint32(t)}}parseBlock(e,t){let s=new Map;return this[t]=s,this.parseTags(e,t,s),s}async parseIfd0Block(){if(this.ifd0)return;let{file:e}=this;this.findIfd0Offset(),this.ifd0Offset<8&&l("Malformed EXIF data"),!e.chunked&&this.ifd0Offset>e.byteLength&&l(`IFD0 offset points to outside of file.\nthis.ifd0Offset: ${this.ifd0Offset}, file.byteLength: ${e.byteLength}`),e.tiff&&await e.ensureChunk(this.ifd0Offset,o(this.options));let t=this.parseBlock(this.ifd0Offset,"ifd0");return 0!==t.size?(this.exifOffset=t.get(34665),this.interopOffset=t.get(40965),this.gpsOffset=t.get(34853),this.xmp=t.get(700),this.iptc=t.get(33723),this.icc=t.get(34675),this.options.sanitize&&(t.delete(34665),t.delete(40965),t.delete(34853),t.delete(700),t.delete(33723),t.delete(34675)),t):void 0}async parseExifBlock(){if(this.exif)return;if(this.ifd0||await this.parseIfd0Block(),void 0===this.exifOffset)return;this.file.tiff&&await this.file.ensureChunk(this.exifOffset,o(this.options));let e=this.parseBlock(this.exifOffset,"exif");return this.interopOffset||(this.interopOffset=e.get(40965)),this.makerNote=e.get(37500),this.userComment=e.get(37510),this.options.sanitize&&(e.delete(40965),e.delete(37500),e.delete(37510)),this.unpack(e,41728),this.unpack(e,41729),e}unpack(e,t){let s=e.get(t);s&&1===s.length&&e.set(t,s[0])}async parseGpsBlock(){if(this.gps)return;if(this.ifd0||await this.parseIfd0Block(),void 0===this.gpsOffset)return;let e=this.parseBlock(this.gpsOffset,"gps");return e&&e.has(2)&&e.has(4)&&(e.set("latitude",ne(...e.get(2),e.get(1))),e.set("longitude",ne(...e.get(4),e.get(3)))),e}async parseInteropBlock(){if(!this.interop&&(this.ifd0||await this.parseIfd0Block(),void 0!==this.interopOffset||this.exif||await this.parseExifBlock(),void 0!==this.interopOffset))return this.parseBlock(this.interopOffset,"interop")}async parseThumbnailBlock(e=!1){if(!this.ifd1&&!this.ifd1Parsed&&(!this.options.mergeOutput||e))return this.findIfd1Offset(),this.ifd1Offset>0&&(this.parseBlock(this.ifd1Offset,"ifd1"),this.ifd1Parsed=!0),this.ifd1}async extractThumbnail(){if(this.headerParsed||this.parseHeader(),this.ifd1Parsed||await this.parseThumbnailBlock(!0),void 0===this.ifd1)return;let e=this.ifd1.get(513),t=this.ifd1.get(514);return this.chunk.getUint8Array(e,t)}get image(){return this.ifd0}get thumbnail(){return this.ifd1}createOutput(){let e,t,s,i={};for(t of P)if(e=this[t],!f(e))if(s=this.canTranslate?this.translateBlock(e,t):Object.fromEntries(e),this.options.mergeOutput){if("ifd1"===t)continue;Object.assign(i,s)}else i[t]=s;return this.makerNote&&(i.makerNote=this.makerNote),this.userComment&&(i.userComment=this.userComment),i}assignToOutput(e,t){if(this.globalOptions.mergeOutput)Object.assign(e,t);else for(let[s,i]of Object.entries(t))this.assignObjectToOutput(e,s,i)}}function ne(e,t,s,i){var n=e+t/60+s/3600;return"S"!==i&&"W"!==i||(n*=-1),n}e(ie,"type","tiff"),e(ie,"headerLength",10),y.set("tiff",ie);var re=Object.freeze({__proto__:null,default:G,Exifr:H,fileParsers:m,segmentParsers:y,fileReaders:b,tagKeys:B,tagValues:V,tagRevivers:I,createDictionary:x,extendDictionary:C,fetchUrlAsArrayBuffer:S,readBlobAsArrayBuffer:A,chunkedProps:L,otherSegments:T,segments:z,tiffBlocks:P,segmentsAndBlocks:F,tiffExtractables:j,inheritables:E,allFormatters:M,Options:R,parse:Y});const ae={ifd0:!1,ifd1:!1,exif:!1,gps:!1,interop:!1,sanitize:!1,reviveValues:!0,translateKeys:!1,translateValues:!1,mergeOutput:!1},he=Object.assign({},ae,{firstChunkSize:4e4,gps:[1,2,3,4]});async function fe(e){let t=new H(he);await t.read(e);let s=await t.parse();if(s&&s.gps){let{latitude:e,longitude:t}=s.gps;return{latitude:e,longitude:t}}}const le=Object.assign({},ae,{tiff:!1,ifd1:!0,mergeOutput:!1});async function oe(e){let t=new H(le);await t.read(e);let s=await t.extractThumbnail();return s&&a?r.from(s):s}async function ue(e){let t=await this.thumbnail(e);if(void 0!==t){let e=new Blob([t]);return URL.createObjectURL(e)}}const de=Object.assign({},ae,{firstChunkSize:4e4,ifd0:[274]});async function ce(e){let t=new H(de);await t.read(e);let s=await t.parse();if(s&&s.ifd0)return s.ifd0[274]}const pe=Object.freeze({1:{dimensionSwapped:!1,scaleX:1,scaleY:1,deg:0,rad:0},2:{dimensionSwapped:!1,scaleX:-1,scaleY:1,deg:0,rad:0},3:{dimensionSwapped:!1,scaleX:1,scaleY:1,deg:180,rad:180*Math.PI/180},4:{dimensionSwapped:!1,scaleX:-1,scaleY:1,deg:180,rad:180*Math.PI/180},5:{dimensionSwapped:!0,scaleX:1,scaleY:-1,deg:90,rad:90*Math.PI/180},6:{dimensionSwapped:!0,scaleX:1,scaleY:1,deg:90,rad:90*Math.PI/180},7:{dimensionSwapped:!0,scaleX:1,scaleY:-1,deg:270,rad:270*Math.PI/180},8:{dimensionSwapped:!0,scaleX:1,scaleY:1,deg:270,rad:270*Math.PI/180}});let ge=!0,me=!0;if("object"==typeof navigator){let e=navigator.userAgent;if(e.includes("iPad")||e.includes("iPhone")){let t=e.match(/OS (\d+)_(\d+)/);if(t){let[,e,s]=t,i=Number(e)+.1*Number(s);ge=i<13.4,me=!1}}else if(e.includes("OS X 10")){let[,t]=e.match(/OS X 10[_.](\d+)/);ge=me=Number(t)<15}if(e.includes("Chrome/")){let[,t]=e.match(/Chrome\/(\d+)/);ge=me=Number(t)<81}else if(e.includes("Firefox/")){let[,t]=e.match(/Firefox\/(\d+)/);ge=me=Number(t)<77}}async function ye(e){let t=await ce(e);return Object.assign({canvas:ge,css:me},pe[t])}class be extends c{constructor(...t){super(...t),e(this,"ranges",new we),0!==this.byteLength&&this.ranges.add(0,this.byteLength)}_tryExtend(e,t,s){if(0===e&&0===this.byteLength&&s){let e=new DataView(s.buffer||s,s.byteOffset,s.byteLength);this._swapDataView(e)}else{let s=e+t;if(s>this.byteLength){let{dataView:e}=this._extend(s);this._swapDataView(e)}}}_extend(e){let t;t=a?r.allocUnsafe(e):new Uint8Array(e);let s=new DataView(t.buffer,t.byteOffset,t.byteLength);return t.set(new Uint8Array(this.buffer,this.byteOffset,this.byteLength),0),{uintView:t,dataView:s}}subarray(e,t,s=!1){return t=t||this._lengthToEnd(e),s&&this._tryExtend(e,t),this.ranges.add(e,t),super.subarray(e,t)}set(e,t,s=!1){s&&this._tryExtend(t,e.byteLength,e);let i=super.set(e,t);return this.ranges.add(t,i.byteLength),i}async ensureChunk(e,t){this.chunked&&(this.ranges.available(e,t)||await this.readChunk(e,t))}available(e,t){return this.ranges.available(e,t)}}class we{constructor(){e(this,"list",[])}get length(){return this.list.length}add(e,t,s=0){let i=e+t,n=this.list.filter((t=>ke(e,t.offset,i)||ke(e,t.end,i)));if(n.length>0){e=Math.min(e,...n.map((e=>e.offset))),i=Math.max(i,...n.map((e=>e.end))),t=i-e;let s=n.shift();s.offset=e,s.length=t,s.end=i,this.list=this.list.filter((e=>!n.includes(e)))}else this.list.push({offset:e,length:t,end:i})}available(e,t){let s=e+t;return this.list.some((t=>t.offset<=e&&s<=t.end))}}function ke(e,t,s){return e<=t&&t<=s}class Oe extends be{constructor(t,s){super(0),e(this,"chunksRead",0),this.input=t,this.options=s}async readWhole(){this.chunked=!1,await this.readChunk(this.nextChunkOffset)}async readChunked(){this.chunked=!0,await this.readChunk(0,this.options.firstChunkSize)}async readNextChunk(e=this.nextChunkOffset){if(this.fullyRead)return this.chunksRead++,!1;let t=this.options.chunkSize,s=await this.readChunk(e,t);return!!s&&s.byteLength===t}async readChunk(e,t){if(this.chunksRead++,0!==(t=this.safeWrapAddress(e,t)))return this._readChunk(e,t)}safeWrapAddress(e,t){return void 0!==this.size&&e+t>this.size?Math.max(0,this.size-e):t}get nextChunkOffset(){if(0!==this.ranges.list.length)return this.ranges.list[0].length}get canReadNextChunk(){return this.chunksRead<this.options.chunkLimit}get fullyRead(){return void 0!==this.size&&this.nextChunkOffset===this.size}read(){return this.options.chunked?this.readChunked():this.readWhole()}close(){}}b.set("blob",class extends Oe{async readWhole(){this.chunked=!1;let e=await A(this.input);this._swapArrayBuffer(e)}readChunked(){return this.chunked=!0,this.size=this.input.size,super.readChunked()}async _readChunk(e,t){let s=t?e+t:void 0,i=this.input.slice(e,s),n=await A(i);return this.set(n,e,!0)}});/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (re);
 
 
+<<<<<<< HEAD
+=======
+/***/ }),
+
+/***/ "./node_modules/p-queue/dist/index.js":
+/*!********************************************!*\
+  !*** ./node_modules/p-queue/dist/index.js ***!
+  \********************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AbortError: () => (/* binding */ AbortError),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var eventemitter3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.mjs");
+/* harmony import */ var p_timeout__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! p-timeout */ "./node_modules/p-timeout/index.js");
+/* harmony import */ var _priority_queue_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./priority-queue.js */ "./node_modules/p-queue/dist/priority-queue.js");
+var __classPrivateFieldSet = (undefined && undefined.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
+    if (kind === "m") throw new TypeError("Private method is not writable");
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+    return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+};
+var __classPrivateFieldGet = (undefined && undefined.__classPrivateFieldGet) || function (receiver, state, kind, f) {
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+};
+var _PQueue_instances, _PQueue_carryoverConcurrencyCount, _PQueue_isIntervalIgnored, _PQueue_intervalCount, _PQueue_intervalCap, _PQueue_interval, _PQueue_intervalEnd, _PQueue_intervalId, _PQueue_timeoutId, _PQueue_queue, _PQueue_queueClass, _PQueue_pending, _PQueue_concurrency, _PQueue_isPaused, _PQueue_throwOnTimeout, _PQueue_doesIntervalAllowAnother_get, _PQueue_doesConcurrentAllowAnother_get, _PQueue_next, _PQueue_onResumeInterval, _PQueue_isIntervalPaused_get, _PQueue_tryToStartAnother, _PQueue_initializeIntervalIfNeeded, _PQueue_onInterval, _PQueue_processQueue, _PQueue_throwOnAbort, _PQueue_onEvent;
+
+
+
+/**
+The error thrown by `queue.add()` when a job is aborted before it is run. See `signal`.
+*/
+class AbortError extends Error {
+}
+/**
+Promise queue with concurrency control.
+*/
+class PQueue extends eventemitter3__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+    // TODO: The `throwOnTimeout` option should affect the return types of `add()` and `addAll()`
+    constructor(options) {
+        var _a, _b, _c, _d;
+        super();
+        _PQueue_instances.add(this);
+        _PQueue_carryoverConcurrencyCount.set(this, void 0);
+        _PQueue_isIntervalIgnored.set(this, void 0);
+        _PQueue_intervalCount.set(this, 0);
+        _PQueue_intervalCap.set(this, void 0);
+        _PQueue_interval.set(this, void 0);
+        _PQueue_intervalEnd.set(this, 0);
+        _PQueue_intervalId.set(this, void 0);
+        _PQueue_timeoutId.set(this, void 0);
+        _PQueue_queue.set(this, void 0);
+        _PQueue_queueClass.set(this, void 0);
+        _PQueue_pending.set(this, 0);
+        // The `!` is needed because of https://github.com/microsoft/TypeScript/issues/32194
+        _PQueue_concurrency.set(this, void 0);
+        _PQueue_isPaused.set(this, void 0);
+        _PQueue_throwOnTimeout.set(this, void 0);
+        /**
+        Per-operation timeout in milliseconds. Operations fulfill once `timeout` elapses if they haven't already.
+    
+        Applies to each future operation.
+        */
+        Object.defineProperty(this, "timeout", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        options = {
+            carryoverConcurrencyCount: false,
+            intervalCap: Number.POSITIVE_INFINITY,
+            interval: 0,
+            concurrency: Number.POSITIVE_INFINITY,
+            autoStart: true,
+            queueClass: _priority_queue_js__WEBPACK_IMPORTED_MODULE_2__["default"],
+            ...options,
+        };
+        if (!(typeof options.intervalCap === 'number' && options.intervalCap >= 1)) {
+            throw new TypeError(`Expected \`intervalCap\` to be a number from 1 and up, got \`${(_b = (_a = options.intervalCap) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : ''}\` (${typeof options.intervalCap})`);
+        }
+        if (options.interval === undefined || !(Number.isFinite(options.interval) && options.interval >= 0)) {
+            throw new TypeError(`Expected \`interval\` to be a finite number >= 0, got \`${(_d = (_c = options.interval) === null || _c === void 0 ? void 0 : _c.toString()) !== null && _d !== void 0 ? _d : ''}\` (${typeof options.interval})`);
+        }
+        __classPrivateFieldSet(this, _PQueue_carryoverConcurrencyCount, options.carryoverConcurrencyCount, "f");
+        __classPrivateFieldSet(this, _PQueue_isIntervalIgnored, options.intervalCap === Number.POSITIVE_INFINITY || options.interval === 0, "f");
+        __classPrivateFieldSet(this, _PQueue_intervalCap, options.intervalCap, "f");
+        __classPrivateFieldSet(this, _PQueue_interval, options.interval, "f");
+        __classPrivateFieldSet(this, _PQueue_queue, new options.queueClass(), "f");
+        __classPrivateFieldSet(this, _PQueue_queueClass, options.queueClass, "f");
+        this.concurrency = options.concurrency;
+        this.timeout = options.timeout;
+        __classPrivateFieldSet(this, _PQueue_throwOnTimeout, options.throwOnTimeout === true, "f");
+        __classPrivateFieldSet(this, _PQueue_isPaused, options.autoStart === false, "f");
+    }
+    get concurrency() {
+        return __classPrivateFieldGet(this, _PQueue_concurrency, "f");
+    }
+    set concurrency(newConcurrency) {
+        if (!(typeof newConcurrency === 'number' && newConcurrency >= 1)) {
+            throw new TypeError(`Expected \`concurrency\` to be a number from 1 and up, got \`${newConcurrency}\` (${typeof newConcurrency})`);
+        }
+        __classPrivateFieldSet(this, _PQueue_concurrency, newConcurrency, "f");
+        __classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_processQueue).call(this);
+    }
+    async add(function_, options = {}) {
+        options = {
+            timeout: this.timeout,
+            throwOnTimeout: __classPrivateFieldGet(this, _PQueue_throwOnTimeout, "f"),
+            ...options,
+        };
+        return new Promise((resolve, reject) => {
+            __classPrivateFieldGet(this, _PQueue_queue, "f").enqueue(async () => {
+                var _a;
+                var _b, _c;
+                __classPrivateFieldSet(this, _PQueue_pending, (_b = __classPrivateFieldGet(this, _PQueue_pending, "f"), _b++, _b), "f");
+                __classPrivateFieldSet(this, _PQueue_intervalCount, (_c = __classPrivateFieldGet(this, _PQueue_intervalCount, "f"), _c++, _c), "f");
+                try {
+                    // TODO: Use options.signal?.throwIfAborted() when targeting Node.js 18
+                    if ((_a = options.signal) === null || _a === void 0 ? void 0 : _a.aborted) {
+                        // TODO: Use ABORT_ERR code when targeting Node.js 16 (https://nodejs.org/docs/latest-v16.x/api/errors.html#abort_err)
+                        throw new AbortError('The task was aborted.');
+                    }
+                    let operation = function_({ signal: options.signal });
+                    if (options.timeout) {
+                        operation = (0,p_timeout__WEBPACK_IMPORTED_MODULE_1__["default"])(Promise.resolve(operation), options.timeout);
+                    }
+                    if (options.signal) {
+                        operation = Promise.race([operation, __classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_throwOnAbort).call(this, options.signal)]);
+                    }
+                    const result = await operation;
+                    resolve(result);
+                    this.emit('completed', result);
+                }
+                catch (error) {
+                    if (error instanceof p_timeout__WEBPACK_IMPORTED_MODULE_1__.TimeoutError && !options.throwOnTimeout) {
+                        resolve();
+                        return;
+                    }
+                    reject(error);
+                    this.emit('error', error);
+                }
+                finally {
+                    __classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_next).call(this);
+                }
+            }, options);
+            this.emit('add');
+            __classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_tryToStartAnother).call(this);
+        });
+    }
+    async addAll(functions, options) {
+        return Promise.all(functions.map(async (function_) => this.add(function_, options)));
+    }
+    /**
+    Start (or resume) executing enqueued tasks within concurrency limit. No need to call this if queue is not paused (via `options.autoStart = false` or by `.pause()` method.)
+    */
+    start() {
+        if (!__classPrivateFieldGet(this, _PQueue_isPaused, "f")) {
+            return this;
+        }
+        __classPrivateFieldSet(this, _PQueue_isPaused, false, "f");
+        __classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_processQueue).call(this);
+        return this;
+    }
+    /**
+    Put queue execution on hold.
+    */
+    pause() {
+        __classPrivateFieldSet(this, _PQueue_isPaused, true, "f");
+    }
+    /**
+    Clear the queue.
+    */
+    clear() {
+        __classPrivateFieldSet(this, _PQueue_queue, new (__classPrivateFieldGet(this, _PQueue_queueClass, "f"))(), "f");
+    }
+    /**
+    Can be called multiple times. Useful if you for example add additional items at a later time.
+
+    @returns A promise that settles when the queue becomes empty.
+    */
+    async onEmpty() {
+        // Instantly resolve if the queue is empty
+        if (__classPrivateFieldGet(this, _PQueue_queue, "f").size === 0) {
+            return;
+        }
+        await __classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_onEvent).call(this, 'empty');
+    }
+    /**
+    @returns A promise that settles when the queue size is less than the given limit: `queue.size < limit`.
+
+    If you want to avoid having the queue grow beyond a certain size you can `await queue.onSizeLessThan()` before adding a new item.
+
+    Note that this only limits the number of items waiting to start. There could still be up to `concurrency` jobs already running that this call does not include in its calculation.
+    */
+    async onSizeLessThan(limit) {
+        // Instantly resolve if the queue is empty.
+        if (__classPrivateFieldGet(this, _PQueue_queue, "f").size < limit) {
+            return;
+        }
+        await __classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_onEvent).call(this, 'next', () => __classPrivateFieldGet(this, _PQueue_queue, "f").size < limit);
+    }
+    /**
+    The difference with `.onEmpty` is that `.onIdle` guarantees that all work from the queue has finished. `.onEmpty` merely signals that the queue is empty, but it could mean that some promises haven't completed yet.
+
+    @returns A promise that settles when the queue becomes empty, and all promises have completed; `queue.size === 0 && queue.pending === 0`.
+    */
+    async onIdle() {
+        // Instantly resolve if none pending and if nothing else is queued
+        if (__classPrivateFieldGet(this, _PQueue_pending, "f") === 0 && __classPrivateFieldGet(this, _PQueue_queue, "f").size === 0) {
+            return;
+        }
+        await __classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_onEvent).call(this, 'idle');
+    }
+    /**
+    Size of the queue, the number of queued items waiting to run.
+    */
+    get size() {
+        return __classPrivateFieldGet(this, _PQueue_queue, "f").size;
+    }
+    /**
+    Size of the queue, filtered by the given options.
+
+    For example, this can be used to find the number of items remaining in the queue with a specific priority level.
+    */
+    sizeBy(options) {
+        // eslint-disable-next-line unicorn/no-array-callback-reference
+        return __classPrivateFieldGet(this, _PQueue_queue, "f").filter(options).length;
+    }
+    /**
+    Number of running items (no longer in the queue).
+    */
+    get pending() {
+        return __classPrivateFieldGet(this, _PQueue_pending, "f");
+    }
+    /**
+    Whether the queue is currently paused.
+    */
+    get isPaused() {
+        return __classPrivateFieldGet(this, _PQueue_isPaused, "f");
+    }
+}
+_PQueue_carryoverConcurrencyCount = new WeakMap(), _PQueue_isIntervalIgnored = new WeakMap(), _PQueue_intervalCount = new WeakMap(), _PQueue_intervalCap = new WeakMap(), _PQueue_interval = new WeakMap(), _PQueue_intervalEnd = new WeakMap(), _PQueue_intervalId = new WeakMap(), _PQueue_timeoutId = new WeakMap(), _PQueue_queue = new WeakMap(), _PQueue_queueClass = new WeakMap(), _PQueue_pending = new WeakMap(), _PQueue_concurrency = new WeakMap(), _PQueue_isPaused = new WeakMap(), _PQueue_throwOnTimeout = new WeakMap(), _PQueue_instances = new WeakSet(), _PQueue_doesIntervalAllowAnother_get = function _PQueue_doesIntervalAllowAnother_get() {
+    return __classPrivateFieldGet(this, _PQueue_isIntervalIgnored, "f") || __classPrivateFieldGet(this, _PQueue_intervalCount, "f") < __classPrivateFieldGet(this, _PQueue_intervalCap, "f");
+}, _PQueue_doesConcurrentAllowAnother_get = function _PQueue_doesConcurrentAllowAnother_get() {
+    return __classPrivateFieldGet(this, _PQueue_pending, "f") < __classPrivateFieldGet(this, _PQueue_concurrency, "f");
+}, _PQueue_next = function _PQueue_next() {
+    var _a;
+    __classPrivateFieldSet(this, _PQueue_pending, (_a = __classPrivateFieldGet(this, _PQueue_pending, "f"), _a--, _a), "f");
+    __classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_tryToStartAnother).call(this);
+    this.emit('next');
+}, _PQueue_onResumeInterval = function _PQueue_onResumeInterval() {
+    __classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_onInterval).call(this);
+    __classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_initializeIntervalIfNeeded).call(this);
+    __classPrivateFieldSet(this, _PQueue_timeoutId, undefined, "f");
+}, _PQueue_isIntervalPaused_get = function _PQueue_isIntervalPaused_get() {
+    const now = Date.now();
+    if (__classPrivateFieldGet(this, _PQueue_intervalId, "f") === undefined) {
+        const delay = __classPrivateFieldGet(this, _PQueue_intervalEnd, "f") - now;
+        if (delay < 0) {
+            // Act as the interval was done
+            // We don't need to resume it here because it will be resumed on line 160
+            __classPrivateFieldSet(this, _PQueue_intervalCount, (__classPrivateFieldGet(this, _PQueue_carryoverConcurrencyCount, "f")) ? __classPrivateFieldGet(this, _PQueue_pending, "f") : 0, "f");
+        }
+        else {
+            // Act as the interval is pending
+            if (__classPrivateFieldGet(this, _PQueue_timeoutId, "f") === undefined) {
+                __classPrivateFieldSet(this, _PQueue_timeoutId, setTimeout(() => {
+                    __classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_onResumeInterval).call(this);
+                }, delay), "f");
+            }
+            return true;
+        }
+    }
+    return false;
+}, _PQueue_tryToStartAnother = function _PQueue_tryToStartAnother() {
+    if (__classPrivateFieldGet(this, _PQueue_queue, "f").size === 0) {
+        // We can clear the interval ("pause")
+        // Because we can redo it later ("resume")
+        if (__classPrivateFieldGet(this, _PQueue_intervalId, "f")) {
+            clearInterval(__classPrivateFieldGet(this, _PQueue_intervalId, "f"));
+        }
+        __classPrivateFieldSet(this, _PQueue_intervalId, undefined, "f");
+        this.emit('empty');
+        if (__classPrivateFieldGet(this, _PQueue_pending, "f") === 0) {
+            this.emit('idle');
+        }
+        return false;
+    }
+    if (!__classPrivateFieldGet(this, _PQueue_isPaused, "f")) {
+        const canInitializeInterval = !__classPrivateFieldGet(this, _PQueue_instances, "a", _PQueue_isIntervalPaused_get);
+        if (__classPrivateFieldGet(this, _PQueue_instances, "a", _PQueue_doesIntervalAllowAnother_get) && __classPrivateFieldGet(this, _PQueue_instances, "a", _PQueue_doesConcurrentAllowAnother_get)) {
+            const job = __classPrivateFieldGet(this, _PQueue_queue, "f").dequeue();
+            if (!job) {
+                return false;
+            }
+            this.emit('active');
+            job();
+            if (canInitializeInterval) {
+                __classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_initializeIntervalIfNeeded).call(this);
+            }
+            return true;
+        }
+    }
+    return false;
+}, _PQueue_initializeIntervalIfNeeded = function _PQueue_initializeIntervalIfNeeded() {
+    if (__classPrivateFieldGet(this, _PQueue_isIntervalIgnored, "f") || __classPrivateFieldGet(this, _PQueue_intervalId, "f") !== undefined) {
+        return;
+    }
+    __classPrivateFieldSet(this, _PQueue_intervalId, setInterval(() => {
+        __classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_onInterval).call(this);
+    }, __classPrivateFieldGet(this, _PQueue_interval, "f")), "f");
+    __classPrivateFieldSet(this, _PQueue_intervalEnd, Date.now() + __classPrivateFieldGet(this, _PQueue_interval, "f"), "f");
+}, _PQueue_onInterval = function _PQueue_onInterval() {
+    if (__classPrivateFieldGet(this, _PQueue_intervalCount, "f") === 0 && __classPrivateFieldGet(this, _PQueue_pending, "f") === 0 && __classPrivateFieldGet(this, _PQueue_intervalId, "f")) {
+        clearInterval(__classPrivateFieldGet(this, _PQueue_intervalId, "f"));
+        __classPrivateFieldSet(this, _PQueue_intervalId, undefined, "f");
+    }
+    __classPrivateFieldSet(this, _PQueue_intervalCount, __classPrivateFieldGet(this, _PQueue_carryoverConcurrencyCount, "f") ? __classPrivateFieldGet(this, _PQueue_pending, "f") : 0, "f");
+    __classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_processQueue).call(this);
+}, _PQueue_processQueue = function _PQueue_processQueue() {
+    // eslint-disable-next-line no-empty
+    while (__classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_tryToStartAnother).call(this)) { }
+}, _PQueue_throwOnAbort = async function _PQueue_throwOnAbort(signal) {
+    return new Promise((_resolve, reject) => {
+        signal.addEventListener('abort', () => {
+            // TODO: Reject with signal.throwIfAborted() when targeting Node.js 18
+            // TODO: Use ABORT_ERR code when targeting Node.js 16 (https://nodejs.org/docs/latest-v16.x/api/errors.html#abort_err)
+            reject(new AbortError('The task was aborted.'));
+        }, { once: true });
+    });
+}, _PQueue_onEvent = async function _PQueue_onEvent(event, filter) {
+    return new Promise(resolve => {
+        const listener = () => {
+            if (filter && !filter()) {
+                return;
+            }
+            this.off(event, listener);
+            resolve();
+        };
+        this.on(event, listener);
+    });
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (PQueue);
+
+
+/***/ }),
+
+/***/ "./node_modules/p-queue/dist/lower-bound.js":
+/*!**************************************************!*\
+  !*** ./node_modules/p-queue/dist/lower-bound.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ lowerBound)
+/* harmony export */ });
+// Port of lower_bound from https://en.cppreference.com/w/cpp/algorithm/lower_bound
+// Used to compute insertion index to keep queue sorted after insertion
+function lowerBound(array, value, comparator) {
+    let first = 0;
+    let count = array.length;
+    while (count > 0) {
+        const step = Math.trunc(count / 2);
+        let it = first + step;
+        if (comparator(array[it], value) <= 0) {
+            first = ++it;
+            count -= step + 1;
+        }
+        else {
+            count = step;
+        }
+    }
+    return first;
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/p-queue/dist/priority-queue.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/p-queue/dist/priority-queue.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _lower_bound_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lower-bound.js */ "./node_modules/p-queue/dist/lower-bound.js");
+var __classPrivateFieldGet = (undefined && undefined.__classPrivateFieldGet) || function (receiver, state, kind, f) {
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+};
+var _PriorityQueue_queue;
+
+class PriorityQueue {
+    constructor() {
+        _PriorityQueue_queue.set(this, []);
+    }
+    enqueue(run, options) {
+        options = {
+            priority: 0,
+            ...options,
+        };
+        const element = {
+            priority: options.priority,
+            run,
+        };
+        if (this.size && __classPrivateFieldGet(this, _PriorityQueue_queue, "f")[this.size - 1].priority >= options.priority) {
+            __classPrivateFieldGet(this, _PriorityQueue_queue, "f").push(element);
+            return;
+        }
+        const index = (0,_lower_bound_js__WEBPACK_IMPORTED_MODULE_0__["default"])(__classPrivateFieldGet(this, _PriorityQueue_queue, "f"), element, (a, b) => b.priority - a.priority);
+        __classPrivateFieldGet(this, _PriorityQueue_queue, "f").splice(index, 0, element);
+    }
+    dequeue() {
+        const item = __classPrivateFieldGet(this, _PriorityQueue_queue, "f").shift();
+        return item === null || item === void 0 ? void 0 : item.run;
+    }
+    filter(options) {
+        return __classPrivateFieldGet(this, _PriorityQueue_queue, "f").filter((element) => element.priority === options.priority).map((element) => element.run);
+    }
+    get size() {
+        return __classPrivateFieldGet(this, _PriorityQueue_queue, "f").length;
+    }
+}
+_PriorityQueue_queue = new WeakMap();
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (PriorityQueue);
+
+
+/***/ }),
+
+/***/ "./node_modules/p-timeout/index.js":
+/*!*****************************************!*\
+  !*** ./node_modules/p-timeout/index.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AbortError: () => (/* binding */ AbortError),
+/* harmony export */   TimeoutError: () => (/* binding */ TimeoutError),
+/* harmony export */   "default": () => (/* binding */ pTimeout)
+/* harmony export */ });
+class TimeoutError extends Error {
+	constructor(message) {
+		super(message);
+		this.name = 'TimeoutError';
+	}
+}
+
+/**
+An error to be thrown when the request is aborted by AbortController.
+DOMException is thrown instead of this Error when DOMException is available.
+*/
+class AbortError extends Error {
+	constructor(message) {
+		super();
+		this.name = 'AbortError';
+		this.message = message;
+	}
+}
+
+/**
+TODO: Remove AbortError and just throw DOMException when targeting Node 18.
+*/
+const getDOMException = errorMessage => globalThis.DOMException === undefined ?
+	new AbortError(errorMessage) :
+	new DOMException(errorMessage);
+
+/**
+TODO: Remove below function and just 'reject(signal.reason)' when targeting Node 18.
+*/
+const getAbortedReason = signal => {
+	const reason = signal.reason === undefined ?
+		getDOMException('This operation was aborted.') :
+		signal.reason;
+
+	return reason instanceof Error ? reason : getDOMException(reason);
+};
+
+function pTimeout(promise, milliseconds, fallback, options) {
+	let timer;
+
+	const cancelablePromise = new Promise((resolve, reject) => {
+		if (typeof milliseconds !== 'number' || Math.sign(milliseconds) !== 1) {
+			throw new TypeError(`Expected \`milliseconds\` to be a positive number, got \`${milliseconds}\``);
+		}
+
+		if (milliseconds === Number.POSITIVE_INFINITY) {
+			resolve(promise);
+			return;
+		}
+
+		options = {
+			customTimers: {setTimeout, clearTimeout},
+			...options
+		};
+
+		if (options.signal) {
+			const {signal} = options;
+			if (signal.aborted) {
+				reject(getAbortedReason(signal));
+			}
+
+			signal.addEventListener('abort', () => {
+				reject(getAbortedReason(signal));
+			});
+		}
+
+		timer = options.customTimers.setTimeout.call(undefined, () => {
+			if (typeof fallback === 'function') {
+				try {
+					resolve(fallback());
+				} catch (error) {
+					reject(error);
+				}
+
+				return;
+			}
+
+			const message = typeof fallback === 'string' ? fallback : `Promise timed out after ${milliseconds} milliseconds`;
+			const timeoutError = fallback instanceof Error ? fallback : new TimeoutError(message);
+
+			if (typeof promise.cancel === 'function') {
+				promise.cancel();
+			}
+
+			reject(timeoutError);
+		}, milliseconds);
+
+		(async () => {
+			try {
+				resolve(await promise);
+			} catch (error) {
+				reject(error);
+			} finally {
+				options.customTimers.clearTimeout.call(undefined, timer);
+			}
+		})();
+	});
+
+	cancelablePromise.clear = () => {
+		clearTimeout(timer);
+		timer = undefined;
+	};
+
+	return cancelablePromise;
+}
+
+
+>>>>>>> feature/publication-datetimetype
 /***/ })
 
 /******/ 	});
@@ -28627,24 +37723,41 @@ var __webpack_exports__ = {};
   !*** ./src/Bundle/ContentBundle/Resources/assets/js/upload_uppy.js ***!
   \*********************************************************************/
 __webpack_require__.r(__webpack_exports__);
+<<<<<<< HEAD
 /* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/index.js");
+=======
+/* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/Uppy.js");
+>>>>>>> feature/publication-datetimetype
 /* harmony import */ var _uppy_dashboard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/dashboard */ "./node_modules/@uppy/dashboard/lib/index.js");
 /* harmony import */ var _uppy_xhr_upload__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/xhr-upload */ "./node_modules/@uppy/xhr-upload/lib/index.js");
 /* harmony import */ var _uppy_image_editor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/image-editor */ "./node_modules/@uppy/image-editor/lib/index.js");
 /* provided dependency */ var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+<<<<<<< HEAD
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var methodName = context.method, method = delegate.iterator[methodName]; if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel; var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
+=======
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw new Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw new Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
+>>>>>>> feature/publication-datetimetype
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
 function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+<<<<<<< HEAD
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+=======
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+>>>>>>> feature/publication-datetimetype
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+<<<<<<< HEAD
 function _iterableToArrayLimit(arr, i) { var _i = null == arr ? null : "undefined" != typeof Symbol && arr[Symbol.iterator] || arr["@@iterator"]; if (null != _i) { var _s, _e, _x, _r, _arr = [], _n = !0, _d = !1; try { if (_x = (_i = _i.call(arr)).next, 0 === i) { if (Object(_i) !== _i) return; _n = !1; } else for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = !0); } catch (err) { _d = !0, _e = err; } finally { try { if (!_n && null != _i["return"] && (_r = _i["return"](), Object(_r) !== _r)) return; } finally { if (_d) throw _e; } } return _arr; } }
+=======
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+>>>>>>> feature/publication-datetimetype
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 __webpack_require__.g.Uppy = _uppy_core__WEBPACK_IMPORTED_MODULE_0__["default"];
@@ -28771,7 +37884,11 @@ function inititalizeUppy(uppyOptions) {
         }
       }, _callee);
     }));
+<<<<<<< HEAD
     return function (_x2) {
+=======
+    return function (_x) {
+>>>>>>> feature/publication-datetimetype
       return _ref.apply(this, arguments);
     };
   }());
