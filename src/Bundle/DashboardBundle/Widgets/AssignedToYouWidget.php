@@ -47,14 +47,7 @@ class AssignedToYouWidget implements WidgetInterface
 
     public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
-        /** @var $client \Solarium\Client */
-        //
-        // Get documents assigned to this user
-        //
         $query = $this->solariumClient->createSelect();
-
-        $assignedContent = [];
-
         $userId = $user->getId();
         $query
             ->createFilterQuery('workflow_assigned_id')
@@ -65,20 +58,25 @@ class AssignedToYouWidget implements WidgetInterface
         $assignedToYou = [];
 
         foreach ($assignedContent as $solarArticle) {
+            $workflow_deadline = DateTimeImmutable::createFromFormat('d-m-Y', $solarArticle->workflow_deadline);
+            if (!$workflow_deadline instanceof DateTimeImmutable) {
+                $workflow_deadline = null;
+            }
+
             $article = $this->manager->getRepository(Article::class)
                 ->findOneBy(
                     ['id' => $solarArticle->type_id]
                 );
-            if ($article->getTitle() == "Technologie: l'essort de windows Millenium")
-            {
-                //dd($solarArticle);
-            }
+
             $assignedToYou[] = [
                 'id' => $article->getId(),
                 'title' =>$article->getTitle(),
                 'slug' =>$article->getSlug(),
                 'last_changes' =>$article->getUpdatedAt(),
                 'path' => $this->urlGenerator->generate('integrated_content_content_edit', ['id' => $article->getId()]),
+                'workflow_deadline' => $workflow_deadline,
+                'workflow_color_string' => $solarArticle->workflow_color_string ?? null,
+                'workflow_icon_string' => $solarArticle->workflow_icon_string ?? null,
             ];
         }
         usort($assignedToYou, array($this, 'compareLastChanges'));
