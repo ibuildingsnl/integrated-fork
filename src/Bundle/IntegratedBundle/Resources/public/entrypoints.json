@@ -16,11 +16,6 @@
         "/bundles/integratedintegrated/edit.js"
       ]
     },
-    "dashboard": {
-      "js": [
-        "/bundles/integratedintegrated/dashboard.js"
-      ]
-    },
     "collection": {
       "js": [
         "/bundles/integratedintegrated/collection.js"
