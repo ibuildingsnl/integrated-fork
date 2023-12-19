@@ -43,10 +43,8 @@ function populateSelectedImages() {
   });
 }
 function populateFormRelations() {
-  console.log('populateFormRelations');
   document.querySelectorAll('.mediagallery_selector').forEach(function (item) {
     var id = item.getAttribute('id');
-    console.log('populateFormRelations: ' + id);
     var inputIdentifier = item.parentNode.classList.contains('relation') ? "integrated_content[relations][".concat(id, "]") : item.querySelector('.selected_images').getAttribute('data-fieldName');
     form_relations[id] = {
       modus: item.querySelector('.select_multimedia_button').dataset.multiple ? 'select_multiple' : 'select_one',
