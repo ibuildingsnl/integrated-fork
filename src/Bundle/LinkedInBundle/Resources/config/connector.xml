@@ -19,7 +19,8 @@
         </service>
 
         <service id="Integrated\Bundle\LinkedInBundle\Connector\LinkedInConfigType">
-            <argument type="service" id="Integrated\Bundle\LinkedInBundle\Connector\LinkedInFactory"></argument>
+            <argument type="service" id="Integrated\Bundle\LinkedInBundle\Connector\LinkedInFactory"/>
+            <argument type="service" id="cache.app"/>
 <!--            <argument>%env(resolve:LINKEDIN_CONSUMER_SECRET)%</argument>-->
 <!--            <argument type="service" id="integrated_content.routing.generator" ></argument>-->
         </service>
@@ -28,7 +29,7 @@
         <service id="Integrated\Bundle\LinkedInBundle\Connector\LinkedInFactory">
             <argument>%env(resolve:LINKEDIN_CONSUMER_KEY)%</argument>
             <argument>%env(resolve:LINKEDIN_CONSUMER_SECRET)%</argument>
-            <argument type="service" id="integrated_content.routing.generator" ></argument>
+            <argument type="service" id="integrated_content.routing.generator"/>
         </service>
 
         <service id="Integrated\Bundle\LinkedInBundle\Connector\LinkedInConnector" />
@@ -37,6 +38,7 @@
 
         <service id="Integrated\Bundle\LinkedInBundle\Form\AddLinkedInPageFieldListener" >
             <argument type="service" id="Integrated\Bundle\LinkedInBundle\Connector\LinkedInFactory" />
+            <argument type="service" id="cache.app"/>
 <!--            <argument type="service" id="Integrated\Bundle\LinkedInBundle\Connector\LinkedInConfiguration" />-->
 <!--            <tag name="integrated_channel.connector" />-->
         </service>
