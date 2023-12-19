@@ -3,6 +3,8 @@
 namespace Integrated\Bundle\FacebookBundle\Connector;
 
 use GuzzleHttp\Client;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class FacebookClient
 {
@@ -13,6 +15,7 @@ class FacebookClient
         private readonly string $loginUrl,
         private readonly string $baseUrl,
         private readonly string $redirectUrl,
+        private readonly CacheInterface $cache,
     )
     {
     }
@@ -70,15 +73,20 @@ class FacebookClient
     }
 
     public function getPages(string $userToken): array {
-        $userId = $this->getUserId($userToken);
+        $pages = $this->cache->get("{$userToken}-pages", function(ItemInterface $item) use ($userToken) {
+            $item->expiresAfter(3600); // 1 hour
+            $userId = $this->getUserId($userToken);
 
-        $response = $this->client->get("{$this->baseUrl}/{$userId}/accounts", [
-            'headers' => [
-                'Authorization' => "Bearer {$userToken}"
-            ]
-        ]);
+            $response = $this->client->get("{$this->baseUrl}/{$userId}/accounts", [
+                'headers' => [
+                    'Authorization' => "Bearer {$userToken}"
+                ]
+            ]);
 
-        return json_decode($response->getBody()->getContents(), true);
+            return json_decode($response->getBody()->getContents(), true);
+        });
+
+        return $pages;
     }
 
     public function postToPage(string $userToken, string $pageId, ?string $title, ?string $message, ?string $link): string {

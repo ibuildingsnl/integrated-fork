@@ -7,6 +7,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class PopulateFacebookPageFieldListener implements EventSubscriberInterface
 {
@@ -38,6 +40,7 @@ class PopulateFacebookPageFieldListener implements EventSubscriberInterface
 
         try {
             $pages = $this->client->getPages($formData['token_secret'])['data'];
+
             $choices = [];
 
             foreach ($pages as $page) {
@@ -58,8 +61,9 @@ class PopulateFacebookPageFieldListener implements EventSubscriberInterface
                 $formData['page_token'] = $token;
             }
         } catch (\Exception $exception) {
+            throw $exception;
             $formData['token_secret'] = null;
-            $form['api_status'] = 'Invalid token. Save the form to obtain a new token.';
+            $formData['api_status'] = 'Invalid token. Save the form to obtain a new token.';
         }
     }
 }
