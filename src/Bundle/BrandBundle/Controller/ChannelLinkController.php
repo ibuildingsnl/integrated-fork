@@ -41,9 +41,6 @@ class ChannelLinkController extends AbstractController
 
         $channel = new Channel();
         $channel->setType($channelType);
-        $channel->setColor($brand->profile->color);
-        $channel->setSecondaryColor($brand->profile->secondaryColor);
-        $channel->setLogo($brand->profile->logo);
 
         $link = new ChannelLink($channelType, $channel, false);
 

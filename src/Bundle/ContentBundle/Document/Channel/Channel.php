@@ -124,46 +124,6 @@ class Channel implements ChannelInterface
         return $this;
     }
 
-    public function getLogo(): ?Image
-    {
-        return $this->logo;
-    }
-
-    public function setLogo(?Image $logo): void
-    {
-        $this->logo = $logo;
-    }
-
-    public function getFavicon(): Image|null
-    {
-        return $this->favicon;
-    }
-
-    public function setFavicon(?Image $favicon): void
-    {
-        $this->favicon = $favicon;
-    }
-
-    public function getColor(): ?string
-    {
-        return $this->color;
-    }
-
-    public function setColor(?string $color): void
-    {
-        $this->color = $color;
-    }
-
-    public function getSecondaryColor(): ?string
-    {
-        return $this->secondarycolor;
-    }
-
-    public function setSecondaryColor(?string $secondarycolor): void
-    {
-        $this->secondarycolor = $secondarycolor;
-    }
-
     public function setDomains(array $domains): void
     {
         $this->domains = $domains;

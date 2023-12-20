@@ -3,6 +3,7 @@
 namespace Integrated\Bundle\BrandBundle\Twig\Extension;
 
 use Integrated\Bundle\BrandBundle\Document\Brand;
+use Integrated\Bundle\BrandBundle\Document\BrandProfile;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Twig\Extension\AbstractExtension;
@@ -22,6 +23,7 @@ class BrandExtension extends AbstractExtension
     {
         return [
             new TwigFilter('integrated_brand', [$this, 'getBrandForChannel']),
+            new TwigFilter('integrated_brand_profile', [$this, 'getBrandProfileForChannel']),
         ];
     }
 
@@ -31,6 +33,19 @@ class BrandExtension extends AbstractExtension
             foreach ($this->brands->all() as $brand) {
                 if ($brand->hasChannel($channel)) {
                     return $brand;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function getBrandProfileForChannel(?ChannelInterface $channel): ?BrandProfile
+    {
+        if ($channel instanceof ChannelInterface) {
+            foreach ($this->brands->all() as $brand) {
+                if ($brand->hasChannel($channel)) {
+                    return $brand->profile;
                 }
             }
         }

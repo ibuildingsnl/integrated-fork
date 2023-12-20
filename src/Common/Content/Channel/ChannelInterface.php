@@ -29,8 +29,4 @@ interface ChannelInterface
     public function getPrimaryDomain(): ?string;
 
     public function getPrimaryDomainRedirect(): bool;
-
-    public function getLogo(): ?Image;
-
-    public function getColor(): ?string;
 }
