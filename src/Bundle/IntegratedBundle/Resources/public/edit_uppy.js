@@ -15677,7 +15677,7 @@ function memoizeOne(resultFn, isEqual) {
   \******************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var wildcard = __webpack_require__(/*! wildcard */ "./node_modules/wildcard/index.js");
+var wildcard = __webpack_require__(/*! wildcard */ "./node_modules/mime-match/node_modules/wildcard/index.js");
 var reMimePartSplit = /[\/\+\.]/;
 
 /**
@@ -15700,6 +15700,110 @@ module.exports = function(target, pattern) {
   }
 
   return pattern ? test(pattern.split(';')[0]) : test;
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/mime-match/node_modules/wildcard/index.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/mime-match/node_modules/wildcard/index.js ***!
+  \****************************************************************/
+/***/ ((module) => {
+
+"use strict";
+/* jshint node: true */
+
+
+/**
+  # wildcard
+
+  Very simple wildcard matching, which is designed to provide the same
+  functionality that is found in the
+  [eve](https://github.com/adobe-webplatform/eve) eventing library.
+
+  ## Usage
+
+  It works with strings:
+
+  <<< examples/strings.js
+
+  Arrays:
+
+  <<< examples/arrays.js
+
+  Objects (matching against keys):
+
+  <<< examples/objects.js
+
+  While the library works in Node, if you are are looking for file-based
+  wildcard matching then you should have a look at:
+
+  <https://github.com/isaacs/node-glob>
+**/
+
+function WildcardMatcher(text, separator) {
+  this.text = text = text || '';
+  this.hasWild = ~text.indexOf('*');
+  this.separator = separator;
+  this.parts = text.split(separator);
+}
+
+WildcardMatcher.prototype.match = function(input) {
+  var matches = true;
+  var parts = this.parts;
+  var ii;
+  var partsCount = parts.length;
+  var testParts;
+
+  if (typeof input == 'string' || input instanceof String) {
+    if (!this.hasWild && this.text != input) {
+      matches = false;
+    } else {
+      testParts = (input || '').split(this.separator);
+      for (ii = 0; matches && ii < partsCount; ii++) {
+        if (parts[ii] === '*')  {
+          continue;
+        } else if (ii < testParts.length) {
+          matches = parts[ii] === testParts[ii];
+        } else {
+          matches = false;
+        }
+      }
+
+      // If matches, then return the component parts
+      matches = matches && testParts;
+    }
+  }
+  else if (typeof input.splice == 'function') {
+    matches = [];
+
+    for (ii = input.length; ii--; ) {
+      if (this.match(input[ii])) {
+        matches[matches.length] = input[ii];
+      }
+    }
+  }
+  else if (typeof input == 'object') {
+    matches = {};
+
+    for (var key in input) {
+      if (this.match(key)) {
+        matches[key] = input[key];
+      }
+    }
+  }
+
+  return matches;
+};
+
+module.exports = function(text, test, separator) {
+  var matcher = new WildcardMatcher(text, separator || /[\/\.]/);
+  if (typeof test != 'undefined') {
+    return matcher.match(test);
+  }
+
+  return matcher;
 };
 
 
@@ -15861,19 +15965,19 @@ module.exports = function createNamespaceEmitter () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Component: () => (/* binding */ b),
-/* harmony export */   Fragment: () => (/* binding */ g),
-/* harmony export */   cloneElement: () => (/* binding */ E),
-/* harmony export */   createContext: () => (/* binding */ F),
+/* harmony export */   Fragment: () => (/* binding */ k),
+/* harmony export */   cloneElement: () => (/* binding */ F),
+/* harmony export */   createContext: () => (/* binding */ G),
 /* harmony export */   createElement: () => (/* binding */ y),
 /* harmony export */   createRef: () => (/* binding */ _),
 /* harmony export */   h: () => (/* binding */ y),
-/* harmony export */   hydrate: () => (/* binding */ B),
+/* harmony export */   hydrate: () => (/* binding */ E),
 /* harmony export */   isValidElement: () => (/* binding */ t),
 /* harmony export */   options: () => (/* binding */ l),
-/* harmony export */   render: () => (/* binding */ q),
-/* harmony export */   toChildArray: () => (/* binding */ $)
+/* harmony export */   render: () => (/* binding */ B),
+/* harmony export */   toChildArray: () => (/* binding */ C)
 /* harmony export */ });
-var n,l,u,t,i,o,r,f,e,c={},s=[],a=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i,h=Array.isArray;function v(n,l){for(var u in l)n[u]=l[u];return n}function p(n){var l=n.parentNode;l&&l.removeChild(n)}function y(l,u,t){var i,o,r,f={};for(r in u)"key"==r?i=u[r]:"ref"==r?o=u[r]:f[r]=u[r];if(arguments.length>2&&(f.children=arguments.length>3?n.call(arguments,2):t),"function"==typeof l&&null!=l.defaultProps)for(r in l.defaultProps)void 0===f[r]&&(f[r]=l.defaultProps[r]);return d(l,f,i,o,null)}function d(n,t,i,o,r){var f={type:n,props:t,key:i,ref:o,__k:null,__:null,__b:0,__e:null,__d:void 0,__c:null,constructor:void 0,__v:null==r?++u:r,__i:-1,__u:0};return null==r&&null!=l.vnode&&l.vnode(f),f}function _(){return{current:null}}function g(n){return n.children}function b(n,l){this.props=n,this.context=l}function m(n,l){if(null==l)return n.__?m(n.__,n.__i+1):null;for(var u;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e)return u.__e;return"function"==typeof n.type?m(n):null}function k(n){var l,u;if(null!=(n=n.__)&&null!=n.__c){for(n.__e=n.__c.base=null,l=0;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e){n.__e=n.__c.base=u.__e;break}return k(n)}}function w(n){(!n.__d&&(n.__d=!0)&&i.push(n)&&!x.__r++||o!==l.debounceRendering)&&((o=l.debounceRendering)||r)(x)}function x(){var n,u,t,o,r,e,c,s,a;for(i.sort(f);n=i.shift();)n.__d&&(u=i.length,o=void 0,e=(r=(t=n).__v).__e,s=[],a=[],(c=t.__P)&&((o=v({},r)).__v=r.__v+1,l.vnode&&l.vnode(o),L(c,o,r,t.__n,void 0!==c.ownerSVGElement,32&r.__u?[e]:null,s,null==e?m(r):e,!!(32&r.__u),a),o.__.__k[o.__i]=o,M(s,o,a),o.__e!=e&&k(o)),i.length>u&&i.sort(f));x.__r=0}function C(n,l,u,t,i,o,r,f,e,a,h){var v,p,y,d,_,g=t&&t.__k||s,b=l.length;for(u.__d=e,P(u,l,g),e=u.__d,v=0;v<b;v++)null!=(y=u.__k[v])&&"boolean"!=typeof y&&"function"!=typeof y&&(p=-1===y.__i?c:g[y.__i]||c,y.__i=v,L(n,y,p,i,o,r,f,e,a,h),d=y.__e,y.ref&&p.ref!=y.ref&&(p.ref&&z(p.ref,null,y),h.push(y.ref,y.__c||d,y)),null==_&&null!=d&&(_=d),65536&y.__u||p.__k===y.__k?e=S(y,e,n):"function"==typeof y.type&&void 0!==y.__d?e=y.__d:d&&(e=d.nextSibling),y.__d=void 0,y.__u&=-196609);u.__d=e,u.__e=_}function P(n,l,u){var t,i,o,r,f,e=l.length,c=u.length,s=c,a=0;for(n.__k=[],t=0;t<e;t++)null!=(i=n.__k[t]=null==(i=l[t])||"boolean"==typeof i||"function"==typeof i?null:"string"==typeof i||"number"==typeof i||"bigint"==typeof i||i.constructor==String?d(null,i,null,null,i):h(i)?d(g,{children:i},null,null,null):i.__b>0?d(i.type,i.props,i.key,i.ref?i.ref:null,i.__v):i)?(i.__=n,i.__b=n.__b+1,f=H(i,u,r=t+a,s),i.__i=f,o=null,-1!==f&&(s--,(o=u[f])&&(o.__u|=131072)),null==o||null===o.__v?(-1==f&&a--,"function"!=typeof i.type&&(i.__u|=65536)):f!==r&&(f===r+1?a++:f>r?s>e-r?a+=f-r:a--:a=f<r&&f==r-1?f-r:0,f!==t+a&&(i.__u|=65536))):(o=u[t])&&null==o.key&&o.__e&&(o.__e==n.__d&&(n.__d=m(o)),N(o,o,!1),u[t]=null,s--);if(s)for(t=0;t<c;t++)null!=(o=u[t])&&0==(131072&o.__u)&&(o.__e==n.__d&&(n.__d=m(o)),N(o,o))}function S(n,l,u){var t,i;if("function"==typeof n.type){for(t=n.__k,i=0;t&&i<t.length;i++)t[i]&&(t[i].__=n,l=S(t[i],l,u));return l}return n.__e!=l&&(u.insertBefore(n.__e,l||null),l=n.__e),l&&l.nextSibling}function $(n,l){return l=l||[],null==n||"boolean"==typeof n||(h(n)?n.some(function(n){$(n,l)}):l.push(n)),l}function H(n,l,u,t){var i=n.key,o=n.type,r=u-1,f=u+1,e=l[u];if(null===e||e&&i==e.key&&o===e.type)return u;if(t>(null!=e&&0==(131072&e.__u)?1:0))for(;r>=0||f<l.length;){if(r>=0){if((e=l[r])&&0==(131072&e.__u)&&i==e.key&&o===e.type)return r;r--}if(f<l.length){if((e=l[f])&&0==(131072&e.__u)&&i==e.key&&o===e.type)return f;f++}}return-1}function I(n,l,u){"-"===l[0]?n.setProperty(l,null==u?"":u):n[l]=null==u?"":"number"!=typeof u||a.test(l)?u:u+"px"}function T(n,l,u,t,i){var o;n:if("style"===l)if("string"==typeof u)n.style.cssText=u;else{if("string"==typeof t&&(n.style.cssText=t=""),t)for(l in t)u&&l in u||I(n.style,l,"");if(u)for(l in u)t&&u[l]===t[l]||I(n.style,l,u[l])}else if("o"===l[0]&&"n"===l[1])o=l!==(l=l.replace(/(PointerCapture)$|Capture$/,"$1")),l=l.toLowerCase()in n?l.toLowerCase().slice(2):l.slice(2),n.l||(n.l={}),n.l[l+o]=u,u?t?u.u=t.u:(u.u=Date.now(),n.addEventListener(l,o?D:A,o)):n.removeEventListener(l,o?D:A,o);else{if(i)l=l.replace(/xlink(H|:h)/,"h").replace(/sName$/,"s");else if("width"!==l&&"height"!==l&&"href"!==l&&"list"!==l&&"form"!==l&&"tabIndex"!==l&&"download"!==l&&"rowSpan"!==l&&"colSpan"!==l&&"role"!==l&&l in n)try{n[l]=null==u?"":u;break n}catch(n){}"function"==typeof u||(null==u||!1===u&&"-"!==l[4]?n.removeAttribute(l):n.setAttribute(l,u))}}function A(n){var u=this.l[n.type+!1];if(n.t){if(n.t<=u.u)return}else n.t=Date.now();return u(l.event?l.event(n):n)}function D(n){return this.l[n.type+!0](l.event?l.event(n):n)}function L(n,u,t,i,o,r,f,e,c,s){var a,p,y,d,_,m,k,w,x,P,S,$,H,I,T,A=u.type;if(void 0!==u.constructor)return null;128&t.__u&&(c=!!(32&t.__u),r=[e=u.__e=t.__e]),(a=l.__b)&&a(u);n:if("function"==typeof A)try{if(w=u.props,x=(a=A.contextType)&&i[a.__c],P=a?x?x.props.value:a.__:i,t.__c?k=(p=u.__c=t.__c).__=p.__E:("prototype"in A&&A.prototype.render?u.__c=p=new A(w,P):(u.__c=p=new b(w,P),p.constructor=A,p.render=O),x&&x.sub(p),p.props=w,p.state||(p.state={}),p.context=P,p.__n=i,y=p.__d=!0,p.__h=[],p._sb=[]),null==p.__s&&(p.__s=p.state),null!=A.getDerivedStateFromProps&&(p.__s==p.state&&(p.__s=v({},p.__s)),v(p.__s,A.getDerivedStateFromProps(w,p.__s))),d=p.props,_=p.state,p.__v=u,y)null==A.getDerivedStateFromProps&&null!=p.componentWillMount&&p.componentWillMount(),null!=p.componentDidMount&&p.__h.push(p.componentDidMount);else{if(null==A.getDerivedStateFromProps&&w!==d&&null!=p.componentWillReceiveProps&&p.componentWillReceiveProps(w,P),!p.__e&&(null!=p.shouldComponentUpdate&&!1===p.shouldComponentUpdate(w,p.__s,P)||u.__v===t.__v)){for(u.__v!==t.__v&&(p.props=w,p.state=p.__s,p.__d=!1),u.__e=t.__e,u.__k=t.__k,u.__k.forEach(function(n){n&&(n.__=u)}),S=0;S<p._sb.length;S++)p.__h.push(p._sb[S]);p._sb=[],p.__h.length&&f.push(p);break n}null!=p.componentWillUpdate&&p.componentWillUpdate(w,p.__s,P),null!=p.componentDidUpdate&&p.__h.push(function(){p.componentDidUpdate(d,_,m)})}if(p.context=P,p.props=w,p.__P=n,p.__e=!1,$=l.__r,H=0,"prototype"in A&&A.prototype.render){for(p.state=p.__s,p.__d=!1,$&&$(u),a=p.render(p.props,p.state,p.context),I=0;I<p._sb.length;I++)p.__h.push(p._sb[I]);p._sb=[]}else do{p.__d=!1,$&&$(u),a=p.render(p.props,p.state,p.context),p.state=p.__s}while(p.__d&&++H<25);p.state=p.__s,null!=p.getChildContext&&(i=v(v({},i),p.getChildContext())),y||null==p.getSnapshotBeforeUpdate||(m=p.getSnapshotBeforeUpdate(d,_)),C(n,h(T=null!=a&&a.type===g&&null==a.key?a.props.children:a)?T:[T],u,t,i,o,r,f,e,c,s),p.base=u.__e,u.__u&=-161,p.__h.length&&f.push(p),k&&(p.__E=p.__=null)}catch(n){u.__v=null,c||null!=r?(u.__e=e,u.__u|=c?160:32,r[r.indexOf(e)]=null):(u.__e=t.__e,u.__k=t.__k),l.__e(n,u,t)}else null==r&&u.__v===t.__v?(u.__k=t.__k,u.__e=t.__e):u.__e=j(t.__e,u,t,i,o,r,f,c,s);(a=l.diffed)&&a(u)}function M(n,u,t){u.__d=void 0;for(var i=0;i<t.length;i++)z(t[i],t[++i],t[++i]);l.__c&&l.__c(u,n),n.some(function(u){try{n=u.__h,u.__h=[],n.some(function(n){n.call(u)})}catch(n){l.__e(n,u.__v)}})}function j(l,u,t,i,o,r,f,e,s){var a,v,y,d,_,g,b,k=t.props,w=u.props,x=u.type;if("svg"===x&&(o=!0),null!=r)for(a=0;a<r.length;a++)if((_=r[a])&&"setAttribute"in _==!!x&&(x?_.localName===x:3===_.nodeType)){l=_,r[a]=null;break}if(null==l){if(null===x)return document.createTextNode(w);l=o?document.createElementNS("http://www.w3.org/2000/svg",x):document.createElement(x,w.is&&w),r=null,e=!1}if(null===x)k===w||e&&l.data===w||(l.data=w);else{if(r=r&&n.call(l.childNodes),k=t.props||c,!e&&null!=r)for(k={},a=0;a<l.attributes.length;a++)k[(_=l.attributes[a]).name]=_.value;for(a in k)_=k[a],"children"==a||("dangerouslySetInnerHTML"==a?y=_:"key"===a||a in w||T(l,a,null,_,o));for(a in w)_=w[a],"children"==a?d=_:"dangerouslySetInnerHTML"==a?v=_:"value"==a?g=_:"checked"==a?b=_:"key"===a||e&&"function"!=typeof _||k[a]===_||T(l,a,_,k[a],o);if(v)e||y&&(v.__html===y.__html||v.__html===l.innerHTML)||(l.innerHTML=v.__html),u.__k=[];else if(y&&(l.innerHTML=""),C(l,h(d)?d:[d],u,t,i,o&&"foreignObject"!==x,r,f,r?r[0]:t.__k&&m(t,0),e,s),null!=r)for(a=r.length;a--;)null!=r[a]&&p(r[a]);e||(a="value",void 0!==g&&(g!==l[a]||"progress"===x&&!g||"option"===x&&g!==k[a])&&T(l,a,g,k[a],!1),a="checked",void 0!==b&&b!==l[a]&&T(l,a,b,k[a],!1))}return l}function z(n,u,t){try{"function"==typeof n?n(u):n.current=u}catch(n){l.__e(n,t)}}function N(n,u,t){var i,o;if(l.unmount&&l.unmount(n),(i=n.ref)&&(i.current&&i.current!==n.__e||z(i,null,u)),null!=(i=n.__c)){if(i.componentWillUnmount)try{i.componentWillUnmount()}catch(n){l.__e(n,u)}i.base=i.__P=null,n.__c=void 0}if(i=n.__k)for(o=0;o<i.length;o++)i[o]&&N(i[o],u,t||"function"!=typeof n.type);t||null==n.__e||p(n.__e),n.__=n.__e=n.__d=void 0}function O(n,l,u){return this.constructor(n,u)}function q(u,t,i){var o,r,f,e;l.__&&l.__(u,t),r=(o="function"==typeof i)?null:i&&i.__k||t.__k,f=[],e=[],L(t,u=(!o&&i||t).__k=y(g,null,[u]),r||c,c,void 0!==t.ownerSVGElement,!o&&i?[i]:r?null:t.firstChild?n.call(t.childNodes):null,f,!o&&i?i:r?r.__e:t.firstChild,o,e),M(f,u,e)}function B(n,l){q(n,l,B)}function E(l,u,t){var i,o,r,f,e=v({},l.props);for(r in l.type&&l.type.defaultProps&&(f=l.type.defaultProps),u)"key"==r?i=u[r]:"ref"==r?o=u[r]:e[r]=void 0===u[r]&&void 0!==f?f[r]:u[r];return arguments.length>2&&(e.children=arguments.length>3?n.call(arguments,2):t),d(l.type,e,i||l.key,o||l.ref,null)}function F(n,l){var u={__c:l="__cC"+e++,__:n,Consumer:function(n,l){return n.children(l)},Provider:function(n){var u,t;return this.getChildContext||(u=[],(t={})[l]=this,this.getChildContext=function(){return t},this.shouldComponentUpdate=function(n){this.props.value!==n.value&&u.some(function(n){n.__e=!0,w(n)})},this.sub=function(n){u.push(n);var l=n.componentWillUnmount;n.componentWillUnmount=function(){u.splice(u.indexOf(n),1),l&&l.call(n)}}),n.children}};return u.Provider.__=u.Consumer.contextType=u}n=s.slice,l={__e:function(n,l,u,t){for(var i,o,r;l=l.__;)if((i=l.__c)&&!i.__)try{if((o=i.constructor)&&null!=o.getDerivedStateFromError&&(i.setState(o.getDerivedStateFromError(n)),r=i.__d),null!=i.componentDidCatch&&(i.componentDidCatch(n,t||{}),r=i.__d),r)return i.__E=i}catch(l){n=l}throw n}},u=0,t=function(n){return null!=n&&null==n.constructor},b.prototype.setState=function(n,l){var u;u=null!=this.__s&&this.__s!==this.state?this.__s:this.__s=v({},this.state),"function"==typeof n&&(n=n(v({},u),this.props)),n&&v(u,n),null!=n&&this.__v&&(l&&this._sb.push(l),w(this))},b.prototype.forceUpdate=function(n){this.__v&&(this.__e=!0,n&&this.__h.push(n),w(this))},b.prototype.render=g,i=[],r="function"==typeof Promise?Promise.prototype.then.bind(Promise.resolve()):setTimeout,f=function(n,l){return n.__v.__b-l.__v.__b},x.__r=0,e=0;
+var n,l,u,t,i,o,r,f,e,c={},s=[],a=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i,v=Array.isArray;function h(n,l){for(var u in l)n[u]=l[u];return n}function p(n){var l=n.parentNode;l&&l.removeChild(n)}function y(l,u,t){var i,o,r,f={};for(r in u)"key"==r?i=u[r]:"ref"==r?o=u[r]:f[r]=u[r];if(arguments.length>2&&(f.children=arguments.length>3?n.call(arguments,2):t),"function"==typeof l&&null!=l.defaultProps)for(r in l.defaultProps)void 0===f[r]&&(f[r]=l.defaultProps[r]);return d(l,f,i,o,null)}function d(n,t,i,o,r){var f={type:n,props:t,key:i,ref:o,__k:null,__:null,__b:0,__e:null,__d:void 0,__c:null,__h:null,constructor:void 0,__v:null==r?++u:r};return null==r&&null!=l.vnode&&l.vnode(f),f}function _(){return{current:null}}function k(n){return n.children}function b(n,l){this.props=n,this.context=l}function g(n,l){if(null==l)return n.__?g(n.__,n.__.__k.indexOf(n)+1):null;for(var u;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e)return u.__d||u.__e;return"function"==typeof n.type?g(n):null}function m(n){var l,u;if(null!=(n=n.__)&&null!=n.__c){for(n.__e=n.__c.base=null,l=0;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e){n.__e=n.__c.base=u.__e;break}return m(n)}}function w(n){(!n.__d&&(n.__d=!0)&&i.push(n)&&!x.__r++||o!==l.debounceRendering)&&((o=l.debounceRendering)||r)(x)}function x(){var n,l,u,t,o,r,e,c,s;for(i.sort(f);n=i.shift();)n.__d&&(l=i.length,t=void 0,o=void 0,r=void 0,c=(e=(u=n).__v).__e,(s=u.__P)&&(t=[],o=[],(r=h({},e)).__v=e.__v+1,z(s,e,r,u.__n,void 0!==s.ownerSVGElement,null!=e.__h?[c]:null,t,null==c?g(e):c,e.__h,o),L(t,e,o),e.__e!=c&&m(e)),i.length>l&&i.sort(f));x.__r=0}function P(n,l,u,t,i,o,r,f,e,a,h){var p,y,_,b,m,w,x,P,C,D=0,H=t&&t.__k||s,I=H.length,T=I,j=l.length;for(u.__k=[],p=0;p<j;p++)null!=(b=u.__k[p]=null==(b=l[p])||"boolean"==typeof b||"function"==typeof b?null:"string"==typeof b||"number"==typeof b||"bigint"==typeof b?d(null,b,null,null,b):v(b)?d(k,{children:b},null,null,null):b.__b>0?d(b.type,b.props,b.key,b.ref?b.ref:null,b.__v):b)?(b.__=u,b.__b=u.__b+1,-1===(P=A(b,H,x=p+D,T))?_=c:(_=H[P]||c,H[P]=void 0,T--),z(n,b,_,i,o,r,f,e,a,h),m=b.__e,(y=b.ref)&&_.ref!=y&&(_.ref&&N(_.ref,null,b),h.push(y,b.__c||m,b)),null!=m&&(null==w&&(w=m),(C=_===c||null===_.__v)?-1==P&&D--:P!==x&&(P===x+1?D++:P>x?T>j-x?D+=P-x:D--:D=P<x&&P==x-1?P-x:0),x=p+D,"function"!=typeof b.type||P===x&&_.__k!==b.__k?"function"==typeof b.type||P===x&&!C?void 0!==b.__d?(e=b.__d,b.__d=void 0):e=m.nextSibling:e=S(n,m,e):e=$(b,e,n),"function"==typeof u.type&&(u.__d=e))):(_=H[p])&&null==_.key&&_.__e&&(_.__e==e&&(_.__=t,e=g(_)),O(_,_,!1),H[p]=null);for(u.__e=w,p=I;p--;)null!=H[p]&&("function"==typeof u.type&&null!=H[p].__e&&H[p].__e==u.__d&&(u.__d=H[p].__e.nextSibling),O(H[p],H[p]))}function $(n,l,u){for(var t,i=n.__k,o=0;i&&o<i.length;o++)(t=i[o])&&(t.__=n,l="function"==typeof t.type?$(t,l,u):S(u,t.__e,l));return l}function C(n,l){return l=l||[],null==n||"boolean"==typeof n||(v(n)?n.some(function(n){C(n,l)}):l.push(n)),l}function S(n,l,u){return null==u||u.parentNode!==n?n.insertBefore(l,null):l==u&&null!=l.parentNode||n.insertBefore(l,u),l.nextSibling}function A(n,l,u,t){var i=n.key,o=n.type,r=u-1,f=u+1,e=l[u];if(null===e||e&&i==e.key&&o===e.type)return u;if(t>(null!=e?1:0))for(;r>=0||f<l.length;){if(r>=0){if((e=l[r])&&i==e.key&&o===e.type)return r;r--}if(f<l.length){if((e=l[f])&&i==e.key&&o===e.type)return f;f++}}return-1}function D(n,l,u,t,i){var o;for(o in u)"children"===o||"key"===o||o in l||I(n,o,null,u[o],t);for(o in l)i&&"function"!=typeof l[o]||"children"===o||"key"===o||"value"===o||"checked"===o||u[o]===l[o]||I(n,o,l[o],u[o],t)}function H(n,l,u){"-"===l[0]?n.setProperty(l,null==u?"":u):n[l]=null==u?"":"number"!=typeof u||a.test(l)?u:u+"px"}function I(n,l,u,t,i){var o;n:if("style"===l)if("string"==typeof u)n.style.cssText=u;else{if("string"==typeof t&&(n.style.cssText=t=""),t)for(l in t)u&&l in u||H(n.style,l,"");if(u)for(l in u)t&&u[l]===t[l]||H(n.style,l,u[l])}else if("o"===l[0]&&"n"===l[1])o=l!==(l=l.replace(/(PointerCapture)$|Capture$/,"$1")),l=l.toLowerCase()in n?l.toLowerCase().slice(2):l.slice(2),n.l||(n.l={}),n.l[l+o]=u,u?t?u.u=t.u:(u.u=Date.now(),n.addEventListener(l,o?j:T,o)):n.removeEventListener(l,o?j:T,o);else if("dangerouslySetInnerHTML"!==l){if(i)l=l.replace(/xlink(H|:h)/,"h").replace(/sName$/,"s");else if("width"!==l&&"height"!==l&&"href"!==l&&"list"!==l&&"form"!==l&&"tabIndex"!==l&&"download"!==l&&"rowSpan"!==l&&"colSpan"!==l&&"role"!==l&&l in n)try{n[l]=null==u?"":u;break n}catch(n){}"function"==typeof u||(null==u||!1===u&&"-"!==l[4]?n.removeAttribute(l):n.setAttribute(l,u))}}function T(n){var u=this.l[n.type+!1];if(n.t){if(n.t<=u.u)return}else n.t=Date.now();return u(l.event?l.event(n):n)}function j(n){return this.l[n.type+!0](l.event?l.event(n):n)}function z(n,u,t,i,o,r,f,e,c,s){var a,p,y,d,_,g,m,w,x,$,C,S,A,D,H,I=u.type;if(void 0!==u.constructor)return null;null!=t.__h&&(c=t.__h,e=u.__e=t.__e,u.__h=null,r=[e]),(a=l.__b)&&a(u);n:if("function"==typeof I)try{if(w=u.props,x=(a=I.contextType)&&i[a.__c],$=a?x?x.props.value:a.__:i,t.__c?m=(p=u.__c=t.__c).__=p.__E:("prototype"in I&&I.prototype.render?u.__c=p=new I(w,$):(u.__c=p=new b(w,$),p.constructor=I,p.render=q),x&&x.sub(p),p.props=w,p.state||(p.state={}),p.context=$,p.__n=i,y=p.__d=!0,p.__h=[],p._sb=[]),null==p.__s&&(p.__s=p.state),null!=I.getDerivedStateFromProps&&(p.__s==p.state&&(p.__s=h({},p.__s)),h(p.__s,I.getDerivedStateFromProps(w,p.__s))),d=p.props,_=p.state,p.__v=u,y)null==I.getDerivedStateFromProps&&null!=p.componentWillMount&&p.componentWillMount(),null!=p.componentDidMount&&p.__h.push(p.componentDidMount);else{if(null==I.getDerivedStateFromProps&&w!==d&&null!=p.componentWillReceiveProps&&p.componentWillReceiveProps(w,$),!p.__e&&(null!=p.shouldComponentUpdate&&!1===p.shouldComponentUpdate(w,p.__s,$)||u.__v===t.__v)){for(u.__v!==t.__v&&(p.props=w,p.state=p.__s,p.__d=!1),u.__e=t.__e,u.__k=t.__k,u.__k.forEach(function(n){n&&(n.__=u)}),C=0;C<p._sb.length;C++)p.__h.push(p._sb[C]);p._sb=[],p.__h.length&&f.push(p);break n}null!=p.componentWillUpdate&&p.componentWillUpdate(w,p.__s,$),null!=p.componentDidUpdate&&p.__h.push(function(){p.componentDidUpdate(d,_,g)})}if(p.context=$,p.props=w,p.__P=n,p.__e=!1,S=l.__r,A=0,"prototype"in I&&I.prototype.render){for(p.state=p.__s,p.__d=!1,S&&S(u),a=p.render(p.props,p.state,p.context),D=0;D<p._sb.length;D++)p.__h.push(p._sb[D]);p._sb=[]}else do{p.__d=!1,S&&S(u),a=p.render(p.props,p.state,p.context),p.state=p.__s}while(p.__d&&++A<25);p.state=p.__s,null!=p.getChildContext&&(i=h(h({},i),p.getChildContext())),y||null==p.getSnapshotBeforeUpdate||(g=p.getSnapshotBeforeUpdate(d,_)),P(n,v(H=null!=a&&a.type===k&&null==a.key?a.props.children:a)?H:[H],u,t,i,o,r,f,e,c,s),p.base=u.__e,u.__h=null,p.__h.length&&f.push(p),m&&(p.__E=p.__=null)}catch(n){u.__v=null,(c||null!=r)&&(u.__e=e,u.__h=!!c,r[r.indexOf(e)]=null),l.__e(n,u,t)}else null==r&&u.__v===t.__v?(u.__k=t.__k,u.__e=t.__e):u.__e=M(t.__e,u,t,i,o,r,f,c,s);(a=l.diffed)&&a(u)}function L(n,u,t){for(var i=0;i<t.length;i++)N(t[i],t[++i],t[++i]);l.__c&&l.__c(u,n),n.some(function(u){try{n=u.__h,u.__h=[],n.some(function(n){n.call(u)})}catch(n){l.__e(n,u.__v)}})}function M(l,u,t,i,o,r,f,e,s){var a,h,y,d=t.props,_=u.props,k=u.type,b=0;if("svg"===k&&(o=!0),null!=r)for(;b<r.length;b++)if((a=r[b])&&"setAttribute"in a==!!k&&(k?a.localName===k:3===a.nodeType)){l=a,r[b]=null;break}if(null==l){if(null===k)return document.createTextNode(_);l=o?document.createElementNS("http://www.w3.org/2000/svg",k):document.createElement(k,_.is&&_),r=null,e=!1}if(null===k)d===_||e&&l.data===_||(l.data=_);else{if(r=r&&n.call(l.childNodes),h=(d=t.props||c).dangerouslySetInnerHTML,y=_.dangerouslySetInnerHTML,!e){if(null!=r)for(d={},b=0;b<l.attributes.length;b++)d[l.attributes[b].name]=l.attributes[b].value;(y||h)&&(y&&(h&&y.__html==h.__html||y.__html===l.innerHTML)||(l.innerHTML=y&&y.__html||""))}if(D(l,_,d,o,e),y)u.__k=[];else if(P(l,v(b=u.props.children)?b:[b],u,t,i,o&&"foreignObject"!==k,r,f,r?r[0]:t.__k&&g(t,0),e,s),null!=r)for(b=r.length;b--;)null!=r[b]&&p(r[b]);e||("value"in _&&void 0!==(b=_.value)&&(b!==l.value||"progress"===k&&!b||"option"===k&&b!==d.value)&&I(l,"value",b,d.value,!1),"checked"in _&&void 0!==(b=_.checked)&&b!==l.checked&&I(l,"checked",b,d.checked,!1))}return l}function N(n,u,t){try{"function"==typeof n?n(u):n.current=u}catch(n){l.__e(n,t)}}function O(n,u,t){var i,o;if(l.unmount&&l.unmount(n),(i=n.ref)&&(i.current&&i.current!==n.__e||N(i,null,u)),null!=(i=n.__c)){if(i.componentWillUnmount)try{i.componentWillUnmount()}catch(n){l.__e(n,u)}i.base=i.__P=null,n.__c=void 0}if(i=n.__k)for(o=0;o<i.length;o++)i[o]&&O(i[o],u,t||"function"!=typeof n.type);t||null==n.__e||p(n.__e),n.__=n.__e=n.__d=void 0}function q(n,l,u){return this.constructor(n,u)}function B(u,t,i){var o,r,f,e;l.__&&l.__(u,t),r=(o="function"==typeof i)?null:i&&i.__k||t.__k,f=[],e=[],z(t,u=(!o&&i||t).__k=y(k,null,[u]),r||c,c,void 0!==t.ownerSVGElement,!o&&i?[i]:r?null:t.firstChild?n.call(t.childNodes):null,f,!o&&i?i:r?r.__e:t.firstChild,o,e),L(f,u,e)}function E(n,l){B(n,l,E)}function F(l,u,t){var i,o,r,f,e=h({},l.props);for(r in l.type&&l.type.defaultProps&&(f=l.type.defaultProps),u)"key"==r?i=u[r]:"ref"==r?o=u[r]:e[r]=void 0===u[r]&&void 0!==f?f[r]:u[r];return arguments.length>2&&(e.children=arguments.length>3?n.call(arguments,2):t),d(l.type,e,i||l.key,o||l.ref,null)}function G(n,l){var u={__c:l="__cC"+e++,__:n,Consumer:function(n,l){return n.children(l)},Provider:function(n){var u,t;return this.getChildContext||(u=[],(t={})[l]=this,this.getChildContext=function(){return t},this.shouldComponentUpdate=function(n){this.props.value!==n.value&&u.some(function(n){n.__e=!0,w(n)})},this.sub=function(n){u.push(n);var l=n.componentWillUnmount;n.componentWillUnmount=function(){u.splice(u.indexOf(n),1),l&&l.call(n)}}),n.children}};return u.Provider.__=u.Consumer.contextType=u}n=s.slice,l={__e:function(n,l,u,t){for(var i,o,r;l=l.__;)if((i=l.__c)&&!i.__)try{if((o=i.constructor)&&null!=o.getDerivedStateFromError&&(i.setState(o.getDerivedStateFromError(n)),r=i.__d),null!=i.componentDidCatch&&(i.componentDidCatch(n,t||{}),r=i.__d),r)return i.__E=i}catch(l){n=l}throw n}},u=0,t=function(n){return null!=n&&void 0===n.constructor},b.prototype.setState=function(n,l){var u;u=null!=this.__s&&this.__s!==this.state?this.__s:this.__s=h({},this.state),"function"==typeof n&&(n=n(h({},u),this.props)),n&&h(u,n),null!=n&&this.__v&&(l&&this._sb.push(l),w(this))},b.prototype.forceUpdate=function(n){this.__v&&(this.__e=!0,n&&this.__h.push(n),w(this))},b.prototype.render=k,i=[],r="function"==typeof Promise?Promise.prototype.then.bind(Promise.resolve()):setTimeout,f=function(n,l){return n.__v.__b-l.__v.__b},x.__r=0,e=0;
 //# sourceMappingURL=preact.module.js.map
 
 
@@ -15908,107 +16012,935 @@ var t,r,u,i,o=0,f=[],c=[],e=preact__WEBPACK_IMPORTED_MODULE_0__.options.__b,a=pr
 
 /***/ }),
 
-/***/ "./node_modules/wildcard/index.js":
-/*!****************************************!*\
-  !*** ./node_modules/wildcard/index.js ***!
-  \****************************************/
-/***/ ((module) => {
+/***/ "./node_modules/@uppy/companion-client/lib/AuthError.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/@uppy/companion-client/lib/AuthError.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-/* jshint node: true */
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+
+
+class AuthError extends Error {
+  constructor() {
+    super('Authorization required');
+    this.name = 'AuthError';
+    this.isAuthError = true;
+  }
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (AuthError);
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/companion-client/lib/Provider.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/@uppy/companion-client/lib/Provider.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Provider)
+/* harmony export */ });
+/* harmony import */ var _RequestClient_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./RequestClient.js */ "./node_modules/@uppy/companion-client/lib/RequestClient.js");
+/* harmony import */ var _tokenStorage_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./tokenStorage.js */ "./node_modules/@uppy/companion-client/lib/tokenStorage.js");
+
+
+function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+var id = 0;
+function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
+
+
+const getName = id => {
+  return id.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+};
+function getOrigin() {
+  // eslint-disable-next-line no-restricted-globals
+  return location.origin;
+}
+function getRegex(value) {
+  if (typeof value === 'string') {
+    return new RegExp(`^${value}$`);
+  }
+  if (value instanceof RegExp) {
+    return value;
+  }
+  return undefined;
+}
+function isOriginAllowed(origin, allowedOrigin) {
+  const patterns = Array.isArray(allowedOrigin) ? allowedOrigin.map(getRegex) : [getRegex(allowedOrigin)];
+  return patterns.some(pattern => (pattern == null ? void 0 : pattern.test(origin)) || (pattern == null ? void 0 : pattern.test(`${origin}/`))); // allowing for trailing '/'
+}
+var _refreshingTokenPromise = /*#__PURE__*/_classPrivateFieldLooseKey("refreshingTokenPromise");
+var _getAuthToken = /*#__PURE__*/_classPrivateFieldLooseKey("getAuthToken");
+var _removeAuthToken = /*#__PURE__*/_classPrivateFieldLooseKey("removeAuthToken");
+class Provider extends _RequestClient_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
+  constructor(uppy, opts, getQueue) {
+    super(uppy, opts, getQueue);
+    Object.defineProperty(this, _removeAuthToken, {
+      value: _removeAuthToken2
+    });
+    Object.defineProperty(this, _getAuthToken, {
+      value: _getAuthToken2
+    });
+    Object.defineProperty(this, _refreshingTokenPromise, {
+      writable: true,
+      value: void 0
+    });
+    this.provider = opts.provider;
+    this.id = this.provider;
+    this.name = this.opts.name || getName(this.id);
+    this.pluginId = this.opts.pluginId;
+    this.tokenKey = `companion-${this.pluginId}-auth-token`;
+    this.companionKeysParams = this.opts.companionKeysParams;
+    this.preAuthToken = null;
+  }
+  async headers() {
+    const [headers, token] = await Promise.all([super.headers(), _classPrivateFieldLooseBase(this, _getAuthToken)[_getAuthToken]()]);
+    const authHeaders = {};
+    if (token) {
+      authHeaders['uppy-auth-token'] = token;
+    }
+    if (this.companionKeysParams) {
+      authHeaders['uppy-credentials-params'] = btoa(JSON.stringify({
+        params: this.companionKeysParams
+      }));
+    }
+    return {
+      ...headers,
+      ...authHeaders
+    };
+  }
+  onReceiveResponse(response) {
+    super.onReceiveResponse(response);
+    const plugin = this.uppy.getPlugin(this.pluginId);
+    const oldAuthenticated = plugin.getPluginState().authenticated;
+    const authenticated = oldAuthenticated ? response.status !== 401 : response.status < 400;
+    plugin.setPluginState({
+      authenticated
+    });
+    return response;
+  }
+  async setAuthToken(token) {
+    return this.uppy.getPlugin(this.pluginId).storage.setItem(this.tokenKey, token);
+  }
+  /**
+   * Ensure we have a preauth token if necessary. Attempts to fetch one if we don't,
+   * or rejects if loading one fails.
+   */
+  async ensurePreAuth() {
+    if (this.companionKeysParams && !this.preAuthToken) {
+      await this.fetchPreAuthToken();
+      if (!this.preAuthToken) {
+        throw new Error('Could not load authentication data required for third-party login. Please try again later.');
+      }
+    }
+  }
+  authUrl(queries) {
+    if (queries === void 0) {
+      queries = {};
+    }
+    const params = new URLSearchParams({
+      state: btoa(JSON.stringify({
+        origin: getOrigin()
+      })),
+      ...queries
+    });
+    if (this.preAuthToken) {
+      params.set('uppyPreAuthToken', this.preAuthToken);
+    }
+    return `${this.hostname}/${this.id}/connect?${params}`;
+  }
+  async login(queries) {
+    await this.ensurePreAuth();
+    return new Promise((resolve, reject) => {
+      const link = this.authUrl(queries);
+      const authWindow = window.open(link, '_blank');
+      const handleToken = e => {
+        if (e.source !== authWindow) {
+          this.uppy.log.warn('ignoring event from unknown source', e);
+          return;
+        }
+        const {
+          companionAllowedHosts
+        } = this.uppy.getPlugin(this.pluginId).opts;
+        if (!isOriginAllowed(e.origin, companionAllowedHosts)) {
+          reject(new Error(`rejecting event from ${e.origin} vs allowed pattern ${companionAllowedHosts}`));
+          return;
+        }
+
+        // Check if it's a string before doing the JSON.parse to maintain support
+        // for older Companion versions that used object references
+        const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+        if (data.error) {
+          const {
+            uppy
+          } = this;
+          const message = uppy.i18n('authAborted');
+          uppy.info({
+            message
+          }, 'warning', 5000);
+          reject(new Error('auth aborted'));
+          return;
+        }
+        if (!data.token) {
+          reject(new Error('did not receive token from auth window'));
+          return;
+        }
+        authWindow.close();
+        window.removeEventListener('message', handleToken);
+        this.setAuthToken(data.token);
+        resolve();
+      };
+      window.addEventListener('message', handleToken);
+    });
+  }
+  refreshTokenUrl() {
+    return `${this.hostname}/${this.id}/refresh-token`;
+  }
+  fileUrl(id) {
+    return `${this.hostname}/${this.id}/get/${id}`;
+  }
+
+  /** @protected */
+  async request() {
+    await _classPrivateFieldLooseBase(this, _refreshingTokenPromise)[_refreshingTokenPromise];
+    try {
+      // throw Object.assign(new Error(), { isAuthError: true }) // testing simulate access token expired (to refresh token)
+      // A better way to test this is for example with Google Drive:
+      // While uploading, go to your google account settings,
+      // "Third-party apps & services", then click "Companion" and "Remove access".
+
+      return await super.request(...arguments);
+    } catch (err) {
+      // only handle auth errors (401 from provider), and only handle them if we have a (refresh) token
+      if (!err.isAuthError || !(await _classPrivateFieldLooseBase(this, _getAuthToken)[_getAuthToken]())) throw err;
+      if (_classPrivateFieldLooseBase(this, _refreshingTokenPromise)[_refreshingTokenPromise] == null) {
+        // Many provider requests may be starting at once, however refresh token should only be called once.
+        // Once a refresh token operation has started, we need all other request to wait for this operation (atomically)
+        _classPrivateFieldLooseBase(this, _refreshingTokenPromise)[_refreshingTokenPromise] = (async () => {
+          try {
+            const response = await super.request({
+              path: this.refreshTokenUrl(),
+              method: 'POST'
+            });
+            await this.setAuthToken(response.uppyAuthToken);
+          } catch (refreshTokenErr) {
+            if (refreshTokenErr.isAuthError) {
+              // if refresh-token has failed with auth error, delete token, so we don't keep trying to refresh in future
+              await _classPrivateFieldLooseBase(this, _removeAuthToken)[_removeAuthToken]();
+            }
+            throw err;
+          } finally {
+            _classPrivateFieldLooseBase(this, _refreshingTokenPromise)[_refreshingTokenPromise] = undefined;
+          }
+        })();
+      }
+      await _classPrivateFieldLooseBase(this, _refreshingTokenPromise)[_refreshingTokenPromise];
+
+      // now retry the request with our new refresh token
+      return super.request(...arguments);
+    }
+  }
+  async fetchPreAuthToken() {
+    if (!this.companionKeysParams) {
+      return;
+    }
+    try {
+      const res = await this.post(`${this.id}/preauth/`, {
+        params: this.companionKeysParams
+      });
+      this.preAuthToken = res.token;
+    } catch (err) {
+      this.uppy.log(`[CompanionClient] unable to fetch preAuthToken ${err}`, 'warning');
+    }
+  }
+  list(directory, options) {
+    return this.get(`${this.id}/list/${directory || ''}`, options);
+  }
+  async logout(options) {
+    const response = await this.get(`${this.id}/logout`, options);
+    await _classPrivateFieldLooseBase(this, _removeAuthToken)[_removeAuthToken]();
+    return response;
+  }
+  static initPlugin(plugin, opts, defaultOpts) {
+    /* eslint-disable no-param-reassign */
+    plugin.type = 'acquirer';
+    plugin.files = [];
+    if (defaultOpts) {
+      plugin.opts = {
+        ...defaultOpts,
+        ...opts
+      };
+    }
+    if (opts.serverUrl || opts.serverPattern) {
+      throw new Error('`serverUrl` and `serverPattern` have been renamed to `companionUrl` and `companionAllowedHosts` respectively in the 0.30.5 release. Please consult the docs (for example, https://uppy.io/docs/instagram/ for the Instagram plugin) and use the updated options.`');
+    }
+    if (opts.companionAllowedHosts) {
+      const pattern = opts.companionAllowedHosts;
+      // validate companionAllowedHosts param
+      if (typeof pattern !== 'string' && !Array.isArray(pattern) && !(pattern instanceof RegExp)) {
+        throw new TypeError(`${plugin.id}: the option "companionAllowedHosts" must be one of string, Array, RegExp`);
+      }
+      plugin.opts.companionAllowedHosts = pattern;
+    } else if (/^(?!https?:\/\/).*$/i.test(opts.companionUrl)) {
+      // does not start with https://
+      plugin.opts.companionAllowedHosts = `https://${opts.companionUrl.replace(/^\/\//, '')}`;
+    } else {
+      plugin.opts.companionAllowedHosts = new URL(opts.companionUrl).origin;
+    }
+    plugin.storage = plugin.opts.storage || _tokenStorage_js__WEBPACK_IMPORTED_MODULE_1__;
+    /* eslint-enable no-param-reassign */
+  }
+}
+async function _getAuthToken2() {
+  return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey);
+}
+async function _removeAuthToken2() {
+  return this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey);
+}
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/companion-client/lib/RequestClient.js":
+/*!******************************************************************!*\
+  !*** ./node_modules/@uppy/companion-client/lib/RequestClient.js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ RequestClient)
+/* harmony export */ });
+/* harmony import */ var _uppy_utils_lib_fetchWithNetworkError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/utils/lib/fetchWithNetworkError */ "./node_modules/@uppy/utils/lib/fetchWithNetworkError.js");
+/* harmony import */ var _uppy_utils_lib_ErrorWithCause__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/utils/lib/ErrorWithCause */ "./node_modules/@uppy/utils/lib/ErrorWithCause.js");
+/* harmony import */ var _uppy_utils_lib_emitSocketProgress__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/utils/lib/emitSocketProgress */ "./node_modules/@uppy/utils/lib/emitSocketProgress.js");
+/* harmony import */ var _uppy_utils_lib_getSocketHost__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/utils/lib/getSocketHost */ "./node_modules/@uppy/utils/lib/getSocketHost.js");
+/* harmony import */ var _uppy_utils_lib_EventManager__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @uppy/utils/lib/EventManager */ "./node_modules/@uppy/utils/lib/EventManager.js");
+/* harmony import */ var _AuthError_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./AuthError.js */ "./node_modules/@uppy/companion-client/lib/AuthError.js");
+/* harmony import */ var _Socket_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Socket.js */ "./node_modules/@uppy/companion-client/lib/Socket.js");
+
+
+let _Symbol$for;
+function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+var id = 0;
+function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
+
+
+
+
+
+
+
+const packageJson = {
+  "version": "3.4.1"
+}; // Remove the trailing slash so we can always safely append /xyz.
+function stripSlash(url) {
+  return url.replace(/\/$/, '');
+}
+async function handleJSONResponse(res) {
+  if (res.status === 401) {
+    throw new _AuthError_js__WEBPACK_IMPORTED_MODULE_5__["default"]();
+  }
+  const jsonPromise = res.json();
+  if (res.ok) {
+    return jsonPromise;
+  }
+  let errMsg = `Failed request with status: ${res.status}. ${res.statusText}`;
+  try {
+    const errData = await jsonPromise;
+    errMsg = errData.message ? `${errMsg} message: ${errData.message}` : errMsg;
+    errMsg = errData.requestId ? `${errMsg} request-Id: ${errData.requestId}` : errMsg;
+  } catch {
+    /* if the response contains invalid JSON, let's ignore the error */
+  }
+  throw new Error(errMsg);
+}
+
+// todo pull out into core instead?
+const allowedHeadersCache = new Map();
+var _companionHeaders = /*#__PURE__*/_classPrivateFieldLooseKey("companionHeaders");
+var _getUrl = /*#__PURE__*/_classPrivateFieldLooseKey("getUrl");
+var _requestSocketToken = /*#__PURE__*/_classPrivateFieldLooseKey("requestSocketToken");
+_Symbol$for = Symbol.for('uppy test: getCompanionHeaders');
+class RequestClient {
+  constructor(uppy, opts, getQueue) {
+    Object.defineProperty(this, _getUrl, {
+      value: _getUrl2
+    });
+    Object.defineProperty(this, _companionHeaders, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _requestSocketToken, {
+      writable: true,
+      value: async (file, postBody) => {
+        if (file.remote.url == null) {
+          throw new Error('Cannot connect to an undefined URL');
+        }
+        const res = await this.post(file.remote.url, {
+          ...file.remote.body,
+          ...postBody
+        });
+        return res.token;
+      }
+    });
+    this.uppy = uppy;
+    this.opts = opts;
+    this.getQueue = getQueue;
+    this.onReceiveResponse = this.onReceiveResponse.bind(this);
+    _classPrivateFieldLooseBase(this, _companionHeaders)[_companionHeaders] = opts == null ? void 0 : opts.companionHeaders;
+  }
+  setCompanionHeaders(headers) {
+    _classPrivateFieldLooseBase(this, _companionHeaders)[_companionHeaders] = headers;
+  }
+  [_Symbol$for]() {
+    return _classPrivateFieldLooseBase(this, _companionHeaders)[_companionHeaders];
+  }
+  get hostname() {
+    const {
+      companion
+    } = this.uppy.getState();
+    const host = this.opts.companionUrl;
+    return stripSlash(companion && companion[host] ? companion[host] : host);
+  }
+  async headers() {
+    const defaultHeaders = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'Uppy-Versions': `@uppy/companion-client=${RequestClient.VERSION}`
+    };
+    return {
+      ...defaultHeaders,
+      ..._classPrivateFieldLooseBase(this, _companionHeaders)[_companionHeaders]
+    };
+  }
+  onReceiveResponse(_ref) {
+    let {
+      headers
+    } = _ref;
+    const state = this.uppy.getState();
+    const companion = state.companion || {};
+    const host = this.opts.companionUrl;
+
+    // Store the self-identified domain name for the Companion instance we just hit.
+    if (headers.has('i-am') && headers.get('i-am') !== companion[host]) {
+      this.uppy.setState({
+        companion: {
+          ...companion,
+          [host]: headers.get('i-am')
+        }
+      });
+    }
+  }
+  /*
+    Preflight was added to avoid breaking change between older Companion-client versions and
+    newer Companion versions and vice-versa. Usually the break will manifest via CORS errors because a
+    version of companion-client could be sending certain headers to a version of Companion server that
+    does not support those headers. In which case, the default preflight would lead to CORS.
+    So to avoid those errors, we do preflight ourselves, to see what headers the Companion server
+    we are communicating with allows. And based on that, companion-client knows what headers to
+    send and what headers to not send.
+     The preflight only happens once throughout the life-cycle of a certain
+    Companion-client <-> Companion-server pair (allowedHeadersCache).
+    Subsequent requests use the cached result of the preflight.
+    However if there is an error retrieving the allowed headers, we will try again next time
+  */
+  async preflight(path) {
+    const allowedHeadersCached = allowedHeadersCache.get(this.hostname);
+    if (allowedHeadersCached != null) return allowedHeadersCached;
+    const fallbackAllowedHeaders = ['accept', 'content-type', 'uppy-auth-token'];
+    const promise = (async () => {
+      try {
+        const response = await fetch(_classPrivateFieldLooseBase(this, _getUrl)[_getUrl](path), {
+          method: 'OPTIONS'
+        });
+        const header = response.headers.get('access-control-allow-headers');
+        if (header == null || header === '*') {
+          allowedHeadersCache.set(this.hostname, fallbackAllowedHeaders);
+          return fallbackAllowedHeaders;
+        }
+        this.uppy.log(`[CompanionClient] adding allowed preflight headers to companion cache: ${this.hostname} ${header}`);
+        const allowedHeaders = header.split(',').map(headerName => headerName.trim().toLowerCase());
+        allowedHeadersCache.set(this.hostname, allowedHeaders);
+        return allowedHeaders;
+      } catch (err) {
+        this.uppy.log(`[CompanionClient] unable to make preflight request ${err}`, 'warning');
+        // If the user gets a network error or similar, we should try preflight
+        // again next time, or else we might get incorrect behaviour.
+        allowedHeadersCache.delete(this.hostname); // re-fetch next time
+        return fallbackAllowedHeaders;
+      }
+    })();
+    allowedHeadersCache.set(this.hostname, promise);
+    return promise;
+  }
+  async preflightAndHeaders(path) {
+    const [allowedHeaders, headers] = await Promise.all([this.preflight(path), this.headers()]);
+    // filter to keep only allowed Headers
+    return Object.fromEntries(Object.entries(headers).filter(_ref2 => {
+      let [header] = _ref2;
+      if (!allowedHeaders.includes(header.toLowerCase())) {
+        this.uppy.log(`[CompanionClient] excluding disallowed header ${header}`);
+        return false;
+      }
+      return true;
+    }));
+  }
+
+  /** @protected */
+  async request(_ref3) {
+    let {
+      path,
+      method = 'GET',
+      data,
+      skipPostResponse,
+      signal
+    } = _ref3;
+    try {
+      const headers = await this.preflightAndHeaders(path);
+      const response = await (0,_uppy_utils_lib_fetchWithNetworkError__WEBPACK_IMPORTED_MODULE_0__["default"])(_classPrivateFieldLooseBase(this, _getUrl)[_getUrl](path), {
+        method,
+        signal,
+        headers,
+        credentials: this.opts.companionCookiesRule || 'same-origin',
+        body: data ? JSON.stringify(data) : null
+      });
+      if (!skipPostResponse) this.onReceiveResponse(response);
+      return handleJSONResponse(response);
+    } catch (err) {
+      if (err != null && err.isAuthError) throw err;
+      throw new _uppy_utils_lib_ErrorWithCause__WEBPACK_IMPORTED_MODULE_1__["default"](`Could not ${method} ${_classPrivateFieldLooseBase(this, _getUrl)[_getUrl](path)}`, {
+        cause: err
+      });
+    }
+  }
+  async get(path, options) {
+    if (options === void 0) {
+      options = undefined;
+    }
+    // TODO: remove boolean support for options that was added for backward compatibility.
+    // eslint-disable-next-line no-param-reassign
+    if (typeof options === 'boolean') options = {
+      skipPostResponse: options
+    };
+    return this.request({
+      ...options,
+      path
+    });
+  }
+  async post(path, data, options) {
+    if (options === void 0) {
+      options = undefined;
+    }
+    // TODO: remove boolean support for options that was added for backward compatibility.
+    // eslint-disable-next-line no-param-reassign
+    if (typeof options === 'boolean') options = {
+      skipPostResponse: options
+    };
+    return this.request({
+      ...options,
+      path,
+      method: 'POST',
+      data
+    });
+  }
+  async delete(path, data, options) {
+    if (data === void 0) {
+      data = undefined;
+    }
+    // TODO: remove boolean support for options that was added for backward compatibility.
+    // eslint-disable-next-line no-param-reassign
+    if (typeof options === 'boolean') options = {
+      skipPostResponse: options
+    };
+    return this.request({
+      ...options,
+      path,
+      method: 'DELETE',
+      data
+    });
+  }
+  async uploadRemoteFile(file, reqBody, options) {
+    if (options === void 0) {
+      options = {};
+    }
+    try {
+      if (file.serverToken) {
+        return await this.connectToServerSocket(file, this.getQueue());
+      }
+      const queueRequestSocketToken = this.getQueue().wrapPromiseFunction(_classPrivateFieldLooseBase(this, _requestSocketToken)[_requestSocketToken], {
+        priority: -1
+      });
+      const serverToken = await queueRequestSocketToken(file, reqBody).abortOn(options.signal);
+      if (!this.uppy.getState().files[file.id]) return undefined;
+      this.uppy.setFileState(file.id, {
+        serverToken
+      });
+      return await this.connectToServerSocket(this.uppy.getFile(file.id), this.getQueue());
+    } catch (err) {
+      var _err$cause;
+      if ((err == null || (_err$cause = err.cause) == null ? void 0 : _err$cause.name) === 'AbortError') {
+        // The file upload was aborted, it’s not an error
+        return undefined;
+      }
+      this.uppy.setFileState(file.id, {
+        serverToken: undefined
+      });
+      this.uppy.emit('upload-error', file, err);
+      throw err;
+    }
+  }
+  /**
+   * @param {UppyFile} file
+   */
+  async connectToServerSocket(file, queue) {
+    return new Promise((resolve, reject) => {
+      const token = file.serverToken;
+      const host = (0,_uppy_utils_lib_getSocketHost__WEBPACK_IMPORTED_MODULE_3__["default"])(file.remote.companionUrl);
+      const socket = new _Socket_js__WEBPACK_IMPORTED_MODULE_6__["default"]({
+        target: `${host}/api/${token}`,
+        autoOpen: false
+      });
+      const eventManager = new _uppy_utils_lib_EventManager__WEBPACK_IMPORTED_MODULE_4__["default"](this.uppy);
+      let queuedRequest;
+      eventManager.onFileRemove(file.id, () => {
+        socket.send('cancel', {});
+        queuedRequest.abort();
+        resolve(`upload ${file.id} was removed`);
+      });
+      eventManager.onPause(file.id, isPaused => {
+        if (isPaused) {
+          // Remove this file from the queue so another file can start in its place.
+          socket.send('pause', {});
+          queuedRequest.abort();
+        } else {
+          // Resuming an upload should be queued, else you could pause and then
+          // resume a queued upload to make it skip the queue.
+          queuedRequest.abort();
+          queuedRequest = queue.run(() => {
+            socket.open();
+            socket.send('resume', {});
+            return () => {};
+          });
+        }
+      });
+      eventManager.onPauseAll(file.id, () => {
+        socket.send('pause', {});
+        queuedRequest.abort();
+      });
+      eventManager.onCancelAll(file.id, function (_temp) {
+        let {
+          reason
+        } = _temp === void 0 ? {} : _temp;
+        if (reason === 'user') {
+          socket.send('cancel', {});
+          queuedRequest.abort();
+        }
+        resolve(`upload ${file.id} was canceled`);
+      });
+      eventManager.onResumeAll(file.id, () => {
+        queuedRequest.abort();
+        if (file.error) {
+          socket.send('pause', {});
+        }
+        queuedRequest = queue.run(() => {
+          socket.open();
+          socket.send('resume', {});
+          return () => {};
+        });
+      });
+      eventManager.onRetry(file.id, () => {
+        // Only do the retry if the upload is actually in progress;
+        // else we could try to send these messages when the upload is still queued.
+        // We may need a better check for this since the socket may also be closed
+        // for other reasons, like network failures.
+        if (socket.isOpen) {
+          socket.send('pause', {});
+          socket.send('resume', {});
+        }
+      });
+      eventManager.onRetryAll(file.id, () => {
+        // See the comment in the onRetry() call
+        if (socket.isOpen) {
+          socket.send('pause', {});
+          socket.send('resume', {});
+        }
+      });
+      socket.on('progress', progressData => (0,_uppy_utils_lib_emitSocketProgress__WEBPACK_IMPORTED_MODULE_2__["default"])(this, progressData, file));
+      socket.on('error', errData => {
+        const {
+          message
+        } = errData.error;
+        const error = Object.assign(new Error(message), {
+          cause: errData.error
+        });
+
+        // If the remote retry optimisation should not be used,
+        // close the socket—this will tell companion to clear state and delete the file.
+        if (!this.opts.useFastRemoteRetry) {
+          // Remove the serverToken so that a new one will be created for the retry.
+          this.uppy.setFileState(file.id, {
+            serverToken: null
+          });
+        } else {
+          socket.close();
+        }
+        this.uppy.emit('upload-error', file, error);
+        queuedRequest.done();
+        reject(error);
+      });
+      socket.on('success', data => {
+        const uploadResp = {
+          uploadURL: data.url
+        };
+        this.uppy.emit('upload-success', file, uploadResp);
+        queuedRequest.done();
+        socket.close();
+        resolve();
+      });
+      queuedRequest = queue.run(() => {
+        if (file.isPaused) {
+          socket.send('pause', {});
+        } else {
+          socket.open();
+        }
+        return () => {};
+      });
+    });
+  }
+}
+function _getUrl2(url) {
+  if (/^(https?:|)\/\//.test(url)) {
+    return url;
+  }
+  return `${this.hostname}/${url}`;
+}
+RequestClient.VERSION = packageJson.version;
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/companion-client/lib/SearchProvider.js":
+/*!*******************************************************************!*\
+  !*** ./node_modules/@uppy/companion-client/lib/SearchProvider.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ SearchProvider)
+/* harmony export */ });
+/* harmony import */ var _RequestClient_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./RequestClient.js */ "./node_modules/@uppy/companion-client/lib/RequestClient.js");
+
+
+
+const getName = id => {
+  return id.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+};
+class SearchProvider extends _RequestClient_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
+  constructor(uppy, opts) {
+    super(uppy, opts);
+    this.provider = opts.provider;
+    this.id = this.provider;
+    this.name = this.opts.name || getName(this.id);
+    this.pluginId = this.opts.pluginId;
+  }
+  fileUrl(id) {
+    return `${this.hostname}/search/${this.id}/get/${id}`;
+  }
+  search(text, queries) {
+    return this.get(`search/${this.id}/list?q=${encodeURIComponent(text)}${queries ? `&${queries}` : ''}`);
+  }
+}
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/companion-client/lib/Socket.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/@uppy/companion-client/lib/Socket.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ UppySocket)
+/* harmony export */ });
+/* harmony import */ var namespace_emitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! namespace-emitter */ "./node_modules/namespace-emitter/index.js");
+let _Symbol$for, _Symbol$for2;
+function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+var id = 0;
+function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
+
+var _queued = /*#__PURE__*/_classPrivateFieldLooseKey("queued");
+var _emitter = /*#__PURE__*/_classPrivateFieldLooseKey("emitter");
+var _isOpen = /*#__PURE__*/_classPrivateFieldLooseKey("isOpen");
+var _socket = /*#__PURE__*/_classPrivateFieldLooseKey("socket");
+var _handleMessage = /*#__PURE__*/_classPrivateFieldLooseKey("handleMessage");
+_Symbol$for = Symbol.for('uppy test: getSocket');
+_Symbol$for2 = Symbol.for('uppy test: getQueued');
+class UppySocket {
+  constructor(opts) {
+    Object.defineProperty(this, _queued, {
+      writable: true,
+      value: []
+    });
+    Object.defineProperty(this, _emitter, {
+      writable: true,
+      value: namespace_emitter__WEBPACK_IMPORTED_MODULE_0__()
+    });
+    Object.defineProperty(this, _isOpen, {
+      writable: true,
+      value: false
+    });
+    Object.defineProperty(this, _socket, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _handleMessage, {
+      writable: true,
+      value: e => {
+        try {
+          const message = JSON.parse(e.data);
+          this.emit(message.action, message.payload);
+        } catch (err) {
+          // TODO: use a more robust error handler.
+          console.log(err); // eslint-disable-line no-console
+        }
+      }
+    });
+    this.opts = opts;
+    if (!opts || opts.autoOpen !== false) {
+      this.open();
+    }
+  }
+  get isOpen() {
+    return _classPrivateFieldLooseBase(this, _isOpen)[_isOpen];
+  }
+  [_Symbol$for]() {
+    return _classPrivateFieldLooseBase(this, _socket)[_socket];
+  }
+  [_Symbol$for2]() {
+    return _classPrivateFieldLooseBase(this, _queued)[_queued];
+  }
+  open() {
+    if (_classPrivateFieldLooseBase(this, _socket)[_socket] != null) return;
+    _classPrivateFieldLooseBase(this, _socket)[_socket] = new WebSocket(this.opts.target);
+    _classPrivateFieldLooseBase(this, _socket)[_socket].onopen = () => {
+      _classPrivateFieldLooseBase(this, _isOpen)[_isOpen] = true;
+      while (_classPrivateFieldLooseBase(this, _queued)[_queued].length > 0 && _classPrivateFieldLooseBase(this, _isOpen)[_isOpen]) {
+        const first = _classPrivateFieldLooseBase(this, _queued)[_queued].shift();
+        this.send(first.action, first.payload);
+      }
+    };
+    _classPrivateFieldLooseBase(this, _socket)[_socket].onclose = () => {
+      _classPrivateFieldLooseBase(this, _isOpen)[_isOpen] = false;
+      _classPrivateFieldLooseBase(this, _socket)[_socket] = null;
+    };
+    _classPrivateFieldLooseBase(this, _socket)[_socket].onmessage = _classPrivateFieldLooseBase(this, _handleMessage)[_handleMessage];
+  }
+  close() {
+    var _classPrivateFieldLoo;
+    (_classPrivateFieldLoo = _classPrivateFieldLooseBase(this, _socket)[_socket]) == null ? void 0 : _classPrivateFieldLoo.close();
+  }
+  send(action, payload) {
+    // attach uuid
+
+    if (!_classPrivateFieldLooseBase(this, _isOpen)[_isOpen]) {
+      _classPrivateFieldLooseBase(this, _queued)[_queued].push({
+        action,
+        payload
+      });
+      return;
+    }
+    _classPrivateFieldLooseBase(this, _socket)[_socket].send(JSON.stringify({
+      action,
+      payload
+    }));
+  }
+  on(action, handler) {
+    _classPrivateFieldLooseBase(this, _emitter)[_emitter].on(action, handler);
+  }
+  emit(action, payload) {
+    _classPrivateFieldLooseBase(this, _emitter)[_emitter].emit(action, payload);
+  }
+  once(action, handler) {
+    _classPrivateFieldLooseBase(this, _emitter)[_emitter].once(action, handler);
+  }
+}
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/companion-client/lib/index.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/@uppy/companion-client/lib/index.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Provider: () => (/* reexport safe */ _Provider_js__WEBPACK_IMPORTED_MODULE_1__["default"]),
+/* harmony export */   RequestClient: () => (/* reexport safe */ _RequestClient_js__WEBPACK_IMPORTED_MODULE_0__["default"]),
+/* harmony export */   SearchProvider: () => (/* reexport safe */ _SearchProvider_js__WEBPACK_IMPORTED_MODULE_2__["default"]),
+/* harmony export */   Socket: () => (/* reexport safe */ _Socket_js__WEBPACK_IMPORTED_MODULE_3__["default"])
+/* harmony export */ });
+/* harmony import */ var _RequestClient_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./RequestClient.js */ "./node_modules/@uppy/companion-client/lib/RequestClient.js");
+/* harmony import */ var _Provider_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Provider.js */ "./node_modules/@uppy/companion-client/lib/Provider.js");
+/* harmony import */ var _SearchProvider_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./SearchProvider.js */ "./node_modules/@uppy/companion-client/lib/SearchProvider.js");
+/* harmony import */ var _Socket_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Socket.js */ "./node_modules/@uppy/companion-client/lib/Socket.js");
 
 
 /**
-  # wildcard
+ * Manages communications with Companion
+ */
 
-  Very simple wildcard matching, which is designed to provide the same
-  functionality that is found in the
-  [eve](https://github.com/adobe-webplatform/eve) eventing library.
 
-  ## Usage
 
-  It works with strings:
 
-  <<< examples/strings.js
 
-  Arrays:
+/***/ }),
 
-  <<< examples/arrays.js
+/***/ "./node_modules/@uppy/companion-client/lib/tokenStorage.js":
+/*!*****************************************************************!*\
+  !*** ./node_modules/@uppy/companion-client/lib/tokenStorage.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
-  Objects (matching against keys):
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getItem: () => (/* binding */ getItem),
+/* harmony export */   removeItem: () => (/* binding */ removeItem),
+/* harmony export */   setItem: () => (/* binding */ setItem)
+/* harmony export */ });
 
-  <<< examples/objects.js
 
-  While the library works in Node, if you are are looking for file-based
-  wildcard matching then you should have a look at:
-
-  <https://github.com/isaacs/node-glob>
-**/
-
-function WildcardMatcher(text, separator) {
-  this.text = text = text || '';
-  this.hasWild = ~text.indexOf('*');
-  this.separator = separator;
-  this.parts = text.split(separator);
+/**
+ * This module serves as an Async wrapper for LocalStorage
+ */
+function setItem(key, value) {
+  return new Promise(resolve => {
+    localStorage.setItem(key, value);
+    resolve();
+  });
 }
-
-WildcardMatcher.prototype.match = function(input) {
-  var matches = true;
-  var parts = this.parts;
-  var ii;
-  var partsCount = parts.length;
-  var testParts;
-
-  if (typeof input == 'string' || input instanceof String) {
-    if (!this.hasWild && this.text != input) {
-      matches = false;
-    } else {
-      testParts = (input || '').split(this.separator);
-      for (ii = 0; matches && ii < partsCount; ii++) {
-        if (parts[ii] === '*')  {
-          continue;
-        } else if (ii < testParts.length) {
-          matches = parts[ii] === testParts[ii];
-        } else {
-          matches = false;
-        }
-      }
-
-      // If matches, then return the component parts
-      matches = matches && testParts;
-    }
-  }
-  else if (typeof input.splice == 'function') {
-    matches = [];
-
-    for (ii = input.length; ii--; ) {
-      if (this.match(input[ii])) {
-        matches[matches.length] = input[ii];
-      }
-    }
-  }
-  else if (typeof input == 'object') {
-    matches = {};
-
-    for (var key in input) {
-      if (this.match(key)) {
-        matches[key] = input[key];
-      }
-    }
-  }
-
-  return matches;
-};
-
-module.exports = function(text, test, separator) {
-  var matcher = new WildcardMatcher(text, separator || /[\/\.]/);
-  if (typeof test != 'undefined') {
-    return matcher.match(test);
-  }
-
-  return matcher;
-};
-
+function getItem(key) {
+  return Promise.resolve(localStorage.getItem(key));
+}
+function removeItem(key) {
+  return new Promise(resolve => {
+    localStorage.removeItem(key);
+    resolve();
+  });
+}
 
 /***/ }),
 
@@ -16464,17 +17396,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _uppy_utils_lib_Translator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/utils/lib/Translator */ "./node_modules/@uppy/utils/lib/Translator.js");
 /* harmony import */ var namespace_emitter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! namespace-emitter */ "./node_modules/namespace-emitter/index.js");
-/* harmony import */ var nanoid_non_secure__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! nanoid/non-secure */ "./node_modules/@uppy/core/node_modules/nanoid/non-secure/index.js");
+/* harmony import */ var nanoid_non_secure__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! nanoid/non-secure */ "./node_modules/nanoid/non-secure/index.js");
 /* harmony import */ var lodash_throttle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lodash/throttle.js */ "./node_modules/lodash/throttle.js");
 /* harmony import */ var _uppy_store_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/store-default */ "./node_modules/@uppy/store-default/lib/index.js");
 /* harmony import */ var _uppy_utils_lib_getFileType__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @uppy/utils/lib/getFileType */ "./node_modules/@uppy/utils/lib/getFileType.js");
 /* harmony import */ var _uppy_utils_lib_getFileNameAndExtension__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @uppy/utils/lib/getFileNameAndExtension */ "./node_modules/@uppy/utils/lib/getFileNameAndExtension.js");
 /* harmony import */ var _uppy_utils_lib_generateFileID__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @uppy/utils/lib/generateFileID */ "./node_modules/@uppy/utils/lib/generateFileID.js");
-/* harmony import */ var _supportsUploadProgress_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./supportsUploadProgress.js */ "./node_modules/@uppy/core/lib/supportsUploadProgress.js");
-/* harmony import */ var _getFileName_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./getFileName.js */ "./node_modules/@uppy/core/lib/getFileName.js");
+/* harmony import */ var _supportsUploadProgress_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./supportsUploadProgress.js */ "./node_modules/@uppy/core/lib/supportsUploadProgress.js");
+/* harmony import */ var _getFileName_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./getFileName.js */ "./node_modules/@uppy/core/lib/getFileName.js");
 /* harmony import */ var _loggers_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./loggers.js */ "./node_modules/@uppy/core/lib/loggers.js");
-/* harmony import */ var _Restricter_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./Restricter.js */ "./node_modules/@uppy/core/lib/Restricter.js");
-/* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/core/lib/locale.js");
+/* harmony import */ var _Restricter_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./Restricter.js */ "./node_modules/@uppy/core/lib/Restricter.js");
+/* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/core/lib/locale.js");
 let _Symbol$for, _Symbol$for2;
 function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
 var id = 0;
@@ -16495,15 +17427,9 @@ function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + n
 
 
 const packageJson = {
-  "version": "3.7.1"
+  "version": "3.5.1"
 };
 
-const getDefaultUploadState = () => ({
-  totalProgress: 0,
-  allowNewUpload: true,
-  error: null,
-  recoveredState: null
-});
 
 /**
  * Uppy Core module.
@@ -16674,13 +17600,13 @@ class Uppy {
       writable: true,
       value: this.updateOnlineStatus.bind(this)
     });
-    this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_7__["default"];
+    this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_11__["default"];
     const defaultOptions = {
       id: 'uppy',
       autoProceed: false,
       allowMultipleUploadBatches: true,
       debug: false,
-      restrictions: _Restricter_js__WEBPACK_IMPORTED_MODULE_8__.defaultOptions,
+      restrictions: _Restricter_js__WEBPACK_IMPORTED_MODULE_10__.defaultOptions,
       meta: {},
       onBeforeFileAdded: (file, files) => !Object.hasOwn(files, file.id),
       onBeforeUpload: files => files,
@@ -16711,21 +17637,23 @@ class Uppy {
     this.i18nInit();
     this.store = this.opts.store;
     this.setState({
-      ...getDefaultUploadState(),
       plugins: {},
       files: {},
       currentUploads: {},
+      allowNewUpload: true,
       capabilities: {
-        uploadProgress: (0,_supportsUploadProgress_js__WEBPACK_IMPORTED_MODULE_10__["default"])(),
+        uploadProgress: (0,_supportsUploadProgress_js__WEBPACK_IMPORTED_MODULE_7__["default"])(),
         individualCancellation: true,
         resumableUploads: false
       },
+      totalProgress: 0,
       meta: {
         ...this.opts.meta
       },
-      info: []
+      info: [],
+      recoveredState: null
     });
-    _classPrivateFieldLooseBase(this, _restricter)[_restricter] = new _Restricter_js__WEBPACK_IMPORTED_MODULE_8__.Restricter(() => this.opts, this.i18n);
+    _classPrivateFieldLooseBase(this, _restricter)[_restricter] = new _Restricter_js__WEBPACK_IMPORTED_MODULE_10__.Restricter(() => this.opts, this.i18n);
     _classPrivateFieldLooseBase(this, _storeUnsubscribe)[_storeUnsubscribe] = this.store.subscribe((prevState, nextState, patch) => {
       this.emit('state-update', prevState, nextState, patch);
       this.updateAll(nextState);
@@ -16840,7 +17768,6 @@ class Uppy {
     this.setState(); // so that UI re-renders with new options
   }
 
-  // todo next major: rename to something better? (it doesn't just reset progress)
   resetProgress() {
     const defaultProgress = {
       percentage: 0,
@@ -16863,17 +17790,12 @@ class Uppy {
     });
     this.setState({
       files: updatedFiles,
-      ...getDefaultUploadState()
+      totalProgress: 0,
+      allowNewUpload: true,
+      error: null,
+      recoveredState: null
     });
     this.emit('reset-progress');
-  }
-
-  /** @protected */
-  clearUploadedFiles() {
-    this.setState({
-      ...getDefaultUploadState(),
-      files: {}
-    });
   }
   addPreProcessor(fn) {
     _classPrivateFieldLooseBase(this, _preProcessors)[_preProcessors].add(fn);
@@ -17276,11 +18198,13 @@ class Uppy {
       if (fileIDs.length) {
         this.removeFiles(fileIDs, 'cancel-all');
       }
-      this.setState(getDefaultUploadState());
-      // todo should we call this.emit('reset-progress') like we do for resetProgress?
+      this.setState({
+        totalProgress: 0,
+        error: null,
+        recoveredState: null
+      });
     }
   }
-
   retryUpload(fileID) {
     this.setFileState(fileID, {
       error: null,
@@ -17407,7 +18331,6 @@ class Uppy {
       _classPrivateFieldLooseBase(this, _plugins)[_plugins][plugin.type] = [plugin];
     }
     plugin.install();
-    this.emit('plugin-added', plugin);
     return this;
   }
 
@@ -17619,7 +18542,7 @@ class Uppy {
       throw err;
     }).then(() => {
       if (!_classPrivateFieldLooseBase(this, _checkRequiredMetaFields)[_checkRequiredMetaFields](files)) {
-        throw new _Restricter_js__WEBPACK_IMPORTED_MODULE_8__.RestrictionError(this.i18n('missingRequiredMetaField'));
+        throw new _Restricter_js__WEBPACK_IMPORTED_MODULE_10__.RestrictionError(this.i18n('missingRequiredMetaField'));
       }
     }).catch(err => {
       // Doing this in a separate catch because we already emited and logged
@@ -17715,7 +18638,7 @@ function _assertNewUploadAllowed2(file) {
     allowNewUpload
   } = this.getState();
   if (allowNewUpload === false) {
-    const error = new _Restricter_js__WEBPACK_IMPORTED_MODULE_8__.RestrictionError(this.i18n('noMoreFilesAllowed'), {
+    const error = new _Restricter_js__WEBPACK_IMPORTED_MODULE_10__.RestrictionError(this.i18n('noMoreFilesAllowed'), {
       file
     });
     _classPrivateFieldLooseBase(this, _informAndEmit)[_informAndEmit]([error]);
@@ -17733,7 +18656,7 @@ function _transformFile2(fileDescriptorOrFile) {
     data: fileDescriptorOrFile
   } : fileDescriptorOrFile;
   const fileType = (0,_uppy_utils_lib_getFileType__WEBPACK_IMPORTED_MODULE_4__["default"])(fileDescriptor);
-  const fileName = (0,_getFileName_js__WEBPACK_IMPORTED_MODULE_11__["default"])(fileType, fileDescriptor);
+  const fileName = (0,_getFileName_js__WEBPACK_IMPORTED_MODULE_8__["default"])(fileType, fileDescriptor);
   const fileExtension = (0,_uppy_utils_lib_getFileNameAndExtension__WEBPACK_IMPORTED_MODULE_5__["default"])(fileName).extension;
   const isRemote = Boolean(fileDescriptor.isRemote);
   const id = (0,_uppy_utils_lib_generateFileID__WEBPACK_IMPORTED_MODULE_6__.getSafeFileId)(fileDescriptor);
@@ -17812,7 +18735,7 @@ function _checkAndUpdateFileState2(filesToAdd) {
       }
       const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, nextFilesState);
       if (!onBeforeFileAddedResult && this.checkIfFileAlreadyExists(newFile.id)) {
-        throw new _Restricter_js__WEBPACK_IMPORTED_MODULE_8__.RestrictionError(this.i18n('noDuplicates', {
+        throw new _Restricter_js__WEBPACK_IMPORTED_MODULE_10__.RestrictionError(this.i18n('noDuplicates', {
           fileName: newFile.name
         }), {
           file: fileToAdd
@@ -17820,7 +18743,7 @@ function _checkAndUpdateFileState2(filesToAdd) {
       }
       if (onBeforeFileAddedResult === false) {
         // Don’t show UI info for this error, as it should be done by the developer
-        throw new _Restricter_js__WEBPACK_IMPORTED_MODULE_8__.RestrictionError('Cannot add the file because onBeforeFileAdded returned false.', {
+        throw new _Restricter_js__WEBPACK_IMPORTED_MODULE_10__.RestrictionError('Cannot add the file because onBeforeFileAdded returned false.', {
           isUserFacing: false,
           file: fileToAdd
         });
@@ -18212,6 +19135,33 @@ function getFileName(fileType, fileDescriptor) {
 
 /***/ }),
 
+/***/ "./node_modules/@uppy/core/lib/index.js":
+/*!**********************************************!*\
+  !*** ./node_modules/@uppy/core/lib/index.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BasePlugin: () => (/* reexport safe */ _BasePlugin_js__WEBPACK_IMPORTED_MODULE_2__["default"]),
+/* harmony export */   UIPlugin: () => (/* reexport safe */ _UIPlugin_js__WEBPACK_IMPORTED_MODULE_1__["default"]),
+/* harmony export */   Uppy: () => (/* reexport safe */ _Uppy_js__WEBPACK_IMPORTED_MODULE_0__["default"]),
+/* harmony export */   debugLogger: () => (/* reexport safe */ _loggers_js__WEBPACK_IMPORTED_MODULE_3__.debugLogger),
+/* harmony export */   "default": () => (/* reexport safe */ _Uppy_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _Uppy_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Uppy.js */ "./node_modules/@uppy/core/lib/Uppy.js");
+/* harmony import */ var _UIPlugin_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./UIPlugin.js */ "./node_modules/@uppy/core/lib/UIPlugin.js");
+/* harmony import */ var _BasePlugin_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./BasePlugin.js */ "./node_modules/@uppy/core/lib/BasePlugin.js");
+/* harmony import */ var _loggers_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./loggers.js */ "./node_modules/@uppy/core/lib/loggers.js");
+
+
+
+
+
+
+/***/ }),
+
 /***/ "./node_modules/@uppy/core/lib/locale.js":
 /*!***********************************************!*\
   !*** ./node_modules/@uppy/core/lib/locale.js ***!
@@ -18388,42 +19338,6 @@ function supportsUploadProgress(userAgent) {
 
 /***/ }),
 
-/***/ "./node_modules/@uppy/core/node_modules/nanoid/non-secure/index.js":
-/*!*************************************************************************!*\
-  !*** ./node_modules/@uppy/core/node_modules/nanoid/non-secure/index.js ***!
-  \*************************************************************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   customAlphabet: () => (/* binding */ customAlphabet),
-/* harmony export */   nanoid: () => (/* binding */ nanoid)
-/* harmony export */ });
-let urlAlphabet =
-  'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
-let customAlphabet = (alphabet, defaultSize = 21) => {
-  return (size = defaultSize) => {
-    let id = ''
-    let i = size
-    while (i--) {
-      id += alphabet[(Math.random() * alphabet.length) | 0]
-    }
-    return id
-  }
-}
-let nanoid = (size = 21) => {
-  let id = ''
-  let i = size
-  while (i--) {
-    id += urlAlphabet[(Math.random() * 64) | 0]
-  }
-  return id
-}
-
-
-/***/ }),
-
 /***/ "./node_modules/@uppy/dashboard/lib/Dashboard.js":
 /*!*******************************************************!*\
   !*** ./node_modules/@uppy/dashboard/lib/Dashboard.js ***!
@@ -18435,20 +19349,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Dashboard)
 /* harmony export */ });
-/* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/UIPlugin.js");
-/* harmony import */ var _uppy_status_bar__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/status-bar */ "./node_modules/@uppy/status-bar/lib/index.js");
-/* harmony import */ var _uppy_informer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/informer */ "./node_modules/@uppy/informer/lib/index.js");
-/* harmony import */ var _uppy_thumbnail_generator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/thumbnail-generator */ "./node_modules/@uppy/thumbnail-generator/lib/index.js");
-/* harmony import */ var _uppy_utils_lib_findAllDOMElements__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/utils/lib/findAllDOMElements */ "./node_modules/@uppy/utils/lib/findAllDOMElements.js");
-/* harmony import */ var _uppy_utils_lib_toArray__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @uppy/utils/lib/toArray */ "./node_modules/@uppy/utils/lib/toArray.js");
-/* harmony import */ var _uppy_utils_lib_getDroppedFiles__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @uppy/utils/lib/getDroppedFiles */ "./node_modules/@uppy/utils/lib/getDroppedFiles/index.js");
-/* harmony import */ var _uppy_provider_views__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @uppy/provider-views */ "./node_modules/@uppy/provider-views/lib/index.js");
-/* harmony import */ var nanoid_non_secure__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! nanoid/non-secure */ "./node_modules/@uppy/dashboard/node_modules/nanoid/non-secure/index.js");
-/* harmony import */ var memoize_one__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! memoize-one */ "./node_modules/memoize-one/dist/memoize-one.esm.js");
-/* harmony import */ var _utils_trapFocus_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./utils/trapFocus.js */ "./node_modules/@uppy/dashboard/lib/utils/trapFocus.js");
-/* harmony import */ var _utils_createSuperFocus_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./utils/createSuperFocus.js */ "./node_modules/@uppy/dashboard/lib/utils/createSuperFocus.js");
-/* harmony import */ var _components_Dashboard_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/Dashboard.js */ "./node_modules/@uppy/dashboard/lib/components/Dashboard.js");
-/* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/dashboard/lib/locale.js");
+/* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/index.js");
+/* harmony import */ var _uppy_status_bar__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/status-bar */ "./node_modules/@uppy/status-bar/lib/index.js");
+/* harmony import */ var _uppy_informer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/informer */ "./node_modules/@uppy/informer/lib/index.js");
+/* harmony import */ var _uppy_thumbnail_generator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/thumbnail-generator */ "./node_modules/@uppy/thumbnail-generator/lib/index.js");
+/* harmony import */ var _uppy_utils_lib_findAllDOMElements__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @uppy/utils/lib/findAllDOMElements */ "./node_modules/@uppy/utils/lib/findAllDOMElements.js");
+/* harmony import */ var _uppy_utils_lib_toArray__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @uppy/utils/lib/toArray */ "./node_modules/@uppy/utils/lib/toArray.js");
+/* harmony import */ var _uppy_utils_lib_getDroppedFiles__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @uppy/utils/lib/getDroppedFiles */ "./node_modules/@uppy/utils/lib/getDroppedFiles/index.js");
+/* harmony import */ var _uppy_provider_views__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @uppy/provider-views */ "./node_modules/@uppy/provider-views/lib/index.js");
+/* harmony import */ var nanoid_non_secure__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! nanoid/non-secure */ "./node_modules/nanoid/non-secure/index.js");
+/* harmony import */ var memoize_one__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! memoize-one */ "./node_modules/memoize-one/dist/memoize-one.esm.js");
+/* harmony import */ var _utils_trapFocus_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./utils/trapFocus.js */ "./node_modules/@uppy/dashboard/lib/utils/trapFocus.js");
+/* harmony import */ var _utils_createSuperFocus_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./utils/createSuperFocus.js */ "./node_modules/@uppy/dashboard/lib/utils/createSuperFocus.js");
+/* harmony import */ var _components_Dashboard_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/Dashboard.js */ "./node_modules/@uppy/dashboard/lib/components/Dashboard.js");
+/* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/dashboard/lib/locale.js");
 function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
 var id = 0;
 function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
@@ -18466,10 +19380,10 @@ function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + n
 
 
 const packageJson = {
-  "version": "3.7.1"
+  "version": "3.5.4"
 };
 
-const memoize = memoize_one__WEBPACK_IMPORTED_MODULE_11__["default"]["default"] || memoize_one__WEBPACK_IMPORTED_MODULE_11__["default"];
+const memoize = memoize_one__WEBPACK_IMPORTED_MODULE_12__["default"]["default"] || memoize_one__WEBPACK_IMPORTED_MODULE_12__["default"];
 const TAB_KEY = 9;
 const ESC_KEY = 27;
 function createPromise() {
@@ -18492,10 +19406,7 @@ var _isTargetSupported = /*#__PURE__*/_classPrivateFieldLooseKey("isTargetSuppor
 var _getAcquirers = /*#__PURE__*/_classPrivateFieldLooseKey("getAcquirers");
 var _getProgressIndicators = /*#__PURE__*/_classPrivateFieldLooseKey("getProgressIndicators");
 var _getEditors = /*#__PURE__*/_classPrivateFieldLooseKey("getEditors");
-var _addSpecifiedPluginsFromOptions = /*#__PURE__*/_classPrivateFieldLooseKey("addSpecifiedPluginsFromOptions");
-var _autoDiscoverPlugins = /*#__PURE__*/_classPrivateFieldLooseKey("autoDiscoverPlugins");
-var _addSupportedPluginIfNoTarget = /*#__PURE__*/_classPrivateFieldLooseKey("addSupportedPluginIfNoTarget");
-class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
+class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
   constructor(uppy, _opts) {
     var _this;
     super(uppy, _opts);
@@ -18817,7 +19728,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
     this.disableInteractiveElements = disable => {
       var _classPrivateFieldLoo;
       const NODES_TO_DISABLE = ['a[href]', 'input:not([disabled])', 'select:not([disabled])', 'textarea:not([disabled])', 'button:not([disabled])', '[role="button"]:not([disabled])'];
-      const nodesToDisable = (_classPrivateFieldLoo = _classPrivateFieldLooseBase(this, _disabledNodes)[_disabledNodes]) != null ? _classPrivateFieldLoo : (0,_uppy_utils_lib_toArray__WEBPACK_IMPORTED_MODULE_4__["default"])(this.el.querySelectorAll(NODES_TO_DISABLE)).filter(node => !node.classList.contains('uppy-Dashboard-close'));
+      const nodesToDisable = (_classPrivateFieldLoo = _classPrivateFieldLooseBase(this, _disabledNodes)[_disabledNodes]) != null ? _classPrivateFieldLoo : (0,_uppy_utils_lib_toArray__WEBPACK_IMPORTED_MODULE_5__["default"])(this.el.querySelectorAll(NODES_TO_DISABLE)).filter(node => !node.classList.contains('uppy-Dashboard-close'));
       for (const node of nodesToDisable) {
         // Links can’t have `disabled` attr, so we use `aria-disabled` for a11y
         if (node.tagName === 'A') {
@@ -18874,7 +19785,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
       // close modal on esc key press
       if (event.keyCode === ESC_KEY) this.requestCloseModal(event);
       // trap focus on tab key press
-      if (event.keyCode === TAB_KEY) _utils_trapFocus_js__WEBPACK_IMPORTED_MODULE_7__.forModal(event, this.getPluginState().activeOverlayType, this.el);
+      if (event.keyCode === TAB_KEY) _utils_trapFocus_js__WEBPACK_IMPORTED_MODULE_8__.forModal(event, this.getPluginState().activeOverlayType, this.el);
     };
     this.handleClickOutside = () => {
       if (this.opts.closeModalOnClickOutside) this.requestCloseModal();
@@ -18889,7 +19800,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
       });
 
       // Add all dropped files
-      const files = (0,_uppy_utils_lib_toArray__WEBPACK_IMPORTED_MODULE_4__["default"])(event.clipboardData.files);
+      const files = (0,_uppy_utils_lib_toArray__WEBPACK_IMPORTED_MODULE_5__["default"])(event.clipboardData.files);
       if (files.length > 0) {
         this.uppy.log('[Dashboard] Files pasted');
         this.addFiles(files);
@@ -18897,7 +19808,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
     };
     this.handleInputChange = event => {
       event.preventDefault();
-      const files = (0,_uppy_utils_lib_toArray__WEBPACK_IMPORTED_MODULE_4__["default"])(event.target.files);
+      const files = (0,_uppy_utils_lib_toArray__WEBPACK_IMPORTED_MODULE_5__["default"])(event.target.files);
       if (files.length > 0) {
         this.uppy.log('[Dashboard] Files selected through input');
         this.addFiles(files);
@@ -18998,7 +19909,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
       this.uppy.log('[Dashboard] Processing dropped files');
 
       // Add all dropped files
-      const files = await (0,_uppy_utils_lib_getDroppedFiles__WEBPACK_IMPORTED_MODULE_5__["default"])(event.dataTransfer, {
+      const files = await (0,_uppy_utils_lib_getDroppedFiles__WEBPACK_IMPORTED_MODULE_6__["default"])(event.dataTransfer, {
         logDropError
       });
       if (files.length > 0) {
@@ -19023,7 +19934,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
     };
     this.handleKeyDownInInline = event => {
       // Trap focus on tab key press.
-      if (event.keyCode === TAB_KEY) _utils_trapFocus_js__WEBPACK_IMPORTED_MODULE_7__.forInline(event, this.getPluginState().activeOverlayType, this.el);
+      if (event.keyCode === TAB_KEY) _utils_trapFocus_js__WEBPACK_IMPORTED_MODULE_8__.forInline(event, this.getPluginState().activeOverlayType, this.el);
     };
     // ___Why do we listen to the 'paste' event on a document instead of onPaste={props.handlePaste} prop,
     //    or this.el.addEventListener('paste')?
@@ -19089,7 +20000,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
     this.initEvents = () => {
       // Modal open button
       if (this.opts.trigger && !this.opts.inline) {
-        const showModalTrigger = (0,_uppy_utils_lib_findAllDOMElements__WEBPACK_IMPORTED_MODULE_3__["default"])(this.opts.trigger);
+        const showModalTrigger = (0,_uppy_utils_lib_findAllDOMElements__WEBPACK_IMPORTED_MODULE_4__["default"])(this.opts.trigger);
         if (showModalTrigger) {
           showModalTrigger.forEach(trigger => trigger.addEventListener('click', this.openModal));
         } else {
@@ -19098,7 +20009,6 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
       }
       this.startListeningToResize();
       document.addEventListener('paste', this.handlePasteOnBody);
-      this.uppy.on('plugin-added', _classPrivateFieldLooseBase(this, _addSupportedPluginIfNoTarget)[_addSupportedPluginIfNoTarget]);
       this.uppy.on('plugin-remove', this.removeTarget);
       this.uppy.on('file-added', this.hideAllPanels);
       this.uppy.on('dashboard:modal-closed', this.hideAllPanels);
@@ -19119,14 +20029,13 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
       }
     };
     this.removeEvents = () => {
-      const showModalTrigger = (0,_uppy_utils_lib_findAllDOMElements__WEBPACK_IMPORTED_MODULE_3__["default"])(this.opts.trigger);
+      const showModalTrigger = (0,_uppy_utils_lib_findAllDOMElements__WEBPACK_IMPORTED_MODULE_4__["default"])(this.opts.trigger);
       if (!this.opts.inline && showModalTrigger) {
         showModalTrigger.forEach(trigger => trigger.removeEventListener('click', this.openModal));
       }
       this.stopListeningToResize();
       document.removeEventListener('paste', this.handlePasteOnBody);
       window.removeEventListener('popstate', this.handlePopState, false);
-      this.uppy.off('plugin-added', _classPrivateFieldLooseBase(this, _addSupportedPluginIfNoTarget)[_addSupportedPluginIfNoTarget]);
       this.uppy.off('plugin-remove', this.removeTarget);
       this.uppy.off('file-added', this.hideAllPanels);
       this.uppy.off('dashboard:modal-closed', this.hideAllPanels);
@@ -19260,7 +20169,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
         // eslint-disable-next-line no-console
         console.warn(`Unsupported option for "fileManagerSelectionType". Using default of "${this.opts.fileManagerSelectionType}".`);
       }
-      return (0,_components_Dashboard_js__WEBPACK_IMPORTED_MODULE_9__["default"])({
+      return (0,_components_Dashboard_js__WEBPACK_IMPORTED_MODULE_10__["default"])({
         state,
         isHidden: pluginState.isHidden,
         files,
@@ -19348,41 +20257,13 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
         handleDrop: this.handleDrop
       });
     };
-    Object.defineProperty(this, _addSpecifiedPluginsFromOptions, {
-      writable: true,
-      value: () => {
-        const plugins = this.opts.plugins || [];
-        plugins.forEach(pluginID => {
-          const plugin = this.uppy.getPlugin(pluginID);
-          if (plugin) {
-            plugin.mount(this, plugin);
-          } else {
-            this.uppy.log(`[Uppy] Dashboard could not find plugin '${pluginID}', make sure to uppy.use() the plugins you are specifying`, 'warning');
-          }
-        });
-      }
-    });
-    Object.defineProperty(this, _autoDiscoverPlugins, {
-      writable: true,
-      value: () => {
-        this.uppy.iteratePlugins(_classPrivateFieldLooseBase(this, _addSupportedPluginIfNoTarget)[_addSupportedPluginIfNoTarget]);
-      }
-    });
-    Object.defineProperty(this, _addSupportedPluginIfNoTarget, {
-      writable: true,
-      value: plugin => {
-        var _plugin$opts;
-        // Only these types belong on the Dashboard,
-        // we wouldn’t want to try and mount Compressor or Tus, for example.
-        const typesAllowed = ['acquirer', 'editor'];
-        if (plugin && !((_plugin$opts = plugin.opts) != null && _plugin$opts.target) && typesAllowed.includes(plugin.type)) {
-          const pluginAlreadyAdded = this.getPluginState().targets.some(installedPlugin => plugin.id === installedPlugin.id);
-          if (!pluginAlreadyAdded) {
-            plugin.mount(this, plugin);
-          }
+    this.discoverProviderPlugins = () => {
+      this.uppy.iteratePlugins(plugin => {
+        if (plugin && !plugin.target && plugin.opts && plugin.opts.target === this.constructor) {
+          this.addTarget(plugin);
         }
-      }
-    });
+      });
+    };
     this.install = () => {
       // Set default state for Dashboard
       this.setPluginState({
@@ -19418,8 +20299,15 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
       if (target) {
         this.mount(target, this);
       }
+      const plugins = this.opts.plugins || [];
+      plugins.forEach(pluginID => {
+        const plugin = this.uppy.getPlugin(pluginID);
+        if (plugin) {
+          plugin.mount(this, plugin);
+        }
+      });
       if (!this.opts.disableStatusBar) {
-        this.uppy.use(_uppy_status_bar__WEBPACK_IMPORTED_MODULE_0__["default"], {
+        this.uppy.use(_uppy_status_bar__WEBPACK_IMPORTED_MODULE_1__["default"], {
           id: `${this.id}:StatusBar`,
           target: this,
           hideUploadButton: this.opts.hideUploadButton,
@@ -19433,13 +20321,13 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
         });
       }
       if (!this.opts.disableInformer) {
-        this.uppy.use(_uppy_informer__WEBPACK_IMPORTED_MODULE_1__["default"], {
+        this.uppy.use(_uppy_informer__WEBPACK_IMPORTED_MODULE_2__["default"], {
           id: `${this.id}:Informer`,
           target: this
         });
       }
       if (!this.opts.disableThumbnailGenerator) {
-        this.uppy.use(_uppy_thumbnail_generator__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        this.uppy.use(_uppy_thumbnail_generator__WEBPACK_IMPORTED_MODULE_3__["default"], {
           id: `${this.id}:ThumbnailGenerator`,
           thumbnailWidth: this.opts.thumbnailWidth,
           thumbnailHeight: this.opts.thumbnailHeight,
@@ -19458,8 +20346,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
       if (this.opts.theme === 'auto') {
         this.darkModeMediaQuery.addListener(this.handleSystemDarkModeChange);
       }
-      _classPrivateFieldLooseBase(this, _addSpecifiedPluginsFromOptions)[_addSpecifiedPluginsFromOptions]();
-      _classPrivateFieldLooseBase(this, _autoDiscoverPlugins)[_autoDiscoverPlugins]();
+      this.discoverProviderPlugins();
       this.initEvents();
     };
     this.uninstall = () => {
@@ -19485,9 +20372,6 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
       if (this.opts.theme === 'auto') {
         this.darkModeMediaQuery.removeListener(this.handleSystemDarkModeChange);
       }
-      if (this.opts.disablePageScrollWhenModalOpen) {
-        document.body.classList.remove('uppy-Dashboard-isFixed');
-      }
       this.unmount();
       this.removeEvents();
     };
@@ -19495,7 +20379,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
     this.title = 'Dashboard';
     this.type = 'orchestrator';
     this.modalName = `uppy-Dashboard-${(0,nanoid_non_secure__WEBPACK_IMPORTED_MODULE_13__.nanoid)()}`;
-    this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_10__["default"];
+    this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_11__["default"];
 
     // set default options, must be kept in sync with packages/@uppy/react/src/DashboardModal.js
     const defaultOptions = {
@@ -19508,7 +20392,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
       thumbnailWidth: 280,
       thumbnailType: 'image/jpeg',
       waitForThumbnailsBeforeUpload: false,
-      defaultPickerIcon: _uppy_provider_views__WEBPACK_IMPORTED_MODULE_6__.defaultPickerIcon,
+      defaultPickerIcon: _uppy_provider_views__WEBPACK_IMPORTED_MODULE_7__.defaultPickerIcon,
       showLinkToFileUploadResult: false,
       showProgressDetails: false,
       hideUploadButton: false,
@@ -19517,7 +20401,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
       hidePauseResumeButton: false,
       hideProgressAfterFinish: false,
       doneButtonHandler: () => {
-        this.uppy.clearUploadedFiles();
+        this.uppy.cancelAll();
         this.requestCloseModal();
       },
       note: null,
@@ -19549,7 +20433,7 @@ class Dashboard extends _uppy_core__WEBPACK_IMPORTED_MODULE_12__["default"] {
       ..._opts
     };
     this.i18nInit();
-    this.superFocus = (0,_utils_createSuperFocus_js__WEBPACK_IMPORTED_MODULE_8__["default"])();
+    this.superFocus = (0,_utils_createSuperFocus_js__WEBPACK_IMPORTED_MODULE_9__["default"])();
     this.ifFocusedOnUppyRecently = false;
 
     // Timeouts
@@ -20268,7 +21152,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
 /* harmony import */ var preact_hooks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! preact/hooks */ "./node_modules/preact/hooks/dist/hooks.module.js");
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
-/* harmony import */ var nanoid_non_secure__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! nanoid/non-secure */ "./node_modules/@uppy/dashboard/node_modules/nanoid/non-secure/index.js");
+/* harmony import */ var nanoid_non_secure__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! nanoid/non-secure */ "./node_modules/nanoid/non-secure/index.js");
 /* harmony import */ var _utils_getFileTypeIcon_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../utils/getFileTypeIcon.js */ "./node_modules/@uppy/dashboard/lib/utils/getFileTypeIcon.js");
 /* harmony import */ var _utils_ignoreEvent_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils/ignoreEvent.js */ "./node_modules/@uppy/dashboard/lib/utils/ignoreEvent.js");
 /* harmony import */ var _FilePreview_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../FilePreview.js */ "./node_modules/@uppy/dashboard/lib/components/FilePreview.js");
@@ -22195,42 +23079,6 @@ function forInline(event, activeOverlayType, dashboardEl) {
 
 /***/ }),
 
-/***/ "./node_modules/@uppy/dashboard/node_modules/nanoid/non-secure/index.js":
-/*!******************************************************************************!*\
-  !*** ./node_modules/@uppy/dashboard/node_modules/nanoid/non-secure/index.js ***!
-  \******************************************************************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   customAlphabet: () => (/* binding */ customAlphabet),
-/* harmony export */   nanoid: () => (/* binding */ nanoid)
-/* harmony export */ });
-let urlAlphabet =
-  'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
-let customAlphabet = (alphabet, defaultSize = 21) => {
-  return (size = defaultSize) => {
-    let id = ''
-    let i = size
-    while (i--) {
-      id += alphabet[(Math.random() * alphabet.length) | 0]
-    }
-    return id
-  }
-}
-let nanoid = (size = 21) => {
-  let id = ''
-  let i = size
-  while (i--) {
-    id += urlAlphabet[(Math.random() * 64) | 0]
-  }
-  return id
-}
-
-
-/***/ }),
-
 /***/ "./node_modules/@uppy/image-editor/lib/Editor.js":
 /*!*******************************************************!*\
   !*** ./node_modules/@uppy/image-editor/lib/Editor.js ***!
@@ -22246,11 +23094,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
 /* harmony import */ var _utils_getCanvasDataThatFitsPerfectlyIntoContainer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils/getCanvasDataThatFitsPerfectlyIntoContainer.js */ "./node_modules/@uppy/image-editor/lib/utils/getCanvasDataThatFitsPerfectlyIntoContainer.js");
 /* harmony import */ var _utils_getScaleFactorThatRemovesDarkCorners_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils/getScaleFactorThatRemovesDarkCorners.js */ "./node_modules/@uppy/image-editor/lib/utils/getScaleFactorThatRemovesDarkCorners.js");
-/* harmony import */ var _utils_limitCropboxMovementOnMove_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils/limitCropboxMovementOnMove.js */ "./node_modules/@uppy/image-editor/lib/utils/limitCropboxMovementOnMove.js");
-/* harmony import */ var _utils_limitCropboxMovementOnResize_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./utils/limitCropboxMovementOnResize.js */ "./node_modules/@uppy/image-editor/lib/utils/limitCropboxMovementOnResize.js");
-/* eslint-disable jsx-a11y/label-has-associated-control */
-
-
 
 
 
@@ -22284,7 +23127,7 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
       this.cropper.setCropBoxData(newCanvasData);
     };
     this.onRotateGranular = ev => {
-      //  1. Set state
+      //  1. Set stsate
       const newGranularAngle = Number(ev.target.value);
       this.setState({
         angleGranular: newGranularAngle
@@ -22298,19 +23141,16 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
       this.cropper.rotateTo(newAngle);
 
       // 3. Scale the image so that it fits into the cropbox
-      const image = this.cropper.getImageData();
-      const scaleFactor = (0,_utils_getScaleFactorThatRemovesDarkCorners_js__WEBPACK_IMPORTED_MODULE_3__["default"])(image.naturalWidth, image.naturalHeight, newGranularAngle);
+      const cropboxData = this.cropper.getCropBoxData();
+      const scaleFactor = (0,_utils_getScaleFactorThatRemovesDarkCorners_js__WEBPACK_IMPORTED_MODULE_3__["default"])(cropboxData, newGranularAngle);
       // Preserve flip
       const scaleFactorX = this.cropper.getImageData().scaleX < 0 ? -scaleFactor : scaleFactor;
       this.cropper.scale(scaleFactorX, scaleFactor);
     };
     this.state = {
       angle90Deg: 0,
-      angleGranular: 0,
-      prevCropboxData: null
+      angleGranular: 0
     };
-    this.storePrevCropboxData = this.storePrevCropboxData.bind(this);
-    this.limitCropboxMovement = this.limitCropboxMovement.bind(this);
   }
   componentDidMount() {
     const {
@@ -22318,38 +23158,10 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
       storeCropperInstance
     } = this.props;
     this.cropper = new cropperjs__WEBPACK_IMPORTED_MODULE_0__(this.imgElement, opts.cropperOptions);
-    this.imgElement.addEventListener('cropstart', this.storePrevCropboxData);
-    this.imgElement.addEventListener('cropend', this.limitCropboxMovement);
     storeCropperInstance(this.cropper);
   }
   componentWillUnmount() {
     this.cropper.destroy();
-    this.imgElement.removeEventListener('cropstart', this.storePrevCropboxData);
-    this.imgElement.removeEventListener('cropend', this.limitCropboxMovement);
-  }
-
-  // eslint-disable-next-line react/sort-comp
-  storePrevCropboxData() {
-    this.setState({
-      prevCropboxData: this.cropper.getCropBoxData()
-    });
-  }
-  limitCropboxMovement(event) {
-    const canvasData = this.cropper.getCanvasData();
-    const cropboxData = this.cropper.getCropBoxData();
-    const {
-      prevCropboxData
-    } = this.state;
-
-    // 1. When we grab the cropbox in the middle and move it
-    if (event.detail.action === 'all') {
-      const newCropboxData = (0,_utils_limitCropboxMovementOnMove_js__WEBPACK_IMPORTED_MODULE_4__["default"])(canvasData, cropboxData, prevCropboxData);
-      if (newCropboxData) this.cropper.setCropBoxData(newCropboxData);
-      // When we stretch the cropbox by one of its sides
-    } else {
-      const newCropboxData = (0,_utils_limitCropboxMovementOnResize_js__WEBPACK_IMPORTED_MODULE_5__["default"])(canvasData, cropboxData, prevCropboxData);
-      if (newCropboxData) this.cropper.setCropBoxData(newCropboxData);
-    }
   }
   renderGranularRotate() {
     const {
@@ -22358,33 +23170,34 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
     const {
       angleGranular
     } = this.state;
-    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
-      role: "tooltip",
-      "aria-label": `${angleGranular}º`,
-      "data-microtip-position": "top",
-      className: "uppy-ImageCropper-rangeWrapper"
-    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("input", {
-      className: "uppy-ImageCropper-range uppy-u-reset",
-      type: "range",
-      onInput: this.onRotateGranular,
-      onChange: this.onRotateGranular,
-      value: angleGranular,
-      min: "-45",
-      max: "45",
-      "aria-label": i18n('rotate')
-    }));
+    return (
+      // eslint-disable-next-line jsx-a11y/label-has-associated-control
+      (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
+        "data-microtip-position": "top",
+        role: "tooltip",
+        "aria-label": `${angleGranular}º`,
+        className: "uppy-ImageCropper-rangeWrapper uppy-u-reset"
+      }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("input", {
+        className: "uppy-ImageCropper-range uppy-u-reset",
+        type: "range",
+        onInput: this.onRotateGranular,
+        onChange: this.onRotateGranular,
+        value: angleGranular,
+        min: "-45",
+        max: "44",
+        "aria-label": i18n('rotate')
+      }))
+    );
   }
   renderRevert() {
     const {
       i18n
     } = this.props;
-    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
-      role: "tooltip",
-      "aria-label": i18n('revert'),
-      "data-microtip-position": "top"
-    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
+    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
       type: "button",
       className: "uppy-u-reset uppy-c-btn",
+      "aria-label": i18n('revert'),
+      "data-microtip-position": "top",
       onClick: () => {
         this.cropper.reset();
         this.cropper.setAspectRatio(0);
@@ -22404,20 +23217,18 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
       fill: "none"
     }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("path", {
       d: "M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"
-    }))));
+    })));
   }
   renderRotate() {
     const {
       i18n
     } = this.props;
-    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
-      role: "tooltip",
-      "aria-label": i18n('rotate'),
-      "data-microtip-position": "top"
-    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
+    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
       type: "button",
       className: "uppy-u-reset uppy-c-btn",
-      onClick: this.onRotate90Deg
+      onClick: this.onRotate90Deg,
+      "aria-label": i18n('rotate'),
+      "data-microtip-position": "top"
     }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("svg", {
       "aria-hidden": "true",
       className: "uppy-c-icon",
@@ -22429,19 +23240,17 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
       fill: "none"
     }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("path", {
       d: "M14 10a2 2 0 012 2v7a2 2 0 01-2 2H6a2 2 0 01-2-2v-7a2 2 0 012-2h8zm0 1.75H6a.25.25 0 00-.243.193L5.75 12v7a.25.25 0 00.193.243L6 19.25h8a.25.25 0 00.243-.193L14.25 19v-7a.25.25 0 00-.193-.243L14 11.75zM12 .76V4c2.3 0 4.61.88 6.36 2.64a8.95 8.95 0 012.634 6.025L21 13a1 1 0 01-1.993.117L19 13h-.003a6.979 6.979 0 00-2.047-4.95 6.97 6.97 0 00-4.652-2.044L12 6v3.24L7.76 5 12 .76z"
-    }))));
+    })));
   }
   renderFlip() {
     const {
       i18n
     } = this.props;
-    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
-      role: "tooltip",
-      "aria-label": i18n('flipHorizontal'),
-      "data-microtip-position": "top"
-    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
+    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
       type: "button",
       className: "uppy-u-reset uppy-c-btn",
+      "aria-label": i18n('flipHorizontal'),
+      "data-microtip-position": "top",
       onClick: () => this.cropper.scaleX(-this.cropper.getData().scaleX || -1)
     }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("svg", {
       "aria-hidden": "true",
@@ -22454,19 +23263,17 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
       fill: "none"
     }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("path", {
       d: "M15 21h2v-2h-2v2zm4-12h2V7h-2v2zM3 5v14c0 1.1.9 2 2 2h4v-2H5V5h4V3H5c-1.1 0-2 .9-2 2zm16-2v2h2c0-1.1-.9-2-2-2zm-8 20h2V1h-2v22zm8-6h2v-2h-2v2zM15 5h2V3h-2v2zm4 8h2v-2h-2v2zm0 8c1.1 0 2-.9 2-2h-2v2z"
-    }))));
+    })));
   }
   renderZoomIn() {
     const {
       i18n
     } = this.props;
-    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
-      role: "tooltip",
-      "aria-label": i18n('zoomIn'),
-      "data-microtip-position": "top"
-    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
+    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
       type: "button",
       className: "uppy-u-reset uppy-c-btn",
+      "aria-label": i18n('zoomIn'),
+      "data-microtip-position": "top",
       onClick: () => this.cropper.zoom(0.1)
     }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("svg", {
       "aria-hidden": "true",
@@ -22481,19 +23288,17 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
       d: "M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
     }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("path", {
       d: "M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"
-    }))));
+    })));
   }
   renderZoomOut() {
     const {
       i18n
     } = this.props;
-    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
-      role: "tooltip",
-      "aria-label": i18n('zoomOut'),
-      "data-microtip-position": "top"
-    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
+    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
       type: "button",
       className: "uppy-u-reset uppy-c-btn",
+      "aria-label": i18n('zoomOut'),
+      "data-microtip-position": "top",
       onClick: () => this.cropper.zoom(-0.1)
     }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("svg", {
       "aria-hidden": "true",
@@ -22506,19 +23311,17 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
       fill: "none"
     }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("path", {
       d: "M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zM7 9h5v1H7z"
-    }))));
+    })));
   }
   renderCropSquare() {
     const {
       i18n
     } = this.props;
-    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
-      role: "tooltip",
-      "aria-label": i18n('aspectRatioSquare'),
-      "data-microtip-position": "top"
-    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
+    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
       type: "button",
       className: "uppy-u-reset uppy-c-btn",
+      "aria-label": i18n('aspectRatioSquare'),
+      "data-microtip-position": "top",
       onClick: () => this.cropper.setAspectRatio(1)
     }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("svg", {
       "aria-hidden": "true",
@@ -22531,19 +23334,17 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
       fill: "none"
     }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("path", {
       d: "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-    }))));
+    })));
   }
   renderCropWidescreen() {
     const {
       i18n
     } = this.props;
-    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
-      role: "tooltip",
-      "aria-label": i18n('aspectRatioLandscape'),
-      "data-microtip-position": "top"
-    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
+    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
       type: "button",
       className: "uppy-u-reset uppy-c-btn",
+      "aria-label": i18n('aspectRatioLandscape'),
+      "data-microtip-position": "top",
       onClick: () => this.cropper.setAspectRatio(16 / 9)
     }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("svg", {
       "aria-hidden": "true",
@@ -22556,19 +23357,17 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
     }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("path", {
       fill: "none",
       d: "M0 0h24v24H0z"
-    }))));
+    })));
   }
   renderCropWidescreenVertical() {
     const {
       i18n
     } = this.props;
-    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("label", {
-      role: "tooltip",
-      "aria-label": i18n('aspectRatioPortrait'),
-      "data-microtip-position": "top"
-    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
+    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("button", {
       type: "button",
       className: "uppy-u-reset uppy-c-btn",
+      "aria-label": i18n('aspectRatioPortrait'),
+      "data-microtip-position": "top",
       onClick: () => this.cropper.setAspectRatio(9 / 16)
     }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("svg", {
       "aria-hidden": "true",
@@ -22581,7 +23380,7 @@ class Editor extends preact__WEBPACK_IMPORTED_MODULE_1__.Component {
     }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)("path", {
       d: "M0 0h24v24H0z",
       fill: "none"
-    }))));
+    })));
   }
   render() {
     const {
@@ -22622,18 +23421,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ImageEditor)
 /* harmony export */ });
-/* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/UIPlugin.js");
-/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
-/* harmony import */ var _Editor_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Editor.js */ "./node_modules/@uppy/image-editor/lib/Editor.js");
-/* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/image-editor/lib/locale.js");
+/* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/index.js");
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+/* harmony import */ var _Editor_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Editor.js */ "./node_modules/@uppy/image-editor/lib/Editor.js");
+/* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/image-editor/lib/locale.js");
 
 
 
 const packageJson = {
-  "version": "2.3.0"
+  "version": "2.2.1"
 };
 
-class ImageEditor extends _uppy_core__WEBPACK_IMPORTED_MODULE_3__["default"] {
+class ImageEditor extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
   constructor(uppy, opts) {
     super(uppy, opts);
     this.save = () => {
@@ -22685,14 +23484,12 @@ class ImageEditor extends _uppy_core__WEBPACK_IMPORTED_MODULE_3__["default"] {
     this.id = this.opts.id || 'ImageEditor';
     this.title = 'Image Editor';
     this.type = 'editor';
-    this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_2__["default"];
+    this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_3__["default"];
     const defaultCropperOptions = {
       viewMode: 0,
       background: false,
       autoCropArea: 1,
       responsive: true,
-      minCropBoxWidth: 70,
-      minCropBoxHeight: 70,
       croppedCanvasOptions: {}
     };
     const defaultActions = {
@@ -22706,10 +23503,6 @@ class ImageEditor extends _uppy_core__WEBPACK_IMPORTED_MODULE_3__["default"] {
       cropWidescreen: true,
       cropWidescreenVertical: true
     };
-
-    // Why is the default quality smaller than 1?
-    // Because `quality: 1` increases the image size by orders of magnitude - 0.8 seems to be the sweet spot.
-    // (see https://github.com/fengyuanchen/cropperjs/issues/538#issuecomment-1776279427)
     const defaultOptions = {
       quality: 0.8
     };
@@ -22718,11 +23511,11 @@ class ImageEditor extends _uppy_core__WEBPACK_IMPORTED_MODULE_3__["default"] {
       ...opts,
       actions: {
         ...defaultActions,
-        ...(opts == null ? void 0 : opts.actions)
+        ...opts.actions
       },
       cropperOptions: {
         ...defaultCropperOptions,
-        ...(opts == null ? void 0 : opts.cropperOptions)
+        ...opts.cropperOptions
       }
     };
     this.i18nInit();
@@ -22767,7 +23560,7 @@ class ImageEditor extends _uppy_core__WEBPACK_IMPORTED_MODULE_3__["default"] {
     if (currentImage === null || currentImage.isRemote) {
       return null;
     }
-    return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_Editor_js__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    return (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)(_Editor_js__WEBPACK_IMPORTED_MODULE_2__["default"], {
       currentImage: currentImage,
       storeCropperInstance: this.storeCropperInstance,
       save: this.save,
@@ -22809,11 +23602,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   strings: {
-    revert: 'Reset',
-    rotate: 'Rotate 90°',
+    revert: 'Revert',
+    rotate: 'Rotate',
     zoomIn: 'Zoom in',
     zoomOut: 'Zoom out',
-    flipHorizontal: 'Flip horizontally',
+    flipHorizontal: 'Flip horizontal',
     aspectRatioSquare: 'Crop square',
     aspectRatioLandscape: 'Crop landscape (16:9)',
     aspectRatioPortrait: 'Crop portrait (9:16)'
@@ -22871,110 +23664,14 @@ __webpack_require__.r(__webpack_exports__);
 function toRadians(angle) {
   return angle * (Math.PI / 180);
 }
-function getScaleFactorThatRemovesDarkCorners(w, h, granularAngle) {
+function getScaleFactorThatRemovesDarkCorners(cropboxData, granularAngle) {
   const α = Math.abs(toRadians(granularAngle));
+  const w = cropboxData.width;
+  const h = cropboxData.height;
   const scaleFactor = Math.max((Math.sin(α) * w + Math.cos(α) * h) / h, (Math.sin(α) * h + Math.cos(α) * w) / w);
   return scaleFactor;
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (getScaleFactorThatRemovesDarkCorners);
-
-/***/ }),
-
-/***/ "./node_modules/@uppy/image-editor/lib/utils/limitCropboxMovementOnMove.js":
-/*!*********************************************************************************!*\
-  !*** ./node_modules/@uppy/image-editor/lib/utils/limitCropboxMovementOnMove.js ***!
-  \*********************************************************************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-function limitCropboxMovementOnMove(canvas, cropbox, prevCropbox) {
-  // For the left boundary
-  if (cropbox.left < canvas.left) {
-    return {
-      left: canvas.left,
-      width: prevCropbox.width
-    };
-  }
-
-  // For the top boundary
-  if (cropbox.top < canvas.top) {
-    return {
-      top: canvas.top,
-      height: prevCropbox.height
-    };
-  }
-
-  // For the right boundary
-  if (cropbox.left + cropbox.width > canvas.left + canvas.width) {
-    return {
-      left: canvas.left + canvas.width - prevCropbox.width,
-      width: prevCropbox.width
-    };
-  }
-
-  // For the bottom boundary
-  if (cropbox.top + cropbox.height > canvas.top + canvas.height) {
-    return {
-      top: canvas.top + canvas.height - prevCropbox.height,
-      height: prevCropbox.height
-    };
-  }
-  return null;
-}
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (limitCropboxMovementOnMove);
-
-/***/ }),
-
-/***/ "./node_modules/@uppy/image-editor/lib/utils/limitCropboxMovementOnResize.js":
-/*!***********************************************************************************!*\
-  !*** ./node_modules/@uppy/image-editor/lib/utils/limitCropboxMovementOnResize.js ***!
-  \***********************************************************************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-function limitCropboxMovementOnResize(canvas, cropboxData, prevCropbox) {
-  // For the left boundary
-  if (cropboxData.left < canvas.left) {
-    return {
-      left: canvas.left,
-      width: prevCropbox.left + prevCropbox.width - canvas.left
-    };
-  }
-
-  // For the top boundary
-  if (cropboxData.top < canvas.top) {
-    return {
-      top: canvas.top,
-      height: prevCropbox.top + prevCropbox.height - canvas.top
-    };
-  }
-
-  // For the right boundary
-  if (cropboxData.left + cropboxData.width > canvas.left + canvas.width) {
-    return {
-      left: prevCropbox.left,
-      width: canvas.left + canvas.width - prevCropbox.left
-    };
-  }
-
-  // For the bottom boundary
-  if (cropboxData.top + cropboxData.height > canvas.top + canvas.height) {
-    return {
-      top: prevCropbox.top,
-      height: canvas.top + canvas.height - prevCropbox.top
-    };
-  }
-  return null;
-}
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (limitCropboxMovementOnResize);
 
 /***/ }),
 
@@ -23032,9 +23729,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ Informer)
 /* harmony export */ });
 /* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
-/* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/UIPlugin.js");
-/* harmony import */ var _FadeIn_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./FadeIn.js */ "./node_modules/@uppy/informer/lib/FadeIn.js");
-/* harmony import */ var _TransitionGroup_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./TransitionGroup.js */ "./node_modules/@uppy/informer/lib/TransitionGroup.js");
+/* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/index.js");
+/* harmony import */ var _FadeIn_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./FadeIn.js */ "./node_modules/@uppy/informer/lib/FadeIn.js");
+/* harmony import */ var _TransitionGroup_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./TransitionGroup.js */ "./node_modules/@uppy/informer/lib/TransitionGroup.js");
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions  */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
@@ -23042,7 +23739,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const packageJson = {
-  "version": "3.0.4"
+  "version": "3.0.3"
 };
 /**
  * Informer
@@ -23051,13 +23748,13 @@ const packageJson = {
  * or for errors: `uppy.info('Error uploading img.jpg', 'error', 5000)`
  *
  */
-class Informer extends _uppy_core__WEBPACK_IMPORTED_MODULE_3__["default"] {
+class Informer extends _uppy_core__WEBPACK_IMPORTED_MODULE_1__.UIPlugin {
   constructor(uppy, opts) {
     super(uppy, opts);
     this.render = state => {
       return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("div", {
         className: "uppy uppy-Informer"
-      }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_TransitionGroup_js__WEBPACK_IMPORTED_MODULE_2__["default"], null, state.info.map(info => (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_FadeIn_js__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_TransitionGroup_js__WEBPACK_IMPORTED_MODULE_3__["default"], null, state.info.map(info => (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_FadeIn_js__WEBPACK_IMPORTED_MODULE_2__["default"], {
         key: info.message
       }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)("p", {
         role: "alert"
@@ -24173,6 +24870,7 @@ function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototy
 var id = 0;
 function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
 
+// eslint-disable-next-line import/no-unresolved
 
 
 
@@ -24182,7 +24880,7 @@ function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + n
 
 
 const packageJson = {
-  "version": "3.7.0"
+  "version": "3.5.0"
 };
 function formatBreadcrumbs(breadcrumbs) {
   return breadcrumbs.slice(1).map(directory => directory.name).join('/');
@@ -24512,7 +25210,7 @@ class ProviderView extends _View_js__WEBPACK_IMPORTED_MODULE_8__["default"] {
         // and that will allow the user to start the upload, so we need to make sure we have
         // finished all async operations before we add any file
         // see https://github.com/transloadit/uppy/pull/4384
-        this.plugin.uppy.log('Adding files from a remote provider');
+        this.plugin.uppy.log('Adding remote provider files');
         this.plugin.uppy.addFiles(newFiles.map(file => this.getTagFile(file)));
         this.plugin.setPluginState({
           filterInput: ''
@@ -24800,7 +25498,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
 /* harmony import */ var preact_hooks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! preact/hooks */ "./node_modules/preact/hooks/dist/hooks.module.js");
-/* harmony import */ var nanoid_non_secure__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! nanoid/non-secure */ "./node_modules/@uppy/provider-views/node_modules/nanoid/non-secure/index.js");
+/* harmony import */ var nanoid_non_secure__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! nanoid/non-secure */ "./node_modules/nanoid/non-secure/index.js");
 
 
 
@@ -24914,7 +25612,7 @@ function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + n
 
 
 const packageJson = {
-  "version": "3.7.0"
+  "version": "3.5.0"
 };
 /**
  * SearchProviderView, used for Unsplash and future image search providers.
@@ -25320,19 +26018,11 @@ class View {
         body: {
           fileId: file.id
         },
+        providerOptions: this.provider.opts,
         providerName: this.provider.name,
         provider: this.provider.provider
       }
     };
-
-    // all properties on this object get saved into the Uppy store.
-    // Some users might serialize their store (for example using JSON.stringify),
-    // or when using Golden Retriever it will serialize state into e.g. localStorage.
-    // However RequestClient is not serializable so we need to prevent it from being serialized.
-    Object.defineProperty(tagFile.remote, 'requestClient', {
-      value: this.provider,
-      enumerable: false
-    });
     const fileType = (0,_uppy_utils_lib_getFileType__WEBPACK_IMPORTED_MODULE_0__["default"])(tagFile);
 
     // TODO Should we just always use the thumbnail URL if it exists?
@@ -25375,42 +26065,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ProviderView_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ProviderView/index.js */ "./node_modules/@uppy/provider-views/lib/ProviderView/index.js");
 /* harmony import */ var _SearchProviderView_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SearchProviderView/index.js */ "./node_modules/@uppy/provider-views/lib/SearchProviderView/index.js");
 
-
-
-/***/ }),
-
-/***/ "./node_modules/@uppy/provider-views/node_modules/nanoid/non-secure/index.js":
-/*!***********************************************************************************!*\
-  !*** ./node_modules/@uppy/provider-views/node_modules/nanoid/non-secure/index.js ***!
-  \***********************************************************************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   customAlphabet: () => (/* binding */ customAlphabet),
-/* harmony export */   nanoid: () => (/* binding */ nanoid)
-/* harmony export */ });
-let urlAlphabet =
-  'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
-let customAlphabet = (alphabet, defaultSize = 21) => {
-  return (size = defaultSize) => {
-    let id = ''
-    let i = size
-    while (i--) {
-      id += alphabet[(Math.random() * alphabet.length) | 0]
-    }
-    return id
-  }
-}
-let nanoid = (size = 21) => {
-  let id = ''
-  let i = size
-  while (i--) {
-    id += urlAlphabet[(Math.random() * 64) | 0]
-  }
-  return id
-}
 
 
 /***/ }),
@@ -25816,12 +26470,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ StatusBar)
 /* harmony export */ });
-/* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/UIPlugin.js");
-/* harmony import */ var _uppy_utils_lib_emaFilter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/utils/lib/emaFilter */ "./node_modules/@uppy/utils/lib/emaFilter.js");
-/* harmony import */ var _uppy_utils_lib_getTextDirection__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/utils/lib/getTextDirection */ "./node_modules/@uppy/utils/lib/getTextDirection.js");
-/* harmony import */ var _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./StatusBarStates.js */ "./node_modules/@uppy/status-bar/lib/StatusBarStates.js");
-/* harmony import */ var _StatusBarUI_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./StatusBarUI.js */ "./node_modules/@uppy/status-bar/lib/StatusBarUI.js");
-/* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/status-bar/lib/locale.js");
+/* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/index.js");
+/* harmony import */ var _uppy_utils_lib_emaFilter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/utils/lib/emaFilter */ "./node_modules/@uppy/utils/lib/emaFilter.js");
+/* harmony import */ var _uppy_utils_lib_getTextDirection__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/utils/lib/getTextDirection */ "./node_modules/@uppy/utils/lib/getTextDirection.js");
+/* harmony import */ var _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./StatusBarStates.js */ "./node_modules/@uppy/status-bar/lib/StatusBarStates.js");
+/* harmony import */ var _StatusBarUI_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./StatusBarUI.js */ "./node_modules/@uppy/status-bar/lib/StatusBarUI.js");
+/* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/status-bar/lib/locale.js");
 function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
 var id = 0;
 function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
@@ -25831,22 +26485,22 @@ function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + n
 
 
 const packageJson = {
-  "version": "3.2.5"
+  "version": "3.2.4"
 };
 
 const speedFilterHalfLife = 2000;
 const ETAFilterHalfLife = 2000;
 function getUploadingState(error, isAllComplete, recoveredState, files) {
   if (error) {
-    return _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_ERROR;
+    return _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_3__["default"].STATE_ERROR;
   }
   if (isAllComplete) {
-    return _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_COMPLETE;
+    return _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_3__["default"].STATE_COMPLETE;
   }
   if (recoveredState) {
-    return _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_WAITING;
+    return _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_3__["default"].STATE_WAITING;
   }
-  let state = _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_WAITING;
+  let state = _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_3__["default"].STATE_WAITING;
   const fileIDs = Object.keys(files);
   for (let i = 0; i < fileIDs.length; i++) {
     const {
@@ -25854,17 +26508,17 @@ function getUploadingState(error, isAllComplete, recoveredState, files) {
     } = files[fileIDs[i]];
     // If ANY files are being uploaded right now, show the uploading state.
     if (progress.uploadStarted && !progress.uploadComplete) {
-      return _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_UPLOADING;
+      return _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_3__["default"].STATE_UPLOADING;
     }
     // If files are being preprocessed AND postprocessed at this time, we show the
     // preprocess state. If any files are being uploaded we show uploading.
-    if (progress.preprocess && state !== _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_UPLOADING) {
-      state = _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_PREPROCESSING;
+    if (progress.preprocess && state !== _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_3__["default"].STATE_UPLOADING) {
+      state = _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_3__["default"].STATE_PREPROCESSING;
     }
     // If NO files are being preprocessed or uploaded right now, but some files are
     // being postprocessed, show the postprocess state.
-    if (progress.postprocess && state !== _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_UPLOADING && state !== _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_PREPROCESSING) {
-      state = _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_2__["default"].STATE_POSTPROCESSING;
+    if (progress.postprocess && state !== _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_3__["default"].STATE_UPLOADING && state !== _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_3__["default"].STATE_PREPROCESSING) {
+      state = _StatusBarStates_js__WEBPACK_IMPORTED_MODULE_3__["default"].STATE_POSTPROCESSING;
     }
   }
   return state;
@@ -25880,7 +26534,7 @@ var _previousSpeed = /*#__PURE__*/_classPrivateFieldLooseKey("previousSpeed");
 var _previousETA = /*#__PURE__*/_classPrivateFieldLooseKey("previousETA");
 var _computeSmoothETA = /*#__PURE__*/_classPrivateFieldLooseKey("computeSmoothETA");
 var _onUploadStart = /*#__PURE__*/_classPrivateFieldLooseKey("onUploadStart");
-class StatusBar extends _uppy_core__WEBPACK_IMPORTED_MODULE_5__["default"] {
+class StatusBar extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
   constructor(uppy, opts) {
     super(uppy, opts);
     Object.defineProperty(this, _computeSmoothETA, {
@@ -25936,7 +26590,7 @@ class StatusBar extends _uppy_core__WEBPACK_IMPORTED_MODULE_5__["default"] {
     this.id = this.opts.id || 'StatusBar';
     this.title = 'StatusBar';
     this.type = 'progressindicator';
-    this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_4__["default"];
+    this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_5__["default"];
 
     // set default options, must be kept in sync with @uppy/react/src/StatusBar.js
     const defaultOptions = {
@@ -25995,7 +26649,7 @@ class StatusBar extends _uppy_core__WEBPACK_IMPORTED_MODULE_5__["default"] {
       total: totalSize,
       remaining: totalSize - totalUploadedSize
     });
-    return (0,_StatusBarUI_js__WEBPACK_IMPORTED_MODULE_3__["default"])({
+    return (0,_StatusBarUI_js__WEBPACK_IMPORTED_MODULE_4__["default"])({
       error,
       uploadState: getUploadingState(error, isAllComplete, recoveredState, state.files || {}),
       allowNewUpload,
@@ -26032,7 +26686,7 @@ class StatusBar extends _uppy_core__WEBPACK_IMPORTED_MODULE_5__["default"] {
   onMount() {
     // Set the text direction if the page has not defined one.
     const element = this.el;
-    const direction = (0,_uppy_utils_lib_getTextDirection__WEBPACK_IMPORTED_MODULE_1__["default"])(element);
+    const direction = (0,_uppy_utils_lib_getTextDirection__WEBPACK_IMPORTED_MODULE_2__["default"])(element);
     if (!direction) {
       element.dir = 'ltr';
     }
@@ -26079,11 +26733,11 @@ function _computeSmoothETA2(totalBytes) {
     return Math.round(((_classPrivateFieldLoo4 = _classPrivateFieldLooseBase(this, _previousETA)[_previousETA]) != null ? _classPrivateFieldLoo4 : 0) / 100) / 10;
   }
   const currentSpeed = uploadedBytesSinceLastTick / dt;
-  const filteredSpeed = _classPrivateFieldLooseBase(this, _previousSpeed)[_previousSpeed] == null ? currentSpeed : (0,_uppy_utils_lib_emaFilter__WEBPACK_IMPORTED_MODULE_0__["default"])(currentSpeed, _classPrivateFieldLooseBase(this, _previousSpeed)[_previousSpeed], speedFilterHalfLife, dt);
+  const filteredSpeed = _classPrivateFieldLooseBase(this, _previousSpeed)[_previousSpeed] == null ? currentSpeed : (0,_uppy_utils_lib_emaFilter__WEBPACK_IMPORTED_MODULE_1__["default"])(currentSpeed, _classPrivateFieldLooseBase(this, _previousSpeed)[_previousSpeed], speedFilterHalfLife, dt);
   _classPrivateFieldLooseBase(this, _previousSpeed)[_previousSpeed] = filteredSpeed;
   const instantETA = totalBytes.remaining / filteredSpeed;
   const updatedPreviousETA = Math.max(_classPrivateFieldLooseBase(this, _previousETA)[_previousETA] - dt, 0);
-  const filteredETA = _classPrivateFieldLooseBase(this, _previousETA)[_previousETA] == null ? instantETA : (0,_uppy_utils_lib_emaFilter__WEBPACK_IMPORTED_MODULE_0__["default"])(instantETA, updatedPreviousETA, ETAFilterHalfLife, dt);
+  const filteredETA = _classPrivateFieldLooseBase(this, _previousETA)[_previousETA] == null ? instantETA : (0,_uppy_utils_lib_emaFilter__WEBPACK_IMPORTED_MODULE_1__["default"])(instantETA, updatedPreviousETA, ETAFilterHalfLife, dt);
   _classPrivateFieldLooseBase(this, _previousETA)[_previousETA] = filteredETA;
   _classPrivateFieldLooseBase(this, _lastUpdateTime)[_lastUpdateTime] = performance.now();
   return Math.round(filteredETA / 100) / 10;
@@ -26471,26 +27125,24 @@ __webpack_require__.r(__webpack_exports__);
 function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
 var id = 0;
 function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
 const packageJson = {
-  "version": "3.1.0"
+  "version": "3.0.4"
 };
-var _callbacks = /*#__PURE__*/_classPrivateFieldLooseKey("callbacks");
-var _publish = /*#__PURE__*/_classPrivateFieldLooseKey("publish");
 /**
  * Default store that keeps state in a simple object.
  */
+var _callbacks = /*#__PURE__*/_classPrivateFieldLooseKey("callbacks");
+var _publish = /*#__PURE__*/_classPrivateFieldLooseKey("publish");
 class DefaultStore {
   constructor() {
     Object.defineProperty(this, _publish, {
       value: _publish2
     });
-    this.state = {};
     Object.defineProperty(this, _callbacks, {
       writable: true,
       value: new Set()
     });
+    this.state = {};
   }
   getState() {
     return this.state;
@@ -26537,12 +27189,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ThumbnailGenerator)
 /* harmony export */ });
-/* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/UIPlugin.js");
-/* harmony import */ var _uppy_utils_lib_dataURItoBlob__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/utils/lib/dataURItoBlob */ "./node_modules/@uppy/utils/lib/dataURItoBlob.js");
-/* harmony import */ var _uppy_utils_lib_isObjectURL__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/utils/lib/isObjectURL */ "./node_modules/@uppy/utils/lib/isObjectURL.js");
-/* harmony import */ var _uppy_utils_lib_isPreviewSupported__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/utils/lib/isPreviewSupported */ "./node_modules/@uppy/utils/lib/isPreviewSupported.js");
-/* harmony import */ var exifr_dist_mini_esm_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! exifr/dist/mini.esm.mjs */ "./node_modules/exifr/dist/mini.esm.mjs");
-/* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/thumbnail-generator/lib/locale.js");
+/* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/index.js");
+/* harmony import */ var _uppy_utils_lib_dataURItoBlob__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/utils/lib/dataURItoBlob */ "./node_modules/@uppy/utils/lib/dataURItoBlob.js");
+/* harmony import */ var _uppy_utils_lib_isObjectURL__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/utils/lib/isObjectURL */ "./node_modules/@uppy/utils/lib/isObjectURL.js");
+/* harmony import */ var _uppy_utils_lib_isPreviewSupported__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/utils/lib/isPreviewSupported */ "./node_modules/@uppy/utils/lib/isPreviewSupported.js");
+/* harmony import */ var exifr_dist_mini_esm_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! exifr/dist/mini.esm.mjs */ "./node_modules/exifr/dist/mini.esm.mjs");
+/* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/thumbnail-generator/lib/locale.js");
 
 
 
@@ -26550,7 +27202,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const packageJson = {
-  "version": "3.0.6"
+  "version": "3.0.5"
 };
 /**
  * Save a <canvas> element's content to a Blob object.
@@ -26577,7 +27229,7 @@ function canvasToBlob(canvas, type, quality) {
     });
   }
   return Promise.resolve().then(() => {
-    return (0,_uppy_utils_lib_dataURItoBlob__WEBPACK_IMPORTED_MODULE_0__["default"])(canvas.toDataURL(type, quality), {});
+    return (0,_uppy_utils_lib_dataURItoBlob__WEBPACK_IMPORTED_MODULE_1__["default"])(canvas.toDataURL(type, quality), {});
   }).then(blob => {
     if (blob === null) {
       throw new Error('could not extract blob, probably an old browser');
@@ -26640,11 +27292,11 @@ function protect(image) {
  * The Thumbnail Generator plugin
  */
 
-class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_5__["default"] {
+class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_0__.UIPlugin {
   constructor(uppy, opts) {
     super(uppy, opts);
     this.onFileAdded = file => {
-      if (!file.preview && file.data && (0,_uppy_utils_lib_isPreviewSupported__WEBPACK_IMPORTED_MODULE_2__["default"])(file.type) && !file.isRemote) {
+      if (!file.preview && file.data && (0,_uppy_utils_lib_isPreviewSupported__WEBPACK_IMPORTED_MODULE_3__["default"])(file.type) && !file.isRemote) {
         this.addToQueue(file.id);
       }
     };
@@ -26667,7 +27319,7 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_5__["defaul
       }
 
       // Clean up object URLs.
-      if (file.preview && (0,_uppy_utils_lib_isObjectURL__WEBPACK_IMPORTED_MODULE_1__["default"])(file.preview)) {
+      if (file.preview && (0,_uppy_utils_lib_isObjectURL__WEBPACK_IMPORTED_MODULE_2__["default"])(file.preview)) {
         URL.revokeObjectURL(file.preview);
       }
     };
@@ -26675,7 +27327,7 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_5__["defaul
       const restoredFiles = this.uppy.getFiles().filter(file => file.isRestored);
       restoredFiles.forEach(file => {
         // Only add blob URLs; they are likely invalid after being restored.
-        if (!file.preview || (0,_uppy_utils_lib_isObjectURL__WEBPACK_IMPORTED_MODULE_1__["default"])(file.preview)) {
+        if (!file.preview || (0,_uppy_utils_lib_isObjectURL__WEBPACK_IMPORTED_MODULE_2__["default"])(file.preview)) {
           this.addToQueue(file.id);
         }
       });
@@ -26716,7 +27368,7 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_5__["defaul
     this.queueProcessing = false;
     this.defaultThumbnailDimension = 200;
     this.thumbnailType = this.opts.thumbnailType || 'image/jpeg';
-    this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_4__["default"];
+    this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_5__["default"];
     const defaultOptions = {
       thumbnailWidth: null,
       thumbnailHeight: null,
@@ -26755,7 +27407,7 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_5__["defaul
         reject(event.error || new Error('Could not create thumbnail'));
       });
     });
-    const orientationPromise = (0,exifr_dist_mini_esm_mjs__WEBPACK_IMPORTED_MODULE_3__.rotation)(file.data).catch(() => 1);
+    const orientationPromise = (0,exifr_dist_mini_esm_mjs__WEBPACK_IMPORTED_MODULE_4__.rotation)(file.data).catch(() => 1);
     return Promise.all([onload, orientationPromise]).then(_ref => {
       let [image, orientation] = _ref;
       const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight, orientation.deg);
@@ -26858,7 +27510,7 @@ class ThumbnailGenerator extends _uppy_core__WEBPACK_IMPORTED_MODULE_5__["defaul
     return Promise.resolve();
   }
   requestThumbnail(file) {
-    if ((0,_uppy_utils_lib_isPreviewSupported__WEBPACK_IMPORTED_MODULE_2__["default"])(file.type) && !file.isRemote) {
+    if ((0,_uppy_utils_lib_isPreviewSupported__WEBPACK_IMPORTED_MODULE_3__["default"])(file.type) && !file.isRemote) {
       return this.createThumbnail(file, this.opts.thumbnailWidth, this.opts.thumbnailHeight).then(preview => {
         this.setPreviewURL(file.id, preview);
         this.uppy.log(`[ThumbnailGenerator] Generated thumbnail for ${file.id}`);
@@ -26920,6 +27572,35 @@ __webpack_require__.r(__webpack_exports__);
     generatingThumbnails: 'Generating thumbnails...'
   }
 });
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/utils/lib/ErrorWithCause.js":
+/*!********************************************************!*\
+  !*** ./node_modules/@uppy/utils/lib/ErrorWithCause.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _hasProperty_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./hasProperty.js */ "./node_modules/@uppy/utils/lib/hasProperty.js");
+
+class ErrorWithCause extends Error {
+  constructor(message, options) {
+    if (options === void 0) {
+      options = {};
+    }
+    super(message);
+    this.cause = options.cause;
+    if (this.cause && (0,_hasProperty_js__WEBPACK_IMPORTED_MODULE_0__["default"])(this.cause, 'isNetworkError')) {
+      this.isNetworkError = this.cause.isNetworkError;
+    }
+  }
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ErrorWithCause);
 
 /***/ }),
 
@@ -27119,7 +27800,7 @@ class ProgressTimeout {
   done() {
     if (!_classPrivateFieldLooseBase(this, _isDone)[_isDone]) {
       clearTimeout(_classPrivateFieldLooseBase(this, _aliveTimer)[_aliveTimer]);
-      _classPrivateFieldLooseBase(this, _aliveTimer)[_aliveTimer] = undefined;
+      _classPrivateFieldLooseBase(this, _aliveTimer)[_aliveTimer] = null;
       _classPrivateFieldLooseBase(this, _isDone)[_isDone] = true;
     }
   }
@@ -27380,7 +28061,7 @@ function _call2(fn) {
       if (done) return;
       done = true;
       _classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] -= 1;
-      cancelActive == null ? void 0 : cancelActive(cause);
+      cancelActive(cause);
       _classPrivateFieldLooseBase(this, _queueNext)[_queueNext]();
     },
     done: () => {
@@ -27463,9 +28144,6 @@ function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototy
 var id = 0;
 function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
 
-
-// We're using a generic because languages have different plural rules.
-
 function insertReplacement(source, rx, replacement) {
   const newParts = [];
   source.forEach(chunk => {
@@ -27497,8 +28175,9 @@ function insertReplacement(source, rx, replacement) {
  * @license https://github.com/airbnb/polyglot.js/blob/master/LICENSE
  * taken from https://github.com/airbnb/polyglot.js/blob/master/lib/polyglot.js#L299
  *
- * @param phrase that needs interpolation, with placeholders
- * @param options with values that will be used to replace placeholders
+ * @param {string} phrase that needs interpolation, with placeholders
+ * @param {object} options with values that will be used to replace placeholders
+ * @returns {any[]} interpolated
  */
 function interpolate(phrase, options) {
   const dollarRegex = /\$/g;
@@ -27536,6 +28215,9 @@ function interpolate(phrase, options) {
  */
 var _apply = /*#__PURE__*/_classPrivateFieldLooseKey("apply");
 class Translator {
+  /**
+   * @param {object|Array<object>} locales - locale or list of locales.
+   */
   constructor(locales) {
     Object.defineProperty(this, _apply, {
       value: _apply2
@@ -27558,9 +28240,9 @@ class Translator {
   /**
    * Public translate method
    *
-   * @param key
-   * @param options with values that will be used later to replace placeholders in string
-   * @returns string translated (and interpolated)
+   * @param {string} key
+   * @param {object} options with values that will be used later to replace placeholders in string
+   * @returns {string} translated (and interpolated)
    */
   translate(key, options) {
     return this.translateArray(key, options).join('');
@@ -27569,7 +28251,9 @@ class Translator {
   /**
    * Get a translation and return the translated and interpolated parts as an array.
    *
-   * @returns The translated and interpolated parts, in order.
+   * @param {string} key
+   * @param {object} options with values that will be used to replace placeholders
+   * @returns {Array} The translated and interpolated parts, in order.
    */
   translateArray(key, options) {
     if (!(0,_hasProperty_js__WEBPACK_IMPORTED_MODULE_0__["default"])(this.locale.strings, key)) {
@@ -27798,15 +28482,15 @@ function dataURItoBlob(dataURI, opts, toFile) {
 
   // user may provide mime type, if not get it from data URI
   const mimeType = (_ref = (_opts$mimeType = opts.mimeType) != null ? _opts$mimeType : dataURIData == null ? void 0 : dataURIData[1]) != null ? _ref : 'plain/text';
-  let data; // We add `!` to tell TS we're OK with `data` being not defined when the dataURI is invalid.
-  if ((dataURIData == null ? void 0 : dataURIData[2]) != null) {
+  let data;
+  if (dataURIData[2] != null) {
     const binary = atob(decodeURIComponent(dataURIData[3]));
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) {
       bytes[i] = binary.charCodeAt(i);
     }
     data = [bytes];
-  } else if ((dataURIData == null ? void 0 : dataURIData[3]) != null) {
+  } else {
     data = [decodeURIComponent(dataURIData[3])];
   }
 
@@ -27839,16 +28523,80 @@ __webpack_require__.r(__webpack_exports__);
  * Filters a sequence of values by updating the mixing the previous output value
  * with the new input using the exponential window function
  *
- * @param newValue the n-th value of the sequence
- * @param previousSmoothedValue the exponential average of the first n-1 values
- * @param halfLife value of `dt` to move the smoothed value halfway between `previousFilteredValue` and `newValue`
- * @param dt time elapsed between adding the (n-1)th and the n-th values
+ * @param {*} newValue the n-th value of the sequence
+ * @param {*} previousSmoothedValue the exponential average of the first n-1 values
+ * @param {*} halfLife value of `dt` to move the smoothed value halfway between `previousFilteredValue` and `newValue`
+ * @param {*} dt time elapsed between adding the (n-1)th and the n-th values
  * @returns the exponential average of the first n values
  */
 function emaFilter(newValue, previousSmoothedValue, halfLife, dt) {
   if (halfLife === 0 || newValue === previousSmoothedValue) return newValue;
   if (dt === 0) return previousSmoothedValue;
   return newValue + (previousSmoothedValue - newValue) * 2 ** (-dt / halfLife);
+}
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/utils/lib/emitSocketProgress.js":
+/*!************************************************************!*\
+  !*** ./node_modules/@uppy/utils/lib/emitSocketProgress.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var lodash_throttle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash/throttle.js */ "./node_modules/lodash/throttle.js");
+
+function emitSocketProgress(uploader, progressData, file) {
+  const {
+    progress,
+    bytesUploaded,
+    bytesTotal
+  } = progressData;
+  if (progress) {
+    uploader.uppy.log(`Upload progress: ${progress}`);
+    uploader.uppy.emit('upload-progress', file, {
+      uploader,
+      bytesUploaded,
+      bytesTotal
+    });
+  }
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (lodash_throttle_js__WEBPACK_IMPORTED_MODULE_0__(emitSocketProgress, 300, {
+  leading: true,
+  trailing: true
+}));
+
+/***/ }),
+
+/***/ "./node_modules/@uppy/utils/lib/fetchWithNetworkError.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/@uppy/utils/lib/fetchWithNetworkError.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ fetchWithNetworkError)
+/* harmony export */ });
+/* harmony import */ var _NetworkError_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./NetworkError.js */ "./node_modules/@uppy/utils/lib/NetworkError.js");
+
+
+/**
+ * Wrapper around window.fetch that throws a NetworkError when appropriate
+ */
+function fetchWithNetworkError() {
+  return fetch(...arguments).catch(err => {
+    if (err.name === 'AbortError') {
+      throw err;
+    } else {
+      throw new _NetworkError_js__WEBPACK_IMPORTED_MODULE_0__["default"](err);
+    }
+  });
 }
 
 /***/ }),
@@ -27866,16 +28614,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   filterNonFailedFiles: () => (/* binding */ filterNonFailedFiles)
 /* harmony export */ });
 function filterNonFailedFiles(files) {
-  const hasError = file => 'error' in file && !!file.error;
+  const hasError = file => 'error' in file && file.error;
   return files.filter(file => !hasError(file));
 }
 
 // Don't double-emit upload-started for Golden Retriever-restored files that were already started
 function filterFilesToEmitUploadStarted(files) {
-  return files.filter(file => {
-    var _file$progress;
-    return !((_file$progress = file.progress) != null && _file$progress.uploadStarted) || !file.isRestored;
-  });
+  return files.filter(file => !file.progress.uploadStarted || !file.isRestored);
 }
 
 /***/ }),
@@ -27896,6 +28641,9 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * Find one or more DOM elements.
+ *
+ * @param {string|Node} element
+ * @returns {Node[]|null}
  */
 function findAllDOMElements(element) {
   if (typeof element === 'string') {
@@ -27926,6 +28674,9 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * Find a DOM element.
+ *
+ * @param {Node|string} element
+ * @returns {Node|null}
  */
 function findDOMElement(element, context) {
   if (context === void 0) {
@@ -27961,7 +28712,7 @@ function encodeCharacter(character) {
 }
 function encodeFilename(name) {
   let suffix = '';
-  return name.replace(/[^A-Z0-9]/gi, character => {
+  return name.replace(/[^A-Z0-9]/ig, character => {
     suffix += `-${encodeCharacter(character)}`;
     return '/';
   }) + suffix;
@@ -27970,6 +28721,9 @@ function encodeFilename(name) {
 /**
  * Takes a file object and turns it into fileID, by converting file.name to lowercase,
  * removing extra characters and adding type, size and lastModified
+ *
+ * @param {object} file
+ * @returns {string} the fileID
  */
 function generateFileID(file) {
   // It's tempting to do `[items].filter(Boolean).join('-')` here, but that
@@ -28036,18 +28790,18 @@ __webpack_require__.r(__webpack_exports__);
  * Each file has .relativePath prop appended to it (e.g. "/docs/Prague/ticket_from_prague_to_ufa.pdf")
  * if browser supports it. Otherwise it's undefined.
  *
- * @param dataTransfer
- * @param options
- * @param options.logDropError - a function that's called every time some
+ * @param {DataTransfer} dataTransfer
+ * @param {Function} logDropError - a function that's called every time some
  * folder or some file error out (e.g. because of the folder name being too long
  * on Windows). Notice that resulting promise will always be resolved anyway.
  *
  * @returns {Promise} - Array<File>
  */
-async function getDroppedFiles(dataTransfer, options) {
-  var _options$logDropError;
+async function getDroppedFiles(dataTransfer, _temp) {
+  let {
+    logDropError = () => {}
+  } = _temp === void 0 ? {} : _temp;
   // Get all files from all subdirs. Works (at least) in Chrome, Mozilla, and Safari
-  const logDropError = (_options$logDropError = options == null ? void 0 : options.logDropError) != null ? _options$logDropError : Function.prototype;
   try {
     const accumulator = [];
     for await (const file of (0,_utils_webkitGetAsEntryApi_index_js__WEBPACK_IMPORTED_MODULE_0__["default"])(dataTransfer, logDropError)) {
@@ -28097,6 +28851,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /**
  * Recursive function, calls the original callback() when the directory is entirely parsed.
+ *
+ * @param {FileSystemDirectoryReader} directoryReader
+ * @param {Array} oldEntries
+ * @param {Function} logDropError
+ * @param {Function} callback - called with ([ all files and directories in that directoryReader ])
  */
 function getFilesAndDirectoriesFromDirectory(directoryReader, oldEntries, logDropError, _ref) {
   let {
@@ -28139,6 +28898,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _getFilesAndDirectoriesFromDirectory_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./getFilesAndDirectoriesFromDirectory.js */ "./node_modules/@uppy/utils/lib/getDroppedFiles/utils/webkitGetAsEntryApi/getFilesAndDirectoriesFromDirectory.js");
 
+
 /**
  * Polyfill for the new (experimental) getAsFileSystemHandle API (using the popular webkitGetAsEntry behind the scenes)
  * so that we can switch to the getAsFileSystemHandle API once it (hopefully) becomes standard
@@ -28157,14 +28917,11 @@ function getAsFileSystemHandleFromEntry(entry, logDropError) {
       const directoryReader = entry.createReader();
       const entries = await new Promise(resolve => {
         (0,_getFilesAndDirectoriesFromDirectory_js__WEBPACK_IMPORTED_MODULE_0__["default"])(directoryReader, [], logDropError, {
-          onSuccess: dirEntries => resolve(dirEntries.map(
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          file => getAsFileSystemHandleFromEntry(file, logDropError)))
+          onSuccess: dirEntries => resolve(dirEntries.map(file => getAsFileSystemHandleFromEntry(file, logDropError)))
         });
       });
       yield* entries;
-    },
-    isSameEntry: undefined
+    }
   };
 }
 function createPromiseToAddFileOrParseDirectory(entry, relativePath, lastResortFile) {
@@ -28179,7 +28936,6 @@ function createPromiseToAddFileOrParseDirectory(entry, relativePath, lastResortF
       if (entry.kind === 'file') {
         const file = await entry.getFile();
         if (file != null) {
-          ;
           file.relativePath = relativePath ? getNextRelativePath() : null;
           yield file;
         } else if (lastResortFile != null) yield lastResortFile;
@@ -28213,8 +28969,7 @@ async function* getFilesFromDataTransfer(dataTransfer, logDropError) {
     // TODO enable getAsFileSystemHandle API once we can get it working with subdirectories
     // IMPORTANT: Need to check isSecureContext *before* calling getAsFileSystemHandle
     // or else Chrome will crash when running in HTTP: https://github.com/transloadit/uppy/issues/4133
-    // if (window.isSecureContext && item.getAsFileSystemHandle != null)
-    // fileSystemHandle = await item.getAsFileSystemHandle()
+    // if (window.isSecureContext && item.getAsFileSystemHandle != null) entry = await item.getAsFileSystemHandle()
 
     // `webkitGetAsEntry` exists in all popular browsers (including non-WebKit browsers),
     // however it may be renamed to getAsEntry() in the future, so you should code defensively, looking for both.
@@ -28265,6 +29020,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /**
  * Takes a full filename string and returns an object {name, extension}
+ *
+ * @param {string} fullFileName
+ * @returns {object} {name, extension}
  */
 function getFileNameAndExtension(fullFileName) {
   const lastDot = fullFileName.lastIndexOf('.');
@@ -28312,6 +29070,27 @@ function getFileType(file) {
 
 /***/ }),
 
+/***/ "./node_modules/@uppy/utils/lib/getSocketHost.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/@uppy/utils/lib/getSocketHost.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ getSocketHost)
+/* harmony export */ });
+function getSocketHost(url) {
+  // get the host domain
+  const regex = /^(?:https?:\/\/|\/\/)?(?:[^@\n]+@)?(?:www\.)?([^\n]+)/i;
+  const host = regex.exec(url)[1];
+  const socketProtocol = /^http:\/\//i.test(url) ? 'ws' : 'wss';
+  return `${socketProtocol}://${host}`;
+}
+
+/***/ }),
+
 /***/ "./node_modules/@uppy/utils/lib/getTextDirection.js":
 /*!**********************************************************!*\
   !*** ./node_modules/@uppy/utils/lib/getTextDirection.js ***!
@@ -28325,6 +29104,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /**
  * Get the declared text direction for an element.
+ *
+ * @param {Node} element
+ * @returns {string|undefined}
  */
 
 function getTextDirection(element) {
@@ -28358,6 +29140,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /**
  * Adds zero to strings shorter than two characters.
+ *
+ * @param {number} number
+ * @returns {string}
  */
 function pad(number) {
   return number < 10 ? `0${number}` : number.toString();
@@ -28406,11 +29191,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /**
  * Check if an object is a DOM element. Duck-typing based on `nodeType`.
+ *
+ * @param {*} obj
  */
 function isDOMElement(obj) {
-  if (typeof obj !== 'object' || obj === null) return false;
-  if (!('nodeType' in obj)) return false;
-  return obj.nodeType === Node.ELEMENT_NODE;
+  return (obj == null ? void 0 : obj.nodeType) === Node.ELEMENT_NODE;
 }
 
 /***/ }),
@@ -28428,6 +29213,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /**
  * Checks if the browser supports Drag & Drop (not supported on mobile devices, for example).
+ *
+ * @returns {boolean}
  */
 function isDragDropSupported() {
   const div = document.body;
@@ -28479,6 +29266,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /**
  * Check if a URL string is an object URL from `URL.createObjectURL`.
+ *
+ * @param {string} url
+ * @returns {boolean}
  */
 function isObjectURL(url) {
   return url.startsWith('blob:');
@@ -28522,7 +29312,6 @@ __webpack_require__.r(__webpack_exports__);
 //    https://github.com/jshttp/mime-db/blob/master/db.json
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  __proto__: null,
   md: 'text/markdown',
   markdown: 'text/markdown',
   mp4: 'video/mp4',
@@ -28684,6 +29473,10 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * Truncates a string to the given number of chars (maxLength) by inserting '...' in the middle of that string.
  * Partially taken from https://stackoverflow.com/a/5723274/3192470.
+ *
+ * @param {string} string - string to be truncated
+ * @param {number} maxLength - maximum size of the resulting string
+ * @returns {string}
  */
 const separator = '...';
 function truncateString(string, maxLength) {
@@ -28712,15 +29505,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ XHRUpload)
 /* harmony export */ });
-/* harmony import */ var _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @uppy/core/lib/BasePlugin.js */ "./node_modules/@uppy/core/lib/BasePlugin.js");
-/* harmony import */ var nanoid_non_secure__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! nanoid/non-secure */ "./node_modules/@uppy/xhr-upload/node_modules/nanoid/non-secure/index.js");
-/* harmony import */ var _uppy_utils_lib_EventManager__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/utils/lib/EventManager */ "./node_modules/@uppy/utils/lib/EventManager.js");
-/* harmony import */ var _uppy_utils_lib_ProgressTimeout__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/utils/lib/ProgressTimeout */ "./node_modules/@uppy/utils/lib/ProgressTimeout.js");
-/* harmony import */ var _uppy_utils_lib_RateLimitedQueue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/utils/lib/RateLimitedQueue */ "./node_modules/@uppy/utils/lib/RateLimitedQueue.js");
-/* harmony import */ var _uppy_utils_lib_NetworkError__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/utils/lib/NetworkError */ "./node_modules/@uppy/utils/lib/NetworkError.js");
-/* harmony import */ var _uppy_utils_lib_isNetworkError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @uppy/utils/lib/isNetworkError */ "./node_modules/@uppy/utils/lib/isNetworkError.js");
-/* harmony import */ var _uppy_utils_lib_fileFilters__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @uppy/utils/lib/fileFilters */ "./node_modules/@uppy/utils/lib/fileFilters.js");
-/* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/xhr-upload/lib/locale.js");
+/* harmony import */ var _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/core/lib/BasePlugin.js */ "./node_modules/@uppy/core/lib/BasePlugin.js");
+/* harmony import */ var nanoid_non_secure__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! nanoid/non-secure */ "./node_modules/nanoid/non-secure/index.js");
+/* harmony import */ var _uppy_companion_client__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/companion-client */ "./node_modules/@uppy/companion-client/lib/index.js");
+/* harmony import */ var _uppy_utils_lib_EventManager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/utils/lib/EventManager */ "./node_modules/@uppy/utils/lib/EventManager.js");
+/* harmony import */ var _uppy_utils_lib_ProgressTimeout__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/utils/lib/ProgressTimeout */ "./node_modules/@uppy/utils/lib/ProgressTimeout.js");
+/* harmony import */ var _uppy_utils_lib_RateLimitedQueue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @uppy/utils/lib/RateLimitedQueue */ "./node_modules/@uppy/utils/lib/RateLimitedQueue.js");
+/* harmony import */ var _uppy_utils_lib_NetworkError__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @uppy/utils/lib/NetworkError */ "./node_modules/@uppy/utils/lib/NetworkError.js");
+/* harmony import */ var _uppy_utils_lib_isNetworkError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @uppy/utils/lib/isNetworkError */ "./node_modules/@uppy/utils/lib/isNetworkError.js");
+/* harmony import */ var _uppy_utils_lib_fileFilters__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @uppy/utils/lib/fileFilters */ "./node_modules/@uppy/utils/lib/fileFilters.js");
+/* harmony import */ var _locale_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./locale.js */ "./node_modules/@uppy/xhr-upload/lib/locale.js");
 function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
 var id = 0;
 function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
@@ -28732,8 +29526,9 @@ function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + n
 
 
 
+
 const packageJson = {
-  "version": "3.5.0"
+  "version": "3.4.1"
 };
 
 function buildResponseError(xhr, err) {
@@ -28748,8 +29543,8 @@ function buildResponseError(xhr, err) {
       data: error
     });
   }
-  if ((0,_uppy_utils_lib_isNetworkError__WEBPACK_IMPORTED_MODULE_4__["default"])(xhr)) {
-    error = new _uppy_utils_lib_NetworkError__WEBPACK_IMPORTED_MODULE_3__["default"](error, xhr);
+  if ((0,_uppy_utils_lib_isNetworkError__WEBPACK_IMPORTED_MODULE_6__["default"])(xhr)) {
+    error = new _uppy_utils_lib_NetworkError__WEBPACK_IMPORTED_MODULE_5__["default"](error, xhr);
     return error;
   }
   error.request = xhr;
@@ -28773,7 +29568,7 @@ var _uploadBundle = /*#__PURE__*/_classPrivateFieldLooseKey("uploadBundle");
 var _getCompanionClientArgs = /*#__PURE__*/_classPrivateFieldLooseKey("getCompanionClientArgs");
 var _uploadFiles = /*#__PURE__*/_classPrivateFieldLooseKey("uploadFiles");
 var _handleUpload = /*#__PURE__*/_classPrivateFieldLooseKey("handleUpload");
-class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_7__["default"] {
+class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
   constructor(uppy, _opts) {
     super(uppy, _opts);
     Object.defineProperty(this, _uploadFiles, {
@@ -28798,13 +29593,13 @@ class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_7_
 
         // No limit configured by the user, and no RateLimitedQueue passed in by a "parent" plugin
         // (basically just AwsS3) using the internal symbol
-        if (this.opts.limit === 0 && !this.opts[_uppy_utils_lib_RateLimitedQueue__WEBPACK_IMPORTED_MODULE_2__.internalRateLimitedQueue]) {
+        if (this.opts.limit === 0 && !this.opts[_uppy_utils_lib_RateLimitedQueue__WEBPACK_IMPORTED_MODULE_4__.internalRateLimitedQueue]) {
           this.uppy.log('[XHRUpload] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/xhr-upload/#limit-0', 'warning');
         }
         this.uppy.log('[XHRUpload] Uploading...');
         const files = this.uppy.getFilesByIds(fileIDs);
-        const filesFiltered = (0,_uppy_utils_lib_fileFilters__WEBPACK_IMPORTED_MODULE_5__.filterNonFailedFiles)(files);
-        const filesToEmit = (0,_uppy_utils_lib_fileFilters__WEBPACK_IMPORTED_MODULE_5__.filterFilesToEmitUploadStarted)(filesFiltered);
+        const filesFiltered = (0,_uppy_utils_lib_fileFilters__WEBPACK_IMPORTED_MODULE_7__.filterNonFailedFiles)(files);
+        const filesToEmit = (0,_uppy_utils_lib_fileFilters__WEBPACK_IMPORTED_MODULE_7__.filterFilesToEmitUploadStarted)(filesFiltered);
         this.uppy.emit('upload-start', filesToEmit);
         if (this.opts.bundle) {
           // if bundle: true, we don’t support remote uploads
@@ -28824,7 +29619,7 @@ class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_7_
     this.type = 'uploader';
     this.id = this.opts.id || 'XHRUpload';
     this.title = 'XHRUpload';
-    this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_6__["default"];
+    this.defaultLocale = _locale_js__WEBPACK_IMPORTED_MODULE_8__["default"];
 
     // Default options
     const defaultOptions = {
@@ -28858,8 +29653,8 @@ class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_7_
        */
       getResponseError(_, response) {
         let error = new Error('Upload error');
-        if ((0,_uppy_utils_lib_isNetworkError__WEBPACK_IMPORTED_MODULE_4__["default"])(response)) {
-          error = new _uppy_utils_lib_NetworkError__WEBPACK_IMPORTED_MODULE_3__["default"](error, response);
+        if ((0,_uppy_utils_lib_isNetworkError__WEBPACK_IMPORTED_MODULE_6__["default"])(response)) {
+          error = new _uppy_utils_lib_NetworkError__WEBPACK_IMPORTED_MODULE_5__["default"](error, response);
         }
         return error;
       },
@@ -28879,10 +29674,10 @@ class XHRUpload extends _uppy_core_lib_BasePlugin_js__WEBPACK_IMPORTED_MODULE_7_
     this.i18nInit();
 
     // Simultaneous upload limiting is shared across all uploads with this plugin.
-    if (_uppy_utils_lib_RateLimitedQueue__WEBPACK_IMPORTED_MODULE_2__.internalRateLimitedQueue in this.opts) {
-      this.requests = this.opts[_uppy_utils_lib_RateLimitedQueue__WEBPACK_IMPORTED_MODULE_2__.internalRateLimitedQueue];
+    if (_uppy_utils_lib_RateLimitedQueue__WEBPACK_IMPORTED_MODULE_4__.internalRateLimitedQueue in this.opts) {
+      this.requests = this.opts[_uppy_utils_lib_RateLimitedQueue__WEBPACK_IMPORTED_MODULE_4__.internalRateLimitedQueue];
     } else {
-      this.requests = new _uppy_utils_lib_RateLimitedQueue__WEBPACK_IMPORTED_MODULE_2__.RateLimitedQueue(this.opts.limit);
+      this.requests = new _uppy_utils_lib_RateLimitedQueue__WEBPACK_IMPORTED_MODULE_4__.RateLimitedQueue(this.opts.limit);
     }
     if (this.opts.bundle && !this.opts.formData) {
       throw new Error('`opts.formData` must be true when `opts.bundle` is enabled.');
@@ -29000,16 +29795,16 @@ async function _uploadLocalFile2(file, current, total) {
   return new Promise((resolve, reject) => {
     const data = opts.formData ? this.createFormDataUpload(file, opts) : file.data;
     const xhr = new XMLHttpRequest();
-    const eventManager = new _uppy_utils_lib_EventManager__WEBPACK_IMPORTED_MODULE_0__["default"](this.uppy);
+    const eventManager = new _uppy_utils_lib_EventManager__WEBPACK_IMPORTED_MODULE_2__["default"](this.uppy);
     this.uploaderEvents[file.id] = eventManager;
     let queuedRequest;
-    const timer = new _uppy_utils_lib_ProgressTimeout__WEBPACK_IMPORTED_MODULE_1__["default"](opts.timeout, () => {
+    const timer = new _uppy_utils_lib_ProgressTimeout__WEBPACK_IMPORTED_MODULE_3__["default"](opts.timeout, () => {
       const error = new Error(this.i18n('uploadStalled', {
         seconds: Math.ceil(opts.timeout / 1000)
       }));
       this.uppy.emit('upload-stalled', error, [file]);
     });
-    const id = (0,nanoid_non_secure__WEBPACK_IMPORTED_MODULE_8__.nanoid)();
+    const id = (0,nanoid_non_secure__WEBPACK_IMPORTED_MODULE_9__.nanoid)();
     xhr.upload.addEventListener('loadstart', () => {
       this.uppy.log(`[XHRUpload] ${id} started`);
     });
@@ -29125,7 +29920,7 @@ function _uploadBundle2(files) {
         this.uppy.emit('upload-error', file, error);
       });
     };
-    const timer = new _uppy_utils_lib_ProgressTimeout__WEBPACK_IMPORTED_MODULE_1__["default"](this.opts.timeout, () => {
+    const timer = new _uppy_utils_lib_ProgressTimeout__WEBPACK_IMPORTED_MODULE_3__["default"](this.opts.timeout, () => {
       const error = new Error(this.i18n('uploadStalled', {
         seconds: Math.ceil(this.opts.timeout / 1000)
       }));
@@ -29213,15 +30008,18 @@ async function _uploadFiles2(files) {
     const current = parseInt(i, 10) + 1;
     const total = files.length;
     if (file.isRemote) {
+      // INFO: the url plugin needs to use RequestClient,
+      // while others use Provider
+      const Client = file.remote.providerOptions.provider ? _uppy_companion_client__WEBPACK_IMPORTED_MODULE_1__.Provider : _uppy_companion_client__WEBPACK_IMPORTED_MODULE_1__.RequestClient;
       const getQueue = () => this.requests;
+      const client = new Client(this.uppy, file.remote.providerOptions, getQueue);
       const controller = new AbortController();
       const removedHandler = removedFile => {
         if (removedFile.id === file.id) controller.abort();
       };
       this.uppy.on('file-removed', removedHandler);
-      const uploadPromise = file.remote.requestClient.uploadRemoteFile(file, _classPrivateFieldLooseBase(this, _getCompanionClientArgs)[_getCompanionClientArgs](file), {
-        signal: controller.signal,
-        getQueue
+      const uploadPromise = client.uploadRemoteFile(file, _classPrivateFieldLooseBase(this, _getCompanionClientArgs)[_getCompanionClientArgs](file), {
+        signal: controller.signal
       });
       this.requests.wrapSyncFunction(() => {
         this.uppy.off('file-removed', removedHandler);
@@ -29255,42 +30053,6 @@ __webpack_require__.r(__webpack_exports__);
     uploadStalled: 'Upload has not made any progress for %{seconds} seconds. You may want to retry it.'
   }
 });
-
-/***/ }),
-
-/***/ "./node_modules/@uppy/xhr-upload/node_modules/nanoid/non-secure/index.js":
-/*!*******************************************************************************!*\
-  !*** ./node_modules/@uppy/xhr-upload/node_modules/nanoid/non-secure/index.js ***!
-  \*******************************************************************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   customAlphabet: () => (/* binding */ customAlphabet),
-/* harmony export */   nanoid: () => (/* binding */ nanoid)
-/* harmony export */ });
-let urlAlphabet =
-  'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
-let customAlphabet = (alphabet, defaultSize = 21) => {
-  return (size = defaultSize) => {
-    let id = ''
-    let i = size
-    while (i--) {
-      id += alphabet[(Math.random() * alphabet.length) | 0]
-    }
-    return id
-  }
-}
-let nanoid = (size = 21) => {
-  let id = ''
-  let i = size
-  while (i--) {
-    id += urlAlphabet[(Math.random() * 64) | 0]
-  }
-  return id
-}
-
 
 /***/ }),
 
@@ -29359,6 +30121,42 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   tiffExtractables: () => (/* binding */ j)
 /* harmony export */ });
 function e(e,t,s){return t in e?Object.defineProperty(e,t,{value:s,enumerable:!0,configurable:!0,writable:!0}):e[t]=s,e}var t="undefined"!=typeof self?self:global;const s="undefined"!=typeof navigator,i=s&&"undefined"==typeof HTMLImageElement,n=!("undefined"==typeof global||"undefined"==typeof process||!process.versions||!process.versions.node),r=t.Buffer,a=!!r,h=e=>void 0!==e;function f(e){return void 0===e||(e instanceof Map?0===e.size:0===Object.values(e).filter(h).length)}function l(e){let t=new Error(e);throw delete t.stack,t}function o(e){let t=function(e){let t=0;return e.ifd0.enabled&&(t+=1024),e.exif.enabled&&(t+=2048),e.makerNote&&(t+=2048),e.userComment&&(t+=1024),e.gps.enabled&&(t+=512),e.interop.enabled&&(t+=100),e.ifd1.enabled&&(t+=1024),t+2048}(e);return e.jfif.enabled&&(t+=50),e.xmp.enabled&&(t+=2e4),e.iptc.enabled&&(t+=14e3),e.icc.enabled&&(t+=6e3),t}const u=e=>String.fromCharCode.apply(null,e),d="undefined"!=typeof TextDecoder?new TextDecoder("utf-8"):void 0;class c{static from(e,t){return e instanceof this&&e.le===t?e:new c(e,void 0,void 0,t)}constructor(e,t=0,s,i){if("boolean"==typeof i&&(this.le=i),Array.isArray(e)&&(e=new Uint8Array(e)),0===e)this.byteOffset=0,this.byteLength=0;else if(e instanceof ArrayBuffer){void 0===s&&(s=e.byteLength-t);let i=new DataView(e,t,s);this._swapDataView(i)}else if(e instanceof Uint8Array||e instanceof DataView||e instanceof c){void 0===s&&(s=e.byteLength-t),(t+=e.byteOffset)+s>e.byteOffset+e.byteLength&&l("Creating view outside of available memory in ArrayBuffer");let i=new DataView(e.buffer,t,s);this._swapDataView(i)}else if("number"==typeof e){let t=new DataView(new ArrayBuffer(e));this._swapDataView(t)}else l("Invalid input argument for BufferView: "+e)}_swapArrayBuffer(e){this._swapDataView(new DataView(e))}_swapBuffer(e){this._swapDataView(new DataView(e.buffer,e.byteOffset,e.byteLength))}_swapDataView(e){this.dataView=e,this.buffer=e.buffer,this.byteOffset=e.byteOffset,this.byteLength=e.byteLength}_lengthToEnd(e){return this.byteLength-e}set(e,t,s=c){return e instanceof DataView||e instanceof c?e=new Uint8Array(e.buffer,e.byteOffset,e.byteLength):e instanceof ArrayBuffer&&(e=new Uint8Array(e)),e instanceof Uint8Array||l("BufferView.set(): Invalid data argument."),this.toUint8().set(e,t),new s(this,t,e.byteLength)}subarray(e,t){return t=t||this._lengthToEnd(e),new c(this,e,t)}toUint8(){return new Uint8Array(this.buffer,this.byteOffset,this.byteLength)}getUint8Array(e,t){return new Uint8Array(this.buffer,this.byteOffset+e,t)}getString(e=0,t=this.byteLength){let s=this.getUint8Array(e,t);return i=s,d?d.decode(i):a?Buffer.from(i).toString("utf8"):decodeURIComponent(escape(u(i)));var i}getLatin1String(e=0,t=this.byteLength){let s=this.getUint8Array(e,t);return u(s)}getUnicodeString(e=0,t=this.byteLength){const s=[];for(let i=0;i<t&&e+i<this.byteLength;i+=2)s.push(this.getUint16(e+i));return u(s)}getInt8(e){return this.dataView.getInt8(e)}getUint8(e){return this.dataView.getUint8(e)}getInt16(e,t=this.le){return this.dataView.getInt16(e,t)}getInt32(e,t=this.le){return this.dataView.getInt32(e,t)}getUint16(e,t=this.le){return this.dataView.getUint16(e,t)}getUint32(e,t=this.le){return this.dataView.getUint32(e,t)}getFloat32(e,t=this.le){return this.dataView.getFloat32(e,t)}getFloat64(e,t=this.le){return this.dataView.getFloat64(e,t)}getFloat(e,t=this.le){return this.dataView.getFloat32(e,t)}getDouble(e,t=this.le){return this.dataView.getFloat64(e,t)}getUintBytes(e,t,s){switch(t){case 1:return this.getUint8(e,s);case 2:return this.getUint16(e,s);case 4:return this.getUint32(e,s);case 8:return this.getUint64&&this.getUint64(e,s)}}getUint(e,t,s){switch(t){case 8:return this.getUint8(e,s);case 16:return this.getUint16(e,s);case 32:return this.getUint32(e,s);case 64:return this.getUint64&&this.getUint64(e,s)}}toString(e){return this.dataView.toString(e,this.constructor.name)}ensureChunk(){}}function p(e,t){l(`${e} '${t}' was not loaded, try using full build of exifr.`)}class g extends Map{constructor(e){super(),this.kind=e}get(e,t){return this.has(e)||p(this.kind,e),t&&(e in t||function(e,t){l(`Unknown ${e} '${t}'.`)}(this.kind,e),t[e].enabled||p(this.kind,e)),super.get(e)}keyList(){return Array.from(this.keys())}}var m=new g("file parser"),y=new g("segment parser"),b=new g("file reader");let w=t.fetch;function k(e,t){return(i=e).startsWith("data:")||i.length>1e4?v(e,t,"base64"):n&&e.includes("://")?O(e,t,"url",S):n?v(e,t,"fs"):s?O(e,t,"url",S):void l("Invalid input argument");var i}async function O(e,t,s,i){return b.has(s)?v(e,t,s):i?async function(e,t){let s=await t(e);return new c(s)}(e,i):void l(`Parser ${s} is not loaded`)}async function v(e,t,s){let i=new(b.get(s))(e,t);return await i.read(),i}const S=e=>w(e).then((e=>e.arrayBuffer())),A=e=>new Promise(((t,s)=>{let i=new FileReader;i.onloadend=()=>t(i.result||new ArrayBuffer),i.onerror=s,i.readAsArrayBuffer(e)}));class U extends Map{get tagKeys(){return this.allKeys||(this.allKeys=Array.from(this.keys())),this.allKeys}get tagValues(){return this.allValues||(this.allValues=Array.from(this.values())),this.allValues}}function x(e,t,s){let i=new U;for(let[e,t]of s)i.set(e,t);if(Array.isArray(t))for(let s of t)e.set(s,i);else e.set(t,i);return i}function C(e,t,s){let i,n=e.get(t);for(i of s)n.set(i[0],i[1])}const B=new Map,V=new Map,I=new Map,L=["chunked","firstChunkSize","firstChunkSizeNode","firstChunkSizeBrowser","chunkSize","chunkLimit"],T=["jfif","xmp","icc","iptc","ihdr"],z=["tiff",...T],P=["ifd0","ifd1","exif","gps","interop"],F=[...z,...P],j=["makerNote","userComment"],E=["translateKeys","translateValues","reviveValues","multiSegment"],M=[...E,"sanitize","mergeOutput","silentErrors"];class _{get translate(){return this.translateKeys||this.translateValues||this.reviveValues}}class D extends _{get needed(){return this.enabled||this.deps.size>0}constructor(t,s,i,n){if(super(),e(this,"enabled",!1),e(this,"skip",new Set),e(this,"pick",new Set),e(this,"deps",new Set),e(this,"translateKeys",!1),e(this,"translateValues",!1),e(this,"reviveValues",!1),this.key=t,this.enabled=s,this.parse=this.enabled,this.applyInheritables(n),this.canBeFiltered=P.includes(t),this.canBeFiltered&&(this.dict=B.get(t)),void 0!==i)if(Array.isArray(i))this.parse=this.enabled=!0,this.canBeFiltered&&i.length>0&&this.translateTagSet(i,this.pick);else if("object"==typeof i){if(this.enabled=!0,this.parse=!1!==i.parse,this.canBeFiltered){let{pick:e,skip:t}=i;e&&e.length>0&&this.translateTagSet(e,this.pick),t&&t.length>0&&this.translateTagSet(t,this.skip)}this.applyInheritables(i)}else!0===i||!1===i?this.parse=this.enabled=i:l(`Invalid options argument: ${i}`)}applyInheritables(e){let t,s;for(t of E)s=e[t],void 0!==s&&(this[t]=s)}translateTagSet(e,t){if(this.dict){let s,i,{tagKeys:n,tagValues:r}=this.dict;for(s of e)"string"==typeof s?(i=r.indexOf(s),-1===i&&(i=n.indexOf(Number(s))),-1!==i&&t.add(Number(n[i]))):t.add(s)}else for(let s of e)t.add(s)}finalizeFilters(){!this.enabled&&this.deps.size>0?(this.enabled=!0,X(this.pick,this.deps)):this.enabled&&this.pick.size>0&&X(this.pick,this.deps)}}var N={jfif:!1,tiff:!0,xmp:!1,icc:!1,iptc:!1,ifd0:!0,ifd1:!1,exif:!0,gps:!0,interop:!1,ihdr:void 0,makerNote:!1,userComment:!1,multiSegment:!1,skip:[],pick:[],translateKeys:!0,translateValues:!0,reviveValues:!0,sanitize:!0,mergeOutput:!0,silentErrors:!0,chunked:!0,firstChunkSize:void 0,firstChunkSizeNode:512,firstChunkSizeBrowser:65536,chunkSize:65536,chunkLimit:5},$=new Map;class R extends _{static useCached(e){let t=$.get(e);return void 0!==t||(t=new this(e),$.set(e,t)),t}constructor(e){super(),!0===e?this.setupFromTrue():void 0===e?this.setupFromUndefined():Array.isArray(e)?this.setupFromArray(e):"object"==typeof e?this.setupFromObject(e):l(`Invalid options argument ${e}`),void 0===this.firstChunkSize&&(this.firstChunkSize=s?this.firstChunkSizeBrowser:this.firstChunkSizeNode),this.mergeOutput&&(this.ifd1.enabled=!1),this.filterNestedSegmentTags(),this.traverseTiffDependencyTree(),this.checkLoadedPlugins()}setupFromUndefined(){let e;for(e of L)this[e]=N[e];for(e of M)this[e]=N[e];for(e of j)this[e]=N[e];for(e of F)this[e]=new D(e,N[e],void 0,this)}setupFromTrue(){let e;for(e of L)this[e]=N[e];for(e of M)this[e]=N[e];for(e of j)this[e]=!0;for(e of F)this[e]=new D(e,!0,void 0,this)}setupFromArray(e){let t;for(t of L)this[t]=N[t];for(t of M)this[t]=N[t];for(t of j)this[t]=N[t];for(t of F)this[t]=new D(t,!1,void 0,this);this.setupGlobalFilters(e,void 0,P)}setupFromObject(e){let t;for(t of(P.ifd0=P.ifd0||P.image,P.ifd1=P.ifd1||P.thumbnail,Object.assign(this,e),L))this[t]=W(e[t],N[t]);for(t of M)this[t]=W(e[t],N[t]);for(t of j)this[t]=W(e[t],N[t]);for(t of z)this[t]=new D(t,N[t],e[t],this);for(t of P)this[t]=new D(t,N[t],e[t],this.tiff);this.setupGlobalFilters(e.pick,e.skip,P,F),!0===e.tiff?this.batchEnableWithBool(P,!0):!1===e.tiff?this.batchEnableWithUserValue(P,e):Array.isArray(e.tiff)?this.setupGlobalFilters(e.tiff,void 0,P):"object"==typeof e.tiff&&this.setupGlobalFilters(e.tiff.pick,e.tiff.skip,P)}batchEnableWithBool(e,t){for(let s of e)this[s].enabled=t}batchEnableWithUserValue(e,t){for(let s of e){let e=t[s];this[s].enabled=!1!==e&&void 0!==e}}setupGlobalFilters(e,t,s,i=s){if(e&&e.length){for(let e of i)this[e].enabled=!1;let t=K(e,s);for(let[e,s]of t)X(this[e].pick,s),this[e].enabled=!0}else if(t&&t.length){let e=K(t,s);for(let[t,s]of e)X(this[t].skip,s)}}filterNestedSegmentTags(){let{ifd0:e,exif:t,xmp:s,iptc:i,icc:n}=this;this.makerNote?t.deps.add(37500):t.skip.add(37500),this.userComment?t.deps.add(37510):t.skip.add(37510),s.enabled||e.skip.add(700),i.enabled||e.skip.add(33723),n.enabled||e.skip.add(34675)}traverseTiffDependencyTree(){let{ifd0:e,exif:t,gps:s,interop:i}=this;i.needed&&(t.deps.add(40965),e.deps.add(40965)),t.needed&&e.deps.add(34665),s.needed&&e.deps.add(34853),this.tiff.enabled=P.some((e=>!0===this[e].enabled))||this.makerNote||this.userComment;for(let e of P)this[e].finalizeFilters()}get onlyTiff(){return!T.map((e=>this[e].enabled)).some((e=>!0===e))&&this.tiff.enabled}checkLoadedPlugins(){for(let e of z)this[e].enabled&&!y.has(e)&&p("segment parser",e)}}function K(e,t){let s,i,n,r,a=[];for(n of t){for(r of(s=B.get(n),i=[],s))(e.includes(r[0])||e.includes(r[1]))&&i.push(r[0]);i.length&&a.push([n,i])}return a}function W(e,t){return void 0!==e?e:void 0!==t?t:void 0}function X(e,t){for(let s of t)e.add(s)}e(R,"default",N);class H{constructor(t){e(this,"parsers",{}),e(this,"output",{}),e(this,"errors",[]),e(this,"pushToErrors",(e=>this.errors.push(e))),this.options=R.useCached(t)}async read(e){this.file=await function(e,t){return"string"==typeof e?k(e,t):s&&!i&&e instanceof HTMLImageElement?k(e.src,t):e instanceof Uint8Array||e instanceof ArrayBuffer||e instanceof DataView?new c(e):s&&e instanceof Blob?O(e,t,"blob",A):void l("Invalid input argument")}(e,this.options)}setup(){if(this.fileParser)return;let{file:e}=this,t=e.getUint16(0);for(let[s,i]of m)if(i.canHandle(e,t))return this.fileParser=new i(this.options,this.file,this.parsers),e[s]=!0;this.file.close&&this.file.close(),l("Unknown file format")}async parse(){let{output:e,errors:t}=this;return this.setup(),this.options.silentErrors?(await this.executeParsers().catch(this.pushToErrors),t.push(...this.fileParser.errors)):await this.executeParsers(),this.file.close&&this.file.close(),this.options.silentErrors&&t.length>0&&(e.errors=t),f(s=e)?void 0:s;var s}async executeParsers(){let{output:e}=this;await this.fileParser.parse();let t=Object.values(this.parsers).map((async t=>{let s=await t.parse();t.assignToOutput(e,s)}));this.options.silentErrors&&(t=t.map((e=>e.catch(this.pushToErrors)))),await Promise.all(t)}async extractThumbnail(){this.setup();let{options:e,file:t}=this,s=y.get("tiff",e);var i;if(t.tiff?i={start:0,type:"tiff"}:t.jpeg&&(i=await this.fileParser.getOrFindSegment("tiff")),void 0===i)return;let n=await this.fileParser.ensureSegmentChunk(i),r=this.parsers.tiff=new s(n,e,t),a=await r.extractThumbnail();return t.close&&t.close(),a}}async function Y(e,t){let s=new H(t);return await s.read(e),s.parse()}var G=Object.freeze({__proto__:null,parse:Y,Exifr:H,fileParsers:m,segmentParsers:y,fileReaders:b,tagKeys:B,tagValues:V,tagRevivers:I,createDictionary:x,extendDictionary:C,fetchUrlAsArrayBuffer:S,readBlobAsArrayBuffer:A,chunkedProps:L,otherSegments:T,segments:z,tiffBlocks:P,segmentsAndBlocks:F,tiffExtractables:j,inheritables:E,allFormatters:M,Options:R});class J{static findPosition(e,t){let s=e.getUint16(t+2)+2,i="function"==typeof this.headerLength?this.headerLength(e,t,s):this.headerLength,n=t+i,r=s-i;return{offset:t,length:s,headerLength:i,start:n,size:r,end:n+r}}static parse(e,t={}){return new this(e,new R({[this.type]:t}),e).parse()}normalizeInput(e){return e instanceof c?e:new c(e)}constructor(t,s={},i){e(this,"errors",[]),e(this,"raw",new Map),e(this,"handleError",(e=>{if(!this.options.silentErrors)throw e;this.errors.push(e.message)})),this.chunk=this.normalizeInput(t),this.file=i,this.type=this.constructor.type,this.globalOptions=this.options=s,this.localOptions=s[this.type],this.canTranslate=this.localOptions&&this.localOptions.translate}translate(){this.canTranslate&&(this.translated=this.translateBlock(this.raw,this.type))}get output(){return this.translated?this.translated:this.raw?Object.fromEntries(this.raw):void 0}translateBlock(e,t){let s=I.get(t),i=V.get(t),n=B.get(t),r=this.options[t],a=r.reviveValues&&!!s,h=r.translateValues&&!!i,f=r.translateKeys&&!!n,l={};for(let[t,r]of e)a&&s.has(t)?r=s.get(t)(r):h&&i.has(t)&&(r=this.translateValue(r,i.get(t))),f&&n.has(t)&&(t=n.get(t)||t),l[t]=r;return l}translateValue(e,t){return t[e]||t.DEFAULT||e}assignToOutput(e,t){this.assignObjectToOutput(e,this.constructor.type,t)}assignObjectToOutput(e,t,s){if(this.globalOptions.mergeOutput)return Object.assign(e,s);e[t]?Object.assign(e[t],s):e[t]=s}}e(J,"headerLength",4),e(J,"type",void 0),e(J,"multiSegment",!1),e(J,"canHandle",(()=>!1));function q(e){return 192===e||194===e||196===e||219===e||221===e||218===e||254===e}function Q(e){return e>=224&&e<=239}function Z(e,t,s){for(let[i,n]of y)if(n.canHandle(e,t,s))return i}class ee extends class{constructor(t,s,i){e(this,"errors",[]),e(this,"ensureSegmentChunk",(async e=>{let t=e.start,s=e.size||65536;if(this.file.chunked)if(this.file.available(t,s))e.chunk=this.file.subarray(t,s);else try{e.chunk=await this.file.readChunk(t,s)}catch(t){l(`Couldn't read segment: ${JSON.stringify(e)}. ${t.message}`)}else this.file.byteLength>t+s?e.chunk=this.file.subarray(t,s):void 0===e.size?e.chunk=this.file.subarray(t):l("Segment unreachable: "+JSON.stringify(e));return e.chunk})),this.extendOptions&&this.extendOptions(t),this.options=t,this.file=s,this.parsers=i}injectSegment(e,t){this.options[e].enabled&&this.createParser(e,t)}createParser(e,t){let s=new(y.get(e))(t,this.options,this.file);return this.parsers[e]=s}createParsers(e){for(let t of e){let{type:e,chunk:s}=t,i=this.options[e];if(i&&i.enabled){let t=this.parsers[e];t&&t.append||t||this.createParser(e,s)}}}async readSegments(e){let t=e.map(this.ensureSegmentChunk);await Promise.all(t)}}{constructor(...t){super(...t),e(this,"appSegments",[]),e(this,"jpegSegments",[]),e(this,"unknownSegments",[])}static canHandle(e,t){return 65496===t}async parse(){await this.findAppSegments(),await this.readSegments(this.appSegments),this.mergeMultiSegments(),this.createParsers(this.mergedAppSegments||this.appSegments)}setupSegmentFinderArgs(e){!0===e?(this.findAll=!0,this.wanted=new Set(y.keyList())):(e=void 0===e?y.keyList().filter((e=>this.options[e].enabled)):e.filter((e=>this.options[e].enabled&&y.has(e))),this.findAll=!1,this.remaining=new Set(e),this.wanted=new Set(e)),this.unfinishedMultiSegment=!1}async findAppSegments(e=0,t){this.setupSegmentFinderArgs(t);let{file:s,findAll:i,wanted:n,remaining:r}=this;if(!i&&this.file.chunked&&(i=Array.from(n).some((e=>{let t=y.get(e),s=this.options[e];return t.multiSegment&&s.multiSegment})),i&&await this.file.readWhole()),e=this.findAppSegmentsInRange(e,s.byteLength),!this.options.onlyTiff&&s.chunked){let t=!1;for(;r.size>0&&!t&&(s.canReadNextChunk||this.unfinishedMultiSegment);){let{nextChunkOffset:i}=s,n=this.appSegments.some((e=>!this.file.available(e.offset||e.start,e.length||e.size)));if(t=e>i&&!n?!await s.readNextChunk(e):!await s.readNextChunk(i),void 0===(e=this.findAppSegmentsInRange(e,s.byteLength)))return}}}findAppSegmentsInRange(e,t){t-=2;let s,i,n,r,a,h,{file:f,findAll:l,wanted:o,remaining:u,options:d}=this;for(;e<t;e++)if(255===f.getUint8(e))if(s=f.getUint8(e+1),Q(s)){if(i=f.getUint16(e+2),n=Z(f,e,i),n&&o.has(n)&&(r=y.get(n),a=r.findPosition(f,e),h=d[n],a.type=n,this.appSegments.push(a),!l&&(r.multiSegment&&h.multiSegment?(this.unfinishedMultiSegment=a.chunkNumber<a.chunkCount,this.unfinishedMultiSegment||u.delete(n)):u.delete(n),0===u.size)))break;d.recordUnknownSegments&&(a=J.findPosition(f,e),a.marker=s,this.unknownSegments.push(a)),e+=i+1}else if(q(s)){if(i=f.getUint16(e+2),218===s&&!1!==d.stopAfterSos)return;d.recordJpegSegments&&this.jpegSegments.push({offset:e,length:i,marker:s}),e+=i+1}return e}mergeMultiSegments(){if(!this.appSegments.some((e=>e.multiSegment)))return;let e=function(e,t){let s,i,n,r=new Map;for(let a=0;a<e.length;a++)s=e[a],i=s[t],r.has(i)?n=r.get(i):r.set(i,n=[]),n.push(s);return Array.from(r)}(this.appSegments,"type");this.mergedAppSegments=e.map((([e,t])=>{let s=y.get(e,this.options);if(s.handleMultiSegments){return{type:e,chunk:s.handleMultiSegments(t)}}return t[0]}))}getSegment(e){return this.appSegments.find((t=>t.type===e))}async getOrFindSegment(e){let t=this.getSegment(e);return void 0===t&&(await this.findAppSegments(0,[e]),t=this.getSegment(e)),t}}e(ee,"type","jpeg"),m.set("jpeg",ee);const te=[void 0,1,1,2,4,8,1,1,2,4,8,4,8,4];class se extends J{parseHeader(){var e=this.chunk.getUint16();18761===e?this.le=!0:19789===e&&(this.le=!1),this.chunk.le=this.le,this.headerParsed=!0}parseTags(e,t,s=new Map){let{pick:i,skip:n}=this.options[t];i=new Set(i);let r=i.size>0,a=0===n.size,h=this.chunk.getUint16(e);e+=2;for(let f=0;f<h;f++){let h=this.chunk.getUint16(e);if(r){if(i.has(h)&&(s.set(h,this.parseTag(e,h,t)),i.delete(h),0===i.size))break}else!a&&n.has(h)||s.set(h,this.parseTag(e,h,t));e+=12}return s}parseTag(e,t,s){let{chunk:i}=this,n=i.getUint16(e+2),r=i.getUint32(e+4),a=te[n];if(a*r<=4?e+=8:e=i.getUint32(e+8),(n<1||n>13)&&l(`Invalid TIFF value type. block: ${s.toUpperCase()}, tag: ${t.toString(16)}, type: ${n}, offset ${e}`),e>i.byteLength&&l(`Invalid TIFF value offset. block: ${s.toUpperCase()}, tag: ${t.toString(16)}, type: ${n}, offset ${e} is outside of chunk size ${i.byteLength}`),1===n)return i.getUint8Array(e,r);if(2===n)return""===(h=function(e){for(;e.endsWith("\0");)e=e.slice(0,-1);return e}(h=i.getString(e,r)).trim())?void 0:h;var h;if(7===n)return i.getUint8Array(e,r);if(1===r)return this.parseTagValue(n,e);{let t=new(function(e){switch(e){case 1:return Uint8Array;case 3:return Uint16Array;case 4:return Uint32Array;case 5:return Array;case 6:return Int8Array;case 8:return Int16Array;case 9:return Int32Array;case 10:return Array;case 11:return Float32Array;case 12:return Float64Array;default:return Array}}(n))(r),s=a;for(let i=0;i<r;i++)t[i]=this.parseTagValue(n,e),e+=s;return t}}parseTagValue(e,t){let{chunk:s}=this;switch(e){case 1:return s.getUint8(t);case 3:return s.getUint16(t);case 4:return s.getUint32(t);case 5:return s.getUint32(t)/s.getUint32(t+4);case 6:return s.getInt8(t);case 8:return s.getInt16(t);case 9:return s.getInt32(t);case 10:return s.getInt32(t)/s.getInt32(t+4);case 11:return s.getFloat(t);case 12:return s.getDouble(t);case 13:return s.getUint32(t);default:l(`Invalid tiff type ${e}`)}}}class ie extends se{static canHandle(e,t){return 225===e.getUint8(t+1)&&1165519206===e.getUint32(t+4)&&0===e.getUint16(t+8)}async parse(){this.parseHeader();let{options:e}=this;return e.ifd0.enabled&&await this.parseIfd0Block(),e.exif.enabled&&await this.safeParse("parseExifBlock"),e.gps.enabled&&await this.safeParse("parseGpsBlock"),e.interop.enabled&&await this.safeParse("parseInteropBlock"),e.ifd1.enabled&&await this.safeParse("parseThumbnailBlock"),this.createOutput()}safeParse(e){let t=this[e]();return void 0!==t.catch&&(t=t.catch(this.handleError)),t}findIfd0Offset(){void 0===this.ifd0Offset&&(this.ifd0Offset=this.chunk.getUint32(4))}findIfd1Offset(){if(void 0===this.ifd1Offset){this.findIfd0Offset();let e=this.chunk.getUint16(this.ifd0Offset),t=this.ifd0Offset+2+12*e;this.ifd1Offset=this.chunk.getUint32(t)}}parseBlock(e,t){let s=new Map;return this[t]=s,this.parseTags(e,t,s),s}async parseIfd0Block(){if(this.ifd0)return;let{file:e}=this;this.findIfd0Offset(),this.ifd0Offset<8&&l("Malformed EXIF data"),!e.chunked&&this.ifd0Offset>e.byteLength&&l(`IFD0 offset points to outside of file.\nthis.ifd0Offset: ${this.ifd0Offset}, file.byteLength: ${e.byteLength}`),e.tiff&&await e.ensureChunk(this.ifd0Offset,o(this.options));let t=this.parseBlock(this.ifd0Offset,"ifd0");return 0!==t.size?(this.exifOffset=t.get(34665),this.interopOffset=t.get(40965),this.gpsOffset=t.get(34853),this.xmp=t.get(700),this.iptc=t.get(33723),this.icc=t.get(34675),this.options.sanitize&&(t.delete(34665),t.delete(40965),t.delete(34853),t.delete(700),t.delete(33723),t.delete(34675)),t):void 0}async parseExifBlock(){if(this.exif)return;if(this.ifd0||await this.parseIfd0Block(),void 0===this.exifOffset)return;this.file.tiff&&await this.file.ensureChunk(this.exifOffset,o(this.options));let e=this.parseBlock(this.exifOffset,"exif");return this.interopOffset||(this.interopOffset=e.get(40965)),this.makerNote=e.get(37500),this.userComment=e.get(37510),this.options.sanitize&&(e.delete(40965),e.delete(37500),e.delete(37510)),this.unpack(e,41728),this.unpack(e,41729),e}unpack(e,t){let s=e.get(t);s&&1===s.length&&e.set(t,s[0])}async parseGpsBlock(){if(this.gps)return;if(this.ifd0||await this.parseIfd0Block(),void 0===this.gpsOffset)return;let e=this.parseBlock(this.gpsOffset,"gps");return e&&e.has(2)&&e.has(4)&&(e.set("latitude",ne(...e.get(2),e.get(1))),e.set("longitude",ne(...e.get(4),e.get(3)))),e}async parseInteropBlock(){if(!this.interop&&(this.ifd0||await this.parseIfd0Block(),void 0!==this.interopOffset||this.exif||await this.parseExifBlock(),void 0!==this.interopOffset))return this.parseBlock(this.interopOffset,"interop")}async parseThumbnailBlock(e=!1){if(!this.ifd1&&!this.ifd1Parsed&&(!this.options.mergeOutput||e))return this.findIfd1Offset(),this.ifd1Offset>0&&(this.parseBlock(this.ifd1Offset,"ifd1"),this.ifd1Parsed=!0),this.ifd1}async extractThumbnail(){if(this.headerParsed||this.parseHeader(),this.ifd1Parsed||await this.parseThumbnailBlock(!0),void 0===this.ifd1)return;let e=this.ifd1.get(513),t=this.ifd1.get(514);return this.chunk.getUint8Array(e,t)}get image(){return this.ifd0}get thumbnail(){return this.ifd1}createOutput(){let e,t,s,i={};for(t of P)if(e=this[t],!f(e))if(s=this.canTranslate?this.translateBlock(e,t):Object.fromEntries(e),this.options.mergeOutput){if("ifd1"===t)continue;Object.assign(i,s)}else i[t]=s;return this.makerNote&&(i.makerNote=this.makerNote),this.userComment&&(i.userComment=this.userComment),i}assignToOutput(e,t){if(this.globalOptions.mergeOutput)Object.assign(e,t);else for(let[s,i]of Object.entries(t))this.assignObjectToOutput(e,s,i)}}function ne(e,t,s,i){var n=e+t/60+s/3600;return"S"!==i&&"W"!==i||(n*=-1),n}e(ie,"type","tiff"),e(ie,"headerLength",10),y.set("tiff",ie);var re=Object.freeze({__proto__:null,default:G,Exifr:H,fileParsers:m,segmentParsers:y,fileReaders:b,tagKeys:B,tagValues:V,tagRevivers:I,createDictionary:x,extendDictionary:C,fetchUrlAsArrayBuffer:S,readBlobAsArrayBuffer:A,chunkedProps:L,otherSegments:T,segments:z,tiffBlocks:P,segmentsAndBlocks:F,tiffExtractables:j,inheritables:E,allFormatters:M,Options:R,parse:Y});const ae={ifd0:!1,ifd1:!1,exif:!1,gps:!1,interop:!1,sanitize:!1,reviveValues:!0,translateKeys:!1,translateValues:!1,mergeOutput:!1},he=Object.assign({},ae,{firstChunkSize:4e4,gps:[1,2,3,4]});async function fe(e){let t=new H(he);await t.read(e);let s=await t.parse();if(s&&s.gps){let{latitude:e,longitude:t}=s.gps;return{latitude:e,longitude:t}}}const le=Object.assign({},ae,{tiff:!1,ifd1:!0,mergeOutput:!1});async function oe(e){let t=new H(le);await t.read(e);let s=await t.extractThumbnail();return s&&a?r.from(s):s}async function ue(e){let t=await this.thumbnail(e);if(void 0!==t){let e=new Blob([t]);return URL.createObjectURL(e)}}const de=Object.assign({},ae,{firstChunkSize:4e4,ifd0:[274]});async function ce(e){let t=new H(de);await t.read(e);let s=await t.parse();if(s&&s.ifd0)return s.ifd0[274]}const pe=Object.freeze({1:{dimensionSwapped:!1,scaleX:1,scaleY:1,deg:0,rad:0},2:{dimensionSwapped:!1,scaleX:-1,scaleY:1,deg:0,rad:0},3:{dimensionSwapped:!1,scaleX:1,scaleY:1,deg:180,rad:180*Math.PI/180},4:{dimensionSwapped:!1,scaleX:-1,scaleY:1,deg:180,rad:180*Math.PI/180},5:{dimensionSwapped:!0,scaleX:1,scaleY:-1,deg:90,rad:90*Math.PI/180},6:{dimensionSwapped:!0,scaleX:1,scaleY:1,deg:90,rad:90*Math.PI/180},7:{dimensionSwapped:!0,scaleX:1,scaleY:-1,deg:270,rad:270*Math.PI/180},8:{dimensionSwapped:!0,scaleX:1,scaleY:1,deg:270,rad:270*Math.PI/180}});let ge=!0,me=!0;if("object"==typeof navigator){let e=navigator.userAgent;if(e.includes("iPad")||e.includes("iPhone")){let t=e.match(/OS (\d+)_(\d+)/);if(t){let[,e,s]=t,i=Number(e)+.1*Number(s);ge=i<13.4,me=!1}}else if(e.includes("OS X 10")){let[,t]=e.match(/OS X 10[_.](\d+)/);ge=me=Number(t)<15}if(e.includes("Chrome/")){let[,t]=e.match(/Chrome\/(\d+)/);ge=me=Number(t)<81}else if(e.includes("Firefox/")){let[,t]=e.match(/Firefox\/(\d+)/);ge=me=Number(t)<77}}async function ye(e){let t=await ce(e);return Object.assign({canvas:ge,css:me},pe[t])}class be extends c{constructor(...t){super(...t),e(this,"ranges",new we),0!==this.byteLength&&this.ranges.add(0,this.byteLength)}_tryExtend(e,t,s){if(0===e&&0===this.byteLength&&s){let e=new DataView(s.buffer||s,s.byteOffset,s.byteLength);this._swapDataView(e)}else{let s=e+t;if(s>this.byteLength){let{dataView:e}=this._extend(s);this._swapDataView(e)}}}_extend(e){let t;t=a?r.allocUnsafe(e):new Uint8Array(e);let s=new DataView(t.buffer,t.byteOffset,t.byteLength);return t.set(new Uint8Array(this.buffer,this.byteOffset,this.byteLength),0),{uintView:t,dataView:s}}subarray(e,t,s=!1){return t=t||this._lengthToEnd(e),s&&this._tryExtend(e,t),this.ranges.add(e,t),super.subarray(e,t)}set(e,t,s=!1){s&&this._tryExtend(t,e.byteLength,e);let i=super.set(e,t);return this.ranges.add(t,i.byteLength),i}async ensureChunk(e,t){this.chunked&&(this.ranges.available(e,t)||await this.readChunk(e,t))}available(e,t){return this.ranges.available(e,t)}}class we{constructor(){e(this,"list",[])}get length(){return this.list.length}add(e,t,s=0){let i=e+t,n=this.list.filter((t=>ke(e,t.offset,i)||ke(e,t.end,i)));if(n.length>0){e=Math.min(e,...n.map((e=>e.offset))),i=Math.max(i,...n.map((e=>e.end))),t=i-e;let s=n.shift();s.offset=e,s.length=t,s.end=i,this.list=this.list.filter((e=>!n.includes(e)))}else this.list.push({offset:e,length:t,end:i})}available(e,t){let s=e+t;return this.list.some((t=>t.offset<=e&&s<=t.end))}}function ke(e,t,s){return e<=t&&t<=s}class Oe extends be{constructor(t,s){super(0),e(this,"chunksRead",0),this.input=t,this.options=s}async readWhole(){this.chunked=!1,await this.readChunk(this.nextChunkOffset)}async readChunked(){this.chunked=!0,await this.readChunk(0,this.options.firstChunkSize)}async readNextChunk(e=this.nextChunkOffset){if(this.fullyRead)return this.chunksRead++,!1;let t=this.options.chunkSize,s=await this.readChunk(e,t);return!!s&&s.byteLength===t}async readChunk(e,t){if(this.chunksRead++,0!==(t=this.safeWrapAddress(e,t)))return this._readChunk(e,t)}safeWrapAddress(e,t){return void 0!==this.size&&e+t>this.size?Math.max(0,this.size-e):t}get nextChunkOffset(){if(0!==this.ranges.list.length)return this.ranges.list[0].length}get canReadNextChunk(){return this.chunksRead<this.options.chunkLimit}get fullyRead(){return void 0!==this.size&&this.nextChunkOffset===this.size}read(){return this.options.chunked?this.readChunked():this.readWhole()}close(){}}b.set("blob",class extends Oe{async readWhole(){this.chunked=!1;let e=await A(this.input);this._swapArrayBuffer(e)}readChunked(){return this.chunked=!0,this.size=this.input.size,super.readChunked()}async _readChunk(e,t){let s=t?e+t:void 0,i=this.input.slice(e,s),n=await A(i);return this.set(n,e,!0)}});/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (re);
+
+
+/***/ }),
+
+/***/ "./node_modules/nanoid/non-secure/index.js":
+/*!*************************************************!*\
+  !*** ./node_modules/nanoid/non-secure/index.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   customAlphabet: () => (/* binding */ customAlphabet),
+/* harmony export */   nanoid: () => (/* binding */ nanoid)
+/* harmony export */ });
+let urlAlphabet =
+  'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
+let customAlphabet = (alphabet, defaultSize = 21) => {
+  return (size = defaultSize) => {
+    let id = ''
+    let i = size
+    while (i--) {
+      id += alphabet[(Math.random() * alphabet.length) | 0]
+    }
+    return id
+  }
+}
+let nanoid = (size = 21) => {
+  let id = ''
+  let i = size
+  while (i--) {
+    id += urlAlphabet[(Math.random() * 64) | 0]
+  }
+  return id
+}
 
 
 /***/ }),
@@ -30000,7 +30798,7 @@ var __webpack_exports__ = {};
   !*** ./src/Bundle/ContentBundle/Resources/assets/js/edit_uppy.js ***!
   \*******************************************************************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/Uppy.js");
+/* harmony import */ var _uppy_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uppy/core */ "./node_modules/@uppy/core/lib/index.js");
 /* harmony import */ var _uppy_dashboard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/dashboard */ "./node_modules/@uppy/dashboard/lib/index.js");
 /* harmony import */ var _uppy_xhr_upload__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/xhr-upload */ "./node_modules/@uppy/xhr-upload/lib/index.js");
 /* harmony import */ var _uppy_image_editor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/image-editor */ "./node_modules/@uppy/image-editor/lib/index.js");
@@ -30016,8 +30814,8 @@ function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyri
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 

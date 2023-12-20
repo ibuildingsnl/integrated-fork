@@ -38,10 +38,12 @@
 
         <service id="Integrated\Bundle\FacebookBundle\Connector\FacebookConfigType">
             <argument type="service" id="Integrated\Bundle\FacebookBundle\Connector\FacebookClient"/>
+            <argument type="service" id="request_stack"/>
         </service>
 
         <service id="Integrated\Bundle\FacebookBundle\Form\PopulateFacebookPageFieldListener" >
             <argument type="service" id="Integrated\Bundle\FacebookBundle\Connector\FacebookClient" />
+            <argument type="service" id="request_stack"/>
         </service>
 
         <service id="td_connector.facebook" class="Integrated\Bundle\ChannelBundle\Adaptor\ConnectorAdapter">

@@ -7,11 +7,14 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class AddLinkedInPageFieldListener implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly LinkedInFactory $linkedinFactory
+        private readonly LinkedInFactory $linkedinFactory,
+        private readonly CacheInterface $cache,
     ) {
     }
 
@@ -27,16 +30,23 @@ class AddLinkedInPageFieldListener implements EventSubscriberInterface
 
     public function getRelatedOrganisations($client, $token): array
     {
-        $requestOptions['headers'] = $this->linkedinFactory->getHeaders();
-        $availableCompaniesRequest = $client->getAuthenticatedRequest('GET', 'api.linkedin.com/rest/organizationAcls?q=roleAssignee', $token, $requestOptions);
-        $response = $client->getResponse($availableCompaniesRequest);
+        $organizations = $this->cache->get("{$token}-orgs", function(ItemInterface $item) use ($client, $token) {
+            $item->expiresAfter(86400); // 1 day
 
-        $organizations = [];
-        foreach (json_decode((string) $response->getBody())->elements as $element) {
-            if ($element->state == 'APPROVED' && $element->role == 'ADMINISTRATOR') {
-                $organizations[] = str_replace('urn:li:organization:', '', $element->organization);
+            $requestOptions['headers'] = $this->linkedinFactory->getHeaders();
+            $availableCompaniesRequest = $client->getAuthenticatedRequest('GET', 'api.linkedin.com/rest/organizationAcls?q=roleAssignee', $token, $requestOptions);
+            $response = $client->getResponse($availableCompaniesRequest);
+            $jsonOrganizations = json_decode((string) $response->getBody())->elements;
+
+            $organizations = [];
+            foreach ($jsonOrganizations as $organization) {
+                if ($organization->state == 'APPROVED' && $organization->role == 'ADMINISTRATOR') {
+                    $organizations[] = str_replace('urn:li:organization:', '', $organization->organization);
+                }
             }
-        }
+
+            return $organizations;
+        });
 
         return $organizations;
     }

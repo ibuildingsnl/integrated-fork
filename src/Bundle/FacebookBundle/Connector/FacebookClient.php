@@ -72,6 +72,10 @@ class FacebookClient
         return json_decode($response->getBody()->getContents())->id;
     }
 
+    public function clearPagesCache() {
+
+    }
+
     public function getPages(string $userToken): array {
         $pages = $this->cache->get("{$userToken}-pages", function(ItemInterface $item) use ($userToken) {
             $item->expiresAfter(3600); // 1 hour

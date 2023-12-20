@@ -45,6 +45,10 @@
             <tag name="form.type" />
         </service>
 
+        <service id="integrated_form_type.form_type.select2type" class="Integrated\Bundle\FormTypeBundle\Form\Type\RefreshableChoiceType">
+            <tag name="form.type" />
+        </service>
+
         <service id="integrated_form_type.form_type.embedded_document_type" class="Integrated\Bundle\FormTypeBundle\Form\Type\EmbeddedDocumentType">
             <argument type="service" id="integrated_content.metadata.factory.all_types" />
             <tag name="form.type" />
