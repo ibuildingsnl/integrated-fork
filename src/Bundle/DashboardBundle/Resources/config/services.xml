@@ -8,6 +8,8 @@
         <service id="Integrated\Bundle\DashboardBundle\Controller\DashboardController">
             <argument key="$channelContext" type="service" id="channel.context"/>
             <argument key="$manager" type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument key="$channelRepository" type="service" id="integrated_channel.repository.channel" />
+            <argument key="$brandRepository" type="service" id="integrated_brand.brand.repository" />
             <argument key="$allWidgets" type="tagged_iterator" tag="integrated_dashboard.widget"/>
             <tag name="container.service_subscriber" />
             <tag name="controller.service_arguments" />

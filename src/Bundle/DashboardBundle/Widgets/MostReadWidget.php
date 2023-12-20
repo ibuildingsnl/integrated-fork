@@ -52,13 +52,11 @@ class MostReadWidget implements WidgetInterface
 
     public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
-
         $mostReadArticle = $this->manager->getRepository(AnalyticsData::class)
             ->findOneBy(
                 ['channelID' => $channel->getId(), 'dataType' => $this->id ],
                 ['dateTime' => 'DESC']
             );
-
         $allDatas = $mostReadArticle->getDatas();
         foreach ($allDatas as $key => $values) {
             $filteredValues = array_filter($values, function ($element) {

@@ -11,8 +11,13 @@
 
 namespace Integrated\Bundle\DashboardBundle\Controller;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\MongoDBException;
+use Integrated\Bundle\BrandBundle\Document\Brand;
+use Integrated\Bundle\BrandBundle\Document\BrandRepository;
+use Integrated\Bundle\BrandBundle\Document\ChannelLink;
+use Integrated\Bundle\BrandBundle\Form\Type\BrandChoiceType;
 use Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\DashboardBundle\Document\WidgetConfig;
@@ -22,6 +27,7 @@ use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Integrated\Common\Content\Channel\ChannelInterface;
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
 use function Deployer\writeln;
 
 class DashboardController extends AbstractController
@@ -31,6 +37,8 @@ class DashboardController extends AbstractController
     public function __construct(
         private readonly ChannelContextInterface $channelContext,
         private readonly DocumentManager         $manager,
+        private readonly ChannelRepository       $channelRepository,
+        private readonly BrandRepository         $brandRepository,
         private readonly iterable                $allWidgets,
     )
     {
@@ -43,27 +51,66 @@ class DashboardController extends AbstractController
     public function index(Request $request): Response
     {
         $user = $this->getUser();
-        $selectChannelForm = $this->createForm(ChannelChoiceType::class, null, [
-            'multiple' => false,
-            'return_object' => true, // true = object, false = ID
-        ]);
+        $allBrands = $this->getBrands();
         $channel = $this->getChannel($request);
         $widgetAllData = $this->renderWidgets($channel, $user, $request);
-        return $this->renderDashboardView($channel->getId(), $widgetAllData, $selectChannelForm);
+        return $this->renderDashboardView($channel->getId(), $widgetAllData, $allBrands);
+    }
+
+    private function getBrands(): array
+    {
+        $allBrands = [];
+        $brands = $this->brandRepository->All();
+        foreach ($brands as $brand) {
+            $channelId = $this->getChannelId($brand);
+            $allBrands[] = [
+                'id' => $brand->getId(),
+                'name' => $brand->getName(),
+                'channelId' => $channelId,
+            ];
+        }
+        return $allBrands;
+    }
+
+    private function getChannelId($brand): string
+    {
+        //dd($brand);
+        $channelLinks = $brand->getChannelLinks();
+        $channelId = null;
+        /* @var $channelLink ChannelLink */
+        foreach ($channelLinks as $channelLink)
+        {
+            $channel = $channelLink->channel;
+            if ($channel->getType()->id == 'website') {
+                $channelId = $channelLink->channel->getId();
+            }
+        }
+        return $channelId;
+    }
+
+    public function getBrandForChannel(?ChannelInterface $channel): ?Brand
+    {
+        if ($channel instanceof ChannelInterface) {
+            foreach ($this->brandRepository->all() as $brand) {
+                if ($brand->hasChannel($channel)) {
+                    return $brand;
+                }
+            }
+        }
+        return null;
     }
 
     private function getChannel($request): ChannelInterface
     {
-        $selectedByFormChannel = $request->query->get('integrated_channel_choice');
-        $channelRepository = $this->manager->getRepository(Channel::class);
-
-        if ($selectedByFormChannel !== null) {
-            $selectedChannel = $channelRepository->findOneBy(['id' => $selectedByFormChannel]);
+        $selectedByFormBrand = $request->query->get('integrated_brand_choice');
+       if ($selectedByFormBrand !== null) {
+           $selectedBrand = $this->brandRepository->find($selectedByFormBrand);
+           $channelId = $this->getChannelId($selectedBrand);
+           $selectedChannel = $this->channelRepository->findOneBy(['id' => $channelId]);
         } else {
             $selectedChannel = $this->channelContext->getChannel();
         }
-        return $selectedChannel ?? $channelRepository->findAll()[0];
-
+        return $selectedChannel ?? $this->channelRepository->findAll()[0];
     }
 
     /**
@@ -90,12 +137,12 @@ class DashboardController extends AbstractController
         return $widgetAllData;
     }
 
-    private function renderDashboardView(string $channelId, array $widgetAllData, $selectChannelForm): Response
+    private function renderDashboardView(string $channelId, array $widgetAllData, $allBrands): Response
     {
         return $this->render('@IntegratedDashboard/index.html.twig', [
             "channelId" => $channelId,
-            "channelForm" => $selectChannelForm->createView(),
-            "widgetAllData" => $widgetAllData
+            "allBrands" => $allBrands,
+            "widgetAllData" => $widgetAllData,
         ]);
     }
 }

@@ -14,9 +14,12 @@
             <div class="options">
                 <ul class="content-navigator-menu">
                     <li>
-                        {{ form_start(channelForm) }}
-                        {{ form_widget(channelForm, {'attr': {'class': 'dashboardForm-select dashboardForm-event',}}) }}
-                        {{ form_end(channelForm) }}
+                        <select id="integrated_brand_choice" name="integrated_brand_choice"
+                                class="dashboardForm-select dashboardForm-event">
+                            {% for brand in allBrands %}
+                                <option value="{{ brand.id }}">{{ brand.name }}</option>
+                            {% endfor %}
+                        </select>
                     </li>
                     <li class="dropdown close-outside" data-underlay="no">
                         <a data-toggle="dropdown" role="button" id="sorting-list"
@@ -83,6 +86,7 @@
                     }
                 });
             }
+
             disableNonExistentWidgets();
             var selectDateRange = document.getElementById('select_date_range');
             const checkboxes = document.querySelectorAll('.widget_choice input[type="checkbox"]');
@@ -140,7 +144,7 @@
                     const selectName = selectElement.name;
                     const urlParams = new URLSearchParams(window.location.search);
                     var paramValues = urlParams.getAll(selectName);
-                    if(selectName == 'integrated_channel_choice' && paramValues == ""){
+                    if (selectName == 'integrated_channel_choice' && paramValues == "") {
                         paramValues = ['{{ channelId }}'];
                     }
                     Array.from(selectElement.options).forEach(function (option) {

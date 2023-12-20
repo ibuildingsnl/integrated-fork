@@ -89,8 +89,7 @@ class AnalyticsRequest
     {
         $channels = [];
         foreach ($this->channelRepository->findAll() as $channel) {
-            if ($channel->getPrimaryDomain() != null)
-            {
+            if ($channel->getType()->id == 'website') {
                 $channels[] = $channel;
             }
         }
