@@ -4,6 +4,7 @@ namespace Integrated\Bundle\BrandBundle\Document;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
@@ -59,6 +60,8 @@ class Brand
         return false;
     }
 
+
+
     /** @deprecated */
     public function linkTypeForChannel(ChannelInterface $channel): ?ChannelType
     {
@@ -89,6 +92,16 @@ class Brand
     {
         return $this->channelLinks;
     }
+
+    public function getWebsiteChannel(): Channel
+    {
+        foreach ($this->channelLinks as $link) {
+            if ($link->getName() === 'Website') {
+                return $link->channel;
+            }
+        }
+    }
+
 
     public function addChannelLink(ChannelLink $link): void
     {
