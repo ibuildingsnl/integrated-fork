@@ -23,25 +23,9 @@ class FacebookConfigType extends AbstractType
     {
         $builder->addEventSubscriber(new PopulateFacebookPageFieldListener($this->client, $this->stack));
         $builder->add('token_secret', TextType::class, ['attr' => ['readonly' => 'true']]);
-        $builder->add('page', ChoiceType::class, ['choices' => ['Please finish setting up connection to Facebook' => 'empty'], 'attr' => ['disabled' => 'true']]);
+        $builder->add('page', RefreshableChoiceType::class, ['select' => ['choices' => ['Please finish setting up connection to Facebook' => 'empty', 'attr' => ['disabled' => 'true']]]]);
         $builder->add('page_token', TextType::class, ['attr' => ['readonly' => 'true']]);
         $builder->add('api_status', TextType::class, ['attr' => ['disabled' => 'true']]);
-        $builder->add('test', RefreshableChoiceType::class, [
-            'select' => [
-                'choices' => [
-                    'Test' => 'test',
-                    'Test2' => 'test2',
-                    'Test3' => 'test3'
-                ]
-            ],
-            'submit' => [
-                'attr' => [
-                    'style' => 'height: unset;'
-                ],
-                'label' => false,
-                'icon' => 'iconoir-refresh-double',
-            ]
-        ]);
     }
 
     public function getBlockPrefix()

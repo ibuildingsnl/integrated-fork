@@ -5,6 +5,7 @@ namespace Integrated\Bundle\FacebookBundle\Form;
 use Integrated\Bundle\ChannelBundle\Event\FormConfigEvent;
 use Integrated\Bundle\ChannelBundle\IntegratedChannelEvents;
 use Integrated\Bundle\FacebookBundle\Connector\FacebookClient;
+use Integrated\Bundle\FormTypeBundle\Form\Type\RefreshableChoiceType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormEvents;
@@ -54,14 +55,14 @@ class PopulateFacebookPageFieldListener implements EventSubscriberInterface
             if (empty($choices)) {
                 $formData['api_status'] = 'No pages available for selection.';
             } else {
-                $form->add('page', ChoiceType::class, ['choices' => $choices]);
+                $form->add('page', RefreshableChoiceType::class, ['select' => ['choices' => $choices]]);
                 $formData['api_status'] = 'OK';
 
                 if (!isset($formData['page'])) {
                     return;
                 }
 
-                $token = $this->client->getPageToken($formData['token_secret'], $formData['page'], $pages);
+                $token = $this->client->getPageToken($formData['token_secret'], $formData['page']['choice'], $pages);
                 $formData['page_token'] = $token;
             }
         } catch (\Exception $exception) {
@@ -79,7 +80,7 @@ class PopulateFacebookPageFieldListener implements EventSubscriberInterface
                 return;
             }
 
-            $this->client->clearPagesCache();
+            $this->client->clearPagesCache($form->getData()->getOptions()->get('token_secret'));
             $event->setResponse(new RedirectResponse($this->stack->getMainRequest()->getUri()));
         }
     }

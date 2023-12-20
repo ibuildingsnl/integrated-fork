@@ -72,8 +72,8 @@ class FacebookClient
         return json_decode($response->getBody()->getContents())->id;
     }
 
-    public function clearPagesCache() {
-
+    public function clearPagesCache(string $userToken) {
+        $this->cache->delete("{$userToken}-pages");
     }
 
     public function getPages(string $userToken): array {
