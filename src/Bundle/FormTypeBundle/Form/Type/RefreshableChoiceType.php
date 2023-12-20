@@ -21,8 +21,10 @@ class RefreshableChoiceType extends AbstractType
         $resolver->setDefaults([
             'select' => [],
             'submit' => [
-                'label' => '',
-                'icon' => 'refresh-double'
+                'label' => ' ',
+                'attr' => [
+                    'icon' => 'refresh-double',
+                ],
             ],
         ]);
     }
