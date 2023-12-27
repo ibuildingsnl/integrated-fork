@@ -24,6 +24,7 @@ class RefreshableChoiceType extends AbstractType
                 'label' => ' ',
                 'attr' => [
                     'icon' => 'refresh-double',
+                    'style' => 'height: unset'
                 ],
             ],
         ]);
