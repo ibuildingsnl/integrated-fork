@@ -40,7 +40,8 @@
         "tinymce": "^6.4.2",
         "typeahead.js": "0.11.1",
         "uppy": "^3.3.1",
-        "webpack": "^5.89.0"
+        "webpack": "^5.89.0",
+        "webpack-cli": "^5.1.4"
     },
     "private": true
 }

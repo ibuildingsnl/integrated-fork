@@ -30,10 +30,8 @@ function populateSelectedImages() {
 }
 
 function populateFormRelations() {
-    console.log('populateFormRelations');
     document.querySelectorAll('.mediagallery_selector').forEach((item) => {
         const id = item.getAttribute('id');
-        console.log('populateFormRelations: ' + id);
         const inputIdentifier = item.parentNode.classList.contains('relation') ?
             `integrated_content[relations][${id}]` :
             item.querySelector('.selected_images').getAttribute('data-fieldName');

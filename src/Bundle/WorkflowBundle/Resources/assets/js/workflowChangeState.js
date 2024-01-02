@@ -32,7 +32,7 @@ $(function() {
                 $firstOption.siblings().remove();
 
                 $.each(response.users, function(index, user) {
-                    var $tmp = $option.clone().val(user.id).text(user.name);
+                    var $tmp = $('<option></option>').val(user.id).text(user.name);
 
                     if (user.id==selected) {
                         $tmp.attr('selected','selected');
