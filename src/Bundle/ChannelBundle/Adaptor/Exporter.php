@@ -27,7 +27,7 @@ final class Exporter implements ExporterInterface
         }
 
         // @todo better error handling...
-        dump("Publishing to {$this->connector->getName()}...\n");
+        dump("Publishing to {$this->connector->getName()}...");
         if ($content->hasConnector($this->config->getId())) {
             // already posted
             dump('Skipped: already posted');

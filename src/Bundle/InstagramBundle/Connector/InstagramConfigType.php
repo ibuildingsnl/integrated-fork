@@ -21,10 +21,11 @@ class InstagramConfigType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventSubscriber(new PopulateInstagramPageFieldListener($this->client, $this->stack));
-        $builder->add('token_secret', TextType::class, ['attr' => ['readonly' => 'true']]);
-        $builder->add('page', RefreshableChoiceType::class, ['select' => ['choices' => ['Please finish setting up connection to Instagram' => 'empty'], 'attr' => ['disabled' => 'true']]]);
+        $builder->add('token_secret', TextType::class, ['attr' => ['readonly' => 'true'], 'label' => 'User token']);
+        $builder->add('page', RefreshableChoiceType::class, ['select' => ['choices' => ['Please finish setting up connection to Instagram' => 'empty'], 'attr' => ['disabled' => 'true'], 'label' => 'Facebook page']]);
         $builder->add('page_token', TextType::class, ['attr' => ['readonly' => 'true']]);
-        $builder->add('api_status', TextType::class, ['attr' => ['disabled' => 'true']]);
+        $builder->add('ig_account', TextType::class, ['attr' => ['readonly' => 'true'], 'label' => 'Instagram account']);
+        $builder->add('api_status', TextType::class, ['attr' => ['disabled' => 'true'], 'label' => 'API status']);
     }
 
     public function getBlockPrefix()

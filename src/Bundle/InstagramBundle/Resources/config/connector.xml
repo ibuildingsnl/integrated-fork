@@ -30,6 +30,7 @@
 
         <service id="Integrated\Bundle\InstagramBundle\Connector\InstagramConnector">
             <argument type="service" id="Integrated\Bundle\InstagramBundle\Connector\InstagramClient"/>
+            <argument type="service" id="Integrated\Bundle\ChannelBundle\Services\LinkMaker"/>
         </service>
 
         <service id="Integrated\Bundle\InstagramBundle\Connector\InstagramConfiguration">

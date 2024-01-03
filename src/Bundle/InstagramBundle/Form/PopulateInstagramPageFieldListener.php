@@ -39,6 +39,7 @@ class PopulateInstagramPageFieldListener implements EventSubscriberInterface
     {
         $form = $event->getForm();
         $formData = $event->getData();
+        $originalData = [...$formData];
 
         if (!isset($formData['token_secret'])) {
             $formData['api_status'] = 'Save the connector to connect to Instagram.';
@@ -56,19 +57,29 @@ class PopulateInstagramPageFieldListener implements EventSubscriberInterface
             if (empty($choices)) {
                 $formData['api_status'] = 'No pages available for selection.';
             } else {
-                $form->add('page', RefreshableChoiceType::class, ['select' => ['choices' => $choices]]);
-                $formData['api_status'] = 'OK';
+                $form->add('page', RefreshableChoiceType::class, ['select' => ['choices' => $choices], 'label' => 'Facebook page']);
 
-                if (!isset($formData['page_token'])) {
+                if (empty($originalData['page']['choice'])) {
+                    $formData['api_status'] = 'Select a page to retrieve the page token.';
                     return;
                 }
 
+                // Fetch instagram business accounts
+
                 $token = $this->client->getPageToken($formData['token_secret'], $formData['page']['choice'], $pages);
                 $formData['page_token'] = $token;
+                $formData['ig_account'] = $this->client->getInstagramAccount($token, $formData['page']['choice']);
+
+                if(!empty($originalData['page_token']) && !empty($originalData['ig_account'])) {
+                    $formData['api_status'] = 'OK';
+                } else {
+                    $formData['api_status'] = 'Save the connector to select the Instagram account ID.';
+                }
             }
         } catch (\Exception $exception) {
+//            throw $exception;
             $formData['token_secret'] = null;
-            $formData['api_status'] = 'Invalid token. Save the form to obtain a new token.';
+            $formData['api_status'] = $exception->getMessage();
         }
     }
 
@@ -82,6 +93,7 @@ class PopulateInstagramPageFieldListener implements EventSubscriberInterface
             }
 
             $this->client->clearPagesCache($form->getData()->getOptions()->get('token_secret'));
+            $this->client->clearInstagramAccountCache($form->getData()->getOptions()->get('page_token'));
             $event->setResponse(new RedirectResponse($this->stack->getMainRequest()->getUri()));
         }
     }

@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\InstagramBundle\Form;
 
+use Integrated\Bundle\ContentBundle\Form\Type\ImageChoiceType;
 use Integrated\Bundle\ContentBundle\Form\Type\PublishTimeType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
