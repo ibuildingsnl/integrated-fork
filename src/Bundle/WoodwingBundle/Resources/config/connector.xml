@@ -44,6 +44,7 @@
 
         <service id="Integrated\Bundle\WoodwingBundle\Form\WoodwingPublicationType">
             <argument type="service" id="integrated_content.content_repository" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
 
             <tag name="form.type" />
         </service>
