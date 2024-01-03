@@ -12,6 +12,7 @@
             <argument>facebook</argument>
             <argument>Facebook</argument>
             <argument type="expression">false</argument>
+            <argument type="expression">true</argument>
             <argument>facebook</argument>
             <argument>\Integrated\Bundle\FacebookBundle\Form\FacebookPublicationType</argument>
 

@@ -24,6 +24,7 @@ class PublicationsType extends AbstractType
                     'class' => 'publication-settings',
                     'data-publication-channel' => $channel->getId(),
                     'data-channel-type' => $channel->getType()?->getName() ?: 'N/A',
+                    'data-can-be-set-globally' => $channel->getType()?->canBeSetGlobally() ? 'yes' : 'no',
                     'data-channel-name' => $channel->getName(),
                 ],
                 'settings' => $this->publicationSettings->settingTypeFor($channel),

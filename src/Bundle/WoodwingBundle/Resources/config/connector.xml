@@ -36,6 +36,7 @@
             <argument>woodwing</argument>
             <argument>WoodWing</argument>
             <argument type="expression">false</argument>
+            <argument type="expression">false</argument>
             <argument>woodwing</argument>
             <argument>Integrated\Bundle\WoodwingBundle\Form\WoodwingPublicationType</argument>
 

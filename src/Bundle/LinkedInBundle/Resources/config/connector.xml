@@ -14,6 +14,7 @@
             <argument type="expression">false</argument>
             <argument>linkedin</argument>
             <argument>\Integrated\Bundle\LinkedInBundle\Form\LinkedInPublicationType</argument>
+            <argument type="expression">true</argument>
 
             <tag name="integrated_channel.type" />
         </service>
