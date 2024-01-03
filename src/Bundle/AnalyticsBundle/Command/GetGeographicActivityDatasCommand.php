@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use DateTimeImmutable;
 use Integrated\Bundle\AnalyticsBundle\Document\AnalyticsData;
 
-class GetGeographicActivityCommand extends Command
+class GetGeographicActivityDatasCommand extends Command
 {
     private OutputInterface $output;
     private string $dataType = "geographic_activity";

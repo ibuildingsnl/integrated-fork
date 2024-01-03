@@ -90,6 +90,14 @@
             disableNonExistentWidgets();
             var selectDateRange = document.getElementById('select_date_range');
             const checkboxes = document.querySelectorAll('.widget_choice input[type="checkbox"]');
+            selectElements = document.querySelectorAll('.dashboardForm-select');
+            SelectEventListener = document.querySelectorAll('.dashboardForm-event');
+            SelectEventListener.forEach(function (selectElement) {
+                selectElement.addEventListener('change', function () {
+                    submitForm();
+                });
+            });
+
             checkboxes.forEach(function (checkbox) {
                 checkbox.addEventListener('change', function () {
                     const widgetId = this.name;
@@ -100,14 +108,6 @@
                         widgetContainer.style.display = 'none';
                     }
                 });
-            });
-
-            selectElements = document.querySelectorAll('.dashboardForm-select');
-            SelectEventListener = document.querySelectorAll('.dashboardForm-event');
-            const submitButton = Object.assign(document.createElement('button'), {
-                id: 'submitAllButton',
-                type: 'submit',
-                textContent: 'Submit',
             });
 
             function submitForm() {
@@ -125,19 +125,8 @@
                 });
 
                 document.body.appendChild(form);
-
                 form.submit();
             }
-
-            submitButton.addEventListener('click', function () {
-                submitForm();
-            });
-
-            SelectEventListener.forEach(function (selectElement) {
-                selectElement.addEventListener('change', function () {
-                    submitForm();
-                });
-            });
 
             function restoreSelectValues() {
                 selectElements.forEach(function (selectElement) {

@@ -13,7 +13,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class GetVisitorsActivityCommand extends Command
+class GetVisitorsActivityDatasCommand extends Command
 {
     private OutputInterface $output;
     private string $dataType = "visitors_activity";

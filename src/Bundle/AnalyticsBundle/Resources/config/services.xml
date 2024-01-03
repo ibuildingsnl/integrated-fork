@@ -6,7 +6,7 @@
     <services>
         <service id="Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest">
         </service>
-        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetSitePerformancesCommand">
+        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetSitePerformancesDatasCommand">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_channel.repository.channel" />
             <argument type="service" id="guzzle" />
@@ -21,7 +21,7 @@
             <argument type="service" id="monolog.logger"/>
             <tag name="console.command" />
         </service>
-        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetGeographicActivityCommand">
+        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetGeographicActivityDatasCommand">
             <argument>%env(resolve:GOOGLE_APPLICATION_CREDENTIALS)%</argument>
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_channel.repository.channel" />
@@ -29,7 +29,7 @@
             <argument type="service" id="monolog.logger"/>
             <tag name="console.command" />
         </service>
-        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetDeviceTypeCommand">
+        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetDeviceTypeDatasCommand">
             <argument>%env(resolve:GOOGLE_APPLICATION_CREDENTIALS)%</argument>
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_channel.repository.channel" />
@@ -37,7 +37,7 @@
             <argument type="service" id="monolog.logger"/>
             <tag name="console.command" />
         </service>
-        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetTrafficAcquisitionCommand">
+        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetTrafficAcquisitionDatasCommand">
             <argument>%env(resolve:GOOGLE_APPLICATION_CREDENTIALS)%</argument>
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_channel.repository.channel" />
@@ -45,7 +45,7 @@
             <argument type="service" id="monolog.logger"/>
             <tag name="console.command" />
         </service>
-        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetVisitorsActivityCommand">
+        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetVisitorsActivityDatasCommand">
             <argument>%env(resolve:GOOGLE_APPLICATION_CREDENTIALS)%</argument>
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_channel.repository.channel" />

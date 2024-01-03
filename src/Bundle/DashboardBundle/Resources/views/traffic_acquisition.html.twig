@@ -31,7 +31,6 @@
 
         function updateTrafficAcquisitionChart() {
             var selectedTrafficAcquisitionDateRange = dateRangeTrafficAcquisitionSelection(selectTrafficAcquisitionDate.value);
-            console.log(trafficAcquisitionDatas[selectedTrafficAcquisitionDateRange]);
             const source = trafficAcquisitionDatas[selectedTrafficAcquisitionDateRange].map(item => item.source);
             const sessions = trafficAcquisitionDatas[selectedTrafficAcquisitionDateRange].map(item => item.sessions);
 

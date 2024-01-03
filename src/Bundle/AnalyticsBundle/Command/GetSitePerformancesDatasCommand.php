@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use GuzzleHttp\Exception\GuzzleException;
 
 
-class GetSitePerformancesCommand extends Command
+class GetSitePerformancesDatasCommand extends Command
 {
     private OutputInterface $output;
     /**
@@ -58,7 +58,7 @@ class GetSitePerformancesCommand extends Command
             }
             $encodedUrl = urlencode($url);
             try {
-                $this->output->writeln('- Getting '.$website['domain'].'\'s Site performance datas');
+                $this->output->writeln('- Getting '.$website['name'].'\'s Site performance datas');
                 $this->getSitePerformance($encodedUrl, $website['id']);
                 $this->saveSitePerformance();
             } catch (\InvalidArgumentException $e) {
@@ -79,7 +79,8 @@ class GetSitePerformancesCommand extends Command
             }
             $websites[] = [
                 'id' => $channel->getId(),
-                'domain' => $this->getCleanUrl($domain)
+                'domain' => $this->getCleanUrl($domain),
+                'name' => $channel->getName(),
             ];
         }
 

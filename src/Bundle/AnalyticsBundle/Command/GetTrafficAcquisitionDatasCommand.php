@@ -1,6 +1,7 @@
 <?php
 
 namespace Integrated\Bundle\AnalyticsBundle\Command;
+
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\Persistence\ObjectRepository;
@@ -10,17 +11,16 @@ use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Command\Command;
-use DateTimeImmutable;
 
 
-
-class GetDeviceTypeCommand extends Command
+class GetTrafficAcquisitionDatasCommand extends Command
 {
     private OutputInterface $output;
-    private string $dataType = "device_type";
+    private string $dataType = "traffic_acquisition";
+
     /**
      * Constructor.
      */
@@ -41,8 +41,8 @@ class GetDeviceTypeCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('device:type')
-            ->setDescription('Get "Device type" datas');
+            ->setName('traffic:acquisition')
+            ->setDescription('Get "Trafic Acquisition" datas');
     }
 
     /**
@@ -66,12 +66,13 @@ class GetDeviceTypeCommand extends Command
 
     public function getData(ChannelInterface $channel, $analyticsRequest): array
     {
+        $analyticsRequest->getPropertyID($channel);
         $dateRanges = [
-            'weeklyDeviceType' => '7daysAgo',
-            'monthlyDeviceType' => '30daysAgo',
-            'quarterlyDeviceType' => '90daysAgo',
-            'semesterDeviceType' => '182daysAgo',
-            'yearlyDeviceType' => '365daysAgo',
+            'weeklyTrafficAcquisition' => '7daysAgo',
+            'monthlyTrafficAcquisition' => '30daysAgo',
+            'quarterlyTrafficAcquisition' => '90daysAgo',
+            'semesterTrafficAcquisition' => '182daysAgo',
+            'yearlyTrafficAcquisition' => '365daysAgo',
         ];
 
         $allDatas = [];
@@ -85,33 +86,33 @@ class GetDeviceTypeCommand extends Command
                 ],
                 "dimensions" => [
                     [
-                        "name" => "deviceCategory"
+                        "name" => "sessionDefaultChannelGroup"
                     ],
                 ],
                 "metrics" => [
                     [
-                        "name" => "screenPageViews"
+                        "name" => "sessions"
                     ]
                 ],
-            ];
 
+            ];
             $responseData = $analyticsRequest->getDataFromAnalytics($channel, $requestBody);
             if ($responseData == null){
-                $message = "Get Device Type Error: No datas found for" . $channel->getName() . "in date range: $dateRange \n";
+                $message = "Get Most Read Error: No datas found for" . $channel->getName() . "in date range: $dateRange \n";
                 $this->logger->error($message);
                 $this->output->writeln($message);
                 continue;
             }
-            $deviceType = [];
+            $trafficAcquisition = [];
             foreach ($responseData['rows'] as $row) {
-                $deviceCategory = $row['dimensionValues'][0]['value'];
-                $screenPageViews = (int)$row['metricValues'][0]['value'];
-                $deviceType[] = [
-                    'device' => $deviceCategory,
-                    'amount' => $screenPageViews,
+                $source = $row['dimensionValues'][0]['value'];
+                $sessions = (int)$row['metricValues'][0]['value'];
+                $trafficAcquisition[] = [
+                    'source' => $source,
+                    'sessions' => $sessions,
                 ];
             }
-            $allDatas[$key] = $deviceType;
+            $allDatas[$key] = $trafficAcquisition;
         }
         return $allDatas;
     }
