@@ -153,15 +153,15 @@
                                 {% trans %}Planned{% endtrans %}
                             </div>
                         {% endif %}
-                        {% if content.workflow_state is not defined and content.published == "true" %}
-                            <div class="workflow-status" style="background-color:#00ae93;">
-                                {% trans %}Published{% endtrans %}
-                            </div>
-                        {% elseif content.workflow_state is not defined and content.published == "false" %}
-                            <div class="workflow-status" style="background-color:#ababab;">
-                                {% trans %}Concept{% endtrans %}
-                            </div>
-                        {% endif %}
+{#                        {% if content.workflow_state is not defined and content.published == "true" %}#}
+{#                            <div class="workflow-status" style="background-color:#00ae93;">#}
+{#                                {% trans %}Published{% endtrans %}#}
+{#                            </div>#}
+{#                        {% elseif content.workflow_state is not defined and content.published == "false" %}#}
+{#                            <div class="workflow-status" style="background-color:#ababab;">#}
+{#                                {% trans %}Concept{% endtrans %}#}
+{#                            </div>#}
+{#                        {% endif %}#}
                     </td>
                 </tr>
             {% else %}
