@@ -23,12 +23,14 @@ use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\DashboardBundle\Document\WidgetConfig;
 use Integrated\Bundle\DashboardBundle\Widgets\WidgetInterface;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
 use function Deployer\writeln;
+
 
 class DashboardController extends AbstractController
 {
@@ -115,14 +117,15 @@ class DashboardController extends AbstractController
     /**
      * @throws MongoDBException
      */
-    private function renderWidgets(ChannelInterface $channel, $user, Request $request): array
-    {
+    private function renderWidgets(ChannelInterface $channel, $user, Request $request): array    {
         $widgetAllData = [];
+
         $widgetConfigs = $this->manager->getRepository(WidgetConfig::class)
             ->createQueryBuilder()
             ->sort('order', 'asc')
             ->getQuery()
             ->execute();
+
         foreach ($widgetConfigs as $config) {
             $widget = $this->widgets[$config->getWidgetName()] ?? null;
             if ($widget) {
@@ -136,7 +139,7 @@ class DashboardController extends AbstractController
         return $widgetAllData;
     }
 
-    private function renderDashboardView(string $channelId, array $widgetAllData, $allBrands): Response
+    private function renderDashboardView(string $channelId, array $widgetAllData, array $allBrands): Response
     {
         return $this->render('@IntegratedDashboard/index.html.twig', [
             "channelId" => $channelId,

@@ -63,12 +63,10 @@ class GetAnalyticsDatas extends Command
                 $commandInput = new ArrayInput([]);
                 $command->run($commandInput, $output);
             } catch (\Exception $e) {
-                // Gérer l'exception
                 $output->writeln("<error>Error executing command '$commandClass': " . $e->getMessage()."</error>");
             }
             $this->output->writeln("\n\n");
         }
-
 
         return Command::SUCCESS;
     }
