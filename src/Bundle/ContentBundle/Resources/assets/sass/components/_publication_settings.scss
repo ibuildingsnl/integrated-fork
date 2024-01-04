@@ -54,7 +54,12 @@
     transition: opacity .15s linear, visibility .15s linear;
     opacity: 0;
     visibility: hidden;
-
+    @include media(max-xl) {
+        left: 50px;
+    }
+    @include media(max-sm) {
+        width: 100%;
+    }
     &.show {
         opacity: 1;
         visibility: visible;
