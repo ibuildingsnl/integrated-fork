@@ -621,6 +621,17 @@
 
 {% endblock %}
 
+{% block integrated_refreshable_choice_widget %}
+    {% apply spaceless %}
+        {% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' form-control')|trim }) %}
+
+        <div class="input-group flex flex-row justify-stretch max-w-[750px] space-x-4">
+           {{ form_widget(form.choice) }}
+           {{ form_widget(form.refresh) }}
+        </div>
+    {% endapply %}
+{% endblock %}
+
 {% block attributes -%}
     {%- for attrname, attrvalue in attr -%}
         {{- " " -}}

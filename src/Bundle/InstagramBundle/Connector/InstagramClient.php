@@ -1,12 +1,12 @@
 <?php
 
-namespace Integrated\Bundle\FacebookBundle\Connector;
+namespace Integrated\Bundle\InstagramBundle\Connector;
 
 use GuzzleHttp\Client;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
-class FacebookClient
+class InstagramClient
 {
     public function __construct(
         private readonly Client $client,
@@ -31,8 +31,10 @@ class FacebookClient
                 'pages_manage_engagement',
                 'pages_manage_posts',
                 'pages_read_engagement',
-//                'pages_read_user_engagement',
                 'pages_show_list',
+                'instagram_basic',
+                'instagram_content_publish',
+                'business_management',
             ]),
         ];
 
@@ -62,26 +64,19 @@ class FacebookClient
         return $data;
     }
 
-    public function getUserId(string $userToken): string {
-        $response = $this->client->get("{$this->baseUrl}/me?fields=id", [
-            'headers' => [
-                'Authorization' => "Bearer {$userToken}",
-            ],
-        ]);
-
-        return json_decode($response->getBody()->getContents())->id;
+    public function clearPagesCache(string $userToken) {
+        $this->cache->delete("{$userToken}-ig-pages");
     }
 
-    public function clearPagesCache(string $userToken) {
-        $this->cache->delete("{$userToken}-pages");
+    public function clearInstagramAccountCache(string $pageToken) {
+        $this->cache->delete("{$pageToken}-ig-account");
     }
 
     public function getPages(string $userToken): array {
-        $pages = $this->cache->get("{$userToken}-pages", function(ItemInterface $item) use ($userToken) {
+        $pages = $this->cache->get("{$userToken}-ig-pages", function(ItemInterface $item) use ($userToken) {
             $item->expiresAfter(3600); // 1 hour
-            $userId = $this->getUserId($userToken);
 
-            $response = $this->client->get("{$this->baseUrl}/{$userId}/accounts", [
+            $response = $this->client->get("{$this->baseUrl}/me/accounts", [
                 'headers' => [
                     'Authorization' => "Bearer {$userToken}"
                 ]
@@ -93,21 +88,54 @@ class FacebookClient
         return $pages;
     }
 
-    public function postToPage(string $userToken, string $pageId, ?string $title, ?string $message, ?string $link): string {
-        $title = $title ? $title . "\n\n" : '';
-        $message = $message ? $message . "\n\n" :  '';
+    public function getInstagramAccount(string $pageToken, string $pageId) {
+        $accountId = $this->cache->get("{$pageToken}-ig-account", function(ItemInterface $item) use ($pageToken, $pageId) {
+            $item->expiresAfter(3600); // 1 hour
 
-        $response = $this->client->post("{$this->baseUrl}/{$pageId}/feed", [
-            'headers' => [
-                'Authorization' => "Bearer {$userToken}",
-            ],
-            'json' => [
-                'message' => "{$title}{$message}{$link}",
-                'published' => true,
-            ]
-        ]);
+            $response = $this->client->get("{$this->baseUrl}/{$pageId}?fields=instagram_business_account", [
+                'headers' => [
+                    'Authorization' => "Bearer {$pageToken}",
+                ]
+            ]);
 
-        return json_decode($response->getBody()->getContents(), true)['id'];
+            return json_decode($response->getBody()->getContents(), true)['instagram_business_account']['id'];
+        });
+
+        return $accountId;
+    }
+
+    public function getInstagramBusinessAccounts() {
+        $pages = $this->cache->get();
+    }
+
+    public function postToPage(string $pageToken, string $igUserId, string $imageUrl, ?string $caption): string {
+        dump('Image URL: ' . $imageUrl);
+        dump('Caption: ' . $caption);
+
+        try {
+            $response = $this->client->post("{$this->baseUrl}/{$igUserId}/media", [
+                'headers' => [
+                    'Authorization' => "Bearer {$pageToken}",
+                ],
+                'json' => [
+                    'image_url' => $imageUrl,
+                    'caption' => "{$caption}",
+                    'published' => true,
+                ]
+            ]);
+
+            $containerId = json_decode($response->getBody()->getContents(), true)['id'];
+
+            $response = $this->client->post("{$this->baseUrl}/{$igUserId}/media_publish?creation_id={$containerId}", [
+                'headers' => [
+                    'Authorization' => "Bearer {$pageToken}",
+                ]
+            ]);
+
+            return json_decode($response->getBody()->getContents(), true)['id'];
+        }catch(\Exception $e){} finally {
+            return '';
+        }
     }
 
     /**

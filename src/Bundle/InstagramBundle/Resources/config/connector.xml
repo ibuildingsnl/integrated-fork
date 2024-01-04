@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <defaults autowire="true" autoconfigure="true"/>
+
+        <service id="integrated_brand.type.instagram" class="Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeFactory">
+            <argument>instagram</argument>
+            <argument>Instagram</argument>
+            <argument type="expression">false</argument>
+            <argument>instagram</argument>
+            <argument>\Integrated\Bundle\InstagramBundle\Form\InstagramPublicationType</argument>
+
+            <tag name="integrated_channel.type" />
+        </service>
+
+        <service id="Integrated\Bundle\InstagramBundle\Connector\InstagramClient">
+            <argument type="service" id="guzzle"/>
+            <argument>%env(resolve:FACEBOOK_APP_ID)%</argument>
+            <argument>%env(resolve:FACEBOOK_APP_SECRET)%</argument>
+            <argument>https://www.facebook.com/v18.0</argument>
+            <argument>https://graph.facebook.com/v18.0</argument>
+            <argument>https://localhost.e-active.nl/admin/connector/config/external/return</argument>
+            <argument type="service" id="cache.app"/>
+        </service>
+
+        <service id="Integrated\Bundle\InstagramBundle\Connector\InstagramConnector">
+            <argument type="service" id="Integrated\Bundle\InstagramBundle\Connector\InstagramClient"/>
+            <argument type="service" id="Integrated\Bundle\ChannelBundle\Services\LinkMaker"/>
+        </service>
+
+        <service id="Integrated\Bundle\InstagramBundle\Connector\InstagramConfiguration">
+            <argument type="service" id="Integrated\Bundle\InstagramBundle\Connector\InstagramClient"/>
+        </service>
+
+        <service id="Integrated\Bundle\InstagramBundle\Connector\InstagramConfigType">
+            <argument type="service" id="Integrated\Bundle\InstagramBundle\Connector\InstagramClient"/>
+            <argument type="service" id="request_stack"/>
+        </service>
+
+        <service id="Integrated\Bundle\InstagramBundle\Form\PopulateInstagramPageFieldListener" >
+            <argument type="service" id="Integrated\Bundle\InstagramBundle\Connector\InstagramClient" />
+            <argument type="service" id="request_stack"/>
+        </service>
+
+        <service id="td_connector.instagram" class="Integrated\Bundle\ChannelBundle\Adaptor\ConnectorAdapter">
+            <argument type="service" id="Integrated\Bundle\InstagramBundle\Connector\InstagramConnector" />
+            <argument type="service" id="Integrated\Bundle\InstagramBundle\Connector\InstagramConfiguration" />
+            <argument type="service" id="logger" />
+
+            <tag name="integrated_channel.connector" />
+        </service>
+
+        <service id="td_connector.listener.instagram" class="Integrated\Bundle\ChannelBundle\Adaptor\ConnectorConfigSubscriber">
+            <argument type="service" id="Integrated\Bundle\InstagramBundle\Connector\InstagramConfiguration" />
+            <argument key="$em" type="service" id="doctrine.orm.entity_manager" />
+
+            <tag name="kernel.event_subscriber" />
+        </service>
+    </services>
+</container>

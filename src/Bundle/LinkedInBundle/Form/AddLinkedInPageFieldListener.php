@@ -36,11 +36,12 @@ class AddLinkedInPageFieldListener implements EventSubscriberInterface
             $requestOptions['headers'] = $this->linkedinFactory->getHeaders();
             $availableCompaniesRequest = $client->getAuthenticatedRequest('GET', 'api.linkedin.com/rest/organizationAcls?q=roleAssignee', $token, $requestOptions);
             $response = $client->getResponse($availableCompaniesRequest);
+            $jsonOrganizations = json_decode((string) $response->getBody())->elements;
 
             $organizations = [];
-            foreach (json_decode((string) $response->getBody())->elements as $element) {
-                if ($element->state == 'APPROVED' && $element->role == 'ADMINISTRATOR') {
-                    $organizations[] = str_replace('urn:li:organization:', '', $element->organization);
+            foreach ($jsonOrganizations as $organization) {
+                if ($organization->state == 'APPROVED' && $organization->role == 'ADMINISTRATOR') {
+                    $organizations[] = str_replace('urn:li:organization:', '', $organization->organization);
                 }
             }
 
