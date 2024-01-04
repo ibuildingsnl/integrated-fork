@@ -67,6 +67,7 @@ class WidgetDatabaseCommand extends Command
             foreach ($this->widgets as $widget) {
                 $widgetConfig = new WidgetConfig($widget->getId(), $widget->getName(), $order);
                 $this->manager->persist($widgetConfig);
+                $output->writeln('- Adding '.$widget->getName().' to the database');
                 $order++;
             }
             $this->manager->flush();

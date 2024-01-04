@@ -74,7 +74,6 @@ class DashboardController extends AbstractController
 
     private function getChannelId($brand): string
     {
-        //dd($brand);
         $channelLinks = $brand->getChannelLinks();
         $channelId = null;
         /* @var $channelLink ChannelLink */

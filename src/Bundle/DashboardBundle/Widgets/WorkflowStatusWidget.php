@@ -4,6 +4,7 @@ namespace Integrated\Bundle\DashboardBundle\Widgets;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
+use Integrated\Bundle\DashboardBundle\Widgets\WidgetInterface;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Solarium\Client as solariumClient;
@@ -12,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use DateTimeImmutable;
 
 
-class AssignedToYouWidget implements WidgetInterface
+class WorkflowStatusWidget implements WidgetInterface
 {
 
     private readonly string $id;
@@ -23,11 +24,10 @@ class AssignedToYouWidget implements WidgetInterface
         private readonly DocumentManager            $manager,
         private readonly solariumClient             $solariumClient,
         private readonly UrlGeneratorInterface      $urlGenerator,
-    )
-    {
-        $this->id = 'assigned_to_you';
-        $this->name = 'Assigned To You';
-        $this->view = '@IntegratedDashboard/assigned_to_you.html.twig';
+    ){
+        $this->id = 'workflow_status';
+        $this->name = 'Workflow status';
+        $this->view = '@IntegratedDashboard/workflow_status.html.twig';
     }
 
     public function getId(): string
@@ -47,11 +47,14 @@ class AssignedToYouWidget implements WidgetInterface
 
     public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
-        $assignedToYou = $this->getAssignedElement($user);
-        usort($assignedToYou, array($this, 'compareLastChanges'));
+        $assignedElement = $this->getAssignedElement($user);
+
+        usort($assignedElement, array($this, 'compareLastChanges'));
+
+        $workflowStatus = array_slice($assignedElement, 0, 2);
         return [
             "widget" => $this,
-            'assignedToYou' => $assignedToYou,
+            'workflowStatus' => $workflowStatus,
             'channel' => $channel,
         ];
     }
@@ -92,7 +95,6 @@ class AssignedToYouWidget implements WidgetInterface
         }
         return $assignedElement ?? null;
     }
-
 
     /**
      * @throws \Exception

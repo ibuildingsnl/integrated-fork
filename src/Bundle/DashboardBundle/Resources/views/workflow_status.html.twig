@@ -1,0 +1,36 @@
+{% if workflowStatus is not null %}
+    <div class="widget col-left w-full">
+        <div class="widget-container {{ widget.id }}">
+            <div class="widget-header">
+                {% if (workflowStatus is not iterable) %}
+                    <h2>{{ workflowStatus }}</h2>
+                {% else %}
+                    <h2>{% trans %}Workflow status{% endtrans %}</h2>
+                {% endif %}
+            </div>
+            <nav class="article-list" id="articleList">
+                <ul>
+                    {% for article in workflowStatus %}
+                        {% if article.workflow_color_string is not null %}
+                            {% set status_color = article.workflow_color_string|first %}
+                        {% else %}
+                            {% set status_color = '#f2f2f2' %}
+                        {% endif %}
+                        {% if article.workflow_icon_string is not null %}
+                            {% set status_icon = article.workflow_icon_string|first %}
+                        {% else %}
+                            {% set status_icon = '' %}
+                        {% endif %}
+                        <li class="facet-wrappper">
+                        <span class="facet-title">
+                            <b><a target="_blank" href="{{ article.path }}"> <i
+                                        class="iconoir-{{ status_icon }}"></i> {{ article.title }}</a></b>
+                        </span>
+                            <span class="facet-count">{{ article.workflow_deadline }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endif %}
