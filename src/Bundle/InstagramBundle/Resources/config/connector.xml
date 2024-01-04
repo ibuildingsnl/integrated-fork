@@ -12,6 +12,7 @@
             <argument>instagram</argument>
             <argument>Instagram</argument>
             <argument type="expression">false</argument>
+            <argument type="expression">true</argument>
             <argument>instagram</argument>
             <argument>\Integrated\Bundle\InstagramBundle\Form\InstagramPublicationType</argument>
 
