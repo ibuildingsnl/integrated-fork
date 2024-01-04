@@ -29,10 +29,10 @@
         </service>
 
         <service id="Integrated\Bundle\BrandBundle\Controller\ChannelLinkController">
-            <argument type="service" id="integrated_channel.repository.channel" />
             <argument type="service" id="integrated_channel.channel_type.registry" />
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="integrated_content.services.flusher"/>
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
