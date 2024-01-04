@@ -12,6 +12,7 @@
             <argument>twitter</argument>
             <argument>X (Twitter)</argument>
             <argument type="expression">false</argument>
+            <argument type="expression">true</argument>
             <argument>X (Twitter)</argument>
             <argument>\Integrated\Bundle\XTwitterBundle\Form\TwitterPublicationType</argument>
 

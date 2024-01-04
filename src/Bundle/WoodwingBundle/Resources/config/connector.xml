@@ -36,6 +36,7 @@
             <argument>woodwing</argument>
             <argument>WoodWing</argument>
             <argument type="expression">false</argument>
+            <argument type="expression">false</argument>
             <argument>woodwing</argument>
             <argument>Integrated\Bundle\WoodwingBundle\Form\WoodwingPublicationType</argument>
 
@@ -44,6 +45,7 @@
 
         <service id="Integrated\Bundle\WoodwingBundle\Form\WoodwingPublicationType">
             <argument type="service" id="integrated_content.content_repository" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
 
             <tag name="form.type" />
         </service>

@@ -15,7 +15,7 @@ final class ChannelAddingLinkMaker implements LinkMaker
     public function urlFor(Content $content, ChannelInterface $preferredChannel): string
     {
         return (
-            $content->hasChannel($preferredChannel) // @todo Fix duplicate ChannelInterface
+            $content->hasChannel($preferredChannel)
                 ? $preferredChannel->getPrimaryDomain()
                 : $content->getPrimaryChannel()->getPrimaryDomain()
         ).'/'.$this->linkMaker->urlFor($content, $preferredChannel);

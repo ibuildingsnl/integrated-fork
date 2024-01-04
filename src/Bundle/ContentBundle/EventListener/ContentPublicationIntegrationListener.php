@@ -3,6 +3,7 @@
 namespace Integrated\Bundle\ContentBundle\EventListener;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Bundle\ContentBundle\Form\Type\PublicationsType;
@@ -45,6 +46,7 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
 
         $form->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $content = $event->getData();
+
             if (!$content instanceof Content) {
                 return;
             }
@@ -60,6 +62,18 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                 if (($data['time'] ?? null) instanceof PublishTimeInterface) {
                     $time = $data['time'];
                     unset($data['time']);
+                }
+                if (isset($data['images']) && \is_array($data['images'])) {
+                    $images = [];
+                    /** @var Image $image */
+                    foreach ($data['images'] as $key => $image) {
+                        $images[$key] = [
+                            '$ref' => 'content',
+                            '$id' => $image->getId(),
+                            'class' => 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Image',
+                        ];
+                    }
+                    $data['images'] = $images;
                 }
                 $this->publications->add(
                     new Publication($content, $channel, $time, \is_array($data) ? $data : [])

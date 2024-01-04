@@ -29,7 +29,7 @@ final class TaxonomyIndexer implements TaxonomyOverview
 
         $taxonomy = $this->taxonomies->byId($root);
 
-        if (!$taxonomy) {
+        if (!$taxonomy && $filtered) {
             return [];
         }
 

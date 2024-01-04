@@ -3,7 +3,9 @@
 namespace Integrated\Bundle\WoodwingBundle\Form;
 
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\ContentRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
@@ -14,19 +16,24 @@ use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class WoodwingPublicationType extends AbstractType
 {
     public function __construct(
         private readonly ContentRepository $content,
+        private readonly DocumentManager $dm,
     ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $formChannel = $this->dm->createQueryBuilder(Channel::class)
+                                ->field('name')
+                                ->equals($options['label'])
+                                ->getQuery()
+                                ->getSingleResult();
+
         $builder->add('time', PublishTimeType::class, ['label' => false]);
 
         $withChannels = ChoiceList::attr($this, fn(?Taxonomy $taxonomy) => [
@@ -38,7 +45,9 @@ class WoodwingPublicationType extends AbstractType
         $builder->add('edition', DocumentType::class, [
             'class' => Taxonomy::class,
             'query_builder' => fn(DocumentRepository $repository) => $repository->createQueryBuilder()
-                ->field('contentType')->equals($options['editionType']),
+                ->field('contentType')->equals($options['editionType'])
+                ->field('channels.$id')->equals($formChannel->getId())
+                ->field('parent_id')->notEqual(null),
             'choice_label' => 'title',
             'choice_value' => function (?Taxonomy $entity): string {
                 return $entity ? $entity->getId() : '';
@@ -50,7 +59,9 @@ class WoodwingPublicationType extends AbstractType
         $builder->add('layout', DocumentType::class, [
             'class' => Taxonomy::class,
             'query_builder' => fn(DocumentRepository $repository) => $repository->createQueryBuilder()
-                ->field('contentType')->equals($options['layoutType']),
+                ->field('contentType')->equals($options['layoutType'])
+                ->field('channels.$id')->equals($formChannel->getId())
+                ->field('parent_id')->notEqual(null),
             'choice_label' => 'title',
             'choice_value' => function (?Taxonomy $entity): string {
                 return $entity ? $entity->getId() : '';
@@ -67,16 +78,8 @@ class WoodwingPublicationType extends AbstractType
             fn (?Content $item) => $item?->getId(),
         );
         $builder->get('edition')->addModelTransformer($transformer);
+
         $builder->get('layout')->addModelTransformer($transformer);
-//        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-//            if ($event->getData()['send'] ?? false) {
-//                $woodwingPost = $this->type->create();
-//                assert($woodwingPost instanceof WoodwingPost);
-//                $woodwingPost->setOriginal($original);
-//                $woodwingPost->populate();
-//                $this->content->add($woodwingPost);
-//            }
-//        });
     }
 
     public function configureOptions(OptionsResolver $resolver)

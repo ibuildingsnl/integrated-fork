@@ -37,7 +37,7 @@ class WoodwingIntegrationListener implements EventSubscriberInterface
         $type = $this->types->getType($this->contentType);
         $this->content->add($original);
         foreach ($this->publications->forContent($original) as $publication) {
-            if ($publication->getChannel()->getType()->getName() !== 'woodwing') {
+            if ($publication->getChannel()->getType()->getName() !== 'WoodWing') {
                 continue;
             }
             if (!$publication->getSettings()['send'] ?? false) {

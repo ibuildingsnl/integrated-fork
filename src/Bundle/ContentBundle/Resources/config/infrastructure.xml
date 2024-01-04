@@ -18,6 +18,7 @@
             <argument>website</argument>
             <argument>Website</argument>
             <argument type="expression">true</argument>
+            <argument type="expression">false</argument>
             <argument>website</argument>
 
             <tag name="integrated_channel.type" />
@@ -27,35 +28,10 @@
             <argument>newsletter</argument>
             <argument>Newsletter</argument>
             <argument type="expression">false</argument>
+            <argument type="expression">false</argument>
 
             <tag name="integrated_channel.type" />
         </service>
-
-<!--        <service id="integrated_channel.type.woodwing" class="Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeFactory">-->
-<!--            <argument>woodwing</argument>-->
-<!--            <argument>Woodwing</argument>-->
-<!--            <argument type="expression">false</argument>-->
-
-<!--            <tag name="integrated_channel.type" />-->
-<!--        </service>-->
-
-<!--        <service id="integrated_channel.type.linkedin" class="Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeFactory">-->
-<!--            <argument>linkedin</argument>-->
-<!--            <argument>LinkedIn</argument>-->
-<!--            <argument type="expression">false</argument>-->
-<!--            <argument>linkedin</argument>-->
-
-<!--            <tag name="integrated_channel.type" />-->
-<!--        </service>-->
-
-<!--        <service id="integrated_channel.type.facebook" class="Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeFactory">-->
-<!--            <argument>facebook</argument>-->
-<!--            <argument>Facebook (meta)</argument>-->
-<!--            <argument type="expression">false</argument>-->
-<!--            <argument>facebook</argument>-->
-
-<!--            <tag name="integrated_channel.type" />-->
-<!--        </service>-->
 
     </services>
 

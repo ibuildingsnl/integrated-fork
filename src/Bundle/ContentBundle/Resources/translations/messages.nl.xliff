@@ -1290,6 +1290,10 @@
                 <source>Settings</source>
                 <target>Instellingen</target>
             </trans-unit>
+            <trans-unit id="327">
+                <source>images</source>
+                <target>afbeeldingen</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -5,7 +5,7 @@ popup.className = 'publishActions ';
 popup.innerText = 'Hello World';
 document.body.appendChild(popup);
 
-const publishActions = Array.from(document.querySelectorAll('.publication-settings'))
+const publishActions = Array.from(document.querySelectorAll('.publication-settings[data-can-be-set-globally="yes"]'))
     .map((e) => e.dataset.channelType)
     .filter((v, i, a) => a.indexOf(v) === i);
 
@@ -28,10 +28,6 @@ if (publishActions.length > 0) {
     // add publishing options to newly added dropdown menu
     const menu = document.querySelector('#menu_publish');
     publishActions.forEach(function (action) {
-        if (action === 'Newsletter' || action === 'Website') {
-            // @todo make into a setting on channel type instead of hardcoded in js
-            return;
-        }
         const item = document.createElement('li');
         menu.appendChild(item);
         const a = document.createElement('a');

@@ -588,7 +588,7 @@
                  data-types="{{ form.vars.attr['data-types'] }}"
                  data-relationtype="embedded"
                  data-relationid="{{ form.vars.id }}"
-                 data-emptytext="{{ form.vars.attr['data-emptytext'] ?: 'Select ' ~ (form.vars.name) }}"
+                 data-emptytext="{{ form.vars.attr['data-emptytext'] ?: 'Select ' ~ (form.vars.name|trans) }}"
                  data-fieldName="{{ form.vars.full_name }}">
             </div>
 
@@ -598,7 +598,7 @@
                 data-relationtype="embedded"
                 data-relationid="{{ form.vars.id }}"
                 class="select_multimedia_button btn btn-white">
-                {% trans %}Select{% endtrans %} {{ label ?: (form.vars.name) }}
+                {% trans %}Select{% endtrans %} {{ label ?: (form.vars.name|trans) }}
             </div>
 
             <ul class="selected_images hidden">
