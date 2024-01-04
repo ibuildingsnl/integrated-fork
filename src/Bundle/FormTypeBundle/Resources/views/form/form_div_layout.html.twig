@@ -598,7 +598,7 @@
                 data-relationtype="embedded"
                 data-relationid="{{ form.vars.id }}"
                 class="select_multimedia_button btn btn-white">
-                {% trans %}Select{% endtrans %} {{ label ?: (form.vars.name) }}
+                {% trans %}Select{% endtrans %} {{ label ?: (form.vars.name|trans) }}
             </div>
 
             <ul class="selected_images hidden">
