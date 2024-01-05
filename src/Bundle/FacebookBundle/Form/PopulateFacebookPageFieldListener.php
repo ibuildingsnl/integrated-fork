@@ -55,7 +55,7 @@ class PopulateFacebookPageFieldListener implements EventSubscriberInterface
             if (empty($choices)) {
                 $formData['api_status'] = 'No pages available for selection.';
             } else {
-                $form->add('page', RefreshableChoiceType::class, ['select' => ['choices' => $choices]]);
+                $form->add('page', RefreshableChoiceType::class, ['select' => ['choices' => $choices], 'label' => 'Facebook page']);
                 $formData['api_status'] = 'OK';
 
                 if (!isset($formData['page'])) {

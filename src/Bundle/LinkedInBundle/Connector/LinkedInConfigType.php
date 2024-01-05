@@ -22,9 +22,8 @@ class LinkedInConfigType extends AbstractType
     {
         $builder->addEventSubscriber(new AddLinkedInPageFieldListener($this->linkedin, $this->cache));
         $builder->add('token', TextType::class, ['attr' => ['readonly' => 'true']]);
-        $builder->add('page', TextType::class, ['attr' => ['readonly' => 'false']]);
+        $builder->add('page', RefreshableChoiceType::class, ['select' => ['choices' => ['Please finish setting up connection to LinkedIn' => 'empty'], 'attr' => ['disabled' => 'true']]]);
         $builder->add('apiStatus', TextType::class, ['attr' => ['readonly' => 'false']]);
-        $builder->add('test', RefreshableChoiceType::class, ['choices' => ['Test' => 'test', 'Test 2' => 'test2']]);
     }
 
     public function getBlockPrefix(): string

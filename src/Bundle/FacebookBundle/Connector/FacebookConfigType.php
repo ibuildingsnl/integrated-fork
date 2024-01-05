@@ -23,7 +23,7 @@ class FacebookConfigType extends AbstractType
     {
         $builder->addEventSubscriber(new PopulateFacebookPageFieldListener($this->client, $this->stack));
         $builder->add('token_secret', TextType::class, ['attr' => ['readonly' => 'true']]);
-        $builder->add('page', RefreshableChoiceType::class, ['select' => ['choices' => ['Please finish setting up connection to Facebook' => 'empty', 'attr' => ['disabled' => 'true']]]]);
+        $builder->add('page', RefreshableChoiceType::class, ['select' => ['choices' => ['Please finish setting up connection to Facebook' => 'empty'], 'attr' => ['disabled' => 'true']]]);
         $builder->add('page_token', TextType::class, ['attr' => ['readonly' => 'true']]);
         $builder->add('api_status', TextType::class, ['attr' => ['disabled' => 'true']]);
     }
