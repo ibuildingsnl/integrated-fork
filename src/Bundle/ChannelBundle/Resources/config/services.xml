@@ -27,12 +27,6 @@
 
         <service
             id="Integrated\Bundle\ChannelBundle\Services\LinkMaker"
-            class="Integrated\Bundle\ChannelBundle\Services\ChannelAddingLinkMaker"
-            decorates="Integrated\Bundle\ChannelBundle\Services\ResolverLinkMaker"
-        />
-
-        <service
-            id="Integrated\Bundle\ChannelBundle\Services\LinkMaker"
             class="Integrated\Bundle\ChannelBundle\Services\HttpsAddingLinkMaker"
             decorates="Integrated\Bundle\ChannelBundle\Services\ResolverLinkMaker"
         />
