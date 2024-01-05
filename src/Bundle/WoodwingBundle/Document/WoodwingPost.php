@@ -22,6 +22,7 @@ class WoodwingPost extends Content
     private array $kaders = [];
     private array $author = [];
     private array $images = [];
+    private array $featuredImage = [];
     private array $quotes = [];
 
     public function populate(): void
@@ -32,10 +33,10 @@ class WoodwingPost extends Content
         $this->kaders = $this->getKadersFromArticle();
         $this->quotes = $this->getQuotesFromArticle();
         $this->body = $this->cleanBody();
-        $featuredImage = $this->getFeaturedImageFromArticle();
+        $this->featuredImage = $this->getFeaturedImageFromArticle();
         $this->images = $this->getImagesFromArticle();
-        if (count($featuredImage) > 0) {
-            array_unshift($this->images, ...$featuredImage);
+        if (count($this->featuredImage) > 0) {
+            array_unshift($this->images, $this->featuredImage);
         }
         $this->setAuthor();
     }
@@ -100,12 +101,12 @@ class WoodwingPost extends Content
 
     private function getQuotesFromArticle(): array
     {
-        $pattern = '/<blockquote class="quote">\s*([^*]+?)\s*<\/blockquote>/si'; //excluding
+        $pattern = '/<blockquote>\s*([^*]+?)\s*<\/blockquote>/si'; //excluding
         preg_match_all($pattern, $this->getOriginal()->getContent(), $matches);
 
         $quotes = [];
         foreach ($matches[0] as $key => $value) {
-            preg_match('/<cite class="quote">([^<]+)<\/cite>/', $value, $nameMatch);
+            preg_match('/<cite>([^<]+)<\/cite>/', $value, $nameMatch);
             $name = $nameMatch[1] ?? "Unknown";
 
             $quote = $matches[1][$key];
@@ -151,7 +152,7 @@ class WoodwingPost extends Content
         //images:
         $content =  preg_replace('/<img[^>]+\>/i', '', $content);
         //quotes:
-        $content =  preg_replace('/<blockquote class="quote">\s*[^*]+?\s*<\/blockquote>/si', '', $content);
+        $content =  preg_replace('/<blockquote>\s*[^*]+?\s*<\/blockquote>/si', '', $content);
         //intro:
         $content =  preg_replace('/<div class="(?:frame-intro|intro)">\s*([^*]+?)\s*<\/div>/si', '', $content);
         //kaders:
