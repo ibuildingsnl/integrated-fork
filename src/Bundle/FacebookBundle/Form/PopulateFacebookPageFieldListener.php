@@ -38,6 +38,7 @@ class PopulateFacebookPageFieldListener implements EventSubscriberInterface
     {
         $form = $event->getForm();
         $formData = $event->getData();
+        $originalData = [...$formData];
 
         if (!isset($formData['token_secret'])) {
             $formData['api_status'] = 'Save the connector to connect to Facebook.';
@@ -56,14 +57,15 @@ class PopulateFacebookPageFieldListener implements EventSubscriberInterface
                 $formData['api_status'] = 'No pages available for selection.';
             } else {
                 $form->add('page', RefreshableChoiceType::class, ['select' => ['choices' => $choices], 'label' => 'Facebook page']);
-                $formData['api_status'] = 'OK';
 
-                if (!isset($formData['page'])) {
+                if (empty($originalData['page']['choice'])) {
+                    $formData['api_status'] = 'Select a page to retrieve the page token.';
                     return;
                 }
 
                 $token = $this->client->getPageToken($formData['token_secret'], $formData['page']['choice'], $pages);
                 $formData['page_token'] = $token;
+                $formData['api_status'] = 'OK';
             }
         } catch (\Exception $exception) {
             $formData['token_secret'] = null;
