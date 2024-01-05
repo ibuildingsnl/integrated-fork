@@ -12,6 +12,7 @@
 namespace Integrated\Common\Converter\Tests;
 
 use Integrated\Common\Converter\FilterContainer;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -47,9 +48,7 @@ class FilterContainerTest extends ContainerTest
         self::assertTrue(mb_check_encoding($container->get('key')[0], 'UTF-8'));
     }
 
-    /**
-     * @dataProvider controlCharacterProvider
-     */
+    #[DataProvider('controlCharacterProvider')]
     public function testSetAddAndGetControlCharacters($character)
     {
         $container = $this->getInstance();
@@ -61,7 +60,7 @@ class FilterContainerTest extends ContainerTest
     /**
      * @return array
      */
-    public function controlCharacterProvider()
+    public static function controlCharacterProvider()
     {
         return [
             'null' => ["\x00"],

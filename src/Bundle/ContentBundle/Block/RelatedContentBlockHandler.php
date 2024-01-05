@@ -108,7 +108,7 @@ class RelatedContentBlockHandler extends BlockHandler
     }
 
     /**
-     * @return \Doctrine\MongoDB\Query\Builder|\Doctrine\Common\Collections\ArrayCollection|null
+     * @return Builder|null
      */
     protected function getQuery(RelatedContentBlock $block)
     {

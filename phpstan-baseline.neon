@@ -1,0 +1,41 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Call to an undefined method Doctrine\\\\ODM\\\\MongoDB\\\\Repository\\\\DocumentRepository\\<Integrated\\\\Bundle\\\\BlockBundle\\\\Document\\\\Block\\\\Block\\>\\:\\:isUsed\\(\\)\\.$#"
+			count: 1
+			path: src/Bundle/BlockBundle/Controller/BlockController.php
+
+		-
+			message: "#^Call to an undefined method Doctrine\\\\ODM\\\\MongoDB\\\\Repository\\\\DocumentRepository\\<Integrated\\\\Bundle\\\\BlockBundle\\\\Document\\\\Block\\\\Block\\>\\:\\:getTypeChoices\\(\\)\\.$#"
+			count: 1
+			path: src/Bundle/BlockBundle/Form/Type/BlockFilterType.php
+
+		-
+			message: "#^Call to an undefined method Doctrine\\\\ODM\\\\MongoDB\\\\Repository\\\\DocumentRepository\\<Integrated\\\\Bundle\\\\ContentBundle\\\\Document\\\\Content\\\\Content\\>\\:\\:getUsedBy\\(\\)\\.$#"
+			count: 2
+			path: src/Bundle/ContentBundle/Block/RelatedContentBlockHandler.php
+
+		-
+			message: "#^Call to an undefined method Faker\\\\Generator\\:\\:state\\(\\)\\.$#"
+			count: 1
+			path: src/Bundle/ContentBundle/DataFixtures/MongoDB/ContentFixtures.php
+
+		-
+			message: "#^Call to an undefined method Solarium\\\\Component\\\\Facet\\\\FacetInterface\\:\\:setMinCount\\(\\)\\.$#"
+			count: 1
+			path: src/Bundle/ContentBundle/Provider/SolariumProvider.php
+
+		-
+			message: "#^Call to an undefined method Solarium\\\\Component\\\\Facet\\\\FacetInterface\\:\\:setField\\(\\)\\.$#"
+			count: 5
+			path: src/Bundle/ContentBundle/Solr/Query/Type/IntegratedContent.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Console\\\\Helper\\\\HelperInterface\\:\\:ask\\(\\)\\.$#"
+			count: 1
+			path: src/Bundle/SolrBundle/Command/IndexerQueueCommand.php
+
+		-
+			message: "#^Call to an undefined method Solarium\\\\Component\\\\Facet\\\\FacetInterface\\:\\:setField\\(\\)\\.$#"
+			count: 2
+			path: src/Bundle/WorkflowBundle/Solr/Query/WorkflowExtension.php

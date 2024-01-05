@@ -59,14 +59,15 @@ class AbstractController extends BaseAbstractController
         return $user;
     }
 
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
-        return array_merge(parent::getSubscribedServices(), [
+        return [
+            ...BaseAbstractController::getSubscribedServices(),
             'doctrine' => ManagerRegistry::class,
             'doctrine_mongodb' => ManagerRegistry::class,
             'knp_paginator' => PaginatorInterface::class,
             'solarium.client' => Client::class,
             'translator' => TranslatorInterface::class,
-        ]);
+        ];
     }
 }

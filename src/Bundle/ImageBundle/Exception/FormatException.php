@@ -20,11 +20,11 @@ class FormatException extends \ErrorException
      * @param string $inputFormat
      * @param string $outputFormat
      *
-     * @return static
+     * @return self
      */
     public static function noSupportingConverter($inputFormat, $outputFormat)
     {
-        return new static(
+        return new self(
             sprintf(
                 'Format %s can not be converted in to %s, there is not converter supporting this format.',
                 $inputFormat,

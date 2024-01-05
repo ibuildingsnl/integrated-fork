@@ -38,10 +38,7 @@ class DoctrineClearEventSubscriber implements EventSubscriberInterface
         $this->entityManager = $entityManager;
     }
 
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::PROCESSED => 'processedEvent',

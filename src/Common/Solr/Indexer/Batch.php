@@ -62,7 +62,7 @@ class Batch implements \Countable, \IteratorAggregate
     /**
      * Get a iterator to walk of the batch operations.
      *
-     * @return BatchOperation[]
+     * @return \Traversable<BatchOperation>
      */
     public function getIterator(): \Traversable
     {

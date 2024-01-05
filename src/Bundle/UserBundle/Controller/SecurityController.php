@@ -18,32 +18,14 @@ use Integrated\Bundle\UserBundle\Form\Type\PasswordResetType;
 use Integrated\Bundle\UserBundle\Service\KeyGenerator;
 use Integrated\Bundle\UserBundle\Service\Mailer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Twig\Error\Error;
 
-/**
- * The login controller.
- *
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
 class SecurityController extends AbstractController
 {
-    /**
-     * @var UserManager
-     */
-    private $userManager;
-
-    /**
-     * @var Mailer
-     */
-    private $mailer;
-
-    /**
-     * @var KeyGenerator
-     */
-    private $keyGenerator;
+    private UserManager $userManager;
+    private Mailer $mailer;
+    private KeyGenerator $keyGenerator;
 
     public function __construct(UserManager $userManager, Mailer $mailer, KeyGenerator $keyGenerator)
     {
@@ -52,10 +34,7 @@ class SecurityController extends AbstractController
         $this->keyGenerator = $keyGenerator;
     }
 
-    /**
-     * @return Response
-     */
-    public function login()
+    public function login(): Response
     {
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirectToRoute('integrated_content_content_index');
@@ -67,13 +46,10 @@ class SecurityController extends AbstractController
             ['action' => $this->generateUrl('integrated_user_check')]
         );
 
-        return $this->render('@IntegratedUser/security/login.html.twig', ['form' => $form->createView()]);
+        return $this->render('@IntegratedUser/security/login.html.twig', ['form' => $form]);
     }
 
-    /**
-     * @return RedirectResponse|Response
-     */
-    public function passwordReset(Request $request)
+    public function passwordReset(Request $request): Response
     {
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirectToRoute('integrated_content_content_index');
@@ -99,15 +75,10 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('integrated_user_login');
         }
 
-        return $this->render('@IntegratedUser/security/password_reset.html.twig', ['form' => $form->createView()]);
+        return $this->render('@IntegratedUser/security/password_reset.html.twig', ['form' => $form]);
     }
 
-    /**
-     * @return RedirectResponse|Response
-     *
-     * @throws Error
-     */
-    public function passwordChange(Request $request, int $id, int $timestamp, string $key)
+    public function passwordChange(Request $request, int $id, int $timestamp, string $key): Response
     {
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirectToRoute('integrated_user_profile_index');
@@ -137,6 +108,6 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('integrated_user_login');
         }
 
-        return $this->render('@IntegratedUser/security/password_reset.html.twig', ['form' => $form->createView()]);
+        return $this->render('@IntegratedUser/security/password_reset.html.twig', ['form' => $form]);
     }
 }

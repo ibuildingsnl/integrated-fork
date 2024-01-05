@@ -12,6 +12,7 @@
 namespace Integrated\Common\Content\Extension\Adaptor\Doctrine;
 
 use Doctrine\Common\EventSubscriber;
+use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Persistence\Proxy;
 use Integrated\Common\Content\Extension\Adaptor\AbstractAdaptor;
@@ -61,6 +62,11 @@ class DoctrineOrmAdaptor extends AbstractAdaptor implements EventSubscriber
     public function preFlush(LifecycleEventArgs $event)
     {
         $manager = $event->getObjectManager();
+
+        if (!$manager instanceof EntityManager) {
+            throw new \LogicException(sprintf('The ObjectManger is not an instance of %s', EntityManager::class));
+        }
+
         $uow = $manager->getUnitOfWork();
 
         foreach ($uow->getIdentityMap() as $class => $objects) {

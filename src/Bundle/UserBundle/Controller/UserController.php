@@ -19,36 +19,27 @@ use Integrated\Bundle\UserBundle\Form\Type\UserFormType;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Bundle\UserBundle\Provider\FilterQueryProvider;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
 class UserController extends AbstractController
 {
-    /**
-     * @var UserManagerInterface
-     */
-    private $manager;
+    private UserManagerInterface $manager;
+    private FilterQueryProvider $provider;
+    private PaginatorInterface $paginator;
 
-    /**
-     * @var FilterQueryProvider
-     */
-    private $provider;
-
-    public function __construct(UserManagerInterface $manager, FilterQueryProvider $provider)
+    public function __construct(UserManagerInterface $manager, FilterQueryProvider $provider, PaginatorInterface $paginator)
     {
         $this->manager = $manager;
         $this->provider = $provider;
+        $this->paginator = $paginator;
     }
 
-    /**
-     * @return Response
-     */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -63,7 +54,7 @@ class UserController extends AbstractController
         ]);
         $facetFilter->handleRequest($request);
 
-        $pagination = $this->getPaginator()->paginate(
+        $pagination = $this->paginator->paginate(
             $users,
             $request->query->get('page', 1),
             15
@@ -71,24 +62,22 @@ class UserController extends AbstractController
 
         return $this->render('@IntegratedUser/user/index.html.twig', [
             'users' => $pagination,
-            'facetFilter' => $facetFilter->createView(),
+            'facetFilter' => $facetFilter,
         ]);
     }
 
-    /**
-     * @return Response
-     */
-    public function new(Request $request)
+    public function new(Request $request): Response
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
+        /** @var Form $form */
         $form = $this->createNewForm();
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->get('actions')->get('cancel')->isClicked()) {
+            if ($form->getClickedButton()?->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_user_user_index');
             }
 
@@ -103,16 +92,11 @@ class UserController extends AbstractController
         }
 
         return $this->render('@IntegratedUser/user/new.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return Response
-     *
-     * @throws NotFoundHttpException
-     */
-    public function edit(Request $request)
+    public function edit(Request $request): Response
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -124,11 +108,12 @@ class UserController extends AbstractController
             throw $this->createNotFoundException();
         }
 
+        /** @var Form $form */
         $form = $this->createEditForm($user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->get('actions')->get('cancel')->isClicked()) {
+            if ($form->getClickedButton()?->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_user_user_index');
             }
 
@@ -142,14 +127,11 @@ class UserController extends AbstractController
 
         return $this->render('@IntegratedUser/user/edit.html.twig', [
             'user' => $user,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return Response
-     */
-    public function delete(Request $request)
+    public function delete(Request $request): Response
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -161,11 +143,12 @@ class UserController extends AbstractController
             return $this->redirectToRoute('integrated_user_user_index'); // user is already gone
         }
 
+        /** @var Form $form */
         $form = $this->createDeleteForm($user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->get('actions')->get('cancel')->isClicked()) {
+            if ($form->getClickedButton()?->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_user_user_index');
             }
 
@@ -179,73 +162,49 @@ class UserController extends AbstractController
 
         return $this->render('@IntegratedUser/user/delete.html.twig', [
             'user' => $user,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createNewForm()
+    protected function createNewForm(): FormInterface
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        $form = $this->createForm(
-            UserFormType::class,
-            null,
-            [
-                'action' => $this->generateUrl('integrated_user_user_new'),
-                'method' => 'POST',
-            ]
-        );
+        $form = $this->createForm(UserFormType::class, null, [
+            'action' => $this->generateUrl('integrated_user_user_new'),
+        ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
         return $form;
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createEditForm(UserInterface $user)
+    protected function createEditForm(UserInterface $user): FormInterface
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        $form = $this->createForm(
-            UserFormType::class,
-            $user,
-            [
-                'action' => $this->generateUrl('integrated_user_user_edit', ['id' => $user->getId()]),
-                'method' => 'PUT',
-            ]
-        );
+        $form = $this->createForm(UserFormType::class, $user, [
+            'action' => $this->generateUrl('integrated_user_user_edit', ['id' => $user->getId()]),
+        ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createDeleteForm(UserInterface $user)
+    protected function createDeleteForm(UserInterface $user): FormInterface
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        $form = $this->createForm(
-            DeleteFormType::class,
-            $user,
-            [
-                'action' => $this->generateUrl('integrated_user_user_delete', ['id' => $user->getId()]),
-                'method' => 'DELETE',
-            ]
-        );
+        $form = $this->createForm(DeleteFormType::class, $user, [
+            'action' => $this->generateUrl('integrated_user_user_delete', ['id' => $user->getId()]),
+        ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 

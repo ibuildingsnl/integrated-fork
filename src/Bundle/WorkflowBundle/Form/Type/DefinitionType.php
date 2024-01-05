@@ -63,7 +63,7 @@ class DefinitionType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return EntityType::class;
     }
@@ -71,7 +71,7 @@ class DefinitionType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_workflow_definition_choice';
     }

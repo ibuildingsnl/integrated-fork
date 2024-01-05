@@ -8,15 +8,11 @@
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\RelationController::index</default>
     </route>
 
-    <route id="integrated_content_relation_new" path="/new" methods="GET">
+    <route id="integrated_content_relation_new" path="/new">
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\RelationController::new</default>
     </route>
 
-    <route id="integrated_content_relation_create" path="/" methods="POST">
-        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\RelationController::create</default>
-    </route>
-
-    <route id="integrated_content_relation_edit" path="/{id}/edit" methods="GET">
+    <route id="integrated_content_relation_edit" path="/{id}/edit">
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\RelationController::edit</default>
     </route>
 

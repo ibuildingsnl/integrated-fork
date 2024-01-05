@@ -28,10 +28,7 @@ class CsvArray extends AbstractType
         $builder->addModelTransformer(new Transformer());
     }
 
-    /**
-     * @return string
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_csv_array';
     }
@@ -39,7 +36,7 @@ class CsvArray extends AbstractType
     /**
      * @return string
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return TextType::class;
     }

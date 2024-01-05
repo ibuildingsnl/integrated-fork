@@ -11,18 +11,13 @@
 
 namespace Integrated\Bundle\SitemapBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
-class RobotsController
+class RobotsController extends AbstractController
 {
-    /**
-     * @Template
-     */
-    public function index(): array
+    public function index(): Response
     {
-        return [];
+        return $this->render('@IntegratedSitemapBundle/Robots/index.html.twig');
     }
 }

@@ -12,12 +12,6 @@
 
         <service id="integrated_slug.slugger" class="Integrated\Bundle\SlugBundle\Slugger\Slugger" />
 
-        <service id="Integrated\Bundle\SlugBundle\Mapping\Driver\AnnotationDriver">
-            <argument type="service" id="annotations.reader" />
-
-            <tag name="integrated_slug.mapping.driver" />
-        </service>
-
         <service id="Integrated\Bundle\SlugBundle\Mapping\Driver\AttributeDriver">
             <tag name="integrated_slug.mapping.driver" />
         </service>

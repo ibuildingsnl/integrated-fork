@@ -99,7 +99,7 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct()
+    final public function __construct()
     {
         if (\func_num_args() === 2 && \is_string(func_get_arg(0)) && strpos(func_get_arg(0), '<') === false) {
             $result = self::create(func_get_arg(1))->find(func_get_arg(0));
@@ -576,6 +576,8 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
                 return $node;
             }
         }
+
+        return null;
     }
 
     /**

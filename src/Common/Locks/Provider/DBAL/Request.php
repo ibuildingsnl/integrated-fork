@@ -78,7 +78,7 @@ class Request implements RequestInterface
     {
         return sprintf(
             "Resource: %s\nResourceOwner: %s\ntimeout: %s",
-            (string) $this->resource,
+            method_exists($this->resource, '__toString') ? (string) $this->resource : $this->resource->getIdentifier(),
             $this->owner === null ? 'NULL' : $this->owner,
             $this->timeout === null ? 'NULL' : $this->timeout
         );

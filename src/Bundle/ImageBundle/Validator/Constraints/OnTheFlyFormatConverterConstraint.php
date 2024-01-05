@@ -18,10 +18,7 @@ use Symfony\Component\Validator\Constraint;
  */
 class OnTheFlyFormatConverterConstraint extends Constraint
 {
-    /**
-     * @return string
-     */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return 'integrated_image.validator_ontheformatflyconverter';
     }

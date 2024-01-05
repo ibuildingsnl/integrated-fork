@@ -14,7 +14,6 @@ namespace Integrated\Bundle\ContentBundle\Block;
 use Integrated\Bundle\BlockBundle\Block\BlockHandler;
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
 use Integrated\Bundle\ContentBundle\Document\Block\FacetBlock;
-use Integrated\Bundle\ContentBundle\Provider\SolariumProvider;
 use Integrated\Common\Block\BlockHandlerRegistryInterface;
 use Integrated\Common\Block\BlockInterface;
 use Solarium\QueryType\Select\Result\Result;
@@ -30,7 +29,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class FacetBlockHandler extends BlockHandler
 {
     /**
-     * @var SolariumProvider
+     * @var BlockHandlerRegistryInterface
      */
     private $blockRegistry;
 
@@ -51,25 +50,25 @@ class FacetBlockHandler extends BlockHandler
     public function execute(BlockInterface $block, array $options)
     {
         if (!$block instanceof FacetBlock) {
-            return;
+            return null;
         }
 
         $contentBlock = $block->getBlock();
 
         if (!$contentBlock instanceof ContentBlock) {
-            return;
+            return null;
         }
 
         $handler = $this->blockRegistry->getHandler($contentBlock->getType());
 
         if (!$handler instanceof ContentBlockHandler) {
-            return;
+            return null;
         }
 
         $request = $this->requestStack->getCurrentRequest();
 
         if (!$request instanceof Request) {
-            return;
+            return null;
         }
 
         $options['exclude'] = false; // don't exclude already shown items
@@ -79,13 +78,13 @@ class FacetBlockHandler extends BlockHandler
         $result = $pagination->getCustomParameter('result');
 
         if (!$result instanceof Result) {
-            return;
+            return null;
         }
 
         $facetSet = $result->getFacetSet();
 
         if (null === $facetSet) {
-            return;
+            return null;
         }
 
         $facets = [];
@@ -97,7 +96,7 @@ class FacetBlockHandler extends BlockHandler
         }
 
         if (!\count($facets)) {
-            return;
+            return null;
         }
 
         return $this->render([

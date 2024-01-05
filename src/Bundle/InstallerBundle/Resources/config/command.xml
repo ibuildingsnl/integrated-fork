@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <defaults autowire="true" autoconfigure="true"/>
+
+        <service id="Integrated\Bundle\InstallerBundle\Command\IntegratedInstallCommand">
+            <argument id="solarium.client" type="service"/>
+            <argument type="service">
+                <service class="Integrated\Bundle\InstallerBundle\Test\BundleTest">
+                    <argument>%kernel.bundles%</argument>
+                </service>
+            </argument>
+            <argument type="service" id="kernel" />
+
+            <tag name="console.command" />
+        </service>
+
+        <service id="Integrated\Bundle\InstallerBundle\Command\IntegratedMongoDBMigrateCommand">
+            <argument type="service">
+                <service class="Integrated\Bundle\InstallerBundle\Install\MongoDBMigrations">
+                    <argument id="doctrine_mongodb.odm.document_manager" type="service"/>
+                    <argument id="service_container" type="service"/>
+                </service>
+            </argument>
+
+            <tag name="console.command" />
+        </service>
+
+    </services>
+
+</container>

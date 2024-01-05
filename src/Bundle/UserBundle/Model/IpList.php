@@ -36,17 +36,11 @@ class IpList
         $this->description = $description;
     }
 
-    /**
-     * @return string
-     */
     public function getId(): ?string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getIp(): IP
     {
         return $this->ip;

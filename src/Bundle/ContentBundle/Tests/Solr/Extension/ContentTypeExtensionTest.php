@@ -18,34 +18,31 @@ use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\Type\TypeExtensionInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Integrated\Bundle\ContentBundle\Solr\Extension\ContentTypeExtension
- *
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- */
-class ContentTypeExtensionTest extends \PHPUnit\Framework\TestCase
+class ContentTypeExtensionTest extends TestCase
 {
     public function testInterface()
     {
         self::assertInstanceOf(TypeExtensionInterface::class, $this->getInstance($this->getResolver()));
     }
 
-    /**
-     * @dataProvider buildProvider
-     */
+    #[DataProvider('buildProvider')]
     public function testBuild(string $type, string $name, array $expected)
     {
-        $container = $this->getContainer();
+        $extension = $this->getInstance($this->getResolver($type, $this->getContentType($name)));
+        $extension->build($container = new Container(), $this->getContent($type));
 
-        $this->getInstance($this->getResolver($type, $this->getContentType($name)))->build($container, $this->getContent($type));
-        $this->getInstance($this->getResolver($type, $this->getContentType($name)))->build($container, $this->getContent($type)); // should clear previous build
+        self::assertEquals($expected, $container->toArray());
+
+        $extension->build($container, $this->getContent($type)); // should clear previous build and not add to it
 
         self::assertEquals($expected, $container->toArray());
     }
 
-    public function buildProvider()
+    public static function buildProvider(): array
     {
         return [
             [
@@ -67,8 +64,7 @@ class ContentTypeExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildNoContent()
     {
-        /* @var ContainerInterface | MockObject $container */
-        $container = $this->createMock('Integrated\\Common\\Converter\\ContainerInterface');
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->never())
             ->method($this->anything());
 
@@ -86,17 +82,6 @@ class ContentTypeExtensionTest extends \PHPUnit\Framework\TestCase
     protected function getInstance(ResolverInterface $resolver)
     {
         return new ContentTypeExtension($resolver);
-    }
-
-    /**
-     * @return ContainerInterface
-     */
-    protected function getContainer()
-    {
-        // Easier to check end result when using an actual container instead of mocking it away. Also
-        // the code coverage for the container class is ignored for these tests.
-
-        return new Container();
     }
 
     /**
@@ -118,7 +103,7 @@ class ContentTypeExtensionTest extends \PHPUnit\Framework\TestCase
     protected function getContentType(string $name)
     {
         $mock = $this->createMock(ContentTypeInterface::class);
-        $mock->expects($this->once())
+        $mock->expects($this->atLeastOnce())
             ->method('getName')
             ->willReturn($name);
 
@@ -131,6 +116,7 @@ class ContentTypeExtensionTest extends \PHPUnit\Framework\TestCase
     protected function getResolver(string $type = null, ContentTypeInterface $contentType = null)
     {
         $mock = $this->createMock(ResolverInterface::class);
+
         if (null !== $type) {
             $mock->expects($this->any())
                 ->method('getType')

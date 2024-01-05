@@ -13,13 +13,12 @@ namespace Integrated\Bundle\SlugBundle\Tests\Mapping\Metadata;
 
 use Integrated\Bundle\ContentBundle\Document\Content;
 use Integrated\Bundle\SlugBundle\Mapping\Metadata\PropertyMetadata;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class PropertyMetadataTest extends TestCase
 {
-    /**
-     * @dataProvider propertyProvider
-     */
+    #[DataProvider('propertyProvider')]
     public function testProperties(string $class, string $name, array $fields, string $separator, int $lengthLimit, string $value)
     {
         $metadata = new PropertyMetadata($class, $name, $fields, $separator, $lengthLimit);
@@ -35,7 +34,7 @@ class PropertyMetadataTest extends TestCase
         $this->assertSame($metadata->getValue($object), $value);
     }
 
-    public function propertyProvider(): array
+    public static function propertyProvider(): array
     {
         return [
             [

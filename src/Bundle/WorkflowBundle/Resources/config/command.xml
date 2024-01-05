@@ -12,13 +12,14 @@
             <argument type="service" id="Integrated\Bundle\WorkflowBundle\Service\StateManager"/>
             <argument type="service" id="integrated_content.resolver"/>
             <argument type="service" id="integrated_workflow.repository.definition"/>
-            <argument type="service" id="integrated_workflow.lock.factory"/>
+
             <tag name="console.command"/>
         </service>
 
         <service id="Integrated\Bundle\WorkflowBundle\Command\WorkerCommand">
             <argument type="service" id="integrated_queue.workflow"/>
             <argument>%kernel.project_dir%</argument>
+
             <tag name="console.command"/>
         </service>
 

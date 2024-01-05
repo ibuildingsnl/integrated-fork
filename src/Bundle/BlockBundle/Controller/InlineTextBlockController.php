@@ -11,20 +11,24 @@
 
 namespace Integrated\Bundle\BlockBundle\Controller;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BlockBundle\Document\Block\InlineTextBlock;
 use Integrated\Bundle\BlockBundle\Form\Type\BlockEditType;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @author Johan Liefers@e-active.nl>
- */
-class InlineTextBlockController extends BlockController
+class InlineTextBlockController extends AbstractController
 {
-    /**
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function create(Request $request, AbstractPage $page)
+    private DocumentManager $manager;
+
+    public function __construct(DocumentManager $manager)
+    {
+        $this->manager = $manager;
+    }
+
+    public function new(Request $request, AbstractPage $page): Response
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -36,8 +40,7 @@ class InlineTextBlockController extends BlockController
             BlockEditType::class,
             $block,
             [
-                'method' => 'PUT',
-                'data_class' => \get_class($block),
+                'data_class' => $block::class,
                 'type' => $block->getType(),
             ]
         );
@@ -46,14 +49,14 @@ class InlineTextBlockController extends BlockController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->documentManager->persist($block);
-            $this->documentManager->flush();
+            $this->manager->persist($block);
+            $this->manager->flush();
 
             return $this->render('@IntegratedBlock/block/saved.iframe.html.twig', ['id' => $block->getId()]);
         }
 
         return $this->render('@IntegratedBlock/block/new.iframe.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 }

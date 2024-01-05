@@ -95,13 +95,12 @@ class RelationAction implements BulkActionInterface
      *
      * @return $this
      */
-    public function setReferences($references)
+    public function setReferences(iterable $references)
     {
         $this->references->clear();
-        if (\is_array($references) || $references instanceof \Traversable) {
-            foreach ($references as $reference) {
-                $this->addReference($reference);
-            }
+
+        foreach ($references as $reference) {
+            $this->addReference($reference);
         }
 
         return $this;

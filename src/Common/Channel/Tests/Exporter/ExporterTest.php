@@ -19,9 +19,9 @@ use Integrated\Common\Channel\Connector\AdapterInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
 use Integrated\Common\Channel\Connector\Config\ResolverInterface;
+use Integrated\Common\Channel\Connector\ExporterInterface;
 use Integrated\Common\Channel\Exporter\ExportableInterface;
 use Integrated\Common\Channel\Exporter\Exporter;
-use Integrated\Common\Channel\Exporter\ExporterInterface;
 use Integrated\Common\Channel\Exporter\ExporterResponse;
 use Integrated\Common\Channel\Tests\Exporter\Mock\NonContentDocument;
 use Integrated\Common\Content\ConnectorInterface;
@@ -281,7 +281,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getExporter()
     {
-        return $this->createMock('Integrated\\Common\\Channel\\Exporter\\ExporterInterface');
+        return $this->createMock('Integrated\\Common\\Channel\\Connector\\ExporterInterface');
     }
 
     /**

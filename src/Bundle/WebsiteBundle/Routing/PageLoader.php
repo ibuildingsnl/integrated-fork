@@ -44,7 +44,7 @@ class PageLoader implements LoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function load($resource, $type = null)
+    public function load(mixed $resource, $type = null)
     {
         if (true === $this->loaded) {
             throw new \RuntimeException('Page loader is already added');
@@ -65,8 +65,8 @@ class PageLoader implements LoaderInterface
             $route = new Route(
                 $page->getPath(),
                 [
-                    '_controller' => 'integrated_website.controller.page:showAction',
-                    'id' => $page->getId(),
+                    '_controller' => 'Integrated\Bundle\WebsiteBundle\Controller\PageController::show',
+                    'page' => $page->getId(),
                 ],
                 [],
                 [],
@@ -85,7 +85,7 @@ class PageLoader implements LoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function supports($resource, $type = null)
+    public function supports($resource, $type = null): bool
     {
         return 'integrated_website_page' === $type;
     }
@@ -93,7 +93,7 @@ class PageLoader implements LoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function getResolver()
+    public function getResolver(): LoaderResolverInterface
     {
         return new LoaderResolver();
     }

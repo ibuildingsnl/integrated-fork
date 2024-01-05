@@ -2,84 +2,54 @@
 
 namespace Integrated\Bundle\InstallerBundle\Command;
 
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ORM\EntityManager;
-use Integrated\Bundle\InstallerBundle\Install\MongoDBMigrations;
-use Integrated\Bundle\InstallerBundle\Install\MySQLMigrations;
 use Integrated\Bundle\InstallerBundle\Test\BundleTest;
 use Solarium\Client;
 use Solarium\QueryType\Select\Query\Query;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
-/**
- * Command for executing single migrations up or down manually.
- */
+#[AsCommand(
+    name: 'integrated:install',
+    description: 'Run the Integrated installer to set up database scheme etc.',
+)]
 class IntegratedInstallCommand extends Command
 {
-    /**
-     * @var MySQLMigrations
-     */
-    private $migrations;
+    private Client $solrClient;
+    private BundleTest $bundleTest;
+    private KernelInterface $kernel;
+    private ?string $php = null;
 
-    /**
-     * @var MongoDBMigrations
-     */
-    private $mongoDBMigrations;
-
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
-     * @var DocumentManager
-     */
-    private $documentManager;
-
-    /**
-     * @var Client
-     */
-    private $solrClient;
-
-    /**
-     * @var BundleTest
-     */
-    private $bundleTest;
-
-    public function __construct(EntityManager $entityManager, DocumentManager $documentManager, Client $solrClient, MySQLMigrations $migrations, MongoDBMigrations $mongoDBMigrations, BundleTest $bundleTest)
+    public function __construct(Client $solrClient, BundleTest $bundleTest, KernelInterface $kernel)
     {
-        $this->migrations = $migrations;
-        $this->mongoDBMigrations = $mongoDBMigrations;
-        $this->entityManager = $entityManager;
-        $this->documentManager = $documentManager;
         $this->solrClient = $solrClient;
         $this->bundleTest = $bundleTest;
+        $this->kernel = $kernel;
 
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
-        $this
-            ->setName('integrated:install')
-            ->setDescription('Run the Integrated installer to set up database scheme etc.')
-            ->addOption(
-                'step',
-                's',
-                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                'Specify step to run. Choices: migrations. You can add this option multiple times. If not specified all steps will be executed.'
-            );
+        $this->addOption(
+            'step',
+            's',
+            InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+            'Specify step to run. Choices: migrations. You can add this option multiple times. If not specified all steps will be executed.'
+        );
     }
 
-    /**
-     * @return int|void|null
-     */
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        $this->findExecutable();
+    }
+
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $steps = $input->getOption('step');
@@ -116,28 +86,26 @@ class IntegratedInstallCommand extends Command
         if (\in_array('migrations', $steps) || empty($steps)) {
             $io->section('Execute migrations');
 
-            $this->migrations->execute();
-            $this->mongoDBMigrations->execute();
+            $this->executeCommand('integrated:install:database:migrate --no-interaction', $output);
+            $this->executeCommand('integrated:install:mongodb:migrate', $output);
         }
 
-        return 0;
+        return self::SUCCESS;
     }
 
-    protected function executeCommand($command, OutputInterface $output)
+    private function executeCommand($command, OutputInterface $output): void
     {
-        $php = self::getPhp(false);
-        $console = 'bin/console';
+        $command = implode(' ', [$this->php, 'bin/console', $command, '-e', $this->kernel->getEnvironment()]);
 
-        $output->writeln(sprintf('Execute %s %s %s', $php, $console, $command), OutputInterface::VERBOSITY_VERY_VERBOSE);
+        $output->writeln(sprintf('Execute %s', $command), OutputInterface::VERBOSITY_VERY_VERBOSE);
 
-        $process = new Process([$php, $console, $command]);
-
+        $process = Process::fromShellCommandline($command);
         $process->setTimeout(0);
         $process->run(function ($type, $buffer) use ($output) {
             if (Process::ERR === $type) {
-                $output->write($buffer);
+                $output->write($buffer, false, $output::OUTPUT_RAW | $output::VERBOSITY_NORMAL);
             } else {
-                $output->write($buffer, false, $output::VERBOSITY_VERBOSE);
+                $output->write($buffer, false, $output::OUTPUT_RAW | $output::VERBOSITY_VERBOSE);
             }
         });
 
@@ -146,20 +114,16 @@ class IntegratedInstallCommand extends Command
         }
     }
 
-    /**
-     * @param bool $includeArgs
-     *
-     * @return array|false|string|null
-     */
-    protected static function getPhp($includeArgs = true)
+    private function findExecutable(): void
     {
-        $phpFinder = new PhpExecutableFinder();
-        if (!$phpPath = $phpFinder->find($includeArgs)) {
+        $finder = new PhpExecutableFinder();
+
+        if (!$path = $finder->find(false)) {
             throw new \RuntimeException(
                 'The php executable could not be found, add it to your PATH environment variable and try again'
             );
         }
 
-        return $phpPath;
+        $this->php = $path;
     }
 }

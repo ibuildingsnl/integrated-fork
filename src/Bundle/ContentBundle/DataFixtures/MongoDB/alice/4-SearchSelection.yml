@@ -1,4 +1,0 @@
-Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection:
-  search-selection-all-content:
-    title:  All content
-    public: true

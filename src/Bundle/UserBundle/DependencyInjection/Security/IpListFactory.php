@@ -21,7 +21,7 @@ class IpListFactory implements AuthenticatorFactoryInterface, FirewallListenerFa
     /**
      * {@inheritdoc}
      */
-    public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProviderId)
+    public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProviderId): string|array
     {
         return [];
     }
@@ -46,7 +46,7 @@ class IpListFactory implements AuthenticatorFactoryInterface, FirewallListenerFa
     /**
      * {@inheritdoc}
      */
-    public function getKey()
+    public function getKey(): string
     {
         return 'ip_list';
     }

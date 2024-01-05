@@ -16,7 +16,6 @@ use Integrated\Bundle\StorageBundle\Form\EventListener\FileEventSubscriber;
 use Integrated\Bundle\StorageBundle\Form\Upload\StorageIntentUpload;
 use Integrated\Bundle\StorageBundle\Storage\Cache\AppCache;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
-use Integrated\Common\Storage\ManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType as SymfonyFileType;
@@ -37,9 +36,6 @@ class FileType extends AbstractType
      */
     private $appCache;
 
-    /**
-     * @param ManagerInterface $manager
-     */
     public function __construct(AppCache $appCache)
     {
         $this->appCache = $appCache;
@@ -95,7 +91,7 @@ class FileType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_file';
     }

@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Queue\Tests\Provider\Memory;
 
-use Integrated\Common\Queue\Provider\Memory\QueueMessage;
 use Integrated\Common\Queue\Provider\Memory\QueueProvider;
 
 /**
@@ -85,7 +84,6 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider->push('channel', 'payload2');
         $this->provider->push('channel', 'payload3');
 
-        /** @var QueueMessage $message */
         $message = $this->provider->pull('channel');
         $message = array_pop($message);
 
@@ -98,7 +96,6 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider->push('channel', 'payload2');
         $this->provider->push('channel', 'payload3');
 
-        /** @var QueueMessage $message */
         $message = $this->provider->pull('channel');
         $message = array_pop($message);
 
@@ -125,7 +122,6 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider->push('channel', 'payload');
         $this->provider->push('channel', 'payload');
 
-        /** @var QueueMessage $message */
         $message = $this->provider->pull('channel');
         $message = array_pop($message);
 
@@ -140,7 +136,6 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->provider->push('channel', 'payload');
 
-        /** @var QueueMessage $message */
         $message = $this->provider->pull('channel');
         $message = array_pop($message);
 

@@ -20,10 +20,7 @@ use Integrated\Bundle\SolrBundle\Solr\Type\FieldAppendMapperType;
  */
 class FieldAppendMapperTypeTest extends FieldMapperTypeTest
 {
-    /**
-     * @return array
-     */
-    public function buildProvider()
+    public static function buildProvider(): array
     {
         $data = parent::buildProvider();
 

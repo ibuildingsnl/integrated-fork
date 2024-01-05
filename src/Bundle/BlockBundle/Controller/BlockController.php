@@ -23,35 +23,15 @@ use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class BlockController extends AbstractController
 {
-    /**
-     * @var MetadataFactoryInterface
-     */
-    protected $metadataFactory;
-
-    /**
-     * @var DocumentManager
-     */
-    protected $documentManager;
-
-    /**
-     * @var PaginatorInterface
-     */
-    protected $paginator;
-
-    /**
-     * @var FilterQueryProvider
-     */
-    protected $provider;
+    private MetadataFactoryInterface $metadataFactory;
+    private DocumentManager $documentManager;
+    private PaginatorInterface $paginator;
+    private FilterQueryProvider $provider;
 
     public function __construct(
         MetadataFactoryInterface $metadataFactory,
@@ -65,10 +45,7 @@ class BlockController extends AbstractController
         $this->provider = $provider;
     }
 
-    /**
-     * @return Response
-     */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $user = null;
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
@@ -92,14 +69,11 @@ class BlockController extends AbstractController
         return $this->render(sprintf('@IntegratedBlock/block/index.%s.twig', $request->getRequestFormat()), [
             'blocks' => $pagination,
             'factory' => $this->metadataFactory,
-            'facetFilter' => $facetFilter->createView(),
+            'facetFilter' => $facetFilter,
         ]);
     }
 
-    /**
-     * @return Response
-     */
-    public function show(Request $request, Block $block)
+    public function show(Request $request, Block $block): Response
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -112,10 +86,7 @@ class BlockController extends AbstractController
         ]);
     }
 
-    /**
-     * @return RedirectResponse|Response
-     */
-    public function new(Request $request)
+    public function new(Request $request): Response
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -133,8 +104,7 @@ class BlockController extends AbstractController
             BlockEditType::class,
             $block,
             [
-                'method' => 'PUT',
-                'data_class' => \get_class($block),
+                'data_class' => $block::class,
                 'type' => $block->getType(),
             ]
         );
@@ -159,46 +129,11 @@ class BlockController extends AbstractController
         }
 
         return $this->render(sprintf('@IntegratedBlock/block/new.%s.twig', $request->getRequestFormat()), [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return Response
-     */
-    public function newChannelBlock(Request $request)
-    {
-        $csrfToken = $request->request->get('csrf_token');
-
-        if (!(
-            ($this->isGranted('ROLE_WEBSITE_MANAGER') || $this->isGranted('ROLE_ADMIN'))
-            && $this->isCsrfTokenValid('create-channel-block', $csrfToken))
-        ) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $class = $request->request->get('class');
-        $id = $request->request->get('id');
-        $name = $request->request->get('name');
-
-        $block = class_exists($class) ? new $class($id) : null;
-
-        if (!$block instanceof Block) {
-            throw $this->createNotFoundException(sprintf('Invalid block "%s"', $class));
-        }
-
-        $block->setTitle($name);
-        $block->setLayout('default.html.twig');
-        $this->documentManager->persist($block);
-        $this->documentManager->flush();
-
-        return new JsonResponse(['result' => 'ok']);
-    }
-
-    /**
-     * @return array|RedirectResponse|Response
-     */
-    public function edit(Request $request, Block $block)
+    public function edit(Request $request, Block $block): Response
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             $user = $this->getUser();
@@ -242,15 +177,12 @@ class BlockController extends AbstractController
 
         return $this->render(sprintf('@IntegratedBlock/block/edit.%s.twig', $request->getRequestFormat()), [
             'block' => $block,
-            'form' => $form->createView(),
+            'form' => $form,
             'blockType' => $metadata->getType(),
         ]);
     }
 
-    /**
-     * @return RedirectResponse|Response
-     */
-    public function delete(Request $request, Block $block)
+    public function delete(Request $request, Block $block): Response
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -286,14 +218,11 @@ class BlockController extends AbstractController
 
         return $this->render('@IntegratedBlock/block/delete.html.twig', [
             'block' => $block,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createDeleteForm($id)
+    private function createDeleteForm($id): FormInterface
     {
         $builder = $this->createFormBuilder();
 

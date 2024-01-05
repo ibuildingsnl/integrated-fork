@@ -92,11 +92,14 @@ class Relation implements RelationInterface
     /**
      * Set references of Relations.
      *
+     * @param ContentInterface[] $references
+     *
      * @return $this
      */
-    public function setReferences(Collection $references)
+    public function setReferences(iterable $references)
     {
-        $this->references = $references;
+        $this->references = new ArrayCollection();
+        $this->addReferences($references);
 
         return $this;
     }
@@ -106,19 +109,28 @@ class Relation implements RelationInterface
      */
     public function getReferences()
     {
-        return $this->references;
+        return $this->references->toArray();
     }
 
     /**
      * Add references to references collection.
      *
+     * @param ContentInterface[] $references
+     *
      * @return $this
      */
-    public function addReferences(Collection $references)
+    public function addReferences(iterable $references)
     {
         foreach ($references as $reference) {
             $this->addReference($reference);
         }
+
+        return $this;
+    }
+
+    public function clearReferences()
+    {
+        $this->references = new ArrayCollection();
 
         return $this;
     }

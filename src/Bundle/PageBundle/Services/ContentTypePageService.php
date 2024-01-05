@@ -41,15 +41,14 @@ class ContentTypePageService
     {
         $controller = $this->controllerManager->getController($contentType->getClass());
 
-        // don't add if no controller service is defined
-        if (!\is_array($controller)) {
+        if (!$controller) {
             return;
         }
 
         $contentTypePage = new ContentTypePage($contentType, $channel);
 
-        $contentTypePage->setControllerService($controller['service']);
-        $contentTypePage->setControllerAction($controller['controller_actions'][0]);
+        $contentTypePage->setControllerService($controller['serviceId']);
+        $contentTypePage->setControllerAction($controller['actions'][0]);
 
         $this->dm->persist($contentTypePage);
         $this->dm->flush();

@@ -92,6 +92,8 @@ class DatabaseMenuFactory implements FactoryInterface
 
             return $menu;
         }
+
+        return null;
     }
 
     /**

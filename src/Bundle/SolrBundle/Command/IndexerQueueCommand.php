@@ -16,54 +16,37 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Solr\Indexer\Job;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
+#[AsCommand(
+    name: 'solr:indexer:queue',
+    description: 'Queue all the content of the given content type for solr indexing',
+)]
 class IndexerQueueCommand extends Command
 {
-    /**
-     * @var DocumentManager
-     */
-    private $documentManager;
+    private DocumentManager $documentManager;
+    private QueueInterface $queue;
+    private ResolverInterface $resolver;
 
-    /**
-     * @var QueueInterface
-     */
-    private $queue;
-
-    /**
-     * @var ResolverInterface
-     */
-    private $resolver;
-
-    /**
-     * IndexerQueueCommand constructor.
-     */
     public function __construct(DocumentManager $documentManager, QueueInterface $queue, ResolverInterface $resolver)
     {
-        parent::__construct();
-
         $this->documentManager = $documentManager;
         $this->queue = $queue;
         $this->resolver = $resolver;
+
+        parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('solr:indexer:queue')
             ->addArgument('id', InputArgument::IS_ARRAY, 'One or more content types that need to be indexed')
             ->addOption(
                 'full',
@@ -84,7 +67,6 @@ class IndexerQueueCommand extends Command
                 'Queue a commit'
             )
             ->addOption('ignore', 'i', InputOption::VALUE_NONE, 'Ignore content types that do not exist')
-            ->setDescription('Queue all the content of the given content type for solr indexing')
             ->setHelp('
 The <info>%command.name%</info> command starts a index of the site.
 
@@ -93,8 +75,6 @@ The <info>%command.name%</info> command starts a index of the site.
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws \InvalidArgumentException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -102,10 +82,8 @@ The <info>%command.name%</info> command starts a index of the site.
         //  validate the content types unless validation is ignored
 
         if ($input->getArgument('id') && !$input->getOption('ignore')) {
-            $code = $this->executeValidation($input, $output);
-
-            if ($code) {
-                return (int) $code;
+            if ($code = $this->executeValidation($input, $output)) {
+                return $code;
             }
         }
 
@@ -116,7 +94,7 @@ The <info>%command.name%</info> command starts a index of the site.
         if ($input->getOption('commit')) {
             $this->doIndexCommit();
 
-            return 0;
+            return self::SUCCESS;
         }
 
         if (!$input->getArgument('id') && !$input->getOption('full')) {
@@ -131,11 +109,9 @@ The <info>%command.name%</info> command starts a index of the site.
     /**
      * validate the ids in de input.
      *
-     * @return int
-     *
      * @throws \InvalidArgumentException
      */
-    protected function executeValidation(InputInterface $input, OutputInterface $output)
+    private function executeValidation(InputInterface $input, OutputInterface $output): int
     {
         $types = [];
 
@@ -162,37 +138,33 @@ The <info>%command.name%</info> command starts a index of the site.
 
             $output->writeln($text);
 
-            if (!$this->getQuestion()->ask(
+            if (!$this->getHelper('question')->ask(
                 $input,
                 $output,
                 new ConfirmationQuestion('Would you want to continue? [y/N] ', false)
             )) {
-                return 1;
+                return self::FAILURE;
             }
         }
 
-        return 0;
+        return self::SUCCESS;
     }
 
     /**
      * queue a delete on the solr index.
-     *
-     * @return int
      */
-    protected function executeDelete(InputInterface $input, OutputInterface $output)
+    private function executeDelete(InputInterface $input, OutputInterface $output): int
     {
         $this->doIndexCleanup($input->getArgument('id'));
         $this->doIndexCommit();
 
-        return 0;
+        return self::SUCCESS;
     }
 
     /**
      * queue the indexing of content in to solr.
-     *
-     * @return int
      */
-    protected function executeIndex(InputInterface $input, OutputInterface $output)
+    private function executeIndex(InputInterface $input, OutputInterface $output): int
     {
         // Don't hydrate for performance reasons
         $builder = $this->documentManager->createQueryBuilder(Content::class);
@@ -244,13 +216,13 @@ The <info>%command.name%</info> command starts a index of the site.
 
         $this->documentManager->clear();
 
-        return 0;
+        return self::SUCCESS;
     }
 
     /**
      * Add all the documents in the cursor to the solr queue.
      */
-    protected function doIndex(object $cursor, ProgressBar $progress)
+    private function doIndex(object $cursor, ProgressBar $progress): void
     {
         // the document manager need to be cleared from time to time so this counter keeps
         // track of that.
@@ -262,7 +234,7 @@ The <info>%command.name%</info> command starts a index of the site.
 
             $job = new Job('ADD');
 
-            $contentType = isset($document['contentType']) ? $document['contentType'] : '';
+            $contentType = $document['contentType'] ?? '';
 
             $job->setOption('document.id', $contentType.'-'.$document['_id']);
 
@@ -280,10 +252,8 @@ The <info>%command.name%</info> command starts a index of the site.
 
     /**
      * delete all the types or everything if none is given.
-     *
-     * @param \DateTime $date
      */
-    protected function doIndexCleanup(array $types, \DateTime $date = null)
+    private function doIndexCleanup(array $types, \DateTime $date = null): void
     {
         $query = [];
 
@@ -312,16 +282,8 @@ The <info>%command.name%</info> command starts a index of the site.
     /**
      * close up with a commit.
      */
-    protected function doIndexCommit()
+    protected function doIndexCommit(): void
     {
         $this->queue->push(new Job('COMMIT', ['softcommit' => 'true']), 2);
-    }
-
-    /**
-     * @return QuestionHelper
-     */
-    protected function getQuestion()
-    {
-        return $this->getHelper('question');
     }
 }

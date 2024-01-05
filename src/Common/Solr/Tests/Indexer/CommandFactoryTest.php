@@ -16,6 +16,7 @@ use Integrated\Common\Converter\ConverterInterface;
 use Integrated\Common\Solr\Indexer\CommandFactory;
 use Integrated\Common\Solr\Indexer\CommandFactoryInterface;
 use Integrated\Common\Solr\Indexer\JobInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Solarium\QueryType\Update\Query\Command\Add;
 use Solarium\QueryType\Update\Query\Command\Commit;
@@ -65,9 +66,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
         $this->getInstance()->create($this->getJob('does-not-compute'));
     }
 
-    /**
-     * @dataProvider createAddProvider
-     */
+    #[DataProvider('createAddProvider')]
     public function testCreateAdd(array $options, array $expected)
     {
         $document = new \stdClass();
@@ -83,7 +82,6 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->getContainer(['key' => 'value']));
 
         /** @var Add $result */
-        /** @var Document $document */
         $result = $this->getInstance()->create($this->getJob('ADD', [
             'document.data' => 'data',
             'document.class' => 'class',
@@ -94,6 +92,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
         self::assertCount(1, $result->getDocuments());
         self::assertSame($expected, $result->getOptions());
 
+        /** @var Document $document */
         $document = current($result->getDocuments());
 
         self::assertInstanceOf(Document::class, $document);
@@ -103,7 +102,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function createAddProvider()
+    public static function createAddProvider()
     {
         return [
             'no options' => [
@@ -218,9 +217,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
         ]));
     }
 
-    /**
-     * @dataProvider createDeleteProvider
-     */
+    #[DataProvider('createDeleteProvider')]
     public function testCreateDelete(array $options, array $ids, array $queries)
     {
         $result = $this->getInstance()->create($this->getJob('DELETE', $options));
@@ -233,7 +230,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function createDeleteProvider()
+    public static function createDeleteProvider()
     {
         return [
             'id' => [
@@ -267,9 +264,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
         self::assertNull($instance->create($this->getJob('DELETE', ['invalid-option' => 'invalid-value'])));
     }
 
-    /**
-     * @dataProvider createOptimizeProvider
-     */
+    #[DataProvider('createOptimizeProvider')]
     public function testCreateOptimize(array $options, array $expected)
     {
         $result = $this->getInstance()->create($this->getJob('OPTIMIZE', $options));
@@ -281,7 +276,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function createOptimizeProvider()
+    public static function createOptimizeProvider()
     {
         return [
             'no options' => [
@@ -315,9 +310,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @dataProvider createCommitProvider
-     */
+    #[DataProvider('createCommitProvider')]
     public function testCreateCommit(array $options, array $expected)
     {
         $result = $this->getInstance()->create($this->getJob('COMMIT', $options));
@@ -329,7 +322,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function createCommitProvider()
+    public static function createCommitProvider()
     {
         return [
             'no options' => [

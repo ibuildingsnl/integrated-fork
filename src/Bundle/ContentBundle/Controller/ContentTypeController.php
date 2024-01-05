@@ -25,6 +25,8 @@ use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Form\Mapping\MetadataInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,39 +34,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/**
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- */
 class ContentTypeController extends AbstractController
 {
-    /**
-     * @var string
-     */
-    protected $contentTypeClass = 'Integrated\\Bundle\\ContentBundle\\Document\\ContentType\\ContentType';
+    private MetadataFactoryInterface $metadata;
+    private ContentTypeManager $contentTypeManager;
+    private EventDispatcherInterface $eventDispatcher;
+    private DocumentManager $documentManager;
 
-    /**
-     * @var MetadataFactoryInterface
-     */
-    protected $metadata;
-
-    /**
-     * @var ContentTypeManager
-     */
-    private $contentTypeManager;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
-     * @var DocumentManager
-     */
-    private $documentManager;
-
-    /**
-     * ContentTypeController constructor.
-     */
     public function __construct(
         ContentTypeManager $contentTypeManager,
         EventDispatcherInterface $eventDispatcher,
@@ -77,12 +53,7 @@ class ContentTypeController extends AbstractController
         $this->documentManager = $documentManager;
     }
 
-    /**
-     * Lists all the ContentType documents.
-     *
-     * @return Response
-     */
-    public function index()
+    public function index(): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -95,12 +66,7 @@ class ContentTypeController extends AbstractController
         ]);
     }
 
-    /**
-     * Display a list of Content documents.
-     *
-     * @return Response
-     */
-    public function select()
+    public function select(): Response
     {
         $documentTypes = $this->metadata->getAllMetadata();
 
@@ -109,14 +75,7 @@ class ContentTypeController extends AbstractController
         ]);
     }
 
-    /**
-     * Finds and displays a ContentType document.
-     *
-     * @param string $id
-     *
-     * @return Response
-     */
-    public function show($id)
+    public function show(string $id): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -124,17 +83,12 @@ class ContentTypeController extends AbstractController
         $form = $this->createDeleteForm($contentType);
 
         return $this->render('@IntegratedContent/content_type/show.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'contentType' => $contentType,
         ]);
     }
 
-    /**
-     * Creates a new ContentType document.
-     *
-     * @return Response|RedirectResponse
-     */
-    public function new(Request $request)
+    public function new(Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -168,18 +122,11 @@ class ContentTypeController extends AbstractController
         }
 
         return $this->render('@IntegratedContent/content_type/new.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * Edits an existing ContentType document.
-     *
-     * @param string $id
-     *
-     * @return Response|RedirectResponse
-     */
-    public function edit(Request $request, $id)
+    public function edit(Request $request, string $id): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -211,19 +158,12 @@ class ContentTypeController extends AbstractController
         }
 
         return $this->render('@IntegratedContent/content_type/edit.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'contentType' => $contentType,
         ]);
     }
 
-    /**
-     * Deletes a ContentType document.
-     *
-     * @param string $id
-     *
-     * @return RedirectResponse
-     */
-    public function delete(Request $request, $id)
+    public function delete(Request $request, string $id): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -271,18 +211,11 @@ class ContentTypeController extends AbstractController
 
         return $this->render('@IntegratedContent/content_type/delete.html.twig', [
             'contentType' => $contentType,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @param string $id
-     *
-     * @return ContentTypeInterface
-     *
-     * @throws NotFoundHttpException
-     */
-    private function getContentType($id)
+    private function getContentType(string $id): ContentTypeInterface
     {
         try {
             return $this->contentTypeManager->getType($id);
@@ -291,65 +224,35 @@ class ContentTypeController extends AbstractController
         }
     }
 
-    /**
-     * Creates a form to create a ContentType document.
-     *
-     * @return Form
-     */
-    protected function createNewForm(ContentType $type, MetadataInterface $metadata)
+    private function createNewForm(ContentType $type, MetadataInterface $metadata): FormInterface
     {
-        $form = $this->createForm(
-            ContentTypeFormType::class,
-            $type,
-            [
-                'action' => $this->generateUrl('integrated_content_content_type_new', ['class' => $type->getClass()]),
-                'method' => 'POST',
-                'metadata' => $metadata,
-            ]
-        );
+        $form = $this->createForm(ContentTypeFormType::class, $type, [
+            'action' => $this->generateUrl('integrated_content_content_type_new', ['class' => $type->getClass()]),
+            'metadata' => $metadata,
+        ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
         return $form;
     }
 
-    /**
-     * Creates a form to edit a ContentType document.
-     *
-     * @return Form
-     */
-    protected function createEditForm(ContentType $type, MetadataInterface $metadata)
+    private function createEditForm(ContentType $type, MetadataInterface $metadata): FormInterface
     {
-        $form = $this->createForm(
-            ContentTypeFormType::class,
-            $type,
-            [
-                'action' => $this->generateUrl('integrated_content_content_type_edit', ['id' => $type->getId()]),
-                'method' => 'PUT',
-                'metadata' => $metadata,
-            ]
-        );
+        $form = $this->createForm(ContentTypeFormType::class, $type, [
+            'action' => $this->generateUrl('integrated_content_content_type_edit', ['id' => $type->getId()]),
+            'metadata' => $metadata,
+        ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
     }
 
-    /**
-     * Creates a form to delete a ContentType document.
-     *
-     * @return Form
-     */
-    protected function createDeleteForm(ContentType $type)
+    private function createDeleteForm(ContentType $type): FormInterface
     {
-        $form = $this->createForm(
-            DeleteFormType::class,
-            $type,
-            [
-                'action' => $this->generateUrl('integrated_content_content_type_delete', ['id' => $type->getId()]),
-                'method' => 'DELETE',
-            ]
-        );
+        $form = $this->createForm(DeleteFormType::class, $type, [
+            'action' => $this->generateUrl('integrated_content_content_type_delete', ['id' => $type->getId()]),
+        ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 

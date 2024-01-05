@@ -14,39 +14,22 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 use Integrated\Bundle\ContentBundle\Solr\Query\SuggestionQuery;
 use Solarium\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Serializer;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
 class SearchController extends AbstractController
 {
-    /**
-     * @var Client
-     */
-    protected $client;
+    private Client $client;
+    private Serializer $serializer;
 
-    /**
-     * @var Serializer
-     */
-    protected $serializer;
-
-    public function __construct(Client $client, Serializer $serializer, ContainerInterface $container)
+    public function __construct(Client $client, Serializer $serializer)
     {
         $this->client = $client;
         $this->serializer = $serializer;
-        $this->container = $container;
     }
 
-    /**
-     * @param string $query
-     *
-     * @return Response
-     */
-    public function suggestion($query, Request $request)
+    public function suggestion(string $query, Request $request): Response
     {
         $response = ['query' => ''];
 

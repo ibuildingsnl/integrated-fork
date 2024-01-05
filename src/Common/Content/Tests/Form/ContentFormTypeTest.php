@@ -209,7 +209,6 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
                 $this->assertInstanceOf(FormEvent::class, $value);
                 self::assertSame($this->type, $value->getContentType());
                 self::assertSame($this->metadata, $value->getMetadata());
-                self::assertSame(['key' => 'value'], $value->getOptions());
 
                 if ($value instanceof BuilderEvent) {
                     self::assertSame($builder, $value->getBuilder());
@@ -221,6 +220,8 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
                 } else {
                     return false;
                 }
+
+                self::assertSame(['key' => 'value'], $value->getOptions());
 
                 return true;
             }))

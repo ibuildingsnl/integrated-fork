@@ -15,6 +15,7 @@ use Solarium\Core\Event\Events;
 use Solarium\Core\Event\PostExecuteRequest;
 use Solarium\Core\Event\PreExecuteRequest;
 use Solarium\Core\Plugin\AbstractPlugin;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollectorInterface;
@@ -42,8 +43,11 @@ class SolariumDataCollector extends AbstractPlugin implements DataCollectorInter
     protected function initPluginType()
     {
         $dispatcher = $this->client->getEventDispatcher();
-        $dispatcher->addListener(Events::PRE_EXECUTE_REQUEST, [$this, 'preExecuteRequest'], 1000);
-        $dispatcher->addListener(Events::POST_EXECUTE_REQUEST, [$this, 'postExecuteRequest'], -1000);
+
+        if ($dispatcher instanceof EventDispatcherInterface) {
+            $dispatcher->addListener(Events::PRE_EXECUTE_REQUEST, [$this, 'preExecuteRequest'], 1000);
+            $dispatcher->addListener(Events::POST_EXECUTE_REQUEST, [$this, 'postExecuteRequest'], -1000);
+        }
     }
 
     /**
@@ -102,7 +106,7 @@ class SolariumDataCollector extends AbstractPlugin implements DataCollectorInter
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return 'solr';
     }

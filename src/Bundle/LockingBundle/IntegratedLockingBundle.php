@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\LockingBundle;
 
-use Integrated\Bundle\LockingBundle\DependencyInjection\IntegratedLockingExtension;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -19,11 +18,4 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class IntegratedLockingBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getContainerExtension()
-    {
-        return new IntegratedLockingExtension();
-    }
 }

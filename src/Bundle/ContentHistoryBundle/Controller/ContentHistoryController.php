@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\ContentHistoryBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentHistoryBundle\Document\ContentHistory;
@@ -22,30 +21,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class ContentHistoryController extends AbstractController
 {
-    /**
-     * @var DocumentRepository
-     */
-    protected $manager;
-
-    /**
-     * @var Parser
-     */
-    protected $parser;
-
-    /**
-     * @var PaginatorInterface
-     */
-    protected $paginator;
-
-    /**
-     * @var ContentTypeManager
-     */
-    protected $contentTypeManager;
+    private DocumentManager $manager;
+    private Parser $parser;
+    private PaginatorInterface $paginator;
+    private ContentTypeManager $contentTypeManager;
 
     public function __construct(DocumentManager $manager, Parser $parser, PaginatorInterface $paginator, ContentTypeManager $contentTypeManager)
     {

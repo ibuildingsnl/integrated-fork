@@ -61,7 +61,7 @@ class ChannelChoiceType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return DocumentType::class;
     }
@@ -69,7 +69,7 @@ class ChannelChoiceType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_channel_choice';
     }

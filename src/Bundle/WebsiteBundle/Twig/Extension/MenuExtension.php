@@ -133,6 +133,7 @@ class MenuExtension extends AbstractExtension
             $menu = $this->factory->createItem($name);
         }
 
+        /** @var MenuItem $menu */
         $html = '';
 
         if ($edit) {
@@ -199,6 +200,7 @@ class MenuExtension extends AbstractExtension
         if (isset($options['depth']) && $depth <= (int) $options['depth']) {
             $uuid = $this->generator->generateV5($this->generator->generateV4(), uniqid(rand(), true));
 
+            /** @var MenuItem $child */
             $child = $menu->addChild('+', [
                 'uri' => '#',
                 'attributes' => [

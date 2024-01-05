@@ -22,53 +22,49 @@ class Config implements ConfigInterface
     /**
      * @var int
      */
-    protected $id;
+    private $id;
 
     /**
      * @var string
      */
-    protected $name;
+    private $name;
 
     /**
      * @var string
      */
-    protected $adapter;
+    private $adapter;
 
     /**
-     * @var OptionsInterface
+     * @var array|Options
      */
-    protected $options = null;
+    private $options;
 
     /**
      * @var string[]
      */
-    protected $channels = [];
+    private $channels = [];
 
     /**
      * @var \DateTime
      */
-    protected $publicationStartDate;
+    private $publicationStartDate;
 
     /**
      * @var \DateTime
      */
-    protected $created;
+    private $created;
 
     /**
      * @var \DateTime
      */
-    protected $updated;
+    private $updated;
 
-    /**
-     * @param int $id
-     *
-     * @throws \Exception
-     */
     public function __construct(?int $id = null)
     {
         $this->id = $id;
-        $this->created = new \DateTime();
+        $this->options = new Options();
         $this->publicationStartDate = new \DateTime();
+        $this->created = new \DateTime();
         $this->updated = new \DateTime();
     }
 
@@ -201,8 +197,8 @@ class Config implements ConfigInterface
      */
     public function getOptions(): OptionsInterface
     {
-        if (null === $this->options) {
-            $this->options = new Options();
+        if (!$this->options instanceof Options) {
+            $this->options = \is_array($this->options) ? new Options($this->options) : new Options();
         }
 
         return $this->options;
@@ -215,29 +211,13 @@ class Config implements ConfigInterface
      */
     public function setOptions(OptionsInterface $options = null)
     {
-        if (null !== $options && !$options instanceof Options) {
+        if ($options === null) {
+            $options = new Options();
+        } elseif (!$options instanceof Options) {
             $options = new Options($options->toArray());
         }
 
         $this->options = $options;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreated()
-    {
-        return $this->created;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setCreated(\DateTime $created)
-    {
-        $this->created = $created;
 
         return $this;
     }
@@ -256,6 +236,24 @@ class Config implements ConfigInterface
     public function setPublicationStartDate(?\DateTime $publicationStartDate): void
     {
         $this->publicationStartDate = $publicationStartDate;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setCreated(\DateTime $created)
+    {
+        $this->created = $created;
+
+        return $this;
     }
 
     /**

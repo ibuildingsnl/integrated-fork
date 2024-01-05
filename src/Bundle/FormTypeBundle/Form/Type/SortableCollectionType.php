@@ -47,7 +47,7 @@ class SortableCollectionType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return TailwindCollectionType::class;
     }
@@ -55,7 +55,7 @@ class SortableCollectionType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_sortable_collection';
     }

@@ -27,8 +27,6 @@ class IntegratedSlugBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        parent::build($container);
-
-        $container->addCompilerPass(new DriverRegistryPass('integrated_slug.metadata.driver.registry', 'integrated_slug.mapping.driver'));
+        $container->addCompilerPass(new DriverRegistryPass('integrated_slug.metadata.driver.registry', 'integrated_slug.mapping.driver'), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
     }
 }

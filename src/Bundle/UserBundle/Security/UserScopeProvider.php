@@ -5,6 +5,7 @@ namespace Integrated\Bundle\UserBundle\Security;
 use Integrated\Bundle\UserBundle\Context\ScopeContext;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserScopeProvider extends UserProvider
 {
@@ -24,7 +25,7 @@ class UserScopeProvider extends UserProvider
         parent::__construct($manager);
     }
 
-    public function loadUserByUsername($username)
+    public function loadUserByIdentifier($username): UserInterface
     {
         if (!$user = $this->manager->findEnabledByUsernameAndScope($username, $this->context->getScope())) {
             $exception = new UserNotFoundException(sprintf('No user with the username "%s" exists', $username));

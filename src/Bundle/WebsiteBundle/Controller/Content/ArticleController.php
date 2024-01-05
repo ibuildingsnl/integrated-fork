@@ -13,27 +13,15 @@ namespace Integrated\Bundle\WebsiteBundle\Controller\Content;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
-use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\Service\ContentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Twig\Error\Error;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class ArticleController extends AbstractController
 {
-    /**
-     * @var ContentService
-     */
-    private $contentService;
-
-    /**
-     * @var ThemeManager
-     */
-    protected $themeManager;
+    private ContentService $contentService;
+    private ThemeManager $themeManager;
 
     public function __construct(ContentService $contentService, ThemeManager $themeManager)
     {
@@ -41,22 +29,13 @@ class ArticleController extends AbstractController
         $this->themeManager = $themeManager;
     }
 
-    /**
-     * @return Response
-     *
-     * @throws CircularFallbackException
-     * @throws Error
-     */
-    public function showAction(ContentTypePage $page, Article $article)
+    public function show(ContentTypePage $page, Article $article): Response
     {
         $this->contentService->prepare($article);
 
-        return $this->render(
-            $this->themeManager->locateTemplate('content/article/show/'.$page->getLayout()),
-            [
-                'article' => $article,
-                'page' => $page,
-            ]
-        );
+        return $this->render($this->themeManager->locateTemplate('content/article/show/'.$page->getLayout()), [
+            'article' => $article,
+            'page' => $page,
+        ]);
     }
 }

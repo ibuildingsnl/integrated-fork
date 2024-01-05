@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit backupGlobals="false"
+<!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.1/phpunit.xsd"
+         backupGlobals="false"
          colors="true"
-         bootstrap="./vendor/autoload.php"
-         failOnRisky="true"
-         failOnWarning="true"
+         bootstrap="vendor/autoload.php"
 >
-
     <php>
-        <ini name="error_reporting" value="-1" />
-        <ini name="memory_limit" value="-1" />
+        <ini name="display_errors" value="1"/>
+        <ini name="error_reporting" value="-1"/>
     </php>
 
     <testsuites>
@@ -21,18 +20,19 @@
         </testsuite>
     </testsuites>
 
-    <filter>
-        <whitelist>
-            <directory>./src/</directory>
-            <exclude>
-                <directory>./src/Bundle/*/Tests/</directory>
-                <directory>./src/Bundle/*/Resources</directory>
-                <directory>./src/Bundle/*/vendor</directory>
-                <directory>./src/Common/*/Tests/</directory>
-                <directory>./src/Doctrine/*/Tests/</directory>
-                <directory>./src/MongoDB/*/Tests/</directory>
-            </exclude>
-        </whitelist>
-    </filter>
+    <coverage/>
 
+    <source>
+        <include>
+            <directory suffix=".php">./src/</directory>
+        </include>
+        <exclude>
+            <directory>./src/Bundle/*/Tests/</directory>
+            <directory>./src/Bundle/*/Resources</directory>
+            <directory>./src/Bundle/*/vendor</directory>
+            <directory>./src/Common/*/Tests/</directory>
+            <directory>./src/Doctrine/*/Tests/</directory>
+            <directory>./src/MongoDB/*/Tests/</directory>
+        </exclude>
+    </source>
 </phpunit>

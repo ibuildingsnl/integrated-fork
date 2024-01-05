@@ -47,13 +47,13 @@ class Relation implements RelationInterface
     protected $type;
 
     /**
-     * @var ContentTypeInterface[]
+     * @var Collection<ContentTypeInterface>
      */
     #[Assert\NotBlank]
     protected $sources;
 
     /**
-     * @var ContentTypeInterface[]
+     * @var Collection<ContentTypeInterface>
      */
     #[Assert\NotBlank]
     protected $targets;
@@ -73,12 +73,12 @@ class Relation implements RelationInterface
     /**
      * @var bool
      */
-    protected $multiple;
+    protected $multiple = false;
 
     /**
      * @var bool
      */
-    protected $required;
+    protected $required = false;
 
     /**
      * @var \DateTime
@@ -204,13 +204,15 @@ class Relation implements RelationInterface
      */
     public function getSources()
     {
-        return $this->sources;
+        return $this->sources->toArray();
     }
 
     /**
+     * @param ContentTypeInterface[] $sources
+     *
      * @return $this
      */
-    public function setSources(Collection $sources)
+    public function setSources(iterable $sources)
     {
         $this->sources = new ArrayCollection();
 
@@ -254,13 +256,15 @@ class Relation implements RelationInterface
      */
     public function getTargets()
     {
-        return $this->targets;
+        return $this->targets->toArray();
     }
 
     /**
+     * @param ContentTypeInterface[] $targets
+     *
      * @return $this
      */
-    public function setTargets(Collection $targets)
+    public function setTargets(iterable $targets)
     {
         $this->targets = new ArrayCollection();
 

@@ -18,7 +18,7 @@ use Solarium\Core\Query\Result\ResultInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ResultEventTest extends AbstractEventTest
+class ResultEventTest extends IndexerEventTest
 {
     /**
      * @var ResultInterface|MockObject

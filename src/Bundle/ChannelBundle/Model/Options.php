@@ -13,9 +13,10 @@ namespace Integrated\Bundle\ChannelBundle\Model;
 
 use Integrated\Common\Channel\Connector\Config\Options as BaseOptions;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
-class Options extends BaseOptions
+class Options extends BaseOptions implements \JsonSerializable
 {
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
+    }
 }

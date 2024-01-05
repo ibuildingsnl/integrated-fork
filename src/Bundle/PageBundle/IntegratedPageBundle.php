@@ -25,8 +25,6 @@ class IntegratedPageBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        parent::build($container);
-
-        $container->addCompilerPass(new ContentTypeControllersPass());
+        $container->addCompilerPass(new ContentTypeControllersPass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
     }
 }

@@ -11,55 +11,25 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
-use Integrated\Common\Bulk\BulkHandlerInterface;
 use Integrated\Common\Content\RankableInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RankController extends AbstractController
 {
-    /**
-     * @var DocumentManager
-     */
-    protected $dm;
+    private ContentProvider $contentProvider;
+    private TranslatorInterface $translator;
 
-    /**
-     * @var ContentProvider
-     */
-    protected $contentProvider;
-
-    /**
-     * @var BulkHandlerInterface
-     */
-    protected $bulkHandler;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    public function __construct(
-        DocumentManager $dm,
-        ContentProvider $contentProvider,
-        TranslatorInterface $translator
-    ) {
-        $this->dm = $dm;
+    public function __construct(ContentProvider $contentProvider, TranslatorInterface $translator)
+    {
         $this->contentProvider = $contentProvider;
         $this->translator = $translator;
     }
 
-    /**
-     * @param BulkAction $bulk
-     *
-     * @return RedirectResponse|Response
-     */
-    public function lookup(Request $request)
+    public function lookup(Request $request): Response
     {
         $limit = 20;
         $current = $request->get('current');

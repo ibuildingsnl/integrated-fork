@@ -52,7 +52,7 @@ class BulkActionContentTypeType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_content_bulk_action_content_type';
     }

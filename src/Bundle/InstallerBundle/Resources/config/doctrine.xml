@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <service id="integrated_installer.doctrine.migrations.dependency_factory" class="Doctrine\Migrations\DependencyFactory">
+            <factory class="Doctrine\Migrations\DependencyFactory" method="fromEntityManager" />
+
+            <argument type="service" id="integrated_installer.doctrine.migrations.configuration_loader" />
+            <argument type="service">
+                <service class="Doctrine\Migrations\Configuration\EntityManager\ManagerRegistryEntityManager">
+                    <factory class="Doctrine\Migrations\Configuration\EntityManager\ManagerRegistryEntityManager" method="withSimpleDefault"/>
+
+                    <argument type="service" id="doctrine"/>
+                </service>
+            </argument>
+            <argument type="service" id="logger" on-invalid="null" />
+        </service>
+
+        <service id="integrated_installer.doctrine.migrations.configuration_loader" class="Doctrine\Migrations\Configuration\Migration\ExistingConfiguration">
+            <argument type="service" id="integrated_installer.doctrine.migrations.configuration"/>
+        </service>
+
+        <service id="integrated_installer.doctrine.migrations.configuration" class="Doctrine\Migrations\Configuration\Configuration" />
+
+        <service id="integrated_installer.doctrine.migrations.migrations_factory" class="Doctrine\Migrations\Version\MigrationFactory">
+            <factory service="integrated_installer.doctrine.migrations.dependency_factory" method="getMigrationFactory"/>
+        </service>
+
+        <service id="integrated_installer.doctrine.migrations.container_aware_migrations_factory"
+                 class="Integrated\Bundle\InstallerBundle\Doctrine\ContainerAwareMigrationFactory"
+                 decorates="integrated_installer.doctrine.migrations.migrations_factory"
+        >
+            <argument type="service" id="integrated_installer.doctrine.migrations.container_aware_migrations_factory.inner" />
+            <argument type="service" id="service_container" />
+        </service>
+
+    </services>
+
+</container>

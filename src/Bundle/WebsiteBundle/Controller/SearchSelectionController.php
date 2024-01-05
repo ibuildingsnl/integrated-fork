@@ -14,31 +14,20 @@ namespace Integrated\Bundle\WebsiteBundle\Controller;
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Provider\SolariumProvider;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class SearchSelectionController extends AbstractController
 {
-    /**
-     * @var SolariumProvider
-     */
-    private $solariumProvider;
+    private SolariumProvider $solariumProvider;
 
     public function __construct(SolariumProvider $solariumProvider)
     {
         $this->solariumProvider = $solariumProvider;
     }
 
-    /**
-     * @Template
-     *
-     * @return array
-     */
-    public function rss(Request $request, SearchSelection $selection)
+    public function rss(Request $request, SearchSelection $selection): Response
     {
         $block = new ContentBlock();
         $block->setSearchSelection($selection);

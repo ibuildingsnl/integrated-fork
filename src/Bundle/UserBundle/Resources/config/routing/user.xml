@@ -12,15 +12,7 @@
 		<default key="_controller">Integrated\Bundle\UserBundle\Controller\UserController::new</default>
 	</route>
 
-	<route id="integrated_user_user_new_rest" path="/" methods="POST">
-		<default key="_controller">Integrated\Bundle\UserBundle\Controller\UserController::new</default>
-	</route>
-
-	<route id="integrated_user_user_edit" path="/{id}"  methods="GET">
-		<default key="_controller">Integrated\Bundle\UserBundle\Controller\UserController::edit</default>
-	</route>
-
-	<route id="integrated_user_user_edit_rest" path="/{id}" methods="PUT">
+	<route id="integrated_user_user_edit" path="/{id}">
 		<default key="_controller">Integrated\Bundle\UserBundle\Controller\UserController::edit</default>
 	</route>
 
@@ -28,15 +20,7 @@
 		<default key="_controller">Integrated\Bundle\UserBundle\Controller\UserController::delete</default>
 	</route>
 
-	<route id="integrated_user_user_delete_rest" path="/{id}" methods="DELETE">
-		<default key="_controller">Integrated\Bundle\UserBundle\Controller\UserController::delete</default>
-	</route>
-
     <route id="integrated_user_user_delete_authenticator" path="/{id}/authenticator/delete">
-        <default key="_controller">Integrated\Bundle\UserBundle\Controller\TwoFactorController::delete</default>
-    </route>
-
-    <route id="integrated_user_user_delete_authenticator_rest" path="/{id}/authenticator" methods="DELETE">
         <default key="_controller">Integrated\Bundle\UserBundle\Controller\TwoFactorController::delete</default>
     </route>
 

@@ -159,7 +159,7 @@ class FieldMapperType implements TypeInterface
                 // a array to simulate that the result is a array.
 
                 try {
-                    $array = $this->accessor->getValue($data, (string) $index);
+                    $array = (\is_object($data) || \is_array($data)) ? $this->accessor->getValue($data, (string) $index) : [];
 
                     if (!\is_array($array) && !$array instanceof \Traversable) {
                         $array = [$array];
@@ -213,7 +213,7 @@ class FieldMapperType implements TypeInterface
         // data then don't return a error but just null.
 
         try {
-            return $this->convert($this->accessor->getValue($data, (string) $path));
+            return (\is_object($data) || \is_array($data)) ? $this->convert($this->accessor->getValue($data, (string) $path)) : null;
         } catch (ExceptionInterface $e) {
             return null;
         }

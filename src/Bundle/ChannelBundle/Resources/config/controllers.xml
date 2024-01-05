@@ -11,15 +11,11 @@
         <service id="Integrated\Bundle\ChannelBundle\Controller\ConfigController">
             <argument type="service" id="integrated_channel.config.manager" />
             <argument type="service" id="integrated_channel.adapter.registry" />
+            <argument type="service" id="knp_paginator" />
             <argument type="service" id="event_dispatcher" />
-            <argument type="service" id="service_container" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
     </services>

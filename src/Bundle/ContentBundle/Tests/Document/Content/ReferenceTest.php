@@ -15,11 +15,12 @@ use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Common\Content\PublishTimeInterface;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class ReferenceTest extends \PHPUnit\Framework\TestCase
+class ReferenceTest extends TestCase
 {
     /**
      * @var Taxonomy

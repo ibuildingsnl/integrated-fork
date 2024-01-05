@@ -20,78 +20,49 @@ use Integrated\Bundle\ChannelBundle\Form\Type\ConfigFormType;
 use Integrated\Bundle\ChannelBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\ChannelBundle\IntegratedChannelEvents;
 use Integrated\Bundle\ChannelBundle\Model\Config;
-use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\AdapterInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigManagerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
 class ConfigController extends AbstractController
 {
-    /**
-     * @var ConfigManagerInterface
-     */
-    protected $manager;
+    private ConfigManagerInterface $manager;
+    private RegistryInterface $registry;
+    private PaginatorInterface $paginator;
+    private EventDispatcherInterface $dispatcher;
 
-    /**
-     * @var RegistryInterface
-     */
-    protected $registry;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
-
-    /**
-     * ConfigController constructor.
-     */
     public function __construct(
         ConfigManagerInterface $manager,
         RegistryInterface $registry,
+        PaginatorInterface $paginator,
         EventDispatcherInterface $dispatcher,
-        ContainerInterface $container
     ) {
         $this->manager = $manager;
         $this->registry = $registry;
+        $this->paginator = $paginator;
         $this->dispatcher = $dispatcher;
-        $this->container = $container;
     }
 
-    /**
-     * @return Response
-     */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        if ($pager = $this->getPaginator()) {
-            return $this->render('@IntegratedChannel/config/index.html.twig', [
-                'adapters' => $this->registry->getAdapters(),
-                'pager' => $pager->paginate($this->manager->findAll(), $request->query->get('page', 1)),
-            ]);
-        }
-
-        throw new HttpException(500, 'Paginator service not found');
+        return $this->render('@IntegratedChannel/config/index.html.twig', [
+            'adapters' => $this->registry->getAdapters(),
+            'pager' => $this->paginator->paginate($this->manager->findAll(), $request->query->get('page', 1)),
+        ]);
     }
 
-    /**
-     * @param string $adapter
-     *
-     * @return Response
-     */
-    public function new(Request $request, $adapter)
+    public function new(Request $request, string $adapter): Response
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -148,12 +119,7 @@ class ConfigController extends AbstractController
         ]);
     }
 
-    /**
-     * @param string $id
-     *
-     * @return Response
-     */
-    public function edit(Request $request, $id)
+    public function edit(Request $request, string $id): Response
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -208,14 +174,11 @@ class ConfigController extends AbstractController
         return $this->render('@IntegratedChannel/config/edit.html.twig', [
             'adapter' => $adapter,
             'data' => $data,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return Response
-     */
-    public function externalReturn(Request $request)
+    public function externalReturn(Request $request): Response
     {
         $session = new Session();
 
@@ -228,12 +191,7 @@ class ConfigController extends AbstractController
         return $this->edit($request, $id);
     }
 
-    /**
-     * @param string $id
-     *
-     * @return Response
-     */
-    public function delete(Request $request, $id)
+    public function delete(Request $request, string $id): Response
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -283,10 +241,7 @@ class ConfigController extends AbstractController
         ]);
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createNewForm(Config $data, AdapterInterface $adapter)
+    private function createNewForm(Config $data, AdapterInterface $adapter): FormInterface
     {
         $form = $this->createForm(ConfigFormType::class, $data, [
             'adapter' => $adapter,
@@ -302,15 +257,12 @@ class ConfigController extends AbstractController
         return $form;
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createEditForm(Config $data, AdapterInterface $adapter)
+    private function createEditForm(Config $data, AdapterInterface $adapter): FormInterface
     {
         $form = $this->createForm(ConfigFormType::class, $data, [
             'adapter' => $adapter,
             'action' => $this->generateUrl('integrated_channel_config_edit', ['id' => $data->getId()]),
-            'method' => 'PUT',
+            'method' => 'POST',
         ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
@@ -318,14 +270,11 @@ class ConfigController extends AbstractController
         return $form;
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createDeleteForm(Config $data)
+    private function createDeleteForm(Config $data): FormInterface
     {
         $form = $this->createForm(DeleteFormType::class, $data, [
             'action' => $this->generateUrl('integrated_channel_config_delete', ['id' => $data->getId()]),
-            'method' => 'DELETE',
+            'method' => 'POST',
         ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);

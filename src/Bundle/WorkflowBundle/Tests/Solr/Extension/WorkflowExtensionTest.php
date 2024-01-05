@@ -20,7 +20,7 @@ use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
-use Integrated\Common\Security\PermissionInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -57,9 +57,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
         self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\TypeExtensionInterface', $this->getInstance());
     }
 
-    /**
-     * @dataProvider buildProvider
-     */
+    #[DataProvider('buildProvider')]
     public function testBuild(Definition\State $state, array $expected)
     {
         $content = $this->getContent();
@@ -87,35 +85,35 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expected, $container->toArray());
     }
 
-    public function buildProvider()
+    public static function buildProvider()
     {
         return [
             [
-                $this->getState([]),
+                self::getState(),
                 [],
             ],
             [
-                $this->getState([$this->getPermission('group1', false, false), $this->getPermission('group2', false, false)]),
+                self::getState([self::getPermission('group1', false, false), self::getPermission('group2', false, false)]),
                 [],
             ],
             [
-                $this->getState([$this->getPermission('group1', true, false), $this->getPermission('group2', false, true)]),
+                self::getState([self::getPermission('group1', true, false), self::getPermission('group2', false, true)]),
                 ['security_workflow_read' => ['group1'], 'security_workflow_write' => ['group2']],
             ],
             [
-                $this->getState([$this->getPermission('group1', false, false), $this->getPermission('group2', true, true)]),
+                self::getState([self::getPermission('group1', false, false), self::getPermission('group2', true, true)]),
                 ['security_workflow_read' => ['group2'], 'security_workflow_write' => ['group2']],
             ],
             [
-                $this->getState([$this->getPermission('group1', true, true), $this->getPermission('group2', true, true)]),
+                self::getState([self::getPermission('group1', true, true), self::getPermission('group2', true, true)]),
                 ['security_workflow_read' => ['group1', 'group2'], 'security_workflow_write' => ['group1', 'group2']],
             ],
             [
-                $this->getState([$this->getPermission('group1', true, false), $this->getPermission('group2', false, false)]),
+                self::getState([self::getPermission('group1', true, false), self::getPermission('group2', false, false)]),
                 ['security_workflow_read' => ['group1']],
             ],
             [
-                $this->getState([$this->getPermission('group1', false, false), $this->getPermission('group2', false, true)]),
+                self::getState([self::getPermission('group1', false, false), self::getPermission('group2', false, true)]),
                 ['security_workflow_write' => ['group2']],
             ],
         ];
@@ -175,9 +173,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
         self::assertEquals([], $container->toArray());
     }
 
-    /**
-     * @dataProvider buildProvider
-     */
+    #[DataProvider('buildProvider')]
     public function testBuildNoCurrentState(Definition\State $state, array $expected)
     {
         $content = $this->getContent();
@@ -207,9 +203,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expected, $container->toArray());
     }
 
-    /**
-     * @dataProvider buildProvider
-     */
+    #[DataProvider('buildProvider')]
     public function testBuildDefaultWorkflow(Definition\State $state, array $expected)
     {
         $content = $this->getContent();
@@ -331,7 +325,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function getContent()
     {
-        $mock = $this->createMock('Integrated\\Common\\Content\\ContentInterface');
+        $mock = $this->createMock(ContentInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getContentType')
             ->willReturn('this-is-the-content-type');
@@ -346,7 +340,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function getContentType($workflow = null)
     {
-        $mock = $this->createMock('Integrated\\Common\\ContentType\\ContentTypeInterface');
+        $mock = $this->createMock(ContentTypeInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getOption')
             ->with($this->equalTo('workflow'))
@@ -366,7 +360,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function getWorkflow(Definition\State $state = null)
     {
-        $mock = $this->createMock('Integrated\\Bundle\\WorkflowBundle\\Entity\\Workflow\\State');
+        $mock = $this->createMock(State::class);
         $mock->expects($this->atLeastOnce())
             ->method('getState')
             ->willReturn($state);
@@ -381,7 +375,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function getDefinition(Definition\State $state = null)
     {
-        $mock = $this->createMock('Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition');
+        $mock = $this->createMock(Definition::class);
         $mock->expects($this->atLeastOnce())
             ->method('getDefault')
             ->willReturn($state);
@@ -391,41 +385,32 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param Definition\Permission[] $permissions
-     *
-     * @return Definition\State
      */
-    protected function getState(array $permissions)
+    protected static function getState(array $permissions = []): Definition\State
     {
-        $mock = $this->createMock('Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition\\State');
-        $mock->expects($this->atLeastOnce())
-            ->method('getPermissions')
-            ->willReturn($permissions);
+        $state = new Definition\State();
 
-        return $mock;
+        foreach ($permissions as $permission) {
+            $state->addPermission($permission);
+        }
+
+        return $state;
     }
 
-    /**
-     * @param string $group
-     * @param bool   $read
-     * @param bool   $write
-     *
-     * @return Definition\Permission
-     */
-    protected function getPermission($group, $read, $write)
+    protected static function getPermission(string $group, bool $read, bool $write): Definition\Permission
     {
-        $mock = $this->createMock('Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition\\Permission');
-        $mock->expects($this->atLeastOnce())
-            ->method('getGroup')
-            ->willReturn($group);
+        $permission = new Definition\Permission();
+        $permission->setGroup($group);
 
-        $mock->expects($this->exactly(2))
-            ->method('hasMask')
-            ->willReturnMap([
-                [PermissionInterface::READ, $read],
-                [PermissionInterface::WRITE, $write],
-            ]);
+        if ($read) {
+            $permission->addMask($permission::READ);
+        }
 
-        return $mock;
+        if ($write) {
+            $permission->addMask($permission::WRITE);
+        }
+
+        return $permission;
     }
 
     /**

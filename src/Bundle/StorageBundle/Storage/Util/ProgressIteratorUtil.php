@@ -47,7 +47,7 @@ class ProgressIteratorUtil
      */
     public function map(\Closure $closure)
     {
-        if (\count($this->iterator->toArray())) {
+        if (iterator_count($this->iterator)) {
             $progress = $this->createProgress();
             $iterator = new \ArrayIterator();
 
@@ -73,7 +73,7 @@ class ProgressIteratorUtil
      */
     public function walk(\Closure $closure)
     {
-        if (\count($this->iterator->toArray())) {
+        if (iterator_count($this->iterator)) {
             $progress = $this->createProgress();
 
             foreach ($this->iterator as $item) {
@@ -93,11 +93,12 @@ class ProgressIteratorUtil
      */
     protected function createProgress()
     {
-        $items = $this->iterator->toArray();
-        $progress = new ProgressBar($this->output, \count($items));
+        $count = iterator_count($this->iterator);
+
+        $progress = new ProgressBar($this->output, $count);
         $progress->start();
         $progress->setFormat(self::FORMAT);
-        $progress->setRedrawFrequency(ceil(\count($items) / 50));
+        $progress->setRedrawFrequency(ceil($count / 50));
 
         return $progress;
     }

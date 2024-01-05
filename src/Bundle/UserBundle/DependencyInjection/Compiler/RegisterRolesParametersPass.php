@@ -51,7 +51,7 @@ class RegisterRolesParametersPass implements CompilerPassInterface
         $crawler = new Crawler($content);
         $options = $crawler->filter('roles')->children();
 
-        /** @var $option \DOMElement */
+        /** @var \DOMElement $option */
         foreach ($options as $option) {
             if ($option->tagName == 'role') {
                 $name = '';

@@ -16,6 +16,7 @@ use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Metadata;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\ChannelableInterface;
@@ -66,7 +67,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     protected $contentType;
 
     /**
-     * @var ArrayCollection
+     * @var Collection
      */
     protected $relations;
 
@@ -217,19 +218,16 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      */
     public function getRelations()
     {
-        // should always be instanceOf collection, but due to corrupt database can sometimes be null
-        if (!$this->relations instanceof Collection) {
-            $this->relations = new ArrayCollection();
-        }
-
-        return $this->relations;
+        return $this->relations->toArray();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setRelations(Collection $relations)
+    public function setRelations(iterable $relations)
     {
+        $this->relations = new ArrayCollection();
+
         foreach ($relations as $relation) {
             if ($relation instanceof RelationInterface) {
                 $this->addRelation($relation);
@@ -245,9 +243,20 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     public function addRelation(RelationInterface $relation)
     {
         if ($exist = $this->getRelation($relation->getRelationId())) {
+            if (!$exist instanceof Relation) {
+                $new = new Relation();
+
+                $new->setRelationId($exist->getRelationId());
+                $new->setRelationType($exist->getRelationType());
+                $new->addReferences($exist->getReferences());
+
+                $this->relations->remove($exist);
+                $this->relations->add($exist = $new);
+            }
+
             $exist->addReferences($relation->getReferences());
         } else {
-            $this->getRelations()->add($relation);
+            $this->relations->add($relation);
         }
 
         return $this;
@@ -258,7 +267,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      */
     public function removeRelation(RelationInterface $relation)
     {
-        $this->getRelations()->removeElement($relation);
+        $this->relations->removeElement($relation);
 
         return $this;
     }
@@ -268,7 +277,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      */
     public function getRelation($relationId)
     {
-        return $this->getRelations()->filter(function ($relation) use ($relationId) {
+        return $this->relations->filter(function ($relation) use ($relationId) {
             if ($relation instanceof RelationInterface) {
                 if ($relation->getRelationId() == $relationId) {
                     return true;
@@ -280,11 +289,11 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * @return ArrayCollection|false
+     * @return RelationInterface[]
      */
     public function getRelationsByRelationType($relationType)
     {
-        return $this->getRelations()->filter(function ($relation) use ($relationType) {
+        return $this->relations->filter(function ($relation) use ($relationType) {
             if ($relation instanceof RelationInterface) {
                 if ($relation->getRelationType() == $relationType) {
                     return true;
@@ -292,47 +301,41 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
             }
 
             return false;
-        });
+        })->toArray();
     }
 
     /**
-     * @return array|bool
+     * @return ContentInterface[]
      */
     public function getReferencesByRelationType($relationType)
     {
+        $references = [];
+
         if ($relations = $this->getRelationsByRelationType($relationType)) {
-            $references = [];
-
-            /** @var RelationInterface $relation */
             foreach ($relations as $relation) {
-                $references = array_merge($references, $relation->getReferences()->toArray());
+                $references = array_merge($references, $relation->getReferences());
             }
-
-            return $references;
         }
 
-        return false;
+        return $references;
     }
 
     /**
-     * @return array|bool
+     * @return ContentInterface[]
      */
     public function getReferencesByRelationTypes(array $relationTypes)
     {
         $references = [];
+
         foreach ($relationTypes as $relationType) {
             $references = array_merge($references, $this->getReferencesByRelationType($relationType));
         }
 
-        if (\count($references) > 0) {
-            return $references;
-        }
-
-        return false;
+        return $references;
     }
 
     /**
-     * @return Content|null
+     * @return ContentInterface|null
      */
     public function getReferenceByRelationType($relationType)
     {

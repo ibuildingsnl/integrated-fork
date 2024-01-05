@@ -24,7 +24,7 @@ class NoFilesystemAvailableException extends \ErrorException
     public static function readOperation(StorageInterface $storage)
     {
         // Just to the last resort
-        return new static(
+        return new self(
             sprintf(
                 'The file %s has no available filesystem(s) for a read operation tried: %s.',
                 $storage->getIdentifier(),

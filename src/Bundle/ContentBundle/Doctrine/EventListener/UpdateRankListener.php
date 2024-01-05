@@ -70,7 +70,7 @@ class UpdateRankListener implements EventSubscriber
                     }
 
                     $rankDocument = $dm->getRepository(Content::class)->findOneBy(['rank' => $document->getRank()]);
-                    if ($rankDocument === null || $rankDocument->getId() == $document->getId()) {
+                    if ($rankDocument === null || !method_exists($document, 'getId') || $rankDocument->getId() == $document->getId()) {
                         continue;
                     }
 

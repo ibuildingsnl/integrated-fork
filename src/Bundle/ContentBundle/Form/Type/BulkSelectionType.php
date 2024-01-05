@@ -61,7 +61,7 @@ class BulkSelectionType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'intgrated_content_bulk_select';
     }

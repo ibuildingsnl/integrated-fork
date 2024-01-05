@@ -53,7 +53,9 @@ class Resolver implements ResolverInterface
     public function resolve(StorageInterface $storage, ArrayCollection $filesystem = null)
     {
         $priority = $filesystem ?: $storage->getFilesystems();
-        $priority->getIterator()->uasort(function ($a) use ($filesystem) {
+        $priority = iterator_to_array($priority);
+
+        uasort($priority, function ($a) use ($filesystem) {
             // The given filesystem always has priority, however it might not be able to serve the file
             return $a == $filesystem ? -1 : 1;
         });

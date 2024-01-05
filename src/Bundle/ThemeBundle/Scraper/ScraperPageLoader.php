@@ -16,7 +16,6 @@ use Integrated\Bundle\ThemeBundle\Entity\Scraper as ScraperEntity;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
-use Symfony\Contracts\Cache\CacheInterface;
 use Twig\Error\LoaderError;
 use Twig\Loader\LoaderInterface;
 use Twig\Source;
@@ -39,7 +38,7 @@ class ScraperPageLoader implements LoaderInterface
     private $entityManager;
 
     /**
-     * @var CacheInterface
+     * @var ApcuAdapter
      */
     private $cache;
 

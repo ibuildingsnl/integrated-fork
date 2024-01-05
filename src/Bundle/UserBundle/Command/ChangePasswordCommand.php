@@ -13,9 +13,9 @@ namespace Integrated\Bundle\UserBundle\Command;
 
 use Integrated\Bundle\UserBundle\Doctrine\ScopeManager;
 use Integrated\Bundle\UserBundle\Doctrine\UserManager;
-use Integrated\Bundle\UserBundle\Model\Scope;
+use Integrated\Bundle\UserBundle\Model\ScopeInterface;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
-use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,51 +23,34 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\PasswordHasher\LegacyPasswordHasherInterface;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
+#[AsCommand(
+    name: 'user:password:change',
+    description: 'Change password of a user',
+)]
 class ChangePasswordCommand extends Command
 {
-    /**
-     * @var UserManagerInterface
-     */
-    private $userManager;
-
-    /**
-     * @var ScopeManager
-     */
-    private $scopeManager;
-
-    /**
-     * @var PasswordHasherFactoryInterface
-     */
-    private $hasherFactory;
+    private UserManager $userManager;
+    private ScopeManager $scopeManager;
+    private PasswordHasherFactoryInterface $hasherFactory;
 
     public function __construct(
+        UserManager $userManager,
         ScopeManager $scopeManager,
-        UserManagerInterface $userManager,
         PasswordHasherFactoryInterface $hasherFactory
     ) {
-        $this->scopeManager = $scopeManager;
         $this->userManager = $userManager;
+        $this->scopeManager = $scopeManager;
         $this->hasherFactory = $hasherFactory;
 
         parent::__construct();
     }
 
-    /**
-     * @see Command
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('user:password:change')
-
             ->addArgument('username', InputArgument::REQUIRED, 'The username')
             ->addArgument('password', InputArgument::REQUIRED, 'The password')
             ->addArgument('scope', InputArgument::OPTIONAL, 'The scope')
-
-            ->setDescription('Change password of a user')
             ->setHelp('
 The <info>%command.name%</info> command replaces the password of the user
 
@@ -75,9 +58,6 @@ The <info>%command.name%</info> command replaces the password of the user
 ');
     }
 
-    /**
-     * @see Command::execute()
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $username = $input->getArgument('username'); // @todo validate input
@@ -91,7 +71,7 @@ The <info>%command.name%</info> command replaces the password of the user
         if (!$scope = $this->scopeManager->findByName($scopeName)) {
             $output->writeln(sprintf('Aborting: scope with name "%s" does not exist', $scopeName));
 
-            return 1;
+            return self::FAILURE;
         }
 
         $user = $this->findUserByScope($username, $scope);
@@ -99,13 +79,13 @@ The <info>%command.name%</info> command replaces the password of the user
         if (!$user) {
             $output->writeln(sprintf('Aborting: user with username "%s" does not exist', $username));
 
-            return 1;
+            return self::FAILURE;
         }
 
         $hasher = $this->hasherFactory->getPasswordHasher($user);
 
         if (!$hasher instanceof LegacyPasswordHasherInterface) {
-            $user->setPassword($hasher->hash($password, $user->getSalt()));
+            $user->setPassword($hasher->hash($password));
             $user->setSalt(null);
         } else {
             $salt = base64_encode(random_bytes(72));
@@ -119,27 +99,18 @@ The <info>%command.name%</info> command replaces the password of the user
         } catch (\Exception $e) {
             $output->writeln(sprintf('Aborting: %s', $e->getMessage()));
 
-            return 1;
+            return self::FAILURE;
         }
 
-        return 0;
+        return self::SUCCESS;
     }
 
     /**
-     * @param string $username
-     *
-     * @return UserInterface|null
-     *
      * @throws \Exception
      */
-    protected function findUserByScope($username, Scope $scope)
+    protected function findUserByScope(string $username, ScopeInterface $scope): ?UserInterface
     {
-        $manager = $this->userManager;
-        if (!$manager instanceof UserManager) {
-            throw new \Exception(sprintf('Manager should be instance of %s', UserManager::class));
-        }
-
-        return $manager->createQueryBuilder()
+        return $this->userManager->createQueryBuilder()
             ->select('User')
             ->leftJoin('User.scope', 'Scope')
             ->where('User.username = :username')
@@ -149,7 +120,6 @@ The <info>%command.name%</info> command replaces the password of the user
                 'scope' => (int) $scope->getId(),
             ])
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
     }
 }

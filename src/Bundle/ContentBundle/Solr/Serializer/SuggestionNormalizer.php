@@ -68,7 +68,7 @@ class SuggestionNormalizer implements NormalizerInterface
      *
      * @return array
      */
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($object, $format = null, array $context = []): array|bool|string|int|float|null|\ArrayObject
     {
         if (!$this->supportsNormalization($object)) {
             throw new InvalidArgumentException(sprintf(
@@ -100,13 +100,16 @@ class SuggestionNormalizer implements NormalizerInterface
             ];
         }
 
-        return ['query' => $object->getQuery()->getQuery(true)] + array_filter($data);
+        /** @var SuggestionQuery $query */
+        $query = $object->getQuery();
+
+        return ['query' => $query->getQuery(true)] + array_filter($data);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, $format = null): bool
     {
         return $data instanceof Result && $data->getQuery() instanceof SuggestionQuery;
     }

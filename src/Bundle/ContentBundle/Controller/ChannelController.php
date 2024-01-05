@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Form\Type\ChannelType;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type as Form;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
@@ -22,32 +23,17 @@ use Integrated\Common\Channel\Events;
 use Integrated\Common\Security\Resolver\PermissionResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Controller for CRUD actions Channel document.
- *
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- */
 class ChannelController extends AbstractController
 {
-    /**
-     * @var DocumentManager
-     */
-    protected $documentManager;
-
-    /**
-     * @var SearchContentReferenced
-     */
-    protected $searchContentReferenced;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
+    private DocumentManager $documentManager;
+    private SearchContentReferenced $searchContentReferenced;
+    private EventDispatcherInterface $dispatcher;
 
     public function __construct(
         DocumentManager $documentManager,
@@ -94,7 +80,7 @@ class ChannelController extends AbstractController
         $form = $this->createCreateForm($channel);
 
         return $this->render('@IntegratedContent/channel/new.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
@@ -125,7 +111,7 @@ class ChannelController extends AbstractController
         }
 
         return $this->render('@IntegratedContent/channel/new.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
@@ -167,7 +153,7 @@ class ChannelController extends AbstractController
         }
 
         return $this->render('@IntegratedContent/channel/edit.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'channel' => $channel,
         ]);
     }
@@ -180,6 +166,7 @@ class ChannelController extends AbstractController
 
         $referenced = $this->searchContentReferenced->getReferenced($channel);
 
+        /** @var Form $form */
         $form = $this->createDeleteForm($channel->getId(), \count($referenced) === 0);
         $form->handleRequest($request);
 
@@ -187,7 +174,7 @@ class ChannelController extends AbstractController
             return $this->redirectToRoute('integrated_content_channel_index');
         }
 
-        if ($form->isSubmitted() && $form->isValid() && $form->has('submit') && $form->get('submit')->isClicked()) {
+        if ($form->isSubmitted() && $form->isValid() && $form->getClickedButton()?->getName() === 'submit') {
             $this->documentManager->remove($channel);
             $this->documentManager->flush();
 
@@ -200,21 +187,16 @@ class ChannelController extends AbstractController
 
         return $this->render('@IntegratedContent/channel/delete.html.twig', [
             'channel' => $channel,
-            'form' => $form->createView(),
+            'form' => $form,
             'referenced' => $referenced,
         ]);
     }
 
     protected function createCreateForm(Channel $channel): FormInterface
     {
-        $form = $this->createForm(
-            Form\ChannelType::class,
-            $channel,
-            [
-                'action' => $this->generateUrl('integrated_content_channel_create'),
-                'method' => 'POST',
-            ]
-        );
+        $form = $this->createForm(ChannelType::class, $channel, [
+            'action' => $this->generateUrl('integrated_content_channel_new'),
+        ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
@@ -223,9 +205,8 @@ class ChannelController extends AbstractController
 
     protected function createEditForm(Channel $channel): FormInterface
     {
-        $form = $this->createForm(Form\ChannelType::class, $channel, [
-            'action' => $this->generateUrl('integrated_content_channel_update', ['id' => $channel->getId()]),
-            'method' => 'PUT',
+        $form = $this->createForm(ChannelType::class, $channel, [
+            'action' => $this->generateUrl('integrated_content_channel_edit', ['id' => $channel->getId()]),
         ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);

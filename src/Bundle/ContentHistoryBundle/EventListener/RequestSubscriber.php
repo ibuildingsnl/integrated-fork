@@ -35,10 +35,7 @@ class RequestSubscriber implements EventSubscriberInterface
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             ContentHistoryEvent::INSERT => 'onChange',

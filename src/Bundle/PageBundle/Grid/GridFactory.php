@@ -46,6 +46,8 @@ class GridFactory
 
             return $grid;
         }
+
+        return null;
     }
 
     /**

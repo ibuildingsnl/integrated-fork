@@ -13,11 +13,11 @@ namespace Integrated\Bundle\ContentBundle\Form\Type;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
+use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
@@ -58,10 +58,7 @@ class SearchSelectionChoiceType extends AbstractType
         ]);
     }
 
-    /**
-     * @return UserInterface|null
-     */
-    private function getUser()
+    private function getUser(): ?UserInterface
     {
         if ($token = $this->tokenStorage->getToken()) {
             $user = $token->getUser();
@@ -77,7 +74,7 @@ class SearchSelectionChoiceType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return ChoiceType::class;
     }
@@ -85,7 +82,7 @@ class SearchSelectionChoiceType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_search_selection_choice';
     }

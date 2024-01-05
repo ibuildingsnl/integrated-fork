@@ -142,10 +142,7 @@ class ChannelDistributionListenerTest extends TestCase
         $this->assertSame('add', $this->getPayload()->state);
     }
 
-    /**
-     * @return LifecycleEventArgs|MockObject
-     */
-    private function getLifecycleEventArgs(MockObject $document): LifecycleEventArgs
+    private function getLifecycleEventArgs(MockObject $document): MockObject|LifecycleEventArgs
     {
         $event = $this->createMock(LifecycleEventArgs::class);
         $event

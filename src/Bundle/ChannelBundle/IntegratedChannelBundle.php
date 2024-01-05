@@ -15,7 +15,6 @@ use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappi
 use Integrated\Bundle\ChannelBundle\DependencyInjection\Compiler\RegisterAdapterPass;
 use Integrated\Bundle\ChannelBundle\DependencyInjection\Compiler\RegisterConfigPass;
 use Integrated\Bundle\ChannelBundle\DependencyInjection\Compiler\RegisterConfigResolverPass;
-use Integrated\Bundle\ChannelBundle\DependencyInjection\IntegratedChannelExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -32,19 +31,11 @@ class IntegratedChannelBundle extends Bundle
         $container->addCompilerPass(
             DoctrineOrmMappingsPass::createXmlMappingDriver(
                 [__DIR__.'/Resources/config/model' => 'Integrated\Bundle\ChannelBundle\Model']
-            )
+            ), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0
         );
 
-        $container->addCompilerPass(new RegisterConfigPass());
-        $container->addCompilerPass(new RegisterConfigResolverPass());
-        $container->addCompilerPass(new RegisterAdapterPass());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContainerExtension()
-    {
-        return new IntegratedChannelExtension();
+        $container->addCompilerPass(new RegisterConfigPass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
+        $container->addCompilerPass(new RegisterConfigResolverPass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
+        $container->addCompilerPass(new RegisterAdapterPass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
     }
 }

@@ -85,8 +85,6 @@ class AssetTokenParser extends AbstractTokenParser
     }
 
     /**
-     * @param Twig_Token $token
-     *
      * @return bool
      */
     public function testEndTag(Token $token)

@@ -21,42 +21,19 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * @author Johan Liefers <johan@e-active.nl>
- */
 class ContentTypePageType extends AbstractType
 {
-    /**
-     * @var ContentTypeControllerManager
-     */
-    protected $controllerManager;
+    private ContentTypeControllerManager $manager;
+    private ThemeResolver $resolver;
 
-    /**
-     * @var ThemeResolver
-     */
-    private $themeResolver;
-
-    /**
-     * ContentTypePageType constructor.
-     */
-    public function __construct(ContentTypeControllerManager $controllerManager, ThemeResolver $themeResolver)
+    public function __construct(ContentTypeControllerManager $manager, ThemeResolver $resolver)
     {
-        $this->controllerManager = $controllerManager;
-        $this->themeResolver = $themeResolver;
+        $this->manager = $manager;
+        $this->resolver = $resolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        /** @var ContentTypePage $contentTypePage */
-        $contentTypePage = $builder->getData();
-
-        if (!$contentTypePage instanceof ContentTypePage) {
-            throw new \InvalidArgumentException(sprintf('Form needs an instance of %s', ContentTypePage::class));
-        }
-
         $builder->add('channel', ChannelChoiceType::class, [
             'return_object' => true,
             'disabled' => true,
@@ -66,40 +43,18 @@ class ContentTypePageType extends AbstractType
             'label' => 'URL',
         ]);
 
-        if (!preg_match('/Content\\\(.+)Controller$/', \get_class($options['controller']), $matchController)) {
-            throw new \InvalidArgumentException(sprintf('The %s class is not a contentTypeController class (the namespace must contain Controller\Content and the class name must end with Controller)', \get_class($options['controller'])));
-        }
-
-        if (!preg_match('/^(.+)Action$/', $contentTypePage->getControllerAction(), $matchAction)) {
-            throw new \InvalidArgumentException(sprintf('The %s method does not look like an action method (it does not end with Action)', $contentTypePage->getControllerAction()));
-        }
-
-        $builder->add('layout', LayoutChoiceType::class, [
-            'theme' => $this->themeResolver->getTheme($contentTypePage->getChannel()),
-            'directory' => strtolower(sprintf('/content/%s/%s', $matchController[1], $matchAction[1])),
-        ]);
-
-        $builder->addEventSubscriber(new ContentTypePageListener($this->controllerManager));
+        $builder->add('layout', LayoutChoiceType::class);
+        $builder->addEventSubscriber(new ContentTypePageListener($this->manager, $this->resolver));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => ContentTypePage::class,
         ]);
-
-        $resolver->setRequired('controller');
-
-        $resolver->setAllowedTypes('controller', 'object');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_page_content_type_page';
     }

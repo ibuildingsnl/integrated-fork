@@ -666,7 +666,7 @@
             formData.append('name', name);
             formData.append('csrf_token', csrfToken);
 
-            fetch('{{ path('integrated_block_block_new_channel_block') }}', {
+            fetch('{{ path('integrated_block_channel_block_new') }}', {
                 method: 'POST',
                 body: formData,
             }).then(response => response.json()).then(data => {

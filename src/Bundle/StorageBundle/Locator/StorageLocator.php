@@ -46,7 +46,7 @@ class StorageLocator extends FileLocator
     /**
      * {@inheritdoc}
      */
-    public function locate($file, $currentPath = null, $first = true)
+    public function locate(string|StorageInterface $file, ?string $currentPath = null, bool $first = true): array|string
     {
         if ($file instanceof StorageInterface) {
             try {

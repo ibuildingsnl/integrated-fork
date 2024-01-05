@@ -5,4 +5,7 @@
     xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
     <import resource="@IntegratedBlockBundle/Resources/config/routing/block.xml" prefix="/block" />
+    <import resource="@IntegratedBlockBundle/Resources/config/routing/channel-block.xml" prefix="/block/channel-block" />
+    <import resource="@IntegratedBlockBundle/Resources/config/routing/inline-text.xml" prefix="/block/inline-text" />
+
 </routes>

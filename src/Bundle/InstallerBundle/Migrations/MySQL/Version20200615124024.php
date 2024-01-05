@@ -12,14 +12,18 @@ final class Version20200615124024 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
+        $this->abortIf(
+            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQLPlatform,
+            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQLPlatform'."
+        );
+
         $manager = $this->getEntityManager();
-        $repository = $manager->getRepository(Scope::class);
-        if (!$scope = $repository->findOneBy(['admin' => true])) {
+
+        if (!$scope = $manager->getRepository(Scope::class)->findOneBy(['admin' => true])) {
             $scope = new Scope();
             $scope
                 ->setName('Integrated')
-                ->setAdmin(true)
-            ;
+                ->setAdmin(true);
 
             $manager->persist($scope);
             $manager->flush();

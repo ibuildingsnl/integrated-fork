@@ -34,6 +34,8 @@ class DomQuery extends DomQueryNodes
         if ($node = $this->getFirstElmNode()) { // get value for first node
             return $node->nodeValue;
         }
+
+        return null;
     }
 
     /**
@@ -77,6 +79,8 @@ class DomQuery extends DomQueryNodes
         if ($node = $this->getFirstElmNode()) { // get attribute value for first element
             return $node->getAttribute($name);
         }
+
+        return null;
     }
 
     /**
@@ -174,7 +178,7 @@ class DomQuery extends DomQueryNodes
     /**
      * Convert css string to array.
      *
-     * @param string containing style properties
+     * @param string $css containing style properties
      *
      * @return array with name-value as style properties
      */
@@ -197,7 +201,7 @@ class DomQuery extends DomQueryNodes
     /**
      * Convert css name-value array to string.
      *
-     * @param array with style properties
+     * @param array $array with style properties
      *
      * @return string containing style properties
      */
@@ -778,7 +782,9 @@ class DomQuery extends DomQueryNodes
      */
     public function first($selector = null)
     {
-        $result = $this[0];
+        /** @var static $result */
+        $result = $this->offsetGet(0);
+
         if ($selector) {
             $result = $result->filter($selector);
         }
@@ -795,7 +801,9 @@ class DomQuery extends DomQueryNodes
      */
     public function last($selector = null)
     {
-        $result = $this[$this->length - 1];
+        /** @var static $result */
+        $result = $this->offsetGet($this->length - 1);
+
         if ($selector) {
             $result = $result->filter($selector);
         }
@@ -999,9 +1007,9 @@ class DomQuery extends DomQueryNodes
      *
      * @return $this
      */
-    public function append()
+    public function append(...$content)
     {
-        $this->importNodes(\func_get_args(), function ($node, $imported_node) {
+        $this->importNodes($content, function ($node, $imported_node) {
             $node->appendChild($imported_node);
         });
 
@@ -1032,9 +1040,9 @@ class DomQuery extends DomQueryNodes
      *
      * @return $this
      */
-    public function prepend()
+    public function prepend(...$content)
     {
-        $this->importNodes(\func_get_args(), function ($node, $imported_node) {
+        $this->importNodes($content, function ($node, $imported_node) {
             $node->insertBefore($imported_node, $node->childNodes->item(0));
         });
 
@@ -1065,9 +1073,9 @@ class DomQuery extends DomQueryNodes
      *
      * @return $this
      */
-    public function before()
+    public function before(...$content)
     {
-        $this->importNodes(\func_get_args(), function ($node, $imported_node) {
+        $this->importNodes($content, function ($node, $imported_node) {
             if ($node->parentNode instanceof \DOMDocument) {
                 throw new \Exception('Can not set before root element '.$node->tagName.' of document');
             }
@@ -1085,9 +1093,9 @@ class DomQuery extends DomQueryNodes
      *
      * @return $this
      */
-    public function after()
+    public function after(...$content)
     {
-        $this->importNodes(\func_get_args(), function ($node, $imported_node) {
+        $this->importNodes($content, function ($node, $imported_node) {
             if ($node->nextSibling) {
                 $node->parentNode->insertBefore($imported_node, $node->nextSibling);
             } else { // node is last, so there is no next sibling to insert before
@@ -1102,15 +1110,15 @@ class DomQuery extends DomQueryNodes
      * Replace each element in the set of matched elements with the provided
      * new content and return the set of elements that was removed.
      *
-     * @param string|self $new_content,...
+     * @param string|self $content,...
      *
      * @return self
      */
-    public function replaceWith()
+    public function replaceWith(...$content)
     {
         $removed_nodes = new self();
 
-        $this->importNodes(\func_get_args(), function ($node, $imported_node) use (&$removed_nodes) {
+        $this->importNodes($content, function ($node, $imported_node) use (&$removed_nodes) {
             if ($node->nextSibling) {
                 $node->parentNode->insertBefore($imported_node, $node->nextSibling);
             } else { // node is last, so there is no next sibling to insert before
@@ -1120,9 +1128,9 @@ class DomQuery extends DomQueryNodes
             $node->parentNode->removeChild($node);
         });
 
-        foreach (\func_get_args() as $new_content) {
-            if (!\is_string($new_content)) {
-                self::create($new_content)->remove();
+        foreach ($content as $newContent) {
+            if (!\is_string($newContent)) {
+                self::create($newContent)->remove();
             }
         }
 
@@ -1136,9 +1144,9 @@ class DomQuery extends DomQueryNodes
      *
      * @return $this
      */
-    public function wrap()
+    public function wrap(...$content)
     {
-        $this->importNodes(\func_get_args(), function ($node, $imported_node) {
+        $this->importNodes($content, function ($node, $imported_node) {
             if ($node->parentNode instanceof \DOMDocument) {
                 throw new \Exception('Can not wrap inside root element '.$node->tagName.' of document');
             }
@@ -1163,12 +1171,12 @@ class DomQuery extends DomQueryNodes
      *
      * @return $this
      */
-    public function wrapAll()
+    public function wrapAll(...$content)
     {
         $wrapper_node = null; // node given as wrapper
         $wrap_target_node = null; // node that wil be parent of content to be wrapped
 
-        $this->importNodes(\func_get_args(), function ($node, $imported_node) use (&$wrapper_node, &$wrap_target_node) {
+        $this->importNodes($content, function ($node, $imported_node) use (&$wrapper_node, &$wrap_target_node) {
             if ($node->parentNode instanceof \DOMDocument) {
                 throw new \Exception('Can not wrap inside root element '.$node->tagName.' of document');
             }
@@ -1200,10 +1208,10 @@ class DomQuery extends DomQueryNodes
      *
      * @return $this
      */
-    public function wrapInner()
+    public function wrapInner(...$content)
     {
         foreach ($this->nodes as $node) {
-            self::create($node->childNodes)->wrapAll(\func_get_args());
+            self::create($node->childNodes)->wrapAll($content);
         }
 
         return $this;

@@ -14,50 +14,44 @@ namespace Integrated\Bundle\ContentHistoryBundle\Command;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentHistoryBundle\Document\ContentHistory;
 use Integrated\Bundle\ContentHistoryBundle\History\Cleaner;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(
+    name: 'integrated:content-history:clean',
+    description: 'Clean content history using configuration',
+)]
 class CleanCommand extends Command
 {
-    /**
-     * @var DocumentManager
-     */
-    private $documentManager;
-
-    /**
-     * @var Cleaner
-     */
-    private $cleaner;
+    private DocumentManager $documentManager;
+    private Cleaner $cleaner;
 
     public function __construct(DocumentManager $documentManager, Cleaner $cleaner)
     {
-        parent::__construct();
-
         $this->documentManager = $documentManager;
         $this->cleaner = $cleaner;
+
+        parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    protected function configure(): void
     {
-        $this
-            ->setName('integrated:content-history:clean')
-            ->setDescription('Clean content history using configuration')
-            ->addOption('clean', 'c', InputOption::VALUE_IS_ARRAY + InputOption::VALUE_OPTIONAL, 'Clean fields from class, use: classFQN:fieldname')
-        ;
+        $this->addOption(
+            'clean',
+            'c',
+            InputOption::VALUE_IS_ARRAY + InputOption::VALUE_OPTIONAL,
+            'Clean fields from class, use: classFQN:fieldname'
+        );
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws \InvalidArgumentException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $clean = $input->getOption('clean');
         $cleanTable = [];
@@ -85,14 +79,12 @@ class CleanCommand extends Command
         $builder = $this->documentManager->createQueryBuilder(ContentHistory::class);
         $builder->select('id', 'contentClass', 'changeSet', 'action')->hydrate(false);
 
-        $result = $builder->getQuery()->execute()->immortal();
+        $result = $builder->getQuery()->execute();
 
-        $progress = new ProgressBar($output, $result->count());
+        $progress = new ProgressBar($output);
 
-        $progress->setRedrawFrequency(min(max(floor($result->count() / 250), 1), 100));
         $progress->setFormat('verbose');
-
-        $progress->start($result->count());
+        $progress->start();
 
         $count = 0;
 
@@ -111,6 +103,6 @@ class CleanCommand extends Command
 
         $this->documentManager->clear();
 
-        return 0;
+        return self::SUCCESS;
     }
 }

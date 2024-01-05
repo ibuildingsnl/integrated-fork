@@ -54,7 +54,7 @@ class FacebookChannelConfigSubscriber implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             IntegratedChannelEvents::CONFIG_CREATE_SUBMITTED => 'onSubmit',

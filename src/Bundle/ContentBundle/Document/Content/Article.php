@@ -233,12 +233,16 @@ class Article extends Content implements RankableInterface
 
     public function getAuthors(): ?Collection
     {
-        return $this->authors;
+        return $this->authors->toArray();
     }
 
-    public function setAuthors(Collection $authors): void
+    public function setAuthors(iterable $authors): void
     {
-        $this->authors = $authors;
+        $this->authors = new ArrayCollection();
+
+        foreach ($authors as $author) {
+            $this->addAuthor($author);
+        }
     }
 
     public function addAuthor(Embedded\Author $author): void

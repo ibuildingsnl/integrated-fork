@@ -38,11 +38,7 @@ class QueueMessage implements QueueMessageInterface
      */
     private $release;
 
-    /**
-     * @param callable $delete
-     * @param callable $release
-     */
-    public function __construct(array $data, \Closure $delete, \Closure $release)
+    public function __construct(array $data, callable $delete, callable $release)
     {
         $this->data = $data;
 

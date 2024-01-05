@@ -8,11 +8,16 @@
 
         <defaults autowire="true" autoconfigure="true"/>
 
-        <service id="integrated_user.user.manager" alias="integrated_user.user.manager.doctrine" public="true"/>
-        <service id="integrated_user.group.manager" alias="integrated_user.group.manager.doctrine" public="true"/>
-        <service id="integrated_user.role.manager" alias="integrated_user.role.manager.doctrine" public="true"/>
-        <service id="integrated_user.scope.manager" alias="integrated_user.scope.manager.doctrine" public="true"/>
+        <service id="integrated_user.user.manager" alias="integrated_user.user.manager.doctrine" />
+        <service id="integrated_user.group.manager" alias="integrated_user.group.manager.doctrine" />
+        <service id="integrated_user.role.manager" alias="integrated_user.role.manager.doctrine" />
+        <service id="integrated_user.scope.manager" alias="integrated_user.scope.manager.doctrine" />
         <service id="integrated_user.ip_list.manager" alias="integrated_user.ip_list.manager.doctrine" />
+
+        <service id="Integrated\Bundle\UserBundle\Model\UserManagerInterface" alias="integrated_user.user.manager" />
+        <service id="Integrated\Bundle\UserBundle\Model\GroupManagerInterface" alias="integrated_user.group.manager" />
+        <service id="Integrated\Bundle\UserBundle\Model\RoleManagerInterface" alias="integrated_user.role.manager" />
+        <service id="Integrated\Bundle\UserBundle\Model\ScopeManagerInterface" alias="integrated_user.scope.manager" />
 
     </services>
 

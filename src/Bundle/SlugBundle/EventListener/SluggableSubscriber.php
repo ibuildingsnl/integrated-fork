@@ -21,7 +21,6 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\UnitOfWork as ORMUnitOfWork;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Persistence\ObjectManager;
-use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\SlugBundle\Mapping\MetadataFactoryInterface;
 use Integrated\Bundle\SlugBundle\Slugger\SluggerInterface;
 use MongoDB\BSON\Regex;
@@ -292,6 +291,7 @@ class SluggableSubscriber implements EventSubscriber
             }
         }
 
+        /** @var DocumentManager|EntityManagerInterface $om */
         $uow = $om->getUnitOfWork();
 
         // check in database
@@ -323,6 +323,7 @@ class SluggableSubscriber implements EventSubscriber
      */
     protected function findSimilarSlugs(ObjectManager $om, $class, $field, $slug, $separator = '-')
     {
+        /** @var DocumentManager|EntityManagerInterface $om */
         $objects = $this->getScheduledObjects($om);
         $uow = $om->getUnitOfWork();
 
@@ -344,6 +345,7 @@ class SluggableSubscriber implements EventSubscriber
      */
     protected function getScheduledObjects(ObjectManager $om)
     {
+        /** @var DocumentManager|EntityManagerInterface $om */
         $uow = $om->getUnitOfWork();
 
         if ($uow instanceof ODMUnitOfWork) {
@@ -359,10 +361,11 @@ class SluggableSubscriber implements EventSubscriber
      * @param ObjectManager|DocumentManager|EntityManager $om
      * @param string                                      $class
      *
-     * @return ObjectRepository|DocumentRepository|EntityRepository
+     * @return DocumentRepository|EntityRepository
      */
     protected function getRepository(ObjectManager $om, $class)
     {
+        /** @var DocumentManager|EntityManagerInterface $om */
         $uow = $om->getUnitOfWork();
 
         if ($uow instanceof ODMUnitOfWork) {
@@ -394,6 +397,7 @@ class SluggableSubscriber implements EventSubscriber
      */
     protected function recomputeSingleObjectChangeSet(ObjectManager $om, $object)
     {
+        /** @var DocumentManager|EntityManagerInterface $om */
         if ($om->contains($object)) {
             $classMetadata = $om->getClassMetadata(\get_class($object));
             $uow = $om->getUnitOfWork();

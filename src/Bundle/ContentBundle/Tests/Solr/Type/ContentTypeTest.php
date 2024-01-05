@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Solr\Type;
 
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 use Integrated\Bundle\ContentBundle\Solr\Type\ContentType;
 use Integrated\Bundle\ContentBundle\Tests\Fixtures\__CG__\ProxyObject;
@@ -19,19 +20,14 @@ use Integrated\Bundle\ContentBundle\Tests\Fixtures\Object2;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
+use Integrated\Common\Converter\Type\TypeInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Integrated\Bundle\ContentBundle\Solr\Type\ContentType
- *
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
-class ContentTypeTest extends \PHPUnit\Framework\TestCase
+class ContentTypeTest extends TestCase
 {
-    /**
-     * @var ObjectManager|MockObject
-     */
-    private $manager;
+    private ObjectManager|MockObject $manager;
 
     protected function setUp(): void
     {
@@ -40,16 +36,22 @@ class ContentTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\TypeInterface', $this->getInstance());
+        self::assertInstanceOf(TypeInterface::class, $this->getInstance());
     }
 
-    /**
-     * @dataProvider buildProvider
-     */
+    #[DataProvider('buildProvider')]
     public function testBuild(ContentInterface $content, array $expected)
     {
-        $this->configureManager($expected['type_class'][0]);
-        $container = $this->getContainer();
+        $metadata = $this->createMock(ClassMetadata::class);
+        $metadata->expects($this->exactly(2))
+            ->method('getName')
+            ->willReturn($expected['type_class'][0]);
+
+        $this->manager->expects($this->exactly(2))
+            ->method('getClassMetadata')
+            ->willReturn($metadata);
+
+        $container = new Container();
 
         $this->getInstance()->build($container, $content);
         $this->getInstance()->build($container, $content); // should clear previous build
@@ -57,7 +59,7 @@ class ContentTypeTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expected, $container->toArray());
     }
 
-    public function buildProvider()
+    public static function buildProvider(): array
     {
         return [
             [
@@ -92,11 +94,9 @@ class ContentTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildNoContent()
     {
-        $container = $this->createMock('Integrated\\Common\\Converter\\ContainerInterface');
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->never())
             ->method($this->anything());
-
-        /* @var ContainerInterface $container */
 
         $this->getInstance()->build($container, new \stdClass());
     }
@@ -106,34 +106,8 @@ class ContentTypeTest extends \PHPUnit\Framework\TestCase
         self::assertEquals('integrated.content', $this->getInstance()->getName());
     }
 
-    /**
-     * @return ContentType
-     */
-    protected function getInstance()
+    protected function getInstance(): ContentType
     {
         return new ContentType($this->manager);
-    }
-
-    protected function configureManager($class)
-    {
-        $mockMeta = $this->createMock('Doctrine\\Persistence\\Mapping\\ClassMetadata');
-        $mockMeta->expects($this->exactly(2))
-            ->method('getName')
-            ->willReturn($class);
-
-        $this->manager->expects($this->exactly(2))
-            ->method('getClassMetadata')
-            ->willReturn($mockMeta);
-    }
-
-    /**
-     * @return ContainerInterface
-     */
-    protected function getContainer()
-    {
-        // Easier to check end result when using an actual container instead of mocking it away. Also
-        // the code coverage for the container class is ignored for these tests.
-
-        return new Container();
     }
 }

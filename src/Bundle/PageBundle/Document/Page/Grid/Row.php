@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\PageBundle\Document\Page\Grid;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Row document.
@@ -21,7 +22,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Row
 {
     /**
-     * @var Column[]
+     * @var Collection<Column>
      */
     protected $columns;
 

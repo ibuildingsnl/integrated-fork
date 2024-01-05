@@ -17,6 +17,7 @@ use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Solarium\Component\Result\Facet\Field;
 use Solarium\Component\Result\FacetSet;
 use Solarium\QueryType\Select\Result\Document;
@@ -28,7 +29,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 /**
  * @author Michael Jongman <michael@e-active.nl>
  */
-class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
+class SuggestionNormalizerTest extends TestCase
 {
     public const ROUTE = 'this-is-the-route';
 

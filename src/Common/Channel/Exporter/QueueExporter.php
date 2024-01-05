@@ -104,7 +104,7 @@ class QueueExporter implements ExporterInterface
     /**
      * {@inheritdoc}
      */
-    public function export($content, $state, ChannelInterface $channel)
+    public function export(object $content, string $state, ChannelInterface $channel): void
     {
         $this->exporter->export($content, $state, $channel);
     }

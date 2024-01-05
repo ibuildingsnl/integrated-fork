@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\UserBundle\Doctrine;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Model\ScopeInterface;
@@ -24,12 +26,12 @@ use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 class UserManager implements UserManagerInterface
 {
     /**
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     private $om;
 
     /**
-     * @var ObjectRepository
+     * @var EntityRepository
      */
     private $repository;
 
@@ -38,7 +40,7 @@ class UserManager implements UserManagerInterface
      */
     private $hasherFactory;
 
-    public function __construct(ObjectManager $om, $class, PasswordHasherFactoryInterface $hasherFactory)
+    public function __construct(EntityManagerInterface $om, string $class, PasswordHasherFactoryInterface $hasherFactory)
     {
         $this->om = $om;
         $this->repository = $this->om->getRepository($class);
@@ -105,7 +107,7 @@ class UserManager implements UserManagerInterface
      */
     public function clear()
     {
-        $this->om->clear($this->repository->getClassName());
+        $this->om->clear();
     }
 
     /**
