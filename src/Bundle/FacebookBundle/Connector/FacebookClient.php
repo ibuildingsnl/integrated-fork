@@ -116,10 +116,14 @@ class FacebookClient
      * @param array|null $pages If you already have done a call to fetch pages, you can reuse the result by passing the array here
      * @return string|null
      */
-    public function getPageToken(string $userToken, string $pageId, ?array $pages = null): ?string
+    public function getPageToken(string $userToken, ?string $pageId, ?array $pages = null): ?string
     {
         if(!$pages) {
             $pages = $this->getPages($userToken)['data'];
+        }
+
+        if ($pageId === null) {
+            return null;
         }
 
         foreach ($pages as $page) {
