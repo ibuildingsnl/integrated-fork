@@ -23,6 +23,7 @@
 
         <service id="Integrated\Bundle\ChannelBundle\Services\ResolverLinkMaker">
             <argument type="service" id="integrated_page.services.url_resolver"/>
+            <argument type="service" id="integrated_brand.brand.repository" />
         </service>
 
         <service
