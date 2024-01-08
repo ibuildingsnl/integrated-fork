@@ -77,7 +77,7 @@ class Content extends AbstractType
             foreach ($options['pub_channels'] as $channel) {
                 $channel = $helper->escapeTerm($channel);
                 $query->createFilterQuery('pub_channel_'.$channel)
-                      ->setQuery('(pub_start_'.$channel.'_index_date: [* TO NOW]) AND (pub_end_'.$channel.'_index_date: [NOW TO *])');
+                      ->setQuery('(publication_start_'.$channel.'_index_date: [* TO NOW]) AND (publication_end_'.$channel.'_index_date: [NOW TO *])');
             }
         }
 
@@ -170,6 +170,7 @@ class Content extends AbstractType
             'contenttypes' => [],
             'channels' => [],
             'authors' => [],
+            'pub_channels' => [],
             'properties' => [],
         ]);
 
@@ -184,6 +185,7 @@ class Content extends AbstractType
         $resolver->setNormalizer('contenttypes', $arrayNormalizer);
         $resolver->setNormalizer('channels', $arrayNormalizer);
         $resolver->setNormalizer('authors', $arrayNormalizer);
+        $resolver->setNormalizer('pub_channels', $arrayNormalizer);
         $resolver->setNormalizer('properties', $arrayNormalizer);
 
         // handle filters that will be directly inserted into the query base on a key value
