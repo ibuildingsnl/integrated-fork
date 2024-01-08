@@ -73,6 +73,14 @@ class Content extends AbstractType
                 ->setQuery('facet_channels: ((%1%))', [implode(') OR (', array_map($escape, $options['channels']))]);
         }
 
+        if ($options['pub_channels']) {
+            foreach ($options['pub_channels'] as $channel) {
+                $channel = $helper->escapeTerm($channel);
+                $query->createFilterQuery('pub_channel_'.$channel)
+                      ->setQuery('(pub_start_'.$channel.'_index_date: [* TO NOW]) AND (pub_end_'.$channel.'_index_date: [NOW TO *])');
+            }
+        }
+
         if ($options['authors']) {
             $query->createFilterQuery('authors')
                 ->addTag('authors')
