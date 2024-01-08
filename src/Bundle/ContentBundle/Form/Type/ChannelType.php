@@ -114,7 +114,7 @@ class ChannelType extends AbstractType
                 'attr' => [
                     'location' => 'sidebar',
                     'style' => 'sidebar',
-                    'icon' => 'key-alt-back',
+                    'icon' => 'key',
                 ],
             ])->add(
                 'permissions',
@@ -133,6 +133,7 @@ class ChannelType extends AbstractType
                     'style' => 'sidebar',
                     'state' => 'show',
                     'icon' => 'tools',
+                    'data-exclusive-to' => 'website',
                 ],
             ])->add(
                 'primaryDomainRedirect',
@@ -153,6 +154,7 @@ class ChannelType extends AbstractType
                     'required' => false,
                     'attr' => [
                         'align_with_widget' => true,
+                        'data-exclusive-to' => 'website',
                     ],
                 ]
             )

@@ -79,7 +79,7 @@ class ContentTypeFormType extends AbstractType
         ]);
         foreach ($metadata->getOptions() as $option) {
             $ype = $builder->create(
-                'options_'.$option->getName(),
+                'options_' . $option->getName(),
                 $option->getType(),
                 [
                     'attr' => [
@@ -90,7 +90,7 @@ class ContentTypeFormType extends AbstractType
                     ],
                     'label' => ucfirst($option->getName()),
                 ] + $option->getOptions()
-            )->setPropertyPath('options['.$option->getName().']');
+            )->setPropertyPath('options[' . $option->getName() . ']');
 
             $builder->add($ype);
         }
@@ -105,17 +105,16 @@ class ContentTypeFormType extends AbstractType
                         'location' => 'sidebar',
                         'style' => 'sidebar',
                         'state' => 'show',
-                        'icon' => 'key-alt-back',
+                        'icon' => 'key',
                     ],
                 ]
-            )
-                    ->add(
-                        'permissions',
-                        PermissionsType::class,
-                        [
-                            'required' => false,
-                        ]
-                    ),
+            )->add(
+                'permissions',
+                PermissionsType::class,
+                [
+                    'required' => false,
+                ]
+            ),
         );
 
         $builder->add('options_color', ColorType::class, [

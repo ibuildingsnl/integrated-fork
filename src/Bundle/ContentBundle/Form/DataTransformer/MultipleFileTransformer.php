@@ -34,17 +34,19 @@ class MultipleFileTransformer implements DataTransformerInterface
      */
     public function transform($list)
     {
-            if (\is_array($list)) {
-                $data = [];
-                foreach ($list as $item) {
+        if (\is_array($list)) {
+            $data = [];
+            foreach ($list as $item) {
+                if (count($item) > 0) {
                     if (is_array($item)) {
                         $data[] = $item['$id'];
                     } else {
                         $data[] = $item->getId();
                     }
                 }
-                return implode(',', $data);
             }
+            return implode(',', $data);
+        }
     }
 
     /**
