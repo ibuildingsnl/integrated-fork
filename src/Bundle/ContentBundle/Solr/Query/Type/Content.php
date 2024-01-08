@@ -112,6 +112,17 @@ class Content extends AbstractType
                     ->setQuery($field.': ((%1%))', [implode(') OR (', array_map($escape, $options['relation'][$relation->getId()]))]);
             }
         }
+
+        // handle start/end dates
+        if ($options['start'] instanceof \DateTimeInterface && $options['end'] instanceof \DateTimeInterface) {
+            $query->createFilterQuery('pub_time')
+                ->addTag('pub_time')
+                ->setQuery(sprintf(
+                    'pub_time: [%s TO %s]',
+                    $options['start']->format("Y-m-d\TH:i:s.z\Z"),
+                    $options['end']->format("Y-m-d\TH:i:s.z\Z"),
+                ));
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -185,7 +196,6 @@ class Content extends AbstractType
         $resolver->setNormalizer('contenttypes', $arrayNormalizer);
         $resolver->setNormalizer('channels', $arrayNormalizer);
         $resolver->setNormalizer('authors', $arrayNormalizer);
-        $resolver->setNormalizer('pub_channels', $arrayNormalizer);
         $resolver->setNormalizer('properties', $arrayNormalizer);
 
         // handle filters that will be directly inserted into the query base on a key value
@@ -246,5 +256,12 @@ class Content extends AbstractType
 
             return array_filter($relations);
         });
+
+
+        // handle start/end dates
+        $resolver->setDefaults([
+            'start' => null,
+            'end' => null,
+        ]);
     }
 }
