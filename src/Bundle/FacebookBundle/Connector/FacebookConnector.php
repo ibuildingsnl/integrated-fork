@@ -34,7 +34,6 @@ class FacebookConnector implements ConnectorInterface
         return $this->client->postToPage(
             $options['page_token'],
             $options['page']['choice'],
-            $settings['title'],
             $settings['text'],
             $this->linkMaker->urlFor($content, $channel)
         );

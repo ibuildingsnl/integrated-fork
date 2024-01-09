@@ -13,7 +13,6 @@ class FacebookPublicationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('time', PublishTimeType::class, ['label' => false]);
-        $builder->add('title', TextType::class);
         $builder->add('text', TextareaType::class);
     }
 

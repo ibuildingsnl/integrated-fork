@@ -33,7 +33,6 @@ final class TwitterConnector implements ConnectorInterface
         $client = $this->factory->createClient($options->get('token'), $options->get('token_secret'));
 
         $message = [
-            $settings['title'] ?? null,
             $settings['text'] ?? null,
             $this->linkMaker->urlFor($content, $channel),
         ];

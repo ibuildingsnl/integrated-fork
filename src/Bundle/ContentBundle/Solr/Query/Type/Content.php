@@ -72,14 +72,14 @@ class Content extends AbstractType
                 ->addTag('channels')
                 ->setQuery('facet_channels: ((%1%))', [implode(') OR (', array_map($escape, $options['channels']))]);
         }
-
-        if ($options['pub_channels']) {
-            foreach ($options['pub_channels'] as $channel) {
-                $channel = $helper->escapeTerm($channel);
-                $query->createFilterQuery('pub_channel_'.$channel)
-                      ->setQuery('(publication_start_'.$channel.'_index_date: [* TO NOW]) AND (publication_end_'.$channel.'_index_date: [NOW TO *])');
-            }
-        }
+//@TODO: Add publication_start_date to solr
+//        if ($options['pub_channels']) {
+//            foreach ($options['pub_channels'] as $channel) {
+//                $channel = $helper->escapeTerm($channel);
+//                $query->createFilterQuery('pub_channel_'.$channel)
+//                      ->setQuery('(publication_start_'.$channel.'_index_date: [* TO NOW]) AND (publication_end_'.$channel.'_index_date: [NOW TO *])');
+//            }
+//        }
 
         if ($options['authors']) {
             $query->createFilterQuery('authors')

@@ -45,6 +45,9 @@
             </thead>
             <tbody id="post-list">
             {% for content in pager %}
+
+                {% set document = integrated_document(content) %}
+
                 {% set class_name = content.type_class|split('\\')|last %}
                 <tr class="has-options">
                     <td class="title">
@@ -96,37 +99,46 @@
                         </div>
                     </td>
 
-                    {% set document = integrated_document(content) %}
-
                     <td class="channels">
                         {% if document.channels is defined and document.channels is not null %}
-                        <div
-                            class="favicon-wrapper {% if document.channels|length > 3 %}hover-popout{% endif %}" style="--color: {{ type.options.color|default('gray') }}">
-                            {% if document.channels|length > 3 %}
-                                <span class="channel-popout">3+</span>
-                            {% endif %}
-                            <div
-                                class="channel-favicons {% if document.channels|length > 3 %}popout{% endif %}">
-                                {% for channel in document.channels %}
-                                    {% if channel|integrated_brand.favicon.file is defined %}
-                                        <div class="channel-favicon"
-                                         style="background-image:url('{{ image(channel|integrated_brand.favicon.file).cropResize(36, 36)|default }}')"
-                                         title="{{ channel.name }}">
+                            {% set groupedChannels = {} %}
 
-                                        </div>
-                                    {% else %}
-                                        <div class="channel-favicon font-bold" title="{{ channel.name }}" style="background-color: {{ channel|integrated_brand.color|default('gray') }}">
-                                            {{ channel.name|first }}
-                                        </div>
-                                    {% endif %}
-                                {% endfor %}
+                            {% for channel in document.channels %}
+                                {% set brandName = channel|integrated_brand_profile.name|default('Unknown') %}
+
+                                {% if brandName not in groupedChannels %}
+                                    {% set groupedChannels = groupedChannels|merge({(brandName): []}) %}
+                                {% endif %}
+
+                                {% set groupedChannels = groupedChannels|merge({(brandName): groupedChannels[brandName]|merge([channel])}) %}
+                            {% endfor %}
+
+                            <div class="favicon-wrapper {% if groupedChannels|length > 3 %}hover-popout{% endif %}">
+                                {% if groupedChannels|length > 3 %}
+                                    <span class="channel-popout">3+</span>
+                                {% endif %}
+                                <div class="channel-favicons {% if groupedChannels|length > 3 %}popout{% endif %}">
+                                    {% for brandName, channels in groupedChannels %}
+                                        {% for channel in channels %}
+                                            {% if channel|integrated_brand_profile.favicon.file is defined %}
+                                                <div class="channel-favicon"
+                                                     style="background-image:url('{{ image(channel|integrated_brand_profile.favicon.file).cropResize(36, 36)|default }}')"
+                                                     title="{{ channel.name }}">
+                                                </div>
+                                            {% else %}
+                                                <div class="channel-favicon font-bold" title="{{ channel.name }}" style="background-color: {{ channel|integrated_brand.color|default('gray') }}">
+                                                    {{ channel.name|first }}
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                </div>
                             </div>
-                        </div>
                         {% endif %}
                     </td>
                     <td class="content-type">
                         <div class="flex font-bold" style="color: {{ type.options.color|default('gray') }}">
-                            <i class="icon mr-2  iconoir-{{ type.options.icon|default('empty-page') }}" title="{{ type }}"></i>
+                            <i class="icon mr-2 iconoir-{{ type.options.icon|default('empty-page') }}" title="{{ type }}"></i>
                             <span>{{ content.type_name|integrated_content_type.name|default(content.type_name) }}</span>
                         </div>
                     </td>

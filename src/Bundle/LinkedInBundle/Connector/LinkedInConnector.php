@@ -36,7 +36,7 @@ final class LinkedInConnector implements ConnectorInterface
         }
 
         $client = $this->factory->createClient($options->get('token'));
-        $message = $settings['title']. " " .$settings['text']. " " . $this->linkMaker->urlFor($content, $channel);
+        $message = $settings['text']. " " . $this->linkMaker->urlFor($content, $channel);
 
         $requestOptions['headers'] = [
             'LinkedIn-Version' => $linkedinVersion,

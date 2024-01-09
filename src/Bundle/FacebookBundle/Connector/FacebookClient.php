@@ -93,8 +93,7 @@ class FacebookClient
         return $pages;
     }
 
-    public function postToPage(string $userToken, string $pageId, ?string $title, ?string $message, ?string $link): string {
-        $title = $title ? $title . "\n\n" : '';
+    public function postToPage(string $userToken, string $pageId, ?string $message, ?string $link): string {
         $message = $message ? $message . "\n\n" :  '';
 
         $response = $this->client->post("{$this->baseUrl}/{$pageId}/feed", [
@@ -102,7 +101,7 @@ class FacebookClient
                 'Authorization' => "Bearer {$userToken}",
             ],
             'json' => [
-                'message' => "{$title}{$message}{$link}",
+                'message' => "{$message}{$link}",
                 'published' => true,
             ]
         ]);
