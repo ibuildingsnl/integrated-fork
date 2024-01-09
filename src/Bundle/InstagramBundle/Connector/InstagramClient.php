@@ -120,7 +120,7 @@ class InstagramClient
         foreach ($images as $key => $image) {
             dump("Image {$key}: {$image}");
             $json = [
-                'image_url' => 'https://via.placeholder.com/400x400',
+                'image_url' => $image,
                 'caption' => $caption,
             ];
 
