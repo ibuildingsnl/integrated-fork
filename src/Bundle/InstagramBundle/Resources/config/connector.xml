@@ -31,7 +31,7 @@
 
         <service id="Integrated\Bundle\InstagramBundle\Connector\InstagramConnector">
             <argument type="service" id="Integrated\Bundle\InstagramBundle\Connector\InstagramClient"/>
-            <argument type="service" id="Integrated\Bundle\ChannelBundle\Services\LinkMaker"/>
+            <argument type="service" id="doctrine_mongodb.odm.document_manager"/>
         </service>
 
         <service id="Integrated\Bundle\InstagramBundle\Connector\InstagramConfiguration">

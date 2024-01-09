@@ -2,11 +2,14 @@
 
 namespace Integrated\Bundle\InstagramBundle\Connector;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Bundle\ChannelBundle\Model\ConnectorInterface;
 use Integrated\Bundle\ChannelBundle\Model\CouldNotPublish;
 use Integrated\Bundle\ChannelBundle\Services\LinkMaker;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -15,10 +18,14 @@ class InstagramConnector implements ConnectorInterface
 {
     public const NAME = 'instagram';
 
+    private readonly DocumentRepository $documentRepository;
+
     public function __construct(
         private readonly InstagramClient $client,
+        DocumentManager $documentManager,
     )
     {
+        $this->documentRepository = $documentManager->getRepository(File::class);
     }
 
     public function getName(): string
@@ -36,14 +43,31 @@ class InstagramConnector implements ConnectorInterface
             throw new CouldNotPublish('Content is not an Article');
         }
 
+        $imageIds = [];
+
+        foreach ($settings['images'] as $image) {
+            $imageIds[] = $image['$id'];
+        }
+
+        $images = $this->documentRepository->createQueryBuilder()
+            ->field('id')
+            ->in($imageIds)
+            ->getQuery()
+            ->getIterator()
+            ->toArray();
+
         $domain = $content->getPrimaryChannel()->getPrimaryDomain();
-        $image = $content->getFeaturedImage()->getFile();
-        $imageUrl = 'https://' . $domain . $image;
+
+        $urls = [];
+
+        foreach ($images as $image) {
+            $urls[] = "https://{$domain}{$image->getFile()}";
+        }
 
         return $this->client->postToPage(
             $options['page_token'],
             $options['ig_account'],
-            $imageUrl,
+            $urls,
             $settings['caption']
         );
     }
