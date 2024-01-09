@@ -60,11 +60,11 @@
                 var linkElement = document.createElement('a');
                 linkElement.setAttribute('target', '_blank');
                 linkElement.setAttribute('href', article.path);
-                linkElement.innerHTML = `<b>${article.title}</b>`;
+                linkElement.innerHTML = `${article.title}`;
 
                 var countElement = document.createElement('span');
                 countElement.classList.add('facet-count');
-                countElement.textContent = article.views;
+                countElement.innerHTML = `<b>${article.views} views</b>`;
 
                 liElement.appendChild(linkElement);
                 liElement.appendChild(countElement);
