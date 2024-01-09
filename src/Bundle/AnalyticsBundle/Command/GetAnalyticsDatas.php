@@ -64,6 +64,7 @@ class GetAnalyticsDatas extends Command
                 $command->run($commandInput, $output);
             } catch (\Exception $e) {
                 $output->writeln("<error>Error executing command '$commandClass': " . $e->getMessage()."</error>");
+                $this->logger->error("Error executing command '$commandClass': " . $e->getMessage());
             }
             $this->output->writeln("\n\n");
         }

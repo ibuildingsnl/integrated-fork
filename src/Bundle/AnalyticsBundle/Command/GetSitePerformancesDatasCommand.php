@@ -54,10 +54,9 @@ class GetSitePerformancesDatasCommand extends Command
 
         foreach ($websites as $website) {
             $url = $website['domain'];
-            if (!$this->isValidUrl($url)) {
-                continue;
-            }
+            if (!$this->isValidUrl($url)) continue;
             $encodedUrl = urlencode($url);
+
             try {
                 $this->output->writeln('- Getting '.$website['name'].'\'s Site performance datas');
                 $this->getSitePerformance($encodedUrl, $website['id']);
@@ -69,6 +68,7 @@ class GetSitePerformancesDatasCommand extends Command
         }
         return 0;
     }
+
     public function getWebsites(): array
     {
         $websites = [];
