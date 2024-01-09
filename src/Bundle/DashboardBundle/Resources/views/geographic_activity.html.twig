@@ -108,11 +108,11 @@
             var visitorsContainer = document.querySelector('.visitors');
 
             if (show === true) {
-                citiesContainer.classList.add('show')
-                visitorsContainer.classList.remove('show')
+                citiesContainer.classList.add('show');
+                visitorsContainer.classList.remove('show');
             } else {
-                citiesContainer.classList.remove('show')
-                visitorsContainer.classList.add('show')
+                citiesContainer.classList.remove('show');
+                visitorsContainer.classList.add('show');
             }
 
             var existingList = document.querySelector('.visitor-cities');
@@ -123,11 +123,19 @@
             var ul = document.createElement('ul');
             ul.classList.add('visitor-cities');
             var selectedCountryData = currentViewByCountryData[country];
-
             if (selectedCountryData) {
+                var cityArray = [];
                 for (var cityName in selectedCountryData.cities) {
-                    var cityData = selectedCountryData.cities[cityName];
+                    cityArray.push(selectedCountryData.cities[cityName]);
+                }
 
+                cityArray.sort(function(a, b) {
+                    if (a.city === 'Other') return 1;
+                    if (b.city === 'Other') return -1;
+                    return b.totalUser - a.totalUser;
+                });
+
+                cityArray.forEach(function(cityData) {
                     var li = document.createElement('li');
 
                     var spanLocation = document.createElement('span');
@@ -151,10 +159,11 @@
                     li.appendChild(divPercentageFull);
                     li.appendChild(divUserCount);
                     ul.appendChild(li);
-                }
+                });
             }
             citiesContainer.appendChild(ul);
         }
+
     </script>
 </div>
 {% endif %}

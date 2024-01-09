@@ -75,6 +75,7 @@ class GeographicActivityWidget implements WidgetInterface
                 $result['viewByCountry'][$key] = $this->getViewByCountry($data['GeographicActivity'], $result['totalViews'][$key]);
             }
         }
+        //dd($result);
         return $result;
     }
 
