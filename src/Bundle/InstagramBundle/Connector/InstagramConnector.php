@@ -6,23 +6,24 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Bundle\ChannelBundle\Model\ConnectorInterface;
 use Integrated\Bundle\ChannelBundle\Model\CouldNotPublish;
-use Integrated\Bundle\ChannelBundle\Services\LinkMaker;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
+use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class InstagramConnector implements ConnectorInterface
 {
     public const NAME = 'instagram';
+    public const DIMENSION = 2048;
 
     private readonly DocumentRepository $documentRepository;
 
     public function __construct(
         private readonly InstagramClient $client,
         DocumentManager $documentManager,
+        private readonly ImageExtension $imageExtension,
     )
     {
         $this->documentRepository = $documentManager->getRepository(File::class);
@@ -61,7 +62,10 @@ class InstagramConnector implements ConnectorInterface
         $urls = [];
 
         foreach ($images as $image) {
-            $urls[] = "https://{$domain}{$image->getFile()}";
+            $editedImage = $this->imageExtension->image($image->getFile())
+                ->cropResize(self::DIMENSION, self::DIMENSION)
+                ->jpeg();
+            $urls[] = "https://{$domain}{$editedImage}";
         }
 
         return $this->client->postToPage(

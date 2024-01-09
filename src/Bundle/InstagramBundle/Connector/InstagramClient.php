@@ -121,19 +121,19 @@ class InstagramClient
             dump("Image {$key}: {$image}");
             $json = [
                 'image_url' => $image,
+                'caption' => $caption,
             ];
 
             if(count($images) > 1) {
                 $json['is_carousel_item'] = true;
             }
 
+
             $response = $this->client->post("{$this->baseUrl}/{$igUserId}/media", [
                 'headers' => [
                     'Authorization' => "Bearer {$pageToken}",
                 ],
-                'json' => [
-                    'image_url' => $image,
-                ]
+                'json' => $json
             ]);
 
             $containerId = json_decode($response->getBody()->getContents(), true)['id'];
