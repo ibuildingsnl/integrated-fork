@@ -9,18 +9,19 @@ use Symfony\Contracts\Cache\ItemInterface;
 class InstagramClient
 {
     public function __construct(
-        private readonly Client $client,
-        private readonly string $appId,
-        private readonly string $secret,
-        private readonly string $loginUrl,
-        private readonly string $baseUrl,
-        private readonly string $redirectUrl,
+        private readonly Client         $client,
+        private readonly string         $appId,
+        private readonly string         $secret,
+        private readonly string         $loginUrl,
+        private readonly string         $baseUrl,
+        private readonly string         $redirectUrl,
         private readonly CacheInterface $cache,
     )
     {
     }
 
-    public function getAuthUrl(): string {
+    public function getAuthUrl(): string
+    {
         // Information about parameters
         // https://developers.facebook.com/docs/facebook-login/guides/advanced/manual-flow/#login
         $options = [
@@ -50,7 +51,8 @@ class InstagramClient
      * @return array
      * @see https://developers.facebook.com/docs/facebook-login/guides/advanced/manual-flow/#exchangecode
      */
-    public function exchangeAccessToken(string $code): array {
+    public function exchangeAccessToken(string $code): array
+    {
         $options = [
             'client_id' => $this->appId,
             'redirect_uri' => $this->redirectUrl,
@@ -64,16 +66,19 @@ class InstagramClient
         return $data;
     }
 
-    public function clearPagesCache(string $userToken) {
+    public function clearPagesCache(string $userToken)
+    {
         $this->cache->delete("{$userToken}-ig-pages");
     }
 
-    public function clearInstagramAccountCache(string $pageToken) {
+    public function clearInstagramAccountCache(string $pageToken)
+    {
         $this->cache->delete("{$pageToken}-ig-account");
     }
 
-    public function getPages(string $userToken): array {
-        $pages = $this->cache->get("{$userToken}-ig-pages", function(ItemInterface $item) use ($userToken) {
+    public function getPages(string $userToken): array
+    {
+        $pages = $this->cache->get("{$userToken}-ig-pages", function (ItemInterface $item) use ($userToken) {
             $item->expiresAfter(3600); // 1 hour
 
             $response = $this->client->get("{$this->baseUrl}/me/accounts", [
@@ -88,8 +93,9 @@ class InstagramClient
         return $pages;
     }
 
-    public function getInstagramAccount(string $pageToken, string $pageId) {
-        $accountId = $this->cache->get("{$pageToken}-ig-account", function(ItemInterface $item) use ($pageToken, $pageId) {
+    public function getInstagramAccount(string $pageToken, string $pageId)
+    {
+        $accountId = $this->cache->get("{$pageToken}-ig-account", function (ItemInterface $item) use ($pageToken, $pageId) {
             $item->expiresAfter(3600); // 1 hour
 
             $response = $this->client->get("{$this->baseUrl}/{$pageId}?fields=instagram_business_account", [
@@ -104,38 +110,60 @@ class InstagramClient
         return $accountId;
     }
 
-    public function getInstagramBusinessAccounts() {
-        $pages = $this->cache->get();
-    }
-
-    public function postToPage(string $pageToken, string $igUserId, string $imageUrl, ?string $caption): string {
-        dump('Image URL: ' . $imageUrl);
+    public function postToPage(string $pageToken, string $igUserId, string|array $content, ?string $caption): string
+    {
         dump('Caption: ' . $caption);
 
-        try {
+        $images = is_array($content) ? $content : [$content];
+        $containerIds = [];
+
+        foreach ($images as $key => $image) {
+            dump("Image {$key}: {$image}");
+            $json = [
+                'image_url' => $image,
+            ];
+
+            if(count($images) > 1) {
+                $json['is_carousel_item'] = true;
+            }
+
             $response = $this->client->post("{$this->baseUrl}/{$igUserId}/media", [
                 'headers' => [
                     'Authorization' => "Bearer {$pageToken}",
                 ],
                 'json' => [
-                    'image_url' => $imageUrl,
-                    'caption' => "{$caption}",
-                    'published' => true,
+                    'image_url' => $image,
                 ]
             ]);
 
             $containerId = json_decode($response->getBody()->getContents(), true)['id'];
-
-            $response = $this->client->post("{$this->baseUrl}/{$igUserId}/media_publish?creation_id={$containerId}", [
-                'headers' => [
-                    'Authorization' => "Bearer {$pageToken}",
-                ]
-            ]);
-
-            return json_decode($response->getBody()->getContents(), true)['id'];
-        }catch(\Exception $e){} finally {
-            return '';
+            $containerIds[] = $containerId;
         }
+
+        $commaSepContainers = implode(',', $containerIds);
+        $response = $this->client->post("{$this->baseUrl}/{$igUserId}/media", [
+            'headers' => [
+                'Authorization' => "Bearer {$pageToken}",
+            ],
+            'json' => [
+                'media_type' => 'CAROUSEL',
+                'children' => $commaSepContainers,
+                'caption' => $caption,
+            ]
+        ]);
+
+        $carouselContainerId = json_decode($response->getBody()->getContents(), true)['id'];
+
+        $response = $this->client->post("{$this->baseUrl}/{$igUserId}/media_publish", [
+            'headers' => [
+                'Authorization' => "Bearer {$pageToken}",
+            ],
+            'json' => [
+                'creation_id' => $carouselContainerId,
+            ]
+        ]);
+
+        return json_decode($response->getBody()->getContents(), true)['id'];
     }
 
     /**
@@ -146,12 +174,12 @@ class InstagramClient
      */
     public function getPageToken(string $userToken, string $pageId, ?array $pages = null): ?string
     {
-        if(!$pages) {
+        if (!$pages) {
             $pages = $this->getPages($userToken)['data'];
         }
 
         foreach ($pages as $page) {
-            if($page['id'] === $pageId) {
+            if ($page['id'] === $pageId) {
                 return $page['access_token'];
             }
         }
@@ -159,7 +187,8 @@ class InstagramClient
         return null;
     }
 
-    private function assocArrayToQueryString(array $array): string {
+    private function assocArrayToQueryString(array $array): string
+    {
         $query = [];
 
         foreach ($array as $key => $value) {
