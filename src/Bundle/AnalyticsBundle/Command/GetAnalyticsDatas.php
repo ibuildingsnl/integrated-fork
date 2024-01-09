@@ -67,7 +67,6 @@ class GetAnalyticsDatas extends Command
             }
             $this->output->writeln("\n\n");
         }
-
         return Command::SUCCESS;
     }
 }

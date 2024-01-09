@@ -23,6 +23,7 @@ class GetSitePerformancesDatasCommand extends Command
      * Constructor.
      */
     public function __construct(
+        private readonly string           $credential,
         private readonly DocumentManager  $manager,
         private readonly ObjectRepository $channelRepository,
         private readonly Client           $client,
@@ -80,20 +81,9 @@ class GetSitePerformancesDatasCommand extends Command
             $websites[] = [
                 'id' => $channel->getId(),
                 'domain' => $this->getCleanUrl($domain),
-                'name' => $channel->getName(),
+                'name' => $channel->getName() ?? "",
             ];
         }
-
-        $websites[] = [
-            'id' => 'bakkersinbedrijf',
-            'domain' => $this->getCleanUrl('bakkersinbedrijf.nl')
-        ];
-
-        $websites[] = [
-            'id' => 'vismagazine',
-            'domain' => $this->getCleanUrl('vismagazine.nl')
-        ];
-
         return $websites;
     }
 
@@ -120,10 +110,8 @@ class GetSitePerformancesDatasCommand extends Command
 
     public function getSitePerformance(string $url, string $channelId): void
     {
-        $apiKey = 'AIzaSyCy9x4Iu2dvAJo6MVpSu9x-LNKQOF-7p9c';
-
-        $desktopData = $this->getPerformanceData($url, $apiKey, 'desktop');
-        $mobileData = $this->getPerformanceData($url, $apiKey, 'mobile');
+        $desktopData = $this->getPerformanceData($url, 'desktop');
+        $mobileData = $this->getPerformanceData($url, 'mobile');
 
         $dateTime = new \DateTimeImmutable();
 
@@ -145,13 +133,13 @@ class GetSitePerformancesDatasCommand extends Command
         $this->manager->persist($sitePerformance);
     }
 
-    private function getPerformanceData(string $url, string $apiKey, string $strategy): ?array
+    private function getPerformanceData(string $url, string $strategy): ?array
     {
         $performanceData = null;
 
 
         try {
-            $request = "https://pagespeedonline.googleapis.com/pagespeedonline/v5/runPagespeed?url=$url&category=PERFORMANCE&strategy=$strategy&key=$apiKey";
+            $request = "https://pagespeedonline.googleapis.com/pagespeedonline/v5/runPagespeed?url=$url&category=PERFORMANCE&strategy=$strategy&key=$this->credential";
             $response = $this->client->get($request);
 
             if ($response->getStatusCode() === 200) {

@@ -7,6 +7,7 @@
         <service id="Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest">
         </service>
         <service id="Integrated\Bundle\AnalyticsBundle\Command\GetSitePerformancesDatasCommand" public="true">
+            <argument>%env(resolve:GOOGLE_LIGHTHOUSE_KEY)%</argument>
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_channel.repository.channel" />
             <argument type="service" id="guzzle" />
