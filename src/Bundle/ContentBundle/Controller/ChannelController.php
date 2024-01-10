@@ -15,7 +15,6 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Form\Type\ChannelType;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
-use Integrated\Bundle\ContentBundle\Form\Type as Form;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\Channel\Event\ChannelEvent;
@@ -26,6 +25,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -166,7 +166,6 @@ class ChannelController extends AbstractController
 
         $referenced = $this->searchContentReferenced->getReferenced($channel);
 
-        /** @var Form $form */
         $form = $this->createDeleteForm($channel->getId(), \count($referenced) === 0);
         $form->handleRequest($request);
 
@@ -217,7 +216,7 @@ class ChannelController extends AbstractController
     /**
      * @param mixed $id The document id
      */
-    protected function createDeleteForm($id, bool $deleteAllowed): FormInterface
+    protected function createDeleteForm($id, bool $deleteAllowed): Form
     {
         $form = $this->createFormBuilder()
             ->setAction($this->generateUrl('integrated_content_channel_delete', ['id' => $id]))

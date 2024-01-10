@@ -6,6 +6,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Solr\Query\SortOptions;
 use Integrated\Common\Solr\Search\Type\AbstractType;
+use Solarium\Component\Facet\Field;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -40,20 +41,24 @@ class Content extends AbstractType
         $facet = $query->getFacetSet();
         $facet->setMinCount(1);
 
-        $facet->createFacetField('contenttypes')
-            ->setField('type_name')
+        /** @var Field $facetField */
+        $facetField = $facet->createFacetField('contenttypes');
+        $facetField->setField('type_name')
             ->getLocalParameters()->setExclude('contenttypes');
 
-        $facet->createFacetField('channels')
-            ->setField('facet_channels')
+        /** @var Field $facetField */
+        $facetField = $facet->createFacetField('channels');
+        $facetField->setField('facet_channels')
             ->getLocalParameters()->setExclude('channels');
 
-        $facet->createFacetField('authors')
-            ->setField('facet_authors')
+        /** @var Field $facetField */
+        $facetField = $facet->createFacetField('authors');
+        $facetField->setField('facet_authors')
             ->getLocalParameters()->setExclude('authors');
 
-        $facet->createFacetField('properties')
-            ->setField('facet_properties')
+        /** @var Field $facetField */
+        $facetField = $facet->createFacetField('properties');
+        $facetField->setField('facet_properties')
             ->getLocalParameters()->setExclude('properties');
 
         $helper = $query->getHelper();
@@ -94,8 +99,9 @@ class Content extends AbstractType
         // handle relations
 
         foreach ($this->manager->getRepository(Relation::class)->findAll() as $relation) {
-            $facet->createFacetField($name = 'relation_'.$relation->getId())
-                ->setField($field = 'facet_'.$relation->getId())
+            /** @var Field $facetField */
+            $facetField = $facet->createFacetField($name = 'relation_'.$relation->getId());
+            $facetField->setField($field = 'facet_'.$relation->getId())
                 ->getLocalParameters()->setExclude($name);
 
             if ($options['relation'][$relation->getId()] ?? []) {

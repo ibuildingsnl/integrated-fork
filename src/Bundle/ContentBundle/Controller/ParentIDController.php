@@ -53,12 +53,7 @@ class ParentIDController extends AbstractController
         $this->translator = $translator;
     }
 
-    /**
-     * @param BulkAction $bulk
-     *
-     * @return RedirectResponse|Response
-     */
-    public function lookup(Request $request)
+    public function lookup(Request $request): RedirectResponse|Response
     {
         $request->query->set('contenttypes', [$request->get('contentType')]);
         $content = $this->contentProvider->getContentFromSolr($request, 1000);

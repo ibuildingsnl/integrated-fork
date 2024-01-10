@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Solr\Type;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Converter\ContainerInterface;
@@ -28,7 +29,7 @@ class FeaturedType implements TypeInterface
      */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
-        if (!$data instanceof ContentInterface) {
+        if (!$data instanceof Content) {
             return; // only process content
         }
 

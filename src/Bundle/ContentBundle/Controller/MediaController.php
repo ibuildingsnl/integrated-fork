@@ -15,6 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Bulk\DeleteHandler;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\ContentRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
@@ -84,6 +85,7 @@ class MediaController extends AbstractController
         protected AuthorizationCheckerInterface $authorizationChecker,
         private MediaGalleryUploadFile $mediaGalleryUploadFile,
         private MediaGalleryEditFile $mediaGalleryEditFile,
+        private ContentRepository $contentRepository,
     ) {
     }
 
@@ -273,11 +275,11 @@ class MediaController extends AbstractController
     {
         $usesByTitles = [];
         foreach ($idSelection as $id) {
-            $content = $this->documentManager->getRepository(Content::class)->find($id);
+            $content = $this->contentRepository->find($id);
 
             if ($content) {
                 // get the usedby, is there an easier way?
-                $usedByItems = $this->documentManager->getRepository(Content::class)
+                $usedByItems = $this->contentRepository
                     ->getUsedBy(new ArrayCollection([$content]), null, null, false)
                     ->getQuery()
                     ->execute();

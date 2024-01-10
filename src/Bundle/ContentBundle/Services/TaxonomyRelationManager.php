@@ -96,9 +96,9 @@ class TaxonomyRelationManager
 
     private function getArrayOfRelationIDs(Relation $relations): array
     {
-        return $relations->getReferences()->map(function ($item) {
+        return array_map(function ($item) {
             return $item->getID();
-        })->toArray();
+        }, $relations->getReferences());
     }
 
     private function removeRelationIfNeeded(Relation $relations, TaxonomyRelationModel $taxonomyRelation, array $relationIDs): void

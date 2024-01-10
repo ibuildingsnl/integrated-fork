@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Channel\Tests\Fixtures;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Common\Channel\ChannelInterface;
 
 class Channel implements ChannelInterface
@@ -43,6 +44,16 @@ class Channel implements ChannelInterface
     }
 
     public function getPrimaryDomainRedirect()
+    {
+        throw new \LogicException('Not implemented');
+    }
+
+    public function getLogo(): ?Image
+    {
+        throw new \LogicException('Not implemented');
+    }
+
+    public function getColor(): ?string
     {
         throw new \LogicException('Not implemented');
     }

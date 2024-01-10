@@ -3,6 +3,8 @@
 namespace Integrated\Bundle\InstallerBundle\Migrations\MongoDB;
 
 use AntiMattr\MongoDB\Migrations\AbstractMigration;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Company;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
@@ -11,9 +13,11 @@ use MongoDB\Database;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-final class Version20230320131012 extends AbstractMigration implements ContainerAwareInterface
+final class Version20230320131012 extends AbstractMigration
 {
-    private ?ContainerInterface $container = null;
+    public function __construct(private DocumentManager $manager)
+    {
+    }
 
     /**
      * @return string
@@ -28,7 +32,7 @@ final class Version20230320131012 extends AbstractMigration implements Container
      */
     public function up(Database $db)
     {
-        $migrator = new ImageMigrator($this->container->get('doctrine_mongodb.odm.document_manager'));
+        $migrator = new ImageMigrator($this->manager);
 
         $migrator->move(Channel::class, 'logo');
         $migrator->move(Company::class, 'logo');
@@ -38,10 +42,5 @@ final class Version20230320131012 extends AbstractMigration implements Container
     public function down(Database $db)
     {
         $this->throwIrreversibleMigrationException();
-    }
-
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
     }
 }

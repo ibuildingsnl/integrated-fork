@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Solr\Type;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\Type\TypeInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -47,7 +48,6 @@ class RelationJsonType implements TypeInterface
         }
 
         $relations = $data->getReferencesByRelationId($options['relation_id']);
-
         $array = [];
 
         foreach ($relations as $key => $relation) {

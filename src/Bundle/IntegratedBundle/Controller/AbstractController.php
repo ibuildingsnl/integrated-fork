@@ -16,6 +16,7 @@ use Integrated\Bundle\UserBundle\Model\User;
 use Knp\Component\Pager\PaginatorInterface;
 use Solarium\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as BaseAbstractController;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AbstractController extends BaseAbstractController
@@ -49,7 +50,7 @@ class AbstractController extends BaseAbstractController
         return $this->container->get('translator');
     }
 
-    protected function getUser()
+    protected function getUser(): ?User
     {
         $user = parent::getUser();
         if ($user && !$user instanceof User) {

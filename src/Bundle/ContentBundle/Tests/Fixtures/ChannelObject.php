@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Fixtures;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
 class ChannelObject implements ChannelInterface
@@ -43,6 +44,16 @@ class ChannelObject implements ChannelInterface
     }
 
     public function getPrimaryDomainRedirect()
+    {
+        throw new \Exception();
+    }
+
+    public function getLogo(): ?Image
+    {
+        throw new \Exception();
+    }
+
+    public function getColor(): ?string
     {
         throw new \Exception();
     }

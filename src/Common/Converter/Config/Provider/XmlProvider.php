@@ -14,6 +14,7 @@ namespace Integrated\Common\Converter\Config\Provider;
 use Integrated\Common\Converter\Config\TypeConfig;
 use Integrated\Common\Converter\Config\TypeConfigInterface;
 use Integrated\Common\Converter\Exception\RuntimeException;
+use SimpleXMLElement;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -63,7 +64,7 @@ class XmlProvider extends AbstractFileProvider
      *
      * @return TypeConfigInterface[]
      */
-    protected function parseTypes(\SimpleXMLElement $element)
+    protected function parseTypes(SimpleXMLElement $element)
     {
         $types = [];
 
@@ -85,7 +86,7 @@ class XmlProvider extends AbstractFileProvider
      *
      * @return array
      */
-    protected function parseOptions(\SimpleXMLElement $element)
+    protected function parseOptions(SimpleXMLElement $element)
     {
         if (!$element->count()) {
             return []; // empty array if options contains no data
@@ -99,7 +100,7 @@ class XmlProvider extends AbstractFileProvider
      *
      * @return array
      */
-    protected function parseArray(\SimpleXMLElement $element)
+    protected function parseArray(SimpleXMLElement $element)
     {
         $result = [];
 
@@ -120,7 +121,7 @@ class XmlProvider extends AbstractFileProvider
      * Of the parsed tags only the <array> tag is allowed to have children. The nesting of the array
      * tags is unlimited.
      */
-    protected function parsePrimitive(\SimpleXMLElement $element)
+    protected function parsePrimitive(SimpleXMLElement $element)
     {
         switch ($element->getName()) {
             case 'array':

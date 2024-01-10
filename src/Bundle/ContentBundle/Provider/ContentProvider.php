@@ -18,6 +18,8 @@ use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\WorkflowBundle\Solr\Extension\WorkflowExtension;
 use Solarium\Client;
+use Solarium\Component\Result\Facet\Field;
+use Solarium\Component\Result\FacetSet;
 use Solarium\QueryType\Select\Query\FilterQuery;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\HttpFoundation\Request;
@@ -121,6 +123,7 @@ class ContentProvider
 
         $resultSet = $this->client->select($query);
 
+        /** @var Field $facet */
         $facet = $resultSet->getFacetSet()->getFacet('pub_created');
 
         $facetValues = $facet->getValues();

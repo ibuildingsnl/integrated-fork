@@ -190,7 +190,7 @@ class Person extends Relation
         return $this;
     }
 
-    public function getJobs(): Collection
+    public function getJobs(): array
     {
         return $this->jobs->toArray();
     }

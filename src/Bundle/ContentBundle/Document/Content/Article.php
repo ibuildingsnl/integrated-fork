@@ -231,7 +231,7 @@ class Article extends Content implements RankableInterface
         $this->featuredImage = $featuredImage;
     }
 
-    public function getAuthors(): ?Collection
+    public function getAuthors(): array
     {
         return $this->authors->toArray();
     }

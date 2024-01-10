@@ -6,6 +6,7 @@ use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Common\Solr\Search\Event\ConfigureOptionsEvent;
 use Integrated\Common\Solr\Search\Event\PostCreateEvent;
 use Integrated\Common\Solr\Search\QueryEvents;
+use Solarium\Component\Facet\Field;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class BrandFacetListener implements EventSubscriberInterface
@@ -34,6 +35,7 @@ class BrandFacetListener implements EventSubscriberInterface
         $options = $event->getOptions();
         $facet = $query->getFacetSet();
 
+        /** @var Field $field */
         $field = $facet->createFacetField('brands', false);
         $field->setField('facet_brands')->getLocalParameters()->setExclude('brands');
 

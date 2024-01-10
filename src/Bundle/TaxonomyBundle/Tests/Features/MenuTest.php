@@ -34,7 +34,7 @@ use Symfony\Component\Security\Core\Authorization\Strategy\UnanimousStrategy;
 final class MenuTest extends TestCase
 {
     private TokenStorageInterface $tokenStorage;
-    private ResolverInterface $repository;
+    private MemoryTypeResolver $repository;
     private ItemInterface $menu;
     private ConfigureMenuSubscriber $menuSubscriber;
 
