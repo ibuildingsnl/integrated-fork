@@ -88,7 +88,7 @@
 
     &.show {
         position: fixed;
-        top: 60px;
+        top: 48px;
         left: 0;
         right: 0;
         bottom: 0;
@@ -204,13 +204,13 @@
 }
 
 .taxonomy_category {
-    div#taxonomy_backdrop {
+    .taxonomy_backdrop {
         background-color: rgba(0, 0, 0, 1);
         bottom: 0;
         left: 0;
         position: fixed;
         right: 0;
-        top: 60px;
+        top: 48px;
         z-index: 1040;
         height: -webkit-fill-available;
         display: flex;

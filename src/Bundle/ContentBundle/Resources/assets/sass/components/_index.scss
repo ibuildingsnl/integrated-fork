@@ -189,8 +189,8 @@ div.heading-switcher {
 
         button.close-edit-form {
             position: absolute;
-            width: 50px;
-            height: 50px;
+            width: 48px;
+            height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -212,8 +212,11 @@ div.heading-switcher {
 
 .index-wrapper {
     table {
-        .state, .pub-date {
+        .pub-date {
             width: 150px;
+        }
+        .state {
+            width: 70px;
         }
         .content-type {
             width: 175px;

@@ -13,14 +13,17 @@ body {
     right: 0;
     left: 0;
     bottom: 0;
+    background-color: $navbar-green;
 }
 
 .content-wrapper {
     position: relative;
     overflow: hidden;
-    width: calc(100vw - 250px);
-    height: calc(100vh - 60px);
+    width: calc(100vw - 256px);
+    margin-left: 6px;
+    height: calc(100vh - 48px);
     background-color: $bg-gray;
+    border-top-left-radius: 1rem;
     @include media(max-xl) {
         width: calc(100vw - 50px);
     }
@@ -30,7 +33,7 @@ body {
 
     &.iframe {
         width: 100vw;
-        max-height: calc(100vh - 60px);
+        max-height: calc(100vh - 48px);
 
         .aside-options {
             height: 100vh
@@ -47,7 +50,7 @@ body {
 
     .editor-wrapper {
         width: calc(100% - 350px);
-        height: calc(100vh - 110px);
+        height: calc(100vh - 96px);
         overflow: hidden auto;
         position: relative;
         background-color: white;
@@ -73,7 +76,7 @@ body {
 
     .index-wrapper {
         width: calc(100% - 350px);
-        max-height: calc(100vh - 60px);
+        max-height: calc(100vh - 48px);
         overflow: auto;
         position: relative;
         padding: 2rem 2rem;
@@ -84,7 +87,7 @@ body {
 
         &-full {
             width: 100%;
-            max-height: calc(100vh - 60px);
+            max-height: calc(100vh - 48px);
             overflow: auto;
             position: relative;
             padding: 2rem;
@@ -227,7 +230,7 @@ body.integrated_page_page_copy,
 body.integrated_block_inline_text_block_create,
 body.integrated_taxonomy_index {
     .content-wrapper {
-        padding: 50px 0 0;
+        padding: 48px 0 0;
     }
 }
 
@@ -286,7 +289,7 @@ body.hide-options {
 
 .content_edit, .content_new {
     .content-wrapper {
-        padding: 50px 0 0;
+        padding: 48px 0 0;
     }
 }
 
@@ -526,7 +529,7 @@ li.dropdown.searchselection a {
 .searchselection-edit-form {
     position: absolute;
     left: 0;
-    top: 110px;
+    top: 96px;
     background-color: white;
     border-radius: 8px;
     padding: 1rem;

@@ -152,26 +152,26 @@
                             {% if content.workflow_color_string is defined %}
                                 {% set status_color = content.workflow_color_string|first %}
                                 <div class="workflow-status" style="background-color:{{ status_color }};">
-                                    {{ content.workflow_state|default }}
+                                    <i class="iconoir-{{ content.workflow_icon_string|first|default }}"></i>
                                 </div>
                             {% else %}
                                 <div class="workflow-status" style="background-color:#d8d8d8;">
-                                    {{ content.workflow_state|default }}
+                                    <i class="iconoir-{{ content.workflow_icon_string|first|default }}"></i>
                                 </div>
                             {% endif %}
                             {% set status_color = '' %}
                         {% elseif content.workflow_state is defined %}
                             <div class="workflow-status" style="background-color:#5f84db;">
-                                {% trans %}Planned{% endtrans %}
+                                <i class="iconoir-calendar"></i>
                             </div>
                         {% endif %}
                         {% if content.workflow_state is not defined and content.published is defined and content.published == "true" %}
                             <div class="workflow-status" style="background-color:#00ae93;">
-                                {% trans %}Published{% endtrans %}
+                                <i class="iconoir-check"></i>
                             </div>
                         {% elseif content.workflow_state is not defined and content.published is defined and content.published == "false" %}
                             <div class="workflow-status" style="background-color:#ababab;">
-                                {% trans %}Concept{% endtrans %}
+                                <i class="iconoir-edit-pencil"></i>
                             </div>
                         {% endif %}
                     </td>

@@ -269,12 +269,18 @@ function openSelectedOptions(elem) {
 }
 
 function toggleDropDownBackGround(hidden) {
-    let menuItemDropDownUnderlay =  document.querySelector('#dropdown_overlay');
-    let taxonomyDropDownUnderlay =  document.querySelector('#taxonomy_backdrop');
+    let menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
+    let taxonomyDropDownUnderlays = document.querySelectorAll('.taxonomy_backdrop');
     document.querySelector('body').classList.remove('popup-open');
     menuItemDropDownUnderlay.classList.toggle('hide', hidden);
-    taxonomyDropDownUnderlay.classList.toggle('hide', hidden);
     menuItemDropDownUnderlay.innerHTML = '';
+
+    taxonomyDropDownUnderlays.forEach(taxonomyDropDownUnderlay => {
+        // Toggle 'hide' only if it does not have the 'hide' class
+        if (!taxonomyDropDownUnderlay.classList.contains('hide')) {
+            taxonomyDropDownUnderlay.classList.toggle('hide', hidden);
+        }
+    });
 }
 
 function isElement(o) {

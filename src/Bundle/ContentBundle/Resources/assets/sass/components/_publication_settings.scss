@@ -7,13 +7,13 @@
 .publication-settings-aside {
     background-color: #ffffff;
     border-left: 1px solid #dee3e9;
-    height: calc(100vh - 110px);
+    height: calc(100vh - 96px);
     margin-top: -1px;
     order: 1;
     overflow: auto;
     position: fixed;
     right: 350px;
-    top: 110px;
+    top: 96px;
     width: 350px;
     visibility: hidden;
     transform: translateX(350px);
@@ -43,8 +43,9 @@
 
 .editor-overlay {
     position: fixed;
-    top: 0;
-    left: 250px;
+    top: 48px;
+    left: 260px;
+    border-top-left-radius: 1rem;
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);

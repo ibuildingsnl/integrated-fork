@@ -13,9 +13,13 @@ class BrandChannelChoiceType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $brandName = strtolower($options['brand_name']); // Convert to lower case
+        $brandName = preg_replace('/\s+/', '', $brandName); // Strip spaces
+        $brandName = preg_replace('/[^a-z0-9]/', '', $brandName); // Remove special characters
+
         $builder->add('publish', CheckboxType::class, [
             'required' => false,
-            'value' => $options['publish'],
+            'value' => $brandName,
             'label' => $options['brand_name'],
             'attr' => [
                 'class' => 'brand-choice',
