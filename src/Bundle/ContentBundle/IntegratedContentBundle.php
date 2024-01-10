@@ -36,7 +36,7 @@ class IntegratedContentBundle extends Bundle
     /**
      * {@inheritdoc}
      */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new ExtensionRegistryBuilderPass());
         $container->addCompilerPass(new FormFactoryEventDispatcherPass());
