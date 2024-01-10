@@ -43,15 +43,15 @@
                     labels: source,
                     datasets: [
                         {
-                            label: "Type of device",
-                            backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850", "#5D5D5D", "#FF6600", "#33CC33", "#FFCC00", "#9900FF"],
+                            label: "Traffic source",
+                            backgroundColor: ["#008080", "#FF7F50", "#40E0D0", "#FFC0CB", "#808000", "#DDA0DD", "#87CEEB", "#98FF98", "#FFE5B4", "#E6E6FA"],
                             data: sessions
                         }
                     ]
                 },
                 options: {
-                    aspectRatio: 2,
-                    cutout: '50%',
+                    maintainAspectRatio: false,
+                    cutout: '0%',
                     title: {
                         display: true,
                         text: 'type of device'

@@ -60,9 +60,12 @@ class AssignedToYouWidget implements WidgetInterface
     {
         $query = $this->solariumClient->createSelect();
         $userId = $user->getId();
-        $query
-            ->createFilterQuery('workflow_assigned_id')
-            ->setQuery('facet_workflow_assigned_id:' . $userId . '');
+        $query->createFilterQuery('workflow_assigned_id')
+              ->setQuery('facet_workflow_assigned_id:' . $userId . '');
+
+//        // Additional filter to check if pub_active is not true
+//        $query->createFilterQuery('pub_not_active')
+//              ->setQuery('-pub_active:true');
 
         $result = $this->solariumClient->select($query);
         $assignedContent = $result->getDocuments();
