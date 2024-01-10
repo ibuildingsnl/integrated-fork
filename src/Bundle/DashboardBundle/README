@@ -1,3 +1,9 @@
+How to install widget on database
+- php bin/console widget:database
+
+How to reload all widget on database
+- php bin/console widget:database --update
+
 How to Create a Widget:
 
 - Create the Widget class in "src/Bundle/DashboardBundle/Widgets" which implements the "WidgetInterface".
