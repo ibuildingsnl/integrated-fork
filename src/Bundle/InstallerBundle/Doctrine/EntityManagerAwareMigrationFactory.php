@@ -13,26 +13,20 @@ namespace Integrated\Bundle\InstallerBundle\Doctrine;
 
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\Migrations\Version\MigrationFactory;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
-class ContainerAwareMigrationFactory implements MigrationFactory
+class EntityManagerAwareMigrationFactory implements MigrationFactory
 {
-    private MigrationFactory $factory;
-    private ContainerInterface $container;
-
-    public function __construct(MigrationFactory $factory, ContainerInterface $container)
+    public function __construct(private MigrationFactory $factory, private EntityManagerInterface $manager)
     {
-        $this->factory = $factory;
-        $this->container = $container;
     }
 
     public function createVersion(string $migrationClassName): AbstractMigration
     {
         $migration = $this->factory->createVersion($migrationClassName);
 
-        if ($migration instanceof ContainerAwareInterface) {
-            $migration->setContainer($this->container);
+        if ($migration instanceof EntityManagerAwareInterface) {
+            $migration->setEntityManager($this->manager);
         }
 
         return $migration;

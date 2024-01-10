@@ -7,13 +7,12 @@ namespace Integrated\Bundle\InstallerBundle\Migrations\MySQL;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\ORM\EntityManagerInterface;
+use Integrated\Bundle\InstallerBundle\Doctrine\EntityManagerAwareInterface;
 use Integrated\Bundle\UserBundle\Model\Scope;
 
-final class Version20200615124024 extends AbstractMigration
+final class Version20200615124024 extends AbstractMigration implements EntityManagerAwareInterface
 {
-    public function __construct(private EntityManagerInterface $manager)
-    {
-    }
+    private EntityManagerInterface $manager;
 
     public function up(Schema $schema): void
     {
@@ -35,5 +34,10 @@ final class Version20200615124024 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
+    }
+
+    public function setEntityManager(?EntityManagerInterface $manager): void
+    {
+        $this->manager = $manager;
     }
 }
