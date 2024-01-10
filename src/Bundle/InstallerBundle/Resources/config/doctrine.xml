@@ -35,7 +35,7 @@
                  decorates="integrated_installer.doctrine.migrations.migrations_factory"
         >
             <argument type="service" id="integrated_installer.doctrine.migrations.entity_manager_aware_migrations_factory.inner" />
-            <argument type="service" id="%doctrine_mongodb.odm.document_manager.class%" />
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
         </service>
 
     </services>

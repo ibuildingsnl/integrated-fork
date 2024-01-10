@@ -84,8 +84,8 @@ class ContentProvider
         };
 
         // Filter on ContentType
-        $contentType = $request->query->get('contenttypes');
-        if (null === $contentType) {
+        $contentType = $request->query->all('contenttypes');
+        if (!count($contentType)) {
             $contentType = [];
             foreach ($contentTypeSelectOptions as $contentTypeSelectOption) {
                 $contentType[] = $contentTypeSelectOption->getId();
@@ -162,7 +162,7 @@ class ContentProvider
                 }
             }
         } else {
-            $contentType = $request->query->get('contenttypes');
+            $contentType = $request->query->all('contenttypes');
         }
 
         $helper = $query->getHelper();
@@ -171,7 +171,7 @@ class ContentProvider
         };
 
         // If the request query contains a properties parameter we need to fetch all the targets of the relation in order
-        // to filter on these targets.
+        // to filter on thesetype_nametargets.
         $propertiesfilter = $request->query->get('properties');
         if (\is_array($propertiesfilter)) {
             $query
@@ -380,10 +380,10 @@ class ContentProvider
         if (\is_array($contentType) && \count($contentType) === 1) {
             $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
         } else {
-            $availableContenttypes = $request->query->get('available_contenttypes');
+            $availableContenttypes = $request->query->all('available_contenttypes');
             if (\is_array($availableContenttypes) && \count($availableContenttypes)) {
                 $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $availableContenttypes))]);
-            } elseif (\is_array($contentType)) {
+            } elseif (\is_array($contentType) && \count($contentType)) {
                 $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
             }
         }

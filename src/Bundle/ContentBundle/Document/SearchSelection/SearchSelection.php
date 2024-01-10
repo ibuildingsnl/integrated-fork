@@ -58,7 +58,7 @@ class SearchSelection
      */
     protected $userId;
 
-    protected bool $inMenu = false;
+    protected ?bool $inMenu = false;
 
     protected ?string $groupId = null;
 
@@ -223,7 +223,7 @@ class SearchSelection
 
     public function isInMenu(): bool
     {
-        return $this->inMenu;
+        return (bool) $this->inMenu;
     }
 
     public function setInMenu(bool $inMenu): void

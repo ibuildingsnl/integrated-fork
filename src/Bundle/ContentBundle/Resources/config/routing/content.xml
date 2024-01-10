@@ -44,7 +44,7 @@
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::edit</default>
     </route>
 
-	<route id="integrated_content_content_edit_rest" path="/{id}" methods="PUT">
+	<route id="integrated_content_content_edit_rest" path="/{id}" methods="PUT, POST">
 		<default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::edit</default>
 	</route>
 

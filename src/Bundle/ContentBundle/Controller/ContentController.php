@@ -476,9 +476,9 @@ class ContentController extends AbstractController
     {
         $relations = [];
 
-        foreach ($form->getData()->getRelations()->toArray() as $relation) {
+        foreach ($form->getData()->getRelations() as $relation) {
             $references = [];
-            foreach ($relation->getReferences()->toArray() as $imageObject) {
+            foreach ($relation->getReferences() as $imageObject) {
                 $references[$imageObject->getId()] = $imageObject;
             }
             $relations[$relation->getRelationId()] = $references;
