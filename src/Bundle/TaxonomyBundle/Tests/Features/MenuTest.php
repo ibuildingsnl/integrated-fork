@@ -15,7 +15,6 @@ use Integrated\Bundle\TaxonomyBundle\Tests\Features\Doubles\MemoryTypeResolver;
 use Integrated\Bundle\UserBundle\Model\Group;
 use Integrated\Bundle\UserBundle\Model\Role;
 use Integrated\Bundle\UserBundle\Model\User;
-use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Security\Permission;
 use Integrated\Common\Security\PermissionInterface;
 use Knp\Menu\Integration\Symfony\RoutingExtension;

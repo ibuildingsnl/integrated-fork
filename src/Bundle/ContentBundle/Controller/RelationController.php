@@ -88,8 +88,6 @@ class RelationController extends AbstractController
 
     /**
      * Display a form to edit an existing Relation document.
-     *
-     * @return Response
      */
     public function edit(Relation $relation): Response
     {

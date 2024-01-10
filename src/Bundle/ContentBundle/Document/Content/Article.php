@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\SeoMeta;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;

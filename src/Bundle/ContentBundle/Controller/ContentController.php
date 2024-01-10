@@ -320,8 +320,6 @@ class ContentController extends AbstractController
 
     /**
      * Update a existing document.
-     *
-     * @return Response
      */
     public function edit(Request $request, Content $content): Response
     {
@@ -491,8 +489,6 @@ class ContentController extends AbstractController
 
     /**
      * Delete a document.
-     *
-     * @return Response
      */
     public function delete(Request $request, Content $content): Response
     {

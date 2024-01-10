@@ -19,7 +19,6 @@ use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\WorkflowBundle\Solr\Extension\WorkflowExtension;
 use Solarium\Client;
 use Solarium\Component\Result\Facet\Field;
-use Solarium\Component\Result\FacetSet;
 use Solarium\QueryType\Select\Query\FilterQuery;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\HttpFoundation\Request;

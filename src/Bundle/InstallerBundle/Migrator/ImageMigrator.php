@@ -2,10 +2,9 @@
 
 namespace Integrated\Bundle\InstallerBundle\Migrator;
 
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use MongoDB\BSON\UTCDateTime;
+use MongoDB\Database;
 use Ramsey\Uuid\Uuid;
 
 class ImageMigrator
@@ -14,7 +13,7 @@ class ImageMigrator
     private UTCDateTime $timeMax;
 
     public function __construct(
-        private readonly DocumentManager $manager
+        private readonly Database $db
     ) {
         $this->timeNow = new UTCDateTime((new \DateTime())->getTimestamp() * 1000);
         $this->timeMax = new UTCDateTime(253402214400000);
@@ -34,7 +33,7 @@ class ImageMigrator
             return;
         }
 
-        $this->manager->getDocumentCollection(Content::class)->insertMany(array_values($images));
+        $this->db->selectCollection('content')->insertMany(array_values($images));
 
         $this->updateItems($class, $images);
     }
@@ -42,7 +41,7 @@ class ImageMigrator
     private function updateItems(string $class, array $images): void
     {
         foreach ($images as $id => $image) {
-            $this->manager->getDocumentCollection($class)->updateOne(['_id' => $id], [
+            $this->db->selectCollection('content')->updateOne(['_id' => $id], [
                 '$set' => [
                     'logo' => [
                         '$ref' => 'content',
@@ -55,9 +54,10 @@ class ImageMigrator
 
     private function getImages(string $class, string $field): \Traversable
     {
-        return $this->manager->getDocumentCollection($class)->aggregate([
+        return $this->db->selectCollection('content')->aggregate([
             [
                 '$match' => [
+                    'class' => $class,
                     $field => ['$exists' => true],
                     $field.'.identifier' => ['$exists' => true],
                     $field.'.pathname' => ['$exists' => true],

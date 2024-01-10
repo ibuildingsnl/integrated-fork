@@ -13,7 +13,6 @@ namespace Integrated\Bundle\ContentBundle\Solr\Type;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
-use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\Type\TypeInterface;
 

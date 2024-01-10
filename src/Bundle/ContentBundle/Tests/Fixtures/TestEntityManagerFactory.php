@@ -2,12 +2,10 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Fixtures;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use PHPUnit\Framework\TestCase;
 
 class TestEntityManagerFactory

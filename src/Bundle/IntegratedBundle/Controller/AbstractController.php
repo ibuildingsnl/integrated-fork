@@ -16,7 +16,6 @@ use Integrated\Bundle\UserBundle\Model\User;
 use Knp\Component\Pager\PaginatorInterface;
 use Solarium\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as BaseAbstractController;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AbstractController extends BaseAbstractController

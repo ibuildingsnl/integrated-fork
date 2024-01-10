@@ -378,7 +378,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     public function getReferenceByRelationId($relationId, $published = true)
     {
         if ($references = $this->getReferencesByRelationId($relationId, $published)) {
-            if (count($references)) {
+            if (\count($references)) {
                 return reset($references);
             }
         }

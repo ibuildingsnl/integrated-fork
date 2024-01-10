@@ -13,8 +13,8 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Bundle\ContentBundle\Form\Type\ChannelType;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
+use Integrated\Bundle\ContentBundle\Form\Type\ChannelType;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\Channel\Event\ChannelEvent;
@@ -22,7 +22,6 @@ use Integrated\Common\Channel\Events;
 use Integrated\Common\Security\Resolver\PermissionResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
