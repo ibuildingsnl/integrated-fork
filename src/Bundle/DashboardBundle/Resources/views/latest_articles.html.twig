@@ -8,8 +8,8 @@
                 <ul>
                     {% for article in mostRecentArticles %}
                         <li>
-                            <a target="_blank" href="{{ path('integrated_content_content_edit', {id: article.id}) }}">{{ article.title }}</a>
-                            <span class="post-date">{{ article.publishTime.startDate | date("d-m-Y") }}</span>
+                            <a class="flex flex-1 items-center w-full" target="_blank" href="{{ path('integrated_content_content_edit', {id: article.id}) }}">{{ article.title }}</a>
+                            <span class="post-date tab">{{ article.publishTime.startDate | date("d-m-Y") }}</span>
                         </li>
                     {% endfor %}
                 </ul>

@@ -21,13 +21,23 @@
                         {% else %}
                             {% set status_icon = '' %}
                         {% endif %}
-                        <li class="facet-wrappper">
-                        <span class="facet-title">
-                            <b><a target="_blank" href="{{ article.path }}"> <i class="iconoir-{{ status_icon }}"></i> {{ article.title }}</a></b>
-                        </span>
-                            <span class="facet-count">{{ article.workflow_deadline }}</span>
+                        <li class="assigned-item">
+                                <a class="flex flex-1 items-center w-full" target="_blank" href="{{ article.path }}">
+                                    <div class="workflow-status" style="background-color:{{ status_color }};">
+                                        <i class="iconoir-{{ status_icon }}"></i>
+                                    </div>
+                                    <span class="item-title">{{ article.title }}</span>
+                                </a>
+                            <span class="facet-count flex items-center date-tab">{{ article.workflow_deadline }}</span>
                         </li>
                     {% endfor %}
+                    {% if assignedToYou|length == 0 %}
+                        <li class="facet-wrappper">
+                        <span class="facet-title">
+                            <b>{% trans %}You have nothing assigned to you{% endtrans %}</b>
+                        </span>
+                        </li>
+                    {% endif %}
                 </ul>
             </nav>
         </div>
