@@ -8,7 +8,7 @@
                     <h2>{% trans %}Assigned to you{% endtrans %}</h2>
                 {% endif %}
             </div>
-            <nav class="article-list" id="articleList">
+            <nav class="article-list {{ assignedToYou|length > 7 ? 'assigned-item-scrollable-list' : '' }}" id="articleList">
                 <ul>
                     {% for article in assignedToYou %}
                         {% if article.workflow_color_string is not null %}
@@ -42,4 +42,10 @@
             </nav>
         </div>
     </div>
+    <style>
+        .assigned-item-scrollable-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
 {% endif %}
