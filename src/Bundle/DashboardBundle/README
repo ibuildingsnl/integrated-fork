@@ -4,17 +4,8 @@ How to install widget on database
 How to reload all widget on database
 - php bin/console widget:database --update
 
-How to Create a Widget:
 
-- Create the Widget class in "src/Bundle/DashboardBundle/Widgets" which implements the "WidgetInterface".
-- Create its Twig template in vendor/integrated/integrated/src/Bundle/DashboardBundle/Resources/views
-- Define the ID, Name, and path to its view
-- Connect to the MongoDB database aleaintegrated and create the widget in the "WidgetConfig" table by defining the attributes ID, Name, and Order (the ID and name must be the same as those of the created class)
-- Add the widget in "src/Bundle/DashboardBundle/Resources/config/services.xml"
-- Clear the cache
-
-
-List of Analytical Data Retrieval Commands:
+List of getting Analytical Data Commands:
 
 - "analytics:datas": Executes all commands for obtaining data
 - "device:type": Retrieves data on device types
@@ -24,4 +15,12 @@ List of Analytical Data Retrieval Commands:
 - "traffic:acquisition": Retrieves data on traffic acquisition
 - "visitors:activity": Retrieves data on user activity
 
+How to Create a Widget:
+
+- Create the Widget class in "src/Bundle/DashboardBundle/Widgets" which implements the "WidgetInterface".
+- Create its Twig template in vendor/integrated/integrated/src/Bundle/DashboardBundle/Resources/views
+- Define the ID, Name, and path to its view
+- Connect to the MongoDB database aleaintegrated and create the widget in the "WidgetConfig" table by defining the attributes ID, Name, and Order (the ID and name must be the same as those of the created class)
+- Add the widget in "src/Bundle/DashboardBundle/Resources/config/services.xml"
+- Clear the cache
 
