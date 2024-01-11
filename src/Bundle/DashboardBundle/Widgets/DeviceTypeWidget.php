@@ -42,11 +42,12 @@ class DeviceTypeWidget implements WidgetInterface
     {
         return $this->view;
     }
+
     public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
         $deviceType = $this->manager->getRepository(AnalyticsData::class)
             ->findOneBy(
-                ['channelID' => $channel->getId(), 'dataType' => $this->id ],
+                ['channelID' => $channel->getId(), 'dataType' => $this->id],
                 ['dateTime' => 'DESC']
             );
         $allDatas = $deviceType->getDatas();
@@ -54,15 +55,26 @@ class DeviceTypeWidget implements WidgetInterface
         $maxElements = 10;
         foreach ($allDatas as &$dateRangeData) {
             if (count($dateRangeData) > $maxElements) {
-                $dateRangeData = $this->processOtherDeviceType($dateRangeData, $maxElements-1);
+                $dateRangeData = $this->processOtherDeviceType($dateRangeData, $maxElements - 1);
             }
         }
+
+        $deviceTypes = $this->capitalizeDeviceTypes($allDatas);
         return [
             "widget" => $this,
-            "deviceType" => $allDatas ?? [],
+            "deviceType" => $deviceTypes ?? [],
         ];
     }
 
+    public function capitalizeDeviceTypes($deviceTypes): ?array
+    {
+        foreach ($deviceTypes as &$period) {
+            foreach ($period as &$deviceType) {
+                $deviceType['device'] = ucfirst($deviceType['device']);
+            }
+        }
+        return $deviceTypes;
+    }
 
     function processOtherDeviceType(array $dateRangeData, $maxElements): array
     {

@@ -57,7 +57,7 @@ class GetDeviceTypeDatasCommand extends Command
 
         foreach ($channels as $channel)
         {
-            $this->output->writeln('- Getting '.$channel->getName().'\'s Trafic Acquisition  datas');
+            $this->output->writeln('- Getting '.$channel->getName().'\'s Device Type  datas');
             $allDatas = $this->getData($channel, $analyticsRequest);
             $analyticsRequest->setDataToDB($channel, $this->dataType, $allDatas);
         }
