@@ -14,10 +14,10 @@ nav.navbar {
         background-position: 50%;
         background-repeat: no-repeat;
         padding: 10px 0;
-        flex: 0 0 36px;
-        background-size: 32px;
+        flex: 0 0 30px;
+        background-size: 30px;
         margin-right: 1rem;
-        height: 36px;
+        height: 30px;
         @include media(max-sm) {
             display: none;
         }
@@ -47,8 +47,8 @@ nav.navbar {
         .dropdown-profile {
             .profile-image {
                 border-radius: 50%;
-                height: 36px;
-                width: 36px;
+                height: 30px;
+                width: 30px;
             }
 
             > a {
@@ -152,7 +152,7 @@ body div#dropdown_overlay {
     display: flex;
     position: relative;
     align-items: center;
-    height: 36px;
+    height: 30px;
 
     .btn {
         margin-right: 1rem;
