@@ -18,6 +18,7 @@ use function Deployer\writeln;
 class WidgetDatabaseCommand extends Command
 {
     private array $widgets;
+    private OutputInterface $output;
 
     public function __construct(
         private readonly DocumentManager $manager,
@@ -39,8 +40,7 @@ class WidgetDatabaseCommand extends Command
     {
         $this
             ->setName('widget:database')
-            ->setDescription('Fill or update WidgetConfig table')
-            ->addOption('update', 'u', null, "Delete table content and refill it");
+            ->setDescription('Fill WidgetConfig table');
     }
 
     /**
@@ -49,30 +49,30 @@ class WidgetDatabaseCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->output = $output;
         $widgets = $this->manager->getRepository(WidgetConfig::class)->findAll();
-        if ($input->hasOption('update')) {
-            foreach ($widgets as $widget)             {
-                $this->manager->remove($widget);
-            }
-            $this->manager->flush();
-        }
-        $this->fillDB($output, $widgets);
+        $this->flushDB($widgets);
+        $this->fillDB();
         return 0;
     }
 
-    private function fillDB(OutputInterface $output, $widgets)
+    private function fillDB()
     {
-        if (count($widgets) == 0) {
-            $order = 1;
-            foreach ($this->widgets as $widget) {
-                $widgetConfig = new WidgetConfig($widget->getId(), $widget->getName(), $order);
-                $this->manager->persist($widgetConfig);
-                $output->writeln('- Adding '.$widget->getName().' to the database');
-                $order++;
-            }
-            $this->manager->flush();
-        } else {
-            $output->writeln('The WidgetConfig table is not empty, run the --u option to refill it');
+        $order = 1;
+        foreach ($this->widgets as $widget) {
+            $widgetConfig = new WidgetConfig($widget->getId(), $widget->getName(), $order);
+            $this->manager->persist($widgetConfig);
+            $this->output->writeln('- Adding ' . $widget->getName() . ' to the database');
+            $order++;
         }
+        $this->manager->flush();
+    }
+
+    private function flushDB($widgets)
+    {
+        foreach ($widgets as $widget) {
+            $this->manager->remove($widget);
+        }
+        $this->manager->flush();
     }
 }
