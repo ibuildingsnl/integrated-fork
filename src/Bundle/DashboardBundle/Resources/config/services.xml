@@ -61,11 +61,5 @@
             <argument key="$urlGenerator" type="service" id="router" />
             <tag name="integrated_dashboard.widget" />
         </service>
-        <service id="Integrated\Bundle\DashboardBundle\Widgets\WorkflowStatusWidget">
-            <argument key="$manager" type="service" id="doctrine_mongodb.odm.document_manager" />
-            <argument key="$solariumClient" type="service" id="solarium.client" />
-            <argument key="$urlGenerator" type="service" id="router" />
-            <tag name="integrated_dashboard.widget" />
-        </service>
     </services>
 </container>
