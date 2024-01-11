@@ -25,6 +25,7 @@ use Integrated\Bundle\DashboardBundle\Widgets\WidgetInterface;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
+use Integrated\Common\Security\Resolver\PermissionResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -53,16 +54,16 @@ class DashboardController extends AbstractController
     public function index(Request $request): Response
     {
         $user = $this->getUser();
-        $allBrands = $this->getBrands();
+        $allowedBrands = $this->getBrands();
         $channel = $this->getChannel($request);
         $widgetAllData = $this->renderWidgets($channel, $user, $request);
-        return $this->renderDashboardView($channel->getId(), $widgetAllData, $allBrands);
+        return $this->renderDashboardView($channel->getId(), $widgetAllData, $allowedBrands);
     }
 
     private function getBrands(): array
     {
         $allBrands = [];
-        $brands = $this->brandRepository->All();
+        $brands = $this->getAllowedChannels();
         foreach ($brands as $brand) {
             $channelId = $this->getChannelId($brand);
             $allBrands[] = [
@@ -74,7 +75,7 @@ class DashboardController extends AbstractController
         return $allBrands;
     }
 
-    private function getChannelId($brand): string
+    private function getChannelId(Brand $brand): string
     {
         $channelLinks = $brand->getChannelLinks();
         $channelId = null;
@@ -114,6 +115,20 @@ class DashboardController extends AbstractController
         return $selectedChannel ?? $this->channelRepository->findAll()[0];
     }
 
+    public function getAllowedChannels(): ?array
+    {
+        $channels = $this->manager->getRepository(Channel::class)->findBy([], ['name' => 1]);
+        $user = $this->getUser();
+        $allowedBrands = [];
+        foreach ($channels as $channel) {
+            $permissions = PermissionResolver::getPermissions($user, $channel->getPermissions());
+            if (($permissions['read'] === true || $permissions['write'] === true) && $channel->getPrimaryDomain() != null) {
+                $allowedBrands[] = $this->getBrandForChannel($channel);
+            }
+        }
+        return $allowedBrands;
+    }
+
     /**
      * @throws MongoDBException
      */
@@ -139,11 +154,11 @@ class DashboardController extends AbstractController
         return $widgetAllData;
     }
 
-    private function renderDashboardView(string $channelId, array $widgetAllData, array $allBrands): Response
+    private function renderDashboardView(string $channelId, array $widgetAllData, array $allowedBrands): Response
     {
         return $this->render('@IntegratedDashboard/index.html.twig', [
             "channelId" => $channelId,
-            "allBrands" => $allBrands,
+            "allBrands" => $allowedBrands,
             "widgetAllData" => $widgetAllData,
         ]);
     }

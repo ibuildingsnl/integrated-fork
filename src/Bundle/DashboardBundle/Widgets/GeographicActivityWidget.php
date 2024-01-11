@@ -63,7 +63,6 @@ class GeographicActivityWidget implements WidgetInterface
             "viewByCountry" => [],
         ];
 
-        //dd($allDatas);
         foreach ($allDatas as $key => $data) {
             if ($data == null) {
                 $result['totalViews'][$key] = "No data found";
@@ -75,7 +74,6 @@ class GeographicActivityWidget implements WidgetInterface
                 $result['viewByCountry'][$key] = $this->getViewByCountry($data['GeographicActivity'], $result['totalViews'][$key]);
             }
         }
-        //dd($result);
         return $result;
     }
 
