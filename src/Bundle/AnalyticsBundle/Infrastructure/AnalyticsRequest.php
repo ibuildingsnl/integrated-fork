@@ -77,10 +77,15 @@ class AnalyticsRequest
      */
     public function getDataFromAnalytics(ChannelInterface $channel, array $requestBody): ?array
     {
-        $this->googleAnalyticsPostRequest($requestBody, $this->getPropertyID($channel));
-        $responseData = $this->getResponse();
-        if ($responseData != null && isset($responseData['rows'])) {
-            return $responseData;
+        $propertyID = $this->getPropertyID($channel) ?? null;
+        if ($propertyID != null)
+        {
+            $this->googleAnalyticsPostRequest($requestBody, $propertyID);
+            $responseData = $this->getResponse();
+            if ($responseData != null && isset($responseData['rows'])) {
+                return $responseData;
+            }
+            return null;
         }
         return null;
     }
@@ -99,7 +104,7 @@ class AnalyticsRequest
     {
         foreach ($this->brandRepository->all() as $brand) {
             if ($brand->hasChannel($channel)) {
-                $propertyId = $brand->profile->analytics;
+                $propertyId = $this->extractGoogleAnalyticsID($brand->profile->analytics);
             }
         }
         if (!isset($propertyId) || $propertyId == null) {
@@ -108,6 +113,11 @@ class AnalyticsRequest
         }
         return $propertyId;
     }
+    function extractGoogleAnalyticsID($input) {
+        preg_match('/\d+/', $input, $matches);
+        return $matches[0] ?? null;
+    }
+
     public function setDataToDB(ChannelInterface $channel, $dataType ,$allDatas): void
     {
         $analyticsData = new AnalyticsData($channel->getId(), $dataType, $allDatas, new DateTimeImmutable());
