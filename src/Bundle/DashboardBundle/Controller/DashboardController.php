@@ -60,21 +60,6 @@ class DashboardController extends AbstractController
         return $this->renderDashboardView($channel->getId(), $widgetAllData, $allowedBrands);
     }
 
-    private function getBrands(): array
-    {
-        $allBrands = [];
-        $brands = $this->getAllowedChannels();
-        foreach ($brands as $brand) {
-            $channelId = $this->getChannelId($brand);
-            $allBrands[] = [
-                'id' => $brand->getId(),
-                'name' => $brand->getName(),
-                'channelId' => $channelId,
-            ];
-        }
-        return $allBrands;
-    }
-
     private function getChannelId(Brand $brand): string
     {
         $channelLinks = $brand->getChannelLinks();
@@ -90,6 +75,34 @@ class DashboardController extends AbstractController
         return $channelId;
     }
 
+    private function getChannel($request): ChannelInterface
+    {
+        $selectedByFormBrand = $request->query->get('integrated_brand_choice');
+        if ($selectedByFormBrand !== null) {
+            $selectedBrand = $this->brandRepository->find($selectedByFormBrand);
+            $channelId = $this->getChannelId($selectedBrand);
+            $selectedChannel = $this->channelRepository->findOneBy(['id' => $channelId]);
+        } else {
+            $selectedChannel = $this->channelContext->getChannel();
+        }
+        return $selectedChannel ?? $this->channelRepository->findAll()[0];
+    }
+
+    private function getBrands(): array
+    {
+        $allBrands = [];
+        $brands = $this->getAllowedBrands();
+        foreach ($brands as $brand) {
+            $channelId = $this->getChannelId($brand);
+            $allBrands[] = [
+                'id' => $brand->getId(),
+                'name' => $brand->getName(),
+                'channelId' => $channelId,
+            ];
+        }
+        return $allBrands;
+    }
+
     public function getBrandForChannel(?ChannelInterface $channel): ?Brand
     {
         if ($channel instanceof ChannelInterface) {
@@ -102,20 +115,7 @@ class DashboardController extends AbstractController
         return null;
     }
 
-    private function getChannel($request): ChannelInterface
-    {
-        $selectedByFormBrand = $request->query->get('integrated_brand_choice');
-       if ($selectedByFormBrand !== null) {
-           $selectedBrand = $this->brandRepository->find($selectedByFormBrand);
-           $channelId = $this->getChannelId($selectedBrand);
-           $selectedChannel = $this->channelRepository->findOneBy(['id' => $channelId]);
-        } else {
-            $selectedChannel = $this->channelContext->getChannel();
-        }
-        return $selectedChannel ?? $this->channelRepository->findAll()[0];
-    }
-
-    public function getAllowedChannels(): ?array
+    public function getAllowedBrands(): ?array
     {
         $channels = $this->manager->getRepository(Channel::class)->findBy([], ['name' => 1]);
         $user = $this->getUser();
@@ -129,9 +129,6 @@ class DashboardController extends AbstractController
         return $allowedBrands;
     }
 
-    /**
-     * @throws MongoDBException
-     */
     private function renderWidgets(ChannelInterface $channel, $user, Request $request): array    {
         $widgetAllData = [];
 
