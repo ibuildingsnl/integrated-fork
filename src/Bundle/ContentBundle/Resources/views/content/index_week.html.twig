@@ -119,7 +119,7 @@
                     {% set calendarState = 'concept' %}
                 {% endif %}
 
-                <a class="quick-edit-link calendar-item {{ calendarState }}" href="#" data-id="{{ content.type_id }}"
+                <a class="calendar-item {{ calendarState }}" href="{{ editLink }}" target="_blank" data-id="{{ content.type_id }}"
                    data-title="Edit {{ type }}" data-time="{{ date(content.pub_time)|date('Hi') }}">
                     <div class="calendar-wrap" style="--color: {{ type.options.color|default('gray') }}">
                         <div class="calendar-item-heading">
