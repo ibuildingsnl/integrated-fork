@@ -54,7 +54,6 @@ class GetTrafficAcquisitionDatasCommand extends Command
         $this->output = $output;
         $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger, $this->brandRepository, $this->channelRepository, $this->manager);
         $channels = $analyticsRequest->getChannels();
-
         foreach ($channels as $channel)
         {
             $this->output->writeln('- Getting '.$channel->getName().'\'s Trafic Acquisition  datas');

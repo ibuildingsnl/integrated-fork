@@ -47,7 +47,7 @@ class AssignedToYouWidget implements WidgetInterface
 
     public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
-        $assignedToYou = $this->getAssignedElement($user);
+        $assignedToYou = $this->getAssignedElement($user, $channel);
         usort($assignedToYou, array($this, 'compareLastChanges'));
         return [
             "widget" => $this,
@@ -56,16 +56,14 @@ class AssignedToYouWidget implements WidgetInterface
         ];
     }
 
-    function getAssignedElement(User $user): ?array
+    function getAssignedElement(User $user, ChannelInterface $channel): ?array
     {
         $query = $this->solariumClient->createSelect();
         $userId = $user->getId();
         $query->createFilterQuery('workflow_assigned_id')
               ->setQuery('facet_workflow_assigned_id:' . $userId . '');
-
-//        // Additional filter to check if pub_active is not true
-//        $query->createFilterQuery('pub_not_active')
-//              ->setQuery('-pub_active:true');
+        $query->createFilterQuery('pub_not_active')
+              ->setQuery('-pub_active:true');
 
         $result = $this->solariumClient->select($query);
         $assignedContent = $result->getDocuments();
@@ -82,11 +80,15 @@ class AssignedToYouWidget implements WidgetInterface
                     ['id' => $solarArticle->type_id]
                 );
 
+            if (!in_array($channel, $article->getChannels())) {
+                continue;
+            }
+
             $assignedElement[] = [
                 'id' => $article->getId(),
-                'title' =>$article->getTitle(),
-                'slug' =>$article->getSlug(),
-                'last_changes' =>$article->getUpdatedAt(),
+                'title' => $article->getTitle(),
+                'slug' => $article->getSlug(),
+                'last_changes' => $article->getUpdatedAt(),
                 'path' => $this->urlGenerator->generate('integrated_content_content_edit', ['id' => $article->getId()]),
                 'workflow_deadline' => $workflow_deadline,
                 'workflow_color_string' => $solarArticle->workflow_color_string ?? null,
