@@ -345,7 +345,7 @@ class MediaController extends AbstractController
          * but when the user clicks on 'Files' we want to query on 'OtherFile'.
          */
         $contentType = $request->query->all('contenttypes');
-        if (!count($contentType) || 'all_files' === $contentType) {
+        if (!\count($contentType) || 'all_files' === $contentType) {
             $contentTypes = [];
             foreach ($contentTypeSelectOptions as $contentTypeSelectOption) {
                 $contentTypes[] = $contentTypeSelectOption->getId();
@@ -448,7 +448,7 @@ class MediaController extends AbstractController
     {
         $current = 'all_files';
         if ($contenttypes = $request->query->all('contenttypes')) {
-            if (count($contenttypes)) {
+            if (\count($contenttypes)) {
                 $current = $contenttypes[0];
             }
         }
@@ -468,7 +468,7 @@ class MediaController extends AbstractController
         $allContentTypes = $this->documentManager->getRepository(ContentType::class)->findAll();
 
         $availableContenttypes = $request->query->all('available_contenttypes');
-        if (!count($availableContenttypes)) {
+        if (!\count($availableContenttypes)) {
             $allContentTypes = array_filter($allContentTypes, function ($item) use ($availableContenttypes) {
                 return \in_array($item->getId(), $availableContenttypes) == true;
             });

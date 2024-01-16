@@ -85,7 +85,7 @@ class ContentProvider
 
         // Filter on ContentType
         $contentType = $request->query->all('contenttypes');
-        if (!count($contentType)) {
+        if (!\count($contentType)) {
             $contentType = [];
             foreach ($contentTypeSelectOptions as $contentTypeSelectOption) {
                 $contentType[] = $contentTypeSelectOption->getId();
