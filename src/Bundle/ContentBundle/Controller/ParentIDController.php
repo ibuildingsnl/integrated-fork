@@ -15,7 +15,6 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Common\Bulk\BulkHandlerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -52,7 +51,7 @@ class ParentIDController extends AbstractController
         $this->translator = $translator;
     }
 
-    public function lookup(Request $request): RedirectResponse|Response
+    public function lookup(Request $request): Response
     {
         $request->query->set('contenttypes', [$request->get('contentType')]);
         $content = $this->contentProvider->getContentFromSolr($request, 1000);

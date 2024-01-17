@@ -171,7 +171,7 @@ class ContentProvider
         };
 
         // If the request query contains a properties parameter we need to fetch all the targets of the relation in order
-        // to filter on thesetype_nametargets.
+        // to filter on these targets.
         $propertiesfilter = $request->query->get('properties');
         if (\is_array($propertiesfilter)) {
             $query
