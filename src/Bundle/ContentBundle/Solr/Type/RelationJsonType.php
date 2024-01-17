@@ -47,7 +47,6 @@ class RelationJsonType implements TypeInterface
         }
 
         $relations = $data->getReferencesByRelationId($options['relation_id']);
-
         $array = [];
 
         foreach ($relations as $key => $relation) {

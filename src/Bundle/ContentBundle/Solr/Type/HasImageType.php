@@ -11,8 +11,10 @@
 
 namespace Integrated\Bundle\ContentBundle\Solr\Type;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
+use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\Type\TypeInterface;
 
@@ -35,9 +37,9 @@ class HasImageType implements TypeInterface
         // Add property for has image / doesn't have image (usefull to make selections with articles for views with image, or to find articles with missing image)
         $found = false;
 
-        $image = $data->getFeaturedImage();
-
-        if (!$image) {
+        if (($data instanceof Article || $data instanceof Taxonomy) && $data->getFeaturedImage()) {
+            $found = true;
+        } else {
             $items = $data->getReferencesByRelationType('embedded');
             if ($items) {
                 foreach ($items as $item) {
@@ -46,8 +48,6 @@ class HasImageType implements TypeInterface
                     }
                 }
             }
-        } else {
-            $found = true;
         }
 
         if ($found) {

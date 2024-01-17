@@ -17,6 +17,7 @@ use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\RelationType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -87,8 +88,6 @@ class RelationController extends AbstractController
 
     /**
      * Display a form to edit an existing Relation document.
-     *
-     * @return Response
      */
     public function edit(Relation $relation): Response
     {
@@ -104,10 +103,8 @@ class RelationController extends AbstractController
 
     /**
      * Edits an existing Relation document.
-     *
-     * @return Response|RedirectResponse
      */
-    public function update(Request $request, Relation $relation): Response
+    public function update(Request $request, Relation $relation): Response|RedirectResponse
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 

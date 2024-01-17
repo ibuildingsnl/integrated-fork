@@ -172,8 +172,6 @@ class TailwindFormExtension extends AbstractExtension
 
     /**
      * Returns the value of true or false to show or hide Labels.
-     *
-     * @param bool $showLabel true or false
      */
     public function getShowLabel()
     {
@@ -192,8 +190,6 @@ class TailwindFormExtension extends AbstractExtension
 
     /**
      * Returns the value of Icon.
-     *
-     * @param bool $icon true or false
      */
     public function getIcon()
     {
@@ -212,8 +208,6 @@ class TailwindFormExtension extends AbstractExtension
 
     /**
      * Returns the value of State.
-     *
-     * @param bool $state true or false
      */
     public function getState()
     {
@@ -232,8 +226,6 @@ class TailwindFormExtension extends AbstractExtension
 
     /**
      * Returns the value of true or false to show or hide Placeholders.
-     *
-     * @param bool $showPlaceholder true or false
      */
     public function getShowPlaceholder()
     {

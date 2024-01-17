@@ -25,7 +25,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class IntegratedUserBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         $mapping = [
             __DIR__.'/Resources/config/mapping/doctrine/' => 'Integrated\\Bundle\\UserBundle\\Model',

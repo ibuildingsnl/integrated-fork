@@ -5,10 +5,14 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_brand.brand.odm.repository" class="Doctrine\ODM\MongoDB\Repository\DocumentRepository">
             <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
             <argument type="string">\Integrated\Bundle\BrandBundle\Document\Brand</argument>
         </service>
+
         <service id="integrated_brand.brand.repository" class="Integrated\Bundle\BrandBundle\Infrastructure\ODMBrandRepository">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_brand.brand.odm.repository" />
@@ -19,13 +23,6 @@
             <argument type="service" id="integrated_brand.link_type.registry" />
             <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
             <argument type="service" id="integrated_content.services.flusher"/>
-
-            <tag name="controller.service_arguments" />
-            <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="Integrated\Bundle\BrandBundle\Controller\ChannelLinkController">

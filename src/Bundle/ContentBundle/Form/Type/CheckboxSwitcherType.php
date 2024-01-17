@@ -57,7 +57,7 @@ class CheckboxSwitcherType extends CheckboxType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'checkbox_switcher';
     }

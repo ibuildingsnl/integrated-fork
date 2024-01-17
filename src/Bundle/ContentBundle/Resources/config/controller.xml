@@ -40,17 +40,10 @@
             <tag name="container.service_subscriber" />
         </service>
 
-        <service id="Integrated\Bundle\ContentBundle\Controller\ChannelController">
+        <service id="Integrated\Bundle\ContentBundle\Controller\ChannelController" autowire="true" autoconfigure="true">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_content.services.search.content.referenced" />
             <argument type="service" id="event_dispatcher" />
-
-            <tag name="controller.service_arguments" />
-            <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Controller\MediaController">

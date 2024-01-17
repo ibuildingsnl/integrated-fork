@@ -320,8 +320,6 @@ class ContentController extends AbstractController
 
     /**
      * Update a existing document.
-     *
-     * @return Response
      */
     public function edit(Request $request, Content $content): Response
     {
@@ -478,9 +476,9 @@ class ContentController extends AbstractController
     {
         $relations = [];
 
-        foreach ($form->getData()->getRelations()->toArray() as $relation) {
+        foreach ($form->getData()->getRelations() as $relation) {
             $references = [];
-            foreach ($relation->getReferences()->toArray() as $imageObject) {
+            foreach ($relation->getReferences() as $imageObject) {
                 $references[$imageObject->getId()] = $imageObject;
             }
             $relations[$relation->getRelationId()] = $references;
@@ -491,8 +489,6 @@ class ContentController extends AbstractController
 
     /**
      * Delete a document.
-     *
-     * @return Response
      */
     public function delete(Request $request, Content $content): Response
     {

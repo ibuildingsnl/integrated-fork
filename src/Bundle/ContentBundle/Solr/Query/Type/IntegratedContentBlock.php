@@ -14,6 +14,7 @@ namespace Integrated\Bundle\ContentBundle\Solr\Query\Type;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Common\Solr\Search\Type\AbstractType;
+use Solarium\Component\Facet\Field;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -49,9 +50,9 @@ class IntegratedContentBlock extends AbstractType
         $facet = $query->getFacetSet();
 
         foreach ($options['facets'] as $field => $value) {
-            $facet
-                ->createFacetField($field)
-                ->setField($field)
+            /** @var Field $facetField */
+            $facetField = $facet->createFacetField($field);
+            $facetField->setField($field)
                 ->setMinCount(1)
                 ->getLocalParameters()->setExclude($field);
 
@@ -64,9 +65,9 @@ class IntegratedContentBlock extends AbstractType
         }
 
         foreach ($options['facets_search_selection'] as $field => $value) {
-            $facet
-                ->createFacetField($field.'_search_selection')
-                ->setField($field)
+            /** @var Field $facetField */
+            $facetField = $facet->createFacetField($field.'_search_selection');
+            $facetField->setField($field)
                 ->setMinCount(1);
 
             if ($value) {
@@ -82,8 +83,9 @@ class IntegratedContentBlock extends AbstractType
         }
 
         foreach ($this->manager->getRepository(Relation::class)->findAll() as $relation) {
-            $facet->createFacetField($name = 'relation_'.$relation->getId().'_search_selection')
-                ->setField($field = 'facet_'.$relation->getId());
+            /** @var Field $facetField */
+            $facetField = $facet->createFacetField($name = 'relation_'.$relation->getId().'_search_selection');
+            $facetField->setField($field = 'facet_'.$relation->getId());
 
             if ($value = $options['relation_search_selection'][$relation->getId()] ?? []) {
                 $query->createFilterQuery($name)

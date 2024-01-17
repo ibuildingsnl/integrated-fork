@@ -30,12 +30,12 @@
             <factory service="integrated_installer.doctrine.migrations.dependency_factory" method="getMigrationFactory"/>
         </service>
 
-        <service id="integrated_installer.doctrine.migrations.container_aware_migrations_factory"
-                 class="Integrated\Bundle\InstallerBundle\Doctrine\ContainerAwareMigrationFactory"
+        <service id="integrated_installer.doctrine.migrations.entity_manager_aware_migrations_factory"
+                 class="Integrated\Bundle\InstallerBundle\Doctrine\EntityManagerAwareMigrationFactory"
                  decorates="integrated_installer.doctrine.migrations.migrations_factory"
         >
-            <argument type="service" id="integrated_installer.doctrine.migrations.container_aware_migrations_factory.inner" />
-            <argument type="service" id="service_container" />
+            <argument type="service" id="integrated_installer.doctrine.migrations.entity_manager_aware_migrations_factory.inner" />
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
         </service>
 
     </services>

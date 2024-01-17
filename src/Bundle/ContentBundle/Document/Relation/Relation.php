@@ -145,8 +145,6 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @param string $type
-     *
      * @return $this
      */
     public function setLocation($location)

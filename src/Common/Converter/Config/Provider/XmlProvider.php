@@ -151,7 +151,7 @@ class XmlProvider extends AbstractFileProvider
     /**
      * Load the file into aSimpleXMLElement.
      *
-     * @return SimpleXMLElement
+     * @return \SimpleXMLElement
      *
      * @trows RuntimeException if $file can not be read or parsed
      */

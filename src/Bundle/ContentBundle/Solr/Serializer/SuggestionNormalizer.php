@@ -160,7 +160,7 @@ class SuggestionNormalizer implements NormalizerInterface
     private function getImage(DocumentInterface $document)
     {
         if (isset($document['file'])) {
-            return $this->imageExtension->image($document['file'])->zoomCrop(100, 100)->jpeg();
+            return $this->imageExtension->image($document['file'])->zoomCrop(100, 100, '0xffffff', 0, 0)->jpeg();
         }
 
         return null;

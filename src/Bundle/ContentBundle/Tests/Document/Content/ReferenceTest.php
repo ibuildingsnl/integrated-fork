@@ -50,7 +50,7 @@ class ReferenceTest extends TestCase
         $this->taxonomy->addRelation($relation);
 
         $this->assertCount(0, $this->taxonomy->getReferencesByRelationId($relation->getRelationId()));
-        $this->assertFalse($this->taxonomy->getReferenceByRelationId($relation->getRelationId()));
+        $this->assertNull($this->taxonomy->getReferenceByRelationId($relation->getRelationId()));
 
         // test published
 
@@ -65,11 +65,11 @@ class ReferenceTest extends TestCase
 
         $this->assertCount(1, $this->taxonomy->getReferencesByRelationId($relation->getRelationId()));
         $this->assertSame($reference2, $this->taxonomy->getReferenceByRelationId($relation->getRelationId()));
-        $this->assertEquals([$reference2], $this->taxonomy->getReferencesByRelationId($relation->getRelationId())->getValues());
+        $this->assertEquals([1 => $reference2], $this->taxonomy->getReferencesByRelationId($relation->getRelationId()));
 
         // test published parameter
 
         $this->assertCount(2, $this->taxonomy->getReferencesByRelationId($relation->getRelationId(), false));
-        $this->assertEquals([$reference1, $reference2], $this->taxonomy->getReferencesByRelationId($relation->getRelationId(), false)->getValues());
+        $this->assertEquals([$reference1, $reference2], $this->taxonomy->getReferencesByRelationId($relation->getRelationId(), false));
     }
 }

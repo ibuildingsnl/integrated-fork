@@ -20,7 +20,6 @@ use Integrated\Bundle\ThemeBundle\Scraper\Scraper as ScraperService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -131,8 +130,6 @@ class ScraperController extends AbstractController
 
     /**
      * Creates a form to edit a Scraper.
-     *
-     * @return FormInterface
      */
     protected function createEditForm(Scraper $scraper): FormInterface
     {
@@ -150,9 +147,6 @@ class ScraperController extends AbstractController
         return $form;
     }
 
-    /**
-     * @return FormInterface
-     */
     protected function createNewForm(Scraper $scraper): FormInterface
     {
         $form = $this->createForm(

@@ -18,6 +18,7 @@ use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\WorkflowBundle\Solr\Extension\WorkflowExtension;
 use Solarium\Client;
+use Solarium\Component\Result\Facet\Field;
 use Solarium\QueryType\Select\Query\FilterQuery;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\HttpFoundation\Request;
@@ -83,8 +84,8 @@ class ContentProvider
         };
 
         // Filter on ContentType
-        $contentType = $request->query->get('contenttypes');
-        if (null === $contentType) {
+        $contentType = $request->query->all('contenttypes');
+        if (!\count($contentType)) {
             $contentType = [];
             foreach ($contentTypeSelectOptions as $contentTypeSelectOption) {
                 $contentType[] = $contentTypeSelectOption->getId();
@@ -121,6 +122,7 @@ class ContentProvider
 
         $resultSet = $this->client->select($query);
 
+        /** @var Field $facet */
         $facet = $resultSet->getFacetSet()->getFacet('pub_created');
 
         $facetValues = $facet->getValues();
@@ -160,7 +162,7 @@ class ContentProvider
                 }
             }
         } else {
-            $contentType = $request->query->get('contenttypes');
+            $contentType = $request->query->all('contenttypes');
         }
 
         $helper = $query->getHelper();
@@ -378,10 +380,10 @@ class ContentProvider
         if (\is_array($contentType) && \count($contentType) === 1) {
             $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
         } else {
-            $availableContenttypes = $request->query->get('available_contenttypes');
+            $availableContenttypes = $request->query->all('available_contenttypes');
             if (\is_array($availableContenttypes) && \count($availableContenttypes)) {
                 $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $availableContenttypes))]);
-            } elseif (\is_array($contentType)) {
+            } elseif (\is_array($contentType) && \count($contentType)) {
                 $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
             }
         }

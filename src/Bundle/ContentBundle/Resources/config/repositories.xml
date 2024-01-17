@@ -18,6 +18,9 @@
             <argument type="string">\Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection</argument>
         </service>
 
+        <service id="Integrated\Bundle\ContentBundle\Document\Content\ContentRepository" autoconfigure="true" autowire="true">
+        </service>
+
     </services>
 
 </container>

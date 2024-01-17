@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
@@ -24,6 +25,13 @@ use Solarium\Core\Query\DocumentInterface;
  */
 class ContentRepository extends DocumentRepository
 {
+    public function __construct(private DocumentManager $manager)
+    {
+        $uow = $manager->getUnitOfWork();
+        $classMetaData = $manager->getClassMetadata(Content::class);
+        parent::__construct($manager, $uow, $classMetaData);
+    }
+
     /**
      * Get items which have the current document linked.
      *

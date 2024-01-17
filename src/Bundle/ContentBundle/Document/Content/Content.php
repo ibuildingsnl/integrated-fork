@@ -351,24 +351,22 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * @param string $relationId
      * @param bool   $published
-     * @param string $channelId
-     *
-     * @return ArrayCollection
      */
-    public function getReferencesByRelationId($relationId, $published = true, ChannelInterface $channel = null): ArrayCollection|array
+    public function getReferencesByRelationId($relationId, $published = true, ChannelInterface $channel = null): array
     {
         foreach ($this->getRelations() as $relation) {
             if ($relation instanceof RelationInterface &&
                 $relation->getRelationId() == $relationId &&
                 $references = $relation->getReferences()
             ) {
-                return $references->filter(fn (ContentInterface $content) => $content instanceof self &&
-                    (!$published || $content->isPublished()) &&
-                    (!$channel || $content->hasChannel($channel)));
+                return array_filter($references, function (ContentInterface $content) use ($published, $channel) {
+                    return (!$published || !$content instanceof PublishableInterface || $content->isPublished()) &&
+                    (!$channel || !$content instanceof ChannelableInterface || $content->hasChannel($channel));
+                });
             }
         }
 
-        return new ArrayCollection();
+        return [];
     }
 
     /**
@@ -380,7 +378,9 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     public function getReferenceByRelationId($relationId, $published = true)
     {
         if ($references = $this->getReferencesByRelationId($relationId, $published)) {
-            return $references->first();
+            if (\count($references)) {
+                return reset($references);
+            }
         }
 
         return null;

@@ -15,6 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Bulk\DeleteHandler;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\ContentRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
@@ -84,6 +85,7 @@ class MediaController extends AbstractController
         protected AuthorizationCheckerInterface $authorizationChecker,
         private MediaGalleryUploadFile $mediaGalleryUploadFile,
         private MediaGalleryEditFile $mediaGalleryEditFile,
+        private ContentRepository $contentRepository,
     ) {
     }
 
@@ -126,14 +128,10 @@ class MediaController extends AbstractController
         $requestCopy = clone $requestSource;
 
         // Todo: Update this code when the contentprovides is updated
-        $givenContentType = $requestCopy->get('contenttypes');
+        $givenContentType = $requestCopy->query->all('contenttypes');
         if (\is_array($givenContentType) && \count($givenContentType) > 0) {
             $givenContentType = $givenContentType[0];
-        }
-        if ($givenContentType !== 'all_files' && $givenContentType !== null) {
             $requestCopy->query->set('contenttypes', [$givenContentType]);
-        } else {
-            $requestSource->query->set('contenttypes', 'all_files');
         }
 
         $requestCopy = $this->setAndGetMediaType($requestCopy, $contentTypeSelectOptions);
@@ -273,11 +271,11 @@ class MediaController extends AbstractController
     {
         $usesByTitles = [];
         foreach ($idSelection as $id) {
-            $content = $this->documentManager->getRepository(Content::class)->find($id);
+            $content = $this->contentRepository->find($id);
 
             if ($content) {
                 // get the usedby, is there an easier way?
-                $usedByItems = $this->documentManager->getRepository(Content::class)
+                $usedByItems = $this->contentRepository
                     ->getUsedBy(new ArrayCollection([$content]), null, null, false)
                     ->getQuery()
                     ->execute();
@@ -346,8 +344,8 @@ class MediaController extends AbstractController
          * because with the user selection 'Alle Mediafiles' we want to query for the class: File.
          * but when the user clicks on 'Files' we want to query on 'OtherFile'.
          */
-        $contentType = $request->query->get('contenttypes');
-        if (null === $contentType || 'all_files' === $contentType) {
+        $contentType = $request->query->all('contenttypes');
+        if (!\count($contentType) || 'all_files' === $contentType) {
             $contentTypes = [];
             foreach ($contentTypeSelectOptions as $contentTypeSelectOption) {
                 $contentTypes[] = $contentTypeSelectOption->getId();
@@ -448,6 +446,13 @@ class MediaController extends AbstractController
 
     private function getContentTypeFilterOptions(Request $request): array
     {
+        $current = 'all_files';
+        if ($contenttypes = $request->query->all('contenttypes')) {
+            if (\count($contenttypes)) {
+                $current = $contenttypes[0];
+            }
+        }
+
         $filter = [
             'options' => [
                 'all_files' => [
@@ -455,15 +460,15 @@ class MediaController extends AbstractController
                     'name' => 'Alle mediafiles',
                 ],
             ],
-            'current' => $request->query->get('contenttypes'),
+            'current' => $current,
             'default' => 'All mediafiles',
         ];
 
         $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
         $allContentTypes = $this->documentManager->getRepository(ContentType::class)->findAll();
 
-        $availableContenttypes = $request->get('available_contenttypes', []);
-        if (!empty($availableContenttypes)) {
+        $availableContenttypes = $request->query->all('available_contenttypes');
+        if (!\count($availableContenttypes)) {
             $allContentTypes = array_filter($allContentTypes, function ($item) use ($availableContenttypes) {
                 return \in_array($item->getId(), $availableContenttypes) == true;
             });

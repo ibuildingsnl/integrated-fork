@@ -25,7 +25,6 @@ use Integrated\Bundle\PageBundle\Services\RouteCache;
 use Knp\Component\Pager\PaginatorInterface;
 use MongoDB\BSON\Regex;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

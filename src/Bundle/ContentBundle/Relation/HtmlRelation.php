@@ -29,7 +29,9 @@ class HtmlRelation
 
         $xpath = new \DOMXPath($document);
         foreach ($xpath->query('//img[@data-integrated-id]') as $elm) {
-            yield $elm->getAttribute('data-integrated-id');
+            if ($elm instanceof \DOMElement) {
+                yield $elm->getAttribute('data-integrated-id');
+            }
         }
     }
 }

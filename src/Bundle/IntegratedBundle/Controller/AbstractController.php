@@ -49,7 +49,7 @@ class AbstractController extends BaseAbstractController
         return $this->container->get('translator');
     }
 
-    protected function getUser()
+    protected function getUser(): ?User
     {
         $user = parent::getUser();
         if ($user && !$user instanceof User) {
