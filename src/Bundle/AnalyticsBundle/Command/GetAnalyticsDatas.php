@@ -48,26 +48,26 @@ class GetAnalyticsDatas extends Command
         $this->output = $output;
         $finder = new Finder();
         $finder->files()->in(__DIR__)->name('*Command.php');
-        $commandsToRun = [];
 
-        foreach ($finder as $file) {
+        foreach ($finder as $file)
+        {
             $className = 'Integrated\Bundle\AnalyticsBundle\Command\\' . $file->getBasename('.php');
-            if ($className != GetAnalyticsDatas::class) {
-                $commandsToRun[] = $className;
+            if ($className == GetAnalyticsDatas::class) {
+                continue;
             }
-        }
-        foreach ($commandsToRun as $commandClass) {
+
             try {
-                $this->output->writeln("<info> Running '$commandClass' command\n</info>");
-                $command = $this->container->get($commandClass);
-                $commandInput = new ArrayInput([]);
-                $command->run($commandInput, $output);
+                $this->output->writeln("<info> Running '$className' command\n</info>");
+                $command = $this->container->get($className);
+                $command->run(new ArrayInput([]), $output);
             } catch (\Exception $e) {
-                $output->writeln("<error>Error executing command '$commandClass': " . $e->getMessage()."</error>");
-                $this->logger->error("Error executing command '$commandClass': " . $e->getMessage());
+                $output->writeln("<error>Error executing command '$className': " . $e->getMessage()."</error>");
+                $this->logger->error("Error executing command '$className': " . $e->getMessage());
             }
             $this->output->writeln("\n\n");
         }
+
         return Command::SUCCESS;
     }
+
 }

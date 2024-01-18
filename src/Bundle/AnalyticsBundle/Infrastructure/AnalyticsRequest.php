@@ -3,6 +3,7 @@
 namespace Integrated\Bundle\AnalyticsBundle\Infrastructure;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\Persistence\ObjectRepository;
 use Google\Client as GoogleApiClient;
 use GuzzleHttp\Client as GuzzleClient;
@@ -17,14 +18,15 @@ class AnalyticsRequest
 {
 
     public function __construct(
-        private readonly string $credential,
-        private readonly LoggerInterface $logger,
+        private readonly string           $credential,
+        private readonly LoggerInterface  $logger,
         private readonly BrandRepository  $brandRepository,
         private readonly ObjectRepository $channelRepository,
         private readonly DocumentManager  $manager,
     )
     {
     }
+
     private string $response;
 
     public function getResponse()
@@ -66,8 +68,7 @@ class AnalyticsRequest
             ]);
             $responseBody = $response->getBody()->getContents();
         } catch (GuzzleException $e) {
-            // Handle other Guzzle exceptions here
-            $this->logger->error('Get Analytics Error: ' . $e->getMessage(). '\n');
+            $this->logger->error('Get Analytics Error: ' . $e->getMessage() . '\n');
         }
         $this->response = $responseBody ?? "";
     }
@@ -100,6 +101,7 @@ class AnalyticsRequest
         }
         return $channels;
     }
+
     public function getPropertyID(ChannelInterface $channel): ?string
     {
         foreach ($this->brandRepository->all() as $brand) {
@@ -108,17 +110,22 @@ class AnalyticsRequest
             }
         }
         if (!isset($propertyId) || $propertyId == null) {
-            $this->logger->error($channel->getName(). ' Error: no property ID found');
+            $this->logger->error($channel->getName() . ' Error: no property ID found');
             return null;
         }
         return $propertyId;
     }
-    function extractGoogleAnalyticsID($input) {
+
+    function extractGoogleAnalyticsID($input): ?string
+    {
         preg_match('/\d+/', $input, $matches);
         return $matches[0] ?? null;
     }
 
-    public function setDataToDB(ChannelInterface $channel, $dataType ,$allDatas): void
+    /**
+     * @throws MongoDBException
+     */
+    public function setDataToDB(ChannelInterface $channel, $dataType, $allDatas): void
     {
         $analyticsData = new AnalyticsData($channel->getId(), $dataType, $allDatas, new DateTimeImmutable());
         $this->manager->persist($analyticsData);
