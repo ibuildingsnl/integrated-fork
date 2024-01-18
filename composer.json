@@ -134,9 +134,9 @@
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-release/0.29": "0.29.x-dev",
             "dev-release/0.30": "0.30.x-dev",
-            "dev-release/0.80": "0.80.x-dev"
+            "dev-release/0.80": "0.80.x-dev",
+            "dev-release/0.29": "0.90.x-dev"
         }
     }
 }
