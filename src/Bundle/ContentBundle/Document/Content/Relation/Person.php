@@ -72,12 +72,9 @@ class Person extends Relation
     #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'sidebar')]
     protected $nickname;
 
-    /**
-     * @var string
-     */
     #[Slug(fields: ['firstName', 'lastName'])]
     #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
-    protected $slug;
+    protected ?string $slug = null;
 
     /**
      * @var Collection Job[]

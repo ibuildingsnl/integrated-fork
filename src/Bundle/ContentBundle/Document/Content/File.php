@@ -24,9 +24,6 @@ use Integrated\Common\Form\Mapping\Attributes as Type;
 #[Type\Document('File')]
 class File extends Content implements FileInterface
 {
-    /**
-     * @var string
-     */
     #[Slug(fields: ['title'])]
     #[Type\Field(options: [
         'priority' => 500,
@@ -36,7 +33,7 @@ class File extends Content implements FileInterface
             'icon' => 'link',
         ],
     ], location: 'sidebar')]
-    protected $slug;
+    protected ?string $slug = null;
 
     /**
      * @var StorageInterface

@@ -29,7 +29,7 @@
                 {% if app.request.query.get('integrated_website_edit') and layoutEditable %}
                     <a href="javascript:;" class="integrated-website-toolbar-button btn btn-green"
                        data-action="integrated-website-page-save"
-                       {% if app.request.attributes.get('page').id|default %}data-id="{{ app.request.attributes.get('page').id }}" {% endif %}
+                       {% if page.id|default %}data-id="{{ page.id }}" {% endif %}
                        data-target="{{ path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 0})) }}">
                         {% trans %}Save page{% endtrans %}
                     </a>
@@ -52,11 +52,11 @@
                                class="integrated-website-toolbar-button btn btn-green">
                                 {% trans %}Edit page{% endtrans %}
                             </a>
-                            {% if app.request.attributes.get('page').type == 'content_type_page' %}
+                            {% if page.type == 'content_type_page' %}
                                 <a href="{{ path('integrated_page_content_type_page_edit', {'id': app.request.attributes.get('page').id}) }}"
                                    class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>
                             {% else %}
-                                <a href="{{ path('integrated_page_page_edit', {'id': app.request.attributes.get('page').id}) }}"
+                                <a href="{{ path('integrated_page_page_edit', {'id': page.id}) }}"
                                    class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>
                             {% endif %}
                             <a href="{{ path('integrated_page_page_index') }}"

@@ -31,9 +31,6 @@ class Article extends Content implements RankableInterface
 {
     use RankTrait;
 
-    /**
-     * @var string
-     */
     #[Type\Field(options: [
         'priority' => 990,
         'attr' => [
@@ -42,7 +39,7 @@ class Article extends Content implements RankableInterface
             'style' => 'horizontal',
         ],
     ], location: 'editor')]
-    protected $title;
+    protected ?string $title = '';
 
     /**
      * @var string
@@ -57,12 +54,9 @@ class Article extends Content implements RankableInterface
     ], location: 'editor')]
     protected $content;
 
-    /**
-     * @var string
-     */
     #[Slug(fields: ['title'])]
     #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
-    protected $slug;
+    protected ?string $slug = null;
 
     /**
      * @var string
@@ -182,7 +176,7 @@ class Article extends Content implements RankableInterface
 
     public function getTitle(): string
     {
-        return $this->title;
+        return (string) $this->title;
     }
 
     public function setTitle(string $title): void
@@ -200,7 +194,7 @@ class Article extends Content implements RankableInterface
         $this->content = $content;
     }
 
-    public function getSlug(): string
+    public function getSlug(): ?string
     {
         return $this->slug;
     }

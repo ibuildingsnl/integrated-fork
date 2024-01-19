@@ -54,12 +54,9 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      */
     protected $primaryChannel;
 
-    /**
-     * @var string
-     */
     #[Slug(fields: ['id'])]
     #[Type\Field(options: ['attr' => ['style' => 'sidebar']], location: 'sidebar')]
-    protected $slug;
+    protected ?string $slug = null;
 
     /**
      * @var string the type of the ContentType
