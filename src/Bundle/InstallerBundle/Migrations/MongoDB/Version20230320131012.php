@@ -26,9 +26,9 @@ final class Version20230320131012 extends AbstractMigration
     {
         $migrator = new ImageMigrator($db);
 
-        $migrator->move(Channel::class, 'logo');
-        $migrator->move(Company::class, 'logo');
-        $migrator->move(Person::class, 'picture');
+        $migrator->move('channel', null, 'logo');
+        $migrator->move('content', Company::class, 'logo');
+        $migrator->move('content', Person::class, 'picture');
     }
 
     public function down(Database $db)

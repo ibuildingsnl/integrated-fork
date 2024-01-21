@@ -13,7 +13,7 @@
                 </a>
            {% else %}
                {% set queryParams = [] %}
-               {% set queryParams = queryParams|merge({'available_contenttypes': app.request.get('available_contenttypes'), page: 1}) %}
+               {% set queryParams = queryParams|merge({'available_contenttypes': app.request.all('available_contenttypes'), page: 1}) %}
 
                <a href="{{ path(app.request.attributes.get('_route'), queryParams) }}" tabindex="-1">
                    <i class="iconoir-folder"></i>
