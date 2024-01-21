@@ -3,7 +3,6 @@
 namespace Integrated\Bundle\InstallerBundle\Migrations\MongoDB;
 
 use AntiMattr\MongoDB\Migrations\AbstractMigration;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Company;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\InstallerBundle\Migrator\ImageMigrator;
