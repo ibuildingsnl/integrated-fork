@@ -25,7 +25,7 @@
             <argument>%env(resolve:FACEBOOK_APP_SECRET)%</argument>
             <argument>https://www.facebook.com/v18.0</argument>
             <argument>https://graph.facebook.com/v18.0</argument>
-            <argument>https://localhost.e-active.nl/admin/connector/config/external/return</argument>
+            <argument>https://bib.testalea-integrated.e-activesites.nl/admin/connector/config/external/return</argument>
             <argument type="service" id="cache.app"/>
         </service>
 
