@@ -38,12 +38,9 @@ class Company extends Relation
     ], location: 'editor')]
     protected $name;
 
-    /**
-     * @var string
-     */
     #[Slug(fields: ['name'])]
     #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
-    protected $slug;
+    protected ?string $slug = null;
 
     /**
      * @var Image

@@ -39,7 +39,7 @@
         <button class="button_enable_list_view toggle_view list switcher mr-2"><i
                 class="iconoir-list"></i></button>
 
-        {% if app.request.query.get('available_contenttypes')|length != 1 %}
+        {% if app.request.query.all('available_contenttypes')|length != 1 %}
             <ul class="mr-2">
                 <li class="dropdown close-outside" data-underlay="no">
                     <a data-toggle="dropdown" role="button" id="sorting-list"

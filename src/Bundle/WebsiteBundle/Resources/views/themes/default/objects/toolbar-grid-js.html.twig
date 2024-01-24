@@ -700,7 +700,7 @@
             var pageId = document.querySelector('[data-action="integrated-website-page-save"]').dataset.id;
 
             createIframe(
-                '{{ path('integrated_block_inline_text_block_create', {'id': 'page-id'}) }}'.replace('page-id', pageId),
+                '{{ path('integrated_block_inline_text_block_new', {'id': 'page-id'}) }}'.replace('page-id', pageId),
                 '{% trans %}New block{% endtrans %}');
 
             hideLoader();

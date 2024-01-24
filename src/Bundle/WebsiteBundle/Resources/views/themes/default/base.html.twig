@@ -16,6 +16,9 @@
     {% block stylesheets %}
         {{ integrated_stylesheets() }}
     {% endblock %}
+
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 </head>
 <body class="integrated-block-page-builder">
 
@@ -39,14 +42,6 @@
         {{ integrated_grid('main') }}
     {% endblock %}
 </div>
-
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-<script type="text/javascript" src="{{ asset('bundles/integratedcontent/components/handlebars/handlebars.min.js') }}"></script>
-
-{% if app.request.attributes.get('integrated_menu_edit') %}
-    {{ include('@IntegratedWebsite/handlebars/menu.html.twig') }}
-{% endif %}
 
 {% block javascripts %}
     {{ integrated_javascripts() }}

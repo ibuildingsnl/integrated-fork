@@ -46,7 +46,7 @@ class Product extends Content
      */
     #[Slug(fields: ['title'])]
     #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
-    protected $slug;
+    protected ?string $slug = null;
 
     /**
      * @var string

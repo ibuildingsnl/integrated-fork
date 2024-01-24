@@ -3,7 +3,6 @@
 namespace Integrated\Bundle\InstallerBundle\Migrations\MongoDB;
 
 use AntiMattr\MongoDB\Migrations\AbstractMigration;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Company;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\InstallerBundle\Migrator\ImageMigrator;
@@ -26,9 +25,9 @@ final class Version20230320131012 extends AbstractMigration
     {
         $migrator = new ImageMigrator($db);
 
-        $migrator->move(Channel::class, 'logo');
-        $migrator->move(Company::class, 'logo');
-        $migrator->move(Person::class, 'picture');
+        $migrator->move('channel', null, 'logo');
+        $migrator->move('content', Company::class, 'logo');
+        $migrator->move('content', Person::class, 'picture');
     }
 
     public function down(Database $db)

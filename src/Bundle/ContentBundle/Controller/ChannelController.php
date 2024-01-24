@@ -114,21 +114,7 @@ class ChannelController extends AbstractController
         ]);
     }
 
-    public function edit(Channel $channel): Response
-    {
-        if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $form = $this->createEditForm($channel);
-
-        return $this->render('@IntegratedContent/channel/edit.html.twig', [
-            'form' => $form->createView(),
-            'channel' => $channel,
-        ]);
-    }
-
-    public function update(Request $request, Channel $channel): Response|RedirectResponse
+    public function edit(Channel $channel, Request $request): Response
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();

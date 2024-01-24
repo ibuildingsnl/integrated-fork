@@ -65,7 +65,7 @@ class ChannelLinkController extends AbstractController
 
             $this->flusher->flush(); // flush here too, because it doesn't get a uuid on create
             $this->dispatcher->dispatch(new BrandUpdatedEvent($brand));
-            $this->dispatcher->dispatch(new ChannelEvent($channel), Events::CHANNEL_UPDATED);
+            $this->dispatcher->dispatch(new ChannelEvent($link->channel), Events::CHANNEL_UPDATED);
 
             $this->flusher->flush();
             $this->addFlash('success', $link->type->name.' added');
