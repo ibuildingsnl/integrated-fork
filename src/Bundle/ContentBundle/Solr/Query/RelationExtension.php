@@ -15,6 +15,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Common\Solr\Search\Type\AbstractTypeExtension;
+use Solarium\Component\Facet\Field;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -36,6 +37,7 @@ class RelationExtension extends AbstractTypeExtension
         };
 
         foreach ($this->manager->getRepository(Relation::class)->findAll() as $relation) {
+            /** @var Field $facetField */
             $facetField = $facet->createFacetField($name = 'relation_'.$relation->getId());
             $facetField->setField($field = 'facet_'.$relation->getId())
                 ->getLocalParameters()->setExclude($name);

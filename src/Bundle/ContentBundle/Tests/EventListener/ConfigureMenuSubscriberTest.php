@@ -146,7 +146,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
     {
         $menu = $this->getValidMenu($this->event);
 
-        /** @var \Knp\Menu\ItemInterface|MockObject $menuContent */
+        /** @var \Knp\Menu\ItemInterface|MockObject $menuManage */
         $menuManage = $this->createMock('Knp\Menu\ItemInterface');
 
         $menu
@@ -225,7 +225,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
     {
         $menu = $this->getValidMenu($this->event);
 
-        /** @var \Knp\Menu\ItemInterface|MockObject $menuContent */
+        /** @var \Knp\Menu\ItemInterface|MockObject $menuManage */
         $menuManage = $this->createMock('Knp\Menu\ItemInterface');
 
         $menu
