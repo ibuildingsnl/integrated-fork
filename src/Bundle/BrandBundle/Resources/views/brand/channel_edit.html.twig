@@ -35,6 +35,15 @@
         <div class="editor-wrapper">
             <div class="page-title">
                 <h1 class="heading">{% trans %}Edit {% endtrans %} {{ channel.name }}</h1>
+                <ul class="create">
+                    {% if link|default and link.type.connector %}
+                        <li>
+                        <a class="btn btn-create-new" href="{{ path('integrated_content_brand_manage_connector', {'id': brand.id, 'link': link.id}) }}" title="{% trans %}Connector{% endtrans %}">
+                            {% trans %}Manage{% endtrans %} {% trans %}Connector{% endtrans %}
+                        </a>
+                        </li>
+                    {% endif %}
+                </ul>
             </div>
             <section class="editor">
                 {{ form_errors(form) }}
@@ -46,12 +55,6 @@
 
                     {{ form_rest(form, {'style':'editor', 'state':'show'})}}
                 {% endblock %}
-
-                {% if link|default and link.type.connector %}
-                    <a href="{{ path('integrated_content_brand_manage_connector', {'id': brand.id, 'link': link.id}) }}" title="{% trans %}Connector{% endtrans %}">
-                        {% trans %}Manage{% endtrans %} {{ brand.name }} {{ link.name }} {% trans %}Connector{% endtrans %}
-                    </a>
-                {% endif %}
             </section>
         </div>
 
