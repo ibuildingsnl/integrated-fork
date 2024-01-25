@@ -25,6 +25,13 @@ class PermissionResolver
 
         foreach ($user->getGroups() as $group) {
             $groups[$group->getId()] = $group->getId();
+
+            if (in_array('ROLE_ADMIN', $group->getRoles())) {
+                return [
+                    'read' => true,
+                    'write' => true,
+                ];
+            }
         }
 
         $mask = 0;
