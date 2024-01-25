@@ -3,7 +3,6 @@
 namespace Integrated\Bundle\ContentBundle\Solr\Query\Type;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Solr\Query\SortOptions;
 use Integrated\Common\Solr\Search\Type\AbstractType;
 use Solarium\Component\Facet\Field;

@@ -82,7 +82,7 @@ class IntegratedContentBlock extends AbstractType
             $query->addParam($key, $value);
         }
 
-        if (count($options['relation_search_selection'])) {
+        if (\count($options['relation_search_selection'])) {
             foreach ($this->manager->getRepository(Relation::class)->findAll() as $relation) {
                 if ($value = $options['relation_search_selection'][$relation->getId()] ?? []) {
                     /** @var Field $facetField */
