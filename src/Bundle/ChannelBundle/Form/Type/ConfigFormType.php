@@ -64,7 +64,7 @@ class ConfigFormType extends AbstractType
                 'location' => 'sidebar',
                 'style' => 'sidebar',
                 'state' => 'show search',
-                'icon' => 'network-alt',
+                'icon' => 'network-reverse',
             ],
         ]);
 

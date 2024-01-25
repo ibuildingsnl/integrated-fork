@@ -36,6 +36,13 @@
                             {% endif %}
                         {% endif %}
 
+                        <div class="form-item w-full flex flex-wrap title text show">
+                            <label class="control-label w-full required">URL</label>
+                            <div class="w-full  widget">
+                                <input type="text" disabled class="form-control" value="{{ app.request.schemeAndHttpHost ~ integrated_document(form.vars.value.id).file.getPathname() }}">
+                            </div>
+                        </div>
+
                         {% block content_editor %}
                             {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR')) %}
                                 {{ form_row(child, { 'style': 'inline'}) }}

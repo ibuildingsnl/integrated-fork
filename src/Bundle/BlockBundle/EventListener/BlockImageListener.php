@@ -5,7 +5,7 @@ namespace Integrated\Bundle\BlockBundle\EventListener;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
+use Integrated\Bundle\BlockBundle\Document\Block\Embedded\Relation;
 use Integrated\Common\Content\Form\Event\BlockEvent;
 use Integrated\Common\Content\Form\Events;
 use Integrated\Common\Services\MainFlusher;
