@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
@@ -174,7 +173,14 @@ class ContentController extends AbstractController
             if ($relation = $this->getDoctrineODM()->getRepository(Relation::class)->find($options['relation'])) {
                 foreach ($relation->getTargets() as $target) {
                     $relations[] = [
-                        'href' => $this->generateUrl('integrated_content_content_new', ['class' => $target->getClass(), 'type' => $target->getId(), 'relation' => $relation->getId()]),
+                        'href' => $this->generateUrl(
+                            'integrated_content_content_new',
+                            [
+                                'class' => $target->getClass(),
+                                'type' => $target->getId(),
+                                'relation' => $relation->getId(),
+                            ]
+                        ),
                         'name' => $target->getName(),
                     ];
                 }
@@ -818,12 +824,8 @@ class ContentController extends AbstractController
      */
     public function usedBy(Content $content, Request $request)
     {
-        $query = $this->documentManager->createQueryBuilder(Content::class)
-                                       ->field('relations.references.$id')
-                                       ->equals($content->getId())
-                                       ->getQuery();
-
-        $blockQuery = $this->documentManager->createQueryBuilder(Block::class)
+        $query = $this->documentManager
+            ->createQueryBuilder(Content::class)
                                             ->field('relations.references.$id')
                                             ->equals($content->getId())
                                             ->getQuery();
@@ -835,17 +837,9 @@ class ContentController extends AbstractController
             $request->query->get('limit', 15)
         );
 
-        /** @var $paginator \Knp\Component\Pager\Paginator */
-        $blockPagination = $this->getPaginator()->paginate(
-            $blockQuery,
-            $request->query->get('page', 1),
-            $request->query->get('limit', 15)
-        );
-
         return $this->render('@IntegratedContent/content/used_by.'.$request->getRequestFormat().'.twig', [
             'content' => $content,
             'pagination' => $pagination,
-            'blockpagination' => $blockPagination,
         ]);
     }
 
@@ -948,7 +942,13 @@ class ContentController extends AbstractController
     protected function createDeleteForm(ContentInterface $content, array $locking, $notDelete = false)
     {
         $form = $this->createForm(DeleteFormType::class, null, [
-            'action' => $this->generateUrl('integrated_content_content_delete', $locking['locked'] ? ['id' => $content->getId()] : ['id' => $content->getId(), 'lock' => $locking['lock']->getId()]),
+            'action' => $this->generateUrl(
+                'integrated_content_content_delete',
+                $locking['locked'] ? ['id' => $content->getId()] : [
+                    'id' => $content->getId(),
+                    'lock' => $locking['lock']->getId(),
+                ]
+            ),
             'method' => 'DELETE',
         ]);
 

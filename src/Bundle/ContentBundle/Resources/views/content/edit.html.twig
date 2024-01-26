@@ -396,6 +396,7 @@
 {% if content is defined %}
     <script>
         usedByUrl = '{{ path('integrated_content_content_used_by', {'id': content.id, '_format': 'json'}) }}';
+        usedByBlockUrl = '{{ path('integrated_block_block_used_by', {'id': content.id, '_format': 'json'}) }}';
     </script>
 {% endif %}
 {% if editable %}
