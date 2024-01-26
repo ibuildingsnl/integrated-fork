@@ -37,10 +37,10 @@ class BlockRepository extends DocumentRepository
         }
 
         $qb->group()
-            ->field('_id')
-            ->expression('$class')
-            ->field('total')
-            ->sum(1);
+           ->field('_id')
+           ->expression('$class')
+           ->field('total')
+           ->sum(1);
 
         $groupCountBlock = $qb->getAggregation();
 
