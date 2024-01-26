@@ -303,7 +303,7 @@ class MediaController extends AbstractController
 
         if (\count($usesByTitles) > 0) {
             return new JsonResponse([
-                'message' => 'There exist some relations. Are you SURE?',
+                'message' => 'There exist some relations. Are you sure you want to remove the file?',
                 'used_by' => $usesByTitles,
             ]);
         } else {
