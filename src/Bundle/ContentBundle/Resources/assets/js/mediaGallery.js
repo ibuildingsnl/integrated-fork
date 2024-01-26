@@ -290,7 +290,7 @@ function showUsedByToUser(json_response) {
             let new_link = document.createElement('a');
             new_link.style.color = "rgb(1, 131, 213)"
             new_link.textContent = used_by_item.title
-            new_link.href = '/admin/content/' + used_by_item.id
+            new_link.href = used_by_item.link
             new_div.appendChild(new_link)
             new_item.appendChild(new_div)
         }

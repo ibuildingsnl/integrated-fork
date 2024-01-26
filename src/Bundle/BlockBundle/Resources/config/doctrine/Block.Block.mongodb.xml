@@ -21,6 +21,10 @@
         <field name="locked" type="bool" />
         <field name="groups" type="collection" />
 
+        <embed-many
+            field="relations"
+            target-document="Integrated\Bundle\BlockBundle\Document\Block\Embedded\Relation" />
+
         <discriminator-field name="class" />
 
         <indexes>

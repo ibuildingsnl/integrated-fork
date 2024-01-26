@@ -173,7 +173,14 @@ class ContentController extends AbstractController
             if ($relation = $this->getDoctrineODM()->getRepository(Relation::class)->find($options['relation'])) {
                 foreach ($relation->getTargets() as $target) {
                     $relations[] = [
-                        'href' => $this->generateUrl('integrated_content_content_new', ['class' => $target->getClass(), 'type' => $target->getId(), 'relation' => $relation->getId()]),
+                        'href' => $this->generateUrl(
+                            'integrated_content_content_new',
+                            [
+                                'class' => $target->getClass(),
+                                'type' => $target->getId(),
+                                'relation' => $relation->getId(),
+                            ]
+                        ),
                         'name' => $target->getName(),
                     ];
                 }
@@ -817,10 +824,11 @@ class ContentController extends AbstractController
      */
     public function usedBy(Content $content, Request $request)
     {
-        $qb = $this->documentManager->createQueryBuilder(Content::class);
-        $qb->field('relations.references.$id')->equals($content->getId());
-
-        $query = $qb->getQuery();
+        $query = $this->documentManager
+            ->createQueryBuilder(Content::class)
+            ->field('relations.references.$id')
+            ->equals($content->getId())
+            ->getQuery();
 
         /** @var $paginator \Knp\Component\Pager\Paginator */
         $pagination = $this->getPaginator()->paginate(
@@ -934,7 +942,13 @@ class ContentController extends AbstractController
     protected function createDeleteForm(ContentInterface $content, array $locking, $notDelete = false)
     {
         $form = $this->createForm(DeleteFormType::class, null, [
-            'action' => $this->generateUrl('integrated_content_content_delete', $locking['locked'] ? ['id' => $content->getId()] : ['id' => $content->getId(), 'lock' => $locking['lock']->getId()]),
+            'action' => $this->generateUrl(
+                'integrated_content_content_delete',
+                $locking['locked'] ? ['id' => $content->getId()] : [
+                    'id' => $content->getId(),
+                    'lock' => $locking['lock']->getId(),
+                ]
+            ),
             'method' => 'DELETE',
         ]);
 

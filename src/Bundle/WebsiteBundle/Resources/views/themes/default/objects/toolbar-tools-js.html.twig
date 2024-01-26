@@ -14,7 +14,7 @@
 
             document.querySelectorAll('body').forEach(item =>
                 item.addEventListener('click', function(e) {
-                    if (!e.target.classList.contains('iconoir-cancel')) {
+                    if (!e.target.classList.contains('iconoir-xmark')) {
                         return true;
                     }
                     hideModal();
@@ -37,7 +37,7 @@
                 '    <div class="integrated-modal-content">\n' +
                 '        <div class="integrated-modal-header">\n' +
                 '            <span class="integrated-modal-header-title">' + title + '</span>\n' +
-                '            <a class="integrated-modal-close"><i class="iconoir-cancel"></i></a>\n' +
+                '            <a class="integrated-modal-close"><i class="iconoir-xmark"></i></a>\n' +
                 '        </div>\n' +
                 '        <div class="integrated-modal-body">\n' + content + '</div>\n' +
                 '    </div>\n' +

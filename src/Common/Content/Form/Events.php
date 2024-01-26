@@ -46,4 +46,6 @@ final class Events
     public const POST_VIEW = 'form.post.view';
 
     public const POST_VALIDATE = 'form.post.validate';
+
+    public const BLOCK_VALIDATE = 'form.block.validate';
 }

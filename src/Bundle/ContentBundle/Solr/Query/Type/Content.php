@@ -133,7 +133,7 @@ class Content extends AbstractType
                 return 'rel';
             }
 
-            return 'changed';
+            return 'time';
         });
 
         $resolver->setNormalizer('order', function (Options $options, $value) {
