@@ -375,7 +375,7 @@ abstract class Block implements BlockInterface
         return $this->relations;
     }
 
-    public function setRelations(Collection $relations): static
+    public function setRelations(Collection $relations)
     {
         foreach ($relations as $relation) {
             if ($relation instanceof RelationInterface) {
@@ -386,7 +386,7 @@ abstract class Block implements BlockInterface
         return $this;
     }
 
-    public function addRelation(RelationInterface $relation): static
+    public function addRelation(RelationInterface $relation)
     {
         if ($exist = $this->getRelation($relation->getRelationId())) {
             $exist->addReferences($relation->getReferences());
