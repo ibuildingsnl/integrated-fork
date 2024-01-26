@@ -826,9 +826,9 @@ class ContentController extends AbstractController
     {
         $query = $this->documentManager
             ->createQueryBuilder(Content::class)
-                                            ->field('relations.references.$id')
-                                            ->equals($content->getId())
-                                            ->getQuery();
+            ->field('relations.references.$id')
+            ->equals($content->getId())
+            ->getQuery();
 
         /** @var $paginator \Knp\Component\Pager\Paginator */
         $pagination = $this->getPaginator()->paginate(
