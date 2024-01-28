@@ -144,6 +144,8 @@
 
         <service id="Integrated\Bundle\ContentBundle\Solr\Query\Provider\IntegratedContentBlock" />
 
+        <service id="Integrated\Bundle\ContentBundle\Solr\Query\ContentTypesExtension" />
+
         <service id="Integrated\Bundle\ContentBundle\Solr\Query\PublishedExtension" />
 
         <service id="Integrated\Bundle\ContentBundle\Solr\Query\RelationExtension" />
