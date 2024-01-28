@@ -39,7 +39,7 @@ class ContentTypesExtension extends AbstractTypeExtension
             }
         }
 
-        if (is_array($contentTypes) && \count($contentTypes)) {
+        if (\is_array($contentTypes) && \count($contentTypes)) {
             $helper = $query->getHelper();
             $filter = function ($param) use ($helper) {
                 return $helper->escapePhrase($param);
