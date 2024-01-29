@@ -44,11 +44,14 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            ConfigureMenuEvent::CONFIGURE => 'onMenuConfigure',
+            ConfigureMenuEvent::CONFIGURE => [
+                ['onMenuConfigureContent', 90],
+                ['onMenuConfigureSettings', 10],
+            ],
         ];
     }
 
-    public function onMenuConfigure(ConfigureMenuEvent $event)
+    public function onMenuConfigureContent(ConfigureMenuEvent $event)
     {
         $menu = $event->getMenu();
         if ($menu->getName() !== self::MENU) {
@@ -61,6 +64,14 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
 
         $menuContent->addChild('Content navigator', ['route' => 'integrated_content_content_index']);
         $menuContent->addChild('Media Library', ['route' => 'integrated_content_media_index']);
+    }
+
+    public function onMenuConfigureSettings(ConfigureMenuEvent $event)
+    {
+        $menu = $event->getMenu();
+        if ($menu->getName() !== self::MENU) {
+            return;
+        }
 
         if ($this->authorizationChecker->isGranted(self::ROLE_ADMIN) || $this->authorizationChecker->isGranted(self::ROLE_CHANNEL_MANAGER)) {
             if (!$menuManage = $menu->getChild(self::MENU_SETTINGS)) {

@@ -78,7 +78,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
             ->expects($this->never())
             ->method('getChild');
 
-        $this->subscriber->onMenuConfigure($this->event);
+        $this->subscriber->onMenuConfigureContent($this->event);
     }
 
     /**
@@ -101,7 +101,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
             ->expects($this->atLeastOnce())
             ->method('addChild');
 
-        $this->subscriber->onMenuConfigure($this->event);
+        $this->subscriber->onMenuConfigureContent($this->event);
     }
 
     /**
@@ -136,36 +136,28 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
             ->expects($this->atLeastOnce())
             ->method('addChild');
 
-        $this->subscriber->onMenuConfigure($this->event);
+        $this->subscriber->onMenuConfigureContent($this->event);
     }
 
     /**
      * Test onMenuConfigure function with valid menu and with content menu and with manage menu.
      */
-    public function testOnMenuConfigureFunctionWithValidMenuAndWithContentMenuAndWithManageMenu()
+    public function testOnMenuConfigureFunctionWithValidMenuAndWithManageMenu()
     {
         $menu = $this->getValidMenu($this->event);
 
-        /** @var \Knp\Menu\ItemInterface|MockObject $menuContent */
-        $menuContent = $this->createMock('Knp\Menu\ItemInterface');
-
-        /** @var \Knp\Menu\ItemInterface|MockObject $menuContent */
+        /** @var \Knp\Menu\ItemInterface|MockObject $menuManage */
         $menuManage = $this->createMock('Knp\Menu\ItemInterface');
 
         $menu
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(1))
             ->method('getChild')
             ->willReturnMap([
-                [ConfigureMenuSubscriber::MENU_CONTENT, $menuContent],
                 [ConfigureMenuSubscriber::MENU_SETTINGS, $menuManage],
             ]);
 
         $menu
             ->expects($this->never())
-            ->method('addChild');
-
-        $menuContent
-            ->expects($this->atLeastOnce())
             ->method('addChild');
 
         $menuManage
@@ -178,47 +170,32 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
             ->with(ConfigureMenuSubscriber::ROLE_ADMIN)
             ->willReturn(true);
 
-        $this->subscriber->onMenuConfigure($this->event);
+        $this->subscriber->onMenuConfigureSettings($this->event);
     }
 
     /**
-     * Test onMenuConfigure function with valid menu and with no content menu and with no manage menu.
+     * Test onMenuConfigure function with valid menu and with no manage menu.
      */
-    public function testOnMenuConfigureFunctionWithValidMenuAndWithNoContentMenuAndWithNoManageMenu()
+    public function testOnMenuConfigureFunctionWithValidMenuAndWithNoManageMenu()
     {
         $menu = $this->getValidMenu($this->event);
 
-        /** @var \Knp\Menu\ItemInterface|MockObject $menuContent */
-        $menuContent = $this->createMock('Knp\Menu\ItemInterface');
-
-        /** @var \Knp\Menu\ItemInterface|MockObject $menuContent */
+        /** @var \Knp\Menu\ItemInterface|MockObject $menuManage */
         $menuManage = $this->createMock('Knp\Menu\ItemInterface');
 
         $menu
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(1))
             ->method('getChild')
             ->willReturnMap([
-                [ConfigureMenuSubscriber::MENU_CONTENT, null],
                 [ConfigureMenuSubscriber::MENU_SETTINGS, null],
             ]);
 
         $menu
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(1))
             ->method('addChild')
             ->willReturnMap([
-                [ConfigureMenuSubscriber::MENU_CONTENT, [], $menuContent],
                 [ConfigureMenuSubscriber::MENU_SETTINGS, [], $menuManage],
             ]);
-
-        $menuContent
-            ->expects($this->once())
-            ->method('setExtra')
-            ->with('icon', 'iconoir-journal-page')
-            ->willReturnSelf();
-
-        $menuContent
-            ->expects($this->atLeastOnce())
-            ->method('addChild');
 
         $menuManage
             ->expects($this->once())
@@ -238,47 +215,32 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
             ->with(ConfigureMenuSubscriber::ROLE_ADMIN)
             ->willReturn(true);
 
-        $this->subscriber->onMenuConfigure($this->event);
+        $this->subscriber->onMenuConfigureSettings($this->event);
     }
 
     /**
      * Test onMenuConfigure function for channel manager with valid menu and with no content menu and with no manage menu.
      */
-    public function testOnMenuConfigureFunctionChannelManagerWithValidMenuAndWithNoContentMenuAndWithNoManageMenu()
+    public function testOnMenuConfigureFunctionChannelManagerWithValidMenuAndWithNoManageMenu()
     {
         $menu = $this->getValidMenu($this->event);
 
-        /** @var \Knp\Menu\ItemInterface|MockObject $menuContent */
-        $menuContent = $this->createMock('Knp\Menu\ItemInterface');
-
-        /** @var \Knp\Menu\ItemInterface|MockObject $menuContent */
+        /** @var \Knp\Menu\ItemInterface|MockObject $menuManage */
         $menuManage = $this->createMock('Knp\Menu\ItemInterface');
 
         $menu
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(1))
             ->method('getChild')
             ->willReturnMap([
-                [ConfigureMenuSubscriber::MENU_CONTENT, null],
                 [ConfigureMenuSubscriber::MENU_SETTINGS, null],
             ]);
 
         $menu
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(1))
             ->method('addChild')
             ->willReturnMap([
-                [ConfigureMenuSubscriber::MENU_CONTENT, [], $menuContent],
                 [ConfigureMenuSubscriber::MENU_SETTINGS, [], $menuManage],
             ]);
-
-        $menuContent
-            ->expects($this->once())
-            ->method('setExtra')
-            ->with('icon', 'iconoir-journal-page')
-            ->willReturnSelf();
-
-        $menuContent
-            ->expects($this->atLeastOnce())
-            ->method('addChild');
 
         $menuManage
             ->expects($this->once())
@@ -300,7 +262,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
                 [ConfigureMenuSubscriber::ROLE_CHANNEL_MANAGER, null, true],
             ]);
 
-        $this->subscriber->onMenuConfigure($this->event);
+        $this->subscriber->onMenuConfigureSettings($this->event);
     }
 
     /**

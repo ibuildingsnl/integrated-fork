@@ -43,7 +43,9 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            ConfigureMenuEvent::CONFIGURE => 'onMenuConfigure',
+            ConfigureMenuEvent::CONFIGURE => [
+                ['onMenuConfigure', 20],
+            ],
         ];
     }
 

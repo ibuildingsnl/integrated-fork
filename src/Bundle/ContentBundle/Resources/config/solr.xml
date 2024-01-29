@@ -146,6 +146,8 @@
 
         <service id="Integrated\Bundle\ContentBundle\Solr\Query\PublishedExtension" />
 
+        <service id="Integrated\Bundle\ContentBundle\Solr\Query\RelationExtension" />
+
     </services>
 
 </container>

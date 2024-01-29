@@ -82,15 +82,17 @@ class IntegratedContentBlock extends AbstractType
             $query->addParam($key, $value);
         }
 
-        foreach ($this->manager->getRepository(Relation::class)->findAll() as $relation) {
-            /** @var Field $facetField */
-            $facetField = $facet->createFacetField($name = 'relation_'.$relation->getId().'_search_selection');
-            $facetField->setField($field = 'facet_'.$relation->getId());
+        if (\count($options['relation_search_selection'])) {
+            foreach ($this->manager->getRepository(Relation::class)->findAll() as $relation) {
+                if ($value = $options['relation_search_selection'][$relation->getId()] ?? []) {
+                    /** @var Field $facetField */
+                    $facetField = $facet->createFacetField($name = 'relation_'.$relation->getId().'_search_selection');
+                    $facetField->setField($field = 'facet_'.$relation->getId());
 
-            if ($value = $options['relation_search_selection'][$relation->getId()] ?? []) {
-                $query->createFilterQuery($name)
-                    ->addTag($name)
-                    ->setQuery($field.': ((%1%))', [implode(') OR (', array_map($escape, $value))]);
+                    $query->createFilterQuery($name)
+                        ->addTag($name)
+                        ->setQuery($field.': ((%1%))', [implode(') OR (', array_map($escape, $value))]);
+                }
             }
         }
     }
