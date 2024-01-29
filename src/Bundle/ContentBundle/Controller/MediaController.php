@@ -146,8 +146,8 @@ class MediaController extends AbstractController
         $paginator = $this->getPaginator();
         $paginator = $paginator->paginate(
             new CallbackPagination(
-                fn() => $this->provider->getContentFromSolr($requestCopy, 40, 0, true),
-                fn($offset, $limit) => $this->provider->getContentFromSolr($requestCopy, $limit, $offset),
+                fn () => $this->provider->getContentFromSolr($requestCopy, 40, 0, true),
+                fn ($offset, $limit) => $this->provider->getContentFromSolr($requestCopy, $limit, $offset),
             ),
             $requestCopy->query->get('page', 1),
             $requestCopy->query->get('limit', 40),
@@ -171,7 +171,7 @@ class MediaController extends AbstractController
             'selectedMediaTaxonomy' => $selectedMediaTaxonomy,
             'menu' => $menu,
             'not_shown_filetypes' => array_map(
-                fn($item) => strtolower($item),
+                fn ($item) => strtolower($item),
                 $this::NOT_SHOWN_FILETYPES
             ),
         ];
@@ -195,9 +195,9 @@ class MediaController extends AbstractController
                 ]
             ),
             'previous_url' => $request->headers->get('referer'),
-            'file_url' => $request->server->get('REQUEST_SCHEME') . '://' . $request->server->get(
-                    'SERVER_NAME'
-                ) . $file->getFile()->getPathName(),
+            'file_url' => $request->server->get('REQUEST_SCHEME').'://'.$request->server->get(
+                'SERVER_NAME'
+            ).$file->getFile()->getPathName(),
         ]);
     }
 
@@ -304,7 +304,7 @@ class MediaController extends AbstractController
                 if (\count($usedByItems) > 0) {
                     foreach ($usedByItems as $usedByItem) {
                         $usedByResult[] = [
-                            'link' => '/admin/content/' . $usedByItem->getId(),
+                            'link' => '/admin/content/'.$usedByItem->getId(),
                             'title' => $usedByItem->getTitle(),
                         ];
                     }
@@ -313,7 +313,7 @@ class MediaController extends AbstractController
                 if (\count($usedByBlocks) > 0) {
                     foreach ($usedByBlocks as $usedByBlock) {
                         $usedByResult[] = [
-                            'link' => '/admin/block/' . $usedByBlock->getId() . '/edit',
+                            'link' => '/admin/block/'.$usedByBlock->getId().'/edit',
                             'title' => $usedByBlock->getTitle(),
                         ];
                     }
@@ -431,13 +431,13 @@ class MediaController extends AbstractController
                 if (null != $yearMonthFilter && 'all_dates' !== $yearMonthFilter) {
                     list($year, $month, $day) = explode('-', $yearMonthFilter);
                     $startDate = "{$year}-{$month}-01T00:00:00Z";
-                    $nextMonth = (int)$month + 1;
+                    $nextMonth = (int) $month + 1;
                     if ($nextMonth === 13) {
                         $nextMonth = 1;
-                        $year = (int)$year + 1;
+                        $year = (int) $year + 1;
                     }
                     $endDate = "$year-{$nextMonth}-01T00:00:00Z";
-                    $fullDateFilter = $startDate . ' TO ' . $endDate;
+                    $fullDateFilter = $startDate.' TO '.$endDate;
 
                     $request->query->set('year_month_day_filter', $fullDateFilter);
                 } elseif ('all_dates' === $yearMonthFilter) {
@@ -468,7 +468,7 @@ class MediaController extends AbstractController
             }
 
             $result[$yearMonth] = [
-                'label' => $label . ' (' . $amount . ')',
+                'label' => $label.' ('.$amount.')',
                 'yearMonth' => $yearMonth,
                 'amount' => $amount,
             ];
