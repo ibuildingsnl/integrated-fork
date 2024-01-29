@@ -14,6 +14,7 @@ namespace Integrated\Bundle\FormTypeBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class MediaController extends AbstractController
 {
@@ -24,33 +25,30 @@ class MediaController extends AbstractController
         $this->controller = $controller;
     }
 
-    /**
-     * @Template
-     */
-    public function image(Request $request): array
+    public function image(Request $request): Response
     {
-        $request->query->set('contenttypes', 'image');
+        if ($contentType = $request->query->get('contenttypes')) {
+            $request->query->set('contenttypes', [$contentType]);
+        }
 
-        return $this->controller->indexComponent($request);
+        return $this->render('@IntegratedFormType/media/image.html.twig', $this->controller->indexComponent($request));
     }
 
-    /**
-     * @Template
-     */
-    public function gallery(Request $request): array
+    public function gallery(Request $request): Response
     {
-        $request->query->set('contenttypes', 'image');
+        if ($contentType = $request->query->get('contenttypes')) {
+            $request->query->set('contenttypes', [$contentType]);
+        }
 
-        return $this->controller->indexComponent($request);
+        return $this->render('@IntegratedFormType/media/gallery.html.twig', $this->controller->indexComponent($request));
     }
 
-    /**
-     * @Template
-     */
-    public function video(Request $request): array
+    public function video(Request $request): Response
     {
-        $request->query->set('contenttypes', 'video');
+        if ($contentType = $request->query->get('contenttypes')) {
+            $request->query->set('contenttypes', [$contentType]);
+        }
 
-        return $this->controller->indexComponent($request);
+        return $this->render('@IntegratedFormType/media/video.html.twig', $this->controller->indexComponent($request));
     }
 }
