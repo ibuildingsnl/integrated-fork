@@ -22,6 +22,8 @@ final class Exporter implements ExporterInterface
 
     public function export($content, $state, ChannelInterface $channel, array $settings = []): ?ExporterResponse
     {
+        $externalId = null;
+
         if (!$content instanceof Content || $state != self::STATE_ADD) {
             return null;
         }
