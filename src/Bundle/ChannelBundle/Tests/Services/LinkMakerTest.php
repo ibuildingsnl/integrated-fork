@@ -6,5 +6,4 @@ use PHPUnit\Framework\TestCase;
 
 final class LinkMakerTest extends TestCase
 {
-
 }
