@@ -2,7 +2,6 @@
 
 namespace Integrated\Bundle\ChannelBundle\Tests\Services;
 
-use Integrated\Bundle\ChannelBundle\Services\ChannelAddingLinkMaker;
 use Integrated\Bundle\ChannelBundle\Services\HttpsAddingLinkMaker;
 use Integrated\Bundle\ChannelBundle\Services\LinkMaker;
 use Integrated\Bundle\ChannelBundle\Tests\Mock\NaiveLinkMaker;
