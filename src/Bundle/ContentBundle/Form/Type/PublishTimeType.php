@@ -34,16 +34,16 @@ class PublishTimeType extends AbstractType
         $builder->add('startDate', DateTimeType::class, [
             'placeholder' => ' ',
             'attr' => [
-                'data-set-date-text' => 'Set publication date'
-            ]
+                'data-set-date-text' => 'Set publication date',
+            ],
         ]);
 
         $builder->add(
             $builder->create('endDate', DateTimeType::class, [
                 'placeholder' => ' ',
                 'attr' => [
-                    'data-set-date-text' => 'Set depublication date'
-                ]
+                    'data-set-date-text' => 'Set depublication date',
+                ],
             ])->addModelTransformer(new MaxDateTimeTransformer())
         );
     }
