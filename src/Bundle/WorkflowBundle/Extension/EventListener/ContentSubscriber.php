@@ -43,6 +43,8 @@ class ContentSubscriber implements ContentSubscriberInterface
 {
     public const CONTENT_CLASS = 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Relation\\Relation';
 
+    private ExtensionInterface $extension;
+
     public function __construct(
         private readonly UserManagerInterface $userManager,
         private readonly EventDispatcherInterface $eventDispatcher,
@@ -320,14 +322,14 @@ class ContentSubscriber implements ContentSubscriberInterface
         return null;
     }
 
-    public function getExtension(): ExtensionInterface
-    {
-        return $this->extension;
-    }
-
     public function setExtension(ExtensionInterface $extension): void
     {
         $this->extension = $extension;
+    }
+
+    public function getExtension(): ExtensionInterface
+    {
+        return $this->extension;
     }
 
     protected function hasAssignedAccess(User $assigned, Definition\State $state, ContentInterface $content): bool

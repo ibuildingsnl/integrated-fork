@@ -17,6 +17,8 @@ final class ResolverLinkMaker implements LinkMaker
 
     public function urlFor(Content $content, ChannelInterface $preferredChannel): string
     {
+        $channel = false;
+
         foreach ($this->brands->all() as $brand) {
             if ($brand->hasChannel($preferredChannel)) {
                 $channel = $brand->getWebsiteChannel();
