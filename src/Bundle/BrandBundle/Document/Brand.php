@@ -91,7 +91,7 @@ class Brand
         return $this->channelLinks;
     }
 
-    public function getWebsiteChannel(): Channel
+    public function getWebsiteChannel(): ?Channel
     {
         foreach ($this->channelLinks as $link) {
             if ($link->getName() === 'Website') {

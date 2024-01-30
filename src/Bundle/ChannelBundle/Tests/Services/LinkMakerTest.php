@@ -3,6 +3,7 @@
 namespace Integrated\Bundle\ChannelBundle\Tests\Services;
 
 use Integrated\Bundle\ChannelBundle\Services\ChannelAddingLinkMaker;
+use Integrated\Bundle\ChannelBundle\Services\HttpsAddingLinkMaker;
 use Integrated\Bundle\ChannelBundle\Services\LinkMaker;
 use Integrated\Bundle\ChannelBundle\Tests\Mock\NaiveLinkMaker;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
@@ -24,7 +25,7 @@ final class LinkMakerTest extends TestCase
         foreach ($this->channels as $tld => $channel) {
             $channel->setPrimaryDomain('channel.'.$tld);
         }
-        $this->linkMaker = new ChannelAddingLinkMaker(new NaiveLinkMaker());
+        $this->linkMaker = new HttpsAddingLinkMaker(new NaiveLinkMaker());
     }
 
     public function testLinkingToAnArticleOnTheSameChannel()
