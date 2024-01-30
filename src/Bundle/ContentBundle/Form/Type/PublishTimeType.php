@@ -34,16 +34,16 @@ class PublishTimeType extends AbstractType
         $builder->add('startDate', DateTimeType::class, [
             'placeholder' => ' ',
             'attr' => [
-                'data-set-date-text' => 'Set publication date',
-            ],
+                'data-set-date-text' => 'Set publication date'
+            ]
         ]);
 
         $builder->add(
             $builder->create('endDate', DateTimeType::class, [
                 'placeholder' => ' ',
                 'attr' => [
-                    'data-set-date-text' => 'Set depublication date',
-                ],
+                    'data-set-date-text' => 'Set depublication date'
+                ]
             ])->addModelTransformer(new MaxDateTimeTransformer())
         );
     }
@@ -55,8 +55,7 @@ class PublishTimeType extends AbstractType
     {
         $resolver->setDefaults([
                                    'data_class' => 'Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime',
-                                   'constraints' => new Callback(
-                                       function (?PublishTime $publishTime, ExecutionContextInterface $context) {
+            'constraints' => new Callback(function (?PublishTime $publishTime, ExecutionContextInterface $context) {
                                            if (!$publishTime) {
                                                return;
                                            }
@@ -73,14 +72,11 @@ class PublishTimeType extends AbstractType
 
                                            if ($startDate instanceof \DateTime && $endDate instanceof \DateTime) {
                                                if ($endDate < $startDate) {
-                                                   $context->buildViolation(
-                                                       "The end date can't be earlier than the begin date"
-                                                   )
+                        $context->buildViolation("The end date can't be earlier than the begin date")
                                                            ->atPath('endDate')->addViolation();
                                                }
                                            }
-                                       }
-                                   ),
+            }),
                                ]);
     }
 

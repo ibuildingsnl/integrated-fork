@@ -20,7 +20,7 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 {
     public function testInterface()
     {
-        $message = new Queuecd Message(null, 0, 0, 0, 0, 0, function () {
+        $message = new QueueMessage(null, 0, 0, 0, 0, 0, function () {
         });
 
         $this->assertInstanceOf('Integrated\Common\Queue\QueueMessageInterface', $message);
