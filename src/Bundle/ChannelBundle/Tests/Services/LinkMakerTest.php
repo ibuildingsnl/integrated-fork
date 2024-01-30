@@ -16,11 +16,23 @@ final class LinkMakerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->channels = [
-            'a' => (new Channel())->setId('a')->setName('a'),
-            'b' => (new Channel())->setId('b')->setName('b'),
-            'c' => (new Channel())->setId('c')->setName('c'),
-        ];
+        $this->channels = [];
+
+        $channelA = new Channel();
+        $channelA->setId('a');
+        $channelA->setName('a');
+        $this->channels['a'] = $channelA;
+
+        $channelB = new Channel();
+        $channelB->setId('b');
+        $channelB->setName('b');
+        $this->channels['b'] = $channelB;
+
+        $channelC = new Channel();
+        $channelC->setId('c');
+        $channelC->setName('c');
+        $this->channels['c'] = $channelC;
+
         foreach ($this->channels as $tld => $channel) {
             $channel->setPrimaryDomain('channel.'.$tld);
         }
