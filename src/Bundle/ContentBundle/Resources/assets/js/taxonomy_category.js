@@ -141,14 +141,11 @@ function handleChannelClick(event) {
                         .trim() // removes whitespace from both ends of a string
                         .toLowerCase() // converts the string to lower case
                         .replace(/[\s!]/g, ''); // removes spaces and exclamation marks
-    console.log(channel_name)
     if (enabled_channels.includes(channel_name)) {
         enabled_channels = enabled_channels.filter(item => item !== channel_name)
     } else {
         enabled_channels.push(channel_name)
     }
-
-    console.log(enabled_channels);
 
     filterBasedOnChannels()
     updateDOMForAllRelations()

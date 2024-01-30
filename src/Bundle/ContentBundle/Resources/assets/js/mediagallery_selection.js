@@ -74,7 +74,6 @@ function addEventListeners() {
         selectButton.addEventListener('click', (event) => {
             const { relationid } = event.target.dataset;
             selected_relation = form_relations[relationid];
-            console.log(selected_relation);
             showMediaGallery(selected_relation);
         });
     });
