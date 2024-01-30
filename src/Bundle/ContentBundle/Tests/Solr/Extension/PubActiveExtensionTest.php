@@ -54,14 +54,14 @@ class PubActiveExtensionTest extends \PHPUnit\Framework\TestCase
                 'article',
                 'Article',
                 ['pub_active' => [false]],
-                ['published' => [false]],
+                ['published' => false],
             ],
             [
                 $this->getContent(true, 'news'),
                 'news',
                 'News',
                 ['pub_active' => [true]],
-                ['published' => [true]],
+                ['published' => true],
             ],
         ];
     }
