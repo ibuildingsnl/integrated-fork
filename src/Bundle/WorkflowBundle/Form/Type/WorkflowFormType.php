@@ -11,11 +11,11 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Form\Type;
 
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\Select2Type;
 use Integrated\Bundle\UserBundle\Doctrine\UserManager;
 use Integrated\Bundle\WorkflowBundle\Form\EventListener\WorkflowDefaultDataListener;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;

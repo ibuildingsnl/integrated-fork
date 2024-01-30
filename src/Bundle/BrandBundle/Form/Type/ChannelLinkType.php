@@ -3,10 +3,10 @@
 namespace Integrated\Bundle\BrandBundle\Form\Type;
 
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
-use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
 use Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Form\Type\ChannelType;
+use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

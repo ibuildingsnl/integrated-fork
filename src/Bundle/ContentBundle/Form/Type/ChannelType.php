@@ -13,7 +13,6 @@ namespace Integrated\Bundle\ContentBundle\Form\Type;
 
 use Integrated\Bundle\AssetBundle\Manager\AssetManager;
 use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
-use Integrated\Bundle\FormTypeBundle\Form\Type\ColorType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -53,7 +52,7 @@ class ChannelType extends AbstractType
             'attr' => [
                 'location' => 'editor',
                 'style' => 'inline',
-                'class' => $options['can_change_type'] ? '' : 'hidden'
+                'class' => $options['can_change_type'] ? '' : 'hidden',
             ],
         ]);
         $builder->add('name', TextType::class, [

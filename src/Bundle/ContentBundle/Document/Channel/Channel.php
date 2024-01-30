@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\ContentBundle\Document\Channel;
 
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
-use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Integrated\Common\Content\Channel\ChannelInterface;

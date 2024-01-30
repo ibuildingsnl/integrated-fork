@@ -48,7 +48,7 @@ class ChannelEnforcerListener implements EventSubscriberInterface
 
     /**
      * @param ChannelInterface[] $channels
-     * @param string    $operand
+     * @param string             $operand
      */
     public function __construct(array $channels, $operand = self::SET)
     {

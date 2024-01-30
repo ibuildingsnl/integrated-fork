@@ -98,8 +98,8 @@ class ChannelsTransformer implements DataTransformerInterface
             if ($options['selected'] ?? false) {
                 $result['defaults'][$id] = [
                     'id' => $id,
-                    'restrict' => (bool)$options['restrict'],
-                    'enforce' => (bool)$options['enforce'],
+                    'restrict' => (bool) $options['restrict'],
+                    'enforce' => (bool) $options['enforce'],
                 ];
             }
             if ($options['restrict'] ?? false) {

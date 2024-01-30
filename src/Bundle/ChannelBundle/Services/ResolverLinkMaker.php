@@ -25,10 +25,10 @@ final class ResolverLinkMaker implements LinkMaker
 
         if ($channel instanceof ChannelInterface) {
             return (
-                   $content->hasChannel($channel)
-                       ? $channel->getPrimaryDomain()
-                       : $content->getPrimaryChannel()->getPrimaryDomain()
-                   ) . $this->urlResolver->generateUrl($content, $channel->getId());
+                $content->hasChannel($channel)
+                    ? $channel->getPrimaryDomain()
+                    : $content->getPrimaryChannel()->getPrimaryDomain()
+            ).$this->urlResolver->generateUrl($content, $channel->getId());
         } else {
             return '';
         }

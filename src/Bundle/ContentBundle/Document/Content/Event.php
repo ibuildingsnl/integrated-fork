@@ -53,6 +53,7 @@ class Event extends Article
         if ($this->startDate === null) {
             return new \DateTime();
         }
+
         return $this->startDate;
     }
 

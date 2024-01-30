@@ -72,7 +72,7 @@ class Content extends AbstractType
                 ->addTag('channels')
                 ->setQuery('facet_channels: ((%1%))', [implode(') OR (', array_map($escape, $options['channels']))]);
         }
-//@TODO: Add publication_start_date to solr
+        // @TODO: Add publication_start_date to solr
 //        if ($options['pub_channels']) {
 //            foreach ($options['pub_channels'] as $channel) {
 //                $channel = $helper->escapeTerm($channel);
@@ -256,7 +256,6 @@ class Content extends AbstractType
 
             return array_filter($relations);
         });
-
 
         // handle start/end dates
         $resolver->setDefaults([

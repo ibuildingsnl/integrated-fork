@@ -39,7 +39,6 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-
 class ContentSubscriber implements ContentSubscriberInterface
 {
     public const CONTENT_CLASS = 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Relation\\Relation';
@@ -199,19 +198,19 @@ class ContentSubscriber implements ContentSubscriberInterface
                         $link = $this->router->generate('integrated_content_content_edit', ['id' => $content->getId()]);
 
                         $baseUrl = $content->getPrimaryChannel()?->getPrimaryDomain() ??
-                                   ((isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]");
+                                   ((isset($_SERVER['HTTPS']) ? 'https' : 'http')."://$_SERVER[HTTP_HOST]");
 
                         $template = $this->themeManager->locateTemplate('/mail/workflow-notification.html.twig');
 
                         $lines = [
-                            "A new item has been assigned to you:",
+                            'A new item has been assigned to you:',
                             "Document: <a href=\"{$baseUrl}{$link}\">{$title}</a>",
                             "E-mail: {$person->getEmail()}",
-                            $data['deadline'] ?? false ? "Deadline: {$data['deadline']->format('d-m-Y H:i:s')}" : ''
+                            $data['deadline'] ?? false ? "Deadline: {$data['deadline']->format('d-m-Y H:i:s')}" : '',
                         ];
 
                         $email['emailContent'] = implode('<br>', $lines);
-                        $email['subject'] = 'A new item has been assigned to you: "' . $title . '"';
+                        $email['subject'] = 'A new item has been assigned to you: "'.$title.'"';
 
                         try {
                             $message = (new TemplatedEmail())

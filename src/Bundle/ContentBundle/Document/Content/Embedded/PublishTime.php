@@ -36,6 +36,7 @@ class PublishTime implements PublishTimeInterface
         if ($this->startDate === null) {
             return new \DateTime();
         }
+
         return $this->startDate;
     }
 
