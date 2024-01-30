@@ -23,7 +23,7 @@
 
         <embed-many
             field="relations"
-            target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation" />
+            target-document="Integrated\Bundle\BlockBundle\Document\Block\Embedded\Relation" />
 
         <discriminator-field name="class" />
 
