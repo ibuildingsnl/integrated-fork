@@ -98,6 +98,7 @@ class Brand
                 return $link->channel;
             }
         }
+        return null;
     }
 
     public function addChannelLink(ChannelLink $link): void

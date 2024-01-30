@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\FormTypeBundle\Form\Type;
 
 use Integrated\Bundle\AssetBundle\Manager\AssetManager;
-use Integrated\Bundle\FormTypeBundle\Form\DataTransformer\DateTime;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -34,8 +33,6 @@ class DateTimeType extends AbstractType
 
     public function __construct()
     {
-//        $this->styleSheetManager = $styleSheetManager;
-//        $this->javascriptManager = $javascriptManager;
     }
 
     /**
@@ -43,7 +40,6 @@ class DateTimeType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addModelTransformer(new DateTime());
     }
 
     /**
