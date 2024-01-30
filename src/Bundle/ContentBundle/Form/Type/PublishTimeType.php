@@ -53,31 +53,33 @@ class PublishTimeType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-                                   'data_class' => 'Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime',
-            'constraints' => new Callback(function (?PublishTime $publishTime, ExecutionContextInterface $context) {
-                                           if (!$publishTime) {
-                                               return;
-                                           }
-                                           $startDate = $publishTime->getStartDate() ?: new \DateTime();
-                                           $endDate = $publishTime->getEndDate();
+        $resolver->setDefaults(
+            [
+                'data_class' => 'Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime',
+                'constraints' => new Callback(function (?PublishTime $publishTime, ExecutionContextInterface $context) {
+                    if (!$publishTime) {
+                        return;
+                    }
+                    $startDate = $publishTime->getStartDate() ?: new \DateTime();
+                    $endDate = $publishTime->getEndDate();
 
-                                           if (!$startDate instanceof \DateTime) {
-                                               $publishTime->setStartDate(new \DateTime());
-                                           }
+                    if (!$startDate instanceof \DateTime) {
+                        $publishTime->setStartDate(new \DateTime());
+                    }
 
-                                           if (!$endDate instanceof \DateTime) {
-                                               $publishTime->setEndDate(new \DateTime(PublishTimeInterface::DATE_MAX));
-                                           }
+                    if (!$endDate instanceof \DateTime) {
+                        $publishTime->setEndDate(new \DateTime(PublishTimeInterface::DATE_MAX));
+                    }
 
-                                           if ($startDate instanceof \DateTime && $endDate instanceof \DateTime) {
-                                               if ($endDate < $startDate) {
-                        $context->buildViolation("The end date can't be earlier than the begin date")
-                                                           ->atPath('endDate')->addViolation();
-                                               }
-                                           }
-            }),
-                               ]);
+                    if ($startDate instanceof \DateTime && $endDate instanceof \DateTime) {
+                        if ($endDate < $startDate) {
+                            $context->buildViolation("The end date can't be earlier than the begin date")
+                                    ->atPath('endDate')->addViolation();
+                        }
+                    }
+                }),
+            ]
+        );
     }
 
     /**
