@@ -397,7 +397,7 @@ abstract class Block implements BlockInterface
         return $this;
     }
 
-    public function removeRelation(RelationInterface $relation): static
+    public function removeRelation(RelationInterface $relation)
     {
         $this->getRelations()->removeElement($relation);
 

@@ -22,7 +22,9 @@ class SortOptions
     {
         foreach ($options as $index => $option) {
             if (!$option instanceof SortOption) {
-                throw new \InvalidArgumentException(sprintf('Sorting option "%s" is not an instance of "%s"', $index, SortOption::class));
+                throw new \InvalidArgumentException(
+                    sprintf('Sorting option "%s" is not an instance of "%s"', $index, SortOption::class)
+                );
             }
 
             $this->options[$option->name] = $option;
@@ -34,6 +36,17 @@ class SortOptions
         return (bool) ($this->options[$name] ?? false);
     }
 
+    public function hasByField(string $fieldName): bool
+    {
+        foreach ($this->options as $option) {
+            if ($option->field === $fieldName) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function get(string $name): SortOption
     {
         if ($this->options[$name] ?? null) {
@@ -41,6 +54,17 @@ class SortOptions
         }
 
         throw new \InvalidArgumentException(sprintf('Sorting option "%s" does not exist', $name));
+    }
+
+    public function getByField(string $fieldName): SortOption
+    {
+        foreach ($this->options as $option) {
+            if ($option->field === $fieldName) {
+                return $option;
+            }
+        }
+
+        throw new \InvalidArgumentException(sprintf('Sorting option "%s" does not exist', $fieldName));
     }
 
     public function all(): array

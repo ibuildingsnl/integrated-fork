@@ -112,8 +112,8 @@ class ContentController extends AbstractController
         $selection = null;
         if ($searchSelection && $searchSelection !== 'all') {
             $selection = $this->getDoctrineODM()
-                ->getRepository(SearchSelection::class)
-                ->find($searchSelection);
+                              ->getRepository(SearchSelection::class)
+                              ->find($searchSelection);
             if ($selection && empty($options)) {
                 $options = $selection->getFilters();
             }
@@ -152,7 +152,10 @@ class ContentController extends AbstractController
 
             $this->addFlash('success', 'Selection saved');
             if ($newSelection) {
-                return $this->redirectToRoute('integrated_content_content_selection', ['searchSelection' => $selection->getId()]);
+                return $this->redirectToRoute(
+                    'integrated_content_content_selection',
+                    ['searchSelection' => $selection->getId()]
+                );
             }
         }
 
@@ -206,20 +209,23 @@ class ContentController extends AbstractController
         /** @var SearchSelectionRepository $repo */
         $repo = $this->documentManager->getRepository(SearchSelection::class);
 
-        return $this->render('@IntegratedContent/content/index'.$view.'.'.$request->getRequestFormat().'.twig', [
-            'params' => $query->getOptions(),
-            'pager' => $paginator,
-            'facets' => $paginator->getCustomParameters()['result']->getFacetSet()->getFacets(),
-            'locks' => $this->getLocks($paginator),
-            'relations' => $relations,
-            'selection' => $selection,
-            'isSelectionEditable' => $editableSelection,
-            'searchSelections' => $this->getUser() ? $repo->findForUser($this->getUser()) : [],
-            'searchSelectionForm' => $searchSelectionForm->createView(),
-            'contentTypes' => $this->contentTypeManager->getAll(),
-            'route' => $request->attributes->get('_route'),
-            'queryParams' => array_merge($request->query->all(), $options),
-        ]);
+        return $this->render(
+            '@IntegratedContent/content/index'.$view.'.'.$request->getRequestFormat().'.twig',
+            [
+                'params' => $query->getOptions(),
+                'pager' => $paginator,
+                'facets' => $paginator->getCustomParameters()['result']->getFacetSet()->getFacets(),
+                'locks' => $this->getLocks($paginator),
+                'relations' => $relations,
+                'selection' => $selection,
+                'isSelectionEditable' => $editableSelection,
+                'searchSelections' => $this->getUser() ? $repo->findForUser($this->getUser()) : [],
+                'searchSelectionForm' => $searchSelectionForm->createView(),
+                'contentTypes' => $this->contentTypeManager->getAll(),
+                'route' => $request->attributes->get('_route'),
+                'queryParams' => array_merge($request->query->all(), $options),
+            ]
+        );
     }
 
     /**
@@ -260,11 +266,14 @@ class ContentController extends AbstractController
 
             if ($form->isValid()) {
                 if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
-                    $this->dispatcher->dispatch(new ValidationEvent(
-                        $contentType,
-                        $this->metadataFactory->getMetadata($contentType->getClass()),
-                        $content,
-                    ), Events::POST_VALIDATE);
+                    $this->dispatcher->dispatch(
+                        new ValidationEvent(
+                            $contentType,
+                            $this->metadataFactory->getMetadata($contentType->getClass()),
+                            $content,
+                        ),
+                        Events::POST_VALIDATE
+                    );
                 }
                 // higher priority for content edited in Integrated
                 $queue = $this->queueSubscriber->getQueue();
@@ -278,7 +287,8 @@ class ContentController extends AbstractController
 
                 try {
                     $this->indexer->setOption('queue.size', 2);
-                    $this->indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
+                    $this->indexer->execute(
+                    ); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
                 } finally {
                     $lock->release();
                 }
@@ -295,9 +305,18 @@ class ContentController extends AbstractController
                 }
 
                 // Set flash message
-                $this->addFlash('success', $this->getTranslator()->trans('The document %name% has been created', ['%name%' => $contentType->getName()]));
+                $this->addFlash(
+                    'success',
+                    $this->getTranslator()->trans(
+                        'The document %name% has been created',
+                        ['%name%' => $contentType->getName()]
+                    )
+                );
 
-                return $this->redirectToRoute('integrated_content_content_edit', ['remember' => 1, 'id' => $content->getId()]);
+                return $this->redirectToRoute(
+                    'integrated_content_content_edit',
+                    ['remember' => 1, 'id' => $content->getId()]
+                );
                 // TODO: Remember is broken, needs fixin.
             }
         }
@@ -385,7 +404,10 @@ class ContentController extends AbstractController
                     $locking['release']();
                 }
 
-                $url = $form->get('returnUrl')->getData() ?: $this->generateUrl('integrated_content_content_index', ['remember' => 1]);
+                $url = $form->get('returnUrl')->getData() ?: $this->generateUrl(
+                    'integrated_content_content_index',
+                    ['remember' => 1]
+                );
 
                 return $this->redirect($url);
             }
@@ -402,11 +424,14 @@ class ContentController extends AbstractController
             if ($form->get('actions')->getData() == 'save') {
                 if (!$locking['locked'] && $form->isValid()) {
                     if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
-                        $this->dispatcher->dispatch(new ValidationEvent(
-                            $contentType,
-                            $this->metadataFactory->getMetadata($contentType->getClass()),
-                            $content,
-                        ), Events::POST_VALIDATE);
+                        $this->dispatcher->dispatch(
+                            new ValidationEvent(
+                                $contentType,
+                                $this->metadataFactory->getMetadata($contentType->getClass()),
+                                $content,
+                            ),
+                            Events::POST_VALIDATE
+                        );
                     }
 
                     // higher priority for content edited in Integrated
@@ -416,14 +441,21 @@ class ContentController extends AbstractController
                     $this->documentManager->flush();
 
                     // Set flash message
-                    $this->addFlash('success', $this->getTranslator()->trans('The changes to %name% are saved', ['%name%' => $contentType->getName()]));
+                    $this->addFlash(
+                        'success',
+                        $this->getTranslator()->trans(
+                            'The changes to %name% are saved',
+                            ['%name%' => $contentType->getName()]
+                        )
+                    );
 
                     $lock = $this->lockFactory->createLock(self::class);
                     $lock->acquire(true);
 
                     try {
                         $this->indexer->setOption('queue.size', 2);
-                        $this->indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
+                        $this->indexer->execute(
+                        ); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
                     } finally {
                         $lock->release();
                     }
@@ -458,7 +490,10 @@ class ContentController extends AbstractController
                     }
                 }
 
-                $text = sprintf('The document is currently locked by %s, the document can not be edited until this lock is released.', $user);
+                $text = sprintf(
+                    'The document is currently locked by %s, the document can not be edited until this lock is released.',
+                    $user
+                );
             } else {
                 $text = 'The document is currently locked and can not be edited until this lock is released.';
             }
@@ -528,7 +563,10 @@ class ContentController extends AbstractController
 
             if ($locking['new']) {
                 if ($request->isMethod('get')) {
-                    return $this->redirectToRoute('integrated_content_content_delete', ['id' => $content->getId(), 'lock' => $locking['lock']->getId()]);
+                    return $this->redirectToRoute(
+                        'integrated_content_content_delete',
+                        ['id' => $content->getId(), 'lock' => $locking['lock']->getId()]
+                    );
                 }
 
                 $locking['locked'] = false;
@@ -566,10 +604,17 @@ class ContentController extends AbstractController
                     $this->documentManager->flush();
 
                     // Set flash message
-                    $this->addFlash('success', $this->getTranslator()->trans('The document %name% has been deleted', ['%name%' => $type->getName()]));
+                    $this->addFlash(
+                        'success',
+                        $this->getTranslator()->trans(
+                            'The document %name% has been deleted',
+                            ['%name%' => $type->getName()]
+                        )
+                    );
 
                     $this->indexer->setOption('queue.size', 2);
-                    $this->indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
+                    $this->indexer->execute(
+                    ); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
 
                     if (!$locking['locked']) {
                         $locking['release']();
@@ -599,7 +644,10 @@ class ContentController extends AbstractController
                     }
                 }
 
-                $text = sprintf('The document is currently locked by %s, the document can not be deleted until this lock is released.', $user);
+                $text = sprintf(
+                    'The document is currently locked by %s, the document can not be deleted until this lock is released.',
+                    $user
+                );
             } else {
                 $text = 'The document is currently locked and can not be deleted until this lock is released.';
             }
@@ -857,7 +905,10 @@ class ContentController extends AbstractController
             $output[] = [
                 'id' => $contentType->getId(),
                 'name' => $contentType->getName(),
-                'path' => $this->generateUrl('integrated_content_content_new', ['type' => $contentType->getId(), '_format' => 'iframe.html']),
+                'path' => $this->generateUrl(
+                    'integrated_content_content_new',
+                    ['type' => $contentType->getId(), '_format' => 'iframe.html']
+                ),
             ];
         }
 
@@ -891,9 +942,16 @@ class ContentController extends AbstractController
     /**
      * @return FormInterface
      */
-    protected function createEditForm(ContentTypeInterface $contentType, ContentInterface $content, array $locking, Request $request = null)
-    {
-        $parameters = ($locking['lock'] ? ['id' => $content->getId(), 'lock' => $locking['lock']->getId()] : ['id' => $content->getId()]);
+    protected function createEditForm(
+        ContentTypeInterface $contentType,
+        ContentInterface $content,
+        array $locking,
+        Request $request = null
+    ) {
+        $parameters = ($locking['lock'] ? [
+            'id' => $content->getId(),
+            'lock' => $locking['lock']->getId(),
+        ] : ['id' => $content->getId()]);
 
         if ($request instanceof Request) {
             $parameters = array_merge($request->query->all(), $parameters);
@@ -919,7 +977,11 @@ class ContentController extends AbstractController
         }
 
         $form = $this->createForm(ContentFormType::class, $content, $options);
-        $form->add('returnUrl', HiddenType::class, ['required' => false, 'mapped' => false, 'attr' => ['class' => 'return-url']]);
+        $form->add(
+            'returnUrl',
+            HiddenType::class,
+            ['required' => false, 'mapped' => false, 'attr' => ['class' => 'return-url']]
+        );
 
         // load a different set of buttons based on the permissions and locking state
 
@@ -975,7 +1037,10 @@ class ContentController extends AbstractController
                 ];
 
                 if ($reference instanceof Image) {
-                    $properties['image'] = $this->imageExtension->image($reference->getFile())->cropResize(250, 250)->jpeg();
+                    $properties['image'] = $this->imageExtension->image($reference->getFile())->cropResize(
+                        250,
+                        250
+                    )->jpeg();
                 }
 
                 $references[$relation->getRelationId()][] = $properties;

@@ -308,6 +308,7 @@ async function confirmDelete(confirmed_by_user) {
 
     const response = await deleteData(bulkdelete_path, json_content)
     const json_response = await response.json()
+
     document.querySelector('#used_images').innerHTML = ''
     if (confirmed_by_user === false) {
         showUsedByPopup(json_response)
