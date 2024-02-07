@@ -31,8 +31,8 @@ $('.integrated_tinymce').each(function(key, elem){
 
     let style_formats = [
         {title: 'Paragraph', format: 'p'},
-        {title: 'Heading', block: 'h2' },
-        {title: 'Subheading', block: 'h3' },
+        {title: 'Heading (H2)', block: 'h2' },
+        {title: 'Subheading (H3)', block: 'h3' },
         {title: 'Heading 4', block: 'h4' },
         {title: 'Heading 5', block: 'h5' },
         {title: 'Blockquote', format: 'blockquote'},
