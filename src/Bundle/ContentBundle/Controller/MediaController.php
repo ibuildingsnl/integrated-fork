@@ -29,7 +29,6 @@ use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Security\PermissionInterface;
 use Integrated\Common\Solr\Search\QueryFactoryInterface;
-use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -133,7 +132,7 @@ class MediaController extends AbstractController
         foreach ($contentTypes as $contentType) {
             $options['contenttypes'][] = $contentType->getId();
         }
-        if (count($request->query->all('contenttypes'))) {
+        if (\count($request->query->all('contenttypes'))) {
             $options['contenttypes'] = array_intersect($options['contenttypes'], $request->query->all('contenttypes'));
         }
 
@@ -345,7 +344,7 @@ class MediaController extends AbstractController
                 continue;
             }
 
-            if (count($filterContentTypes) && !in_array($contentType->getId(), $filterContentTypes)) {
+            if (\count($filterContentTypes) && !\in_array($contentType->getId(), $filterContentTypes)) {
                 continue;
             }
 
@@ -378,7 +377,7 @@ class MediaController extends AbstractController
             $nextMonth = 1;
             $year = (int) $year + 1;
         }
-        $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
+        $nextMonth = str_pad($nextMonth, 2, '0', \STR_PAD_LEFT);
         $endDate = "$year-{$nextMonth}-01T00:00:00Z";
         $fullDateFilter = $startDate.' TO '.$endDate;
 

@@ -157,7 +157,7 @@ class Content extends AbstractType
         });
 
         $resolver->setNormalizer('created', function (Options $options, $value) {
-            if (!is_array($value)) {
+            if (!\is_array($value)) {
                 return null;
             }
 
