@@ -13,7 +13,7 @@
                 </a>
            {% else %}
                {% set queryParams = [] %}
-               {% set queryParams = queryParams|merge({'available_contenttypes': app.request.all('available_contenttypes'), page: 1}) %}
+               {% set queryParams = queryParams|merge({'available_contenttypes[]': app.request.query.all('available_contenttypes')|join(','), page: 1}) %}
 
                <a href="{{ path(app.request.attributes.get('_route'), queryParams) }}" tabindex="-1">
                    <i class="iconoir-folder"></i>
@@ -37,13 +37,13 @@
             </form>
             <ul class="aside-filter-menu">
                 {% for key, menu_item in menu %}
-                    <li class="menu-parent {% if selectedMediaTaxonomy.current == menu_item.title %}current-menu-item{% endif %}">
-                        {% if selectedMediaTaxonomy.current == menu_item.title %}
+                    <li class="menu-parent {% if app.request.query.get('media_taxonomy_id') == menu_item.ID %}current-menu-item{% endif %}">
+                        {% if app.request.query.get('media_taxonomy_id') == menu_item.ID %}
                         <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item.ID }}">
                             {% else %}
                             <a href="{{ path(app.request.attributes.get('_route'),
                                 app.request.query.all|
-                                merge({'relation[media_taxonomy][]': menu_item.title == selectedMediaTaxonomy.default ? null : menu_item.title })|
+                                merge({'relation[media_taxonomy][]': menu_item.title })|
                                 merge({'media_taxonomy_id':menu_item.ID})|
                                 merge({'page':1})
                             ) }}"
@@ -58,14 +58,14 @@
                             {% if menu_item.children %}
                                 <ul class="child-menu">
                                     {% for key_1, menu_item_1 in menu_item.children %}
-                                        <li class="menu-child {% if selectedMediaTaxonomy.current == menu_item_1.title %}current-menu-item{% endif %}">
-                                            {% if selectedMediaTaxonomy.current == menu_item_1.title %}
+                                        <li class="menu-child {% if app.request.query.get('media_taxonomy_id') == menu_item_1.ID %}current-menu-item{% endif %}">
+                                            {% if app.request.query.get('media_taxonomy_id') == menu_item_1.ID %}
                                             <a tabindex="-1" role="menuitem" class="media_category"
                                                id="{{ menu_item_1.ID }}">
                                                 {% else %}
                                                 <a href="{{ path(app.request.attributes.get('_route'),
                                                     app.request.query.all|
-                                                    merge({'MediaTaxonomy': menu_item_1.title == selectedMediaTaxonomy.default ? null : menu_item_1.title })|
+                                                    merge({'relation[media_taxonomy][]': menu_item_1.title })|
                                                     merge({'media_taxonomy_id':menu_item_1.ID})|
                                                     merge({'page':1})
                                                 ) }}"
@@ -79,15 +79,15 @@
                                                 {% if menu_item_1.children %}
                                                     <ul class="child-menu">
                                                         {% for key_2, menu_item_2 in menu_item_1.children %}
-                                                            <li class="menu-child {% if selectedMediaTaxonomy.current == menu_item_2.title %}current-menu-item{% endif %}">
-                                                                {% if selectedMediaTaxonomy.current == menu_item_2.title %}
+                                                            <li class="menu-child {% if app.request.query.get('media_taxonomy_id') == menu_item_2.ID %}current-menu-item{% endif %}">
+                                                                {% if app.request.query.get('media_taxonomy_id') == menu_item_2.ID %}
                                                                 <a tabindex="-1" role="menuitem"
                                                                    class="media_category"
                                                                    id="{{ menu_item_2.ID }}">
                                                                     {% else %}
                                                                     <a href="{{ path(app.request.attributes.get('_route'),
                                                                         app.request.query.all|
-                                                                        merge({'MediaTaxonomy': menu_item_2.title == selectedMediaTaxonomy.default ? null : menu_item_2.title })|
+                                                                        merge({'relation[media_taxonomy][]': menu_item_2.title })|
                                                                         merge({'media_taxonomy_id':menu_item_2.ID})|
                                                                         merge({'page':1})
                                                                     ) }}"

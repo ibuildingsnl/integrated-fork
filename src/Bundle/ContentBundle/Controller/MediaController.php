@@ -124,25 +124,19 @@ class MediaController extends AbstractController
 
     public function indexComponent(Request $request): array
     {
-        $contentTypeSelectOptions = $this->getContentTypes();
-
-        $request->query->set('sort', 'created');
-        $request->query->set('id', $request->get('id'));
-
-        $requestCopy = clone $request;
-
-        // Todo: Update this code when the contentprovides is updated
-        $givenContentType = $requestCopy->query->all('contenttypes');
-        if (\is_array($givenContentType) && \count($givenContentType) > 0) {
-            $givenContentType = $givenContentType[0];
-            $requestCopy->query->set('contenttypes', [$givenContentType]);
-        }
-
-        $requestCopy = $this->setAndGetMediaType($requestCopy, $contentTypeSelectOptions);
-
+        $contentTypes = $this->getContentTypes($request->query->all('available_contenttypes'));
         $menu = $this->mediaGalleryMenu->createMenu();
 
-        $options = $requestCopy->query->all();
+        $options = $request->query->all();
+        $options['sort'] = 'created';
+        $options['contenttypes'] = [];
+        foreach ($contentTypes as $contentType) {
+            $options['contenttypes'][] = $contentType->getId();
+        }
+        if (count($request->query->all('contenttypes'))) {
+            $options['contenttypes'] = array_intersect($options['contenttypes'], $request->query->all('contenttypes'));
+        }
+
         $this->setYearMonthFilter($options, $request->query->get('year_month'));
 
         $client = $this->getSolarium();
@@ -157,21 +151,18 @@ class MediaController extends AbstractController
             [PaginatorInterface::SORT_FIELD_PARAMETER_NAME => null]
         );
 
-        $selectedMediaTaxonomy = $this->getSelectedMediaTaxonomy($requestCopy);
-
         $contentTypeFilterOptions = $this->getContentTypeFilterOptions($request);
 
-        $dateFilter = $this->getYearMonthDates($requestCopy, $contentTypeSelectOptions);
-        $dateFilterOptions = $this->getDateFilterOptions($requestCopy, $dateFilter);
+        $dateFilter = $this->getYearMonthDates($request, $contentTypes);
+        $dateFilterOptions = $this->getDateFilterOptions($request, $dateFilter);
 
         $request = $this->removeIdsFromRequest($request);
 
         return [
             'paginator' => $paginator,
-            'contentTypeSelectOptions' => $this->removeStandardClasses($contentTypeSelectOptions),
+            'contentTypeSelectOptions' => $this->removeStandardClasses($contentTypes),
             'contentTypeFilterOptions' => $contentTypeFilterOptions,
             'dateFilterOptions' => $dateFilterOptions,
-            'selectedMediaTaxonomy' => $selectedMediaTaxonomy,
             'menu' => $menu,
             'not_shown_filetypes' => array_map(
                 fn ($item) => strtolower($item),
@@ -342,40 +333,19 @@ class MediaController extends AbstractController
         return $filter;
     }
 
-    private function setAndGetMediaType(Request $request, $contentTypeSelectOptions): Request
-    {
-        /** we want to keep two things separate:
-         * - what the user asks for
-         * - what we query
-         * because with the user selection 'Alle Mediafiles' we want to query for the class: File.
-         * but when the user clicks on 'Files' we want to query on 'OtherFile'.
-         */
-        $contentType = $request->query->all('contenttypes');
-        if (!\count($contentType) || 'all_files' === $contentType) {
-            $contentTypes = [];
-            foreach ($contentTypeSelectOptions as $contentTypeSelectOption) {
-                $contentTypes[] = $contentTypeSelectOption->getId();
-            }
-            $request->query->set('contenttypes', $contentTypes);
-        }
-
-        if (null !== $request->query->get('MediaTaxonomy')) {
-            $request->query->set('MediaTaxonomy', [$request->query->get('MediaTaxonomy')]);
-            $request->query->set('MediaTaxonomy[]', [$request->query->get('MediaTaxonomy')]);
-        }
-
-        return $request;
-    }
-
-    private function getContentTypes(): array
+    private function getContentTypes(array $filterContentTypes): array
     {
         // TODO: Make sure File and or Files are shown correctly. Not sure if it shows both File and Files due to data.
         $allowedClasses = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
-        $allContentTypes = $this->documentManager->getRepository(ContentType::class)->findAll();
+        $allContentTypes = $this->documentManager->getRepository(ContentType::class)->findBy([], ['name' => 1]);
 
         $result = [];
         foreach ($allContentTypes as $contentType) {
             if (!$this->authorizationChecker->isGranted(PermissionInterface::WRITE, $contentType)) {
+                continue;
+            }
+
+            if (count($filterContentTypes) && !in_array($contentType->getId(), $filterContentTypes)) {
                 continue;
             }
 
@@ -456,7 +426,7 @@ class MediaController extends AbstractController
         $filter = [
             'options' => [
                 'all_files' => [
-                    'id' => 'all_files',
+                    'id' => null,
                     'name' => 'Alle mediafiles',
                 ],
             ],
@@ -465,10 +435,10 @@ class MediaController extends AbstractController
         ];
 
         $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
-        $allContentTypes = $this->documentManager->getRepository(ContentType::class)->findAll();
+        $allContentTypes = $this->documentManager->getRepository(ContentType::class)->findBy([], ['name' => 1]);
 
         $availableContenttypes = $request->query->all('available_contenttypes');
-        if (!\count($availableContenttypes)) {
+        if (\count($availableContenttypes)) {
             $allContentTypes = array_filter($allContentTypes, function ($item) use ($availableContenttypes) {
                 return \in_array($item->getId(), $availableContenttypes) == true;
             });
@@ -487,22 +457,6 @@ class MediaController extends AbstractController
         }
 
         return $filter;
-    }
-
-    private function getSelectedMediaTaxonomy(Request $request): array
-    {
-        // Handle that MediaTaxonomy can be "WATER" or "[WATER]" or null
-        $mediaTaxonomy = 'null';
-        if (\is_array($request->query->get('MediaTaxonomy'))) {
-            $mediaTaxonomy = $request->query->get('MediaTaxonomy')[0];
-        } elseif (\is_string($request->query->get('MediaTaxonomy'))) {
-            $mediaTaxonomy = $request->query->get('MediaTaxonomy');
-        }
-
-        return [
-            'current' => $mediaTaxonomy,
-            'default' => null,
-        ];
     }
 
     public function manageRelations(Request $request): Response
