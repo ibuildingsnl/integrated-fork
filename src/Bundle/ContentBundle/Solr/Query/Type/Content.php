@@ -89,6 +89,13 @@ class Content extends AbstractType
                 ->setQuery('facet_properties: ((%1%))', [implode(') OR (', array_map($escape, $options['properties']))]);
         }
 
+        if ($created = $options['created']) {
+            $from =
+            $query
+                ->createFilterQuery('pub_created')
+                ->setQuery('pub_created: ['.$created['start'].' TO '.$created['end'].']');
+        }
+
         // handler filters
 
         foreach ($options['filter'] as $field => $value) {
@@ -103,6 +110,7 @@ class Content extends AbstractType
             'sort' => '',
             'order' => '',
             'ids' => '',
+            'created' => null,
         ]);
 
         $resolver->setNormalizer('q', function (Options $options, $value) {
@@ -146,6 +154,17 @@ class Content extends AbstractType
             return array_filter($value, function (string $value) {
                 return preg_match('/[a-z0-9]{32}/', $value);
             });
+        });
+
+        $resolver->setNormalizer('created', function (Options $options, $value) {
+            if (!is_array($value)) {
+                return null;
+            }
+
+            return [
+                'start' => preg_replace('/[^0-9\*\-\:TZ]/', '', $value['start'] ?? '*'),
+                'end' => preg_replace('/[^0-9\*\-\:TZ]/', '', $value['end'] ?? '*'),
+            ];
         });
 
         $resolver->setDefaults([

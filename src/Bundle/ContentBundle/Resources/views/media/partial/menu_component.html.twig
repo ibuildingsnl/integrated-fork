@@ -43,7 +43,7 @@
                             {% else %}
                             <a href="{{ path(app.request.attributes.get('_route'),
                                 app.request.query.all|
-                                merge({'MediaTaxonomy': menu_item.title == selectedMediaTaxonomy.default ? null : menu_item.title })|
+                                merge({'relation[media_taxonomy][]': menu_item.title == selectedMediaTaxonomy.default ? null : menu_item.title })|
                                 merge({'media_taxonomy_id':menu_item.ID})|
                                 merge({'page':1})
                             ) }}"
