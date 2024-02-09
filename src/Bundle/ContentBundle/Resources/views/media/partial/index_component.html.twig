@@ -83,7 +83,10 @@
                     {% endif %}
                     <ul class="flex flex-wrap gallery ui-helper-reset ui-helper-clearfix" id="gallery">
                         {% for media in paginator.items %}
-                            {% include '@IntegratedContent/media/partial/media_thumbnail_component.html.twig' %}
+                            {% set media = integrated_document(media) %}
+                            {% if media %}
+                                {% include '@IntegratedContent/media/partial/media_thumbnail_component.html.twig' %}
+                            {% endif %}
                         {% endfor %}
                     </ul>
                 </div>

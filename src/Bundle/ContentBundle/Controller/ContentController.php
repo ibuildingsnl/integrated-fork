@@ -160,7 +160,7 @@ class ContentController extends AbstractController
         $view = '';
         if (!empty($options['view']) && $options['view'] != 'list') {
             $request->query->set('page', 1);
-            $request->query->set('limit', 10000);
+            $request->query->set('limit', 1000);
             $options = $this->calendarOptions->prepare($options);
             $view = $options['_view'] ?? '';
             unset($options['_view']);
@@ -173,7 +173,7 @@ class ContentController extends AbstractController
 
             if ($relation = $this->getDoctrineODM()->getRepository(Relation::class)->find($options['relation'])) {
                 foreach ($relation->getTargets() as $target) {
-                    $options['contenttypes'] = $target->getId();
+                    $options['contenttypes'][] = $target->getId();
                     $relations[] = [
                         'href' => $this->generateUrl('integrated_content_content_new', ['class' => $target->getClass(), 'type' => $target->getId(), 'relation' => $relation->getId()]),
                         'name' => $target->getName(),

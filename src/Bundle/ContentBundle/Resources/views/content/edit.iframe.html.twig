@@ -29,7 +29,7 @@
                                 {% set image = integrated_document(form.vars.value.id).file %}
                                 {% set thumbnail = integrated_image(image).scaleResize(300) %}
                                 <div class="thumbnail-holder" style="background-image:url('{{ thumbnail }}');">
-                                    {% if form.vars.data.contentType == 'image'  %}
+                                    {% if 'Image' in type.class %}
                                         <button id="go_to_editor" class="no-icon btn btn-white">Edit image</button>
                                     {% endif %}
                                 </div>
@@ -136,9 +136,11 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            document.querySelector('#go_to_editor').addEventListener('click', (event) => {
-                dispatchEvent(event);
-            })
+            if (document.querySelector('#go_to_editor')) {
+                document.querySelector('#go_to_editor').addEventListener('click', (event) => {
+                    dispatchEvent(event);
+                })
+            }
         });
 
         // This loads the edit image screen. This can be a full redirect, or an iframe (without
