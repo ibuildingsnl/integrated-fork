@@ -63,7 +63,7 @@ class Exporter implements ExporterInterface
             $publicationDate = $content->getPublishTime()->getStartDate();
             if (!$content->isPublished()) {
                 // make sure content is not published when publication date or state
-                // has changed after queueingfvbx
+                // has changed after queueing
                 $state = ConnectorExporterInterface::STATE_DELETE;
             }
         }
@@ -88,10 +88,10 @@ class Exporter implements ExporterInterface
             $exporters = [];
 
             foreach ($this->resolver->getConfigs($channel) as $config) {
-//                $publicationStartDate = $config->getPublicationStartDate();
-//                if ($publicationStartDate && $publicationDate && $publicationStartDate > $publicationDate) {
-//                    continue;
-//                }
+                $publicationStartDate = $config->getPublicationStartDate();
+                if ($publicationStartDate && $publicationDate && $publicationStartDate > $publicationDate) {
+                    continue;
+                }
 
                 $adaptor = $this->registry->getAdapter($config->getAdapter());
 

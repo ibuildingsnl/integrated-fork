@@ -60,7 +60,6 @@ class Brand
         return false;
     }
 
-    /** @deprecated */
     public function linkTypeForChannel(ChannelInterface $channel): ?ChannelType
     {
         foreach ($this->channelLinks as $link) {
