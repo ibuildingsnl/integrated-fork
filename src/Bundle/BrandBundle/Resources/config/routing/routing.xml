@@ -12,7 +12,7 @@
         <default key="_controller">Integrated\Bundle\BrandBundle\Controller\BrandController::create</default>
     </route>
 
-    <route id="integrated_content_brand_edit" path="/{id}/edit" methods="GET,PUT">
+    <route id="integrated_content_brand_edit" path="/{id}/edit" methods="GET,POST,PUT">
         <default key="_controller">Integrated\Bundle\BrandBundle\Controller\BrandController::edit</default>
     </route>
 
@@ -24,7 +24,7 @@
         <default key="_controller">Integrated\Bundle\BrandBundle\Controller\ChannelLinkController::addChannel</default>
     </route>
 
-    <route id="integrated_content_brand_edit_channel" path="/{id}/edit/{link}" methods="GET,PUT">
+    <route id="integrated_content_brand_edit_channel" path="/{id}/edit/{link}" methods="GET,POST,PUT">
         <default key="_controller">Integrated\Bundle\BrandBundle\Controller\ChannelLinkController::editChannel</default>
     </route>
 
