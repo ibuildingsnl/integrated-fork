@@ -138,7 +138,7 @@ class ChannelType extends AbstractType
                 'attr' => [
                     'location' => 'sidebar',
                     'style' => 'sidebar',
-                    'icon' => 'key-alt-back',
+                    'icon' => 'key-back',
                 ],
             ])->add(
                 'permissions',

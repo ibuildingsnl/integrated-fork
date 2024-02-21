@@ -36,7 +36,7 @@
                             <div class="status-options">
                                 {% if data.publicationStartDate is defined and ('now'|date('U') > data.publicationStartDate|date('U'))%}
                                     <div class="status published">
-                                        <i class="iconoir-check-circled-outline"></i> {% trans %}Published{% endtrans %}
+                                        <i class="iconoir-check-circle"></i> {% trans %}Published{% endtrans %}
                                     </div>
                                     <a class="delete"
                                        href="{{ path('integrated_channel_config_delete', {'id': data.id}) }}">

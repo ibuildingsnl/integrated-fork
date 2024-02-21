@@ -105,7 +105,7 @@ class ContentTypeFormType extends AbstractType
                         'location' => 'sidebar',
                         'style' => 'sidebar',
                         'state' => 'show',
-                        'icon' => 'key-alt-back',
+                        'icon' => 'key-back',
                     ],
                 ]
             )
