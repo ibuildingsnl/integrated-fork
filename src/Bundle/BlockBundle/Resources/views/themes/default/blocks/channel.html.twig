@@ -1,12 +1,12 @@
 {% set edit = app.request.attributes.get('integrated_block_edit') %}
 
 {% if edit|default %}
-<div class="integrated-block-buttons">
-    <a href="javascript:;" class="integrated-block-button integrated-website-block-edit" data-action="integrated-website-block-edit" title="{% trans %}Edit block{% endtrans %}">
-        <svg class="integrated-icon integrated-icon-edit"><use xlink:href="#integrated-icon-edit"></use></svg>
-        <span class="integrated-block-button-label">{% trans %}Edit block{% endtrans %}</span>
-    </a>
-</div><div class="integrated-website-channel-block-grid" data-block-type="channel" data-id="{{ id }}">
+<div class="integrated-website-channel-block-grid" data-block-type="channel" data-id="{{ id }}">
+    <div>
+        <a href="javascript:;" class="integrated-block-button" data-action="integrated-website-block-edit" title="{% trans %}Edit block{% endtrans %}">
+            <i class="iconoir-edit-pencil"></i>
+        </a>
+    </div>
 {% endif %}
 
 {{ content|raw }}

@@ -1,12 +1,11 @@
 {% if app.request.attributes.get('integrated_block_edit') %}
-    <div class="integrated-block-buttons">
+    <div>
         <button class="integrated-block-button" type="button"
                 data-action="integrated-website-block-new-channel-block"
                 data-id="{{ id }}"
                 data-name="{{ name }}"
                 data-class="{{ class }}"
                 data-csrf-token="{{ csrf_token('create-channel-block') }}"
-        >Create block {{ name|default('undefined') }}</button>
-
+        ><i class="iconoir-plus"></i></button>
     </div>
 {% endif %}
