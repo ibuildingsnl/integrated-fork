@@ -74,6 +74,11 @@ class Channel implements ChannelInterface
     protected $ipProtected = false;
 
     /**
+     * @var string
+     */
+    protected $language = 'nl';
+
+    /**
      * @var Scope
      */
     protected $scopeInstance = null;
@@ -211,6 +216,16 @@ class Channel implements ChannelInterface
     public function setIpProtected(bool $protected): void
     {
         $this->ipProtected = $protected;
+    }
+
+    public function getLanguage(): ?string
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(string $language): void
+    {
+        $this->language = $language;
     }
 
     public function getScope(): ?Scope
