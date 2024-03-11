@@ -20,6 +20,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\LanguageType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -151,6 +152,18 @@ class ChannelType extends AbstractType
                 [
                     'label' => 'Protect by IP address or logged in user',
                     'required' => false,
+                    'attr' => [
+                        'align_with_widget' => true,
+                        'data-exclusive-to' => 'website',
+                    ],
+                ]
+            )->add(
+                'language',
+                LanguageType::class,
+                [
+                    'label' => 'Website language',
+                    'required' => false,
+                    'choice_self_translation' => true,
                     'attr' => [
                         'align_with_widget' => true,
                         'data-exclusive-to' => 'website',
