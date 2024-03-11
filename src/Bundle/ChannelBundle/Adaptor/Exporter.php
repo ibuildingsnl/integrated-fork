@@ -28,12 +28,7 @@ final class Exporter implements ExporterInterface
             return null;
         }
 
-        // @todo better error handling...
-        dump("Publishing to {$this->connector->getName()}...");
         if ($content->hasConnector($this->config->getId())) {
-            // already posted
-            dump('Skipped: already posted');
-
             return null;
         }
 
@@ -41,22 +36,15 @@ final class Exporter implements ExporterInterface
             $externalId = $this->connector->publish($content, $channel, $this->config->getOptions(), $settings);
         } catch (CouldNotPublish $e) {
             $this->logger->error($e->getMessage()."\n".$e->getTraceAsString());
-            dump("Failed: {$e->getMessage()}");
-//            @todo Add feedback about failure to publication or content
             return null;
         } catch (\Throwable $e) {
-            dump('Error:');
-            dd($e);
+
         }
 
         if (null === $externalId) {
-            dump('Skipped: refused by connector');
-
             return null;
         }
-
-//        @todo Add feedback about success state to publication or content
-
+        
         $response = new ExporterResponse($this->config->getId(), $this->config->getAdapter());
         $response->setExternalId($externalId);
 
