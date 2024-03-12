@@ -45,6 +45,7 @@ final class Exporter implements ExporterInterface
 
         if (null === $externalId) {
             $this->logger->error('Skipped: refused by connector');
+
             return null;
         }
 
