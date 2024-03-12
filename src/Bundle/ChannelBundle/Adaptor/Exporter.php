@@ -28,6 +28,7 @@ final class Exporter implements ExporterInterface
             return null;
         }
 
+        $this->logger->info("Publishing to {$this->connector->getName()}...");
         if ($content->hasConnector($this->config->getId())) {
             return null;
         }
@@ -38,13 +39,14 @@ final class Exporter implements ExporterInterface
             $this->logger->error($e->getMessage()."\n".$e->getTraceAsString());
             return null;
         } catch (\Throwable $e) {
-
+            $this->logger->error($e);
         }
 
         if (null === $externalId) {
+            $this->logger->error('Skipped: refused by connector');
             return null;
         }
-        
+
         $response = new ExporterResponse($this->config->getId(), $this->config->getAdapter());
         $response->setExternalId($externalId);
 
