@@ -19,8 +19,8 @@ class LocaleSubscriber implements EventSubscriberInterface
         $channel = $this->manager->findByDomain($event->getRequest()->getHost());
 
         if ($channel) {
-            if (strlen($channel->getLanguage()) > 0) {
-                $request->setLocale($channel->getLanguage() ?: 'nl');
+            if ($channel->getLanguage() !== '') {
+                $request->setLocale($channel->getLanguage());
             }
         }
     }

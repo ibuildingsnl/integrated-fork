@@ -36,6 +36,7 @@ final class Exporter implements ExporterInterface
             $externalId = $this->connector->publish($content, $channel, $this->config->getOptions(), $settings);
         } catch (CouldNotPublish $e) {
             $this->logger->error($e->getMessage()."\n".$e->getTraceAsString());
+
             return null;
         } catch (\Throwable $e) {
         }
