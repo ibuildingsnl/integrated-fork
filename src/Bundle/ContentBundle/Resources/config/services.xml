@@ -40,7 +40,7 @@
             <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
         </service>
 
-        <service id="Integrated\Bundle\ContentBundle\Services\PublicationSettingsProvider"
+        <service id="Integrated\Bundle\ContentBundle\Services\PublicationSettingsProviderInterface"
                  class="Integrated\Bundle\ContentBundle\Services\PublicationTimeSettingsProvider">
         </service>
 

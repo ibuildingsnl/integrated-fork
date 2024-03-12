@@ -2,7 +2,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
-use Integrated\Bundle\ContentBundle\Services\PublicationSettingsProvider;
+use Integrated\Bundle\ContentBundle\Services\PublicationSettingsProviderInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class PublicationsType extends AbstractType
 {
     public function __construct(
-        private readonly PublicationSettingsProvider $publicationSettings,
+        private readonly PublicationSettingsProviderInterface $publicationSettings,
     ) {
     }
 

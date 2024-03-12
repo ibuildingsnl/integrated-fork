@@ -4,7 +4,7 @@ namespace Integrated\Bundle\ContentBundle\Services;
 
 use Integrated\Common\Content\Channel\ChannelInterface;
 
-interface PublicationSettingsProvider
+interface PublicationSettingsProviderInterface
 {
     public function settingTypeFor(ChannelInterface $channel): string;
 }
