@@ -28,6 +28,7 @@ class ContentBlockConverter
 
             $settings['facets_search_selection'] = $this->getFacets($block, $filters);
             $settings['relation_search_selection'] = $filters['relation'] ?? [];
+            $settings['sort'] = $filters['sort'] ?? null;
             $settings['params'] = $selection->getInternalParams();
         }
 

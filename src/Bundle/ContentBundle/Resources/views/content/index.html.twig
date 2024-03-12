@@ -9,7 +9,7 @@
             <i class="iconoir-nav-arrow-down"></i>
         </a>
         <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
-            {% set sort_default = params.q ? 'rel' : 'time' %}
+            {% set sort_default = params.q ? 'rel' : 'changed' %}
             {% for sort in integrated_search_sorting_options()|filter(v => v.name != 'rel' or params.q) %}
                 <li {% if sort.name == params.sort %}class="active"
                     {% endif %}role="presentation">
