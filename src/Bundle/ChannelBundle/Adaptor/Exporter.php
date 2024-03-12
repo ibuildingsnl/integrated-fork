@@ -38,13 +38,12 @@ final class Exporter implements ExporterInterface
             $this->logger->error($e->getMessage()."\n".$e->getTraceAsString());
             return null;
         } catch (\Throwable $e) {
-
         }
 
         if (null === $externalId) {
             return null;
         }
-        
+
         $response = new ExporterResponse($this->config->getId(), $this->config->getAdapter());
         $response->setExternalId($externalId);
 
