@@ -142,10 +142,8 @@ $('.integrated_tinymce').each(function(key, elem){
                     args.content = '<div class="embed-content">' + modifiedCode + '</div><br>';
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(errorThrown)
                 },
                 complete: function (jqXHR, textStatus) {
-                    console.log(textStatus)
                 }
             });
         },
