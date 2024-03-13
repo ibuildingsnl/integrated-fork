@@ -1294,11 +1294,6 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-"@typhonjs-tinymce/oembed@^0.4.0":
-  "integrity" "sha512-uGdCZ0M8mHW0fsfu2dX0pAFAxDKJNeY35W9WJNpT0jJFKQUdDmsHT6NDKGFiLp1NZ4jx8C979adwQLj3qbJ5oA=="
-  "resolved" "https://registry.npmjs.org/@typhonjs-tinymce/oembed/-/oembed-0.4.0.tgz"
-  "version" "0.4.0"
-
 "@uppy/audio@^1.1.3":
   "integrity" "sha512-wFxZzdJ1zFUgo77a0I382nZQYPzZElgSc7p+AO5l1tHA2X2cj9+FfL0XtrzEnL1oKt2VXBgKsjnltpMkZsHilA=="
   "resolved" "https://registry.npmjs.org/@uppy/audio/-/audio-1.1.3.tgz"

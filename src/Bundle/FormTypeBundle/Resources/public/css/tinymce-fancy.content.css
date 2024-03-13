@@ -170,3 +170,53 @@ blockquote:before {
     -webkit-mask-size: cover;
 }
 
+
+.twitter-tweet {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    max-width: 550px;
+    border: 1px solid #e1e8ed;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px auto;
+    background-color: #fff;
+    color: #14171a;
+}
+
+.twitter-tweet:before {
+    content:unset;
+}
+
+.twitter-tweet p {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.twitter-tweet a {
+    color: #1da1f2;
+    text-decoration: none;
+}
+
+.twitter-tweet a:hover {
+    text-decoration: underline;
+}
+
+/* Handle hashtags and mentions styling */
+.twitter-tweet a[href*="/hashtag/"], .twitter-tweet a[href*="/AZAlkmaar"] {
+    color: #1da1f2;
+    text-decoration: none;
+}
+
+/* Styling for the author and tweet date */
+.twitter-tweet a[href*="/status/"] {
+    display: block;
+    color: #657786;
+    font-size: 14px;
+    margin-top: 10px;
+    text-decoration: none;
+}
+
+.twitter-tweet img {
+    max-width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+}

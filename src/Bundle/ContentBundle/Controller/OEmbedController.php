@@ -10,6 +10,15 @@ use Symfony\Component\Validator\Validation;
 
 class OEmbedController extends AbstractController
 {
+    public function __construct(
+        private readonly string $fbAppId,
+        private readonly string $fbSecret,
+        private readonly string $xAppId,
+        private readonly string $xSecret,
+    )
+    {
+    }
+
     public function oEmbed(Request $request): JsonResponse
     {
         $validator = Validation::createValidator();
@@ -30,46 +39,46 @@ class OEmbedController extends AbstractController
 
         try {
             // Creating an Embed instance and extracting the info
-            $embed = new \Embed\Embed();
+            $embed = new Embed();
+            $embed->setSettings(
+                [
+                    'facebook:token' => $this->fbAppId . '|' . $this->fbSecret,
+                    'instagram:token' => $this->fbAppId . '|' . $this->fbSecret,
+                    'twitter:token' => $this->xAppId . '|' . $this->xSecret,
+                ]
+            );
+
             $info = $embed->get($url);
 
-            // Constructing the response based on available data
             $response = [
                 'title' => $info->title, //The page title
                 'description' => $info->description, //The page description
                 'url' => $info->url, //The canonical url
-                'type' => $info->type, //The page type (link, video, image, rich)
-                'tags' => $info->tags, //The page keywords (tags)
+                'keywords' => $info->keywords, //The page keywords (tags)
 
-                'images' => $info->images, //List of all images found in the page
                 'image' => $info->image, //The image choosen as main image
-                'image_width' => $info->imageWidth, //The width of the main image
-                'image_height' => $info->imageHeight, //The height of the main image
 
-                'code' => $info->code, //The code to embed the image, video, etc
-                'width' => $info->width, //The width of the embed code
-                'height' => $info->height, //The height of the embed code
-                'aspect_ratio' => $info->aspectRatio, //The aspect ratio (width/height)
+                'code' => $info->code->html, //The code to embed the image, video, etc
+                'width' => $info->code->width, //The width of the embed code
+                'height' => $info->code->height, //The height of the embed code
+                'ratio' => $info->code->ratio, //The aspect ratio (width/height)
 
                 'author_name' => $info->authorName, //The resource author
                 'author_url' => $info->authorUrl, //The author url
 
                 'provider_name' => $info->providerName, //The provider name of the page (Youtube, Twitter, Instagram, etc)
                 'provider_url' => $info->providerUrl, //The provider url
-                'provider_icons' => $info->providerIcons, //All provider icons found in the page
-                'provider_icon' => $info->providerIcon, //The icon choosen as main icon
+                'provider_icon' => $info->icon, //All provider icons found in the page
+                'favicon' => $info->favicon, //The icon choosen as main icon
 
-                'published_date' => $info->publishedDate, //The published date of the resource
+                'published_date' => $info->publishedTime, //The published date of the resource
                 'license' => $info->license, //The license url of the resource
-                'linked_data' => $info->linkedData, //The linked-data info (http://json-ld.org/)
                 'feeds' => $info->feeds, //The RSS/Atom feeds
             ];
 
-            dd($response);
-
-            return $this->json($response);
+            return new JsonResponse($response);
         } catch (\Exception $e) {
-            return $this->json(['error' => 'Failed to retrieve embed data'], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+            return new JsonResponse(['error' => 'Failed to retrieve embed data'], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
