@@ -33,6 +33,7 @@
         "doctrine/migrations": "~2.2",
         "doctrine/mongodb-odm-bundle": "~4.3",
         "doctrine/orm": "2.16.3",
+        "embed/embed": "^4.4",
         "endroid/qr-code-bundle": "^4.0",
         "excelwebzone/recaptcha-bundle": "^1.5",
         "gregwar/image": ">=2.0.25",
@@ -52,7 +53,6 @@
         "sensio/framework-extra-bundle": "~5.0",
         "solarium/solarium": "6.2.*",
         "swiftmailer/swiftmailer": "~6.1",
-        "twindigital/clock": "^1.0.0",
         "symfony/asset": "^5.4",
         "symfony/cache": "^5.4",
         "symfony/css-selector": "^5.4",
@@ -80,7 +80,8 @@
         "twig/extra-bundle": "^3.3",
         "twig/intl-extra": "^3.3",
         "twig/string-extra": "^3.3",
-        "twig/twig": ">=3.4"
+        "twig/twig": ">=3.4",
+        "twindigital/clock": "^1.0.0"
     },
     "replace": {
         "integrated/asset-bundle": "self.version",

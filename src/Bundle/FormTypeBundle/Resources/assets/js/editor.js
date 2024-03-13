@@ -26,6 +26,12 @@ import 'tinymce/plugins/code';
 
 import './tinymce-integrated-browser/plugin';
 
+function isValidURL(str) {
+    var a  = document.createElement('a');
+    a.href = str;
+    return (a.host && a.host != window.location.host);
+}
+
 $('.integrated_tinymce').each(function(key, elem){
     const element = $(elem);
 
@@ -97,6 +103,33 @@ $('.integrated_tinymce').each(function(key, elem){
         integrated_browser_video_dialog_url: element.data('integrated_browser_video_dialog_url'),
         document_base_url : element.data('document_base_url'),
         style_formats: style_formats,
+        noneditable_noneditable_class: 'embed-content',
+
+        paste_preprocess: function(plugin, args) {
+            let input = args.content.trim();
+
+            if (!isValidURL(input)) return;
+
+            $.ajax({
+                url: '/admin/_oembed/fetch-data',
+                dataType: 'json',
+                type: 'get',
+                async: false, // set the async to false, because we want to replace the original content with the embed code
+                data: {
+                    url: input
+                },
+                success: function (data, textStatus, jqXHR) {
+                    if (!data.code) return;
+
+                    // wrap the embed code with a div, to prevent it to be editable
+                    args.content = '<div class="embed-content">' + data.code + '</div>';
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                },
+                complete: function (jqXHR, textStatus) {
+                }
+            });
+        },
         setup: function (editor) {
 
             function addRemoveButton(element, className) {

@@ -162,6 +162,10 @@
             <tag name="controller.service_arguments" />
         </service>
 
+        <service id="Integrated\Bundle\ContentBundle\Controller\OEmbedController">
+            <tag name="controller.service_arguments" />
+        </service>
+
     </services>
 
 </container>
