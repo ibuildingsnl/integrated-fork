@@ -42,8 +42,8 @@ class OEmbedController extends AbstractController
             $embed = new Embed();
             $embed->setSettings(
                 [
-                    'facebook:token' => $this->fbAppId . '|' . $this->fbSecret,
-                    'instagram:token' => $this->fbAppId . '|' . $this->fbSecret,
+                    'facebook:token' => $this->fbAppId . '|' . $this->fbSecret, // oEmbed Read rights are needed, app needs to be verified
+                    'instagram:token' => $this->fbAppId . '|' . $this->fbSecret, // oEmbed Read rights are needed, app needs to be verified
                     'twitter:token' => $this->xAppId . '|' . $this->xSecret,
                 ]
             );
