@@ -263,3 +263,29 @@ blockquote:before {
     text-decoration: none;
     font-size: 14px;
 }
+
+
+.reddit-embed-bq {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 20px;
+    margin: 20px auto;
+    background-color: #f8f9fa;
+    color: #333;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.reddit-embed-bq a {
+    color: #0079d3;
+    text-decoration: none;
+}
+
+.reddit-embed-bq a:hover {
+    text-decoration: underline;
+}
+
+.reddit-embed-bq br {
+    display: none;
+}
