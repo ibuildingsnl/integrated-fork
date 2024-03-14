@@ -125,5 +125,11 @@
             <tag name="integrated_content.facet_setting" />
         </service>
 
+        <service id="Integrated\Bundle\BrandBundle\Services\LinkTypeSettingsProvider"
+                 decorates="Integrated\Bundle\ContentBundle\Services\PublicationSettingsProviderInterface">
+            <argument type="service" id="integrated_brand.brand.repository" />
+            <argument type="service" id=".inner"/>
+        </service>
+
     </services>
 </container>

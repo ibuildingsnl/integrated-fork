@@ -113,12 +113,6 @@
         "phpstan/phpstan-doctrine": "^1",
         "phpstan/phpstan-deprecation-rules": "^1"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@bitbucket.org:twin-digital/clock.git"
-        }
-    ],
     "autoload": {
         "psr-4": {
             "Integrated\\Bundle\\": "src/Bundle",

@@ -423,7 +423,6 @@ class ContentController extends AbstractController
             // this is not rest compatible since a button click is required to save
             if ($form->get('actions')->getData() == 'save') {
                 if (!$locking['locked'] && $form->isValid()) {
-                    $this->documentManager->flush();
                     if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
                         $this->dispatcher->dispatch(
                             new ValidationEvent(
