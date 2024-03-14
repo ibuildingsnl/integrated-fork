@@ -108,14 +108,13 @@ class ContentTypeFormType extends AbstractType
                         'icon' => 'key-back',
                     ],
                 ]
-            )
-                    ->add(
-                        'permissions',
-                        PermissionsType::class,
-                        [
-                            'required' => false,
-                        ]
-                    ),
+            )->add(
+                'permissions',
+                PermissionsType::class,
+                [
+                    'required' => false,
+                ]
+            ),
         );
 
         $builder->add('options_color', ColorType::class, [

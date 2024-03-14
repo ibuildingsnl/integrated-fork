@@ -17,6 +17,7 @@ class ContentBlockConverter
             'exclude' => false,
             'q' => '',
             'channels' => [$channel],
+            'pub_channels' => [$channel],
         ];
 
         if ($search = $request->query->get($block->getId().'-search')) {

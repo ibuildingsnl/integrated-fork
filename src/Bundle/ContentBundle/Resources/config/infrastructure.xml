@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <defaults autowire="true" autoconfigure="true"/>
+
+        <service id="integrated_channel.channel_type.registry" class="Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry">
+            <argument type="tagged_iterator" tag="integrated_channel.type" />
+        </service>
+
+        <!-- Note: the types below are mainly here for demo purposes, they can and should be moved to bundles/plugins -->
+
+        <service id="integrated_channel.type.website" class="Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeFactory">
+            <argument>website</argument>
+            <argument>Website</argument>
+            <argument type="expression">true</argument>
+            <argument type="expression">false</argument>
+            <argument>website</argument>
+
+            <tag name="integrated_channel.type" />
+        </service>
+
+        <service id="integrated_channel.type.newsletter" class="Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeFactory">
+            <argument>newsletter</argument>
+            <argument>Newsletter</argument>
+            <argument type="expression">false</argument>
+            <argument type="expression">false</argument>
+
+            <tag name="integrated_channel.type" />
+        </service>
+
+    </services>
+
+</container>

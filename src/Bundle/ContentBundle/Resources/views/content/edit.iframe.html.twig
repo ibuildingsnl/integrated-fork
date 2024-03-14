@@ -45,13 +45,15 @@
 
                         {% block content_editor %}
                             {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR')) %}
-                                {{ form_row(child, { 'style': 'inline'}) }}
+                                {% if child.vars.name is not same as('brands') %}
+                                    {{ form_row(child, { 'style': 'inline'}) }}
+                                {% endif %}
                             {% endfor %}
                         {% endblock %}
 
                         {% block content_meta %}
                             {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR')) %}
-                                {% if child.vars.name is not same as('channels') %}
+                                {% if child.vars.name is not same as('brands') %}
                                     {{ form_row(child, { 'style': 'inline'}) }}
                                 {% endif %}
                             {% endfor %}
@@ -89,20 +91,12 @@
                             {% endif %}
                         {% endblock %}
 
-                        {% if form.channels is defined %}
-                            {{ form_row(form.channels, { 'style': 'sidebar', 'state': 'search'}) }}
-                        {% endif %}
-
                         <div class="aside-item-wrapper" id="used-by"></div>
 
                         {% block content_history %}
                             {% if showContentHistory %}
                                 {{ render(controller('Integrated\\Bundle\\ContentHistoryBundle\\Controller\\ContentHistoryController::historyIframe', { 'content': content })) }}
                             {% endif %}
-                        {% endblock %}
-
-                        {% block form_rest %}
-                            {{ form_rest(form) }}
                         {% endblock %}
                     {% endblock %}
                 </div>

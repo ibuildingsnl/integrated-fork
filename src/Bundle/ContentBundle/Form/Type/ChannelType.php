@@ -11,18 +11,22 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
-use Integrated\Bundle\FormTypeBundle\Form\Type\ColorType;
+use Integrated\Bundle\AssetBundle\Manager\AssetManager;
+use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
 use Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\LanguageType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 
 /**
@@ -30,11 +34,28 @@ use Symfony\Component\Validator\Constraints\Length;
  */
 class ChannelType extends AbstractType
 {
+    public function __construct(
+        private readonly AssetManager $js,
+        private readonly ChannelTypeRegistry $channelTypes,
+    ) {
+    }
+
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $builder->add('type', ChoiceType::class, [
+            'choices' => $this->channelTypes->allTypes(),
+            'choice_label' => 'name',
+            'choice_value' => 'id',
+            'priority' => 1000,
+            'attr' => [
+                'location' => 'editor',
+                'style' => 'inline',
+                'class' => $options['can_change_type'] ? '' : 'hidden',
+            ],
+        ]);
         $builder->add('name', TextType::class, [
             'priority' => 990,
             'constraints' => new Length(['max' => 100]),
@@ -62,62 +83,6 @@ class ChannelType extends AbstractType
             ]
         );
 
-        $builder->add(
-            $builder->create('colors', FormType::class, [
-                'inherit_data' => true,
-                'attr' => [
-                    'location' => 'sidebar',
-                    'style' => 'sidebar',
-                    'icon' => 'droplet',
-                ],
-            ])->add(
-                'color',
-                ColorType::class,
-                [
-                    'label' => 'Primary Color',
-                    'required' => false,
-                ]
-            )->add(
-                'secondarycolor',
-                ColorType::class,
-                [
-                    'label' => 'Secondary Color',
-                    'required' => false,
-                ]
-            )
-        );
-
-        $builder->add(
-            'logo',
-            MediaGalleryType::class,
-            [
-                'attr' => [
-                    'location' => 'sidebar',
-                    'style' => 'sidebar',
-                    'icon' => 'media-image',
-                    'data-types' => '[{"type":"image","name":"Image"}]',
-                    'data-emptytext' => 'Select logo',
-                    'data-multiple' => false,
-                ],
-            ]
-        );
-
-        $builder->add(
-            'favicon',
-            MediaGalleryType::class,
-            [
-                'attr' => [
-                    'location' => 'sidebar',
-                    'style' => 'sidebar',
-                    'icon' => 'media-image',
-                    'data-types' => '[{"type":"image","name":"Image"}]',
-                    'data-emptytext' => 'Select Favicon 512x512',
-                    'data-multiple' => false,
-                    'help_text' => '<span>Use a 512x512 sized image for the best result</span>',
-                ],
-            ]
-        );
-
         $builder->add('domains', TailwindCollectionType::class, [
             'priority' => 500,
             'label' => 'Domains (example.com)',
@@ -125,12 +90,23 @@ class ChannelType extends AbstractType
             'allow_delete' => true,
             'add_button_text' => 'Add domain',
             'delete_button_text' => 'Delete domain',
-            'attr' => ['class' => 'channel-domains', 'show_headings' => 'false', 'location' => 'editor', 'style' => 'editor', 'state' => 'show'],
+            'attr' => [
+                'class' => 'channel-domains',
+                'show_headings' => 'false',
+                'location' => 'editor',
+                'style' => 'editor',
+                'state' => 'show',
+                'data-exclusive-to' => 'website',
+            ],
         ]);
 
         $builder->add('primaryDomain', HiddenType::class, [
             'priority' => 500,
-            'attr' => ['class' => 'primary-domain-input'], ]);
+            'attr' => [
+                'class' => 'primary-domain-input',
+                'data-exclusive-to' => 'website',
+            ],
+        ]);
 
         $builder->add(
             $builder->create('permissions', FormType::class, [
@@ -157,6 +133,7 @@ class ChannelType extends AbstractType
                     'style' => 'sidebar',
                     'state' => 'show',
                     'icon' => 'tools',
+                    'data-exclusive-to' => 'website',
                 ],
             ])->add(
                 'primaryDomainRedirect',
@@ -166,6 +143,7 @@ class ChannelType extends AbstractType
                     'required' => false,
                     'attr' => [
                         'align_with_widget' => true,
+                        'data-exclusive-to' => 'website',
                     ],
                 ]
             )->add(
@@ -176,6 +154,19 @@ class ChannelType extends AbstractType
                     'required' => false,
                     'attr' => [
                         'align_with_widget' => true,
+                        'data-exclusive-to' => 'website',
+                    ],
+                ]
+            )->add(
+                'language',
+                LanguageType::class,
+                [
+                    'label' => 'Website language',
+                    'required' => false,
+                    'choice_self_translation' => true,
+                    'attr' => [
+                        'align_with_widget' => true,
+                        'data-exclusive-to' => 'website',
                     ],
                 ]
             )
@@ -211,5 +202,12 @@ class ChannelType extends AbstractType
                 }
             }
         });
+
+        $this->js->add('bundles/integratedcontent/js/channel_types.js');
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefault('can_change_type', true);
     }
 }

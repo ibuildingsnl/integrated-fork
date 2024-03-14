@@ -11,25 +11,18 @@
 
 namespace Integrated\Common\Channel\Exporter\Queue;
 
-use Integrated\Common\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
 class Request
 {
-    /**
-     * @var object
-     */
-    public $content;
-
-    /**
-     * @var string
-     */
-    public $state;
-
-    /**
-     * @var ChannelInterface
-     */
-    public $channel;
+    public function __construct(
+        public ?object $content = null,
+        public ?string $state = null,
+        public ?ChannelInterface $channel = null,
+        public ?array $settings = [],
+    ) {
+    }
 }

@@ -15,9 +15,9 @@ use Abraham\TwitterOAuth\TwitterOAuth;
 use Integrated\Bundle\ChannelBundle\Model\ConfigInterface;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface;
 use Integrated\Common\Channel\Exporter\ExporterResponse;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -48,7 +48,7 @@ class Exporter implements ExporterInterface
     /**
      * {@inheritdoc}
      */
-    public function export($content, $state, ChannelInterface $channel)
+    public function export($content, $state, ChannelInterface $channel, array $settings = [])
     {
         if (!$content instanceof Article) {
             return;

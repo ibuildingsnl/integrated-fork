@@ -1,12 +1,13 @@
 let form_relations = {}; //this holds all the form relation objects with an id
 const mediagallery_link = '/admin/media/';
 
-window.onload = async function() {
+window.addEventListener('load', function() {
     populateFormRelations();
-    await populateSelectedImages(); // wait for populateSelectedImages() to finish
-    setupFormRelations();
-    addEventListeners();
-};
+    populateSelectedImages().then(() => {
+        setupFormRelations();
+        addEventListeners();
+    });
+});
 
 function setupFormRelations() {
     Object.values(form_relations).forEach(form_relation => {

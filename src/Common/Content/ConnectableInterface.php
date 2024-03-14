@@ -13,7 +13,7 @@ namespace Integrated\Common\Content;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Connector;
 
-interface ConnectorInterface
+interface ConnectableInterface
 {
     /**
      * Add author to Connectors collection.

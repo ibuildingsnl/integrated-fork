@@ -44,8 +44,8 @@ div.heading-switcher {
     .day {
         width: calc(100% / 7);
         margin: 0;
-        padding: 0;
         min-width: 230px;
+        padding: 0.5rem;
 
         &.title {
             text-align: center;
@@ -98,7 +98,7 @@ div.heading-switcher {
                 &.show {
                     display: block;
                     position: sticky;
-                    bottom: -1px;
+                    bottom: -7px;
                     background-color: white;
                     width: 100%;
                     text-align: center;
@@ -109,9 +109,11 @@ div.heading-switcher {
     }
 
     .calendar-item {
-        border-bottom: 1px solid $border-color;
+        border: 1px solid $border-color;
         color: black;
         display: block;
+        border-radius: 8px;
+        margin-bottom: 0.5em;
 
         &.concept {
             filter: grayscale(100%);
@@ -126,6 +128,7 @@ div.heading-switcher {
             display: flex;
             flex-direction: column;
             padding: 0.5rem;
+            border-radius: 4px;
 
             .calendar-item-heading {
                 font-weight: bold;
@@ -189,8 +192,8 @@ div.heading-switcher {
 
         button.close-edit-form {
             position: absolute;
-            width: 50px;
-            height: 50px;
+            width: 48px;
+            height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -212,8 +215,11 @@ div.heading-switcher {
 
 .index-wrapper {
     table {
-        .state, .pub-date {
+        .pub-date {
             width: 150px;
+        }
+        .state {
+            width: 70px;
         }
         .content-type {
             width: 175px;

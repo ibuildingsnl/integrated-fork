@@ -1,18 +1,18 @@
 <?php
 
-namespace Integrated\Bundle\BrandBundle\Infrastructure;
+namespace Integrated\Bundle\ContentBundle\Infrastructure;
 
-use Integrated\Bundle\BrandBundle\Document\LinkType;
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 
-class LinkTypeRegistry
+class ChannelTypeRegistry
 {
-    /** @param iterable<LinkTypeFactory> $linkTypeFactories */
+    /** @param iterable<ChannelTypeFactory> $linkTypeFactories */
     public function __construct(
         private readonly iterable $linkTypeFactories,
     ) {
     }
 
-    public function getType(string $id): ?LinkType
+    public function getType(string $id): ?ChannelType
     {
         foreach ($this->linkTypeFactories as $factory) {
             if ($factory->id === $id) {
@@ -23,7 +23,7 @@ class LinkTypeRegistry
         return null;
     }
 
-    /** @return LinkType[] */
+    /** @return ChannelType[] */
     public function allTypes(): array
     {
         $types = [];

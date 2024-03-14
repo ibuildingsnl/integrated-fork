@@ -11,7 +11,7 @@
 
 namespace Integrated\Common\Channel\Exporter;
 
-use Integrated\Common\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -19,9 +19,8 @@ use Integrated\Common\Channel\ChannelInterface;
 interface ExporterInterface
 {
     /**
-     * @param object                  $content
-     * @param string                  $state
-     * @param string|ChannelInterface $channel
+     * @param object $content
+     * @param string $state
      */
-    public function export($content, $state, ChannelInterface $channel);
+    public function export($content, $state, ChannelInterface $channel, array $settings = []);
 }

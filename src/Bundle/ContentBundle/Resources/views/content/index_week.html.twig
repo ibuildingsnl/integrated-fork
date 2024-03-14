@@ -39,7 +39,8 @@
             {% endfor %}
             <li role="presentation" class="active">
                 <a role="menuitem">
-                    <b>{{ queryParams.start|date('M d') }} t/m {{ queryParams.start|date_modify('+6 days')|date('M d') }}
+                    <b>{{ queryParams.start|date('M d') }}
+                        t/m {{ queryParams.start|date_modify('+6 days')|date('M d') }}
                         (Week {{ queryParams.start|date_modify('+6 days')|date('W') }})</b>
                 </a>
             </li>
@@ -95,7 +96,8 @@
                 {% set dayN = dayN + 1 %}
                 <div class="message">{{ scroll_message }}</div>
             </div>
-            <div class="day column" draggable="true" data-date="{{ queryParams.start|date_modify('+%d days'|format(dayN))|date('Y/m/d') }}">
+            <div class="day column" draggable="true"
+                 data-date="{{ queryParams.start|date_modify('+%d days'|format(dayN))|date('Y/m/d') }}">
                 {% endfor %}
                 {% set prev_day = day %}
                 {% endif %}
@@ -117,7 +119,7 @@
                     {% set calendarState = 'concept' %}
                 {% endif %}
 
-                <a class="quick-edit-link calendar-item {{ calendarState }}" href="#" data-id="{{ content.type_id }}"
+                <a class="calendar-item {{ calendarState }}" href="{{ editLink }}" target="_blank" data-id="{{ content.type_id }}"
                    data-title="Edit {{ type }}" data-time="{{ date(content.pub_time)|date('Hi') }}">
                     <div class="calendar-wrap" style="--color: {{ type.options.color|default('gray') }}">
                         <div class="calendar-item-heading">
@@ -127,27 +129,43 @@
                                 <span class="publish-time">{{ date(content.pub_time)|date('H:i') }}</span>
 
                                 {% if document.channels is defined and document.channels is not null %}
-                                <div class="favicon-wrapper {% if document.channels|length > 3 %}hover-popout{% endif %}">
-                                    {% if document.channels|length > 3 %}
-                                        <span class="channel-popout">3+</span>
-                                    {% endif %}
-                                    <div
-                                        class="channel-favicons {% if document.channels|length > 3 %}popout{% endif %}">
-                                        {% for channel in document.channels %}
-                                            {% if channel.favicon.file is defined %}
-                                                <div class="channel-favicon"
-                                                     style="background-image:url('{{ image(channel.favicon.file).cropResize(36, 36)|default }}')"
-                                                     title="{{ channel.name }}">
+                                    {% set groupedChannels = {} %}
 
-                                                </div>
-                                            {% else %}
-                                                <div class="channel-favicon font-bold" title="{{ channel.name }}" style="background-color: {{ channel.color|default('gray') }}">
-                                                    {{ channel.name|first }}
-                                                </div>
-                                            {% endif %}
-                                        {% endfor %}
+                                    {% for channel in document.channels %}
+                                        {% set brandName = channel|integrated_brand_profile.name|default('Unknown') %}
+
+                                        {% if brandName not in groupedChannels %}
+                                            {% set groupedChannels = groupedChannels|merge({(brandName): []}) %}
+                                        {% endif %}
+
+                                        {% set groupedChannels = groupedChannels|merge({(brandName): groupedChannels[brandName]|merge([channel])}) %}
+                                    {% endfor %}
+
+                                    <div
+                                        class="favicon-wrapper {% if groupedChannels|length > 3 %}hover-popout{% endif %}">
+                                        {% if groupedChannels|length > 3 %}
+                                            <span class="channel-popout">3+</span>
+                                        {% endif %}
+                                        <div
+                                            class="channel-favicons {% if groupedChannels|length > 3 %}popout{% endif %}">
+                                            {% for brandName, channels in groupedChannels %}
+                                                {% for channel in channels %}
+                                                    {% if channel|integrated_brand_profile.favicon.file is defined %}
+                                                        <div class="channel-favicon"
+                                                             style="background-image:url('{{ image(channel|integrated_brand_profile.favicon.file).cropResize(36, 36)|default }}')"
+                                                             title="{{ channel.name }}">
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="channel-favicon font-bold"
+                                                             title="{{ channel.name }}"
+                                                             style="background-color: {{ channel|integrated_brand.color|default('gray') }}">
+                                                            {{ channel.name|first }}
+                                                        </div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endfor %}
+                                        </div>
                                     </div>
-                                </div>
                                 {% endif %}
                             </div>
                             <div class="heading-right">
@@ -166,7 +184,8 @@
                 {% set dayN = dayN + 1 %}
                 <div class="message">{{ scroll_message }}</div>
             </div>
-            <div class="day column" draggable="true" data-date="{{ queryParams.start|date_modify('+%d days'|format(dayN))|date('Y/m/d') }}">
+            <div class="day column" draggable="true"
+                 data-date="{{ queryParams.start|date_modify('+%d days'|format(dayN))|date('Y/m/d') }}">
                 {% endfor %}
                 {% endif %}
                 <div class="message">{{ scroll_message }}</div>

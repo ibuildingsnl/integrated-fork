@@ -11,9 +11,9 @@
 
 namespace Integrated\Bundle\UserBundle\Form\Type;
 
+use Integrated\Bundle\FormTypeBundle\Form\Type\Select2Type;
 use Integrated\Bundle\UserBundle\Doctrine\RoleManager;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -40,10 +40,13 @@ class RoleType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('multiple', true);
-        $resolver->setDefault('expanded', true);
+//        $resolver->setDefault('expanded', true);
 
         $resolver->setDefaults([
             'choices' => array_flip($this->manager->getRolesFromSources()),
+            'attr' => [
+                'class' => 'select2',
+            ],
         ]);
     }
 
@@ -52,7 +55,7 @@ class RoleType extends AbstractType
      */
     public function getParent()
     {
-        return ChoiceType::class;
+        return Select2Type::class;
     }
 
     /**

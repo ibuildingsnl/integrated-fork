@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\ContentBundle\Document\Channel;
 
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
-use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -42,25 +41,7 @@ class Channel implements ChannelInterface
     #[Assert\NotBlank]
     protected $name;
 
-    /**
-     * @var Image
-     */
-    protected $logo;
-
-    /**
-     * @var Image
-     */
-    protected $favicon;
-
-    /**
-     * @var string
-     */
-    protected $color;
-
-    /**
-     * @var string
-     */
-    protected $secondarycolor;
+    protected ?ChannelType $type;
 
     /**
      * @var array
@@ -91,6 +72,11 @@ class Channel implements ChannelInterface
      * @var bool
      */
     protected $ipProtected = false;
+
+    /**
+     * @var string
+     */
+    protected $language = 'nl';
 
     /**
      * @var Scope
@@ -127,47 +113,19 @@ class Channel implements ChannelInterface
 
     public function getName(): ?string
     {
-        return $this->name;
+        return $this->name ?: '';
     }
 
-    public function getLogo(): ?Image
+    public function getType(): ?ChannelType
     {
-        return $this->logo;
+        return $this->type;
     }
 
-    public function setLogo(?Image $logo): void
+    public function setType(?ChannelType $type): static
     {
-        $this->logo = $logo;
-    }
+        $this->type = $type;
 
-    public function getFavicon(): Image|null
-    {
-        return $this->favicon;
-    }
-
-    public function setFavicon(?Image $favicon): void
-    {
-        $this->favicon = $favicon;
-    }
-
-    public function getColor(): ?string
-    {
-        return $this->color;
-    }
-
-    public function setColor(?string $color): void
-    {
-        $this->color = $color;
-    }
-
-    public function getSecondaryColor(): ?string
-    {
-        return $this->secondarycolor;
-    }
-
-    public function setSecondaryColor(?string $secondarycolor): void
-    {
-        $this->secondarycolor = $secondarycolor;
+        return $this;
     }
 
     public function setDomains(array $domains): void
@@ -258,6 +216,16 @@ class Channel implements ChannelInterface
     public function setIpProtected(bool $protected): void
     {
         $this->ipProtected = $protected;
+    }
+
+    public function getLanguage(): ?string
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(string $language): void
+    {
+        $this->language = $language;
     }
 
     public function getScope(): ?Scope

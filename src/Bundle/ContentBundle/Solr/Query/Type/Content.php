@@ -73,6 +73,15 @@ class Content extends AbstractType
                 ->setQuery('facet_channels: ((%1%))', [implode(') OR (', array_map($escape, $options['channels']))]);
         }
 
+        // @TODO: Add publication_start_date to solr
+//        if ($options['pub_channels']) {
+//            foreach ($options['pub_channels'] as $channel) {
+//                $channel = $helper->escapeTerm($channel);
+//                $query->createFilterQuery('pub_channel_'.$channel)
+//                      ->setQuery('(publication_start_'.$channel.'_index_date: [* TO NOW]) AND (publication_end_'.$channel.'_index_date: [NOW TO *])');
+//            }
+//        }
+
         if ($options['authors']) {
             $query->createFilterQuery('authors')
                 ->addTag('authors')
@@ -103,6 +112,17 @@ class Content extends AbstractType
                     ->addTag($name)
                     ->setQuery($field.': ((%1%))', [implode(') OR (', array_map($escape, $options['relation'][$relation->getId()]))]);
             }
+        }
+
+        // handle start/end dates
+        if ($options['start'] instanceof \DateTimeInterface && $options['end'] instanceof \DateTimeInterface) {
+            $query->createFilterQuery('pub_time')
+                ->addTag('pub_time')
+                ->setQuery(sprintf(
+                    'pub_time: [%s TO %s]',
+                    $options['start']->format("Y-m-d\TH:i:s.z\Z"),
+                    $options['end']->format("Y-m-d\TH:i:s.z\Z"),
+                ));
         }
     }
 
@@ -162,6 +182,7 @@ class Content extends AbstractType
             'contenttypes' => [],
             'channels' => [],
             'authors' => [],
+            'pub_channels' => [],
             'properties' => [],
         ]);
 
@@ -236,5 +257,11 @@ class Content extends AbstractType
 
             return array_filter($relations);
         });
+
+        // handle start/end dates
+        $resolver->setDefaults([
+            'start' => null,
+            'end' => null,
+        ]);
     }
 }

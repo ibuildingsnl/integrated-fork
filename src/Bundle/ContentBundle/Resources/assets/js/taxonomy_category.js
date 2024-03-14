@@ -1,27 +1,6 @@
-//Goal:
-//This code is to organise taxonomies
-//The input is a list of taxonomies with a tree structure. But we receive them as flat list with levels
-//There can be multiple of these in 1 page, for each we save a relation in the relations array
-//The channels are involved: categories will be shown based on active channels
-
-//Keywords:
-//pills = The selected items that are shown to the user
-//popup = When a user clicks on the fullscreen icon, a popup is shown with all the options
-//tabs = The tabs in the popup screen, these are tabs. These refer to the level0 items of the input
-//selected_tab = The selected item of the tabs.
-
-//Key events:
-//User clicks channel
-//User clicks radio button
-//User enabled fullscreen
-//User disables fullscreen
-//User clicks tab
-
-//Flows:
-// - One where we setup everything
-// - One where we handle a specific category event
-
-const channels_selector = '#integrated_content_channels'
+const channels_selector = '#integrated_content_brands'
+//Children were added to brands, so we have to ignore those by focusing on the brand:
+const channel_brands_selector = ' input[type=checkbox].brand-choice'
 const pills_selector = '.enabled_categories_pills'
 const popup_selector = '.category_wrapper'
 const input_field_prefix = 'integrated_content_relations_'
@@ -62,15 +41,18 @@ function createNewRelation(relation_id) {
 }
 
 function setupChannels() {
-    const channel_checkboxes = document.querySelectorAll(channels_selector + ' input[type=checkbox]')
+    //If brands didnt have children:
+    // const channel_checkboxes = document.querySelectorAll(channels_selector + ' input[type=checkbox]')
+    //But they do:
+    const channel_checkboxes = document.querySelectorAll(channels_selector + channel_brands_selector)
     enabled_channels = getEnabledChannels(channel_checkboxes)
     return channel_checkboxes
 }
 
 function getEnabledChannels(checkboxes) {
-    return Array.from(checkboxes).reduce((prev, current, arr) => {
-        return current.checked === true ? [...prev, current.value] : prev
-    }, [])
+    return Array.from(checkboxes).reduce((prev, current) => {
+        return current.checked ? [...prev, current.value] : prev;
+    }, []);
 }
 
 function addEventListeners(channel_checkboxes) {
@@ -132,7 +114,11 @@ function setActiveTab() {
 
 function togglePopup() {
     document.querySelector(current_relation.popup_selector).classList.toggle("show");
-    document.querySelector('#dropdown_overlay').classList.toggle("hide");
+    let taxonomyDropDownUnderlays = document.querySelectorAll('.taxonomy_backdrop');
+    taxonomyDropDownUnderlays.forEach(taxonomyDropDownUnderlay => {
+        taxonomyDropDownUnderlay.classList.toggle("hide");
+    });
+    document.querySelector('body').classList.toggle("popup-open");
 }
 
 function toggleFullscreen() {
@@ -150,10 +136,15 @@ function toggleFullscreen() {
 }
 
 function handleChannelClick(event) {
-    if (enabled_channels.includes(event.target.value)) {
-        enabled_channels = enabled_channels.filter(item => item != event.target.value)
+    //With channels this was event.target.value. With brands we have:
+    const channel_name = event.target.parentNode.innerText
+                        .trim() // removes whitespace from both ends of a string
+                        .toLowerCase() // converts the string to lower case
+                        .replace(/[\s!]/g, ''); // removes spaces and exclamation marks
+    if (enabled_channels.includes(channel_name)) {
+        enabled_channels = enabled_channels.filter(item => item !== channel_name)
     } else {
-        enabled_channels.push(event.target.value)
+        enabled_channels.push(channel_name)
     }
 
     filterBasedOnChannels()

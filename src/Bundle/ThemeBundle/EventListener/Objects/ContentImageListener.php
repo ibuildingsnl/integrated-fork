@@ -13,7 +13,7 @@ namespace Integrated\Bundle\ThemeBundle\EventListener\Objects;
 
 use Doctrine\Persistence\ObjectManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Integrated\Bundle\ContentBundle\Event\ContentEvent;
+use Integrated\Bundle\ContentBundle\Event\ContentRenderEvent;
 use Integrated\Bundle\SlugBundle\Slugger\SluggerInterface;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Twig\Environment;
@@ -23,52 +23,17 @@ use Twig\Environment;
  */
 class ContentImageListener
 {
-    /**
-     * @var ThemeManager
-     */
-    protected $themeManager;
-
-    /**
-     * @var ObjectManager
-     */
-    protected $objectManager;
-
-    /**
-     * @var Environment
-     */
-    protected $templating;
-
-    /**
-     * @var SluggerInterface
-     */
-    protected $slugger;
-
-    /**
-     * @var string
-     */
-    protected $env;
-
-    /**
-     * @param string $env
-     */
     public function __construct(
-        ThemeManager $themeManager,
-        ObjectManager $objectManager,
-        Environment $templating,
-        SluggerInterface $slugger,
-        $env
+        private readonly ThemeManager $themeManager,
+        private readonly ObjectManager $objectManager,
+        private readonly Environment $templating,
+        private readonly SluggerInterface $slugger,
+        private readonly string $env,
     ) {
-        $this->themeManager = $themeManager;
-        $this->objectManager = $objectManager;
-        $this->templating = $templating;
-        $this->slugger = $slugger;
-        $this->env = $env;
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function replaceImages(ContentEvent $contentEvent)
+    /** @throws \Exception */
+    public function replaceImages(ContentRenderEvent $contentEvent): void
     {
         try {
             $content = preg_replace_callback(
@@ -87,12 +52,7 @@ class ContentImageListener
         }
     }
 
-    /**
-     * @param array $matches
-     *
-     * @return string|null
-     */
-    protected function findImages($matches)
+    protected function findImages(array $matches): ?string
     {
         if ($file = $this->objectManager->find(Content::class, $matches[1])) {
             $class = '';
@@ -118,13 +78,13 @@ class ContentImageListener
         return $matches[0];
     }
 
-    /**
-     * @param string $class
-     *
-     * @return string|null
-     */
-    protected function getTemplate(Content $file, $class = '', $width = '', $height = '', $style = '')
-    {
+    protected function getTemplate(
+        Content $file,
+        string $class = '',
+        string $width = '',
+        string $height = '',
+        string $style = ''
+    ): ?string {
         if ($template = $this->getViewFromClass($class)) {
             return $this->templating->render(
                 $template,
@@ -135,12 +95,7 @@ class ContentImageListener
         return null;
     }
 
-    /**
-     * @param string $class
-     *
-     * @return string
-     */
-    protected function getViewFromClass($class = '')
+    protected function getViewFromClass(string $class = ''): string
     {
         if (preg_match('/template-image-(.*?)(\s|$)/', $class, $views)) {
             $view = $this->slugger->slugify($views[1], '_');

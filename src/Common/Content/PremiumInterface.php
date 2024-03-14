@@ -15,5 +15,5 @@ interface PremiumInterface
 {
     public function setPremium(bool $premium): static;
 
-    public function isPremium(): bool;
+    public function isPremium(): ?bool;
 }
