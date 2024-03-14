@@ -49,6 +49,11 @@ class QueueMessage implements QueueMessageInterface
     private $executeAt;
 
     /**
+     * @var \Closure|null
+     */
+    private $release = null;
+
+    /**
      * @param mixed $payload
      * @param int   $attempts
      * @param int   $priority
@@ -56,7 +61,7 @@ class QueueMessage implements QueueMessageInterface
      * @param int   $updatedAt
      * @param int   $executeAt
      */
-    public function __construct($payload, $attempts, $priority, $createdAt, $updatedAt, $executeAt)
+    public function __construct($payload, $attempts, $priority, $createdAt, $updatedAt, $executeAt, \Closure $release)
     {
         $this->payload = $payload;
         $this->attempts = $attempts;
@@ -65,6 +70,8 @@ class QueueMessage implements QueueMessageInterface
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
         $this->executeAt = $executeAt;
+
+        $this->release = $release;
     }
 
     /**
@@ -72,6 +79,10 @@ class QueueMessage implements QueueMessageInterface
      */
     public function delete()
     {
+        // release should be cleared as after a delete the message can not
+        // be returned anymore;
+
+        $this->release = null;
     }
 
     /**
@@ -79,6 +90,12 @@ class QueueMessage implements QueueMessageInterface
      */
     public function release($delay = 0)
     {
+        if ($this->release !== null) {
+            $release = $this->release;
+            $release();
+        }
+
+        $this->release = null;
     }
 
     /**
