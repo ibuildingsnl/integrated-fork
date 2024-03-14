@@ -37,7 +37,8 @@
 
 {% block javascript %}
     <script src="//code.jquery.com/jquery.js"></script>
-    <script src="{{ asset('/js/bootstrap.js') }}"></script>
+//     vvvvv--- Not found?? Request gets redirected back to /admin/login and the page errors trying to load HTML as JS
+{#    <script src="{{ asset('/js/bootstrap.js') }}"></script>#}
 {% endblock javascript %}
 
 </body>

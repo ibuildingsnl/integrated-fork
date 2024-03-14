@@ -6,6 +6,7 @@ module.exports = {
     },
     content: [
         './src/**/*.{twig, js, php}',
+        'src/**/js/components/*.vue'
     ],
     theme: {
         extend: {
