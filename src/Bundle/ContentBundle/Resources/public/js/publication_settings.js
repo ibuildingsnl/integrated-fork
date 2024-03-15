@@ -164,20 +164,20 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
     });
 });
 
-document.addEventListener('keydown', function (ev) {
-    if (ev.key === 'Escape' || ev.keyCode === 27) {
-        document.querySelectorAll('.publication-settings-aside.show').forEach(div => {
-            div.classList.remove('show');
-        });
-        document.querySelectorAll('.editor-overlay.show').forEach(div => {
-            div.classList.remove('show');
-        });
-    }
-});
+// document.addEventListener('keydown', function (ev) {
+//     if (ev.key === 'Escape' || ev.keyCode === 27) {
+//         document.querySelectorAll('.publication-settings-aside.show').forEach(div => {
+//             div.classList.remove('show');
+//         });
+//         document.querySelectorAll('.editor-overlay.show').forEach(div => {
+//             div.classList.remove('show');
+//         });
+//     }
+// });
 
 document.addEventListener('click', function (ev) {
     if (document.querySelectorAll('.publication-settings-aside.show')) {
-        if (!ev.target.closest('.publication-settings-aside') && !ev.target.closest('.aside-holder') && !ev.target.closest('#toolbar')) {
+        if (!ev.target.closest('.publication-settings-aside') && !ev.target.closest('.aside-holder') && !ev.target.closest('#toolbar') && !ev.target.closest('.navbar') && !ev.target.closest('.remove_link')) {
             document.querySelectorAll('.publication-settings-aside.show').forEach(div => {
                 div.classList.remove('show');
             });

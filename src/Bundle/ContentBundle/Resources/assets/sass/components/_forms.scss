@@ -129,6 +129,10 @@ label {
     @include display(flex);
     flex-direction: row-reverse;
 
+    @include media(max-sm) {
+        padding-left:0;
+    }
+
     .nav-form-inner {
         @include transition(300ms);
         width: 300px;
