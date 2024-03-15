@@ -854,6 +854,9 @@ class ContentController extends AbstractController
                 ->createFilterQuery('workflow_assigned_id')
                 ->setQuery('facet_workflow_assigned_id:'.$userId.'');
 
+            $query->createFilterQuery('pub_not_active')
+                  ->setQuery('-pub_active:true');
+
             $result = $this->getSolarium()->select($query);
 
             $assignedContent = $result->getDocuments();
