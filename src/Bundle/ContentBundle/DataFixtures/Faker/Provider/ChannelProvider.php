@@ -14,6 +14,7 @@ namespace Integrated\Bundle\ContentBundle\DataFixtures\Faker\Provider;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\DocumentNotFoundException;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 class ChannelProvider
 {
@@ -30,7 +31,7 @@ class ChannelProvider
     /**
      * @param string $id
      *
-     * @return Channel
+     * @return ChannelInterface
      *
      * @throws DocumentNotFoundException
      */

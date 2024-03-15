@@ -47,6 +47,7 @@ class PubActiveExtension implements TypeExtensionInterface
         }
 
         $container->set('pub_active', $published);
+        $container->set('published', $data->isPublished(false));
     }
 
     /**

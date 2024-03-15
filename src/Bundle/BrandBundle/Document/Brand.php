@@ -4,6 +4,8 @@ namespace Integrated\Bundle\BrandBundle\Document;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -58,6 +60,17 @@ class Brand
         return false;
     }
 
+    public function linkTypeForChannel(ChannelInterface $channel): ?ChannelType
+    {
+        foreach ($this->channelLinks as $link) {
+            if ($link->channel->getId() === $channel->getId()) {
+                return $link->type;
+            }
+        }
+
+        return null;
+    }
+
     public function hasAtLeastOneOfChannels(ChannelInterface ...$channels): bool
     {
         foreach ($channels as $channel) {
@@ -75,6 +88,17 @@ class Brand
     public function getChannelLinks(): Collection
     {
         return $this->channelLinks;
+    }
+
+    public function getWebsiteChannel(): ?Channel
+    {
+        foreach ($this->channelLinks as $link) {
+            if ($link->getName() === 'Website') {
+                return $link->channel;
+            }
+        }
+
+        return null;
     }
 
     public function addChannelLink(ChannelLink $link): void

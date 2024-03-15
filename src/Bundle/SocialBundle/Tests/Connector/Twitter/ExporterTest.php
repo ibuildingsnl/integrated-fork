@@ -16,11 +16,11 @@ use Integrated\Bundle\ChannelBundle\Model\ConfigInterface;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
 use Integrated\Bundle\SocialBundle\Connector\Twitter\Exporter;
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface;
 use Integrated\Common\Channel\Exporter\ExporterResponse;
 use Integrated\Common\Channel\Tests\Exporter\Mock\NonContentDocument;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\ContentInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 

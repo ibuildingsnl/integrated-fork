@@ -11,7 +11,7 @@
 
 namespace Integrated\Common\Channel\Connector\Config;
 
-use Integrated\Common\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>

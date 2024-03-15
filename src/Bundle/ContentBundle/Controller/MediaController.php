@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\ContentBundle\Bulk\DeleteHandler;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
@@ -187,10 +188,12 @@ class MediaController extends AbstractController
         return $this->render("@IntegratedContent/media/edit_image{$format}.html.twig", [
             'id' => $id,
             'title' => $file->getTitle(),
-            'meta' => json_encode([
-                'mimetype' => $file->getFile()->getMetadata()->getMimeType(),
-                'extension' => $file->getFile()->getMetadata()->getExtension(),
-            ]),
+            'meta' => json_encode(
+                [
+                    'mimetype' => $file->getFile()->getMetadata()->getMimeType(),
+                    'extension' => $file->getFile()->getMetadata()->getExtension(),
+                ]
+            ),
             'previous_url' => $request->headers->get('referer'),
             'file_url' => $request->server->get('REQUEST_SCHEME').'://'.$request->server->get('SERVER_NAME').$file->getFile()->getPathName(),
         ]);
@@ -225,6 +228,7 @@ class MediaController extends AbstractController
                 } else { // new upload
                     // Creating a new file, creating a new class Image
                     $file = $this->mediaGalleryUploadFile->handleUpload($request);
+                    $this->taxonomyRelationManager->runSolrQueue();
                 }
 
                 $request->attributes->set('media_id', $file->getId());
@@ -236,7 +240,9 @@ class MediaController extends AbstractController
 
             return new JsonResponse(['message' => 'File is uploaded?', 'content' => json_encode($file)]);
         } catch (\Exception $e) {
-            return (new JsonResponse(['error' => 'This file is not uploaded. Is this filetype allowed? Is the file too big?']))
+            return (new JsonResponse(
+                ['error' => 'This file is not uploaded. Is this filetype allowed? Is the file too big?']
+            ))
                 ->setStatusCode(422);
         }
     }
@@ -255,7 +261,9 @@ class MediaController extends AbstractController
     private function removeRelations(array $bulkselection): Response
     {
         $deletedIds = [];
-        $toBeDeletedArray = $this->documentManager->getRepository(Content::class)->findBy(['_id' => ['$in' => $bulkselection]]);
+        $toBeDeletedArray = $this->documentManager->getRepository(Content::class)->findBy(
+            ['_id' => ['$in' => $bulkselection]]
+        );
 
         $searchReferenced = new SearchContentReferenced($this->documentManager);
         $deleteHandler = new DeleteHandler($this->documentManager, $searchReferenced, true);
@@ -263,10 +271,12 @@ class MediaController extends AbstractController
 
         $this->taxonomyRelationManager->runSolrQueue();
 
-        return new JsonResponse([
-            'message' => 'Removed some items',
-            'ids' => $deletedIds,
-        ]);
+        return new JsonResponse(
+            [
+                'message' => 'Removed some items',
+                'ids' => $deletedIds,
+            ]
+        );
     }
 
     private function getUsedBy(array $idSelection): Response
@@ -277,35 +287,51 @@ class MediaController extends AbstractController
 
             if ($content) {
                 // get the usedby, is there an easier way?
-                $usedByItems = $this->documentManager->getRepository(Content::class)
+                $usedByItems = $this->documentManager
+                    ->getRepository(Content::class)
                     ->getUsedBy(new ArrayCollection([$content]), null, null, false)
                     ->getQuery()
                     ->execute();
 
+                $usedByBlocks = $this->documentManager
+                    ->getRepository(Block::class)
+                    ->getUsedBy(new ArrayCollection([$content]), null, null, false)
+                    ->getQuery()
+                    ->execute();
+
+                $usedByResult = [];
                 if (\count($usedByItems) > 0) {
-                    $usedByResult = [];
                     foreach ($usedByItems as $usedByItem) {
                         $usedByResult[] = [
-                            'id' => $usedByItem->getId(),
+                            'link' => '/admin/content/'.$usedByItem->getId(),
                             'title' => $usedByItem->getTitle(),
                         ];
                     }
-
-                    $usesByTitles[] =
-                        [
-                            'usedBy' => $usedByResult,
-                            'id' => $content->getId(),
-                            'title' => $content->getTitle(),
-                        ];
                 }
+
+                if (\count($usedByBlocks) > 0) {
+                    foreach ($usedByBlocks as $usedByBlock) {
+                        $usedByResult[] = [
+                            'link' => '/admin/block/'.$usedByBlock->getId().'/edit',
+                            'title' => $usedByBlock->getTitle(),
+                        ];
+                    }
+                }
+
+                $usesByTitles[] =
+                    [
+                        'usedBy' => $usedByResult,
+                        'id' => $content->getId(),
+                        'title' => $content->getTitle(),
+                    ];
             }
         }
 
         if (\count($usesByTitles) > 0) {
             return new JsonResponse([
-                'message' => 'There exist some relations. Are you SURE?',
-                'used_by' => $usesByTitles,
-            ]);
+                                        'message' => 'There exist some relations. Are you SURE?',
+                                        'used_by' => $usesByTitles,
+                                    ]);
         } else {
             return new JsonResponse(['message' => 'Ok to delete, go for it!']);
         }
@@ -422,7 +448,11 @@ class MediaController extends AbstractController
 
     private function getYearMonthDates(Request $request, $contentTypeSelectOptions): array
     {
-        $dateAmount = $this->provider->getFilterOptionsFromSolr($request, $this::DATE_FILTER_ON, $contentTypeSelectOptions);
+        $dateAmount = $this->provider->getFilterOptionsFromSolr(
+            $request,
+            $this::DATE_FILTER_ON,
+            $contentTypeSelectOptions
+        );
 
         return $this->transformDateYearToFrontendArray($dateAmount);
     }

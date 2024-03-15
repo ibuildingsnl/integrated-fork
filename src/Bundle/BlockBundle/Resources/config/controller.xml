@@ -13,6 +13,7 @@
             <argument type="service" id="doctrine_mongodb.odm.document_manager"/>
             <argument type="service" id="knp_paginator"/>
             <argument type="service" id="integrated_block.provider.filter_query"/>
+            <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
 
             <tag name="controller.service_arguments"/>
             <tag name="container.service_subscriber" />

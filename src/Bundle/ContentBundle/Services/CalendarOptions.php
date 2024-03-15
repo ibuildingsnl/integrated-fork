@@ -18,7 +18,7 @@ class CalendarOptions
         switch ($options['view']) {
             case 'week':
                 $options['_view'] = '_week';
-                $options['week'] = $options['week'] ?? 'monday this week';
+                $options['week'] = empty($options['week']) ? 'monday this week' : $options['week'];
                 $options['start'] = new \DateTimeImmutable($options['week']);
                 // Summer/winter time fix, @todo better fix
                 if ($options['start']->format('H') > 12) {

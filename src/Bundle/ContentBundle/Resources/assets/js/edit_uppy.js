@@ -119,8 +119,21 @@ async function loadUsedBy(uppyOptions) {
     try {
         const response = await fetch(uppyOptions.usedByPath.replace("REPLACE", uppyOptions.id) + '/json?limit=10');
         const usedBy = await response.json();
+        const blockResponse = await fetch(uppyOptions.usedByBlockPath.replace("REPLACE", uppyOptions.id) + '/json?limit=10');
+        const usedByBlocks = await blockResponse.json();
+
+        let allUsedBy = [];
+
         if (usedBy?.items.length > 0) {
-            applyUsedBy(usedBy)
+            allUsedBy = [...allUsedBy, ...usedBy.items];
+        }
+
+        if (usedByBlocks?.items.length > 0) {
+            allUsedBy = [...allUsedBy, ...usedByBlocks.items];
+        }
+
+        if (allUsedBy?.length > 0) {
+            applyUsedBy(allUsedBy)
         }
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -132,7 +145,7 @@ function applyUsedBy(usedBy) {
     document.querySelector('#not-used-by').hidden = true
 
     const targetElement = document.getElementById('used-by-list'); // Replace 'target' with the ID of the element you want to append to
-    usedBy?.items.forEach((item) => {
+    usedBy?.forEach((item) => {
         const newLink = document.createElement('li');
         newLink.innerHTML = `<a href="${item.href}">${item.title}</a>`;
         targetElement.appendChild(newLink);
