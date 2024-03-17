@@ -21,15 +21,12 @@ class OEmbedController extends AbstractController
 
     public function oEmbed(Request $request): JsonResponse
     {
-        $validator = Validation::createValidator();
-
         parse_str($request->getQueryString(), $parsedArray);
 
         $decodedUrl = '';
 
         if (isset($parsedArray['url'])) {
             $url = $parsedArray['url'];
-            // If you need to decode the URL
             $decodedUrl = urldecode($url);
         } else {
             echo "URL parameter is missing.";
@@ -38,7 +35,6 @@ class OEmbedController extends AbstractController
         $url = $decodedUrl;
 
         try {
-            // Creating an Embed instance and extracting the info
             $embed = new Embed();
             $embed->setSettings(
                 [

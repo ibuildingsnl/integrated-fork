@@ -163,8 +163,8 @@
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Controller\OEmbedController">
-            <argument>%env(resolve:FACEBOOK_APP_ID)%</argument>
-            <argument>%env(resolve:FACEBOOK_APP_SECRET)%</argument>
+            <argument>%env(resolve:FACEBOOK_OEMBED_APP_ID)%</argument>
+            <argument>%env(resolve:FACEBOOK_OEMBED_APP_SECRET)%</argument>
             <argument>%env(resolve:TWITTER_CONSUMER_KEY)%</argument>
             <argument>%env(resolve:TWITTER_CONSUMER_SECRET)%</argument>
 

@@ -29,7 +29,21 @@ import './tinymce-integrated-browser/plugin';
 function isValidURL(str) {
     var a  = document.createElement('a');
     a.href = str;
+    console.log(a.href);
+    console.log(a.host);
+    console.log(window.location.host);
+
     return (a.host && a.host != window.location.host);
+}
+
+function isValidUrl(url) {
+    const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name and extension
+        '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+        '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    return !!pattern.test(url);
 }
 
 $('.integrated_tinymce').each(function(key, elem){
@@ -106,7 +120,33 @@ $('.integrated_tinymce').each(function(key, elem){
         noneditable_class: 'embed-content',
 
         paste_preprocess: function(plugin, args) {
+
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = args.content;
+
+            // Remove elements with inline styles, classes, or lang attributes
+            tempDiv.querySelectorAll('[style], [class], [lang]').forEach(el => el.removeAttribute('style') || el.removeAttribute('class') || el.removeAttribute('lang'));
+
+            // Replace spans with their content (unwrap)
+            tempDiv.querySelectorAll('span').forEach(el => {
+                var parent = el.parentNode;
+                while (el.firstChild) parent.insertBefore(el.firstChild, el);
+                parent.removeChild(el);
+            });
+            // Remove comment nodes
+            // removeComments(tempDiv);
+
+            args.content = tempDiv.innerHTML;
+
+            var cleanContent = args.content.replace(/<meta[^>]*>/g, ''); // Remove <meta> tags
+            cleanContent = cleanContent.replace(/<span[^>]*>(.*?)<\/span>/g, '$1'); // Unwrap <span> tags
+            args.content = cleanContent;
+
             let input = args.content.trim();
+
+            if (!isValidURL(input)) {
+                console.log('not valid url');
+            }
 
             if (!isValidURL(input)) return;
 
