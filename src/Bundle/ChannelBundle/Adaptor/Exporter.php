@@ -6,6 +6,7 @@ use Integrated\Bundle\ChannelBundle\Model\ConfigInterface;
 use Integrated\Bundle\ChannelBundle\Model\ConnectorInterface;
 use Integrated\Bundle\ChannelBundle\Model\CouldNotPublish;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface;
 use Integrated\Common\Channel\Exporter\ExporterResponse;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -16,7 +17,7 @@ final class Exporter implements ExporterInterface
     public function __construct(
         private readonly ConnectorInterface $connector,
         private readonly ConfigInterface $config,
-        private readonly LoggerInterface $logger,
+        private readonly LoggerInterface $logger
     ) {
     }
 
@@ -25,6 +26,10 @@ final class Exporter implements ExporterInterface
         $externalId = null;
 
         if (!$content instanceof Content || $state != self::STATE_ADD) {
+            return null;
+        }
+
+        if (!$content->hasChannel($channel)) {
             return null;
         }
 
