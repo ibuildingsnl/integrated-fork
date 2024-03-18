@@ -873,32 +873,16 @@ input#block_edit_id.disabled {
     display: flex;
     width: 100%;
     position: relative;
-
-    .tailwind-date {
-        display: flex;
-        width: 70%;
-
-        select:first-child {
-            width: 121px;
-        }
+    input[type=time] {
+        height: 33px;
+        width: 90px;
+        margin-left: .5rem;
+        margin-right: .5rem;
     }
-
-    .tailwind-time {
-        display: flex;
-        width: 40%;
-        align-items: center;
-
-        select:last-child {
-            margin-left: .25rem;
-        }
+    input[type=date] {
+        height: 33px;
+        width: 140px;
     }
-
-    select {
-        margin-right: .25rem;
-        display: block;
-        background-image: unset !important;
-    }
-
     span.ok-date {
         height: 32px;
         background-color: #03ae93;
@@ -909,6 +893,7 @@ input#block_edit_id.disabled {
         border-radius: 8px;
         color: white;
         cursor:pointer;
+        margin-left: auto;
     }
 
     span.set-now-date {

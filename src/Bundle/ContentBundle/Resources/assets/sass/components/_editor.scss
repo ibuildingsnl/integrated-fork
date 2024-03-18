@@ -621,6 +621,15 @@ pre#editor {
                 height: 33px;
                 line-height: 33px;
             }
+            input[type=time] {
+                height: 33px;
+                width: 140px;
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+            input[type=date] {
+                height: 33px;
+            }
         }
     }
 
