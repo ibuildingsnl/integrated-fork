@@ -36,16 +36,6 @@ function isValidURL(str) {
     return (a.host && a.host != window.location.host);
 }
 
-function isValidUrl(url) {
-    const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name and extension
-        '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-        '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-        '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-    return !!pattern.test(url);
-}
-
 $('.integrated_tinymce').each(function(key, elem){
     const element = $(elem);
 
@@ -133,8 +123,6 @@ $('.integrated_tinymce').each(function(key, elem){
                 while (el.firstChild) parent.insertBefore(el.firstChild, el);
                 parent.removeChild(el);
             });
-            // Remove comment nodes
-            // removeComments(tempDiv);
 
             args.content = tempDiv.innerHTML;
 
@@ -143,10 +131,6 @@ $('.integrated_tinymce').each(function(key, elem){
             args.content = cleanContent;
 
             let input = args.content.trim();
-
-            if (!isValidURL(input)) {
-                console.log('not valid url');
-            }
 
             if (!isValidURL(input)) return;
 
