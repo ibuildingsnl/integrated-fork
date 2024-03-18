@@ -82,7 +82,17 @@ class WorkflowFormType extends AbstractType
             ]
         );
 
-        $builder->add('deadline', DateTimeType::class, ['placeholder' => ' ', 'attr' => ['class' => 'form-control deadline', 'data-set-date-text' => 'Set deadline']]);
+        $builder->add(
+            'deadline',
+            DateTimeType::class,
+            [
+                'placeholder' => ' ',
+                'attr' => ['class' => 'form-control deadline', 'data-set-date-text' => 'Set deadline'],
+                'html5' => true,
+                'date_widget' => 'single_text',
+                'time_widget' => 'single_text',
+            ]
+        );
 
         $builder->addEventSubscriber(new WorkflowDefaultDataListener($this->tokenStorage));
     }
