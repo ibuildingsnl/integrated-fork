@@ -217,15 +217,10 @@
 }
 
 .publication-item {
-    border: 1px solid $border-color;
     color: black;
     display: block;
     border-radius: 8px;
     margin-bottom: 0.5em;
-
-    &.concept {
-        filter: grayscale(100%);
-    }
 
     &.published {
         background-color: rgba(1, 174, 147, 0.05);
@@ -233,6 +228,10 @@
 
     &.planned {
         background-color: rgba(95, 132, 219, 0.1);
+    }
+
+    &:hover {
+        color:black;
     }
 
     .publication-wrap {
