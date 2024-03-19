@@ -215,3 +215,81 @@
         }
     }
 }
+
+.publication-item {
+    border: 1px solid $border-color;
+    color: black;
+    display: block;
+    border-radius: 8px;
+    margin-bottom: 0.5em;
+
+    &.concept {
+        filter: grayscale(100%);
+    }
+
+    &.published {
+        background-color: rgba(1, 174, 147, 0.05);
+    }
+
+    &.planned {
+        background-color: rgba(95, 132, 219, 0.1);
+    }
+
+    .publication-wrap {
+        border-left: 3px solid var(--color);
+        display: flex;
+        flex-direction: column;
+        padding: 0.5rem;
+        border-radius: 4px;
+
+        .publication-item-heading {
+            font-weight: bold;
+            color: var(--color);
+            display: flex;
+            justify-content: space-between;
+
+            .heading-left {
+                display: flex;
+                align-content: center;
+                position: relative;
+
+                span {
+                    line-height: 18px;
+                    margin-right: 0.5rem;
+                }
+
+                .icon {
+                    margin-right: .5rem;
+
+                    &:before {
+                        height: 18px;
+                        width: 18px;
+                    }
+                }
+            }
+            .heading-right {
+                display: flex;
+                i {
+                    cursor: pointer;
+                    &:hover {
+                        color:black;
+                    }
+                }
+            }
+        }
+
+        .publication-item-content {
+            line-height: 17px;
+            word-break: break-word;
+            padding-top: 0.5rem;
+        }
+    }
+}
+
+p.publication-info {
+    font-size: .875rem;
+    border: 1px solid #dfe3e9;
+    line-height: 1rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+}

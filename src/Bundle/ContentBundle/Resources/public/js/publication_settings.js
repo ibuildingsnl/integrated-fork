@@ -219,3 +219,26 @@ function createOrFindButton(parent, className, text) {
     }
     return button;
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const icons = document.querySelectorAll('.icon.iconoir-xmark');
+
+    icons.forEach(function(icon) {
+        icon.addEventListener('click', function() {
+            const channelSelector = icon.getAttribute('data-channel');
+
+            const checkbox = document.querySelector(`input[type="checkbox"][data-channel-selector="${channelSelector}"]`);
+
+            if (checkbox) {
+                checkbox.checked = false;
+                var event = new Event('change', { 'bubbles': true, 'cancelable': true });
+                checkbox.dispatchEvent(event);
+            }
+
+            const publicationItem = icon.closest('.publication-item');
+            if (publicationItem) {
+                publicationItem.remove();
+            }
+        });
+    });
+});
