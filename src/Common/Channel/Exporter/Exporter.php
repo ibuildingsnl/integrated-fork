@@ -12,6 +12,7 @@
 namespace Integrated\Common\Channel\Exporter;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Connector;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
@@ -48,15 +49,17 @@ class Exporter implements ExporterInterface
      */
     public function export($content, $state, ChannelInterface $channel, array $settings = [])
     {
-        foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
-            $settings = $publication->getSettings();
-            $time = $publication->getTime();
+        if ($content instanceof Content) {
+            foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
+                $settings = $publication->getSettings();
+                $time = $publication->getTime();
 
-            $startDate = $time->getStartDate();
-            $now = new \DateTime('now', new \DateTimeZone('UTC')); // Ensure time zone consistency
+                $startDate = $time->getStartDate();
+                $now = new \DateTime('now', new \DateTimeZone('UTC')); // Ensure time zone consistency
 
-            if ($startDate > $now) {
-                $state = ConnectorExporterInterface::STATE_DELETE;
+                if ($startDate > $now) {
+                    $state = ConnectorExporterInterface::STATE_DELETE;
+                }
             }
         }
 
@@ -123,13 +126,15 @@ class Exporter implements ExporterInterface
 
         if ($content->hasConnector($response->getConfigId())) {
             $content->getConnector($response->getConfigId())
-                ->setConfigAdapter($response->getConfigAdapter())
-                ->setExternalId($response->getExternalId());
+                    ->setConfigAdapter($response->getConfigAdapter())
+                    ->setExternalId($response->getExternalId());
         } else {
-            $content->addConnector((new Connector())
-                ->setConfigId($response->getConfigId())
-                ->setConfigAdapter($response->getConfigAdapter())
-                ->setExternalId($response->getExternalId()));
+            $content->addConnector(
+                (new Connector())
+                    ->setConfigId($response->getConfigId())
+                    ->setConfigAdapter($response->getConfigAdapter())
+                    ->setExternalId($response->getExternalId())
+            );
         }
 
         $this->dm->persist($content);
