@@ -11,8 +11,6 @@
 
 namespace Integrated\Common\Channel\Exporter;
 
-use DateTime;
-use DateTimeZone;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Connector;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
@@ -40,24 +38,22 @@ class Exporter implements ExporterInterface
         private readonly ResolverInterface $resolver,
         private readonly DocumentManager $dm,
         private readonly PublicationRepositoryInterface $publications
-    )
-    {
-
+    ) {
     }
 
     /**
      * {@inheritdoc}
+     *
      * @throws \Exception
      */
     public function export($content, $state, ChannelInterface $channel, array $settings = [])
     {
-
         foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
             $settings = $publication->getSettings();
             $time = $publication->getTime();
 
             $startDate = $time->getStartDate();
-            $now = new DateTime("now", new DateTimeZone('UTC')); // Ensure time zone consistency
+            $now = new \DateTime('now', new \DateTimeZone('UTC')); // Ensure time zone consistency
 
             if ($startDate > $now) {
                 $state = ConnectorExporterInterface::STATE_DELETE;

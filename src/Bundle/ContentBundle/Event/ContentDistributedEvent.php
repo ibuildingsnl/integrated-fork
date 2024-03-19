@@ -2,8 +2,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Event;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ContentDistributedEvent extends Event
 {
