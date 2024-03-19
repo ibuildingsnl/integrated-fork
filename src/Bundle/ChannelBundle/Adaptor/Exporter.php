@@ -16,7 +16,7 @@ final class Exporter implements ExporterInterface
     public function __construct(
         private readonly ConnectorInterface $connector,
         private readonly ConfigInterface $config,
-        private readonly LoggerInterface $logger,
+        private readonly LoggerInterface $logger
     ) {
     }
 
@@ -25,6 +25,10 @@ final class Exporter implements ExporterInterface
         $externalId = null;
 
         if (!$content instanceof Content || $state != self::STATE_ADD) {
+            return null;
+        }
+
+        if (!$content->hasChannel($channel)) {
             return null;
         }
 

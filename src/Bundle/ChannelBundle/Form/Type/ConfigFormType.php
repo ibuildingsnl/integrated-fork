@@ -74,6 +74,9 @@ class ConfigFormType extends AbstractType
                 'data-set-date-text' => 'Set publication date and time',
             ],
             'required' => false,
+            'html5' => true,
+            'date_widget' => 'single_text',
+            'time_widget' => 'single_text',
         ]);
 
         if ($adapter instanceof ConfigurableInterface) {

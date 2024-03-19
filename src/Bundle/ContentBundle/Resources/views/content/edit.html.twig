@@ -53,12 +53,12 @@
                                         {% set workflow = content.extensions['integrated.extension.workflow']['state'] %}
                                     {% endif %}
                                     <div class="status-options">
-                                        {% if workflow is defined and ('now'|date('U') > content.publishTime.startDate |date('U')) %}
+                                        {% if workflow is defined and ('now'|date('U') > content.publishTime.startDate|date('U')) %}
                                             <div class="status {{ workflow.name|lower }}"
                                                  style="background-color:{{ workflow.color|alpha(15) }};color:{{ workflow.color }};">
                                                 <i class="iconoir-{{ workflow.icon }}"></i> {{ workflow.name }}
                                             </div>
-                                        {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
+                                        {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate|date('U'))) %}
                                             <div class="status planned">
                                                 <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
                                             </div>
@@ -67,7 +67,7 @@
                                                 <div class="status published">
                                                     <i class="iconoir-check-circle"></i> {% trans %}Published{% endtrans %}
                                                 </div>
-                                            {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
+                                            {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate|date('U'))) %}
                                                 <div class="status planned">
                                                     <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
                                                 </div>
