@@ -5,7 +5,7 @@ namespace Integrated\Bundle\ContentBundle\Services;
 use Integrated\Bundle\ContentBundle\Form\Type\DefaultPublicationSettingsType;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
-class PublicationTimeSettingsProvider implements PublicationSettingsProvider
+class PublicationTimeSettingsProvider implements PublicationSettingsProviderInterface
 {
     public function settingTypeFor(ChannelInterface $channel): string
     {

@@ -3,19 +3,14 @@
 namespace Integrated\Bundle\BrandBundle\Services;
 
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
-use Integrated\Bundle\ContentBundle\Services\PublicationSettingsProvider;
+use Integrated\Bundle\ContentBundle\Services\PublicationSettingsProviderInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
-/**
- * @deprecated
- *
- * @todo Use channel type instead
- */
-final class LinkTypeSettingsProvider implements PublicationSettingsProvider
+class LinkTypeSettingsProvider implements PublicationSettingsProviderInterface
 {
     public function __construct(
         private readonly BrandRepository $brands,
-        private readonly PublicationSettingsProvider $fallback,
+        private readonly PublicationSettingsProviderInterface $fallback,
     ) {
     }
 

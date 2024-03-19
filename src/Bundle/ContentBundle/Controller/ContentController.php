@@ -19,6 +19,8 @@ use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
+use Integrated\Bundle\ContentBundle\Event\ContentDistributedEvent;
+use Integrated\Bundle\ContentBundle\Event\ContentDeletedEvent;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
@@ -283,6 +285,13 @@ class ContentController extends AbstractController
                 $this->documentManager->persist($content);
                 $this->documentManager->flush();
 
+                if ($this->dispatcher->hasListeners(Events::CONTENT_DISTRIBUTED)) {
+                    $this->dispatcher->dispatch(
+                        new ContentDistributedEvent($content),
+                        Events::CONTENT_DISTRIBUTED
+                    );
+                }
+
                 $lock = $this->lockFactory->createLock(self::class);
                 $lock->acquire(true);
 
@@ -423,7 +432,6 @@ class ContentController extends AbstractController
             // this is not rest compatible since a button click is required to save
             if ($form->get('actions')->getData() == 'save') {
                 if (!$locking['locked'] && $form->isValid()) {
-                    $this->documentManager->flush();
                     if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
                         $this->dispatcher->dispatch(
                             new ValidationEvent(
@@ -440,6 +448,14 @@ class ContentController extends AbstractController
                     $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
 
                     $this->documentManager->flush();
+
+
+                    if ($this->dispatcher->hasListeners(Events::CONTENT_DISTRIBUTED)) {
+                        $this->dispatcher->dispatch(
+                            new ContentDistributedEvent($content),
+                            Events::CONTENT_DISTRIBUTED
+                        );
+                    }
 
                     // Set flash message
                     $this->addFlash(
@@ -550,7 +566,6 @@ class ContentController extends AbstractController
         if (!$this->isGranted(Permissions::DELETE, $content)) {
             throw new AccessDeniedException();
         }
-
         // get a lock on this content resource.
 
         $locking = $this->getLock($content, 15);
@@ -602,6 +617,13 @@ class ContentController extends AbstractController
 
                     $this->documentManager->remove($content);
                     $this->documentManager->flush();
+
+                    if ($this->dispatcher->hasListeners(Events::CONTENT_DELETED)) {
+                        $this->dispatcher->dispatch(
+                            new ContentDeletedEvent($content),
+                            Events::CONTENT_DELETED
+                        );
+                    }
 
                     // Set flash message
                     $this->addFlash(
@@ -852,6 +874,9 @@ class ContentController extends AbstractController
             $query
                 ->createFilterQuery('workflow_assigned_id')
                 ->setQuery('facet_workflow_assigned_id:' . $userId . '');
+
+            $query->createFilterQuery('pub_not_active')
+                  ->setQuery('-pub_active:true');
 
             $result = $this->getSolarium()->select($query);
 

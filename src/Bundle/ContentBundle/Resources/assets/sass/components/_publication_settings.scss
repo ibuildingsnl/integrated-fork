@@ -19,6 +19,12 @@
     transform: translateX(350px);
     transition: all 0.3s ease-in-out;
     z-index: 20;
+    @include media(max-lg) {
+        top:0;
+    }
+    @include media(max-md) {
+        position: fixed !important;
+    }
 
     &.show {
         transform: translateX(0px);

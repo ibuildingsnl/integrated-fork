@@ -29,15 +29,19 @@ function openPublishingSettings(channelId, input) {
     settings.classList.add('show');
 
 
-    settings.querySelectorAll('[name*="[startDate][date][day]"], [name*="[startDate][date][month]"], [name*="[startDate][date][year]"], [name*="[startDate][time][hour]"], [name*="[startDate][time][minute]"]').forEach(function(d) {
-        const fieldNamePart = d.name.match(/\[(date|time)\]\[(day|month|year|hour|minute)]/)[0];
-        const correspondingValue = document.querySelector(`[name="integrated_content[publishTime][startDate]${fieldNamePart}"]`)?.value;
+    settings.querySelectorAll('[name*="[startDate][date]"], [name*="[startDate][time]"]').forEach(function(d) {
+        const isDateInput = d.name.includes('[date]');
+        const fieldNamePart = isDateInput ? '[date]' : '[time]';
+        const correspondingName = `integrated_content[publishTime][startDate]${fieldNamePart}`;
+        const correspondingValue = document.querySelector(`[name="${correspondingName}"]`)?.value;
         d.value = d.value || correspondingValue;
     });
 
-    settings.querySelectorAll('[name*="[endDate][date][day]"], [name*="[endDate][date][month]"], [name*="[endDate][date][year]"], [name*="[endDate][time][hour]"], [name*="[endDate][time][minute]"]').forEach(function(d) {
-        const fieldNamePart = d.name.match(/\[(date|time)\]\[(day|month|year|hour|minute)]/)[0];
-        const correspondingValue = document.querySelector(`[name="integrated_content[publishTime][endDate]${fieldNamePart}"]`)?.value;
+    settings.querySelectorAll('[name*="[endDate][date]"], [name*="[endDate][time]"]').forEach(function(d) {
+        const isDateInput = d.name.includes('[date]');
+        const fieldNamePart = isDateInput ? '[date]' : '[time]';
+        const correspondingName = `integrated_content[publishTime][endDate]${fieldNamePart}`;
+        const correspondingValue = document.querySelector(`[name="${correspondingName}"]`)?.value;
         d.value = d.value || correspondingValue;
     });
 
@@ -164,20 +168,20 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
     });
 });
 
-document.addEventListener('keydown', function (ev) {
-    if (ev.key === 'Escape' || ev.keyCode === 27) {
-        document.querySelectorAll('.publication-settings-aside.show').forEach(div => {
-            div.classList.remove('show');
-        });
-        document.querySelectorAll('.editor-overlay.show').forEach(div => {
-            div.classList.remove('show');
-        });
-    }
-});
+// document.addEventListener('keydown', function (ev) {
+//     if (ev.key === 'Escape' || ev.keyCode === 27) {
+//         document.querySelectorAll('.publication-settings-aside.show').forEach(div => {
+//             div.classList.remove('show');
+//         });
+//         document.querySelectorAll('.editor-overlay.show').forEach(div => {
+//             div.classList.remove('show');
+//         });
+//     }
+// });
 
 document.addEventListener('click', function (ev) {
     if (document.querySelectorAll('.publication-settings-aside.show')) {
-        if (!ev.target.closest('.publication-settings-aside') && !ev.target.closest('.aside-holder') && !ev.target.closest('#toolbar')) {
+        if (!ev.target.closest('.publication-settings-aside') && !ev.target.closest('.aside-holder') && !ev.target.closest('#toolbar') && !ev.target.closest('.navbar') && !ev.target.closest('.remove_link')) {
             document.querySelectorAll('.publication-settings-aside.show').forEach(div => {
                 div.classList.remove('show');
             });

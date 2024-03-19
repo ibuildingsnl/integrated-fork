@@ -11,8 +11,12 @@
 
 namespace Integrated\Common\Channel\Exporter;
 
+use DateTime;
+use DateTimeZone;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Connector;
+use Integrated\Bundle\ContentBundle\Document\Content\Publication;
+use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\Config\ResolverInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface as ConnectorExporterInterface;
@@ -27,37 +31,39 @@ use Integrated\Common\Content\PublishableInterface;
 class Exporter implements ExporterInterface
 {
     /**
-     * @var RegistryInterface
-     */
-    private $registry;
-
-    /**
-     * @var ResolverInterface
-     */
-    private $resolver;
-
-    /**
-     * @var DocumentManager
-     */
-    private $dm;
-
-    /**
      * @var ConnectorExporterInterface[][]
      */
     private $cache = [];
 
-    public function __construct(RegistryInterface $registry, ResolverInterface $resolver, DocumentManager $dm)
+    public function __construct(
+        private readonly RegistryInterface $registry,
+        private readonly ResolverInterface $resolver,
+        private readonly DocumentManager $dm,
+        private readonly PublicationRepositoryInterface $publications
+    )
     {
-        $this->registry = $registry;
-        $this->resolver = $resolver;
-        $this->dm = $dm;
+
     }
 
     /**
      * {@inheritdoc}
+     * @throws \Exception
      */
     public function export($content, $state, ChannelInterface $channel, array $settings = [])
     {
+
+        foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
+            $settings = $publication->getSettings();
+            $time = $publication->getTime();
+
+            $startDate = $time->getStartDate();
+            $now = new DateTime("now", new DateTimeZone('UTC')); // Ensure time zone consistency
+
+            if ($startDate > $now) {
+                $state = ConnectorExporterInterface::STATE_DELETE;
+            }
+        }
+
         $publicationDate = null;
         if ($content instanceof PublishableInterface) {
             $publicationDate = $content->getPublishTime()->getStartDate();

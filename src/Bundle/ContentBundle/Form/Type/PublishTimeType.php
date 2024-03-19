@@ -36,6 +36,9 @@ class PublishTimeType extends AbstractType
             'attr' => [
                 'data-set-date-text' => 'Set publication date',
             ],
+            'html5' => true,
+            'date_widget' => 'single_text',
+            'time_widget' => 'single_text',
         ]);
 
         $builder->add(
@@ -44,6 +47,9 @@ class PublishTimeType extends AbstractType
                 'attr' => [
                     'data-set-date-text' => 'Set depublication date',
                 ],
+                'html5' => true,
+                'date_widget' => 'single_text',
+                'time_widget' => 'single_text',
             ])->addModelTransformer(new MaxDateTimeTransformer())
         );
     }

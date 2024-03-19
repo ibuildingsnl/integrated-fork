@@ -25,7 +25,15 @@ class Event extends Article
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\DateTimeType', options: [
         'priority' => 495,
         'label' => 'Event start',
-        'attr' => ['style' => 'sidebar', 'icon' => 'calendar', 'class' => 'datetime', 'data-set-date-text' => 'Set start date'],
+        'attr' => [
+            'style' => 'sidebar',
+            'icon' => 'calendar',
+            'class' => 'datetime',
+            'data-set-date-text' => 'Set start date',
+        ],
+        'html5' => true,
+        'date_widget' => 'single_text',
+        'time_widget' => 'single_text',
     ], location: 'sidebar')]
     protected $startDate;
 
@@ -35,7 +43,15 @@ class Event extends Article
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\DateTimeType', options: [
         'priority' => 494,
         'label' => 'Event end',
-        'attr' => ['style' => 'sidebar', 'icon' => 'calendar', 'class' => 'datetime', 'data-set-date-text' => 'Set end date'],
+        'attr' => [
+            'style' => 'sidebar',
+            'icon' => 'calendar',
+            'class' => 'datetime',
+            'data-set-date-text' => 'Set end date',
+        ],
+        'html5' => true,
+        'date_widget' => 'single_text',
+        'time_widget' => 'single_text',
     ], location: 'sidebar')]
     protected $endDate;
 
