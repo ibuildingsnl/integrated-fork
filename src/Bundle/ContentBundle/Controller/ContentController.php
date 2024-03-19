@@ -614,15 +614,15 @@ class ContentController extends AbstractController
                     $queue = $this->queueSubscriber->getQueue();
                     $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
 
-                    $this->documentManager->remove($content);
-                    $this->documentManager->flush();
-
                     if ($this->dispatcher->hasListeners(Events::CONTENT_DELETED)) {
                         $this->dispatcher->dispatch(
                             new ContentDeletedEvent($content),
                             Events::CONTENT_DELETED
                         );
                     }
+
+                    $this->documentManager->remove($content);
+                    $this->documentManager->flush();
 
                     // Set flash message
                     $this->addFlash(
