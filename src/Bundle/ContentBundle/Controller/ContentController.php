@@ -16,6 +16,7 @@ use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
+use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
@@ -612,7 +613,7 @@ class ContentController extends AbstractController
             // this is not rest compatible since a button click is required to save
             if ($form->get('actions')->getData() == 'delete') {
                 if ($form->isValid()) {
-                    // higher priority for content edited in Integrated
+
                     $queue = $this->queueSubscriber->getQueue();
                     $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
 

@@ -15,6 +15,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ODM\MongoDB\Types\Type as MongoType;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 
 /**
  * Class SearchContentReferenced.
@@ -112,6 +113,10 @@ class SearchContentReferenced
                 }
             }
         }
+
+        $referenced = array_filter($referenced, function ($item) {
+            return !($item instanceof Publication);
+        });
 
         return $this->prepareReferenced($referenced);
     }
