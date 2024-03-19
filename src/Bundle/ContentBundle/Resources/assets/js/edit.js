@@ -139,3 +139,28 @@ function updateDateText(dateSelection, dateText) {
 window.addEventListener('openPublishSettingsEvent', function(e) {
     prepDateTimeFields();
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    const textareas = document.querySelectorAll('textarea[data-maxchars]');
+
+    textareas.forEach(textarea => {
+        const counterSpan = document.createElement('span');
+        counterSpan.style.fontWeight = 'bold';
+        textarea.parentNode.insertBefore(counterSpan, textarea.nextSibling);
+
+        const updateCounter = () => {
+            const maxChars = parseInt(textarea.getAttribute('data-maxchars'), 10);
+            let currentLength = textarea.value.length;
+
+            if (currentLength > maxChars) {
+                textarea.value = textarea.value.substr(0, maxChars);
+                currentLength = maxChars; // Correct the length if trimmed
+            }
+
+            counterSpan.textContent = `${currentLength} of ${maxChars} characters used`;
+        };
+
+        updateCounter();
+        textarea.addEventListener('input', updateCounter);
+    });
+});

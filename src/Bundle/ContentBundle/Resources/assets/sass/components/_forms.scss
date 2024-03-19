@@ -899,7 +899,6 @@ input#block_edit_id.disabled {
         cursor:pointer;
         margin-left: auto;
     }
-
     span.set-now-date {
         position: absolute;
         top: -25px;
@@ -911,6 +910,7 @@ input#block_edit_id.disabled {
         padding-left: 10px;
         border-radius: 8px 0 0 8px;
     }
+
     span.clear-date {
         position: absolute;
         right: 0;
@@ -922,6 +922,22 @@ input#block_edit_id.disabled {
         padding-right: 10px;
         padding-left: 10px;
         border-radius: 0 8px 8px 0;
+    }
+}
+
+.textarea {
+    span.copy-intro-btn {
+        border: 1px solid #dee3e9;
+        border-radius: 8px;
+        color: #04ae93;
+        right: 0;
+        height: 22px;
+        line-height: 20px;
+        cursor: pointer;
+        padding-left: 10px;
+        padding-right: 10px;
+        position: absolute;
+        top: -1px;
     }
 }
 

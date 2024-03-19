@@ -168,17 +168,6 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
     });
 });
 
-// document.addEventListener('keydown', function (ev) {
-//     if (ev.key === 'Escape' || ev.keyCode === 27) {
-//         document.querySelectorAll('.publication-settings-aside.show').forEach(div => {
-//             div.classList.remove('show');
-//         });
-//         document.querySelectorAll('.editor-overlay.show').forEach(div => {
-//             div.classList.remove('show');
-//         });
-//     }
-// });
-
 document.addEventListener('click', function (ev) {
     if (document.querySelectorAll('.publication-settings-aside.show')) {
         if (!ev.target.closest('.publication-settings-aside') && !ev.target.closest('.aside-holder') && !ev.target.closest('#toolbar') && !ev.target.closest('.navbar') && !ev.target.closest('.remove_link')) {
@@ -192,3 +181,46 @@ document.addEventListener('click', function (ev) {
     }
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+    const editorID = 'integrated_content_content'; // Adjust accordingly
+    const settingsDivs = document.querySelectorAll('.publication-settings-aside');
+
+    settingsDivs.forEach(div => {
+        const textarea = div.querySelector('textarea');
+
+        if (textarea) {
+            const copyIntroButton = createOrFindButton(textarea, 'copy-intro-btn', 'Copy Intro');
+
+            copyIntroButton.addEventListener('click', function() {
+                if (tinymce.get(editorID)) {
+                    const content = tinymce.get(editorID).getContent();
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = content;
+                    let textContent = tempDiv.textContent ||
+                        tempDiv.innerText || '';
+
+                    // Respect the maxChars limit from the textarea's data-maxchars attribute
+                    const maxChars = parseInt(textarea.getAttribute('data-maxchars'), 10);
+                    if (maxChars > 0) {
+                        if (textContent.length > maxChars) {
+                            textContent = textContent.substr(0, maxChars);
+                        }
+                    }
+
+                    textarea.value = textContent; // Copy the constrained text content to the textarea
+                }
+            });
+        }
+    });
+});
+
+function createOrFindButton(parent, className, text) {
+    let button = parent.querySelector('.' + className);
+    if (!button) {
+        button = document.createElement('span'); // Using 'button' for semantic clarity
+        button.className = className;
+        button.textContent = text;
+        parent.insertAdjacentElement('afterend', button); // Insert after the textarea
+    }
+    return button;
+}
