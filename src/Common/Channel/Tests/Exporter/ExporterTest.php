@@ -57,8 +57,6 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
      */
     private $publications;
 
-    private readonly PublicationRepositoryInterface&MockObject $publicationRepository;
-
     protected function setUp(): void
     {
         $this->registry = $this->createMock('Integrated\\Common\\Channel\\Connector\\Adapter\\RegistryInterface');
