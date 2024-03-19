@@ -28,7 +28,6 @@ function openPublishingSettings(channelId, input) {
 
     settings.classList.add('show');
 
-
     settings.querySelectorAll('[name*="[startDate][date]"], [name*="[startDate][time]"]').forEach(function(d) {
         const isDateInput = d.name.includes('[date]');
         const fieldNamePart = isDateInput ? '[date]' : '[time]';
@@ -50,7 +49,6 @@ function openPublishingSettings(channelId, input) {
     window.dispatchEvent(openPublishSettingsEvent);
 }
 
-// Add publication settings buttons
 document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
     const settings = document.querySelector(
         '.publication-settings[data-publication-channel="'+input.dataset.channelSelector+'"]'
@@ -122,7 +120,6 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
             });
             const applyType = settings.querySelector('[data-apply-to]')?.value;
             if (applyType === 'type') {
-                // apply to all of this type
                 const pubInputSelector = 'input,select,textarea';
                 const data = {};
                 settings.querySelectorAll(pubInputSelector).forEach(function (input, i) {
@@ -141,7 +138,6 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
                     });
                 });
             } else if (applyType === 'choose') {
-                // apply to the selected channels
                 const pubInputSelector = 'input,select,textarea';
                 const data = {};
                 settings.querySelectorAll(pubInputSelector).forEach(function (input, i) {
@@ -199,7 +195,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     let textContent = tempDiv.textContent ||
                         tempDiv.innerText || '';
 
-                    // Respect the maxChars limit from the textarea's data-maxchars attribute
                     const maxChars = parseInt(textarea.getAttribute('data-maxchars'), 10);
                     if (maxChars > 0) {
                         if (textContent.length > maxChars) {
@@ -207,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }
 
-                    textarea.value = textContent; // Copy the constrained text content to the textarea
+                    textarea.value = textContent;
                 }
             });
         }
@@ -217,10 +212,10 @@ document.addEventListener('DOMContentLoaded', function() {
 function createOrFindButton(parent, className, text) {
     let button = parent.querySelector('.' + className);
     if (!button) {
-        button = document.createElement('span'); // Using 'button' for semantic clarity
+        button = document.createElement('span');
         button.className = className;
         button.textContent = text;
-        parent.insertAdjacentElement('afterend', button); // Insert after the textarea
+        parent.insertAdjacentElement('afterend', button);
     }
     return button;
 }
