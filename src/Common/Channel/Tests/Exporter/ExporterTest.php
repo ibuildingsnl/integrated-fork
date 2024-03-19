@@ -13,6 +13,7 @@ namespace Integrated\Common\Channel\Tests\Exporter;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
+use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\AdapterInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
@@ -52,11 +53,14 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
      */
     private $dm;
 
+    private readonly PublicationRepositoryInterface&MockObject $publicationRepository;
+
     protected function setUp(): void
     {
         $this->registry = $this->createMock('Integrated\\Common\\Channel\\Connector\\Adapter\\RegistryInterface');
         $this->resolver = $this->createMock('Integrated\\Common\\Channel\\Connector\\Config\\ResolverInterface');
         $this->dm = $this->createMock('Doctrine\\ODM\\MongoDB\\DocumentManager');
+        $this->publicationRepository = $this->createMock(PublicationRepositoryInterface::class);
     }
 
     public function testInterface()
@@ -253,12 +257,12 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
                 $this->getAdapter($config1, $exporter1)
             );
 
-        return new Exporter($this->registry, $this->resolver, $this->dm);
+        return new Exporter($this->registry, $this->resolver, $this->dm, $this->publicationRepository);
     }
 
     protected function getInstance(): Exporter
     {
-        return new Exporter($this->registry, $this->resolver, $this->dm);
+        return new Exporter($this->registry, $this->resolver, $this->dm, $this->publicationRepository);
     }
 
     /**
