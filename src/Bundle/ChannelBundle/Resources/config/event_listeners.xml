@@ -14,9 +14,8 @@
         </service>
 
         <service id="integrated_channel.event_listener.channel_distribution" class="Integrated\Bundle\ChannelBundle\EventListener\ChannelDistributionListener">
-            <argument type="service" id="integrated_channel.distributor"/>
-            <tag name="kernel.event_listener" event="content.distributed" method="onContentDistributed"/>
-            <tag name="kernel.event_listener" event="content.deleted" method="onContentDeleted"/>
+            <argument type="service" id="integrated_channel.distributor" />
+            <tag name="integrated_content.form.event_subscriber"/>
         </service>
 
     </services>
