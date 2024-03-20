@@ -221,6 +221,7 @@
     display: block;
     border-radius: 8px;
     margin-bottom: 0.5em;
+    cursor:pointer;
 
     &.published {
         background-color: rgba(1, 174, 147, 0.05);

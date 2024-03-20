@@ -132,7 +132,7 @@
                                                 {% set pubState = 'planned' %}
                                                 {% set pubColor = '#5f84db' %}
                                             {% endif %}
-                                            <a class="publication-item {{ pubState }}" data-id="{{ publication.getId }}">
+                                            <a class="publication-item {{ pubState }}" data-id="{{ publication.getId }}" data-channel="{{ publication.getChannel.getId }}">
                                                 <div class="publication-wrap" style="--color: {{ pubColor }}">
                                                     <div class="publication-item-heading">
                                                         <div class="heading-left">

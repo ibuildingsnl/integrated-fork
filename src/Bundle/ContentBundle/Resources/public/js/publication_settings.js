@@ -221,7 +221,7 @@ function createOrFindButton(parent, className, text) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    const icons = document.querySelectorAll('.icon.iconoir-xmark');
+    const icons = document.querySelectorAll('.publication-item .icon.iconoir-xmark');
 
     icons.forEach(function(icon) {
         icon.addEventListener('click', function() {
@@ -238,6 +238,39 @@ document.addEventListener('DOMContentLoaded', function () {
             const publicationItem = icon.closest('.publication-item');
             if (publicationItem) {
                 publicationItem.remove();
+            }
+        });
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const publicationItems = document.querySelectorAll('.publication-item');
+
+    publicationItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const channel = item.getAttribute('data-channel');
+
+            const settingsDiv = document.querySelector(`.publication-settings[data-publication-channel="${channel}"]`);
+
+            document.querySelectorAll('.publication-settings-aside.show').forEach(openDiv => {
+                if (openDiv.querySelector(`.publication-settings[data-publication-channel="${channel}"]`) === null) {
+                    openDiv.classList.remove('show');
+
+                    document.querySelectorAll('.editor-overlay').forEach(div => {
+                        div.classList.remove('show');
+                    });
+                }
+            });
+
+            if (settingsDiv) {
+                const parentAside = settingsDiv.closest('.publication-settings-aside');
+                if (parentAside) {
+                    parentAside.classList.toggle('show');
+
+                    document.querySelectorAll('.editor-overlay').forEach(div => {
+                        div.classList.toggle('show');
+                    });
+                }
             }
         });
     });
