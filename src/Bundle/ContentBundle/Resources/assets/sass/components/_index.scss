@@ -53,8 +53,13 @@ div.heading-switcher {
             border-bottom: 1px solid $border-color;
 
             &.today {
-                color: #046283;
-                font-weight: bold;
+                span {
+                    color: white;
+                    font-weight: 700;
+                    background-color: #01ae93;
+                    border-radius: 8px;
+                    padding: 0 5px;
+                }
             }
         }
 
@@ -109,7 +114,7 @@ div.heading-switcher {
     }
 
     .calendar-item {
-        border: 1px solid $border-color;
+        //border: 1px solid $border-color;
         color: black;
         display: block;
         border-radius: 8px;
@@ -117,10 +122,15 @@ div.heading-switcher {
 
         &.concept {
             filter: grayscale(100%);
+            border: 1px solid #f2f2f2;
         }
 
         &.published {
             background-color: rgba(1, 174, 147, 0.05);
+        }
+
+        &.planned {
+            background-color: rgba(95,132,219,.1);
         }
 
         .calendar-wrap {
