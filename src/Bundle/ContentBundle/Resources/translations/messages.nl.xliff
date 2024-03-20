@@ -1302,6 +1302,10 @@
                 <source>Removing a published Social Media publication will not remove it from the respected platform. Removing a planned (purple) publication will stop it from publishing to that Social Media Channel</source>
                 <target>Het verwijderen van een gepubliceerde Social Media-publicatie zal deze niet verwijderen van het betreffende platform. Het verwijderen van een geplande (paarse) publicatie zal voorkomen dat deze wordt gepubliceerd op dat Social Media-kanaal.</target>
             </trans-unit>
+            <trans-unit id="330">
+                <source>Planned</source>
+                <target>Ingepland</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
