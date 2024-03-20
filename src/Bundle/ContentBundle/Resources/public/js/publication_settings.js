@@ -28,16 +28,19 @@ function openPublishingSettings(channelId, input) {
 
     settings.classList.add('show');
 
-
-    settings.querySelectorAll('[name*="[startDate][date][day]"], [name*="[startDate][date][month]"], [name*="[startDate][date][year]"], [name*="[startDate][time][hour]"], [name*="[startDate][time][minute]"]').forEach(function(d) {
-        const fieldNamePart = d.name.match(/\[(date|time)\]\[(day|month|year|hour|minute)]/)[0];
-        const correspondingValue = document.querySelector(`[name="integrated_content[publishTime][startDate]${fieldNamePart}"]`)?.value;
+    settings.querySelectorAll('[name*="[startDate][date]"], [name*="[startDate][time]"]').forEach(function(d) {
+        const isDateInput = d.name.includes('[date]');
+        const fieldNamePart = isDateInput ? '[date]' : '[time]';
+        const correspondingName = `integrated_content[publishTime][startDate]${fieldNamePart}`;
+        const correspondingValue = document.querySelector(`[name="${correspondingName}"]`)?.value;
         d.value = d.value || correspondingValue;
     });
 
-    settings.querySelectorAll('[name*="[endDate][date][day]"], [name*="[endDate][date][month]"], [name*="[endDate][date][year]"], [name*="[endDate][time][hour]"], [name*="[endDate][time][minute]"]').forEach(function(d) {
-        const fieldNamePart = d.name.match(/\[(date|time)\]\[(day|month|year|hour|minute)]/)[0];
-        const correspondingValue = document.querySelector(`[name="integrated_content[publishTime][endDate]${fieldNamePart}"]`)?.value;
+    settings.querySelectorAll('[name*="[endDate][date]"], [name*="[endDate][time]"]').forEach(function(d) {
+        const isDateInput = d.name.includes('[date]');
+        const fieldNamePart = isDateInput ? '[date]' : '[time]';
+        const correspondingName = `integrated_content[publishTime][endDate]${fieldNamePart}`;
+        const correspondingValue = document.querySelector(`[name="${correspondingName}"]`)?.value;
         d.value = d.value || correspondingValue;
     });
 
@@ -46,7 +49,6 @@ function openPublishingSettings(channelId, input) {
     window.dispatchEvent(openPublishSettingsEvent);
 }
 
-// Add publication settings buttons
 document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
     const settings = document.querySelector(
         '.publication-settings[data-publication-channel="'+input.dataset.channelSelector+'"]'
@@ -118,7 +120,6 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
             });
             const applyType = settings.querySelector('[data-apply-to]')?.value;
             if (applyType === 'type') {
-                // apply to all of this type
                 const pubInputSelector = 'input,select,textarea';
                 const data = {};
                 settings.querySelectorAll(pubInputSelector).forEach(function (input, i) {
@@ -137,7 +138,6 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
                     });
                 });
             } else if (applyType === 'choose') {
-                // apply to the selected channels
                 const pubInputSelector = 'input,select,textarea';
                 const data = {};
                 settings.querySelectorAll(pubInputSelector).forEach(function (input, i) {
@@ -164,20 +164,9 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
     });
 });
 
-document.addEventListener('keydown', function (ev) {
-    if (ev.key === 'Escape' || ev.keyCode === 27) {
-        document.querySelectorAll('.publication-settings-aside.show').forEach(div => {
-            div.classList.remove('show');
-        });
-        document.querySelectorAll('.editor-overlay.show').forEach(div => {
-            div.classList.remove('show');
-        });
-    }
-});
-
 document.addEventListener('click', function (ev) {
     if (document.querySelectorAll('.publication-settings-aside.show')) {
-        if (!ev.target.closest('.publication-settings-aside') && !ev.target.closest('.aside-holder') && !ev.target.closest('#toolbar')) {
+        if (!ev.target.closest('.publication-settings-aside') && !ev.target.closest('.aside-holder') && !ev.target.closest('#toolbar') && !ev.target.closest('.navbar') && !ev.target.closest('.remove_link')) {
             document.querySelectorAll('.publication-settings-aside.show').forEach(div => {
                 div.classList.remove('show');
             });
@@ -188,3 +177,45 @@ document.addEventListener('click', function (ev) {
     }
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+    const editorID = 'integrated_content_content'; // Adjust accordingly
+    const settingsDivs = document.querySelectorAll('.publication-settings-aside');
+
+    settingsDivs.forEach(div => {
+        const textarea = div.querySelector('textarea');
+
+        if (textarea) {
+            const copyIntroButton = createOrFindButton(textarea, 'copy-intro-btn', 'Copy Intro');
+
+            copyIntroButton.addEventListener('click', function() {
+                if (tinymce.get(editorID)) {
+                    const content = tinymce.get(editorID).getContent();
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = content;
+                    let textContent = tempDiv.textContent ||
+                        tempDiv.innerText || '';
+
+                    const maxChars = parseInt(textarea.getAttribute('data-maxchars'), 10);
+                    if (maxChars > 0) {
+                        if (textContent.length > maxChars) {
+                            textContent = textContent.substr(0, maxChars);
+                        }
+                    }
+
+                    textarea.value = textContent;
+                }
+            });
+        }
+    });
+});
+
+function createOrFindButton(parent, className, text) {
+    let button = parent.querySelector('.' + className);
+    if (!button) {
+        button = document.createElement('span');
+        button.className = className;
+        button.textContent = text;
+        parent.insertAdjacentElement('afterend', button);
+    }
+    return button;
+}

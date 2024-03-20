@@ -23,102 +23,58 @@ function prepDateTimeFields() {
             dateText = document.createElement('div');
             dateText.className = 'date-text';
             dateText.style.display = 'block';
-            if (dateSelection.closest('.datetime')?.getAttribute('data-set-date-text')) {
-                dateText.textContent = dateSelection.closest('.datetime').getAttribute('data-set-date-text');
-            } else {
-                dateText.textContent = dateSelection.closest('.aside-item-wrapper').getAttribute('data-set-date-text');
-            }
+            dateText.textContent = dateSelection.getAttribute('data-set-date-text') || 'Set Date/Time';
             dateSelection.parentNode.insertBefore(dateText, dateSelection);
         } else {
             dateText = dateSelection.parentNode.querySelector('.date-text');
-            dateText.style.display = 'block';
         }
 
         dateSelection.style.paddingTop = '.5rem';
 
-        if (!dateSelection.querySelector('.ok-date')) {
-            okButton = document.createElement('span');
-            okButton.className = 'ok-date';
-            okButton.textContent = 'OK';
+        okButton = createOrFindButton(dateSelection, 'ok-date', 'OK');
+        setToNowButton = createOrFindButton(dateSelection, 'set-now-date', 'Set to Now');
+        clearButton = createOrFindButton(dateSelection, 'clear-date', 'Clear');
 
-            dateSelection.appendChild(okButton);
-        } else {
-            okButton = dateSelection.querySelector('.ok-date');
-        }
-
-
-        if (!dateSelection.querySelector('.set-now-date')) {
-            setToNowButton = document.createElement('span');
-            setToNowButton.className = 'set-now-date';
-            setToNowButton.textContent = 'Set to Now';
-
-            dateSelection.appendChild(setToNowButton);
-        } else {
-            setToNowButton = dateSelection.querySelector('.set-now-date');
-        }
-
-        if (!dateSelection.querySelector('.clear-date')) {
-            clearButton = document.createElement('span');
-            clearButton.className = 'clear-date';
-            clearButton.textContent = 'Reset';
-
-            dateSelection.appendChild(clearButton);
-        } else {
-            clearButton = dateSelection.querySelector('.clear-date');
-        }
-
-        dateText.onclick = function() {
-            toggleDateSelection(true, dateSelection, dateText);
-        };
-
-        okButton.onclick = function() {
-            toggleDateSelection(false, dateSelection, dateText);
-        };
-
-        clearButton.onclick = function() {
-            clearDateTimeFields(dateSelection);
-            updateDateText(dateSelection, dateText);
-        };
-
-        setToNowButton.onclick = function() {
-            const now = new Date();
-            const dayElement = dateSelection.querySelector(
-                '[id$="_date_day"]')
-                ? dateSelection.querySelector('[id$="_date_day"]')
-                : dateSelection.querySelector('[id$="_date_day_popup"]');
-            const monthElement = dateSelection.querySelector(
-                '[id$="_date_month"]')
-                ? dateSelection.querySelector('[id$="_date_month"]')
-                : dateSelection.querySelector('[id$="_date_month_popup"]');
-            const yearElement = dateSelection.querySelector(
-                '[id$="_date_year"]')
-                ? dateSelection.querySelector('[id$="_date_year"]')
-                : dateSelection.querySelector('[id$="_date_year_popup"]');
-            const hourElement = dateSelection.querySelector(
-                '[id$="_time_hour"]')
-                ? dateSelection.querySelector('[id$="_time_hour"]')
-                : dateSelection.querySelector('[id$="_time_hour_popup"]');
-            const minuteElement = dateSelection.querySelector(
-                '[id$="_time_minute"]')
-                ? dateSelection.querySelector('[id$="_time_minute"]')
-                : dateSelection.querySelector('[id$="_time_minute_popup"]');
-
-            if (dayElement && monthElement && yearElement && hourElement &&
-                minuteElement) {
-                dayElement.value = now.getDate().toString();
-                monthElement.value = (now.getMonth() + 1).toString(); // Months are 0-indexed
-                yearElement.value = now.getFullYear().toString();
-                hourElement.value = now.getHours().toString();
-                minuteElement.value = now.getMinutes().toString();
-            }
-
-            updateDateText(dateSelection, dateText);
-        };
+        dateText.onclick = () => toggleDateSelection(true, dateSelection, dateText);
+        okButton.onclick = () => toggleDateSelection(false, dateSelection, dateText);
+        clearButton.onclick = () => clearDateTimeFields(dateSelection);
+        setToNowButton.onclick = () => setDateTimeToNow(dateSelection);
 
         dateSelection.style.display = 'none';
 
         updateDateText(dateSelection, dateText);
     });
+
+}
+
+function createOrFindButton(parent, className, text) {
+    let button = parent.querySelector('.' + className);
+    if (!button) {
+        button = document.createElement('span');
+        button.className = className;
+        button.textContent = text;
+        parent.appendChild(button);
+    }
+    return button;
+}
+
+function setDateTimeToNow(dateSelection) {
+    const now = new Date();
+    const dateInput = dateSelection.querySelector('input[type="date"]');
+    const timeInput = dateSelection.querySelector('input[type="time"]');
+
+    if (dateInput && timeInput) {
+        dateInput.value = now.toISOString().split('T')[0]; // YYYY-MM-DD format
+        timeInput.value = now.toTimeString().split(' ')[0].substring(0, 5); // HH:MM format
+    }
+}
+
+
+function clearDateTimeFields(dateSelection) {
+    const dateInput = dateSelection.querySelector('input[type="date"]');
+    const timeInput = dateSelection.querySelector('input[type="time"]');
+    if (dateInput) dateInput.value = '';
+    if (timeInput) timeInput.value = '';
 }
 
 function toggleDateSelection(showSelection, dateSelection, dateText) {
@@ -131,6 +87,7 @@ function toggleDateSelection(showSelection, dateSelection, dateText) {
         updateDateText(dateSelection, dateText);
     }
 }
+
 $('form[name="integrated_content"]').on('keyup keypress', function(e) {
     var keyCode = e.keyCode || e.which;
     if (keyCode === 13) {
@@ -140,84 +97,54 @@ $('form[name="integrated_content"]').on('keyup keypress', function(e) {
 });
 
 function updateDateText(dateSelection, dateText) {
-    const dayElement = dateSelection.querySelector('[id$="_date_day"]')
-        ? dateSelection.querySelector('[id$="_date_day"]')
-        : dateSelection.querySelector('[id$="_date_day_popup"]');
-    const monthElement = dateSelection.querySelector('[id$="_date_month"]')
-        ? dateSelection.querySelector('[id$="_date_month"]')
-        : dateSelection.querySelector('[id$="_date_month_popup"]');
-    const yearElement = dateSelection.querySelector('[id$="_date_year"]')
-        ? dateSelection.querySelector('[id$="_date_year"]')
-        : dateSelection.querySelector('[id$="_date_year_popup"]');
-    const hourElement = dateSelection.querySelector('[id$="_time_hour"]')
-        ? dateSelection.querySelector('[id$="_time_hour"]')
-        : dateSelection.querySelector('[id$="_time_hour_popup"]');
-    const minuteElement = dateSelection.querySelector('[id$="_time_minute"]')
-        ? dateSelection.querySelector('[id$="_time_minute"]')
-        : dateSelection.querySelector('[id$="_time_minute_popup"]');
+    const dateInput = dateSelection.querySelector('input[type="date"]');
+    const timeInput = dateSelection.querySelector('input[type="time"]');
 
-    const day = dayElement ? dayElement.value : '';
-    const month = monthElement ? monthElement.value : '';
-    const year = yearElement ? yearElement.value : '';
+    const dateValue = dateInput ? dateInput.value : ''; // YYYY-MM-DD
+    const timeValue = timeInput ? timeInput.value : ''; // HH:MM
 
-    let hour = '';
-
-    if (hourElement) {
-        hour = hourElement.value;
-        if (hour.length === 1) {
-            hour = '0' + hour;
-        }
-    }
-
-    let minute = '';
-
-    if (minuteElement) {
-        minute = minuteElement.value;
-        if (minute.length === 1) {
-            minute = '0' + minute;
-        }
-    }
-
-    const existingClearButton = dateText.nextSibling;
-    if (existingClearButton && existingClearButton.className === 'clear-date') {
-        existingClearButton.remove();
-    }
-
-    if (day && month && year) {
-        dateText.textContent = `${day}-${month}-${year} ${hour}:${minute}`;
+    let displayText = '';
+    if (dateValue && timeValue) {
+        const [year, month, day] = dateValue.split('-');
+        displayText = `${day}-${month}-${year} ${timeValue}`;
+    } else if (dateValue) {
+        const [year, month, day] = dateValue.split('-');
+        displayText = `${day}-${month}-${year}`;
+    } else if (timeValue) {
+        displayText = timeValue;
     } else {
-        if (dateSelection.closest('.datetime')?.getAttribute('data-set-date-text')) {
-            dateText.textContent = dateSelection.closest('.datetime').getAttribute('data-set-date-text');
-        } else {
-            dateText.textContent = dateSelection.closest('.aside-item-wrapper').getAttribute('data-set-date-text');
-        }
+        displayText = dateSelection.getAttribute('data-set-date-text') || 'Set Date/Time';
     }
-}
 
-function clearDateTimeFields(dateSelection) {
-    const dayElement = dateSelection.querySelector('[id$="_date_day"]')
-        ? dateSelection.querySelector('[id$="_date_day"]')
-        : dateSelection.querySelector('[id$="_date_day_popup"]');
-    const monthElement = dateSelection.querySelector('[id$="_date_month"]')
-        ? dateSelection.querySelector('[id$="_date_month"]')
-        : dateSelection.querySelector('[id$="_date_month_popup"]');
-    const yearElement = dateSelection.querySelector('[id$="_date_year"]')
-        ? dateSelection.querySelector('[id$="_date_year"]')
-        : dateSelection.querySelector('[id$="_date_year_popup"]');
-    const hourElement = dateSelection.querySelector('[id$="_time_hour"]')
-        ? dateSelection.querySelector('[id$="_time_hour"]')
-        : dateSelection.querySelector('[id$="_time_hour_popup"]');
-    const minuteElement = dateSelection.querySelector('[id$="_time_minute"]')
-        ? dateSelection.querySelector('[id$="_time_minute"]')
-        : dateSelection.querySelector('[id$="_time_minute_popup"]');
-
-    if (dayElement) dayElement.value = '';
-    if (monthElement) monthElement.value = '';
-    if (yearElement) yearElement.value = '';
-    if (hourElement) hourElement.value = '';
-    if (minuteElement) minuteElement.value = '';
+    // Update the text display element
+    dateText.textContent = displayText;
 }
 
 window.addEventListener('openPublishSettingsEvent', function(e) {
     prepDateTimeFields();
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const textareas = document.querySelectorAll('textarea[data-maxchars]');
+
+    textareas.forEach(textarea => {
+        const counterSpan = document.createElement('span');
+        counterSpan.style.fontWeight = 'bold';
+        textarea.parentNode.insertBefore(counterSpan, textarea.nextSibling);
+
+        const updateCounter = () => {
+            const maxChars = parseInt(textarea.getAttribute('data-maxchars'), 10);
+            let currentLength = textarea.value.length;
+
+            if (currentLength > maxChars) {
+                textarea.value = textarea.value.substr(0, maxChars);
+                currentLength = maxChars; // Correct the length if trimmed
+            }
+
+            counterSpan.textContent = `${currentLength} of ${maxChars} characters used`;
+        };
+
+        updateCounter();
+        textarea.addEventListener('change', updateCounter);
+    });
 });

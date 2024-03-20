@@ -18,6 +18,10 @@ nav.navbar {
         background-size: 30px;
         margin-right: 1rem;
         height: 30px;
+        @include media(max-md) {
+            margin-right: 21px;
+            margin-left: 8px;
+        }
         @include media(max-sm) {
             display: none;
         }
@@ -278,11 +282,6 @@ body div#dropdown_overlay {
 }
 
 @include media(max-xl) {
-    nav.navbar {
-        .new-contenttype {
-            margin-left: 15px;
-        }
-    }
     .dropdown-profile {
         margin-right: 10px;
     }
@@ -291,8 +290,6 @@ body div#dropdown_overlay {
 @include media(max-lg) {
     nav.navbar {
         .new-contenttype {
-            margin-left: 15px;
-
             span {
                 display: none;
             }
@@ -321,22 +318,8 @@ body div#dropdown_overlay {
 }
 
 @include media(max-md) {
-    nav.navbar {
-        .new-contenttype {
-            margin-left: 5px;
-        }
-    }
     li.dropdown-assigned-to-me > a > span {
-        position: absolute;
-        background-color: white;
-        color: black;
-        border-radius: 50%;
-        height: 20px;
-        width: 20px;
-        line-height: initial;
-        text-align: center;
-        top: 5px;
-        right: -5px;
+        margin-left:.5rem;
     }
 
     li.dropdown-assigned-to-me {

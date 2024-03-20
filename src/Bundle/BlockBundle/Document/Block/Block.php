@@ -64,6 +64,9 @@ abstract class Block implements BlockInterface
         'attr' => [
             'data-set-date-text' => 'Set publication date',
         ],
+        'html5' => true,
+        'date_widget' => 'single_text',
+        'time_widget' => 'single_text',
     ], location: 'custom')]
     protected $publishedAt;
 
@@ -76,6 +79,9 @@ abstract class Block implements BlockInterface
         'attr' => [
             'data-set-date-text' => 'Set depublication date',
         ],
+        'html5' => true,
+        'date_widget' => 'single_text',
+        'time_widget' => 'single_text',
     ], location: 'custom')]
     protected $publishedUntil;
 
