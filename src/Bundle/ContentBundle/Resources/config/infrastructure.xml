@@ -20,6 +20,8 @@
             <argument type="expression">true</argument>
             <argument type="expression">false</argument>
             <argument>website</argument>
+            <argument type="expression">null</argument>
+            <argument>www</argument>
 
             <tag name="integrated_channel.type" />
         </service>
@@ -29,6 +31,9 @@
             <argument>Newsletter</argument>
             <argument type="expression">false</argument>
             <argument type="expression">false</argument>
+            <argument>newsletter</argument>
+            <argument type="expression">null</argument>
+            <argument>mail</argument>
 
             <tag name="integrated_channel.type" />
         </service>

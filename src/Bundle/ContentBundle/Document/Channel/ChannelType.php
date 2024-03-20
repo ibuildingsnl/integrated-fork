@@ -11,6 +11,7 @@ class ChannelType
         public readonly bool $canBeSetGlobally = true,
         public readonly ?string $connector = null,
         public readonly ?string $publicationSettingsForm = null,
+        public readonly ?string $icon = null,
     ) {
     }
 
@@ -42,5 +43,10 @@ class ChannelType
     public function getPublicationSettingsForm(): ?string
     {
         return $this->publicationSettingsForm;
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->icon;
     }
 }

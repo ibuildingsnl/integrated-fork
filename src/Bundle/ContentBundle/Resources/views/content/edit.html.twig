@@ -118,14 +118,7 @@
                                         {% for publication in publications %}
                                             {% set pubChannel = publication.getChannel %}
                                             {% set brandName = pubChannel|integrated_brand_profile.name|default('Unknown') %}
-                                            {% set pubType = pubChannel.getType.getId %}
-                                            {% if pubType is same as('website') %}
-                                                {% set pubType = 'www' %}
-                                            {% elseif pubType is same as('twitter') %}
-                                                {% set pubType = 'x' %}
-                                            {% elseif pubType is same as('woodwing') %}
-                                                {% set pubType = 'open-book' %}
-                                            {% endif %}
+                                            {% set pubIcon = pubChannel.getType.getIcon %}
                                             {% set pubState = 'published' %}
                                             {% set pubColor = '#009472' %}
                                             {% if ('now'|date('U') < publication.getTime.getStartDate|date('U')) %}
@@ -136,7 +129,7 @@
                                                 <div class="publication-wrap" style="--color: {{ pubColor }}">
                                                     <div class="publication-item-heading">
                                                         <div class="heading-left">
-                                                            <i class="icon iconoir-{{ pubType }}" title="{{ pubChannel.getType.getName }}"></i>
+                                                            <i class="icon iconoir-{{ pubIcon }}" title="{{ pubChannel.getType.getName }}"></i>
                                                             <span class="publish-time">{{ publication.getTime.getStartDate|date('d-m-Y H:i') }}</span>
                                                         </div>
                                                         <div class="heading-right">
