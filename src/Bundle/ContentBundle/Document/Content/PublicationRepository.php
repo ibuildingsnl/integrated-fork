@@ -25,11 +25,10 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
             'time.startDate' => [
                 '$gte' => $startMongoDate,
                 '$lte' => $endMongoDate,
-            ]
+            ],
         ];
 
         return $this->findBy($query);
-
     }
 
     public function forContentByChannel(Content $content): array

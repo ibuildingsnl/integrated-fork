@@ -2,7 +2,6 @@
 
 namespace Integrated\Bundle\ContentBundle\EventListener;
 
-use DateTimeImmutable;
 use Integrated\Bundle\AssetBundle\Manager\AssetManager;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
@@ -29,9 +28,9 @@ class CalendarPublicationProvider implements EventSubscriberInterface
 
     public function addPublicationSchedule(CalendarEvent $event): void
     {
-        /** @var DateTimeImmutable $calendarStart */
+        /** @var \DateTimeImmutable $calendarStart */
         $calendarStart = $event->options['start'];
-        /** @var DateTimeImmutable $calendarEnd */
+        /** @var \DateTimeImmutable $calendarEnd */
         $calendarEnd = $event->options['end'];
 
         $publications = $this->publicationRepository->forDateRange($calendarStart, $calendarEnd);
@@ -72,7 +71,7 @@ class CalendarPublicationProvider implements EventSubscriberInterface
 
             $scheduledPublications[] = $data;
         }
-        $this->js->add('const publicationSchedule = ' . json_encode($scheduledPublications), true);
+        $this->js->add('const publicationSchedule = '.json_encode($scheduledPublications), true);
         $this->js->add('bundles/integratedcontent/js/publication_calendar.js');
     }
 }
