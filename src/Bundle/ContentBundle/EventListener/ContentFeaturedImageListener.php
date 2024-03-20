@@ -12,13 +12,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ContentFeaturedImageListener implements EventSubscriberInterface
 {
-    private $documentManager;
-    private $flusher;
 
-    public function __construct(DocumentManager $documentManager, MainFlusher $flusher)
+    public function __construct(
+        private readonly DocumentManager $documentManager
+    )
     {
-        $this->documentManager = $documentManager;
-        $this->flusher = $flusher;
     }
 
     /**
@@ -52,7 +50,7 @@ class ContentFeaturedImageListener implements EventSubscriberInterface
                         ->addReference($image)
                 );
 
-                $this->flusher->flush();
+                $this->documentManager->flush();
             }
         }
 
@@ -67,7 +65,7 @@ class ContentFeaturedImageListener implements EventSubscriberInterface
                         ->addReference($image)
                 );
 
-                $this->flusher->flush();
+                $this->documentManager->flush();
             }
         }
     }
