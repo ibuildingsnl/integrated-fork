@@ -16,7 +16,6 @@ use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
-use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
