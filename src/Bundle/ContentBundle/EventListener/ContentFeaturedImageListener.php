@@ -7,16 +7,13 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use Integrated\Common\Content\Form\Event\ValidationEvent;
 use Integrated\Common\Content\Form\Events;
-use Integrated\Common\Services\MainFlusher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ContentFeaturedImageListener implements EventSubscriberInterface
 {
-
     public function __construct(
         private readonly DocumentManager $documentManager
-    )
-    {
+    ) {
     }
 
     /**
