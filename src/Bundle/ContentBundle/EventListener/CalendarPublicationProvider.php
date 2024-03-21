@@ -45,7 +45,6 @@ class CalendarPublicationProvider implements EventSubscriberInterface
             $type = $publication->getChannel()->getType();
             $dateTime = $publication->getTime()->getStartDate();
 
-
             if ($publication->getChannel() instanceof ChannelInterface) {
                 foreach ($this->brands->all() as $brand) {
                     if ($brand->hasChannel($publication->getChannel())) {
@@ -75,7 +74,7 @@ class CalendarPublicationProvider implements EventSubscriberInterface
                 }
             }
         }
-        $this->js->add('const publicationSchedule = ' . json_encode($scheduledPublications), true);
+        $this->js->add('const publicationSchedule = '.json_encode($scheduledPublications), true);
         $this->js->add('bundles/integratedcontent/js/publication_calendar.js');
     }
 }
