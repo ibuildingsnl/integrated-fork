@@ -130,7 +130,7 @@
                                                     <div class="publication-item-heading">
                                                         <div class="heading-left">
                                                             <i class="icon iconoir-{{ pubIcon }}" title="{{ pubChannel.getType.getName }}"></i>
-                                                            <span class="publish-time">{{ publication.getTime.getStartDate|date('d-m-Y H:i') }}</span>
+                                                            <span class="publish-time">{{ publication.getTime.getStartDate|default(content.publishTime.startDate)|date('d-m-Y H:i') }}</span>
                                                         </div>
                                                         <div class="heading-right">
                                                             <i class="icon iconoir-xmark" title="remove" data-channel="{{ publication.getChannel.getId }}"></i>

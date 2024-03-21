@@ -10,7 +10,7 @@ if (typeof publicationSchedule === 'object') {
     for (const publication of publicationSchedule) {
         console.log(publication);
         const column = document.querySelector('.day.column[data-date="' + publication.date + '"]');
-        const existingItem = document.querySelector('.calendar-item[data-id="' + publication.id + '"]');
+        const existingItem = column.querySelector('.calendar-item[data-id="' + publication.id + '"]');
 
         let shouldAddIcon = false;
 
