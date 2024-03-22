@@ -9,6 +9,8 @@ class Publication
 {
     private string $id;
 
+    private string $response;
+
     public function __construct(
         private readonly Content $content,
         private readonly ChannelInterface $channel,
@@ -40,6 +42,16 @@ class Publication
     public function getTime(): PublishTimeInterface
     {
         return $this->time;
+    }
+
+    public function getResponse(): ?string
+    {
+        return $this->response;
+    }
+
+    public function setResponse($response): void
+    {
+        $this->response = $response;
     }
 
     public function getSettings(): array

@@ -78,6 +78,8 @@ class Exporter implements ExporterInterface
             if ($response instanceof ExporterResponse) {
                 $this->save($content, $response);
             }
+
+            $this->dm->flush();
         }
     }
 

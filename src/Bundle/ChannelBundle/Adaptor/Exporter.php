@@ -6,6 +6,7 @@ use Integrated\Bundle\ChannelBundle\Model\ConfigInterface;
 use Integrated\Bundle\ChannelBundle\Model\ConnectorInterface;
 use Integrated\Bundle\ChannelBundle\Model\CouldNotPublish;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface;
 use Integrated\Common\Channel\Exporter\ExporterResponse;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -16,14 +17,13 @@ final class Exporter implements ExporterInterface
     public function __construct(
         private readonly ConnectorInterface $connector,
         private readonly ConfigInterface $config,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly PublicationRepositoryInterface $publications
     ) {
     }
 
     public function export($content, $state, ChannelInterface $channel, array $settings = []): ?ExporterResponse
     {
-        $externalId = null;
-
         if (!$content instanceof Content || $state != self::STATE_ADD) {
             return null;
         }
@@ -37,25 +37,32 @@ final class Exporter implements ExporterInterface
             return null;
         }
 
+        $responseMessage = null;
+        $externalId = null;
+
         try {
             $externalId = $this->connector->publish($content, $channel, $this->config->getOptions(), $settings);
         } catch (CouldNotPublish $e) {
             $this->logger->error($e->getMessage()."\n".$e->getTraceAsString());
-
-            return null;
+            $responseMessage = $e->getMessage();
         } catch (\Throwable $e) {
             $this->logger->error($e);
+            $responseMessage = $e->getMessage();
         }
 
         if (null === $externalId) {
             $this->logger->error('Skipped: refused by connector');
-
-            return null;
         }
 
         $response = new ExporterResponse($this->config->getId(), $this->config->getAdapter());
-        $response->setExternalId($externalId);
+        if ($externalId !== null) {
+            $response->setExternalId($externalId);
+            $responseMessage = $response;
+        }
+        foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
+            $publication->setResponse($responseMessage);
+        }
 
-        return $response;
+        return $responseMessage instanceof ExporterResponse ? $responseMessage : null;
     }
 }
