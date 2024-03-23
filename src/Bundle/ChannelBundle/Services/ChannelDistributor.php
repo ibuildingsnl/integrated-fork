@@ -42,12 +42,14 @@ class ChannelDistributor
 
             return;
         }
-        $this->scheduleDistributionWindow(
-            $channel,
-            $content,
-            $publication ? $publication->getTime() : $content->getPublishTime(),
-            $publication?->getSettings() ?: []
-        );
+        if ($publication->getStatus() != 'succes') {
+            $this->scheduleDistributionWindow(
+                $channel,
+                $content,
+                $publication ? $publication->getTime() : $content->getPublishTime(),
+                $publication?->getSettings() ?: []
+            );
+        }
     }
 
     private function scheduleDistributionWindow(
