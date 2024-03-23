@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\ChannelBundle\Adaptor;
 
+use GuzzleHttp\Exception\ClientException;
 use Integrated\Bundle\ChannelBundle\Model\ConfigInterface;
 use Integrated\Bundle\ChannelBundle\Model\ConnectorInterface;
 use Integrated\Bundle\ChannelBundle\Model\CouldNotPublish;
@@ -39,14 +40,22 @@ final class Exporter implements ExporterInterface
 
         $responseMessage = null;
         $externalId = null;
+        $status = 'failed';
 
         try {
             $externalId = $this->connector->publish($content, $channel, $this->config->getOptions(), $settings);
         } catch (CouldNotPublish $e) {
             $this->logger->error($e->getMessage()."\n".$e->getTraceAsString());
             $responseMessage = $e->getMessage();
+        } catch (ClientException $e) {
+            $responseBody = $e->getResponse()->getBody()->getContents();
+            $this->logger->error("ClientException: " . $e->getMessage() . "\nResponse: " . $responseBody);
+            $responseMessage = json_decode($responseBody, true);
+        } catch (\TypeError $e) {
+            $this->logger->error("TypeError: " . $e->getMessage());
+            $responseMessage = $e->getMessage();
         } catch (\Throwable $e) {
-            $this->logger->error($e);
+            $this->logger->error("Error: " . get_class($e) . " - " . $e->getMessage());
             $responseMessage = $e->getMessage();
         }
 
@@ -58,9 +67,11 @@ final class Exporter implements ExporterInterface
         if ($externalId !== null) {
             $response->setExternalId($externalId);
             $responseMessage = $response;
+            $status = 'succes';
         }
         foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
             $publication->setResponse($responseMessage);
+            $publication->setStatus($status);
         }
 
         return $responseMessage instanceof ExporterResponse ? $responseMessage : null;

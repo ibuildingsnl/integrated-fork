@@ -11,6 +11,8 @@ class Publication
 
     private string $response;
 
+    private string $status = '';
+
     public function __construct(
         private readonly Content $content,
         private readonly ChannelInterface $channel,
@@ -52,6 +54,16 @@ class Publication
     public function setResponse($response): void
     {
         $this->response = $response;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus($status): void
+    {
+        $this->status = $status;
     }
 
     public function getSettings(): array
