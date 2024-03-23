@@ -9,7 +9,7 @@ class Publication
 {
     private string $id;
 
-    private string $response;
+    private string $response = '';
 
     private string $status = '';
 
