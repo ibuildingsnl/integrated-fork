@@ -49,13 +49,13 @@ final class Exporter implements ExporterInterface
             $responseMessage = $e->getMessage();
         } catch (ClientException $e) {
             $responseBody = $e->getResponse()->getBody()->getContents();
-            $this->logger->error("ClientException: " . $e->getMessage() . "\nResponse: " . $responseBody);
+            $this->logger->error('ClientException: '.$e->getMessage()."\nResponse: ".$responseBody);
             $responseMessage = $responseBody;
         } catch (\TypeError $e) {
-            $this->logger->error("TypeError: " . $e->getMessage());
+            $this->logger->error('TypeError: '.$e->getMessage());
             $responseMessage = $e->getMessage();
         } catch (\Throwable $e) {
-            $this->logger->error("Error: " . get_class($e) . " - " . $e->getMessage());
+            $this->logger->error('Error: '.\get_class($e).' - '.$e->getMessage());
             $responseMessage = $e->getMessage();
         }
 

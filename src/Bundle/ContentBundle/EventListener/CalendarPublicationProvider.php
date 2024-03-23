@@ -74,7 +74,7 @@ class CalendarPublicationProvider implements EventSubscriberInterface
                         'brand_name' => $currentBrand->getName(),
                         'brand_favicon' => $brandProfile->getFavicon()?->getFile()->getPathname(),
                         'brand_color' => $brandProfile->getColor(),
-                        'response' => $publication->getResponse()
+                        'response' => $publication->getResponse(),
                     ];
                     $scheduledPublications[] = $data;
                 }

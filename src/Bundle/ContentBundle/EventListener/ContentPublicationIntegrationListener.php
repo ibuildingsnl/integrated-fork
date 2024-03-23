@@ -3,7 +3,6 @@
 namespace Integrated\Bundle\ContentBundle\EventListener;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Bundle\ContentBundle\Form\Type\PublicationsType;
