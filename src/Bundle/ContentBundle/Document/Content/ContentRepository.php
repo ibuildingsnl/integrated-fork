@@ -101,4 +101,9 @@ class ContentRepository extends DocumentRepository
     {
         $this->getDocumentManager()->persist($content);
     }
+
+    public function remove(Content $content): void
+    {
+        $this->getDocumentManager()->remove($content);
+    }
 }
