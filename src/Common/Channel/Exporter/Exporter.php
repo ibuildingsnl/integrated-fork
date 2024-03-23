@@ -76,6 +76,13 @@ class Exporter implements ExporterInterface
             }
         }
 
+        if (count($this->getExporters($channel, $publicationDate)) === 0) {
+            foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
+                $publication->setStatus('failed');
+                $publication->setResponse('There is no connector configured, please check your settings');
+            }
+        }
+
         foreach ($this->getExporters($channel, $publicationDate) as $exporter) {
             $response = $exporter->export($content, $state, $channel, $settings);
 
