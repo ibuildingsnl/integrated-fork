@@ -59,6 +59,10 @@ class Exporter implements ExporterInterface
                 if ($startDate > $now) {
                     $state = ConnectorExporterInterface::STATE_DELETE;
                 }
+
+                if ($publication->getStatus() === 'succes') {
+                    return;
+                }
             }
         }
 
