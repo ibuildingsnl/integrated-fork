@@ -8,7 +8,6 @@ if (typeof publicationSchedule === 'object') {
     };
 
     for (const publication of publicationSchedule) {
-        console.log(publication);
         const column = document.querySelector('.day.column[data-date="' + publication.date + '"]');
         const existingItem = column.querySelector('.calendar-item[data-id="' + publication.id + '"]');
 
@@ -25,20 +24,32 @@ if (typeof publicationSchedule === 'object') {
         let colorVariable = brandColors.hasOwnProperty(publication.icon) ? brandColors[publication.icon] : '#000000';
 
         if (shouldAddIcon) {
-            console.log('adding-icon')
             const headingLeftDiv = existingItem.querySelector('.heading-left');
-            const firstIcon = headingLeftDiv.querySelector('i.icon');
-            const newIcon = document.createElement('i');
-            newIcon.className = 'icon iconoir-' + publication.icon;
-            newIcon.title = publication.icon;
-            if (firstIcon) {
-                firstIcon.insertAdjacentElement('afterend', newIcon);
-            } else {
-                headingLeftDiv.appendChild(newIcon);
+            const iconClass = 'icon iconoir-' + publication.icon;
+            const existingIcon = headingLeftDiv.querySelector(`.${iconClass.replace(/\s/g, '.')}`);
+
+            if (!existingIcon) {
+                const newIcon = document.createElement('i');
+                newIcon.className = iconClass;
+
+                newIcon.title = publication.name;
+                const firstIcon = headingLeftDiv.querySelector('i.icon');
+
+                if (firstIcon) {
+                    firstIcon.insertAdjacentElement('afterend', newIcon);
+                } else {
+                    headingLeftDiv.appendChild(newIcon);
+                }
+            }
+
+            if (publication.published === 'failed') {
+                const errorEntry = document.createElement('div');
+                errorEntry.className = 'calendar-error';
+                errorEntry.innerHTML = '<b>' + publication.name + ' ' + publication.brand_name + '</b>:<br>' + publication.response;
+                const calContent = existingItem.querySelector('.calendar-wrap');
+                calContent.appendChild(errorEntry);
             }
         } else {
-            console.log('adding-entry')
-
             let before = null;
 
             for (const calendarItem of column.querySelectorAll('a.calendar-item')) {
@@ -60,22 +71,28 @@ if (typeof publicationSchedule === 'object') {
     }
 
     function generatePublicationHTML(publication, colorVariable) {
+
+        const errorMessage = publication.published === 'failed'
+            ? `<div class="publication-error">${publication.response}</div>`
+            : '';
+
         return `<div class="calendar-wrap" style="--color: ${colorVariable}">
-        <div class="calendar-item-heading">
-            <div class="heading-left">
-                <i class="icon iconoir-${publication.icon}" title="${publication.icon}"></i>
-                <span class="publish-time">${publication.display_time}</span>
-                <div class="favicon-wrapper ">
-                    <div class="channel-favicons ">
-                        <div class="channel-favicon" style="background-image:url(${publication.brand_favicon})" title="${publication.brand_name}"></div>
+                    <div class="calendar-item-heading">
+                        <div class="heading-left">
+                            <i class="icon iconoir-${publication.icon}" title="${publication.icon}"></i>
+                            <span class="publish-time">${publication.display_time}</span>
+                            <div class="favicon-wrapper">
+                                <div class="channel-favicons">
+                                    <div class="channel-favicon" style="background-image:url(${publication.brand_favicon})" title="${publication.brand_name}"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="calendar-item-content">
-            ${publication.title}
-        </div>
-    </div>`;
+                    <div class="calendar-item-content">
+                        ${publication.title}
+                    </div>
+                    ${errorMessage}
+                </div>`;
     }
 
     function attachMouseEvents(publicationEntry, colorVariable, publication) {

@@ -54,6 +54,11 @@ class CalendarPublicationProvider implements EventSubscriberInterface
                 }
             }
 
+            $status = $now > $publication->getTime()->getStartDate() ? 'published' : 'planned';
+            if ($publication->getStatus() === 'failed') {
+                $status = 'failed';
+            }
+
             if (isset($brandProfile) && isset($currentBrand)) {
                 if ($brandProfile instanceof BrandProfile && $currentBrand instanceof Brand) {
                     $data = [
@@ -62,13 +67,14 @@ class CalendarPublicationProvider implements EventSubscriberInterface
                         'type' => $type->getId(),
                         'name' => $type->getName(),
                         'icon' => $type->getIcon() ?: 'empty-page',
-                        'published' => $now > $publication->getTime()->getStartDate() ? 'published' : 'planned',
+                        'published' => $status,
                         'date' => $dateTime->format('Y/m/d'),
                         'time' => $dateTime->format('Hi'),
                         'display_time' => $dateTime->format('H:i'),
                         'brand_name' => $currentBrand->getName(),
                         'brand_favicon' => $brandProfile->getFavicon()?->getFile()->getPathname(),
                         'brand_color' => $brandProfile->getColor(),
+                        'response' => $publication->getResponse()
                     ];
                     $scheduledPublications[] = $data;
                 }

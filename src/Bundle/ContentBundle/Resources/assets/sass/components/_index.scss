@@ -133,6 +133,10 @@ div.heading-switcher {
             background-color: rgba(95,132,219,.1);
         }
 
+        &.failed {
+            background-color: rgba(255, 71, 71, 0.1);
+        }
+
         .calendar-wrap {
             border-left: 3px solid var(--color);
             display: flex;
@@ -159,7 +163,7 @@ div.heading-switcher {
                     }
 
                     .icon {
-                        margin-right: .5rem;
+                        margin-right: .25rem;
 
                         &:before {
                             height: 18px;
@@ -167,6 +171,16 @@ div.heading-switcher {
                         }
                     }
                 }
+            }
+
+            .calendar-error {
+                background-color: #ffeded;
+                border-radius: 8px;
+                font-size: .875rem;
+                line-height: 1rem;
+                padding: 0.5rem;
+                word-wrap: break-word;
+                margin-top: 0.5rem;
             }
 
             .calendar-item-content {
@@ -277,14 +291,14 @@ div.heading-switcher {
         }
 
         &.popout {
-            display: none;
-            position: absolute;
-            background-color: white;
-            padding: 0.5rem;
+            background-color: #fff;
             border: 1px solid #d8d8d8;
             border-radius: 8px;
-            top: -8px;
-            left: 23px;
+            display: none;
+            right: 0;
+            padding: 0.5rem;
+            position: absolute;
+            top: 22px;
             z-index: 1;
         }
     }

@@ -225,10 +225,32 @@
 
     &.published {
         background-color: rgba(1, 174, 147, 0.05);
+        .publication-wrap {
+            border-left: 3px solid #009472;
+            .publication-item-heading {
+                color:#009472;
+            }
+        }
     }
 
     &.planned {
         background-color: rgba(95, 132, 219, 0.1);
+        .publication-wrap {
+            border-left: 3px solid #5f84db;
+            .publication-item-heading {
+                color:#5f84db;
+            }
+        }
+    }
+
+    &.failed {
+        background-color: rgba(255, 71, 71, 0.1);
+        .publication-wrap {
+            border-left: 3px solid #ff4747;
+            .publication-item-heading {
+                color:#ff4747;
+            }
+        }
     }
 
     &:hover {
@@ -236,7 +258,6 @@
     }
 
     .publication-wrap {
-        border-left: 3px solid var(--color);
         display: flex;
         flex-direction: column;
         padding: 0.5rem;
@@ -244,7 +265,6 @@
 
         .publication-item-heading {
             font-weight: bold;
-            color: var(--color);
             display: flex;
             justify-content: space-between;
 
@@ -276,6 +296,15 @@
                     }
                 }
             }
+        }
+
+        .publication-error {
+            border: 1px solid #dfe3e9;
+            border-radius: 8px;
+            font-size: .875rem;
+            line-height: 1rem;
+            padding: 0.5rem;
+            word-wrap: break-word;
         }
 
         .publication-item-content {
