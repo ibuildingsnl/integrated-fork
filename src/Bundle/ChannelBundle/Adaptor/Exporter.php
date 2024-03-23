@@ -50,7 +50,7 @@ final class Exporter implements ExporterInterface
         } catch (ClientException $e) {
             $responseBody = $e->getResponse()->getBody()->getContents();
             $this->logger->error("ClientException: " . $e->getMessage() . "\nResponse: " . $responseBody);
-            $responseMessage = json_decode($responseBody, true);
+            $responseMessage = $responseBody;
         } catch (\TypeError $e) {
             $this->logger->error("TypeError: " . $e->getMessage());
             $responseMessage = $e->getMessage();
@@ -66,7 +66,7 @@ final class Exporter implements ExporterInterface
         $response = new ExporterResponse($this->config->getId(), $this->config->getAdapter());
         if ($externalId !== null) {
             $response->setExternalId($externalId);
-            $responseMessage = $response;
+            $responseMessage = $externalId;
             $status = 'succes';
         }
         foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
