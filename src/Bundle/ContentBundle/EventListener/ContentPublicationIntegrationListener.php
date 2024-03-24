@@ -5,6 +5,7 @@ namespace Integrated\Bundle\ContentBundle\EventListener;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
+use Integrated\Bundle\ContentBundle\Form\Type\GlobalPublicationsType;
 use Integrated\Bundle\ContentBundle\Form\Type\PublicationsType;
 use Integrated\Common\Content\Form\Event\BuilderEvent;
 use Integrated\Common\Content\Form\Events;
@@ -42,6 +43,15 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
             ],
             'data' => $this->publications->forContentByChannel($content),
         ]);
+
+        $form->add('global_publications', GlobalPublicationsType::class, [
+            'channels' => $form->get('channels')->getOption('choices'),
+            'mapped' => false,
+            'attr' => [
+                'class' => 'publication-settings-global',
+            ]
+        ]);
+
 
         $form->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $content = $event->getData();

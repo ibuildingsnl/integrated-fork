@@ -211,6 +211,10 @@
             <tag name="form.type"/>
         </service>
 
+        <service id="integrated_content.form.type.global_publication_settings" class="Integrated\Bundle\ContentBundle\Form\Type\GlobalPublicationsType">
+            <tag name="form.type"/>
+        </service>
+
         <service id="integrated_content.form.type.job.company_job" class="Integrated\Bundle\ContentBundle\Form\Type\Job\CompanyJobType">
             <argument type="service" id="integrated_content.content_type.manager"/>
             <tag name="form.type"/>
