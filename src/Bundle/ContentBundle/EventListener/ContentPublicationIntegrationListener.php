@@ -68,7 +68,6 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
 
                 if (($data['time'] ?? null) instanceof PublishTimeInterface) {
                     $time = $data['time'];
-                    unset($data['time']);
                 }
 
                 $imagesProcessed = [];
