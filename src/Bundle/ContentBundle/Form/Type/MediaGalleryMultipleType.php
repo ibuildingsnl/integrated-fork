@@ -36,7 +36,7 @@ class MediaGalleryMultipleType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['attr']['data-multiple'] = true;
+        $view->vars['attr']['data-multiple'] = is_bool($view->vars['attr']['data-multiple']) ? $view->vars['attr']['data-multiple'] : true;
     }
 
     /**

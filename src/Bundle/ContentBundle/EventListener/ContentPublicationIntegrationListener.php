@@ -35,6 +35,14 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
         if (!$content instanceof Content || !$form->has('channels')) {
             return;
         }
+        $form->add('global_publications', GlobalPublicationsType::class, [
+            'channels' => $form->get('channels')->getOption('choices'),
+            'mapped' => false,
+            'attr' => [
+                'class' => 'publication-settings-global',
+            ],
+        ]);
+
         $form->add('publications', PublicationsType::class, [
             'channels' => $form->get('channels')->getOption('choices'),
             'mapped' => false,
@@ -42,14 +50,6 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                 'class' => 'publication-settings-container',
             ],
             'data' => $this->publications->forContentByChannel($content),
-        ]);
-
-        $form->add('global_publications', GlobalPublicationsType::class, [
-            'channels' => $form->get('channels')->getOption('choices'),
-            'mapped' => false,
-            'attr' => [
-                'class' => 'publication-settings-global',
-            ],
         ]);
 
         $form->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
