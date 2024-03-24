@@ -73,11 +73,6 @@ class Exporter implements ExporterInterface
                 if ($publication->getStatus() === 'succes') {
                     return;
                 }
-
-                if (\count($this->getExporters($channel, $publicationDate)) === 0) {
-                    $publication->setStatus('failed');
-                    $publication->setResponse('There is no connector configured, please check your settings');
-                }
             }
         }
 
