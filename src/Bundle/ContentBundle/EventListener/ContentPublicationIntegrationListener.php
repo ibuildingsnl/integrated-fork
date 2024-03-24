@@ -49,9 +49,8 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
             'mapped' => false,
             'attr' => [
                 'class' => 'publication-settings-global',
-            ]
+            ],
         ]);
-
 
         $form->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $content = $event->getData();

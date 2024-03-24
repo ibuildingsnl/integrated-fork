@@ -23,13 +23,13 @@ class GlobalPublicationsType extends AbstractType
         foreach ($options['channels'] as $channel) {
             $channelType = $channel->getType();
 
-            if (in_array($channelType, $channelTypes, true) || !$channelType->canBeSetGlobally()) {
+            if (\in_array($channelType, $channelTypes, true) || !$channelType->canBeSetGlobally()) {
                 continue;
             }
 
             $channelTypes[] = $channelType;
 
-            $builder->add('global_' . $channel->getId(), GlobalPublicationType::class, [
+            $builder->add('global_'.$channel->getId(), GlobalPublicationType::class, [
                 'attr' => [
                     'class' => 'global-publication-settings',
                     'data-channel-type' => $channel->getType()?->getName() ?: 'N/A',
