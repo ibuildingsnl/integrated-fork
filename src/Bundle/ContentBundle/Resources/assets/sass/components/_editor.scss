@@ -665,8 +665,9 @@ pre#editor {
         }
     }
     .textarea {
-        max-height: 100px;
-
+        textarea {
+            max-height: 100px;
+        }
         span.copy-intro-btn {
             bottom: 0px;
             top: auto;
