@@ -43,10 +43,6 @@ function openPublishingSettings(channelId, input) {
         const correspondingValue = document.querySelector(`[name="${correspondingName}"]`)?.value;
         d.value = d.value || correspondingValue;
     });
-
-    var openPublishSettingsEvent = new CustomEvent('openPublishSettingsEvent', settings);
-
-    window.dispatchEvent(openPublishSettingsEvent);
 }
 
 document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
@@ -91,6 +87,7 @@ document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
 });
 
 function showHideChannelSelect(container, type) {
+
     const applyToChannelsSelect = container.querySelector('select[data-apply-channels]');
     const channelSelectContainer = container.querySelector('.settings-channels-choice');
     applyToChannelsSelect.innerHTML = '';
@@ -100,9 +97,9 @@ function showHideChannelSelect(container, type) {
     }
     channelSelectContainer.classList.remove('hidden');
     document.querySelectorAll('input[data-channel-type="'+type+'"]').forEach(function (input) {
-        if (!input.checked) {
-            return;
-        }
+        // if (!input.checked) {
+        //     return;
+        // }
         const option = document.createElement('option');
         option.value = input.value;
         option.text = input.dataset.channelName;
@@ -118,6 +115,7 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
             document.querySelectorAll('.editor-overlay').forEach(div => {
                 div.classList.remove('show');
             });
+            //TODO: Fix integration for LinkedIn
             const applyType = settings.querySelector('[data-apply-to]')?.value;
             if (applyType === 'type') {
                 const pubInputSelector = 'input,select,textarea';
@@ -177,9 +175,9 @@ document.addEventListener('click', function (ev) {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+function setupTextareaCopyFeature() {
     const editorID = 'integrated_content_content'; // Adjust accordingly
-    const settingsDivs = document.querySelectorAll('.publication-settings-aside');
+    const settingsDivs = document.querySelectorAll('.publication-settings, .publication-settings-global .publishable');
 
     settingsDivs.forEach(div => {
         const textarea = div.querySelector('textarea');
@@ -207,18 +205,20 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
-});
+}
 
-function createOrFindButton(parent, className, text) {
-    let button = parent.querySelector('.' + className);
+function createOrFindButton(input, className, text) {
+    let button = input.parentNode.querySelector('.' + className);
     if (!button) {
         button = document.createElement('span');
         button.className = className;
         button.textContent = text;
-        parent.insertAdjacentElement('afterend', button);
+        input.insertAdjacentElement('afterend', button);
     }
     return button;
 }
+
+document.addEventListener('DOMContentLoaded', setupTextareaCopyFeature);
 
 document.addEventListener('DOMContentLoaded', function () {
     const icons = document.querySelectorAll('.publication-item .icon.iconoir-xmark');
