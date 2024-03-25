@@ -74,8 +74,6 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                     unset($data['time']);
                 }
 
-                // TODO: Changing time is not seen as a "change" yet.
-
                 $imagesProcessed = [];
                 if (isset($data['images']) && \is_array($data['images'])) {
                     foreach ($data['images'] as $key => $image) {

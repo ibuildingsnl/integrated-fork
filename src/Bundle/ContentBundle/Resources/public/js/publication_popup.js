@@ -8,7 +8,7 @@ const publishActions = Array.from(document.querySelectorAll('.global-publication
 
 console.log(publishActions);
 
-if (publishActions.length > 0) {
+if (publishActions.length > 0 && document.body.classList.contains('integrated_content_content_edit')) {
     // add top-bar menu item
     const publish = document.createElement('div');
     publish.className = 'publish';
