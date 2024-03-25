@@ -43,6 +43,10 @@ function openPublishingSettings(channelId, input) {
         const correspondingValue = document.querySelector(`[name="${correspondingName}"]`)?.value;
         d.value = d.value || correspondingValue;
     });
+
+    var openPublishSettingsEvent = new CustomEvent('openPublishSettingsEvent');
+
+    window.dispatchEvent(openPublishSettingsEvent);
 }
 
 document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
@@ -115,7 +119,6 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
             document.querySelectorAll('.editor-overlay').forEach(div => {
                 div.classList.remove('show');
             });
-            //TODO: Fix integration for LinkedIn
             const applyType = settings.querySelector('[data-apply-to]')?.value;
             if (applyType === 'type') {
                 const pubInputSelector = 'input,select,textarea';

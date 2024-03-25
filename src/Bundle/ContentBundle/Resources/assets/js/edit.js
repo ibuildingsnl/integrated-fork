@@ -156,3 +156,7 @@ document.addEventListener('DOMContentLoaded', initializePage);
 window.addEventListener('applyPublishSettingsEvent', function(e) {
     prepDateTimeFields();
 });
+
+window.addEventListener('openPublishSettingsEvent', function(e) {
+    prepDateTimeFields();
+});
