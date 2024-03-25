@@ -36,6 +36,7 @@
         <service id="integrated_content.form.publication.listener"
                  class="Integrated\Bundle\ContentBundle\EventListener\ContentPublicationIntegrationListener">
             <argument type="service" id="integrated_content.publication_repository" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager"/>
 
             <tag name="integrated_content.form.event_subscriber"/>
         </service>

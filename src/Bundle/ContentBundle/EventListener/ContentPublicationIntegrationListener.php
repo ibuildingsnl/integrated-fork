@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\ContentBundle\EventListener;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
@@ -18,6 +19,7 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
 {
     public function __construct(
         private readonly PublicationRepositoryInterface $publications,
+        private readonly DocumentManager $documentManager,
     ) {
     }
 
@@ -35,13 +37,6 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
         if (!$content instanceof Content || !$form->has('channels')) {
             return;
         }
-        $form->add('global_publications', GlobalPublicationsType::class, [
-            'channels' => $form->get('channels')->getOption('choices'),
-            'mapped' => false,
-            'attr' => [
-                'class' => 'publication-settings-global',
-            ],
-        ]);
 
         $form->add('publications', PublicationsType::class, [
             'channels' => $form->get('channels')->getOption('choices'),
@@ -50,6 +45,14 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                 'class' => 'publication-settings-container',
             ],
             'data' => $this->publications->forContentByChannel($content),
+        ]);
+
+        $form->add('global_publications', GlobalPublicationsType::class, [
+            'channels' => $form->get('channels')->getOption('choices'),
+            'mapped' => false,
+            'attr' => [
+                'class' => 'publication-settings-global',
+            ],
         ]);
 
         $form->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
@@ -68,7 +71,10 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
 
                 if (($data['time'] ?? null) instanceof PublishTimeInterface) {
                     $time = $data['time'];
+                    unset($data['time']);
                 }
+
+                //TODO: Changing time is not seen as a "change" yet.
 
                 $imagesProcessed = [];
                 if (isset($data['images']) && \is_array($data['images'])) {
@@ -85,6 +91,9 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                 $foundOrUpdated = false;
                 foreach ($existingPublications as $key => $previousPublication) {
                     if ($previousPublication->getChannel()->getId() == $channel->getId()) {
+
+                        $this->documentManager->refresh($previousPublication);
+
                         if ($this->isPublicationChanged($previousPublication, ['settings' => $data, 'time' => $time])) {
                             $this->publications->remove($previousPublication);
 
