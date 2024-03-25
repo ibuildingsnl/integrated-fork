@@ -53,12 +53,13 @@ if (publishActions.length > 0) {
                 });
 
                 const sourceImageContainer = channelTypeForm.querySelector('.mediagallery_selector .selected_images');
-                const imageInfos = Array.from(sourceImageContainer.children).map(li => ({
-                    src: li.querySelector('img').src,
-                    id: li.id
-                }));
 
-                console.log(data)
+                if (sourceImageContainer) {
+                    const imageInfos = Array.from(sourceImageContainer.children).map(li => ({
+                        src: li.querySelector('img').src,
+                        id: li.id
+                    }));
+                }
                 document.querySelectorAll('.publication-settings[data-channel-type="' + action + '"]').forEach(function (container) {
                     if (!popup.querySelector('[data-apply-channels] option:checked[value="'+container.dataset.publicationChannel+'"]')) {
                         return;
@@ -67,27 +68,28 @@ if (publishActions.length > 0) {
                         input.value = data[i];
                     });
 
-                    const targetImageContainer = container.querySelector('.mediagallery_selector .selected_images');
-                    const targetHiddenInput = container.querySelector('.mediagallery_selector .mediagallery_selector_input');
+                    if (sourceImageContainer) {
+                        const targetImageContainer = container.querySelector('.mediagallery_selector .selected_images');
+                        const targetHiddenInput = container.querySelector('.mediagallery_selector .mediagallery_selector_input');
 
-                    targetImageContainer.innerHTML = '';
+                        targetImageContainer.innerHTML = '';
 
-                    targetHiddenInput.value = '';
+                        targetHiddenInput.value = '';
 
-                    imageInfos.forEach(info => {
-                        const li = document.createElement('li');
-                        li.id = info.id;
-                        li.className = 'media-item';
-                        li.innerHTML = `<div class="media-preview"><div class="thumbnail relative"><div class="centered"><img src="${info.src}"></div><a class="remove_link remove"><i class="iconoir-xmark"></i></a></div></div>`;
-                        targetImageContainer.appendChild(li);
+                        imageInfos.forEach(info => {
+                            const li = document.createElement('li');
+                            li.id = info.id;
+                            li.className = 'media-item';
+                            li.innerHTML = `<div class="media-preview"><div class="thumbnail relative"><div class="centered"><img src="${info.src}"></div><a class="remove_link remove"><i class="iconoir-xmark"></i></a></div></div>`;
+                            targetImageContainer.appendChild(li);
 
-                        if (targetHiddenInput.value) {
-                            targetHiddenInput.value += ',' + info.id;
-                        } else {
-                            targetHiddenInput.value = info.id;
-                        }
-                    });
-
+                            if (targetHiddenInput.value) {
+                                targetHiddenInput.value += ',' + info.id;
+                            } else {
+                                targetHiddenInput.value = info.id;
+                            }
+                        });
+                    }
                     //Check the selected Channel under Brands
                     const input = document.querySelector('input[data-channel-selector="'+container.dataset.publicationChannel+'"]');
                     input.checked = true;
