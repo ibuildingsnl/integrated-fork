@@ -1314,6 +1314,10 @@
                 <source>Apply</source>
                 <target>Toepassen</target>
             </trans-unit>
+            <trans-unit id="333">
+                <source>Select image</source>
+                <target>Selecteer afbeelding</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
