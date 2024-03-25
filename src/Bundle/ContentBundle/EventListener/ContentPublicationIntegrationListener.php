@@ -74,7 +74,7 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                     unset($data['time']);
                 }
 
-                //TODO: Changing time is not seen as a "change" yet.
+                // TODO: Changing time is not seen as a "change" yet.
 
                 $imagesProcessed = [];
                 if (isset($data['images']) && \is_array($data['images'])) {
@@ -91,7 +91,6 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                 $foundOrUpdated = false;
                 foreach ($existingPublications as $key => $previousPublication) {
                     if ($previousPublication->getChannel()->getId() == $channel->getId()) {
-
                         $this->documentManager->refresh($previousPublication);
 
                         if ($this->isPublicationChanged($previousPublication, ['settings' => $data, 'time' => $time])) {

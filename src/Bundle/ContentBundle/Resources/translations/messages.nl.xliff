@@ -1310,6 +1310,10 @@
                 <source>Planned</source>
                 <target>Ingepland</target>
             </trans-unit>
+            <trans-unit id="332">
+                <source>Apply</source>
+                <target>Toepassen</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
