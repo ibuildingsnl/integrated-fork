@@ -73,7 +73,7 @@ if (typeof publicationSchedule === 'object') {
     function generatePublicationHTML(publication, colorVariable) {
 
         const errorMessage = publication.published === 'failed'
-            ? `<div class="publication-error">${publication.response}</div>`
+            ? `<div class="calendar-error">${publication.response}</div>`
             : '';
 
         return `<div class="calendar-wrap" style="--color: ${colorVariable}">
