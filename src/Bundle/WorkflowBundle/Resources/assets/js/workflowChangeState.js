@@ -1,5 +1,4 @@
-$(function() {
-
+$(document).ready(function () {
     var $nextStatus = $('.next-status-choice');
     var $assigned = $('.assigned-choice');
 
@@ -28,17 +27,10 @@ $(function() {
                 var selected = $('option:selected', $assigned).val();
 
                 var $firstOption = $('option:first', $assigned);
-                var $option = $firstOption.clone();
                 $firstOption.siblings().remove();
-
-                $.each(response.users, function(index, user) {
-                    var $tmp = $option.clone().val(user.id).text(user.name);
-
-                    if (user.id==selected) {
-                        $tmp.attr('selected','selected');
-                    }
-
-                    $tmp.appendTo($assigned);
+                $.each(response.users, function (index, user) {
+                    var newOption = new Option(user.name, user.id, (user.id == selected), (user.id == selected));
+                    $assigned.append(newOption);
                 });
                 $assigned.removeAttr('disabled');
 
@@ -51,9 +43,9 @@ $(function() {
                         $el.parents('.form-group').show();
 
                         if (values.disabled) {
-                            $el.attr('disabled','disabled').parents('.form-group').hide();
+                            $el.attr('disabled', 'disabled').parents('.form-group').hide();
                         } else if (values.required) {
-                            $el.attr('required','required');
+                            $el.attr('required', 'required');
                         }
                     }
                 });
@@ -61,11 +53,7 @@ $(function() {
         });
     };
 
-    $('select', $nextStatus).change(changeState);
-    changeState();
-
-});
-
-$(document).ready(function () {
     $('#integrated_content_extension_workflow_assigned').select2();
+    $($nextStatus).change(changeState);
+    changeState();
 });
