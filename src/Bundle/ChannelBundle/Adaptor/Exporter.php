@@ -39,6 +39,7 @@ final class Exporter implements ExporterInterface
                 $publication->setResponse('Content already published on this connector');
                 $publication->setStatus('failed');
             }
+
             return null;
         }
 
