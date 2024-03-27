@@ -586,7 +586,7 @@ pre#editor {
     }
     .publishable {
         display: none;
-        &.display {
+        &.show {
             display: flex;
             padding: 3rem;
             padding-bottom: 2rem;
@@ -650,7 +650,7 @@ pre#editor {
     .publishTime > div {
         width: 100%;
     }
-    .publication-settings {
+    .global-publication-settings {
         .settings > div {
             width: 100%;
         }
@@ -664,16 +664,27 @@ pre#editor {
             }
         }
     }
+    .textarea {
+        textarea {
+            max-height: 100px;
+        }
+        span.copy-intro-btn {
+            bottom: 0px;
+            top: auto;
+        }
+    }
+    .global-publication-settings {
+        > .form-item {
+            > .widget {
+                width: 100%;
+            }
+        }
+    }
+    .integrated_publish_time {
+        margin-bottom: 0;
+        .endDate {
+            display: none;
+        }
+    }
 }
-
-
-//.publishActions .aside-item-wrapper.image {
-//    padding-left: 100px;
-//    margin-bottom: 1rem;
-//    margin-top: -20px;
-//}
-//
-//.publishActions .aside-item-wrapper {
-//    border: none;
-//}
 

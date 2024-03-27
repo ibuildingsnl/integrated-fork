@@ -355,25 +355,25 @@
         <div class="publication-settings-popup aside-item-wrapper show">
             <div class="yoast-seo__application" id="yoast-app"
                  data-configuration="{{ {
-                'title': articleTitle,
-                'titleOverride': titleOverride,
-                'description': description,
-                'focusKeyword': focusKeyword,
-                'isCornerstone': false,
-                'isAmp': false,
-                'uiLocale': 'nl_NL',
-                'translationsUrl': '/admin/_yoastseo/fetch-translations',
-                'workerUrl': asset('bundles/integratedcontent/js/webWorker.js'),
-                'baseUrl': 'https://' ~ primaryDomain,
-                'siteUrl': 'https://' ~ primaryDomain,
-                'brandName': brandName,
-                'pageUrl': documentUrl,
-                'uriPathSegment': uriPathSegment,
-                'faviconSrc': faviconSrc,
-                'featuredImageSrc': featuredImage,
-                'twitterFallbackImage': asset('bundles/integratedcontent/twitter.svg'),
-                'openGraphFallbackImage': asset('bundles/integratedcontent/facebook.svg')
-            }|json_encode }}">
+                     'title': articleTitle,
+                     'titleOverride': titleOverride,
+                     'description': description,
+                     'focusKeyword': focusKeyword,
+                     'isCornerstone': false,
+                     'isAmp': false,
+                     'uiLocale': 'nl_NL',
+                     'translationsUrl': '/admin/_yoastseo/fetch-translations',
+                     'workerUrl': asset('bundles/integratedcontent/js/webWorker.js'),
+                     'baseUrl': 'https://' ~ primaryDomain,
+                     'siteUrl': 'https://' ~ primaryDomain,
+                     'brandName': brandName,
+                     'pageUrl': documentUrl,
+                     'uriPathSegment': uriPathSegment,
+                     'faviconSrc': faviconSrc,
+                     'featuredImageSrc': featuredImage,
+                     'twitterFallbackImage': asset('bundles/integratedcontent/twitter.svg'),
+                     'openGraphFallbackImage': asset('bundles/integratedcontent/facebook.svg')
+                 }|json_encode }}">
             </div>
 
             <div class="seo-metadata-fields">
@@ -511,14 +511,11 @@
             'channels': '{% trans %}Channels{% endtrans %}',
             'searchIn': '{% trans %}Search in{% endtrans %}',
             'brands': '{% trans %}Brands{% endtrans %}',
-        }
+        };
     </script>
 
     {% integrated_javascripts mode='append'
         'bundles/integratedcontent/js/publication_settings.js' %}
-    {% endintegrated_javascripts %}
-    {% integrated_javascripts mode='append'
-        'bundles/integratedcontent/js/publication_popup.js' %}
     {% endintegrated_javascripts %}
 {% endblock %}
 
@@ -545,6 +542,35 @@
                     <a class="btn btn-green" href="#">{% trans %}Apply{% endtrans %}</a>
                 </div>
             </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block integrated_global_publication_settings_container_row %}
+
+    <div class="publishActions">
+        {{ form_widget(form) }}
+    </div>
+
+    {% integrated_javascripts mode='append'
+        'bundles/integratedcontent/js/publication_popup.js' %}
+    {% endintegrated_javascripts %}
+{% endblock %}
+
+{% block integrated_global_publication_settings_row %}
+    <div class="publishable">
+        <h3>{% trans %}Publish to{% endtrans %} {{ form.vars.attr['data-channel-type'] }}</h3>
+        <div class="form-item w-full flex flex-wrap channels integrated_channel_choice"><label
+                class="control-label w-full md:w-3/12 xl:w-2/12 3xl:w-1/12">{% trans %}Channels{% endtrans %}</label>
+            <div class="w-full md:w-9/12 xl:w-10/12 3xl:w-11/12 widget">
+                <select class="select2 select2-hidden-accessible" multiple="" data-apply-channels="true">
+                </select>
+            </div>
+        </div>
+        {{ form_widget(form) }}
+        <div class="flex justify-between mt-8">
+            <a href="#" class="apply btn btn-green">{% trans %}Apply{% endtrans %}</a>
+            <a href="#" class="cancel btn btn-white">{% trans %}Cancel{% endtrans %}</a>
         </div>
     </div>
 {% endblock %}

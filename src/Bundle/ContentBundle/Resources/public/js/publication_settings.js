@@ -44,7 +44,7 @@ function openPublishingSettings(channelId, input) {
         d.value = d.value || correspondingValue;
     });
 
-    var openPublishSettingsEvent = new CustomEvent('openPublishSettingsEvent', settings);
+    var openPublishSettingsEvent = new CustomEvent('openPublishSettingsEvent');
 
     window.dispatchEvent(openPublishSettingsEvent);
 }
@@ -91,6 +91,7 @@ document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
 });
 
 function showHideChannelSelect(container, type) {
+
     const applyToChannelsSelect = container.querySelector('select[data-apply-channels]');
     const channelSelectContainer = container.querySelector('.settings-channels-choice');
     applyToChannelsSelect.innerHTML = '';
@@ -100,9 +101,9 @@ function showHideChannelSelect(container, type) {
     }
     channelSelectContainer.classList.remove('hidden');
     document.querySelectorAll('input[data-channel-type="'+type+'"]').forEach(function (input) {
-        if (!input.checked) {
-            return;
-        }
+        // if (!input.checked) {
+        //     return;
+        // }
         const option = document.createElement('option');
         option.value = input.value;
         option.text = input.dataset.channelName;
@@ -177,9 +178,9 @@ document.addEventListener('click', function (ev) {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+function setupTextareaCopyFeature() {
     const editorID = 'integrated_content_content'; // Adjust accordingly
-    const settingsDivs = document.querySelectorAll('.publication-settings-aside');
+    const settingsDivs = document.querySelectorAll('.publication-settings, .publication-settings-global .publishable');
 
     settingsDivs.forEach(div => {
         const textarea = div.querySelector('textarea');
@@ -207,18 +208,20 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
-});
+}
 
-function createOrFindButton(parent, className, text) {
-    let button = parent.querySelector('.' + className);
+function createOrFindButton(input, className, text) {
+    let button = input.parentNode.querySelector('.' + className);
     if (!button) {
         button = document.createElement('span');
         button.className = className;
         button.textContent = text;
-        parent.insertAdjacentElement('afterend', button);
+        input.insertAdjacentElement('afterend', button);
     }
     return button;
 }
+
+document.addEventListener('DOMContentLoaded', setupTextareaCopyFeature);
 
 document.addEventListener('DOMContentLoaded', function () {
     const icons = document.querySelectorAll('.publication-item .icon.iconoir-xmark');

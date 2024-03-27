@@ -14,8 +14,8 @@ class Publication
     private string $status = '';
 
     public function __construct(
-        private readonly Content $content,
-        private readonly ChannelInterface $channel,
+        private Content $content,
+        private ChannelInterface $channel,
         private PublishTimeInterface $time,
         private array $settings = [],
     ) {
