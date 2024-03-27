@@ -19,6 +19,12 @@
     transform: translateX(350px);
     transition: all 0.3s ease-in-out;
     z-index: 20;
+    @include media(max-lg) {
+        top:0;
+    }
+    @include media(max-md) {
+        position: fixed !important;
+    }
 
     &.show {
         transform: translateX(0px);
@@ -208,4 +214,111 @@
             }
         }
     }
+}
+
+.publication-item {
+    color: black;
+    display: block;
+    border-radius: 8px;
+    margin-bottom: 0.5em;
+    cursor:pointer;
+
+    &.published {
+        background-color: rgba(1, 174, 147, 0.05);
+        .publication-wrap {
+            border-left: 3px solid #009472;
+            .publication-item-heading {
+                color:#009472;
+            }
+        }
+    }
+
+    &.planned {
+        background-color: rgba(95, 132, 219, 0.1);
+        .publication-wrap {
+            border-left: 3px solid #5f84db;
+            .publication-item-heading {
+                color:#5f84db;
+            }
+        }
+    }
+
+    &.failed {
+        background-color: rgba(255, 71, 71, 0.1);
+        .publication-wrap {
+            border-left: 3px solid #ff4747;
+            .publication-item-heading {
+                color:#ff4747;
+            }
+        }
+    }
+
+    &:hover {
+        color:black;
+    }
+
+    .publication-wrap {
+        display: flex;
+        flex-direction: column;
+        padding: 0.5rem;
+        border-radius: 4px;
+
+        .publication-item-heading {
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+
+            .heading-left {
+                display: flex;
+                align-content: center;
+                position: relative;
+
+                span {
+                    line-height: 18px;
+                    margin-right: 0.5rem;
+                }
+
+                .icon {
+                    margin-right: .5rem;
+
+                    &:before {
+                        height: 18px;
+                        width: 18px;
+                    }
+                }
+            }
+            .heading-right {
+                display: flex;
+                i {
+                    cursor: pointer;
+                    &:hover {
+                        color:black;
+                    }
+                }
+            }
+        }
+
+        .publication-error {
+            border: 1px solid #dfe3e9;
+            border-radius: 8px;
+            font-size: .875rem;
+            line-height: 1rem;
+            padding: 0.5rem;
+            word-wrap: break-word;
+        }
+
+        .publication-item-content {
+            line-height: 17px;
+            word-break: break-word;
+            padding-top: 0.5rem;
+        }
+    }
+}
+
+p.publication-info {
+    font-size: .875rem;
+    border: 1px solid #dfe3e9;
+    line-height: 1rem;
+    padding: 0.5rem;
+    border-radius: 8px;
 }

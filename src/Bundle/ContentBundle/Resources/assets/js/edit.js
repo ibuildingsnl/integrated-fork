@@ -24,7 +24,6 @@ function prepDateTimeFields() {
             dateText = document.createElement('div');
             dateText.className = 'date-text';
             dateText.style.display = 'block';
-            // Set default text based on parent attribute or fallback
             dateText.textContent = dateSelection.getAttribute('data-set-date-text') || 'Set Date/Time';
             dateSelection.parentNode.insertBefore(dateText, dateSelection);
         } else {
@@ -34,22 +33,15 @@ function prepDateTimeFields() {
         // Adjust styles as needed
         dateSelection.style.paddingTop = '.5rem';
 
-        // Create or find the "OK" button
         okButton = createOrFindButton(dateSelection, 'ok-date', 'OK');
-
-        // Create or find the "Set to Now" button
         setToNowButton = createOrFindButton(dateSelection, 'set-now-date', 'Set to Now');
-
-        // Create or find the "Clear" button
         clearButton = createOrFindButton(dateSelection, 'clear-date', 'Clear');
 
-        // Event handlers
         dateText.onclick = () => toggleDateSelection(true, dateSelection, dateText);
         okButton.onclick = () => toggleDateSelection(false, dateSelection, dateText);
         clearButton.onclick = () => clearDateTimeFields(dateSelection);
         setToNowButton.onclick = () => setDateTimeToNow(dateSelection);
 
-        // Initially hide the date selection UI
         dateSelection.style.display = 'none';
 
         updateDateText(dateSelection, dateText);
@@ -110,25 +102,19 @@ function updateDateText(dateSelection, dateText) {
     const dateInput = dateSelection.querySelector('input[type="date"]');
     const timeInput = dateSelection.querySelector('input[type="time"]');
 
-    // Extract the date and time values
     const dateValue = dateInput ? dateInput.value : ''; // YYYY-MM-DD
     const timeValue = timeInput ? timeInput.value : ''; // HH:MM
 
-    // Format display text
     let displayText = '';
     if (dateValue && timeValue) {
-        // Format for display: DD-MM-YYYY HH:MM
         const [year, month, day] = dateValue.split('-');
         displayText = `${day}-${month}-${year} ${timeValue}`;
     } else if (dateValue) {
-        // If only date is set
         const [year, month, day] = dateValue.split('-');
         displayText = `${day}-${month}-${year}`;
     } else if (timeValue) {
-        // If only time is set
         displayText = timeValue;
     } else {
-        // Default text if neither is set
         displayText = dateSelection.getAttribute('data-set-date-text') || 'Set Date/Time';
     }
 
@@ -138,4 +124,29 @@ function updateDateText(dateSelection, dateText) {
 
 window.addEventListener('openPublishSettingsEvent', function(e) {
     prepDateTimeFields();
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const textareas = document.querySelectorAll('textarea[data-maxchars]');
+
+    textareas.forEach(textarea => {
+        const counterSpan = document.createElement('span');
+        counterSpan.style.fontWeight = 'bold';
+        textarea.parentNode.insertBefore(counterSpan, textarea.nextSibling);
+
+        const updateCounter = () => {
+            const maxChars = parseInt(textarea.getAttribute('data-maxchars'), 10);
+            let currentLength = textarea.value.length;
+
+            if (currentLength > maxChars) {
+                textarea.value = textarea.value.substr(0, maxChars);
+                currentLength = maxChars; // Correct the length if trimmed
+            }
+
+            counterSpan.textContent = `${currentLength} of ${maxChars} characters used`;
+        };
+
+        updateCounter();
+        textarea.addEventListener('change', updateCounter);
+    });
 });

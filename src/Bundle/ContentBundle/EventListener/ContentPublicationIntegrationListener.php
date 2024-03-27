@@ -3,7 +3,6 @@
 namespace Integrated\Bundle\ContentBundle\EventListener;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Bundle\ContentBundle\Form\Type\PublicationsType;
@@ -50,35 +49,73 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
             if (!$content instanceof Content) {
                 return;
             }
-            // Remove all existing publications, then add from the form data.
-            // Potential optimization might be to check for changes first.
-            foreach ($this->publications->forContent($content) as $previousPublication) {
-                $this->publications->remove($previousPublication);
-            }
+
+            $existingPublications = $this->publications->forContent($content);
+
             $form = $event->getForm()->get('publications');
             foreach ($content->getChannels() as $channel) {
                 $data = $form->get($channel->getId())->get('settings')->getData();
                 $time = $content->getPublishTime();
+
                 if (($data['time'] ?? null) instanceof PublishTimeInterface) {
                     $time = $data['time'];
                     unset($data['time']);
                 }
+
+                $imagesProcessed = [];
                 if (isset($data['images']) && \is_array($data['images'])) {
-                    $images = [];
-                    /** @var Image $image */
                     foreach ($data['images'] as $key => $image) {
-                        $images[$key] = [
+                        $imagesProcessed[$key] = [
                             '$ref' => 'content',
                             '$id' => $image->getId(),
                             'class' => 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Image',
                         ];
                     }
-                    $data['images'] = $images;
+                    $data['images'] = $imagesProcessed;
                 }
-                $this->publications->add(
-                    new Publication($content, $channel, $time, \is_array($data) ? $data : [])
-                );
+
+                $foundOrUpdated = false;
+                foreach ($existingPublications as $key => $previousPublication) {
+                    if ($previousPublication->getChannel()->getId() == $channel->getId()) {
+                        if ($this->isPublicationChanged($previousPublication, ['settings' => $data, 'time' => $time])) {
+                            $this->publications->remove($previousPublication);
+
+                            $this->publications->add(
+                                new Publication($content, $channel, $time, \is_array($data) ? $data : [])
+                            );
+                        }
+
+                        unset($existingPublications[$key]);
+                        $foundOrUpdated = true;
+                        break;
+                    }
+                }
+
+                if (!$foundOrUpdated) {
+                    $this->publications->add(
+                        new Publication($content, $channel, $time, \is_array($data) ? $data : [])
+                    );
+                }
+            }
+
+            foreach ($existingPublications as $publicationToRemove) {
+                $this->publications->remove($publicationToRemove);
             }
         });
+    }
+
+    private function isPublicationChanged($previousPublication, $data): bool
+    {
+        $existingSettings = $previousPublication->getSettings();
+        $newSettings = $data['settings'] ?? null;
+
+        $existingTime = $previousPublication->getTime();
+        $newTime = $data['time'] ?? null;
+
+        $timeChanged = $existingTime != $newTime;
+
+        $settingsChanged = json_encode($existingSettings) != json_encode($newSettings);
+
+        return $timeChanged || $settingsChanged;
     }
 }

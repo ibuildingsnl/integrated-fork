@@ -831,6 +831,7 @@
 }
 
 .integrated_content_media_select_one, .integrated_content_media_select_multiple, .integrated_formtype_media_image, .integrated_formtype_media_video, .integrated_formtype_media_gallery, .integrated_content_media_edit_image_iframe {
+
     #wrapper-holder {
         top: 0;
         width: 100%;
@@ -841,6 +842,7 @@
         width: 100%;
         padding: 48px 0 0 0;
         height: 100%;
+        margin-left:0;
 
         .index-wrapper {
             max-height: 100%;

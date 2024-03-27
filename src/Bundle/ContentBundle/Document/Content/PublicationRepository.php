@@ -16,6 +16,21 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
         return $this->findBy(['content' => $content]);
     }
 
+    public function forDateRange(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate): array
+    {
+        $startMongoDate = new \MongoDB\BSON\UTCDateTime($startDate->getTimestamp() * 1000);
+        $endMongoDate = new \MongoDB\BSON\UTCDateTime($endDate->getTimestamp() * 1000);
+
+        $query = [
+            'time.startDate' => [
+                '$gte' => $startMongoDate,
+                '$lte' => $endMongoDate,
+            ],
+        ];
+
+        return $this->findBy($query);
+    }
+
     public function forContentByChannel(Content $content): array
     {
         return array_combine(

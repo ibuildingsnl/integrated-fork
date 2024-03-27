@@ -13,6 +13,9 @@ interface PublicationRepositoryInterface
     public function forContentByChannel(Content $content): array;
 
     /** @return Publication[] */
+    public function forDateRange(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate): array;
+
+    /** @return Publication[] */
     public function forContentOnChannel(Content $content, ChannelInterface $channel): array;
 
     public function add(Publication $publication): void;

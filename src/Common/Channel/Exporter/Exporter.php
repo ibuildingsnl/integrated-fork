@@ -12,7 +12,9 @@
 namespace Integrated\Common\Channel\Exporter;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Connector;
+use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\Config\ResolverInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface as ConnectorExporterInterface;
@@ -27,34 +29,22 @@ use Integrated\Common\Content\PublishableInterface;
 class Exporter implements ExporterInterface
 {
     /**
-     * @var RegistryInterface
-     */
-    private $registry;
-
-    /**
-     * @var ResolverInterface
-     */
-    private $resolver;
-
-    /**
-     * @var DocumentManager
-     */
-    private $dm;
-
-    /**
      * @var ConnectorExporterInterface[][]
      */
     private $cache = [];
 
-    public function __construct(RegistryInterface $registry, ResolverInterface $resolver, DocumentManager $dm)
-    {
-        $this->registry = $registry;
-        $this->resolver = $resolver;
-        $this->dm = $dm;
+    public function __construct(
+        private readonly RegistryInterface $registry,
+        private readonly ResolverInterface $resolver,
+        private readonly DocumentManager $dm,
+        private readonly PublicationRepositoryInterface $publications
+    ) {
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \Exception
      */
     public function export($content, $state, ChannelInterface $channel, array $settings = [])
     {
@@ -68,12 +58,37 @@ class Exporter implements ExporterInterface
             }
         }
 
+        if ($content instanceof Content) {
+            foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
+                $settings = $publication->getSettings();
+                $time = $publication->getTime();
+
+                $startDate = $time->getStartDate();
+                $now = new \DateTime('now', new \DateTimeZone('UTC')); // Ensure time zone consistency
+
+                if ($startDate > $now) {
+                    $state = ConnectorExporterInterface::STATE_DELETE;
+                }
+
+                if ($publication->getStatus() === 'succes') {
+                    return;
+                }
+
+                if (\count($this->getExporters($channel, $publicationDate)) === 0) {
+                    $publication->setStatus('failed');
+                    $publication->setResponse('There is no connector configured, please check your settings');
+                }
+            }
+        }
+
         foreach ($this->getExporters($channel, $publicationDate) as $exporter) {
             $response = $exporter->export($content, $state, $channel, $settings);
 
             if ($response instanceof ExporterResponse) {
                 $this->save($content, $response);
             }
+
+            $this->dm->flush();
         }
     }
 
@@ -121,13 +136,15 @@ class Exporter implements ExporterInterface
 
         if ($content->hasConnector($response->getConfigId())) {
             $content->getConnector($response->getConfigId())
-                ->setConfigAdapter($response->getConfigAdapter())
-                ->setExternalId($response->getExternalId());
+                    ->setConfigAdapter($response->getConfigAdapter())
+                    ->setExternalId($response->getExternalId());
         } else {
-            $content->addConnector((new Connector())
-                ->setConfigId($response->getConfigId())
-                ->setConfigAdapter($response->getConfigAdapter())
-                ->setExternalId($response->getExternalId()));
+            $content->addConnector(
+                (new Connector())
+                    ->setConfigId($response->getConfigId())
+                    ->setConfigAdapter($response->getConfigAdapter())
+                    ->setExternalId($response->getExternalId())
+            );
         }
 
         $this->dm->persist($content);

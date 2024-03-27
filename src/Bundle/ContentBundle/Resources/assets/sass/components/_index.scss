@@ -53,8 +53,13 @@ div.heading-switcher {
             border-bottom: 1px solid $border-color;
 
             &.today {
-                color: #046283;
-                font-weight: bold;
+                span {
+                    color: white;
+                    font-weight: 700;
+                    background-color: #01ae93;
+                    border-radius: 8px;
+                    padding: 0 5px;
+                }
             }
         }
 
@@ -109,7 +114,7 @@ div.heading-switcher {
     }
 
     .calendar-item {
-        border: 1px solid $border-color;
+        //border: 1px solid $border-color;
         color: black;
         display: block;
         border-radius: 8px;
@@ -117,10 +122,19 @@ div.heading-switcher {
 
         &.concept {
             filter: grayscale(100%);
+            border: 1px solid #f2f2f2;
         }
 
         &.published {
             background-color: rgba(1, 174, 147, 0.05);
+        }
+
+        &.planned {
+            background-color: rgba(95,132,219,.1);
+        }
+
+        &.failed {
+            background-color: rgba(255, 71, 71, 0.1);
         }
 
         .calendar-wrap {
@@ -149,7 +163,7 @@ div.heading-switcher {
                     }
 
                     .icon {
-                        margin-right: .5rem;
+                        margin-right: .25rem;
 
                         &:before {
                             height: 18px;
@@ -157,6 +171,16 @@ div.heading-switcher {
                         }
                     }
                 }
+            }
+
+            .calendar-error {
+                background-color: #ffeded;
+                border-radius: 8px;
+                font-size: .875rem;
+                line-height: 1rem;
+                padding: 0.5rem;
+                word-wrap: break-word;
+                margin-top: 0.5rem;
             }
 
             .calendar-item-content {
@@ -267,14 +291,14 @@ div.heading-switcher {
         }
 
         &.popout {
-            display: none;
-            position: absolute;
-            background-color: white;
-            padding: 0.5rem;
+            background-color: #fff;
             border: 1px solid #d8d8d8;
             border-radius: 8px;
-            top: -8px;
-            left: 23px;
+            display: none;
+            right: 0;
+            padding: 0.5rem;
+            position: absolute;
+            top: 22px;
             z-index: 1;
         }
     }

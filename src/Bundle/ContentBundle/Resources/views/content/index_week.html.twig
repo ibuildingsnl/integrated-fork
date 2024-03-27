@@ -80,7 +80,7 @@
                 {% set d = queryParams.start|date_modify('+%d days'|format(i)) %}
                 <div class="day title {% if d|date('d/m/Y') == date('now')|date('d/m/Y') %}today{% endif %}"
                      data-date="{{ d|date('Y/m/d') }}">
-                    {{ d|date('D d') }}
+                    <span>{{ d|date('D d') }}</span>
                 </div>
             {% endfor %}
         </div>
@@ -153,13 +153,13 @@
                                                     {% if channel|integrated_brand_profile.favicon.file is defined %}
                                                         <div class="channel-favicon"
                                                              style="background-image:url('{{ image(channel|integrated_brand_profile.favicon.file).cropResize(36, 36)|default }}')"
-                                                             title="{{ channel.name }}">
+                                                             title="{{ channel|integrated_brand_profile.name }}">
                                                         </div>
                                                     {% else %}
                                                         <div class="channel-favicon font-bold"
-                                                             title="{{ channel.name }}"
-                                                             style="background-color: {{ channel|integrated_brand.color|default('gray') }}">
-                                                            {{ channel.name|first }}
+                                                             title="{{ channel|integrated_brand_profile.name }}"
+                                                             style="background-color: {{ channel|integrated_brand_profile.color|default('gray') }}">
+                                                            {{ channel|integrated_brand_profile.name|first }}
                                                         </div>
                                                     {% endif %}
                                                 {% endfor %}
