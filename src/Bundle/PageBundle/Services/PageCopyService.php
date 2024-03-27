@@ -104,11 +104,40 @@ class PageCopyService
             if ($block instanceof Block) {
                 // copy block
                 if (isset($data['block_'.$block->getId()]['operation']) && $data['block_'.$block->getId()]['operation'] == 'clone') {
-                    $copiedBlock = clone $block;
+                    $classMetadata = $this->documentManager->getClassMetadata(\get_class($block));
+                    $reflector = new \ReflectionClass($classMetadata->getName());
+
+                    $className = $classMetadata->getName();
+
+                    $getters = [];
+                    $setters = [];
+
+                    $copiedBlock = new $className();
+
+                    foreach ($reflector->getMethods() as $method) {
+                        $methodName = $method->getName();
+                        if (strpos($methodName, 'get') === 0 && $method->getNumberOfParameters() === 0) {
+                            $getters[] = $methodName;
+                        }
+                        if (strpos($methodName, 'set') === 0 && $method->getNumberOfParameters() > 0) {
+                            $setters[] = $methodName;
+                        }
+                    }
+
+                    foreach ($getters as $getter) {
+                        $setter = 'set'.substr($getter, 3);
+
+                        if (\in_array($setter, $setters)) {
+                            $value = $block->$getter();
+                            $copiedBlock->$setter($value);
+                        }
+                    }
+
                     $copiedBlock->setId($data['block_'.$block->getId()]['newBlockId']);
                     $copiedBlock->setCreatedAt(new \DateTime());
 
                     $this->documentManager->persist($copiedBlock);
+                    $this->documentManager->flush();
 
                     $item->setBlock($copiedBlock);
                 }
