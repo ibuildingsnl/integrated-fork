@@ -28,6 +28,10 @@ function openPublishingSettings(channelId, input) {
 
     settings.classList.add('show');
 
+    settings.querySelectorAll('.date-text').forEach(function(d) {
+        d.style.display = 'flex';
+    })
+
     settings.querySelectorAll('[name*="[startDate][date]"], [name*="[startDate][time]"]').forEach(function(d) {
         const isDateInput = d.name.includes('[date]');
         const fieldNamePart = isDateInput ? '[date]' : '[time]';
