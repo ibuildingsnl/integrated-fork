@@ -321,6 +321,9 @@ blockquote:before {
 
 blockquote.instagram-media {
     margin: 0 auto !important;
+    width: auto !important;
+    min-width: auto !important;
+    max-width: 400px !important;
 }
 
 blockquote.instagram-media:before {
