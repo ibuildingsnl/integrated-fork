@@ -92,3 +92,46 @@ document.querySelectorAll('.brands input.brand-choice').forEach((brandCheckbox) 
         });
     }
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.brand-channel-choice');
+
+    checkboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            if (!checkbox.checked) {
+                const label = checkbox.closest('.checkbox-container');
+                if (label) {
+                    label.style.backgroundColor = '';
+                    label.style.color = '';
+                }
+                const checkmark = label.querySelector('.checkmark');
+                if (checkmark) {
+                    checkmark.style.backgroundColor = '';
+                    checkmark.style.borderColor = '';
+                }
+            }
+        });
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const brandContainers = document.querySelectorAll('.brand-container');
+
+    brandContainers.forEach(container => {
+        container.addEventListener('change', function(event) {
+            if (event.target.classList.contains('brand-channel-choice')) {
+                const anyChildChecked = [...container.querySelectorAll('.brand-channel-choice')]
+                .some(checkbox => checkbox.checked);
+
+                const parentCheckbox = container.querySelector('.brand-choice');
+
+                if (!anyChildChecked && parentCheckbox) {
+                    parentCheckbox.checked = false;
+                }
+
+                var throwEvent = new Event('change', { 'bubbles': true, 'cancelable': true });
+                parentCheckbox.dispatchEvent(throwEvent);
+            }
+        });
+    });
+});
