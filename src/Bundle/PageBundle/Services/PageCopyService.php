@@ -104,32 +104,38 @@ class PageCopyService
             if ($block instanceof Block) {
                 // copy block
                 if (isset($data['block_'.$block->getId()]['operation']) && $data['block_'.$block->getId()]['operation'] == 'clone') {
-                    $classMetadata = $this->documentManager->getClassMetadata(\get_class($block));
-                    $reflector = new \ReflectionClass($classMetadata->getName());
 
+                    $classMetadata = $this->documentManager->getClassMetadata(\get_class($block));
+                    
                     $className = $classMetadata->getName();
 
-                    $getters = [];
-                    $setters = [];
+                    if (str_contains($className, 'InlineTextBlock')) {
+                        $copiedBlock = clone $block;
+                    } else {
+                        $reflector = new \ReflectionClass($classMetadata->getName());
 
-                    $copiedBlock = new $className();
+                        $getters = [];
+                        $setters = [];
 
-                    foreach ($reflector->getMethods() as $method) {
-                        $methodName = $method->getName();
-                        if (strpos($methodName, 'get') === 0 && $method->getNumberOfParameters() === 0) {
-                            $getters[] = $methodName;
+                        $copiedBlock = new $className();
+
+                        foreach ($reflector->getMethods() as $method) {
+                            $methodName = $method->getName();
+                            if (strpos($methodName, 'get') === 0 && $method->getNumberOfParameters() === 0) {
+                                $getters[] = $methodName;
+                            }
+                            if (strpos($methodName, 'set') === 0 && $method->getNumberOfParameters() > 0) {
+                                $setters[] = $methodName;
+                            }
                         }
-                        if (strpos($methodName, 'set') === 0 && $method->getNumberOfParameters() > 0) {
-                            $setters[] = $methodName;
-                        }
-                    }
 
-                    foreach ($getters as $getter) {
-                        $setter = 'set'.substr($getter, 3);
+                        foreach ($getters as $getter) {
+                            $setter = 'set'.substr($getter, 3);
 
-                        if (\in_array($setter, $setters)) {
-                            $value = $block->$getter();
-                            $copiedBlock->$setter($value);
+                            if (\in_array($setter, $setters)) {
+                                $value = $block->$getter();
+                                $copiedBlock->$setter($value);
+                            }
                         }
                     }
 
