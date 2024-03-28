@@ -82,6 +82,11 @@ function toggleDateSelection(showSelection, dateSelection, dateText) {
     if (showSelection) {
         dateSelection.style.display = 'flex';
         dateText.style.display = 'none';
+        dateText.style.color = '';
+        let warning = dateText.parentNode.querySelector('.date-warning-message');
+        if (warning) {
+            warning.remove();
+        }
     } else {
         dateSelection.style.display = 'none';
         dateText.style.display = 'flex';
@@ -152,6 +157,84 @@ function setupCharacterCounters() {
 }
 
 document.addEventListener('DOMContentLoaded', initializePage);
+
+document.addEventListener('click', function(e) {
+    if (!e.target.classList.contains('ok-date')) return;
+
+    let parent = e.target.closest('.publication-settings');
+    if (!parent || !parent.getAttribute('data-publication-channel')) return;
+
+    let publicationChannel = parent.getAttribute('data-publication-channel');
+    let checkbox = document.querySelector(`#integrated_content_brands [data-channel-selector="${publicationChannel}"]`);
+    if (!checkbox) return;
+
+    let brandChannel = checkbox.closest('.brand-channels');
+    let checkedChannels = Array.from(brandChannel.querySelectorAll('.brand-channels [type="checkbox"]:checked')).map(el => el.getAttribute('data-channel-selector'));
+
+    let dateInput, timeInput;
+    let fallbackDateInput = document.querySelector('#integrated_content_publishTime input[type="date"]');
+    let fallbackTimeInput = document.querySelector('#integrated_content_publishTime input[type="time"]');
+
+    let websiteChannel = checkedChannels.find(channel => document.querySelector(`[data-channel-selector="${channel}"][data-channel-type="Website"]`));
+
+    if (websiteChannel) {
+        let websiteElement = document.querySelector(`[data-publication-channel="${websiteChannel}"][data-channel-type="Website"]`);
+
+        dateInput = websiteElement.querySelector('input[type="date"]').value || fallbackDateInput.value;
+        timeInput = websiteElement.querySelector('input[type="time"]').value || fallbackTimeInput.value;
+    } else {
+        dateInput = fallbackDateInput.value;
+        timeInput = fallbackTimeInput.value;
+    }
+
+    if (!(dateInput && timeInput)) return;
+    let websiteDateTime = new Date(`${dateInput}T${timeInput}`);
+
+    let publicationSettingsContainer = document.querySelector('#integrated_content_publications');
+
+    checkedChannels.forEach(channel => {
+        let channelElement = publicationSettingsContainer.querySelector(`[data-publication-channel="${channel}"]:not([data-channel-type="Website"])`);
+        console.log(channel);
+        console.log(channelElement);
+        if (!channelElement) return;
+
+        let channelDateInput = channelElement.querySelector('input[type="date"]');
+        let channelTimeInput = channelElement.querySelector('input[type="time"]');
+        let channelCheckboxParent = document.querySelector(`#integrated_content_brands [data-channel-selector="${channel}"]`).closest('.checkbox-container');
+
+        if (!(channelDateInput && channelTimeInput)) return;
+        let channelDateTime = new Date(`${channelDateInput.value}T${channelTimeInput.value}`);
+
+        let dateTextElement = channelElement.querySelector('.date-text');
+        if (!dateTextElement) return;
+
+        dateTextElement.style.color = channelDateTime >= websiteDateTime ? '' : 'red';
+        updateChannelStyles(channelCheckboxParent, channelDateTime >= websiteDateTime, channelElement, dateTextElement);
+    });
+});
+
+function updateChannelStyles(channelCheckboxParent, isDateValid, channelElement, dateTextElement) {
+    let checkmark = channelCheckboxParent.querySelector('.checkmark');
+    if (isDateValid) {
+        channelCheckboxParent.style.backgroundColor = '';
+        channelCheckboxParent.style.color = '';
+        checkmark.style.backgroundColor = '';
+        checkmark.style.borderColor = '';
+    } else {
+        channelCheckboxParent.style.backgroundColor = '#ffc9cd';
+        channelCheckboxParent.style.color = 'red';
+        checkmark.style.backgroundColor = 'red';
+        checkmark.style.borderColor = 'red';
+
+        let existingMessage = channelElement.querySelector('.date-warning-message');
+        if (existingMessage) return;
+
+        let messageSpan = document.createElement('p');
+        messageSpan.classList.add('date-warning-message', 'publication-info');
+        messageSpan.textContent = "This date/time is earlier than the website's publication date/time.";
+        dateTextElement.insertAdjacentElement('afterend', messageSpan);
+    }
+}
 
 window.addEventListener('applyPublishSettingsEvent', function(e) {
     prepDateTimeFields();
