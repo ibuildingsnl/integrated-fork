@@ -15,6 +15,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\MappingException as MappingExceptionAlias;
 use Doctrine\ODM\MongoDB\MongoDBException as MongoDBExceptionAlias;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
+use Integrated\Bundle\BlockBundle\Document\Block\InlineTextBlock;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Item;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\ItemsInterface;
@@ -106,10 +107,10 @@ class PageCopyService
                 if (isset($data['block_'.$block->getId()]['operation']) && $data['block_'.$block->getId()]['operation'] == 'clone') {
 
                     $classMetadata = $this->documentManager->getClassMetadata(\get_class($block));
-                    
+
                     $className = $classMetadata->getName();
 
-                    if (str_contains($className, 'InlineTextBlock')) {
+                    if ($className === InlineTextBlock::class) {
                         $copiedBlock = clone $block;
                     } else {
                         $reflector = new \ReflectionClass($classMetadata->getName());
