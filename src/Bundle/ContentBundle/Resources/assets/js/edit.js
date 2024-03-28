@@ -194,8 +194,6 @@ document.addEventListener('click', function(e) {
 
     checkedChannels.forEach(channel => {
         let channelElement = publicationSettingsContainer.querySelector(`[data-publication-channel="${channel}"]:not([data-channel-type="Website"])`);
-        console.log(channel);
-        console.log(channelElement);
         if (!channelElement) return;
 
         let channelDateInput = channelElement.querySelector('input[type="date"]');
