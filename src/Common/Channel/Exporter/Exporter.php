@@ -49,6 +49,7 @@ class Exporter implements ExporterInterface
     public function export($content, $state, ChannelInterface $channel, array $settings = [])
     {
         $publicationDate = null;
+        //TODO: Check if website publication is published for non website publications
         if ($content instanceof PublishableInterface) {
             $publicationDate = $content->getPublishTime()->getStartDate();
             if (!$content->isPublished()) {
@@ -60,6 +61,10 @@ class Exporter implements ExporterInterface
 
         if ($content instanceof Content) {
             foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
+                if ($publication->getStatus() === 'succes') {
+                    continue;
+                }
+
                 $settings = $publication->getSettings();
                 $time = $publication->getTime();
 
@@ -70,25 +75,16 @@ class Exporter implements ExporterInterface
                     $state = ConnectorExporterInterface::STATE_DELETE;
                 }
 
-                if ($publication->getStatus() === 'succes') {
-                    return;
-                }
+                foreach ($this->getExporters($channel, $publicationDate) as $exporter) {
+                    $response = $exporter->export($content, $state, $channel, $settings);
 
-                if (\count($this->getExporters($channel, $publicationDate)) === 0) {
-                    $publication->setStatus('failed');
-                    $publication->setResponse('There is no connector configured, please check your settings');
+                    if ($response instanceof ExporterResponse) {
+                        $this->save($content, $response);
+                    }
+
+                    $this->dm->flush();
                 }
             }
-        }
-
-        foreach ($this->getExporters($channel, $publicationDate) as $exporter) {
-            $response = $exporter->export($content, $state, $channel, $settings);
-
-            if ($response instanceof ExporterResponse) {
-                $this->save($content, $response);
-            }
-
-            $this->dm->flush();
         }
     }
 
