@@ -47,16 +47,6 @@ final class Exporter implements ExporterInterface
         } catch (CouldNotPublish $e) {
             $this->logger->error($e->getMessage()."\n".$e->getTraceAsString());
             $responseMessage = $e->getMessage();
-        } catch (ClientException $e) {
-            $responseBody = $e->getResponse()->getBody()->getContents();
-            $this->logger->error('ClientException: '.$e->getMessage()."\nResponse: ".$responseBody);
-            $responseMessage = $responseBody;
-        } catch (\TypeError $e) {
-            $this->logger->error('TypeError: '.$e->getMessage());
-            $responseMessage = $e->getMessage();
-        } catch (\Throwable $e) {
-            $this->logger->error('Error: '.\get_class($e).' - '.$e->getMessage());
-            $responseMessage = $e->getMessage();
         }
 
         if (null === $externalId) {
@@ -67,7 +57,7 @@ final class Exporter implements ExporterInterface
         if ($externalId !== null) {
             $response->setExternalId($externalId);
             $responseMessage = $externalId;
-            $status = 'succes';
+            $status = 'success';
         }
         foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
             $publication->setResponse($responseMessage);
