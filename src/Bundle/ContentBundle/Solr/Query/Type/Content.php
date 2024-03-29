@@ -48,6 +48,10 @@ class Content extends AbstractType
             ->setField('facet_channels')
             ->getLocalParameters()->setExclude('channels');
 
+        $facet->createFacetField('brands')
+              ->setField('facet_brands')
+              ->getLocalParameters()->setExclude('brands');
+
         $facet->createFacetField('authors')
             ->setField('facet_authors')
             ->getLocalParameters()->setExclude('authors');
@@ -180,6 +184,7 @@ class Content extends AbstractType
         $resolver->setDefaults([
             'contenttypes' => [],
             'channels' => [],
+            'brands' => [],
             'authors' => [],
             'pub_channels' => [],
             'properties' => [],
@@ -195,6 +200,7 @@ class Content extends AbstractType
 
         $resolver->setNormalizer('contenttypes', $arrayNormalizer);
         $resolver->setNormalizer('channels', $arrayNormalizer);
+        $resolver->setNormalizer('brands', $arrayNormalizer);
         $resolver->setNormalizer('authors', $arrayNormalizer);
         $resolver->setNormalizer('properties', $arrayNormalizer);
 

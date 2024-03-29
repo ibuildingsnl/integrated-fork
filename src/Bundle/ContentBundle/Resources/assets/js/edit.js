@@ -6,9 +6,10 @@ import './used_by';
 import './unlock_article';
 import './taxonomy_category';
 
-window.onload = function() {
+function initializePage() {
     prepDateTimeFields();
-};
+    setupCharacterCounters();
+}
 
 function prepDateTimeFields() {
     const dateSelections = document.querySelectorAll('.tailwind-datetime');
@@ -113,24 +114,25 @@ function updateDateText(dateSelection, dateText) {
     } else if (timeValue) {
         displayText = timeValue;
     } else {
-        displayText = dateSelection.getAttribute('data-set-date-text') || 'Set Date/Time';
+        displayText = dateSelection.getAttribute('data-set-date-text') ||
+            'Set Date/Time';
     }
 
-    // Update the text display element
     dateText.textContent = displayText;
 }
 
-window.addEventListener('openPublishSettingsEvent', function(e) {
-    prepDateTimeFields();
-});
-
-document.addEventListener('DOMContentLoaded', function () {
+function setupCharacterCounters() {
     const textareas = document.querySelectorAll('textarea[data-maxchars]');
 
     textareas.forEach(textarea => {
-        const counterSpan = document.createElement('span');
-        counterSpan.style.fontWeight = 'bold';
-        textarea.parentNode.insertBefore(counterSpan, textarea.nextSibling);
+        let counterSpan = textarea.parentNode.querySelector('.char-counter');
+
+        if (!counterSpan) {
+            counterSpan = document.createElement('span');
+            counterSpan.className = 'char-counter';
+            counterSpan.style.fontWeight = 'bold';
+            textarea.parentNode.insertBefore(counterSpan, textarea.nextSibling);
+        }
 
         const updateCounter = () => {
             const maxChars = parseInt(textarea.getAttribute('data-maxchars'), 10);
@@ -138,13 +140,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (currentLength > maxChars) {
                 textarea.value = textarea.value.substr(0, maxChars);
-                currentLength = maxChars; // Correct the length if trimmed
+                currentLength = maxChars;
             }
 
             counterSpan.textContent = `${currentLength} of ${maxChars} characters used`;
         };
 
-        updateCounter();
-        textarea.addEventListener('change', updateCounter);
+        updateCounter(); // Initial update
+        textarea.addEventListener('input', updateCounter);
     });
+}
+
+document.addEventListener('DOMContentLoaded', initializePage);
+
+window.addEventListener('applyPublishSettingsEvent', function(e) {
+    prepDateTimeFields();
+});
+
+window.addEventListener('openPublishSettingsEvent', function(e) {
+    prepDateTimeFields();
 });

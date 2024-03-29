@@ -582,7 +582,6 @@
                     {% endif %}
                 {% endif %}
             </ul>
-
             <div class="selected_images flex flex-wrap mb-4"
                  data-multiple="{{ form.vars.attr['data-multiple'] }}"
                  data-types="{{ form.vars.attr['data-types'] }}"
@@ -591,14 +590,13 @@
                  data-emptytext="{{ form.vars.attr['data-emptytext'] ?: 'Select ' ~ (form.vars.name|trans) }}"
                  data-fieldName="{{ form.vars.full_name }}">
             </div>
-
             <div
                 data-multiple="{{ form.vars.attr['data-multiple'] }}"
                 data-types="{{ form.vars.attr['data-types'] }}"
                 data-relationtype="embedded"
                 data-relationid="{{ form.vars.id }}"
                 class="select_multimedia_button btn btn-white">
-                {% trans %}Select{% endtrans %} {{ label ?: (form.vars.name|trans) }}
+                {{ form.vars.attr['data-emptytext'] ?: 'Select ' ~ (form.vars.name|trans) }}
             </div>
 
             <ul class="selected_images hidden">
@@ -615,7 +613,7 @@
             </ul>
             <script src="{{ asset('bundles/integratedintegrated/mediagallery_selection.js') }}"></script>
             {{ form_errors(form) }}
-            <input hidden type="text" class="w-full" name="{{ form.vars.full_name }}">
+            <input hidden type="text" class="w-full mediagallery_selector_input" name="{{ form.vars.full_name }}">
         </div>
     {% endapply %}
 
