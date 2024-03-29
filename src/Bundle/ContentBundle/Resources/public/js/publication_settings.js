@@ -227,12 +227,12 @@ function createOrFindButton(input, className, text) {
 
 document.addEventListener('DOMContentLoaded', setupTextareaCopyFeature);
 
-document.addEventListener('DOMContentLoaded', function () {
+function initPublicationDelete() {
     const icons = document.querySelectorAll('.publication-item .icon.iconoir-xmark');
 
     icons.forEach(function(icon) {
         icon.addEventListener('click', function() {
-            const channelSelector = icon.getAttribute('data-channel');
+            const channelSelector = icon.closest('.publication-item').getAttribute('data-channel');
 
             const checkbox = document.querySelector(`input[type="checkbox"][data-channel-selector="${channelSelector}"]`);
 
@@ -248,37 +248,31 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-});
+}
 
-document.addEventListener('DOMContentLoaded', function() {
-    const publicationItems = document.querySelectorAll('.publication-item');
+function initPublicationItems() {
+    const publicationItems = document.querySelectorAll('.aside-item-wrapper.publications .publication-item');
 
     publicationItems.forEach(item => {
-        item.addEventListener('click', function() {
-            const channel = item.getAttribute('data-channel');
-
-            const settingsDiv = document.querySelector(`.publication-settings[data-publication-channel="${channel}"]`);
-
-            document.querySelectorAll('.publication-settings-aside.show').forEach(openDiv => {
-                if (openDiv.querySelector(`.publication-settings[data-publication-channel="${channel}"]`) === null) {
-                    openDiv.classList.remove('show');
-
-                    document.querySelectorAll('.editor-overlay').forEach(div => {
-                        div.classList.remove('show');
-                    });
-                }
+        if (item.dataset.listenerAdded !== "true") {
+            item.addEventListener('click', function() {
+                const channel = item.getAttribute('data-channel');
+                openPublishingSettings(channel);
             });
 
-            if (settingsDiv) {
-                const parentAside = settingsDiv.closest('.publication-settings-aside');
-                if (parentAside) {
-                    parentAside.classList.toggle('show');
-
-                    document.querySelectorAll('.editor-overlay').forEach(div => {
-                        div.classList.toggle('show');
-                    });
-                }
-            }
-        });
+            item.dataset.listenerAdded = "true";
+        }
     });
+}
+
+document.addEventListener('DOMContentLoaded', initPublicationItems);
+document.addEventListener('DOMContentLoaded', initPublicationDelete);
+
+window.addEventListener('updatePublicationItems', function(e) {
+    initPublicationItems();
 });
+
+window.addEventListener('updatePublicationItems', function(e) {
+    initPublicationDelete();
+});
+

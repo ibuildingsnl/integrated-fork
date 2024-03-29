@@ -41,7 +41,7 @@ function prepDateTimeFields() {
         clearButton.onclick = () => clearDateTimeFields(dateSelection);
         setToNowButton.onclick = () => setDateTimeToNow(dateSelection);
 
-        dateSelection.style.display = 'none';
+        toggleDateSelection(false, dateSelection, dateText);
 
         updateDateText(dateSelection, dateText);
     });
@@ -156,8 +156,6 @@ function setupCharacterCounters() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', initializePage);
-
 document.addEventListener('click', function(e) {
     if (!e.target.classList.contains('ok-date')) return;
 
@@ -175,6 +173,42 @@ document.addEventListener('click', function(e) {
     let fallbackDateInput = document.querySelector('#integrated_content_publishTime input[type="date"]');
     let fallbackTimeInput = document.querySelector('#integrated_content_publishTime input[type="time"]');
 
+    let pubSettings = document.querySelector(`[data-publication-channel="${publicationChannel}"]`);
+
+    let pubTimeInput, pubDateInput;
+    if (pubSettings) {
+        pubDateInput = pubSettings.querySelector('input[type="date"]').value ||
+            fallbackDateInput.value;
+        pubTimeInput = pubSettings.querySelector('input[type="time"]').value ||
+            fallbackTimeInput.value;
+    }
+
+    let formattedDate = pubDateInput.split('-').reverse().join('-');
+    let selectedDateTime = new Date(`${pubDateInput}T${pubTimeInput}`);
+    let now = new Date();
+
+    let publicationListContainer = document.querySelector('.aside-item-wrapper.publications .aside-item-list-container .publication-list');
+    let publicationToUpdate = publicationListContainer.querySelector(`a[data-channel="${publicationChannel}"]`);
+
+    if (publicationToUpdate) {
+        let publishTimeSpan = publicationToUpdate.querySelector('.publish-time');
+        if (publishTimeSpan) {
+            publishTimeSpan.textContent = `${formattedDate} ${pubTimeInput}`;
+        }
+
+        if (selectedDateTime > now) {
+            publicationToUpdate.classList.remove('published');
+            publicationToUpdate.classList.add('planned');
+        } else {
+            publicationToUpdate.classList.remove('planned');
+            publicationToUpdate.classList.add('published');
+        }
+    }
+
+    let publicationSettingsContainer = document.querySelector('#integrated_content_publications');
+
+    sortPublications(publicationListContainer);
+
     let websiteChannel = checkedChannels.find(channel => document.querySelector(`[data-channel-selector="${channel}"][data-channel-type="Website"]`));
 
     if (websiteChannel) {
@@ -188,26 +222,29 @@ document.addEventListener('click', function(e) {
     }
 
     if (!(dateInput && timeInput)) return;
-    let websiteDateTime = new Date(`${dateInput}T${timeInput}`);
 
-    let publicationSettingsContainer = document.querySelector('#integrated_content_publications');
+    let websiteDateTime = new Date(`${dateInput}T${timeInput}`);
 
     checkedChannels.forEach(channel => {
         let channelElement = publicationSettingsContainer.querySelector(`[data-publication-channel="${channel}"]:not([data-channel-type="Website"])`);
         if (!channelElement) return;
 
-        let channelDateInput = channelElement.querySelector('input[type="date"]');
-        let channelTimeInput = channelElement.querySelector('input[type="time"]');
+        let channelDateInput = channelElement.querySelector('input[type="date"]').value;
+        let channelTimeInput = channelElement.querySelector('input[type="time"]').value;
         let channelCheckboxParent = document.querySelector(`#integrated_content_brands [data-channel-selector="${channel}"]`).closest('.checkbox-container');
 
         if (!(channelDateInput && channelTimeInput)) return;
-        let channelDateTime = new Date(`${channelDateInput.value}T${channelTimeInput.value}`);
+        let channelDateTime = new Date(`${channelDateInput}T${channelTimeInput}`);
 
         let dateTextElement = channelElement.querySelector('.date-text');
         if (!dateTextElement) return;
 
         dateTextElement.style.color = channelDateTime >= websiteDateTime ? '' : 'red';
         updateChannelStyles(channelCheckboxParent, channelDateTime >= websiteDateTime, channelElement, dateTextElement);
+
+        let channelPublicationToUpdate = publicationListContainer.querySelector(`a[data-channel="${channel}"]`);
+
+        updatePublicationStyles(channelPublicationToUpdate, channelDateTime >= websiteDateTime);
     });
 });
 
@@ -229,10 +266,132 @@ function updateChannelStyles(channelCheckboxParent, isDateValid, channelElement,
 
         let messageSpan = document.createElement('p');
         messageSpan.classList.add('date-warning-message', 'publication-info');
-        messageSpan.textContent = "This date/time is earlier than the website's publication date/time.";
+        messageSpan.textContent = "This date/time is not set or is earlier than the website's publication date/time.";
         dateTextElement.insertAdjacentElement('afterend', messageSpan);
     }
 }
+
+function updatePublicationStyles(publicationToUpdate, isDateValid) {
+    if (isDateValid) {
+        if (publicationToUpdate.classList.contains('published') || publicationToUpdate.classList.contains('planned')) {
+            publicationToUpdate.classList.remove('failed');
+        }
+        let existingMessage = publicationToUpdate.querySelector('.publication-info');
+        if (existingMessage) {
+            existingMessage.remove()
+        }
+    } else {
+        publicationToUpdate.classList.add('failed');
+        let publicationTitle = publicationToUpdate.querySelector('.publication-item-content');
+        let existingMessage = publicationToUpdate.querySelector('.publication-info');
+        if (existingMessage) return;
+
+        let messageSpan = document.createElement('p');
+        messageSpan.classList.add('publication-info');
+        messageSpan.textContent = "This date/time is not set or is earlier than the website's publication date/time.";
+        publicationTitle.insertAdjacentElement('afterend', messageSpan);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.brand-channel-choice').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            let channelName = checkbox.getAttribute('data-channel-name');
+            let channelIcon = checkbox.getAttribute('data-channel-type-icon');
+            let channelSelector = checkbox.getAttribute('data-channel-selector');
+            let publicationListContainer = document.querySelector('.aside-item-wrapper.publications .aside-item-list-container .publication-list');
+
+            let dateInput, timeInput;
+            let fallbackDateInput = document.querySelector('#integrated_content_publishTime input[type="date"]');
+            let fallbackTimeInput = document.querySelector('#integrated_content_publishTime input[type="time"]');
+
+            let channelSettings = document.querySelector(`[data-publication-channel="${channelSelector}"]`);
+
+            if (channelSettings) {
+                dateInput = channelSettings.querySelector('input[type="date"]').value || fallbackDateInput.value;
+                timeInput = channelSettings.querySelector('input[type="time"]').value || fallbackTimeInput.value;
+            } else {
+                dateInput = fallbackDateInput.value;
+                timeInput = fallbackTimeInput.value;
+            }
+
+            if (checkbox.checked) {
+                let publicationItem = createPublicationItem(channelName, channelIcon, dateInput, timeInput, channelSelector);
+                publicationListContainer.appendChild(publicationItem);
+            } else {
+                let itemToRemove = publicationListContainer.querySelector(`[data-channel="${channelSelector}"]`);
+                if (itemToRemove) {
+                    publicationListContainer.removeChild(itemToRemove);
+                }
+            }
+
+            updatePublicationCount();
+            sortPublications(publicationListContainer);
+
+            var updatePublicationItems = new CustomEvent('updatePublicationItems');
+
+            window.dispatchEvent(updatePublicationItems);
+        });
+    });
+});
+
+function createPublicationItem(channelName, channelIcon, date, time, dataChannel) {
+    const formattedDate = date.split('-').reverse().join('-');
+    const isFutureDate = new Date(`${date}T${time}`) > new Date() || !date;
+    const publicationItem = document.createElement('a');
+    publicationItem.className = `publication-item ${isFutureDate ? 'planned' : 'published'}`;
+    publicationItem.setAttribute('data-channel', dataChannel);
+    publicationItem.innerHTML = `
+        <div class="publication-wrap">
+            <div class="publication-item-heading">
+                <div class="heading-left">
+                    <i class="icon iconoir-${channelIcon}" title="${channelName}"></i>
+                    <span class="publish-time">${formattedDate} ${time}</span>
+                </div>
+                <div class="heading-right">
+                    <i class="icon iconoir-xmark" title="remove"></i>
+                </div>
+            </div>
+            <div class="publication-item-content">
+                <b>${channelName}</b><br>
+            </div>
+        </div>`;
+
+    return publicationItem;
+}
+
+function sortPublications(container) {
+    let publications = Array.from(container.querySelectorAll('.publication-item'));
+
+    function parseDateFromDateTimeString(dateTimeStr) {
+        if (!dateTimeStr) return new Date(0);
+        let [datePart, timePart] = dateTimeStr.split(' ');
+        let [day, month, year] = datePart.split('-').map(num => parseInt(num, 10));
+        let [hours, minutes] = timePart.split(':').map(num => parseInt(num, 10));
+
+        return new Date(year, month - 1, day, hours, minutes);
+    }
+
+    publications.sort((a, b) => {
+        let dateA = parseDateFromDateTimeString(a.querySelector('.publish-time').textContent || '');
+        let dateB = parseDateFromDateTimeString(b.querySelector('.publish-time').textContent || '');
+        return dateA - dateB;
+    });
+
+    publications.forEach(publication => {
+        container.appendChild(publication); // Simply append to the container
+    });
+}
+
+function updatePublicationCount() {
+    const publicationItems = document.querySelectorAll('.aside-item-list-container .publication-item');
+    const pubCountSpan = document.querySelector('.aside-item-wrapper.publications .pub-count');
+    if (pubCountSpan) {
+        pubCountSpan.textContent = `(${publicationItems.length})`;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initializePage);
 
 window.addEventListener('applyPublishSettingsEvent', function(e) {
     prepDateTimeFields();

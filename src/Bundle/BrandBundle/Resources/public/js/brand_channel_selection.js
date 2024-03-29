@@ -51,28 +51,6 @@ function toggleChannelList(input, toggle) {
     }
 }
 
-document.querySelectorAll('.brands input.brand-choice').forEach(function (input) {
-
-    const showChannels = document.createElement('a');
-    showChannels.href = '#';
-    showChannels.title = 'Toggle Channels';
-    showChannels.innerHTML = '<i class="iconoir-nav-arrow-down"></i>';
-    showChannels.className = 'publication-channel-toggle-button';
-    showChannels.addEventListener('click', function (ev) {
-        toggleChannelList(input, true);
-        ev.preventDefault();
-    });
-    input.closest('.checkbox').insertAdjacentElement('afterend', showChannels);
-    input.showChannels = showChannels;
-
-    input.addEventListener('change', function() {
-        if (!input.checked) {
-            toggleChannelList(input, false);
-        }
-    })
-
-});
-
 document.querySelectorAll('.brands input.brand-choice').forEach((brandCheckbox) => {
     brandCheckbox.addEventListener('change', () => {
         brandCheckbox
@@ -115,22 +93,62 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    const brandContainers = document.querySelectorAll('.brand-container');
+    document.querySelectorAll('.brands input.brand-choice').forEach(function(input) {
+        input.addEventListener('change', function() {
+            if (input.updating) return;
+            input.updating = true;
 
-    brandContainers.forEach(container => {
+            const channelsContainer = input.closest('.brand-container').querySelector('.channels');
+            const defaultChannelCheckboxes = channelsContainer.querySelectorAll('.brand-channel-choice[data-channel-default="1"]');
+            const allChannelCheckboxes = channelsContainer.querySelectorAll('.brand-channel-choice');
+
+            let skipUnchecking = input.checked && defaultChannelCheckboxes.length === 0;
+
+            if (input.checked) {
+                defaultChannelCheckboxes.forEach(channel => {
+                    channel.checked = true;
+                    channel.dispatchEvent(new Event('change', { 'bubbles': true, 'cancelable': true }));
+                });
+            } else {
+                allChannelCheckboxes.forEach(channel => {
+                    channel.checked = false;
+                    channel.dispatchEvent(new Event('change', { 'bubbles': true, 'cancelable': true }));
+                });
+            }
+
+            toggleChannelList(input, input.checked);
+
+            setTimeout(() => input.updating = false, 0);
+
+            if (skipUnchecking) {
+                input.checked = true;
+            }
+        });
+
+        const showChannels = document.createElement('a');
+        showChannels.href = '#';
+        showChannels.title = 'Toggle Channels';
+        showChannels.innerHTML = '<i class="iconoir-nav-arrow-down"></i>';
+        showChannels.className = 'publication-channel-toggle-button';
+        showChannels.addEventListener('click', function(ev) {
+            toggleChannelList(input, true);
+            ev.preventDefault();
+        });
+
+        input.closest('.checkbox').insertAdjacentElement('afterend', showChannels);
+        input.showChannels = showChannels;
+    });
+
+    document.querySelectorAll('.brand-container').forEach(container => {
         container.addEventListener('change', function(event) {
-            if (event.target.classList.contains('brand-channel-choice')) {
-                const anyChildChecked = [...container.querySelectorAll('.brand-channel-choice')]
-                .some(checkbox => checkbox.checked);
-
+            if (event.target.classList.contains('brand-channel-choice') && !event.target.updating) {
+                const anyChildChecked = [...container.querySelectorAll('.brand-channel-choice')].some(checkbox => checkbox.checked);
                 const parentCheckbox = container.querySelector('.brand-choice');
 
-                if (!anyChildChecked && parentCheckbox) {
+                if (!anyChildChecked && parentCheckbox && parentCheckbox.updating !== true) {
                     parentCheckbox.checked = false;
+                    parentCheckbox.dispatchEvent(new Event('change', { 'bubbles': true, 'cancelable': true }));
                 }
-
-                var throwEvent = new Event('change', { 'bubbles': true, 'cancelable': true });
-                parentCheckbox.dispatchEvent(throwEvent);
             }
         });
     });
