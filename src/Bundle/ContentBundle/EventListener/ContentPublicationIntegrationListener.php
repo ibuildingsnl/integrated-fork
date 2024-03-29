@@ -88,10 +88,17 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
 
                 $foundOrUpdated = false;
                 foreach ($existingPublications as $key => $previousPublication) {
-                    if ($previousPublication->getChannel()->getId() == $channel->getId() && $previousPublication->getStatus() !== 'success') {
-                        $this->documentManager->refresh($previousPublication);
+                    //We're fetching the previous publication fresh from the database, because it got updated by the form and we don't want any of that.
+                    $this->documentManager->refresh($previousPublication);
+                    $this->documentManager->persist($previousPublication);
 
+                    if ($previousPublication->getStatus() === 'success') {
+                        unset($existingPublications[$key]);
+                        continue;
+                    }
+                    if ($previousPublication->getChannel()->getId() == $channel->getId()) {
                         if ($this->isPublicationChanged($previousPublication, ['settings' => $data, 'time' => $time])) {
+
                             $this->publications->remove($previousPublication);
 
                             $this->publications->add(
@@ -102,8 +109,6 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                         unset($existingPublications[$key]);
                         $foundOrUpdated = true;
                         break;
-                    } elseif ($previousPublication->getStatus() === 'success') {
-                        unset($existingPublications[$key]);
                     }
                 }
 
@@ -115,7 +120,9 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
             }
 
             foreach ($existingPublications as $publicationToRemove) {
-                $this->publications->remove($publicationToRemove);
+                if ($publicationToRemove->getStatus() !== 'success') {
+                    $this->publications->remove($publicationToRemove);
+                }
             }
         });
     }
