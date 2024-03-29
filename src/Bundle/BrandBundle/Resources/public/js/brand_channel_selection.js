@@ -51,26 +51,6 @@ function toggleChannelList(input, toggle) {
     }
 }
 
-document.querySelectorAll('.brands input.brand-choice').forEach((brandCheckbox) => {
-    brandCheckbox.addEventListener('change', () => {
-        brandCheckbox
-        .closest('.brand-container')
-        .querySelectorAll('.publication-channel-toggle-button')
-        .forEach((brandChannelsToggle) => {
-            brandChannelsToggle.style.display = brandCheckbox.checked ? 'flex' : 'none';
-        });
-    });
-
-    if (brandCheckbox.checked) {
-        brandCheckbox
-        .closest('.brand-container')
-        .querySelectorAll('.publication-channel-toggle-button')
-        .forEach((brandChannelsToggle) => {
-            brandChannelsToggle.style.display = 'flex';
-        });
-    }
-});
-
 document.addEventListener('DOMContentLoaded', function() {
     const checkboxes = document.querySelectorAll('.brand-channel-choice');
 
@@ -93,18 +73,46 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.brands input.brand-choice').forEach(function(input) {
-        input.addEventListener('change', function() {
-            if (input.updating) return;
-            input.updating = true;
+    document.querySelectorAll('.brands input.brand-choice').forEach(function(brandCheckbox) {
 
-            const channelsContainer = input.closest('.brand-container').querySelector('.channels');
+        const showChannels = document.createElement('a');
+        showChannels.href = '#';
+        showChannels.title = 'Toggle Channels';
+        showChannels.innerHTML = '<i class="iconoir-nav-arrow-down"></i>';
+        showChannels.className = 'publication-channel-toggle-button';
+        showChannels.addEventListener('click', function(ev) {
+            toggleChannelList(brandCheckbox, true);
+            ev.preventDefault();
+        });
+
+        brandCheckbox.closest('.checkbox').insertAdjacentElement('afterend', showChannels);
+        brandCheckbox.showChannels = showChannels;
+
+        brandCheckbox.addEventListener('change', () => {
+            brandCheckbox
+            .closest('.brand-container')
+            .querySelectorAll('.publication-channel-toggle-button')
+            .forEach((brandChannelsToggle) => {
+                brandChannelsToggle.style.display = brandCheckbox.checked ? 'flex' : 'none';
+            });
+        });
+
+        if (brandCheckbox.checked) {
+            let brandChannelsToggle = brandCheckbox.closest('.brand-container').querySelector('.publication-channel-toggle-button')
+            brandChannelsToggle.style.display = 'flex';
+        }
+
+        brandCheckbox.addEventListener('change', function() {
+            if (brandCheckbox.updating) return;
+            brandCheckbox.updating = true;
+
+            const channelsContainer = brandCheckbox.closest('.brand-container').querySelector('.channels');
             const defaultChannelCheckboxes = channelsContainer.querySelectorAll('.brand-channel-choice[data-channel-default="1"]');
             const allChannelCheckboxes = channelsContainer.querySelectorAll('.brand-channel-choice');
 
-            let skipUnchecking = input.checked && defaultChannelCheckboxes.length === 0;
+            let skipUnchecking = brandCheckbox.checked && defaultChannelCheckboxes.length === 0;
 
-            if (input.checked) {
+            if (brandCheckbox.checked) {
                 defaultChannelCheckboxes.forEach(channel => {
                     channel.checked = true;
                     channel.dispatchEvent(new Event('change', { 'bubbles': true, 'cancelable': true }));
@@ -116,27 +124,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
 
-            toggleChannelList(input, input.checked);
+            toggleChannelList(brandCheckbox, brandCheckbox.checked);
 
-            setTimeout(() => input.updating = false, 0);
+            setTimeout(() => brandCheckbox.updating = false, 0);
 
-            if (skipUnchecking) {
-                input.checked = true;
+            if (brandCheckbox.checked && skipUnchecking) {
+                brandCheckbox.checked = true;
             }
         });
-
-        const showChannels = document.createElement('a');
-        showChannels.href = '#';
-        showChannels.title = 'Toggle Channels';
-        showChannels.innerHTML = '<i class="iconoir-nav-arrow-down"></i>';
-        showChannels.className = 'publication-channel-toggle-button';
-        showChannels.addEventListener('click', function(ev) {
-            toggleChannelList(input, true);
-            ev.preventDefault();
-        });
-
-        input.closest('.checkbox').insertAdjacentElement('afterend', showChannels);
-        input.showChannels = showChannels;
     });
 
     document.querySelectorAll('.brand-container').forEach(container => {
