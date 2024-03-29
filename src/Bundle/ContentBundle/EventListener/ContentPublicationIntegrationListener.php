@@ -76,7 +76,7 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
 
                 $foundOrUpdated = false;
                 foreach ($existingPublications as $key => $previousPublication) {
-                    if ($previousPublication->getChannel()->getId() == $channel->getId()) {
+                    if ($previousPublication->getChannel()->getId() == $channel->getId() && $previousPublication->getStatus() !== 'success') {
                         if ($this->isPublicationChanged($previousPublication, ['settings' => $data, 'time' => $time])) {
                             $this->publications->remove($previousPublication);
 
@@ -88,6 +88,8 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                         unset($existingPublications[$key]);
                         $foundOrUpdated = true;
                         break;
+                    } elseif ($previousPublication->getStatus() === 'success') {
+                        unset($existingPublications[$key]);
                     }
                 }
 
