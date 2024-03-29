@@ -9,6 +9,13 @@ import './taxonomy_category';
 function initializePage() {
     prepDateTimeFields();
     setupCharacterCounters();
+    updatePublicationsAndChannels();
+    setPublicationDateTimes();
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.classList.contains('ok-date')) return;
+        updatePublicationsAndChannels();
+    });
 }
 
 function prepDateTimeFields() {
@@ -156,38 +163,86 @@ function setupCharacterCounters() {
     });
 }
 
-document.addEventListener('click', function(e) {
-    if (!e.target.classList.contains('ok-date')) return;
+function updatePublicationsAndChannels() {
+    // Assuming there could be multiple publication settings containers, loop through each
+    document.querySelectorAll('.publication-settings[data-publication-channel]').forEach(pubSettings => {
+        let publicationSettingsContainer = document.querySelector('#integrated_content_publications');
+        let publicationListContainer = document.querySelector('.aside-item-wrapper.publications .aside-item-list-container .publication-list');
+        let publicationChannel = pubSettings.getAttribute('data-publication-channel');
+        let checkbox = document.querySelector(`#integrated_content_brands [data-channel-selector="${publicationChannel}"]`);
 
-    let parent = e.target.closest('.publication-settings');
-    if (!parent || !parent.getAttribute('data-publication-channel')) return;
+        if (!checkbox) return;
 
-    let publicationChannel = parent.getAttribute('data-publication-channel');
-    let checkbox = document.querySelector(`#integrated_content_brands [data-channel-selector="${publicationChannel}"]`);
-    if (!checkbox) return;
+        let brandChannel = checkbox.closest('.brand-channels');
+        let brandInput = brandChannel.closest('.brand-container').querySelector('input.brand-choice');
 
-    let brandChannel = checkbox.closest('.brand-channels');
-    let checkedChannels = Array.from(brandChannel.querySelectorAll('.brand-channels [type="checkbox"]:checked')).map(el => el.getAttribute('data-channel-selector'));
+        if (!brandInput.checked) return;
 
-    let dateInput, timeInput;
-    let fallbackDateInput = document.querySelector('#integrated_content_publishTime input[type="date"]');
-    let fallbackTimeInput = document.querySelector('#integrated_content_publishTime input[type="time"]');
+        let checkedChannels = Array.from(brandChannel.querySelectorAll('.brand-channels [type="checkbox"]:checked')).map(el => el.getAttribute('data-channel-selector'));
 
-    let pubSettings = document.querySelector(`[data-publication-channel="${publicationChannel}"]`);
+        if (!checkedChannels.length > 0) return;
 
-    let pubTimeInput, pubDateInput;
-    if (pubSettings) {
-        pubDateInput = pubSettings.querySelector('input[type="date"]').value ||
-            fallbackDateInput.value;
-        pubTimeInput = pubSettings.querySelector('input[type="time"]').value ||
-            fallbackTimeInput.value;
-    }
+        let dateInput, timeInput;
+        let fallbackDateInput = document.querySelector('#integrated_content_publishTime input[type="date"]');
+        let fallbackTimeInput = document.querySelector('#integrated_content_publishTime input[type="time"]');
 
+        let pubTimeInput, pubDateInput;
+        if (pubSettings) {
+            pubDateInput = pubSettings.querySelector('input[type="date"]').value ||
+                fallbackDateInput.value;
+            pubTimeInput = pubSettings.querySelector('input[type="time"]').value ||
+                fallbackTimeInput.value;
+        }
+
+        updatePublication(pubDateInput, pubTimeInput, publicationChannel, publicationListContainer)
+
+        let websiteChannel = checkedChannels.find(channel => document.querySelector(`[data-channel-selector="${channel}"][data-channel-type="Website"]`));
+
+        if (websiteChannel) {
+            let websiteElement = document.querySelector(`[data-publication-channel="${websiteChannel}"][data-channel-type="Website"]`);
+
+            dateInput = websiteElement.querySelector('input[type="date"]').value || fallbackDateInput.value;
+            timeInput = websiteElement.querySelector('input[type="time"]').value || fallbackTimeInput.value;
+        } else {
+            dateInput = fallbackDateInput.value;
+            timeInput = fallbackTimeInput.value;
+        }
+
+        if (!(dateInput && timeInput)) return;
+
+        let websiteDateTime = new Date(`${dateInput}T${timeInput}`);
+
+        checkedChannels.forEach(channel => {
+            console.log(channel);
+            let channelElement = publicationSettingsContainer.querySelector(`[data-publication-channel="${channel}"]:not([data-channel-type="Website"])`);
+            if (!channelElement) return;
+
+            let channelDateInput = channelElement.querySelector('input[type="date"]').value;
+            let channelTimeInput = channelElement.querySelector('input[type="time"]').value;
+            let channelCheckboxParent = document.querySelector(`#integrated_content_brands [data-channel-selector="${channel}"]`).closest('.checkbox-container');
+
+            if (!(channelDateInput && channelTimeInput)) return;
+            let channelDateTime = new Date(`${channelDateInput}T${channelTimeInput}`);
+
+            let dateTextElement = channelElement.querySelector('.startDate .date-text');
+
+            if (!dateTextElement) return;
+
+            dateTextElement.style.color = channelDateTime >= websiteDateTime ? '' : 'red';
+            updateChannelStyles(channelCheckboxParent, channelDateTime >= websiteDateTime, channelElement, dateTextElement);
+
+            let channelPublicationToUpdate = publicationListContainer.querySelector(`a[data-channel="${channel}"]`);
+
+            updatePublicationStyles(channelPublicationToUpdate, channelDateTime >= websiteDateTime);
+        });
+    });
+}
+
+function updatePublication(pubDateInput, pubTimeInput, publicationChannel, publicationListContainer) {
     let formattedDate = pubDateInput.split('-').reverse().join('-');
     let selectedDateTime = new Date(`${pubDateInput}T${pubTimeInput}`);
     let now = new Date();
 
-    let publicationListContainer = document.querySelector('.aside-item-wrapper.publications .aside-item-list-container .publication-list');
     let publicationToUpdate = publicationListContainer.querySelector(`a[data-channel="${publicationChannel}"]`);
 
     if (publicationToUpdate) {
@@ -205,48 +260,8 @@ document.addEventListener('click', function(e) {
         }
     }
 
-    let publicationSettingsContainer = document.querySelector('#integrated_content_publications');
-
     sortPublications(publicationListContainer);
-
-    let websiteChannel = checkedChannels.find(channel => document.querySelector(`[data-channel-selector="${channel}"][data-channel-type="Website"]`));
-
-    if (websiteChannel) {
-        let websiteElement = document.querySelector(`[data-publication-channel="${websiteChannel}"][data-channel-type="Website"]`);
-
-        dateInput = websiteElement.querySelector('input[type="date"]').value || fallbackDateInput.value;
-        timeInput = websiteElement.querySelector('input[type="time"]').value || fallbackTimeInput.value;
-    } else {
-        dateInput = fallbackDateInput.value;
-        timeInput = fallbackTimeInput.value;
-    }
-
-    if (!(dateInput && timeInput)) return;
-
-    let websiteDateTime = new Date(`${dateInput}T${timeInput}`);
-
-    checkedChannels.forEach(channel => {
-        let channelElement = publicationSettingsContainer.querySelector(`[data-publication-channel="${channel}"]:not([data-channel-type="Website"])`);
-        if (!channelElement) return;
-
-        let channelDateInput = channelElement.querySelector('input[type="date"]').value;
-        let channelTimeInput = channelElement.querySelector('input[type="time"]').value;
-        let channelCheckboxParent = document.querySelector(`#integrated_content_brands [data-channel-selector="${channel}"]`).closest('.checkbox-container');
-
-        if (!(channelDateInput && channelTimeInput)) return;
-        let channelDateTime = new Date(`${channelDateInput}T${channelTimeInput}`);
-
-        let dateTextElement = channelElement.querySelector('.date-text');
-        if (!dateTextElement) return;
-
-        dateTextElement.style.color = channelDateTime >= websiteDateTime ? '' : 'red';
-        updateChannelStyles(channelCheckboxParent, channelDateTime >= websiteDateTime, channelElement, dateTextElement);
-
-        let channelPublicationToUpdate = publicationListContainer.querySelector(`a[data-channel="${channel}"]`);
-
-        updatePublicationStyles(channelPublicationToUpdate, channelDateTime >= websiteDateTime);
-    });
-});
+}
 
 function updateChannelStyles(channelCheckboxParent, isDateValid, channelElement, dateTextElement) {
     let checkmark = channelCheckboxParent.querySelector('.checkmark');
@@ -326,6 +341,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             updatePublicationCount();
+            updatePublicationsAndChannels();
             sortPublications(publicationListContainer);
 
             var updatePublicationItems = new CustomEvent('updatePublicationItems');
@@ -389,6 +405,51 @@ function updatePublicationCount() {
     if (pubCountSpan) {
         pubCountSpan.textContent = `(${publicationItems.length})`;
     }
+}
+
+function setPublicationDateTimes(){
+    let prevDate = '';
+    let prevTime = '';
+
+    let mainStartDate = document.querySelector('#integrated_content_publishTime .startDate');
+
+    mainStartDate.querySelector('.date-text').addEventListener('click', function() {
+        let dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
+        let timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
+        prevDate = dateInput.value
+        prevTime = timeInput.value
+
+    })
+
+    mainStartDate.querySelector('.ok-date').addEventListener('click', function() {
+        let dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
+        let timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
+        let newDate = dateInput.value;
+        let newTime = timeInput.value;
+
+        let prevFormattedDateTime = `${prevDate} ${prevTime}`;
+        let newFormattedDateTime = `${newDate.split('-').reverse().join('-')} ${newTime}`;
+
+        document.querySelectorAll('.publication-settings').forEach(setting => {
+            let settingDateText = setting.querySelector('.date-text');
+            let settingDateInput = setting.querySelector('input[type="date"]');
+            let settingTimeInput = setting.querySelector('input[type="time"]');
+            let currentDateTime = `${settingDateInput.value} ${settingTimeInput.value}`;
+
+            if (settingDateText && currentDateTime === prevFormattedDateTime) {
+                settingDateText.textContent = newFormattedDateTime;
+
+                if (settingDateInput && settingTimeInput) {
+                    settingDateInput.value = newDate;
+                    settingTimeInput.value = newTime;
+                }
+
+            }
+        });
+
+        updatePublicationsAndChannels();
+        prepDateTimeFields();
+    });
 }
 
 document.addEventListener('DOMContentLoaded', initializePage);

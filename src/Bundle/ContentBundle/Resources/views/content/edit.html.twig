@@ -117,7 +117,7 @@
                                 <div class="aside-item-list">
                                     <div class="aside-item-list-container">
                                         <div class="publication-list">
-                                            {% if publications is defined and publications is not empty and content.published == 'true' %}
+                                            {% if publications is defined and publications is not empty and (content.published == 'true' or ('now'|date('U') < content.publishTime.startDate|date('U'))) %}
                                                 {% for publication in publications %}
                                                     {% set pubChannel = publication.getChannel %}
                                                     {% set brandName = pubChannel|integrated_brand_profile.name|default('Unknown') %}
