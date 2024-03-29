@@ -134,7 +134,7 @@
                                                             <span class="publish-time">{{ publication.getTime.getStartDate|default(content.publishTime.startDate)|date('d-m-Y H:i') }}</span>
                                                         </div>
                                                         <div class="heading-right">
-                                                            {% if publication.getStatus() == 'succes' %}
+                                                            {% if publication.getStatus() == 'success' %}
                                                                 <i class="icon iconoir-check" title="Published to Channel"></i>
                                                             {% else %}
                                                                 <i class="icon iconoir-xmark" title="remove" data-channel="{{ publication.getChannel.getId }}"></i>

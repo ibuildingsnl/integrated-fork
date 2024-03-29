@@ -42,7 +42,7 @@ class ChannelDistributor
 
             return;
         }
-        if ($publication->getStatus() != 'succes') {
+        if ($publication->getStatus() != 'success') {
             $this->scheduleDistributionWindow(
                 $channel,
                 $content,

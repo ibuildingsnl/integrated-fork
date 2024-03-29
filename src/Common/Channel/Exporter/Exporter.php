@@ -61,7 +61,7 @@ class Exporter implements ExporterInterface
 
         if ($content instanceof Content) {
             foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
-                if ($publication->getStatus() === 'succes') {
+                if ($publication->getStatus() === 'success') {
                     continue;
                 }
 
