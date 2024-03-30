@@ -105,7 +105,6 @@ class PageCopyService
             if ($block instanceof Block) {
                 // copy block
                 if (isset($data['block_'.$block->getId()]['operation']) && $data['block_'.$block->getId()]['operation'] == 'clone') {
-
                     $classMetadata = $this->documentManager->getClassMetadata(\get_class($block));
 
                     $className = $classMetadata->getName();
