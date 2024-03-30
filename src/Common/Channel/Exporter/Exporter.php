@@ -84,7 +84,7 @@ class Exporter implements ExporterInterface
                 }
             }
         }
-        //Backwards compatibility
+        // Backwards compatibility
         if (!$publications) {
             foreach ($this->getExporters($channel, $publicationDate) as $exporter) {
                 $response = $exporter->export($content, $state, $channel, $settings);

@@ -166,6 +166,9 @@ function setupCharacterCounters() {
 function updatePublicationsAndChannels() {
     // Assuming there could be multiple publication settings containers, loop through each
     document.querySelectorAll('.publication-settings[data-publication-channel]').forEach(pubSettings => {
+        let pubStatus = pubSettings.getAttribute('data-publication-status');
+        if (pubStatus === 'success') return;
+
         let publicationSettingsContainer = document.querySelector('#integrated_content_publications');
         let publicationListContainer = document.querySelector('.aside-item-wrapper.publications .aside-item-list-container .publication-list');
         let publicationChannel = pubSettings.getAttribute('data-publication-channel');
@@ -213,9 +216,11 @@ function updatePublicationsAndChannels() {
         let websiteDateTime = new Date(`${dateInput}T${timeInput}`);
 
         checkedChannels.forEach(channel => {
-            console.log(channel);
             let channelElement = publicationSettingsContainer.querySelector(`[data-publication-channel="${channel}"]:not([data-channel-type="Website"])`);
             if (!channelElement) return;
+
+            let pubStatus = channelElement.getAttribute('data-publication-status');
+            if (pubStatus === 'success') return;
 
             let channelDateInput = channelElement.querySelector('input[type="date"]').value;
             let channelTimeInput = channelElement.querySelector('input[type="time"]').value;
@@ -236,7 +241,6 @@ function updatePublicationsAndChannels() {
             if (channelPublicationToUpdate) {
                 updatePublicationStyles(channelPublicationToUpdate, channelDateTime >= websiteDateTime);
             }
-
         });
     });
 }
@@ -317,13 +321,16 @@ document.addEventListener('DOMContentLoaded', function() {
             let channelName = checkbox.getAttribute('data-channel-name');
             let channelIcon = checkbox.getAttribute('data-channel-type-icon');
             let channelSelector = checkbox.getAttribute('data-channel-selector');
+
+            let channelSettings = document.querySelector(`[data-publication-channel="${channelSelector}"]`);
+            let pubStatus = channelSettings.getAttribute('data-publication-status');
+            if (pubStatus === 'success') return;
+
             let publicationListContainer = document.querySelector('.aside-item-wrapper.publications .aside-item-list-container .publication-list');
 
             let dateInput, timeInput;
             let fallbackDateInput = document.querySelector('#integrated_content_publishTime input[type="date"]');
             let fallbackTimeInput = document.querySelector('#integrated_content_publishTime input[type="time"]');
-
-            let channelSettings = document.querySelector(`[data-publication-channel="${channelSelector}"]`);
 
             if (channelSettings) {
                 dateInput = channelSettings.querySelector('input[type="date"]').value || fallbackDateInput.value;
@@ -455,7 +462,47 @@ function setPublicationDateTimes(){
     });
 }
 
+function ensurePublicationExists(channelId) {
+    const publicationListContainer = document.querySelector('.aside-item-wrapper.publications .aside-item-list-container .publication-list');
+    if (!publicationListContainer.querySelector(`a[data-channel="${channelId}"]`)) {
+        let checkbox = document.querySelector(`[data-channel-selector="${channelId}"]`);
+        let channelName = checkbox.getAttribute('data-channel-name');
+        let channelIcon = checkbox.getAttribute('data-channel-type-icon');
+        let channelSelector = checkbox.getAttribute('data-channel-selector');
+
+        let channelSettings = document.querySelector(`[data-publication-channel="${channelId}"]`);
+
+        let dateInput, timeInput;
+        let fallbackDateInput = document.querySelector('#integrated_content_publishTime input[type="date"]');
+        let fallbackTimeInput = document.querySelector('#integrated_content_publishTime input[type="time"]');
+
+        if (channelSettings) {
+            dateInput = channelSettings.querySelector('input[type="date"]').value || fallbackDateInput.value;
+            timeInput = channelSettings.querySelector('input[type="time"]').value || fallbackTimeInput.value;
+        } else {
+            dateInput = fallbackDateInput.value;
+            timeInput = fallbackTimeInput.value;
+        }
+
+        const publicationItem = createPublicationItem(channelName, channelIcon, dateInput, timeInput, channelSelector);
+        publicationListContainer.appendChild(publicationItem);
+
+        updatePublicationCount();
+        updatePublicationsAndChannels();
+        sortPublications(publicationListContainer);
+
+        var updatePublicationItems = new CustomEvent('updatePublicationItems');
+
+        window.dispatchEvent(updatePublicationItems);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', initializePage);
+
+document.addEventListener("ensurePublicationEvent", function(e) {
+    var channelId = e.detail.channelId; // Access channelId from the event detail
+    ensurePublicationExists(channelId); // Call your function with channelId
+});
 
 window.addEventListener('applyPublishSettingsEvent', function(e) {
     prepDateTimeFields();

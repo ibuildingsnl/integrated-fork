@@ -119,6 +119,7 @@ function showHideChannelSelect(container, type) {
 document.querySelectorAll('.publication-settings-popup').forEach(function (settings) {
     settings.querySelectorAll('a.btn').forEach(function(a) {
         a.addEventListener('click', function (ev) {
+            let channelId = settings.querySelector('.publication-settings').getAttribute('data-publication-channel');
             a.closest('.publication-settings-aside').classList.remove('show');
             document.querySelectorAll('.editor-overlay').forEach(div => {
                 div.classList.remove('show');
@@ -130,11 +131,7 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
                 settings.querySelectorAll(pubInputSelector).forEach(function (input, i) {
                     data[i] = input.value;
                 });
-                document.querySelectorAll(
-                    '.publication-settings[data-channel-type="' +
-                    settings.querySelector('[data-channel-type]')?.dataset.channelType +
-                    '"]'
-                ).forEach(function (container) {
+                document.querySelectorAll('.publication-settings[data-channel-type="' + settings.querySelector('[data-channel-type]')?.dataset.channelType + '"]').forEach(function (container) {
                     if (settings.contains(container)) {
                         return;
                     }
@@ -148,10 +145,7 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
                 settings.querySelectorAll(pubInputSelector).forEach(function (input, i) {
                     data[i] = input.value;
                 });
-                document.querySelectorAll(
-                    '.publication-settings[data-channel-type="' +
-                    settings.querySelector('[data-channel-type]')?.dataset.channelType +
-                    '"]'
+                document.querySelectorAll('.publication-settings[data-channel-type="' + settings.querySelector('[data-channel-type]')?.dataset.channelType + '"]'
                 ).forEach(function (container) {
                     if (settings.contains(container)) {
                         return;
@@ -164,6 +158,9 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
                     });
                 });
             }
+            var event = new CustomEvent("ensurePublicationEvent", { detail: { channelId: channelId } });
+            document.dispatchEvent(event);
+
             ev.preventDefault();
         });
     });
@@ -275,16 +272,20 @@ document.addEventListener('DOMContentLoaded', function () {
     newPublicationCheckboxes.forEach((checkbox, index) => {
         checkbox.addEventListener('change', function () {
             const publicationSettingsAside = checkbox.closest('.publication-settings-aside');
+            const publicationSettings = publicationSettingsAside.querySelector('.publication-settings');
             const fields = publicationSettingsAside.querySelectorAll('.aside-item-list .form-control:not([data-apply-to])');
             const imageContainer = publicationSettingsAside.querySelector('.mediagallery_selector .selected_images');
             const hiddenImageInput = publicationSettingsAside.querySelector('.mediagallery_selector .mediagallery_selector_input');
+            const channelId = publicationSettings.getAttribute('data-publication-channel');
+            const publicationListContainer = document.querySelector('.aside-item-wrapper.publications .aside-item-list-container .publication-list');
+            let publication = publicationListContainer.querySelector(`a[data-channel="${channelId}"]`);
 
             savedData[index] = savedData[index] || {};
             savedImages[index] = savedImages[index] || [];
 
             if (this.checked) {
                 publicationSettingsAside.classList.remove('no-edit');
-
+                publicationSettings.setAttribute('data-publication-status', '');
                 // Save current values and clear fields
                 fields.forEach(field => {
                     const key = field.name || field.id;
@@ -303,6 +304,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             } else {
                 publicationSettingsAside.classList.add('no-edit');
+                publicationSettings.setAttribute('data-publication-status', 'success');
+                if (publication) {
+                    publication.remove();
+                }
 
                 fields.forEach(field => {
                     const key = field.name || field.id;

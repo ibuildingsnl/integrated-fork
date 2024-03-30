@@ -132,8 +132,9 @@
                                                     {% set pubState = 'published no-edit' %}
                                                 {% endif %}
                                                 <a class="publication-item {{ pubState }}"
-                                                   data-id="{{ publication.getId }}"
-                                                   {% if publication.getStatus != 'success' %}data-channel="{{ publication.getChannel.getId }}"{% endif %}>
+                                                    data-id="{{ publication.getId }}"
+                                                    {% if publication.getStatus != 'success' %}data-channel="{{ publication.getChannel.getId }}"{% endif %}
+                                                    {% if publication.getStatus == 'success' %}data-publication-status="success"{% endif %}>
                                                     <div class="publication-wrap">
                                                         <div class="publication-item-heading">
                                                             <div class="heading-left">

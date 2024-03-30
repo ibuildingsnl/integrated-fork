@@ -261,6 +261,11 @@
     margin-bottom: 0.5em;
     cursor:pointer;
 
+    &[data-publication-status="success"] {
+        pointer-events: none;
+        cursor: not-allowed;
+    }
+
     &.published {
         background-color: rgba(1, 174, 147, 0.05);
         .publication-wrap {
