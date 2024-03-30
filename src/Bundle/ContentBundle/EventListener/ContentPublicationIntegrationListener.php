@@ -69,16 +69,16 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                 $data = $form->get($channel->getId())->get('settings')->getData();
                 $time = $content->getPublishTime();
 
+                if (($data['time'] ?? null) instanceof PublishTimeInterface) {
+                    $time = $data['time'];
+                    unset($data['time']);
+                }
+
                 $existingChannelPublications = $this->publications->forContentOnChannel($content, $channel);
 
                 if (!$existingChannelPublications) {
                     $this->publications->add(new Publication($content, $channel, $time, \is_array($data) ? $data : []));
                     continue;
-                }
-
-                if (($data['time'] ?? null) instanceof PublishTimeInterface) {
-                    $time = $data['time'];
-                    unset($data['time']);
                 }
 
                 $imagesProcessed = [];
