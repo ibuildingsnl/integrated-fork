@@ -1318,6 +1318,18 @@
                 <source>Select image</source>
                 <target>Selecteer afbeelding</target>
             </trans-unit>
+            <trans-unit id="334">
+                <source>Create a new publication</source>
+                <target>Nieuwe publicatie aanmaken</target>
+            </trans-unit>
+            <trans-unit id="335">
+                <source>, do you want to make a new publication?</source>
+                <target>, wil je een nieuwe publicatie maken?</target>
+            </trans-unit>
+            <trans-unit id="336">
+                <source>You have already published to</source>
+                <target>U heeft al gepubliceerd naar</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
