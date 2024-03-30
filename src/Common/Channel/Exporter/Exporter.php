@@ -49,7 +49,7 @@ class Exporter implements ExporterInterface
     public function export($content, $state, ChannelInterface $channel, array $settings = [])
     {
         $publicationDate = null;
-        //TODO: Check if website publication is published for non website publications
+        // TODO: Check if website publication is published for non website publications
         if ($content instanceof PublishableInterface) {
             $publicationDate = $content->getPublishTime()->getStartDate();
             if (!$content->isPublished()) {
@@ -60,11 +60,7 @@ class Exporter implements ExporterInterface
         }
 
         if ($content instanceof Content) {
-            foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
-                if ($publication->getStatus() === 'success') {
-                    continue;
-                }
-
+            foreach ($this->publications->availablePublicationsForChannelByContent($content, $channel) as $publication) {
                 $settings = $publication->getSettings();
                 $time = $publication->getTime();
 
