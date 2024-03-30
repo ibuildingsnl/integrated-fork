@@ -69,6 +69,13 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                 $data = $form->get($channel->getId())->get('settings')->getData();
                 $time = $content->getPublishTime();
 
+                $existingChannelPublications = $this->publications->forContentOnChannel($content, $channel);
+
+                if (!$existingChannelPublications) {
+                    $this->publications->add(new Publication($content, $channel, $time, \is_array($data) ? $data : []));
+                    continue;
+                }
+
                 if (($data['time'] ?? null) instanceof PublishTimeInterface) {
                     $time = $data['time'];
                     unset($data['time']);
@@ -86,36 +93,39 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                     $data['images'] = $imagesProcessed;
                 }
 
-                $foundOrUpdated = false;
-                foreach ($existingPublications as $key => $previousPublication) {
-                    //We're fetching the previous publication fresh from the database, because it got updated by the form and we don't want any of that.
-                    $this->documentManager->refresh($previousPublication);
-                    $this->documentManager->persist($previousPublication);
-
-                    if ($previousPublication->getStatus() === 'success') {
+                foreach ($existingPublications as $key => $existingPublication) {
+                    if ($existingPublication->getChannel()->getId() == $channel->getId()) {
                         unset($existingPublications[$key]);
-                        continue;
-                    }
-                    if ($previousPublication->getChannel()->getId() == $channel->getId()) {
-                        if ($this->isPublicationChanged($previousPublication, ['settings' => $data, 'time' => $time])) {
-
-                            $this->publications->remove($previousPublication);
-
-                            $this->publications->add(
-                                new Publication($content, $channel, $time, \is_array($data) ? $data : [])
-                            );
-                        }
-
-                        unset($existingPublications[$key]);
-                        $foundOrUpdated = true;
-                        break;
                     }
                 }
 
-                if (!$foundOrUpdated) {
-                    $this->publications->add(
-                        new Publication($content, $channel, $time, \is_array($data) ? $data : [])
-                    );
+                $publicationChanged = [];
+                foreach ($existingChannelPublications as $key => $previousPublication) {
+                    // We're fetching the previous publication fresh from the database and persist it, because it got updated by the form and we don't want any of that.
+                    $this->documentManager->refresh($previousPublication);
+                    $this->documentManager->persist($previousPublication);
+
+                    $publicationChanged[$previousPublication->getId()] = [
+                        'key' => $key,
+                        'changed' => $this->isPublicationChanged($previousPublication, ['settings' => $data, 'time' => $time]),
+                        'status' => $previousPublication->getStatus(),
+                    ];
+                }
+
+                $allPublicationsAreDifferent = !\in_array(false, array_column($publicationChanged, 'changed'), true);
+
+                if ($allPublicationsAreDifferent) {
+                    $this->publications->add(new Publication($content, $channel, $time, \is_array($data) ? $data : []));
+                }
+
+                foreach ($publicationChanged as $publication) {
+                    if (!$allPublicationsAreDifferent || $publication['status'] === 'success' || $publication['changed'] === false) {
+                        unset($existingChannelPublications[$publication['key']]);
+                    }
+                }
+
+                foreach ($existingChannelPublications as $publicationToRemove) {
+                    $this->publications->remove($publicationToRemove);
                 }
             }
 
