@@ -15,17 +15,14 @@ class PublicationType extends AbstractType
 
         $status = '';
         if ($data instanceof Publication) {
-            $data = $data->getSettings() + [
-                    'time' => $data->getTime(),
-                    'status' => $options['data']->getStatus()
-                ];
+            $data = $data->getSettings() + ['time' => $data->getTime()];
             $status = $options['data']->getStatus();
         }
         $builder->add('settings', $options['settings'], [
             'label' => $options['label'],
             'data' => $data,
             'attr' => [
-                'data-publication-status' => $status
+                'data-publication-status' => $status,
             ],
             'mapped' => false,
         ]);

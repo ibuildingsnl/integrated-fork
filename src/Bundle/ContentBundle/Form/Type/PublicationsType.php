@@ -19,7 +19,6 @@ class PublicationsType extends AbstractType
     {
         /** @var ChannelInterface $channel */
         foreach ($options['channels'] as $channel) {
-
             $status = '';
             $channelData = $options['data'][$channel->getId()] ?? null;
 
