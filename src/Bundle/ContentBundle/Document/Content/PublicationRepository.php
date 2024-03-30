@@ -48,6 +48,31 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
         return $this->findBy(['content' => $content, 'channel' => $channel]);
     }
 
+    public function availablePublicationsForChannelByContent(Content $content, ChannelInterface $channel): array
+    {
+        if (!$content->getId()) {
+            return [];
+        }
+
+        $failedPublications = $this->findBy(
+            [
+                'content' => $content,
+                'channel' => $channel,
+                'status' => 'failed',
+            ]
+        );
+
+        $nullStatusPublications = $this->findBy(
+            [
+                'content' => $content,
+                'channel' => $channel,
+                'status' => '',
+            ]
+        );
+
+        return array_merge($failedPublications, $nullStatusPublications);
+    }
+
     public function add(Publication $publication): void
     {
         $this->getDocumentManager()->persist($publication);

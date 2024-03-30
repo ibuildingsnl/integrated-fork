@@ -24,7 +24,7 @@ class ChannelDistributor
     public function distribute(Content $content): void
     {
         foreach ($content->getChannels() as $channel) {
-            $publications = $this->publications->forContentOnChannel($content, $channel);
+            $publications = $this->publications->availablePublicationsForChannelByContent($content, $channel);
             foreach ($publications as $publication) {
                 $this->distributeTo($channel, $content, $publication);
             }
@@ -45,14 +45,12 @@ class ChannelDistributor
 
             return;
         }
-        if ($publication->getStatus() !== 'success') {
-            $this->scheduleDistributionWindow(
-                $channel,
-                $content,
-                $publication ? $publication->getTime() : $content->getPublishTime(),
-                $publication?->getSettings() ?: []
-            );
-        }
+        $this->scheduleDistributionWindow(
+            $channel,
+            $content,
+            $publication ? $publication->getTime() : $content->getPublishTime(),
+            $publication?->getSettings() ?: []
+        );
     }
 
     private function scheduleDistributionWindow(

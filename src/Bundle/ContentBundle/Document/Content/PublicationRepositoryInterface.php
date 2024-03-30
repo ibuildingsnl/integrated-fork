@@ -18,6 +18,9 @@ interface PublicationRepositoryInterface
     /** @return Publication[] */
     public function forContentOnChannel(Content $content, ChannelInterface $channel): array;
 
+    /** @return Publication[] */
+    public function availablePublicationsForChannelByContent(Content $content, ChannelInterface $channel): array;
+
     public function add(Publication $publication): void;
 
     public function remove(Publication $publication): void;
