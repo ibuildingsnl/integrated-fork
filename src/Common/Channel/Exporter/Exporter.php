@@ -59,8 +59,10 @@ class Exporter implements ExporterInterface
             }
         }
 
+        $publications = false;
         if ($content instanceof Content) {
-            foreach ($this->publications->availablePublicationsForChannelByContent($content, $channel) as $publication) {
+            $publications = $this->publications->availablePublicationsForChannelByContent($content, $channel);
+            foreach ($publications as $publication) {
                 $settings = $publication->getSettings();
                 $time = $publication->getTime();
 
@@ -80,6 +82,18 @@ class Exporter implements ExporterInterface
 
                     $this->dm->flush();
                 }
+            }
+        }
+        //Backwards compatibility
+        if (!$publications) {
+            foreach ($this->getExporters($channel, $publicationDate) as $exporter) {
+                $response = $exporter->export($content, $state, $channel, $settings);
+
+                if ($response instanceof ExporterResponse) {
+                    $this->save($content, $response);
+                }
+
+                $this->dm->flush();
             }
         }
     }
