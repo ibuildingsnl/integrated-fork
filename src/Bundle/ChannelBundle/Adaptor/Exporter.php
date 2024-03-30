@@ -2,7 +2,6 @@
 
 namespace Integrated\Bundle\ChannelBundle\Adaptor;
 
-use GuzzleHttp\Exception\ClientException;
 use Integrated\Bundle\ChannelBundle\Model\ConfigInterface;
 use Integrated\Bundle\ChannelBundle\Model\ConnectorInterface;
 use Integrated\Bundle\ChannelBundle\Model\CouldNotPublish;
@@ -51,6 +50,9 @@ final class Exporter implements ExporterInterface
             $externalId = $this->connector->publish($content, $channel, $this->config->getOptions(), $settings);
         } catch (CouldNotPublish $e) {
             $this->logger->error($e->getMessage()."\n".$e->getTraceAsString());
+            $responseMessage = $e->getMessage();
+        } catch (\Throwable $e) {
+            $this->logger->error('Error: '.\get_class($e).' - '.$e->getMessage());
             $responseMessage = $e->getMessage();
         }
 
