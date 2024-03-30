@@ -233,7 +233,10 @@ function updatePublicationsAndChannels() {
 
             let channelPublicationToUpdate = publicationListContainer.querySelector(`a[data-channel="${channel}"]`);
 
-            updatePublicationStyles(channelPublicationToUpdate, channelDateTime >= websiteDateTime);
+            if (channelPublicationToUpdate) {
+                updatePublicationStyles(channelPublicationToUpdate, channelDateTime >= websiteDateTime);
+            }
+
         });
     });
 }
@@ -456,6 +459,7 @@ document.addEventListener('DOMContentLoaded', initializePage);
 
 window.addEventListener('applyPublishSettingsEvent', function(e) {
     prepDateTimeFields();
+    setupCharacterCounters();
 });
 
 window.addEventListener('openPublishSettingsEvent', function(e) {

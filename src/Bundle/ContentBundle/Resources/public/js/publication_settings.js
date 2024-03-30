@@ -257,13 +257,83 @@ function initPublicationItems() {
         if (item.dataset.listenerAdded !== "true") {
             item.addEventListener('click', function() {
                 const channel = item.getAttribute('data-channel');
-                openPublishingSettings(channel);
+                if (channel) {
+                    openPublishingSettings(channel);
+                }
             });
 
             item.dataset.listenerAdded = "true";
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const newPublicationCheckboxes = document.querySelectorAll('.new-publication-check input[type="checkbox"]');
+    let savedData = {};
+    let savedImages = {};
+
+    newPublicationCheckboxes.forEach((checkbox, index) => {
+        checkbox.addEventListener('change', function () {
+            const publicationSettingsAside = checkbox.closest('.publication-settings-aside');
+            const fields = publicationSettingsAside.querySelectorAll('.aside-item-list .form-control:not([data-apply-to])');
+            const imageContainer = publicationSettingsAside.querySelector('.mediagallery_selector .selected_images');
+            const hiddenImageInput = publicationSettingsAside.querySelector('.mediagallery_selector .mediagallery_selector_input');
+
+            savedData[index] = savedData[index] || {};
+            savedImages[index] = savedImages[index] || [];
+
+            if (this.checked) {
+                publicationSettingsAside.classList.remove('no-edit');
+
+                // Save current values and clear fields
+                fields.forEach(field => {
+                    const key = field.name || field.id;
+                    savedData[index][key] = field.value;
+                    field.value = '';
+                });
+
+                if (imageContainer) {
+                    savedImages[index] = Array.from(imageContainer.querySelectorAll('li')).map(li => ({
+                        id: li.id,
+                        src: li.querySelector('img').src
+                    }));
+
+                    imageContainer.innerHTML = '';
+                    hiddenImageInput.value = '';
+                }
+            } else {
+                publicationSettingsAside.classList.add('no-edit');
+
+                fields.forEach(field => {
+                    const key = field.name || field.id;
+                    if (savedData[index].hasOwnProperty(key)) {
+                        field.value = savedData[index][key];
+                    }
+                });
+
+                savedData[index] = {};
+
+                if (imageContainer && savedImages[index].length > 0) {
+                    savedImages[index].forEach(info => {
+                        const li = document.createElement('li');
+                        li.id = info.id;
+                        li.className = 'media-item';
+                        li.innerHTML = `<div class="media-preview"><div class="thumbnail relative"><div class="centered"><img src="${info.src}"></div><a class="remove_link remove"><i class="iconoir-xmark"></i></a></div></div>`;
+                        imageContainer.appendChild(li);
+                    });
+
+                    hiddenImageInput.value = savedImages[index].map(info => info.id).join(',');
+                    savedImages[index] = [];
+                }
+            }
+
+            var applyPublishSettingsEvent = new CustomEvent('applyPublishSettingsEvent');
+
+            window.dispatchEvent(applyPublishSettingsEvent);
+
+        });
+    });
+});
 
 document.addEventListener('DOMContentLoaded', initPublicationItems);
 document.addEventListener('DOMContentLoaded', initPublicationDelete);

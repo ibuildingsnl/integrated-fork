@@ -39,6 +39,44 @@
     .aside-item-wrapper .aside-item-header {
         cursor: unset;
     }
+    &.no-edit {
+        background-color: #f2f2f2;
+        .aside-item-wrapper {
+            background-color: transparent;
+            .aside-item-header {
+                background-color: transparent;
+            }
+            .aside-item-list {
+                opacity: .5;
+                pointer-events: none;
+            }
+        }
+    }
+    p.publication-info {
+        background-color: white;
+        margin-bottom: 0;
+        border-radius: 8px 8px 0 0;
+    }
+    .checkbox {
+        &.new-publication-check {
+            font-size: 0.875rem;
+            border: 1px solid #dfe3e9;
+            line-height: 1rem;
+            border-radius: 0 0 8px 8px;
+            border-top: none;
+            background-color: white;
+            margin-bottom: 1rem;
+            label {
+                margin-bottom: 0;
+                font-size: .875rem;
+                padding: 0.5rem;
+                border-radius: 0 0 8px 8px;
+                &:hover {
+                    background-color: #ecf6ff;
+                }
+            }
+        }
+    }
 }
 
 .publication-settings-button {
