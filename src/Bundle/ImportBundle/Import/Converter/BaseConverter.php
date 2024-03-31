@@ -2,6 +2,8 @@
 
 namespace Integrated\Bundle\ImportBundle\Import\Converter;
 
+use DateTime;
+use DateTimeZone;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
@@ -120,10 +122,25 @@ class BaseConverter
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     private static function getDateFromData($rowData, $rowKey, $newData, $newDataKey, $default = null)
     {
-        if (isset($newData[$newDataKey]) && $newData[$newDataKey] !== '') {
-            return new \DateTime($newData[$newDataKey]);
+        $value = $newData[$newDataKey];
+
+        list($timestamp, $offset) = explode('+', $value);
+
+        if (is_numeric($timestamp) && ($timestamp == (int)$timestamp)) {
+            if (strlen($offset)) {
+                return self::createDateTimeFromTimestampWithOffset($value);
+            }    else {
+                return new DateTime("@$timestamp");
+            }
+        }
+
+        if (isset($value) && $value !== '') {
+            return new \DateTime($value);
         }
 
         if (isset($rowData[$rowKey]) && $rowData[$rowKey] !== '') {
@@ -131,6 +148,24 @@ class BaseConverter
         }
 
         return $default;
+    }
+
+    private static function createDateTimeFromTimestampWithOffset($input) {
+        // Split the input into the timestamp and the offset parts
+        [$timestamp, $offset] = explode('+', $input);
+        // Ensure the offset has a "+" prefix and is correctly formatted as "+HH:MM"
+        $formattedOffset = '+' . ltrim($offset, '+'); // Adds back the + sign if removed
+
+        // Create a DateTime object from the timestamp
+        $dateTime = new DateTime("@$timestamp");
+
+        // Create a DateTimeZone object using the correct offset format
+        $timezone = new DateTimeZone($formattedOffset);
+
+        // Set the timezone for the DateTime object
+        $dateTime->setTimezone($timezone);
+
+        return $dateTime;
     }
 
     public static function processPersonObject($newObject, $row, $importDefinition, $storageManager)
@@ -305,6 +340,15 @@ class BaseConverter
         $storageManager
     ) {
         $result = ExecuteImporter::initializeResult();
+
+        if (is_numeric($value) && ($value == (int)$value)) {
+            $currentYear = date('Y');
+            $yearFromTimestamp = date('Y', $value);
+
+            if ($yearFromTimestamp >= 1970 && $yearFromTimestamp <= $currentYear + 20) {
+                $value = new DateTime("@$value");
+            }
+        }
 
         //Should only be mapped if there is a list of authors which is comma seperated
         if (strpos($mappedField, 'author-') === 0) {
