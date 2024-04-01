@@ -77,7 +77,7 @@
             <span>{% trans %}Brands{% endtrans %}</span>
             <i class="iconoir-nav-arrow-down"></i>
         </a>
-        <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="brands-menu">
+        <ul aria-labelledby="brands-list" role="menu" class="dropdown-menu" id="brands-menu">
         </ul>
     </li>
     <li class="dropdown close-outside calendar-filter contenttypes" data-underlay="no">
@@ -86,7 +86,16 @@
         </span>
             <i class="iconoir-nav-arrow-down"></i>
         </a>
-        <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="content-types-menu">
+        <ul aria-labelledby="content-types-list" role="menu" class="dropdown-menu" id="content-types-menu">
+        </ul>
+    </li>
+    <li class="dropdown close-outside calendar-filter status" data-underlay="no">
+        <a data-toggle="dropdown" role="button"
+           class="btn btn-select space-between"><span>{% trans %}Status{% endtrans %}
+        </span>
+            <i class="iconoir-nav-arrow-down"></i>
+        </a>
+        <ul aria-labelledby="status-list" role="menu" class="dropdown-menu" id="status-menu">
         </ul>
     </li>
     <li class="checkbox premium-checkbox">

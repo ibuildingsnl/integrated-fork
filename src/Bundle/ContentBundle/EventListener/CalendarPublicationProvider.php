@@ -77,6 +77,7 @@ class CalendarPublicationProvider implements EventSubscriberInterface
                         'id' => $publication->getContent()->getId(),
                         'title' => $publication->getContent()->getTitle(),
                         'premium' => $publication->getContent()->isPremium(),
+                        'status' => $publication->getContent()->getMetadata()->get('workflow_state'),
                         'type' => $type->getId(),
                         'typename' => $type->getName(),
                         'icon' => $type->getIcon() ?: 'empty-page',

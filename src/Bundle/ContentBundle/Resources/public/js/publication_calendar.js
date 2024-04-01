@@ -182,7 +182,7 @@ if (typeof publicationSchedule === 'object') {
     });
 
     function attachFilterEventListeners() {
-        document.querySelectorAll('[name="contentType"], [name="brand"]').forEach(input => {
+        document.querySelectorAll('[name="contentType"], [name="brand"], [name="status"]').forEach(input => {
             input.addEventListener('change', updateFilterStates);
         });
 
@@ -197,6 +197,7 @@ if (typeof publicationSchedule === 'object') {
     function updateFilterStates() {
         filterStates.contentType = new Set([...document.querySelectorAll('[name="contentType"]:checked')].map(input => input.value));
         filterStates.brand = new Set([...document.querySelectorAll('[name="brand"]:checked')].map(input => input.value));
+        filterStates.status = new Set([...document.querySelectorAll('[name="status"]:checked')].map(input => input.value));
         saveAndApplyFilters();
     }
 
@@ -210,6 +211,7 @@ if (typeof publicationSchedule === 'object') {
         localStorage.setItem('filterStates', JSON.stringify({
             contentType: Array.from(filterStates.contentType),
             brand: Array.from(filterStates.brand),
+            status: Array.from(filterStates.status),
             premium: filterStates.premium
         }));
     }
@@ -222,6 +224,7 @@ if (typeof publicationSchedule === 'object') {
         if (savedStates) {
             filterStates.contentType = new Set(savedStates.contentType || []);
             filterStates.brand = new Set(savedStates.brand || []);
+            filterStates.status = new Set(savedStates.status || []);
             filterStates.premium = 'premium' in savedStates ? savedStates.premium : false;
 
             document.querySelectorAll('[name="contentType"]').forEach(input => {
@@ -229,6 +232,9 @@ if (typeof publicationSchedule === 'object') {
             });
             document.querySelectorAll('[name="brand"]').forEach(input => {
                 input.checked = filterStates.brand.has(input.value);
+            });
+            document.querySelectorAll('[name="status"]').forEach(input => {
+                input.checked = filterStates.status.has(input.value);
             });
             const premiumCheckbox = document.getElementById('premium-checkbox');
             if (premiumCheckbox) premiumCheckbox.checked = filterStates.premium;
@@ -238,15 +244,17 @@ if (typeof publicationSchedule === 'object') {
     function applyFilters() {
         document.querySelectorAll('.calendar-item').forEach(item => {
             const typeMatch = filterStates.contentType.size === 0 || filterStates.contentType.has(item.getAttribute('data-type'));
+            const statusMatch = filterStates.status.size === 0 || filterStates.status.has(item.getAttribute('data-status'));
             const brandMatch = filterStates.brand.size === 0 || item.getAttribute('data-brands').split(', ').some(brand => filterStates.brand.has(brand.trim()));
             const premiumMatch = filterStates.premium ? item.getAttribute('data-premium') === 'true' : true;
 
-            item.style.display = (typeMatch && brandMatch && premiumMatch) ? '' : 'none';
+            item.style.display = (typeMatch && brandMatch && statusMatch && premiumMatch) ? '' : 'none';
         });
     }
 
     function countAndUpdateFacetCounts() {
         const contentTypeCounts = {};
+        const contentStatusCounts = {};
         const brandCounts = {};
         let premiumCount = 0;
 
@@ -256,6 +264,11 @@ if (typeof publicationSchedule === 'object') {
             const type = item.getAttribute('data-type');
             if (type) {
                 contentTypeCounts[type] = (contentTypeCounts[type] || 0) + 1;
+            }
+
+            const status = item.getAttribute('data-status');
+            if (status) {
+                contentStatusCounts[type] = (contentStatusCounts[type] || 0) + 1;
             }
 
             const brands = item.getAttribute('data-brands').split(', ').map(brand => brand.trim());
@@ -270,6 +283,14 @@ if (typeof publicationSchedule === 'object') {
 
         document.querySelectorAll('[name="contentType"]').forEach(input => {
             const count = contentTypeCounts[input.value] || 0;
+            const countDisplay = input.closest('.checkbox-container').querySelector('.facet-count');
+            if (countDisplay) {
+                countDisplay.textContent = `(${count})`;
+            }
+        });
+
+        document.querySelectorAll('[name="status"]').forEach(input => {
+            const count = contentStatusCounts[input.value] || 0;
             const countDisplay = input.closest('.checkbox-container').querySelector('.facet-count');
             if (countDisplay) {
                 countDisplay.textContent = `(${count})`;
