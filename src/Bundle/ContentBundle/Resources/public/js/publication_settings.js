@@ -318,7 +318,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 savedData[index] = {};
 
+                if (imageContainer) {
+                    imageContainer.innerHTML = '';
+                    hiddenImageInput.value = '';
+                }
+
                 if (imageContainer && savedImages[index].length > 0) {
+
                     savedImages[index].forEach(info => {
                         const li = document.createElement('li');
                         li.id = info.id;
