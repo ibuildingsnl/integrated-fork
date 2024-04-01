@@ -61,9 +61,12 @@ if (typeof publicationSchedule === 'object') {
 
             const publicationEntry = document.createElement('a');
             column.insertBefore(publicationEntry, before);
-            publicationEntry.className = 'quick-edit-link calendar-item ' + publication.published + ' ' + publication.type;
+            publicationEntry.className = 'quick-edit-link calendar-item ' + publication.published + ' ' + publication.typename;
             publicationEntry.href = '/admin/content/' + publication.id;
             publicationEntry.dataset.time = publication.time;
+            publicationEntry.dataset.type = publication.typename;
+            publicationEntry.dataset.brands = publication.brand_name;
+            publicationEntry.dataset.premium = publication.premium;
             publicationEntry.innerHTML = generatePublicationHTML(publication, colorVariable);
 
             attachMouseEvents(publicationEntry, colorVariable, publication);
@@ -99,11 +102,192 @@ if (typeof publicationSchedule === 'object') {
         publicationEntry.addEventListener('mouseover', function(ev) {
             const content = document.querySelector('.calendar-item[data-id="'+publication.id+'"]');
             if (content) {
-                content.style = 'border-color: ' + colorVariable + ';margin: 0 -3px 0.5rem -3px;'
+                content.style.borderColor = colorVariable;
+                content.style.margin = '0 -3px 0.5rem -3px';
             }
         });
         publicationEntry.addEventListener('mouseout', function (ev) {
-            document.querySelectorAll('.calendar-item').forEach((i) => i.style = '');
+            const items = document.querySelectorAll('.calendar-item');
+            items.forEach((i) => {
+                i.style.borderColor = '';
+                i.style.margin = '';
+            });
         });
     }
+
+    let filterStates = {
+        contentType: new Set(),
+        brand: new Set(),
+        premium: true,
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const contentTypes = new Set();
+        document.querySelectorAll('.calendar-item').forEach(item => {
+            contentTypes.add(item.getAttribute('data-type'));
+        });
+        const contentTypesMenu = document.getElementById('content-types-menu');
+        contentTypes.forEach(type => {
+            contentTypesMenu.innerHTML += `<li class="checkbox">
+            <label class="checkbox-container">
+                <input type="checkbox" name="contentType" value="${type}">
+                <span class="checkmark"></span>
+                <div class="facet-wrappper">
+                    <span class="facet-title">${type}</span>
+                    <span class="facet-count"></span>
+                </div>
+            </label>
+        </li>`;
+        });
+
+        const brands = new Set();
+        document.querySelectorAll('.calendar-item').forEach(item => {
+            item.getAttribute('data-brands').split(', ').forEach(brand => {
+                const trimmedBrand = brand.trim();
+                if (trimmedBrand) {
+                    brands.add(trimmedBrand);
+                }
+            });
+        });
+        const brandsMenu = document.getElementById('brands-menu');
+        brands.forEach(brand => {
+            brandsMenu.innerHTML += `<li class="checkbox">
+            <label class="checkbox-container">
+                <input type="checkbox" name="brand" value="${brand}">
+                <span class="checkmark"></span>
+                <div class="facet-wrappper">
+                    <span class="facet-title">${brand}</span>
+                    <span class="facet-count"></span>
+                </div>
+            </label>
+        </li>`;
+        });
+
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const hasPremiumContent = Array.from(document.querySelectorAll('.calendar-item')).some(item => item.getAttribute('data-premium') === 'true');
+        const premiumCheckboxContainer = document.querySelector('.premium-checkbox');
+
+        if (!hasPremiumContent) {
+            premiumCheckboxContainer.style.display = 'none';
+        } else {
+            premiumCheckboxContainer.style.display = '';
+        }
+
+        attachFilterEventListeners();
+        loadFilterStates();
+        applyFilters();
+        countAndUpdateFacetCounts();
+    });
+
+    function attachFilterEventListeners() {
+        document.querySelectorAll('[name="contentType"], [name="brand"]').forEach(input => {
+            input.addEventListener('change', updateFilterStates);
+        });
+
+        const premiumCheckbox = document.getElementById('premium-checkbox');
+        premiumCheckbox.checked = filterStates.premium;
+        premiumCheckbox.addEventListener('change', () => {
+            filterStates.premium = premiumCheckbox.checked;
+            saveAndApplyFilters();
+        });
+    }
+
+    function updateFilterStates() {
+        filterStates.contentType = new Set([...document.querySelectorAll('[name="contentType"]:checked')].map(input => input.value));
+        filterStates.brand = new Set([...document.querySelectorAll('[name="brand"]:checked')].map(input => input.value));
+        saveAndApplyFilters();
+    }
+
+    function saveAndApplyFilters() {
+        saveFilterStates();
+        applyFilters();
+        countAndUpdateFacetCounts();
+    }
+
+    function saveFilterStates() {
+        localStorage.setItem('filterStates', JSON.stringify({
+            contentType: Array.from(filterStates.contentType),
+            brand: Array.from(filterStates.brand),
+            premium: filterStates.premium
+        }));
+    }
+
+    function loadFilterStates() {
+        const savedStates = JSON.parse(localStorage.getItem('filterStates'));
+
+        console.log(savedStates);
+
+        if (savedStates) {
+            filterStates.contentType = new Set(savedStates.contentType || []);
+            filterStates.brand = new Set(savedStates.brand || []);
+            filterStates.premium = 'premium' in savedStates ? savedStates.premium : false;
+
+            document.querySelectorAll('[name="contentType"]').forEach(input => {
+                input.checked = filterStates.contentType.has(input.value);
+            });
+            document.querySelectorAll('[name="brand"]').forEach(input => {
+                input.checked = filterStates.brand.has(input.value);
+            });
+            const premiumCheckbox = document.getElementById('premium-checkbox');
+            if (premiumCheckbox) premiumCheckbox.checked = filterStates.premium;
+        }
+    }
+
+    function applyFilters() {
+        document.querySelectorAll('.calendar-item').forEach(item => {
+            const typeMatch = filterStates.contentType.size === 0 || filterStates.contentType.has(item.getAttribute('data-type'));
+            const brandMatch = filterStates.brand.size === 0 || item.getAttribute('data-brands').split(', ').some(brand => filterStates.brand.has(brand.trim()));
+            const premiumMatch = filterStates.premium ? item.getAttribute('data-premium') === 'true' : true;
+
+            item.style.display = (typeMatch && brandMatch && premiumMatch) ? '' : 'none';
+        });
+    }
+
+    function countAndUpdateFacetCounts() {
+        const contentTypeCounts = {};
+        const brandCounts = {};
+        let premiumCount = 0;
+
+        document.querySelectorAll('.calendar-item').forEach(item => {
+            if (item.style.display === 'none') return;
+
+            const type = item.getAttribute('data-type');
+            if (type) {
+                contentTypeCounts[type] = (contentTypeCounts[type] || 0) + 1;
+            }
+
+            const brands = item.getAttribute('data-brands').split(', ').map(brand => brand.trim());
+            brands.forEach(brand => {
+                brandCounts[brand] = (brandCounts[brand] || 0) + 1;
+            });
+
+            if (item.getAttribute('data-premium') === 'true') {
+                premiumCount += 1;
+            }
+        });
+
+        document.querySelectorAll('[name="contentType"]').forEach(input => {
+            const count = contentTypeCounts[input.value] || 0;
+            const countDisplay = input.closest('.checkbox-container').querySelector('.facet-count');
+            if (countDisplay) {
+                countDisplay.textContent = `(${count})`;
+            }
+        });
+
+        document.querySelectorAll('[name="brand"]').forEach(input => {
+            const count = brandCounts[input.value] || 0;
+            const countDisplay = input.closest('.checkbox-container').querySelector('.facet-count');
+            if (countDisplay) {
+                countDisplay.textContent = `(${count})`;
+            }
+        });
+
+        const premiumCheckboxCountDisplay = document.querySelector('.premium-checkbox .facet-count');
+        if (premiumCheckboxCountDisplay) {
+            premiumCheckboxCountDisplay.textContent = `(${premiumCount})`;
+        }
+    }
+
 }

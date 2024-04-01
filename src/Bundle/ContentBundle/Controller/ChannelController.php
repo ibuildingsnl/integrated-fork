@@ -250,10 +250,8 @@ class ChannelController extends AbstractController
         return $form->getForm();
     }
 
-    public function getchannels(): Response
+    public function getChannels(): Response
     {
-        $channels = $this->documentManager->getRepository(Channel::class)->findBy([], ['name' => 1]);
-
         $user = $this->getUser();
 
         if (!$user instanceof UserInterface) {
@@ -262,6 +260,16 @@ class ChannelController extends AbstractController
             ]);
         }
 
+        $allowedChannels = $this->getAllowedChannels($user);
+
+        return $this->render('@IntegratedContent/partials/block.websites.html.twig', [
+            'channels' => $allowedChannels,
+        ]);
+    }
+
+    public function getAllowedChannels(UserInterface $user): array
+    {
+        $channels = $this->documentManager->getRepository(Channel::class)->findBy([], ['name' => 1]);
         $allowedChannels = [];
 
         foreach ($channels as $channel) {
@@ -272,8 +280,6 @@ class ChannelController extends AbstractController
             }
         }
 
-        return $this->render('@IntegratedContent/partials/block.websites.html.twig', [
-            'channels' => $allowedChannels,
-        ]);
+        return $allowedChannels;
     }
 }

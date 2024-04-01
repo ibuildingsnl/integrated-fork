@@ -1334,6 +1334,10 @@
                 <source>Select </source>
                 <target>Selecteer </target>
             </trans-unit>
+            <trans-unit id="337">
+                <source>Only show Premium content</source>
+                <target>Toon enkel Premium content</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

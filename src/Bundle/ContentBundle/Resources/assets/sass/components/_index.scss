@@ -130,7 +130,7 @@ div.heading-switcher {
         }
 
         &.planned {
-            background-color: rgba(95,132,219,.1);
+            background-color: rgba(95, 132, 219, .1);
         }
 
         &.failed {
@@ -242,12 +242,15 @@ div.heading-switcher {
         .pub-date {
             width: 150px;
         }
+
         .state {
             width: 70px;
         }
+
         .content-type {
             width: 175px;
         }
+
         .channels {
             width: 110px;
         }
@@ -311,12 +314,59 @@ table.table {
             height: 18px;
             font-weight: bold;
         }
+
         .channel-favicons .channel-favicon {
             width: 18px;
             height: 18px;
         }
+
         .channel-favicons.popout {
             left: 33px;
+        }
+    }
+}
+
+.content-navigator-menu {
+    .premium-checkbox {
+        background: #fff;
+        font-size: 13px;
+        color: #515865;
+        height: 34px;
+        line-height: 34px;
+        border: 1px solid #DEE3E9;
+        align-items: center;
+        border-radius: 8px;
+        padding: 0 1rem;
+        justify-content: center;
+        span.facet-count {
+            padding-left: .5rem;
+        }
+    }
+    .calendar-filter {
+        .dropdown-menu {
+            padding:0;
+        }
+        .checkbox {
+            label.checkbox-container {
+                padding: 5px 10px;
+                border-bottom: 1px solid #dfe3e9;
+                &:hover {
+                    background-color:#ecf6ff;
+                }
+            }
+            span.facet-title {
+                white-space: nowrap;
+            }
+            span.facet-count {
+                padding-left: 1rem;
+            }
+        }
+
+        .checkbox:last-child {
+            label.checkbox-container {
+                border-bottom: none;
+            }
+
         }
     }
 }

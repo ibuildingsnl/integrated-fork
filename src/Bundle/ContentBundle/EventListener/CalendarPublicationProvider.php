@@ -44,14 +44,26 @@ class CalendarPublicationProvider implements EventSubscriberInterface
         foreach ($publications as $publication) {
             $type = $publication->getChannel()->getType();
             $dateTime = $publication->getTime()->getStartDate();
+            $eligibleForDisplay = false;
 
             if ($publication->getChannel() instanceof ChannelInterface) {
                 foreach ($this->brands->all() as $brand) {
                     if ($brand->hasChannel($publication->getChannel())) {
+                        if (array_key_exists('brands', $event->options) && in_array($brand->getId(), $event->options['brands'])) {
+                            $eligibleForDisplay = true;
+                        }
                         $currentBrand = $brand;
                         $brandProfile = $brand->profile;
                     }
                 }
+            }
+
+            if (!array_key_exists('brands', $event->options)) {
+                $eligibleForDisplay = true;
+            }
+
+            if (!$eligibleForDisplay) {
+                continue;
             }
 
             $status = $now > $publication->getTime()->getStartDate() ? 'published' : 'planned';
@@ -64,8 +76,9 @@ class CalendarPublicationProvider implements EventSubscriberInterface
                     $data = [
                         'id' => $publication->getContent()->getId(),
                         'title' => $publication->getContent()->getTitle(),
+                        'premium' => $publication->getContent()->isPremium(),
                         'type' => $type->getId(),
-                        'name' => $type->getName(),
+                        'typename' => $type->getName(),
                         'icon' => $type->getIcon() ?: 'empty-page',
                         'published' => $status,
                         'date' => $dateTime->format('Y/m/d'),
