@@ -8,7 +8,6 @@ use Integrated\Bundle\AssetBundle\Manager\AssetManager;
 use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\BrandProfile;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
-use Integrated\Bundle\ChannelBundle\Model\CouldNotPublish;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
@@ -19,7 +18,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class CalendarPublicationProvider implements EventSubscriberInterface
 {
-
     private readonly DocumentRepository $documentRepository;
 
     public function __construct(
@@ -87,7 +85,7 @@ class CalendarPublicationProvider implements EventSubscriberInterface
             $urls = [];
             $images = [];
 
-            if (isset($publicationSettings['images']) && count($publicationSettings['images']) > 0) {
+            if (isset($publicationSettings['images']) && \count($publicationSettings['images']) > 0) {
                 $imageIds = [];
 
                 foreach ($publicationSettings['images'] as $image) {
@@ -103,7 +101,6 @@ class CalendarPublicationProvider implements EventSubscriberInterface
                     ->toArray();
 
                 unset($publicationSettings['images']);
-
             } else {
                 $images[] = $publication->getContent()->getFeaturedImage();
             }
