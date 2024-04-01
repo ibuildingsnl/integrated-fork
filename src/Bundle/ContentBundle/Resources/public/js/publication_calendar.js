@@ -82,13 +82,35 @@ if (typeof publicationSchedule === 'object') {
         publicationEntry.innerHTML = generatePublicationHTML(publication, colorVariable);
 
         attachMouseEvents(publicationEntry, colorVariable, publication);
-
     }
 
     function generatePublicationHTML(publication, colorVariable) {
 
         const errorMessage = publication.published === 'failed'
-            ? `<div class="calendar-error">${publication.response}</div>`
+            ? `<div class="calendar-error hidden">${publication.response}</div>`
+            : '';
+
+        let postContent = '<div class="post-content hidden">';
+        Object.entries(publication.settings).forEach(([key, value]) => {
+            if (value && value.length > 0) {
+                postContent += `
+                <b>${key.charAt(0).toUpperCase() + key.slice(1)}</b>
+                <p>${value}</p>
+            `;
+            }
+        });
+        postContent += '</div>';
+
+        if (postContent === '<div class="post-content hidden"></div>') {
+            postContent = '';
+        }
+
+        const postImages = publication.images.length > 0
+            ? `<div class="post-images hidden">${publication.images.map(src => `<img src="${src}" alt="">`).join('')}</div>`
+            : '';
+
+        const showDetailsButton = (postContent || postImages || errorMessage)
+            ? `<button class="show-details-btn"><i class="iconoir-info-circle"></i></button>`
             : '';
 
         return `<div class="calendar-wrap" style="--color: ${colorVariable}">
@@ -105,7 +127,10 @@ if (typeof publicationSchedule === 'object') {
                     </div>
                     <div class="calendar-item-content">
                         ${publication.title}
+                        ${showDetailsButton}
                     </div>
+                    ${postContent}
+                    ${postImages}
                     ${errorMessage}
                 </div>`;
     }
@@ -127,6 +152,17 @@ if (typeof publicationSchedule === 'object') {
             });
         });
     }
+
+    document.addEventListener('click', function(event) {
+        if (event.target.classList.contains('show-details-btn')) {
+            event.preventDefault();
+            const calendarItem = event.target.closest('.calendar-item');
+            const elementsToToggle = calendarItem.querySelectorAll('.calendar-error, .post-content, .post-images');
+            elementsToToggle.forEach(element => {
+                element.classList.toggle('hidden');
+            });
+        }
+    });
 
     let filterStates = {
         contentType: new Set(),

@@ -143,7 +143,33 @@ div.heading-switcher {
             flex-direction: column;
             padding: 0.5rem;
             border-radius: 4px;
+            position: relative;
+            .post-content, .post-images {
+                font-size: .875rem;
+                background-color: rgb(0 0 0 / 5%);
+                padding: .5rem;
+                border-radius: 8px;
+                margin-top: .5rem;
+                margin-bottom: .5rem;
+            }
 
+            .post-content p {
+                margin-bottom: .5rem;
+            }
+
+            button.show-details-btn {
+                font-weight: bold;
+                position: absolute;
+                top: 0;
+                right: 0;
+                background-color: rgba(0, 0, 0, 0.05);
+                width: 26px;
+                height: 26px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-top-right-radius: 7px;
+            }
             .calendar-item-heading {
                 font-weight: bold;
                 color: var(--color);
