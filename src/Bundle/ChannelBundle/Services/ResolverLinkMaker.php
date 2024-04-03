@@ -21,7 +21,7 @@ final class ResolverLinkMaker implements LinkMaker
     {
         $channel = false;
         $websitePublicationFound = false;
-        $websitePublicationFoundForChannel = true;
+        $websitePublicationFoundForPreferredChannel = false;
 
         if ($preferredChannel === null) {
             $preferredChannel = $content->getPrimaryChannel();
@@ -32,7 +32,7 @@ final class ResolverLinkMaker implements LinkMaker
                if ($publication->getTime()->getStartDate() < new \DateTime('now')) {
                    $websitePublicationFound = true;
                    if ($publication->getChannel() === $preferredChannel) {
-                       $websitePublicationFoundForChannel = true;
+                       $websitePublicationFoundForPreferredChannel = true;
                    }
                }
            }
@@ -42,7 +42,7 @@ final class ResolverLinkMaker implements LinkMaker
             return '';
         }
 
-        if (!$websitePublicationFoundForChannel) {
+        if (!$websitePublicationFoundForPreferredChannel) {
             $preferredChannel = $content->getPrimaryChannel();
         }
 
