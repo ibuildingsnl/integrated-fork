@@ -11,8 +11,6 @@ use Integrated\Bundle\BrandBundle\Form\Type\BrandType;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
-use Integrated\Bundle\UserBundle\Model\UserInterface;
-use Integrated\Common\Security\Resolver\PermissionResolver;
 use Integrated\Common\Services\Flusher;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -142,23 +140,5 @@ class BrandController extends AbstractController
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
-    }
-
-    public function getAllowedBrands(UserInterface $user): array
-    {
-        $brands = $this->brands->all();
-        $allowedBrands = [];
-
-        foreach ($brands as $brand) {
-            foreach ($brand->getChannelLinks() as $channelLink) {
-                $permissions = PermissionResolver::getPermissions($user, $channelLink->channel->getPermissions());
-                if ($permissions['read'] === true || $permissions['write'] === true) {
-                    $allowedBrands[] = $brand;
-                    break;
-                }
-            }
-        }
-
-        return $allowedBrands;
     }
 }
