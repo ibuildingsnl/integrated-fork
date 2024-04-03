@@ -2,7 +2,6 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
-use Doctrine\ODM\MongoDB\Iterator\Iterator;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
 interface PublicationRepositoryInterface
