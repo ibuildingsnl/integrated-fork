@@ -17,14 +17,15 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
         return $this->findBy(['content' => $content]);
     }
 
-    public function forDateRange(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate): Iterator
+    public function forDateRange(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate): array
     {
         return $this->createQueryBuilder()
                     ->setRewindable(false)
                     ->field('time.startDate')->gte($startDate)
                     ->field('time.startDate')->lte($endDate)
                     ->getQuery()
-                    ->getIterator();
+                    ->getIterator()
+                    ->toArray();
     }
 
     public function forContentByChannel(Content $content): array
