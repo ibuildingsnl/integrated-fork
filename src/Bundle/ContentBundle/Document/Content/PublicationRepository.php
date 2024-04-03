@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
+use Doctrine\ODM\MongoDB\Iterator\Iterator;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
@@ -16,19 +17,14 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
         return $this->findBy(['content' => $content]);
     }
 
-    public function forDateRange(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate): array
+    public function forDateRange(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate): Iterator
     {
-        $startMongoDate = new \MongoDB\BSON\UTCDateTime($startDate->getTimestamp() * 1000);
-        $endMongoDate = new \MongoDB\BSON\UTCDateTime($endDate->getTimestamp() * 1000);
-
-        $query = [
-            'time.startDate' => [
-                '$gte' => $startMongoDate,
-                '$lte' => $endMongoDate,
-            ],
-        ];
-
-        return $this->findBy($query);
+        return $this->createQueryBuilder()
+                    ->setRewindable(false)
+                    ->field('time.startDate')->gte($startDate)
+                    ->field('time.startDate')->lte($endDate)
+                    ->getQuery()
+                    ->getIterator();
     }
 
     public function forContentByChannel(Content $content): array

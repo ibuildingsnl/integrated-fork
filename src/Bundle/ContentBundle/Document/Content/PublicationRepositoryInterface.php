@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
+use Doctrine\ODM\MongoDB\Iterator\Iterator;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
 interface PublicationRepositoryInterface
@@ -13,7 +14,7 @@ interface PublicationRepositoryInterface
     public function forContentByChannel(Content $content): array;
 
     /** @return Publication[] */
-    public function forDateRange(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate): array;
+    public function forDateRange(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate): Iterator;
 
     /** @return Publication[] */
     public function forContentOnChannel(Content $content, ChannelInterface $channel): array;
