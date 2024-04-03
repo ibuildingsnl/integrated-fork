@@ -7,5 +7,5 @@ use Integrated\Common\Content\Channel\ChannelInterface;
 
 interface LinkMaker
 {
-    public function urlFor(Content $content, ChannelInterface $preferredChannel): string;
+    public function urlFor(Content $content, ?ChannelInterface $preferredChannel): string;
 }

@@ -15,9 +15,13 @@ final class ResolverLinkMaker implements LinkMaker
     ) {
     }
 
-    public function urlFor(Content $content, ChannelInterface $preferredChannel): string
+    public function urlFor(Content $content, ?ChannelInterface $preferredChannel): string
     {
         $channel = false;
+
+        if ($preferredChannel === null) {
+            $channel = $content->getPrimaryChannel();
+        }
 
         foreach ($this->brands->all() as $brand) {
             if ($brand->hasChannel($preferredChannel)) {
