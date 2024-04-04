@@ -1,4 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
+
 {% block title %}
     {% if brand|default %}
         {% trans %}Edit {% endtrans %} {{ brand.name }}
@@ -6,6 +7,7 @@
         {% trans %}New brand{% endtrans %}
     {% endif %}
 {% endblock title %}
+
 {% block style %}
     {{ parent() }}
 

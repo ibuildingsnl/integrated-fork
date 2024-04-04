@@ -25,6 +25,7 @@ class BrandChannelChoiceType extends AbstractType
                 'class' => 'brand-choice',
             ],
         ]);
+
         $builder->add('channels', ChoiceType::class, [
             'label' => false,
             'choices' => $options['links'],
@@ -35,6 +36,8 @@ class BrandChannelChoiceType extends AbstractType
                     'class' => 'brand-channel-choice',
                     'data-can-be-primary' => $link->type->canBePrimary ? 'yes' : 'no',
                     'data-channel-type' => $link->getName(),
+                    'data-channel-type-icon' => $link->type->getIcon(),
+                    'data-channel-default' => $link->default ? true : false,
                 ],
                 \is_array($options['choice_attr']) ? $options['choice_attr'] : $options['choice_attr']($link->channel),
             ),

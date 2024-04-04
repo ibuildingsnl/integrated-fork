@@ -16,6 +16,7 @@ use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
+use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
@@ -85,6 +86,7 @@ class ContentController extends AbstractController
         private readonly EventDispatcherInterface $dispatcher,
         private readonly DocumentManager $documentManager,
         private readonly CalendarOptions $calendarOptions,
+        private readonly PublicationRepositoryInterface $publicationRepository,
     ) {
     }
 
@@ -375,6 +377,8 @@ class ContentController extends AbstractController
             throw new AccessDeniedException();
         }
 
+        $publications = $this->publicationRepository->forContent($content);
+
         $locking = $this->getLock($content, 15);
         $locking['locked'] = (bool) $locking['lock'];
 
@@ -533,6 +537,7 @@ class ContentController extends AbstractController
             'formRelations' => $this->getFormRelations($form),
             'content' => $content,
             'locking' => $locking,
+            'publications' => $publications,
             'showContentHistory' => true,
             'references' => json_encode($this->getReferences($content)),
         ]);

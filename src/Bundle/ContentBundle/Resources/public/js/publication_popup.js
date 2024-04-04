@@ -1,15 +1,12 @@
 const formActions = document.querySelector('.form-actions-extra');
 
-const popup = document.createElement('div');
-popup.className = 'publishActions ';
-popup.innerText = 'Hello World';
-document.body.appendChild(popup);
+const popup = document.querySelector('.publishActions')
 
-const publishActions = Array.from(document.querySelectorAll('.publication-settings[data-can-be-set-globally="yes"]'))
-    .map((e) => e.dataset.channelType)
-    .filter((v, i, a) => a.indexOf(v) === i);
+const publishActions = Array.from(document.querySelectorAll('.global-publication-settings'))
+.map((e) => e.dataset.channelType)
+.filter((v, i, a) => a.indexOf(v) === i);
 
-if (publishActions.length > 0) {
+if (publishActions.length > 0 && document.body.classList.contains('integrated_content_content_edit')) {
     // add top-bar menu item
     const publish = document.createElement('div');
     publish.className = 'publish';
@@ -32,65 +29,36 @@ if (publishActions.length > 0) {
         menu.appendChild(item);
         const a = document.createElement('a');
         a.className = 'popup-link';
+        a.dataset.channelType = action;
         a.innerText = 'Publish to ' + action;
         a.addEventListener('click', function () {
-            // open popup
-            const settings = document.querySelector('.publication-settings[data-channel-type="'+action+'"]').cloneNode(true);
-            popup.innerHTML = '';
-            const settingsContainer = document.createElement('div');
-            settingsContainer.classList = 'close-outside publishable display';
-            settingsContainer.appendChild(settings);
-            popup.appendChild(settingsContainer);
-            popup.querySelectorAll('[id]').forEach(function (e) {
-                e.id += '_popup'; // prevent duplicate ids
-            });
-            popup.querySelector('label').className = 'hidden';
-            const channelContainer = document.createElement('div');
-            channelContainer.classList = 'form-item w-full flex flex-wrap channels integrated_channel_choice';
 
-            // Create label element
-            const label = document.createElement('label');
-            label.className = 'control-label w-full md:w-3/12 xl:w-2/12 3xl:w-1/12';
-            label.textContent = 'Kanalen';
+            const channelTypeContainer = popup.querySelector(`.global-publication-settings[data-channel-type="${action}"]`).parentNode;
+            const channelTypeForm = channelTypeContainer.querySelector('.global-publication-settings');
+            const channels = channelTypeContainer.querySelector('.integrated_channel_choice select.select2');
 
-            // Create div element
-            const widgetDiv = document.createElement('div');
-            widgetDiv.className = 'w-full md:w-9/12 xl:w-10/12 3xl:w-11/12 widget';
+            channelTypeContainer.classList.add('show');
 
-            // Create select element
-            const channels = document.createElement('select');
-            channels.className = 'select2';
-            channels.multiple = true;
-            channels.dataset.applyChannels = true;
+            apply = channelTypeContainer.querySelector('a.apply');
 
-            const publishHeader = document.createElement('h3')
-            publishHeader.innerText = 'Publish to ' + action
-
-            // Append elements
-            channelContainer.appendChild(label);
-            channelContainer.appendChild(widgetDiv);
-            widgetDiv.appendChild(channels);
-            settingsContainer.prepend(channelContainer);
-            settingsContainer.prepend(publishHeader);
-
-            const buttonContainer = document.createElement('div');
-            buttonContainer.className = 'flex justify-between mt-8';
-
-            //Add Apply button
-            const apply = document.createElement('a');
-            apply.href = '#';
-            apply.className = 'apply btn btn-green';
-            apply.innerText = 'Apply';
             apply.addEventListener('click', function (ev) {
+                ev.preventDefault();
                 // Apply choices
                 const pubInputSelector = 'input,select,textarea';
                 const data = {};
-                settings.querySelectorAll(pubInputSelector).forEach(function (input, i) {
+                channelTypeForm.querySelectorAll(pubInputSelector).forEach(function (input, i) {
                     data[i] = input.value;
                 });
-                document.querySelectorAll(
-                    '.publication-settings[data-channel-type="' + action + '"]'
-                ).forEach(function (container) {
+
+                const sourceImageContainer = channelTypeForm.querySelector('.mediagallery_selector .selected_images');
+
+                if (sourceImageContainer) {
+                    const imageInfos = Array.from(sourceImageContainer.children).map(li => ({
+                        src: li.querySelector('img').src,
+                        id: li.id
+                    }));
+                }
+                document.querySelectorAll('.publication-settings[data-channel-type="' + action + '"]').forEach(function (container) {
                     if (!popup.querySelector('[data-apply-channels] option:checked[value="'+container.dataset.publicationChannel+'"]')) {
                         return;
                     }
@@ -98,6 +66,29 @@ if (publishActions.length > 0) {
                         input.value = data[i];
                     });
 
+                    if (sourceImageContainer) {
+                        const targetImageContainer = container.querySelector('.mediagallery_selector .selected_images');
+                        const targetHiddenInput = container.querySelector('.mediagallery_selector .mediagallery_selector_input');
+
+                        targetImageContainer.innerHTML = '';
+
+                        targetHiddenInput.value = '';
+
+                        imageInfos.forEach(info => {
+                            const li = document.createElement('li');
+                            li.id = info.id;
+                            li.className = 'media-item';
+                            li.innerHTML = `<div class="media-preview"><div class="thumbnail relative"><div class="centered"><img src="${info.src}"></div><a class="remove_link remove"><i class="iconoir-xmark"></i></a></div></div>`;
+                            targetImageContainer.appendChild(li);
+
+                            if (targetHiddenInput.value) {
+                                targetHiddenInput.value += ',' + info.id;
+                            } else {
+                                targetHiddenInput.value = info.id;
+                            }
+                        });
+                    }
+                    //Check the selected Channel under Brands
                     const input = document.querySelector('input[data-channel-selector="'+container.dataset.publicationChannel+'"]');
                     input.checked = true;
                     var event = new Event('change', { 'bubbles': true, 'cancelable': true });
@@ -115,42 +106,50 @@ if (publishActions.length > 0) {
 
                 });
                 popup.classList.remove('show');
-                ev.preventDefault();
+                channelTypeContainer.classList.remove('show');
+
+                while (channels.options.length > 0) {
+                    channels.remove(0);
+                }
+
+                var applyPublishSettingsEvent = new CustomEvent('applyPublishSettingsEvent');
+
+                window.dispatchEvent(applyPublishSettingsEvent);
             });
 
             //Add cancel Button
-            const cancel = document.createElement('a');
-            cancel.href = '#';
-            cancel.className = 'cancel btn btn-white';
-            cancel.innerText = 'Cancel';
+            const cancel = channelTypeContainer.querySelector('a.cancel');
+
             cancel.addEventListener('click', function (ev) {
                 ev.preventDefault();
                 popup.classList.remove('show');
-            });
+                channelTypeContainer.classList.remove('show');
 
-            buttonContainer.appendChild(apply);
-            buttonContainer.appendChild(cancel);
-            settingsContainer.appendChild(buttonContainer);
+                while (channels.options.length > 0) {
+                    channels.remove(0);
+                }
+            });
 
             triggerSelect2();
 
             document.querySelectorAll('input[data-channel-type="'+action+'"]').forEach(function (input) {
-                const brand = input.closest('.brand-container');
-                let selected = input.checked;
-                if (brand && selected) {
-                    selected = brand.querySelector('input.brand-choice').checked;
-                }
-                const option = document.createElement('option');
-                option.value = input.value;
-                option.text = input.dataset.channelName;
-                option.selected = selected;
-                channels.append(option);
+                    let channel = input.getAttribute('data-channel-selector');
+                    let pubStatus = document.querySelector('[data-publication-channel="'+channel+'"]').getAttribute('data-publication-status');
+
+                    if (pubStatus === 'success') return;
+
+                    const brand = input.closest('.brand-container');
+                    let selected = input.checked;
+                    if (brand && selected) {
+                        selected = brand.querySelector('input.brand-choice').checked;
+                    }
+                    const option = document.createElement('option');
+                    option.value = input.value;
+                    option.text = input.dataset.channelName;
+                    option.selected = selected;
+                    channels.append(option);
             });
             popup.classList.add('show');
-
-            var openPublishSettingsEvent = new CustomEvent('openPublishSettingsEvent', settings);
-
-            window.dispatchEvent(openPublishSettingsEvent);
 
         });
         item.appendChild(a);
@@ -158,8 +157,22 @@ if (publishActions.length > 0) {
     });
     // close on outside click
     document.addEventListener('click', function (e) {
-        if (!e.target.closest('.publishable') && !e.target.closest('.popup-link') && !e.target.closest('.select2-selection__choice')) {
+        if (!e.target.closest('.publishable') &&
+            !e.target.closest('.popup-link') &&
+            !e.target.closest('.select2-selection__choice') &&
+            !e.target.closest('.select2-results__option')) {
             popup.classList.remove('show');
+
+            const channelTypeContainer = document.querySelector('.publication-settings-global .publishable.show');
+            if (channelTypeContainer) {
+                const channels = channelTypeContainer.querySelector('.integrated_channel_choice select');
+
+                while (channels.options.length > 0) {
+                    channels.remove(0);
+                }
+
+                channelTypeContainer.classList.remove('show');
+            }
         }
     });
 }

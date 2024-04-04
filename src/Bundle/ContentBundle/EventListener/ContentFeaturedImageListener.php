@@ -7,18 +7,13 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use Integrated\Common\Content\Form\Event\ValidationEvent;
 use Integrated\Common\Content\Form\Events;
-use Integrated\Common\Services\MainFlusher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ContentFeaturedImageListener implements EventSubscriberInterface
 {
-    private $documentManager;
-    private $flusher;
-
-    public function __construct(DocumentManager $documentManager, MainFlusher $flusher)
-    {
-        $this->documentManager = $documentManager;
-        $this->flusher = $flusher;
+    public function __construct(
+        private readonly DocumentManager $documentManager
+    ) {
     }
 
     /**
@@ -52,7 +47,7 @@ class ContentFeaturedImageListener implements EventSubscriberInterface
                         ->addReference($image)
                 );
 
-                $this->flusher->flush();
+                $this->documentManager->flush();
             }
         }
 
@@ -67,7 +62,7 @@ class ContentFeaturedImageListener implements EventSubscriberInterface
                         ->addReference($image)
                 );
 
-                $this->flusher->flush();
+                $this->documentManager->flush();
             }
         }
     }

@@ -16,11 +16,14 @@ class LocaleSubscriber implements EventSubscriberInterface
     public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
-        $channel = $this->manager->findByDomain($event->getRequest()->getHost());
 
-        if ($channel) {
-            if ($channel->getLanguage() !== '') {
-                $request->setLocale($channel->getLanguage());
+        if (!str_contains($request->getPathInfo(), '/admin/')) {
+            $channel = $this->manager->findByDomain($event->getRequest()->getHost());
+
+            if ($channel) {
+                if ($channel->getLanguage() !== '') {
+                    $request->setLocale($channel->getLanguage());
+                }
             }
         }
     }
