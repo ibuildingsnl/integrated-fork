@@ -1,0 +1,10 @@
+// TODO: Fix import path
+//@import '../_fonts';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    font-family: 'Poppins', ui-sans-serif, sans-serif;
+}

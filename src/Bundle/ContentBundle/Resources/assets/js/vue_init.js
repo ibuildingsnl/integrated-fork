@@ -1,5 +1,6 @@
 import {createApp} from 'vue';
-import ArticleSearchComponent from "./components/ArticleSearchComponent.vue";
+import ArticleSearchComponent from "./vue/article-search/ArticleSearchComponent.vue";
+import clickOutside from "./vue/clickOutside";
 
 const app = createApp({
     components: {
@@ -7,5 +8,7 @@ const app = createApp({
     },
     delimiters: ['${', '}$'],
 });
+
+app.directive('click-outside', clickOutside);
 
 app.mount('#app');

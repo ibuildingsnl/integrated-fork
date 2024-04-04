@@ -13,6 +13,7 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
     ])
     .addEntry('edit', [
         './node_modules/jquery-datetimepicker/jquery.datetimepicker.css',
+        './src/Bundle/ContentBundle/Resources/assets/js/article_search.js',
         './src/Bundle/ContentBundle/Resources/assets/js/edit.js',
         './src/Bundle/ContentBundle/Resources/assets/js/handlebars.helpers.js',
         './src/Bundle/UserBundle/Resources/assets/js/visible_user_form.js',
@@ -58,8 +59,10 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
         './src/Bundle/WorkflowBundle/Resources/assets/js/defaultSelection.js',
         './src/Bundle/WorkflowBundle/Resources/assets/js/select2_init.js',
     ])
-    .addEntry('vue', [
-        './src/Bundle/ContentBundle/Resources/assets/js/vue_init.js'
+    .addEntry('article-search', [
+        './src/Bundle/ContentBundle/Resources/assets/js/vue_init.js',
+        './src/Bundle/ContentBundle/Resources/assets/js/article_search.js',
+        './src/Bundle/ContentBundle/Resources/assets/sass/components/vue/vue.scss'
     ])
     .copyFiles({
         from: './node_modules/tinymce/skins',

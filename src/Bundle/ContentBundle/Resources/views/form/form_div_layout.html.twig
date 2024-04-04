@@ -228,7 +228,7 @@
         {% endif %}
     </div>
 
-    <component is="script" type="text/javascript">
+    <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function(event) {
 
             $('.change-name-author').each(function() {
@@ -304,7 +304,7 @@
             {% endautoescape %}
             {% endif %}
         });
-    </component>
+    </script>
 {% endblock %}
 
 
@@ -503,7 +503,7 @@
         {{ form_widget(form) }}
     </div>
 
-    <component is="script" type="text/javascript">
+    <script type="text/javascript">
         const pubSettings = {
             'applyTo': '{% trans %}Apply to{% endtrans %}',
             'applyToAll': '{% trans %}Apply to all{% endtrans %}',
@@ -512,7 +512,7 @@
             'searchIn': '{% trans %}Search in{% endtrans %}',
             'brands': '{% trans %}Brands{% endtrans %}',
         }
-    </component>
+    </script>
 
     {% integrated_javascripts mode='append'
         'bundles/integratedcontent/js/publication_settings.js' %}

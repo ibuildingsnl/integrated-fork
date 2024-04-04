@@ -285,7 +285,7 @@
 
     {% autoescape 'js' %}
         {% verbatim %}
-            <component is="script" id="add-template" type="text/xhandlebars-template">
+            <script id="add-template" type="text/xhandlebars-template">
                 {{#if relations}}
                 {{#equals relations.length 1}}
                     <button data-title="Add {{relations.0.name}}" class="add-relation" data-href="{{relations.0.href}}" data-modal="add-modal">

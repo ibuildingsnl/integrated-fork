@@ -1,0 +1,22 @@
+<html lang="en">
+<head>
+    <title>Article Search</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+    </style>
+    <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/article-search.css') }}"/>
+</head>
+<body class="text-sm">
+<div id="app" data-x-selection="">
+    <article-search-component/>
+</div>
+<script src="{{ asset('bundles/integratedintegrated/article-search.js') }}"></script>
+<script>
+    window.addEventListener('message', (event) => {
+        let data = event.data;
+
+        document.getElementById("app").setAttribute('data-x-selection', data.selectionText);
+    });
+</script>
+</body>
+</html>

@@ -915,26 +915,6 @@ class ContentController extends AbstractController
         ]);
     }
 
-    public function searchContentByChannel(Request $request, string $channelId)
-    {
-        $keyword = $request->query->get('keyword');
-        $query = $this->getSolarium()->createSelect();
-        $query->createFilterQuery('channels')
-            ->addTag('channels')
-            ->setQuery("facet_channels: {$channelId} AND type_name:(article news) AND title:{$keyword}");
-
-        // Ensure the item has a non-empty 'url_vleesmagazine' field
-
-        $result = $this->getSolarium()->select($query);
-        $contentItems = $result->getDocuments();
-
-        if($contentItems) {
-            return new Response(json_encode($contentItems), headers: ['Content-Type' => 'application/json']);
-        } else {
-            return new Response(json_encode([]));
-        }
-    }
-
     /**
      * @param null $filter
      *

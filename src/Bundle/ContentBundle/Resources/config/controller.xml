@@ -128,6 +128,14 @@
             </call>
         </service>
 
+        <service id="Integrated\Bundle\ContentBundle\Controller\ArticleSearchController">
+            <tag name="container.service_subscriber" />
+
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+        </service>
+
         <service id="Integrated\Bundle\ContentBundle\Controller\SearchSelectionController">
             <argument type="service" id="request_stack" />
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
