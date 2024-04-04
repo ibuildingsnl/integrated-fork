@@ -6,6 +6,7 @@ use Integrated\Bundle\ChannelBundle\Model\ConfigInterface;
 use Integrated\Bundle\ChannelBundle\Model\ConnectorInterface;
 use Integrated\Bundle\ChannelBundle\Model\CouldNotPublish;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface;
 use Integrated\Common\Channel\Exporter\ExporterResponse;
@@ -22,7 +23,7 @@ final class Exporter implements ExporterInterface
     ) {
     }
 
-    public function export($content, $state, ChannelInterface $channel, array $settings = []): ?ExporterResponse
+    public function export(object $content, string $state, ChannelInterface $channel, array $settings = []): ?ExporterResponse
     {
         if (!$content instanceof Content || $state != self::STATE_ADD) {
             return null;
@@ -36,7 +37,7 @@ final class Exporter implements ExporterInterface
         if ($content->hasConnector($this->config->getId())) {
             foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
                 $publication->setResponse('Content already published on this connector');
-                $publication->setStatus('failed');
+                $publication->setStatus(Publication::STATUS_FAILED);
             }
 
             return null;
@@ -44,7 +45,7 @@ final class Exporter implements ExporterInterface
 
         $responseMessage = null;
         $externalId = null;
-        $status = 'failed';
+        $status = Publication::STATUS_FAILED;
 
         try {
             $externalId = $this->connector->publish($content, $channel, $this->config->getOptions(), $settings);
@@ -64,7 +65,7 @@ final class Exporter implements ExporterInterface
         if ($externalId !== null) {
             $response->setExternalId($externalId);
             $responseMessage = $externalId;
-            $status = 'success';
+            $status = Publication::STATUS_SUCCESS;
         }
         foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
             $publication->setResponse($responseMessage);

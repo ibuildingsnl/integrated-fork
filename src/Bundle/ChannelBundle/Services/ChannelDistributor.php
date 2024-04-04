@@ -24,8 +24,7 @@ class ChannelDistributor
     public function distribute(Content $content): void
     {
         foreach ($content->getChannels() as $channel) {
-            $publications = $this->publications->availablePublicationsForChannelByContent($content, $channel);
-            foreach ($publications as $publication) {
+            foreach ($this->publications->getAvailable($content, $channel) as $publication) {
                 $this->distributeTo($channel, $content, $publication);
             }
         }

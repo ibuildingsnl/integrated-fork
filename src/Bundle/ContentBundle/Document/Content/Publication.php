@@ -7,6 +7,9 @@ use Integrated\Common\Content\PublishTimeInterface;
 
 class Publication
 {
+    public const STATUS_SUCCESS = 'success';
+    public const STATUS_FAILED = 'failed';
+
     private string $id;
 
     private string $response = '';
@@ -56,12 +59,12 @@ class Publication
         $this->response = $response;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): string
     {
         return $this->status;
     }
 
-    public function setStatus($status): void
+    public function setStatus(string $status): void
     {
         $this->status = $status;
     }

@@ -63,7 +63,7 @@ class CalendarPublicationProvider implements EventSubscriberInterface
                             $eligibleForDisplay = true;
                         }
                         $currentBrand = $brand;
-                        $brandProfile = $brand->profile;
+                        $brandProfile = $brand->getProfile();
                     }
                 }
             }
