@@ -763,7 +763,9 @@ class BaseConverter
 
         foreach ($importDefinition->getChannels() as $channel) {
             $parent = $documentManager->getRepository(Content::class)
-                                      ->createQueryBuilder()->select()
+                                      ->createQueryBuilder()
+                                      ->select()
+                                      ->field('contentType')->equals($importDefinition->getContentType())
                                       ->field('title')->equals($newData['title'])
                                       ->field('channels.$id')->equals($channel->getId())
                                       ->limit(1)->getQuery()
