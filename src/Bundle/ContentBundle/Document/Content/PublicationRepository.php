@@ -16,15 +16,14 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
         return $this->findBy(['content' => $content]);
     }
 
-    public function forDateRange(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate): array
+    public function forDateRange(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate): iterable
     {
         return $this->createQueryBuilder()
-                    ->setRewindable(false)
-                    ->field('time.startDate')->gte($startDate)
-                    ->field('time.startDate')->lte($endDate)
-                    ->getQuery()
-                    ->getIterator()
-                    ->toArray();
+            ->setRewindable(false)
+            ->field('time.startDate')->gte($startDate)
+            ->field('time.startDate')->lte($endDate)
+            ->getQuery()
+            ->getIterator();
     }
 
     public function forContentByChannel(Content $content): array
@@ -44,29 +43,15 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
         return $this->findBy(['content' => $content, 'channel' => $channel]);
     }
 
-    public function availablePublicationsForChannelByContent(Content $content, ChannelInterface $channel): array
+    public function getAvailable(Content $content, ChannelInterface $channel): iterable
     {
-        if (!$content->getId()) {
-            return [];
-        }
-
-        $failedPublications = $this->findBy(
-            [
-                'content' => $content,
-                'channel' => $channel,
-                'status' => 'failed',
-            ]
-        );
-
-        $nullStatusPublications = $this->findBy(
-            [
-                'content' => $content,
-                'channel' => $channel,
-                'status' => '',
-            ]
-        );
-
-        return array_merge($failedPublications, $nullStatusPublications);
+        return $this->createQueryBuilder()
+            ->setRewindable(false)
+            ->field('content')->equals($content)
+            ->field('channel')->equals($channel)
+            ->field('status')->in([Publication::STATUS_FAILED, ''])
+            ->getQuery()
+            ->getIterator();
     }
 
     public function add(Publication $publication): void

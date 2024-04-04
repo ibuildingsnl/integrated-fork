@@ -12,9 +12,7 @@
 namespace Integrated\Common\Channel\Exporter;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Connector;
-use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\Config\ResolverInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface as ConnectorExporterInterface;
@@ -29,27 +27,20 @@ use Integrated\Common\Content\PublishableInterface;
 class Exporter implements ExporterInterface
 {
     /**
-     * @var ConnectorExporterInterface[][]
+     * @var array<string, ConnectorExporterInterface[]>
      */
-    private $cache = [];
+    private array $cache = [];
 
     public function __construct(
         private readonly RegistryInterface $registry,
         private readonly ResolverInterface $resolver,
-        private readonly DocumentManager $dm,
-        private readonly PublicationRepositoryInterface $publications
+        private readonly DocumentManager $dm
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Exception
-     */
     public function export($content, $state, ChannelInterface $channel, array $settings = [])
     {
         $publicationDate = null;
-        // TODO: Check if website publication is published for non website publications
         if ($content instanceof PublishableInterface) {
             $publicationDate = $content->getPublishTime()->getStartDate();
             if (!$content->isPublished()) {
@@ -59,41 +50,15 @@ class Exporter implements ExporterInterface
             }
         }
 
-        $publications = false;
-        if ($content instanceof Content) {
-            $publications = $this->publications->availablePublicationsForChannelByContent($content, $channel);
-            foreach ($publications as $publication) {
-                $settings = $publication->getSettings();
-                $time = $publication->getTime();
-
-                $startDate = $time->getStartDate();
-                $now = new \DateTime('now', new \DateTimeZone('UTC')); // Ensure time zone consistency
-
-                if ($startDate > $now) {
-                    $state = ConnectorExporterInterface::STATE_DELETE;
-                }
-
-                foreach ($this->getExporters($channel, $publicationDate) as $exporter) {
-                    $response = $exporter->export($content, $state, $channel, $settings);
-
-                    if ($response instanceof ExporterResponse) {
-                        $this->save($content, $response);
-                    }
-
-                    $this->dm->flush();
-                }
-            }
-        }
-        // Backwards compatibility
-        if (!$publications) {
-            foreach ($this->getExporters($channel, $publicationDate) as $exporter) {
-                $response = $exporter->export($content, $state, $channel, $settings);
+        foreach ($this->getExporters($channel, $publicationDate) as $exporter) {
+            try {
+                $response = $exporter->export($content, $state, $channel);
 
                 if ($response instanceof ExporterResponse) {
                     $this->save($content, $response);
                 }
-
-                $this->dm->flush();
+            } catch (\Exception $e) {
+                // @todo probably should log this somewhere
             }
         }
     }
@@ -109,15 +74,19 @@ class Exporter implements ExporterInterface
             $exporters = [];
 
             foreach ($this->resolver->getConfigs($channel) as $config) {
-                $publicationStartDate = $config->getPublicationStartDate();
-                if ($publicationStartDate && $publicationDate && $publicationStartDate > $publicationDate) {
-                    continue;
-                }
+                try {
+                    $publicationStartDate = $config->getPublicationStartDate();
+                    if ($publicationStartDate && $publicationDate && $publicationStartDate > $publicationDate) {
+                        continue;
+                    }
 
-                $adaptor = $this->registry->getAdapter($config->getAdapter());
+                    $adaptor = $this->registry->getAdapter($config->getAdapter());
 
-                if ($adaptor instanceof ExportableInterface) {
-                    $exporters[] = $adaptor->getExporter($config);
+                    if ($adaptor instanceof ExportableInterface) {
+                        $exporters[] = $adaptor->getExporter($config);
+                    }
+                } catch (\Exception $e) {
+                    // @todo probably should log this somewhere
                 }
             }
 
@@ -127,10 +96,7 @@ class Exporter implements ExporterInterface
         return $this->cache[$channel->getId()];
     }
 
-    /**
-     * @param object $content
-     */
-    protected function save($content, ExporterResponse $response)
+    protected function save($content, ExporterResponse $response): void
     {
         if (!$content instanceof ContentInterface) {
             return;
@@ -142,8 +108,8 @@ class Exporter implements ExporterInterface
 
         if ($content->hasConnector($response->getConfigId())) {
             $content->getConnector($response->getConfigId())
-                    ->setConfigAdapter($response->getConfigAdapter())
-                    ->setExternalId($response->getExternalId());
+                ->setConfigAdapter($response->getConfigAdapter())
+                ->setExternalId($response->getExternalId());
         } else {
             $content->addConnector(
                 (new Connector())

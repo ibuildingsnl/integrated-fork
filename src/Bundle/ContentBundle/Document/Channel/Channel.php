@@ -41,7 +41,7 @@ class Channel implements ChannelInterface
     #[Assert\NotBlank]
     protected $name;
 
-    protected ?ChannelType $type;
+    protected ?ChannelType $type = null;
 
     /**
      * @var array

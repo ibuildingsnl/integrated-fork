@@ -13,7 +13,6 @@ namespace Integrated\Common\Channel\Tests\Exporter;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
-use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\AdapterInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
@@ -52,22 +51,17 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
      * @var DocumentManager|MockObject
      */
     private $dm;
-    /**
-     * @var PublicationRepositoryInterface|MockObject
-     */
-    private $publications;
 
     protected function setUp(): void
     {
-        $this->registry = $this->createMock('Integrated\\Common\\Channel\\Connector\\Adapter\\RegistryInterface');
-        $this->resolver = $this->createMock('Integrated\\Common\\Channel\\Connector\\Config\\ResolverInterface');
-        $this->dm = $this->createMock('Doctrine\\ODM\\MongoDB\\DocumentManager');
-        $this->publications = $this->createMock('Integrated\\Bundle\\ContentBundle\\Document\\Content\\PublicationRepositoryInterface');
+        $this->registry = $this->createMock(RegistryInterface::class);
+        $this->resolver = $this->createMock(ResolverInterface::class);
+        $this->dm = $this->createMock(DocumentManager::class);
     }
 
     public function testInterface()
     {
-        $this->assertInstanceOf('Integrated\\Common\\Channel\\Exporter\\ExporterInterface', $this->getInstance());
+        $this->assertInstanceOf(ExporterInterface::class, $this->getInstance());
     }
 
     public function testExport()
@@ -78,7 +72,8 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
         $exporter1 = $this->getExporter();
         $exporter1->expects($this->exactly(2))
             ->method('export')
-            ->with($this->identicalTo($content), $this->equalTo(self::TEST_STATE), $this->identicalTo($channel));
+            ->with($this->identicalTo($content), $this->equalTo(self::TEST_STATE), $this->identicalTo($channel))
+            ->willThrowException(new \Exception('i-will-be-caught-and-not-cause-any-troubles'));
 
         $exporter3 = $this->getExporter();
         $exporter3->expects($this->exactly(2))
@@ -103,11 +98,12 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
 
         $this->registry->expects($this->exactly(3))
             ->method('getAdapter')
-            ->willReturnMap([
-                ['adapter1', $this->getAdapter($config1, $exporter1)],
-                ['adapter2', $this->getAdapter()],
-                ['adapter3', $this->getAdapter($config3, $exporter3)],
-            ]);
+            ->withConsecutive([$this->equalTo('adapter1')], [$this->equalTo('adapter2')], [$this->equalTo('adapter3')])
+            ->willReturnOnConsecutiveCalls(
+                $this->getAdapter($config1, $exporter1),
+                $this->getAdapter(),
+                $this->getAdapter($config3, $exporter3)
+            );
 
         $exporter = $this->getInstance();
 
@@ -171,11 +167,12 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
 
         $this->registry->expects($this->exactly(3))
             ->method('getAdapter')
-            ->willReturnMap([
-                ['adapter1', $this->getAdapter()],
-                ['adapter2', $this->getAdapter()],
-                ['adapter3', $this->getAdapter()],
-            ]);
+            ->withConsecutive(
+                [$this->equalTo('adapter1')],
+                [$this->equalTo('adapter2')],
+                [$this->equalTo('adapter3')]
+            )
+            ->willReturnOnConsecutiveCalls($this->getAdapter(), $this->getAdapter(), $this->getAdapter());
 
         $exporter = $this->getInstance();
 
@@ -199,11 +196,12 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
 
         $this->registry->expects($this->exactly(3))
             ->method('getAdapter')
-            ->willReturnMap([
-                ['adapter1', $this->throwException(new \Exception('i-will-be-caught-and-not-cause-any-troubles'))],
-                ['adapter2', $this->getAdapter()],
-                ['adapter3', $this->getAdapter()],
-            ]);
+            ->withConsecutive([$this->equalTo('adapter1')], [$this->equalTo('adapter2')], [$this->equalTo('adapter3')])
+            ->willReturnOnConsecutiveCalls(
+                $this->throwException(new \Exception('i-will-be-caught-and-not-cause-any-troubles')),
+                $this->getAdapter(),
+                $this->getAdapter()
+            );
 
         $exporter = $this->getInstance();
 
@@ -259,12 +257,12 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
                 $this->getAdapter($config1, $exporter1)
             );
 
-        return new Exporter($this->registry, $this->resolver, $this->dm, $this->publications);
+        return new Exporter($this->registry, $this->resolver, $this->dm);
     }
 
     protected function getInstance(): Exporter
     {
-        return new Exporter($this->registry, $this->resolver, $this->dm, $this->publications);
+        return new Exporter($this->registry, $this->resolver, $this->dm);
     }
 
     /**
@@ -287,7 +285,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getExporter()
     {
-        return $this->createMock('Integrated\\Common\\Channel\\Exporter\\ExporterInterface');
+        return $this->createMock(ExporterInterface::class);
     }
 
     /**
@@ -298,7 +296,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getConfig($adaptor, OptionsInterface $options = null)
     {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\Connector\\Config\\ConfigInterface');
+        $mock = $this->createMock(ConfigInterface::class);
         $mock->expects($this->once())
             ->method('getAdapter')
             ->willReturn($adaptor);
@@ -317,7 +315,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getOptions()
     {
-        return $this->createMock('Integrated\\Common\\Channel\\Connector\\Config\\OptionsInterface');
+        return $this->createMock(OptionsInterface::class);
     }
 
     /**
@@ -329,7 +327,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     protected function getAdapter(ConfigInterface $config = null, ExporterInterface $exporter = null)
     {
         if ($config) {
-            $mock = $this->createMock('Integrated\\Common\\Channel\\Tests\Fixtures\\ExportableInterface');
+            $mock = $this->createMock(ExportableInterface::class);
             $mock->expects($this->once())
                 ->method('getExporter')
                 ->with($this->identicalTo($config))
@@ -338,6 +336,6 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
             return $mock;
         }
 
-        return $this->createMock('Integrated\\Common\\Channel\\Connector\\AdapterInterface');
+        return $this->createMock(AdapterInterface::class);
     }
 }

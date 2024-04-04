@@ -260,26 +260,27 @@ class ChannelController extends AbstractController
             ]);
         }
 
-        $allowedChannels = $this->getAllowedChannels($user);
-
         return $this->render('@IntegratedContent/partials/block.websites.html.twig', [
-            'channels' => $allowedChannels,
+            'channels' => $this->getAllowedChannels($user),
         ]);
     }
 
-    public function getAllowedChannels(UserInterface $user): array
+    /**
+     * @return Channel[]
+     */
+    private function getAllowedChannels(UserInterface $user): array
     {
         $channels = $this->documentManager->getRepository(Channel::class)->findBy([], ['name' => 1]);
-        $allowedChannels = [];
+        $allowed = [];
 
         foreach ($channels as $channel) {
             $permissions = PermissionResolver::getPermissions($user, $channel->getPermissions());
 
             if ($permissions['read'] === true || $permissions['write'] === true) {
-                $allowedChannels[] = $channel;
+                $allowed[] = $channel;
             }
         }
 
-        return $allowedChannels;
+        return $allowed;
     }
 }

@@ -18,6 +18,7 @@ class PublicationType extends AbstractType
             $data = $data->getSettings() + ['time' => $data->getTime()];
             $attr = ['data-publication-status' => $options['data']->getStatus()];
         }
+
         $builder->add('settings', $options['settings'], [
             'label' => $options['label'],
             'data' => $data,

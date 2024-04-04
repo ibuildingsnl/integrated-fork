@@ -11,40 +11,42 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class GlobalPublicationsType extends AbstractType
 {
     public function __construct(
-        private readonly PublicationSettingsProviderInterface $publicationSettings,
+        private readonly PublicationSettingsProviderInterface $provider,
     ) {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $ids = [];
+
         /** @var ChannelInterface $channel */
-        $channelTypes = [];
-
         foreach ($options['channels'] as $channel) {
-            $channelType = $channel->getType();
-
-            if (\in_array($channelType, $channelTypes, true) || !$channelType->canBeSetGlobally()) {
+            if (!($type = $channel->getType()) || !$type->canBeSetGlobally()) {
                 continue;
             }
 
-            $channelTypes[] = $channelType;
+            if (\array_key_exists($id = $type->getId(), $ids)) {
+                continue;
+            }
+
+            $ids[$id] = $id;
 
             $builder->add('global_'.$channel->getId(), GlobalPublicationType::class, [
-                'attr' => [
-                    'class' => 'global-publication-settings',
-                    'data-channel-type' => $channel->getType()?->getName() ?: 'N/A',
-                    'data-can-be-set-globally' => $channel->getType()?->canBeSetGlobally() ? 'yes' : 'no',
-                ],
-                'settings' => $this->publicationSettings->settingTypeFor($channel),
-                'label' => false,
                 'required' => false,
+                'label' => false,
+                'settings' => $this->provider->settingTypeFor($channel),
                 'data' => [],
                 'mapped' => false,
+                'attr' => [
+                    'class' => 'global-publication-settings',
+                    'data-channel-type' => $type->getName() ?: 'N/A',
+                    'data-can-be-set-globally' => 'yes',
+                ],
             ]);
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('channels', []);
         $resolver->setAllowedTypes('channels', ChannelInterface::class.'[]');
