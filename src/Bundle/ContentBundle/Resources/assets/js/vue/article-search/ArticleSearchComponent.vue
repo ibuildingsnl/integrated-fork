@@ -4,6 +4,7 @@ import debounce from "lodash.debounce";
 import Checkbox from "../form/Checkbox.vue";
 import TextInput from "../form/TextInput.vue";
 import SuggestionTextInput from "../form/SuggestionTextInput.vue";
+import Button from "../form/Button.vue";
 
 const endpoint = 'https://integrated.localhost/admin';
 
@@ -75,9 +76,9 @@ const openInNewTab = ref(false);
             <TextInput v-model="linkText" placeholder="Link text"/>
             <SuggestionTextInput :permanent="true" :suggestions="results" placeholder="URL or title"/>
             <Checkbox id="new-tab" v-model="openInNewTab" label="Open in new tab" />
-            <div>
-                <button>Cancel</button>
-                <button>Apply</button>
+            <div class="flex flex-row space-x-2">
+                <Button>Cancel</Button>
+                <Button>Apply</Button>
             </div>
         </main>
     </div>
