@@ -57,6 +57,8 @@ class PublicationExporterDecorator implements ExporterInterface
                 }
             }
 
+            $this->manager->flush();
+
             $old = false;
         }
 
