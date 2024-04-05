@@ -153,6 +153,7 @@ class Create
                                      ->field('file.identifier')->equals($storage->getIdentifier())
                                      ->limit(1)->getQuery()
                                      ->getSingleResult()) {
+            /** @var File $newFile */
             $newFile = $targetContentType->create();
 
             $relation = $documentManager->getRepository(Relation::class)->find('media_taxonomy');
@@ -164,6 +165,8 @@ class Create
             $newFile->setFile($storage);
             $newFile->setTitle($title);
             $newFile->getMetadata()->set('importDate', date('Ymd'));
+            $newFile->setChannels($importDefinition->getChannels());
+
 
             $mediaTaxonomy = $documentManager->find(ContentType::class, 'media_taxonomy');
 

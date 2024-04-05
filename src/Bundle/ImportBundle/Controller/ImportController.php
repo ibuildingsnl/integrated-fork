@@ -534,18 +534,28 @@ class ImportController extends AbstractController
                             $content = $newObject->getDescription();
                         }
 
-                        $content = WP::processContent($content, $importType, $importDefinition);
-
-                        $html = HtmlDomParser::str_get_html($content);
-
-                        $checkResult = BaseConverter::processImageElements(
-                            $html,
+                        $content = WP::processContent(
+                            $content,
+                            $importType,
+                            $importDefinition,
                             $newObject,
                             $newData,
-                            $importDefinition,
-                            $this->documentManager,
-                            $this->storageManager
+                            $this->storageManager,
+                            $this->documentManager
                         );
+
+                        $result['messages'] = array_merge($result['messages'], $content['result']['messages']);
+
+                        $html = HtmlDomParser::str_get_html($content['newHtml']);
+
+                        $checkResult = BaseConverter::processImageElements(
+                                $html,
+                                $newObject,
+                                $newData,
+                                $importDefinition,
+                                $this->documentManager,
+                                $this->storageManager
+                            );
 
                         $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
 

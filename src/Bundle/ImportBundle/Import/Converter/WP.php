@@ -11,8 +11,10 @@ use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
 
 class WP
 {
-    public static function processContent($content, $importType, $importDefinition)
+    public static function processContent($content, $importType, $importDefinition, $newObject, $newData, $storageManager, $documentManager): array
     {
+        $result = ExecuteImporter::initializeResult();
+
         $imgIds = [];
 
         $content = str_ireplace('alt=" width', 'alt="" width', $content);
@@ -27,6 +29,33 @@ class WP
             },
             $content
         );
+
+        foreach ($imgIds as $imgId) {
+            if (isset($imgId)) {
+                $href = $importDefinition->getWebsiteBaseUrl().'?attachment_id='.$imgId;
+                $checkResult = Create::createFileFromUrl(
+                    $href,
+                    $newObject,
+                    $newData,
+                    $importDefinition,
+                    $storageManager,
+                    $documentManager,
+                    false,
+                    false
+                );
+
+                $relation = new \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation();
+                $relationType = 'embedded';
+                $relationId = 'fotogallerij';
+
+                $relation->setRelationType($relationType);
+                $relation->setRelationId($relationId);
+                $relation->addReference($checkResult['file']);
+                $newObject->addRelation($relation);
+
+                $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
+            }
+        }
 
         $youtubeRexEg = '/(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)/';
         $content = preg_replace_callback($youtubeRexEg, function ($matches) {
@@ -104,7 +133,10 @@ class WP
             }
         }
 
-        return $newHtml;
+        return [
+            'result' => $result,
+            'newHtml' => $newHtml,
+        ];
     }
 
     public static function formatContentLines(string $content): string

@@ -749,6 +749,7 @@ class BaseConverter
                         ->getRepository(Content::class)
                         ->findOneBy(
                             [
+                                'contentType' => $importDefinition->getContentType(),
                                 "metadata.data.{$dbField}" => $row[$field],
                                 'metadata.data.importWebsiteBaseUrl' => $importDefinition->getWebsiteBaseUrl(),
                             ]
