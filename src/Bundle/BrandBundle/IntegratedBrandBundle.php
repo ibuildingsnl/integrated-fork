@@ -2,7 +2,7 @@
 
 namespace Integrated\Bundle\BrandBundle;
 
-use Integrated\Bundle\BrandBundle\Infrastructure\IntegratedBrandExtension;
+use Integrated\Bundle\BrandBundle\DependencyInjection\IntegratedBrandExtension;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

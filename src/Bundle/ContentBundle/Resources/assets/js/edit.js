@@ -6,9 +6,17 @@ import './used_by';
 import './unlock_article';
 import './taxonomy_category';
 
-window.onload = function() {
+function initializePage() {
     prepDateTimeFields();
-};
+    setupCharacterCounters();
+    updatePublicationsAndChannels();
+    setPublicationDateTimes();
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.classList.contains('ok-date')) return;
+        updatePublicationsAndChannels();
+    });
+}
 
 function prepDateTimeFields() {
     const dateSelections = document.querySelectorAll('.tailwind-datetime');
@@ -19,38 +27,28 @@ function prepDateTimeFields() {
         let setToNowButton = '';
         let clearButton = '';
 
-        // Create or find the date text display element
         if (!dateSelection.parentNode.querySelector('.date-text')) {
             dateText = document.createElement('div');
             dateText.className = 'date-text';
             dateText.style.display = 'block';
-            // Set default text based on parent attribute or fallback
             dateText.textContent = dateSelection.getAttribute('data-set-date-text') || 'Set Date/Time';
             dateSelection.parentNode.insertBefore(dateText, dateSelection);
         } else {
             dateText = dateSelection.parentNode.querySelector('.date-text');
         }
 
-        // Adjust styles as needed
         dateSelection.style.paddingTop = '.5rem';
 
-        // Create or find the "OK" button
         okButton = createOrFindButton(dateSelection, 'ok-date', 'OK');
-
-        // Create or find the "Set to Now" button
         setToNowButton = createOrFindButton(dateSelection, 'set-now-date', 'Set to Now');
-
-        // Create or find the "Clear" button
         clearButton = createOrFindButton(dateSelection, 'clear-date', 'Clear');
 
-        // Event handlers
         dateText.onclick = () => toggleDateSelection(true, dateSelection, dateText);
         okButton.onclick = () => toggleDateSelection(false, dateSelection, dateText);
         clearButton.onclick = () => clearDateTimeFields(dateSelection);
         setToNowButton.onclick = () => setDateTimeToNow(dateSelection);
 
-        // Initially hide the date selection UI
-        dateSelection.style.display = 'none';
+        toggleDateSelection(false, dateSelection, dateText);
 
         updateDateText(dateSelection, dateText);
     });
@@ -91,6 +89,11 @@ function toggleDateSelection(showSelection, dateSelection, dateText) {
     if (showSelection) {
         dateSelection.style.display = 'flex';
         dateText.style.display = 'none';
+        dateText.style.color = '';
+        let warning = dateText.parentNode.querySelector('.date-warning-message');
+        if (warning) {
+            warning.remove();
+        }
     } else {
         dateSelection.style.display = 'none';
         dateText.style.display = 'flex';
@@ -110,43 +113,38 @@ function updateDateText(dateSelection, dateText) {
     const dateInput = dateSelection.querySelector('input[type="date"]');
     const timeInput = dateSelection.querySelector('input[type="time"]');
 
-    // Extract the date and time values
     const dateValue = dateInput ? dateInput.value : ''; // YYYY-MM-DD
     const timeValue = timeInput ? timeInput.value : ''; // HH:MM
 
-    // Format display text
     let displayText = '';
     if (dateValue && timeValue) {
-        // Format for display: DD-MM-YYYY HH:MM
         const [year, month, day] = dateValue.split('-');
         displayText = `${day}-${month}-${year} ${timeValue}`;
     } else if (dateValue) {
-        // If only date is set
         const [year, month, day] = dateValue.split('-');
         displayText = `${day}-${month}-${year}`;
     } else if (timeValue) {
-        // If only time is set
         displayText = timeValue;
     } else {
-        // Default text if neither is set
-        displayText = dateSelection.getAttribute('data-set-date-text') || 'Set Date/Time';
+        displayText = dateSelection.getAttribute('data-set-date-text') ||
+            'Set Date/Time';
     }
 
-    // Update the text display element
     dateText.textContent = displayText;
 }
 
-window.addEventListener('openPublishSettingsEvent', function(e) {
-    prepDateTimeFields();
-});
-
-document.addEventListener('DOMContentLoaded', function () {
+function setupCharacterCounters() {
     const textareas = document.querySelectorAll('textarea[data-maxchars]');
 
     textareas.forEach(textarea => {
-        const counterSpan = document.createElement('span');
-        counterSpan.style.fontWeight = 'bold';
-        textarea.parentNode.insertBefore(counterSpan, textarea.nextSibling);
+        let counterSpan = textarea.parentNode.querySelector('.char-counter');
+
+        if (!counterSpan) {
+            counterSpan = document.createElement('span');
+            counterSpan.className = 'char-counter';
+            counterSpan.style.fontWeight = 'bold';
+            textarea.parentNode.insertBefore(counterSpan, textarea.nextSibling);
+        }
 
         const updateCounter = () => {
             const maxChars = parseInt(textarea.getAttribute('data-maxchars'), 10);
@@ -154,13 +152,363 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (currentLength > maxChars) {
                 textarea.value = textarea.value.substr(0, maxChars);
-                currentLength = maxChars; // Correct the length if trimmed
+                currentLength = maxChars;
             }
 
             counterSpan.textContent = `${currentLength} of ${maxChars} characters used`;
         };
 
-        updateCounter();
+        updateCounter(); // Initial update
         textarea.addEventListener('input', updateCounter);
     });
+}
+
+function updatePublicationsAndChannels() {
+    // Assuming there could be multiple publication settings containers, loop through each
+    document.querySelectorAll('.publication-settings[data-publication-channel]').forEach(pubSettings => {
+        let pubStatus = pubSettings.getAttribute('data-publication-status');
+        if (pubStatus === 'success') return;
+
+        let publicationSettingsContainer = document.querySelector('#integrated_content_publications');
+        let publicationListContainer = document.querySelector('.aside-item-wrapper.publications .aside-item-list-container .publication-list');
+        let publicationChannel = pubSettings.getAttribute('data-publication-channel');
+        let checkbox = document.querySelector(`#integrated_content_brands [data-channel-selector="${publicationChannel}"]`);
+
+        if (!checkbox) return;
+
+        let brandChannel = checkbox.closest('.brand-channels');
+        let brandInput = brandChannel.closest('.brand-container').querySelector('input.brand-choice');
+
+        if (!brandInput.checked) return;
+
+        let checkedChannels = Array.from(brandChannel.querySelectorAll('.brand-channels [type="checkbox"]:checked')).map(el => el.getAttribute('data-channel-selector'));
+
+        if (!checkedChannels.length > 0) return;
+
+        let dateInput, timeInput;
+        let fallbackDateInput = document.querySelector('#integrated_content_publishTime input[type="date"]');
+        let fallbackTimeInput = document.querySelector('#integrated_content_publishTime input[type="time"]');
+
+        let pubTimeInput, pubDateInput;
+        if (pubSettings) {
+            pubDateInput = pubSettings.querySelector('input[type="date"]').value ||
+                fallbackDateInput.value;
+            pubTimeInput = pubSettings.querySelector('input[type="time"]').value ||
+                fallbackTimeInput.value;
+        }
+
+        updatePublication(pubDateInput, pubTimeInput, publicationChannel, publicationListContainer)
+
+        let websiteChannel = checkedChannels.find(channel => document.querySelector(`[data-channel-selector="${channel}"][data-channel-type="Website"]`));
+
+        if (websiteChannel) {
+            let websiteElement = document.querySelector(`[data-publication-channel="${websiteChannel}"][data-channel-type="Website"]`);
+
+            dateInput = websiteElement.querySelector('input[type="date"]').value || fallbackDateInput.value;
+            timeInput = websiteElement.querySelector('input[type="time"]').value || fallbackTimeInput.value;
+        } else {
+            dateInput = fallbackDateInput.value;
+            timeInput = fallbackTimeInput.value;
+        }
+
+        if (!(dateInput && timeInput)) return;
+
+        let websiteDateTime = new Date(`${dateInput}T${timeInput}`);
+
+        checkedChannels.forEach(channel => {
+            let channelElement = publicationSettingsContainer.querySelector(`[data-publication-channel="${channel}"]:not([data-channel-type="Website"])`);
+            if (!channelElement) return;
+
+            let pubStatus = channelElement.getAttribute('data-publication-status');
+            if (pubStatus === 'success') return;
+
+            let channelDateInput = channelElement.querySelector('input[type="date"]').value;
+            let channelTimeInput = channelElement.querySelector('input[type="time"]').value;
+            let channelCheckboxParent = document.querySelector(`#integrated_content_brands [data-channel-selector="${channel}"]`).closest('.checkbox-container');
+
+            if (!(channelDateInput && channelTimeInput)) return;
+            let channelDateTime = new Date(`${channelDateInput}T${channelTimeInput}`);
+
+            let dateTextElement = channelElement.querySelector('.startDate .date-text');
+
+            if (!dateTextElement) return;
+
+            dateTextElement.style.color = channelDateTime >= websiteDateTime ? '' : 'red';
+            updateChannelStyles(channelCheckboxParent, channelDateTime >= websiteDateTime, channelElement, dateTextElement);
+
+            let channelPublicationToUpdate = publicationListContainer.querySelector(`a[data-channel="${channel}"]`);
+
+            if (channelPublicationToUpdate) {
+                updatePublicationStyles(channelPublicationToUpdate, channelDateTime >= websiteDateTime);
+            }
+        });
+    });
+}
+
+function updatePublication(pubDateInput, pubTimeInput, publicationChannel, publicationListContainer) {
+    let formattedDate = pubDateInput.split('-').reverse().join('-');
+    let selectedDateTime = new Date(`${pubDateInput}T${pubTimeInput}`);
+    let now = new Date();
+
+    let publicationToUpdate = publicationListContainer.querySelector(`a[data-channel="${publicationChannel}"]`);
+
+    if (publicationToUpdate) {
+        let publishTimeSpan = publicationToUpdate.querySelector('.publish-time');
+        if (publishTimeSpan) {
+            publishTimeSpan.textContent = `${formattedDate} ${pubTimeInput}`;
+        }
+
+        if (selectedDateTime > now) {
+            publicationToUpdate.classList.remove('published');
+            publicationToUpdate.classList.add('planned');
+        } else {
+            publicationToUpdate.classList.remove('planned');
+            publicationToUpdate.classList.add('published');
+        }
+    }
+
+    sortPublications(publicationListContainer);
+}
+
+function updateChannelStyles(channelCheckboxParent, isDateValid, channelElement, dateTextElement) {
+    let checkmark = channelCheckboxParent.querySelector('.checkmark');
+    if (isDateValid) {
+        channelCheckboxParent.style.backgroundColor = '';
+        channelCheckboxParent.style.color = '';
+        checkmark.style.backgroundColor = '';
+        checkmark.style.borderColor = '';
+    } else {
+        channelCheckboxParent.style.backgroundColor = '#ffc9cd';
+        channelCheckboxParent.style.color = 'red';
+        checkmark.style.backgroundColor = 'red';
+        checkmark.style.borderColor = 'red';
+
+        let existingMessage = channelElement.querySelector('.date-warning-message');
+        if (existingMessage) return;
+
+        let messageSpan = document.createElement('p');
+        messageSpan.classList.add('date-warning-message', 'publication-info');
+        messageSpan.textContent = "This date/time is not set or is earlier than the website's publication date/time.";
+        dateTextElement.insertAdjacentElement('afterend', messageSpan);
+    }
+}
+
+function updatePublicationStyles(publicationToUpdate, isDateValid) {
+    if (isDateValid) {
+        if (publicationToUpdate.classList.contains('published') || publicationToUpdate.classList.contains('planned')) {
+            publicationToUpdate.classList.remove('failed');
+        }
+        let existingMessage = publicationToUpdate.querySelector('.publication-info');
+        if (existingMessage) {
+            existingMessage.remove()
+        }
+    } else {
+        publicationToUpdate.classList.add('failed');
+        let publicationTitle = publicationToUpdate.querySelector('.publication-item-content');
+        let existingMessage = publicationToUpdate.querySelector('.publication-info');
+        if (existingMessage) return;
+
+        let messageSpan = document.createElement('p');
+        messageSpan.classList.add('publication-info');
+        messageSpan.textContent = "This date/time is not set or is earlier than the website's publication date/time.";
+        publicationTitle.insertAdjacentElement('afterend', messageSpan);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.brand-channel-choice').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            let channelName = checkbox.getAttribute('data-channel-name');
+            let channelIcon = checkbox.getAttribute('data-channel-type-icon');
+            let channelSelector = checkbox.getAttribute('data-channel-selector');
+
+            let channelSettings = document.querySelector(`[data-publication-channel="${channelSelector}"]`);
+            let pubStatus = channelSettings.getAttribute('data-publication-status');
+            if (pubStatus === 'success') return;
+
+            let publicationListContainer = document.querySelector('.aside-item-wrapper.publications .aside-item-list-container .publication-list');
+
+            let dateInput, timeInput;
+            let fallbackDateInput = document.querySelector('#integrated_content_publishTime input[type="date"]');
+            let fallbackTimeInput = document.querySelector('#integrated_content_publishTime input[type="time"]');
+
+            if (channelSettings) {
+                dateInput = channelSettings.querySelector('input[type="date"]').value || fallbackDateInput.value;
+                timeInput = channelSettings.querySelector('input[type="time"]').value || fallbackTimeInput.value;
+            } else {
+                dateInput = fallbackDateInput.value;
+                timeInput = fallbackTimeInput.value;
+            }
+
+            if (checkbox.checked) {
+                let publicationItem = createPublicationItem(channelName, channelIcon, dateInput, timeInput, channelSelector);
+                publicationListContainer.appendChild(publicationItem);
+            } else {
+                let itemToRemove = publicationListContainer.querySelector(`[data-channel="${channelSelector}"]`);
+                if (itemToRemove) {
+                    publicationListContainer.removeChild(itemToRemove);
+                }
+            }
+
+            updatePublicationCount();
+            updatePublicationsAndChannels();
+            sortPublications(publicationListContainer);
+
+            var updatePublicationItems = new CustomEvent('updatePublicationItems');
+
+            window.dispatchEvent(updatePublicationItems);
+        });
+    });
+});
+
+function createPublicationItem(channelName, channelIcon, date, time, dataChannel) {
+    const formattedDate = date.split('-').reverse().join('-');
+    const isFutureDate = new Date(`${date}T${time}`) > new Date() || !date;
+    const publicationItem = document.createElement('a');
+    publicationItem.className = `publication-item ${isFutureDate ? 'planned' : 'published'}`;
+    publicationItem.setAttribute('data-channel', dataChannel);
+    publicationItem.innerHTML = `
+        <div class="publication-wrap">
+            <div class="publication-item-heading">
+                <div class="heading-left">
+                    <i class="icon iconoir-${channelIcon}" title="${channelName}"></i>
+                    <span class="publish-time">${formattedDate} ${time}</span>
+                </div>
+                <div class="heading-right">
+                    <i class="icon iconoir-xmark" title="remove"></i>
+                </div>
+            </div>
+            <div class="publication-item-content">
+                <b>${channelName}</b><br>
+            </div>
+        </div>`;
+
+    return publicationItem;
+}
+
+function sortPublications(container) {
+    let publications = Array.from(container.querySelectorAll('.publication-item'));
+
+    function parseDateFromDateTimeString(dateTimeStr) {
+        if (!dateTimeStr) return new Date(0);
+        let [datePart, timePart] = dateTimeStr.split(' ');
+        let [day, month, year] = datePart.split('-').map(num => parseInt(num, 10));
+        let [hours, minutes] = timePart.split(':').map(num => parseInt(num, 10));
+
+        return new Date(year, month - 1, day, hours, minutes);
+    }
+
+    publications.sort((a, b) => {
+        let dateA = parseDateFromDateTimeString(a.querySelector('.publish-time').textContent || '');
+        let dateB = parseDateFromDateTimeString(b.querySelector('.publish-time').textContent || '');
+        return dateA - dateB;
+    });
+
+    publications.forEach(publication => {
+        container.appendChild(publication); // Simply append to the container
+    });
+}
+
+function updatePublicationCount() {
+    const publicationItems = document.querySelectorAll('.aside-item-list-container .publication-item');
+    const pubCountSpan = document.querySelector('.aside-item-wrapper.publications .pub-count');
+    if (pubCountSpan) {
+        pubCountSpan.textContent = `(${publicationItems.length})`;
+    }
+}
+
+function setPublicationDateTimes(){
+    let prevDate = '';
+    let prevTime = '';
+
+    let mainStartDate = document.querySelector('#integrated_content_publishTime .startDate');
+
+    mainStartDate.querySelector('.date-text').addEventListener('click', function() {
+        let dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
+        let timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
+        prevDate = dateInput.value
+        prevTime = timeInput.value
+
+    })
+
+    mainStartDate.querySelector('.ok-date').addEventListener('click', function() {
+        let dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
+        let timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
+        let newDate = dateInput.value;
+        let newTime = timeInput.value;
+
+        let prevFormattedDateTime = `${prevDate} ${prevTime}`;
+        let newFormattedDateTime = `${newDate.split('-').reverse().join('-')} ${newTime}`;
+
+        document.querySelectorAll('.publication-settings').forEach(setting => {
+            let settingDateText = setting.querySelector('.date-text');
+            let settingDateInput = setting.querySelector('input[type="date"]');
+            let settingTimeInput = setting.querySelector('input[type="time"]');
+            let currentDateTime = `${settingDateInput.value} ${settingTimeInput.value}`;
+
+            if (settingDateText && currentDateTime === prevFormattedDateTime) {
+                settingDateText.textContent = newFormattedDateTime;
+
+                if (settingDateInput && settingTimeInput) {
+                    settingDateInput.value = newDate;
+                    settingTimeInput.value = newTime;
+                }
+
+            }
+        });
+
+        updatePublicationsAndChannels();
+        prepDateTimeFields();
+    });
+}
+
+function ensurePublicationExists(channelId) {
+    const publicationListContainer = document.querySelector('.aside-item-wrapper.publications .aside-item-list-container .publication-list');
+    if (!publicationListContainer.querySelector(`a[data-channel="${channelId}"]`)) {
+        let checkbox = document.querySelector(`[data-channel-selector="${channelId}"]`);
+        let channelName = checkbox.getAttribute('data-channel-name');
+        let channelIcon = checkbox.getAttribute('data-channel-type-icon');
+        let channelSelector = checkbox.getAttribute('data-channel-selector');
+
+        let channelSettings = document.querySelector(`[data-publication-channel="${channelId}"]`);
+
+        let dateInput, timeInput;
+        let fallbackDateInput = document.querySelector('#integrated_content_publishTime input[type="date"]');
+        let fallbackTimeInput = document.querySelector('#integrated_content_publishTime input[type="time"]');
+
+        if (channelSettings) {
+            dateInput = channelSettings.querySelector('input[type="date"]').value || fallbackDateInput.value;
+            timeInput = channelSettings.querySelector('input[type="time"]').value || fallbackTimeInput.value;
+        } else {
+            dateInput = fallbackDateInput.value;
+            timeInput = fallbackTimeInput.value;
+        }
+
+        const publicationItem = createPublicationItem(channelName, channelIcon, dateInput, timeInput, channelSelector);
+        publicationListContainer.appendChild(publicationItem);
+
+        updatePublicationCount();
+        updatePublicationsAndChannels();
+        sortPublications(publicationListContainer);
+
+        var updatePublicationItems = new CustomEvent('updatePublicationItems');
+
+        window.dispatchEvent(updatePublicationItems);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initializePage);
+
+document.addEventListener("ensurePublicationEvent", function(e) {
+    var channelId = e.detail.channelId; // Access channelId from the event detail
+    ensurePublicationExists(channelId); // Call your function with channelId
+});
+
+window.addEventListener('applyPublishSettingsEvent', function(e) {
+    prepDateTimeFields();
+    setupCharacterCounters();
+});
+
+window.addEventListener('openPublishSettingsEvent', function(e) {
+    prepDateTimeFields();
 });

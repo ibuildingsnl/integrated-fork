@@ -64,6 +64,7 @@ class QueueExporter implements ExporterInterface, QueueExporterInterface
 
     /**
      * Execute a queued exporter run.
+     * TODO: This removes a queuemessage even though it fails. Shouldn't we keep it in the queue for a retry?
      */
     public function exportMessages(int $limit = 1000): int
     {

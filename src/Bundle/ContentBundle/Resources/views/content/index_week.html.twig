@@ -71,6 +71,34 @@
         </a>
     </li>
 {% endblock options_start %}
+{% block options_end %}
+    <li class="dropdown close-outside calendar-filter brands" data-underlay="no">
+        <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
+            <span>{% trans %}Brands{% endtrans %}</span>
+            <i class="iconoir-nav-arrow-down"></i>
+        </a>
+        <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="brands-menu">
+        </ul>
+    </li>
+    <li class="dropdown close-outside calendar-filter contenttypes" data-underlay="no">
+        <a data-toggle="dropdown" role="button"
+           class="btn btn-select space-between"><span>{% trans %}Content Types{% endtrans %}
+        </span>
+            <i class="iconoir-nav-arrow-down"></i>
+        </a>
+        <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="content-types-menu">
+        </ul>
+    </li>
+    <li class="checkbox premium-checkbox">
+        <label class="checkbox-container">
+            <input type="checkbox" id="premium-checkbox" name="Premium" value="Premium">
+            <span class="checkmark"></span>
+            <div class="facet-wrappper">
+                <span class="facet-title">{% trans %}Only show Premium content{% endtrans %}</span><span class="facet-count"></span>
+            </div>
+        </label>
+    </li>
+{% endblock options_end %}
 
 {% block content_items %}
     {% set scroll_message = 'Scroll to see more'|trans %}
@@ -80,7 +108,7 @@
                 {% set d = queryParams.start|date_modify('+%d days'|format(i)) %}
                 <div class="day title {% if d|date('d/m/Y') == date('now')|date('d/m/Y') %}today{% endif %}"
                      data-date="{{ d|date('Y/m/d') }}">
-                    {{ d|date('D d') }}
+                    <span>{{ d|date('D d') }}</span>
                 </div>
             {% endfor %}
         </div>
@@ -119,27 +147,27 @@
                     {% set calendarState = 'concept' %}
                 {% endif %}
 
-                <a class="calendar-item {{ calendarState }}" href="{{ editLink }}" target="_blank" data-id="{{ content.type_id }}"
-                   data-title="Edit {{ type }}" data-time="{{ date(content.pub_time)|date('Hi') }}">
-                    <div class="calendar-wrap" style="--color: {{ type.options.color|default('gray') }}">
-                        <div class="calendar-item-heading">
-                            <div class="heading-left">
-                                <i class="icon iconoir-{{ type.options.icon|default('empty-page') }}"
-                                   title="{{ type }}"></i>
-                                <span class="publish-time">{{ date(content.pub_time)|date('H:i') }}</span>
+                {% if document.channels is defined and document.channels is not null %}
+                {% set groupedChannels = {} %}
 
-                                {% if document.channels is defined and document.channels is not null %}
-                                    {% set groupedChannels = {} %}
+                {% for channel in document.channels %}
+                    {% set brandName = channel|integrated_brand_profile.name|default('Unknown') %}
 
-                                    {% for channel in document.channels %}
-                                        {% set brandName = channel|integrated_brand_profile.name|default('Unknown') %}
+                    {% if brandName not in groupedChannels %}
+                        {% set groupedChannels = groupedChannels|merge({(brandName): []}) %}
+                    {% endif %}
 
-                                        {% if brandName not in groupedChannels %}
-                                            {% set groupedChannels = groupedChannels|merge({(brandName): []}) %}
-                                        {% endif %}
-
-                                        {% set groupedChannels = groupedChannels|merge({(brandName): groupedChannels[brandName]|merge([channel])}) %}
-                                    {% endfor %}
+                    {% set groupedChannels = groupedChannels|merge({(brandName): groupedChannels[brandName]|merge([channel])}) %}
+                {% endfor %}
+                    <a class="calendar-item {{ calendarState }}" href="{{ editLink }}" target="_blank"
+                       data-id="{{ content.type_id }}" data-type="{{ type }}" data-brands="{{ groupedChannels|keys|join(', ')|default('') }}"
+                       data-premium="{% if document.premium %}true{% endif %}"
+                       data-title="Edit {{ type }}" data-time="{{ date(content.pub_time)|date('Hi') }}">
+                        <div class="calendar-wrap" style="--color: {{ type.options.color|default('gray') }}">
+                            <div class="calendar-item-heading">
+                                <div class="heading-left">
+                                    <i class="icon iconoir-{{ type.options.icon|default('empty-page') }}" title="{{ type }}"></i>
+                                    <span class="publish-time">{{ date(content.pub_time)|date('H:i') }}</span>
 
                                     <div
                                         class="favicon-wrapper {% if groupedChannels|length > 3 %}hover-popout{% endif %}">
@@ -151,33 +179,30 @@
                                             {% for brandName, channels in groupedChannels %}
                                                 {% for channel in channels %}
                                                     {% if channel|integrated_brand_profile.favicon.file is defined %}
-                                                        <div class="channel-favicon"
-                                                             style="background-image:url('{{ image(channel|integrated_brand_profile.favicon.file).cropResize(36, 36)|default }}')"
-                                                             title="{{ channel.name }}">
+                                                        <div class="channel-favicon" style="background-image:url('{{ image(channel|integrated_brand_profile.favicon.file).cropResize(36, 36)|default }}')"
+                                                             title="{{ channel|integrated_brand_profile.name|default('') }}">
                                                         </div>
                                                     {% else %}
                                                         <div class="channel-favicon font-bold"
-                                                             title="{{ channel.name }}"
-                                                             style="background-color: {{ channel|integrated_brand.color|default('gray') }}">
-                                                            {{ channel.name|first }}
+                                                             title="{{ channel|integrated_brand_profile.name|default('') }}" style="background-color: {{ channel|integrated_brand_profile.color|default('gray') }}">
+                                                            {{ channel|integrated_brand_profile.name|default('')|first }}
                                                         </div>
                                                     {% endif %}
                                                 {% endfor %}
                                             {% endfor %}
                                         </div>
                                     </div>
-                                {% endif %}
-                            </div>
-                            <div class="heading-right">
+                                </div>
+                                <div class="heading-right">
 
+                                </div>
+                            </div>
+                            <div class="calendar-item-content">
+                                {{ content.title|default('untitled') }}
                             </div>
                         </div>
-                        <div class="calendar-item-content">
-                            {{ content.title|default('untitled') }}
-                        </div>
-                    </div>
-                </a>
-
+                    </a>
+                {% endif %}
                 {% endfor %}
                 {% if prev_day < 6 %}
                 {% for i in range(prev_day + 1, 6) %}

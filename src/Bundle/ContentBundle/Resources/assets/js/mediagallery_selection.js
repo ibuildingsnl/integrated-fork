@@ -48,15 +48,16 @@ function populateFormRelations() {
         };
         form_relations[id].types_url = getTypesUrl(form_relations[id].types);
 
-        var wrap = document.createElement('div');
-        wrap.className = `wrap media-library iframe-wrapper close-outside ${id}`;
+        if (!document.querySelector(`iframe.iframe.${id}`)) {
+            var wrap = document.createElement('div');
+            wrap.className = `wrap media-library iframe-wrapper close-outside ${id}`;
 
-        // Create iframe element
-        var iframe = document.createElement('iframe');
-        iframe.className = `iframe ${id}`;
+            var iframe = document.createElement('iframe');
+            iframe.className = `iframe ${id}`;
 
-        wrap.appendChild(iframe);
-        document.body.appendChild(wrap);
+            wrap.appendChild(iframe);
+            document.body.appendChild(wrap);
+        }
 
     });
 }

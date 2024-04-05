@@ -301,6 +301,16 @@ function showDropDownBackGround() {
     toggleDropDownBackGround(false);
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    var dismissibleAlerts = document.querySelectorAll('.alert-dismissible');
+
+    setTimeout(function() {
+        dismissibleAlerts.forEach(function(alert) {
+            alert.remove();
+        });
+    }, 10000);
+});
+
 // Initialization
 
 document.addEventListener('DOMContentLoaded', hideButtonIfNoOptions);

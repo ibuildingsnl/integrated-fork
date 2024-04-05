@@ -9,6 +9,7 @@
             <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
             <argument type="string">\Integrated\Bundle\BrandBundle\Document\Brand</argument>
         </service>
+
         <service id="integrated_brand.brand.repository" class="Integrated\Bundle\BrandBundle\Infrastructure\ODMBrandRepository">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_brand.brand.odm.repository" />
