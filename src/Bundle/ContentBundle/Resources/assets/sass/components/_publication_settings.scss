@@ -296,6 +296,16 @@
         }
     }
 
+    &.date-invalid {
+        background-color: rgba(255, 71, 71, 0.1);
+        .publication-wrap {
+            border-left: 3px solid #ff4747;
+            .publication-item-heading {
+                color:#ff4747;
+            }
+        }
+    }
+
     &:hover {
         color:black;
     }
