@@ -126,7 +126,6 @@
                                                 {% if ('now'|date('U') < publication.getTime.getStartDate|date('U')) %}
                                                     {% set pubState = 'planned' %}
                                                 {% endif %}
-                                                {{ dump(publication.getStatus()) }}
                                                 {% if publication.getStatus() == 'failed' %}
                                                     {% set pubState = 'failed' %}
                                                 {% elseif publication.getStatus == 'succes' %}
