@@ -7,6 +7,7 @@ use DateTimeZone;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata as StorageMetadata;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
@@ -650,10 +651,18 @@ class BaseConverter
             }
 
             if ($field === 'start_date' || $field === 'end_date') {
-                $value = new \DateTime($value);
+                list($timestamp, $offset) = explode('+', $value);
+
+                if (is_numeric($timestamp) && ($timestamp == (int)$timestamp)) {
+                    if (strlen($offset)) {
+                        $value =  self::createDateTimeFromTimestampWithOffset($value);
+                    }    else {
+                        $value = new \DateTime("@$timestamp");
+                    }
+                }
             }
 
-            if ($field === 'seo_metadata' || $field === 'address') {
+            if ($field === 'seo_metadata') {
                 foreach ($value as $childField => $childValue) {
                     $method = str_replace(' ', '', ucwords(str_replace('_', ' ', $childField)));
 
@@ -664,6 +673,24 @@ class BaseConverter
                         \call_user_func([$newObject, $setterMethod], $childValue);
                     }
                 }
+                continue;
+            }
+
+            if ($field === 'address') {
+                $address = new Address();
+
+                foreach ($value as $childField => $childValue) {
+                    $method = str_replace(' ', '', ucwords(str_replace('_', ' ', $childField)));
+
+                    // Prefix with 'set' for setter methods, e.g., 'Title' becomes 'setTitle'
+                    $setterMethod = 'set' . $method;
+
+                    if (method_exists($address, $setterMethod)) {
+                        call_user_func([$address, $setterMethod], $childValue);
+                    }
+                }
+                $newObject->setAddress($address);
+
                 continue;
             }
 
@@ -700,8 +727,6 @@ class BaseConverter
 
                 if ($href === '') {
                     $result['messages'][] = "[WARNING] {$field} {$value} does not contain a valid link or id";
-
-                    return $result;
                 }
 
                 $checkResult = Create::createFileFromUrl(

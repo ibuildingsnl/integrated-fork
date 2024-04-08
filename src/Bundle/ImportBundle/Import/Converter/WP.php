@@ -118,6 +118,7 @@ class WP
         $content = preg_replace('/\[(\/)?su_.*?\]/', '', $content); // Strip shortcodes
         $content = str_ireplace('<p>&nbsp;</p>', '', $content);
         $content = str_ireplace('<p> </p>', '', $content);
+        $content = preg_replace('/\[pdf\s+issuu_pdf_id="[^"]*"\s+width="\d*"\s+height="\d*"\s+layout="\d"\s+bgcolor="[^"]*"\s+allow_full_screen_="1"\s+flip_timelaps="\d*"\s*\]/', '', $content);
 
         $content = str_ireplace('<div class="well">', '<div class="frame-general">', $content);
 
