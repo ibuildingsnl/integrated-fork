@@ -248,7 +248,6 @@ if (typeof publicationSchedule === 'object') {
             });
 
         const premiumCheckbox = document.getElementById('premium-checkbox');
-        premiumCheckbox.checked = filterStates.premium;
         premiumCheckbox.addEventListener('change', () => {
             filterStates.premium = premiumCheckbox.checked;
             saveAndApplyFilters();

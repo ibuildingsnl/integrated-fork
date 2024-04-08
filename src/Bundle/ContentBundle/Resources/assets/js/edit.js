@@ -296,14 +296,14 @@ function updateChannelStyles(channelCheckboxParent, isDateValid, channelElement,
 function updatePublicationStyles(publicationToUpdate, isDateValid) {
     if (isDateValid) {
         if (publicationToUpdate.classList.contains('published') || publicationToUpdate.classList.contains('planned')) {
-            publicationToUpdate.classList.remove('failed');
+            publicationToUpdate.classList.remove('date-invalid');
         }
         let existingMessage = publicationToUpdate.querySelector('.publication-info');
         if (existingMessage) {
             existingMessage.remove()
         }
     } else {
-        publicationToUpdate.classList.add('failed');
+        publicationToUpdate.classList.add('date-invalid');
         let publicationTitle = publicationToUpdate.querySelector('.publication-item-content');
         let existingMessage = publicationToUpdate.querySelector('.publication-info');
         if (existingMessage) return;

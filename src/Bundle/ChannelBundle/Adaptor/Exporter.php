@@ -67,7 +67,7 @@ final class Exporter implements ExporterInterface
             $responseMessage = $externalId;
             $status = Publication::STATUS_SUCCESS;
         }
-        foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
+        foreach ($this->publications->getAvailable($content, $channel) as $publication) {
             $publication->setResponse($responseMessage);
             $publication->setStatus($status);
         }
