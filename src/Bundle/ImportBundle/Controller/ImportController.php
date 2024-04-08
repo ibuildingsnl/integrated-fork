@@ -468,6 +468,9 @@ class ImportController extends AbstractController
                 }
 
                 if ($newObject instanceof Taxonomy) {
+                    if (!array_key_exists('parent_id', $newData)) {
+                        $newData['parent_id'] = '';
+                    }
                     $checkResult = Create::maybeCreateParent(
                         $newData['parent_id'],
                         $contentType,
@@ -527,7 +530,7 @@ class ImportController extends AbstractController
                     }
 
 
-                    if ($newObject instanceof Article || $newObject instanceof Person) {
+                    if ($newObject instanceof Article || $newObject instanceof Person || $newObject instanceof Taxonomy) {
                         if ($newObject instanceof Article) {
                             $content = $newObject->getContent();
                         } else {
@@ -549,13 +552,13 @@ class ImportController extends AbstractController
                         $html = HtmlDomParser::str_get_html($content['newHtml']);
 
                         $checkResult = BaseConverter::processImageElements(
-                                $html,
-                                $newObject,
-                                $newData,
-                                $importDefinition,
-                                $this->documentManager,
-                                $this->storageManager
-                            );
+                            $html,
+                            $newObject,
+                            $newData,
+                            $importDefinition,
+                            $this->documentManager,
+                            $this->storageManager
+                        );
 
                         $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
 

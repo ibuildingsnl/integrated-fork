@@ -257,9 +257,7 @@ class Create
             if (strlen($title) > 0 && !$parent = $documentManager->getRepository(Content::class)
                                                                  ->createQueryBuilder()->select()
                                                                  ->field('title')->equals($title)
-                                                                 ->field('parent_id')->equals(
-                        $parentBrandTaxonomy->getId()
-                    )
+                                                                 ->field('parent_id')->equals($parentBrandTaxonomy->getId())
                                                                  ->field('channels.$id')->equals($channel->getId())
                                                                  ->limit(1)->getQuery()
                                                                  ->getSingleResult()) {

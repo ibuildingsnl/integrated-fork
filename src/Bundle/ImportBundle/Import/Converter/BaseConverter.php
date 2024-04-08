@@ -115,7 +115,11 @@ class BaseConverter
     public static function setPublicationDate($row, $newData, $newObject)
     {
         $startDate = self::getDateFromData($row, 'publiceren_van', $newData, 'created_at', $newObject->getCreatedAt());
-        $endDate = self::getDateFromData($row, 'publiceren_tot', $newData, 'end_date');
+        if (array_key_exists('end_date', $newData)) {
+            $endDate = self::getDateFromData($row, 'publiceren_tot', $newData, 'end_date');
+        } else {
+            $endDate = false;
+        }
 
         $newObject->getPublishTime()->setStartDate($startDate);
         if ($endDate) {
