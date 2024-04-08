@@ -55,7 +55,7 @@ class PublicationExporterDecorator implements ExporterInterface
                 if ($response = $exporter->export($content, $state, $channel, $settings)) {
                     $this->save($content, $response);
                 } else {
-                    $this->manager->flush(); //flush the publication settings
+                    $this->manager->flush();
                 }
             }
 
