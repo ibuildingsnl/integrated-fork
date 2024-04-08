@@ -54,10 +54,10 @@ class PublicationExporterDecorator implements ExporterInterface
             foreach ($this->getExporters($channel, $publicationDate) as $exporter) {
                 if ($response = $exporter->export($content, $state, $channel, $settings)) {
                     $this->save($content, $response);
+                } else {
+                    $this->manager->flush(); //flush the publication settings
                 }
             }
-
-            $this->manager->flush();
 
             $old = false;
         }
