@@ -59,7 +59,7 @@ class PageCopyService
 
         /** @var Page $page */
         foreach ($result as $page) {
-            if (isset($data['pages']['page'.$page->getId()]['selected']) && $data['pages']['page'.$page->getId()]['selected'] === true) {
+            if (isset($data['pages']['page' . $page->getId()]['selected']) && $data['pages']['page' . $page->getId()]['selected'] === true) {
                 $existingPage = $this->documentManager->getRepository(Page::class)->findOneBy(
                     [
                         'channel.$id' => $targetChannel->getId(),
@@ -79,7 +79,7 @@ class PageCopyService
                 $copiedPage->setChannel($targetChannel);
 
                 foreach ($copiedPage->getGrids() as $key => $grid) {
-                    $this->copyGridBlocks($grid, $data['pages']['page'.$page->getId()]['blocks']);
+                    $this->copyGridBlocks($grid, $data['pages']['page' . $page->getId()]['blocks'], $copiedPage);
                 }
 
                 $this->documentManager->persist($copiedPage);
@@ -105,7 +105,8 @@ class PageCopyService
 
             if ($block instanceof Block) {
                 // copy block
-                if (isset($data['block_'.$block->getId()]['operation']) && $data['block_'.$block->getId()]['operation'] == 'clone') {
+                if (isset($data['block_' . $block->getId()]['operation']) && $data['block_' . $block->getId(
+                    )]['operation'] == 'clone') {
                     $classMetadata = $this->documentManager->getClassMetadata(\get_class($block));
 
                     $className = $classMetadata->getName();
@@ -121,6 +122,7 @@ class PageCopyService
                     $getters = [];
                     $setters = [];
 
+
                     foreach ($reflector->getMethods() as $method) {
                         $methodName = $method->getName();
                         if (strpos($methodName, 'get') === 0 && $method->getNumberOfParameters() === 0) {
@@ -132,7 +134,7 @@ class PageCopyService
                     }
 
                     foreach ($getters as $getter) {
-                        $setter = 'set'.substr($getter, 3);
+                        $setter = 'set' . substr($getter, 3);
 
                         if (\in_array($setter, $setters)) {
                             $value = $block->$getter();
@@ -140,7 +142,7 @@ class PageCopyService
                         }
                     }
 
-                    $copiedBlock->setId($data['block_'.$block->getId()]['newBlockId']);
+                    $copiedBlock->setId($data['block_' . $block->getId()]['newBlockId']);
                     $copiedBlock->setCreatedAt(new \DateTime());
 
                     $this->documentManager->persist($copiedBlock);
@@ -151,7 +153,7 @@ class PageCopyService
 
             if ($item->getRow()) {
                 foreach ($item->getRow()->getColumns() as $columnKey => $column) {
-                    $this->copyGridBlocks($column, $data);
+                    $this->copyGridBlocks($column, $data, $copiedPage);
                 }
             }
         }
