@@ -121,7 +121,6 @@ class PageCopyService
                     $getters = [];
                     $setters = [];
 
-
                     foreach ($reflector->getMethods() as $method) {
                         $methodName = $method->getName();
                         if (strpos($methodName, 'get') === 0 && $method->getNumberOfParameters() === 0) {
