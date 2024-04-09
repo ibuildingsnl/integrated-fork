@@ -17,6 +17,7 @@ use Doctrine\ODM\MongoDB\MongoDBException as MongoDBExceptionAlias;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\InlineTextBlock;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Item;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\ItemsInterface;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
@@ -92,7 +93,7 @@ class PageCopyService
     /**
      * @throws \Exception
      */
-    private function copyGridBlocks(ItemsInterface $grid, array $data)
+    private function copyGridBlocks(ItemsInterface $grid, array $data, AbstractPage $copiedPage)
     {
         $gridItems = $grid->getItems();
         foreach ($gridItems as $key => $item) {
@@ -109,33 +110,34 @@ class PageCopyService
 
                     $className = $classMetadata->getName();
 
-                    if ($className === InlineTextBlock::class) {
-                        $copiedBlock = clone $block;
+                    if ($block instanceof InlineTextBlock) {
+                        $copiedBlock = new $className($copiedPage);
                     } else {
-                        $reflector = new \ReflectionClass($classMetadata->getName());
-
-                        $getters = [];
-                        $setters = [];
-
                         $copiedBlock = new $className();
+                    }
 
-                        foreach ($reflector->getMethods() as $method) {
-                            $methodName = $method->getName();
-                            if (strpos($methodName, 'get') === 0 && $method->getNumberOfParameters() === 0) {
-                                $getters[] = $methodName;
-                            }
-                            if (strpos($methodName, 'set') === 0 && $method->getNumberOfParameters() > 0) {
-                                $setters[] = $methodName;
-                            }
+                    $reflector = new \ReflectionClass($classMetadata->getName());
+
+                    $getters = [];
+                    $setters = [];
+
+
+                    foreach ($reflector->getMethods() as $method) {
+                        $methodName = $method->getName();
+                        if (strpos($methodName, 'get') === 0 && $method->getNumberOfParameters() === 0) {
+                            $getters[] = $methodName;
                         }
+                        if (strpos($methodName, 'set') === 0 && $method->getNumberOfParameters() > 0) {
+                            $setters[] = $methodName;
+                        }
+                    }
 
-                        foreach ($getters as $getter) {
-                            $setter = 'set'.substr($getter, 3);
+                    foreach ($getters as $getter) {
+                        $setter = 'set'.substr($getter, 3);
 
-                            if (\in_array($setter, $setters)) {
-                                $value = $block->$getter();
-                                $copiedBlock->$setter($value);
-                            }
+                        if (\in_array($setter, $setters)) {
+                            $value = $block->$getter();
+                            $copiedBlock->$setter($value);
                         }
                     }
 
@@ -143,7 +145,6 @@ class PageCopyService
                     $copiedBlock->setCreatedAt(new \DateTime());
 
                     $this->documentManager->persist($copiedBlock);
-                    $this->documentManager->flush();
 
                     $item->setBlock($copiedBlock);
                 }
