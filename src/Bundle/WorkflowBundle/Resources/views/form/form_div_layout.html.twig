@@ -36,7 +36,7 @@
 
             {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-line-space"></i><span>' ~ field.vars.value.title|default(form.vars.default_title|default('New status')) ~ '</span></a>' %}
             {% if form.vars.allow_delete %}
-                {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
+                {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-xmark"></i></a>' %}
             {% endif %}
             {% set prototype_html = '<div class="panel-heading"><h4 class="panel-title">' ~ prototype_html ~ '</h4></div>' %}
             {% set prototype_html = prototype_html ~ '<div id="__id__" class="panel-collapse collapse in"><div class="panel-body">' ~ form_widget(prototype, prototype_vars) ~ '</div></div>' %}
@@ -76,7 +76,7 @@
                                         <a href="javascript:;" class="remove"
                                            title="{{ form.vars.delete_button_text|trans({}, translation_domain) }}"
                                            data-removefield="collection" data-field="{{ field.vars.id }}">
-                                            <i class="iconoir-cancel"></i>
+                                            <i class="iconoir-xmark"></i>
                                         </a>
                                     {% endif %}
                                 </h4>

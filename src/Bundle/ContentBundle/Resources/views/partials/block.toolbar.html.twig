@@ -43,6 +43,21 @@
                     </div>
                 {% endif %}
             {% endblock %}
+            {% block seo_meta_button %}
+                {% set hasSeoMetadata = false %}
+
+                {% if type is defined %}
+                    {% for field in type.fields %}
+                        {% if field.name == 'seoMetadata' %}
+                            {% set hasSeoMetadata = true %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                {% if hasSeoMetadata %}
+                    <a href="#" class="btn btn-white seo-button readability-{{ content.seoMetadata.readabilityScore|default('feedback') }} seo-{{ content.seoMetadata.seoScore|default('feedback') }}">SEO</a>
+                {% endif %}
+            {% endblock %}
         </div>
         <button class="form-actions-extra-toggle toggle-data-target" data-target="form-actions-extra"
                 data-underlay="no" type="button">
@@ -82,11 +97,11 @@
         {% endblock %}
         {% if type is defined and form.actions.create is not defined %}
             <span class="editing-title">
-                {% trans with {'%contentType%': type.name} from 'app' %}Editing %contentType%{% endtrans %}
+                {% trans with {'%contentType%': type.name} %}Editing %contentType%{% endtrans %}
             </span>
         {% elseif type is defined and form.actions.create is defined %}
             <span class="editing-title">
-                {% trans with {'%contentType%': type.name} from 'app' %}Creating %contentType%{% endtrans %}
+                {% trans with {'%contentType%': type.name} %}Creating %contentType%{% endtrans %}
             </span>
         {% endif %}
     </div>

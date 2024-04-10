@@ -2,21 +2,29 @@
     <div class="flex items-center">
         <h1 class="heading">{% trans %}Media Library{% endtrans %}</h1>
         <ul class="options-no-bg">
-            <li class="dropdown close-outside" data-underlay="no">
-                <a data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
+            {% if contentTypeSelectOptions %}
+                <li class="dropdown close-outside" data-underlay="no">
+                    <a data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
+                        <span>{% trans %}New{% endtrans %}</span>
+                        <i class="iconoir-plus"></i>
+                    </a>
+                    <ul aria-labelledby="drop_1" role="menu" class="p-2 dropdown-menu" id="menu_1">
+                        {% for type_key, type in contentTypeSelectOptions %}
+                            {% if type %}
+                                <li role="presentation">
+                                    <a data-id="{{ type.getId }}"
+                                       class="cursor-pointer button_toggle_upload_view_with_contenttype">{{ type.getName | title }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% else %}
+                <a data-toggle="dropdown" role="button" id="drop_1" class="button_toggle_upload_view btn btn-select">
                     <span>{% trans %}New{% endtrans %}</span>
                     <i class="iconoir-plus"></i>
                 </a>
-                <ul aria-labelledby="drop_1" role="menu" class="p-2 dropdown-menu" id="menu_1">
-                    {% for type_key, type in contentTypeSelectOptions %}
-                        {% if type %}
-                            <li role="presentation">
-                                <a data-id="{{ type.getId }}" class="cursor-pointer button_toggle_upload_view_with_contenttype">{{ type.getName | title }}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            </li>
+            {% endif %}
         </ul>
     </div>
     <button class="toggle-filters toggle-data-target btn btn-orange icon-left" data-target="aside-filters">
@@ -41,7 +49,8 @@
 
                         {% for content_type_key, content_type in contentTypeFilterOptions.options %}
 
-                            <li {% if content_type_key == contentTypeFilterOptions.current %} class="active" {% endif %} role="presentation">
+                            <li {% if content_type_key == contentTypeFilterOptions.current %} class="active" {% endif %}
+                                role="presentation">
                                 <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
                                     merge({'contenttypes': content_type_key == contentTypeFilterOptions.default ? null : content_type_key })|
                                     merge({'page':1})
@@ -87,8 +96,11 @@
         <button class="btn btn-action mr-2" id="bulkselection">{% trans %} Bulkselection {% endtrans %}
         </button>
 
+        <button class="btn btn-light-red mr-2" style="display: none; height: 34px;" id="bulkselection_delete">{% trans %} Delete {% endtrans %} <span class="ml-1" id="amount_of_files_to_delete"></span>
+        </button>
+
         <button class="button_toggle_upload_view btn btn-action">
-            <i class="iconoir-add-media-image"></i>
+            <i class="iconoir-media-image-plus"></i>
         </button>
 
     </div>

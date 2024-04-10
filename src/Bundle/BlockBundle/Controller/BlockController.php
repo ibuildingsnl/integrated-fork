@@ -17,11 +17,15 @@ use Integrated\Bundle\BlockBundle\Form\Type\BlockEditType;
 use Integrated\Bundle\BlockBundle\Form\Type\BlockFilterType;
 use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
 use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Block\BlockInterface;
+use Integrated\Common\Content\Form\Event\BlockEvent;
+use Integrated\Common\Content\Form\Events;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -53,16 +57,23 @@ class BlockController extends AbstractController
      */
     protected $provider;
 
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
+
     public function __construct(
         MetadataFactoryInterface $metadataFactory,
         DocumentManager $documentManager,
         PaginatorInterface $paginator,
-        FilterQueryProvider $provider
+        FilterQueryProvider $provider,
+        EventDispatcherInterface $dispatcher,
     ) {
         $this->metadataFactory = $metadataFactory;
         $this->documentManager = $documentManager;
         $this->paginator = $paginator;
         $this->provider = $provider;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -224,6 +235,10 @@ class BlockController extends AbstractController
             }
 
             if ($form->isValid()) {
+                if ($this->dispatcher->hasListeners(Events::BLOCK_VALIDATE)) {
+                    $this->dispatcher->dispatch(new BlockEvent($block), Events::BLOCK_VALIDATE);
+                }
+
                 $this->documentManager->flush();
 
                 if ('iframe.html' === $request->getRequestFormat()) {
@@ -302,5 +317,29 @@ class BlockController extends AbstractController
         $builder->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 
         return $builder->getForm();
+    }
+
+    /**
+     * @return Response
+     */
+    public function usedBy(Content $content, Request $request)
+    {
+        $query = $this->documentManager
+            ->createQueryBuilder(Block::class)
+            ->field('relations.references.$id')
+            ->equals($content->getId())
+            ->getQuery();
+
+        /** @var $paginator \Knp\Component\Pager\Paginator */
+        $pagination = $this->paginator->paginate(
+            $query,
+            $request->query->get('page', 1),
+            $request->query->get('limit', 15)
+        );
+
+        return $this->render('@IntegratedBlock/block/used_by.'.$request->getRequestFormat().'.twig', [
+            'content' => $content,
+            'pagination' => $pagination,
+        ]);
     }
 }

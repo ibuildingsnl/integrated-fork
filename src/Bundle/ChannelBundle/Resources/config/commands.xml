@@ -11,6 +11,7 @@
         <service id="integrated_channel.command.export" class="Integrated\Bundle\ChannelBundle\Command\ExportCommand">
             <argument type="service" id="integrated_channel.exporter.queue" />
             <argument type="service" id="kernel" />
+            <argument type="service" id="logger" />
             <argument>%kernel.project_dir%</argument>
 
             <tag name="console.command" />

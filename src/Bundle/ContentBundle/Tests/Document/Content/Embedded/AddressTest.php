@@ -23,74 +23,59 @@ class AddressTest extends \PHPUnit\Framework\TestCase
      */
     private $address;
 
-    /**
-     * Setup the test.
-     */
     protected function setUp(): void
     {
         $this->address = new Address();
     }
 
-    /**
-     * Test get- and setType function.
-     */
     public function testGetAndSetTypeFunction()
     {
         $type = 'type';
-        $this->assertEquals($type, $this->address->setType($type)->getType());
+
+        $this->address->setType($type);
+        $this->assertEquals($type, $this->address->getType());
     }
 
-    /**
-     * Test get- and setAddress1 function.
-     */
     public function testGetAndSetAddress1Function()
     {
         $address1 = 'address1';
-        $this->assertEquals($address1, $this->address->setAddress1($address1)->getAddress1());
+
+        $this->address->setAddress1($address1);
+        $this->assertEquals($address1, $this->address->getAddress1());
     }
 
-    /**
-     * Test get- and setAddress2 function.
-     */
     public function testGetAndSetAddress2Function()
     {
         $address2 = 'address2';
-        $this->assertEquals($address2, $this->address->setAddress2($address2)->getAddress2());
+        $this->address->setAddress2($address2);
+        $this->assertEquals($address2, $this->address->getAddress2());
     }
 
-    /**
-     * Test get- and setZipcode function.
-     */
     public function testGetAndSetZipcodeFunction()
     {
         $zipcode = 'zipcode';
-        $this->assertEquals($zipcode, $this->address->setZipcode($zipcode)->getZipcode());
+        $this->address->setZipcode($zipcode);
+        $this->assertEquals($zipcode, $this->address->getZipcode());
     }
 
-    /**
-     * Test get- and setCity function.
-     */
     public function testGetAndSetCityFunction()
     {
         $city = 'city';
-        $this->assertEquals($city, $this->address->setCity($city)->getCity());
+        $this->address->setCity($city);
+        $this->assertEquals($city, $this->address->getCity());
     }
 
-    /**
-     * Test get- and setState function.
-     */
     public function testGetAndSetStateFunction()
     {
         $state = 'state';
-        $this->assertEquals($state, $this->address->setState($state)->getState());
+        $this->address->setState($state);
+        $this->assertEquals($state, $this->address->getState());
     }
 
-    /**
-     * Test get- and setCountry function.
-     */
     public function testGetAndSetCountryFunction()
     {
         $country = 'city';
-        $this->assertEquals($country, $this->address->setCountry($country)->getCountry());
+        $this->address->setCountry($country);
+        $this->assertEquals($country, $this->address->getCountry());
     }
 }

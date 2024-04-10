@@ -32,6 +32,12 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
     .addEntry('upload_uppy', [
         './src/Bundle/ContentBundle/Resources/assets/js/upload_uppy.js',
     ])
+    .addEntry('edit_uppy', [
+        './src/Bundle/ContentBundle/Resources/assets/js/edit_uppy.js',
+    ])
+    .addEntry('edit_panel', [
+        './src/Bundle/ContentBundle/Resources/assets/js/edit_panel.js',
+    ])
     .addEntry('iframe', [
         './src/Bundle/BlockBundle/Resources/assets/css/iframe.css',
     ])
@@ -69,18 +75,19 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
     })
     .cleanupOutputBeforeBuild()
     .autoProvidejQuery()
-    .enableSassLoader()
-    .enableSourceMaps(false)
-    .enableVersioning(false)
-    .disableSingleRuntimeChunk()
     .enablePostCssLoader((options) => {
         options.postcssOptions = {
             path: './postcss.config.js',
         };
     })
+    .enableSassLoader(options => {
+        options.implementation = require('sass');
+    })
+    .enableSourceMaps(false)
+    .enableVersioning(false)
+    .disableSingleRuntimeChunk()
     .addLoader({ test: /\.handlebars$/, loader: 'handlebars-loader' })
     .getWebpackConfig();
-
 
 webpackConfig.resolve.alias = {
     typeahead: PathResolver.resolve(__dirname, 'node_modules/typeahead.js/dist/typeahead.bundle.js'),

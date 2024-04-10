@@ -37,6 +37,11 @@
             <tag name="twig.extension"/>
         </service>
 
+        <service id="Integrated\Bundle\ContentBundle\Twig\Extension\FacetExtension">
+            <argument type="tagged_iterator" tag="integrated_content.facet_setting" />
+            <tag name="twig.extension"/>
+        </service>
+
         <service id="integrated_content.twig.integrated_content_extension" class="Integrated\Bundle\ContentBundle\Twig\Extension\IntegratedContentExtension">
             <argument type="service" id="event_dispatcher" />
             <tag name="twig.extension" />
@@ -62,6 +67,28 @@
             <argument type="service" id="security.token_storage" />
 
             <tag name="twig.extension" />
+        </service>
+
+        <service id="integrated_content.twig_title.channel" class="Integrated\Bundle\ContentBundle\Twig\Resolver\ChannelTitleResolver">
+            <argument type="service" id="integrated_channel.repository.channel" />
+        </service>
+
+        <service id="integrated_content.twig_title.content_type" class="Integrated\Bundle\ContentBundle\Twig\Resolver\ContentTypeTitleResolver">
+            <argument type="service" id="integrated_content.resolver" />
+        </service>
+
+        <service id="integrated_content.facet_setting.channel" class="Integrated\Bundle\ContentBundle\Twig\FacetSettings">
+            <argument>channels</argument>
+            <argument type="expression">true</argument>
+            <argument type="service" id="integrated_content.twig_title.channel" />
+            <tag name="integrated_content.facet_setting" />
+        </service>
+
+        <service id="integrated_content.facet_setting.content_type" class="Integrated\Bundle\ContentBundle\Twig\FacetSettings">
+            <argument>contenttypes</argument>
+            <argument type="expression">true</argument>
+            <argument type="service" id="integrated_content.twig_title.content_type" />
+            <tag name="integrated_content.facet_setting" />
         </service>
 
     </services>

@@ -57,7 +57,7 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
         if ($this->authorizationChecker->isGranted(self::ROLE_WEBSITE_MANAGER) ||
             $this->authorizationChecker->isGranted(self::ROLE_ADMIN)) {
             if (!$menuWebsite = $menu->getChild(self::MENU_WEBSITE)) {
-                $menuWebsite = $menu->addChild(self::MENU_WEBSITE)->setExtra('icon', 'iconoir-network-alt');
+                $menuWebsite = $menu->addChild(self::MENU_WEBSITE)->setExtra('icon', 'iconoir-network-reverse');
             }
 
             $menuWebsite->addChild('Pages', ['route' => 'integrated_page_page_index']);

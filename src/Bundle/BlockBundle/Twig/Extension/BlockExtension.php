@@ -18,6 +18,7 @@ use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Twig\Environment;
@@ -114,6 +115,7 @@ class BlockExtension extends AbstractExtension
     {
         return [
             new TwigFilter('integrated_block_type', [$this, 'getBlockTypeName']),
+            new TwigFilter('integrated_sort_blocks', [$this, 'sortByType']),
         ];
     }
 
@@ -192,7 +194,7 @@ class BlockExtension extends AbstractExtension
     }
 
     /**
-     * @return Channel[]
+     * @return ChannelInterface[]
      */
     public function findChannels(BlockInterface $block)
     {
@@ -244,6 +246,15 @@ class BlockExtension extends AbstractExtension
         ksort($blocks);
 
         return $blocks;
+    }
+
+    public function sortByType($array)
+    {
+        usort($array, function ($a, $b) {
+            return strcmp($a->getType(), $b->getType());
+        });
+
+        return $array;
     }
 
     /**

@@ -44,7 +44,7 @@
                     <td>
                         {% for type in documentTypes %}
                             {% if type.class == document.class %}
-                                {{ type.type }}
+                                {{ type.type|trans }}
                             {% endif %}
                         {% endfor %}
                     </td>

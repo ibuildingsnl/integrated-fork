@@ -33,47 +33,34 @@ class CompanyTest extends RelationTest
         $this->company = new Company();
     }
 
-    /**
-     * Test get- and setEmail function.
-     */
     public function testGetAndSetEmailFunction()
     {
         $email = 'email';
-        $this->assertEquals($email, $this->company->setEmail($email)->getEmail());
+        $this->company->setEmail($email);
+        $this->assertEquals($email, $this->company->getEmail());
     }
 
-    /**
-     * Test get- and setWebsite function.
-     */
     public function testGetAndSetWebsiteFunction()
     {
         $website = 'http://www.website.com';
         $this->assertEquals($website, $this->company->setWebsite($website)->getWebsite());
     }
 
-    /**
-     * Test get- and setAddresses function.
-     */
     public function testGetAndSetAddressesFunction()
     {
         $addresses = new ArrayCollection([
-            $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address'),
-        ]);
-        $this->assertSame($addresses, $this->company->setAddresses($addresses)->getAddresses());
+                                             $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address'),
+                                         ]);
+        $this->company->setAddresses($addresses);
+        $this->assertSame($addresses, $this->company->getAddresses());
     }
 
-    /**
-     * Test get- and setName function.
-     */
     public function testGetAndSetNameFunction()
     {
         $name = 'name';
         $this->assertEquals($name, $this->company->setName($name)->getName());
     }
 
-    /**
-     * Test get- and setLogo function.
-     */
     public function testGetAndSetLogoFunction()
     {
         /* @var $logo \Integrated\Bundle\ContentBundle\Document\Content\Image | MockObject */
@@ -82,9 +69,6 @@ class CompanyTest extends RelationTest
         $this->assertSame($logo, $this->company->getLogo());
     }
 
-    /**
-     * Test toString function.
-     */
     public function testToStringFunction()
     {
         $name = 'Name';

@@ -1,0 +1,69 @@
+{% extends '@IntegratedContent/base.html.twig' %}
+
+{% set selected_modus = 'media_gallery' %}
+
+{% block title %} {% trans %}Media Library{% endtrans %} - Edit image{% endblock title %}
+{% block content %}
+
+    <div class="modal fade" id="image-edit-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Save image</h4>
+                </div>
+                <div class="modal-body">
+                    <p>If you want to replace the image, you can check this checkbox. Else it will be saved as a copy.</p>
+                    <p id="not-used-by">Currently the image is not in use.</p>
+                    <li class="used-by-item" hidden>
+                        <a href=""></a>
+                    </li>
+
+                    <ul id="used-by-list" hidden></ul>
+
+                    <div>
+                        <input type="checkbox" id="overwriteImage" name="overwriteImage">
+                        <label for="overwriteImage">Overwrite image</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="saveEditedImage" class="btn btn-green">Save image</button>
+                    <button type="button" id="cancelModal" class="btn btn-white" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="drag-drop-area"
+         data-endpoint="{{ endpoint|default( path('integrated_content_media_upload_file') ) }}"
+         data-language="{{ language|default('nl') }}"
+         data-height="{{ height|default('750px') }}"
+         data-image-editor-enabled="{{ imageEditorEnabled|default(true) }}"
+         data-target="{{ target|default('.drag-drop-area') }}"
+         data-id="{{ id }}"
+         data-used-by-path="{{ path('integrated_content_content_used_by', {'id' : 'REPLACE'}) }}"
+         data-used-by-block-path="{{ path('integrated_block_block_used_by', {'id' : 'REPLACE'}) }}"
+         data-media-gallery-path="{{ path('integrated_content_media_index') }}"
+         data-meta="{{ meta }}"
+         data-title="{{ title }}"
+         data-file_url="{{ file_url|default("") }}">
+    </div>
+
+    <script src="{{ asset('bundles/integratedintegrated/edit_uppy.js') }}"></script>
+{% endblock %}
+
+{% block webpack_js %}
+    <script>
+        const path = '{{ path('integrated_content_media_manage_relations') }}'
+        const previous_url = '{{ previous_url }}'
+        const selected_modus = '{{ selected_modus|default('media_gallery') }}'
+
+        var modal = document.getElementById("image-edit-modal");
+        var cancel = document.getElementById("cancelModal");
+        cancel.onclick = function() {
+            modal.style.display = "none";
+        }
+    </script>
+
+    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
+    <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
+{% endblock %}

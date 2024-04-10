@@ -25,6 +25,7 @@
             <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="Integrated\Bundle\ContentBundle\Services\CalendarOptions" />
+            <argument type="service" id="integrated_content.publication_repository" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
@@ -68,6 +69,7 @@
             <argument type="service" id="Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager" />
             <argument type="service" id="security.authorization_checker" />
             <argument type="service" id="Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile" />
+            <argument type="service" id="Integrated\Bundle\ContentBundle\Services\MediaGalleryEditFile" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
@@ -152,6 +154,13 @@
             <call method="setContainer">
                 <argument type="service" id="service_container" />
             </call>
+        </service>
+
+        <service id="Integrated\Bundle\ContentBundle\Controller\YoastSeoLanguageProvider">
+            <argument type="service" id="file_locator" />
+            <argument>@IntegratedContentBundle/YoastSeo/lang</argument>
+
+            <tag name="controller.service_arguments" />
         </service>
 
     </services>

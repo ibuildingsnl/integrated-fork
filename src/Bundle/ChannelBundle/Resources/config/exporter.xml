@@ -14,10 +14,19 @@
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
         </service>
 
+        <service id="integrated_channel.exporter.simple_publications" class="Integrated\Common\Channel\Exporter\PublicationExporterDecorator" decorates="integrated_channel.exporter.simple">
+            <argument type="service" id="integrated_channel.exporter.simple_publications.inner" />
+            <argument type="service" id="integrated_channel.adapter.registry" />
+            <argument type="service" id="integrated_channel.config.resolver" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="integrated_content.publication_repository" />
+        </service>
+
         <service id="integrated_channel.exporter.queue" class="Integrated\Common\Channel\Exporter\QueueExporter">
             <argument type="service" id="integrated_channel.queue" />
             <argument type="service" id="integrated_channel.queue.serializer" />
             <argument type="service" id="integrated_channel.exporter.simple" />
+            <argument type="expression">5</argument>
         </service>
 
         <service id="integrated_channel.exporter" alias="integrated_channel.exporter.queue" />

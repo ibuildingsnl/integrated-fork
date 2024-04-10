@@ -33,6 +33,29 @@
             <tag name="integrated_content.form.event_subscriber"/>
         </service>
 
+        <service id="integrated_content.form.publication.listener"
+                 class="Integrated\Bundle\ContentBundle\EventListener\ContentPublicationIntegrationListener">
+            <argument type="service" id="integrated_content.publication_repository" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager"/>
+
+            <tag name="integrated_content.form.event_subscriber"/>
+        </service>
+
+        <service id="integrated_content.form.featuredimage.listener"
+                 class="Integrated\Bundle\ContentBundle\EventListener\ContentFeaturedImageListener">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager"/>
+
+            <tag name="integrated_content.form.event_subscriber"/>
+        </service>
+
+        <service id="Integrated\Bundle\BlockBundle\EventListener\BlockImageListener">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager"/>
+            <argument type="service" id="integrated_content.services.main_flusher" />
+
+            <tag name="integrated_content.form.event_subscriber"/>
+        </service>
+
+
         <service id="integrated_content.form.relations.listener" class="Integrated\Bundle\ContentBundle\EventListener\ContentRelationsIntegrationListener">
             <argument type="string">relations</argument>
             <argument type="string">Integrated\Bundle\ContentBundle\Form\Type\RelationsType</argument>
@@ -113,6 +136,8 @@
         <service id="integrated_content.form.content_type.channel.type" class="Integrated\Bundle\ContentBundle\Form\Type\ContentTypeChannelType"/>
 
         <service id="integrated_content.form.type.channel" class="Integrated\Bundle\ContentBundle\Form\Type\ChannelType">
+            <argument type="service" id="integrated_asset.manager.javascript_manager" />
+            <argument type="service" id="integrated_channel.channel_type.registry" />
             <tag name="form.type"/>
         </service>
 
@@ -180,6 +205,14 @@
 
         <service id="integrated_content.form.type.primary_channel" class="Integrated\Bundle\ContentBundle\Form\Type\PrimaryChannelType">
             <argument type="service" id="translator"/>
+            <tag name="form.type"/>
+        </service>
+
+        <service id="integrated_content.form.type.publication_settings" class="Integrated\Bundle\ContentBundle\Form\Type\PublicationsType">
+            <tag name="form.type"/>
+        </service>
+
+        <service id="integrated_content.form.type.global_publication_settings" class="Integrated\Bundle\ContentBundle\Form\Type\GlobalPublicationsType">
             <tag name="form.type"/>
         </service>
 

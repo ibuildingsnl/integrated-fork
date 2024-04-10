@@ -222,6 +222,7 @@ thead {
             display: block;
 
             td {
+                border-bottom: 0px;
                 &:first-child {
                     font-weight: bold;
                     font-size: 1.3em;
@@ -233,13 +234,33 @@ thead {
                     float: left;
                 }
 
+                &.channels {
+                    display: none;
+                }
+
                 &.state {
                     clear: both;
                     border: none;
+                    padding: 0;
                 }
 
-                &.title > strong a {
-                    font-size: 14px;
+                &.title {
+                    border-bottom: 1px solid rgba(0, 0, 0, .1);
+                    padding-right: 30px;
+                    > strong a {
+                        font-size: 14px;
+                    }
+                }
+            }
+
+            &.has-options {
+                position: relative;
+                .workflow-status {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    border-bottom-right-radius: 0;
+                    border-top-left-radius: 0px;
                 }
             }
 

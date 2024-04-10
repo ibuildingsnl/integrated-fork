@@ -71,13 +71,13 @@ class StateType extends AbstractType
             ]
         );
 
-        $builder->add('color', ColorType::class, ['label' => 'Status Color', 'required' => false]);
+        $builder->add('color', ColorType::class, ['label' => 'Status color', 'required' => false]);
 
         $builder->add(
             'icon',
             TextType::class,
             [
-                'label' => 'Status Icon',
+                'label' => 'Status icon',
                 'required' => false,
                 'attr' => [
                         'help_text' => '<span>You can use any <a href="https://iconoir.com/" target="_blank">Iconoir</a> icon</span>',

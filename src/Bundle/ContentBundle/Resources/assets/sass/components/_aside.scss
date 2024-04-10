@@ -15,7 +15,7 @@
 
 .aside-filters {
     background-color: white;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 48px);
     width: 350px;
     border-left: 1px solid #dee3e9;
     overflow: auto;
@@ -99,7 +99,7 @@
 
 .aside-item-holder {
     color: #000;
-    padding: 0.5rem 1.5rem;
+    padding: 0.25rem 1rem;
     position: relative;
 
     &:last-child {
@@ -144,7 +144,7 @@
 
     .aside-item-header {
         background-color: #ffffff;
-        padding: 1rem 1.5rem;
+        padding: 0.5rem 1rem;
         display: flex;
         transition: background-color .15s ease-in;
         justify-content: space-between;
@@ -277,6 +277,7 @@
 
                 .select2-selection__rendered {
                     line-height: 33px;
+                    padding-left: 8px;
                 }
 
                 .select2-selection__arrow {
@@ -291,14 +292,15 @@
         background-color: #ecf6fe;
         display: flex;
         justify-content: space-between;
-        padding: 0.5rem 1rem;
+        padding: 0.5rem 0.9rem;
         position: relative;
+        margin-bottom: 0.5rem;
 
         input {
             border: 1px solid #dee3e9;
             width: 100%;
             border-radius: 8px;
-            padding: 0.2rem 1rem 0.2rem 2rem;
+            padding: 0.2rem 1rem 0.2rem 2.5rem;
             font-size: 13px;
             color: black;
         }
@@ -396,7 +398,7 @@ body.hide-options {
 
 .aside-options {
     background-color: white;
-    height: calc(100vh - 110px);
+    height: calc(100vh - 96px);
     width: 350px;
     border-left: 1px solid $border-color;
     overflow: auto;
@@ -404,6 +406,7 @@ body.hide-options {
     margin-top: -1px;
     position: absolute;
     right: 0;
+    z-index: 90;
 
     @include media(max-lg) {
         display: none;
@@ -744,7 +747,7 @@ ul {
 }
 
 #editpaneliframe {
-    height: calc(100vh - 60px);
+    height: calc(100vh - 48px);
     width: 100%;
 }
 
@@ -785,8 +788,8 @@ ul {
 
             button.close-media-edit-form {
                 position: absolute;
-                width: 50px;
-                height: 50px;
+                width: 48px;
+                height: 48px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -834,8 +837,14 @@ ul {
                     height: 200px;
                     background-size: contain;
                     margin-bottom: 1rem;
-                    background-position: center;
+                    background-position: top center;
                     background-repeat: no-repeat;
+                    .btn {
+                        padding: 5px;
+                        height: 26px;
+                        margin: 5px;
+                        font-size: 12px;
+                    }
                 }
 
                 .aside-item-wrapper {
@@ -879,7 +888,7 @@ ul {
     #wrapper-holder {
         .content-wrapper {
             .index-wrapper-full {
-                padding-top: 60px;
+                padding-top: 48px;
             }
         }
     }

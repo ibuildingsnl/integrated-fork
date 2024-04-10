@@ -48,6 +48,8 @@ class DefinitionFormType extends AbstractType
             'entry_type' => StateType::class,
             'allow_add' => true,
             'allow_delete' => true,
+            'default_title' => 'New workflow state',
+            'add_button_text' => 'Add workflow state',
             'entry_options' => ['transitions' => 'empty'],
             'constraints' => [
                 new Count(['min' => 1]),

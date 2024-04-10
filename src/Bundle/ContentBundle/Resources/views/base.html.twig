@@ -70,7 +70,7 @@
 
 {% block header %}
     <nav class="navbar">
-        <div class="flex justify-between xl:px-4 w-full">
+        <div class="flex items-center justify-between w-full xl:px-4 h-full">
             <button class="mobile-menu-toggle toggle-button toggle-data-target" type="button"
                     data-target="sidebar-menu">
                 <i class="iconoir-menu"></i>
@@ -79,7 +79,7 @@
 
             <div class="flex wrap w-full">
                 {% block website_navigation_buttons %}
-                    {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ChannelController::getchannels')) }}
+                    {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ChannelController::getChannels')) }}
                 {% endblock website_navigation_buttons %}
                 {% block navbar_content_type %}
 
@@ -116,7 +116,7 @@
                         {% set label = 'danger' %}
                     {% endif %}
                     <div class="alert alert-{{ label }} alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert"><i class="iconoir-cancel"></i>
+                        <button type="button" class="close" data-dismiss="alert"><i class="iconoir-xmark"></i>
                         </button>
                         {{ message|trans }}
                     </div>

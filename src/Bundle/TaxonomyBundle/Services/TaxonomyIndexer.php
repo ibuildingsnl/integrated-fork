@@ -27,11 +27,17 @@ final class TaxonomyIndexer implements TaxonomyOverview
         $root = $options?->root ?: 'root';
         $filtered = $root !== 'root';
 
+        $taxonomy = $this->taxonomies->byId($root);
+
+        if (!$taxonomy && $filtered) {
+            return [];
+        }
+
         return $this->slice($options ?: new TaxonomyOptions(), ...$this->toSortedIndex(
             $this->listByParent($contentType),
             $root,
             $filtered ? 1 : 0,
-            $filtered ? [$this->toIndexed($this->taxonomies->byId($root))] : []
+            $filtered ? [$this->toIndexed($taxonomy)] : []
         ));
     }
 

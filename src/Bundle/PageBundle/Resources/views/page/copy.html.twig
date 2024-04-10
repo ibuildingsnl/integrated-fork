@@ -22,7 +22,6 @@
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
         {% endblock toolbar %}
-        <div class="aside-options"></div>
         <div class="editor-wrapper editor-wrapper-full">
             <div class="page-title">
                 <h1 class="heading">
@@ -45,6 +44,13 @@
     {{ parent() }}
 
     <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      var fields = document.querySelectorAll('[name*=newBlockId]');
+
+      for (var i = 0; i < fields.length; i++) {
+        fields[i].disabled = true;
+      }
+    });
     $('.copy-pages-blocks select').change(function() {
         var newBlockIdField = $(this).closest('div.row').find('input:text');
         if ($(this).val() == '') {

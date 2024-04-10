@@ -9,7 +9,7 @@ body {
 }
 
 body#tinymce {
-    padding: 70px 0 0 0 !important;
+    padding: 50px 0 0 0 !important;
 }
 
 @media only screen and (max-width: 640px) {
@@ -135,7 +135,7 @@ span.remove {
     display: none;
 }
 
-blockquote.quote {
+blockquote {
     border-left: 1px solid #d8d8d8;
     padding-left: 2rem;
     margin: 0;
@@ -146,17 +146,17 @@ blockquote.quote {
     line-height: 38px;
 }
 
-blockquote.quote cite {
+blockquote cite {
     font-size: 16px;
     font-weight: 300;
     color: rgba(0, 0, 0, 0.7);
 }
 
-blockquote.quote p {
+blockquote p {
     margin-bottom: 0;
 }
 
-blockquote.quote:before {
+blockquote:before {
     display: inline-block;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;

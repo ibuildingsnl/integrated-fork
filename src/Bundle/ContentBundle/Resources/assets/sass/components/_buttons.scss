@@ -5,10 +5,10 @@ button * {
 /* BUTTONS */
 .btn {
     padding: 0 0.8rem;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 400;
-    height: 40px;
-    line-height: 40px;
+    height: 30px;
+    line-height: 30px;
     border: 1px solid;
     display: inline-flex;
     align-items: center;
@@ -290,5 +290,15 @@ button * {
                 background: darken(#c6422f, 20%);
                 border-color: darken(#c6422f, 20%);
             }
+    }
+    &.btn-light-red {
+        background: #f6e9e5;
+        border-color: #f6e9e5;
+        color: #4e150d;
+        &:hover, &:focus {
+            color: #4e150d;
+            background: darken(#f6e9e5, 20%);
+            border-color: darken(#f6e9e5, 20%);
+        }
     }
 }

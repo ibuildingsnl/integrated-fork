@@ -77,10 +77,20 @@
                 then(response => response.json()).
                 then(data => {
                     $block.innerHTML = data.html;
+
+                    $block.className = '';
+
+                    if (data.cssClass) {
+                        $block.classList.add('integrated-website-sortable', ...data.cssClass.split(" "));
+                    } else {
+                        $block.classList.add('integrated-website-sortable');
+                    }
+
                     if (buttons) {
                         $block.prepend(createBlockButtons(), $block.firstChild);
                     }
                 });
+
         };
 
         /**
@@ -92,6 +102,10 @@
             element.dataset.blockType = 'row';
             element.classList.add('row');
             element.classList.add('integrated-website-sortable');
+            if (typeof framework !== 'undefined' && framework === 'tailwind') {
+                element.classList.add('flex');
+                element.classList.add('flex-wrap');
+            }
 
             return element;
         };
@@ -137,7 +151,7 @@
                 '  <i class="iconoir-settings"></i>' +
                 '</a>' +
                 '<a href="javascript:;" class="integrated-block-button integrated-website-column-remove" data-action="integrated-website-column-remove" title="{% trans %}Remove{% endtrans %}">' +
-                '  <i class="iconoir-cancel"></i>' +
+                '  <i class="iconoir-xmark"></i>' +
                 '</a>';
 
             return element;
@@ -179,7 +193,7 @@
                 '</a>' +
 
                 '<a href="javascript:;" class="integrated-block-button integrated-website-block-remove" data-action="integrated-website-block-remove" title="{% trans %}Remove{% endtrans %}">' +
-                '  <i class="iconoir-cancel"></i>' +
+                '  <i class="iconoir-xmark"></i>' +
                 '</a>';
 
             return element;

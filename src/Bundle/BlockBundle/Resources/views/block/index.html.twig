@@ -15,14 +15,16 @@
                         <ul class="options-no-bg">
                             <li class="dropdown close-outside" data-underlay="no">
                                 <a href="#" data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
-                                    <span>{% trans %}New{% endtrans %} {% trans %}block{% endtrans %}</span>
+                                    <span>{% trans %}New block{% endtrans %}</span>
                                     <i class="iconoir-plus"></i>
                                 </a>
                                 <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
-                                    {% for metadata in factory.allMetadata %}
-                                        {% if 'InlineTextBlock' not in metadata.class %}
+                                    {% set sortedBlocks = factory.allMetadata|integrated_sort_blocks %}
+
+                                    {% for blocks in sortedBlocks %}
+                                        {% if 'InlineTextBlock' not in blocks.class %}
                                             <li role="presentation">
-                                                <a href="{{ path('integrated_block_block_new') }}?class={{ metadata.class }}">{{ metadata.type|default(metadata.class) }}</a>
+                                                <a href="{{ path('integrated_block_block_new') }}?class={{ blocks.class }}">{{ blocks.type|default(blocks.class) }}</a>
                                             </li>
                                         {% endif %}
                                     {% endfor %}
@@ -45,10 +47,10 @@
             <aside>
                 <div class="aside-holder section-gray section-radius">
                     <div class="aside-header">
-                        <button class="toggle-filters toggle-data-target"  data-target="aside-filters"><i class="iconoir-cancel"></i></button>
+                        <button class="toggle-filters toggle-data-target"  data-target="aside-filters"><i class="iconoir-xmark"></i></button>
                         <span>{% trans %}Filters{% endtrans %}</span>
                         <a href="{{ path('integrated_block_block_index') }}" class="clear-filters"><span>{% trans %}Remove active filters{% endtrans %}</span>
-                            <i class="iconoir-cancel"></i>
+                            <i class="iconoir-xmark"></i>
                         </a>
                     </div>
                     {{ form_start(facetFilter) }}

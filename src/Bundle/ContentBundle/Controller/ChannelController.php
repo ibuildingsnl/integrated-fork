@@ -172,7 +172,7 @@ class ChannelController extends AbstractController
         ]);
     }
 
-    public function delete(Request $request, Channel $channel): RedirectResponse
+    public function delete(Request $request, Channel $channel): Response
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -250,10 +250,8 @@ class ChannelController extends AbstractController
         return $form->getForm();
     }
 
-    public function getchannels(): Response
+    public function getChannels(): Response
     {
-        $channels = $this->documentManager->getRepository(Channel::class)->findBy([], ['name' => 1]);
-
         $user = $this->getUser();
 
         if (!$user instanceof UserInterface) {
@@ -262,18 +260,27 @@ class ChannelController extends AbstractController
             ]);
         }
 
-        $allowedChannels = [];
+        return $this->render('@IntegratedContent/partials/block.websites.html.twig', [
+            'channels' => $this->getAllowedChannels($user),
+        ]);
+    }
+
+    /**
+     * @return Channel[]
+     */
+    private function getAllowedChannels(UserInterface $user): array
+    {
+        $channels = $this->documentManager->getRepository(Channel::class)->findBy([], ['name' => 1]);
+        $allowed = [];
 
         foreach ($channels as $channel) {
             $permissions = PermissionResolver::getPermissions($user, $channel->getPermissions());
 
             if ($permissions['read'] === true || $permissions['write'] === true) {
-                $allowedChannels[] = $channel;
+                $allowed[] = $channel;
             }
         }
 
-        return $this->render('@IntegratedContent/partials/block.websites.html.twig', [
-            'channels' => $allowedChannels,
-        ]);
+        return $allowed;
     }
 }

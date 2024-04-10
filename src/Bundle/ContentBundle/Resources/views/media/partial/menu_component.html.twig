@@ -1,6 +1,6 @@
 <div class="aside-header">
     <button class="toggle-filters toggle-data-target" data-target="aside-filters"><i
-            class="iconoir-cancel"></i></button>
+            class="iconoir-xmark"></i></button>
     <span>{% trans %}Folders{% endtrans %}</span>
 </div>
 <div class="aside-holder bg-white section-radius">
@@ -25,7 +25,7 @@
             <div class="aside-item-search">
                 <i class="iconoir-search"></i>
                 <input type="text" class="input_aside_folder_search list-search"
-                       placeholder="{% trans %}Enter the name of a folder{% endtrans %}">
+                       placeholder="{% trans %}Search in folders{% endtrans %}">
             </div>
 
             <form id="media_form" action="{{ path('integrated_content_media_manage_relations') }}">

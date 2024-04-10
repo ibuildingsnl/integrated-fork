@@ -19,19 +19,19 @@ use Integrated\Common\Content\PublishTimeInterface;
 class PublishTime implements PublishTimeInterface
 {
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     protected $startDate;
 
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     protected $endDate;
 
     /**
      * {@inheritdoc}
      */
-    public function getStartDate(): ?\DateTime
+    public function getStartDate(): ?\DateTimeInterface
     {
         return $this->startDate;
     }
@@ -39,7 +39,7 @@ class PublishTime implements PublishTimeInterface
     /**
      * {@inheritdoc}
      */
-    public function setStartDate(\DateTime $startDate = null)
+    public function setStartDate(\DateTimeInterface $startDate = null)
     {
         $this->startDate = $startDate;
 
@@ -49,7 +49,7 @@ class PublishTime implements PublishTimeInterface
     /**
      * {@inheritdoc}
      */
-    public function getEndDate(): ?\DateTime
+    public function getEndDate(): ?\DateTimeInterface
     {
         return $this->endDate;
     }
@@ -57,7 +57,7 @@ class PublishTime implements PublishTimeInterface
     /**
      * {@inheritdoc}
      */
-    public function setEndDate(\DateTime $endDate = null)
+    public function setEndDate(\DateTimeInterface $endDate = null)
     {
         $this->endDate = $endDate;
 
@@ -67,7 +67,7 @@ class PublishTime implements PublishTimeInterface
     /**
      * {@inheritdoc}
      */
-    public function isPublished(\DateTime $date = null): bool
+    public function isPublished(\DateTimeInterface $date = null): bool
     {
         if (null === $date) {
             $date = new \DateTime();

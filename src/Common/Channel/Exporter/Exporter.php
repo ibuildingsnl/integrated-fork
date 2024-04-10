@@ -13,11 +13,11 @@ namespace Integrated\Common\Channel\Exporter;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Connector;
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\Config\ResolverInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface as ConnectorExporterInterface;
-use Integrated\Common\Content\ConnectorInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
+use Integrated\Common\Content\ConnectableInterface;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\PublishableInterface;
 
@@ -27,36 +27,18 @@ use Integrated\Common\Content\PublishableInterface;
 class Exporter implements ExporterInterface
 {
     /**
-     * @var RegistryInterface
+     * @var array<string, ConnectorExporterInterface[]>
      */
-    private $registry;
+    private array $cache = [];
 
-    /**
-     * @var ResolverInterface
-     */
-    private $resolver;
-
-    /**
-     * @var DocumentManager
-     */
-    private $dm;
-
-    /**
-     * @var ConnectorExporterInterface[][]
-     */
-    private $cache = [];
-
-    public function __construct(RegistryInterface $registry, ResolverInterface $resolver, DocumentManager $dm)
-    {
-        $this->registry = $registry;
-        $this->resolver = $resolver;
-        $this->dm = $dm;
+    public function __construct(
+        private readonly RegistryInterface $registry,
+        private readonly ResolverInterface $resolver,
+        private readonly DocumentManager $dm
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function export($content, $state, ChannelInterface $channel)
+    public function export($content, $state, ChannelInterface $channel, array $settings = [])
     {
         $publicationDate = null;
         if ($content instanceof PublishableInterface) {
@@ -114,16 +96,13 @@ class Exporter implements ExporterInterface
         return $this->cache[$channel->getId()];
     }
 
-    /**
-     * @param object $content
-     */
-    protected function save($content, ExporterResponse $response)
+    protected function save($content, ExporterResponse $response): void
     {
         if (!$content instanceof ContentInterface) {
             return;
         }
 
-        if (!$content instanceof ConnectorInterface) {
+        if (!$content instanceof ConnectableInterface) {
             return;
         }
 
@@ -132,10 +111,12 @@ class Exporter implements ExporterInterface
                 ->setConfigAdapter($response->getConfigAdapter())
                 ->setExternalId($response->getExternalId());
         } else {
-            $content->addConnector((new Connector())
-                ->setConfigId($response->getConfigId())
-                ->setConfigAdapter($response->getConfigAdapter())
-                ->setExternalId($response->getExternalId()));
+            $content->addConnector(
+                (new Connector())
+                    ->setConfigId($response->getConfigId())
+                    ->setConfigAdapter($response->getConfigAdapter())
+                    ->setExternalId($response->getExternalId())
+            );
         }
 
         $this->dm->persist($content);

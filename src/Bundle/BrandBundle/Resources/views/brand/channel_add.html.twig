@@ -1,0 +1,113 @@
+{% extends '@IntegratedContent/base.html.twig' %}
+
+{% block title %}{% trans %}New{% endtrans %} {{ linkType.name }} {% trans %}channel{% endtrans %}{% endblock title %}
+
+{% block style %}
+    {{ parent() }}
+
+    <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/edit.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="flex flex-wrap edit-form">
+        {% block form_start %}
+            {{ form_start(form) }}
+        {% endblock %}
+        {% block toolbar %}
+            {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+        {% endblock toolbar %}
+        <div class="aside-options" style="margin-top: 48px;">
+            <aside>
+                <div class="aside-holder">
+                    {% block sidebar %}
+                    <div class="aside-header">
+                        <button class="toggle-filters toggle-options-sidebar" data-target="aside-options" type="button">
+                            <i class="iconoir-xmark"></i></button>
+                        <span>{% trans %}Options{% endtrans %}</span>
+                    </div>
+                        {% block content_meta %}
+                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR')) %}
+                                {{ form_row(child) }}
+                            {% endfor %}
+                    <div data-channel-new style="display: none">
+                            {% for child in form.channel|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR')) %}
+                                {{ form_row(child) }}
+                            {% endfor %}
+                    </div>
+                        {% endblock %}
+                    {% endblock %}
+                </div>
+            </aside>
+        </div>
+        <div class="editor-wrapper" style="margin-top: 48px;">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}New{% endtrans %} {{ linkType.name }} {% trans %}channel{% endtrans %}</h1>
+            </div>
+            <section class="editor">
+                {{ form_errors(form) }}
+
+                {% block content_form %}
+                    <div class="hidden">
+                        {{ form_row(form.type) }}
+                    </div>
+
+                    <div>
+                        {{ form_row(form.default) }}
+                    </div>
+
+                    {{ form_row(form.choose_channel) }}
+
+                    <div data-channel-choose style="display: none">
+                        {{ form_row(form.channel_choice) }}
+                    </div>
+
+                    <div data-channel-new style="display: none">
+                    {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR')) %}
+                        {{ form_row(child) }}
+                    {% endfor %}
+                    {{ form_label(form.channel) }}
+                    {% for child in form.channel|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR')) %}
+                        {{ form_row(child) }}
+                    {% endfor %}
+                        <div class="hidden"> {{ form_row(form.channel) }}</div>
+                    </div>
+                    {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
+
+                {% endblock %}
+            </section>
+        </div>
+
+        {% block form_end %}
+            {{ form_end(form) }}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block webpack_js %}
+    <script src="{{ asset('bundles/integratedintegrated/edit.js') }}"></script>
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+
+<script>
+const setDisplayFor = function(suffix, display) {
+  document.querySelectorAll('[data-channel-'+suffix+']').forEach((el) => el.style.display = display);
+}
+const addOrChooseChannel = function() {
+    if (document.querySelector('[data-choose-channel]').checked) {
+        setDisplayFor('choose', 'block');
+        setDisplayFor('new', 'none');
+    } else {
+        setDisplayFor('choose', 'none');
+        setDisplayFor('new', 'block');
+    }
+}
+document.querySelector('[data-choose-channel]').addEventListener('change', addOrChooseChannel);
+addOrChooseChannel();
+
+document.querySelector('[name$="[channel][name]"]').value = '{{ brand.name }} {{ linkType.name }}';
+</script>
+
+<script src="{{ asset('bundles/integratedcontent/js/channel.js') }}"></script>
+{% endblock javascript %}

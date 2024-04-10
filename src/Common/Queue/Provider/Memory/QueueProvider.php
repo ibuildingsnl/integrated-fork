@@ -12,39 +12,44 @@
 namespace Integrated\Common\Queue\Provider\Memory;
 
 use Integrated\Common\Queue\Provider\QueueProviderInterface;
+use Stratadox\Clock\Clock;
+use Stratadox\Clock\DateTimeClock;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
 class QueueProvider implements QueueProviderInterface
 {
-    /**
-     * @var array
-     */
-    private $queue = [];
+    private array $queue = [];
+    private readonly Clock $clock;
+
+    public function __construct(Clock $clock = null)
+    {
+        $this->clock = $clock ?: new DateTimeClock();
+    }
 
     /**
      * {@inheritdoc}
      */
-    public function push($channel, $payload, $delay = 0, $priority = 0)
+    public function push($channel, $payload, $delay = 0, $priority = 0, $attempt = 0)
     {
-        // TODO: for now also ignore priority
+        // TODO: add priority
 
         $channel = (string) $channel;
-        $timestamp = time();
+        $timestamp = $this->clock->now()->getTimestamp();
 
         if (!isset($this->queue[$channel])) {
             $this->queue[$channel] = [];
         }
 
-        $this->queue[$channel][] = [
-            'payload' => $payload,
-            'attempts' => 0,
-            'priority' => min(max((int) $priority, -10), 10),
-            'time_created' => $timestamp,
-            'time_updated' => $timestamp,
-            'time_execute' => $timestamp + $delay,
-        ];
+        $this->queue[$channel][] = new QueueMessage(
+            $payload,
+            $attempt,
+            min(max((int) $priority, -10), 10),
+            $timestamp,
+            $timestamp,
+            $timestamp + $delay,
+        );
     }
 
     /**
@@ -63,26 +68,7 @@ class QueueProvider implements QueueProviderInterface
         $limit = (int) $limit;
         $limit = $limit > 1 ? $limit : 1;
 
-        $results = [];
-
-        foreach (array_splice($this->queue[$channel], 0, $limit) as $row) {
-            $release = function () use ($channel, $row) {
-                ++$row['attempts'];
-                array_unshift($this->queue[$channel], $row);
-            };
-
-            $results[] = new QueueMessage(
-                $row['payload'],
-                $row['attempts'],
-                $row['priority'],
-                $row['time_created'],
-                $row['time_updated'],
-                $row['time_execute'],
-                $release
-            );
-        }
-
-        return $results;
+        return \array_slice($this->currentlyAvailable($channel), 0, $limit);
     }
 
     /**
@@ -96,8 +82,16 @@ class QueueProvider implements QueueProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function count($channel)
+    public function count($channel): int
     {
-        return isset($this->queue[$channel]) ? \count($this->queue[$channel]) : 0;
+        return \count($this->currentlyAvailable($channel));
+    }
+
+    private function currentlyAvailable(string $channel): array
+    {
+        return array_filter(
+            $this->queue[$channel] ?? [],
+            fn (QueueMessage $m) => $m->getExecuteAt() <= $this->clock->now()->getTimestamp()
+        );
     }
 }

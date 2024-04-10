@@ -39,11 +39,6 @@
             <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
         </service>
 
-
-        <service id="integrated_content.odm.mongo.cleanreferences.listener" class="Integrated\Bundle\ContentBundle\Doctrine\EventListener\CleanReferencesListener">
-            <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
-        </service>
-
         <service id="integrated_content.odm.mongo.clean_relations.listener" class="Integrated\Bundle\ContentBundle\Doctrine\EventListener\CleanRelationsListener">
             <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
         </service>

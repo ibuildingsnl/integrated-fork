@@ -11,9 +11,9 @@
 
 namespace Integrated\Common\Channel\Tests\Connector\Config\Resolver;
 
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 use Integrated\Common\Channel\Connector\Config\Resolver\MemoryResolver;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -128,7 +128,7 @@ class MemoryResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected function getChannel($id)
     {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\ChannelInterface');
+        $mock = $this->createMock(ChannelInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getId')
             ->willReturn($id);
