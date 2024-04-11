@@ -151,7 +151,7 @@ class Article extends Content implements RankableInterface
         'priority' => 430,
         'attr' => [
             'style' => 'sidebar',
-            'icon' => 'pin-alt',
+            'icon' => 'map-pin',
         ],
     ], location: 'sidebar')]
     protected $address;
@@ -164,7 +164,7 @@ class Article extends Content implements RankableInterface
         'attr' => [
             'label' => 'Seo Metadata',
             'style' => 'none',
-            'icon' => 'pin-alt',
+            'icon' => 'map-pin',
         ],
     ])]
     protected $seoMetadata;
