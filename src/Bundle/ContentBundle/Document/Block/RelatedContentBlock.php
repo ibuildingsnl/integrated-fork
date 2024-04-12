@@ -107,7 +107,7 @@ class RelatedContentBlock extends Block
             'min' => 0,
             'style' => 'sidebar',
             'state' => 'show',
-            'icon' => 'grid-add',
+            'icon' => 'grid-xmark',
         ],
     ], location: 'sidebar')]
     protected $itemsPerPage = 10;
