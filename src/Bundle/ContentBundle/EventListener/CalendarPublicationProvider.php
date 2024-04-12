@@ -54,7 +54,7 @@ class CalendarPublicationProvider implements EventSubscriberInterface
         foreach ($publications as $publication) {
             $type = $publication->getChannel()->getType();
 
-            if ($publication->getChannel() === null || $publication->getContent() === null || $type === null) {
+            if ($publication->getChannel() === null || $publication->getContent()->getTitle() === null || $type === null) {
                 continue;
             }
 
