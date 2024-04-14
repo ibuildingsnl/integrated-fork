@@ -78,10 +78,13 @@ class Content extends AbstractType
         }
 
         if ($options['pub_channels']) {
+            $now = new \DateTime('now');
+            $nowFormatted = $now->format('Y-m-d\TH:i:s\Z');
+
             foreach ($options['pub_channels'] as $channel) {
                 $channel = $helper->escapeTerm($channel);
                 $query->createFilterQuery('pub_channel_'.$channel)
-                      ->setQuery('(publication_start_'.$channel.'_index_date: [* TO NOW]) AND (publication_end_'.$channel.'_index_date: [NOW TO *])');
+                      ->setQuery('(publication_start_'.$channel.'_index_date: [* TO '.$nowFormatted.']) AND (publication_end_'.$channel.'_index_date: ['.$nowFormatted.' TO *])');
             }
         }
 
