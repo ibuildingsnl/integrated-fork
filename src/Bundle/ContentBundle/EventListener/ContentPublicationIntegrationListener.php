@@ -79,8 +79,6 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                     unset($data['time']);
                 }
 
-                $existingChannelPublications = $this->publications->forContentOnChannel($content, $channel);
-
                 $imagesProcessed = [];
                 if (isset($data['images']) && \is_array($data['images'])) {
                     foreach ($data['images'] as $key => $image) {
@@ -92,6 +90,8 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                     }
                     $data['images'] = $imagesProcessed;
                 }
+
+                $existingChannelPublications = $this->publications->forContentOnChannel($content, $channel);
 
                 if (!$existingChannelPublications) {
                     $this->publications->add(new Publication($content, $channel, $time, \is_array($data) ? $data : []));
