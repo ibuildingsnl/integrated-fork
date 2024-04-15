@@ -591,7 +591,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     {
         foreach ($this->channels as $channel) {
             $this->channels->removeElement($channel);
-
         }
 
         return $this;
