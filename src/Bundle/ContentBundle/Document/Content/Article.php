@@ -41,6 +41,7 @@ class Article extends Content implements RankableInterface
             'state' => 'title_tinymce',
             'class' => 'fancy_tinymce',
             'style' => 'horizontal',
+            'required' => 'required',
         ],
     ], location: 'editor')]
     protected $title;
