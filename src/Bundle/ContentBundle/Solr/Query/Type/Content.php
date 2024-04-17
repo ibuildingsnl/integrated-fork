@@ -78,7 +78,7 @@ class Content extends AbstractType
         }
 
         if ($options['pub_channels']) {
-            $now = new \DateTime('now');
+            $now = new \DateTimeImmutable('now');
             $nowFormatted = $now->format('Y-m-d\TH:i:s\Z');
 
             foreach ($options['pub_channels'] as $channel) {
