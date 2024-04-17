@@ -25,35 +25,11 @@ class BrandExtension extends AbstractExtension
     {
         return [
             new TwigFilter('integrated_brand', [$this, 'getBrandForChannel']),
-            new TwigFilter('integrated_brands', [$this, 'getAllBrands']),
-            new TwigFilter('integrated_other_brands', [$this, 'getAllOtherBrands']),
+            new TwigFilter('integrated_brand_profiles', [$this, 'getAllBrandProfiles']),
+            new TwigFilter('integrated_other_brand_profiles', [$this, 'getAllOtherBrandProfiles']),
             new TwigFilter('integrated_brand_profile', [$this, 'getBrandProfileForChannel']),
             new TwigFilter('integrated_brand_website_channel', [$this, 'getBrandWebsiteChannel']),
         ];
-    }
-
-    public function getAllBrands(): ?ArrayCollection
-    {
-        $brands = new ArrayCollection();
-        foreach ($this->brands->all() as $brand) {
-            $brands->add($brand->getProfile());
-        }
-
-        return $brands;
-    }
-
-    public function getAllOtherBrands(?ChannelInterface $channel): ?ArrayCollection
-    {
-        $brands = new ArrayCollection();
-        if ($channel instanceof ChannelInterface) {
-            foreach ($this->brands->all() as $brand) {
-                if (!$brand->hasChannel($channel)) {
-                    $brands->add($brand->getProfile());
-                }
-            }
-        }
-
-        return $brands;
     }
 
     public function getBrandForChannel(?ChannelInterface $channel): ?Brand
@@ -67,6 +43,30 @@ class BrandExtension extends AbstractExtension
         }
 
         return null;
+    }
+
+    public function getAllBrandProfiles(): ?ArrayCollection
+    {
+        $brands = new ArrayCollection();
+        foreach ($this->brands->all() as $brand) {
+            $brands->add($brand->getProfile());
+        }
+
+        return $brands;
+    }
+
+    public function getAllOtherBrandProfiles(?ChannelInterface $channel): ?ArrayCollection
+    {
+        $brands = new ArrayCollection();
+        if ($channel instanceof ChannelInterface) {
+            foreach ($this->brands->all() as $brand) {
+                if (!$brand->hasChannel($channel)) {
+                    $brands->add($brand->getProfile());
+                }
+            }
+        }
+
+        return $brands;
     }
 
     public function getBrandProfileForChannel(?ChannelInterface $channel): ?BrandProfile

@@ -138,10 +138,7 @@ function toggleFullscreen() {
 function handleChannelClick(event) {
     //With channels this was event.target.value. With brands we have:
     const brand_checkboxes = document.querySelectorAll(channels_selector + channel_brands_selector)
-    console.log(brand_checkboxes);
     enabled_channels = getEnabledChannels(brand_checkboxes)
-    console.log(getEnabledChannels(brand_checkboxes));
-    console.log(enabled_channels);
 
     filterBasedOnChannels()
     updateDOMForAllRelations()
