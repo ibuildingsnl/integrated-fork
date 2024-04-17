@@ -32,6 +32,19 @@ class BrandExtension extends AbstractExtension
         ];
     }
 
+    public function getBrandForChannel(?ChannelInterface $channel): ?Brand
+    {
+        if ($channel instanceof ChannelInterface) {
+            foreach ($this->brands->all() as $brand) {
+                if ($brand->hasChannel($channel)) {
+                    return $brand;
+                }
+            }
+        }
+
+        return null;
+    }
+    
     public function getAllBrandProfiles(): ?ArrayCollection
     {
         $brands = new ArrayCollection();
@@ -54,19 +67,6 @@ class BrandExtension extends AbstractExtension
         }
 
         return $brands;
-    }
-
-    public function getBrandForChannel(?ChannelInterface $channel): ?Brand
-    {
-        if ($channel instanceof ChannelInterface) {
-            foreach ($this->brands->all() as $brand) {
-                if ($brand->hasChannel($channel)) {
-                    return $brand;
-                }
-            }
-        }
-
-        return null;
     }
 
     public function getBrandProfileForChannel(?ChannelInterface $channel): ?BrandProfile
