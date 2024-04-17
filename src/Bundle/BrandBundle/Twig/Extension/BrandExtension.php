@@ -44,7 +44,7 @@ class BrandExtension extends AbstractExtension
 
         return null;
     }
-    
+
     public function getAllBrandProfiles(): ?ArrayCollection
     {
         $brands = new ArrayCollection();
