@@ -25,14 +25,14 @@ class BrandExtension extends AbstractExtension
     {
         return [
             new TwigFilter('integrated_brand', [$this, 'getBrandForChannel']),
-            new TwigFilter('integrated_brands', [$this, 'getAllBrands']),
-            new TwigFilter('integrated_other_brands', [$this, 'getAllOtherBrands']),
+            new TwigFilter('integrated_brand_profiles', [$this, 'getAllBrandProfiles']),
+            new TwigFilter('integrated_other_brand_profiles', [$this, 'getAllOtherBrandProfiles']),
             new TwigFilter('integrated_brand_profile', [$this, 'getBrandProfileForChannel']),
             new TwigFilter('integrated_brand_website_channel', [$this, 'getBrandWebsiteChannel']),
         ];
     }
 
-    public function getAllBrands(): ?ArrayCollection
+    public function getAllBrandProfiles(): ?ArrayCollection
     {
         $brands = new ArrayCollection();
         foreach ($this->brands->all() as $brand) {
@@ -42,7 +42,7 @@ class BrandExtension extends AbstractExtension
         return $brands;
     }
 
-    public function getAllOtherBrands(?ChannelInterface $channel): ?ArrayCollection
+    public function getAllOtherBrandProfiles(?ChannelInterface $channel): ?ArrayCollection
     {
         $brands = new ArrayCollection();
         if ($channel instanceof ChannelInterface) {
