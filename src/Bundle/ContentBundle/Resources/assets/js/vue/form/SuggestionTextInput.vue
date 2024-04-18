@@ -10,7 +10,7 @@ const props = defineProps({
     id: undefined,
     permanent: false,
 });
-
+// TODO: Need to wrap modelValue so we can add selected property to a suggestion to avoid it visually being deselected on blur
 const emit = defineEmits(['update:modelValue']);
 
 const value = computed({
@@ -30,6 +30,10 @@ const onBlur = (e) => {
     }
 };
 
+const selectSuggestion = (key) => {
+
+};
+
 const isShowing = ref(false);
 </script>
 
@@ -41,7 +45,7 @@ const isShowing = ref(false);
              class="w-full bg-white rounded-lg shadow z-50 max-h-[260px] overflow-y-auto"
              :class="{'absolute bottom-0 left-0 translate-y-full': !props.permanent}"
         >
-            <SuggestionTextInputSuggestion @focusout="onBlur" v-for="{key, title, subtitle, text} in props.suggestions" :key="key" :title="title" :subtitle="subtitle" :text="text"/>
+            <SuggestionTextInputSuggestion @select="() => selectSuggestion(key)" @focusout="onBlur" v-for="{key, title, subtitle, text} in props.suggestions" :key="key" :title="title" :subtitle="subtitle" :text="text"/>
         </div>
     </div>
 </template>

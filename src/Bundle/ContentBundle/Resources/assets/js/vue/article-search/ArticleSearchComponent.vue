@@ -77,8 +77,8 @@ const openInNewTab = ref(false);
             <SuggestionTextInput :permanent="true" :suggestions="results" placeholder="URL or title"/>
             <Checkbox id="new-tab" v-model="openInNewTab" label="Open in new tab" />
             <div class="flex flex-row space-x-2">
-                <Button>Cancel</Button>
-                <Button>Apply</Button>
+                <Button type="normal">Cancel</Button>
+                <Button type="primary">Apply</Button>
             </div>
         </main>
     </div>
