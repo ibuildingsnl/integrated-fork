@@ -13,49 +13,49 @@ let selected_tab = ''
 
 document.addEventListener("DOMContentLoaded", function(event) {
     setupRelations()
-    channel_checkboxes = setupChannels()
-    addEventListeners(channel_checkboxes)
+    brand_checkboxes = setupChannels()
+    addEventListeners(brand_checkboxes)
     updateDOMForAllRelations()
     filterBasedOnChannels()
 });
 
 function setupRelations() {
-    const relevant_relations = Array.from(document.querySelectorAll('.taxonomy_category')).map(item => item.id)
-    for (relation_id of relevant_relations) {
-        let new_relation = createNewRelation(relation_id)
-        relations = [...relations, new_relation]
-    }
-}
-
-function createNewRelation(relation_id) {
-    return {
-        relation_id: relation_id,
-        input_selector: input_field_prefix + relation_id.replace("taxonomy_category_", ''),
-        pills_selector: '#' + relation_id + ' ' + pills_selector,
-        popup_selector: '#' + relation_id + ' ' + popup_selector,
-        category_checkboxes: document.querySelectorAll('#' + relation_id + ' .categories_checkboxes_basic input[type=checkbox]'),
-        all_category_checkboxes: document.querySelectorAll('#' + relation_id + ' .categories_checkboxes input[type=checkbox]'),
-        enabled_categories: document.querySelector('#' + relation_id + ' .enabled_categories').dataset.ids.split(",").filter(n => n),
-        popup_tabs: document.querySelectorAll('#' + relation_id + ' .category_tab')
-    }
+    const relevant_relations = document.querySelectorAll('.taxonomy_category');
+    relations = Array.from(relevant_relations).map(relation => ({
+        relation_id: relation.id,
+        input_selector: input_field_prefix + relation.id.replace("taxonomy_category_", ''),
+        pills_selector: '#' + relation.id + ' ' + pills_selector,
+        popup_selector: '#' + relation.id + ' ' + popup_selector,
+        category_checkboxes: relation.querySelectorAll('.categories_checkboxes_basic input[type=checkbox]'),
+        all_category_checkboxes: relation.querySelectorAll('.categories_checkboxes input[type=checkbox]'),
+        enabled_categories: new Set(relation.querySelector('.enabled_categories').dataset.ids.split(",").filter(Boolean)),
+        popup_tabs: relation.querySelectorAll('.category_tab')
+    }));
 }
 
 function setupChannels() {
     //If brands didnt have children:
-    // const channel_checkboxes = document.querySelectorAll(channels_selector + ' input[type=checkbox]')
+    // const brand_checkboxes = document.querySelectorAll(channels_selector + ' input[type=checkbox]')
     //But they do:
-    const channel_checkboxes = document.querySelectorAll(channels_selector + channel_brands_selector)
-    enabled_channels = getEnabledChannels(channel_checkboxes)
-    return channel_checkboxes
+    const brand_checkboxes = document.querySelectorAll(channels_selector + channel_brands_selector)
+
+    enabled_channels = getEnabledChannels(brand_checkboxes)
+    return brand_checkboxes
 }
 
 function getEnabledChannels(checkboxes) {
-    return Array.from(checkboxes).reduce((prev, current) => {
-        return current.checked ? [...prev, current.value] : prev;
-    }, []);
+    let channelCheckboxes = [];
+    checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            const childCheckboxes = checkbox.closest('.brand-container').querySelectorAll('.brand-channel-choice');
+            channelCheckboxes = channelCheckboxes.concat(Array.from(childCheckboxes));
+        }
+    });
+
+    return channelCheckboxes.map(checkbox => checkbox.getAttribute('data-channel-selector'));
 }
 
-function addEventListeners(channel_checkboxes) {
+function addEventListeners(brand_checkboxes) {
     for (relation of relations) {
         relation.all_category_checkboxes.forEach(item => {
             item.addEventListener('change', handleCategoryClick)
@@ -64,7 +64,7 @@ function addEventListeners(channel_checkboxes) {
     document.querySelectorAll('.categories_tabs .category_tab').forEach(item => {
         item.addEventListener('click', handleTabClick)
     })
-    channel_checkboxes.forEach(item => {
+    brand_checkboxes.forEach(item => {
         item.addEventListener('change', handleChannelClick)
     })
     document.querySelectorAll('.togglefullscreen').forEach(item => {
@@ -137,15 +137,8 @@ function toggleFullscreen() {
 
 function handleChannelClick(event) {
     //With channels this was event.target.value. With brands we have:
-    const channel_name = event.target.parentNode.innerText
-                        .trim() // removes whitespace from both ends of a string
-                        .toLowerCase() // converts the string to lower case
-                        .replace(/[\s!]/g, ''); // removes spaces and exclamation marks
-    if (enabled_channels.includes(channel_name)) {
-        enabled_channels = enabled_channels.filter(item => item !== channel_name)
-    } else {
-        enabled_channels.push(channel_name)
-    }
+    const brand_checkboxes = document.querySelectorAll(channels_selector + channel_brands_selector)
+    enabled_channels = getEnabledChannels(brand_checkboxes)
 
     filterBasedOnChannels()
     updateDOMForAllRelations()
@@ -265,5 +258,5 @@ function showCategoryBasedOnChannels(category_item) {
     if (enabled_channels.length === 0) {
         return true
     }
-    return category_item.dataset.parentchannels?.split(",").filter(n => n).some(channel => enabled_channels.includes(channel))
+    return category_item.dataset.channels?.split(",").filter(n => n).some(channel => enabled_channels.includes(channel))
 }

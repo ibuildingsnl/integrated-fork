@@ -12,8 +12,8 @@
 namespace Integrated\Bundle\ChannelBundle\EventListener;
 
 use Integrated\Bundle\ChannelBundle\Services\ChannelDistributor;
-use Integrated\Bundle\ContentBundle\Event\ContentDistributedEvent;
 use Integrated\Bundle\ContentBundle\Event\ContentDeletedEvent;
+use Integrated\Bundle\ContentBundle\Event\ContentDistributedEvent;
 use Integrated\Common\Content\Form\Events;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -21,7 +21,8 @@ class ChannelDistributionListener implements EventSubscriberInterface
 {
     public function __construct(
         private readonly ChannelDistributor $distributor
-    ) {}
+    ) {
+    }
 
     /**
      * {@inheritdoc}

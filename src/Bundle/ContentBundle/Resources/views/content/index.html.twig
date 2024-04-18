@@ -156,16 +156,16 @@
                                 </div>
                             {% endif %}
                             {% set status_color = '' %}
-                        {% elseif content.workflow_state is defined %}
+                        {% elseif ('now'|date('U') < content.pub_time |date('U')) %}
                             <div class="workflow-status" style="background-color:#5f84db;">
                                 <i class="iconoir-calendar"></i>
                             </div>
                         {% endif %}
-                        {% if content.workflow_state is not defined and content.published is defined and content.published == "true" %}
+                        {% if content.workflow_state is not defined and content.published is defined and content.published == "true" and 'now'|date('U') > content.pub_time |date('U') %}
                             <div class="workflow-status" style="background-color:#00ae93;">
                                 <i class="iconoir-check"></i>
                             </div>
-                        {% elseif content.workflow_state is not defined and content.published is defined and content.published == "false" %}
+                        {% elseif content.workflow_state is not defined and content.published is defined and content.published == "false" and 'now'|date('U') > content.pub_time |date('U')%}
                             <div class="workflow-status" style="background-color:#ababab;">
                                 <i class="iconoir-edit-pencil"></i>
                             </div>

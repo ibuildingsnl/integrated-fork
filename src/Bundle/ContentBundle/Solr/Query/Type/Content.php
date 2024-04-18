@@ -48,6 +48,10 @@ class Content extends AbstractType
             ->setField('facet_channels')
             ->getLocalParameters()->setExclude('channels');
 
+        $facet->createFacetField('brands')
+              ->setField('facet_brands')
+              ->getLocalParameters()->setExclude('brands');
+
         $facet->createFacetField('authors')
             ->setField('facet_authors')
             ->getLocalParameters()->setExclude('authors');
@@ -73,14 +77,16 @@ class Content extends AbstractType
                 ->setQuery('facet_channels: ((%1%))', [implode(') OR (', array_map($escape, $options['channels']))]);
         }
 
-        // @TODO: Add publication_start_date to solr
-//        if ($options['pub_channels']) {
-//            foreach ($options['pub_channels'] as $channel) {
-//                $channel = $helper->escapeTerm($channel);
-//                $query->createFilterQuery('pub_channel_'.$channel)
-//                      ->setQuery('(publication_start_'.$channel.'_index_date: [* TO NOW]) AND (publication_end_'.$channel.'_index_date: [NOW TO *])');
-//            }
-//        }
+        if ($options['pub_channels']) {
+            $now = new \DateTimeImmutable('now');
+            $nowFormatted = $now->format('Y-m-d\TH:i:s\Z');
+
+            foreach ($options['pub_channels'] as $channel) {
+                $channel = $helper->escapeTerm($channel);
+                $query->createFilterQuery('pub_channel_'.$channel)
+                      ->setQuery('(publication_start_'.$channel.'_index_date: [* TO '.$nowFormatted.']) AND (publication_end_'.$channel.'_index_date: ['.$nowFormatted.' TO *])');
+            }
+        }
 
         if ($options['authors']) {
             $query->createFilterQuery('authors')
@@ -181,6 +187,7 @@ class Content extends AbstractType
         $resolver->setDefaults([
             'contenttypes' => [],
             'channels' => [],
+            'brands' => [],
             'authors' => [],
             'pub_channels' => [],
             'properties' => [],
@@ -196,6 +203,7 @@ class Content extends AbstractType
 
         $resolver->setNormalizer('contenttypes', $arrayNormalizer);
         $resolver->setNormalizer('channels', $arrayNormalizer);
+        $resolver->setNormalizer('brands', $arrayNormalizer);
         $resolver->setNormalizer('authors', $arrayNormalizer);
         $resolver->setNormalizer('properties', $arrayNormalizer);
 

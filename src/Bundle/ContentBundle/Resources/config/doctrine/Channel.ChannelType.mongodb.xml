@@ -11,6 +11,7 @@
         <field field-name="canBeSetGlobally" type="boolean" />
         <field field-name="connector" type="string" nullable="true" />
         <field field-name="publicationSettingsForm" type="string" nullable="true" />
+        <field field-name="icon" type="string" nullable="true" />
 
     </document>
 </doctrine-mongo-mapping>

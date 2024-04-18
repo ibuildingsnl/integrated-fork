@@ -39,6 +39,44 @@
     .aside-item-wrapper .aside-item-header {
         cursor: unset;
     }
+    &.no-edit {
+        background-color: #f2f2f2;
+        .aside-item-wrapper {
+            background-color: transparent;
+            .aside-item-header {
+                background-color: transparent;
+            }
+            .aside-item-list {
+                opacity: .5;
+                pointer-events: none;
+            }
+        }
+    }
+    p.publication-info {
+        background-color: white;
+        margin-bottom: 0;
+        border-radius: 8px 8px 0 0;
+    }
+    .checkbox {
+        &.new-publication-check {
+            font-size: 0.875rem;
+            border: 1px solid #dfe3e9;
+            line-height: 1rem;
+            border-radius: 0 0 8px 8px;
+            border-top: none;
+            background-color: white;
+            margin-bottom: 1rem;
+            label {
+                margin-bottom: 0;
+                font-size: .875rem;
+                padding: 0.5rem;
+                border-radius: 0 0 8px 8px;
+                &:hover {
+                    background-color: #ecf6ff;
+                }
+            }
+        }
+    }
 }
 
 .publication-settings-button {
@@ -214,4 +252,126 @@
             }
         }
     }
+}
+
+.publication-item {
+    color: black;
+    display: block;
+    border-radius: 8px;
+    margin-bottom: 0.5em;
+    cursor:pointer;
+
+    &[data-publication-status="success"] {
+        pointer-events: none;
+        cursor: not-allowed;
+    }
+
+    &.published {
+        background-color: rgba(1, 174, 147, 0.05);
+        .publication-wrap {
+            border-left: 3px solid #009472;
+            .publication-item-heading {
+                color:#009472;
+            }
+        }
+    }
+
+    &.planned {
+        background-color: rgba(95, 132, 219, 0.1);
+        .publication-wrap {
+            border-left: 3px solid #5f84db;
+            .publication-item-heading {
+                color:#5f84db;
+            }
+        }
+    }
+
+    &.failed {
+        background-color: rgba(255, 71, 71, 0.1);
+        .publication-wrap {
+            border-left: 3px solid #ff4747;
+            .publication-item-heading {
+                color:#ff4747;
+            }
+        }
+    }
+
+    &.date-invalid {
+        background-color: rgba(255, 71, 71, 0.1);
+        .publication-wrap {
+            border-left: 3px solid #ff4747;
+            .publication-item-heading {
+                color:#ff4747;
+            }
+        }
+    }
+
+    &:hover {
+        color:black;
+    }
+
+    .publication-wrap {
+        display: flex;
+        flex-direction: column;
+        padding: 0.5rem;
+        border-radius: 4px;
+
+        .publication-item-heading {
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+
+            .heading-left {
+                display: flex;
+                align-content: center;
+                position: relative;
+
+                span {
+                    line-height: 18px;
+                    margin-right: 0.5rem;
+                }
+
+                .icon {
+                    margin-right: .5rem;
+
+                    &:before {
+                        height: 18px;
+                        width: 18px;
+                    }
+                }
+            }
+            .heading-right {
+                display: flex;
+                i {
+                    cursor: pointer;
+                    &:hover {
+                        color:black;
+                    }
+                }
+            }
+        }
+
+        .publication-error {
+            border: 1px solid #dfe3e9;
+            border-radius: 8px;
+            font-size: .875rem;
+            line-height: 1rem;
+            padding: 0.5rem;
+            word-wrap: break-word;
+        }
+
+        .publication-item-content {
+            line-height: 17px;
+            word-break: break-word;
+            padding-top: 0.5rem;
+        }
+    }
+}
+
+p.publication-info {
+    font-size: .875rem;
+    border: 1px solid #dfe3e9;
+    line-height: 1rem;
+    padding: 0.5rem;
+    border-radius: 8px;
 }

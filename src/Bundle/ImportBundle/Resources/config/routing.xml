@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<routes xmlns="http://symfony.com/schema/routing"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <route id="integrated_import_index" path="/import">
+        <default key="_controller">Integrated\Bundle\ImportBundle\Controller\ImportController:index</default>
+    </route>
+
+    <route id="integrated_import_clone" path="/import/clone/{importDefinition}">
+        <default key="_controller">Integrated\Bundle\ImportBundle\Controller\ImportController:cloneImport</default>
+    </route>
+
+    <route id="integrated_import_new" path="/import/new/{type}">
+        <default key="_controller">Integrated\Bundle\ImportBundle\Controller\ImportController:newImport</default>
+    </route>
+
+    <route id="integrated_import_edit" path="/import/edit/{importDefinition}">
+        <default key="_controller">Integrated\Bundle\ImportBundle\Controller\ImportController:editImport</default>
+    </route>
+
+    <route id="integrated_import_file" path="/import/chooseFile/{importDefinition}">
+        <default key="_controller">Integrated\Bundle\ImportBundle\Controller\ImportController:chooseFile</default>
+    </route>
+
+    <route id="integrated_import_definition" path="/import/composeDefinition/{importDefinition}">
+        <default key="_controller">Integrated\Bundle\ImportBundle\Controller\ImportController:composeDefinition</default>
+    </route>
+
+    <route id="integrated_import_summary" path="/import/summary/{importDefinition}">
+        <default key="_controller">Integrated\Bundle\ImportBundle\Controller\ImportController:summary</default>
+    </route>
+
+    <route id="integrated_import_run" path="/import/run/{importDefinition}">
+        <default key="_controller">Integrated\Bundle\ImportBundle\Controller\ImportController:run</default>
+    </route>
+
+    <route id="integrated_import_run_execute" path="/import/runExecute/{importDefinition}">
+        <default key="_controller">Integrated\Bundle\ImportBundle\Controller\ImportController:runExecute</default>
+    </route>
+
+</routes>

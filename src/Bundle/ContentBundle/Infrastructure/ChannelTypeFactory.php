@@ -13,6 +13,7 @@ class ChannelTypeFactory
         public readonly bool $canBeSetGlobally = true,
         public readonly ?string $connector = null,
         public readonly ?string $publicationSettingsForm = null,
+        public readonly ?string $icon = null,
     ) {
     }
 
@@ -25,6 +26,7 @@ class ChannelTypeFactory
             $this->canBeSetGlobally,
             $this->connector,
             $this->publicationSettingsForm,
+            $this->icon,
         );
     }
 }
