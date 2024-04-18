@@ -12,14 +12,14 @@ class ChannelTokenService
 {
     public function __construct(
         private readonly DocumentManager $dm,
-    )
-    {
+    ) {
     }
 
     /**
      * @throws MongoDBException
      */
-    public function createOrUpdateFor(string $channelId, string $token, \DateTimeImmutable $expiresAt): ChannelToken {
+    public function createOrUpdateFor(string $channelId, string $token, \DateTimeImmutable $expiresAt): ChannelToken
+    {
         $channelToken = new ChannelToken();
         $channelToken->setId($channelId);
         $channelToken->setToken($token);
@@ -35,7 +35,8 @@ class ChannelTokenService
      * @throws MappingException
      * @throws LockException
      */
-    public function getChannelTokenFor(string $channelId): ?ChannelToken {
+    public function getChannelTokenFor(string $channelId): ?ChannelToken
+    {
         $repo = $this->dm->getRepository(ChannelToken::class);
 
         return $repo->find($channelId);
@@ -46,12 +47,13 @@ class ChannelTokenService
      * @throws LockException
      * @throws MongoDBException
      */
-    public function deleteTokenFor(string $channelTokenId): void {
+    public function deleteTokenFor(string $channelTokenId): void
+    {
         $repo = $this->dm->getRepository(ChannelToken::class);
 
         $channelToken = $repo->find($channelTokenId);
 
-        if($channelToken) {
+        if ($channelToken) {
             $this->dm->remove($channelToken);
             $this->dm->flush();
         }
