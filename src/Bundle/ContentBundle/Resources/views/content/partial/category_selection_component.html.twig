@@ -4,8 +4,27 @@
         <div class="hidden"></div>
 
         <div class="categories_tabs flex flex-wrap">
+            {% set showAllTab = false %}
             {% for category in taxonomyCategories[relation.vars.attr['data-relation']] %}
-                {% if category.depth == 0 %}
+                {% if category.depth == 0 and category.channels|length == 0 %}
+                    {% set showAllTab = true %}
+                {% endif %}
+            {% endfor %}
+
+            {% if showAllTab %}
+                <div class="category_tab"
+                     data-level0=""
+                     data-fulltitle="{{ relation.vars.attr['data-title'] }}"
+                     data-title="{{ relation.vars.attr['data-title'] }}"
+                     data-parentchannels=""
+                     data-taxonomyId=""
+                     data-channels="">
+                    {{ relation.vars.attr['data-title'] }}
+                </div>
+            {% endif %}
+
+            {% for category in taxonomyCategories[relation.vars.attr['data-relation']] %}
+                {% if category.depth == 0 and category.channels|length > 0  %}
                     {% set real_title = category.title %}
                     {% set level0 = category.title %}
 
@@ -40,7 +59,12 @@
                     {% set parent_channels = category.channels %}
                 {% endif %}
 
-                {% if category.depth == 1 %}
+                {% if category.channels|length == 0 %}
+                    {% set level0 = '' %}
+                    {% set className = 'noparent' %}
+                {% endif %}
+
+                {% if category.depth == 1 and category.channels|length > 0 %}
                     {% set real_title = level0 ~ ' > ' ~ category.title %}
                     {% set level1 = category.title %}
                     {% set className = 'first-child' %}
@@ -49,7 +73,16 @@
                     {% set parent_channels = category.channels|merge(level0channels) %}
                 {% endif %}
 
-                {% if category.depth == 2 %}
+                {% if category.depth == 1 and category.channels|length == 0 %}
+                    {% set real_title = category.title %}
+                    {% set level1 = category.title %}
+                    {% set className = 'secondary-child' %}
+
+                    {% set level1channels = '' %}
+                    {% set parent_channels = '' %}
+                {% endif %}
+
+                {% if category.depth == 2 and category.channels|length > 0 %}
                     {% set real_title = level0 ~ ' > ' ~ level1 ~ ' > ' ~ category.title %}
                     {% set level2 = category.title %}
                     {% set className = 'secondary-child' %}
