@@ -23,7 +23,7 @@ class ArticleSearchController extends AbstractController
         return $this->json($test);
     }
 
-    public function searchContentByChannel(Request $request, ?string $channelId = null)
+    public function searchContentByChannel(Request $request, ?string $channelId = null, ?string $contentTypeIds = null)
     {
         if($channelId === null) {
             return new Response(
@@ -35,11 +35,26 @@ class ArticleSearchController extends AbstractController
             );
         }
 
-        $keyword = $request->query->get('term');
+        $contentTypeIds = 'news,article,file';
+
+        $channelQueryValue = self::formatQueryValue($channelId);
+        $contentTypeQueryValue = self::formatQueryValue($contentTypeIds);
+
         $query = $this->getSolarium()->createSelect();
         $query->createFilterQuery('channels')
             ->addTag('channels')
-            ->setQuery("title:{$keyword}");
+            ->setQuery('facet_channels: ' . $channelQueryValue);
+
+        $query->createFilterQuery('contenttypes')
+              ->setQuery('type_name: ' . $contentTypeQueryValue);
+
+        if ($q = $request->get('term')) {
+            $edismax = $query->getEDisMax();
+            $edismax->setQueryFields('title content');
+            $edismax->setMinimumMatch('75%');
+
+            $query->setQuery($q);
+        }
 
         // Ensure the item has a non-empty 'url_vleesmagazine' field
 
@@ -51,12 +66,30 @@ class ArticleSearchController extends AbstractController
         } else {
             return new Response(
                 json_encode([
-                    'term' => $keyword,
+                    'term' => $q,
                     'channelId' => $channelId,
+                    'contentTypeId' => $contentTypeIds,
                 ]),
                 status: Response::HTTP_NOT_FOUND,
                 headers: ['Content-Type' => 'application/json']
             );
         }
+    }
+
+
+    function formatQueryValue($ids) {
+        $idArray = explode(',', $ids);
+
+        if (count($idArray) == 1) {
+            $queryValue = '("' . $idArray[0] . '")';
+        } else {
+            $formattedIds = array_map(function($id) {
+                return '"' . $id . '"';
+            }, $idArray);
+
+            $queryValue = '(' . implode(' OR ', $formattedIds) . ')';
+        }
+
+        return $queryValue;
     }
 }

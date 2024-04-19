@@ -6,7 +6,7 @@ import TextInput from "../form/TextInput.vue";
 import SuggestionTextInput from "../form/SuggestionTextInput.vue";
 import Button from "../form/Button.vue";
 
-const endpoint = 'https://integrated.localhost/admin';
+const endpoint = `${window.location.protocol}//${window.location.host}/admin`;
 
 let channels = ref([
     {
