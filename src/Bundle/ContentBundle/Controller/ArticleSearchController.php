@@ -2,19 +2,39 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Integrated\Bundle\UserBundle\Model\UserInterface;
+use Integrated\Common\Security\Resolver\PermissionResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ArticleSearchController extends AbstractController
 {
-    public function index()
-    {
-        return $this->render('@IntegratedContent/article_search/article_search.html.twig');
+    public function __construct(
+        private readonly DocumentManager $documentManager
+    ) {
     }
 
-    public function search(Request $request)
-    {
+    public function index() {
+        $channels = array_filter($this->getAllowedChannels($this->getUser()), function($channel) {
+            return $channel->getPrimaryDomain() !== null && strlen($channel->getPrimaryDomain()) > 0;
+        });
+
+        $channels = array_map(function($channel) {
+            return [
+                'key' => $channel->getId(),
+                'label' => $channel->getName(),
+            ];
+        }, $channels);
+
+        return $this->render('@IntegratedContent/article_search/article_search.html.twig', [
+            'channels' => json_encode(array_values($channels)),
+        ]);
+    }
+
+    public function search(Request $request) {
         $test = new \stdClass();
         $test->msg = 'Hello';
         $test->rand = rand(0, 1000);
@@ -74,6 +94,25 @@ class ArticleSearchController extends AbstractController
                 headers: ['Content-Type' => 'application/json']
             );
         }
+    }
+
+    /**
+     * @return Channel[]
+     */
+    private function getAllowedChannels(UserInterface $user): array
+    {
+        $channels = $this->documentManager->getRepository(Channel::class)->findBy([], ['name' => 1]);
+        $allowed = [];
+
+        foreach ($channels as $channel) {
+            $permissions = PermissionResolver::getPermissions($user, $channel->getPermissions());
+
+            if ($permissions['read'] === true || $permissions['write'] === true) {
+                $allowed[] = $channel;
+            }
+        }
+
+        return $allowed;
     }
 
 

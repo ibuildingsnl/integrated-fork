@@ -6,43 +6,16 @@ import TextInput from "../form/TextInput.vue";
 import SuggestionTextInput from "../form/SuggestionTextInput.vue";
 import Button from "../form/Button.vue";
 
+const props = defineProps({
+    channels: String,
+});
 const endpoint = `${window.location.protocol}//${window.location.host}/admin`;
 
-let channels = ref([
-    {
-        key: 'vleesmagazine',
-        label: 'Vleesmagazine',
-        active: false,
-    },
-    {
-        key: 'evmi',
-        label: 'EVMI',
-        active: false,
-    },
-    {
-        key: 'vismagazine',
-        label: 'Vismagazine',
-        active: false,
-    },
-    {
-        key: 'bakkers_in_bedrijf',
-        label: 'Bakkers in Bedrijf',
-        active: false,
-    }
-]);
+let channels = ref(JSON.parse(props.channels).map((channel) => {return {active: false, ...channel}}));
 
 let results = ref([]);
 let searchTerm = ref('');
 let selections = ref([]);
-
-for (let i = 0; i < 10; i++) {
-    results.value.push({
-        key: `sugg-${i}`,
-        title: 'Lorem Ipsum',
-        subtitle: 'Article | 23-03-2023',
-        text: 'Lorem ipsum dolor sit amet consectetuera adipicising elit',
-    })
-}
 
 let activeChannels = computed(() => {
     return channels.value.filter((channel) => channel.active).map((channel) => channel.key).join(',');
