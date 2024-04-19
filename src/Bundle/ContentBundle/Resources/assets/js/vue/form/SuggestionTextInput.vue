@@ -2,16 +2,19 @@
 import TextInput from "./TextInput.vue";
 import {computed, ref} from "vue";
 import SuggestionTextInputSuggestion from "./SuggestionTextInputSuggestion.vue";
+import debounce from "lodash.debounce";
 
 const props = defineProps({
-    suggestions: [],
-    modelValue: undefined,
-    placeholder: undefined,
-    id: undefined,
-    permanent: false,
+    suggestions: Array,
+    modelValue: String,
+    selections: Array,
+    placeholder: String,
+    id: String,
+    permanent: Boolean,
+    multiple: Boolean,
 });
-// TODO: Need to wrap modelValue so we can add selected property to a suggestion to avoid it visually being deselected on blur
-const emit = defineEmits(['update:modelValue']);
+
+const emit = defineEmits(['update:modelValue', 'update:selections', 'searchConfirm']);
 
 const value = computed({
     get() {
@@ -19,33 +22,90 @@ const value = computed({
     },
     set(newValue) {
         emit('update:modelValue', newValue);
+        sendSearch();
+    }
+});
+
+const selections = computed({
+    get() {
+        return props.selections ?? [];
+    },
+    set(newValue) {
+        emit('update:selections', newValue);
     }
 });
 
 const input = ref(null);
+const isShowing = ref(false);
 
 const onBlur = (e) => {
-    if(!input.value.parentElement.contains(e.relatedTarget)) {
+    if (!input.value.parentElement.contains(e.relatedTarget)) {
         isShowing.value = false;
     }
 };
 
 const selectSuggestion = (key) => {
+    if (props.suggestions.findIndex((v) => v.key === key) !== -1) {
+        if (props.multiple) {
+            if (selections.value.includes(key)) {
+                selections.value = selections.value.filter((v) => v !== key);
+                return;
+            }
 
+            selections.value.push(key);
+            return;
+        }
+
+        if (selections.value.includes(key)) {
+            selections.value = [];
+            return;
+        }
+
+        selections.value = [key];
+    } else {
+        if (props.multiple) {
+            selections.value = selections.value.filter((v) => v.key !== key);
+            return;
+        }
+
+        selections.value = [];
+    }
 };
 
-const isShowing = ref(false);
+const sendSearch = debounce(() => {
+    emit('searchConfirm');
+}, 300);
 </script>
 
 <template>
     <div class="relative" v-click-outside="() => isShowing = false">
-        <TextInput v-model="value" @blur="onBlur" @focus="() => isShowing = true" :placeholder="props.placeholder" :id="props.id"/>
-        <div ref="input"
-             v-show="isShowing || props.permanent"
-             class="w-full bg-white rounded-lg shadow z-50 max-h-[260px] overflow-y-auto"
-             :class="{'absolute bottom-0 left-0 translate-y-full': !props.permanent}"
+        <TextInput
+            v-model="value"
+            @blur="onBlur"
+            @focus="() => isShowing = true"
+            @keyup.enter="sendSearch"
+            :placeholder="props.placeholder"
+            :id="props.id"
+        />
+        <div
+            ref="input"
+            v-show="isShowing || props.permanent"
+            class="flex flex-col justify-stretch w-full bg-white rounded-lg shadow z-50 max-h-[260px] overflow-y-auto"
+            :class="{'absolute bottom-0 left-0 translate-y-full': !props.permanent, 'h-[260px]': props.permanent}"
         >
-            <SuggestionTextInputSuggestion @select="() => selectSuggestion(key)" @focusout="onBlur" v-for="{key, title, subtitle, text} in props.suggestions" :key="key" :title="title" :subtitle="subtitle" :text="text"/>
+            <SuggestionTextInputSuggestion
+                @select="() => selectSuggestion(key)"
+                @focusout="onBlur"
+                v-for="{key, title, subtitle, text} in props.suggestions"
+                :key="key"
+                :title="title"
+                :subtitle="subtitle"
+                :text="text"
+                :selected="selections.includes(key)"
+            />
+            <div v-if="props.suggestions.length === 0" class="grow flex flex-row justify-center items-center">
+                <span class="py-4 text-lg text-zinc-400 select-none">No results</span>
+            </div>
         </div>
     </div>
 </template>

@@ -12,7 +12,7 @@
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ArticleSearchController::search</default>
     </route>
 
-    <route id="integrated_content_article_search_search" path="article-search/search-channel/{channelId}" methods="GET">
+    <route id="integrated_content_article_search_search" path="article-search/search-channel/{channelId?}" methods="GET">
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ArticleSearchController::searchContentByChannel</default>
     </route>
 

@@ -11,6 +11,7 @@ const emit = defineEmits([
     'update:modelValue',
     'focus',
     'blur',
+    'keyup',
 ]);
 
 const value = computed({
@@ -31,6 +32,7 @@ const slots = useSlots();
     >
         <input @focus="(e) => emit('focus', e)"
                @focusout.stop="(e) => emit('blur', e)"
+               @keyup="(e) => emit('keyup', e)"
                :id="id"
                class="outline-0 w-full"
                v-model="value"

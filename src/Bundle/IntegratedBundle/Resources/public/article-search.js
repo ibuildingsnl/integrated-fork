@@ -18426,12 +18426,13 @@ var endpoint = 'https://integrated.localhost/admin';
     }]);
     var results = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)([]);
     var searchTerm = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)('');
+    var selections = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)([]);
     for (var i = 0; i < 10; i++) {
       results.value.push({
         key: "sugg-".concat(i),
         title: 'Lorem Ipsum',
-        subtitle: '23-03-2023',
-        text: 'Lorem ipsum dolor sit amet consectetuer adipicising elit'
+        subtitle: 'Article | 23-03-2023',
+        text: 'Lorem ipsum dolor sit amet consectetuera adipicising elit'
       });
     }
     var activeChannels = (0,vue__WEBPACK_IMPORTED_MODULE_0__.computed)(function () {
@@ -18442,25 +18443,50 @@ var endpoint = 'https://integrated.localhost/admin';
       }).join(',');
     });
     var doSearch = lodash_debounce__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-      var response, data;
+      var url, response, data;
       return _regeneratorRuntime().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
-            _context.next = 2;
-            return fetch("".concat(endpoint, "/article-search/search-channel/").concat(activeChannels.value, "?term=").concat(encodeURIComponent(searchTerm.value)));
-          case 2:
-            response = _context.sent;
+            _context.prev = 0;
+            url = "".concat(endpoint, "/article-search/search-channel/").concat(activeChannels.value);
+            url = url.endsWith('/') ? url.substring(0, url.length - 1) : url;
             _context.next = 5;
-            return response.json();
+            return fetch("".concat(url, "?term=").concat(encodeURIComponent(searchTerm.value)));
           case 5:
+            response = _context.sent;
+            if (response.ok) {
+              _context.next = 8;
+              break;
+            }
+            throw response.errored;
+          case 8:
+            _context.next = 10;
+            return response.json();
+          case 10:
             data = _context.sent;
-            // console.log(data);
-            results.value.push(data[0]);
-          case 7:
+            results.value = data.map(function (entry) {
+              var pubTime = new Date(entry.pub_time);
+              var content = entry.content.toString();
+              var text = content.length > 0 ? content : "\xA0";
+              var typeName = [entry.type_name.substring(0, 1).toLocaleUpperCase(), entry.type_name.substring(1)].join('');
+              return {
+                key: entry.id,
+                title: entry.title,
+                text: text,
+                subtitle: "".concat(typeName, " | ").concat(pubTime.toDateString())
+              };
+            });
+            _context.next = 17;
+            break;
+          case 14:
+            _context.prev = 14;
+            _context.t0 = _context["catch"](0);
+            results.value = [];
+          case 17:
           case "end":
             return _context.stop();
         }
-      }, _callee);
+      }, _callee, null, [[0, 14]]);
     })), 300);
     var linkText = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(JSON.parse(new URLSearchParams(window.location.search).get('data')).selectionText);
     var openInNewTab = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(false);
@@ -18483,6 +18509,12 @@ var endpoint = 'https://integrated.localhost/admin';
       },
       set searchTerm(v) {
         searchTerm = v;
+      },
+      get selections() {
+        return selections;
+      },
+      set selections(v) {
+        selections = v;
       },
       get activeChannels() {
         return activeChannels;
@@ -18622,25 +18654,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _TextInput_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TextInput.vue */ "./src/Bundle/ContentBundle/Resources/assets/js/vue/form/TextInput.vue");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 /* harmony import */ var _SuggestionTextInputSuggestion_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./SuggestionTextInputSuggestion.vue */ "./src/Bundle/ContentBundle/Resources/assets/js/vue/form/SuggestionTextInputSuggestion.vue");
+/* harmony import */ var lodash_debounce__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! lodash.debounce */ "./node_modules/lodash.debounce/index.js");
+/* harmony import */ var lodash_debounce__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(lodash_debounce__WEBPACK_IMPORTED_MODULE_3__);
+
 
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __name: 'SuggestionTextInput',
   props: {
-    suggestions: [],
-    modelValue: undefined,
-    placeholder: undefined,
-    id: undefined,
-    permanent: false
+    suggestions: Array,
+    modelValue: String,
+    selections: Array,
+    placeholder: String,
+    id: String,
+    permanent: Boolean,
+    multiple: Boolean
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'update:selections', 'searchConfirm'],
   setup: function setup(__props, _ref) {
     var __expose = _ref.expose,
       __emit = _ref.emit;
     __expose();
     var props = __props;
-    // TODO: Need to wrap modelValue so we can add selected property to a suggestion to avoid it visually being deselected on blur
     var emit = __emit;
     var value = (0,vue__WEBPACK_IMPORTED_MODULE_1__.computed)({
       get: function get() {
@@ -18648,28 +18684,74 @@ __webpack_require__.r(__webpack_exports__);
       },
       set: function set(newValue) {
         emit('update:modelValue', newValue);
+        sendSearch();
+      }
+    });
+    var selections = (0,vue__WEBPACK_IMPORTED_MODULE_1__.computed)({
+      get: function get() {
+        var _props$selections;
+        return (_props$selections = props.selections) !== null && _props$selections !== void 0 ? _props$selections : [];
+      },
+      set: function set(newValue) {
+        emit('update:selections', newValue);
       }
     });
     var input = (0,vue__WEBPACK_IMPORTED_MODULE_1__.ref)(null);
+    var isShowing = (0,vue__WEBPACK_IMPORTED_MODULE_1__.ref)(false);
     var onBlur = function onBlur(e) {
       if (!input.value.parentElement.contains(e.relatedTarget)) {
         isShowing.value = false;
       }
     };
-    var selectSuggestion = function selectSuggestion(key) {};
-    var isShowing = (0,vue__WEBPACK_IMPORTED_MODULE_1__.ref)(false);
+    var selectSuggestion = function selectSuggestion(key) {
+      if (props.suggestions.findIndex(function (v) {
+        return v.key === key;
+      }) !== -1) {
+        if (props.multiple) {
+          if (selections.value.includes(key)) {
+            selections.value = selections.value.filter(function (v) {
+              return v !== key;
+            });
+            return;
+          }
+          selections.value.push(key);
+          return;
+        }
+        if (selections.value.includes(key)) {
+          selections.value = [];
+          return;
+        }
+        selections.value = [key];
+      } else {
+        if (props.multiple) {
+          selections.value = selections.value.filter(function (v) {
+            return v.key !== key;
+          });
+          return;
+        }
+        selections.value = [];
+      }
+    };
+    var sendSearch = lodash_debounce__WEBPACK_IMPORTED_MODULE_3___default()(function () {
+      emit('searchConfirm');
+    }, 300);
     var __returned__ = {
       props: props,
       emit: emit,
       value: value,
+      selections: selections,
       input: input,
+      isShowing: isShowing,
       onBlur: onBlur,
       selectSuggestion: selectSuggestion,
-      isShowing: isShowing,
+      sendSearch: sendSearch,
       TextInput: _TextInput_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
       computed: vue__WEBPACK_IMPORTED_MODULE_1__.computed,
       ref: vue__WEBPACK_IMPORTED_MODULE_1__.ref,
-      SuggestionTextInputSuggestion: _SuggestionTextInputSuggestion_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+      SuggestionTextInputSuggestion: _SuggestionTextInputSuggestion_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+      get debounce() {
+        return (lodash_debounce__WEBPACK_IMPORTED_MODULE_3___default());
+      }
     };
     Object.defineProperty(__returned__, '__isScriptSetup', {
       enumerable: false,
@@ -18697,7 +18779,8 @@ __webpack_require__.r(__webpack_exports__);
   props: {
     text: undefined,
     title: undefined,
-    subtitle: undefined
+    subtitle: undefined,
+    selected: false
   },
   emits: ['select'],
   setup: function setup(__props, _ref) {
@@ -18740,7 +18823,7 @@ __webpack_require__.r(__webpack_exports__);
     modelValue: undefined,
     id: undefined
   },
-  emits: ['update:modelValue', 'focus', 'blur'],
+  emits: ['update:modelValue', 'focus', 'blur', 'keyup'],
   setup: function setup(__props, _ref) {
     var __expose = _ref.expose,
       __emit = _ref.emit;
@@ -18822,11 +18905,21 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, null, 8 /* PROPS */, ["modelValue"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["SuggestionTextInput"], {
     permanent: true,
     suggestions: $setup.results,
-    placeholder: "URL or title"
-  }, null, 8 /* PROPS */, ["suggestions"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Checkbox"], {
+    placeholder: "URL or search term",
+    multiple: false,
+    modelValue: $setup.searchTerm,
+    "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
+      return $setup.searchTerm = $event;
+    }),
+    selections: $setup.selections,
+    "onUpdate:selections": _cache[2] || (_cache[2] = function ($event) {
+      return $setup.selections = $event;
+    }),
+    onSearchConfirm: $setup.doSearch
+  }, null, 8 /* PROPS */, ["suggestions", "modelValue", "selections", "onSearchConfirm"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Checkbox"], {
     id: "new-tab",
     modelValue: $setup.openInNewTab,
-    "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
+    "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
       return $setup.openInNewTab = $event;
     }),
     label: "Open in new tab"
@@ -18844,7 +18937,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Apply")];
     }),
     _: 1 /* STABLE */
-  })])])]);
+  })]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.selections.toString()), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.searchTerm), 1 /* TEXT */)])])]);
 }
 
 /***/ }),
@@ -18921,6 +19014,14 @@ __webpack_require__.r(__webpack_exports__);
 var _hoisted_1 = {
   "class": "relative"
 };
+var _hoisted_2 = {
+  key: 0,
+  "class": "grow flex flex-row justify-center items-center"
+};
+var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+  "class": "py-4 text-lg text-zinc-400 select-none"
+}, "No results", -1 /* HOISTED */);
+var _hoisted_4 = [_hoisted_3];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _directive_click_outside = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveDirective)("click-outside");
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["TextInput"], {
@@ -18932,12 +19033,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onFocus: _cache[1] || (_cache[1] = function () {
       return $setup.isShowing = true;
     }),
+    onKeyup: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withKeys)($setup.sendSearch, ["enter"]),
     placeholder: $setup.props.placeholder,
     id: $setup.props.id
-  }, null, 8 /* PROPS */, ["modelValue", "placeholder", "id"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  }, null, 8 /* PROPS */, ["modelValue", "onKeyup", "placeholder", "id"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     ref: "input",
-    "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["w-full bg-white rounded-lg shadow z-50 max-h-[260px] overflow-y-auto", {
-      'absolute bottom-0 left-0 translate-y-full': !$setup.props.permanent
+    "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["flex flex-col justify-stretch w-full bg-white rounded-lg shadow z-50 max-h-[260px] overflow-y-auto", {
+      'absolute bottom-0 left-0 translate-y-full': !$setup.props.permanent,
+      'h-[260px]': $setup.props.permanent
     }])
   }, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.props.suggestions, function (_ref) {
     var key = _ref.key,
@@ -18952,9 +19055,10 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       key: key,
       title: title,
       subtitle: subtitle,
-      text: text
-    }, null, 8 /* PROPS */, ["onSelect", "title", "subtitle", "text"]);
-  }), 128 /* KEYED_FRAGMENT */))], 2 /* CLASS */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, $setup.isShowing || $setup.props.permanent]])])), [[_directive_click_outside, function () {
+      text: text,
+      selected: $setup.selections.includes(key)
+    }, null, 8 /* PROPS */, ["onSelect", "title", "subtitle", "text", "selected"]);
+  }), 128 /* KEYED_FRAGMENT */)), $setup.props.suggestions.length === 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_2, [].concat(_hoisted_4))) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)], 2 /* CLASS */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, $setup.isShowing || $setup.props.permanent]])])), [[_directive_click_outside, function () {
     return $setup.isShowing = false;
   }]]);
 }
@@ -18974,15 +19078,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
-var _hoisted_1 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_1 = {
+  "class": "grow"
+};
+var _hoisted_2 = {
   "class": "flex flex-row justify-between"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h4", {
-  "class": "font-semibold"
-}, "Result title"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", {
-  "class": "text-zinc-400"
-}, "23-03-2023")]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
+};
+var _hoisted_3 = {
+  "class": "font-semibold line-clamp-1"
+};
+var _hoisted_4 = {
+  "class": "text-zinc-400 shrink-0"
+};
+var _hoisted_5 = {
   "class": "line-clamp-2"
-}, "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab aliquid delectus deserunt dolores et eum illo ipsam minima necessitatibus officiis, repudiandae sint ullam veritatis! Consequuntur odit possimus temporibus tenetur velit.")], -1 /* HOISTED */);
+};
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
     onKeyup: _cache[0] || (_cache[0] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withKeys)((0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function (e) {
@@ -18992,8 +19102,10 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return $setup.emit('select', e);
     }, ["stop", "left"])),
     tabindex: "0",
-    "class": "p-2 space-x-2 flex flex-row justify-start items-start outline-0 hover:bg-blue-50 focus:bg-blue-100 cursor-pointer"
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "default"), _hoisted_1], 32 /* NEED_HYDRATION */);
+    "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["p-2 space-x-2 flex flex-row justify-stretch items-start outline-0 hover:bg-blue-50 focus:bg-blue-100 cursor-pointer", {
+      'bg-blue-200 focus:bg-blue-200 hover:bg-blue-200': $setup.props.selected
+    }])
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "default"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h4", _hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.props.title), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", _hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.props.subtitle), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.props.text), 1 /* TEXT */)])], 34 /* CLASS, NEED_HYDRATION */);
 }
 
 /***/ }),
@@ -19024,9 +19136,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onFocusout: _cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function (e) {
       return $setup.emit('blur', e);
     }, ["stop"])),
+    onKeyup: _cache[2] || (_cache[2] = function (e) {
+      return $setup.emit('keyup', e);
+    }),
     id: $props.id,
     "class": "outline-0 w-full",
-    "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
+    "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
       return $setup.value = $event;
     }),
     placeholder: $setup.props.placeholder,

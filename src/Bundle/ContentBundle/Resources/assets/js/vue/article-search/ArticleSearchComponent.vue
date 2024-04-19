@@ -33,13 +33,14 @@ let channels = ref([
 
 let results = ref([]);
 let searchTerm = ref('');
+let selections = ref([]);
 
 for (let i = 0; i < 10; i++) {
     results.value.push({
         key: `sugg-${i}`,
         title: 'Lorem Ipsum',
-        subtitle: '23-03-2023',
-        text: 'Lorem ipsum dolor sit amet consectetuer adipicising elit',
+        subtitle: 'Article | 23-03-2023',
+        text: 'Lorem ipsum dolor sit amet consectetuera adipicising elit',
     })
 }
 
@@ -48,11 +49,33 @@ let activeChannels = computed(() => {
 });
 
 const doSearch = debounce(async () => {
-    const response = await fetch(`${endpoint}/article-search/search-channel/${activeChannels.value}?term=${encodeURIComponent(searchTerm.value)}`);
-    const data = await response.json();
+    try {
+        let url = `${endpoint}/article-search/search-channel/${activeChannels.value}`;
+        url = url.endsWith('/') ? url.substring(0, url.length - 1) : url;
+        const response = await fetch(`${url}?term=${encodeURIComponent(searchTerm.value)}`);
 
-    // console.log(data);
-    results.value.push(data[0]);
+        if (!response.ok) {
+            throw response.errored;
+        }
+
+        const data = await response.json();
+
+        results.value = data.map((entry) => {
+            const pubTime = new Date(entry.pub_time);
+            const content = entry.content.toString();
+            const text = content.length > 0 ? content : '\u00A0';
+            const typeName = [entry.type_name.substring(0, 1).toLocaleUpperCase(), entry.type_name.substring(1)].join('');
+
+            return {
+                key: entry.id,
+                title: entry.title,
+                text: text,
+                subtitle: `${typeName} | ${pubTime.toDateString()}`,
+            };
+        });
+    } catch (e) {
+        results.value = [];
+    }
 }, 300);
 
 const linkText = ref(JSON.parse(new URLSearchParams(window.location.search).get('data')).selectionText);
@@ -64,21 +87,34 @@ const openInNewTab = ref(false);
         <aside class="basis-1/4">
             <h1 class="text-xl">Kanalen</h1>
             <div>
-                <Checkbox v-for="channel in channels"
-                          :key="channel.key"
-                          :id="channel.key"
-                          v-model="channel.active"
-                          :label="channel.label"
+                <Checkbox
+                    v-for="channel in channels"
+                    :key="channel.key"
+                    :id="channel.key"
+                    v-model="channel.active"
+                    :label="channel.label"
                 />
             </div>
         </aside>
         <main class="basis-3/4 space-y-2">
             <TextInput v-model="linkText" placeholder="Link text"/>
-            <SuggestionTextInput :permanent="true" :suggestions="results" placeholder="URL or title"/>
-            <Checkbox id="new-tab" v-model="openInNewTab" label="Open in new tab" />
+            <SuggestionTextInput
+                :permanent="true"
+                :suggestions="results"
+                placeholder="URL or search term"
+                :multiple="false"
+                v-model="searchTerm"
+                v-model:selections="selections"
+                @searchConfirm="doSearch"
+            />
+            <Checkbox id="new-tab" v-model="openInNewTab" label="Open in new tab"/>
             <div class="flex flex-row space-x-2">
                 <Button type="normal">Cancel</Button>
                 <Button type="primary">Apply</Button>
+            </div>
+            <div>
+                <p>{{ selections.toString() }}</p>
+                <p>{{ searchTerm }}</p>
             </div>
         </main>
     </div>
