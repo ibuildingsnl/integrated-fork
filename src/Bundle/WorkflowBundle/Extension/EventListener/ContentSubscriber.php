@@ -138,15 +138,19 @@ class ContentSubscriber implements ContentSubscriberInterface
             $state->getWorkflow();
         } catch (Exception $e) {
             error_log('Failed to get workflow: ' . $e->getMessage());
-            $state = $workflow->getDefault();
+            $state = false;
+            //TODO: Entry should be removed from workflow_states table
         }
 
-        if ($content instanceof MetadataInterface) {
+        if ($content instanceof MetadataInterface && $state) {
             $content->getMetadata()->set('workflow', $state->getWorkflow()?->getId());
             $content->getMetadata()->set('workflow_state', $state->getId());
-        }
 
-        $content->setDisabled(!$state->isPublishable()); // hax: setDisabled is not in the interface
+            $content->setDisabled(!$state->isPublishable()); // hax: setDisabled is not in the interface
+        } else {
+            $content->getMetadata()->remove('workflow');
+            $content->getMetadata()->remove('workflow_state');
+        }
     }
 
     public function postUpdate(ContentEvent $event)
