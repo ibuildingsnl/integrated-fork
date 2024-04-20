@@ -16,6 +16,7 @@ final class IndexedItem
         private readonly int $depth,
         private readonly array $channels,
         private readonly ArrayCollection $references,
+        private readonly string|null $linkToChannel,
     ) {
     }
 
@@ -30,6 +31,7 @@ final class IndexedItem
             $depth,
             $taxonomy->getChannels(),
             $taxonomy->getReferencesByRelationId('__children'),
+            $taxonomy->getLinkToChannel(),
         );
     }
 
@@ -71,5 +73,10 @@ final class IndexedItem
     public function getReferences(): ArrayCollection
     {
         return $this->references;
+    }
+
+    public function getLinkToChannel(): ?string
+    {
+        return $this->linkToChannel;
     }
 }

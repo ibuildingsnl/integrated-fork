@@ -6,37 +6,28 @@
         <div class="categories_tabs flex flex-wrap">
             {% set showAllTab = false %}
             {% for category in taxonomyCategories[relation.vars.attr['data-relation']] %}
-                {% if category.depth == 0 and category.getReferences|length == 0 %}
+                {% if category.depth == 0 and category.linkToChannel|length == 0 %}
                         {% set showAllTab = true %}
                 {% endif %}
             {% endfor %}
 
             {% if showAllTab %}
                 <div class="category_tab"
-                     data-level0=""
                      data-fulltitle="{{ relation.vars.attr['data-title'] }}"
                      data-title="{{ relation.vars.attr['data-title'] }}"
-                     data-parentchannels=""
-                     data-taxonomyId=""
-                     data-channels="">
+                     data-linkedchannel="">
                     {{ relation.vars.attr['data-title'] }}
                 </div>
             {% endif %}
 
             {% for category in taxonomyCategories[relation.vars.attr['data-relation']] %}
-                {% if category.depth == 0 and category.getReferences|length > 0  %}
-                    {% set real_title = category.title %}
-                    {% set level0 = category.title %}
-
-                    {% set level0channels = category.channels %}
-                    {% set parent_channels = category.channels %}
+                {% if category.depth == 0 and category.linkToChannel|length > 0  %}
+                    {% set linkedChannel = category.linkToChannel %}
                     <div class="category_tab"
-                         data-level0="{{ level0 }}"
-                         data-fulltitle="{{ real_title }}"
+                         data-fulltitle="{{ category.title }}"
                          data-title="{{ category.title }}"
-                         data-parentchannels="{% for channel in parent_channels %}{{ channel.getId }},{% endfor %}"
                          data-taxonomyId="{{ category.taxonomyId }}"
-                         data-channels="{% for channel in category.channels %}{{ channel.getId }},{% endfor %}">
+                         data-linkedchannel="{{ linkedChannel }}">
                         {{ category.title }}
                     </div>
                 {% endif %}
@@ -50,52 +41,43 @@
 
         <ul id="" class="categories_checkboxes categories_checkboxes_basic">
             {% for category in taxonomyCategories[relation.vars.attr['data-relation']] %}
-                {% if category.depth == 0 %}
-                    {% set real_title = category.title %}
+                {% set className = '' %}
+                {% if category.depth == 0 and category.linkToChannel|length > 0 %}
+                    {% set pill_title = category.title %}
                     {% set level0 = category.title %}
                     {% set className = 'parent' %}
 
-                    {% set level0channels = category.channels %}
-                    {% set parent_channels = category.channels %}
+                    {% set linkedChannel = category.linkToChannel %}
+                {% elseif category.depth == 0 and category.linkToChannel|length == 0 %}
+                    {% set pill_title = category.title %}
+                    {% set level0 = category.title %}
+
+                    {% set linkedChannel = '' %}
                 {% endif %}
 
-                {% if category.channels|length == 0 or category.depth == 0 and category.getReferences|length == 0 %}
-                    {% set level0 = '' %}
-                    {% set className = 'noparent' %}
-                {% endif %}
-
-                {% if category.depth == 1 and category.channels|length > 0 %}
-                    {% set real_title = level0 ~ ' > ' ~ category.title %}
+                {% if category.depth == 1 %}
+                    {% set pill_title = level0 ~ ' > ' ~ category.title %}
                     {% set level1 = category.title %}
                     {% set className = 'first-child' %}
-
-                    {% set level1channels = category.channels %}
-                    {% set parent_channels = category.channels|merge(level0channels) %}
                 {% endif %}
 
-                {% if category.depth == 1 and category.channels|length == 0 %}
-                    {% set real_title = category.title %}
-                    {% set level1 = category.title %}
-                    {% set className = 'first-child' %}
-
-                    {% set level1channels = '' %}
-                    {% set parent_channels = '' %}
-                {% endif %}
-
-                {% if category.depth == 2 and category.channels|length > 0 %}
-                    {% set real_title = level0 ~ ' > ' ~ level1 ~ ' > ' ~ category.title %}
+                {% if category.depth == 2 %}
+                    {% set pill_title = level0 ~ ' > ' ~ level1 ~ ' > ' ~ category.title %}
                     {% set level2 = category.title %}
                     {% set className = 'secondary-child' %}
-
-                    {% set level2channels = category.channels %}
-                    {% set parent_channels = category.channels|merge(level0channels)|merge(level1channels) %}
                 {% endif %}
 
-                <li class="inline-block mr-2 {{ className }}" data-fulltitle="{{ real_title }}"
-                    data-level0="{{ level0 }}"
+                {% if category.depth == 3 %}
+                    {% set pill_title = level0 ~ ' > ' ~ level1 ~ ' > ' ~ level2 ~ ' > ' ~ category.title %}
+                    {% set level3 = category.title %}
+                    {% set className = 'tertiary-child' %}
+                {% endif %}
+
+                <li class="inline-block mr-2 {{ className }}"
+                    data-fulltitle="{{ pill_title }}"
                     data-title="{{ category.title }}"
                     data-taxonomyId="{{ category.taxonomyId }}"
-                    data-channels="{% for channel in category.channels %}{{ channel.getId }},{% endfor %}">
+                    data-linkedchannel="{{ linkedChannel }}">
                     <div class="checkbox">
                         <label class="checkbox-container" for="{{ category.taxonomyId }}">
                             <input type="checkbox" data-id="{{ category.taxonomyId }}" id="{{ category.taxonomyId }}">
