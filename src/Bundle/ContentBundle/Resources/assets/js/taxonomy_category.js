@@ -255,6 +255,9 @@ function toggleItem(item, show) {
 }
 
 function showCategoryBasedOnChannels(category_item) {
+    if (category_item.dataset.channels === '') {
+        return true
+    }
     if (enabled_channels.length === 0) {
         return true
     }

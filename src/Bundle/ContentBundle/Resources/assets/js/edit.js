@@ -423,6 +423,8 @@ function setPublicationDateTimes(){
 
     let mainStartDate = document.querySelector('#integrated_content_publishTime .startDate');
 
+    if (mainStartDate) {
+
     mainStartDate.querySelector('.date-text').addEventListener('click', function() {
         let dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
         let timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
@@ -460,6 +462,7 @@ function setPublicationDateTimes(){
         updatePublicationsAndChannels();
         prepDateTimeFields();
     });
+}
 }
 
 function ensurePublicationExists(channelId) {
