@@ -41,10 +41,8 @@ final class TaxonomyParentRelationListener implements EventSubscriberInterface
                 ->select()
                 ->field('class')
                 ->equals(Taxonomy::class)
-                ->field('relations.relationId')
-                ->equals('__children')
-                ->field('relations.$.references.$[].$id')
-                ->equals($taxonomy->getParentID())
+                ->field('relations.references.$id')
+                ->equals($taxonomy->getId())
                 ->getQuery()
                 ->execute();
 
@@ -53,6 +51,7 @@ final class TaxonomyParentRelationListener implements EventSubscriberInterface
                 $relation = $parent->getRelation('__children');
                 $relation->removeReference($taxonomy);
             }
+
             return;
         }
 
