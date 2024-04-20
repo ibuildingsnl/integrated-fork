@@ -13,7 +13,6 @@ namespace Integrated\Bundle\WorkflowBundle\Extension\EventListener;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
@@ -136,10 +135,10 @@ class ContentSubscriber implements ContentSubscriberInterface
 
         try {
             $state->getWorkflow();
-        } catch (Exception $e) {
-            error_log('Failed to get workflow: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            error_log('Failed to get workflow: '.$e->getMessage());
             $state = false;
-            //TODO: Entry should be removed from workflow_states table
+            // TODO: Entry should be removed from workflow_states table
         }
 
         if ($content instanceof MetadataInterface && $state) {
