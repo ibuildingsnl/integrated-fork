@@ -6,8 +6,8 @@
         <div class="categories_tabs flex flex-wrap">
             {% set showAllTab = false %}
             {% for category in taxonomyCategories[relation.vars.attr['data-relation']] %}
-                {% if category.depth == 0 and category.channels|length == 0 %}
-                    {% set showAllTab = true %}
+                {% if category.depth == 0 and category.getReferences|length == 0 %}
+                        {% set showAllTab = true %}
                 {% endif %}
             {% endfor %}
 
@@ -24,7 +24,7 @@
             {% endif %}
 
             {% for category in taxonomyCategories[relation.vars.attr['data-relation']] %}
-                {% if category.depth == 0 and category.channels|length > 0  %}
+                {% if category.depth == 0 and category.getReferences|length > 0  %}
                     {% set real_title = category.title %}
                     {% set level0 = category.title %}
 
@@ -59,7 +59,7 @@
                     {% set parent_channels = category.channels %}
                 {% endif %}
 
-                {% if category.channels|length == 0 %}
+                {% if category.channels|length == 0 or category.depth == 0 and category.getReferences|length == 0 %}
                     {% set level0 = '' %}
                     {% set className = 'noparent' %}
                 {% endif %}
@@ -76,7 +76,7 @@
                 {% if category.depth == 1 and category.channels|length == 0 %}
                     {% set real_title = category.title %}
                     {% set level1 = category.title %}
-                    {% set className = 'secondary-child' %}
+                    {% set className = 'first-child' %}
 
                     {% set level1channels = '' %}
                     {% set parent_channels = '' %}

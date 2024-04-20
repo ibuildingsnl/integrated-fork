@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\TaxonomyBundle\Domain;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 
 final class IndexedItem
@@ -14,6 +15,7 @@ final class IndexedItem
         private readonly int $count,
         private readonly int $depth,
         private readonly array $channels,
+        private readonly ArrayCollection $references,
     ) {
     }
 
@@ -27,6 +29,7 @@ final class IndexedItem
             $usageCount,
             $depth,
             $taxonomy->getChannels(),
+            $taxonomy->getReferencesByRelationId('__children'),
         );
     }
 
@@ -63,5 +66,10 @@ final class IndexedItem
     public function getChannels(): array
     {
         return $this->channels;
+    }
+
+    public function getReferences(): ArrayCollection
+    {
+        return $this->references;
     }
 }
