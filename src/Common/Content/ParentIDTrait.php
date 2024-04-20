@@ -40,7 +40,6 @@ trait ParentIDTrait
     ], location: 'sidebar')]
     protected $link_to_channel;
 
-
     public function getParentID(): ?string
     {
         return $this->parent_id;

@@ -12,11 +12,11 @@ final class IndexedItem
         private readonly string|null $title,
         private readonly string|null $description,
         private readonly string|null $slug,
-        private readonly int $count,
-        private readonly int $depth,
         private readonly array $channels,
         private readonly ArrayCollection $references,
         private readonly string|null $linkToChannel,
+        private readonly int $count,
+        private readonly int $depth,
     ) {
     }
 
@@ -27,11 +27,11 @@ final class IndexedItem
             $taxonomy->getTitle(),
             $taxonomy->getDescription(),
             $taxonomy->getSlug(),
-            $usageCount,
-            $depth,
             $taxonomy->getChannels(),
             $taxonomy->getReferencesByRelationId('__children'),
             $taxonomy->getLinkToChannel(),
+            $usageCount,
+            $depth,
         );
     }
 
@@ -50,21 +50,6 @@ final class IndexedItem
         return $this->description;
     }
 
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
-
-    public function getCount(): int
-    {
-        return $this->count;
-    }
-
-    public function getDepth(): int
-    {
-        return $this->depth;
-    }
-
     public function getChannels(): array
     {
         return $this->channels;
@@ -78,5 +63,20 @@ final class IndexedItem
     public function getLinkToChannel(): ?string
     {
         return $this->linkToChannel;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function getCount(): int
+    {
+        return $this->count;
+    }
+
+    public function getDepth(): int
+    {
+        return $this->depth;
     }
 }
