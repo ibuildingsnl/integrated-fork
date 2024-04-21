@@ -17,7 +17,8 @@ use Integrated\Common\Converter\Type\TypeInterface;
 
 class CustomFieldsType implements TypeInterface
 {
-    public function __construct() {
+    public function __construct()
+    {
     }
 
     /**
@@ -32,7 +33,7 @@ class CustomFieldsType implements TypeInterface
         $customFields = $data->getCustomFields();
 
         foreach ($customFields as $key => $value) {
-            $container->add($key ,$value);
+            $container->add($key, $value);
         }
     }
 
