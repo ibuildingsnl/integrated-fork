@@ -17,6 +17,14 @@
                 display: none !important;
             }
 
+            &.noparent {
+                display: block !important;
+            }
+
+            &.hidden.noparent {
+                display: none !important;
+            }
+
             &.first-child {
                 label {
                     padding-left: 24px !important;
@@ -26,6 +34,11 @@
             &.secondary-child {
                 label {
                     padding-left: 36px !important;
+                }
+            }
+            &.tertiary-child {
+                label {
+                    padding-left: 48px !important;
                 }
             }
         }
