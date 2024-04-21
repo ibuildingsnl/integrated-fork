@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\ContentBundle\Twig\Extension;
 
-use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Symfony\Component\Serializer\SerializerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
