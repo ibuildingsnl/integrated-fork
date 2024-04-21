@@ -27,10 +27,11 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class IntegratedMenuProvider implements MenuProviderInterface
 {
+    //TODO: Remove SolariumProvider?
     public function __construct(
         private readonly ChannelContextInterface $channelContext,
         private readonly DocumentRepository $repository,
-        private readonly SolariumProvider $solariumProvider, //TODO: Remove SolariumProvider?
+        private readonly SolariumProvider $solariumProvider,
         private readonly SolrUrlExtractor $urlExtractor
     ) {
     }

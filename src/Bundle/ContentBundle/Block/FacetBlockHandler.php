@@ -5,7 +5,6 @@ namespace Integrated\Bundle\ContentBundle\Block;
 use Integrated\Bundle\BlockBundle\Block\BlockHandler;
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
 use Integrated\Bundle\ContentBundle\Document\Block\FacetBlock;
-use Integrated\Bundle\ContentBundle\Provider\SolariumProvider;
 use Integrated\Common\Block\BlockHandlerRegistryInterface;
 use Integrated\Common\Block\BlockInterface;
 use Solarium\QueryType\Select\Result\Result;
