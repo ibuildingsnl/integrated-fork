@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the Integrated package.
- *
- * (c) e-Active B.V. <integrated@e-active.nl>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Integrated\Bundle\MenuBundle\Provider;
 
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
@@ -22,11 +13,13 @@ use Knp\Menu\MenuFactory;
 use Knp\Menu\Provider\MenuProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class IntegratedMenuProvider implements MenuProviderInterface
 {
+    /**
+     * @var ItemInterface[] 
+     */
+    protected $menus = [];
+
     public function __construct(
         private readonly ChannelContextInterface $channelContext,
         private readonly DocumentRepository $repository,
