@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the Integrated package.
- *
- * (c) e-Active B.V. <integrated@e-active.nl>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Integrated\Bundle\WebsiteBundle\Controller;
 
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
@@ -18,19 +9,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
-class SearchSelectionController extends AbstractController
+class RSSSearchSelectionController extends AbstractController
 {
-    /**
-     * @var SolariumProvider
-     */
-    private $solariumProvider;
-
-    public function __construct(SolariumProvider $solariumProvider)
-    {
-        $this->solariumProvider = $solariumProvider;
+    public function __construct(
+        private readonly SolariumProvider $solariumProvider
+    ) {
     }
 
     /**
