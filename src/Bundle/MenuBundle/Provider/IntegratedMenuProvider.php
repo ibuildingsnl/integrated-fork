@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 class IntegratedMenuProvider implements MenuProviderInterface
 {
     /**
-     * @var ItemInterface[] 
+     * @var ItemInterface[]
      */
     protected $menus = [];
 
