@@ -105,11 +105,11 @@ class PageCopyService
 
             if ($block instanceof Block) {
                 // copy block
-                if (isset($data['block_'.$block->getId()]['operation']) && $data['block_'.$block->getId(
-                    )]['operation'] == 'clone') {
+                if (isset($data['block_'.$block->getId()]['operation']) &&
+                    $data['block_'.$block->getId()]['operation'] == 'clone') {
                     $classMetadata = $this->documentManager->getClassMetadata(\get_class($block));
 
-                    if(!$existingBlock = $this->documentManager
+                    if (!$existingBlock = $this->documentManager
                         ->getRepository(Block::class)
                         ->findOneBy(['_id' => $data['block_'.$block->getId()]['newBlockId']])
                     ) {
