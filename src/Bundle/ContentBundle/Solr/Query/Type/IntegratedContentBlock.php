@@ -178,10 +178,10 @@ class IntegratedContentBlock extends AbstractType
                 return substr($sortOption[0], 7);
             }
 
-            if ($this->sorting->has($value)) {
+            if ($this->sorting->hasByField($value)) {
                 // rel is only allowed if there is a query
                 if ($value !== 'rel' || $options['q']) {
-                    return $this->sorting->get($value)->field;
+                    return $this->sorting->getByField($value)->field;
                 }
             }
 
@@ -189,7 +189,7 @@ class IntegratedContentBlock extends AbstractType
                 return $this->sorting->get('rel')->field;
             }
 
-            return $this->sorting->get('changed')->field;
+            return $this->sorting->get('time')->field;
         });
 
         $resolver->setNormalizer('order', function (Options $options, $value) {

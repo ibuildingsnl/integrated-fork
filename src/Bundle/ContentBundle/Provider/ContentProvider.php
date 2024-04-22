@@ -203,6 +203,16 @@ class ContentProvider
             $this->addWorkflowFilter($query);
         }
 
+        $activeBrands = $request->query->get('brands');
+        if (\is_array($activeBrands)) {
+            if (\count($activeBrands)) {
+                $query
+                    ->createFilterQuery('brands')
+                    ->addTag('brands')
+                    ->setQuery('facet_brands: ((%1%))', [implode(') OR (', array_map($filter, $activeBrands))]);
+            }
+        }
+
         $activeChannels = $request->query->get('channels');
         if (\is_array($activeChannels)) {
             if (\count($activeChannels)) {
