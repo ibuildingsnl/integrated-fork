@@ -17,7 +17,7 @@
         {% endif %}
 
         {% if content.content is defined %}
-            {% set item = item|merge({'content': content.content|join('...')|striptags|safeTruncate(250)}) %}
+            {% set item = item|merge({'content': content.content[0]|default('')|striptags|u.truncate(250)}) %}
         {% endif %}
 
         {% if content.cover is defined %}
