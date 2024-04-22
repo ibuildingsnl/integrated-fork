@@ -5,9 +5,9 @@ namespace Integrated\Bundle\WebsiteBundle\Controller;
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Provider\SolariumProvider;
+use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
 class JSONController extends AbstractController
@@ -25,7 +25,6 @@ class JSONController extends AbstractController
      */
     public function rss(Request $request, SearchSelection $searchSelection)
     {
-
         $block = new ContentBlock();
         $block->setSearchSelection($searchSelection);
 
