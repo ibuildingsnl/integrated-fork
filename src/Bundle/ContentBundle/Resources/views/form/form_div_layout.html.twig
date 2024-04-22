@@ -559,15 +559,7 @@
                 {% endif %}
                 <div class="aside-item-list">
                     {{ form_widget(form) }}
-                    <div class="settings-apply-to-menu">
-                        <select data-apply-to class="form-control mt-4 mb-4">
-                            <option value="this">{% trans %}Apply to{% endtrans %} {{ form_label(form) }}</option>
-                        </select>
-                        <div class="hidden settings-channels-choice mb-4">
-                            <select class="select2" data-apply-channels multiple></select>
-                        </div>
-                    </div>
-                    <a class="btn btn-green" href="#">{% trans %}Apply{% endtrans %}</a>
+                    <a class="btn btn-green mt-4" href="#">{% trans %}Apply{% endtrans %}</a>
                 </div>
             </div>
         </div>
