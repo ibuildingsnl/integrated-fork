@@ -7,6 +7,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Common\Content\ContentInterface;
 use Solarium\QueryType\Select\Result\Document;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class DocumentExtension extends AbstractExtension
@@ -28,6 +29,7 @@ class DocumentExtension extends AbstractExtension
     {
         return [
             new TwigFunction('integrated_document', [$this, 'getDocument']),
+            new TwigFilter('safeTruncate', [$this, 'safeTruncate']),
         ];
     }
 
@@ -54,5 +56,22 @@ class DocumentExtension extends AbstractExtension
         }
 
         return null;
+    }
+
+    public function safeTruncate($string, $length)
+    {
+        if (mb_strlen($string) <= $length) {
+            return $string;
+        }
+
+        $truncated = mb_substr($string, 0, $length);
+
+        if (preg_match('/&[^;]{0,4}$/', $truncated)) {
+            $truncated = preg_replace('/&[^;]{0,4}$/', '', $truncated);
+        }
+
+        $truncated = html_entity_decode($truncated, ENT_QUOTES, 'UTF-8');
+
+        return $truncated . '...';
     }
 }
