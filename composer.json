@@ -53,6 +53,7 @@
         "sensio/framework-extra-bundle": "~5.0",
         "solarium/solarium": "6.2.*",
         "swiftmailer/swiftmailer": "~6.1",
+        "twindigital/clock": "^1.0.0",
         "symfony/asset": "^5.4",
         "symfony/cache": "^5.4",
         "symfony/css-selector": "^5.4",
