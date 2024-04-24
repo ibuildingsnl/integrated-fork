@@ -47,6 +47,6 @@ class ChannelType
 
     public function getIcon(): ?string
     {
-        return $this->icon;
+        return $this->icon ?? null;
     }
 }

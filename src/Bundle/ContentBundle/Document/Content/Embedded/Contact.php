@@ -87,7 +87,7 @@ class Contact
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\HiddenType', options: ['attr' => ['data-itemorder' => 'collection']])]
     protected $order = 0;
 
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }
@@ -97,7 +97,7 @@ class Contact
         $this->type = $type;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -107,12 +107,12 @@ class Contact
         $this->name = $name;
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->address1.', '.$this->getCity();
     }
 
-    public function getAddress1(): string
+    public function getAddress1(): ?string
     {
         return $this->address1;
     }
@@ -122,7 +122,7 @@ class Contact
         $this->address1 = $address1;
     }
 
-    public function getAddress2(): string
+    public function getAddress2(): ?string
     {
         return $this->address2;
     }
@@ -132,7 +132,7 @@ class Contact
         $this->address2 = $address2;
     }
 
-    public function getZipcode(): string
+    public function getZipcode(): ?string
     {
         return $this->zipcode;
     }
@@ -142,7 +142,7 @@ class Contact
         $this->zipcode = $zipcode;
     }
 
-    public function getCity(): string
+    public function getCity(): ?string
     {
         return $this->city;
     }
@@ -162,7 +162,7 @@ class Contact
         $this->state = $state;
     }
 
-    public function getCountry(): string
+    public function getCountry(): ?string
     {
         return $this->country;
     }

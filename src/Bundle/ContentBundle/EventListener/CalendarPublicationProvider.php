@@ -53,6 +53,11 @@ class CalendarPublicationProvider implements EventSubscriberInterface
 
         foreach ($publications as $publication) {
             $type = $publication->getChannel()->getType();
+
+            if ($publication->getChannel() === null || $publication->getContent()->getTitle() === null || $type === null) {
+                continue;
+            }
+
             $dateTime = $publication->getTime()->getStartDate();
             $eligibleForDisplay = false;
 
@@ -118,9 +123,9 @@ class CalendarPublicationProvider implements EventSubscriberInterface
             if (isset($brandProfile) && isset($currentBrand)) {
                 if ($brandProfile instanceof BrandProfile && $currentBrand instanceof Brand) {
                     $data = [
-                        'id' => $publication->getContent()->getId(),
-                        'title' => $publication->getContent()->getTitle(),
-                        'premium' => $publication->getContent()->isPremium(),
+                        'id' => $publication->getContent()?->getId(),
+                        'title' => $publication->getContent()?->getTitle(),
+                        'premium' => $publication->getContent()?->isPremium(),
                         'type' => $type->getId(),
                         'typename' => $type->getName(),
                         'settings' => $publicationSettings,
