@@ -70,6 +70,9 @@
 
         <service id="Integrated\Bundle\WebsiteBundle\Controller\JSONController">
             <argument type="service" id="integrated_content.provider.solarium" />
+            <argument type="service" id="knp_paginator" />
+            <argument type="service" id="request_stack" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
 
             <tag name="controller.service_arguments" />
