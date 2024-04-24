@@ -153,6 +153,7 @@ $('.integrated_tinymce').each(function(key, elem){
                         iframe.width = '100%';
                         iframe.height = '432px';
                         iframe.classList.add('video');
+                        iframe.classList.add('youtube');
 
                         var src = iframe.src.replace('youtube.com', 'youtube-nocookie.com');
                         var srcUrl = new URL(src);
@@ -163,7 +164,7 @@ $('.integrated_tinymce').each(function(key, elem){
                     var serializer = new XMLSerializer();
                     var modifiedCode = serializer.serializeToString(doc);
 
-                    args.content = '<div class="embed-content">' + modifiedCode + '</div><br>';
+                    args.content = '<div class="embed-content ' + data.provider_name + '">' + modifiedCode + '</div><br>';
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                 },
