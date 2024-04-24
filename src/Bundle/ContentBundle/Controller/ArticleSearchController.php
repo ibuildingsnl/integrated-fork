@@ -3,7 +3,11 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Integrated\Bundle\ChannelBundle\Services\LinkMaker;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\Security\Resolver\PermissionResolver;
@@ -12,9 +16,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ArticleSearchController extends AbstractController
 {
+    private DocumentRepository $contentTypeRepository;
+
     public function __construct(
-        private readonly DocumentManager $documentManager
+        private readonly DocumentManager $documentManager,
+        private readonly LinkMaker $linkMaker,
     ) {
+        $this->contentTypeRepository = $this->documentManager->getRepository(ContentType::class);
     }
 
     public function index() {
@@ -29,22 +37,24 @@ class ArticleSearchController extends AbstractController
             ];
         }, $channels);
 
+        $contentTypes = $this->contentTypeRepository->findAll();
+        $contentTypes = array_map(function($contentType) {
+            return [
+                'key' => $contentType->getId(),
+                'label' => $contentType->getName(),
+            ];
+        }, $contentTypes);
+
         return $this->render('@IntegratedContent/article_search/article_search.html.twig', [
             'channels' => json_encode(array_values($channels)),
+            'contentTypes' => json_encode(array_values($contentTypes)),
         ]);
     }
 
-    public function search(Request $request) {
-        $test = new \stdClass();
-        $test->msg = 'Hello';
-        $test->rand = rand(0, 1000);
-        $test->term = $request->query->get('term');
-
-        return $this->json($test);
-    }
-
-    public function searchContentByChannel(Request $request, ?string $channelId = null, ?string $contentTypeIds = null)
+    public function searchContentByChannel(Request $request, ?string $channelId = null)
     {
+        $contentTypeIds = $request->get('contentTypeIds', '');
+
         if($channelId === null) {
             return new Response(
                 json_encode([
@@ -55,7 +65,9 @@ class ArticleSearchController extends AbstractController
             );
         }
 
-        $contentTypeIds = 'news,article,file';
+        $contentRepository = $this->documentManager->getRepository(Content::class);
+        /** @var Channel $channel */
+        $channel = $this->documentManager->getRepository(Channel::class)->find($channelId);
 
         $channelQueryValue = self::formatQueryValue($channelId);
         $contentTypeQueryValue = self::formatQueryValue($contentTypeIds);
@@ -76,13 +88,30 @@ class ArticleSearchController extends AbstractController
             $query->setQuery($q);
         }
 
-        // Ensure the item has a non-empty 'url_vleesmagazine' field
-
         $result = $this->getSolarium()->select($query);
         $contentItems = $result->getDocuments();
+        $contentIds = [];
 
-        if ($contentItems) {
-            return new Response(json_encode($contentItems), headers: ['Content-Type' => 'application/json']);
+        $ret = array_map(function($contentItem) use ($channel, &$contentIds) {
+            $contentIds[] = $contentItem->type_id;
+
+            return [
+                'id' => $contentItem->type_id,
+                'title' => $contentItem->title,
+                'subtitle' => ucfirst($contentItem->type_name) . ' | ' . (new \DateTimeImmutable($contentItem->pub_time))->format('d-m-Y'),
+                'text' => substr(strip_tags(implode('', $contentItem->content)), 0, 255),
+                'url' => $contentItem['url_' . $channel->getId()],
+            ];
+        }, $contentItems);
+
+        $ret = array_map(function($contentItem) use ($channel) {
+            return array_merge($contentItem, [
+                'url' => $channel->getPrimaryDomain() . $contentItem['url'],
+            ]);
+        }, $ret);
+
+        if (count($ret) > 0) {
+            return new Response(json_encode($ret), headers: ['Content-Type' => 'application/json']);
         } else {
             return new Response(
                 json_encode([

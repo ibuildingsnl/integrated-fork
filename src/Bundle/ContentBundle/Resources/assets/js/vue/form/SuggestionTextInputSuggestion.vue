@@ -1,9 +1,10 @@
 <script setup>
 const props = defineProps({
-    text: undefined,
-    title: undefined,
-    subtitle: undefined,
-    selected: false,
+    text: String,
+    title: String,
+    subtitle: String,
+    selected: Boolean,
+    tooltip: String,
 });
 
 const emit = defineEmits([
@@ -18,6 +19,7 @@ const emit = defineEmits([
         tabindex="0"
         class="p-2 space-x-2 flex flex-row justify-stretch items-start outline-0 hover:bg-blue-50 focus:bg-blue-100 cursor-pointer"
         :class="{'bg-blue-200 focus:bg-blue-200 hover:bg-blue-200': props.selected}"
+        :title="props.tooltip"
     >
         <slot/>
         <div class="grow">

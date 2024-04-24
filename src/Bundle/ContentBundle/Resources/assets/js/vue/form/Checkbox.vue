@@ -35,13 +35,28 @@ const value = computed({
         margin: 0;
         font: inherit;
         color: currentColor;
-        width: 1.15em;
-        height: 1.15em;
-        border: theme('borderWidth.2') solid currentColor;
+        width: 1.2rem;
+        height: 1.2rem;
+        border: theme('borderWidth.DEFAULT') solid currentColor;
         border-radius: theme('borderRadius.md');
         transform: translateY(-0.075em);
+        position: relative;
+        &::after {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0.75rem;
+            height: 0.75rem;
+            content: ' ';
+            background-color: transparent;
+            border-radius: theme('borderRadius.DEFAULT');
+        }
+
         &:checked {
-            background-color: theme('colors.blue.400');
+            &::after {
+                background-color: #00ae93;
+            }
         }
     }
 </style>

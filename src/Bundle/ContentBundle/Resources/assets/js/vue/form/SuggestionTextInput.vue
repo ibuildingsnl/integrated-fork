@@ -31,6 +31,7 @@ const selections = computed({
         return props.selections ?? [];
     },
     set(newValue) {
+        console.log(newValue);
         emit('update:selections', newValue);
     }
 });
@@ -45,7 +46,7 @@ const onBlur = (e) => {
 };
 
 const selectSuggestion = (key) => {
-    if (props.suggestions.findIndex((v) => v.key === key) !== -1) {
+    if (props.suggestions.findIndex((v) => v.id === key) !== -1) {
         if (props.multiple) {
             if (selections.value.includes(key)) {
                 selections.value = selections.value.filter((v) => v !== key);
@@ -64,7 +65,7 @@ const selectSuggestion = (key) => {
         selections.value = [key];
     } else {
         if (props.multiple) {
-            selections.value = selections.value.filter((v) => v.key !== key);
+            selections.value = selections.value.filter((v) => v.id !== key);
             return;
         }
 
@@ -94,14 +95,15 @@ const sendSearch = debounce(() => {
             :class="{'absolute bottom-0 left-0 translate-y-full': !props.permanent, 'h-[260px]': props.permanent}"
         >
             <SuggestionTextInputSuggestion
-                @select="() => selectSuggestion(key)"
+                @select="() => selectSuggestion(id)"
                 @focusout="onBlur"
-                v-for="{key, title, subtitle, text} in props.suggestions"
-                :key="key"
+                v-for="{id, title, subtitle, text, url} in props.suggestions"
+                :key="id"
                 :title="title"
                 :subtitle="subtitle"
                 :text="text"
-                :selected="selections.includes(key)"
+                :tooltip="url"
+                :selected="selections.includes(id)"
             />
             <div v-if="props.suggestions.length === 0" class="grow flex flex-row justify-center items-center">
                 <span class="py-4 text-lg text-zinc-400 select-none">No results</span>
