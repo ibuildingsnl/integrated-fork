@@ -6,8 +6,6 @@ const publishActions = Array.from(document.querySelectorAll('.global-publication
 .map((e) => e.dataset.channelType)
 .filter((v, i, a) => a.indexOf(v) === i);
 
-console.log(publishActions);
-
 if (publishActions.length > 0 && document.body.classList.contains('integrated_content_content_edit')) {
     // add top-bar menu item
     const publish = document.createElement('div');
@@ -135,6 +133,11 @@ if (publishActions.length > 0 && document.body.classList.contains('integrated_co
             triggerSelect2();
 
             document.querySelectorAll('input[data-channel-type="'+action+'"]').forEach(function (input) {
+                    let channel = input.getAttribute('data-channel-selector');
+                    let pubStatus = document.querySelector('[data-publication-channel="'+channel+'"]').getAttribute('data-publication-status');
+
+                    if (pubStatus === 'success') return;
+
                     const brand = input.closest('.brand-container');
                     let selected = input.checked;
                     if (brand && selected) {

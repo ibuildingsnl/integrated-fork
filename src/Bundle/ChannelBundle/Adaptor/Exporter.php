@@ -2,11 +2,11 @@
 
 namespace Integrated\Bundle\ChannelBundle\Adaptor;
 
-use GuzzleHttp\Exception\ClientException;
 use Integrated\Bundle\ChannelBundle\Model\ConfigInterface;
 use Integrated\Bundle\ChannelBundle\Model\ConnectorInterface;
 use Integrated\Bundle\ChannelBundle\Model\CouldNotPublish;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface;
 use Integrated\Common\Channel\Exporter\ExporterResponse;
@@ -23,7 +23,7 @@ final class Exporter implements ExporterInterface
     ) {
     }
 
-    public function export($content, $state, ChannelInterface $channel, array $settings = []): ?ExporterResponse
+    public function export(object $content, string $state, ChannelInterface $channel, array $settings = []): ?ExporterResponse
     {
         if (!$content instanceof Content || $state != self::STATE_ADD) {
             return null;
@@ -37,7 +37,7 @@ final class Exporter implements ExporterInterface
         if ($content->hasConnector($this->config->getId())) {
             foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
                 $publication->setResponse('Content already published on this connector');
-                $publication->setStatus('failed');
+                $publication->setStatus(Publication::STATUS_FAILED);
             }
 
             return null;
@@ -45,19 +45,12 @@ final class Exporter implements ExporterInterface
 
         $responseMessage = null;
         $externalId = null;
-        $status = 'failed';
+        $status = Publication::STATUS_FAILED;
 
         try {
             $externalId = $this->connector->publish($content, $channel, $this->config->getOptions(), $settings);
         } catch (CouldNotPublish $e) {
             $this->logger->error($e->getMessage()."\n".$e->getTraceAsString());
-            $responseMessage = $e->getMessage();
-        } catch (ClientException $e) {
-            $responseBody = $e->getResponse()->getBody()->getContents();
-            $this->logger->error('ClientException: '.$e->getMessage()."\nResponse: ".$responseBody);
-            $responseMessage = $responseBody;
-        } catch (\TypeError $e) {
-            $this->logger->error('TypeError: '.$e->getMessage());
             $responseMessage = $e->getMessage();
         } catch (\Throwable $e) {
             $this->logger->error('Error: '.\get_class($e).' - '.$e->getMessage());
@@ -72,9 +65,9 @@ final class Exporter implements ExporterInterface
         if ($externalId !== null) {
             $response->setExternalId($externalId);
             $responseMessage = $externalId;
-            $status = 'succes';
+            $status = Publication::STATUS_SUCCESS;
         }
-        foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
+        foreach ($this->publications->getAvailable($content, $channel) as $publication) {
             $publication->setResponse($responseMessage);
             $publication->setStatus($status);
         }

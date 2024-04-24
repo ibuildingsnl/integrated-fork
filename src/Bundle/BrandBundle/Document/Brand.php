@@ -14,12 +14,15 @@ class Brand
 {
     #[Slug(fields: ['name'], separator: '_')]
     private ?string $id = null;
+
     /** @var Collection<ChannelLink> */
     private Collection $channelLinks;
 
-    public function __construct(
-        public ?BrandProfile $profile = null,
-    ) {
+    public ?BrandProfile $profile;
+
+    public function __construct(BrandProfile $profile = null)
+    {
+        $this->profile = $profile;
         $this->channelLinks = new ArrayCollection();
     }
 
@@ -31,6 +34,16 @@ class Brand
     public function getId(): string
     {
         return $this->id;
+    }
+
+    public function getProfile(): ?BrandProfile
+    {
+        return $this->profile;
+    }
+
+    public function setProfile(?BrandProfile $profile): void
+    {
+        $this->profile = $profile;
     }
 
     public function getName(): string

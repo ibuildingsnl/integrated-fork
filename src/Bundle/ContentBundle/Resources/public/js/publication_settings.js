@@ -28,6 +28,10 @@ function openPublishingSettings(channelId, input) {
 
     settings.classList.add('show');
 
+    settings.querySelectorAll('.date-text').forEach(function(d) {
+        d.style.display = 'flex';
+    })
+
     settings.querySelectorAll('[name*="[startDate][date]"], [name*="[startDate][time]"]').forEach(function(d) {
         const isDateInput = d.name.includes('[date]');
         const fieldNamePart = isDateInput ? '[date]' : '[time]';
@@ -115,6 +119,7 @@ function showHideChannelSelect(container, type) {
 document.querySelectorAll('.publication-settings-popup').forEach(function (settings) {
     settings.querySelectorAll('a.btn').forEach(function(a) {
         a.addEventListener('click', function (ev) {
+            let channelId = settings.querySelector('.publication-settings').getAttribute('data-publication-channel');
             a.closest('.publication-settings-aside').classList.remove('show');
             document.querySelectorAll('.editor-overlay').forEach(div => {
                 div.classList.remove('show');
@@ -126,11 +131,7 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
                 settings.querySelectorAll(pubInputSelector).forEach(function (input, i) {
                     data[i] = input.value;
                 });
-                document.querySelectorAll(
-                    '.publication-settings[data-channel-type="' +
-                    settings.querySelector('[data-channel-type]')?.dataset.channelType +
-                    '"]'
-                ).forEach(function (container) {
+                document.querySelectorAll('.publication-settings[data-channel-type="' + settings.querySelector('[data-channel-type]')?.dataset.channelType + '"]').forEach(function (container) {
                     if (settings.contains(container)) {
                         return;
                     }
@@ -144,10 +145,7 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
                 settings.querySelectorAll(pubInputSelector).forEach(function (input, i) {
                     data[i] = input.value;
                 });
-                document.querySelectorAll(
-                    '.publication-settings[data-channel-type="' +
-                    settings.querySelector('[data-channel-type]')?.dataset.channelType +
-                    '"]'
+                document.querySelectorAll('.publication-settings[data-channel-type="' + settings.querySelector('[data-channel-type]')?.dataset.channelType + '"]'
                 ).forEach(function (container) {
                     if (settings.contains(container)) {
                         return;
@@ -160,6 +158,9 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
                     });
                 });
             }
+            var event = new CustomEvent("ensurePublicationEvent", { detail: { channelId: channelId } });
+            document.dispatchEvent(event);
+
             ev.preventDefault();
         });
     });
@@ -223,12 +224,12 @@ function createOrFindButton(input, className, text) {
 
 document.addEventListener('DOMContentLoaded', setupTextareaCopyFeature);
 
-document.addEventListener('DOMContentLoaded', function () {
+function initPublicationDelete() {
     const icons = document.querySelectorAll('.publication-item .icon.iconoir-xmark');
 
     icons.forEach(function(icon) {
         icon.addEventListener('click', function() {
-            const channelSelector = icon.getAttribute('data-channel');
+            const channelSelector = icon.closest('.publication-item').getAttribute('data-channel');
 
             const checkbox = document.querySelector(`input[type="checkbox"][data-channel-selector="${channelSelector}"]`);
 
@@ -244,37 +245,115 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-});
+}
 
-document.addEventListener('DOMContentLoaded', function() {
-    const publicationItems = document.querySelectorAll('.publication-item');
+function initPublicationItems() {
+    const publicationItems = document.querySelectorAll('.aside-item-wrapper.publications .publication-item');
 
     publicationItems.forEach(item => {
-        item.addEventListener('click', function() {
-            const channel = item.getAttribute('data-channel');
-
-            const settingsDiv = document.querySelector(`.publication-settings[data-publication-channel="${channel}"]`);
-
-            document.querySelectorAll('.publication-settings-aside.show').forEach(openDiv => {
-                if (openDiv.querySelector(`.publication-settings[data-publication-channel="${channel}"]`) === null) {
-                    openDiv.classList.remove('show');
-
-                    document.querySelectorAll('.editor-overlay').forEach(div => {
-                        div.classList.remove('show');
-                    });
+        if (item.dataset.listenerAdded !== "true") {
+            item.addEventListener('click', function() {
+                const channel = item.getAttribute('data-channel');
+                if (channel) {
+                    openPublishingSettings(channel);
                 }
             });
 
-            if (settingsDiv) {
-                const parentAside = settingsDiv.closest('.publication-settings-aside');
-                if (parentAside) {
-                    parentAside.classList.toggle('show');
+            item.dataset.listenerAdded = "true";
+        }
+    });
+}
 
-                    document.querySelectorAll('.editor-overlay').forEach(div => {
-                        div.classList.toggle('show');
+document.addEventListener('DOMContentLoaded', function () {
+    const newPublicationCheckboxes = document.querySelectorAll('.new-publication-check input[type="checkbox"]');
+    let savedData = {};
+    let savedImages = {};
+
+    newPublicationCheckboxes.forEach((checkbox, index) => {
+        checkbox.addEventListener('change', function () {
+            const publicationSettingsAside = checkbox.closest('.publication-settings-aside');
+            const publicationSettings = publicationSettingsAside.querySelector('.publication-settings');
+            const fields = publicationSettingsAside.querySelectorAll('.aside-item-list .form-control:not([data-apply-to])');
+            const imageContainer = publicationSettingsAside.querySelector('.mediagallery_selector .selected_images');
+            const hiddenImageInput = publicationSettingsAside.querySelector('.mediagallery_selector .mediagallery_selector_input');
+            const channelId = publicationSettings.getAttribute('data-publication-channel');
+            const publicationListContainer = document.querySelector('.aside-item-wrapper.publications .aside-item-list-container .publication-list');
+            let publication = publicationListContainer.querySelector(`a[data-channel="${channelId}"]`);
+
+            savedData[index] = savedData[index] || {};
+            savedImages[index] = savedImages[index] || [];
+
+            if (this.checked) {
+                publicationSettingsAside.classList.remove('no-edit');
+                publicationSettings.setAttribute('data-publication-status', '');
+                // Save current values and clear fields
+                fields.forEach(field => {
+                    const key = field.name || field.id;
+                    savedData[index][key] = field.value;
+                    field.value = '';
+                });
+
+                if (imageContainer) {
+                    savedImages[index] = Array.from(imageContainer.querySelectorAll('li')).map(li => ({
+                        id: li.id,
+                        src: li.querySelector('img').src
+                    }));
+
+                    imageContainer.innerHTML = '';
+                    hiddenImageInput.value = '';
+                }
+            } else {
+                publicationSettingsAside.classList.add('no-edit');
+                publicationSettings.setAttribute('data-publication-status', 'success');
+                if (publication) {
+                    publication.remove();
+                }
+
+                fields.forEach(field => {
+                    const key = field.name || field.id;
+                    if (savedData[index].hasOwnProperty(key)) {
+                        field.value = savedData[index][key];
+                    }
+                });
+
+                savedData[index] = {};
+
+                if (imageContainer) {
+                    imageContainer.innerHTML = '';
+                    hiddenImageInput.value = '';
+                }
+
+                if (imageContainer && savedImages[index].length > 0) {
+
+                    savedImages[index].forEach(info => {
+                        const li = document.createElement('li');
+                        li.id = info.id;
+                        li.className = 'media-item';
+                        li.innerHTML = `<div class="media-preview"><div class="thumbnail relative"><div class="centered"><img src="${info.src}"></div><a class="remove_link remove"><i class="iconoir-xmark"></i></a></div></div>`;
+                        imageContainer.appendChild(li);
                     });
+
+                    hiddenImageInput.value = savedImages[index].map(info => info.id).join(',');
+                    savedImages[index] = [];
                 }
             }
+
+            var applyPublishSettingsEvent = new CustomEvent('applyPublishSettingsEvent');
+
+            window.dispatchEvent(applyPublishSettingsEvent);
+
         });
     });
 });
+
+document.addEventListener('DOMContentLoaded', initPublicationItems);
+document.addEventListener('DOMContentLoaded', initPublicationDelete);
+
+window.addEventListener('updatePublicationItems', function(e) {
+    initPublicationItems();
+});
+
+window.addEventListener('updatePublicationItems', function(e) {
+    initPublicationDelete();
+});
+

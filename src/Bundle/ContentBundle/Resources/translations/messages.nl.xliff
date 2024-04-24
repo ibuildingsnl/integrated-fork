@@ -1318,6 +1318,26 @@
                 <source>Select image</source>
                 <target>Selecteer afbeelding</target>
             </trans-unit>
+            <trans-unit id="334">
+                <source>Create a new publication</source>
+                <target>Nieuwe publicatie aanmaken</target>
+            </trans-unit>
+            <trans-unit id="335">
+                <source>, do you want to make a new publication?</source>
+                <target>, wil je een nieuwe publicatie maken?</target>
+            </trans-unit>
+            <trans-unit id="336">
+                <source>You have already published to</source>
+                <target>Je hebt al gepubliceerd naar</target>
+            </trans-unit>
+            <trans-unit id="337">
+                <source>Select </source>
+                <target>Selecteer </target>
+            </trans-unit>
+            <trans-unit id="338">
+                <source>Only show Premium content</source>
+                <target>Toon enkel Premium content</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

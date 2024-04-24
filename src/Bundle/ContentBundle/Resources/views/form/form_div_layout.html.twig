@@ -469,6 +469,19 @@
     {% endapply %}
 {% endblock %}
 
+{% block _channel_link_channel_domains_entry_widget %}
+    {% apply spaceless %}
+        {% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' form-control')|trim }) %}
+        <input type="text" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+        <label class="radiobutton-container primary-domain">
+            <input class="primary-domain-radio" type="radio" name="check_primary_domain" disabled>
+            <span class="radiobutton"></span>
+            <div class="background"></div>
+            <span class="radiobutton-label">{{ 'Primary domain'|trans }}</span>
+        </label>
+    {% endapply %}
+{% endblock %}
+
 {% block integrated_content_actions_row %}
     {% apply spaceless %}
         <section class="section-white">
@@ -520,15 +533,30 @@
 {% endblock %}
 
 {% block integrated_publication_settings_row %}
-    <div class="aside-options publication-settings-aside">
+
+
+    {% set status = form.vars.attr['data-publication-status']|default('') %}
+    {% set icon = form.vars.attr['data-channel-type-icon']|default('telegram') %}
+    <div class="aside-options publication-settings-aside {% if status is same as 'success' %}no-edit{% endif %}">
         <div class="publication-settings-popup aside-item-wrapper show">
             <div class="aside-item-header">
                 <h3 class="aside-item-title">
-                    <i class="iconoir-telegram"></i>
-                    <span class="aside-item-icon">{% trans %}Publish to{% endtrans %} {{ form_label(form) }}</span>
+                    <i class="iconoir-{{ icon }}"></i>
+                    <span class="aside-item-icon">{{ form_label(form) }}</span>
                 </h3>
             </div>
             <div class="aside-item-list-container">
+                {% if status is same as 'success' %}
+                    <p class="publication-info">{% trans %}You have already published to{% endtrans %} {{ form_label(form) }} {% trans %}, do you want to make a new publication?{% endtrans %}</p>
+                    <div class="checkbox new-publication-check">
+                        <label class="checkbox-container mb-4" for="new-publication-check-{{ form.vars.label|default(form.vars.name)|lower|replace({' ': '_'}) }}">
+                            <input type="checkbox" id="new-publication-check-{{ form.vars.label|default(form.vars.name)|lower|replace({' ': '_'}) }}" name="new-publication-check-{{ form.vars.label|default(form.vars.name)|lower|replace({' ': '_'}) }}" class="new-publication-check" value="">
+                            <span class="checkmark"></span>
+                            <div class="background"></div>
+                            {% trans %}Create a new publication{% endtrans %}
+                        </label>
+                    </div>
+                {% endif %}
                 <div class="aside-item-list">
                     {{ form_widget(form) }}
                     <div class="settings-apply-to-menu">
