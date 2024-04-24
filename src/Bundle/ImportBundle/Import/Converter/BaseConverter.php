@@ -867,6 +867,10 @@ class BaseConverter
                 $person->getMetadata()->set('wpAuthorId', $authorId);
                 $person->getMetadata()->set('importWebsiteBaseUrl', $baseUrl);
 
+                foreach ($importDefinition->getChannels() as $channel) {
+                    $person->addChannel($channel);
+                }
+
                 $documentManager->persist($person);
 
                 $result['messages'][] = "[NOTICE] Author {$firstName} {$lastName} has been created and will be used as author";
