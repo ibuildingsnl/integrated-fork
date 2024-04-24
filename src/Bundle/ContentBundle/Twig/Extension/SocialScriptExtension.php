@@ -31,7 +31,7 @@ class SocialScriptExtension extends AbstractExtension
             'embed_reddit' => 'https://embed.reddit.com/widgets.js',
             'embed_tiktok' => 'https://www.tiktok.com/embed.js',
             'embed_instagram' => 'https://platform.instagram.com/en_US/embeds.js',
-            'embed_facebook' => 'https://connect.facebook.net/nl_NL/sdk.js#xfbml=1&version=v19.0'
+            'embed_facebook' => 'https://connect.facebook.net/nl_NL/sdk.js#xfbml=1&version=v19.0',
         ];
 
         foreach ($socialScripts as $key => $url) {

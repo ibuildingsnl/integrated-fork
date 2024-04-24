@@ -42,7 +42,7 @@ class EditorSocialDataEventListener implements EventSubscriberInterface
             if ($child->getConfig()->getType()->getInnerType() instanceof EditorType) {
                 $data = $child->getData();
 
-                if (is_string($data) && trim($data)) {
+                if (\is_string($data) && trim($data)) {
                     foreach (self::read($data) as $provider) {
                         $socialEmbeds[$provider] = true;
                     }

@@ -9,7 +9,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class EditorSocialDataExtension extends AbstractTypeExtension
 {
-
     public function __construct()
     {
     }
