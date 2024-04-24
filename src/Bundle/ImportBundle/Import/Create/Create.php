@@ -162,6 +162,11 @@ class Create
             $newRelation->setRelationType($relation->getType());
 
             $documentManager->persist($newFile);
+
+            foreach ($importDefinition->getChannels() as $channel) {
+                $newFile->addChannel($channel);
+            }
+
             $newFile->setFile($storage);
             $newFile->setTitle($title);
             $newFile->getMetadata()->set('importDate', date('Ymd'));

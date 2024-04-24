@@ -872,6 +872,10 @@ class BaseConverter
                 $result['messages'][] = "[NOTICE] Author {$firstName} {$lastName} has been created and will be used as author";
             }
 
+            foreach ($importDefinition->getChannels() as $channel) {
+                $person->addChannel($channel);
+            }
+
             $author = new Author();
             $author->setPerson($person);
             $newObject->addAuthor($author);
