@@ -107,8 +107,9 @@ class Contact
         $this->name = $name;
     }
 
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
+        //todo: include if statement to see if values are filled
         return $this->address1.', '.$this->getCity();
     }
 
