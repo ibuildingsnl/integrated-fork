@@ -73,7 +73,7 @@ class JSONController extends AbstractController
             return;
         }
 
-        /** @var RelatedContentBlock $block **/
+        /** @var RelatedContentBlock $block * */
         $block = $this->documentManager->getRepository(RelatedContentBlock::class)->find($blockId);
 
         $document = $this->documentManager->getRepository(Content::class)->find($documentId);
