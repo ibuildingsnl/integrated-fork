@@ -15,6 +15,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 
 class JSONController extends AbstractController
 {
@@ -61,24 +62,24 @@ class JSONController extends AbstractController
     public function relatedContentBlock(Request $request)
     {
         if (!$blockId = (string) $request->query->get('blockId')) {
-            return new Response(Response::HTTP_UNPROCESSABLE_ENTITY);
+            return new Response('', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         if (!$documentId = (string) $request->query->get('documentId')) {
-            return new Response(Response::HTTP_UNPROCESSABLE_ENTITY);
+            return new Response('', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         if (!$blockId || !$documentId) {
             return;
         }
 
-        /** @var RelatedContentBlock $block */
+        /** @var RelatedContentBlock $block **/
         $block = $this->documentManager->getRepository(RelatedContentBlock::class)->find($blockId);
 
         $document = $this->documentManager->getRepository(Content::class)->find($documentId);
 
         if (!$block || !$document) {
-            return;
+            return new Response('', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $blockHandler = new RelatedContentBlockHandler($this->paginator, $this->requestStack, $this->documentManager);
