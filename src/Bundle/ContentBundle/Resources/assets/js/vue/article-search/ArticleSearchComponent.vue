@@ -35,8 +35,25 @@ const activeContentTypes = computed(() => {
     return contentTypes.value.filter((contentType) => contentType.active).map((contentType) => contentType.key).join(',');
 });
 
+const hasValidUrl = computed(() => {
+    try {
+        return new URL(searchTerm.value);
+    } catch {
+        return false;
+    }
+});
+
+const isStateValid = computed(() => {
+    // Either valid url and link text contains something or valid selection and link text contains something
+    return (hasValidUrl.value || (selections.value.length > 0 && results.value.length > 0)) && linkText.value.length > 0;
+});
+
 const attemptSearch = () => {
     if (activeChannels.value.length === 0 || activeContentTypes.value.length === 0 || searchTerm.value.length === 0) {
+        return;
+    }
+
+    if(hasValidUrl.value) {
         return;
     }
 
@@ -61,6 +78,18 @@ const doSearch = debounce(async () => {
 }, 300);
 
 const finishSelection = () => {
+    if(hasValidUrl.value) {
+        window.parent.postMessage({
+            mceAction: 'insertContent',
+            content: `<a href="${searchTerm.value}"${openInNewTab.value ? ' target="_blank"' : ''}>${linkText.value}</a>`
+        }, '*');
+        window.parent.postMessage({
+            mceAction: 'close',
+        }, '*');
+
+        return;
+    }
+
     if(selections.value.length === 0 || results.value.length === 0 || linkText.value.length === 0) {
         return;
     }
@@ -139,7 +168,7 @@ onMounted(() => {
 
             <div class="flex flex-row space-x-2 self-end">
                 <Button @click.prevent.stop="cancel" type="normal">Cancel</Button>
-                <Button @click.prevent.stop="finishSelection" type="primary" :disabled="selections.length === 0 || results.length === 0 || linkText.length === 0">Apply</Button>
+                <Button @click.prevent.stop="finishSelection" type="primary" :disabled="!isStateValid">Apply</Button>
             </div>
         </main>
     </div>

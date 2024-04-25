@@ -18448,8 +18448,22 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         return contentType.key;
       }).join(',');
     });
+    var hasValidUrl = (0,vue__WEBPACK_IMPORTED_MODULE_0__.computed)(function () {
+      try {
+        return new URL(searchTerm.value);
+      } catch (_unused) {
+        return false;
+      }
+    });
+    var isStateValid = (0,vue__WEBPACK_IMPORTED_MODULE_0__.computed)(function () {
+      // Either valid url and link text contains something or valid selection and link text contains something
+      return (hasValidUrl.value || selections.value.length > 0 && results.value.length > 0) && linkText.value.length > 0;
+    });
     var attemptSearch = function attemptSearch() {
       if (activeChannels.value.length === 0 || activeContentTypes.value.length === 0 || searchTerm.value.length === 0) {
+        return;
+      }
+      if (hasValidUrl.value) {
         return;
       }
       return doSearch();
@@ -18490,6 +18504,16 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }, _callee, null, [[0, 14]]);
     })), 300);
     var finishSelection = function finishSelection() {
+      if (hasValidUrl.value) {
+        window.parent.postMessage({
+          mceAction: 'insertContent',
+          content: "<a href=\"".concat(searchTerm.value, "\"").concat(openInNewTab.value ? ' target="_blank"' : '', ">").concat(linkText.value, "</a>")
+        }, '*');
+        window.parent.postMessage({
+          mceAction: 'close'
+        }, '*');
+        return;
+      }
       if (selections.value.length === 0 || results.value.length === 0 || linkText.value.length === 0) {
         return;
       }
@@ -18530,6 +18554,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       contentTypes: contentTypes,
       activeChannels: activeChannels,
       activeContentTypes: activeContentTypes,
+      hasValidUrl: hasValidUrl,
+      isStateValid: isStateValid,
       attemptSearch: attemptSearch,
       doSearch: doSearch,
       finishSelection: finishSelection,
@@ -19011,7 +19037,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Button"], {
     onClick: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)($setup.finishSelection, ["prevent", "stop"]),
     type: "primary",
-    disabled: $setup.selections.length === 0 || $setup.results.length === 0 || $setup.linkText.length === 0
+    disabled: !$setup.isStateValid
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Apply")];
