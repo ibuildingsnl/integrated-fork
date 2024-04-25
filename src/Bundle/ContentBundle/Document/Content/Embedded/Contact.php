@@ -109,7 +109,7 @@ class Contact
 
     public function getTitle(): string
     {
-        //todo: include if statement to see if values are filled
+        // todo: include if statement to see if values are filled
         return $this->address1.', '.$this->getCity();
     }
 

@@ -64,7 +64,6 @@ class CalendarPublicationProvider implements EventSubscriberInterface
                 continue;
             }
 
-
             $dateTime = $publication->getTime()->getStartDate();
             $eligibleForDisplay = false;
 
@@ -72,9 +71,9 @@ class CalendarPublicationProvider implements EventSubscriberInterface
                 foreach ($this->brands->all() as $brand) {
                     if ($brand->hasChannel($publication->getChannel())) {
                         if (\array_key_exists('brands', $event->options) && \in_array(
-                                $brand->getId(),
-                                $event->options['brands']
-                            )) {
+                            $brand->getId(),
+                            $event->options['brands']
+                        )) {
                             $eligibleForDisplay = true;
                         }
                         $currentBrand = $brand;
@@ -152,7 +151,7 @@ class CalendarPublicationProvider implements EventSubscriberInterface
                 $scheduledPublications[] = $data;
             }
         }
-        $this->js->add('const publicationSchedule = ' . json_encode($scheduledPublications), true);
+        $this->js->add('const publicationSchedule = '.json_encode($scheduledPublications), true);
         $this->js->add('bundles/integratedcontent/js/publication_calendar.js');
     }
 }
