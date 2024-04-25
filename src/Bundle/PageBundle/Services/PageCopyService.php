@@ -105,48 +105,55 @@ class PageCopyService
 
             if ($block instanceof Block) {
                 // copy block
-                if (isset($data['block_'.$block->getId()]['operation']) && $data['block_'.$block->getId(
-                )]['operation'] == 'clone') {
+                if (isset($data['block_'.$block->getId()]['operation']) &&
+                    $data['block_'.$block->getId()]['operation'] == 'clone') {
                     $classMetadata = $this->documentManager->getClassMetadata(\get_class($block));
 
-                    $className = $classMetadata->getName();
+                    if (!$existingBlock = $this->documentManager
+                        ->getRepository(Block::class)
+                        ->findOneBy(['_id' => $data['block_'.$block->getId()]['newBlockId']])
+                    ) {
+                        $className = $classMetadata->getName();
 
-                    if ($block instanceof InlineTextBlock) {
-                        $copiedBlock = new $className($copiedPage);
+                        if ($block instanceof InlineTextBlock) {
+                            $copiedBlock = new $className($copiedPage);
+                        } else {
+                            $copiedBlock = new $className();
+                        }
+
+                        $reflector = new \ReflectionClass($classMetadata->getName());
+
+                        $getters = [];
+                        $setters = [];
+
+                        foreach ($reflector->getMethods() as $method) {
+                            $methodName = $method->getName();
+                            if (strpos($methodName, 'get') === 0 && $method->getNumberOfParameters() === 0) {
+                                $getters[] = $methodName;
+                            }
+                            if (strpos($methodName, 'set') === 0 && $method->getNumberOfParameters() > 0) {
+                                $setters[] = $methodName;
+                            }
+                        }
+
+                        foreach ($getters as $getter) {
+                            $setter = 'set'.substr($getter, 3);
+
+                            if (\in_array($setter, $setters)) {
+                                $value = $block->$getter();
+                                $copiedBlock->$setter($value);
+                            }
+                        }
+
+                        $copiedBlock->setId($data['block_'.$block->getId()]['newBlockId']);
+                        $copiedBlock->setCreatedAt(new \DateTime());
+
+                        $this->documentManager->persist($copiedBlock);
+
+                        $item->setBlock($copiedBlock);
                     } else {
-                        $copiedBlock = new $className();
+                        $item->setBlock($existingBlock);
                     }
-
-                    $reflector = new \ReflectionClass($classMetadata->getName());
-
-                    $getters = [];
-                    $setters = [];
-
-                    foreach ($reflector->getMethods() as $method) {
-                        $methodName = $method->getName();
-                        if (strpos($methodName, 'get') === 0 && $method->getNumberOfParameters() === 0) {
-                            $getters[] = $methodName;
-                        }
-                        if (strpos($methodName, 'set') === 0 && $method->getNumberOfParameters() > 0) {
-                            $setters[] = $methodName;
-                        }
-                    }
-
-                    foreach ($getters as $getter) {
-                        $setter = 'set'.substr($getter, 3);
-
-                        if (\in_array($setter, $setters)) {
-                            $value = $block->$getter();
-                            $copiedBlock->$setter($value);
-                        }
-                    }
-
-                    $copiedBlock->setId($data['block_'.$block->getId()]['newBlockId']);
-                    $copiedBlock->setCreatedAt(new \DateTime());
-
-                    $this->documentManager->persist($copiedBlock);
-
-                    $item->setBlock($copiedBlock);
                 }
             }
 

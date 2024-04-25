@@ -46,7 +46,7 @@ class ContentBlock extends Block
             'label' => 'Items per page',
             'style' => 'sidebar',
             'state' => 'show',
-            'icon' => 'grid-add',
+            'icon' => 'grid-xmark',
         ],
     ], location: 'sidebar')]
     protected $itemsPerPage = 10;

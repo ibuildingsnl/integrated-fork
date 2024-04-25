@@ -9,9 +9,12 @@ use Integrated\Common\Converter\Type\TypeExtensionInterface;
 
 class PublicationsExtension implements TypeExtensionInterface
 {
+    private \DateTimeZone $timezone;
+
     public function __construct(
         private readonly PublicationRepositoryInterface $publications,
     ) {
+        $this->timezone = new \DateTimeZone('UTC');
     }
 
     public function build(ContainerInterface $container, $data, array $options = []): void
@@ -19,19 +22,20 @@ class PublicationsExtension implements TypeExtensionInterface
         if (!$data instanceof Content) {
             return;
         }
-        foreach ($container->toArray() as $key => $value) {
-            if (str_starts_with($key, 'publication_')) {
-                $container->remove($key);
-            }
-        }
+
         foreach ($this->publications->forContent($data) as $publication) {
+            $time = clone $publication->getTime()->getStartDate(); // don't change to original value
+
             $container->add(
                 'publication_start_'.$publication->getChannel()->getId().'_index_date',
-                $publication->getTime()->getStartDate()?->format('Y-m-d\TH:i:s\Z'),
+                $time->setTimezone($this->timezone)->format('Y-m-d\TG:i:s\Z'),
             );
+
+            $time = clone $publication->getTime()->getEndDate();
+
             $container->add(
                 'publication_end_'.$publication->getChannel()->getId().'_index_date',
-                $publication->getTime()->getEndDate()?->format('Y-m-d\TH:i:s\Z'),
+                $time->setTimezone($this->timezone)->format('Y-m-d\TG:i:s\Z'),
             );
         }
     }
