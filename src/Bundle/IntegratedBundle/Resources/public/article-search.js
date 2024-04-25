@@ -52290,14 +52290,13 @@ tinymce__WEBPACK_IMPORTED_MODULE_0___default().PluginManager.add('articlelinksea
   var protocol = window.location.protocol;
   var openDialog = function openDialog(data) {
     return editor.windowManager.openUrl({
-      title: 'Find Article',
+      title: 'Link maker',
       url: "".concat(protocol, "//").concat(hostname, "/admin/article-search?data=").concat(encodeURIComponent(JSON.stringify(data))),
       width: 900,
       height: 600
     });
   };
   editor.ui.registry.addButton('integratedArticleLinkSearch', {
-    text: 'Find article',
     icon: 'link',
     onAction: function onAction() {
       var dialog = openDialog({
@@ -52310,7 +52309,7 @@ tinymce__WEBPACK_IMPORTED_MODULE_0___default().PluginManager.add('articlelinksea
   });
   editor.ui.registry.addMenuItem('integratedArticleLinkSearch', {
     icon: 'link',
-    text: 'Find article',
+    text: 'Link to content',
     onAction: function onAction() {
       var dialog = openDialog({
         selectionText: editor.selection.getContent({
@@ -52320,13 +52319,7 @@ tinymce__WEBPACK_IMPORTED_MODULE_0___default().PluginManager.add('articlelinksea
       return dialog;
     }
   });
-  return {
-    getMetadata: function getMetadata() {
-      return {
-        name: 'Article Link Searching'
-      };
-    }
-  };
+  return {};
 });
 })();
 

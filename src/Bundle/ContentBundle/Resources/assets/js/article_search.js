@@ -6,7 +6,7 @@ tinymce.PluginManager.add('articlelinksearch', (editor, url) => {
 
     const openDialog = function (data) {
         return editor.windowManager.openUrl({
-            title: 'Find Article',
+            title: 'Link maker',
             url: `${protocol}//${hostname}/admin/article-search?data=${encodeURIComponent(JSON.stringify(data))}`,
             width: 900,
             height: 600
@@ -14,7 +14,6 @@ tinymce.PluginManager.add('articlelinksearch', (editor, url) => {
     }
 
     editor.ui.registry.addButton('integratedArticleLinkSearch', {
-        text: 'Find article',
         icon: 'link',
         onAction: () => {
             const dialog = openDialog({
@@ -27,7 +26,7 @@ tinymce.PluginManager.add('articlelinksearch', (editor, url) => {
 
     editor.ui.registry.addMenuItem('integratedArticleLinkSearch', {
         icon: 'link',
-        text: 'Find article',
+        text: 'Link to content',
         onAction: () => {
             const dialog = openDialog({
                 selectionText: editor.selection.getContent({format: "text"})
@@ -37,11 +36,5 @@ tinymce.PluginManager.add('articlelinksearch', (editor, url) => {
         },
     });
 
-    return {
-        getMetadata: function () {
-            return {
-                name: 'Article Link Searching',
-            };
-        },
-    };
+    return {};
 });

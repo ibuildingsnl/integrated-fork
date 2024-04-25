@@ -19,17 +19,12 @@ class ArticleSearchController extends AbstractController
 
     public function __construct(
         private readonly DocumentManager $documentManager,
+        private readonly array $allowedContentTypes,
     ) {
         $this->contentTypeRepository = $this->documentManager->getRepository(ContentType::class);
     }
 
     public function index() {
-        $allowedContentTypeIds = [
-            'article',
-            'image',
-            'file',
-        ];
-
         $channels = array_filter($this->getAllowedChannels($this->getUser()), function ($channel) {
             return $channel->getPrimaryDomain() !== null && strlen($channel->getPrimaryDomain()) > 0;
         });
@@ -47,8 +42,8 @@ class ArticleSearchController extends AbstractController
                 'key' => $contentType->getId(),
                 'label' => $contentType->getName(),
             ];
-        }, array_filter($contentTypes, function($contentType) use ($allowedContentTypeIds) {
-            return in_array($contentType->getId(), $allowedContentTypeIds);
+        }, array_filter($contentTypes, function($contentType) {
+            return in_array($contentType->getClass(), $this->allowedContentTypes);
         }));
 
         return $this->render('@IntegratedContent/article_search/article_search.html.twig', [
@@ -68,7 +63,7 @@ class ArticleSearchController extends AbstractController
             );
         }
 
-        if (count($contentTypeIds) === 0) {
+        if (strlen($contentTypeIds) === 0) {
             return new Response(
                 json_encode(['msg' => 'No content type id(s) specified']),
                 Response::HTTP_BAD_REQUEST,

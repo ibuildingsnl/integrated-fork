@@ -5777,14 +5777,13 @@ tinymce__WEBPACK_IMPORTED_MODULE_0___default().PluginManager.add('articlelinksea
   var protocol = window.location.protocol;
   var openDialog = function openDialog(data) {
     return editor.windowManager.openUrl({
-      title: 'Find Article',
+      title: 'Link maker',
       url: "".concat(protocol, "//").concat(hostname, "/admin/article-search?data=").concat(encodeURIComponent(JSON.stringify(data))),
       width: 900,
       height: 600
     });
   };
   editor.ui.registry.addButton('integratedArticleLinkSearch', {
-    text: 'Find article',
     icon: 'link',
     onAction: function onAction() {
       var dialog = openDialog({
@@ -5797,7 +5796,7 @@ tinymce__WEBPACK_IMPORTED_MODULE_0___default().PluginManager.add('articlelinksea
   });
   editor.ui.registry.addMenuItem('integratedArticleLinkSearch', {
     icon: 'link',
-    text: 'Find article',
+    text: 'Link to content',
     onAction: function onAction() {
       var dialog = openDialog({
         selectionText: editor.selection.getContent({
@@ -5807,13 +5806,7 @@ tinymce__WEBPACK_IMPORTED_MODULE_0___default().PluginManager.add('articlelinksea
       return dialog;
     }
   });
-  return {
-    getMetadata: function getMetadata() {
-      return {
-        name: 'Article Link Searching'
-      };
-    }
-  };
+  return {};
 });
 
 /***/ }),
@@ -8283,7 +8276,7 @@ $('.integrated_tinymce').each(function (key, elem) {
     schema: "html5",
     menubar: 'edit view insert format tools table',
     branding: false,
-    toolbar: "styles | bold italic underline subscript superscript | bullist numlist | alignleft aligncenter alignright alignjustify | " + "link anchor table charmap | integratedimage integratedgallery integratedvideo image media | print | " + "pastetext searchreplace integratedArticleLinkSearch | code fullscreen ",
+    toolbar: "styles | bold italic underline subscript superscript | bullist numlist | alignleft aligncenter alignright alignjustify | " + "integratedArticleLinkSearch anchor table charmap | integratedimage integratedgallery integratedvideo image media | print | " + "pastetext searchreplace | code fullscreen ",
     formats: {
       alignleft: {
         selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img',

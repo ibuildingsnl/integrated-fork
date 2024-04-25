@@ -4,6 +4,19 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
+    <parameters>
+        <parameter key="integrated_article_link_search.document_types.whitelist" type="collection">
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\Article</parameter>
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\Event</parameter>
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\JobPosting</parameter>
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\News</parameter>
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\Video</parameter>
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\Relation\Company</parameter>
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\File</parameter>
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\Image</parameter>
+        </parameter>
+    </parameters>
+
     <services>
 
         <defaults autowire="true" autoconfigure="true"/>
@@ -169,6 +182,11 @@
             <argument>@IntegratedContentBundle/YoastSeo/lang</argument>
 
             <tag name="controller.service_arguments" />
+        </service>
+
+        <service id="Integrated\Bundle\ContentBundle\Controller\ArticleSearchController">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument>%integrated_article_link_search.document_types.whitelist%</argument>
         </service>
 
     </services>

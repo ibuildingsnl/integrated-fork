@@ -72,8 +72,8 @@ $('.integrated_tinymce').each(function(key, elem){
         branding: false,
         toolbar:
             "styles | bold italic underline subscript superscript | bullist numlist | alignleft aligncenter alignright alignjustify | " +
-            "link anchor table charmap | integratedimage integratedgallery integratedvideo image media | print | " +
-            "pastetext searchreplace integratedArticleLinkSearch | code fullscreen ",
+            "integratedArticleLinkSearch anchor table charmap | integratedimage integratedgallery integratedvideo image media | print | " +
+            "pastetext searchreplace | code fullscreen ",
         formats: {
             alignleft: {selector : 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes : 'align-left'},
             aligncenter: {selector : 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes : 'align-center'},
