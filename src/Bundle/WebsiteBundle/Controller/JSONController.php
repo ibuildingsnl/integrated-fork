@@ -3,7 +3,6 @@
 namespace Integrated\Bundle\WebsiteBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\ContentBundle\Block\RelatedContentBlockHandler;
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
 use Integrated\Bundle\ContentBundle\Document\Block\RelatedContentBlock;
@@ -63,11 +62,11 @@ class JSONController extends AbstractController
     {
         if (!$blockId = (string) $request->query->get('blockId')) {
             return new Response(Response::HTTP_UNPROCESSABLE_ENTITY);
-        };
+        }
 
         if (!$documentId = (string) $request->query->get('documentId')) {
             return new Response(Response::HTTP_UNPROCESSABLE_ENTITY);
-        };
+        }
 
         if (!$blockId || !$documentId) {
             return;
