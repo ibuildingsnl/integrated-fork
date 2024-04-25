@@ -61,23 +61,24 @@ class JSONController extends AbstractController
      */
     public function relatedContentBlock(Request $request)
     {
-        $blockId = $request->query->get('blockId');
-        $documentId = $request->query->get('documentId');
+        if (!$blockId = (string) $request->query->get('blockId')) {
+            return new Response(Response::HTTP_UNPROCESSABLE_ENTITY);
+        };
+
+        if (!$documentId = (string) $request->query->get('documentId')) {
+            return new Response(Response::HTTP_UNPROCESSABLE_ENTITY);
+        };
 
         if (!$blockId || !$documentId) {
             return;
         }
 
         /** @var RelatedContentBlock $block */
-        $block = $this->documentManager
-            ->getRepository(Block::class)
-            ->findOneBy(['_id' => $blockId]);
+        $block = $this->documentManager->getRepository(RelatedContentBlock::class)->find($blockId);
 
-        $document = $this->documentManager
-            ->getRepository(Content::class)
-            ->findOneBy(['_id' => $documentId]);
+        $document = $this->documentManager->getRepository(Content::class)->find($documentId);
 
-        if (!$block instanceof RelatedContentBlock || !$document instanceof Content) {
+        if (!$block || !$document) {
             return;
         }
 
