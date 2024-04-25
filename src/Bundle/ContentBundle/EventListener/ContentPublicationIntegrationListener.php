@@ -71,14 +71,12 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
 
                 if (($data['time'] ?? null) instanceof PublishTimeInterface) {
                     $time = $data['time'];
+                    if ($time->getStartDate() === null && $content->getPublishTime()->getStartDate() !== null) {
+                        $time->setStartDate($content->getPublishTime()->getStartDate());
+                    } elseif ($content->getPublishTime()->getStartDate() === null) {
+                        $time->setStartDate(new \DateTime());
+                    }
                     unset($data['time']);
-                }
-
-                $existingChannelPublications = $this->publications->forContentOnChannel($content, $channel);
-
-                if (!$existingChannelPublications) {
-                    $this->publications->add(new Publication($content, $channel, $time, \is_array($data) ? $data : []));
-                    continue;
                 }
 
                 $imagesProcessed = [];
@@ -91,6 +89,13 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                         ];
                     }
                     $data['images'] = $imagesProcessed;
+                }
+
+                $existingChannelPublications = $this->publications->forContentOnChannel($content, $channel);
+
+                if (!$existingChannelPublications) {
+                    $this->publications->add(new Publication($content, $channel, $time, \is_array($data) ? $data : []));
+                    continue;
                 }
 
                 foreach ($existingPublications as $key => $existingPublication) {

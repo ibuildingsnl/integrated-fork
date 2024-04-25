@@ -585,6 +585,18 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function removeChannels()
+    {
+        foreach ($this->channels as $channel) {
+            $this->channels->removeElement($channel);
+        }
+
+        return $this;
+    }
+
+    /**
      * @return ChannelInterface|null
      */
     public function getPrimaryChannel()

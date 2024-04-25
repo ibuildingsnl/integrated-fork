@@ -52,14 +52,28 @@ class CalendarPublicationProvider implements EventSubscriberInterface
         $scheduledPublications = [];
 
         foreach ($publications as $publication) {
-            $type = $publication->getChannel()->getType();
+            $currentBrand = null;
+            $brandProfile = null;
+            $channel = $publication->getChannel();
+
+            if (!$type = $channel->getType()) {
+                continue;
+            }
+
+            if ($publication->getContent()->__toString() === null) {
+                continue;
+            }
+
             $dateTime = $publication->getTime()->getStartDate();
             $eligibleForDisplay = false;
 
             if ($publication->getChannel() instanceof ChannelInterface) {
                 foreach ($this->brands->all() as $brand) {
                     if ($brand->hasChannel($publication->getChannel())) {
-                        if (\array_key_exists('brands', $event->options) && \in_array($brand->getId(), $event->options['brands'])) {
+                        if (\array_key_exists('brands', $event->options) && \in_array(
+                            $brand->getId(),
+                            $event->options['brands']
+                        )) {
                             $eligibleForDisplay = true;
                         }
                         $currentBrand = $brand;
@@ -109,34 +123,32 @@ class CalendarPublicationProvider implements EventSubscriberInterface
                 if (!$image instanceof Image) {
                     continue;
                 }
-                $editedImage = $this->imageExtension->image($image->getFile())
-                                                    ->cropResize(256, 256)
-                                                    ->jpeg();
-                $urls[] = "{$editedImage}";
+
+                $urls[] = $this->imageExtension->image($image->getFile())
+                                               ->cropResize(256, 256)
+                                               ->jpeg();
             }
 
-            if (isset($brandProfile) && isset($currentBrand)) {
-                if ($brandProfile instanceof BrandProfile && $currentBrand instanceof Brand) {
-                    $data = [
-                        'id' => $publication->getContent()->getId(),
-                        'title' => $publication->getContent()->getTitle(),
-                        'premium' => $publication->getContent()->isPremium(),
-                        'type' => $type->getId(),
-                        'typename' => $type->getName(),
-                        'settings' => $publicationSettings,
-                        'images' => $urls,
-                        'icon' => $type->getIcon() ?: 'empty-page',
-                        'published' => $status,
-                        'date' => $dateTime->format('Y/m/d'),
-                        'time' => $dateTime->format('Hi'),
-                        'display_time' => $dateTime->format('H:i'),
-                        'brand_name' => $currentBrand->getName(),
-                        'brand_favicon' => $brandProfile->getFavicon()?->getFile()->getPathname(),
-                        'brand_color' => $brandProfile->getColor(),
-                        'response' => $publication->getResponse(),
-                    ];
-                    $scheduledPublications[] = $data;
-                }
+            if ($brandProfile instanceof BrandProfile && $currentBrand instanceof Brand) {
+                $data = [
+                    'id' => $publication->getContent()->getId(),
+                    'title' => $publication->getContent()->getTitle(),
+                    'premium' => $publication->getContent()->isPremium(),
+                    'type' => $type->getId(),
+                    'typename' => $type->getName(),
+                    'settings' => $publicationSettings,
+                    'images' => $urls,
+                    'icon' => $type->getIcon() ?: 'empty-page',
+                    'published' => $status,
+                    'date' => $dateTime->format('Y/m/d'),
+                    'time' => $dateTime->format('Hi'),
+                    'display_time' => $dateTime->format('H:i'),
+                    'brand_name' => $currentBrand->getName(),
+                    'brand_favicon' => $brandProfile->getFavicon()?->getFile()->getPathname(),
+                    'brand_color' => $brandProfile->getColor(),
+                    'response' => $publication->getResponse(),
+                ];
+                $scheduledPublications[] = $data;
             }
         }
         $this->js->add('const publicationSchedule = '.json_encode($scheduledPublications), true);

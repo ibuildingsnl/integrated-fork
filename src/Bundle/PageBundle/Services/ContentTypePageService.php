@@ -41,8 +41,8 @@ class ContentTypePageService
     {
         $controller = $this->controllerManager->getController($contentType->getClass());
 
-        // don't add if no controller service is defined
-        if (!\is_array($controller)) {
+        // don't add if no controller service is defined or when it's not a website channel
+        if (!\is_array($controller) || $channel->getType()->getName() != 'Website') {
             return;
         }
 
