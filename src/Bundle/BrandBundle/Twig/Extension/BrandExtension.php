@@ -45,14 +45,9 @@ class BrandExtension extends AbstractExtension
         return null;
     }
 
-    public function getAllBrands(): ?ArrayCollection
+    public function getAllBrands(): ?array
     {
-        $brands = new ArrayCollection();
-        foreach ($this->brands->all() as $brand) {
-            $brands->add($brand);
-        }
-
-        return $brands;
+        return $this->brands->all();
     }
 
     public function getAllOtherBrands(?ChannelInterface $channel): ?ArrayCollection
