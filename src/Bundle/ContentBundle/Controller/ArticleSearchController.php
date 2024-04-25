@@ -4,7 +4,6 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
-use Integrated\Bundle\ChannelBundle\Services\LinkMaker;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
@@ -20,17 +19,22 @@ class ArticleSearchController extends AbstractController
 
     public function __construct(
         private readonly DocumentManager $documentManager,
-        private readonly LinkMaker $linkMaker,
     ) {
         $this->contentTypeRepository = $this->documentManager->getRepository(ContentType::class);
     }
 
     public function index() {
-        $channels = array_filter($this->getAllowedChannels($this->getUser()), function($channel) {
+        $allowedContentTypeIds = [
+            'article',
+            'image',
+            'file',
+        ];
+
+        $channels = array_filter($this->getAllowedChannels($this->getUser()), function ($channel) {
             return $channel->getPrimaryDomain() !== null && strlen($channel->getPrimaryDomain()) > 0;
         });
 
-        $channels = array_map(function($channel) {
+        $channels = array_map(function ($channel) {
             return [
                 'key' => $channel->getId(),
                 'label' => $channel->getName(),
@@ -38,12 +42,14 @@ class ArticleSearchController extends AbstractController
         }, $channels);
 
         $contentTypes = $this->contentTypeRepository->findAll();
-        $contentTypes = array_map(function($contentType) {
+        $contentTypes = array_map(function ($contentType) {
             return [
                 'key' => $contentType->getId(),
                 'label' => $contentType->getName(),
             ];
-        }, $contentTypes);
+        }, array_filter($contentTypes, function($contentType) use ($allowedContentTypeIds) {
+            return in_array($contentType->getId(), $allowedContentTypeIds);
+        }));
 
         return $this->render('@IntegratedContent/article_search/article_search.html.twig', [
             'channels' => json_encode(array_values($channels)),
@@ -51,17 +57,32 @@ class ArticleSearchController extends AbstractController
         ]);
     }
 
-    public function searchContentByChannel(Request $request, ?string $channelId = null)
-    {
+    public function searchContentByChannel(Request $request, ?string $channelId = null) {
         $contentTypeIds = $request->get('contentTypeIds', '');
 
-        if($channelId === null) {
+        if ($channelId === null) {
             return new Response(
-                json_encode([
-                    'msg' => 'No channel id specified',
-                ]),
-                status: Response::HTTP_BAD_REQUEST,
-                headers: ['Content-Type' => 'application/json']
+                json_encode(['msg' => 'No channel id specified']),
+                Response::HTTP_BAD_REQUEST,
+                ['Content-Type' => 'application/json']
+            );
+        }
+
+        if (count($contentTypeIds) === 0) {
+            return new Response(
+                json_encode(['msg' => 'No content type id(s) specified']),
+                Response::HTTP_BAD_REQUEST,
+                ['Content-Type' => 'application/json']
+            );
+        }
+
+        $q = $request->get('term');
+
+        if(empty($q) || strlen($q) === 0) {
+            return new Response(
+                json_encode(['msg' => 'No search term specified']),
+                Response::HTTP_BAD_REQUEST,
+                ['Content-Type' => 'application/json']
             );
         }
 
@@ -74,37 +95,37 @@ class ArticleSearchController extends AbstractController
 
         $query = $this->getSolarium()->createSelect();
         $query->createFilterQuery('channels')
-            ->addTag('channels')
-            ->setQuery('facet_channels: ' . $channelQueryValue);
+              ->addTag('channels')
+              ->setQuery('facet_channels: ' . $channelQueryValue);
 
         $query->createFilterQuery('contenttypes')
               ->setQuery('type_name: ' . $contentTypeQueryValue);
 
-        if ($q = $request->get('term')) {
-            $edismax = $query->getEDisMax();
-            $edismax->setQueryFields('title content');
-            $edismax->setMinimumMatch('75%');
+        $edismax = $query->getEDisMax();
+        $edismax->setQueryFields('title content');
+        $edismax->setMinimumMatch('75%');
 
-            $query->setQuery($q);
-        }
+        $query->setQuery($q);
 
         $result = $this->getSolarium()->select($query);
         $contentItems = $result->getDocuments();
         $contentIds = [];
 
-        $ret = array_map(function($contentItem) use ($channel, &$contentIds) {
+        $ret = array_map(function ($contentItem) use ($channel, &$contentIds) {
             $contentIds[] = $contentItem->type_id;
 
             return [
                 'id' => $contentItem->type_id,
                 'title' => $contentItem->title,
-                'subtitle' => ucfirst($contentItem->type_name) . ' | ' . (new \DateTimeImmutable($contentItem->pub_time))->format('d-m-Y'),
+                'subtitle' => ucfirst($contentItem->type_name) . ' | ' . (new \DateTimeImmutable(
+                        $contentItem->pub_time
+                    ))->format('d-m-Y'),
                 'text' => substr(strip_tags(implode('', $contentItem->content)), 0, 255),
                 'url' => $contentItem['url_' . $channel->getId()],
             ];
         }, $contentItems);
 
-        $ret = array_map(function($contentItem) use ($channel) {
+        $ret = array_map(function ($contentItem) use ($channel) {
             return array_merge($contentItem, [
                 'url' => $channel->getPrimaryDomain() . $contentItem['url'],
             ]);
@@ -114,12 +135,12 @@ class ArticleSearchController extends AbstractController
             return new Response(json_encode($ret), headers: ['Content-Type' => 'application/json']);
         } else {
             return new Response(
-                json_encode([
-                    'term' => $q,
-                    'channelId' => $channelId,
-                    'contentTypeId' => $contentTypeIds,
-                ]),
-                status: Response::HTTP_NOT_FOUND,
+                         json_encode([
+                                         'term' => $q,
+                                         'channelId' => $channelId,
+                                         'contentTypeId' => $contentTypeIds,
+                                     ]),
+                status:  Response::HTTP_NOT_FOUND,
                 headers: ['Content-Type' => 'application/json']
             );
         }
@@ -128,8 +149,7 @@ class ArticleSearchController extends AbstractController
     /**
      * @return Channel[]
      */
-    private function getAllowedChannels(UserInterface $user): array
-    {
+    private function getAllowedChannels(UserInterface $user): array {
         $channels = $this->documentManager->getRepository(Channel::class)->findBy([], ['name' => 1]);
         $allowed = [];
 
@@ -144,14 +164,13 @@ class ArticleSearchController extends AbstractController
         return $allowed;
     }
 
-
     function formatQueryValue($ids) {
         $idArray = explode(',', $ids);
 
         if (count($idArray) == 1) {
             $queryValue = '("' . $idArray[0] . '")';
         } else {
-            $formattedIds = array_map(function($id) {
+            $formattedIds = array_map(function ($id) {
                 return '"' . $id . '"';
             }, $idArray);
 
