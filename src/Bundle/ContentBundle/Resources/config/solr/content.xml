@@ -45,6 +45,7 @@
                 </array>
 
                 <string key="source">source</string>
+                <string key="source_url">source_url</string>
                 <string key="locale">locale</string>
 
                 <string key="address_name">address.name</string>
