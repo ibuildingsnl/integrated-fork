@@ -47,15 +47,15 @@ class SitePerformancesWidget implements WidgetInterface
         if ($channelPerformances != null) {
             $desktopSiteData = [
                 'desktopSiteScore' => round($channelPerformances->getDesktopSiteScore() * 100 ?? 0, 1),
-                'desktopSpeedIndex' => $this->MilliToSecond($channelPerformances->getDesktopSpeedIndex()) ?? 0,
-                'desktopTimeToInteractive' => $this->MilliToSecond($channelPerformances->getDesktopTimeToInteractive()) ?? 0,
+                'desktopSpeedIndex' => $this->milliToSecond($channelPerformances->getDesktopSpeedIndex()) ?? 0,
+                'desktopTimeToInteractive' => $this->milliToSecond($channelPerformances->getDesktopTimeToInteractive()) ?? 0,
                 'desktopTimeToFirstByte' => round($channelPerformances->getDesktopServerResponseTime()) ?? 0,
                 'desktopTotalBlockingTime' => round($channelPerformances->getDesktopTotalBlockingTime()) ?? 0,
                ];
             $mobileSiteData = [
                 'mobileSiteScore' => round($channelPerformances->getMobileSiteScore() * 100 ?? 0, 1),
-                'mobileSpeedIndex' => $this->MilliToSecond($channelPerformances->getMobileSpeedIndex()) ?? 0,
-                'mobileTimeToInteractive' => $this->MilliToSecond($channelPerformances->getMobileTimeToInteractive()) ?? 0,
+                'mobileSpeedIndex' => $this->milliToSecond($channelPerformances->getMobileSpeedIndex()) ?? 0,
+                'mobileTimeToInteractive' => $this->milliToSecond($channelPerformances->getMobileTimeToInteractive()) ?? 0,
                 'mobileTimeToFirstByte' => round($channelPerformances->getMobileServerResponseTime()) ?? 0,
                 'mobileTotalBlockingTime' => round($channelPerformances->getMobileTotalBlockingTime()) ?? 0,
             ];
@@ -68,7 +68,7 @@ class SitePerformancesWidget implements WidgetInterface
         ];
     }
 
-    private function MilliToSecond(float $milliValue): float
+    private function milliToSecond(float $milliValue): float
     {
         return round($milliValue / 1000, 2);
     }
