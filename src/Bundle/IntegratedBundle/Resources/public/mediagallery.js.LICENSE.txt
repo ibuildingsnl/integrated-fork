@@ -10,66 +10,66 @@
  */
 
 /*!
- * jQuery UI :data 1.13.2
- * http://jqueryui.com
+ * jQuery UI :data 1.13.3
+ * https://jqueryui.com
  *
- * Copyright jQuery Foundation and other contributors
+ * Copyright OpenJS Foundation and other contributors
  * Released under the MIT license.
- * http://jquery.org/license
+ * https://jquery.org/license
  */
 
 /*!
- * jQuery UI Draggable 1.13.2
- * http://jqueryui.com
+ * jQuery UI Draggable 1.13.3
+ * https://jqueryui.com
  *
- * Copyright jQuery Foundation and other contributors
+ * Copyright OpenJS Foundation and other contributors
  * Released under the MIT license.
- * http://jquery.org/license
+ * https://jquery.org/license
  */
 
 /*!
- * jQuery UI Droppable 1.13.2
- * http://jqueryui.com
+ * jQuery UI Droppable 1.13.3
+ * https://jqueryui.com
  *
- * Copyright jQuery Foundation and other contributors
+ * Copyright OpenJS Foundation and other contributors
  * Released under the MIT license.
- * http://jquery.org/license
+ * https://jquery.org/license
  */
 
 /*!
- * jQuery UI Mouse 1.13.2
- * http://jqueryui.com
+ * jQuery UI Mouse 1.13.3
+ * https://jqueryui.com
  *
- * Copyright jQuery Foundation and other contributors
+ * Copyright OpenJS Foundation and other contributors
  * Released under the MIT license.
- * http://jquery.org/license
+ * https://jquery.org/license
  */
 
 /*!
- * jQuery UI Scroll Parent 1.13.2
- * http://jqueryui.com
+ * jQuery UI Scroll Parent 1.13.3
+ * https://jqueryui.com
  *
- * Copyright jQuery Foundation and other contributors
+ * Copyright OpenJS Foundation and other contributors
  * Released under the MIT license.
- * http://jquery.org/license
+ * https://jquery.org/license
  */
 
 /*!
- * jQuery UI Selectable 1.13.2
- * http://jqueryui.com
+ * jQuery UI Selectable 1.13.3
+ * https://jqueryui.com
  *
- * Copyright jQuery Foundation and other contributors
+ * Copyright OpenJS Foundation and other contributors
  * Released under the MIT license.
- * http://jquery.org/license
+ * https://jquery.org/license
  */
 
 /*!
- * jQuery UI Widget 1.13.2
- * http://jqueryui.com
+ * jQuery UI Widget 1.13.3
+ * https://jqueryui.com
  *
- * Copyright jQuery Foundation and other contributors
+ * Copyright OpenJS Foundation and other contributors
  * Released under the MIT license.
- * http://jquery.org/license
+ * https://jquery.org/license
  */
 
 /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
