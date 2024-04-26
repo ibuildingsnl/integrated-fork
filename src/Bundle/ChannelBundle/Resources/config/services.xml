@@ -32,5 +32,7 @@
             decorates="Integrated\Bundle\ChannelBundle\Services\ResolverLinkMaker"
         />
 
+        <service id="Integrated\Bundle\ChannelBundle\Services\ChannelTokenService"/>
+
     </services>
 </container>
