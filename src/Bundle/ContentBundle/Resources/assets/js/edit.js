@@ -27,6 +27,7 @@ function prepDateTimeFields() {
         let setToNowButton = '';
         let clearButton = '';
 
+        // Create or find the date text display element
         if (!dateSelection.parentNode.querySelector('.date-text')) {
             dateText = document.createElement('div');
             dateText.className = 'date-text';
@@ -37,6 +38,7 @@ function prepDateTimeFields() {
             dateText = dateSelection.parentNode.querySelector('.date-text');
         }
 
+        // Adjust styles as needed
         dateSelection.style.paddingTop = '.5rem';
 
         okButton = createOrFindButton(dateSelection, 'ok-date', 'OK');
