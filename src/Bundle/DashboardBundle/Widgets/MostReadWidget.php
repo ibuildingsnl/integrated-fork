@@ -51,6 +51,7 @@ class MostReadWidget implements WidgetInterface
                 ['dateTime' => 'DESC']
             );
         $allDatas = $mostReadArticle->getDatas();
+        $slicedDatas = [];
         foreach ($allDatas as $key => $values) {
             $filteredValues = array_filter($values, function ($element) {
                 return $element['slug'] !== '';

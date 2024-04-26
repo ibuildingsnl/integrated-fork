@@ -93,7 +93,7 @@ class AssignedToYouWidget implements WidgetInterface
             ];
         }
 
-        return $assignedElement ?? null;
+        return $assignedElement;
     }
 
     /**
