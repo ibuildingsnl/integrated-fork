@@ -11,7 +11,7 @@ class SitePerformance
     private float $desktopTimeToInteractive;
     private float $desktopServerResponseTime;
     private float $desktopTotalBlockingTime;
-
+    
     private float $mobileSpeedIndex;
     private float $mobileSiteScore;
     private float $mobileTimeToInteractive;
@@ -40,13 +40,11 @@ class SitePerformance
         $this->desktopTimeToInteractive = $desktopTimeToInteractive;
         $this->desktopServerResponseTime = $desktopServerResponseTime;
         $this->desktopTotalBlockingTime = $desktopTotalBlockingTime;
-
         $this->mobileSpeedIndex = $mobileSpeedIndex;
         $this->mobileSiteScore = $mobileSiteScore;
         $this->mobileTimeToInteractive = $mobileTimeToInteractive;
         $this->mobileServerResponseTime = $mobileServerResponseTime;
         $this->mobileTotalBlockingTime = $mobileTotalBlockingTime;
-
         $this->dateTime = $dateTime;
     }
 

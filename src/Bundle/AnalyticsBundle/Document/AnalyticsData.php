@@ -6,17 +6,17 @@ class AnalyticsData
 {
     private string $channelID;
     private string $dataType;
-    private array $datas;
+    private array $data;
     private \DateTimeImmutable $dateTime;
 
     public function __construct(
         string $channelID,
         string $dataType,
-        array $datas,
+        array $data,
         \DateTimeImmutable $dateTime
     ) {
         $this->channelID = $channelID;
-        $this->datas = $datas;
+        $this->data = $data;
         $this->dataType = $dataType;
         $this->dateTime = $dateTime;
     }
@@ -31,9 +31,9 @@ class AnalyticsData
         return $this->dataType;
     }
 
-    public function getDatas(): array
+    public function getData(): array
     {
-        return $this->datas;
+        return $this->data;
     }
 
     public function getDateTime(): \DateTimeImmutable

@@ -50,7 +50,7 @@ class MostReadWidget implements WidgetInterface
                 ['channelID' => $channel->getId(), 'dataType' => $this->id],
                 ['dateTime' => 'DESC']
             );
-        $allDatas = $mostReadArticle->getDatas();
+        $allDatas = $mostReadArticle->getData();
         $slicedDatas = [];
         foreach ($allDatas as $key => $values) {
             $filteredValues = array_filter($values, function ($element) {

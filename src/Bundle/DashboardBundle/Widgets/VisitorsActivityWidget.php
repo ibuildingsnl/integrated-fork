@@ -48,7 +48,7 @@ class VisitorsActivityWidget implements WidgetInterface
                 ['channelID' => $channel->getId(), 'dataType' => $this->id],
                 ['dateTime' => 'DESC']
             );
-        $allDatas = $deviceType->getDatas();
+        $allDatas = $deviceType->getData();
 
         return [
             'widget' => $this,

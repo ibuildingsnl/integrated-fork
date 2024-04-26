@@ -44,7 +44,7 @@ class DeviceTypeWidget implements WidgetInterface
                 ['channelID' => $channel->getId(), 'dataType' => $this->id],
                 ['dateTime' => 'DESC']
             );
-        $allDatas = $deviceType->getDatas();
+        $allDatas = $deviceType->getData();
 
         $maxElements = 10;
         foreach ($allDatas as &$dateRangeData) {

@@ -44,7 +44,7 @@ class TrafficAcquisitionWidget implements WidgetInterface
                 ['channelID' => $channel->getId(), 'dataType' => $this->id],
                 ['dateTime' => 'DESC']
             );
-        $allDatas = $trafficAcquisition->getDatas();
+        $allDatas = $trafficAcquisition->getData();
 
         $maxElements = 10;
         foreach ($allDatas as &$dateRangeData) {

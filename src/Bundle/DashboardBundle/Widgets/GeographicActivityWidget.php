@@ -48,7 +48,7 @@ class GeographicActivityWidget implements WidgetInterface
                 ['channelID' => $channel->getId(), 'dataType' => $this->id],
                 ['dateTime' => 'DESC']
             );
-        $allDatas = $geographicActivity->getDatas();
+        $allDatas = $geographicActivity->getData();
         $result = [
             'widget' => $this,
             'totalViews' => [],
