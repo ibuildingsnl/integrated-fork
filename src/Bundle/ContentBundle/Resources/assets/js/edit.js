@@ -426,45 +426,44 @@ function setPublicationDateTimes(){
     let mainStartDate = document.querySelector('#integrated_content_publishTime .startDate');
 
     if (mainStartDate) {
+        mainStartDate.querySelector('.date-text').addEventListener('click', function() {
+            let dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
+            let timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
+            prevDate = dateInput.value
+            prevTime = timeInput.value
 
-    mainStartDate.querySelector('.date-text').addEventListener('click', function() {
-        let dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
-        let timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
-        prevDate = dateInput.value
-        prevTime = timeInput.value
+        })
 
-    })
+        mainStartDate.querySelector('.ok-date').addEventListener('click', function() {
+            let dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
+            let timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
+            let newDate = dateInput.value;
+            let newTime = timeInput.value;
 
-    mainStartDate.querySelector('.ok-date').addEventListener('click', function() {
-        let dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
-        let timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
-        let newDate = dateInput.value;
-        let newTime = timeInput.value;
+            let prevFormattedDateTime = `${prevDate} ${prevTime}`;
+            let newFormattedDateTime = `${newDate.split('-').reverse().join('-')} ${newTime}`;
 
-        let prevFormattedDateTime = `${prevDate} ${prevTime}`;
-        let newFormattedDateTime = `${newDate.split('-').reverse().join('-')} ${newTime}`;
+            document.querySelectorAll('.publication-settings').forEach(setting => {
+                let settingDateText = setting.querySelector('.date-text');
+                let settingDateInput = setting.querySelector('input[type="date"]');
+                let settingTimeInput = setting.querySelector('input[type="time"]');
+                let currentDateTime = `${settingDateInput.value} ${settingTimeInput.value}`;
 
-        document.querySelectorAll('.publication-settings').forEach(setting => {
-            let settingDateText = setting.querySelector('.date-text');
-            let settingDateInput = setting.querySelector('input[type="date"]');
-            let settingTimeInput = setting.querySelector('input[type="time"]');
-            let currentDateTime = `${settingDateInput.value} ${settingTimeInput.value}`;
+                if (settingDateText && currentDateTime === prevFormattedDateTime) {
+                    settingDateText.textContent = newFormattedDateTime;
 
-            if (settingDateText && currentDateTime === prevFormattedDateTime) {
-                settingDateText.textContent = newFormattedDateTime;
+                    if (settingDateInput && settingTimeInput) {
+                        settingDateInput.value = newDate;
+                        settingTimeInput.value = newTime;
+                    }
 
-                if (settingDateInput && settingTimeInput) {
-                    settingDateInput.value = newDate;
-                    settingTimeInput.value = newTime;
                 }
+            });
 
-            }
+            updatePublicationsAndChannels();
+            prepDateTimeFields();
         });
-
-        updatePublicationsAndChannels();
-        prepDateTimeFields();
-    });
-}
+    }
 }
 
 function ensurePublicationExists(channelId) {
