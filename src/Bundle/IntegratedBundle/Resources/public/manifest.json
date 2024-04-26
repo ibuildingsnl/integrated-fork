@@ -28,20 +28,14 @@
   "bundles/integratedintegrated/fonts/poppins/Poppins-SemiBold.eot": "/bundles/integratedintegrated/fonts/poppins/Poppins-SemiBold.eot",
   "bundles/integratedintegrated/fonts/Poppins-SemiBold.ttf": "/bundles/integratedintegrated/fonts/Poppins-SemiBold.0763b5bb.ttf",
   "bundles/integratedintegrated/fonts/poppins/Poppins-SemiBold.ttf": "/bundles/integratedintegrated/fonts/poppins/Poppins-SemiBold.ttf",
-<<<<<<< HEAD
-=======
   "bundles/integratedintegrated/skins/ui/tinymce-5/skin.js": "/bundles/integratedintegrated/skins/ui/tinymce-5/skin.js",
   "bundles/integratedintegrated/skins/ui/tinymce-5-dark/skin.js": "/bundles/integratedintegrated/skins/ui/tinymce-5-dark/skin.js",
->>>>>>> release/0.80
   "bundles/integratedintegrated/skins/ui/tinymce-5/skin.css": "/bundles/integratedintegrated/skins/ui/tinymce-5/skin.css",
   "bundles/integratedintegrated/skins/ui/tinymce-5/skin.min.css": "/bundles/integratedintegrated/skins/ui/tinymce-5/skin.min.css",
   "bundles/integratedintegrated/skins/ui/tinymce-5-dark/skin.css": "/bundles/integratedintegrated/skins/ui/tinymce-5-dark/skin.css",
   "bundles/integratedintegrated/skins/ui/tinymce-5-dark/skin.min.css": "/bundles/integratedintegrated/skins/ui/tinymce-5-dark/skin.min.css",
-<<<<<<< HEAD
-=======
   "bundles/integratedintegrated/skins/ui/oxide/skin.js": "/bundles/integratedintegrated/skins/ui/oxide/skin.js",
   "bundles/integratedintegrated/skins/ui/oxide-dark/skin.js": "/bundles/integratedintegrated/skins/ui/oxide-dark/skin.js",
->>>>>>> release/0.80
   "bundles/integratedintegrated/skins/ui/oxide/skin.css": "/bundles/integratedintegrated/skins/ui/oxide/skin.css",
   "bundles/integratedintegrated/skins/ui/oxide-dark/skin.css": "/bundles/integratedintegrated/skins/ui/oxide-dark/skin.css",
   "bundles/integratedintegrated/skins/ui/oxide/skin.min.css": "/bundles/integratedintegrated/skins/ui/oxide/skin.min.css",
@@ -65,8 +59,6 @@
   "bundles/integratedintegrated/images/fallbacks/fallback.jpg": "/bundles/integratedintegrated/images/fallbacks/fallback.jpg",
   "bundles/integratedintegrated/images/fallbacks/pdf-fallback.jpg": "/bundles/integratedintegrated/images/fallbacks/pdf-fallback.jpg",
   "bundles/integratedintegrated/images/fallbacks/video-fallback.jpg": "/bundles/integratedintegrated/images/fallbacks/video-fallback.jpg",
-<<<<<<< HEAD
-=======
   "bundles/integratedintegrated/skins/ui/tinymce-5/content.js": "/bundles/integratedintegrated/skins/ui/tinymce-5/content.js",
   "bundles/integratedintegrated/skins/ui/oxide/content.js": "/bundles/integratedintegrated/skins/ui/oxide/content.js",
   "bundles/integratedintegrated/skins/ui/tinymce-5-dark/content.inline.js": "/bundles/integratedintegrated/skins/ui/tinymce-5-dark/content.inline.js",
@@ -75,7 +67,6 @@
   "bundles/integratedintegrated/skins/ui/oxide-dark/content.inline.js": "/bundles/integratedintegrated/skins/ui/oxide-dark/content.inline.js",
   "bundles/integratedintegrated/skins/ui/tinymce-5-dark/content.js": "/bundles/integratedintegrated/skins/ui/tinymce-5-dark/content.js",
   "bundles/integratedintegrated/skins/ui/oxide-dark/content.js": "/bundles/integratedintegrated/skins/ui/oxide-dark/content.js",
->>>>>>> release/0.80
   "bundles/integratedintegrated/skins/ui/oxide/content.css": "/bundles/integratedintegrated/skins/ui/oxide/content.css",
   "bundles/integratedintegrated/skins/ui/tinymce-5/content.css": "/bundles/integratedintegrated/skins/ui/tinymce-5/content.css",
   "bundles/integratedintegrated/skins/ui/oxide/content.min.css": "/bundles/integratedintegrated/skins/ui/oxide/content.min.css",
@@ -115,10 +106,6 @@
   "bundles/integratedintegrated/images/ui-icons_cc0000_256x240.png": "/bundles/integratedintegrated/images/ui-icons_cc0000_256x240.5cbbd560.png",
   "bundles/integratedintegrated/images/favicon/safari-pinned-tab.svg": "/bundles/integratedintegrated/images/favicon/safari-pinned-tab.svg",
   "bundles/integratedintegrated/images/favicon/favicon-32x32.png": "/bundles/integratedintegrated/images/favicon/favicon-32x32.png",
-<<<<<<< HEAD
-  "bundles/integratedintegrated/skins/content/document/content.css": "/bundles/integratedintegrated/skins/content/document/content.css",
-  "bundles/integratedintegrated/skins/content/document/content.min.css": "/bundles/integratedintegrated/skins/content/document/content.min.css",
-=======
   "bundles/integratedintegrated/skins/content/document/content.js": "/bundles/integratedintegrated/skins/content/document/content.js",
   "bundles/integratedintegrated/skins/content/tinymce-5-dark/content.js": "/bundles/integratedintegrated/skins/content/tinymce-5-dark/content.js",
   "bundles/integratedintegrated/skins/content/dark/content.js": "/bundles/integratedintegrated/skins/content/dark/content.js",
@@ -127,7 +114,6 @@
   "bundles/integratedintegrated/skins/content/document/content.min.css": "/bundles/integratedintegrated/skins/content/document/content.min.css",
   "bundles/integratedintegrated/skins/content/tinymce-5/content.js": "/bundles/integratedintegrated/skins/content/tinymce-5/content.js",
   "bundles/integratedintegrated/skins/content/default/content.js": "/bundles/integratedintegrated/skins/content/default/content.js",
->>>>>>> release/0.80
   "bundles/integratedintegrated/skins/content/tinymce-5-dark/content.css": "/bundles/integratedintegrated/skins/content/tinymce-5-dark/content.css",
   "bundles/integratedintegrated/skins/content/tinymce-5-dark/content.min.css": "/bundles/integratedintegrated/skins/content/tinymce-5-dark/content.min.css",
   "bundles/integratedintegrated/skins/content/dark/content.css": "/bundles/integratedintegrated/skins/content/dark/content.css",
@@ -140,6 +126,10 @@
   "bundles/integratedintegrated/skins/content/tinymce-5/content.min.css": "/bundles/integratedintegrated/skins/content/tinymce-5/content.min.css",
   "bundles/integratedintegrated/images/logo_white_trademark.svg": "/bundles/integratedintegrated/images/logo_white_trademark.svg",
   "bundles/integratedintegrated/images/favicon/favicon-16x16.png": "/bundles/integratedintegrated/images/favicon/favicon-16x16.png",
+  "bundles/integratedintegrated/skins/ui/tinymce-5-dark/skin.shadowdom.js": "/bundles/integratedintegrated/skins/ui/tinymce-5-dark/skin.shadowdom.js",
+  "bundles/integratedintegrated/skins/ui/tinymce-5/skin.shadowdom.js": "/bundles/integratedintegrated/skins/ui/tinymce-5/skin.shadowdom.js",
+  "bundles/integratedintegrated/skins/ui/oxide/skin.shadowdom.js": "/bundles/integratedintegrated/skins/ui/oxide/skin.shadowdom.js",
+  "bundles/integratedintegrated/skins/ui/oxide-dark/skin.shadowdom.js": "/bundles/integratedintegrated/skins/ui/oxide-dark/skin.shadowdom.js",
   "bundles/integratedintegrated/skins/ui/oxide-dark/skin.shadowdom.css": "/bundles/integratedintegrated/skins/ui/oxide-dark/skin.shadowdom.css",
   "bundles/integratedintegrated/skins/ui/oxide-dark/skin.shadowdom.min.css": "/bundles/integratedintegrated/skins/ui/oxide-dark/skin.shadowdom.min.css",
   "bundles/integratedintegrated/skins/ui/oxide/skin.shadowdom.css": "/bundles/integratedintegrated/skins/ui/oxide/skin.shadowdom.css",

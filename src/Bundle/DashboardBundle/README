@@ -24,3 +24,8 @@ How to Create a Widget:
 - Add the widget in "src/Bundle/DashboardBundle/Resources/config/services.xml"
 - Clear the cache
 
+How to setup:
+.ENV:
+GOOGLE_APPLICATION_CREDENTIALS="/var/www/html/GoogleCredential.json"
+
+You need to create a service account within the Google API Services, and you need to give this account access to the Analytics accounts you want to be able to get data from.

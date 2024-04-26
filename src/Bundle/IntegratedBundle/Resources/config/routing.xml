@@ -6,6 +6,7 @@
 
     <import resource="@IntegratedBlockBundle/Resources/config/routing.xml" type="xml" />
     <import resource="@IntegratedBrandBundle/Resources/config/routing.xml" type="xml" />
+    <import resource="@IntegratedDashboardBundle/Resources/config/routing.xml" type="xml" />
     <import resource="@IntegratedChannelBundle/Resources/config/routing.xml" type="xml" />
     <import resource="@IntegratedCommentBundle/Resources/config/routing.xml" type="xml" />
     <import resource="@IntegratedContentBundle/Resources/config/routing.xml" type="xml" />

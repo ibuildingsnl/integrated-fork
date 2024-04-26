@@ -57,34 +57,23 @@ class DashboardController extends AbstractController
         $allowedBrands = $this->getBrands();
         $channel = $this->getChannel($request);
         $widgetAllData = $this->renderWidgets($channel, $user, $request);
-        return $this->renderDashboardView($channel->getId(), $widgetAllData, $allowedBrands);
-    }
 
-    private function getChannelId(Brand $brand): string
-    {
-        $channelLinks = $brand->getChannelLinks();
-        $channelId = null;
-        /* @var $channelLink ChannelLink */
-        foreach ($channelLinks as $channelLink)
-        {
-            $channel = $channelLink->channel;
-            if ($channel->getType()->id == 'website') {
-                $channelId = $channelLink->channel->getId();
-            }
-        }
-        return $channelId;
+        return $this->renderDashboardView(
+            $channel->getId(),
+            $widgetAllData,
+            $allowedBrands
+        );
     }
 
     private function getChannel($request): ChannelInterface
     {
-        $selectedByFormBrand = $request->query->get('integrated_brand_choice');
-        if ($selectedByFormBrand !== null) {
+        if ($selectedByFormBrand = $request->query->get('integrated_brand_choice')) {
             $selectedBrand = $this->brandRepository->find($selectedByFormBrand);
-            $channelId = $this->getChannelId($selectedBrand);
-            $selectedChannel = $this->channelRepository->findOneBy(['id' => $channelId]);
+            $selectedChannel = $selectedBrand->getWebsiteChannel();
         } else {
             $selectedChannel = $this->channelContext->getChannel();
         }
+
         return $selectedChannel ?? $this->channelRepository->findAll()[0];
     }
 
@@ -93,7 +82,10 @@ class DashboardController extends AbstractController
         $allBrands = [];
         $brands = $this->getAllowedBrands();
         foreach ($brands as $brand) {
-            $channelId = $this->getChannelId($brand);
+            if ($brand === null) {
+                continue;
+            }
+            $channelId = $brand->getWebsiteChannel($brand);
             $allBrands[] = [
                 'id' => $brand->getId(),
                 'name' => $brand->getName(),
