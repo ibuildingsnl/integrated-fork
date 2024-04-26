@@ -5,8 +5,6 @@ namespace Integrated\Bundle\AnalyticsBundle\Infrastructure;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\Persistence\ObjectRepository;
-use Google\Analytics\Admin\V1beta\Client\AnalyticsAdminServiceClient;
-use Google\Analytics\Admin\V1beta\Gapic\AnalyticsAdminServiceGapicClient;
 use Google\Client as GoogleApiClient;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\GuzzleException;
@@ -74,7 +72,7 @@ class AnalyticsRequest
     /**
      * @throws GuzzleException
      */
-    public function getDataFromAnalytics(ChannelInterface $channel, array $requestBody,): ?array
+    public function getDataFromAnalytics(ChannelInterface $channel, array $requestBody): ?array
     {
         $propertyID = $this->getPropertyID($channel) ?? null;
         if ($propertyID != null) {
