@@ -8,6 +8,7 @@ use Integrated\Bundle\ChannelBundle\Event\GetResponseConfigEvent;
 use Integrated\Bundle\ChannelBundle\IntegratedChannelEvents;
 use Integrated\Bundle\ChannelBundle\Model\ConfigurationException;
 use Integrated\Bundle\ChannelBundle\Model\OauthConfigInterface;
+use Integrated\Bundle\ChannelBundle\Services\ChannelTokenService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -19,6 +20,7 @@ final class ConnectorConfigSubscriber implements EventSubscriberInterface
         private readonly OauthConfigInterface $config,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly EntityManagerInterface $em,
+        private readonly ChannelTokenService $channelTokenService,
     ) {
     }
 
@@ -42,7 +44,10 @@ final class ConnectorConfigSubscriber implements EventSubscriberInterface
 
         $options = $config->getOptions();
 
-        if ($options->has('token')) {
+        $channelId = $config->getChannels()[0];
+        $channelToken = $this->channelTokenService->getChannelTokenFor($channelId);
+
+        if ($channelToken) {
             return;
         }
 
