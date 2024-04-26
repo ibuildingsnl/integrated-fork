@@ -10,8 +10,10 @@ class ChannelTypeFactory
         public readonly string $id,
         public readonly string $name,
         public readonly bool $canBePrimary = true,
+        public readonly bool $canBeSetGlobally = true,
         public readonly ?string $connector = null,
         public readonly ?string $publicationSettingsForm = null,
+        public readonly ?string $icon = null,
     ) {
     }
 
@@ -21,8 +23,10 @@ class ChannelTypeFactory
             $this->id,
             $this->name,
             $this->canBePrimary,
+            $this->canBeSetGlobally,
             $this->connector,
             $this->publicationSettingsForm,
+            $this->icon,
         );
     }
 }

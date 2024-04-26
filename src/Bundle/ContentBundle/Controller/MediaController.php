@@ -188,14 +188,14 @@ class MediaController extends AbstractController
         return $this->render("@IntegratedContent/media/edit_image{$format}.html.twig", [
             'id' => $id,
             'title' => $file->getTitle(),
-            'meta' => json_encode([
-                                      'mimetype' => $file->getFile()->getMetadata()->getMimeType(),
-                                      'extension' => $file->getFile()->getMetadata()->getExtension(),
-                                  ]),
+            'meta' => json_encode(
+                [
+                    'mimetype' => $file->getFile()->getMetadata()->getMimeType(),
+                    'extension' => $file->getFile()->getMetadata()->getExtension(),
+                ]
+            ),
             'previous_url' => $request->headers->get('referer'),
-            'file_url' => $request->server->get('REQUEST_SCHEME').'://'.$request->server->get(
-                'SERVER_NAME'
-            ).$file->getFile()->getPathName(),
+            'file_url' => $request->server->get('REQUEST_SCHEME').'://'.$request->server->get('SERVER_NAME').$file->getFile()->getPathName(),
         ]);
     }
 

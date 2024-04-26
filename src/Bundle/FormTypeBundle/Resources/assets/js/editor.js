@@ -89,7 +89,7 @@ $('.integrated_tinymce').each(function(key, elem){
         width: "100%",
         height: "100%",
         browser_spellcheck : true,
-        autoresize_bottom_margin: "0px",
+        autoresize_bottom_margin: 0,
         convert_urls: false,
         content_css: element.data('content_css'),
         integrated_browser_image_dialog_url: element.data('integrated_browser_image_dialog_url'),

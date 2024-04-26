@@ -4,6 +4,7 @@ namespace Integrated\Bundle\BrandBundle\Document;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
@@ -13,12 +14,15 @@ class Brand
 {
     #[Slug(fields: ['name'], separator: '_')]
     private ?string $id = null;
+
     /** @var Collection<ChannelLink> */
     private Collection $channelLinks;
 
-    public function __construct(
-        public ?BrandProfile $profile = null,
-    ) {
+    public ?BrandProfile $profile;
+
+    public function __construct(BrandProfile $profile = null)
+    {
+        $this->profile = $profile;
         $this->channelLinks = new ArrayCollection();
     }
 
@@ -30,6 +34,16 @@ class Brand
     public function getId(): string
     {
         return $this->id;
+    }
+
+    public function getProfile(): ?BrandProfile
+    {
+        return $this->profile;
+    }
+
+    public function setProfile(?BrandProfile $profile): void
+    {
+        $this->profile = $profile;
     }
 
     public function getName(): string
@@ -59,7 +73,6 @@ class Brand
         return false;
     }
 
-    /** @deprecated */
     public function linkTypeForChannel(ChannelInterface $channel): ?ChannelType
     {
         foreach ($this->channelLinks as $link) {
@@ -88,6 +101,17 @@ class Brand
     public function getChannelLinks(): Collection
     {
         return $this->channelLinks;
+    }
+
+    public function getWebsiteChannel(): ?Channel
+    {
+        foreach ($this->channelLinks as $link) {
+            if ($link->getName() === 'Website') {
+                return $link->channel;
+            }
+        }
+
+        return null;
     }
 
     public function addChannelLink(ChannelLink $link): void

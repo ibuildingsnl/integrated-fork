@@ -41,8 +41,8 @@ class ContentTypePageService
     {
         $controller = $this->controllerManager->getController($contentType->getClass());
 
-        // don't add if no controller service is defined
-        if (!\is_array($controller)) {
+        // don't add if no controller service is defined or when it's not a website channel
+        if (!\is_array($controller) || $channel->getType()->getName() != 'Website') {
             return;
         }
 
@@ -51,7 +51,6 @@ class ContentTypePageService
         $contentTypePage->setControllerService($controller['service']);
         $contentTypePage->setControllerAction($controller['controller_actions'][0]);
 
-        $this->dm->persist($channel);
         $this->dm->persist($contentTypePage);
         $this->dm->flush();
     }

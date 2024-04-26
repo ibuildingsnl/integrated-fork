@@ -16,6 +16,16 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
         return $this->findBy(['content' => $content]);
     }
 
+    public function forDateRange(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate): iterable
+    {
+        return $this->createQueryBuilder()
+            ->setRewindable(false)
+            ->field('time.startDate')->gte($startDate)
+            ->field('time.startDate')->lte($endDate)
+            ->getQuery()
+            ->getIterator();
+    }
+
     public function forContentByChannel(Content $content): array
     {
         return array_combine(
@@ -31,6 +41,17 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
         }
 
         return $this->findBy(['content' => $content, 'channel' => $channel]);
+    }
+
+    public function getAvailable(Content $content, ChannelInterface $channel): iterable
+    {
+        return $this->createQueryBuilder()
+            ->setRewindable(false)
+            ->field('content')->equals($content)
+            ->field('channel')->equals($channel)
+            ->field('status')->in([Publication::STATUS_FAILED, ''])
+            ->getQuery()
+            ->getIterator();
     }
 
     public function add(Publication $publication): void

@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\ContentBundle\Document\Channel;
 
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
-use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -42,7 +41,7 @@ class Channel implements ChannelInterface
     #[Assert\NotBlank]
     protected $name;
 
-    protected ?ChannelType $type;
+    protected ?ChannelType $type = null;
 
     /**
      * @var array
@@ -73,6 +72,11 @@ class Channel implements ChannelInterface
      * @var bool
      */
     protected $ipProtected = false;
+
+    /**
+     * @var string
+     */
+    protected $language = 'nl';
 
     /**
      * @var Scope
@@ -122,46 +126,6 @@ class Channel implements ChannelInterface
         $this->type = $type;
 
         return $this;
-    }
-
-    public function getLogo(): ?Image
-    {
-        return $this->logo;
-    }
-
-    public function setLogo(?Image $logo): void
-    {
-        $this->logo = $logo;
-    }
-
-    public function getFavicon(): Image|null
-    {
-        return $this->favicon;
-    }
-
-    public function setFavicon(?Image $favicon): void
-    {
-        $this->favicon = $favicon;
-    }
-
-    public function getColor(): ?string
-    {
-        return $this->color;
-    }
-
-    public function setColor(?string $color): void
-    {
-        $this->color = $color;
-    }
-
-    public function getSecondaryColor(): ?string
-    {
-        return $this->secondarycolor;
-    }
-
-    public function setSecondaryColor(?string $secondarycolor): void
-    {
-        $this->secondarycolor = $secondarycolor;
     }
 
     public function setDomains(array $domains): void
@@ -252,6 +216,16 @@ class Channel implements ChannelInterface
     public function setIpProtected(bool $protected): void
     {
         $this->ipProtected = $protected;
+    }
+
+    public function getLanguage(): ?string
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(string $language): void
+    {
+        $this->language = $language;
     }
 
     public function getScope(): ?Scope

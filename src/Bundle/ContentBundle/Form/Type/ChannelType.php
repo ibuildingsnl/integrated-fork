@@ -13,7 +13,6 @@ namespace Integrated\Bundle\ContentBundle\Form\Type;
 
 use Integrated\Bundle\AssetBundle\Manager\AssetManager;
 use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
-use Integrated\Bundle\FormTypeBundle\Form\Type\ColorType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -21,6 +20,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\LanguageType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -53,7 +53,7 @@ class ChannelType extends AbstractType
             'attr' => [
                 'location' => 'editor',
                 'style' => 'inline',
-                'class' => $options['can_change_type'] ? '' : 'hidden'
+                'class' => $options['can_change_type'] ? '' : 'hidden',
             ],
         ]);
         $builder->add('name', TextType::class, [
@@ -114,7 +114,7 @@ class ChannelType extends AbstractType
                 'attr' => [
                     'location' => 'sidebar',
                     'style' => 'sidebar',
-                    'icon' => 'key-alt-back',
+                    'icon' => 'key-back',
                 ],
             ])->add(
                 'permissions',
@@ -133,6 +133,7 @@ class ChannelType extends AbstractType
                     'style' => 'sidebar',
                     'state' => 'show',
                     'icon' => 'tools',
+                    'data-exclusive-to' => 'website',
                 ],
             ])->add(
                 'primaryDomainRedirect',
@@ -153,6 +154,19 @@ class ChannelType extends AbstractType
                     'required' => false,
                     'attr' => [
                         'align_with_widget' => true,
+                        'data-exclusive-to' => 'website',
+                    ],
+                ]
+            )->add(
+                'language',
+                LanguageType::class,
+                [
+                    'label' => 'Website language',
+                    'required' => false,
+                    'choice_self_translation' => true,
+                    'attr' => [
+                        'align_with_widget' => true,
+                        'data-exclusive-to' => 'website',
                     ],
                 ]
             )

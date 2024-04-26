@@ -1,11 +1,6 @@
 <ul class="header-nav">
-    {% set divided = false %}
-
     {% block navbar_assignee %}
         {% if assignedContent|length > 0 %}
-            <li class="divider-nav hidden-xs"></li>
-            {% set divided = true %}
-
             <li class="dropdown-assigned-to-me dropdown close-outside top-bar hidden-xs">
                 <a class="btn btn-orange icon-left" data-toggle="dropdown">
                     <i class="iconoir-bell-notification"></i>
@@ -48,10 +43,6 @@
 
     {% block navbar_queue %}
         {% if queuecount > 0 and is_granted('ROLE_ADMIN') %}
-            {% if divided == false %}
-                <li class="divider-nav hidden-xs"></li>
-            {% endif %}
-
             <li class="dropdown-queue dropdown close-outside top-bar hidden-xs">
                 <a class="btn btn-green icon-left" data-toggle="dropdown">
                     <i class="iconoir-database-backup"></i>
@@ -80,23 +71,10 @@
     {% endblock navbar_queue %}
 
     {% block navbar_user %}
-        <li class="divider-nav hidden-xs"></li>
-
         {% if app.user %}
             <li class="dropdown-profile dropdown close-outside top-bar hidden-xs">
                 <a class="flex" data-toggle="dropdown">
                     <img src="{{ avatarurl }}" class="profile-image"/>
-
-                    <span class="welcome-msg">
-                        {% trans %}Hello{% endtrans %},&nbsp;
-                    </span>
-                    <span class="user-name">
-                        {% if app.user.getRelation.getLastname is defined %}
-                            {{ app.user.getRelation.getFirstname|default('') }} {{ app.user.getRelation.getLastname|default('') }}
-                        {% else %}
-                            {{ app.user.username|default('') }}
-                        {% endif %}
-                    </span>
                     <i class="iconoir-nav-arrow-down"></i>
                 </a>
 

@@ -2,7 +2,6 @@
 
 namespace Integrated\Bundle\BrandBundle\Controller;
 
-use Doctrine\Persistence\ObjectManager;
 use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Bundle\BrandBundle\Event\BrandAddedEvent;
@@ -10,8 +9,8 @@ use Integrated\Bundle\BrandBundle\Event\BrandRemovedEvent;
 use Integrated\Bundle\BrandBundle\Event\BrandUpdatedEvent;
 use Integrated\Bundle\BrandBundle\Form\Type\BrandType;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
+use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
 use Integrated\Common\Services\Flusher;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;

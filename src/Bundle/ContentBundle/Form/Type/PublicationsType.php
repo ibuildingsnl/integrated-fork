@@ -2,7 +2,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
-use Integrated\Bundle\ContentBundle\Services\PublicationSettingsProvider;
+use Integrated\Bundle\ContentBundle\Services\PublicationSettingsProviderInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class PublicationsType extends AbstractType
 {
     public function __construct(
-        private readonly PublicationSettingsProvider $publicationSettings,
+        private readonly PublicationSettingsProviderInterface $publicationSettings,
     ) {
     }
 
@@ -19,12 +19,22 @@ class PublicationsType extends AbstractType
     {
         /** @var ChannelInterface $channel */
         foreach ($options['channels'] as $channel) {
+            $status = '';
+            $channelData = $options['data'][$channel->getId()] ?? null;
+
+            if ($channelData) {
+                $status = $channelData->getStatus();
+            }
+
             $builder->add($channel->getId(), PublicationType::class, [
                 'attr' => [
                     'class' => 'publication-settings',
                     'data-publication-channel' => $channel->getId(),
                     'data-channel-type' => $channel->getType()?->getName() ?: 'N/A',
+                    'data-can-be-set-globally' => $channel->getType()?->canBeSetGlobally() ? 'yes' : 'no',
                     'data-channel-name' => $channel->getName(),
+                    'data-channel-type-icon' => $channel->getType()?->getIcon() ?: 'www',
+                    'data-publication-status' => $status,
                 ],
                 'settings' => $this->publicationSettings->settingTypeFor($channel),
                 'label' => $channel->getName(),

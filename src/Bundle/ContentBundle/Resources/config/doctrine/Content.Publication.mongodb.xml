@@ -20,6 +20,8 @@
             field="time"
             target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime"
         />
+        <field field-name="response" type="string" />
+        <field field-name="status" type="string" />
         <field field-name="settings" type="hash" />
 
     </document>

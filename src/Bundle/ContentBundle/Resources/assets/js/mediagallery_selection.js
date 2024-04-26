@@ -1,12 +1,13 @@
 let form_relations = {}; //this holds all the form relation objects with an id
 const mediagallery_link = '/admin/media/';
 
-window.onload = async function() {
+window.addEventListener('load', function() {
     populateFormRelations();
-    await populateSelectedImages(); // wait for populateSelectedImages() to finish
-    setupFormRelations();
-    addEventListeners();
-};
+    populateSelectedImages().then(() => {
+        setupFormRelations();
+        addEventListeners();
+    });
+});
 
 function setupFormRelations() {
     Object.values(form_relations).forEach(form_relation => {
@@ -47,15 +48,16 @@ function populateFormRelations() {
         };
         form_relations[id].types_url = getTypesUrl(form_relations[id].types);
 
-        var wrap = document.createElement('div');
-        wrap.className = `wrap media-library iframe-wrapper close-outside ${id}`;
+        if (!document.querySelector(`iframe.iframe.${id}`)) {
+            var wrap = document.createElement('div');
+            wrap.className = `wrap media-library iframe-wrapper close-outside ${id}`;
 
-        // Create iframe element
-        var iframe = document.createElement('iframe');
-        iframe.className = `iframe ${id}`;
+            var iframe = document.createElement('iframe');
+            iframe.className = `iframe ${id}`;
 
-        wrap.appendChild(iframe);
-        document.body.appendChild(wrap);
+            wrap.appendChild(iframe);
+            document.body.appendChild(wrap);
+        }
 
     });
 }
@@ -73,7 +75,6 @@ function addEventListeners() {
         selectButton.addEventListener('click', (event) => {
             const { relationid } = event.target.dataset;
             selected_relation = form_relations[relationid];
-            console.log(selected_relation);
             showMediaGallery(selected_relation);
         });
     });

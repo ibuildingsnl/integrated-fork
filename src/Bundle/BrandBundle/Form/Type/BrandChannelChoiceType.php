@@ -13,14 +13,19 @@ class BrandChannelChoiceType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $brandName = strtolower($options['brand_name']); // Convert to lower case
+        $brandName = preg_replace('/\s+/', '', $brandName); // Strip spaces
+        $brandName = preg_replace('/[^a-z0-9]/', '', $brandName); // Remove special characters
+
         $builder->add('publish', CheckboxType::class, [
             'required' => false,
-            'value' => $options['publish'],
+            'value' => $brandName,
             'label' => $options['brand_name'],
             'attr' => [
                 'class' => 'brand-choice',
             ],
         ]);
+
         $builder->add('channels', ChoiceType::class, [
             'label' => false,
             'choices' => $options['links'],
@@ -31,6 +36,8 @@ class BrandChannelChoiceType extends AbstractType
                     'class' => 'brand-channel-choice',
                     'data-can-be-primary' => $link->type->canBePrimary ? 'yes' : 'no',
                     'data-channel-type' => $link->getName(),
+                    'data-channel-type-icon' => $link->type->getIcon(),
+                    'data-channel-default' => $link->default ? true : false,
                 ],
                 \is_array($options['choice_attr']) ? $options['choice_attr'] : $options['choice_attr']($link->channel),
             ),

@@ -22,6 +22,10 @@
                 <source>Brand</source>
                 <target>Merk</target>
             </trans-unit>
+            <trans-unit id="6">
+                <source>No brands added</source>
+                <target>Geen merken beschikbaar</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

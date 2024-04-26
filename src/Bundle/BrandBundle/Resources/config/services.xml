@@ -9,6 +9,7 @@
             <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
             <argument type="string">\Integrated\Bundle\BrandBundle\Document\Brand</argument>
         </service>
+
         <service id="integrated_brand.brand.repository" class="Integrated\Bundle\BrandBundle\Infrastructure\ODMBrandRepository">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_brand.brand.odm.repository" />
@@ -29,10 +30,10 @@
         </service>
 
         <service id="Integrated\Bundle\BrandBundle\Controller\ChannelLinkController">
-            <argument type="service" id="integrated_channel.repository.channel" />
             <argument type="service" id="integrated_channel.channel_type.registry" />
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="integrated_content.services.flusher"/>
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
@@ -126,7 +127,7 @@
         </service>
 
         <service id="Integrated\Bundle\BrandBundle\Services\LinkTypeSettingsProvider"
-                 decorates="Integrated\Bundle\ContentBundle\Services\PublicationSettingsProvider">
+                 decorates="Integrated\Bundle\ContentBundle\Services\PublicationSettingsProviderInterface">
             <argument type="service" id="integrated_brand.brand.repository" />
             <argument type="service" id=".inner"/>
         </service>

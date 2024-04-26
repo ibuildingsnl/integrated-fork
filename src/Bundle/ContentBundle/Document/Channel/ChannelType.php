@@ -8,9 +8,16 @@ class ChannelType
         public string $id,
         public readonly string $name,
         public readonly bool $canBePrimary = true,
+        public readonly bool $canBeSetGlobally = true,
         public readonly ?string $connector = null,
         public readonly ?string $publicationSettingsForm = null,
+        public readonly ?string $icon = null,
     ) {
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
     }
 
     public function getName(): string
@@ -23,6 +30,11 @@ class ChannelType
         return $this->canBePrimary;
     }
 
+    public function canBeSetGlobally(): bool
+    {
+        return $this->canBeSetGlobally;
+    }
+
     public function getConnector(): ?string
     {
         return $this->connector;
@@ -31,5 +43,10 @@ class ChannelType
     public function getPublicationSettingsForm(): ?string
     {
         return $this->publicationSettingsForm;
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->icon ?? null;
     }
 }

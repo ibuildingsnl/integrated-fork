@@ -48,6 +48,10 @@ class Content extends AbstractType
             ->setField('facet_channels')
             ->getLocalParameters()->setExclude('channels');
 
+        $facet->createFacetField('brands')
+              ->setField('facet_brands')
+              ->getLocalParameters()->setExclude('brands');
+
         $facet->createFacetField('authors')
             ->setField('facet_authors')
             ->getLocalParameters()->setExclude('authors');
@@ -71,6 +75,14 @@ class Content extends AbstractType
             $query->createFilterQuery('channels')
                 ->addTag('channels')
                 ->setQuery('facet_channels: ((%1%))', [implode(') OR (', array_map($escape, $options['channels']))]);
+        }
+
+        if ($options['pub_channels']) {
+            foreach ($options['pub_channels'] as $channel) {
+                $channel = $helper->escapeTerm($channel);
+                $query->createFilterQuery('pub_channel_'.$channel)
+                      ->setQuery('(publication_start_'.$channel.'_index_date: [* TO NOW]) AND (publication_end_'.$channel.'_index_date: [NOW TO *])');
+            }
         }
 
         if ($options['authors']) {
@@ -103,6 +115,17 @@ class Content extends AbstractType
                     ->addTag($name)
                     ->setQuery($field.': ((%1%))', [implode(') OR (', array_map($escape, $options['relation'][$relation->getId()]))]);
             }
+        }
+
+        // handle start/end dates
+        if ($options['start'] instanceof \DateTimeInterface && $options['end'] instanceof \DateTimeInterface) {
+            $query->createFilterQuery('pub_time')
+                ->addTag('pub_time')
+                ->setQuery(sprintf(
+                    'pub_time: [%s TO %s]',
+                    $options['start']->format("Y-m-d\TH:i:s.z\Z"),
+                    $options['end']->format("Y-m-d\TH:i:s.z\Z"),
+                ));
         }
     }
 
@@ -161,7 +184,9 @@ class Content extends AbstractType
         $resolver->setDefaults([
             'contenttypes' => [],
             'channels' => [],
+            'brands' => [],
             'authors' => [],
+            'pub_channels' => [],
             'properties' => [],
         ]);
 
@@ -175,6 +200,7 @@ class Content extends AbstractType
 
         $resolver->setNormalizer('contenttypes', $arrayNormalizer);
         $resolver->setNormalizer('channels', $arrayNormalizer);
+        $resolver->setNormalizer('brands', $arrayNormalizer);
         $resolver->setNormalizer('authors', $arrayNormalizer);
         $resolver->setNormalizer('properties', $arrayNormalizer);
 
@@ -236,5 +262,11 @@ class Content extends AbstractType
 
             return array_filter($relations);
         });
+
+        // handle start/end dates
+        $resolver->setDefaults([
+            'start' => null,
+            'end' => null,
+        ]);
     }
 }

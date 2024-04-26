@@ -62,8 +62,11 @@ abstract class Block implements BlockInterface
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\DateTimeType', options: [
         'attr' => [
-            'data-set-date-text' => 'Set publication date'
-        ]
+            'data-set-date-text' => 'Set publication date',
+        ],
+        'html5' => true,
+        'date_widget' => 'single_text',
+        'time_widget' => 'single_text',
     ], location: 'custom')]
     protected $publishedAt;
 
@@ -74,8 +77,11 @@ abstract class Block implements BlockInterface
         'placeholder' => ' ',
         'required' => false,
         'attr' => [
-            'data-set-date-text' => 'Set depublication date'
-        ]
+            'data-set-date-text' => 'Set depublication date',
+        ],
+        'html5' => true,
+        'date_widget' => 'single_text',
+        'time_widget' => 'single_text',
     ], location: 'custom')]
     protected $publishedUntil;
 
@@ -228,6 +234,7 @@ abstract class Block implements BlockInterface
         if ($this->publishedAt === null) {
             return new \DateTime();
         }
+
         return $this->publishedAt;
     }
 

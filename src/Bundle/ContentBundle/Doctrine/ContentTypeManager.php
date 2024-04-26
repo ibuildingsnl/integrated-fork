@@ -13,7 +13,6 @@ namespace Integrated\Bundle\ContentBundle\Doctrine;
 
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\Exception\InvalidArgumentException;
-use Integrated\Common\ContentType\Exception\UnexpectedTypeException;
 use Integrated\Common\ContentType\Iterator;
 use Integrated\Common\ContentType\IteratorInterface;
 use Integrated\Common\ContentType\Resolver\PriorityResolver;

@@ -23,19 +23,16 @@
 
         <service id="Integrated\Bundle\ChannelBundle\Services\ResolverLinkMaker">
             <argument type="service" id="integrated_page.services.url_resolver"/>
+            <argument type="service" id="integrated_brand.brand.repository" />
         </service>
-
-        <service
-            id="Integrated\Bundle\ChannelBundle\Services\LinkMaker"
-            class="Integrated\Bundle\ChannelBundle\Services\ChannelAddingLinkMaker"
-            decorates="Integrated\Bundle\ChannelBundle\Services\ResolverLinkMaker"
-        />
 
         <service
             id="Integrated\Bundle\ChannelBundle\Services\LinkMaker"
             class="Integrated\Bundle\ChannelBundle\Services\HttpsAddingLinkMaker"
             decorates="Integrated\Bundle\ChannelBundle\Services\ResolverLinkMaker"
         />
+
+        <service id="Integrated\Bundle\ChannelBundle\Services\ChannelTokenService"/>
 
     </services>
 </container>

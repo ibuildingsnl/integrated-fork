@@ -582,23 +582,21 @@
                     {% endif %}
                 {% endif %}
             </ul>
-
             <div class="selected_images flex flex-wrap mb-4"
                  data-multiple="{{ form.vars.attr['data-multiple'] }}"
                  data-types="{{ form.vars.attr['data-types'] }}"
                  data-relationtype="embedded"
                  data-relationid="{{ form.vars.id }}"
-                 data-emptytext="{{ form.vars.attr['data-emptytext'] ?: 'Select ' ~ (form.vars.name) }}"
+                 data-emptytext="{{ form.vars.attr['data-emptytext']|trans ?: 'Select '|trans ~ (form.vars.name|trans) }}"
                  data-fieldName="{{ form.vars.full_name }}">
             </div>
-
             <div
                 data-multiple="{{ form.vars.attr['data-multiple'] }}"
                 data-types="{{ form.vars.attr['data-types'] }}"
                 data-relationtype="embedded"
                 data-relationid="{{ form.vars.id }}"
                 class="select_multimedia_button btn btn-white">
-                {% trans %}Select{% endtrans %} {{ label ?: (form.vars.name) }}
+                {{ form.vars.attr['data-emptytext']|trans ?: 'Select '|trans ~ (form.vars.name|trans) }}
             </div>
 
             <ul class="selected_images hidden">
@@ -615,21 +613,34 @@
             </ul>
             <script src="{{ asset('bundles/integratedintegrated/mediagallery_selection.js') }}"></script>
             {{ form_errors(form) }}
-            <input hidden type="text" class="w-full" name="{{ form.vars.full_name }}">
+            <input hidden type="text" class="w-full mediagallery_selector_input" name="{{ form.vars.full_name }}">
         </div>
     {% endapply %}
 
 {% endblock %}
 
+{% block integrated_refreshable_choice_widget %}
+    {% apply spaceless %}
+        {% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' form-control')|trim }) %}
+
+        <div class="input-group flex flex-row justify-stretch max-w-[750px] space-x-4">
+           {{ form_widget(form.choice) }}
+           {{ form_widget(form.refresh) }}
+        </div>
+    {% endapply %}
+{% endblock %}
+
 {% block attributes -%}
     {%- for attrname, attrvalue in attr -%}
-        {{- " " -}}
-        {%- if attrname in ['placeholder', 'title'] -%}
-            {{- attrname }}="{{ translation_domain is same as(false) or attrvalue is null ? attrvalue : attrvalue|trans(attr_translation_parameters, translation_domain) }}"
-        {%- elseif attrvalue is same as(true) -%}
-            {{- attrname }}="{{ attrname }}"
-        {%- elseif attrvalue is not same as(false) -%}
-            {{- attrname }}="{{ attrvalue|trans({}, translation_domain) }}"
+        {% if attrvalue|length == 1 %}
+            {{- " " -}}
+            {%- if attrname in ['placeholder', 'title'] -%}
+                {{- attrname }}="{{ translation_domain is same as(false) or attrvalue is null ? attrvalue : attrvalue|trans(attr_translation_parameters, translation_domain) }}"
+            {%- elseif attrvalue is same as(true) -%}
+                {{- attrname }}="{{ attrname }}"
+            {%- elseif attrvalue is not same as(false) -%}
+                {{- attrname }}="{{ attrvalue|trans({}, translation_domain) }}"
+            {%- endif -%}
         {%- endif -%}
     {%- endfor -%}
 {%- endblock attributes -%}

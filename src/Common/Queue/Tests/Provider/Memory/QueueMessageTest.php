@@ -20,8 +20,7 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 {
     public function testInterface()
     {
-        $message = new QueueMessage(null, 0, 0, 0, 0, 0, function () {
-        });
+        $message = new QueueMessage(null, 0, 0, 0, 0, 0);
 
         $this->assertInstanceOf('Integrated\Common\Queue\QueueMessageInterface', $message);
     }
@@ -29,24 +28,21 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
     public function testGetPayload()
     {
         $payload = new \stdClass();
-        $message = new QueueMessage($payload, 0, 0, 0, 0, 0, function () {
-        });
+        $message = new QueueMessage($payload, 0, 0, 0, 0, 0);
 
         $this->assertSame($message->getPayload(), $payload);
     }
 
     public function testGetAttempts()
     {
-        $message = new QueueMessage(null, 42, 0, 0, 0, 0, function () {
-        });
+        $message = new QueueMessage(null, 42, 0, 0, 0, 0);
 
         $this->assertEquals(42, $message->getAttempts());
     }
 
     public function testGetPriority()
     {
-        $message = new QueueMessage(null, 0, 10, 0, 0, 0, function () {
-        });
+        $message = new QueueMessage(null, 0, 10, 0, 0, 0);
 
         $this->assertEquals(10, $message->getPriority());
     }
@@ -54,8 +50,7 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
     public function testGetCreatedAt()
     {
         $createdAt = 1234;
-        $message = new QueueMessage(null, 0, 0, $createdAt, 0, 0, function () {
-        });
+        $message = new QueueMessage(null, 0, 0, $createdAt, 0, 0);
 
         $this->assertEquals($createdAt, $message->getCreatedAt());
     }
@@ -63,8 +58,7 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
     public function testGetUpdatedAt()
     {
         $updatedAt = 5678;
-        $message = new QueueMessage(null, 0, 0, 0, $updatedAt, 0, function () {
-        });
+        $message = new QueueMessage(null, 0, 0, 0, $updatedAt, 0);
 
         $this->assertEquals($updatedAt, $message->getUpdatedAt());
     }
@@ -72,8 +66,7 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
     public function testGetExecuteAt()
     {
         $executeAt = 9642;
-        $message = new QueueMessage(null, 0, 0, 0, 0, $executeAt, function () {
-        });
+        $message = new QueueMessage(null, 0, 0, 0, 0, $executeAt);
 
         $this->assertEquals($executeAt, $message->getExecuteAt());
     }

@@ -12,7 +12,6 @@
 namespace Integrated\Common\Content\Channel;
 
 use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
-use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Common\Security\PermissionInterface;
 
 interface ChannelInterface
@@ -29,8 +28,4 @@ interface ChannelInterface
     public function getPrimaryDomain(): ?string;
 
     public function getPrimaryDomainRedirect(): bool;
-
-    public function getLogo(): ?Image;
-
-    public function getColor(): ?string;
 }

@@ -14,6 +14,7 @@
         <field field-name="primaryDomain" type="string" />
         <field field-name="primaryDomainRedirect" type="bool" />
         <field field-name="ipProtected" type="bool" />
+        <field field-name="language" type="string" />
         <field field-name="options" type="hash" />
         <field field-name="createdAt" type="date" />
 

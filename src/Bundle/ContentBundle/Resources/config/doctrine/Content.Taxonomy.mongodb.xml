@@ -9,6 +9,7 @@
         <field field-name="description" type="string" />
         <field field-name="rank" type="string" index="true" />
         <field field-name="parent_id" type="string" index="false" />
+        <field field-name="link_to_channel" type="string" index="false" />
 
         <reference-one
             field="featuredImage"

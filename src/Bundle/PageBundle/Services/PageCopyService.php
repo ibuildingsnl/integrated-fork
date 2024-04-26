@@ -15,7 +15,9 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\MappingException as MappingExceptionAlias;
 use Doctrine\ODM\MongoDB\MongoDBException as MongoDBExceptionAlias;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
+use Integrated\Bundle\BlockBundle\Document\Block\InlineTextBlock;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Item;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\ItemsInterface;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
@@ -77,7 +79,7 @@ class PageCopyService
                 $copiedPage->setChannel($targetChannel);
 
                 foreach ($copiedPage->getGrids() as $key => $grid) {
-                    $this->copyGridBlocks($grid, $data['pages']['page'.$page->getId()]['blocks']);
+                    $this->copyGridBlocks($grid, $data['pages']['page'.$page->getId()]['blocks'], $copiedPage);
                 }
 
                 $this->documentManager->persist($copiedPage);
@@ -91,7 +93,7 @@ class PageCopyService
     /**
      * @throws \Exception
      */
-    private function copyGridBlocks(ItemsInterface $grid, array $data)
+    private function copyGridBlocks(ItemsInterface $grid, array $data, AbstractPage $copiedPage)
     {
         $gridItems = $grid->getItems();
         foreach ($gridItems as $key => $item) {
@@ -103,20 +105,61 @@ class PageCopyService
 
             if ($block instanceof Block) {
                 // copy block
-                if (isset($data['block_'.$block->getId()]['operation']) && $data['block_'.$block->getId()]['operation'] == 'clone') {
-                    $copiedBlock = clone $block;
-                    $copiedBlock->setId($data['block_'.$block->getId()]['newBlockId']);
-                    $copiedBlock->setCreatedAt(new \DateTime());
+                if (isset($data['block_'.$block->getId()]['operation']) &&
+                    $data['block_'.$block->getId()]['operation'] == 'clone') {
+                    $classMetadata = $this->documentManager->getClassMetadata(\get_class($block));
 
-                    $this->documentManager->persist($copiedBlock);
+                    if (!$existingBlock = $this->documentManager
+                        ->getRepository(Block::class)
+                        ->findOneBy(['_id' => $data['block_'.$block->getId()]['newBlockId']])
+                    ) {
+                        $className = $classMetadata->getName();
 
-                    $item->setBlock($copiedBlock);
+                        if ($block instanceof InlineTextBlock) {
+                            $copiedBlock = new $className($copiedPage);
+                        } else {
+                            $copiedBlock = new $className();
+                        }
+
+                        $reflector = new \ReflectionClass($classMetadata->getName());
+
+                        $getters = [];
+                        $setters = [];
+
+                        foreach ($reflector->getMethods() as $method) {
+                            $methodName = $method->getName();
+                            if (strpos($methodName, 'get') === 0 && $method->getNumberOfParameters() === 0) {
+                                $getters[] = $methodName;
+                            }
+                            if (strpos($methodName, 'set') === 0 && $method->getNumberOfParameters() > 0) {
+                                $setters[] = $methodName;
+                            }
+                        }
+
+                        foreach ($getters as $getter) {
+                            $setter = 'set'.substr($getter, 3);
+
+                            if (\in_array($setter, $setters)) {
+                                $value = $block->$getter();
+                                $copiedBlock->$setter($value);
+                            }
+                        }
+
+                        $copiedBlock->setId($data['block_'.$block->getId()]['newBlockId']);
+                        $copiedBlock->setCreatedAt(new \DateTime());
+
+                        $this->documentManager->persist($copiedBlock);
+
+                        $item->setBlock($copiedBlock);
+                    } else {
+                        $item->setBlock($existingBlock);
+                    }
                 }
             }
 
             if ($item->getRow()) {
                 foreach ($item->getRow()->getColumns() as $columnKey => $column) {
-                    $this->copyGridBlocks($column, $data);
+                    $this->copyGridBlocks($column, $data, $copiedPage);
                 }
             }
         }

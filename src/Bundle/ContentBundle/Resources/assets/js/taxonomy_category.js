@@ -1,32 +1,3 @@
-//Goal:
-//This code is to organise taxonomies
-//The input is a list of taxonomies with a tree structure. But we receive them as flat list with levels
-//There can be multiple instances of this select option in 1 page, for each we save a relation in the relations array
-//The channels are involved: categories will be shown based on active channels
-
-//Keywords:
-//pills = The selected items that are shown to the user
-//popup = When a user clicks on the fullscreen icon, a popup is shown with all the options
-//tabs = The tabs in the popup screen, these are tabs. These refer to the level0 items of the input
-//selected_tab = The selected item of the tabs.
-
-//Key events:
-//User clicks channel -> this has been changed to a brand
-//User clicks radio button to select a taxonomy
-//User enabled fullscreen
-//User disables fullscreen
-//User clicks tab
-
-//How it works
-//All taxonomies are shown to the user, grouped per parent taxonomy. This happens when 0 channels (or all channels) are selected.
-//When a user selects a channel, the name of the channel is added to a list: enabled_channels.
-//Then there is a matching and filtering of taxonomies based on that list. If the name of the taxonomy matches an item in the selected channels, it will be shown.
-//With a channel deselection, the reverse happens.
-
-//Flows:
-// - One where we setup everything
-// - One where we handle a specific category event
-
 const channels_selector = '#integrated_content_brands'
 //Children were added to brands, so we have to ignore those by focusing on the brand:
 const channel_brands_selector = ' input[type=checkbox].brand-choice'
@@ -42,49 +13,46 @@ let selected_tab = ''
 
 document.addEventListener("DOMContentLoaded", function(event) {
     setupRelations()
-    channel_checkboxes = setupChannels()
-    addEventListeners(channel_checkboxes)
+    brand_checkboxes = setupChannels()
+    addEventListeners(brand_checkboxes)
     updateDOMForAllRelations()
     filterBasedOnChannels()
 });
 
 function setupRelations() {
-    const relevant_relations = Array.from(document.querySelectorAll('.taxonomy_category')).map(item => item.id)
-    for (relation_id of relevant_relations) {
-        let new_relation = createNewRelation(relation_id)
-        relations = [...relations, new_relation]
-    }
-}
-
-function createNewRelation(relation_id) {
-    return {
-        relation_id: relation_id,
-        input_selector: input_field_prefix + relation_id.replace("taxonomy_category_", ''),
-        pills_selector: '#' + relation_id + ' ' + pills_selector,
-        popup_selector: '#' + relation_id + ' ' + popup_selector,
-        category_checkboxes: document.querySelectorAll('#' + relation_id + ' .categories_checkboxes_basic input[type=checkbox]'),
-        all_category_checkboxes: document.querySelectorAll('#' + relation_id + ' .categories_checkboxes input[type=checkbox]'),
-        enabled_categories: document.querySelector('#' + relation_id + ' .enabled_categories').dataset.ids.split(",").filter(n => n),
-        popup_tabs: document.querySelectorAll('#' + relation_id + ' .category_tab')
-    }
+    const relevant_relations = document.querySelectorAll('.taxonomy_category');
+    relations = Array.from(relevant_relations).map(relation => ({
+        relation_id: relation.id,
+        input_selector: input_field_prefix + relation.id.replace("taxonomy_category_", ''),
+        pills_selector: '#' + relation.id + ' ' + pills_selector,
+        popup_selector: '#' + relation.id + ' ' + popup_selector,
+        category_checkboxes: relation.querySelectorAll('.categories_checkboxes_basic input[type=checkbox]'),
+        all_category_checkboxes: relation.querySelectorAll('.categories_checkboxes input[type=checkbox]'),
+        enabled_categories: new Set(relation.querySelector('.enabled_categories').dataset.ids.split(",").filter(Boolean)),
+        popup_tabs: relation.querySelectorAll('.category_tab')
+    }));
 }
 
 function setupChannels() {
-    //If brands didnt have children:
-    // const channel_checkboxes = document.querySelectorAll(channels_selector + ' input[type=checkbox]')
-    //But they do:
-    const channel_checkboxes = document.querySelectorAll(channels_selector + channel_brands_selector)
-    enabled_channels = getEnabledChannels(channel_checkboxes)
-    return channel_checkboxes
+    const brand_checkboxes = document.querySelectorAll(channels_selector + channel_brands_selector)
+
+    enabled_channels = getEnabledChannels(brand_checkboxes)
+    return brand_checkboxes
 }
 
 function getEnabledChannels(checkboxes) {
-    return Array.from(checkboxes).reduce((prev, current, arr) => {
-        return current.checked === true ? [...prev, current.value] : prev
-    }, [])
+    let channelCheckboxes = [];
+    checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            const childCheckboxes = checkbox.closest('.brand-container').querySelectorAll('.brand-channel-choice');
+            channelCheckboxes = channelCheckboxes.concat(Array.from(childCheckboxes));
+        }
+    });
+
+    return channelCheckboxes.map(checkbox => checkbox.getAttribute('data-channel-selector'));
 }
 
-function addEventListeners(channel_checkboxes) {
+function addEventListeners(brand_checkboxes) {
     for (relation of relations) {
         relation.all_category_checkboxes.forEach(item => {
             item.addEventListener('change', handleCategoryClick)
@@ -93,7 +61,7 @@ function addEventListeners(channel_checkboxes) {
     document.querySelectorAll('.categories_tabs .category_tab').forEach(item => {
         item.addEventListener('click', handleTabClick)
     })
-    channel_checkboxes.forEach(item => {
+    brand_checkboxes.forEach(item => {
         item.addEventListener('change', handleChannelClick)
     })
     document.querySelectorAll('.togglefullscreen').forEach(item => {
@@ -120,7 +88,7 @@ function handleClosePopup() {
 function activateHeader() {
     for (popup_tab of current_relation.popup_tabs) {
         popup_tab.classList.remove("active");
-        if (selected_tab !== undefined && popup_tab.dataset.level0 === selected_tab.dataset.level0) {
+        if (selected_tab !== undefined && popup_tab.dataset.title === selected_tab.dataset.title) {
             popup_tab.classList.add('active')
         }
     }
@@ -143,7 +111,10 @@ function setActiveTab() {
 
 function togglePopup() {
     document.querySelector(current_relation.popup_selector).classList.toggle("show");
-    document.querySelector('#taxonomy_backdrop').classList.toggle("hide");
+    let taxonomyDropDownUnderlays = document.querySelectorAll('.taxonomy_backdrop');
+    taxonomyDropDownUnderlays.forEach(taxonomyDropDownUnderlay => {
+        taxonomyDropDownUnderlay.classList.toggle("hide");
+    });
     document.querySelector('body').classList.toggle("popup-open");
 }
 
@@ -163,12 +134,8 @@ function toggleFullscreen() {
 
 function handleChannelClick(event) {
     //With channels this was event.target.value. With brands we have:
-    const channel_name = event.target.parentNode.innerText.trim().toLowerCase()
-    if (enabled_channels.includes(channel_name)) {
-        enabled_channels = enabled_channels.filter(item => item != channel_name)
-    } else {
-        enabled_channels.push(channel_name)
-    }
+    const brand_checkboxes = document.querySelectorAll(channels_selector + channel_brands_selector)
+    enabled_channels = getEnabledChannels(brand_checkboxes)
 
     filterBasedOnChannels()
     updateDOMForAllRelations()
@@ -204,34 +171,6 @@ function updateFormInputField(event) {
     }
 }
 
-function emptyCurrentPills() {
-    document.querySelector(current_relation.pills_selector).innerHTML = "";
-}
-
-function showEnabledCategoryPills() {
-    const current_value = document.querySelector('#' + current_relation.input_selector).value.split(',').filter(n => n)
-    const categories_checkboxes = current_relation.category_checkboxes
-
-    emptyCurrentPills()
-    for (checkbox of categories_checkboxes) {
-        //Hidden because of selected channels? Dont show
-        if (checkbox.closest('li').classList.contains('hidden')) {
-            continue
-        }
-
-        if (current_value.includes(checkbox.dataset.id)) {
-            appendPill(checkbox.closest('li').dataset.fulltitle)
-        }
-    }
-}
-
-function appendPill(pill_text) {
-    const node = document.createElement("div");
-    node.classList.add('active_category');
-    node.innerHTML = pill_text;
-    document.querySelector(current_relation.pills_selector).appendChild(node);
-}
-
 function setCheckboxState(enabled_categories) {
     const current_value = document.querySelector('#' + current_relation.input_selector).value.split(',').filter(n => n)
     for (checkbox of current_relation.all_category_checkboxes) {
@@ -260,7 +199,7 @@ function filterCheckboxesInPopup() {
 
 function showCategoryBasedOnTab(category_item, show) {
     if (selected_tab !== '' && show === true) {
-        if (category_item.dataset.level0 === selected_tab.dataset.level0) {
+        if (category_item.dataset.linkedchannel === selected_tab.dataset.linkedchannel) {
             show = true
         } else {
             show = false
@@ -285,8 +224,42 @@ function toggleItem(item, show) {
 }
 
 function showCategoryBasedOnChannels(category_item) {
+    if (category_item.dataset.linkedchannel === '') {
+        return true
+    }
     if (enabled_channels.length === 0) {
         return true
     }
-    return category_item.dataset.parentchannels?.split(",").filter(n => n).some(channel => enabled_channels.includes(channel))
+    return category_item.dataset.linkedchannel?.split(",").filter(n => n).some(channel => enabled_channels.includes(channel))
+}
+
+
+//MANAGE PILLS TO SHOW SELECTION
+
+function emptyCurrentPills() {
+    document.querySelector(current_relation.pills_selector).innerHTML = "";
+}
+
+function showEnabledCategoryPills() {
+    const current_value = document.querySelector('#' + current_relation.input_selector).value.split(',').filter(n => n)
+    const categories_checkboxes = current_relation.category_checkboxes
+
+    emptyCurrentPills()
+    for (checkbox of categories_checkboxes) {
+        //Hidden because of selected channels? Dont show
+        if (checkbox.closest('li').classList.contains('hidden')) {
+            continue
+        }
+
+        if (current_value.includes(checkbox.dataset.id)) {
+            appendPill(checkbox.closest('li').dataset.fulltitle)
+        }
+    }
+}
+
+function appendPill(pill_text) {
+    const node = document.createElement("div");
+    node.classList.add('active_category');
+    node.innerHTML = pill_text;
+    document.querySelector(current_relation.pills_selector).appendChild(node);
 }

@@ -2,12 +2,11 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Fixtures;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use PHPUnit\Framework\TestCase;
 
 class TestEntityManagerFactory
@@ -34,7 +33,7 @@ class TestEntityManagerFactory
         $config = new Configuration();
         $config->setAutoGenerateProxyClasses(true);
         $config->setProxyDir(sys_get_temp_dir());
-        $config->setMetadataDriverImpl(new AnnotationDriver(new AnnotationReader()));
+        $config->setMetadataDriverImpl(new AttributeDriver([__DIR__]));
         $config->setProxyNamespace('Integrated\Bundle\ContentBundle\Tests');
 
         return $config;

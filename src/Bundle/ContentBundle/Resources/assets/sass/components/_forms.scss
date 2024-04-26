@@ -50,7 +50,7 @@ select.form-control {
         }
 
         .form-control {
-            height: 50px;
+            height: 48px;
             border-bottom: none;
             @include media(max-md) {
                 height: 34px;
@@ -122,14 +122,15 @@ label {
 }
 
 .nav-form-holder {
-    padding: 10px 0;
-    padding-left: 20px;
+    padding-left: 1rem;
+    padding-right: 1rem;
     flex: 1;
     @include clearfix();
     @include display(flex);
     flex-direction: row-reverse;
-    @include media(max-md) {
-        padding-left: 5px;
+
+    @include media(max-sm) {
+        padding-left:0;
     }
 
     .nav-form-inner {
@@ -167,7 +168,7 @@ label {
         }
 
         input {
-            height: 40px;
+            height: 30px;
             padding: 1rem;
         }
     }
@@ -864,32 +865,16 @@ input#block_edit_id.disabled {
     display: flex;
     width: 100%;
     position: relative;
-
-    .tailwind-date {
-        display: flex;
-        width: 70%;
-
-        select:first-child {
-            width: 121px;
-        }
+    input[type=time] {
+        height: 33px;
+        width: 100px;
+        margin-left: .5rem;
+        margin-right: .5rem;
     }
-
-    .tailwind-time {
-        display: flex;
-        width: 40%;
-        align-items: center;
-
-        select:last-child {
-            margin-left: .25rem;
-        }
+    input[type=date] {
+        height: 33px;
+        width: 140px;
     }
-
-    select {
-        margin-right: .25rem;
-        display: block;
-        background-image: unset !important;
-    }
-
     span.ok-date {
         height: 32px;
         background-color: #03ae93;
@@ -900,8 +885,8 @@ input#block_edit_id.disabled {
         border-radius: 8px;
         color: white;
         cursor:pointer;
+        margin-left: auto;
     }
-
     span.set-now-date {
         position: absolute;
         top: -25px;
@@ -913,6 +898,7 @@ input#block_edit_id.disabled {
         padding-left: 10px;
         border-radius: 8px 0 0 8px;
     }
+
     span.clear-date {
         position: absolute;
         right: 0;
@@ -924,6 +910,22 @@ input#block_edit_id.disabled {
         padding-right: 10px;
         padding-left: 10px;
         border-radius: 0 8px 8px 0;
+    }
+}
+
+.textarea {
+    span.copy-intro-btn {
+        border: 1px solid #dee3e9;
+        border-radius: 8px;
+        color: #04ae93;
+        right: 0;
+        height: 22px;
+        line-height: 20px;
+        cursor: pointer;
+        padding-left: 10px;
+        padding-right: 10px;
+        position: absolute;
+        top: -1px;
     }
 }
 

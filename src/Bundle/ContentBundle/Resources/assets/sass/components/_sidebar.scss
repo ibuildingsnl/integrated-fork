@@ -1,23 +1,24 @@
 #wrapper-holder {
     display: flex;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 48px);
     height: -webkit-fill-available;
     overflow: hidden;
     padding-bottom: 0px !important;
     position: relative;
     z-index: 1000;
     position: absolute;
-    top: 60px;
+    top: 48px;
     bottom: 0;
     left: 0;
     right: 0;
 
     .sidebar-menu {
         background-color: $sidebar-green;
-        height: calc(100vh - 60px);
+        height: calc(100vh - 48px);
         flex-shrink: 0;
         width: 250px;
         overflow-y: auto;
+        border-top-right-radius: 1rem;
 
         .sidebar-menu-wrapper {
             padding: 1rem;
@@ -33,6 +34,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
+                margin-left: -0.5rem;
 
                 div.label {
                     color: white;
@@ -40,14 +42,14 @@
                     display: flex;
                     align-items: center;
                     cursor: pointer;
-                    padding: 0.75rem 0;
+                    padding: 0.5rem 0;
 
                     i {
                         margin-right: 10px;
 
                         &:before {
-                            width: 18px;
-                            height: 18px;
+                            width: 15px;
+                            height: 15px;
                         }
                     }
                 }
@@ -60,7 +62,7 @@
 
             .sidebar-sub-menu {
                 border-bottom: 1px solid #515864;
-                padding: 0 1rem;
+                padding: 0 0.5rem;
                 cursor: pointer;
 
                 .sub-menu-children {
@@ -73,7 +75,7 @@
 
                     li {
                         a {
-                            padding: 3px 0rem 3px 38px;
+                            padding: 1px 0rem 1px 29px;
                             margin-bottom: 1px;
                             display: block;
                             width: 100%;
@@ -84,7 +86,7 @@
                             a {
                                 background-color: #345767;
                                 border-radius: 8px;
-                                padding: 3px 0rem 3px 38px;
+                                padding: 1px 0rem 1px 29px;
 
                                 &:before {
                                     content: "";
@@ -96,8 +98,8 @@
                                     -webkit-border-radius: 7.5px;
                                     border-radius: 7.5px;
                                     background-color: #f5f5f5;
-                                    left: 17px;
-                                    top: 12px;
+                                    left: 13px;
+                                    top: 10px;
                                 }
                             }
                         }
@@ -134,7 +136,7 @@
         @media only screen and (min-width: 640px) and (max-width: 1280px) {
 
             width: 50px;
-            padding-top: 10px;
+            padding-top: 0px;
             overflow-y: visible;
             .sidebar-menu-wrapper {
                 padding: 0;

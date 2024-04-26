@@ -27,35 +27,17 @@ use Integrated\Common\Content\PublishableInterface;
 class Exporter implements ExporterInterface
 {
     /**
-     * @var RegistryInterface
+     * @var array<string, ConnectorExporterInterface[]>
      */
-    private $registry;
+    private array $cache = [];
 
-    /**
-     * @var ResolverInterface
-     */
-    private $resolver;
-
-    /**
-     * @var DocumentManager
-     */
-    private $dm;
-
-    /**
-     * @var ConnectorExporterInterface[][]
-     */
-    private $cache = [];
-
-    public function __construct(RegistryInterface $registry, ResolverInterface $resolver, DocumentManager $dm)
-    {
-        $this->registry = $registry;
-        $this->resolver = $resolver;
-        $this->dm = $dm;
+    public function __construct(
+        private readonly RegistryInterface $registry,
+        private readonly ResolverInterface $resolver,
+        private readonly DocumentManager $dm
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function export($content, $state, ChannelInterface $channel, array $settings = [])
     {
         $publicationDate = null;
@@ -69,10 +51,14 @@ class Exporter implements ExporterInterface
         }
 
         foreach ($this->getExporters($channel, $publicationDate) as $exporter) {
-            $response = $exporter->export($content, $state, $channel, $settings);
+            try {
+                $response = $exporter->export($content, $state, $channel);
 
-            if ($response instanceof ExporterResponse) {
-                $this->save($content, $response);
+                if ($response instanceof ExporterResponse) {
+                    $this->save($content, $response);
+                }
+            } catch (\Exception $e) {
+                // @todo probably should log this somewhere
             }
         }
     }
@@ -88,15 +74,19 @@ class Exporter implements ExporterInterface
             $exporters = [];
 
             foreach ($this->resolver->getConfigs($channel) as $config) {
-                $publicationStartDate = $config->getPublicationStartDate();
-                if ($publicationStartDate && $publicationDate && $publicationStartDate > $publicationDate) {
-                    continue;
-                }
+                try {
+                    $publicationStartDate = $config->getPublicationStartDate();
+                    if ($publicationStartDate && $publicationDate && $publicationStartDate > $publicationDate) {
+                        continue;
+                    }
 
-                $adaptor = $this->registry->getAdapter($config->getAdapter());
+                    $adaptor = $this->registry->getAdapter($config->getAdapter());
 
-                if ($adaptor instanceof ExportableInterface) {
-                    $exporters[] = $adaptor->getExporter($config);
+                    if ($adaptor instanceof ExportableInterface) {
+                        $exporters[] = $adaptor->getExporter($config);
+                    }
+                } catch (\Exception $e) {
+                    // @todo probably should log this somewhere
                 }
             }
 
@@ -106,10 +96,7 @@ class Exporter implements ExporterInterface
         return $this->cache[$channel->getId()];
     }
 
-    /**
-     * @param object $content
-     */
-    protected function save($content, ExporterResponse $response)
+    protected function save($content, ExporterResponse $response): void
     {
         if (!$content instanceof ContentInterface) {
             return;
@@ -124,10 +111,12 @@ class Exporter implements ExporterInterface
                 ->setConfigAdapter($response->getConfigAdapter())
                 ->setExternalId($response->getExternalId());
         } else {
-            $content->addConnector((new Connector())
-                ->setConfigId($response->getConfigId())
-                ->setConfigAdapter($response->getConfigAdapter())
-                ->setExternalId($response->getExternalId()));
+            $content->addConnector(
+                (new Connector())
+                    ->setConfigId($response->getConfigId())
+                    ->setConfigAdapter($response->getConfigAdapter())
+                    ->setExternalId($response->getExternalId())
+            );
         }
 
         $this->dm->persist($content);
