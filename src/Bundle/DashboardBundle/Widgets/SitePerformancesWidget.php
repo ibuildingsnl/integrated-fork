@@ -68,8 +68,8 @@ class SitePerformancesWidget implements WidgetInterface
         ];
     }
 
-      private function MilliToSecond(float $milliValue): float
-      {
-          return round($milliValue / 1000, 2);
-      }
+    private function MilliToSecond(float $milliValue): float
+    {
+        return round($milliValue / 1000, 2);
+    }
 }

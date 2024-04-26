@@ -23,13 +23,11 @@ class SitePerformance
 
     public function __construct(
         string $channelID,
-
         float $desktopSiteScore,
         float $desktopSpeedIndex,
         float $desktopTimeToInteractive,
         float $desktopServerResponseTime,
         float $desktopTotalBlockingTime,
-
         float $mobileSiteScore,
         float $mobileSpeedIndex,
         float $mobileTimeToInteractive,

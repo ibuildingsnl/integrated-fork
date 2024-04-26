@@ -123,7 +123,6 @@ class GetSitePerformancesDatasCommand extends Command
             (float) $desktopData['timeToInteractive'],
             (float) $desktopData['serverResponseTime'],
             (float) $desktopData['totalBlockingTime'],
-
             (float) $mobileData['siteScore'],
             (float) $mobileData['speedIndex'],
             (float) $mobileData['timeToInteractive'],
@@ -154,8 +153,7 @@ class GetSitePerformancesDatasCommand extends Command
                     'totalBlockingTime' => $data['lighthouseResult']['audits']['total-blocking-time']['numericValue'] ?? null,
                 ];
 
-                if (
-                    $siteData['siteScore'] !== null &&
+                if ($siteData['siteScore'] !== null &&
                     $siteData['speedIndex'] !== null &&
                     $siteData['timeToInteractive'] !== null &&
                     $siteData['serverResponseTime'] !== null &&
