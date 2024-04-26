@@ -16,19 +16,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 class GetVisitorsActivityDatasCommand extends Command
 {
     private OutputInterface $output;
-    private string $dataType = "visitors_activity";
+    private string $dataType = 'visitors_activity';
 
     /**
      * Constructor.
      */
     public function __construct(
-        private readonly string           $credential,
-        private readonly DocumentManager  $manager,
+        private readonly string $credential,
+        private readonly DocumentManager $manager,
         private readonly ObjectRepository $channelRepository,
-        private readonly BrandRepository  $brandRepository,
-        private readonly LoggerInterface  $logger,
-    )
-    {
+        private readonly BrandRepository $brandRepository,
+        private readonly LoggerInterface $logger,
+    ) {
         parent::__construct();
     }
 
@@ -44,6 +43,7 @@ class GetVisitorsActivityDatasCommand extends Command
 
     /**
      * {@inheritdoc}
+     *
      * @throws MongoDBException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -53,10 +53,11 @@ class GetVisitorsActivityDatasCommand extends Command
         $channels = $analyticsRequest->getChannels();
 
         foreach ($channels as $channel) {
-            $this->output->writeln('- Getting ' . $channel->getName() . '\'s Visitors activity  datas');
+            $this->output->writeln('- Getting '.$channel->getName().'\'s Visitors activity  datas');
             $allDatas = $this->getData($channel, $analyticsRequest);
             $analyticsRequest->setDataToDB($channel, $this->dataType, $allDatas);
         }
+
         return 1;
     }
 
@@ -64,46 +65,46 @@ class GetVisitorsActivityDatasCommand extends Command
     {
         $analyticsRequest->getPropertyID($channel);
         $requestBody = [
-            "dimensions" => [
+            'dimensions' => [
                 [
-                    "name" => "date"
+                    'name' => 'date',
                 ],
             ],
-            "metrics" => [
+            'metrics' => [
                 [
-                    "name" => "activeUsers"
+                    'name' => 'activeUsers',
                 ],
                 [
-                    "name" => "bounceRate"
+                    'name' => 'bounceRate',
                 ],
                 [
-                    "name" => "screenPageViews"
+                    'name' => 'screenPageViews',
                 ],
             ],
-            "dateRanges" => [
+            'dateRanges' => [
                 [
-                    "startDate" => '365daysAgo',
-                    "endDate" => "today"
-                ]
+                    'startDate' => '365daysAgo',
+                    'endDate' => 'today',
+                ],
             ],
-            "orderBys" =>
-                [
-                    "dimension" => [
-                        "orderType" => "NUMERIC",
-                        "dimensionName" => "date"
+            'orderBys' => [
+                    'dimension' => [
+                        'orderType' => 'NUMERIC',
+                        'dimensionName' => 'date',
                     ],
-                    "desc" => false,
+                    'desc' => false,
                 ],
-            "metricAggregations" => [
-                "TOTAL"
-            ]
+            'metricAggregations' => [
+                'TOTAL',
+            ],
         ];
 
         $responseData = $analyticsRequest->getDataFromAnalytics($channel, $requestBody);
         if ($responseData == null) {
-            $message = "Get Visitors Activity Error: No datas found for" . $channel->getName() ."\n";
+            $message = 'Get Visitors Activity Error: No datas found for'.$channel->getName()."\n";
             $this->logger->error($message);
             $this->output->writeln($message);
+
             return null;
         }
         $userActivityByDate = [];
@@ -116,7 +117,7 @@ class GetVisitorsActivityDatasCommand extends Command
             $userActivityByDate[] = [
                 'date' => $date,
                 'userCount' => $activeUsers,
-                'bounceRate' => round($bounceRate * 100,2),
+                'bounceRate' => round($bounceRate * 100, 2),
                 'screenPageViews' => $screenPageViews,
             ];
         }

@@ -9,22 +9,18 @@ use Integrated\Common\Content\Channel\ChannelInterface;
 use Solarium\Client as solariumClient;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use DateTimeImmutable;
-
 
 class AssignedToYouWidget implements WidgetInterface
 {
-
     private readonly string $id;
     private readonly string $name;
     private readonly string $view;
 
     public function __construct(
-        private readonly DocumentManager            $manager,
-        private readonly solariumClient             $solariumClient,
-        private readonly UrlGeneratorInterface      $urlGenerator,
-    )
-    {
+        private readonly DocumentManager $manager,
+        private readonly solariumClient $solariumClient,
+        private readonly UrlGeneratorInterface $urlGenerator,
+    ) {
         $this->id = 'assigned_to_you';
         $this->name = 'Assigned To You';
         $this->view = '@IntegratedDashboard/assigned_to_you.html.twig';
@@ -48,20 +44,21 @@ class AssignedToYouWidget implements WidgetInterface
     public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
         $assignedToYou = $this->getAssignedElement($user, $channel);
-        usort($assignedToYou, array($this, 'compareLastChanges'));
+        usort($assignedToYou, [$this, 'compareLastChanges']);
+
         return [
-            "widget" => $this,
+            'widget' => $this,
             'assignedToYou' => $assignedToYou,
             'channel' => $channel,
         ];
     }
 
-    function getAssignedElement(User $user, ChannelInterface $channel): ?array
+    public function getAssignedElement(User $user, ChannelInterface $channel): ?array
     {
         $query = $this->solariumClient->createSelect();
         $userId = $user->getId();
         $query->createFilterQuery('workflow_assigned_id')
-              ->setQuery('facet_workflow_assigned_id:' . $userId . '');
+              ->setQuery('facet_workflow_assigned_id:'.$userId.'');
         $query->createFilterQuery('pub_not_active')
               ->setQuery('-pub_active:true');
 
@@ -70,8 +67,8 @@ class AssignedToYouWidget implements WidgetInterface
         $assignedElement = [];
 
         foreach ($assignedContent as $solarArticle) {
-            $workflow_deadline = DateTimeImmutable::createFromFormat('d-m-Y', $solarArticle->workflow_deadline);
-            if (!$workflow_deadline instanceof DateTimeImmutable) {
+            $workflow_deadline = \DateTimeImmutable::createFromFormat('d-m-Y', $solarArticle->workflow_deadline);
+            if (!$workflow_deadline instanceof \DateTimeImmutable) {
                 $workflow_deadline = null;
             }
 
@@ -80,7 +77,7 @@ class AssignedToYouWidget implements WidgetInterface
                     ['id' => $solarArticle->type_id]
                 );
 
-            if (!in_array($channel, $article->getChannels())) {
+            if (!\in_array($channel, $article->getChannels())) {
                 continue;
             }
 
@@ -95,14 +92,15 @@ class AssignedToYouWidget implements WidgetInterface
                 'workflow_icon_string' => $solarArticle->workflow_icon_string ?? null,
             ];
         }
+
         return $assignedElement ?? null;
     }
-
 
     /**
      * @throws \Exception
      */
-    function compareLastChanges($a, $b) {
+    public function compareLastChanges($a, $b)
+    {
         $dateA = $a['last_changes'];
         $dateB = $b['last_changes'];
 

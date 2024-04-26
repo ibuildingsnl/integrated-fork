@@ -11,27 +11,19 @@
 
 namespace Integrated\Bundle\DashboardBundle\Controller;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\MongoDBException;
 use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
-use Integrated\Bundle\BrandBundle\Document\ChannelLink;
-use Integrated\Bundle\BrandBundle\Form\Type\BrandChoiceType;
-use Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
 use Integrated\Bundle\DashboardBundle\Document\WidgetConfig;
 use Integrated\Bundle\DashboardBundle\Widgets\WidgetInterface;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
-use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Security\Resolver\PermissionResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Integrated\Common\Content\Channel\ChannelInterface;
-use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
-use function Deployer\writeln;
-
 
 class DashboardController extends AbstractController
 {
@@ -39,12 +31,11 @@ class DashboardController extends AbstractController
 
     public function __construct(
         private readonly ChannelContextInterface $channelContext,
-        private readonly DocumentManager         $manager,
-        private readonly ChannelRepository       $channelRepository,
-        private readonly BrandRepository         $brandRepository,
-        private readonly iterable                $allWidgets,
-    )
-    {
+        private readonly DocumentManager $manager,
+        private readonly ChannelRepository $channelRepository,
+        private readonly BrandRepository $brandRepository,
+        private readonly iterable $allWidgets,
+    ) {
         /** @var WidgetInterface $widget */
         foreach ($this->allWidgets as $widget) {
             $this->widgets[$widget->getName()] = $widget;
@@ -92,6 +83,7 @@ class DashboardController extends AbstractController
                 'channelId' => $channelId,
             ];
         }
+
         return $allBrands;
     }
 
@@ -104,6 +96,7 @@ class DashboardController extends AbstractController
                 }
             }
         }
+
         return null;
     }
 
@@ -118,10 +111,12 @@ class DashboardController extends AbstractController
                 $allowedBrands[] = $this->getBrandForChannel($channel);
             }
         }
+
         return $allowedBrands;
     }
 
-    private function renderWidgets(ChannelInterface $channel, $user, Request $request): array    {
+    private function renderWidgets(ChannelInterface $channel, $user, Request $request): array
+    {
         $widgetAllData = [];
 
         $widgetConfigs = $this->manager->getRepository(WidgetConfig::class)
@@ -140,15 +135,16 @@ class DashboardController extends AbstractController
                 ];
             }
         }
+
         return $widgetAllData;
     }
 
     private function renderDashboardView(string $channelId, array $widgetAllData, array $allowedBrands): Response
     {
         return $this->render('@IntegratedDashboard/index.html.twig', [
-            "channelId" => $channelId,
-            "allBrands" => $allowedBrands,
-            "widgetAllData" => $widgetAllData,
+            'channelId' => $channelId,
+            'allBrands' => $allowedBrands,
+            'widgetAllData' => $widgetAllData,
         ]);
     }
 }

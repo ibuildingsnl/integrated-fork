@@ -2,9 +2,9 @@
 
 namespace Integrated\Bundle\AnalyticsBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Integrated\Bundle\AnalyticsBundle\Infrastructure\IntegratedAnalyticsExtension;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class IntegratedAnalyticsBundle extends Bundle
 {

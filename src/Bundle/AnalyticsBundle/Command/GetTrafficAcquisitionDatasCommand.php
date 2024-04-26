@@ -5,8 +5,6 @@ namespace Integrated\Bundle\AnalyticsBundle\Command;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\Persistence\ObjectRepository;
-use GuzzleHttp\Exception\GuzzleException;
-use Integrated\Bundle\AnalyticsBundle\Document\AnalyticsData;
 use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -15,23 +13,21 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 class GetTrafficAcquisitionDatasCommand extends Command
 {
     private OutputInterface $output;
-    private string $dataType = "traffic_acquisition";
+    private string $dataType = 'traffic_acquisition';
 
     /**
      * Constructor.
      */
     public function __construct(
-        private readonly string           $credential,
-        private readonly DocumentManager  $manager,
+        private readonly string $credential,
+        private readonly DocumentManager $manager,
         private readonly ObjectRepository $channelRepository,
-        private readonly BrandRepository  $brandRepository,
-        private readonly LoggerInterface  $logger,
-    )
-    {
+        private readonly BrandRepository $brandRepository,
+        private readonly LoggerInterface $logger,
+    ) {
         parent::__construct();
     }
 
@@ -47,6 +43,7 @@ class GetTrafficAcquisitionDatasCommand extends Command
 
     /**
      * {@inheritdoc}
+     *
      * @throws MongoDBException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -54,12 +51,12 @@ class GetTrafficAcquisitionDatasCommand extends Command
         $this->output = $output;
         $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger, $this->brandRepository, $this->channelRepository, $this->manager);
         $channels = $analyticsRequest->getChannels();
-        foreach ($channels as $channel)
-        {
+        foreach ($channels as $channel) {
             $this->output->writeln('- Getting '.$channel->getName().'\'s Trafic Acquisition  datas');
             $allDatas = $this->getData($channel, $analyticsRequest);
             $analyticsRequest->setDataToDB($channel, $this->dataType, $allDatas);
         }
+
         return 1;
     }
 
@@ -77,27 +74,26 @@ class GetTrafficAcquisitionDatasCommand extends Command
         $allDatas = [];
         foreach ($dateRanges as $key => $dateRange) {
             $requestBody = [
-                "dateRanges" => [
+                'dateRanges' => [
                     [
-                        "startDate" => $dateRange,
-                        "endDate" => "today"
-                    ]
-                ],
-                "dimensions" => [
-                    [
-                        "name" => "sessionDefaultChannelGroup"
+                        'startDate' => $dateRange,
+                        'endDate' => 'today',
                     ],
                 ],
-                "metrics" => [
+                'dimensions' => [
                     [
-                        "name" => "sessions"
-                    ]
+                        'name' => 'sessionDefaultChannelGroup',
+                    ],
                 ],
-
+                'metrics' => [
+                    [
+                        'name' => 'sessions',
+                    ],
+                ],
             ];
             $responseData = $analyticsRequest->getDataFromAnalytics($channel, $requestBody);
-            if ($responseData == null){
-                $message = "Get Most Read Error: No datas found for" . $channel->getName() . "in date range: $dateRange \n";
+            if ($responseData == null) {
+                $message = 'Get Most Read Error: No datas found for'.$channel->getName()."in date range: $dateRange \n";
                 $this->logger->error($message);
                 $this->output->writeln($message);
                 continue;
@@ -105,7 +101,7 @@ class GetTrafficAcquisitionDatasCommand extends Command
             $trafficAcquisition = [];
             foreach ($responseData['rows'] as $row) {
                 $source = $row['dimensionValues'][0]['value'];
-                $sessions = (int)$row['metricValues'][0]['value'];
+                $sessions = (int) $row['metricValues'][0]['value'];
                 $trafficAcquisition[] = [
                     'source' => $source,
                     'sessions' => $sessions,
@@ -113,6 +109,7 @@ class GetTrafficAcquisitionDatasCommand extends Command
             }
             $allDatas[$key] = $trafficAcquisition;
         }
+
         return $allDatas;
     }
 }

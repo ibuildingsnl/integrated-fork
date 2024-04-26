@@ -12,19 +12,16 @@ use Integrated\Bundle\AnalyticsBundle\Document\AnalyticsData;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Psr\Log\LoggerInterface;
-use DateTimeImmutable;
 
 class AnalyticsRequest
 {
-
     public function __construct(
-        private readonly string           $credential,
-        private readonly LoggerInterface  $logger,
-        private readonly BrandRepository  $brandRepository,
+        private readonly string $credential,
+        private readonly LoggerInterface $logger,
+        private readonly BrandRepository $brandRepository,
         private readonly ObjectRepository $channelRepository,
-        private readonly DocumentManager  $manager,
-    )
-    {
+        private readonly DocumentManager $manager,
+    ) {
     }
 
     private string $response;
@@ -60,7 +57,7 @@ class AnalyticsRequest
 
             $response = $guzzleClient->request('POST', $apiUrl, [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Authorization' => 'Bearer '.$accessToken,
                     'Accept' => 'application/json',
                     'Content-Type' => 'application/json',
                 ],
@@ -68,9 +65,9 @@ class AnalyticsRequest
             ]);
             $responseBody = $response->getBody()->getContents();
         } catch (GuzzleException $e) {
-            $this->logger->error('Get Analytics Error: ' . $e->getMessage() . '\n');
+            $this->logger->error('Get Analytics Error: '.$e->getMessage().'\n');
         }
-        $this->response = $responseBody ?? "";
+        $this->response = $responseBody ?? '';
     }
 
     /**
@@ -79,15 +76,16 @@ class AnalyticsRequest
     public function getDataFromAnalytics(ChannelInterface $channel, array $requestBody): ?array
     {
         $propertyID = $this->getPropertyID($channel) ?? null;
-        if ($propertyID != null)
-        {
+        if ($propertyID != null) {
             $this->googleAnalyticsPostRequest($requestBody, $propertyID);
             $responseData = $this->getResponse();
             if ($responseData != null && isset($responseData['rows'])) {
                 return $responseData;
             }
+
             return null;
         }
+
         return null;
     }
 
@@ -99,6 +97,7 @@ class AnalyticsRequest
                 $channels[] = $channel;
             }
         }
+
         return $channels;
     }
 
@@ -110,15 +109,18 @@ class AnalyticsRequest
             }
         }
         if (!isset($propertyId) || $propertyId == null) {
-            $this->logger->error($channel->getName() . ' Error: no property ID found');
+            $this->logger->error($channel->getName().' Error: no property ID found');
+
             return null;
         }
+
         return $propertyId;
     }
 
-    function extractGoogleAnalyticsID($input): ?string
+    public function extractGoogleAnalyticsID($input): ?string
     {
         preg_match('/\d+/', $input, $matches);
+
         return $matches[0] ?? null;
     }
 
@@ -127,7 +129,7 @@ class AnalyticsRequest
      */
     public function setDataToDB(ChannelInterface $channel, $dataType, $allDatas): void
     {
-        $analyticsData = new AnalyticsData($channel->getId(), $dataType, $allDatas, new DateTimeImmutable());
+        $analyticsData = new AnalyticsData($channel->getId(), $dataType, $allDatas, new \DateTimeImmutable());
         $this->manager->persist($analyticsData);
         $this->manager->flush();
     }

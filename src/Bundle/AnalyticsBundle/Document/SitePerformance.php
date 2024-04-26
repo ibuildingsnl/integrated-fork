@@ -2,8 +2,6 @@
 
 namespace Integrated\Bundle\AnalyticsBundle\Document;
 
-use DateTimeImmutable;
-
 class SitePerformance
 {
     private readonly string $id;
@@ -21,7 +19,7 @@ class SitePerformance
     private float $mobileServerResponseTime;
     private float $mobileTotalBlockingTime;
 
-    private DateTimeImmutable $dateTime;
+    private \DateTimeImmutable $dateTime;
 
     public function __construct(
         string $channelID,
@@ -37,7 +35,7 @@ class SitePerformance
         float $mobileTimeToInteractive,
         float $mobileServerResponseTime,
         float $mobileTotalBlockingTime,
-        DateTimeImmutable $dateTime
+        \DateTimeImmutable $dateTime
     ) {
         $this->channelID = $channelID;
         $this->desktopSpeedIndex = $desktopSpeedIndex;
@@ -110,9 +108,8 @@ class SitePerformance
         return $this->mobileTotalBlockingTime;
     }
 
-    public function getDateTime(): DateTimeImmutable
+    public function getDateTime(): \DateTimeImmutable
     {
         return $this->dateTime;
     }
 }
-

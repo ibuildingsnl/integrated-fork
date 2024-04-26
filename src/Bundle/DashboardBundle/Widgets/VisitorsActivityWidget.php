@@ -3,17 +3,11 @@
 namespace Integrated\Bundle\DashboardBundle\Widgets;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\Persistence\ObjectRepository;
 use GuzzleHttp\Exception\GuzzleException;
 use Integrated\Bundle\AnalyticsBundle\Document\AnalyticsData;
-use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
-use Integrated\Bundle\BrandBundle\Document\BrandRepository;
-use Integrated\Bundle\DashboardBundle\Widgets\WidgetInterface;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Content\Channel\ChannelInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use DateTimeImmutable;
 
 class VisitorsActivityWidget implements WidgetInterface
 {
@@ -22,8 +16,8 @@ class VisitorsActivityWidget implements WidgetInterface
     private readonly string $view;
 
     public function __construct(
-        private readonly DocumentManager  $manager,
-    ){
+        private readonly DocumentManager $manager,
+    ) {
         $this->id = 'visitors_activity';
         $this->name = 'Visitors activity';
         $this->view = '@IntegratedDashboard/visitors_activity.html.twig';
@@ -51,14 +45,14 @@ class VisitorsActivityWidget implements WidgetInterface
     {
         $deviceType = $this->manager->getRepository(AnalyticsData::class)
             ->findOneBy(
-                ['channelID' => $channel->getId(), 'dataType' => $this->id ],
+                ['channelID' => $channel->getId(), 'dataType' => $this->id],
                 ['dateTime' => 'DESC']
             );
         $allDatas = $deviceType->getDatas();
 
         return [
-            "widget" => $this,
-            "userActivityByDate" => $allDatas['visitorsActivity'] ?? [],
+            'widget' => $this,
+            'userActivityByDate' => $allDatas['visitorsActivity'] ?? [],
         ];
     }
 }

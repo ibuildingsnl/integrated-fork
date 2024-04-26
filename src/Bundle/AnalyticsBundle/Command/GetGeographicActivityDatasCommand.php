@@ -5,7 +5,6 @@ namespace Integrated\Bundle\AnalyticsBundle\Command;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\Persistence\ObjectRepository;
-use GuzzleHttp\Exception\GuzzleException;
 use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -13,24 +12,22 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use DateTimeImmutable;
-use Integrated\Bundle\AnalyticsBundle\Document\AnalyticsData;
 
 class GetGeographicActivityDatasCommand extends Command
 {
     private OutputInterface $output;
-    private string $dataType = "geographic_activity";
+    private string $dataType = 'geographic_activity';
+
     /**
      * Constructor.
      */
     public function __construct(
-        private readonly string           $credential,
-        private readonly DocumentManager  $manager,
+        private readonly string $credential,
+        private readonly DocumentManager $manager,
         private readonly ObjectRepository $channelRepository,
-        private readonly BrandRepository  $brandRepository,
-        private readonly LoggerInterface  $logger,
-    )
-    {
+        private readonly BrandRepository $brandRepository,
+        private readonly LoggerInterface $logger,
+    ) {
         parent::__construct();
     }
 
@@ -46,6 +43,7 @@ class GetGeographicActivityDatasCommand extends Command
 
     /**
      * {@inheritdoc}
+     *
      * @throws MongoDBException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -54,14 +52,15 @@ class GetGeographicActivityDatasCommand extends Command
         $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger, $this->brandRepository, $this->channelRepository, $this->manager);
         $channels = $analyticsRequest->getChannels();
 
-        foreach ($channels as $channel)
-        {
+        foreach ($channels as $channel) {
             $this->output->writeln('- Getting '.$channel->getName().'\'s Geographic activity  datas');
             $allDatas = $this->getData($channel, $analyticsRequest);
             $analyticsRequest->setDataToDB($channel, $this->dataType, $allDatas);
         }
+
         return 1;
     }
+
     public function getData(ChannelInterface $channel, $analyticsRequest): array
     {
         $analyticsRequest->getPropertyID($channel);
@@ -74,47 +73,46 @@ class GetGeographicActivityDatasCommand extends Command
             'yearlyGeographicActivity' => '365daysAgo',
         ];
 
-
         $allDatas = [];
         foreach ($dateRanges as $key => $dateRange) {
             $requestBody = [
-                "dateRanges" => [
+                'dateRanges' => [
                     [
-                        "startDate" => "$dateRange",
-                        "endDate" => "today"
-                    ]
-                ],
-                "dimensions" => [
-                    [
-                        "name" => "country"
-                    ],
-                    [
-                        "name" => "city"
+                        'startDate' => "$dateRange",
+                        'endDate' => 'today',
                     ],
                 ],
-                "metrics" => [
+                'dimensions' => [
                     [
-                        "name" => "bounceRate"
+                        'name' => 'country',
                     ],
                     [
-                        "name" => "totalUsers"
-                    ]
+                        'name' => 'city',
+                    ],
                 ],
-                "orderBys" => [
+                'metrics' => [
                     [
-                        "metric" => [
-                            "metricName" => "totalUsers"
+                        'name' => 'bounceRate',
+                    ],
+                    [
+                        'name' => 'totalUsers',
+                    ],
+                ],
+                'orderBys' => [
+                    [
+                        'metric' => [
+                            'metricName' => 'totalUsers',
                         ],
-                        "desc" => true
-                    ]
+                        'desc' => true,
+                    ],
                 ],
-                "metricAggregations" => [
-                    "TOTAL"
-                ]
+                'metricAggregations' => [
+                    'TOTAL',
+                ],
             ];
             $responseData = $analyticsRequest->getDataFromAnalytics($channel, $requestBody);
-            if ($responseData == null){
-                $message = "Get Geographic Activity Error: No datas found for" . $channel->getName() . "in date range: $dateRange \n";
+            if ($responseData == null) {
+                $message = 'Get Geographic Activity Error: No datas found for'.$channel->getName()."in date range: $dateRange \n";
                 $this->logger->error($message);
                 $this->output->writeln($message);
                 continue;
@@ -130,16 +128,18 @@ class GetGeographicActivityDatasCommand extends Command
             }
             $allDatas[$key] = $geographicAndTotal;
         }
+
         return $allDatas;
     }
+
     private function getGeographicActivity(array $responseData): array
     {
         $GeographicActivity = [];
         foreach ($responseData['rows'] as $row) {
             $country = $row['dimensionValues'][0]['value'];
             $city = $row['dimensionValues'][1]['value'];
-            $bounceRate = (int)$row['metricValues'][0]['value'];
-            $totalUser = (int)$row['metricValues'][1]['value'];
+            $bounceRate = (int) $row['metricValues'][0]['value'];
+            $totalUser = (int) $row['metricValues'][1]['value'];
             $GeographicActivity[] = [
                 'country' => $country,
                 'city' => $city,
@@ -147,17 +147,17 @@ class GetGeographicActivityDatasCommand extends Command
                 'totalUser' => $totalUser,
             ];
         }
+
         return $GeographicActivity;
     }
 
     private function getSiteTotals(array $responseData): array
     {
         $totalsData = $responseData['totals'][0];
+
         return [
-            'bounceRate' => round(($totalsData['metricValues'][0]['value'] * 100), 2),
+            'bounceRate' => round($totalsData['metricValues'][0]['value'] * 100, 2),
             'totalUser' => $totalsData['metricValues'][1]['value'],
         ];
     }
-
-
 }

@@ -17,17 +17,19 @@ class WidgetConfig
     {
         return $this->id;
     }
+
     public function getWidgetId(): string
     {
         return $this->widgetId;
     }
+
     public function getWidgetName(): string
     {
         return $this->widgetName;
     }
+
     public function getOrder(): int
     {
         return $this->order;
     }
-
 }

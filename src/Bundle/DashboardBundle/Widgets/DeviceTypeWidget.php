@@ -4,25 +4,19 @@ namespace Integrated\Bundle\DashboardBundle\Widgets;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\AnalyticsBundle\Document\AnalyticsData;
-use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
-use Integrated\Bundle\BrandBundle\Document\BrandRepository;
-use Integrated\Bundle\DashboardBundle\Widgets\WidgetInterface;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Content\Channel\ChannelInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class DeviceTypeWidget implements WidgetInterface
 {
-
     private readonly string $id;
     private readonly string $name;
     private readonly string $view;
 
     public function __construct(
         private readonly DocumentManager $manager,
-    )
-    {
+    ) {
         $this->id = 'device_type';
         $this->name = 'Device type';
         $this->view = '@IntegratedDashboard/device_type.html.twig';
@@ -54,15 +48,16 @@ class DeviceTypeWidget implements WidgetInterface
 
         $maxElements = 10;
         foreach ($allDatas as &$dateRangeData) {
-            if (count($dateRangeData) > $maxElements) {
+            if (\count($dateRangeData) > $maxElements) {
                 $dateRangeData = $this->processOtherDeviceType($dateRangeData, $maxElements - 1);
             }
         }
 
         $deviceTypes = $this->capitalizeDeviceTypes($allDatas);
+
         return [
-            "widget" => $this,
-            "deviceType" => $deviceTypes ?? [],
+            'widget' => $this,
+            'deviceType' => $deviceTypes ?? [],
         ];
     }
 
@@ -73,13 +68,14 @@ class DeviceTypeWidget implements WidgetInterface
                 $deviceType['device'] = ucfirst($deviceType['device']);
             }
         }
+
         return $deviceTypes;
     }
 
-    function processOtherDeviceType(array $dateRangeData, $maxElements): array
+    public function processOtherDeviceType(array $dateRangeData, $maxElements): array
     {
         $otherDevices = 0;
-        for ($i = $maxElements; $i < count($dateRangeData); $i++) {
+        for ($i = $maxElements; $i < \count($dateRangeData); ++$i) {
             $otherDevices += $dateRangeData[$i]['amount'];
         }
 
@@ -87,9 +83,9 @@ class DeviceTypeWidget implements WidgetInterface
 
         $dateRangeData[] = [
             'device' => 'Other',
-            'amount' => $otherDevices
+            'amount' => $otherDevices,
         ];
-        //dd($dateRangeData);
+        // dd($dateRangeData);
 
         return $dateRangeData;
     }

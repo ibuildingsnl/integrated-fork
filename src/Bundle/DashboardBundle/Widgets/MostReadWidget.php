@@ -5,15 +5,10 @@ namespace Integrated\Bundle\DashboardBundle\Widgets;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use GuzzleHttp\Exception\GuzzleException;
 use Integrated\Bundle\AnalyticsBundle\Document\AnalyticsData;
-use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
-use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Content\Channel\ChannelInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 
 class MostReadWidget implements WidgetInterface
 {
@@ -23,9 +18,8 @@ class MostReadWidget implements WidgetInterface
 
     public function __construct(
         private readonly DocumentManager $manager,
-        private readonly int             $limit,
-    )
-    {
+        private readonly int $limit,
+    ) {
         $this->id = 'most_read';
         $this->name = 'Most read';
         $this->view = '@IntegratedDashboard/most_read.html.twig';
@@ -49,21 +43,20 @@ class MostReadWidget implements WidgetInterface
     /**
      * @throws GuzzleException
      */
-
     public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
         $mostReadArticle = $this->manager->getRepository(AnalyticsData::class)
             ->findOneBy(
-                ['channelID' => $channel->getId(), 'dataType' => $this->id ],
+                ['channelID' => $channel->getId(), 'dataType' => $this->id],
                 ['dateTime' => 'DESC']
             );
         $allDatas = $mostReadArticle->getDatas();
         foreach ($allDatas as $key => $values) {
             $filteredValues = array_filter($values, function ($element) {
-                return $element["slug"] !== "";
+                return $element['slug'] !== '';
             });
 
-            $slicedValues = array_slice($filteredValues, 0, $this->limit);
+            $slicedValues = \array_slice($filteredValues, 0, $this->limit);
             $slicedDatas[$key] = array_values($slicedValues);
 
             foreach ($slicedDatas[$key] as &$element) { // Utilisation de "&" pour obtenir une référence à chaque élément
@@ -82,13 +75,10 @@ class MostReadWidget implements WidgetInterface
             }
             unset($element); // Dissocier la référence de la dernière itération
         }
-        //dd($slicedDatas);
+        // dd($slicedDatas);
         return [
-            "widget" => $this,
-            "mostReadArticles" => $slicedDatas,
+            'widget' => $this,
+            'mostReadArticles' => $slicedDatas,
         ];
     }
-
 }
-
-

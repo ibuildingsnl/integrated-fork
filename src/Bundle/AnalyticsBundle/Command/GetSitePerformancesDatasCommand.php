@@ -2,34 +2,32 @@
 
 namespace Integrated\Bundle\AnalyticsBundle\Command;
 
-
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\Persistence\ObjectRepository;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Integrated\Bundle\AnalyticsBundle\Document\SitePerformance;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use GuzzleHttp\Exception\GuzzleException;
-
 
 class GetSitePerformancesDatasCommand extends Command
 {
     private OutputInterface $output;
+
     /**
      * Constructor.
      */
     public function __construct(
-        private readonly string           $credential,
-        private readonly DocumentManager  $manager,
+        private readonly string $credential,
+        private readonly DocumentManager $manager,
         private readonly ObjectRepository $channelRepository,
-        private readonly Client           $client,
+        private readonly Client $client,
         private readonly LoggerInterface $logger,
-    )
-    {
+    ) {
         parent::__construct();
     }
 
@@ -45,6 +43,7 @@ class GetSitePerformancesDatasCommand extends Command
 
     /**
      * {@inheritdoc}
+     *
      * @throws MongoDBException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -54,7 +53,9 @@ class GetSitePerformancesDatasCommand extends Command
 
         foreach ($websites as $website) {
             $url = $website['domain'];
-            if (!$this->isValidUrl($url)) continue;
+            if (!$this->isValidUrl($url)) {
+                continue;
+            }
             $encodedUrl = urlencode($url);
 
             try {
@@ -63,9 +64,10 @@ class GetSitePerformancesDatasCommand extends Command
                 $this->saveSitePerformance();
             } catch (\InvalidArgumentException $e) {
                 $dateTime = new \DateTimeImmutable();
-                $this->logger->error('Get Site Performance Error: ' . $e->getMessage(). '\n' . $dateTime);
+                $this->logger->error('Get Site Performance Error: '.$e->getMessage().'\n'.$dateTime);
             }
         }
+
         return 0;
     }
 
@@ -81,31 +83,30 @@ class GetSitePerformancesDatasCommand extends Command
             $websites[] = [
                 'id' => $channel->getId(),
                 'domain' => $this->getCleanUrl($domain),
-                'name' => $channel->getName() ?? "",
+                'name' => $channel->getName() ?? '',
             ];
         }
+
         return $websites;
     }
 
-    function getCleanUrl($url): string
+    public function getCleanUrl($url): string
     {
-    $parsedUrl = parse_url($url);
+        $parsedUrl = parse_url($url);
 
-    $host = $parsedUrl['host'] ?? '';
-    $path = $parsedUrl['path'] ?? '';
-    $query = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '';
-    $fragment = isset($parsedUrl['fragment']) ? '#' . $parsedUrl['fragment'] : '';
+        $host = $parsedUrl['host'] ?? '';
+        $path = $parsedUrl['path'] ?? '';
+        $query = isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '';
+        $fragment = isset($parsedUrl['fragment']) ? '#'.$parsedUrl['fragment'] : '';
 
-    $host = str_replace('www.', '', $host);
+        $host = str_replace('www.', '', $host);
 
-    return 'https://'.$host . $path . $query . $fragment;
+        return 'https://'.$host.$path.$query.$fragment;
     }
-
-
 
     public function isValidUrl(string $url): bool
     {
-        return !((filter_var($url, FILTER_VALIDATE_URL) === false) || (str_contains($url, 'localhost')));
+        return !((filter_var($url, \FILTER_VALIDATE_URL) === false) || str_contains($url, 'localhost'));
     }
 
     public function getSitePerformance(string $url, string $channelId): void
@@ -117,17 +118,17 @@ class GetSitePerformancesDatasCommand extends Command
 
         $sitePerformance = new SitePerformance(
             $channelId,
-            (float)$desktopData['siteScore'],
-            (float)$desktopData['speedIndex'],
-            (float)$desktopData['timeToInteractive'],
-            (float)$desktopData['serverResponseTime'],
-            (float)$desktopData['totalBlockingTime'],
+            (float) $desktopData['siteScore'],
+            (float) $desktopData['speedIndex'],
+            (float) $desktopData['timeToInteractive'],
+            (float) $desktopData['serverResponseTime'],
+            (float) $desktopData['totalBlockingTime'],
 
-            (float)$mobileData['siteScore'],
-            (float)$mobileData['speedIndex'],
-            (float)$mobileData['timeToInteractive'],
-            (float)$mobileData['serverResponseTime'],
-            (float)$mobileData['totalBlockingTime'],
+            (float) $mobileData['siteScore'],
+            (float) $mobileData['speedIndex'],
+            (float) $mobileData['timeToInteractive'],
+            (float) $mobileData['serverResponseTime'],
+            (float) $mobileData['totalBlockingTime'],
             $dateTime
         );
         $this->manager->persist($sitePerformance);
@@ -136,7 +137,6 @@ class GetSitePerformancesDatasCommand extends Command
     private function getPerformanceData(string $url, string $strategy): ?array
     {
         $performanceData = null;
-
 
         try {
             $request = "https://pagespeedonline.googleapis.com/pagespeedonline/v5/runPagespeed?url=$url&category=PERFORMANCE&strategy=$strategy&key=$this->credential";
@@ -162,26 +162,25 @@ class GetSitePerformancesDatasCommand extends Command
                     $siteData['totalBlockingTime'] !== null
                 ) {
                     $performanceData = [
-                        "siteScore" => $siteData['siteScore'],
-                        "speedIndex" => $siteData['speedIndex'],
-                        "timeToInteractive" => $siteData['timeToInteractive'],
-                        "serverResponseTime" => $siteData['serverResponseTime'],
-                        "totalBlockingTime" => $siteData['totalBlockingTime'],
+                        'siteScore' => $siteData['siteScore'],
+                        'speedIndex' => $siteData['speedIndex'],
+                        'timeToInteractive' => $siteData['timeToInteractive'],
+                        'serverResponseTime' => $siteData['serverResponseTime'],
+                        'totalBlockingTime' => $siteData['totalBlockingTime'],
                     ];
                 }
             } else {
                 $dateTime = new \DateTimeImmutable();
-                $errorMessage = 'Status Code:' . $response->getStatusCode() . '|' . $response->getHeaderLine() . '\n' . $response->getBody() . '\n' . $dateTime;
-                $this->logger->error('Get Site Performance Error: ' . $errorMessage);
+                $errorMessage = 'Status Code:'.$response->getStatusCode().'|'.$response->getHeaderLine().'\n'.$response->getBody().'\n'.$dateTime;
+                $this->logger->error('Get Site Performance Error: '.$errorMessage);
             }
         } catch (GuzzleException $e) {
             $dateTime = new \DateTimeImmutable();
-            $this->logger->error('Get Site Performance Error: ' . $e->getMessage() . '\n' . $dateTime);
+            $this->logger->error('Get Site Performance Error: '.$e->getMessage().'\n'.$dateTime);
         }
 
         return $performanceData;
     }
-
 
     /**
      * @throws MongoDBException

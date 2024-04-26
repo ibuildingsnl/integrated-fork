@@ -1,37 +1,33 @@
 <?php
 
 namespace Integrated\Bundle\AnalyticsBundle\Command;
+
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\Persistence\ObjectRepository;
-use GuzzleHttp\Exception\GuzzleException;
-use Integrated\Bundle\AnalyticsBundle\Document\AnalyticsData;
 use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Command\Command;
-use DateTimeImmutable;
-
-
 
 class GetDeviceTypeDatasCommand extends Command
 {
     private OutputInterface $output;
-    private string $dataType = "device_type";
+    private string $dataType = 'device_type';
+
     /**
      * Constructor.
      */
     public function __construct(
-        private readonly string           $credential,
-        private readonly DocumentManager  $manager,
+        private readonly string $credential,
+        private readonly DocumentManager $manager,
         private readonly ObjectRepository $channelRepository,
-        private readonly BrandRepository  $brandRepository,
-        private readonly LoggerInterface  $logger,
-    )
-    {
+        private readonly BrandRepository $brandRepository,
+        private readonly LoggerInterface $logger,
+    ) {
         parent::__construct();
     }
 
@@ -47,6 +43,7 @@ class GetDeviceTypeDatasCommand extends Command
 
     /**
      * {@inheritdoc}
+     *
      * @throws MongoDBException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -55,12 +52,12 @@ class GetDeviceTypeDatasCommand extends Command
         $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger, $this->brandRepository, $this->channelRepository, $this->manager);
         $channels = $analyticsRequest->getChannels();
 
-        foreach ($channels as $channel)
-        {
+        foreach ($channels as $channel) {
             $this->output->writeln('- Getting '.$channel->getName().'\'s Device Type  datas');
             $allDatas = $this->getData($channel, $analyticsRequest);
             $analyticsRequest->setDataToDB($channel, $this->dataType, $allDatas);
         }
+
         return 1;
     }
 
@@ -77,27 +74,27 @@ class GetDeviceTypeDatasCommand extends Command
         $allDatas = [];
         foreach ($dateRanges as $key => $dateRange) {
             $requestBody = [
-                "dateRanges" => [
+                'dateRanges' => [
                     [
-                        "startDate" => $dateRange,
-                        "endDate" => "today"
-                    ]
-                ],
-                "dimensions" => [
-                    [
-                        "name" => "deviceCategory"
+                        'startDate' => $dateRange,
+                        'endDate' => 'today',
                     ],
                 ],
-                "metrics" => [
+                'dimensions' => [
                     [
-                        "name" => "screenPageViews"
-                    ]
+                        'name' => 'deviceCategory',
+                    ],
+                ],
+                'metrics' => [
+                    [
+                        'name' => 'screenPageViews',
+                    ],
                 ],
             ];
 
             $responseData = $analyticsRequest->getDataFromAnalytics($channel, $requestBody);
-            if ($responseData == null){
-                $message = "Get Device Type Error: No datas found for" . $channel->getName() . "in date range: $dateRange \n";
+            if ($responseData == null) {
+                $message = 'Get Device Type Error: No datas found for'.$channel->getName()."in date range: $dateRange \n";
                 $this->logger->error($message);
                 $this->output->writeln($message);
                 continue;
@@ -105,7 +102,7 @@ class GetDeviceTypeDatasCommand extends Command
             $deviceType = [];
             foreach ($responseData['rows'] as $row) {
                 $deviceCategory = $row['dimensionValues'][0]['value'];
-                $screenPageViews = (int)$row['metricValues'][0]['value'];
+                $screenPageViews = (int) $row['metricValues'][0]['value'];
                 $deviceType[] = [
                     'device' => $deviceCategory,
                     'amount' => $screenPageViews,
@@ -113,6 +110,7 @@ class GetDeviceTypeDatasCommand extends Command
             }
             $allDatas[$key] = $deviceType;
         }
+
         return $allDatas;
     }
 }

@@ -8,7 +8,6 @@ use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-
 class LatestArticleWidget implements WidgetInterface
 {
     private readonly string $id;
@@ -23,6 +22,7 @@ class LatestArticleWidget implements WidgetInterface
         $this->name = 'Latest articles';
         $this->view = '@IntegratedDashboard/latest_articles.html.twig';
     }
+
     public function getId(): string
     {
         return $this->id;
@@ -51,10 +51,10 @@ class LatestArticleWidget implements WidgetInterface
         $mostRecentArticles = $queryBuilder->getQuery()->execute();
 
         $result = [
-            "widget" => $this,
+            'widget' => $this,
             'mostRecentArticles' => $mostRecentArticles,
         ];
+
         return $result;
     }
-
 }
