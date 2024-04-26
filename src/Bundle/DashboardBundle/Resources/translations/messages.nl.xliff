@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="file.ext">
+        <body>
+            <trans-unit id="1">
+                <source>Latest Articles</source>
+                <target>Laatste artikelen</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>Visitors activity</source>
+                <target>Bezoekers</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>Device type</source>
+                <target>Type apparaat</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>Traffic acquisition</source>
+                <target>Bron van bezoekers</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>Geographic Activity</source>
+                <target>Geografische activiteit</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>Assigned to you</source>
+                <target>Aan jou toegewezen</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>Most read content</source>
+                <target>Meest gelezen content</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>Site performance</source>
+                <target>Site snelheid</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>Mobile</source>
+                <target>Mobiel</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>You have nothing assigned to you</source>
+                <target>Er is geen content aan jou toegewezen</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>Visitors</source>
+                <target>Bezoekers</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>Bounce Ratio</source>
+                <target>Bouncepercentage</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>Page Views</source>
+                <target>Pagina weergaven</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>Loading speed</source>
+                <target>Laadsnelheid</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>Time to Interactive</source>
+                <target>Tijd tot interactief</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>Total Blocking Time</source>
+                <target>Totaal blokkerende tijd</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>This week</source>
+                <target>Deze week</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>This month</source>
+                <target>Deze maand</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>This quarter</source>
+                <target>Dit kwartaal</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>This semester</source>
+                <target>Dit half jaar</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>This year</source>
+                <target>Dit jaar</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>Top countries:</source>
+                <target>Landen met meeste bezoekers:</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

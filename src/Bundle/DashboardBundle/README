@@ -26,6 +26,8 @@ How to Create a Widget:
 
 How to setup:
 .ENV:
-GOOGLE_APPLICATION_CREDENTIALS="/var/www/html/GoogleCredential.json"
+GOOGLE_APPLICATION_CREDENTIALS=%kernel.project_dir%/config/GoogleCredential.json
 
 You need to create a service account within the Google API Services, and you need to give this account access to the Analytics accounts you want to be able to get data from.
+Needs : Google Analytics Admin API / Google Analytics Data API / Google Analytics API
+You also need to add the property ID to the Brand

@@ -5,6 +5,8 @@ namespace Integrated\Bundle\AnalyticsBundle\Infrastructure;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\Persistence\ObjectRepository;
+use Google\Analytics\Admin\V1beta\Client\AnalyticsAdminServiceClient;
+use Google\Analytics\Admin\V1beta\Gapic\AnalyticsAdminServiceGapicClient;
 use Google\Client as GoogleApiClient;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\GuzzleException;
@@ -49,8 +51,7 @@ class AnalyticsRequest
     public function googleAnalyticsPostRequest(array $requestBody, string $propertyId): void
     {
         try {
-            $googleCredentialPath = $this->credential;
-            $accessToken = $this->getAccessToken($googleCredentialPath);
+            $accessToken = $this->getAccessToken($this->credential);
 
             $apiUrl = "https://analyticsdata.googleapis.com/v1beta/properties/$propertyId:runReport";
             $guzzleClient = new GuzzleClient();
@@ -73,7 +74,7 @@ class AnalyticsRequest
     /**
      * @throws GuzzleException
      */
-    public function getDataFromAnalytics(ChannelInterface $channel, array $requestBody): ?array
+    public function getDataFromAnalytics(ChannelInterface $channel, array $requestBody,): ?array
     {
         $propertyID = $this->getPropertyID($channel) ?? null;
         if ($propertyID != null) {
@@ -105,7 +106,7 @@ class AnalyticsRequest
     {
         foreach ($this->brandRepository->all() as $brand) {
             if ($brand->hasChannel($channel)) {
-                $propertyId = $this->extractGoogleAnalyticsID($brand->profile->analytics);
+                $propertyId = $brand->profile->analyticsPropertyId;
             }
         }
         if (!isset($propertyId) || $propertyId == null) {
@@ -115,13 +116,6 @@ class AnalyticsRequest
         }
 
         return $propertyId;
-    }
-
-    public function extractGoogleAnalyticsID($input): ?string
-    {
-        preg_match('/\d+/', $input, $matches);
-
-        return $matches[0] ?? null;
     }
 
     /**

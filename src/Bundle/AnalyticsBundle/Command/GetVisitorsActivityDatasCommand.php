@@ -101,7 +101,7 @@ class GetVisitorsActivityDatasCommand extends Command
 
         $responseData = $analyticsRequest->getDataFromAnalytics($channel, $requestBody);
         if ($responseData == null) {
-            $message = 'Get Visitors Activity Error: No datas found for'.$channel->getName()."\n";
+            $message = 'Get Visitors Activity Error: No data found for '.$channel->getName()."\n";
             $this->logger->error($message);
             $this->output->writeln($message);
 
