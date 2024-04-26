@@ -11,7 +11,7 @@ class SitePerformance
     private float $desktopTimeToInteractive;
     private float $desktopServerResponseTime;
     private float $desktopTotalBlockingTime;
-    
+
     private float $mobileSpeedIndex;
     private float $mobileSiteScore;
     private float $mobileTimeToInteractive;
