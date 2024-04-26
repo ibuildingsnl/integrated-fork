@@ -24,7 +24,7 @@
                 </div>
                 <div class="w-1/3 px-2 user-count VA-graphic-button-change toggle-active" onclick="changeTypeOfGraph('screenPageViews', this)">
                     <div class="content">
-                        <h3>{% trans %}Page Views{% endtrans %}</h3>
+                        <h3>{% trans %}Page views{% endtrans %}</h3>
                         <div id="pageViews-count">18439</div>
                     </div>
                 </div>
@@ -135,7 +135,7 @@
                                 },
                                 scaleLabel: {
                                     display: true,
-                                    labelString: 'Date',
+                                    labelString: '{% trans %}Date{% endtrans %}',
                                 },
                             }],
                         y: [
@@ -148,13 +148,13 @@
                                 },
                                 scaleLabel: {
                                     display: true,
-                                    labelString: 'Visitors',
+                                    labelString: '{% trans %}Visitors{% endtrans %}',
                                 },
                             }],
                     },
                     title: {
                         display: true,
-                        text: 'Visitors Activity',
+                        text: '{% trans %}Visitors Activity{% endtrans %}',
                     },
                 },
             });
@@ -253,7 +253,7 @@
             if (typeOfGraph == "bounceRate") {
                 return {
                     data: dataCounts,
-                    label: 'Bounce Ratio',
+                    label: '{% trans %}Bounce Ratio{% endtrans %}',
                     borderColor: '#00ae93',
                     backgroundColor: 'rgba(0, 174, 147, 0.3)',
                     fill: true,
@@ -263,7 +263,7 @@
             } else if (typeOfGraph == "screenPageViews") {
                 return {
                     data: dataCounts,
-                    label: 'Page views',
+                    label: '{% trans %}Page views{% endtrans %}',
                     borderColor: '#00ae93',
                     backgroundColor: 'rgba(0, 174, 147, 0.3)',
                     fill: true,
@@ -273,7 +273,7 @@
             } else {
                 return {
                     data: dataCounts,
-                    label: 'Visitors',
+                    label: '{% trans %}Visitors{% endtrans %}',
                     borderColor: '#00ae93',
                     backgroundColor: 'rgba(0, 174, 147, 0.3)',
                     fill: true,
