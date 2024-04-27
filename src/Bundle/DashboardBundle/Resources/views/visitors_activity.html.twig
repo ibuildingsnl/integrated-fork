@@ -35,129 +35,117 @@
     <script>
         var typeOfGraph ="userCount"
         var visitorActivityChart;
+
+        const visitorCountElement = document.getElementById('visitor-count');
+        const pageViewCountElement = document.getElementById('pageViews-count');
+        const bouncerateCountElement = document.getElementById('bounceRate-count');
         const selectVisitorActivityDate = document.getElementById('select_date_range');
+
         selectVisitorActivityDate.addEventListener('change', function () {
             updateVisitorActivityChart(selectVisitorActivityDate.value);
         });
 
         function updateVisitorActivityChart(selectedValue) {
-
-            var allDatas = [
+            const allDatas = [
                 {% for row in userActivityByDate %}
                 formatDataCountData('{{ row.date }}', '{{ row.userCount }}', '{{ row.screenPageViews }}', '{{ row.bounceRate }}'),
                 {% endfor %}
             ];
 
-            updateTotalCount(allDatas, selectedValue)
-            if (typeOfGraph == "bounceRate") {
-                var userActivityByDateJS = allDatas.map(data => ({
-                    date: data.date,
-                    dataCount: data.bounceRate,
-                }));
-            } else if (typeOfGraph == "screenPageViews") {
-                var userActivityByDateJS = allDatas.map(data => ({
-                    date: data.date,
-                    dataCount: data.screenPageViews,
-                }));
-            } else {
-                var userActivityByDateJS = allDatas.map(data => ({
-                    date: data.date,
-                    dataCount: data.userCount,
-                }));
-            }
-            var ctx = document.getElementById('Visitor_Activity-line-chart');
-            var dates = [];
-            var dataCounts = [];
-            var dateformat;
+            updateTotalCount(allDatas, selectedValue);
+            const userActivityByDateJS = mapDataBasedOnGraphType(allDatas, typeOfGraph);
 
-            switch (selectedValue) {
+            const { dates, dataCounts, dateformat } = prepareChartData(userActivityByDateJS, selectedValue);
+
+            if (visitorActivityChart) {
+                visitorActivityChart.destroy();
+            }
+
+            visitorActivityChart = new Chart(document.getElementById('Visitor_Activity-line-chart'), configureChart(dates, dataCounts, dateformat));
+        }
+
+        function mapDataBasedOnGraphType(data, graphType) {
+            const typeMap = {
+                bounceRate: 'bounceRate',
+                screenPageViews: 'screenPageViews',
+                userCount: 'userCount'
+            };
+            return data.map(entry => ({
+                date: entry.date,
+                dataCount: entry[typeMap[graphType] || 'userCount']
+            }));
+        }
+
+        function prepareChartData(data, rangeType) {
+            let dateformat;
+            let processedData = [];
+
+            console.log(data);
+
+            switch (rangeType) {
                 case 'weekly':
                 case 'monthly':
+                    const range = rangeType === 'weekly' ? 7 : 30
                     dateformat = 'DD/MM/YYYY';
-                    var slicedData = userActivityByDateJS.slice(0, selectedValue === 'weekly' ? 7 : 30);
-                    slicedData.forEach(function (data) {
-                        dates.push(data.date);
-                        dataCounts.push(data.dataCount);
-                    });
-                    dates.reverse()
-                    dataCounts.reverse()
+                    processedData = data.slice(0, range).reverse();
                     break;
-
-                case 'quarterly' :
+                case 'quarterly':
                     dateformat = 'DD/MM/YYYY';
-                    var aggregatedData = aggregateDataByWeek(userActivityByDateJS, 13);
-                    aggregatedData.forEach(function (data) {
-                        dates.push(data.date);
-                        dataCounts.push(data.dataCount);
-                    });
+                    processedData = aggregateDataByWeek(data, 13);
                     break;
                 case 'semester':
                 case 'yearly':
                     dateformat = 'MM/YYYY';
-                    var numMonths = selectedValue === 'semester' ? 6 : 12;
-                    var aggregatedData = aggregateDataByMonth(userActivityByDateJS, numMonths);
-                    aggregatedData.forEach(function (data) {
-                        dates.push(data.date);
-                        dataCounts.push(data.dataCount);
-                    });
+                    const numMonths = rangeType === 'semester' ? 6 : 12;
+                    processedData = aggregateDataByMonth(data, numMonths);
                     break;
-
                 default:
-                    break;
+                    return { dates: [], dataCounts: [], dateformat: 'DD/MM/YYYY' };
             }
-            chartData = datasetByGraph(dataCounts)
-            if (visitorActivityChart) {visitorActivityChart.destroy();}
 
-            visitorActivityChart = new Chart(ctx, {
+            return {
+                dates: processedData.map(item => item.date),
+                dataCounts: processedData.map(item => item.dataCount),
+                dateformat
+            };
+        }
+
+        function configureChart(labels, data, dateFormat) {
+            return {
                 type: 'line',
                 data: {
-                    labels: dates,
-                    datasets: [chartData],
+                    labels,
+                    datasets: [datasetByGraph(data)],
                 },
-                options: {
-                    plugins: {
-                        customCanvasBackgroundColor: {
-                            color: 'white',
-                        },
-                    },
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    scales: {
-                        x: [
-                            {
-                                grid: {
-                                    display: false,
-                                },
-                                type: 'time',
-                                time: {
-                                    parser: dateformat,
-                                    tooltipFormat: dateformat,
-                                },
-                                scaleLabel: {
-                                    display: true,
-                                    labelString: '{% trans %}Date{% endtrans %}',
-                                },
-                            }],
-                        y: [
-                            {
-                                grid: {
-                                    display: false,
-                                },
-                                ticks: {
-                                    beginAtZero: false,
-                                },
-                                scaleLabel: {
-                                    display: true,
-                                    labelString: '{% trans %}Visitors{% endtrans %}',
-                                },
-                            }],
-                    },
-                    title: {
-                        display: true,
-                        text: '{% trans %}Visitors Activity{% endtrans %}',
-                    },
+                options: getChartOptions(dateFormat)
+            };
+        }
+
+        function getChartOptions(dateFormat) {
+            return {
+                plugins: {
+                    customCanvasBackgroundColor: { color: 'white' },
                 },
-            });
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    x: [{
+                        grid: { display: false },
+                        type: 'time',
+                        time: { parser: dateFormat, tooltipFormat: dateFormat },
+                        scaleLabel: { display: true, labelString: '{% trans %}Date{% endtrans %}' },
+                    }],
+                    y: [{
+                        grid: { display: false },
+                        ticks: { beginAtZero: false },
+                        scaleLabel: { display: true, labelString: '{% trans %}Visitors{% endtrans %}' },
+                    }],
+                },
+                title: {
+                    display: true,
+                    text: '{% trans %}Visitors Activity{% endtrans %}',
+                },
+            };
         }
 
         function formatDataCountData(date, userCount, screenPageViews, bounceRate) {
@@ -186,7 +174,7 @@
             for (let i = 0; i < parsedData.length; i += 7) {
                 const pack = parsedData.slice(i, i + 7);
                 const startWeekDate = pack[pack.length - 1].date;
-                const cumulDataCount = pack.reduce((total, jour) => total + jour.dataCount, 0);
+                const cumulDataCount = pack.reduce((total, year) => total + year.dataCount, 0);
                 aggregatedData[startWeekDate] = cumulDataCount ;
             }
             if (typeOfGraph === "bounceRate") {
@@ -206,6 +194,7 @@
             }
             return result;
         }
+
 
         function aggregateDataByMonth(data, numMonths) {
             const aggregatedData = {};
@@ -303,10 +292,6 @@
             let totalScreenPageViews = 0;
             let totalBounceRate = 0;
 
-            var visitorCountElement = document.getElementById('visitor-count');
-            var pageViewCountElement = document.getElementById('pageViews-count');
-            var bouncerateCountElement = document.getElementById('bounceRate-count');
-
             const rangeLimits = {
                 'weekly': 7,
                 'monthly': 30,
@@ -314,18 +299,22 @@
                 'semester': 182,
                 'yearly': 365
             };
-            const limit = rangeLimits[dateRange];
-            for (let i = 0; i < allDatas.length && i < limit; i++) {
+            const limit = rangeLimits[dateRange] || allDatas.length;
+            const actualLimit = Math.min(allDatas.length, limit);
+
+            for (let i = 0; i < actualLimit; i++) {
                 totalUserCount += allDatas[i].userCount;
                 totalScreenPageViews += allDatas[i].screenPageViews;
                 totalBounceRate += allDatas[i].bounceRate;
             }
-            totalBounceRate = (totalBounceRate/rangeLimits[dateRange]).toFixed(2) +"%"
+
+            const averageBounceRate = totalBounceRate / actualLimit;
+            bouncerateCountElement.textContent = `${averageBounceRate.toFixed(2)}%`;
 
             visitorCountElement.textContent = totalUserCount;
             pageViewCountElement.textContent = totalScreenPageViews;
-            bouncerateCountElement.textContent = totalBounceRate;
         }
+
         visitorActivityChartFirstLoad();
 
     </script>
