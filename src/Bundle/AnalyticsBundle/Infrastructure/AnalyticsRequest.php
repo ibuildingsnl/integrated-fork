@@ -119,9 +119,15 @@ class AnalyticsRequest
     /**
      * @throws MongoDBException
      */
-    public function setDataToDB(ChannelInterface $channel, $dataType, $allDatas): void
+    public function setDataToDB(ChannelInterface $channel, $dataType, $allData): void
     {
-        $analyticsData = new AnalyticsData($channel->getId(), $dataType, $allDatas, new \DateTimeImmutable());
+        if ($existing = $this->manager
+            ->getRepository(AnalyticsData::class)
+            ->findOneBy(['channelID' => $channel->getId(), 'dataType' => $dataType])) {
+            $this->manager->remove($existing);
+        }
+
+        $analyticsData = new AnalyticsData($channel->getId(), $dataType, $allData, new \DateTimeImmutable());
         $this->manager->persist($analyticsData);
         $this->manager->flush();
     }

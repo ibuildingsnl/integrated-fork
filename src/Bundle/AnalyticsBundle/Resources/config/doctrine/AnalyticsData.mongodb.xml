@@ -7,7 +7,7 @@
         <id field-name="id" strategy="auto" />
         <field field-name="channelID" type="string" />
         <field field-name="dataType" type="string" />
-        <field field-name="datas" type="hash" />
+        <field field-name="data" type="hash" />
         <field field-name="dateTime" type="date_immutable" />
     </document>
 

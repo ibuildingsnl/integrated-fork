@@ -14,7 +14,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class GetSitePerformancesDatasCommand extends Command
+class GetSitePerformancesDataCommand extends Command
 {
     private OutputInterface $output;
 
@@ -59,7 +59,7 @@ class GetSitePerformancesDatasCommand extends Command
             $encodedUrl = urlencode($url);
 
             try {
-                $this->output->writeln('- Getting '.$website['name'].'\'s Site performance datas');
+                $this->output->writeln('- Getting '.$website['name'].'\'s Site performance data');
                 $this->getSitePerformance($encodedUrl, $website['id']);
                 $this->saveSitePerformance();
             } catch (\InvalidArgumentException $e) {

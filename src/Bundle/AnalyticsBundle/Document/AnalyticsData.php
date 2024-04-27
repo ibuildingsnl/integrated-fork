@@ -4,6 +4,7 @@ namespace Integrated\Bundle\AnalyticsBundle\Document;
 
 class AnalyticsData
 {
+    private readonly string $id;
     private string $channelID;
     private string $dataType;
     private array $data;

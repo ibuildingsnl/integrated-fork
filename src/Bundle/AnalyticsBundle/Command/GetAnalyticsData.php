@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Finder\Finder;
 
-class GetAnalyticsDatas extends Command
+class GetAnalyticsData extends Command
 {
     private OutputInterface $output;
     private ContainerInterface $container;
@@ -33,8 +33,8 @@ class GetAnalyticsDatas extends Command
     protected function configure(): void
     {
         $this
-            ->setName('analytics:datas')
-            ->setDescription('Get all Analytics datas');
+            ->setName('analytics:data')
+            ->setDescription('Get all Analytics data');
     }
 
     /**

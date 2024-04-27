@@ -13,7 +13,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class GetDeviceTypeDatasCommand extends Command
+class GetDeviceTypeDataCommand extends Command
 {
     private OutputInterface $output;
     private string $dataType = 'device_type';
@@ -38,7 +38,7 @@ class GetDeviceTypeDatasCommand extends Command
     {
         $this
             ->setName('device:type')
-            ->setDescription('Get "Device type" datas');
+            ->setDescription('Get "Device type" data');
     }
 
     /**
@@ -53,9 +53,9 @@ class GetDeviceTypeDatasCommand extends Command
         $channels = $analyticsRequest->getChannels();
 
         foreach ($channels as $channel) {
-            $this->output->writeln('- Getting '.$channel->getName().'\'s Device Type  datas');
-            $allDatas = $this->getData($channel, $analyticsRequest);
-            $analyticsRequest->setDataToDB($channel, $this->dataType, $allDatas);
+            $this->output->writeln('- Getting '.$channel->getName().'\'s Device Type  data');
+            $allData = $this->getData($channel, $analyticsRequest);
+            $analyticsRequest->setDataToDB($channel, $this->dataType, $allData);
         }
 
         return 1;
@@ -71,7 +71,7 @@ class GetDeviceTypeDatasCommand extends Command
             'yearlyDeviceType' => '365daysAgo',
         ];
 
-        $allDatas = [];
+        $allData = [];
         foreach ($dateRanges as $key => $dateRange) {
             $requestBody = [
                 'dateRanges' => [
@@ -108,9 +108,9 @@ class GetDeviceTypeDatasCommand extends Command
                     'amount' => $screenPageViews,
                 ];
             }
-            $allDatas[$key] = $deviceType;
+            $allData[$key] = $deviceType;
         }
 
-        return $allDatas;
+        return $allData;
     }
 }

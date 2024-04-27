@@ -10,7 +10,7 @@
     </div>
 
     <script>
-        const deviceTypeDatas = {{ deviceType | json_encode | raw }};
+        const deviceTypeData = {{ deviceType | json_encode | raw }};
         var deviceTypeChart;
         const selectDeviceTypeDate = document.getElementById('select_date_range');
         selectDeviceTypeDate.addEventListener('change', function () {
@@ -32,8 +32,8 @@
         function updateDeviceTypeChart() {
             var selectedDeviceTypeDateRange = dateRangeDeviceTypeSelection(selectDeviceTypeDate.value);
 
-            const devices = deviceTypeDatas[selectedDeviceTypeDateRange].map(item => item.device);
-            const amounts = deviceTypeDatas[selectedDeviceTypeDateRange].map(item => item.amount);
+            const devices = deviceTypeData[selectedDeviceTypeDateRange].map(item => item.device);
+            const amounts = deviceTypeData[selectedDeviceTypeDateRange].map(item => item.amount);
             var ctx = document.getElementById('Device_Type-doughnut-chart');
 
             if (deviceTypeChart) {deviceTypeChart.destroy();}

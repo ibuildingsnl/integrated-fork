@@ -50,17 +50,17 @@ class MostReadWidget implements WidgetInterface
                 ['channelID' => $channel->getId(), 'dataType' => $this->id],
                 ['dateTime' => 'DESC']
             );
-        $allDatas = $mostReadArticle->getData();
-        $slicedDatas = [];
-        foreach ($allDatas as $key => $values) {
+        $allData = $mostReadArticle->getData();
+        $slicedData = [];
+        foreach ($allData as $key => $values) {
             $filteredValues = array_filter($values, function ($element) {
                 return $element['slug'] !== '';
             });
 
             $slicedValues = \array_slice($filteredValues, 0, $this->limit);
-            $slicedDatas[$key] = array_values($slicedValues);
+            $slicedData[$key] = array_values($slicedValues);
 
-            foreach ($slicedDatas[$key] as &$element) { // Utilisation de "&" pour obtenir une référence à chaque élément
+            foreach ($slicedData[$key] as &$element) { // Utilisation de "&" pour obtenir une référence à chaque élément
                 $article = $this->manager
                     ->getRepository(Article::class)
                     ->findOneBy([
@@ -76,10 +76,10 @@ class MostReadWidget implements WidgetInterface
             }
             unset($element); // Dissocier la référence de la dernière itération
         }
-        // dd($slicedDatas);
+        // dd($slicedData);
         return [
             'widget' => $this,
-            'mostReadArticles' => $slicedDatas,
+            'mostReadArticles' => $slicedData,
         ];
     }
 }

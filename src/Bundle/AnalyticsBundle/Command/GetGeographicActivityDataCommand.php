@@ -13,7 +13,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class GetGeographicActivityDatasCommand extends Command
+class GetGeographicActivityDataCommand extends Command
 {
     private OutputInterface $output;
     private string $dataType = 'geographic_activity';
@@ -38,7 +38,7 @@ class GetGeographicActivityDatasCommand extends Command
     {
         $this
             ->setName('geographic:activity')
-            ->setDescription('Get "Geographic activity" datas');
+            ->setDescription('Get "Geographic activity" data');
     }
 
     /**
@@ -53,9 +53,9 @@ class GetGeographicActivityDatasCommand extends Command
         $channels = $analyticsRequest->getChannels();
 
         foreach ($channels as $channel) {
-            $this->output->writeln('- Getting '.$channel->getName().'\'s Geographic activity  datas');
-            $allDatas = $this->getData($channel, $analyticsRequest);
-            $analyticsRequest->setDataToDB($channel, $this->dataType, $allDatas);
+            $this->output->writeln('- Getting '.$channel->getName().'\'s Geographic activity  data');
+            $allData = $this->getData($channel, $analyticsRequest);
+            $analyticsRequest->setDataToDB($channel, $this->dataType, $allData);
         }
 
         return 1;
@@ -73,7 +73,7 @@ class GetGeographicActivityDatasCommand extends Command
             'yearlyGeographicActivity' => '365daysAgo',
         ];
 
-        $allDatas = [];
+        $allData = [];
         foreach ($dateRanges as $key => $dateRange) {
             $requestBody = [
                 'dateRanges' => [
@@ -108,7 +108,7 @@ class GetGeographicActivityDatasCommand extends Command
                 ],
                 'metricAggregations' => [
                     'TOTAL',
-                ],
+                ]
             ];
             $responseData = $analyticsRequest->getDataFromAnalytics($channel, $requestBody);
             if ($responseData == null) {
@@ -126,10 +126,10 @@ class GetGeographicActivityDatasCommand extends Command
                     'siteTotals' => $siteTotals,
                 ];
             }
-            $allDatas[$key] = $geographicAndTotal;
+            $allData[$key] = $geographicAndTotal;
         }
 
-        return $allDatas;
+        return $allData;
     }
 
     private function getGeographicActivity(array $responseData): array

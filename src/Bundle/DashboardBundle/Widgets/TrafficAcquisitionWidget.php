@@ -44,10 +44,10 @@ class TrafficAcquisitionWidget implements WidgetInterface
                 ['channelID' => $channel->getId(), 'dataType' => $this->id],
                 ['dateTime' => 'DESC']
             );
-        $allDatas = $trafficAcquisition->getData();
+        $allData = $trafficAcquisition->getData();
 
         $maxElements = 10;
-        foreach ($allDatas as &$dateRangeData) {
+        foreach ($allData as &$dateRangeData) {
             if (\count($dateRangeData) > $maxElements) {
                 $dateRangeData = $this->processOtherTrafficAcquisition($dateRangeData, $maxElements - 1);
             }
@@ -55,7 +55,7 @@ class TrafficAcquisitionWidget implements WidgetInterface
 
         return [
             'widget' => $this,
-            'trafficAcquisition' => $allDatas,
+            'trafficAcquisition' => $allData,
         ];
     }
 

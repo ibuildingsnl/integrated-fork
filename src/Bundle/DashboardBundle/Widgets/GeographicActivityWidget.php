@@ -43,12 +43,13 @@ class GeographicActivityWidget implements WidgetInterface
      */
     public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
+
         $geographicActivity = $this->manager->getRepository(AnalyticsData::class)
             ->findOneBy(
                 ['channelID' => $channel->getId(), 'dataType' => $this->id],
                 ['dateTime' => 'DESC']
             );
-        $allDatas = $geographicActivity->getData();
+        $allData = $geographicActivity->getData();
         $result = [
             'widget' => $this,
             'totalViews' => [],
@@ -56,7 +57,7 @@ class GeographicActivityWidget implements WidgetInterface
             'viewByCountry' => [],
         ];
 
-        foreach ($allDatas as $key => $data) {
+        foreach ($allData as $key => $data) {
             if ($data == null) {
                 $result['totalViews'][$key] = 'No data found';
                 $result['bounceRate'][$key] = 'No data found';
@@ -195,59 +196,62 @@ class GeographicActivityWidget implements WidgetInterface
     public function processTopCities(array $data, array $topCountries): array
     {
         $citiesData = [];
-
-        // Récupérer la liste des pays du tableau topCountries
-        $excludedCountries = array_keys($topCountries);
+        $totalUsers = 0;
 
         foreach ($data as $row) {
-            $cityName = $row['city'];
             $countryName = $row['country'];
 
-            // Ignorer les pays du tableau topCountries
-            if (\in_array($countryName, $excludedCountries)) {
+            if (isset($topCountries[$countryName])) {
                 continue;
             }
 
-            if ($cityName === '' || $cityName === '(undefined)' || $cityName === '(not set)') {
-                $cityName = 'Unknown city';
-            }
-            $fullCityName = $cityName.' ('.$countryName.')';
+            $cityName = $row['city'] === '' || $row['city'] === '(undefined)' || $row['city'] === '(not set)' ? 'Unknown city' : $row['city'];
+            $fullCityName = $cityName . ' (' . $countryName . ')';
             $totalUser = $row['totalUser'];
+            $totalUsers += $totalUser;
 
-            if (!isset($citiesData[$cityName])) {
-                $citiesData[$cityName] = [
+            $key = $fullCityName;
+
+            if (!isset($citiesData[$key])) {
+                $citiesData[$key] = [
                     'city' => $fullCityName,
                     'totalUser' => $totalUser,
                     'percentage' => 0,
                 ];
             } else {
-                $citiesData[$cityName]['totalUser'] += $totalUser;
+                $citiesData[$key]['totalUser'] += $totalUser;
             }
         }
 
-        // Trier le tableau par le nombre total d'utilisateurs de manière décroissante
-        usort($citiesData, function ($a, $b) {
-            return $b['totalUser'] - $a['totalUser'];
-        });
+        // Sort and slice only if totalUsers > 0
+        if ($totalUsers > 0) {
+            usort($citiesData, function ($a, $b) {
+                return $b['totalUser'] - $a['totalUser'];
+            });
+            $topCities = array_slice($citiesData, 0, 9);
+            $otherCities = array_slice($citiesData, 9);
+            $otherTotalUsers = array_sum(array_column($otherCities, 'totalUser'));
 
-        // Sélectionner les 9 premières villes
-        $topCities = \array_slice($citiesData, 0, 9, true);
-        // Calculer le pourcentage pour chaque ville
-        $totalUsers = array_sum(array_column($citiesData, 'totalUser'));
-        foreach ($topCities as &$city) {
-            $city['percentage'] = ($city['totalUser'] / $totalUsers) * 100;
+            // Calculate percentages
+            foreach ($topCities as &$city) {
+                $city['percentage'] = ($city['totalUser'] / $totalUsers) * 100;
+            }
+
+            // Add "Other" category for remaining cities
+            $topCities[] = [
+                'city' => 'Other',
+                'totalUser' => $otherTotalUsers,
+                'percentage' => $otherTotalUsers > 0 ? ($otherTotalUsers / $totalUsers) * 100 : 0,
+            ];
+        } else {
+            $topCities = [
+                'Other' => [
+                    'city' => 'Other',
+                    'totalUser' => 0,
+                    'percentage' => 0,
+                ]
+            ];
         }
-
-        // Calculer le cumul des autres villes
-        $otherCities = \array_slice($citiesData, 9);
-        $otherTotalUsers = array_sum(array_column($otherCities, 'totalUser'));
-
-        // Ajouter l'entrée "Other"
-        $topCities['Other'] = [
-            'city' => 'Other',
-            'totalUser' => $otherTotalUsers,
-            'percentage' => ($otherTotalUsers / $totalUsers) * 100,
-        ];
 
         return $topCities;
     }

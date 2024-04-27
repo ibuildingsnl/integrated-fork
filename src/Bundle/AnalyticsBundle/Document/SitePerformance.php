@@ -4,6 +4,7 @@ namespace Integrated\Bundle\AnalyticsBundle\Document;
 
 class SitePerformance
 {
+    private readonly string $id;
     private string $channelID;
 
     private float $desktopSpeedIndex;

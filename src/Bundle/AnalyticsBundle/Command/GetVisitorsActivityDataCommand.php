@@ -13,7 +13,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class GetVisitorsActivityDatasCommand extends Command
+class GetVisitorsActivityDataCommand extends Command
 {
     private OutputInterface $output;
     private string $dataType = 'visitors_activity';
@@ -38,7 +38,7 @@ class GetVisitorsActivityDatasCommand extends Command
     {
         $this
             ->setName('visitors:activity')
-            ->setDescription('Get "Visitors activity" datas');
+            ->setDescription('Get "Visitors activity" data');
     }
 
     /**
@@ -53,9 +53,9 @@ class GetVisitorsActivityDatasCommand extends Command
         $channels = $analyticsRequest->getChannels();
 
         foreach ($channels as $channel) {
-            $this->output->writeln('- Getting '.$channel->getName().'\'s Visitors activity  datas');
-            $allDatas = $this->getData($channel, $analyticsRequest);
-            $analyticsRequest->setDataToDB($channel, $this->dataType, $allDatas);
+            $this->output->writeln('- Getting '.$channel->getName().'\'s Visitors activity  data');
+            $allData = $this->getData($channel, $analyticsRequest);
+            $analyticsRequest->setDataToDB($channel, $this->dataType, $allData);
         }
 
         return 1;
@@ -122,10 +122,10 @@ class GetVisitorsActivityDatasCommand extends Command
             ];
         }
         $userActivityByDate = array_reverse($userActivityByDate);
-        $allDatas = [
+        $allData = [
             'visitorsActivity' => $userActivityByDate,
         ];
 
-        return $allDatas;
+        return $allData;
     }
 }

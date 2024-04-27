@@ -10,7 +10,7 @@
     </div>
 
     <script>
-        const trafficAcquisitionDatas = {{ trafficAcquisition | json_encode | raw }};
+        const trafficAcquisitionData = {{ trafficAcquisition | json_encode | raw }};
         var trafficAcquisitionChart;
         const selectTrafficAcquisitionDate = document.getElementById('select_date_range');
         selectTrafficAcquisitionDate.addEventListener('change', function () {
@@ -31,8 +31,8 @@
 
         function updateTrafficAcquisitionChart() {
             var selectedTrafficAcquisitionDateRange = dateRangeTrafficAcquisitionSelection(selectTrafficAcquisitionDate.value);
-            const source = trafficAcquisitionDatas[selectedTrafficAcquisitionDateRange].map(item => item.source);
-            const sessions = trafficAcquisitionDatas[selectedTrafficAcquisitionDateRange].map(item => item.sessions);
+            const source = trafficAcquisitionData[selectedTrafficAcquisitionDateRange].map(item => item.source);
+            const sessions = trafficAcquisitionData[selectedTrafficAcquisitionDateRange].map(item => item.sessions);
 
             var ctx = document.getElementById('Traffic_Acquisition-doughnut-chart');
 

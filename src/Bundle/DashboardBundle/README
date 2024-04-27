@@ -7,7 +7,7 @@ How to reload all widget on database
 
 List of getting Analytical Data Commands:
 
-- "analytics:datas": Executes all commands for obtaining data
+- "analytics:data": Executes all commands for obtaining data
 - "device:type": Retrieves data on device types
 - "geographic:activity": Retrieves data on geographic activities
 - "most:read": Retrieves data on the most read items

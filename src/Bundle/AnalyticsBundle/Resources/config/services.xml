@@ -6,7 +6,7 @@
     <services>
         <service id="Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest">
         </service>
-        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetSitePerformancesDatasCommand" public="true">
+        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetSitePerformancesDataCommand" public="true">
             <argument>%env(resolve:GOOGLE_LIGHTHOUSE_KEY)%</argument>
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_channel.repository.channel" />
@@ -14,7 +14,7 @@
             <argument type="service" id="monolog.logger"/>
             <tag name="console.command" />
         </service>
-        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetMostReadDatasCommand" public="true">
+        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetMostReadDataCommand" public="true">
             <argument>%env(resolve:GOOGLE_APPLICATION_CREDENTIALS)%</argument>
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_channel.repository.channel" />
@@ -22,7 +22,7 @@
             <argument type="service" id="monolog.logger"/>
             <tag name="console.command" />
         </service>
-        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetGeographicActivityDatasCommand" public="true">
+        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetGeographicActivityDataCommand" public="true">
             <argument>%env(resolve:GOOGLE_APPLICATION_CREDENTIALS)%</argument>
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_channel.repository.channel" />
@@ -30,7 +30,7 @@
             <argument type="service" id="monolog.logger"/>
             <tag name="console.command" />
         </service>
-        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetDeviceTypeDatasCommand" public="true">
+        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetDeviceTypeDataCommand" public="true">
             <argument>%env(resolve:GOOGLE_APPLICATION_CREDENTIALS)%</argument>
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_channel.repository.channel" />
@@ -38,7 +38,7 @@
             <argument type="service" id="monolog.logger"/>
             <tag name="console.command" />
         </service>
-        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetTrafficAcquisitionDatasCommand" public="true">
+        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetTrafficAcquisitionDataCommand" public="true">
             <argument>%env(resolve:GOOGLE_APPLICATION_CREDENTIALS)%</argument>
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_channel.repository.channel" />
@@ -46,7 +46,7 @@
             <argument type="service" id="monolog.logger"/>
             <tag name="console.command" />
         </service>
-        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetVisitorsActivityDatasCommand" public="true">
+        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetVisitorsActivityDataCommand" public="true">
             <argument>%env(resolve:GOOGLE_APPLICATION_CREDENTIALS)%</argument>
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_channel.repository.channel" />
@@ -54,7 +54,7 @@
             <argument type="service" id="monolog.logger"/>
             <tag name="console.command" />
         </service>
-        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetAnalyticsDatas">
+        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetAnalyticsData">
             <argument type="service" id="monolog.logger"/>
             <argument type="service" id="service_container"/>
             <tag name="console.command" />

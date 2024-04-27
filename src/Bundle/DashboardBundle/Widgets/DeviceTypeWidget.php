@@ -44,16 +44,16 @@ class DeviceTypeWidget implements WidgetInterface
                 ['channelID' => $channel->getId(), 'dataType' => $this->id],
                 ['dateTime' => 'DESC']
             );
-        $allDatas = $deviceType->getData();
+        $allData = $deviceType->getData();
 
         $maxElements = 10;
-        foreach ($allDatas as &$dateRangeData) {
+        foreach ($allData as &$dateRangeData) {
             if (\count($dateRangeData) > $maxElements) {
                 $dateRangeData = $this->processOtherDeviceType($dateRangeData, $maxElements - 1);
             }
         }
 
-        $deviceTypes = $this->capitalizeDeviceTypes($allDatas);
+        $deviceTypes = $this->capitalizeDeviceTypes($allData);
 
         return [
             'widget' => $this,
@@ -85,7 +85,6 @@ class DeviceTypeWidget implements WidgetInterface
             'device' => 'Other',
             'amount' => $otherDevices,
         ];
-        // dd($dateRangeData);
 
         return $dateRangeData;
     }

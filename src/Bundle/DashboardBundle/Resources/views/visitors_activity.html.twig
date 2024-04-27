@@ -46,14 +46,14 @@
         });
 
         function updateVisitorActivityChart(selectedValue) {
-            const allDatas = [
+            const allData = [
                 {% for row in userActivityByDate %}
                 formatDataCountData('{{ row.date }}', '{{ row.userCount }}', '{{ row.screenPageViews }}', '{{ row.bounceRate }}'),
                 {% endfor %}
             ];
 
-            updateTotalCount(allDatas, selectedValue);
-            const userActivityByDateJS = mapDataBasedOnGraphType(allDatas, typeOfGraph);
+            updateTotalCount(allData, selectedValue);
+            const userActivityByDateJS = mapDataBasedOnGraphType(allData, typeOfGraph);
 
             const { dates, dataCounts, dateformat } = prepareChartData(userActivityByDateJS, selectedValue);
 
@@ -287,7 +287,7 @@
             updateVisitorActivityChart(selectVisitorActivityDate.value);
         }
 
-        function updateTotalCount(allDatas, dateRange) {
+        function updateTotalCount(allData, dateRange) {
             let totalUserCount = 0;
             let totalScreenPageViews = 0;
             let totalBounceRate = 0;
@@ -299,13 +299,13 @@
                 'semester': 182,
                 'yearly': 365
             };
-            const limit = rangeLimits[dateRange] || allDatas.length;
-            const actualLimit = Math.min(allDatas.length, limit);
+            const limit = rangeLimits[dateRange] || allData.length;
+            const actualLimit = Math.min(allData.length, limit);
 
             for (let i = 0; i < actualLimit; i++) {
-                totalUserCount += allDatas[i].userCount;
-                totalScreenPageViews += allDatas[i].screenPageViews;
-                totalBounceRate += allDatas[i].bounceRate;
+                totalUserCount += allData[i].userCount;
+                totalScreenPageViews += allData[i].screenPageViews;
+                totalBounceRate += allData[i].bounceRate;
             }
 
             const averageBounceRate = totalBounceRate / actualLimit;
