@@ -27,14 +27,11 @@ const slots = useSlots();
 </script>
 
 <template>
-    <div class="bg-white flex flex-row px-2 py-1 rounded-lg border border-zinc-200"
-         :class="{'pr-2!': slots.default}"
-    >
+    <div class="form-field">
         <input @focus="(e) => emit('focus', e)"
                @focusout.stop="(e) => emit('blur', e)"
                @keyup="(e) => emit('keyup', e)"
                :id="id"
-               class="outline-0 w-full"
                v-model="value"
                :placeholder="props.placeholder" type="text"/>
         <slot/>

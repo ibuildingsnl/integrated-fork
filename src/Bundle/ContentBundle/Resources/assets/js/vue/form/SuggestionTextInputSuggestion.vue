@@ -17,8 +17,8 @@ const emit = defineEmits([
         @keyup.stop.enter="(e) => emit('select', e)"
         @click.stop.left="(e) => emit('select', e)"
         tabindex="0"
-        class="p-2 space-x-2 flex flex-row justify-stretch items-start outline-0 hover:bg-blue-50 focus:bg-blue-100 cursor-pointer"
-        :class="{'bg-blue-200 focus:bg-blue-200 hover:bg-blue-200': props.selected}"
+        class="suggestion p-2 space-x-2 flex flex-row justify-stretch items-start outline-0 cursor-pointer"
+        :class="{'selected': props.selected}"
         :title="props.tooltip"
     >
         <slot/>

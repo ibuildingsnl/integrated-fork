@@ -1,10 +1,88 @@
-// TODO: Fix import path
-//@import '../_fonts';
+$custom-font-path: '../../';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+
+@import '../_mixins';
+@import '../_variables';
+
+@import '../_fonts';
+@import '../_forms';
+@import '../_typography';
+@import '../_buttons';
+
 body {
     font-family: 'Poppins', ui-sans-serif, sans-serif;
 }
+
+#app {
+    border-top: 1px solid #dfe3e9;
+    background: #f2f2f2;
+    aside {
+        background-color: white;
+        width: 250px;
+        border-right: 1px solid #dfe3e9;
+        .aside-item-container {
+            .aside-item-header {
+                padding: 0.5rem 1rem;
+                display: flex;
+                background-color: #ecf6fe;
+                border-bottom: 1px solid #dee3e9;
+
+                h3.aside-item-title {
+                    margin-bottom: 0;
+                    font-weight: 300;
+                    font-size: 13px;
+                    display: flex;
+                    cursor: pointer;
+                }
+            }
+            .form-group {
+                padding: .5rem;
+                border-bottom: 1px solid #dee3e9;
+            }
+        }
+    }
+    main {
+        width: calc(100% - 250px);
+        padding: 1rem;
+    }
+}
+
+input {
+    -webkit-appearance: none;
+    border: 1px solid #dee3e9;
+    border-radius: 8px;
+    box-shadow: none;
+    font-size: 13px;
+    max-width: 750px;
+    padding: 0 1rem;
+    width: 100%;
+    background-color: white;
+    line-height: 33px;
+    margin-bottom: .5rem;
+    &[type=text] {
+        height: 33px;
+    }
+}
+
+.checkbox-container {
+    padding: .5rem .5rem !important;
+}
+
+.checkbox {
+    width: 100%;
+    margin-bottom: 0.25rem;
+}
+
+.suggestion {
+    &:hover {
+        background-color: #e9f7fe;
+    }
+    &.selected {
+        background-color: rgba(1, 178, 239, 0.33);
+    }
+}
+

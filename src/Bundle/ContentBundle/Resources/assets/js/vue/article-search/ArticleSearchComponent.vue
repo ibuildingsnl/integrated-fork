@@ -122,11 +122,15 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="flex flex-row px-4 py-2 h-screen space-x-4">
-        <aside class="basis-1/4 space-y-2">
-            <div>
-                <h1 class="text-xl">Kanalen</h1>
-                <MaxHeightScroller max-height="160px">
+    <div class="flex flex-row h-screen">
+        <aside>
+            <div class="aside-item-container">
+                <div class="aside-item-header">
+                    <h3 class="aside-item-title">
+                        Kanalen
+                    </h3>
+                </div>
+                <MaxHeightScroller max-height="calc(50vh - 35px)">
                     <Checkbox
                         v-for="channel in channels"
                         :key="channel.key"
@@ -137,9 +141,13 @@ onMounted(() => {
                 </MaxHeightScroller>
             </div>
 
-            <div>
-                <h1 class="text-xl">Content Type</h1>
-                <MaxHeightScroller max-height="260px">
+            <div class="aside-item-container">
+                <div class="aside-item-header">
+                    <h3 class="aside-item-title">
+                        Content Type
+                    </h3>
+                </div>
+                <MaxHeightScroller max-height="calc(50vh - 35px)">
                     <Checkbox
                         v-for="contentType in contentTypes"
                         :key="contentType.key"
@@ -151,8 +159,8 @@ onMounted(() => {
             </div>
         </aside>
 
-        <main class="basis-3/4 space-y-2 flex flex-col justify-between">
-            <div class="space-y-2">
+        <main class="flex flex-col justify-between">
+            <div class="">
                 <TextInput v-model="linkText" placeholder="Link text"/>
                 <SuggestionTextInput
                     :permanent="true"
@@ -163,7 +171,9 @@ onMounted(() => {
                     v-model:selections="selections"
                     @searchConfirm="attemptSearch"
                 />
-                <Checkbox id="new-tab" v-model="openInNewTab" label="Open in new tab"/>
+                <div class="form-group mt-2">
+                    <Checkbox id="new-tab" v-model="openInNewTab" label="Open in new tab"/>
+                </div>
             </div>
 
             <div class="flex flex-row space-x-2 self-end">

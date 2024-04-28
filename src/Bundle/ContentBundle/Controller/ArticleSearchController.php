@@ -32,7 +32,7 @@ class ArticleSearchController extends AbstractController
         $channels = array_map(function ($channel) {
             return [
                 'key' => $channel->getId(),
-                'label' => $channel->getName(),
+                'label' => str_replace(" Website", "", $channel->getName())
             ];
         }, $channels);
 
@@ -81,7 +81,6 @@ class ArticleSearchController extends AbstractController
             );
         }
 
-        $contentRepository = $this->documentManager->getRepository(Content::class);
         /** @var Channel $channel */
         $channel = $this->documentManager->getRepository(Channel::class)->find($channelId);
 
