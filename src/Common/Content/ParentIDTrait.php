@@ -27,6 +27,19 @@ trait ParentIDTrait
     ], location: 'editor')]
     protected $parent_id;
 
+    /**
+     * @var string|null
+     */
+    #[Type\Field(type: 'Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType', options: [
+        'priority' => 260,
+        'label' => 'Link to Channel',
+        'attr' => [
+            'style' => 'sidebar',
+            'help_text' => '<span>Select a channel you want to link this taxonomy to. Should only be done with top level parents.</span>',
+        ],
+    ], location: 'sidebar')]
+    protected $link_to_channel;
+
     public function getParentID(): ?string
     {
         return $this->parent_id;
@@ -35,5 +48,15 @@ trait ParentIDTrait
     public function setParentID(string $parent_id = null): void
     {
         $this->parent_id = $parent_id;
+    }
+
+    public function getLinkToChannel(): ?string
+    {
+        return $this->link_to_channel;
+    }
+
+    public function setLinkToChannel(string $link_to_channel = null): void
+    {
+        $this->link_to_channel = $link_to_channel;
     }
 }

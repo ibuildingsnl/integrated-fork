@@ -68,13 +68,6 @@ document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
         const someOption = document.createElement('option');
         someOption.value = 'choose';
         someOption.text = pubSettings.applyToSpecific + ' ' + settings.dataset.channelType + ' ' + pubSettings.channels;
-        const settingsContainer = settings.closest('.publication-settings-aside');
-        const applyToSelect = settingsContainer.querySelector('[data-apply-to]');
-        applyToSelect?.append(someOption, allOption);
-        applyToSelect?.addEventListener('change', function () {
-            showHideChannelSelect(settingsContainer, settings.dataset.channelType);
-        });
-        showHideChannelSelect(settingsContainer, settings.dataset.channelType);
     }
 
     const openSettings = document.createElement('a');
@@ -93,27 +86,6 @@ document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
     input.addEventListener('change', () => showHidePublicationSettingsButton(input));
     showHidePublicationSettingsButton(input);
 });
-
-function showHideChannelSelect(container, type) {
-
-    const applyToChannelsSelect = container.querySelector('select[data-apply-channels]');
-    const channelSelectContainer = container.querySelector('.settings-channels-choice');
-    applyToChannelsSelect.innerHTML = '';
-    if (container.querySelector('select[data-apply-to]').value !== 'choose') {
-        channelSelectContainer.classList.add('hidden');
-        return;
-    }
-    channelSelectContainer.classList.remove('hidden');
-    document.querySelectorAll('input[data-channel-type="'+type+'"]').forEach(function (input) {
-        // if (!input.checked) {
-        //     return;
-        // }
-        const option = document.createElement('option');
-        option.value = input.value;
-        option.text = input.dataset.channelName;
-        applyToChannelsSelect.append(option);
-    });
-}
 
 // Save & exit publication settings
 document.querySelectorAll('.publication-settings-popup').forEach(function (settings) {

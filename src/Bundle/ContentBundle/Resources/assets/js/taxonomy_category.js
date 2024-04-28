@@ -34,9 +34,6 @@ function setupRelations() {
 }
 
 function setupChannels() {
-    //If brands didnt have children:
-    // const brand_checkboxes = document.querySelectorAll(channels_selector + ' input[type=checkbox]')
-    //But they do:
     const brand_checkboxes = document.querySelectorAll(channels_selector + channel_brands_selector)
 
     enabled_channels = getEnabledChannels(brand_checkboxes)
@@ -91,7 +88,7 @@ function handleClosePopup() {
 function activateHeader() {
     for (popup_tab of current_relation.popup_tabs) {
         popup_tab.classList.remove("active");
-        if (selected_tab !== undefined && popup_tab.dataset.level0 === selected_tab.dataset.level0) {
+        if (selected_tab !== undefined && popup_tab.dataset.title === selected_tab.dataset.title) {
             popup_tab.classList.add('active')
         }
     }
@@ -174,34 +171,6 @@ function updateFormInputField(event) {
     }
 }
 
-function emptyCurrentPills() {
-    document.querySelector(current_relation.pills_selector).innerHTML = "";
-}
-
-function showEnabledCategoryPills() {
-    const current_value = document.querySelector('#' + current_relation.input_selector).value.split(',').filter(n => n)
-    const categories_checkboxes = current_relation.category_checkboxes
-
-    emptyCurrentPills()
-    for (checkbox of categories_checkboxes) {
-        //Hidden because of selected channels? Dont show
-        if (checkbox.closest('li').classList.contains('hidden')) {
-            continue
-        }
-
-        if (current_value.includes(checkbox.dataset.id)) {
-            appendPill(checkbox.closest('li').dataset.fulltitle)
-        }
-    }
-}
-
-function appendPill(pill_text) {
-    const node = document.createElement("div");
-    node.classList.add('active_category');
-    node.innerHTML = pill_text;
-    document.querySelector(current_relation.pills_selector).appendChild(node);
-}
-
 function setCheckboxState(enabled_categories) {
     const current_value = document.querySelector('#' + current_relation.input_selector).value.split(',').filter(n => n)
     for (checkbox of current_relation.all_category_checkboxes) {
@@ -230,7 +199,7 @@ function filterCheckboxesInPopup() {
 
 function showCategoryBasedOnTab(category_item, show) {
     if (selected_tab !== '' && show === true) {
-        if (category_item.dataset.level0 === selected_tab.dataset.level0) {
+        if (category_item.dataset.linkedchannel === selected_tab.dataset.linkedchannel) {
             show = true
         } else {
             show = false
@@ -255,8 +224,42 @@ function toggleItem(item, show) {
 }
 
 function showCategoryBasedOnChannels(category_item) {
+    if (category_item.dataset.linkedchannel === '') {
+        return true
+    }
     if (enabled_channels.length === 0) {
         return true
     }
-    return category_item.dataset.channels?.split(",").filter(n => n).some(channel => enabled_channels.includes(channel))
+    return category_item.dataset.linkedchannel?.split(",").filter(n => n).some(channel => enabled_channels.includes(channel))
+}
+
+
+//MANAGE PILLS TO SHOW SELECTION
+
+function emptyCurrentPills() {
+    document.querySelector(current_relation.pills_selector).innerHTML = "";
+}
+
+function showEnabledCategoryPills() {
+    const current_value = document.querySelector('#' + current_relation.input_selector).value.split(',').filter(n => n)
+    const categories_checkboxes = current_relation.category_checkboxes
+
+    emptyCurrentPills()
+    for (checkbox of categories_checkboxes) {
+        //Hidden because of selected channels? Dont show
+        if (checkbox.closest('li').classList.contains('hidden')) {
+            continue
+        }
+
+        if (current_value.includes(checkbox.dataset.id)) {
+            appendPill(checkbox.closest('li').dataset.fulltitle)
+        }
+    }
+}
+
+function appendPill(pill_text) {
+    const node = document.createElement("div");
+    node.classList.add('active_category');
+    node.innerHTML = pill_text;
+    document.querySelector(current_relation.pills_selector).appendChild(node);
 }
