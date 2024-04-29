@@ -4,20 +4,19 @@ namespace Integrated\Bundle\AnalyticsBundle\Document;
 
 class AnalyticsData
 {
-    private readonly string $id;
+    private string $id;
+
     private string $channelID;
     private string $dataType;
     private array $data;
     private \DateTimeImmutable $dateTime;
 
     public function __construct(
-        string $id,
         string $channelID,
         string $dataType,
         array $data,
         \DateTimeImmutable $dateTime
     ) {
-        $this->id = $id;
         $this->channelID = $channelID;
         $this->data = $data;
         $this->dataType = $dataType;

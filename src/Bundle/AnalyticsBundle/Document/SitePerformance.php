@@ -4,7 +4,7 @@ namespace Integrated\Bundle\AnalyticsBundle\Document;
 
 class SitePerformance
 {
-    private readonly string $id;
+    private string $id;
     private string $channelID;
 
     private float $desktopSpeedIndex;
@@ -22,7 +22,6 @@ class SitePerformance
     private \DateTimeImmutable $dateTime;
 
     public function __construct(
-        string $id,
         string $channelID,
         float $desktopSiteScore,
         float $desktopSpeedIndex,
@@ -36,7 +35,6 @@ class SitePerformance
         float $mobileTotalBlockingTime,
         \DateTimeImmutable $dateTime
     ) {
-        $this->id = $id;
         $this->channelID = $channelID;
         $this->desktopSpeedIndex = $desktopSpeedIndex;
         $this->desktopSiteScore = $desktopSiteScore;
