@@ -2,7 +2,6 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
-use Exception;
 use Embed\Embed;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,7 +18,7 @@ class OEmbedController extends AbstractController
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function oEmbed(Request $request): JsonResponse
     {
@@ -76,7 +75,7 @@ class OEmbedController extends AbstractController
 
             return new JsonResponse($response);
         } catch (\Exception $e) {
-            throw new Exception($e);
+            throw new \Exception($e);
         }
     }
 }
