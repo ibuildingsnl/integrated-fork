@@ -11,11 +11,13 @@ class AnalyticsData
     private \DateTimeImmutable $dateTime;
 
     public function __construct(
+        string $id,
         string $channelID,
         string $dataType,
         array $data,
         \DateTimeImmutable $dateTime
     ) {
+        $this->id = $id;
         $this->channelID = $channelID;
         $this->data = $data;
         $this->dataType = $dataType;

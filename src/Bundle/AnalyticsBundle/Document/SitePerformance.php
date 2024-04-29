@@ -22,6 +22,7 @@ class SitePerformance
     private \DateTimeImmutable $dateTime;
 
     public function __construct(
+        string $id,
         string $channelID,
         float $desktopSiteScore,
         float $desktopSpeedIndex,
@@ -35,6 +36,7 @@ class SitePerformance
         float $mobileTotalBlockingTime,
         \DateTimeImmutable $dateTime
     ) {
+        $this->id = $id;
         $this->channelID = $channelID;
         $this->desktopSpeedIndex = $desktopSpeedIndex;
         $this->desktopSiteScore = $desktopSiteScore;
