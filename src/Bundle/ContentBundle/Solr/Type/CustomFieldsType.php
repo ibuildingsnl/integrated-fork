@@ -17,10 +17,6 @@ use Integrated\Common\Converter\Type\TypeInterface;
 
 class CustomFieldsType implements TypeInterface
 {
-    public function __construct()
-    {
-    }
-
     /**
      * {@inheritdoc}
      */
