@@ -2,7 +2,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
-use _PHPStan_3e014c27f\Nette\Neon\Exception;
+use Exception;
 use Embed\Embed;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
