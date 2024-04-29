@@ -5,11 +5,14 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
+use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\Security\Resolver\PermissionResolver;
+use Integrated\Common\Solr\Search\QueryFactoryInterface;
+use Solarium\Core\Client\ClientInterface;
+use Solarium\QueryType\Select\Result\Document;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -19,20 +22,23 @@ class ArticleSearchController extends AbstractController
 
     public function __construct(
         private readonly DocumentManager $documentManager,
+        private readonly QueryFactoryInterface $queryFactory,
+        private readonly ClientInterface $solrClient,
         private readonly array $allowedContentTypes,
     ) {
         $this->contentTypeRepository = $this->documentManager->getRepository(ContentType::class);
     }
 
-    public function index() {
+    public function index()
+    {
         $channels = array_filter($this->getAllowedChannels($this->getUser()), function ($channel) {
-            return $channel->getPrimaryDomain() !== null && strlen($channel->getPrimaryDomain()) > 0;
+            return $channel->getPrimaryDomain() !== null && $channel->getPrimaryDomain() !== '';
         });
 
         $channels = array_map(function ($channel) {
             return [
                 'key' => $channel->getId(),
-                'label' => str_replace(" Website", "", $channel->getName())
+                'label' => str_replace(' Website', '', $channel->getName()),
             ];
         }, $channels);
 
@@ -42,8 +48,8 @@ class ArticleSearchController extends AbstractController
                 'key' => $contentType->getId(),
                 'label' => $contentType->getName(),
             ];
-        }, array_filter($contentTypes, function($contentType) {
-            return in_array($contentType->getClass(), $this->allowedContentTypes);
+        }, array_filter($contentTypes, function ($contentType) {
+            return \in_array($contentType->getClass(), $this->allowedContentTypes);
         }));
 
         return $this->render('@IntegratedContent/article_search/article_search.html.twig', [
@@ -52,7 +58,8 @@ class ArticleSearchController extends AbstractController
         ]);
     }
 
-    public function searchContentByChannel(Request $request, ?string $channelId = null) {
+    public function searchContentByChannel(Request $request, ?string $channelId = null)
+    {
         $contentTypeIds = $request->get('contentTypeIds', '');
 
         if ($channelId === null) {
@@ -63,7 +70,7 @@ class ArticleSearchController extends AbstractController
             );
         }
 
-        if (strlen($contentTypeIds) === 0) {
+        if ($contentTypeIds === '') {
             return new Response(
                 json_encode(['msg' => 'No content type id(s) specified']),
                 Response::HTTP_BAD_REQUEST,
@@ -73,7 +80,7 @@ class ArticleSearchController extends AbstractController
 
         $q = $request->get('term');
 
-        if(empty($q) || strlen($q) === 0) {
+        if (empty($q) || $q === '') {
             return new Response(
                 json_encode(['msg' => 'No search term specified']),
                 Response::HTTP_BAD_REQUEST,
@@ -84,57 +91,53 @@ class ArticleSearchController extends AbstractController
         /** @var Channel $channel */
         $channel = $this->documentManager->getRepository(Channel::class)->find($channelId);
 
-        $channelQueryValue = self::formatQueryValue($channelId);
-        $contentTypeQueryValue = self::formatQueryValue($contentTypeIds);
+        $query = $this->queryFactory
+            ->createQuery(IntegratedContent::class, [
+                'contenttypes' => explode(',', $contentTypeIds),
+                'channels' => explode(',', $channelId),
+                'sort' => 'rel',
+                'q' => $q,
+            ])
+            ->getQuery();
 
-        $query = $this->getSolarium()->createSelect();
-        $query->createFilterQuery('channels')
-              ->addTag('channels')
-              ->setQuery('facet_channels: ' . $channelQueryValue);
-
-        $query->createFilterQuery('contenttypes')
-              ->setQuery('type_name: ' . $contentTypeQueryValue);
-
-        $edismax = $query->getEDisMax();
-        $edismax->setQueryFields('title content');
-        $edismax->setMinimumMatch('75%');
-
-        $query->setQuery($q);
-
-        $result = $this->getSolarium()->select($query);
-        $contentItems = $result->getDocuments();
+        /** @var Document[] $items */
+        $items = $this->solrClient->select($query)->getDocuments();
         $contentIds = [];
 
-        $ret = array_map(function ($contentItem) use ($channel, &$contentIds) {
-            $contentIds[] = $contentItem->type_id;
+        $ret = array_map(
+            /**
+             * @throws \Exception
+             */
+            function ($contentItem) use ($channel, &$contentIds) {
+                $contentIds[] = $contentItem->type_id;
 
-            return [
-                'id' => $contentItem->type_id,
-                'title' => $contentItem->title,
-                'subtitle' => ucfirst($contentItem->type_name) . ' | ' . (new \DateTimeImmutable(
+                return [
+                    'id' => $contentItem->type_id,
+                    'title' => $contentItem->title,
+                    'subtitle' => ucfirst($contentItem->type_name).' | '.(new \DateTimeImmutable(
                         $contentItem->pub_time
                     ))->format('d-m-Y'),
-                'text' => substr(strip_tags(implode('', $contentItem->content)), 0, 255),
-                'url' => $contentItem['url_' . $channel->getId()],
-            ];
-        }, $contentItems);
+                    'text' => substr(strip_tags(implode('', $contentItem->content)), 0, 255),
+                    'url' => $contentItem['url_'.$channel->getId()],
+                ];
+            }, $items);
 
         $ret = array_map(function ($contentItem) use ($channel) {
             return array_merge($contentItem, [
-                'url' => $channel->getPrimaryDomain() . $contentItem['url'],
+                'url' => $channel->getPrimaryDomain().$contentItem['url'],
             ]);
         }, $ret);
 
-        if (count($ret) > 0) {
+        if (\count($ret) > 0) {
             return new Response(json_encode($ret), headers: ['Content-Type' => 'application/json']);
         } else {
             return new Response(
-                         json_encode([
-                                         'term' => $q,
-                                         'channelId' => $channelId,
-                                         'contentTypeId' => $contentTypeIds,
-                                     ]),
-                status:  Response::HTTP_NOT_FOUND,
+                json_encode([
+                                'term' => $q,
+                                'channelId' => $channelId,
+                                'contentTypeId' => $contentTypeIds,
+                            ]),
+                status: Response::HTTP_NOT_FOUND,
                 headers: ['Content-Type' => 'application/json']
             );
         }
@@ -143,7 +146,8 @@ class ArticleSearchController extends AbstractController
     /**
      * @return Channel[]
      */
-    private function getAllowedChannels(UserInterface $user): array {
+    private function getAllowedChannels(UserInterface $user): array
+    {
         $channels = $this->documentManager->getRepository(Channel::class)->findBy([], ['name' => 1]);
         $allowed = [];
 
@@ -156,21 +160,5 @@ class ArticleSearchController extends AbstractController
         }
 
         return $allowed;
-    }
-
-    function formatQueryValue($ids) {
-        $idArray = explode(',', $ids);
-
-        if (count($idArray) == 1) {
-            $queryValue = '("' . $idArray[0] . '")';
-        } else {
-            $formattedIds = array_map(function ($id) {
-                return '"' . $id . '"';
-            }, $idArray);
-
-            $queryValue = '(' . implode(' OR ', $formattedIds) . ')';
-        }
-
-        return $queryValue;
     }
 }
