@@ -84,7 +84,7 @@ class GetVisitorsActivityDataCommand extends Command
             'dateRanges' => [
                 [
                     'startDate' => '365daysAgo',
-                    'endDate' => 'today',
+                    'endDate' => 'yesterday',
                 ],
             ],
             'orderBys' => [

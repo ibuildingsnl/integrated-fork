@@ -1,4 +1,4 @@
-{% if viewByCountry is not null and totalViews is not null and bounceRate is not null%}
+{% if viewByCountry is not null %}
     <div class="widget w-full">
     <div class="widget-container {{ widget.id }}">
         <div class="widget-header">
@@ -11,10 +11,6 @@
                 </ul>
             </div>
             <div class="w-1/3">
-                <div class="visitors show">
-                    <h3>{% trans %}Total visits{% endtrans %}: <span class="value" id="total_views"></span></h3>
-                    <h3>{% trans %}Bounce rate{% endtrans %}: <span class="value" id="bounce_rate"></span></h3>
-                </div>
                 <div class="cities">
                     <h3>{% trans %}Top Cities{% endtrans %}:</h3>
                     <ul class="visitor-cities" id="visitor_cities_list">
@@ -26,14 +22,10 @@
 
     <script>
 
-        const totalViews = {{ totalViews | json_encode | raw }};
-        const bounceRate = {{ bounceRate | json_encode | raw }};
         const viewByCountryData = {{ viewByCountry | json_encode | raw }};
         var chart;
 
         let currentViewByCountryData = null;
-        let currentTotalViews = null;
-        let currentBounceRate = null;
 
         var selectGeographicActivityDate = document.getElementById('select_date_range');
         selectGeographicActivityDate.addEventListener('change', function () {
@@ -55,8 +47,6 @@
         function updateViewByCountry() {
             const selectedGeographicActivityDateRange = dateRangeGeographicActivitySelection(selectGeographicActivityDate.value);
             currentViewByCountryData = viewByCountryData[selectedGeographicActivityDateRange];
-            currentTotalViews = totalViews[selectedGeographicActivityDateRange]
-            currentBounceRate = bounceRate[selectedGeographicActivityDateRange]
             renderViewByCountry();
         }
 
@@ -93,9 +83,6 @@
                 visitorRegionsList.appendChild(li);
             }
 
-            document.getElementById('total_views').textContent = currentTotalViews;
-            document.getElementById('bounce_rate').textContent = currentBounceRate + ' %';
-
             const selectedCountry = document.querySelector('.visitor-regions li.selected');
             if (selectedCountry) {
                 updateCityList(selectedCountry.textContent, true);
@@ -106,14 +93,11 @@
 
         function updateCityList(country, show) {
             var citiesContainer = document.querySelector('.cities');
-            var visitorsContainer = document.querySelector('.visitors');
 
             if (show === true) {
                 citiesContainer.classList.add('show');
-                visitorsContainer.classList.remove('show');
             } else {
                 citiesContainer.classList.remove('show');
-                visitorsContainer.classList.add('show');
             }
 
             var existingList = document.querySelector('.visitor-cities');
