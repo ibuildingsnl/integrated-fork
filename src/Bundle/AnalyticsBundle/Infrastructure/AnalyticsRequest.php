@@ -127,8 +127,10 @@ class AnalyticsRequest
             $this->manager->remove($existing);
         }
 
-        $analyticsData = new AnalyticsData($channel->getId(), $dataType, $allData, new \DateTimeImmutable());
-        $this->manager->persist($analyticsData);
-        $this->manager->flush();
+        if ($allData !== null) {
+            $analyticsData = new AnalyticsData($channel->getId(), $dataType, $allData, new \DateTimeImmutable());
+            $this->manager->persist($analyticsData);
+            $this->manager->flush();
+        }
     }
 }

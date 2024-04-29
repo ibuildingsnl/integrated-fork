@@ -108,7 +108,7 @@ class GetGeographicActivityDataCommand extends Command
                 ],
                 'metricAggregations' => [
                     'TOTAL',
-                ]
+                ],
             ];
             $responseData = $analyticsRequest->getDataFromAnalytics($channel, $requestBody);
             if ($responseData == null) {

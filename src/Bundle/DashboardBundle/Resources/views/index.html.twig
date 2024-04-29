@@ -44,11 +44,11 @@
                     <li>
                         <select id="select_date_range" name="select_date_range"
                                 class="dashboardForm-select">
-                            <option value="weekly">{% trans %}This week{% endtrans %}</option>
-                            <option value="monthly">{% trans %}This month{% endtrans %}</option>
-                            <option value="quarterly">{% trans %}This quarter{% endtrans %}</option>
-                            <option value="semester">{% trans %}This semester{% endtrans %}</option>
-                            <option value="yearly">{% trans %}This Year{% endtrans %}</option>
+                            <option value="weekly">{% trans %}Last{% endtrans %} 7 {% trans %}days{% endtrans %}</option>
+                            <option value="monthly">{% trans %}Last{% endtrans %} 30 {% trans %}days{% endtrans %}</option>
+                            <option value="quarterly">{% trans %}Last{% endtrans %} 90 {% trans %}days{% endtrans %}</option>
+                            <option value="semester">{% trans %}Last{% endtrans %} 180 {% trans %}days{% endtrans %}</option>
+                            <option value="yearly">{% trans %}Last{% endtrans %} 365 {% trans %}days{% endtrans %}</option>
                         </select>
                     <li>
                 </ul>

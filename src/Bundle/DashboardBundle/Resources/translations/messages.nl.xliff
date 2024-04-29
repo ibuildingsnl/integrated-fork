@@ -87,8 +87,24 @@
                 <target>Dit jaar</target>
             </trans-unit>
             <trans-unit id="22">
-                <source>Top countries:</source>
-                <target>Landen met meeste bezoekers:</target>
+                <source>Top Countries</source>
+                <target>Landen met meeste bezoekers</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>Total visits</source>
+                <target>Totaal aantal bezoekers</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>Bounce rate</source>
+                <target>Bouncepercentage</target>
+            </trans-unit>
+            <trans-unit id="25">
+                <source>Last</source>
+                <target>Laatste</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>days</source>
+                <target>dagen</target>
             </trans-unit>
         </body>
     </file>

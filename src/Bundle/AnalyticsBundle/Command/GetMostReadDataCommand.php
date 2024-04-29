@@ -95,7 +95,7 @@ class GetMostReadDataCommand extends Command
                         'name' => 'screenPageViews',
                     ],
                 ],
-                'limit' => 20
+                'limit' => 20,
             ];
             $responseData = $analyticsRequest->getDataFromAnalytics($channel, $requestBody);
             $mostViewedPages = [];

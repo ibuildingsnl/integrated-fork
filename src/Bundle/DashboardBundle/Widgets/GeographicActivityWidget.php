@@ -43,7 +43,6 @@ class GeographicActivityWidget implements WidgetInterface
      */
     public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
-
         $geographicActivity = $this->manager->getRepository(AnalyticsData::class)
             ->findOneBy(
                 ['channelID' => $channel->getId(), 'dataType' => $this->id],
@@ -206,7 +205,7 @@ class GeographicActivityWidget implements WidgetInterface
             }
 
             $cityName = $row['city'] === '' || $row['city'] === '(undefined)' || $row['city'] === '(not set)' ? 'Unknown city' : $row['city'];
-            $fullCityName = $cityName . ' (' . $countryName . ')';
+            $fullCityName = $cityName.' ('.$countryName.')';
             $totalUser = $row['totalUser'];
             $totalUsers += $totalUser;
 
@@ -228,8 +227,8 @@ class GeographicActivityWidget implements WidgetInterface
             usort($citiesData, function ($a, $b) {
                 return $b['totalUser'] - $a['totalUser'];
             });
-            $topCities = array_slice($citiesData, 0, 9);
-            $otherCities = array_slice($citiesData, 9);
+            $topCities = \array_slice($citiesData, 0, 9);
+            $otherCities = \array_slice($citiesData, 9);
             $otherTotalUsers = array_sum(array_column($otherCities, 'totalUser'));
 
             // Calculate percentages
@@ -249,7 +248,7 @@ class GeographicActivityWidget implements WidgetInterface
                     'city' => 'Other',
                     'totalUser' => 0,
                     'percentage' => 0,
-                ]
+                ],
             ];
         }
 
