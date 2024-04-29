@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use _PHPStan_3e014c27f\Nette\Neon\Exception;
 use Embed\Embed;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,6 +18,9 @@ class OEmbedController extends AbstractController
     ) {
     }
 
+    /**
+     * @throws Exception
+     */
     public function oEmbed(Request $request): JsonResponse
     {
         parse_str($request->getQueryString(), $parsedArray);
@@ -72,7 +76,7 @@ class OEmbedController extends AbstractController
 
             return new JsonResponse($response);
         } catch (\Exception $e) {
-            return new JsonResponse(['error' => 'Failed to retrieve embed data'], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+            throw new Exception($e);
         }
     }
 }
