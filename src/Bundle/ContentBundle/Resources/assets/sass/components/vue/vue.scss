@@ -86,3 +86,16 @@ input {
     }
 }
 
+.results {
+    border: 1px solid #dee3e9;
+    max-height: calc(100vh - 177px);
+
+    &.permanent {
+        height: calc(100vh - 177px);
+    }
+}
+
+.btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

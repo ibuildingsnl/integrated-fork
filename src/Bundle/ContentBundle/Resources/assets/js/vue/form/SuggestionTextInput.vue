@@ -1,6 +1,6 @@
 <script setup>
 import TextInput from "./TextInput.vue";
-import {computed, ref} from "vue";
+import {computed, ref, useSlots} from "vue";
 import SuggestionTextInputSuggestion from "./SuggestionTextInputSuggestion.vue";
 import debounce from "lodash.debounce";
 
@@ -12,9 +12,11 @@ const props = defineProps({
     id: String,
     permanent: Boolean,
     multiple: Boolean,
+    errorText: String,
 });
 
 const emit = defineEmits(['update:modelValue', 'update:selections', 'searchConfirm']);
+const slots = useSlots();
 
 const value = computed({
     get() {
@@ -31,7 +33,6 @@ const selections = computed({
         return props.selections ?? [];
     },
     set(newValue) {
-        console.log(newValue);
         emit('update:selections', newValue);
     }
 });
@@ -87,12 +88,13 @@ const sendSearch = debounce(() => {
             @keyup.enter="sendSearch"
             :placeholder="props.placeholder"
             :id="props.id"
+            :error-text="props.errorText"
         />
         <div
             ref="input"
             v-show="isShowing || props.permanent"
-            class="flex flex-col justify-stretch w-full bg-white rounded-lg shadow z-50 max-h-[260px] overflow-y-auto"
-            :class="{'absolute bottom-0 left-0 translate-y-full': !props.permanent, 'h-[260px]': props.permanent}"
+            class="flex flex-col justify-stretch w-full bg-white rounded-lg shadow z-50 results overflow-y-auto"
+            :class="{'absolute bottom-0 left-0 translate-y-full': !props.permanent, 'permanent': props.permanent}"
         >
             <SuggestionTextInputSuggestion
                 @select="() => selectSuggestion(id)"
@@ -106,7 +108,8 @@ const sendSearch = debounce(() => {
                 :selected="selections.includes(id)"
             />
             <div v-if="props.suggestions.length === 0" class="grow flex flex-row justify-center items-center">
-                <span class="py-4 text-lg text-zinc-400 select-none">No results</span>
+                <slot/>
+                <span v-if="!slots.default" class="py-4 text-lg text-zinc-400 select-none">No results</span>
             </div>
         </div>
     </div>

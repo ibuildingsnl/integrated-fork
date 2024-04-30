@@ -4,7 +4,22 @@ tinymce.PluginManager.add('articlelinksearch', (editor, url) => {
     const hostname = window.location.hostname;
     const protocol = window.location.protocol;
 
-    const openDialog = function (data) {
+    const openDialog = function () {
+        const selectedNode = editor.selection.getNode();
+        let data;
+
+        if(selectedNode.nodeName.toLocaleUpperCase() === 'A') {
+            data = {
+                selectionText: selectedNode.innerText,
+                url: selectedNode.href,
+                openInNewTab: (selectedNode.target ?? '') === '_blank',
+            };
+        } else {
+            data = {
+                selectionText: editor.selection.getContent({format: "text"}),
+            };
+        }
+
         return editor.windowManager.openUrl({
             title: 'Link maker',
             url: `${protocol}//${hostname}/admin/article-search?data=${encodeURIComponent(JSON.stringify(data))}`,
@@ -16,11 +31,7 @@ tinymce.PluginManager.add('articlelinksearch', (editor, url) => {
     editor.ui.registry.addButton('integratedArticleLinkSearch', {
         icon: 'link',
         onAction: () => {
-            const dialog = openDialog({
-                selectionText: editor.selection.getContent({format: "text"})
-            });
-
-            return dialog;
+            return openDialog();
         },
     });
 
@@ -28,11 +39,28 @@ tinymce.PluginManager.add('articlelinksearch', (editor, url) => {
         icon: 'link',
         text: 'Link to content',
         onAction: () => {
-            const dialog = openDialog({
-                selectionText: editor.selection.getContent({format: "text"})
-            });
+            return openDialog();
+        },
+    });
 
-            return dialog;
+    editor.ui.registry.addContextMenu('integratedArticleLinkSearch', {
+        update: (element) => {
+            let items = [];
+
+             if (element.nodeName.toLocaleUpperCase() === 'A') {
+                 items.push('integratedArticleLinkSearch');
+                 items.push('unlink');
+             } else {
+                 if(element.nodeName.toLocaleUpperCase() === 'P' || element.parentElement.nodeName.toLocaleUpperCase() === 'P') {
+                     if(editor.selection.getContent({format: "text"}).length === 0) {
+                         return;
+                     }
+
+                     items.push('integratedArticleLinkSearch');
+                 }
+             }
+
+            return items.join(' ');
         },
     });
 
