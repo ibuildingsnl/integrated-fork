@@ -37,7 +37,7 @@ class AuthorType extends AbstractType
     {
         $contentTypes = [];
 
-        if (strlen($this->authorContentTypes) > 0 ) {
+        if ($this->authorContentTypes !== '') {
             $contentTypes = explode(',', $this->authorContentTypes);
             foreach ($contentTypes as $contentType) {
                 $contentTypes[$contentType] = $this->contentTypeManager->getType($contentType)->getName();
