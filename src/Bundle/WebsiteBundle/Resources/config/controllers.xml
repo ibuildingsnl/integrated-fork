@@ -56,8 +56,21 @@
             </call>
         </service>
 
-        <service id="integrated_website.controller.search_selection" class="Integrated\Bundle\WebsiteBundle\Controller\SearchSelectionController">
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\RSSSearchSelectionController">
             <argument type="service" id="integrated_content.provider.solarium" />
+            <argument type="service" id="integrated_theme.templating.theme_manager" />
+
+            <tag name="controller.service_arguments" />
+            <tag name="container.service_subscriber" />
+
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+        </service>
+
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\JSONController">
+            <argument type="service" id="integrated_content.provider.solarium" />
+            <argument type="service" id="integrated_theme.templating.theme_manager" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />

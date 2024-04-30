@@ -1,0 +1,32 @@
+{% apply spaceless %}
+    {% set items = [] %}
+
+    {% for content in documents %}
+        {% set item = {} %}
+
+        {% set item = content %}
+
+        {% if params.channels is defined %}
+            {% for channel in params.channels %}
+                {% set item = item|merge({'url': integrated_url(content, channel)}) %}
+            {% endfor %}
+        {% endif %}
+
+        {% if content.id is defined %}
+            {% set item = item|merge({'id': content.type_id}) %}
+        {% endif %}
+
+        {% if content.content is defined %}
+            {% set item = item|merge({'content': content.content[0]|default('')|striptags|u.truncate(250)}) %}
+        {% endif %}
+
+        {% if content.cover is defined %}
+            {% set imageUrl = integrated_image(content.cover).zoomCrop(500, 500) %}
+            {% set item = item|merge({'image': imageUrl|lower }) %}
+        {% endif %}
+        {% set items = items|merge([item]) %}
+    {% endfor %}
+    {% set data = {'href': 'resource', 'totalCount': totalCount, 'maxPages': maxPages, 'items': items} %}
+
+{% endapply %}
+{{ data|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
