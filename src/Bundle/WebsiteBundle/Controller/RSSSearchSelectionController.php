@@ -5,10 +5,11 @@ namespace Integrated\Bundle\WebsiteBundle\Controller;
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Provider\SolariumProvider;
+use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class RSSSearchSelectionController extends AbstractController
 {
@@ -19,11 +20,9 @@ class RSSSearchSelectionController extends AbstractController
     }
 
     /**
-     * @Template
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws CircularFallbackException
      */
-    public function rss(Request $request, SearchSelection $selection)
+    public function rss(Request $request, SearchSelection $selection): Response
     {
         $block = new ContentBlock();
         $block->setSearchSelection($selection);
