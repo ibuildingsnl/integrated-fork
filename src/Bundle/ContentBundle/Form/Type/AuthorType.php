@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the Integrated package.
- *
- * (c) e-Active B.V. <integrated@e-active.nl>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
 use Doctrine\Persistence\ManagerRegistry;
@@ -23,25 +14,13 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * @author Jurre de Jongh <jurre@e-active.nl>
- */
 class AuthorType extends AbstractType
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $mr;
-
-    /**
-     * @var ContentTypeManager
-     */
-    private $contentTypeManager;
-
-    public function __construct(ManagerRegistry $mr, ContentTypeManager $contentTypeManager)
-    {
-        $this->mr = $mr;
-        $this->contentTypeManager = $contentTypeManager;
+    public function __construct(
+        private readonly ManagerRegistry $mr,
+        private readonly ContentTypeManager $contentTypeManager,
+        private readonly string $authorContentTypes
+    ) {
     }
 
     /**
@@ -58,9 +37,16 @@ class AuthorType extends AbstractType
     {
         $contentTypes = [];
 
-        foreach ($this->contentTypeManager->filterInstanceOf(Person::class) as $contentType) {
-            if ($contentType instanceof ContentType) {
-                $contentTypes[$contentType->getId()] = $contentType->getName();
+        if (strlen($this->authorContentTypes) > 0 ) {
+            $contentTypes = explode(',', $this->authorContentTypes);
+            foreach ($contentTypes as $contentType) {
+                $contentTypes[$contentType] = $this->contentTypeManager->getType($contentType)->getName();
+            }
+        } else {
+            foreach ($this->contentTypeManager->filterInstanceOf(Person::class) as $contentType) {
+                if ($contentType instanceof ContentType) {
+                    $contentTypes[$contentType->getId()] = $contentType->getName();
+                }
             }
         }
 
