@@ -118,10 +118,12 @@ class ContentController extends AbstractController
             $selection = $this->getDoctrineODM()
                               ->getRepository(SearchSelection::class)
                               ->find($searchSelection);
-            if ($selection && empty($options)) {
-                $options = $selection->getFilters();
+            if ($selection) {
+                $selectionFilters = $selection->getFilters();
+                $options = array_merge($selectionFilters, $options);
             }
         }
+
         $newSelection = false;
         if (!$selection) {
             $newSelection = true;
