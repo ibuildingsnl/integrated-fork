@@ -70,14 +70,6 @@ class ArticleSearchController extends AbstractController
             );
         }
 
-        if ($contentTypeIds === '') {
-            return new Response(
-                json_encode(['msg' => 'No content type id(s) specified']),
-                Response::HTTP_BAD_REQUEST,
-                ['Content-Type' => 'application/json']
-            );
-        }
-
         $q = $request->get('term');
 
         if (empty($q) || $q === '') {

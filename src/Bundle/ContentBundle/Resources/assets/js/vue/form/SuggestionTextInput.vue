@@ -93,7 +93,7 @@ const sendSearch = debounce(() => {
         <div
             ref="input"
             v-show="isShowing || props.permanent"
-            class="flex flex-col justify-stretch w-full bg-white rounded-lg shadow z-50 results overflow-y-auto"
+            class="flex flex-col justify-stretch w-full bg-white rounded-lg results overflow-y-auto"
             :class="{'absolute bottom-0 left-0 translate-y-full': !props.permanent, 'permanent': props.permanent}"
         >
             <SuggestionTextInputSuggestion
