@@ -37,7 +37,6 @@ class JsonLDExtension extends AbstractExtension
     {
         return [
             new TwigFilter('json_ld', [$this, 'encode'], ['is_safe' => ['html']]),
-            new TwigFilter('json_decode', [$this, 'decode'], ['is_safe' => ['html']]),
         ];
     }
 
@@ -55,16 +54,6 @@ class JsonLDExtension extends AbstractExtension
         }
 
         return '';
-    }
-
-    /**
-     * @param mixed $value
-     *
-     * @return string
-     */
-    public function decode($value)
-    {
-        return json_decode($value, true);
     }
 
     /**
