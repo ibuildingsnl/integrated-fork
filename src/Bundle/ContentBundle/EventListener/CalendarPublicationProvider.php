@@ -117,7 +117,7 @@ class CalendarPublicationProvider implements EventSubscriberInterface
                     ->toArray();
 
                 unset($publicationSettings['images']);
-            } else if ($publication->getContent() instanceof Article || $publication->getContent() instanceof Taxonomy) {
+            } elseif ($publication->getContent() instanceof Article || $publication->getContent() instanceof Taxonomy) {
                 $images[] = $publication->getContent()->getFeaturedImage();
             }
 
