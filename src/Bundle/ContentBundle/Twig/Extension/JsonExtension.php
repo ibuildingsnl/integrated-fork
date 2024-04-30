@@ -25,19 +25,8 @@ class JsonExtension extends AbstractExtension
     public function getFilters()
     {
         return [
-            new TwigFilter('json_encode', [$this, 'encode'], ['is_safe' => ['html']]),
             new TwigFilter('json_decode', [$this, 'decode'], ['is_safe' => ['html']]),
         ];
-    }
-
-    /**
-     * @param mixed $value
-     *
-     * @return string
-     */
-    public function encode($value)
-    {
-        return json_encode($value);
     }
 
     /**
