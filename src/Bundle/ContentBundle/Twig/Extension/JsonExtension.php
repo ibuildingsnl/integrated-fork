@@ -11,32 +11,22 @@
 
 namespace Integrated\Bundle\ContentBundle\Twig\Extension;
 
-use Symfony\Component\Serializer\SerializerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class JsonLDExtension extends AbstractExtension
+class JsonExtension extends AbstractExtension
 {
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    public function __construct(SerializerInterface $serializer)
-    {
-        $this->serializer = $serializer;
-    }
-
     /**
      * {@inheritdoc}
      */
     public function getFilters()
     {
         return [
-            new TwigFilter('json_ld', [$this, 'encode'], ['is_safe' => ['html']]),
+            new TwigFilter('json_encode', [$this, 'encode'], ['is_safe' => ['html']]),
+            new TwigFilter('json_decode', [$this, 'decode'], ['is_safe' => ['html']]),
         ];
     }
 
@@ -47,13 +37,17 @@ class JsonLDExtension extends AbstractExtension
      */
     public function encode($value)
     {
-        $serialized = $this->serializer->serialize($value, 'json-ld');
+        return json_encode($value);
+    }
 
-        if ($serialized && $serialized !== 'null') {
-            return $serialized;
-        }
-
-        return '';
+    /**
+     * @param mixed $value
+     *
+     * @return string
+     */
+    public function decode($value)
+    {
+        return json_decode($value, true);
     }
 
     /**
@@ -61,6 +55,6 @@ class JsonLDExtension extends AbstractExtension
      */
     public function getName()
     {
-        return 'integrated_content_json_ld_extension';
+        return 'integrated_content_json_extension';
     }
 }

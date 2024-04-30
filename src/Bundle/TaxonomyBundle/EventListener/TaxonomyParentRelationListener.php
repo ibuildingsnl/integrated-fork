@@ -49,7 +49,9 @@ final class TaxonomyParentRelationListener implements EventSubscriberInterface
             /** @var Content $parent */
             foreach ($parentDocument as $parent) {
                 $relation = $parent->getRelation('__children');
-                $relation->removeReference($taxonomy);
+                if ($relation instanceof Relation) {
+                    $relation->removeReference($taxonomy);
+                }
             }
 
             return;

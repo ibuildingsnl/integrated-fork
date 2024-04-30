@@ -1338,6 +1338,10 @@
                 <source>Only show Premium content</source>
                 <target>Toon enkel Premium content</target>
             </trans-unit>
+            <trans-unit id="339">
+                <source>Taxonomy (Expanded)</source>
+                <target>Categorie (Uitgebreid)</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
