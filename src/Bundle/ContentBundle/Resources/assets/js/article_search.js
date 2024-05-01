@@ -37,7 +37,7 @@ tinymce.PluginManager.add('articlelinksearch', (editor, url) => {
 
     editor.ui.registry.addMenuItem('integratedArticleLinkSearch', {
         icon: 'link',
-        text: 'Link to content',
+        text: 'Link',
         onAction: () => {
             return openDialog();
         },
