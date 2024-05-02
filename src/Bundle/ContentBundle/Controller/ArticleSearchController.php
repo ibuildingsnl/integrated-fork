@@ -97,22 +97,23 @@ class ArticleSearchController extends AbstractController
         $contentIds = [];
 
         $ret = array_map(
-            /**
-             * @throws \Exception
-             */
+        /**
+         * @throws \Exception
+         */
             function ($contentItem) use ($channel, &$contentIds) {
                 $contentIds[] = $contentItem->type_id;
 
                 return [
                     'id' => $contentItem->type_id,
                     'title' => $contentItem->title,
-                    'subtitle' => ucfirst($contentItem->type_name).' | '.(new \DateTimeImmutable(
-                        $contentItem->pub_time
-                    ))->format('d-m-Y'),
+                    'subtitle' => ucfirst($contentItem->type_name) . ' | ' .
+                    (new \DateTimeImmutable($contentItem->pub_time))->format('d-m-Y'),
                     'text' => substr(strip_tags(implode('', $contentItem->content)), 0, 255),
-                    'url' => $contentItem['url_'.$channel->getId()],
+                    'url' => $contentItem['url_' . $channel->getId()],
                 ];
-            }, $items);
+            },
+            $items
+        );
 
         $ret = array_map(function ($contentItem) use ($channel) {
             return array_merge($contentItem, [
