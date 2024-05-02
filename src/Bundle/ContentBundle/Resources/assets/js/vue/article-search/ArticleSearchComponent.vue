@@ -19,6 +19,7 @@ const searchParams = JSON.parse(new URLSearchParams(window.location.search).get(
 const endpoint = `${window.location.protocol}//${window.location.host}/admin`;
 const linkText = ref(searchParams.selectionText ?? '');
 const openInNewTab = ref(searchParams.openInNewTab ?? false);
+const existing = ref(searchParams.existing ?? false);
 const results = ref([]);
 const searchTerm = ref(searchParams.url ?? '');
 const selections = ref([]);
@@ -44,6 +45,10 @@ const hasValidUrl = computed(() => {
     try {
         return new URL(searchTerm.value);
     } catch {
+        if (searchTerm.value.startsWith('#')) {
+            return true;
+        }
+
         return false;
     }
 });
@@ -72,7 +77,7 @@ const doSearch = debounce(async () => {
         url = url.endsWith('/') ? url.substring(0, url.length - 1) : url;
         url = `${url}?term=${encodeURIComponent(searchTerm.value)}`;
 
-        if(activeContentTypes.value.length > 0) {
+        if (activeContentTypes.value.length > 0) {
             url = `${url}&contentTypeIds=${activeContentTypes.value}`;
         }
 
@@ -93,10 +98,20 @@ const doSearch = debounce(async () => {
 
 const finishSelection = () => {
     if (hasValidUrl.value) {
-        window.parent.postMessage({
-            mceAction: 'insertContent',
-            content: `<a href="${searchTerm.value}"${openInNewTab.value ? ' target="_blank"' : ''}>${linkText.value}</a>`
-        }, '*');
+        if (existing.value) {
+            window.parent.postMessage({
+                mceAction: 'linkMakerReplace',
+                href: searchTerm.value,
+                newTab: openInNewTab.value && !searchTerm.value.startsWith('#'),
+                linkText: linkText.value,
+            }, '*');
+        } else {
+            window.parent.postMessage({
+                mceAction: 'insertContent',
+                content: `<a href="${searchTerm.value}"${openInNewTab ? 'target="_blank"' : ''}>${linkText.value}</a>`
+            }, '*');
+        }
+
         window.parent.postMessage({
             mceAction: 'close',
         }, '*');
@@ -111,10 +126,20 @@ const finishSelection = () => {
     const id = selections.value[0];
     const item = results.value.filter((result) => result.id === id)[0];
 
-    window.parent.postMessage({
-        mceAction: 'insertContent',
-        content: `<a href="${item.url}"${openInNewTab.value ? ' target="_blank"' : ''}>${linkText.value}</a>`
-    }, '*');
+    if (existing.value) {
+        window.parent.postMessage({
+            mceAction: 'linkMakerReplace',
+            href: item.url,
+            newTab: openInNewTab.value,
+            linkText: linkText.value,
+        }, '*');
+    } else {
+        window.parent.postMessage({
+            mceAction: 'insertContent',
+            content: `<a href="${item.url}"${openInNewTab ? 'target="_blank"' : ''}>${linkText.value}</a>`
+        }, '*');
+    }
+
     window.parent.postMessage({
         mceAction: 'close',
     }, '*');
@@ -140,7 +165,7 @@ watchEffect(() => {
     const hasContentTypes = activeContentTypes.value.length > 0;
     const hasSearchTerm = searchTerm.value.length > 0;
 
-    if(hasActiveChannels && hasSearchTerm) {
+    if (hasActiveChannels && hasSearchTerm) {
         attemptSearch();
     }
 });
@@ -182,7 +207,11 @@ watchEffect(() => {
 
         <main class="flex flex-col justify-between">
             <div class="">
-                <TextInput v-model="linkText" :error-text="linkText.length > 0 ? '' : 'Please fill in the link text'" placeholder="Link text"/>
+                <TextInput
+                    v-model="linkText"
+                    :error-text="linkText.length > 0 ? '' : 'Please fill in the link text'"
+                    placeholder="Link text"
+                />
                 <SuggestionTextInput
                     :permanent="true"
                     :suggestions="results"
@@ -194,7 +223,10 @@ watchEffect(() => {
                     :error-text="searchTerm.length > 0 ? '' : 'Enter a search term or URL'"
                 >
                     <ArticleSearchLoadingStatus v-if="loading"/>
-                    <ArticleSearchWarningStatus text="Enter a search term to begin searching" v-else-if="searchTerm.length === 0"/>
+                    <ArticleSearchWarningStatus
+                        text="Enter a search term to begin searching"
+                        v-else-if="searchTerm.length === 0"
+                    />
                     <ArticleSearchWarningStatus text="Please select a channel" v-else-if="activeChannels.length === 0"/>
                     <ArticleSearchWarningStatus text="No results" v-else-if="results.length === 0 && !hasValidUrl"/>
                     <ArticleSearchWarningStatus text="Please fill in the link text" v-else-if="linkText.length === 0"/>

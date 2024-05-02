@@ -11,8 +11,9 @@ tinymce.PluginManager.add('articlelinksearch', (editor, url) => {
         if(selectedNode.nodeName.toLocaleUpperCase() === 'A') {
             data = {
                 selectionText: selectedNode.innerText,
-                url: selectedNode.href,
-                openInNewTab: (selectedNode.target ?? '') === '_blank',
+                url: selectedNode.getAttribute('href'),
+                openInNewTab: (selectedNode.getAttribute('target') ?? '') === '_blank',
+                existing: true,
             };
         } else {
             data = {
@@ -20,12 +21,26 @@ tinymce.PluginManager.add('articlelinksearch', (editor, url) => {
             };
         }
 
-        return editor.windowManager.openUrl({
+        const window = editor.windowManager.openUrl({
             title: 'Link maker',
             url: `${protocol}//${hostname}/admin/article-search?data=${encodeURIComponent(JSON.stringify(data))}`,
             width: 900,
-            height: 600
+            height: 600,
+            onMessage(instance, data) {
+                switch(data.mceAction) {
+                    case 'linkMakerReplace':
+                        if(selectedNode.nodeName.toLocaleUpperCase() === 'A') {
+                            selectedNode.innerText = data.linkText;
+                            editor.dom.setAttrib(selectedNode, 'href', data.href);
+                            editor.dom.setAttrib(selectedNode, 'target', data.newTab ? '_blank' : '');
+                            break;
+                        }
+                        break;
+                }
+            }
         });
+
+        return window;
     }
 
     editor.ui.registry.addButton('integratedArticleLinkSearch', {
