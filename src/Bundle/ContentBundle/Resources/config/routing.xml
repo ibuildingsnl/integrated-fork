@@ -20,4 +20,11 @@
 
     <import resource="@IntegratedBlockBundle/Resources/config/routing.xml" />
 
+    <route id="content_redirect" path="/" controller="Symfony\Bundle\FrameworkBundle\Controller\RedirectController">
+        <default key="route">integrated_content_content_index</default>
+        <default key="permanent">true</default>
+        <default key="keepQueryParams">true</default>
+        <default key="keepRequestMethod">true</default>
+    </route>
+
 </routes>
