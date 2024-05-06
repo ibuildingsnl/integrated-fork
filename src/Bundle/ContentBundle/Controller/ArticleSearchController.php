@@ -55,6 +55,21 @@ class ArticleSearchController extends AbstractController
         return $this->render('@IntegratedContent/article_search/article_search.html.twig', [
             'channels' => json_encode(array_values($channels)),
             'contentTypes' => json_encode(array_values($contentTypes)),
+            'translations' => json_encode([
+                'apply' => $this->getTranslator()->trans('Apply'),
+                'cancel' => $this->getTranslator()->trans('Cancel'),
+                'no_results' => $this->getTranslator()->trans('No results'),
+                'new_tab' => $this->getTranslator()->trans('Open in new tab'),
+                'require_searchterm' => $this->getTranslator()->trans('Enter a search term to begin searching'),
+                'require_linktext' => $this->getTranslator()->trans('Please fill in the link text'),
+                'searching' => $this->getTranslator()->trans('Searching...'),
+                'select_channel' => $this->getTranslator()->trans('Select a channel'),
+                'channels' => $this->getTranslator()->trans('Channels'),
+                'content_types' => $this->getTranslator()->trans('Content types'),
+                'link_text' => $this->getTranslator()->trans('Link text'),
+                'url_or_searchterm' => $this->getTranslator()->trans('URL or search term'),
+                'ready' => $this->getTranslator()->trans('Good to go!'),
+            ])
         ]);
     }
 

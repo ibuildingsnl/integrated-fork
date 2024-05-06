@@ -13,8 +13,10 @@ import ArticleSearchLoadingStatus from "./statuses/ArticleSearchLoadingStatus.vu
 const props = defineProps({
     channels: String,
     contentTypes: String,
+    translations: String,
 });
 
+const translations = JSON.parse(props.translations);
 const searchParams = JSON.parse(new URLSearchParams(window.location.search).get('data'));
 const endpoint = `${window.location.protocol}//${window.location.host}/admin`;
 const linkText = ref(searchParams.selectionText ?? '');
@@ -176,7 +178,7 @@ watchEffect(() => {
         <aside>
             <div class="aside-item-container">
                 <div class="aside-item-header">
-                    <h3 class="aside-item-title">Kanalen</h3>
+                    <h3 class="aside-item-title">{{ translations.channels }}</h3>
                 </div>
                 <MaxHeightScroller max-height="calc(50vh - 35px)">
                     <Checkbox
@@ -191,7 +193,7 @@ watchEffect(() => {
 
             <div class="aside-item-container">
                 <div class="aside-item-header">
-                    <h3 class="aside-item-title">Content type</h3>
+                    <h3 class="aside-item-title">{{ translations.content_types }}</h3>
                 </div>
                 <MaxHeightScroller max-height="calc(50vh - 35px)">
                     <Checkbox
@@ -209,37 +211,34 @@ watchEffect(() => {
             <div class="">
                 <TextInput
                     v-model="linkText"
-                    :error-text="linkText.length > 0 ? '' : 'Please fill in the link text'"
-                    placeholder="Link text"
+                    :error-text="linkText.length > 0 ? '' : translations.require_link_text"
+                    :placeholder="translations.link_text"
                 />
                 <SuggestionTextInput
                     :permanent="true"
                     :suggestions="results"
-                    placeholder="URL or search term"
+                    :placeholder="translations.url_or_searchterm"
                     :multiple="false"
                     v-model="searchTerm"
                     v-model:selections="selections"
                     @searchConfirm="attemptSearch"
-                    :error-text="searchTerm.length > 0 ? '' : 'Enter a search term or URL'"
+                    :error-text="searchTerm.length > 0 ? '' : translations.require_searchterm"
                 >
-                    <ArticleSearchLoadingStatus v-if="loading"/>
-                    <ArticleSearchWarningStatus
-                        text="Enter a search term to begin searching"
-                        v-else-if="searchTerm.length === 0"
-                    />
-                    <ArticleSearchWarningStatus text="Please select a channel" v-else-if="activeChannels.length === 0"/>
-                    <ArticleSearchWarningStatus text="No results" v-else-if="results.length === 0 && !hasValidUrl"/>
-                    <ArticleSearchWarningStatus text="Please fill in the link text" v-else-if="linkText.length === 0"/>
-                    <ArticleSearchSuccessStatus v-else/>
+                    <ArticleSearchLoadingStatus :text="translations.searching" v-if="loading"/>
+                    <ArticleSearchWarningStatus :text="translations.require_searchterm" v-else-if="searchTerm.length === 0"/>
+                    <ArticleSearchWarningStatus :text="translations.select_channel" v-else-if="activeChannels.length === 0"/>
+                    <ArticleSearchWarningStatus :text="translations.no_results" v-else-if="results.length === 0 && !hasValidUrl"/>
+                    <ArticleSearchWarningStatus :text="translations.require_link_text" v-else-if="linkText.length === 0"/>
+                    <ArticleSearchSuccessStatus :text="translations.ready" v-else/>
                 </SuggestionTextInput>
                 <div class="form-group mt-2">
-                    <Checkbox id="new-tab" v-model="openInNewTab" label="Open in new tab"/>
+                    <Checkbox id="new-tab" v-model="openInNewTab" :label="translations.new_tab"/>
                 </div>
             </div>
 
             <div class="flex flex-row space-x-2 self-end">
-                <Button @click.prevent.stop="cancel" type="normal">Cancel</Button>
-                <Button @click.prevent.stop="finishSelection" type="primary" :disabled="!isStateValid">Apply</Button>
+                <Button @click.prevent.stop="cancel" type="normal">{{ translations.cancel }}</Button>
+                <Button @click.prevent.stop="finishSelection" type="primary" :disabled="!isStateValid">{{ translations.apply }}</Button>
             </div>
         </main>
     </div>

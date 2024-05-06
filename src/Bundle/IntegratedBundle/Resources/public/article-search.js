@@ -18418,13 +18418,15 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   __name: 'ArticleSearchComponent',
   props: {
     channels: String,
-    contentTypes: String
+    contentTypes: String,
+    translations: String
   },
   setup: function setup(__props, _ref) {
     var _searchParams$selecti, _searchParams$openInN, _searchParams$existin, _searchParams$url;
     var __expose = _ref.expose;
     __expose();
     var props = __props;
+    var translations = JSON.parse(props.translations);
     var searchParams = JSON.parse(new URLSearchParams(window.location.search).get('data'));
     var endpoint = "".concat(window.location.protocol, "//").concat(window.location.host, "/admin");
     var linkText = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)((_searchParams$selecti = searchParams.selectionText) !== null && _searchParams$selecti !== void 0 ? _searchParams$selecti : '');
@@ -18591,6 +18593,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     });
     var __returned__ = {
       props: props,
+      translations: translations,
       searchParams: searchParams,
       endpoint: endpoint,
       linkText: linkText,
@@ -18651,10 +18654,15 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __name: 'ArticleSearchLoadingStatus',
+  props: {
+    text: String
+  },
   setup: function setup(__props, _ref) {
     var __expose = _ref.expose;
     __expose();
+    var props = __props;
     var __returned__ = {
+      props: props,
       TailwindSpinner: _icons_TailwindSpinner_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
     };
     Object.defineProperty(__returned__, '__isScriptSetup', {
@@ -18682,10 +18690,15 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __name: 'ArticleSearchSuccessStatus',
+  props: {
+    text: String
+  },
   setup: function setup(__props, _ref) {
     var __expose = _ref.expose;
     __expose();
+    var props = __props;
     var __returned__ = {
+      props: props,
       IconoirCheck: _icons_IconoirCheck_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
     };
     Object.defineProperty(__returned__, '__isScriptSetup', {
@@ -19105,33 +19118,35 @@ var _hoisted_1 = {
 var _hoisted_2 = {
   "class": "aside-item-container"
 };
-var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_3 = {
   "class": "aside-item-header"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", {
-  "class": "aside-item-title"
-}, "Kanalen")], -1 /* HOISTED */);
+};
 var _hoisted_4 = {
+  "class": "aside-item-title"
+};
+var _hoisted_5 = {
   "class": "aside-item-container"
 };
-var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "aside-item-header"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", {
-  "class": "aside-item-title"
-}, "Content type")], -1 /* HOISTED */);
 var _hoisted_6 = {
-  "class": "flex flex-col justify-between"
+  "class": "aside-item-header"
 };
 var _hoisted_7 = {
-  "class": ""
+  "class": "aside-item-title"
 };
 var _hoisted_8 = {
-  "class": "form-group mt-2"
+  "class": "flex flex-col justify-between"
 };
 var _hoisted_9 = {
+  "class": ""
+};
+var _hoisted_10 = {
+  "class": "form-group mt-2"
+};
+var _hoisted_11 = {
   "class": "flex flex-row space-x-2 self-end"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("aside", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["MaxHeightScroller"], {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("aside", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.translations.channels), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["MaxHeightScroller"], {
     "max-height": "calc(50vh - 35px)"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
@@ -19148,7 +19163,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       }), 128 /* KEYED_FRAGMENT */))];
     }),
     _: 1 /* STABLE */
-  })]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["MaxHeightScroller"], {
+  })]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.translations.content_types), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["MaxHeightScroller"], {
     "max-height": "calc(50vh - 35px)"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
@@ -19165,17 +19180,17 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       }), 128 /* KEYED_FRAGMENT */))];
     }),
     _: 1 /* STABLE */
-  })])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("main", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["TextInput"], {
+  })])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("main", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["TextInput"], {
     modelValue: $setup.linkText,
     "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
       return $setup.linkText = $event;
     }),
-    "error-text": $setup.linkText.length > 0 ? '' : 'Please fill in the link text',
-    placeholder: "Link text"
-  }, null, 8 /* PROPS */, ["modelValue", "error-text"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["SuggestionTextInput"], {
+    "error-text": $setup.linkText.length > 0 ? '' : $setup.translations.require_link_text,
+    placeholder: $setup.translations.link_text
+  }, null, 8 /* PROPS */, ["modelValue", "error-text", "placeholder"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["SuggestionTextInput"], {
     permanent: true,
     suggestions: $setup.results,
-    placeholder: "URL or search term",
+    placeholder: $setup.translations.url_or_searchterm,
     multiple: false,
     modelValue: $setup.searchTerm,
     "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
@@ -19186,41 +19201,43 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return $setup.selections = $event;
     }),
     onSearchConfirm: $setup.attemptSearch,
-    "error-text": $setup.searchTerm.length > 0 ? '' : 'Enter a search term or URL'
+    "error-text": $setup.searchTerm.length > 0 ? '' : $setup.translations.require_searchterm
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [$setup.loading ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)($setup["ArticleSearchLoadingStatus"], {
-        key: 0
-      })) : $setup.searchTerm.length === 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)($setup["ArticleSearchWarningStatus"], {
+        key: 0,
+        text: $setup.translations.searching
+      }, null, 8 /* PROPS */, ["text"])) : $setup.searchTerm.length === 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)($setup["ArticleSearchWarningStatus"], {
         key: 1,
-        text: "Enter a search term to begin searching"
-      })) : $setup.activeChannels.length === 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)($setup["ArticleSearchWarningStatus"], {
+        text: $setup.translations.require_searchterm
+      }, null, 8 /* PROPS */, ["text"])) : $setup.activeChannels.length === 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)($setup["ArticleSearchWarningStatus"], {
         key: 2,
-        text: "Please select a channel"
-      })) : $setup.results.length === 0 && !$setup.hasValidUrl ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)($setup["ArticleSearchWarningStatus"], {
+        text: $setup.translations.select_channel
+      }, null, 8 /* PROPS */, ["text"])) : $setup.results.length === 0 && !$setup.hasValidUrl ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)($setup["ArticleSearchWarningStatus"], {
         key: 3,
-        text: "No results"
-      })) : $setup.linkText.length === 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)($setup["ArticleSearchWarningStatus"], {
+        text: $setup.translations.no_results
+      }, null, 8 /* PROPS */, ["text"])) : $setup.linkText.length === 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)($setup["ArticleSearchWarningStatus"], {
         key: 4,
-        text: "Please fill in the link text"
-      })) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)($setup["ArticleSearchSuccessStatus"], {
-        key: 5
-      }))];
+        text: $setup.translations.require_link_text
+      }, null, 8 /* PROPS */, ["text"])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)($setup["ArticleSearchSuccessStatus"], {
+        key: 5,
+        text: $setup.translations.ready
+      }, null, 8 /* PROPS */, ["text"]))];
     }),
     _: 1 /* STABLE */
-  }, 8 /* PROPS */, ["suggestions", "modelValue", "selections", "error-text"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Checkbox"], {
+  }, 8 /* PROPS */, ["suggestions", "placeholder", "modelValue", "selections", "error-text"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Checkbox"], {
     id: "new-tab",
     modelValue: $setup.openInNewTab,
     "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
       return $setup.openInNewTab = $event;
     }),
-    label: "Open in new tab"
-  }, null, 8 /* PROPS */, ["modelValue"])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Button"], {
+    label: $setup.translations.new_tab
+  }, null, 8 /* PROPS */, ["modelValue", "label"])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Button"], {
     onClick: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)($setup.cancel, ["prevent", "stop"]),
     type: "normal"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Cancel")];
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.translations.cancel), 1 /* TEXT */)];
     }),
     _: 1 /* STABLE */
   }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Button"], {
@@ -19229,7 +19246,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     disabled: !$setup.isStateValid
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Apply")];
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.translations.apply), 1 /* TEXT */)];
     }),
     _: 1 /* STABLE */
   }, 8 /* PROPS */, ["disabled"])])])]);
@@ -19375,11 +19392,10 @@ __webpack_require__.r(__webpack_exports__);
 var _hoisted_1 = {
   "class": "py-4 text-lg text-zinc-400 select-none flex flex-col items-center space-y-2"
 };
-var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Searching...", -1 /* HOISTED */);
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["TailwindSpinner"], {
     "class": "animate-spin w-10 h-10"
-  }), _hoisted_2]);
+  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.props.text), 1 /* TEXT */)]);
 }
 
 /***/ }),
@@ -19400,11 +19416,10 @@ __webpack_require__.r(__webpack_exports__);
 var _hoisted_1 = {
   "class": "py-4 text-lg text-zinc-400 select-none flex flex-col items-center space-y-2"
 };
-var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Good to go!", -1 /* HOISTED */);
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["IconoirCheck"], {
     "class": "w-10 h-10"
-  }), _hoisted_2]);
+  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.props.text), 1 /* TEXT */)]);
 }
 
 /***/ }),
