@@ -1,10 +1,6 @@
 How to install widget on database
 - php bin/console widget:database
 
-How to reload all widget on database
-- php bin/console widget:database --update
-
-
 List of getting Analytical Data Commands:
 
 - "analytics:data": Executes all commands for obtaining data
