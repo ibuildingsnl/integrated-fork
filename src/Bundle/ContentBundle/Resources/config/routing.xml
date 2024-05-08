@@ -16,6 +16,7 @@
     <import resource="@IntegratedContentBundle/Resources/config/routing/search_selection.xml" prefix="/search-selection/" />
     <import resource="@IntegratedContentBundle/Resources/config/routing/search.xml" />
     <import resource="@IntegratedContentBundle/Resources/config/routing/yoastseo.xml" />
+    <import resource="@IntegratedContentBundle/Resources/config/routing/oembed.xml" />
     <import resource="@IntegratedContentBundle/Resources/config/routing/bulk.xml"  prefix="/bulk/"/>
 
     <import resource="@IntegratedBlockBundle/Resources/config/routing.xml" />
