@@ -38,16 +38,21 @@ class ContentTypeManager
     }
 
     /** @return ContentTypeInterface[] */
-    public function filterInstanceOf(string $className): array
+    public function filterInstanceOf(string $className, bool $strict = false): array
     {
         $contentTypes = [];
 
         foreach ($this->getAll() as $contentType) {
-            if (is_a($contentType->getClass(), $className, true)) {
+            if($strict === true && $contentType->getClass() === $className) {
+                dump($contentType->getClass(), $className, $contentType->getClass() === $className);
+                $contentTypes[] = $contentType;
+                continue;
+            }
+
+            if ($strict === false && is_a($contentType->getClass(), $className, true)) {
                 $contentTypes[] = $contentType;
             }
         }
-
         return $contentTypes;
     }
 
