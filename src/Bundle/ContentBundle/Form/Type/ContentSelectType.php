@@ -15,9 +15,12 @@ use Doctrine\Persistence\ManagerRegistry;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\AuthorTransformer;
+use Integrated\Bundle\ContentBundle\Form\DataTransformer\ContentTypeTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -43,9 +46,12 @@ class ContentSelectType extends AbstractType
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $transformer = new AuthorTransformer($this->mr);
+        $transformer = new ContentTypeTransformer($this->mr, $options['class']);
 
         $builder->addModelTransformer($transformer);
+        $builder->addEventListener(FormEvents::SUBMIT, function(FormEvent $event) {
+//            dd($event->getData());
+        });
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options) {

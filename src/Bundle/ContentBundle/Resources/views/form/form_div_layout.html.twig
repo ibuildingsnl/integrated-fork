@@ -201,8 +201,6 @@
                 {% for item in value %}
                     <option selected value="{{ item.id }}">{{ item.text }}</option>
                 {% endfor %}
-            {% else %}
-                <option selected value="none">Empty</option>
             {% endif %}
         </select>
     </div>
@@ -226,6 +224,23 @@
         {% endif %}
     </div>
 
+    <div id="{{ id }}__content_metadata">
+        {% if value is not empty %}
+            {% for item in value %}
+                <div id="type_{{ item.id }}" style="margin-top: 10px;" class="input-group input-group">
+                    <span class="input-group-addon">
+                        {{ item.text }}
+                    </span>
+                    <input type="text"
+                           class="form-control type-text"
+                           name="{{ full_name }}[metadata][{{ item.id }}]"
+                           value="{{ item.type }}"
+                           placeholder="Type"/>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function(event) {
             $("#{{ id }}").select2({
@@ -241,17 +256,6 @@
                         };
                     },
                     processResults: function(data) {
-                        $.map(data.items, function(item) {
-                            var value = item.title;
-                            if (this.authorValues === undefined) {
-                                this.authorValues = {};
-                            }
-                            if (this.authorValues[value] === undefined) {
-                                this.authorValues[value] = 1;
-                            } else {
-                                this.authorValues[value] = this.authorValues[value] + 1;
-                            }
-                        });
                         return {
                             results: $.map(data.items, function(item) {
                                 title = item.title;
@@ -264,29 +268,6 @@
                     },
                 },
                 dropdownCssClass: 'bigdrop',
-            }).on('change', function(e) {
-                if (e.hasOwnProperty('added')) {
-                }
-
-                if (e.hasOwnProperty('removed')) {
-                    $('#type_' + e.removed.id).remove();
-                }
-            }).on('select2:select', function(e) {
-                var data = e.params.data;
-                $('#authorTypes').
-                append('<div id="type_' + data.id +
-                    '" style="margin-top: 10px;" class="input-group input-group"><span class="input-group-addon">' +
-                    data.text +
-                    '</span><input type="text" class="form-control type-text" name="{{ full_name }}[types][' +
-                    data.id + ']" placeholder="Type" /></div>');
-
-            }).on('select2:unselect', function(e) {
-                var id = e.params.data.id;
-                $('#type_' + id).remove();
-            });
-
-            $('#types-btn').on('click', function(e) {
-                $('#authorTypes').toggle();
             });
 
             {% if value is not empty %}
