@@ -9,6 +9,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\SeoMeta;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata as StorageMetadata;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
@@ -525,7 +526,7 @@ class BaseConverter
 
                         foreach ($categories as $categoryName) {
                             $categoryName = trim($categoryName);
-                            $categoryName = ucfirst($categoryName);
+//                            $categoryName = ucfirst($categoryName);
 
                             $existingDocument = $documentManager->getRepository(Content::class)->findOneBy(
                                 [
@@ -538,7 +539,7 @@ class BaseConverter
                             if (!$existingDocument) {
                                 $existingDocument = $targetContentType->create();
 
-                                $existingDocument->setTitle(ucfirst($categoryName));
+                                $existingDocument->setTitle($categoryName);
                                 //Add functionality to support other parents also
                                 $existingDocument->setParentId($brandParent ? $brandParent->getId() : null);
                                 $existingDocument->getMetadata()->set('importDate', date('Ymd'));
@@ -667,16 +668,19 @@ class BaseConverter
             }
 
             if ($field === 'seo_metadata') {
+                $seoMetaData = new SeoMeta();
                 foreach ($value as $childField => $childValue) {
                     $method = str_replace(' ', '', ucwords(str_replace('_', ' ', $childField)));
 
                     // Prefix with 'set' for setter methods, e.g., 'Title' becomes 'setTitle'
                     $setterMethod = 'set' . $method;
 
-                    if (method_exists($newObject, $setterMethod)) {
-                        \call_user_func([$newObject, $setterMethod], $childValue);
+                    if (method_exists($seoMetaData, $setterMethod)) {
+                        \call_user_func([$seoMetaData, $setterMethod], $childValue);
                     }
                 }
+                $newObject->setSeoMetadata($seoMetaData);
+
                 continue;
             }
 
@@ -747,6 +751,43 @@ class BaseConverter
 
                 if ($checkResult['file']) {
                     $newObject->setFeaturedImage($checkResult['file']);
+                }
+                continue;
+            }
+
+            if ($field === 'picture') {
+                // TODO: Add more options for example Drupal
+                $href = '';
+                if (preg_match('/^[0-9]+$/', $value)) {
+                    if ($importType === 'WordPress') {
+                        $href = $importDefinition->getWebsiteBaseUrl() . '?attachment_id=' . $value;
+                    }
+                } else {
+                    if (filter_var($value, \FILTER_VALIDATE_URL) !== false) {
+                        $href = $value;
+                    } else {
+                        $result['messages'][] = "[WARNING] {$field} {$value} does not contain a valid link or id";
+                    }
+                }
+
+                if ($href === '') {
+                    $result['messages'][] = "[WARNING] {$field} {$value} does not contain a valid link or id";
+                }
+
+                $checkResult = Create::createFileFromUrl(
+                    $href,
+                    $newObject,
+                    $newData,
+                    $importDefinition,
+                    $storageManager,
+                    $documentManager,
+                    false,
+                    true
+                );
+                $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
+
+                if ($checkResult['file']) {
+                    $newObject->setPicture($checkResult['file']);
                 }
                 continue;
             }
