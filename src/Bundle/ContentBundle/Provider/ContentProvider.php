@@ -152,7 +152,7 @@ class ContentProvider
         $relations = $request->query->get('relation');
         if (null !== $relations) {
             $contentType = [];
-            /** @var Relation $relation */
+            /* @var Relation $relation */
             foreach ($relations as $key => $value) {
                 if ($relation = $this->dm->getRepository(Relation::class)->find($key)) {
                     foreach ($relation->getSources() as $source) {
@@ -179,7 +179,7 @@ class ContentProvider
                 ->setQuery('facet_properties: ((%1%))', [implode(') OR (', array_map($filter, $propertiesfilter))]);
         }
 
-        /** @var Relation $relation */
+        /* @var Relation $relation */
         foreach ($request->query->get('relation') as $relationId => $value) {
             $relation = $this->dm->getRepository(Relation::class)->find($relationId);
             $relationfilter = $value;
