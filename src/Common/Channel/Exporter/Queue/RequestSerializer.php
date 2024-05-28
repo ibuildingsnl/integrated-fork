@@ -94,8 +94,12 @@ class RequestSerializer implements RequestSerializerInterface
             return null;
         }
 
-        // only return a valid none empty request object
+        // let the exporter know if content is removed from the database
+        if (!$request->content) {
+            return 'removed';
+        }
 
+        // only return a valid none empty request object
         if ($request->content && $request->channel instanceof ChannelInterface) {
             return $request;
         }

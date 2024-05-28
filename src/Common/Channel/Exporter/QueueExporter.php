@@ -98,6 +98,10 @@ class QueueExporter implements ExporterInterface, QueueExporterInterface
     {
         $request = $this->serializer->deserialize($message->getPayload());
 
+        if ($request === 'removed') {
+            return $message;
+        }
+
         if ($request === null) { // @todo Let serializer throw exception rather than silently returning null
             throw new \InvalidArgumentException('Failed to deserialize the request message.');
         }
