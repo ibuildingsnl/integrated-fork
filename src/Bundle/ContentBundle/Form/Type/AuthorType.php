@@ -19,7 +19,7 @@ class AuthorType extends AbstractType
     public function __construct(
         private readonly ManagerRegistry $mr,
         private readonly ContentTypeManager $contentTypeManager,
-        private readonly string $authorContentTypes
+        private readonly array $authorContentTypes
     ) {
     }
 
@@ -37,8 +37,7 @@ class AuthorType extends AbstractType
     {
         $contentTypes = [];
 
-        if ($this->authorContentTypes !== '') {
-            $contentTypes = explode(',', $this->authorContentTypes);
+        if (count($this->authorContentTypes) > 0) {
             foreach ($contentTypes as $contentType) {
                 $contentTypes[$contentType] = $this->contentTypeManager->getType($contentType)->getName();
             }
