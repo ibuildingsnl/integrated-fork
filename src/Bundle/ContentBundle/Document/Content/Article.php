@@ -217,7 +217,7 @@ class Article extends Content implements RankableInterface
         return $this->subtitle;
     }
 
-    public function setSubtitle(string $subtitle): void
+    public function setSubtitle(?string $subtitle): void
     {
         $this->subtitle = $subtitle;
     }
@@ -289,7 +289,7 @@ class Article extends Content implements RankableInterface
         return $this->intro;
     }
 
-    public function setIntro(string $intro): void
+    public function setIntro(?string $intro): void
     {
         $this->intro = $intro;
     }
@@ -299,7 +299,7 @@ class Article extends Content implements RankableInterface
         return $this->description;
     }
 
-    public function setDescription($description): void
+    public function setDescription(?string $description): void
     {
         $this->description = $description;
     }
@@ -348,6 +348,6 @@ class Article extends Content implements RankableInterface
 
     public function __toString(): string
     {
-        return (string) $this->title;
+        return $this->title;
     }
 }
