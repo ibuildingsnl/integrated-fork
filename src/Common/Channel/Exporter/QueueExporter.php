@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the Integrated package.
- *
- * (c) e-Active B.V. <integrated@e-active.nl>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Integrated\Common\Channel\Exporter;
 
 use Integrated\Common\Channel\Exporter\Queue\RequestSerializerInterface;
@@ -16,12 +7,11 @@ use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Queue\QueueMessageInterface;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
 class QueueExporter implements ExporterInterface, QueueExporterInterface
 {
     private \Closure $retryDelay;
+
+    public const CONTENT_REMOVED = 'removed';
 
     public function __construct(
         private readonly QueueInterface $queue,
@@ -33,26 +23,17 @@ class QueueExporter implements ExporterInterface, QueueExporterInterface
         $this->retryDelay = $retryDelay ?: fn (int $attempt) => 150 + $attempt * 150;
     }
 
-    /**
-     * @return QueueInterface
-     */
-    public function getQueue()
+    public function getQueue(): QueueInterface
     {
         return $this->queue;
     }
 
-    /**
-     * @return RequestSerializerInterface
-     */
-    public function getSerializer()
+    public function getSerializer(): RequestSerializerInterface
     {
         return $this->serializer;
     }
 
-    /**
-     * @return ExporterInterface
-     */
-    public function getExporter()
+    public function getExporter(): ExporterInterface
     {
         return $this->exporter;
     }
@@ -91,14 +72,11 @@ class QueueExporter implements ExporterInterface, QueueExporterInterface
         return $i;
     }
 
-    /**
-     * @return QueueMessageInterface
-     */
-    public function process(QueueMessageInterface $message)
+    public function process(QueueMessageInterface $message): QueueMessageInterface
     {
         $request = $this->serializer->deserialize($message->getPayload());
 
-        if ($request === 'removed') {
+        if ($request === self::CONTENT_REMOVED) {
             return $message;
         }
 

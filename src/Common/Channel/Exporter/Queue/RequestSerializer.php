@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the Integrated package.
- *
- * (c) e-Active B.V. <integrated@e-active.nl>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Integrated\Common\Channel\Exporter\Queue;
 
 use Integrated\Common\Channel\ChannelManagerInterface;
@@ -16,42 +7,22 @@ use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Security\Acl\Util\ClassUtils;
 use Symfony\Component\Serializer\SerializerInterface;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
 class RequestSerializer implements RequestSerializerInterface
 {
-    /**
-     * @var SerializerInterface
-     */
-    protected $serializer = null;
+    public const CONTENT_REMOVED = 'removed';
 
-    /**
-     * @var ChannelManagerInterface
-     */
-    protected $manager = null;
-
-    /**
-     * Constructor.
-     */
-    public function __construct(SerializerInterface $serializer, ChannelManagerInterface $manager)
-    {
-        $this->serializer = $serializer;
-        $this->manager = $manager;
+    public function __construct(
+        private readonly SerializerInterface $serializer,
+        private readonly ChannelManagerInterface $manager
+    ) {
     }
 
-    /**
-     * @return SerializerInterface
-     */
-    protected function getSerializer()
+    protected function getSerializer(): SerializerInterface
     {
         return $this->serializer;
     }
 
-    /**
-     * @return ChannelManagerInterface
-     */
-    protected function getManager()
+    protected function getManager(): ChannelManagerInterface
     {
         return $this->manager;
     }
@@ -96,7 +67,7 @@ class RequestSerializer implements RequestSerializerInterface
 
         // let the exporter know if content is removed from the database
         if (!$request->content) {
-            return 'removed';
+            return self::CONTENT_REMOVED;
         }
 
         // only return a valid none empty request object
