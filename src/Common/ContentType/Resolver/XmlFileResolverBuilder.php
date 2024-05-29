@@ -13,6 +13,7 @@ namespace Integrated\Common\ContentType\Resolver;
 
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Symfony\Component\Config\Util\XmlUtils;
+use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
 
 class XmlFileResolverBuilder extends MemoryResolverBuilder
 {
@@ -34,6 +35,19 @@ class XmlFileResolverBuilder extends MemoryResolverBuilder
 
             foreach ($element->getElementsByTagName('name') as $child) {
                 $contentType->setName($child->nodeValue);
+            }
+
+            $fieldsElement = $element->getElementsByTagName('fields')->item(0);
+            if ($fieldsElement) {
+                $fields = [];
+                foreach ($fieldsElement->getElementsByTagName('field') as $fieldElement) {
+                    $field = new Field();
+                    $field->setName($fieldElement->nodeValue);
+                    $field->setOptions(['required' => false]);
+
+                    $fields[] = $field;
+                }
+                $contentType->setFields($fields);
             }
 
             $this->addContentType($contentType);

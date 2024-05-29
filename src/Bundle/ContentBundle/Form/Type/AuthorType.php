@@ -17,9 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class AuthorType extends AbstractType
 {
     public function __construct(
-        private readonly ManagerRegistry $mr,
-        private readonly ContentTypeManager $contentTypeManager,
-        private readonly array $authorContentTypes
+        private readonly ManagerRegistry $mr
     ) {
     }
 
@@ -35,19 +33,9 @@ class AuthorType extends AbstractType
 
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $contentTypes = [];
-
-        if (\count($this->authorContentTypes) > 0) {
-            foreach ($this->authorContentTypes as $contentType) {
-                $contentTypes[$contentType] = $this->contentTypeManager->getType($contentType)->getName();
-            }
-        } else {
-            foreach ($this->contentTypeManager->filterInstanceOf(Person::class) as $contentType) {
-                if ($contentType instanceof ContentType) {
-                    $contentTypes[$contentType->getId()] = $contentType->getName();
-                }
-            }
-        }
+        $contentTypes = [
+            'author' => 'Author'
+        ];
 
         $view->vars['contentTypes'] = $contentTypes;
     }
@@ -55,7 +43,7 @@ class AuthorType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'multiple' => true,
