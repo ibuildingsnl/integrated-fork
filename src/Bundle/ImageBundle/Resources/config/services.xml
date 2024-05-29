@@ -7,10 +7,8 @@
     <parameters>
 
         <parameter key="integrated_image.format" type="collection">
-            <parameter>jpg</parameter>
             <parameter>gif</parameter>
-            <parameter>jpeg</parameter>
-            <parameter>png</parameter>
+            <parameter>webp</parameter>
             <parameter>svg</parameter>
         </parameter>
 
