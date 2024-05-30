@@ -11,18 +11,37 @@ class RequestSerializer implements RequestSerializerInterface
 {
     public const CONTENT_REMOVED = 'removed';
 
-    public function __construct(
-        private readonly SerializerInterface $serializer,
-        private readonly ChannelManagerInterface $manager
-    ) {
+    /**
+     * @var SerializerInterface
+     */
+    protected $serializer = null;
+
+    /**
+     * @var ChannelManagerInterface
+     */
+    protected $manager = null;
+
+    /**
+     * Constructor.
+     */
+    public function __construct(SerializerInterface $serializer, ChannelManagerInterface $manager)
+    {
+        $this->serializer = $serializer;
+        $this->manager = $manager;
     }
 
-    protected function getSerializer(): SerializerInterface
+    /**
+     * @return SerializerInterface
+     */
+    protected function getSerializer()
     {
         return $this->serializer;
     }
 
-    protected function getManager(): ChannelManagerInterface
+    /**
+     * @return ChannelManagerInterface
+     */
+    protected function getManager()
     {
         return $this->manager;
     }
@@ -32,15 +51,17 @@ class RequestSerializer implements RequestSerializerInterface
      */
     public function serialize(Request $data)
     {
-        return json_encode([
-            'content' => [
-                'data' => $this->getSerializer()->serialize($data->content, 'json'),
-                'type' => ClassUtils::getRealClass($data->content),
-            ],
-            'state' => $data->state,
-            'channel' => $data->channel instanceof ChannelInterface ? $data->channel->getId() : null,
-            'settings' => $data->settings ?? [],
-        ]);
+        return json_encode(
+            [
+                'content' => [
+                    'data' => $this->getSerializer()->serialize($data->content, 'json'),
+                    'type' => ClassUtils::getRealClass($data->content),
+                ],
+                'state' => $data->state,
+                'channel' => $data->channel instanceof ChannelInterface ? $data->channel->getId() : null,
+                'settings' => $data->settings ?? [],
+            ]
+        );
     }
 
     /**
@@ -50,14 +71,20 @@ class RequestSerializer implements RequestSerializerInterface
     {
         $data = json_decode($data, true);
 
-        if (!\is_array($data) || empty($data['content']) || empty($data['content']['data']) || empty($data['content']['type']) || empty($data['state']) || empty($data['channel'])) {
+        if (!\is_array(
+            $data
+        ) || empty($data['content']) || empty($data['content']['data']) || empty($data['content']['type']) || empty($data['state']) || empty($data['channel'])) {
             return null;
         }
 
         $request = new Request();
 
         try {
-            $request->content = $this->getSerializer()->deserialize($data['content']['data'], $data['content']['type'], 'json');
+            $request->content = $this->getSerializer()->deserialize(
+                $data['content']['data'],
+                $data['content']['type'],
+                'json'
+            );
             $request->state = (string) $data['state'];
             $request->channel = $this->getManager()->find($data['channel']);
             $request->settings = $data['settings'] ?? [];
