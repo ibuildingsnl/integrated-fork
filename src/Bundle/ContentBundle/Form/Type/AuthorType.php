@@ -3,9 +3,6 @@
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
-use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
-use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\AuthorTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -34,7 +31,7 @@ class AuthorType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $contentTypes = [
-            'author' => 'Author'
+            'author' => 'Author',
         ];
 
         $view->vars['contentTypes'] = $contentTypes;
