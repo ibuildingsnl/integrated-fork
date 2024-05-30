@@ -8,8 +8,8 @@
 
         <parameter key="integrated_image.format" type="collection">
             <parameter>gif</parameter>
-            <parameter>webp</parameter>
             <parameter>svg</parameter>
+            <parameter>webp</parameter>
         </parameter>
 
     </parameters>
