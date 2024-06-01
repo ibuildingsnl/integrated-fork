@@ -59,7 +59,6 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
             $menuContent = $menu->addChild(self::MENU_CONTENT)->setExtra('icon', 'iconoir-journal-page');
         }
 
-        $menuContent->addChild('Dashboard', ['route' => 'integrated_dashboard_index']);
         $menuContent->addChild('Content navigator', ['route' => 'integrated_content_content_index']);
         $menuContent->addChild('Media Library', ['route' => 'integrated_content_media_index']);
 
