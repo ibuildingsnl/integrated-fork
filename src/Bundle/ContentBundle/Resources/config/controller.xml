@@ -176,6 +176,15 @@
             <tag name="controller.service_arguments" />
         </service>
 
+        <service id="Integrated\Bundle\ContentBundle\Controller\OEmbedController">
+            <argument>%env(resolve:FACEBOOK_OEMBED_APP_ID)%</argument>
+            <argument>%env(resolve:FACEBOOK_OEMBED_APP_SECRET)%</argument>
+            <argument>%env(resolve:TWITTER_CONSUMER_KEY)%</argument>
+            <argument>%env(resolve:TWITTER_CONSUMER_SECRET)%</argument>
+
+            <tag name="controller.service_arguments" />
+        </service>
+
         <service id="Integrated\Bundle\ContentBundle\Controller\ArticleSearchController">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_solr.search.query_factory"/>
