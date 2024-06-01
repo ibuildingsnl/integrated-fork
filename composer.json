@@ -33,6 +33,7 @@
         "doctrine/migrations": "~2.2",
         "doctrine/mongodb-odm-bundle": "~4.3",
         "doctrine/orm": "2.16.3",
+        "embed/embed": "^4.4",
         "endroid/qr-code-bundle": "^4.0",
         "excelwebzone/recaptcha-bundle": "^1.5",
         "gregwar/image": ">=2.0.25",

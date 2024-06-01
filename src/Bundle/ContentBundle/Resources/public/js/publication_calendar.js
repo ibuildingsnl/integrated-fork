@@ -167,7 +167,7 @@ if (typeof publicationSchedule === 'object') {
     let filterStates = {
         contentType: new Set(),
         brand: new Set(),
-        premium: true,
+        premium: false,
     };
 
     document.addEventListener('DOMContentLoaded', function() {

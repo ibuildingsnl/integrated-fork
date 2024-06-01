@@ -18,6 +18,8 @@
 
             </options>
         </type>
+
+        <type name="integrated.customFields" />
         <type name="integrated.taxonomy" />
     </class>
 

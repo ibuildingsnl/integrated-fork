@@ -8,9 +8,11 @@ use Integrated\Bundle\AssetBundle\Manager\AssetManager;
 use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\BrandProfile;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
+use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
+use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Event\CalendarEvent;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -115,7 +117,7 @@ class CalendarPublicationProvider implements EventSubscriberInterface
                     ->toArray();
 
                 unset($publicationSettings['images']);
-            } else {
+            } elseif ($publication->getContent() instanceof Article || $publication->getContent() instanceof Taxonomy) {
                 $images[] = $publication->getContent()->getFeaturedImage();
             }
 

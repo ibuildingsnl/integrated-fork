@@ -40,10 +40,10 @@ class RoleType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('multiple', true);
-//        $resolver->setDefault('expanded', true);
 
         $resolver->setDefaults([
             'choices' => array_flip($this->manager->getRolesFromSources()),
+            'required' => false,
             'attr' => [
                 'class' => 'select2',
             ],
