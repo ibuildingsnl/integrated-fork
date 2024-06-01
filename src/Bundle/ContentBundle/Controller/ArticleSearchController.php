@@ -69,7 +69,7 @@ class ArticleSearchController extends AbstractController
                 'link_text' => $this->getTranslator()->trans('Link text'),
                 'url_or_searchterm' => $this->getTranslator()->trans('URL or search term'),
                 'ready' => $this->getTranslator()->trans('Good to go!'),
-            ])
+            ]),
         ]);
     }
 
@@ -87,7 +87,7 @@ class ArticleSearchController extends AbstractController
 
         $q = $request->get('term');
 
-        if (empty($q) || $q === '') {
+        if (empty($q)) {
             return new Response(
                 json_encode(['msg' => 'No search term specified']),
                 Response::HTTP_BAD_REQUEST,
@@ -112,19 +112,19 @@ class ArticleSearchController extends AbstractController
         $contentIds = [];
 
         $ret = array_map(
-        /**
-         * @throws \Exception
-         */
+            /**
+             * @throws \Exception
+             */
             function ($contentItem) use ($channel, &$contentIds) {
                 $contentIds[] = $contentItem->type_id;
 
                 return [
                     'id' => $contentItem->type_id,
                     'title' => $contentItem->title,
-                    'subtitle' => ucfirst($contentItem->type_name) . ' | ' .
+                    'subtitle' => ucfirst($contentItem->type_name).' | '.
                     (new \DateTimeImmutable($contentItem->pub_time))->format('d-m-Y'),
                     'text' => substr(strip_tags(implode('', $contentItem->content)), 0, 255),
-                    'url' => $contentItem['url_' . $channel->getId()],
+                    'url' => $contentItem['url_'.$channel->getId()],
                 ];
             },
             $items
