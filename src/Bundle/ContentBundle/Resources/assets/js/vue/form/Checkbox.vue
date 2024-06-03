@@ -22,7 +22,7 @@ const value = computed({
 </script>
 
 <template>
-    <div class="checkbox ">
+    <div class="checkbox">
         <label :for="props.id" class="checkbox-container">
             <input :id="props.id" v-model="value" type="checkbox"/>
             <span class="checkmark"></span>

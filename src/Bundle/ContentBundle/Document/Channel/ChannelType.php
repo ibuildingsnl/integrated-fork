@@ -22,17 +22,17 @@ class ChannelType
 
     public function getName(): string
     {
-        return $this->name;
+        return $this->name ?? '';
     }
 
     public function canBePrimary(): bool
     {
-        return $this->canBePrimary;
+        return $this->canBePrimary ?? false;
     }
 
     public function canBeSetGlobally(): bool
     {
-        return $this->canBeSetGlobally;
+        return $this->canBeSetGlobally ?? false;
     }
 
     public function getConnector(): ?string

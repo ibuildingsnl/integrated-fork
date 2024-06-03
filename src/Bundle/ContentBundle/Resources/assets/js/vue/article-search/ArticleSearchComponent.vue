@@ -9,6 +9,7 @@ import MaxHeightScroller from "../layout/MaxHeightScroller.vue";
 import ArticleSearchWarningStatus from "./statuses/ArticleSearchWarningStatus.vue";
 import ArticleSearchSuccessStatus from "./statuses/ArticleSearchSuccessStatus.vue";
 import ArticleSearchLoadingStatus from "./statuses/ArticleSearchLoadingStatus.vue";
+import RadioGroup from "../form/RadioGroup.vue";
 
 const props = defineProps({
     channels: String,
@@ -28,16 +29,14 @@ const selections = ref([]);
 const loading = ref(false);
 
 const channels = ref(JSON.parse(props.channels).map((channel) => {
-    return {active: false, ...channel}
+    return {value: channel.key, ...channel}
 }));
 
 const contentTypes = ref(JSON.parse(props.contentTypes).map((contentType) => {
     return {active: false, ...contentType}
 }));
 
-const activeChannels = computed(() => {
-    return channels.value.filter((channel) => channel.active).map((channel) => channel.key).join(',');
-});
+const activeChannel = ref('');
 
 const activeContentTypes = computed(() => {
     return contentTypes.value.filter((contentType) => contentType.active).map((contentType) => contentType.key).join(',');
@@ -61,11 +60,13 @@ const isStateValid = computed(() => {
 });
 
 const attemptSearch = () => {
-    if (activeChannels.value.length === 0 || searchTerm.value.length === 0) {
+    if (activeChannel.value.length === 0 || searchTerm.value.length === 0) {
+        results.value = [];
         return;
     }
 
     if (hasValidUrl.value) {
+        results.value = [];
         return;
     }
 
@@ -75,7 +76,7 @@ const attemptSearch = () => {
 const doSearch = debounce(async () => {
     try {
         loading.value = true;
-        let url = `${endpoint}/article-search/search-channel/${activeChannels.value}`;
+        let url = `${endpoint}/article-search/search-channel/${activeChannel.value}`;
         url = url.endsWith('/') ? url.substring(0, url.length - 1) : url;
         url = `${url}?term=${encodeURIComponent(searchTerm.value)}`;
 
@@ -158,16 +159,16 @@ onMounted(() => {
         return;
     }
 
-    channels.value = [{...channels.value[0], active: true}];
+    activeChannel.value = channels.value[0].value;
 });
 
 watchEffect(() => {
-    const hasActiveChannels = activeChannels.value.length > 0;
+    const hasActiveChannel = activeChannel.value.length > 0;
     // Dependency on activeContentTypes is necessary, even though hasContentTypes is unused
     const hasContentTypes = activeContentTypes.value.length > 0;
     const hasSearchTerm = searchTerm.value.length > 0;
 
-    if (hasActiveChannels && hasSearchTerm) {
+    if (hasActiveChannel && hasSearchTerm) {
         attemptSearch();
     }
 });
@@ -181,13 +182,7 @@ watchEffect(() => {
                     <h3 class="aside-item-title">{{ translations.channels }}</h3>
                 </div>
                 <MaxHeightScroller max-height="calc(50vh - 35px)">
-                    <Checkbox
-                        v-for="channel in channels"
-                        :key="channel.key"
-                        :id="channel.key"
-                        v-model="channel.active"
-                        :label="channel.label"
-                    />
+                    <RadioGroup name="channel" :radio-buttons="channels" v-model="activeChannel" />
                 </MaxHeightScroller>
             </div>
 
@@ -226,7 +221,7 @@ watchEffect(() => {
                 >
                     <ArticleSearchLoadingStatus :text="translations.searching" v-if="loading"/>
                     <ArticleSearchWarningStatus :text="translations.require_searchterm" v-else-if="searchTerm.length === 0"/>
-                    <ArticleSearchWarningStatus :text="translations.select_channel" v-else-if="activeChannels.length === 0"/>
+                    <ArticleSearchWarningStatus :text="translations.select_channel" v-else-if="activeChannel.length === 0"/>
                     <ArticleSearchWarningStatus :text="translations.no_results" v-else-if="results.length === 0 && !hasValidUrl"/>
                     <ArticleSearchWarningStatus :text="translations.require_link_text" v-else-if="linkText.length === 0"/>
                     <ArticleSearchSuccessStatus :text="translations.ready" v-else/>
