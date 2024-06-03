@@ -40,10 +40,17 @@
 
     <content-type id="media_taxonomy" class="Integrated\Bundle\ContentBundle\Document\Content\Taxonomy">
         <name>Media taxonomy</name>
+        <fields>
+            <field>title</field>
+            <field>slug</field>
+            <field>disabled</field>
+            <field>parent</field>
+            <field>order</field>
+        </fields>
     </content-type>
 
-    <content-type id="testasd" class="Integrated\Bundle\ContentBundle\Document\Content\Relation\Person">
-        <name>testasd</name>
+    <content-type id="author" class="Integrated\Bundle\ContentBundle\Document\Content\Relation\Person">
+        <name>Author</name>
         <fields>
             <field>firstName</field>
             <field>lastName</field>

@@ -30,11 +30,7 @@ class AuthorType extends AbstractType
 
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $contentTypes = [
-            'author' => 'Author',
-        ];
-
-        $view->vars['contentTypes'] = $contentTypes;
+        $view->vars['contentTypes'] = ['author' => 'Author'];
     }
 
     /**
