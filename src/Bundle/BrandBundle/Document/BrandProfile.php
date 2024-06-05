@@ -20,6 +20,7 @@ class BrandProfile
     public ?string $vat;
     public ?string $companyId;
     public ?string $analytics;
+    public ?string $analyticsPropertyId;
     private Collection $socials;
     private Collection $contacts;
 
