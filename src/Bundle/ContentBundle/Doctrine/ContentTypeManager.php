@@ -44,7 +44,6 @@ class ContentTypeManager
 
         foreach ($this->getAll() as $contentType) {
             if($strict === true && $contentType->getClass() === $className) {
-                dump($contentType->getClass(), $className, $contentType->getClass() === $className);
                 $contentTypes[] = $contentType;
                 continue;
             }

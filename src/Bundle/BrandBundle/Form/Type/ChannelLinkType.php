@@ -5,11 +5,7 @@ namespace Integrated\Bundle\BrandBundle\Form\Type;
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
 use Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Bundle\ContentBundle\Document\Content\Article;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author;
-use Integrated\Bundle\ContentBundle\Form\Type\AuthorType;
 use Integrated\Bundle\ContentBundle\Form\Type\ChannelType;
-use Integrated\Bundle\ContentBundle\Form\Type\ContentSelectType;
 use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -68,15 +64,6 @@ class ChannelLinkType extends AbstractType
                 }
             });
         }
-
-        $builder->add('choose_content', ContentSelectType::class, [
-            'mapped' => false,
-            'class' => Article::class,
-        ]);
-
-        $builder->add('author', AuthorType::class, [
-            'mapped' => false,
-        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
