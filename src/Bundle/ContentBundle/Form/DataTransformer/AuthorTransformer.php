@@ -83,15 +83,15 @@ class AuthorTransformer implements DataTransformerInterface
         $mr = $this->mr->getManager();
         $collection = [];
 
-        // TODO: Improve to reduce amount of queries ran
         if (\is_array($array) && isset($array['persons'], $array['types']) && \is_array($array['types'])) {
-            foreach ($array['persons'] as $person) {
-                $result = $mr->getRepository(Person::class)->find($person);
+            $repo = $mr->getRepository(Person::class);
+            $persons = $repo->findBy(['_id' => ['$in' => $array['persons']]]);
 
-                if ($result && isset($array['types'][$person])) {
+            foreach ($persons as $person) {
+                if ($person && isset($array['types'][$person->getId()])) {
                     $author = new Author();
-                    $author->setType($array['types'][$person]);
-                    $author->setPerson($result);
+                    $author->setType($array['types'][$person->getId()]);
+                    $author->setPerson($person);
 
                     $collection[] = $author;
                 }
