@@ -179,6 +179,7 @@ class ContentController extends AbstractController
         if ($options['relation'] ?? null) {
             if ($relation = $this->getDoctrineODM()->getRepository(Relation::class)->find($options['relation'])) {
                 foreach ($relation->getTargets() as $target) {
+                    $options['contenttypes'][] = $target->getId();
                     $relations[] = [
                         'href' => $this->generateUrl(
                             'integrated_content_content_new',

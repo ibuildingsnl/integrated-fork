@@ -60,6 +60,13 @@ final class TaxonomyParentRelationListener implements EventSubscriberInterface
         $parent = $this->taxonomies->byId($taxonomy->getParentID());
 
         if ($parent) {
+            $taxonomy->addRelation(
+                (new Relation())
+                    ->setRelationId('__parent')
+                    ->setRelationType('embedded')
+                    ->addReference($parent)
+            );
+
             $parent->addRelation(
                 (new Relation())
                     ->setRelationId('__children')
