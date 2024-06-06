@@ -212,14 +212,14 @@ class Article extends Content implements RankableInterface
         $this->slug = $slug;
     }
 
-    public function getSubtitle(): ?string
+    public function getSubtitle(): string
     {
         return $this->subtitle;
     }
 
-    public function setSubtitle(string $subtitle): void
+    public function setSubtitle(?string $subtitle): void
     {
-        $this->subtitle = $subtitle;
+        $this->subtitle = (string) $subtitle;
     }
 
     public function getFeaturedImage(): ?Image
@@ -264,14 +264,14 @@ class Article extends Content implements RankableInterface
         $this->source = $source;
     }
 
-    public function getSourceUrl(): ?string
+    public function getSourceUrl(): string
     {
         return $this->sourceUrl;
     }
 
-    public function setSourceUrl(string $sourceUrl): void
+    public function setSourceUrl(?string $sourceUrl): void
     {
-        $this->sourceUrl = $sourceUrl;
+        $this->sourceUrl = (string) $sourceUrl;
     }
 
     public function getLocale(): ?string
@@ -284,24 +284,24 @@ class Article extends Content implements RankableInterface
         $this->locale = $locale;
     }
 
-    public function getIntro(): ?string
+    public function getIntro(): string
     {
         return $this->intro;
     }
 
-    public function setIntro(string $intro): void
+    public function setIntro(?string $intro): void
     {
-        $this->intro = $intro;
+        $this->intro = (string) $intro;
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    public function setDescription($description): void
+    public function setDescription(?string $description): void
     {
-        $this->description = $description;
+        $this->description = (string) $description;
     }
 
     public function setSeoMetadata(Embedded\SeoMeta $seoMetadata): void
@@ -348,6 +348,6 @@ class Article extends Content implements RankableInterface
 
     public function __toString(): string
     {
-        return (string) $this->title;
+        return $this->title;
     }
 }
