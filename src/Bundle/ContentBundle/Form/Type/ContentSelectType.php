@@ -34,7 +34,8 @@ class ContentSelectType extends AbstractType
      */
     private $contentTypeManager;
 
-    public function __construct(ManagerRegistry $mr, ContentTypeManager $contentTypeManager) {
+    public function __construct(ManagerRegistry $mr, ContentTypeManager $contentTypeManager)
+    {
         $this->mr = $mr;
         $this->contentTypeManager = $contentTypeManager;
     }
@@ -42,13 +43,15 @@ class ContentSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
         $transformer = new ContentTypeTransformer($this->mr, $options['class']);
 
         $builder->addModelTransformer($transformer);
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options) {
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
         $contentTypes = [];
         $class = $form->getConfig()->getOption('class');
 
@@ -62,7 +65,8 @@ class ContentSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver) {
+    public function configureOptions(OptionsResolver $resolver)
+    {
         $resolver->setDefaults(
             [
                 'multiple' => true,
@@ -74,14 +78,16 @@ class ContentSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent() {
+    public function getParent()
+    {
         return TextType::class;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix() {
+    public function getBlockPrefix()
+    {
         return 'integrated_content_select';
     }
 }

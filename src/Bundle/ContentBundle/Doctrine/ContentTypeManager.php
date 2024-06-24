@@ -33,7 +33,9 @@ class ContentTypeManager
         $this->resolver = $resolver;
 
         if (!is_subclass_of($class, ContentTypeInterface::class)) {
-            throw new InvalidArgumentException(sprintf('The class "%s" is not subclass of %s', $class, ContentTypeInterface::class));
+            throw new InvalidArgumentException(
+                sprintf('The class "%s" is not subclass of %s', $class, ContentTypeInterface::class)
+            );
         }
     }
 
@@ -43,7 +45,7 @@ class ContentTypeManager
         $contentTypes = [];
 
         foreach ($this->getAll() as $contentType) {
-            if($strict === true && $contentType->getClass() === $className) {
+            if ($strict === true && $contentType->getClass() === $className) {
                 $contentTypes[] = $contentType;
                 continue;
             }
@@ -52,6 +54,7 @@ class ContentTypeManager
                 $contentTypes[] = $contentType;
             }
         }
+
         return $contentTypes;
     }
 

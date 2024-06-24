@@ -7,24 +7,24 @@ use Symfony\Component\Form\DataTransformerInterface;
 
 class ContentTypeTransformer implements DataTransformerInterface
 {
-    public function __construct(private readonly ManagerRegistry $mr, private readonly string $className) {
+    public function __construct(private readonly ManagerRegistry $mr, private readonly string $className)
+    {
     }
 
     /**
-     * DB data -> Form data
-     *
-     * @param $objects
+     * DB data -> Form data.
      *
      * @return array|object[]
      */
-    public function transform($objects): array {
-        if ($objects === null) {
+    public function transform($value): array
+    {
+        if ($value === null) {
             return [];
         }
 
         $ids = [];
 
-        foreach($objects as $object) {
+        foreach ($value as $object) {
             $ids[] = $object->getId();
         }
 
@@ -32,14 +32,13 @@ class ContentTypeTransformer implements DataTransformerInterface
     }
 
     /**
-     * Form data -> DB Data
-     *
-     * @param $value
+     * Form data -> DB Data.
      *
      * @return array|object[]
      */
-    public function reverseTransform($value) {
-        if(!isset($value['selections'])) {
+    public function reverseTransform($value): array
+    {
+        if (!isset($value['selections'])) {
             return [];
         }
 
