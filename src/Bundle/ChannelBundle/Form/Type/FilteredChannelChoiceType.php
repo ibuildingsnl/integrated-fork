@@ -3,16 +3,11 @@
 namespace Integrated\Bundle\ChannelBundle\Form\Type;
 
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ChannelBundle\Form\DataTransformer\ChannelTransformer;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityLoaderInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -26,7 +21,8 @@ class FilteredChannelChoiceType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
         if (!$options['return_object']) {
             $builder->addModelTransformer(new ChannelTransformer($this->repository, $options['multiple']));
         }
@@ -35,14 +31,15 @@ class FilteredChannelChoiceType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver) {
+    public function configureOptions(OptionsResolver $resolver)
+    {
         $resolver->setDefault('class', Channel::class);
         $resolver->setDefault('choice_label', 'name');
         $resolver->setDefault('placeholder', 'Select a channel');
         $resolver->setDefault('return_object', false);
         $resolver->setDefault('filter', []);
 
-        $resolver->setNormalizer('choices', function(Options $options, mixed $value) {
+        $resolver->setNormalizer('choices', function (Options $options, mixed $value) {
             return $this->repository->findBy($options['filter']);
         });
     }
@@ -50,14 +47,16 @@ class FilteredChannelChoiceType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent() {
+    public function getParent()
+    {
         return DocumentType::class;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix() {
+    public function getBlockPrefix()
+    {
         return 'integrated_channel_choice';
     }
 }
