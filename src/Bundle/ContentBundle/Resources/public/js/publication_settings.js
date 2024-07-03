@@ -329,3 +329,13 @@ window.addEventListener('updatePublicationItems', function(e) {
     initPublicationDelete();
 });
 
+document.querySelectorAll('textarea.form-control:not(.title_tinymce_input)').forEach(function(textarea) {
+    textarea.addEventListener('keypress', function(e) {
+        var key = e.keyCode || e.which;
+
+        // If the user has pressed enter
+        if (key == 13) {
+            e.stopPropagation();
+        }
+    });
+});
