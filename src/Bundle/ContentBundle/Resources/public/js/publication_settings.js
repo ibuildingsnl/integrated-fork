@@ -334,7 +334,7 @@ document.querySelectorAll('textarea.form-control:not(.title_tinymce_input)').for
         var key = e.keyCode || e.which;
 
         // If the user has pressed enter
-        if (key == 13) {
+        if (key === 13) {
             e.stopPropagation();
         }
     });
