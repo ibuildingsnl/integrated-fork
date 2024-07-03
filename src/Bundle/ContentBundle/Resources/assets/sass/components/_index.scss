@@ -312,6 +312,7 @@ div.heading-switcher {
             margin-right: 0.25rem;
             background-size: contain;
             display: flex;
+            flex-shrink: 0;
             align-items: center;
             justify-content: center;
             color: white;
@@ -328,6 +329,8 @@ div.heading-switcher {
             position: absolute;
             top: 22px;
             z-index: 1;
+            flex-wrap: nowrap;
+            width: min-content;
         }
     }
 }
