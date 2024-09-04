@@ -21,6 +21,10 @@
             <tag name="form.type_extension" />
         </service>
 
+        <service id="Integrated\Bundle\FormTypeBundle\Form\Extension\EditorSocialDataExtension">
+            <tag name="form.type_extension" />
+        </service>
+
     </services>
 
 </container>
