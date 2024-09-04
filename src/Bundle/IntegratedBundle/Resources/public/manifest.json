@@ -16,6 +16,8 @@
   "bundles/integratedintegrated/drag-drop.css": "/bundles/integratedintegrated/drag-drop.css",
   "bundles/integratedintegrated/drag-drop.js": "/bundles/integratedintegrated/drag-drop.js",
   "bundles/integratedintegrated/workflow.js": "/bundles/integratedintegrated/workflow.js",
+  "bundles/integratedintegrated/article-search.css": "/bundles/integratedintegrated/article-search.css",
+  "bundles/integratedintegrated/article-search.js": "/bundles/integratedintegrated/article-search.js",
   "bundles/integratedintegrated/fonts/Poppins-Regular.eot": "/bundles/integratedintegrated/fonts/Poppins-Regular.a20e7b73.eot",
   "bundles/integratedintegrated/fonts/poppins/Poppins-Regular.eot": "/bundles/integratedintegrated/fonts/poppins/Poppins-Regular.eot",
   "bundles/integratedintegrated/fonts/Poppins-Regular.ttf": "/bundles/integratedintegrated/fonts/Poppins-Regular.e09d5cf4.ttf",

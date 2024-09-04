@@ -16,7 +16,6 @@ use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
-use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
@@ -86,7 +85,6 @@ class ContentController extends AbstractController
         private readonly EventDispatcherInterface $dispatcher,
         private readonly DocumentManager $documentManager,
         private readonly CalendarOptions $calendarOptions,
-        private readonly PublicationRepositoryInterface $publicationRepository,
     ) {
     }
 
@@ -301,8 +299,7 @@ class ContentController extends AbstractController
 
                 try {
                     $this->indexer->setOption('queue.size', 2);
-                    $this->indexer->execute(
-                    ); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
+                    $this->indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
                 } finally {
                     $lock->release();
                 }
@@ -379,8 +376,6 @@ class ContentController extends AbstractController
         if (!$this->isGranted(Permissions::VIEW, $content)) {
             throw new AccessDeniedException();
         }
-
-        $publications = $this->publicationRepository->forContent($content);
 
         $locking = $this->getLock($content, 15);
         $locking['locked'] = (bool) $locking['lock'];
@@ -477,8 +472,7 @@ class ContentController extends AbstractController
 
                     try {
                         $this->indexer->setOption('queue.size', 2);
-                        $this->indexer->execute(
-                        ); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
+                        $this->indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
                     } finally {
                         $lock->release();
                     }
@@ -540,7 +534,6 @@ class ContentController extends AbstractController
             'formRelations' => $this->getFormRelations($form),
             'content' => $content,
             'locking' => $locking,
-            'publications' => $publications,
             'showContentHistory' => true,
             'references' => json_encode($this->getReferences($content)),
         ]);
@@ -619,8 +612,12 @@ class ContentController extends AbstractController
             // this is not rest compatible since a button click is required to save
             if ($form->get('actions')->getData() == 'delete') {
                 if ($form->isValid()) {
+                    // higher priority for content edited in Integrated
                     $queue = $this->queueSubscriber->getQueue();
                     $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
+
+                    $this->documentManager->remove($content);
+                    $this->documentManager->flush();
 
                     if ($this->dispatcher->hasListeners(Events::CONTENT_DELETED)) {
                         $this->dispatcher->dispatch(
@@ -628,9 +625,6 @@ class ContentController extends AbstractController
                             Events::CONTENT_DELETED
                         );
                     }
-
-                    $this->documentManager->remove($content);
-                    $this->documentManager->flush();
 
                     // Set flash message
                     $this->addFlash(
@@ -642,8 +636,7 @@ class ContentController extends AbstractController
                     );
 
                     $this->indexer->setOption('queue.size', 2);
-                    $this->indexer->execute(
-                    ); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
+                    $this->indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
 
                     if (!$locking['locked']) {
                         $locking['release']();

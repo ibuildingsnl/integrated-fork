@@ -74,7 +74,7 @@ $('.integrated_tinymce').each(function(key, elem){
              "advlist autolink link lists charmap anchor pagebreak " +
              "searchreplace wordcount visualchars fullscreen nonbreaking " +
              "table directionality wordcount autoresize code " +
-             "integratedbrowser"
+             "integratedbrowser articlelinksearch"
         ,
         add_unload_trigger: false,
         schema: "html5",
@@ -82,8 +82,9 @@ $('.integrated_tinymce').each(function(key, elem){
         branding: false,
         toolbar:
             "styles | bold italic underline subscript superscript | bullist numlist | alignleft aligncenter alignright alignjustify | " +
-            "link anchor table charmap | integratedimage integratedgallery integratedvideo image media | print | " +
-            "pastetext searchreplace | code fullscreen",
+            "integratedArticleLinkSearch anchor table charmap | integratedimage integratedgallery integratedvideo image media | print | " +
+            "pastetext searchreplace | code fullscreen ",
+        contextmenu: 'integratedArticleLinkSearch',
         formats: {
             alignleft: {selector : 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes : 'align-left'},
             aligncenter: {selector : 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes : 'align-center'},
