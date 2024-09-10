@@ -129,7 +129,7 @@ class ContentController extends AbstractController
         $this->queryFactory = $queryFactory;
     }
 
-    public function index(Request $request): Response
+    public function index(Request $request): array|Response
     {
         // remember search state
         $session = $request->getSession();
