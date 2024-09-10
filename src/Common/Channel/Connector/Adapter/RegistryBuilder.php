@@ -23,9 +23,6 @@ class RegistryBuilder implements RegistryBuilderInterface
      */
     private $adapters = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function addAdapter(AdapterInterface $adapter)
     {
         $this->adapters[$adapter->getManifest()->getName()] = $adapter;
@@ -33,9 +30,6 @@ class RegistryBuilder implements RegistryBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addAdapters(array $adapters)
     {
         foreach ($adapters as $adapter) {
@@ -45,9 +39,6 @@ class RegistryBuilder implements RegistryBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRegistry()
     {
         return new Registry($this->adapters);

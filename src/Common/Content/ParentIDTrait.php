@@ -45,7 +45,7 @@ trait ParentIDTrait
         return $this->parent_id;
     }
 
-    public function setParentID(string $parent_id = null): void
+    public function setParentID(?string $parent_id = null): void
     {
         $this->parent_id = $parent_id;
     }

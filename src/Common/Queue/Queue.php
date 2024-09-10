@@ -53,33 +53,21 @@ class Queue implements QueueInterface
         return $this->provider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function push($payload, $delay = 0, $priority = self::PRIORITY_MEDIUM, $attempt = 0)
     {
         $this->provider->push($this->channel, $payload, $delay, $priority, $attempt);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function pull($limit = 1)
     {
         return $this->provider->pull($this->channel, $limit);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function count(): int
     {
         return $this->provider->count($this->channel);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear()
     {
         $this->provider->clear($this->channel);

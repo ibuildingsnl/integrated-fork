@@ -37,17 +37,11 @@ class ReferenceQueueTask implements \Serializable
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function serialize()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function unserialize($serialized)
     {
         $this->id = $serialized;

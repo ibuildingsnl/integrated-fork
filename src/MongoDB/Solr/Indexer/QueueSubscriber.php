@@ -37,7 +37,7 @@ class QueueSubscriber implements EventSubscriber
     /**
      * @var string
      */
-    private $format = null;
+    private $format;
 
     /**
      * @var int
@@ -54,9 +54,6 @@ class QueueSubscriber implements EventSubscriber
         $this->setPriority($priority);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setQueue(QueueInterface $queue)
     {
         $this->queue = $queue;
@@ -70,9 +67,6 @@ class QueueSubscriber implements EventSubscriber
         return $this->queue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setSerializer(SerializerInterface $serializer)
     {
         $this->serializer = $serializer;
@@ -122,9 +116,6 @@ class QueueSubscriber implements EventSubscriber
         return $this->priority;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribedEvents()
     {
         return [
@@ -167,7 +158,7 @@ class QueueSubscriber implements EventSubscriber
                 $job->setOption('document.id', $document->getContentType().'-'.$document->getId());
 
                 $job->setOption('document.data', $this->getSerializer()->serialize($document, $this->getSerializerFormat()));
-                $job->setOption('document.class', $event->getDocumentManager()->getClassMetadata(\get_class($document))->getName());
+                $job->setOption('document.class', $event->getDocumentManager()->getClassMetadata($document::class)->getName());
                 $job->setOption('document.format', $this->getSerializerFormat());
 
                 break;

@@ -59,11 +59,9 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param ConfigInterface $parent
-     *
      * @return Config
      */
-    protected function getInstance(ConfigInterface $parent = null)
+    protected function getInstance(?ConfigInterface $parent = null)
     {
         return new Config($this->types, $parent);
     }

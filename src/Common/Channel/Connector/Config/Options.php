@@ -11,8 +11,6 @@
 
 namespace Integrated\Common\Channel\Connector\Config;
 
-use ReturnTypeWillChange;
-
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
@@ -33,17 +31,11 @@ class Options implements OptionsInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function toArray()
     {
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function set($key, $value)
     {
         if ($value === null) {
@@ -55,17 +47,11 @@ class Options implements OptionsInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function get($key)
     {
         return isset($this->data[$key]) ? $this->data[$key] : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function remove($key)
     {
         unset($this->data[$key]);
@@ -73,17 +59,11 @@ class Options implements OptionsInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function has($key)
     {
         return isset($this->data[$key]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear()
     {
         $this->data = [];
@@ -91,50 +71,32 @@ class Options implements OptionsInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function count(): int
     {
         return \count($this->data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function offsetExists($offset): bool
     {
         return $this->has($offset);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     #[\ReturnTypeWillChange]
     public function offsetGet($offset): mixed
     {
         return $this->get($offset);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function offsetSet($offset, $value): void
     {
         $this->set($offset, $value);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function offsetUnset($offset): void
     {
         $this->remove($offset);

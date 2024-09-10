@@ -41,9 +41,6 @@ class Product extends Content
     ], location: 'editor')]
     protected $content;
 
-    /**
-     * @var string
-     */
     #[Slug(fields: ['title'])]
     #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
     protected ?string $slug = null;
@@ -116,8 +113,6 @@ class Product extends Content
 
     /**
      * Get the title of the document.
-     *
-     * @return string
      */
     public function getTitle(): ?string
     {
@@ -140,8 +135,6 @@ class Product extends Content
 
     /**
      * Get the slug of the document.
-     *
-     * @return string
      */
     public function getSlug(): ?string
     {
@@ -164,8 +157,6 @@ class Product extends Content
 
     /**
      * Get the reference of the document.
-     *
-     * @return string
      */
     public function getReference(): ?string
     {
@@ -186,8 +177,6 @@ class Product extends Content
 
     /**
      * Get the variant of the document.
-     *
-     * @return string
      */
     public function getVariant(): ?string
     {
@@ -208,8 +197,6 @@ class Product extends Content
 
     /**
      * Get the locale of the document.
-     *
-     * @return string
      */
     public function getLocale(): ?string
     {
@@ -232,8 +219,6 @@ class Product extends Content
 
     /**
      * Get price of the product.
-     *
-     * @return float
      */
     public function getPrice(): ?float
     {
@@ -254,8 +239,6 @@ class Product extends Content
 
     /**
      * Get stock quantity.
-     *
-     * @return int
      */
     public function getStockQuantity(): ?int
     {
@@ -296,8 +279,6 @@ class Product extends Content
 
     /**
      * Get description of the product.
-     *
-     * @return string
      */
     public function getDescription(): ?string
     {
@@ -320,8 +301,6 @@ class Product extends Content
 
     /**
      * Get the content of the document.
-     *
-     * @return string
      */
     public function getContent(): ?string
     {

@@ -23,17 +23,11 @@ class JsonLBNullNormalizer implements NormalizerInterface
      */
     public const FORMAT = 'json-ld';
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($object, $format = null, array $context = []): array|bool|string|int|float|null|\ArrayObject
+    public function normalize($object, $format = null, array $context = []): array|bool|string|int|float|\ArrayObject|null
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsNormalization($data, $format = null): bool
     {
         return self::FORMAT === $format;

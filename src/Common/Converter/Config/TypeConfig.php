@@ -30,33 +30,23 @@ class TypeConfig implements TypeConfigInterface
      * Constructor.
      *
      * @param string $name
-     * @param array  $options
      */
-    public function __construct($name, array $options = null)
+    public function __construct($name, ?array $options = null)
     {
         $this->name = (string) $name;
         $this->options = $options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasOptions()
     {
         return $this->options !== null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOptions()
     {
         return $this->options;

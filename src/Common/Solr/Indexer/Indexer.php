@@ -38,17 +38,17 @@ class Indexer extends Configurable implements IndexerInterface
     /**
      * @var QueueInterface
      */
-    private $queue = null;
+    private $queue;
 
     /**
      * @var Client
      */
-    private $client = null;
+    private $client;
 
     /**
      * @var EventDispatcherInterface
      */
-    private $dispatcher = null;
+    private $dispatcher;
 
     /**
      * @var CommandFactoryInterface
@@ -62,10 +62,8 @@ class Indexer extends Configurable implements IndexerInterface
 
     /**
      * Indexer constructor.
-     *
-     * @param Batch $batch
      */
-    public function __construct(CommandFactoryInterface $factory, Batch $batch = null)
+    public function __construct(CommandFactoryInterface $factory, ?Batch $batch = null)
     {
         parent::__construct();
 
@@ -73,9 +71,6 @@ class Indexer extends Configurable implements IndexerInterface
         $this->batch = $batch ?: new Batch();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -113,9 +108,6 @@ class Indexer extends Configurable implements IndexerInterface
         return $this->dispatcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setQueue(QueueInterface $queue)
     {
         $this->queue = $queue;
@@ -137,9 +129,6 @@ class Indexer extends Configurable implements IndexerInterface
         return $this->queue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setClient(Client $client)
     {
         $this->client = $client;
@@ -155,10 +144,7 @@ class Indexer extends Configurable implements IndexerInterface
         return $this->client;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function execute(Client $client = null)
+    public function execute(?Client $client = null)
     {
         if ($client !== null) {
             $this->setClient($client);

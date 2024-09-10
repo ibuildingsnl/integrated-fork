@@ -36,11 +36,9 @@ class TraceableConfigTest extends ConfigTest
     }
 
     /**
-     * @param ConfigInterface $parent
-     *
      * @return TraceableConfig
      */
-    protected function getInstance(ConfigInterface $parent = null)
+    protected function getInstance(?ConfigInterface $parent = null)
     {
         return new TraceableConfig($this->class, $this->types, $parent);
     }

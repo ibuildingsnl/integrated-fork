@@ -24,17 +24,11 @@ class ResolvedProcessorFactory implements ResolvedProcessorFactoryInterface
      */
     private $factory;
 
-    /**
-     * @param ContainerFactoryInterface $factory
-     */
-    public function __construct(ContainerFactoryInterface $factory = null)
+    public function __construct(?ContainerFactoryInterface $factory = null)
     {
         $this->factory = $factory ?: new ContainerFactory();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function createProcessor(array $processors)
     {
         return new ResolvedProcessor($processors, $this->factory);

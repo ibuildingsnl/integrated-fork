@@ -45,17 +45,11 @@ class PriorityIterator implements IteratorInterface
         $this->rewind();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function current(): mixed
     {
         return $this->iterator->current();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function next(): void
     {
         if (!$this->iterator->valid()) {
@@ -67,25 +61,16 @@ class PriorityIterator implements IteratorInterface
         $this->validate();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function key(): mixed
     {
         return $this->iterator->valid() ? $this->iterator->key() : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function valid(): bool
     {
         return $this->iterator->valid();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rewind(): void
     {
         $this->accepted = [];

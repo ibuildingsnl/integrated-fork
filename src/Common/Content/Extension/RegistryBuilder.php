@@ -21,9 +21,6 @@ class RegistryBuilder implements RegistryBuilderInterface
         addExtension as public;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRegistry()
     {
         return new Registry($this->extensions);

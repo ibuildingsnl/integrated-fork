@@ -37,8 +37,6 @@ interface QueueMessageInterface
 
     /**
      * Get the message payload.
-     *
-     * @return mixed
      */
     public function getPayload();
 

@@ -41,7 +41,7 @@ class ContentRepository extends DocumentRepository
      *
      * @throws \Exception
      */
-    public function getUsedBy(iterable $content, Relation $relation = null, Content $excludeContent = null, $filterPublished = true)
+    public function getUsedBy(iterable $content, ?Relation $relation = null, ?Content $excludeContent = null, $filterPublished = true)
     {
         if ($excludeContent !== null) {
             $excludeContent = $excludeContent->getId();

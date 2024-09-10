@@ -24,7 +24,7 @@ class Document implements MetadataEditorInterface
     /**
      * @var \ReflectionClass
      */
-    private $reflection = null;
+    private $reflection;
 
     /**
      * @var string
@@ -66,9 +66,6 @@ class Document implements MetadataEditorInterface
         $this->class = $class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isTypeOf($class)
     {
         if (null === $class) {
@@ -78,17 +75,13 @@ class Document implements MetadataEditorInterface
         $reflection = $this->getReflection();
 
         return (
-            (interface_exists($class) && $reflection->implementsInterface($class)) ||
-            $reflection->isSubclassOf($class) ||
-            (class_exists($class) && $reflection->isInstance(new $class()))
+            (interface_exists($class) && $reflection->implementsInterface($class))
+            || $reflection->isSubclassOf($class)
+            || (class_exists($class) && $reflection->isInstance(new $class()))
         )
-            &&
-            $reflection->isInstantiable();
+            && $reflection->isInstantiable();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReflection()
     {
         if ($this->reflection === null) {
@@ -108,17 +101,11 @@ class Document implements MetadataEditorInterface
         return $this->class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return $this->type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setType($type)
     {
         $this->type = $type;
@@ -126,17 +113,11 @@ class Document implements MetadataEditorInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getLocation()
     {
         return $this->location;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setLocation($location)
     {
         $this->location = $location;
@@ -144,17 +125,11 @@ class Document implements MetadataEditorInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIcon()
     {
         return $this->icon;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setIcon($icon)
     {
         $this->icon = $icon;
@@ -162,17 +137,11 @@ class Document implements MetadataEditorInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getState()
     {
         return $this->state;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setState($state)
     {
         $this->state = $state;
@@ -180,41 +149,26 @@ class Document implements MetadataEditorInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFields()
     {
         return $this->fields;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getField($name)
     {
         return $this->hasField($name) ? $this->fields[$name] : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasField($name)
     {
         return isset($this->fields[$name]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function newField($name)
     {
         return new Field($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addField(AttributeInterface $field)
     {
         $this->fields[$field->getName()] = $field;
@@ -222,41 +176,26 @@ class Document implements MetadataEditorInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOptions()
     {
         return $this->options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOption($name)
     {
         return $this->hasOption($name) ? $this->options[$name] : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasOption($name)
     {
         return isset($this->options[$name]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function newOption($name)
     {
         return new Field($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addOption(AttributeInterface $option)
     {
         $this->options[$option->getName()] = $option;

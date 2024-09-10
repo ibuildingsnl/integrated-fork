@@ -168,11 +168,9 @@ class OptionsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $data
-     *
      * @return Options
      */
-    protected function getInstance(array $data = null)
+    protected function getInstance(?array $data = null)
     {
         if ($data) {
             return new Options($data);

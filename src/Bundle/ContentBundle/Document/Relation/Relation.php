@@ -107,17 +107,11 @@ class Relation implements RelationInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return $this->type;
@@ -175,9 +169,6 @@ class Relation implements RelationInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->name;
@@ -197,9 +188,6 @@ class Relation implements RelationInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSources()
     {
         return $this->sources->toArray();
@@ -249,9 +237,6 @@ class Relation implements RelationInterface
         return $this->sources->removeElement($contentType);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTargets()
     {
         return $this->targets->toArray();
@@ -301,9 +286,6 @@ class Relation implements RelationInterface
         return $this->targets->removeElement($contentType);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isMultiple()
     {
         return $this->multiple;
@@ -321,9 +303,6 @@ class Relation implements RelationInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isRequired()
     {
         return $this->required;

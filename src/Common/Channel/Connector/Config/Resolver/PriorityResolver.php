@@ -58,9 +58,6 @@ class PriorityResolver implements ResolverInterface
         return $this->resolvers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasConfig($name)
     {
         if ($this->findResolver($name)) {
@@ -70,9 +67,6 @@ class PriorityResolver implements ResolverInterface
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConfig($name)
     {
         if ($resolver = $this->findResolver($name)) {
@@ -82,9 +76,6 @@ class PriorityResolver implements ResolverInterface
         throw new InvalidArgumentException(sprintf('Could not load config with the name "%s"', $name));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigs(ChannelInterface $channel)
     {
         $iterator = new \AppendIterator();

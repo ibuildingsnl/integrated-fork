@@ -36,8 +36,5 @@ interface ConfigInterface
      */
     public function getOptions();
 
-    /**
-     * @return mixed
-     */
     public function getMatcher();
 }

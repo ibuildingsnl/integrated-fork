@@ -35,9 +35,6 @@ class Registry implements RegistryInterface
         $this->adapters = $adapters;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAdapter($name)
     {
         if (!\is_string($name)) {
@@ -51,9 +48,6 @@ class Registry implements RegistryInterface
         throw new InvalidArgumentException(sprintf('Could not load adaptor "%s"', $name));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasAdapter($name)
     {
         if (!\is_string($name)) {
@@ -67,9 +61,6 @@ class Registry implements RegistryInterface
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAdapters()
     {
         return $this->adapters;

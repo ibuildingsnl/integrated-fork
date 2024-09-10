@@ -26,17 +26,11 @@ class Registry implements RegistryInterface
         $this->data = $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function toArray()
     {
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function add($value)
     {
         if ($value === null) {
@@ -48,9 +42,6 @@ class Registry implements RegistryInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function set($key, $value)
     {
         if ($value === null) {
@@ -62,17 +53,11 @@ class Registry implements RegistryInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function get($key)
     {
         return isset($this->data[$key]) ? $this->data[$key] : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function remove($key)
     {
         unset($this->data[$key]);
@@ -80,17 +65,11 @@ class Registry implements RegistryInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function has($key)
     {
         return isset($this->data[$key]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear()
     {
         $this->data = [];
@@ -98,42 +77,27 @@ class Registry implements RegistryInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function count(): int
     {
         return \count($this->data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function offsetExists($offset): bool
     {
         return $this->has($offset);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->get($offset);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function offsetSet($offset, $value): void
     {
         if ($offset === null) {
@@ -143,9 +107,6 @@ class Registry implements RegistryInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function offsetUnset($offset): void
     {
         $this->remove($offset);

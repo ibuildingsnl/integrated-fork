@@ -145,11 +145,9 @@ class ParentAwareConfigIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param ConfigInterface $config
-     *
      * @return ParentAwareConfigIterator
      */
-    protected function getInstance(ConfigInterface $config = null)
+    protected function getInstance(?ConfigInterface $config = null)
     {
         if ($config === null) {
             $config = $this->getConfig([], $this->getConfig());
@@ -168,11 +166,10 @@ class ParentAwareConfigIteratorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param TypeConfigInterface[] $types
-     * @param ConfigInterface       $parent
      *
      * @return ConfigInterface|MockObject
      */
-    protected function getConfig(array $types = [], ConfigInterface $parent = null)
+    protected function getConfig(array $types = [], ?ConfigInterface $parent = null)
     {
         $mock = $this->createMock('Integrated\\Common\\Converter\\Config\\ConfigInterface');
         $mock->expects($this->once())

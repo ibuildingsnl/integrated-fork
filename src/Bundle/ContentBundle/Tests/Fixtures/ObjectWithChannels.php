@@ -30,21 +30,26 @@ class ObjectWithChannels implements ChannelableInterface
 
     public function setChannels(iterable $channels)
     {
-        throw new \Exception();
+        throw new \LogicException();
     }
 
     public function addChannel(ChannelInterface $channel)
     {
-        throw new \Exception();
+        throw new \LogicException();
     }
 
     public function hasChannel(ChannelInterface $channel)
     {
-        throw new \Exception();
+        throw new \LogicException();
     }
 
     public function removeChannel(ChannelInterface $channel)
     {
-        throw new \Exception();
+        throw new \LogicException();
+    }
+
+    public function removeChannels()
+    {
+        throw new \LogicException();
     }
 }

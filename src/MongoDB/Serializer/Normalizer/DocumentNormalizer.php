@@ -11,7 +11,6 @@
 
 namespace Integrated\MongoDB\Serializer\Normalizer;
 
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;

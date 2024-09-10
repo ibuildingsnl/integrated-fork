@@ -163,9 +163,6 @@ class XmlProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Asserts that the two variables are equal.
-     *
-     * @param mixed $expected
-     * @param mixed $actual
      */
     public static function assertContainsTypes($expected, $actual)
     {

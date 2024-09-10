@@ -139,11 +139,9 @@ class ContentBlock extends Block
     }
 
     /**
-     * @param SearchSelection $searchSelection
-     *
      * @return $this
      */
-    public function setSearchSelection(SearchSelection $searchSelection = null)
+    public function setSearchSelection(?SearchSelection $searchSelection = null)
     {
         $this->searchSelection = $searchSelection;
 
@@ -268,9 +266,6 @@ class ContentBlock extends Block
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return 'content';

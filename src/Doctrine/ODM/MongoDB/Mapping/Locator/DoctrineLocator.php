@@ -31,9 +31,6 @@ class DoctrineLocator implements ClassLocatorInterface
         $this->driver = $driver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClassNames()
     {
         return $this->driver->getAllClassNames();

@@ -224,8 +224,6 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param mixed $task
-     *
      * @return QueueMessageInterface|MockObject
      */
     protected function getMessage($task)

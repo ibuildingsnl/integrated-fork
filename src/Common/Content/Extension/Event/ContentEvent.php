@@ -19,10 +19,7 @@ use Integrated\Common\Content\Extension\Event;
  */
 class ContentEvent extends Event
 {
-    /**
-     * @var mixed
-     */
-    private $data = null;
+    private $data;
 
     /**
      * @var ContentInterface
@@ -36,17 +33,11 @@ class ContentEvent extends Event
         $this->content = $content;
     }
 
-    /**
-     * @param mixed $data
-     */
     public function setData($data)
     {
         $this->data = $data;
     }
 
-    /**
-     * @return mixed
-     */
     public function getData()
     {
         return $this->data;

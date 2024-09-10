@@ -289,12 +289,11 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string           $adaptor
-     * @param OptionsInterface $options
+     * @param string $adaptor
      *
      * @return ConfigInterface|MockObject
      */
-    protected function getConfig($adaptor, OptionsInterface $options = null)
+    protected function getConfig($adaptor, ?OptionsInterface $options = null)
     {
         $mock = $this->createMock(ConfigInterface::class);
         $mock->expects($this->once())
@@ -319,12 +318,9 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param ConfigInterface   $config
-     * @param ExporterInterface $exporter
-     *
      * @return AdapterInterface|ExportableInterface|MockObject
      */
-    protected function getAdapter(ConfigInterface $config = null, ExporterInterface $exporter = null)
+    protected function getAdapter(?ConfigInterface $config = null, ?ExporterInterface $exporter = null)
     {
         if ($config) {
             $mock = $this->createMock(ExportableInterface::class);

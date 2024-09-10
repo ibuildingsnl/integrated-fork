@@ -18,9 +18,5 @@ use Integrated\Common\Content\Channel\ChannelInterface;
  */
 interface ExporterInterface
 {
-    /**
-     * @param object $content
-     * @param string $state
-     */
     public function export(object $content, string $state, ChannelInterface $channel, array $settings = []);
 }

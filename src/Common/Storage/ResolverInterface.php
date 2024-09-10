@@ -26,7 +26,7 @@ interface ResolverInterface
      *
      * @return string absolute path
      */
-    public function resolve(StorageInterface $storage, ArrayCollection $filesystem = null);
+    public function resolve(StorageInterface $storage, ?ArrayCollection $filesystem = null);
 
     /**
      * @return string
@@ -44,7 +44,7 @@ interface ResolverInterface
      * @param string $filesystem
      * @param string $identifier
      *
-     * @return \Integrated\Common\Storage\FileResolver\FileResolverInterface
+     * @return FileResolver\FileResolverInterface
      */
     public function getResolverClass($filesystem, $identifier);
 }

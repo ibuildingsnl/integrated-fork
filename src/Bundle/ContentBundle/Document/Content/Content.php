@@ -191,17 +191,11 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getContentType()
     {
         return $this->contentType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setContentType($contentType)
     {
         $this->contentType = $contentType;
@@ -209,17 +203,11 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRelations()
     {
         return $this->relations->toArray();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setRelations(iterable $relations)
     {
         $this->relations = new ArrayCollection();
@@ -233,9 +221,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addRelation(RelationInterface $relation)
     {
         if ($exist = $this->getRelation($relation->getRelationId())) {
@@ -258,9 +243,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeRelation(RelationInterface $relation)
     {
         $this->relations->removeElement($relation);
@@ -268,9 +250,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRelation($relationId)
     {
         return $this->relations->filter(function ($relation) use ($relationId) {
@@ -348,16 +327,16 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      * @param string $relationId
      * @param bool   $published
      */
-    public function getReferencesByRelationId($relationId, $published = true, ChannelInterface $channel = null): array
+    public function getReferencesByRelationId($relationId, $published = true, ?ChannelInterface $channel = null): array
     {
         foreach ($this->getRelations() as $relation) {
-            if ($relation instanceof RelationInterface &&
-                $relation->getRelationId() == $relationId &&
-                $references = $relation->getReferences()
+            if ($relation instanceof RelationInterface
+                && $relation->getRelationId() == $relationId
+                && $references = $relation->getReferences()
             ) {
                 return array_filter($references, function (ContentInterface $content) use ($published, $channel) {
-                    return (!$published || !$content instanceof PublishableInterface || $content->isPublished()) &&
-                    (!$channel || !$content instanceof ChannelableInterface || $content->hasChannel($channel));
+                    return (!$published || !$content instanceof PublishableInterface || $content->isPublished())
+                    && (!$channel || !$content instanceof ChannelableInterface || $content->hasChannel($channel));
                 });
             }
         }
@@ -418,17 +397,11 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPublishTime(): PublishTimeInterface
     {
         return $this->publishTime;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setPublishTime(PublishTimeInterface $publishTime)
     {
         $this->publishTime = $publishTime;
@@ -446,9 +419,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $this->isPublished();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isPublished($checkPublishTime = true): bool
     {
         $published = true;
@@ -501,9 +471,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMetadata()
     {
         if (null === $this->metadata) {
@@ -513,10 +480,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $this->metadata;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setMetadata(RegistryInterface $metadata = null)
+    public function setMetadata(?RegistryInterface $metadata = null)
     {
         if (null !== $metadata && !$metadata instanceof Metadata) {
             $metadata = new Metadata($metadata->toArray());
@@ -527,9 +491,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setChannels(iterable $channels)
     {
         $this->channels->clear();
@@ -542,17 +503,11 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getChannels()
     {
         return $this->channels?->toArray();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addChannel(ChannelInterface $channel)
     {
         if (!$this->channels->contains($channel)) {
@@ -566,17 +521,11 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasChannel(ChannelInterface $channel)
     {
         return $this->channels->contains($channel);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeChannel(ChannelInterface $channel)
     {
         $this->channels->removeElement($channel);
@@ -612,7 +561,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * @return $this
      */
-    public function setPrimaryChannel(ChannelInterface $primaryChannel = null)
+    public function setPrimaryChannel(?ChannelInterface $primaryChannel = null)
     {
         $this->primaryChannel = $primaryChannel;
 
@@ -634,7 +583,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * @return $this
      */
-    public function setCustomFields(RegistryInterface $customFields = null)
+    public function setCustomFields(?RegistryInterface $customFields = null)
     {
         if (null !== $customFields && !$customFields instanceof Embedded\CustomFields) {
             $customFields = new Embedded\CustomFields($customFields->toArray());
@@ -645,17 +594,11 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $this;
     }
 
-    /**
-     * @return ?string
-     */
     public function getCopyrightRestrictions(): ?string
     {
         return $this->copyrightRestrictions;
     }
 
-    /**
-     * @param ?string $copyrightRestrictions
-     */
     public function setCopyrightRestrictions(?string $copyrightRestrictions): self
     {
         $this->copyrightRestrictions = $copyrightRestrictions;

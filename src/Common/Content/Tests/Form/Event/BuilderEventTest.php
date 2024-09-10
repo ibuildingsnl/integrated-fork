@@ -62,8 +62,6 @@ class BuilderEventTest extends FormEventTest
     }
 
     /**
-     * @param mixed $field
-     *
      * @return BuilderEvent
      */
     protected function getInstance($field = null)

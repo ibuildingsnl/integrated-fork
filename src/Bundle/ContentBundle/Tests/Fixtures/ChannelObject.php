@@ -33,7 +33,7 @@ class ChannelObject implements ChannelInterface
         throw new \Exception();
     }
 
-    public function getPermissions()
+    public function getPermissions(): iterable
     {
         throw new \Exception();
     }

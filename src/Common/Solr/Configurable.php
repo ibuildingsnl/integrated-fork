@@ -82,8 +82,6 @@ class Configurable
      * Get the option or return the default if none is set.
      *
      * @param string $key
-     *
-     * @return mixed
      */
     public function getOption($key)
     {
