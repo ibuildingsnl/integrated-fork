@@ -66,14 +66,14 @@ $('[data-prototype]').each(function(index, elm) {
                     plugins:
                         'advlist autolink link lists charmap anchor pagebreak ' +
                         'searchreplace wordcount visualchars fullscreen nonbreaking ' +
-                        'table directionality template wordcount autoresize code',
+                        'table directionality template wordcount autoresize code articlelinksearch',
                     schema: 'html5',
                     menubar: true,
                     branding: false,
                     toolbar:
                         'styles | bold italic underline | bullist numlist | ' +
                         'link anchor integratedImage integratedVideo integratedColumn image media print preview fullpage table | ' +
-                        'charmap pagebreak | pastetext searchreplace | code fullscreen',
+                        'charmap pagebreak | pastetext searchreplace | code fullscreen articlelinksearch',
                     browser_spellcheck: true,
                     convert_urls: false,
                     content_css: editor.data('content_css'),

@@ -73,7 +73,7 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                     $time = $data['time'];
                     if ($time->getStartDate() === null && $content->getPublishTime()->getStartDate() !== null) {
                         $time->setStartDate($content->getPublishTime()->getStartDate());
-                    } elseif ($content->getPublishTime()->getStartDate() === null) {
+                    } elseif ($content->getPublishTime()->getStartDate() === null && $time->getStartDate() === null) {
                         $time->setStartDate(new \DateTime());
                     }
                     unset($data['time']);

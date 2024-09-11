@@ -179,6 +179,7 @@ class ContentProvider
                 ->setQuery('facet_properties: ((%1%))', [implode(') OR (', array_map($filter, $propertiesfilter))]);
         }
 
+        //This does work for the MediaGallery, but it does not work for bulk select
         /** @var Relation $relation */
         foreach ($request->query->get('relation') as $relationId => $value) {
             $relation = $this->dm->getRepository(Relation::class)->find($relationId);
@@ -191,6 +192,19 @@ class ContentProvider
                     ->setQuery('facet_'.$relation->getId().': ((%1%))', [implode(') OR (', array_map($filter, $relationfilter))]);
             }
         }
+        //This works for Bulk Select, but not for media gallery
+//        /* @var Relation $relation */
+//        foreach ($request->query->get('relation') as $relationId => $value) {
+//            $relation = $this->dm->getRepository(Relation::class)->find($relationId);
+//            $relationfilter = $value;
+//
+//            if (\is_array($relationfilter)) {
+//                $query
+//                    ->createFilterQuery($relationId)
+//                    ->addTag($relationId)
+//                    ->setQuery('facet_'.$relation->getId().': ((%1%))', [implode(') OR (', array_map($filter, $relationfilter))]);
+//            }
+//        }
 
         if ($contentType) {
             $contentTypesQuery = $query->createFilterQuery('contenttypes')->addTag('contenttypes');
