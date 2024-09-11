@@ -1,0 +1,45 @@
+{% extends '@IntegratedContent/base.html.twig' %}
+{% block content %}
+    <div class="row">
+        {% block form_start %}
+            {{ form_start(form) }}
+        {% endblock %}
+
+        {% block toolbar %}
+            <div id="toolbar" class="w-full flex justify-between">
+                <div class="options">
+                    <div class="form-actions">
+                        <button class="no-icon btn btn-green" type="submit">{% trans %}Next{% endtrans %}</button>
+                    </div>
+                </div>
+                <div class="back">
+                    <a class="no-icon btn btn-white icon-left" href="{{ path("integrated_import_index") }}"><i
+                            class="iconoir iconoir-arrow-left"></i><span>{% trans %}Back{% endtrans %}</span></a>
+                </div>
+            </div>
+        {% endblock toolbar %}
+
+        <div class="index-wrapper-full" style="margin-top:50px;">
+
+            <h1>{% trans %}Step 1 of 4: Choose import file{% endtrans %}</h1>
+
+            {{ form_errors(form) }}
+
+            <div class="row">
+                <section class="section-white section-padding section-shadow section-radius section-margin">
+
+                    <div class="container">
+                        {% trans %}Choose the file to import. Supported file type: CSV, XLSX, XML.{% endtrans %}
+                    </div>
+
+                    <hr/>
+
+                    {{ form_rest(form) }}
+
+                </section>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

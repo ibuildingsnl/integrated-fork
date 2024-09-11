@@ -112,18 +112,11 @@ class WP
         $content = preg_replace('/<a[^>]*>\s*<\/a>/', '', $content);
         $content = preg_replace('/\[caption.*?\]/', '', $content);
         $content = str_ireplace('[/caption]', '', $content);
-        $content = str_ireplace('[vc_row]', '', $content);
-        $content = str_ireplace('[vs_column]', '', $content);
-        $content = str_ireplace('[vc_column_text]', '', $content);
-        $content = str_ireplace('[/vc_row]', '', $content);
-        $content = str_ireplace('[/vs_column]', '', $content);
-        $content = str_ireplace('[/vc_column_text]', '', $content);
         $content = str_ireplace(' ', ' ', $content);
         $content = str_ireplace('<h4>Wil je meer te weten komen over woningaanpassingen? <a href="https://supportmagazine.nl/abonneren/" target="_blank" rel="noopener">Neem dan nu extra voordelig een abonnement op Support Magazine!</a></h4>', '', $content);
         $content = str_ireplace('IK WORD ABONNEE[/su_button]', '[/su_button]', $content);
         $content = preg_replace('/\[(\/)?su_.*?\]/', '', $content); // Strip shortcodes
         $content = str_ireplace('<p>&nbsp;</p>', '', $content);
-        $content = preg_replace('/<!--(.*)-->/Uis', '', $content);
         $content = str_ireplace('<p> </p>', '', $content);
         $content = preg_replace('/\[pdf\s+issuu_pdf_id="[^"]*"\s+width="\d*"\s+height="\d*"\s+layout="\d"\s+bgcolor="[^"]*"\s+allow_full_screen_="1"\s+flip_timelaps="\d*"\s*\]/', '', $content);
 
@@ -140,9 +133,6 @@ class WP
                 $newHtml .= $line."\n";
             }
         }
-
-
-        $newHtml = str_ireplace('<p>&nbsp;</p>', '', $newHtml);
 
         return [
             'result' => $result,

@@ -1,0 +1,144 @@
+{% extends '@IntegratedContent/base.html.twig' %}
+
+{% block content %}
+    <div class="row">
+        <form method="post" id="composeForm">
+            <input type="hidden" name="action" value="go"/>
+
+            <style>
+                .integrated_import_definition .index-wrapper-full > section {
+                    max-height: calc(100vh - 220px);
+                    overflow: scroll;
+                }
+
+                .importtable .row {
+                    display: inline-flex;
+                    border: 1px solid #e5e7eb;
+                    border-bottom:none;
+                }
+
+                .importtable .row .heading {
+                    font-weight: bold;
+                }
+
+                .importtable .row .heading {
+                    width: 180px;
+                    text-align: center;
+                    border-right: 1px solid #e5e7eb;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .importtable .row.select-fields .field-select {
+                    width: 180px;
+                }
+                .importtable .row.import-data .importdata {
+                    width: 180px;
+                    padding: 0.5rem;
+                    border-right: 1px solid #e5e7eb;
+                    height: 50px;
+                    overflow: hidden;
+                }
+
+                .select-fields .select2 .select2-selection {
+                    height: 32px;
+                    min-height: 32px;
+                    padding: 0 1rem 0 0.5rem;
+                }
+
+                .select-fields .select2-container--default .select2-selection--single .select2-selection__rendered {
+                    line-height: 32px;
+                }
+
+                .select-fields .select2 .select2-selection--single {
+                    border: none;
+                    border-radius: 0;
+                    border-right: 1px solid #e5e7eb;
+                    border-bottom: 1px solid #e5e7eb;
+                }
+
+            </style>
+
+            {% block toolbar %}
+                <div id="toolbar" class="w-full flex justify-between">
+                    <div class="options">
+                        <div class="form-actions">
+                            <button class="no-icon btn btn-green" type="submit">{% trans %}Next{% endtrans %}</button>
+                        </div>
+                    </div>
+                    <div class="back">
+                        <a class="no-icon btn btn-white icon-left"
+                           href="{{ path("integrated_import_file", {'importDefinition': importDefinition.id }) }}"><i
+                                class="iconoir iconoir-arrow-left"></i><span>{% trans %}Back{% endtrans %}</span></a>
+                    </div>
+                </div>
+            {% endblock toolbar %}
+            <div class="index-wrapper-full" style="margin-top:50px;">
+
+                <h1>{% trans %}Step 2 of 4: Compose definition{% endtrans %}</h1>
+
+                <section class="section-white section-padding section-shadow section-radius section-margin">
+
+                    <div class="container">
+                        {% trans %}{1}Choose the operations you wish to perform on the selected content item|]1,Inf[Choose the operation you wish to perform on the selected content items{% endtrans %}
+                    </div>
+
+                    <hr/>
+
+                    <style>
+                        .importdata th, .importdata td {
+                            vertical-align: top;
+                            padding-bottom: 5px;
+                        }
+                    </style>
+                    <table class="importtable">
+                        {% for row in data %}
+                            {% if loop.first %}
+                                <tr class="row table-heading">
+                                    {% for col in row %}
+                                        <th class="heading">{{ col }}</th>
+                                    {% endfor %}
+                                </tr>
+                            {% else %}
+                                <tr class="row import-data">
+                                    {% for col in row %}
+                                        <td class="importdata">{{ col|raw }}</td>
+
+                                    {% endfor %}
+                                </tr>
+                            {% endif %}
+                            {% if loop.first %}
+                                <tr class="row select-fields">
+                                    {% for col in row %}
+                                        {% set colIndex = loop.index0 %}
+                                        <td class="field-select">
+                                            <select name="col{{ colIndex }}" id="col{{ colIndex }}"
+                                                    class="import-fieldchoice">
+                                                {% for fieldKey, field in fields %}
+                                                    <option
+                                                        value="{{ fieldKey }}" {% if colIndex in field.matchCol %} selected="selected"{% endif %}>{{ field.label }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                </section>
+
+            </div>
+        </form>
+
+    </div>
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+
+<script>
+    $(document).ready(function() {
+        $('.import-fieldchoice').select2();
+    });
+</script>
+{% endblock %}
