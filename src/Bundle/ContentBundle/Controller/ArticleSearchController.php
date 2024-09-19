@@ -132,7 +132,7 @@ class ArticleSearchController extends AbstractController
 
         $ret = array_map(function ($contentItem) use ($channel) {
             return array_merge($contentItem, [
-                'url' => $channel->getPrimaryDomain().$contentItem['url'],
+                'url' => 'https://' . $channel->getPrimaryDomain().$contentItem['url'],
             ]);
         }, $ret);
 
