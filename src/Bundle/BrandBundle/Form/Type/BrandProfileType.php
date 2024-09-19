@@ -132,5 +132,16 @@ class BrandProfileType extends AbstractType
             ],
             'required' => false,
         ]);
+
+        $builder->add('analyticsPropertyId', TextType::class, [
+            'label' => 'Analytics Property ID',
+            'attr' => [
+                'location' => 'sidebar',
+                'style' => 'sidebar',
+                'icon' => 'graph-up',
+                'state' => 'show',
+            ],
+            'required' => false,
+        ]);
     }
 }

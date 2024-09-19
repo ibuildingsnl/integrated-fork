@@ -10,9 +10,9 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Provider\SolariumProvider;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Knp\Component\Pager\PaginatorInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,11 +29,10 @@ class JSONController extends AbstractController
     }
 
     /**
-     * @Template
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws CircularFallbackException
+     * @throws \Exception
      */
-    public function searchSelection(Request $request, SearchSelection $searchSelection)
+    public function searchSelectionJson(Request $request, SearchSelection $searchSelection): Response
     {
         $block = new ContentBlock();
         $block->setSearchSelection($searchSelection);
@@ -55,11 +54,9 @@ class JSONController extends AbstractController
     }
 
     /**
-     * @Template
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws CircularFallbackException
      */
-    public function relatedContentBlock(Request $request)
+    public function relatedContentBlock(Request $request): Response
     {
         if (!$blockId = (string) $request->query->get('blockId')) {
             return new Response('', Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -67,10 +64,6 @@ class JSONController extends AbstractController
 
         if (!$documentId = (string) $request->query->get('documentId')) {
             return new Response('', Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        if (!$blockId || !$documentId) {
-            return;
         }
 
         /** @var RelatedContentBlock $block * */

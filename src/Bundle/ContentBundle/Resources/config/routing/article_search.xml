@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<routes xmlns="http://symfony.com/schema/routing"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <route id="integrated_content_article_search_index" path="article-search" methods="GET">
+        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ArticleSearchController::index</default>
+    </route>
+
+    <route id="integrated_content_article_search_search" path="article-search/search-channel/{channelId?}" methods="GET">
+        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ArticleSearchController::searchContentByChannel</default>
+    </route>
+
+</routes>

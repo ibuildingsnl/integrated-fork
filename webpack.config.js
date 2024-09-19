@@ -1,18 +1,19 @@
 let Encore = require('@symfony/webpack-encore');
 const PathResolver = require('path');
+const webpack = require('webpack');
 
 webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/public')
     .setPublicPath('/bundles/integratedintegrated')
     .setManifestKeyPrefix('bundles/integratedintegrated')
     .addEntry('app', [
         './node_modules/iconoir/css/iconoir.css',
-        './src/Bundle/ContentBundle/Resources/assets/sass/main.scss',   
-        './src/Bundle/DashboardBundle/Resources/assets/sass/main.scss',
+        './src/Bundle/ContentBundle/Resources/assets/sass/main.scss',
         './src/Bundle/WorkflowBundle/Resources/assets/css/style.css',
-        './src/Bundle/ContentBundle/Resources/assets/js/main.js'
+        './src/Bundle/ContentBundle/Resources/assets/js/main.js',
     ])
     .addEntry('edit', [
         './node_modules/jquery-datetimepicker/jquery.datetimepicker.css',
+        './src/Bundle/ContentBundle/Resources/assets/js/article_search.js',
         './src/Bundle/ContentBundle/Resources/assets/js/edit.js',
         './src/Bundle/ContentBundle/Resources/assets/js/handlebars.helpers.js',
         './src/Bundle/UserBundle/Resources/assets/js/visible_user_form.js',
@@ -58,6 +59,11 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
         './src/Bundle/WorkflowBundle/Resources/assets/js/defaultSelection.js',
         './src/Bundle/WorkflowBundle/Resources/assets/js/select2_init.js',
     ])
+    .addEntry('article-search', [
+        './src/Bundle/ContentBundle/Resources/assets/js/vue_init.js',
+        './src/Bundle/ContentBundle/Resources/assets/js/article_search.js',
+        './src/Bundle/ContentBundle/Resources/assets/sass/components/vue/vue.scss'
+    ])
     .copyFiles({
         from: './node_modules/tinymce/skins',
         to: 'skins/[path][name].[ext]'
@@ -76,6 +82,17 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
     })
     .cleanupOutputBeforeBuild()
     .autoProvidejQuery()
+    .enableVueLoader(() => {}, {
+        runtimeCompilerBuild: false,
+        version: 3
+    })
+    .addPlugin(
+        new webpack.DefinePlugin({
+            __VUE_OPTIONS_API__: false,
+            __VUE_PROD_DEVTOOLS__: false,
+            __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
+        })
+    )
     .enablePostCssLoader((options) => {
         options.postcssOptions = {
             path: './postcss.config.js',
@@ -93,6 +110,7 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
 webpackConfig.resolve.alias = {
     typeahead: PathResolver.resolve(__dirname, 'node_modules/typeahead.js/dist/typeahead.bundle.js'),
     jquery: PathResolver.resolve(__dirname, 'node_modules/jquery/dist/jquery.js'),
+    'vue': 'vue/dist/vue.esm-bundler.js',
 };
 
 webpackConfig.resolve.fallback = {'fs': false};

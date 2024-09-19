@@ -13,8 +13,10 @@
         <field name="disabled" type="bool" />
         <field name="order" type="float" />
 
-        <embed-one field="image" target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage" />
-
+        <reference-one
+            field="image"
+            target-document="Integrated\Bundle\ContentBundle\Document\Content\Image"
+        />
     </embedded-document>
 
 </doctrine-mongo-mapping>

@@ -8,10 +8,6 @@ use Twig\TwigFilter;
 
 class SocialScriptExtension extends AbstractExtension
 {
-    public function __construct()
-    {
-    }
-
     /**
      * @return TwigFilter[]
      */

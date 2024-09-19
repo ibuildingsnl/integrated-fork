@@ -15,10 +15,18 @@
     <import resource="@IntegratedContentBundle/Resources/config/routing/parent_id.xml"  prefix="/parent_id/"/>
     <import resource="@IntegratedContentBundle/Resources/config/routing/search_selection.xml" prefix="/search-selection/" />
     <import resource="@IntegratedContentBundle/Resources/config/routing/search.xml" />
+    <import resource="@IntegratedContentBundle/Resources/config/routing/article_search.xml" />
     <import resource="@IntegratedContentBundle/Resources/config/routing/yoastseo.xml" />
     <import resource="@IntegratedContentBundle/Resources/config/routing/oembed.xml" />
     <import resource="@IntegratedContentBundle/Resources/config/routing/bulk.xml"  prefix="/bulk/"/>
 
     <import resource="@IntegratedBlockBundle/Resources/config/routing.xml" />
+
+    <route id="content_redirect" path="/" controller="Symfony\Bundle\FrameworkBundle\Controller\RedirectController">
+        <default key="route">integrated_content_content_index</default>
+        <default key="permanent">true</default>
+        <default key="keepQueryParams">true</default>
+        <default key="keepRequestMethod">true</default>
+    </route>
 
 </routes>
