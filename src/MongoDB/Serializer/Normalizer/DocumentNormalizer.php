@@ -99,6 +99,16 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
      */
     protected function supports(string $class): bool
     {
-        return $this->getDocumentManager()->getMetadataFactory()->hasMetadataFor($class);
+        $factory = $this->getDocumentManager()->getMetadataFactory();
+
+        if ($factory->hasMetadataFor($class)) {
+            return true;
+        }
+
+        if (!$factory->isTransient($class)) {
+            return true;
+        }
+
+        return false;
     }
 }
