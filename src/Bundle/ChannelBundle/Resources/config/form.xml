@@ -19,6 +19,11 @@
             <tag name="form.type" />
         </service>
 
+        <service id="integrated_channel.form.channel.choice.website.type" class="Integrated\Bundle\ChannelBundle\Form\Type\FilteredChannelChoiceType">
+            <argument type="service" id="integrated_channel.repository.channel" />
+            <tag name="form.type" />
+        </service>
+
     </services>
 
 </container>
