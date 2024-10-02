@@ -42,11 +42,23 @@ const activeContentTypes = computed(() => {
     return contentTypes.value.filter((contentType) => contentType.active).map((contentType) => contentType.key).join(',');
 });
 
+const ensureHttps = (url) => {
+    if (!url.startsWith('https://') && !url.startsWith('#')) {
+        return `https://${url}`;
+    }
+    console.log('test');
+    return url;
+};
+
 const hasValidUrl = computed(() => {
     try {
         return new URL(searchTerm.value);
     } catch {
         if (searchTerm.value.startsWith('#')) {
+            return true;
+        }
+
+        if (searchTerm.value.startsWith('www')) {
             return true;
         }
 
@@ -101,17 +113,19 @@ const doSearch = debounce(async () => {
 
 const finishSelection = () => {
     if (hasValidUrl.value) {
+        const finalUrl = ensureHttps(searchTerm.value);  // Ensure https:// for searchTerm
+
         if (existing.value) {
             window.parent.postMessage({
                 mceAction: 'linkMakerReplace',
-                href: searchTerm.value,
-                newTab: openInNewTab.value && !searchTerm.value.startsWith('#'),
+                href: finalUrl,
+                newTab: openInNewTab.value && !finalUrl.startsWith('#'),
                 linkText: linkText.value,
             }, '*');
         } else {
             window.parent.postMessage({
                 mceAction: 'insertContent',
-                content: `<a href="${searchTerm.value}"${openInNewTab ? 'target="_blank"' : ''}>${linkText.value}</a>`
+                content: `<a href="${finalUrl}"${openInNewTab.value && !finalUrl.startsWith('#') ? ' target="_blank"' : ''}>${linkText.value}</a>`
             }, '*');
         }
 
@@ -128,18 +142,19 @@ const finishSelection = () => {
 
     const id = selections.value[0];
     const item = results.value.filter((result) => result.id === id)[0];
+    const finalItemUrl = ensureHttps(item.url);  // Ensure https:// for item.url
 
     if (existing.value) {
         window.parent.postMessage({
             mceAction: 'linkMakerReplace',
-            href: item.url,
-            newTab: openInNewTab.value,
+            href: finalItemUrl,
+            newTab: openInNewTab.value && !finalItemUrl.startsWith('#'),
             linkText: linkText.value,
         }, '*');
     } else {
         window.parent.postMessage({
             mceAction: 'insertContent',
-            content: `<a href="${item.url}"${openInNewTab ? 'target="_blank"' : ''}>${linkText.value}</a>`
+            content: `<a href="${finalItemUrl}"${openInNewTab.value && !finalItemUrl.startsWith('#') ? ' target="_blank"' : ''}>${linkText.value}</a>`
         }, '*');
     }
 
