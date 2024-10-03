@@ -212,7 +212,7 @@ class Article extends Content implements RankableInterface
         $this->slug = $slug;
     }
 
-    public function getSubtitle(): string
+    public function getSubtitle(): ?string
     {
         return $this->subtitle;
     }
