@@ -16,7 +16,7 @@ function initContentChoice() {
                 data: (param) => ({
                     contenttypes: $element.data('types'),
                     limit: 100,
-                    sort: 'title',
+                    sort: 'title_sort',
                     q: param.term ? param.term + '*' : ''
                 }),
                 processResults: function (data) {
