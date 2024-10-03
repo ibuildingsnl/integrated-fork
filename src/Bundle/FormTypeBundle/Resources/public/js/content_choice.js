@@ -14,7 +14,7 @@ function initContentChoice() {
                 url: $element.data('ajax-url'),
                 dataType: 'json',
                 data: (param) => ({
-                    relation: $element.data('type'),
+                    contenttypes: $element.data('types'),
                     limit: 100,
                     sort: 'title',
                     q: param.term ? param.term + '*' : ''

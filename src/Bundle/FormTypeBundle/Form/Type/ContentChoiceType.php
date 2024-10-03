@@ -85,8 +85,8 @@ class ContentChoiceType extends AbstractType
             $view->vars[$varName] = $options[$varName];
         }
 
-        if ($options['content_type']) {
-            $view->vars['content_type'] = $options['content_type'];
+        if ($options['content_types']) {
+            $view->vars['content_types'] = $options['content_types'];
         }
 
         if ($options['multiple']) {
@@ -110,7 +110,7 @@ class ContentChoiceType extends AbstractType
                 // api route for getting the ajax results, default: integrated_content_content_index
                 'params' => $this->params,
                 // additional parameters for the api route, default: ['_format' => 'json']
-                'content_type' => null,
+                'content_types' => null,
                 'multiple' => true,
                 'compound' => false,
                 'required' => false,
