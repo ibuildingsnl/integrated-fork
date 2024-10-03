@@ -173,13 +173,6 @@
             <tag name="form.type"/>
         </service>
 
-        <service id="integrated_formtype_form_type_content" class="Integrated\Bundle\ContentBundle\Form\Type\ContentSelectType">
-            <argument type="service" id="doctrine_mongodb"/>
-            <argument type="service" id="integrated_content.content_type.manager"/>
-
-            <tag name="form.type"/>
-        </service>
-
         <service id="integrated_content.form.search_selection.type" class="Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType">
             <argument type="service" id="security.authorization_checker"/>
             <argument type="service" id="integrated_user.group.manager"/>
