@@ -65,6 +65,7 @@ class PageType extends AbstractType
             'return_object' => true,
             'disabled' => $page && $page->getChannel(),
             'data' => $channel,
+            'filter' => ['type.$id' => 'website']
         ]);
 
         $builder->add('title', TextType::class);
