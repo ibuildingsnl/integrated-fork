@@ -30,13 +30,14 @@ class Company extends Relation
      * @var string
      */
     #[Type\Field(options: [
+        'priority' => 990,
         'attr' => [
-            'state' => 'title_tinymce',
-            'class' => 'fancy_tinymce',
-            'style' => 'horizontal',
+            'style' => 'editor',
+            'state' => 'show',
         ],
     ], location: 'editor')]
     protected $name;
+
 
     /**
      * @var string
