@@ -43,10 +43,12 @@ const activeContentTypes = computed(() => {
 });
 
 const ensureHttps = (url) => {
-    if (!url.startsWith('https://') && !url.startsWith('#')) {
+    if (url.startsWith('/') || url.startsWith('#')) {
+        return url;
+    }
+    if (!url.startsWith('https://') && !url.startsWith('http://')) {
         return `https://${url}`;
     }
-    console.log('test');
     return url;
 };
 
@@ -54,7 +56,7 @@ const hasValidUrl = computed(() => {
     try {
         return new URL(searchTerm.value);
     } catch {
-        if (searchTerm.value.startsWith('#')) {
+        if (searchTerm.value.startsWith('/') || searchTerm.value.startsWith('#')) {
             return true;
         }
 
