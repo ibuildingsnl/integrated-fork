@@ -117,7 +117,7 @@ class ArticleSearchController extends AbstractController
              */
             function ($contentItem) use ($channel, &$contentIds) {
                 $contentIds[] = $contentItem->type_id;
-                $content = is_array($contentItem->content) ? implode('', $contentItem->content) : $contentItem->content;
+                $content = \is_array($contentItem->content) ? implode('', $contentItem->content) : $contentItem->content;
                 $content = substr(strip_tags($content), 0, 255);
 
                 return [
@@ -134,7 +134,7 @@ class ArticleSearchController extends AbstractController
 
         $ret = array_map(function ($contentItem) use ($channel) {
             return array_merge($contentItem, [
-                'url' => 'https://' . $channel->getPrimaryDomain().$contentItem['url'],
+                'url' => 'https://'.$channel->getPrimaryDomain().$contentItem['url'],
             ]);
         }, $ret);
 

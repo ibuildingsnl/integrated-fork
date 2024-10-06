@@ -615,7 +615,7 @@ class ContentController extends AbstractController
                     // higher priority for content edited in Integrated
                     $queue = $this->queueSubscriber->getQueue();
                     $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
-                    
+
                     if ($this->dispatcher->hasListeners(Events::CONTENT_DELETED)) {
                         $this->dispatcher->dispatch(
                             new ContentDeletedEvent($content),
