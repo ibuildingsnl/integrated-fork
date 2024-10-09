@@ -204,8 +204,8 @@ class ContentProvider
 
             if (\is_array($relationfilter)) {
                 $query
-                    ->createFilterQuery($relationId)
-                    ->addTag($relationId)
+                    ->createFilterQuery($name)
+                    ->addTag($name)
                     ->setQuery('facet_'.$relation->getId().': ((%1%))', [implode(') OR (', array_map($filter, $relationfilter))]);
             }
         }
