@@ -259,7 +259,7 @@ class Article extends Content implements RankableInterface
         return $this->source;
     }
 
-    public function setSource(string $source): void
+    public function setSource(?string $source): void
     {
         $this->source = $source;
     }
