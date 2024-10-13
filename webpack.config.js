@@ -57,6 +57,7 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
         './src/Bundle/WorkflowBundle/Resources/assets/js/defaultSelection.js',
         './src/Bundle/WorkflowBundle/Resources/assets/js/select2_init.js',
     ])
+    .enableStimulusBridge('./src/Bundle/ContentBundle/Resources/assets/controllers.json')
     .copyFiles({
         from: './node_modules/tinymce/skins',
         to: 'skins/[path][name].[ext]'

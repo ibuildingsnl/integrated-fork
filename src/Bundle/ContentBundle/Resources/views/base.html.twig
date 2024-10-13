@@ -18,7 +18,7 @@
 
     {% block style %}
         <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/app.css') }}">
-
+        <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/turbo.css') }}">
         {{ integrated_stylesheets() }}
 
         <script>
@@ -132,6 +132,8 @@
 {% endblock edit_modal %}
 
 {% block javascript %}
+    <script src="{{ asset('bundles/integratedintegrated/turbo.js') }}"></script>
+
 {% block webpack_js %}
     <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
 {% endblock %}

@@ -1,5 +1,10 @@
 {
   "entrypoints": {
+    "turbo": {
+      "js": [
+        "/bundles/integratedintegrated/turbo.js"
+      ]
+    },
     "app": {
       "css": [
         "/bundles/integratedintegrated/app.css"

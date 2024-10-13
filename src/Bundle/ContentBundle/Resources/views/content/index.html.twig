@@ -21,167 +21,162 @@
     </li>
 {% endblock options_start %}
 {% block content_items %}
-    <section class="section-white section-radius">
+    <turbo-frame id="content-list">
         {% set media_gallery_classes = ["Image", "Video", "File"] %}
-        <table class="table">
-            <thead>
-            <tr>
-                <th class="title">
-                    <span>{% trans %}Title{% endtrans %}</span>
-                </th>
-                <th class="channels">
-                    <span>{% trans %}Channels{% endtrans %}</span>
-                </th>
-                <th class="content-type">
-                    <span>ContentType</span>
-                </th>
-                <th class="pub-date">
-                    <span>{% trans %}Publication date{% endtrans %}</span>
-                </th>
-                <th class="state">
-                    <span>{% trans %}Status{% endtrans %}</span>
-                </th>
-            </tr>
-            </thead>
-            <tbody id="post-list">
-            {% for content in pager %}
+        <section class="section-white section-radius">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th class="title"><span>{% trans %}Title{% endtrans %}</span></th>
+                    <th class="channels"><span>{% trans %}Channels{% endtrans %}</span></th>
+                    <th class="content-type"><span>ContentType</span></th>
+                    <th class="pub-date"><span>{% trans %}Publication date{% endtrans %}</span></th>
+                    <th class="state"><span>{% trans %}Status{% endtrans %}</span></th>
+                </tr>
+                </thead>
+                <tbody id="post-list">
+                {% for content in pager %}
 
-                {% set document = integrated_document(content) %}
+                    {% set document = integrated_document(content) %}
 
-                {% set class_name = content.type_class|split('\\')|last %}
-                <tr class="has-options">
-                    <td class="title">
-                        {% if locks[content.type_id] is defined %}
-                            {% if locks[content.type_id].user is defined %}
-                                <div class="locked-info">
+                    {% set class_name = content.type_class|split('\\')|last %}
+                    <tr class="has-options">
+                        <td class="title">
+                            {% if locks[content.type_id] is defined %}
+                                {% if locks[content.type_id].user is defined %}
+                                    <div class="locked-info">
                                             <span class="locked-text">
                                                 <i class="iconoir-lock"></i>&nbsp;
                                                 {% trans %}This item is locked by{% endtrans %} {{ locks[content.type_id].user }}
                                             </span>
-                                </div>
-                            {% else %}
-                                <div class="locked-info">
+                                    </div>
+                                {% else %}
+                                    <div class="locked-info">
                                             <span class="locked-text">
                                                 <i class="iconoir-lock"></i>&nbsp;
                                                 {% trans %}This item is locked{% endtrans %}
                                             </span>
-                                </div>
+                                    </div>
+                                {% endif %}
                             {% endif %}
-                        {% endif %}
 
-                        {% if class_name in media_gallery_classes %}
-                            {% set editLink = path('integrated_content_media_index', {ids: content.type_id}) %}
-                        {% else %}
-                            {% set editLink = path('integrated_content_content_edit', {id: content.type_id}) %}
-                        {% endif %}
-
-                        {% set type = contentTypes|filter(t => t.id == content.type_name)|first %}
-                        <div>
-                            <strong>
-                                <a href="{{ editLink }}">
-                                    {{ content.title|default }}
-                                </a>
-                            </strong>
-                        </div>
-                        <div class="row-options">
-                            <a href="{{ editLink }}">
-                                {% trans %}Edit{% endtrans %}
-                            </a> |
-                            <a class="color-red"
-                               href="{{ path('integrated_content_content_delete', {'id': content.type_id}) }}"
-                               tabindex="-1" role="option">
-                                {% trans %}Delete{% endtrans %}
-                            </a>
-                        </div>
-                    </td>
-
-                    <td class="channels">
-                        {% if document.channels is defined and document.channels is not null %}
-                            {% set groupedChannels = {} %}
-
-                            {% for channel in document.channels %}
-                                {% set brandName = channel|integrated_brand_profile.name|default('Unknown') %}
-
-                                {% if brandName not in groupedChannels %}
-                                    {% set groupedChannels = groupedChannels|merge({(brandName): []}) %}
-                                {% endif %}
-
-                                {% set groupedChannels = groupedChannels|merge({(brandName): groupedChannels[brandName]|merge([channel])}) %}
-                            {% endfor %}
-
-                            <div class="favicon-wrapper {% if groupedChannels|length > 3 %}hover-popout{% endif %}">
-                                {% if groupedChannels|length > 3 %}
-                                    <span class="channel-popout" style="--color:#01ae93">3+</span>
-                                {% endif %}
-                                <div class="channel-favicons {% if groupedChannels|length > 3 %}popout{% endif %}">
-                                    {% for brandName, channels in groupedChannels %}
-                                        {% for channel in channels %}
-                                            {% if channel|integrated_brand_profile.favicon.file is defined %}
-                                                <div class="channel-favicon"
-                                                     style="background-image:url('{{ image(channel|integrated_brand_profile.favicon.file).cropResize(36, 36)|default }}')"
-                                                     title="{{ channel.name }}">
-                                                </div>
-                                            {% else %}
-                                                <div class="channel-favicon font-bold" title="{{ channel.name }}" style="background-color: {{ channel|integrated_brand.color|default('gray') }}">
-                                                    {{ channel.name|first }}
-                                                </div>
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% endif %}
-                    </td>
-                    <td class="content-type">
-                        <div class="flex font-bold" style="color: {{ type.options.color|default('gray') }}">
-                            <i class="icon mr-2 iconoir-{{ type.options.icon|default('empty-page') }}" title="{{ type }}"></i>
-                            <span>{{ content.type_name|integrated_content_type.name|default(content.type_name) }}</span>
-                        </div>
-                    </td>
-                    <td class="pub-date">
-                        {% if content.pub_time is defined %}
-                            {{ content.pub_time|format_date('long') }}
-                        {% endif %}
-                    </td>
-                    <td class="state">
-                        {% if content.workflow_state is defined and ('now'|date('U') > content.pub_time |date('U')) %}
-                            {% if content.workflow_color_string is defined %}
-                                {% set status_color = content.workflow_color_string|first %}
-                                <div class="workflow-status" style="background-color:{{ status_color }};">
-                                    <i class="iconoir-{{ content.workflow_icon_string|first|default }}"></i>
-                                </div>
+                            {% if class_name in media_gallery_classes %}
+                                {% set editLink = path('integrated_content_media_index', {ids: content.type_id}) %}
                             {% else %}
-                                <div class="workflow-status" style="background-color:#d8d8d8;">
-                                    <i class="iconoir-{{ content.workflow_icon_string|first|default }}"></i>
+                                {% set editLink = path('integrated_content_content_edit', {id: content.type_id}) %}
+                            {% endif %}
+
+                            {% set type = contentTypes|filter(t => t.id == content.type_name)|first %}
+                            <div>
+                                <strong>
+                                    <a href="{{ editLink }}">
+                                        {{ content.title|default }}
+                                    </a>
+                                </strong>
+                            </div>
+                            <div class="row-options">
+                                <a href="{{ editLink }}">
+                                    {% trans %}Edit{% endtrans %}
+                                </a> |
+                                <a class="color-red"
+                                   href="{{ path('integrated_content_content_delete', {'id': content.type_id}) }}"
+                                   data-turbo-action="replace"
+                                   tabindex="-1" role="option">
+                                    {% trans %}Delete{% endtrans %}
+                                </a>
+                            </div>
+                        </td>
+
+                        <td class="channels">
+                            {% if document.channels is defined and document.channels is not null %}
+                                {% set groupedChannels = {} %}
+
+                                {% for channel in document.channels %}
+                                    {% set brandName = channel|integrated_brand_profile.name|default('Unknown') %}
+
+                                    {% if brandName not in groupedChannels %}
+                                        {% set groupedChannels = groupedChannels|merge({(brandName): []}) %}
+                                    {% endif %}
+
+                                    {% set groupedChannels = groupedChannels|merge({(brandName): groupedChannels[brandName]|merge([channel])}) %}
+                                {% endfor %}
+
+                                <div class="favicon-wrapper {% if groupedChannels|length > 3 %}hover-popout{% endif %}">
+                                    {% if groupedChannels|length > 3 %}
+                                        <span class="channel-popout" style="--color:#01ae93">3+</span>
+                                    {% endif %}
+                                    <div class="channel-favicons {% if groupedChannels|length > 3 %}popout{% endif %}">
+                                        {% for brandName, channels in groupedChannels %}
+                                            {% for channel in channels %}
+                                                {% if channel|integrated_brand_profile.favicon.file is defined %}
+                                                    <div class="channel-favicon"
+                                                         style="background-image:url('{{ image(channel|integrated_brand_profile.favicon.file).cropResize(36, 36)|default }}')"
+                                                         title="{{ channel.name }}">
+                                                    </div>
+                                                {% else %}
+                                                    <div class="channel-favicon font-bold" title="{{ channel.name }}"
+                                                         style="background-color: {{ channel|integrated_brand.color|default('gray') }}">
+                                                        {{ channel.name|first }}
+                                                    </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </div>
                                 </div>
                             {% endif %}
-                            {% set status_color = '' %}
-                        {% elseif ('now'|date('U') < content.pub_time |date('U')) %}
-                            <div class="workflow-status" style="background-color:#5f84db;">
-                                <i class="iconoir-calendar"></i>
+                        </td>
+                        <td class="content-type">
+                            <div class="flex font-bold" style="color: {{ type.options.color|default('gray') }}">
+                                <i class="icon mr-2 iconoir-{{ type.options.icon|default('empty-page') }}"
+                                   title="{{ type }}"></i>
+                                <span>{{ content.type_name|integrated_content_type.name|default(content.type_name) }}</span>
                             </div>
-                        {% endif %}
-                        {% if content.workflow_state is not defined and content.published is defined and content.published == "true" and 'now'|date('U') > content.pub_time |date('U') %}
-                            <div class="workflow-status" style="background-color:#00ae93;">
-                                <i class="iconoir-check"></i>
-                            </div>
-                        {% elseif content.workflow_state is not defined and content.published is defined and content.published == "false" and 'now'|date('U') > content.pub_time |date('U')%}
-                            <div class="workflow-status" style="background-color:#ababab;">
-                                <i class="iconoir-edit-pencil"></i>
-                            </div>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td class="title">{% trans %}No items found{% endtrans %}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                        </td>
+                        <td class="pub-date">
+                            {% if content.pub_time is defined %}
+                                {{ content.pub_time|format_date('long') }}
+                            {% endif %}
+                        </td>
+                        <td class="state">
+                            {% if content.workflow_state is defined and ('now'|date('U') > content.pub_time |date('U')) %}
+                                {% if content.workflow_color_string is defined %}
+                                    {% set status_color = content.workflow_color_string|first %}
+                                    <div class="workflow-status" style="background-color:{{ status_color }};">
+                                        <i class="iconoir-{{ content.workflow_icon_string|first|default }}"></i>
+                                    </div>
+                                {% else %}
+                                    <div class="workflow-status" style="background-color:#d8d8d8;">
+                                        <i class="iconoir-{{ content.workflow_icon_string|first|default }}"></i>
+                                    </div>
+                                {% endif %}
+                                {% set status_color = '' %}
+                            {% elseif ('now'|date('U') < content.pub_time |date('U')) %}
+                                <div class="workflow-status" style="background-color:#5f84db;">
+                                    <i class="iconoir-calendar"></i>
+                                </div>
+                            {% endif %}
+                            {% if content.workflow_state is not defined and content.published is defined and content.published == "true" and 'now'|date('U') > content.pub_time |date('U') %}
+                                <div class="workflow-status" style="background-color:#00ae93;">
+                                    <i class="iconoir-check"></i>
+                                </div>
+                            {% elseif content.workflow_state is not defined and content.published is defined and content.published == "false" and 'now'|date('U') > content.pub_time |date('U') %}
+                                <div class="workflow-status" style="background-color:#ababab;">
+                                    <i class="iconoir-edit-pencil"></i>
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td class="title">{% trans %}No items found{% endtrans %}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
 
-        <div class="flex flex-wrap ">
-            {{ knp_pagination_render(pager) }}
-        </div>
-    </section>
+            <div class="flex flex-wrap ">
+                {{ knp_pagination_render(pager) }}
+            </div>
+        </section>
+    </turbo-frame>
 {% endblock content_items %}
