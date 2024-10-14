@@ -1,11 +1,4 @@
 import $ from 'jquery';
-import { startStimulusApp } from '@symfony/stimulus-bridge';
-import '@symfony/ux-turbo';
-
-// Start Stimulus application
-const app = startStimulusApp(require.context(
-    '@symfony/controllers', true, /\.(j|t)sx?$/
-));
 
 jQuery = $;
 global.$ = global.jQuery = $;

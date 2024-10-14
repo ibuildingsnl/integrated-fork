@@ -58,7 +58,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\UX\Turbo\TurboBundle;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -86,8 +85,7 @@ class ContentController extends AbstractController
         private readonly MetadataFactoryInterface $metadataFactory,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly DocumentManager $documentManager,
-        private readonly CalendarOptions $calendarOptions,
-        private readonly TurboBundle $turbo
+        private readonly CalendarOptions $calendarOptions
     ) {
     }
 
