@@ -88,6 +88,10 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
      */
     public function supportsNormalization($data, $format = null)
     {
+        if (!\is_object($data)) {
+            return false;
+        }
+
         return $this->supports(\get_class($data));
     }
 
