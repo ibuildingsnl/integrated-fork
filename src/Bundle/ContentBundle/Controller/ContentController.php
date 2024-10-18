@@ -85,7 +85,8 @@ class ContentController extends AbstractController
         private readonly MetadataFactoryInterface $metadataFactory,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly DocumentManager $documentManager,
-        private readonly CalendarOptions $calendarOptions
+        private readonly CalendarOptions $calendarOptions,
+        private readonly PublicationRepositoryInterface $publicationRepository,
     ) {
     }
 
@@ -129,9 +130,9 @@ class ContentController extends AbstractController
             $selection = new SearchSelection();
         }
         $editableSelection = $this->isGranted('ROLE_ADMIN') || (
-                !$selection->isPublic() &&
-                $selection->getUserId() === $this->getUser()->getId()
-            );
+            !$selection->isPublic() &&
+            $selection->getUserId() === $this->getUser()->getId()
+        );
 
         $searchSelectionForm = $this->createForm(SearchSelectionType::class, $selection);
         $searchSelectionForm->add('actions', ActionsType::class, [
@@ -216,7 +217,7 @@ class ContentController extends AbstractController
         $repo = $this->documentManager->getRepository(SearchSelection::class);
 
         return $this->render(
-            '@IntegratedContent/content/index' . $view . '.' . $request->getRequestFormat() . '.twig',
+            '@IntegratedContent/content/index'.$view.'.'.$request->getRequestFormat().'.twig',
             [
                 'params' => $query->getOptions(),
                 'pager' => $paginator,
@@ -241,7 +242,7 @@ class ContentController extends AbstractController
      */
     public function show(Request $request, Content $content)
     {
-        return $this->render('@IntegratedContent/content/show.' . $request->getRequestFormat() . '.twig', [
+        return $this->render('@IntegratedContent/content/show.'.$request->getRequestFormat().'.twig', [
             'document' => $content,
         ]);
     }
@@ -382,7 +383,7 @@ class ContentController extends AbstractController
         $publications = $this->publicationRepository->forContent($content);
 
         $locking = $this->getLock($content, 15);
-        $locking['locked'] = (bool)$locking['lock'];
+        $locking['locked'] = (bool) $locking['lock'];
 
         if (true === $content instanceof File) {
             $locking['locked'] = false;
@@ -507,7 +508,7 @@ class ContentController extends AbstractController
                 if (method_exists($locking['user'], 'getRelation')) {
                     if ($relation = $locking['user']->getRelation()) {
                         if (method_exists($relation, '__toString')) {
-                            $user = (string)$relation;
+                            $user = (string) $relation;
                         }
                     }
                 }
@@ -565,7 +566,7 @@ class ContentController extends AbstractController
      *
      * @return Response
      */
-    public function delete(Request $request, Content $content): Response
+    public function delete(Request $request, Content $content)
     {
         /** @var $type \Integrated\Common\ContentType\ContentTypeInterface */
         $type = $this->resolver->getType($content->getContentType());
@@ -585,10 +586,10 @@ class ContentController extends AbstractController
 
             if ($locking['new']) {
                 if ($request->isMethod('get')) {
-                    return $this->redirectToRoute('integrated_content_content_delete', [
-                        'id' => $content->getId(),
-                        'lock' => $locking['lock']->getId(),
-                    ]);
+                    return $this->redirectToRoute(
+                        'integrated_content_content_delete',
+                        ['id' => $content->getId(), 'lock' => $locking['lock']->getId()]
+                    );
                 }
 
                 $locking['locked'] = false;
@@ -600,7 +601,7 @@ class ContentController extends AbstractController
         $form = $this->createDeleteForm($content, $locking, \count($referenced) > 0);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
             // possible actions are cancel, reload and delete
 
             if ($form->get('actions')->getData() == 'cancel') {
@@ -644,14 +645,6 @@ class ContentController extends AbstractController
                     $this->indexer->execute(
                     ); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
 
-                    // Handle Turbo Streams if it's an AJAX request
-                    if ($request->isXmlHttpRequest()) {
-                        return $this->render('@IntegratedContent/content/_content_list_turbo_stream.html.twig', [
-                            'content_id' => $content->getId(),
-                        ]);
-                    }
-
-                    // Release the lock if not locked anymore
                     if (!$locking['locked']) {
                         $locking['release']();
                     }
@@ -675,7 +668,7 @@ class ContentController extends AbstractController
                 if (method_exists($locking['user'], 'getRelation')) {
                     if ($relation = $locking['user']->getRelation()) {
                         if (method_exists($relation, '__toString')) {
-                            $user = (string)$relation;
+                            $user = (string) $relation;
                         }
                     }
                 }
@@ -708,7 +701,7 @@ class ContentController extends AbstractController
      * - user: this is the user the lock belongs to or null if the lock does
      *         not have a owner.
      *
-     * @param object $object
+     * @param object   $object
      * @param int|null $timeout
      *
      * @return array
@@ -839,7 +832,7 @@ class ContentController extends AbstractController
                 if (method_exists($user, 'getRelation')) {
                     if ($relation = $user->getRelation()) {
                         if (method_exists($relation, '__toString')) {
-                            $text = (string)$relation;
+                            $text = (string) $relation;
                         }
                     }
                 }
@@ -861,7 +854,7 @@ class ContentController extends AbstractController
     {
         $session = $request->getSession();
 
-        $queuecount = (int)$this->container->get('integrated_queue.dbal.provider')->count();
+        $queuecount = (int) $this->container->get('integrated_queue.dbal.provider')->count();
         $queuepercentage = 100;
         if ($queuecount > 0) {
             $queuemaxcount = max($queuecount, $session->get('queuemaxcount'));
@@ -873,7 +866,7 @@ class ContentController extends AbstractController
 
         $email = '';
 
-        $avatarurl = '//www.gravatar.com/avatar/' . md5(strtolower(trim($email))) . '?s=45';
+        $avatarurl = '//www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s=45';
 
         /** @var $client \Solarium\Client */
         //
@@ -888,7 +881,7 @@ class ContentController extends AbstractController
 
             $query
                 ->createFilterQuery('workflow_assigned_id')
-                ->setQuery('facet_workflow_assigned_id:' . $userId . '');
+                ->setQuery('facet_workflow_assigned_id:'.$userId.'');
 
             $query->createFilterQuery('pub_not_active')
                   ->setQuery('-pub_active:true');
@@ -924,7 +917,7 @@ class ContentController extends AbstractController
             $request->query->get('limit', 15)
         );
 
-        return $this->render('@IntegratedContent/content/used_by.' . $request->getRequestFormat() . '.twig', [
+        return $this->render('@IntegratedContent/content/used_by.'.$request->getRequestFormat().'.twig', [
             'content' => $content,
             'pagination' => $pagination,
         ]);
@@ -1072,7 +1065,7 @@ class ContentController extends AbstractController
             foreach ($relation->getReferences() as $reference) {
                 $properties = [
                     'id' => $reference->getId(),
-                    'title' => (string)$reference,
+                    'title' => (string) $reference,
                 ];
 
                 if ($reference instanceof Image) {
