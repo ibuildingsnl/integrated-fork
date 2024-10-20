@@ -1,11 +1,12 @@
 {% apply spaceless %}
 {% set items = [] %}
 {% for key, value in result %}
-    {% set item = {'id': key,'title': value, 'content': null, 'image': null} %}
-    {% if integrated_document(key).getParentID is defined %}
-        {% set item = item|merge({'path': integrated_content_path(integrated_document(key))|join(' > ')}) %}
+{% set item = {'id': key, 'title': value, 'content': null, 'image': null} %}
+    {% set document = integrated_document(key) %}
+    {% if document is not null and document.getParentID is defined %}
+    {% set item = item|merge({'path': integrated_content_path(document)|join(' > ')}) %}
     {% endif %}
-    {% set items = items|merge([item]) %}
+{% set items = items|merge([item]) %}
 {% endfor %}
 {% set data = {'items': items} %}
 {% endapply %}
