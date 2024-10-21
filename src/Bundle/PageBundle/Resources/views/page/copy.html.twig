@@ -55,9 +55,11 @@
         var newBlockIdField = $(this).closest('div.row').find('input:text');
         if ($(this).val() == '') {
             newBlockIdField.prop('disabled', true);
+            newBlockIdField.prop('required', false);
             newBlockIdField.val('');
         } else {
             newBlockIdField.prop('disabled', false);
+            newBlockIdField.prop('required', true);
             newBlockIdField.val(newBlockIdField.data('proposed-block-id'));
         }
     });
