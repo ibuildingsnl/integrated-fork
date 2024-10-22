@@ -89,6 +89,10 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
      */
     public function supportsNormalization($data, $format = null): bool
     {
+        if (!\is_object($data)) {
+            return false;
+        }
+
         return $this->supports(\get_class($data));
     }
 
@@ -96,16 +100,20 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
      * Check if the class is a mongodb document class registered by the
      * registered document manager.
      *
-     * @param string $class
-     *
-     * @return bool
+     * @param class-string $class
      */
-    protected function supports($class)
+    protected function supports(string $class): bool
     {
-        if ($this->getDocumentManager()->getMetadataFactory()->hasMetadataFor($class)) {
-            $class = $this->getDocumentManager()->getClassMetadata($class)->getName();
+        $factory = $this->getDocumentManager()->getMetadataFactory();
+
+        if ($factory->hasMetadataFor($class)) {
+            return true;
         }
 
-        return !$this->getDocumentManager()->getMetadataFactory()->isTransient(ClassUtils::getRealClass($class));
+        if (!$factory->isTransient($class)) {
+            return true;
+        }
+
+        return false;
     }
 }

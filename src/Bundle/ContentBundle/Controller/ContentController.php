@@ -85,7 +85,7 @@ class ContentController extends AbstractController
     ) {
     }
 
-    public function index(Request $request, string $searchSelection = 'all'): Response
+    public function index(Request $request, string $searchSelection = 'all'): array|Response
     {
         // remember search state
         $session = $request->getSession();
