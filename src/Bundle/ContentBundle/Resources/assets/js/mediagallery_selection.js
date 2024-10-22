@@ -1,13 +1,13 @@
 let form_relations = {}; //this holds all the form relation objects with an id
 const mediagallery_link = '/admin/media/';
 
-window.onload = async function() {
+window.addEventListener('load', function() {
     populateFormRelations();
-    generateSrcAttributeForIframes();
-    await populateSelectedImages(); // wait for populateSelectedImages() to finish
-    setupFormRelations();
-    addEventListeners();
-};
+    populateSelectedImages().then(() => {
+        setupFormRelations();
+        addEventListeners();
+    });
+});
 
 function setupFormRelations() {
     Object.values(form_relations).forEach(form_relation => {
@@ -48,15 +48,16 @@ function populateFormRelations() {
         };
         form_relations[id].types_url = getTypesUrl(form_relations[id].types);
 
-        var wrap = document.createElement('div');
-        wrap.className = `wrap media-library iframe-wrapper close-outside ${id}`;
+        if (!document.querySelector(`iframe.iframe.${id}`)) {
+            var wrap = document.createElement('div');
+            wrap.className = `wrap media-library iframe-wrapper close-outside ${id}`;
 
-        // Create iframe element
-        var iframe = document.createElement('iframe');
-        iframe.className = `iframe ${id}`;
+            var iframe = document.createElement('iframe');
+            iframe.className = `iframe ${id}`;
 
-        wrap.appendChild(iframe);
-        document.body.appendChild(wrap);
+            wrap.appendChild(iframe);
+            document.body.appendChild(wrap);
+        }
 
     });
 }
@@ -64,13 +65,6 @@ function populateFormRelations() {
 function getTypesUrl(types) {
     return types.reduce((accumulator, currentValue) => accumulator +
         'available_contenttypes[]=' + currentValue.type + '&', '');
-}
-
-function generateSrcAttributeForIframes() {
-    Object.values(form_relations).forEach(form_relation => {
-        const link = `${mediagallery_link}${form_relation.modus}?page=1&${form_relation.types_url}`;
-        document.querySelector(form_relation.iframe_selector).setAttribute('src', link);
-    });
 }
 
 function addEventListeners() {
@@ -197,6 +191,15 @@ function reloadMediaLibrary() {
 
 function showMediaGallery(selected_relation) {
     window.popupShown = true;
+
+    const iframe = document.querySelector(selected_relation.iframe_selector);
+    const currentSrc = iframe.getAttribute('src');
+
+    // Check if the 'src' attribute is not set or empty
+    if (!currentSrc) {
+        const link = `${mediagallery_link}${selected_relation.modus}?page=1&${selected_relation.types_url}`;
+        iframe.setAttribute('src', link);
+    }
 
     document.querySelector(selected_relation.wrap_selector).classList.add('show');
     document.querySelector('#dropdown_overlay').classList.remove('hide');

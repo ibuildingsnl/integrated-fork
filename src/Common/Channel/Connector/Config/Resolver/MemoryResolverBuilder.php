@@ -11,9 +11,9 @@
 
 namespace Integrated\Common\Channel\Connector\Config\Resolver;
 
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 use Integrated\Common\Channel\Exception\UnexpectedTypeException;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>

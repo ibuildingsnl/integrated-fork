@@ -3,10 +3,10 @@
 namespace Integrated\Bundle\BrandBundle\Form\Type;
 
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
-use Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeRegistry;
 use Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Form\Type\ChannelType;
+use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -20,7 +20,7 @@ class ChannelLinkType extends AbstractType
 {
     public function __construct(
         private readonly TranslatorInterface $translator,
-        private readonly LinkTypeRegistry $linkTypeRegistry,
+        private readonly ChannelTypeRegistry $linkTypeRegistry,
     ) {
     }
 
@@ -39,6 +39,7 @@ class ChannelLinkType extends AbstractType
         $builder->add('channel', ChannelType::class, [
             'data_class' => Channel::class,
             'label' => $this->translator->trans('Channel'),
+            'can_change_type' => false,
         ]);
         if ($options['allow_choose']) {
             $builder->add('choose_channel', CheckboxType::class, [

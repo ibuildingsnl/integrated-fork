@@ -28,7 +28,7 @@ class Content extends AbstractType
             $query->setQuery($options['q']);
         }
 
-        $query->addSort($this->sorting->get($options['sort'])->field, $options['order']);
+        $query->addSort($options['sort'], $options['order']);
 
         if ($options['ids']) {
             $query->createFilterQuery('ids')
@@ -49,6 +49,10 @@ class Content extends AbstractType
         $facetField = $facet->createFacetField('channels');
         $facetField->setField('facet_channels')
             ->getLocalParameters()->setExclude('channels');
+
+        $facet->createFacetField('brands')
+            ->setField('facet_brands')
+            ->getLocalParameters()->setExclude('brands');
 
         /** @var Field $facetField */
         $facetField = $facet->createFacetField('authors');
@@ -77,6 +81,14 @@ class Content extends AbstractType
                 ->setQuery('facet_channels: ((%1%))', [implode(') OR (', array_map($escape, $options['channels']))]);
         }
 
+        if ($options['pub_channels']) {
+            foreach ($options['pub_channels'] as $channel) {
+                $channel = $helper->escapeTerm($channel);
+                $query->createFilterQuery('pub_channel_'.$channel)
+                      ->setQuery('(publication_start_'.$channel.'_index_date: [* TO NOW]) AND (publication_end_'.$channel.'_index_date: [NOW TO *])');
+            }
+        }
+
         if ($options['authors']) {
             $query->createFilterQuery('authors')
                 ->addTag('authors')
@@ -101,6 +113,17 @@ class Content extends AbstractType
         foreach ($options['filter'] as $field => $value) {
             $query->createFilterQuery($field)->setQuery('%1%:%P2%', [$field, $value]);
         }
+
+        // handle start/end dates
+        if ($options['start'] instanceof \DateTimeInterface && $options['end'] instanceof \DateTimeInterface) {
+            $query->createFilterQuery('pub_time')
+                ->addTag('pub_time')
+                ->setQuery(sprintf(
+                    'pub_time: [%s TO %s]',
+                    $options['start']->format("Y-m-d\TH:i:s.z\Z"),
+                    $options['end']->format("Y-m-d\TH:i:s.z\Z"),
+                ));
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -120,18 +143,18 @@ class Content extends AbstractType
         $resolver->setNormalizer('sort', function (Options $options, $value) {
             $value = strtolower(trim($value));
 
-            if ($this->sorting->has($value)) {
+            if ($this->sorting->hasByField($value)) {
                 // rel is only allowed if there is a query
                 if ($value !== 'rel' || $options['q']) {
-                    return $value;
+                    return $this->sorting->getByField($value)->field;
                 }
             }
 
             if ($options['q']) {
-                return 'rel';
+                return $this->sorting->get('rel')->field;
             }
 
-            return 'changed';
+            return $this->sorting->get('time')->field;
         });
 
         $resolver->setNormalizer('order', function (Options $options, $value) {
@@ -141,7 +164,7 @@ class Content extends AbstractType
                 return $value;
             }
 
-            return $this->sorting->get($options['sort'])->order;
+            return $this->sorting->getByField($options['sort'])->order;
         });
 
         $resolver->setNormalizer('ids', function (Options $options, $value) {
@@ -170,7 +193,9 @@ class Content extends AbstractType
         $resolver->setDefaults([
             'contenttypes' => [],
             'channels' => [],
+            'brands' => [],
             'authors' => [],
+            'pub_channels' => [],
             'properties' => [],
         ]);
 
@@ -184,6 +209,7 @@ class Content extends AbstractType
 
         $resolver->setNormalizer('contenttypes', $arrayNormalizer);
         $resolver->setNormalizer('channels', $arrayNormalizer);
+        $resolver->setNormalizer('brands', $arrayNormalizer);
         $resolver->setNormalizer('authors', $arrayNormalizer);
         $resolver->setNormalizer('properties', $arrayNormalizer);
 
@@ -210,5 +236,11 @@ class Content extends AbstractType
 
             return $filters;
         });
+
+        // handle start/end dates
+        $resolver->setDefaults([
+            'start' => null,
+            'end' => null,
+        ]);
     }
 }

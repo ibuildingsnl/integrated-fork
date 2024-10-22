@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Solr\Type;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
@@ -19,6 +20,11 @@ use Integrated\Common\Converter\Type\TypeInterface;
 
 class TaxonomyType implements TypeInterface
 {
+    public function __construct(
+        private readonly DocumentManager $documentManager
+    ) {
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -40,9 +46,25 @@ class TaxonomyType implements TypeInterface
             foreach ($relation->getReferences() as $content) {
                 if (($content instanceof Taxonomy || $content instanceof Article) && $content->getTitle()) {
                     $container->add('facet_'.$relation->getRelationId(), $content->getTitle());
-                    $container->add('taxonomy_'.$relation->getRelationId().'_string', $content->getTitle());
-                    foreach ($content->getChannels() as $channel) {
-                        $container->add('taxonomy_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());
+
+                    if ($content instanceof Taxonomy) {
+                        $container->add('taxonomy_'.$relation->getRelationId().'_string', $content->getTitle());
+                        foreach ($content->getChannels() as $channel) {
+                            $childen = $this->documentManager
+                                ->getRepository(Content::class)
+                                ->createQueryBuilder()->count()
+                                ->field('class')->equals(Taxonomy::class)
+                                ->field('parent_id')->equals($content->getId())
+                                ->getQuery()
+                                ->execute();
+
+                            if ($childen > 0) {
+                                $container->add('taxonomy_parent_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());
+                            } else {
+                                $container->add('taxonomy_child_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());
+                            }
+                            $container->add('taxonomy_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());
+                        }
                     }
                 }
             }

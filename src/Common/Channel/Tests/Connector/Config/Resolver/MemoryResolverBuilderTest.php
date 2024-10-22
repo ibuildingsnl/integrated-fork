@@ -12,9 +12,11 @@
 namespace Integrated\Common\Channel\Tests\Connector\Config\Resolver;
 
 use Integrated\Common\Channel\Connector\Config\Config;
+use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 use Integrated\Common\Channel\Connector\Config\Options;
 use Integrated\Common\Channel\Connector\Config\Resolver\MemoryResolverBuilder;
 use Integrated\Common\Channel\Tests\Fixtures\Channel;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 

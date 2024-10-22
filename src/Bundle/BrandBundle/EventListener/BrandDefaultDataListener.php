@@ -38,10 +38,10 @@ class BrandDefaultDataListener implements EventSubscriberInterface
 
         $brandsForm = $form->get('brands');
 
-        $defaultChannels = array_map(
+        $defaultChannels = array_filter(array_map(
             fn (array $channel) => $this->channels->find($channel['id']),
             $this->contentType->getOption('channels')['defaults'] ?? [],
-        );
+        ));
 
         $brandsData = [];
         foreach ($this->brands->all() as $brand) {

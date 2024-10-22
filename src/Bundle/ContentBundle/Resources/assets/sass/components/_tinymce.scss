@@ -1,6 +1,9 @@
 /*TINEMCE*/
 .tox-tinymce {
     border-radius: 0 !important;
+    &.tox .tox-throbber {
+        z-index:10;
+    }
 }
 
 .tinymce-inline .tox-tinymce {
@@ -17,7 +20,7 @@
 
 body:not(.tox-fullscreen) {
     .tox .tox-dialog-wrap {
-        top: 60px !important;
+        top: 48px !important;
     }
 }
 

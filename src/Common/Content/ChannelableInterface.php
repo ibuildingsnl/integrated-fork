@@ -56,4 +56,11 @@ interface ChannelableInterface
      * @return $this
      */
     public function removeChannel(ChannelInterface $channel);
+
+    /**
+     * Remove all channels.
+     *
+     * @return $this
+     */
+    public function removeChannels();
 }

@@ -26,6 +26,16 @@ import 'tinymce/plugins/code';
 
 import './tinymce-integrated-browser/plugin';
 
+function isValidURL(str) {
+    var a  = document.createElement('a');
+    a.href = str;
+    console.log(a.href);
+    console.log(a.host);
+    console.log(window.location.host);
+
+    return (a.host && a.host != window.location.host);
+}
+
 $('.integrated_tinymce').each(function(key, elem){
     const element = $(elem);
 
@@ -89,7 +99,7 @@ $('.integrated_tinymce').each(function(key, elem){
         width: "100%",
         height: "100%",
         browser_spellcheck : true,
-        autoresize_bottom_margin: "0px",
+        autoresize_bottom_margin: 0,
         convert_urls: false,
         content_css: element.data('content_css'),
         integrated_browser_image_dialog_url: element.data('integrated_browser_image_dialog_url'),
@@ -97,6 +107,71 @@ $('.integrated_tinymce').each(function(key, elem){
         integrated_browser_video_dialog_url: element.data('integrated_browser_video_dialog_url'),
         document_base_url : element.data('document_base_url'),
         style_formats: style_formats,
+        noneditable_class: 'embed-content',
+
+        paste_preprocess: function(plugin, args) {
+
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = args.content;
+
+            // Remove elements with inline styles, classes, or lang attributes
+            tempDiv.querySelectorAll('[style], [class], [lang]').forEach(el => el.removeAttribute('style') || el.removeAttribute('class') || el.removeAttribute('lang'));
+
+            // Replace spans with their content (unwrap)
+            tempDiv.querySelectorAll('span').forEach(el => {
+                var parent = el.parentNode;
+                while (el.firstChild) parent.insertBefore(el.firstChild, el);
+                parent.removeChild(el);
+            });
+
+            args.content = tempDiv.innerHTML;
+
+            var cleanContent = args.content.replace(/<meta[^>]*>/g, ''); // Remove <meta> tags
+            cleanContent = cleanContent.replace(/<span[^>]*>(.*?)<\/span>/g, '$1'); // Unwrap <span> tags
+            args.content = cleanContent;
+
+            let input = args.content.trim();
+
+            if (!isValidURL(input)) return;
+
+            $.ajax({
+                url: '/admin/_oembed/fetch-data',
+                dataType: 'json',
+                type: 'get',
+                async: false,
+                data: {
+                    url: input
+                },
+                success: function (data, textStatus, jqXHR) {
+                    if (!data.code) return;
+
+                    var parser = new DOMParser();
+                    var doc = parser.parseFromString(data.code, 'text/html');
+                    var iframe = doc.querySelector('iframe');
+
+                    if (iframe && data.provider_name === 'YouTube') {
+                        iframe.width = '100%';
+                        iframe.height = '432px';
+                        iframe.classList.add('video');
+                        iframe.classList.add('youtube');
+
+                        var src = iframe.src.replace('youtube.com', 'youtube-nocookie.com');
+                        var srcUrl = new URL(src);
+                        srcUrl.searchParams.set('controls', '0');
+                        iframe.src = srcUrl.toString();
+                    }
+
+                    var serializer = new XMLSerializer();
+                    var modifiedCode = serializer.serializeToString(doc);
+
+                    args.content = '<div class="embed-content ' + data.provider_name + '">' + modifiedCode + '</div><br>';
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                },
+                complete: function (jqXHR, textStatus) {
+                }
+            });
+        },
         setup: function (editor) {
 
             function addRemoveButton(element, className) {

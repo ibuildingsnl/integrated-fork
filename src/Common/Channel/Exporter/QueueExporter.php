@@ -1,27 +1,17 @@
 <?php
 
-/*
- * This file is part of the Integrated package.
- *
- * (c) e-Active B.V. <integrated@e-active.nl>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Integrated\Common\Channel\Exporter;
 
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Exporter\Queue\RequestSerializerInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Queue\QueueMessageInterface;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
-class QueueExporter implements ExporterInterface
+class QueueExporter implements ExporterInterface, QueueExporterInterface
 {
     private \Closure $retryDelay;
+
+    public const CONTENT_REMOVED = 'removed';
 
     public function __construct(
         private readonly QueueInterface $queue,
@@ -33,37 +23,34 @@ class QueueExporter implements ExporterInterface
         $this->retryDelay = $retryDelay ?: fn (int $attempt) => 150 + $attempt * 150;
     }
 
-    /**
-     * @return QueueInterface
-     */
-    public function getQueue()
+    public function getQueue(): QueueInterface
     {
         return $this->queue;
     }
 
-    /**
-     * @return RequestSerializerInterface
-     */
-    public function getSerializer()
+    public function getSerializer(): RequestSerializerInterface
     {
         return $this->serializer;
     }
 
-    /**
-     * @return ExporterInterface
-     */
-    public function getExporter()
+    public function getExporter(): ExporterInterface
     {
         return $this->exporter;
     }
 
+    public function hasMessages(): bool
+    {
+        return $this->queue->count() > 0;
+    }
+
     /**
      * Execute a queued exporter run.
+     * TODO: This removes a queuemessage even though it fails. Shouldn't we keep it in the queue for a retry?
      */
-    public function execute(): int
+    public function exportMessages(int $limit = 1000): int
     {
         $i = 0;
-        foreach ($this->queue->pull(1000) as $message) {
+        foreach ($this->queue->pull($limit) as $message) {
             try {
                 $this->process($message)->delete();
             } catch (\Throwable $e) {
@@ -85,18 +72,19 @@ class QueueExporter implements ExporterInterface
         return $i;
     }
 
-    /**
-     * @return QueueMessageInterface
-     */
-    public function process(QueueMessageInterface $message)
+    public function process(QueueMessageInterface $message): QueueMessageInterface
     {
         $request = $this->serializer->deserialize($message->getPayload());
+
+        if ($request === self::CONTENT_REMOVED) {
+            return $message;
+        }
 
         if ($request === null) { // @todo Let serializer throw exception rather than silently returning null
             throw new \InvalidArgumentException('Failed to deserialize the request message.');
         }
 
-        $this->export($request->content, $request->state, $request->channel);
+        $this->export($request->content, $request->state, $request->channel, $request->settings);
 
         return $message;
     }
@@ -104,8 +92,8 @@ class QueueExporter implements ExporterInterface
     /**
      * {@inheritdoc}
      */
-    public function export(object $content, string $state, ChannelInterface $channel): void
+    public function export(object $content, string $state, ChannelInterface $channel, array $settings = []): void
     {
-        $this->exporter->export($content, $state, $channel);
+        $this->exporter->export($content, $state, $channel, $settings);
     }
 }

@@ -23,6 +23,12 @@
             <tag name="integrated_content.form.event_subscriber"/>
         </service>
 
+        <service id="integrated_taxonomy.event_listener.parent_relation" class="\Integrated\Bundle\TaxonomyBundle\EventListener\TaxonomyParentRelationListener">
+            <argument type="service" id="integrated_taxonomy.taxonomy.repository" />
+            <argument id="doctrine_mongodb.odm.document_manager" type="service"/>
+            <tag name="integrated_content.form.event_subscriber"/>
+        </service>
+
     </services>
 
 </container>

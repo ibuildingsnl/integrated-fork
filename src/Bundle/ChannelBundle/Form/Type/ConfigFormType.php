@@ -12,11 +12,11 @@
 namespace Integrated\Bundle\ChannelBundle\Form\Type;
 
 use Integrated\Bundle\ChannelBundle\Form\DataTransformer\OptionsTransformer;
-use Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\AdapterInterface;
 use Integrated\Common\Channel\Connector\ConfigurableInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -64,13 +64,19 @@ class ConfigFormType extends AbstractType
                 'location' => 'sidebar',
                 'style' => 'sidebar',
                 'state' => 'show search',
-                'icon' => 'network-alt',
+                'icon' => 'network-reverse',
             ],
         ]);
 
         $builder->add('publicationStartDate', DateTimeType::class, [
             'label' => 'Publication start date',
+            'attr' => [
+                'data-set-date-text' => 'Set publication date and time',
+            ],
             'required' => false,
+            'html5' => true,
+            'date_widget' => 'single_text',
+            'time_widget' => 'single_text',
         ]);
 
         if ($adapter instanceof ConfigurableInterface) {

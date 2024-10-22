@@ -12,7 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Form\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\ChannelableInterface;
 use Integrated\Common\Content\Exception\InvalidArgumentException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -37,7 +37,7 @@ class ChannelEnforcerListener implements EventSubscriberInterface
     public const ADD = 'add';
 
     /**
-     * @var Channel[]
+     * @var ChannelInterface[]
      */
     private $channels;
 
@@ -47,8 +47,8 @@ class ChannelEnforcerListener implements EventSubscriberInterface
     private $operand;
 
     /**
-     * @param Channel[] $channels
-     * @param string    $operand
+     * @param ChannelInterface[] $channels
+     * @param string             $operand
      */
     public function __construct(array $channels, $operand = self::SET)
     {

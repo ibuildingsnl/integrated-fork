@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <defaults autowire="true" autoconfigure="true"/>
+
+        <service id="integrated_channel.distribution_queue" class="Integrated\Bundle\ChannelBundle\Services\DistributionQueue">
+            <argument type="service" id="integrated_channel.queue" />
+            <argument type="service" id="integrated_channel.queue.serializer" />
+        </service>
+
+        <service id="integrated_channel.clock" class="Stratadox\Clock\DateTimeMutableClock" />
+
+        <service id="integrated_channel.distributor" class="Integrated\Bundle\ChannelBundle\Services\ChannelDistributor">
+            <argument type="service" id="integrated_channel.distribution_queue" />
+            <argument type="service" id="integrated_content.publication_repository" />
+            <argument type="service" id="integrated_channel.clock" />
+        </service>
+
+        <service id="Integrated\Bundle\ChannelBundle\Services\ResolverLinkMaker">
+            <argument type="service" id="integrated_page.services.url_resolver"/>
+            <argument type="service" id="integrated_brand.brand.repository" />
+        </service>
+
+        <service
+            id="Integrated\Bundle\ChannelBundle\Services\LinkMaker"
+            class="Integrated\Bundle\ChannelBundle\Services\HttpsAddingLinkMaker"
+            decorates="Integrated\Bundle\ChannelBundle\Services\ResolverLinkMaker"
+        />
+
+        <service id="Integrated\Bundle\ChannelBundle\Services\ChannelTokenService"/>
+
+    </services>
+</container>

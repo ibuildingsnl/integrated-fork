@@ -11,7 +11,8 @@
 
 namespace Integrated\Bundle\WebsiteBundle\EventListener\Objects;
 
-use Integrated\Bundle\ContentBundle\Event\ContentEvent;
+use Integrated\Bundle\ContentBundle\Event\ContentRenderEvent;
+use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Twig\Environment;
 
@@ -20,38 +21,15 @@ use Twig\Environment;
  */
 class ContentYoutubeListener
 {
-    /**
-     * @var ThemeManager
-     */
-    protected $themeManager;
-
-    /**
-     * @var Environment
-     */
-    protected $templating;
-
-    /**
-     * @var string
-     */
-    protected $env;
-
-    /**
-     * @param string $env
-     */
     public function __construct(
-        ThemeManager $themeManager,
-        Environment $templating,
-        $env
+        private readonly ThemeManager $themeManager,
+        private readonly Environment $templating,
+        private readonly string $env,
     ) {
-        $this->themeManager = $themeManager;
-        $this->templating = $templating;
-        $this->env = $env;
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function process(ContentEvent $contentEvent)
+    /** @throws \Exception */
+    public function process(ContentRenderEvent $contentEvent): void
     {
         try {
             $content = preg_replace_callback(
@@ -70,12 +48,8 @@ class ContentYoutubeListener
         }
     }
 
-    /**
-     * @return string|null
-     *
-     * @throws \Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException
-     */
-    protected function getTemplate(string $youtubeId)
+    /** @throws CircularFallbackException */
+    protected function getTemplate(string $youtubeId): ?string
     {
         $template = $this->themeManager->locateTemplate('objects/youtube/default.html.twig');
 

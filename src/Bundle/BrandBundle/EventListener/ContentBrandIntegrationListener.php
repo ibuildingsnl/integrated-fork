@@ -26,7 +26,7 @@ class ContentBrandIntegrationListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            Events::POST_BUILD => ['buildForm', -61],
+            Events::POST_BUILD => ['buildForm', -80],
         ];
     }
 
@@ -38,14 +38,16 @@ class ContentBrandIntegrationListener implements EventSubscriberInterface
             return;
         }
         $form->add('brands', BrandChoiceType::class, [
+            'priority' => 990,
             'mapped' => false,
             'channel_choices' => $form->get('channels')->getOption('choices'),
             'channel_choice_attr' => $form->get('channels')->getOption('choice_attr'),
             'attr' => [
                 'location' => 'sidebar',
                 'style' => 'sidebar',
-                'icon' => 'network-alt',
+                'icon' => 'network-reverse',
                 'class' => 'brands',
+                'state' => 'show',
             ],
         ]);
         $form->addEventSubscriber(new BrandChannelsAssignmentListener($this->authorizationChecker));

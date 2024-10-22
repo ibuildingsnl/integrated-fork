@@ -1,42 +1,17 @@
 <?php
 
-/*
- * This file is part of the Integrated package.
- *
- * (c) e-Active B.V. <integrated@e-active.nl>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Integrated\Bundle\ChannelBundle\Form\DataTransformer;
 
 use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
-use Integrated\Common\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Form\DataTransformerInterface;
 
-/**
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- */
 class ChannelTransformer implements DataTransformerInterface
 {
-    /**
-     * @var ChannelRepository
-     */
-    private $repository;
-
-    /**
-     * @var bool
-     */
-    private $multiple;
-
-    /**
-     * @param bool $multiple
-     */
-    public function __construct(ChannelRepository $repository, $multiple = false)
-    {
-        $this->repository = $repository;
-        $this->multiple = $multiple;
+    public function __construct(
+        private readonly ChannelRepository $repository,
+        private readonly bool $multiple = false
+    ) {
     }
 
     /**

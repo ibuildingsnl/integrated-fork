@@ -105,17 +105,16 @@ class ContentTypeFormType extends AbstractType
                         'location' => 'sidebar',
                         'style' => 'sidebar',
                         'state' => 'show',
-                        'icon' => 'key-alt-back',
+                        'icon' => 'key-back',
                     ],
                 ]
-            )
-                    ->add(
-                        'permissions',
-                        PermissionsType::class,
-                        [
-                            'required' => false,
-                        ]
-                    ),
+            )->add(
+                'permissions',
+                PermissionsType::class,
+                [
+                    'required' => false,
+                ]
+            ),
         );
 
         $builder->add('options_color', ColorType::class, [

@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the Integrated package.
- *
- * (c) e-Active B.V. <integrated@e-active.nl>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Integrated\Bundle\ChannelBundle\Form\Type;
 
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
@@ -19,22 +10,14 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
 class ChannelChoiceType extends AbstractType
 {
     /**
-     * @var ObjectRepository
-     */
-    private $repository;
-
-    /**
      * Constructor.
      */
-    public function __construct(ObjectRepository $repository)
-    {
-        $this->repository = $repository;
+    public function __construct(
+        private readonly ObjectRepository $repository
+    ) {
     }
 
     /**

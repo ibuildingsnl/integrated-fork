@@ -11,8 +11,8 @@
 
 namespace Integrated\Common\Channel\Connector;
 
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Exporter\ExporterResponse;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 interface ExporterInterface
 {
@@ -20,5 +20,5 @@ interface ExporterInterface
 
     public const STATE_DELETE = 'delete';
 
-    public function export(object $content, string $state, ChannelInterface $channel): ?ExporterResponse;
+    public function export(object $content, string $state, ChannelInterface $channel, array $settings = []): ?ExporterResponse;
 }

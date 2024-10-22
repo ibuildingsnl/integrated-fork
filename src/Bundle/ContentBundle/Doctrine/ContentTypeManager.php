@@ -73,6 +73,7 @@ class ContentTypeManager
         return $this->contentTypes;
     }
 
+    /** @throws InvalidArgumentException if the content type can not be found */
     public function getType(string $type): ContentTypeInterface
     {
         return $this->resolver->getType($type);

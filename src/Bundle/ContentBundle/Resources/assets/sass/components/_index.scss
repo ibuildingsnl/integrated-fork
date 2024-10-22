@@ -44,8 +44,8 @@ div.heading-switcher {
     .day {
         width: calc(100% / 7);
         margin: 0;
-        padding: 0;
         min-width: 230px;
+        padding: 0.5rem;
 
         &.title {
             text-align: center;
@@ -53,8 +53,13 @@ div.heading-switcher {
             border-bottom: 1px solid $border-color;
 
             &.today {
-                color: #046283;
-                font-weight: bold;
+                span {
+                    color: white;
+                    font-weight: 700;
+                    background-color: #01ae93;
+                    border-radius: 8px;
+                    padding: 0 5px;
+                }
             }
         }
 
@@ -98,7 +103,7 @@ div.heading-switcher {
                 &.show {
                     display: block;
                     position: sticky;
-                    bottom: -1px;
+                    bottom: -7px;
                     background-color: white;
                     width: 100%;
                     text-align: center;
@@ -109,16 +114,26 @@ div.heading-switcher {
     }
 
     .calendar-item {
-        border-bottom: 1px solid $border-color;
         color: black;
         display: block;
+        border-radius: 8px;
+        margin-bottom: 0.5em;
 
         &.concept {
             filter: grayscale(100%);
+            border: 1px solid #f2f2f2;
         }
 
         &.published {
             background-color: rgba(1, 174, 147, 0.05);
+        }
+
+        &.planned {
+            background-color: rgba(95, 132, 219, .1);
+        }
+
+        &.failed {
+            background-color: rgba(255, 71, 71, 0.1);
         }
 
         .calendar-wrap {
@@ -126,7 +141,34 @@ div.heading-switcher {
             display: flex;
             flex-direction: column;
             padding: 0.5rem;
+            border-radius: 4px;
+            position: relative;
+            .post-content, .post-images {
+                font-size: .875rem;
+                background-color: rgb(0 0 0 / 5%);
+                padding: .5rem;
+                border-radius: 8px;
+                margin-top: .5rem;
+                margin-bottom: .5rem;
+            }
 
+            .post-content p {
+                margin-bottom: .5rem;
+            }
+
+            button.show-details-btn {
+                font-weight: bold;
+                position: absolute;
+                top: 0;
+                right: 0;
+                background-color: rgba(0, 0, 0, 0.05);
+                width: 26px;
+                height: 26px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-top-right-radius: 7px;
+            }
             .calendar-item-heading {
                 font-weight: bold;
                 color: var(--color);
@@ -146,7 +188,7 @@ div.heading-switcher {
                     }
 
                     .icon {
-                        margin-right: .5rem;
+                        margin-right: .25rem;
 
                         &:before {
                             height: 18px;
@@ -154,6 +196,16 @@ div.heading-switcher {
                         }
                     }
                 }
+            }
+
+            .calendar-error {
+                background-color: #ffeded;
+                border-radius: 8px;
+                font-size: .875rem;
+                line-height: 1rem;
+                padding: 0.5rem;
+                word-wrap: break-word;
+                margin-top: 0.5rem;
             }
 
             .calendar-item-content {
@@ -189,8 +241,8 @@ div.heading-switcher {
 
         button.close-edit-form {
             position: absolute;
-            width: 50px;
-            height: 50px;
+            width: 48px;
+            height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -212,12 +264,18 @@ div.heading-switcher {
 
 .index-wrapper {
     table {
-        .state, .pub-date {
+        .pub-date {
             width: 150px;
         }
+
+        .state {
+            width: 70px;
+        }
+
         .content-type {
             width: 175px;
         }
+
         .channels {
             width: 110px;
         }
@@ -254,6 +312,7 @@ div.heading-switcher {
             margin-right: 0.25rem;
             background-size: contain;
             display: flex;
+            flex-shrink: 0;
             align-items: center;
             justify-content: center;
             color: white;
@@ -261,15 +320,17 @@ div.heading-switcher {
         }
 
         &.popout {
-            display: none;
-            position: absolute;
-            background-color: white;
-            padding: 0.5rem;
+            background-color: #fff;
             border: 1px solid #d8d8d8;
             border-radius: 8px;
-            top: -8px;
-            left: 23px;
+            display: none;
+            right: 0;
+            padding: 0.5rem;
+            position: absolute;
+            top: 22px;
             z-index: 1;
+            flex-wrap: nowrap;
+            width: min-content;
         }
     }
 }
@@ -281,12 +342,60 @@ table.table {
             height: 18px;
             font-weight: bold;
         }
+
         .channel-favicons .channel-favicon {
             width: 18px;
             height: 18px;
         }
+
         .channel-favicons.popout {
             left: 33px;
+            top: -7px;
+        }
+    }
+}
+
+.content-navigator-menu {
+    .premium-checkbox {
+        background: #fff;
+        font-size: 13px;
+        color: #515865;
+        height: 34px;
+        line-height: 34px;
+        border: 1px solid #DEE3E9;
+        align-items: center;
+        border-radius: 8px;
+        padding: 0 1rem;
+        justify-content: center;
+        span.facet-count {
+            padding-left: .5rem;
+        }
+    }
+    .calendar-filter {
+        .dropdown-menu {
+            padding:0;
+        }
+        .checkbox {
+            label.checkbox-container {
+                padding: 5px 10px;
+                border-bottom: 1px solid #dfe3e9;
+                &:hover {
+                    background-color:#ecf6ff;
+                }
+            }
+            span.facet-title {
+                white-space: nowrap;
+            }
+            span.facet-count {
+                padding-left: 1rem;
+            }
+        }
+
+        .checkbox:last-child {
+            label.checkbox-container {
+                border-bottom: none;
+            }
+
         }
     }
 }

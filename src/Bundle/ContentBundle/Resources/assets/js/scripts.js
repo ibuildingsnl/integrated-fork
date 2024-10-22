@@ -172,13 +172,16 @@ var selectElement = $('#integrated_content_parent_id');
 if (selectElement) {
     if (selectElement.find('option:selected').length > 0) {
         $('.aside-item-wrapper.channels').hide();
+        $('.aside-item-wrapper.brands').hide();
     }
 
     selectElement.on('select2:select', function(e) {
         $('.aside-item-wrapper.channels').hide();
+        $('.aside-item-wrapper.brands').hide();
     });
 
     selectElement.on('select2:unselect', function(e) {
         $('.aside-item-wrapper.channels').show();
+        $('.aside-item-wrapper.brands').show();
     });
 }

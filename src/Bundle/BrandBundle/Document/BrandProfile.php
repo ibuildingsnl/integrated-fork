@@ -16,9 +16,11 @@ class BrandProfile
     public string $color;
     public string $secondaryColor;
     public ?Image $logo = null;
+    public ?Image $favicon = null;
     public ?string $vat;
     public ?string $companyId;
     public ?string $analytics;
+    public ?string $analyticsPropertyId;
     private Collection $socials;
     private Collection $contacts;
 
@@ -32,6 +34,46 @@ class BrandProfile
     public function getId(): string
     {
         return $this->id;
+    }
+
+    public function getLogo(): ?Image
+    {
+        return $this->logo;
+    }
+
+    public function setLogo(?Image $logo): void
+    {
+        $this->logo = $logo;
+    }
+
+    public function getFavicon(): Image|null
+    {
+        return $this->favicon;
+    }
+
+    public function setFavicon(?Image $favicon): void
+    {
+        $this->favicon = $favicon;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
+    public function setColor(?string $color): void
+    {
+        $this->color = $color;
+    }
+
+    public function getSecondaryColor(): ?string
+    {
+        return $this->secondaryColor;
+    }
+
+    public function setSecondaryColor(?string $secondaryColor): void
+    {
+        $this->secondaryColor = $secondaryColor;
     }
 
     /** @return Contact[] */

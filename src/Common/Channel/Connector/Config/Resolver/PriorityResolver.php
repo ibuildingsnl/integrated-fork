@@ -11,10 +11,10 @@
 
 namespace Integrated\Common\Channel\Connector\Config\Resolver;
 
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Config\ResolverInterface;
 use Integrated\Common\Channel\Connector\Config\Util\UniqueConfigIterator;
 use Integrated\Common\Channel\Exception\InvalidArgumentException;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>

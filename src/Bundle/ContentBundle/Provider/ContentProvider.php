@@ -145,14 +145,15 @@ class ContentProvider
 
         // If the request query contains a relation parameter we need to fetch all the targets of the relation in order
         // to filter on these targets.
-        $relation = $request->query->get('relation');
-        if (null !== $relation) {
+        $relations = $request->query->get('relation');
+        if (null !== $relations) {
             $contentType = [];
-
-            /** @var Relation $relation */
-            if ($relation = $this->dm->getRepository(Relation::class)->find($relation)) {
-                foreach ($relation->getTargets() as $target) {
-                    $contentType[] = $target->getId();
+            /* @var Relation $relation */
+            foreach ($relations as $key => $value) {
+                if ($relation = $this->dm->getRepository(Relation::class)->find($key)) {
+                    foreach ($relation->getSources() as $source) {
+                        $contentType[] = $source->getId();
+                    }
                 }
             }
         } else {
@@ -174,16 +175,15 @@ class ContentProvider
                 ->setQuery('facet_properties: ((%1%))', [implode(') OR (', array_map($filter, $propertiesfilter))]);
         }
 
-        /** @var Relation $relation */
-        foreach ($this->dm->getRepository(Relation::class)->findAll() as $relation) {
-            $name = preg_replace('/[^a-zA-Z]/', '', $relation->getName());
-            $facetTitles[$name] = $relation->getName();
-            $relationfilter = $request->query->get($name);
+        /* @var Relation $relation */
+        foreach ($request->query->get('relation') as $relationId => $value) {
+            $relation = $this->dm->getRepository(Relation::class)->find($relationId);
+            $relationfilter = $value;
 
             if (\is_array($relationfilter)) {
                 $query
-                    ->createFilterQuery($name)
-                    ->addTag($name)
+                    ->createFilterQuery($relationId)
+                    ->addTag($relationId)
                     ->setQuery('facet_'.$relation->getId().': ((%1%))', [implode(') OR (', array_map($filter, $relationfilter))]);
             }
         }
@@ -197,6 +197,16 @@ class ContentProvider
         // user has read rights to
         if ($this->workflowExtension) {
             $this->addWorkflowFilter($query);
+        }
+
+        $activeBrands = $request->query->get('brands');
+        if (\is_array($activeBrands)) {
+            if (\count($activeBrands)) {
+                $query
+                    ->createFilterQuery('brands')
+                    ->addTag('brands')
+                    ->setQuery('facet_brands: ((%1%))', [implode(') OR (', array_map($filter, $activeBrands))]);
+            }
         }
 
         $activeChannels = $request->query->get('channels');
@@ -335,9 +345,9 @@ class ContentProvider
 
         // allow content without workflow
         $fq = $query->createFilterQuery('workflow')
-            ->addTag('workflow')
-            ->addTag('security')
-            ->setQuery('(*:* -security_workflow_read:[* TO *])');
+                    ->addTag('workflow')
+                    ->addTag('security')
+                    ->setQuery('(*:* -security_workflow_read:[* TO *])');
 
         $user = $this->tokenStorage->getToken()->getUser();
 

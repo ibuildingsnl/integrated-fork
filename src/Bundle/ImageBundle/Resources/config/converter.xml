@@ -6,7 +6,7 @@
 
     <parameters>
 
-        <parameter key="integrated_image.converter.web_format">png</parameter>
+        <parameter key="integrated_image.converter.web_format">webp</parameter>
 
     </parameters>
 

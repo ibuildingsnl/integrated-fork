@@ -567,3 +567,124 @@ pre#editor {
         display: none;
     }
 }
+
+.publishActions {
+    height: 0;
+    overflow: hidden;
+    z-index: 1040;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    &.show {
+        position: fixed;
+        height: 100%;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        background: rgba(0, 0, 0, 0.4);
+    }
+    .publishable {
+        display: none;
+        &.show {
+            display: flex;
+            padding: 3rem;
+            padding-bottom: 2rem;
+            background: white;
+            border-radius: 1rem;
+            overflow-y: auto;
+            width: 768px;
+            flex-direction: column;
+        }
+    }
+    .form-item {
+        .control-label {
+            width: 120px;
+        }
+        select {
+            height: 33px;
+
+            padding: 0.4rem 1rem;
+        }
+        .tailwind-datetime {
+            padding-right: 30%;
+            padding-top: 0 !important;
+            .clear-date {
+                top: 0;
+                right: 0;
+                height: 33px;
+                line-height: 33px;
+            }
+            .set-now-date {
+                top: 0;
+                right: 55px;
+                height: 33px;
+                line-height: 33px;
+            }
+            input[type=time] {
+                height: 33px;
+                width: 100px;
+                margin-left: .5rem;
+                margin-right: .5rem;
+            }
+            input[type=date] {
+                height: 33px;
+            }
+        }
+    }
+
+    .widget {
+        width: calc(100% - 120px);
+        input {
+            max-width: 100%;
+        }
+    }
+    .fields {
+        > .widget {
+            width: 100%;
+        }
+        > label {
+            display: none;
+        }
+    }
+    .publishTime > div {
+        width: 100%;
+    }
+    .global-publication-settings {
+        .settings > div {
+            width: 100%;
+        }
+        .settings .integrated_publish_time {
+            > .widget {
+                width: 100%;
+            }
+            .input-group.form_datetime .remove {
+                top: 16px;
+                right: 16px;
+            }
+        }
+    }
+    .textarea {
+        textarea {
+            max-height: 100px;
+        }
+        span.copy-intro-btn {
+            bottom: 0px;
+            top: auto;
+        }
+    }
+    .global-publication-settings {
+        > .form-item {
+            > .widget {
+                width: 100%;
+            }
+        }
+    }
+    .integrated_publish_time {
+        margin-bottom: 0;
+        .endDate {
+            display: none;
+        }
+    }
+}
+

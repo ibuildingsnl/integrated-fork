@@ -23,7 +23,7 @@
         "php": ">=8.1",
         "ext-intl": "*",
         "ext-json": "*",
-        "abraham/twitteroauth": "^5.0",
+        "abraham/twitteroauth": "6.2.0",
         "darsyn/ip": "^4.1",
         "devture/mongodb-migrations": "^4.0",
         "doctrine/cache": "^2.2",
@@ -33,6 +33,7 @@
         "doctrine/migrations": "~3.6",
         "doctrine/mongodb-odm-bundle": "~4.6",
         "doctrine/orm": "^2.17.4",
+        "embed/embed": "^4.4",
         "endroid/qr-code-bundle": "^4.3",
         "excelwebzone/recaptcha-bundle": "^1.5",
         "facebook/graph-sdk": "~5.0",
@@ -74,10 +75,11 @@
         "symfony/translation": "^6.3",
         "symfony/twig-bundle": "^6.3",
         "symfony/validator": "^6.3",
-        "twig/extra-bundle": "^3.6",
-        "twig/intl-extra": "^3.6",
-        "twig/string-extra": "^3.6",
-        "twig/twig": "^3.6"
+        "twig/extra-bundle": "^3.9",
+        "twig/intl-extra": "^3.9",
+        "twig/string-extra": "^3.9",
+        "twig/twig": ">=3.9",
+        "twindigital/clock": "^1.0.0"
     },
     "replace": {
         "integrated/asset-bundle": "self.version",
