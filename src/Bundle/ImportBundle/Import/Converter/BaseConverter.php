@@ -751,6 +751,39 @@ class BaseConverter
                 continue;
             }
 
+            if ($field === 'logo') {
+                // TODO: Add more options for example Drupal
+                $href = '';
+                if (preg_match('/^[0-9]+$/', $value)) {
+                    if ($importType === 'WordPress') {
+                        $href = $importDefinition->getWebsiteBaseUrl() . '?attachment_id=' . $value;
+                    }
+                } else {
+                    if (filter_var($value, \FILTER_VALIDATE_URL) !== false) {
+                        $href = $value;
+                    } else {
+                        $result['messages'][] = "[WARNING] {$field} {$value} does not contain a valid link or id";
+                    }
+                }
+
+                if ($href === '') {
+                    $result['messages'][] = "[WARNING] {$field} {$value} does not contain a valid link or id";
+                }
+
+                $checkResult = Create::createFileFromUrl(
+                    $href,
+                    $newObject,
+                    $newData,
+                    $importDefinition,
+                    $storageManager,
+                    $documentManager,
+                    false,
+                    false
+                );
+                $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
+                continue;
+            }
+
 
             if (method_exists($newObject, $setterMethod)) {
                 \call_user_func([$newObject, $setterMethod], $value);
@@ -791,17 +824,23 @@ class BaseConverter
             }
         }
 
+        if ($newData['title']) {
+            $name = $newData['title'];
+        } else {
+            $name = $newData['name'];
+        }
+
         foreach ($importDefinition->getChannels() as $channel) {
             $parent = $documentManager->getRepository(Content::class)
                                       ->createQueryBuilder()
                                       ->select()
                                       ->field('contentType')->equals($importDefinition->getContentType())
-                                      ->field('title')->equals($newData['title'])
+                                      ->field('title')->equals($name)
                                       ->field('channels.$id')->equals($channel->getId())
                                       ->limit(1)->getQuery()
                                       ->getSingleResult();
             if ($parent) {
-                $result['messages'][] = "[UPDATING] {$importDefinition->getContentType()} with title: {$newData['title']} for {$channel->getName()} already imported - updating";
+                $result['messages'][] = "[UPDATING] {$importDefinition->getContentType()} with title: {$name} for {$channel->getName()} already imported - updating";
                 $target = $parent;
             }
         }

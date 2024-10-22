@@ -228,7 +228,7 @@ abstract class Relation extends Content implements RankableInterface
         return $this->intro;
     }
 
-    public function setIntro(string $intro): void
+    public function setIntro(?string $intro): void
     {
         $this->intro = $intro;
     }

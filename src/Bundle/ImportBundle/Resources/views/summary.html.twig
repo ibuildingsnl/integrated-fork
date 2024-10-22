@@ -34,6 +34,20 @@
                     <label class="control-label col-lg-2">Number of records</label>
                     <div class="col-lg-10">{{ records }}</div>
                 </div>
+
+                <div class="row">
+                    <label class="control-label col-lg-2">Content Type</label>
+                    <div class="col-lg-10">{{ importDefinition.getContentType() }}</div>
+                </div>
+
+                <div class="row">
+                    <label class="control-label col-lg-2">Channel(s)</label>
+                    {% for channel in importDefinition.getChannels() %}
+                    <div class="col-lg-10">{{ channel.name }}</div>
+                    {% endfor %}
+                </div>
+
+
                 <div class="row">
                     <label class="control-label col-lg-2">Fields</label>
                     <div class="col-lg-10">
