@@ -14,6 +14,7 @@ namespace Integrated\Bundle\AssetBundle\Tests\Twig;
 use Integrated\Bundle\AssetBundle\Manager\AssetManager;
 use Integrated\Bundle\AssetBundle\Twig\Extension\JavascriptExtension;
 use Integrated\Bundle\AssetBundle\Twig\Extension\StylesheetExtension;
+use Twig\Error\Error;
 use Twig\Test\IntegrationTestCase;
 use Twig\TwigFunction;
 
@@ -22,9 +23,6 @@ use Twig\TwigFunction;
  */
 class IntegrationTest extends IntegrationTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getExtensions()
     {
         return [
@@ -33,9 +31,6 @@ class IntegrationTest extends IntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getTwigFunctions()
     {
         return [
@@ -47,10 +42,12 @@ class IntegrationTest extends IntegrationTestCase
 
     /**
      * @dataProvider getTests
+     *
+     * @throws Error
      */
     public function testIntegration($file, $message, $condition, $templates, $exception, $outputs, $deprecation = '')
     {
-        $templates = $templates + [
+        $templates += [
             '@IntegratedAsset/asset/javascripts.html.twig' => file_get_contents(
                 __DIR__.'/../../Resources/views/asset/javascripts.html.twig'
             ),
@@ -62,9 +59,6 @@ class IntegrationTest extends IntegrationTestCase
         $this->doIntegrationTest($file, $message, $condition, $templates, $exception, $outputs, $deprecation);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getFixturesDir()
     {
         return __DIR__.'/Fixtures/';
