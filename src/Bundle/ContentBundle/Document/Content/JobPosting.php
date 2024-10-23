@@ -38,6 +38,30 @@ class JobPosting extends Article
     protected $applyUrl;
 
     /**
+     * @var string
+     */
+    #[Type\Field(options: ['label' => 'Working Hours', 'attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
+    protected $workingHours;
+
+    /**
+     * @var \DateTime
+     */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\DateTimeType', options: [
+        'priority' => 495,
+        'label' => 'Apply before',
+        'attr' => [
+            'style' => 'sidebar',
+            'icon' => 'calendar',
+            'class' => 'datetime',
+            'data-set-date-text' => 'Set end date',
+        ],
+        'html5' => true,
+        'date_widget' => 'single_text',
+        'time_widget' => 'single_text',
+    ], location: 'sidebar')]
+    protected $applyBefore;
+
+    /**
      * @var Relation\Company
      */
     protected $company;
@@ -103,6 +127,46 @@ class JobPosting extends Article
     public function setApplyUrl($applyUrl)
     {
         $this->applyUrl = $applyUrl;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWorkingHours()
+    {
+        return $this->workingHours;
+    }
+
+    /**
+     * @param string $workingHours
+     *
+     * @return $this
+     */
+    public function setWorkingHours($workingHours)
+    {
+        $this->workingHours = $workingHours;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getApplyBefore()
+    {
+        return $this->applyBefore;
+    }
+
+    /**
+     * @param \DateTime $applyBefore
+     *
+     * @return $this
+     */
+    public function setApplyBefore(\DateTime $applyBefore = null)
+    {
+        $this->applyBefore = $applyBefore;
 
         return $this;
     }

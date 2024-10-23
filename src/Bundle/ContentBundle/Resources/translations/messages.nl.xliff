@@ -1370,6 +1370,18 @@
                 <source>URL or search term</source>
                 <target>URL of zoekterm</target>
             </trans-unit>
+            <trans-unit id="347">
+                <source>Working Hours</source>
+                <target>Werk uren</target>
+            </trans-unit>
+            <trans-unit id="348">
+                <source>Apply before</source>
+                <target>Einddatum aanmeldingen</target>
+            </trans-unit>
+            <trans-unit id="349">
+                <source>SeoMetadata</source>
+                <target>Seo Metadata</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
