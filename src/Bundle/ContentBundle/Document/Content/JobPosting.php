@@ -156,10 +156,6 @@ class JobPosting extends Article
      */
     public function getApplyBefore()
     {
-        if ($this->applyBefore === null) {
-            return new \DateTime();
-        }
-
         return $this->applyBefore;
     }
 
