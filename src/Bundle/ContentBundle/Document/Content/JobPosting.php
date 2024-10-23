@@ -235,42 +235,42 @@ class JobPosting extends Article
         return $this;
     }
 
-    public function getFunctionProfile(): string
+    public function getFunctionProfile(): ?string
     {
         return $this->functionProfile;
     }
 
-    public function setFunctionProfile(string $functionProfile): void
+    public function setFunctionProfile(?string $functionProfile): void
     {
         $this->functionProfile = $functionProfile;
     }
 
-    public function getRegions(): string
+    public function getRegions(): ?string
     {
         return $this->regions;
     }
 
-    public function setRegions(string $regions): void
+    public function setRegions(?string $regions): void
     {
         $this->regions = $regions;
     }
 
-    public function getEducationLevel(): string
+    public function getEducationLevel(): ?string
     {
         return $this->educationLevel;
     }
 
-    public function setEducationLevel(string $educationLevel): void
+    public function setEducationLevel(?string $educationLevel): void
     {
         $this->educationLevel = $educationLevel;
     }
 
-    public function getContractTypes(): string
+    public function getContractTypes(): ?string
     {
         return $this->contractTypes;
     }
 
-    public function setContractTypes(string $contractTypes): void
+    public function setContractTypes(?string $contractTypes): void
     {
         $this->contractTypes = $contractTypes;
     }
