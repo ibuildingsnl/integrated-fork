@@ -110,7 +110,7 @@ class RedirectContentSubscriber implements EventSubscriberInterface
         try {
             $this->matcher->match($url);
         } catch (ExceptionInterface $e) {
-            return;
+            $event->setResponse(new RedirectResponse($url, 301));
         }
 
         $event->setResponse(new RedirectResponse($url, 301));
