@@ -7,7 +7,7 @@ use Symfony\Component\Routing\RequestContext;
 
 final class FakeUrlGenerator implements UrlGeneratorInterface
 {
-    public function setContext(RequestContext $context)
+    public function setContext(RequestContext $context): void
     {
     }
 

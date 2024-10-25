@@ -25,7 +25,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Lock\Exception\LockConflictedException;
-use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\Process;
 
 #[AsCommand(
@@ -38,7 +37,6 @@ class IndexerRunCommand extends Command
 
     private Indexer $indexer;
     private QueueProvider $queueProvider;
-    private LockFactory $lockFactory;
     private DoctrineClearEventSubscriber $clearEventSubscriber;
     private KernelInterface $kernel;
     private string $workingDirectory;

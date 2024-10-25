@@ -345,7 +345,7 @@ class User implements UserInterface
     /**
      * {@inheritdoc}
      */
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
         /* do nothing as there are no unsecured credentials, password should be encrypted */
     }

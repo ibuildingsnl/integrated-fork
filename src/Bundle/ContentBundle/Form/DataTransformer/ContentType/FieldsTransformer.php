@@ -25,7 +25,7 @@ class FieldsTransformer implements DataTransformerInterface
      *
      * @return array $return
      */
-    public function transform($fields)
+    public function transform($fields): mixed
     {
         $return = [
             'default' => [],
@@ -50,7 +50,7 @@ class FieldsTransformer implements DataTransformerInterface
      *
      * @return array
      */
-    public function reverseTransform($values)
+    public function reverseTransform($values): mixed
     {
         if (!\is_array($values)) {
             return [];
