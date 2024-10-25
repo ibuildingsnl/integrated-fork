@@ -69,7 +69,7 @@ class FileController
 
         // Everything ends here, no file found in the property
         throw new NotFoundHttpException(
-            \sprintf('There is no file found in the %s object', $document->getId())
+            sprintf('There is no file found in the %s object', $document->getId())
         );
     }
 }

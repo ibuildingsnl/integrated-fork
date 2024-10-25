@@ -62,7 +62,7 @@ class ReferencesToArrayTransformer implements DataTransformerInterface
             ->toArray();
 
         if (!$references) {
-            throw new TransformationFailedException(\sprintf(
+            throw new TransformationFailedException(sprintf(
                 'A content with ID "%s" does not exist!',
                 $value
             ));

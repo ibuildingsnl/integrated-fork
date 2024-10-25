@@ -9,7 +9,7 @@ final class CouldNotPublish extends \Exception
 {
     public static function encountered(\Throwable $exception, Content $content, ChannelInterface $channel): self
     {
-        return new self(\sprintf(
+        return new self(sprintf(
             'Could not publish %s on channel %s: %s',
             $content,
             $channel->getName(),

@@ -76,7 +76,7 @@ class AddCommand extends Command
                 ->walk(FilesystemWalk::add($this->storage, $this->metadata, $filesystem))
                 ->walk(DocumentWalk::save($this->database));
         } else {
-            throw new \InvalidArgumentException(\sprintf('The filesystem %s does not exist', $filesystem));
+            throw new \InvalidArgumentException(sprintf('The filesystem %s does not exist', $filesystem));
         }
 
         return self::SUCCESS;

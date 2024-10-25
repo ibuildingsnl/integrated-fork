@@ -39,7 +39,7 @@ class CollectionToDocumentTransformer implements DataTransformerInterface
 
                 if (!\is_object($document)) {
                     throw new TransformationFailedException(
-                        \sprintf('Expected an object in the Collection, "%s" given', \gettype($value))
+                        sprintf('Expected an object in the Collection, "%s" given', \gettype($value))
                     );
                 }
 
@@ -48,7 +48,7 @@ class CollectionToDocumentTransformer implements DataTransformerInterface
 
             return null;
         }
-        throw new TransformationFailedException(\sprintf('Expected a Collection, "%s" given', \gettype($value)));
+        throw new TransformationFailedException(sprintf('Expected a Collection, "%s" given', \gettype($value)));
     }
 
     /**
@@ -63,7 +63,7 @@ class CollectionToDocumentTransformer implements DataTransformerInterface
                 return new ArrayCollection([$value]);
             }
             throw new TransformationFailedException(
-                \sprintf('Expected an object, "%s" given', \gettype($value))
+                sprintf('Expected an object, "%s" given', \gettype($value))
             );
         }
 

@@ -67,6 +67,6 @@ class HandlerFactoryRegistry
             return $this->factories[$class];
         }
 
-        throw new InvalidArgumentException(\sprintf('No handler factory found for class "%s"', $class));
+        throw new InvalidArgumentException(sprintf('No handler factory found for class "%s"', $class));
     }
 }

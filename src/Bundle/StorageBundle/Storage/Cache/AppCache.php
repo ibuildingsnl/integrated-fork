@@ -60,7 +60,7 @@ class AppCache implements CacheInterface
         }
 
         // Attempt to make a local copy of the file, it's probably not in a public storage
-        $file = DirectoryUtil::cachePathFile(\sprintf(self::CACHE_PATH, $this->directory), $storage);
+        $file = DirectoryUtil::cachePathFile(sprintf(self::CACHE_PATH, $this->directory), $storage);
 
         // Check if a file exists
         if ($file->isFile() && $file->getSize() > 0) {

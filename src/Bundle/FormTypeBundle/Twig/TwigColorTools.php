@@ -211,9 +211,9 @@ class TwigColorTools extends AbstractExtension
     {
         switch ($mode) {
             case 'hex':
-                $red = \sprintf('%02x', $color[0]);
-                $green = \sprintf('%02x', $color[1]);
-                $blue = \sprintf('%02x', $color[2]);
+                $red = sprintf('%02x', $color[0]);
+                $green = sprintf('%02x', $color[1]);
+                $blue = sprintf('%02x', $color[2]);
                 $color = '#'.$red.$green.$blue;
                 break;
             case 'rgb':

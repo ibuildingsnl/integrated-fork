@@ -30,7 +30,7 @@ class ContentTypeControllerManager
         $actions = array_filter($actions);
 
         if (!$actions) {
-            throw new \InvalidArgumentException(\sprintf('there are no controller actions defined for the content class %s', $content));
+            throw new \InvalidArgumentException(sprintf('there are no controller actions defined for the content class %s', $content));
         }
 
         $this->controllers[$content] = [

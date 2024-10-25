@@ -36,6 +36,6 @@ class StorageUtil
         }
 
         // File does not exist or is not readable
-        throw new \Exception(\sprintf('The file %s to put in the storage does not exist', $path));
+        throw new \Exception(sprintf('The file %s to put in the storage does not exist', $path));
     }
 }

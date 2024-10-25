@@ -26,7 +26,7 @@ class IpAddressTransformer implements DataTransformerInterface
             return $value->getProtocolAppropriateAddress();
         }
 
-        throw new TransformationFailedException(\sprintf('Expected %s, "%s" given', IP::class, \gettype($value)));
+        throw new TransformationFailedException(sprintf('Expected %s, "%s" given', IP::class, \gettype($value)));
     }
 
     public function reverseTransform($value)
@@ -41,6 +41,6 @@ class IpAddressTransformer implements DataTransformerInterface
             }
         }
 
-        throw new TransformationFailedException(\sprintf('Expected string, "%s" given', \gettype($value)));
+        throw new TransformationFailedException(sprintf('Expected string, "%s" given', \gettype($value)));
     }
 }

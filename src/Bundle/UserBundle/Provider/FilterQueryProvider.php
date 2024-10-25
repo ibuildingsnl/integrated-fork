@@ -101,7 +101,7 @@ class FilterQueryProvider
 
         $choices = [];
         foreach ($query->getResult() as $result) {
-            $choices[\sprintf('%s %d', $result['name'], $result['count'])] = $result['id'];
+            $choices[sprintf('%s %d', $result['name'], $result['count'])] = $result['id'];
         }
 
         return $choices;

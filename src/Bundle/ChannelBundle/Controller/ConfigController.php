@@ -101,7 +101,7 @@ class ConfigController extends AbstractController
             );
 
             if (!$response = $event->getResponse()) {
-                $this->addFlash('success', \sprintf('The config %s is saved', $data->getName()));
+                $this->addFlash('success', sprintf('The config %s is saved', $data->getName()));
 
                 $response = $this->redirectToRoute('integrated_channel_config_index');
             }
@@ -160,7 +160,7 @@ class ConfigController extends AbstractController
             $this->manager->persist($data);
 
             if (!$response = $event->getResponse()) {
-                $this->addFlash('success', \sprintf('The changes to the config %s are saved', $data->getName()));
+                $this->addFlash('success', sprintf('The changes to the config %s are saved', $data->getName()));
 
                 $response = $this->redirectToRoute('integrated_channel_config_index');
             }
@@ -224,7 +224,7 @@ class ConfigController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->manager->remove($data);
 
-            $this->addFlash('success', \sprintf('The config %s is removed', $data->getName()));
+            $this->addFlash('success', sprintf('The config %s is removed', $data->getName()));
 
             $response = $this->redirectToRoute('integrated_channel_config_index');
 

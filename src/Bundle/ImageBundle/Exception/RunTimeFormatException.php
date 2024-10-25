@@ -22,7 +22,7 @@ class RunTimeFormatException extends \ErrorException
     public static function conversionFileCreateFail($converter, $outputFormat, $file)
     {
         return new self(
-            \sprintf(
+            sprintf(
                 'The converter %s did not produce a file while converting %s to %s',
                 $converter,
                 $outputFormat,

@@ -111,7 +111,7 @@ class Role implements RoleInterface
      */
     public function __toString()
     {
-        return \sprintf(
+        return sprintf(
             "ID: %s\nRole: %s\nHidden: %s\nLabel: %s\nDescription: %s",
             $this->getId(),
             $this->getRole(),

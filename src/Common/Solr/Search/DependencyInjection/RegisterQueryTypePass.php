@@ -65,7 +65,7 @@ class RegisterQueryTypePass implements CompilerPassInterface
             $class = $container->getParameterBag()->resolveValue($container->getDefinition((string) $reference)->getClass());
 
             if (!is_a($class, TypeExtensionInterface::class, true)) {
-                throw new InvalidArgumentException(\sprintf('The service "%s" is not an instance of "%s".', $reference, TypeExtensionInterface::class));
+                throw new InvalidArgumentException(sprintf('The service "%s" is not an instance of "%s".', $reference, TypeExtensionInterface::class));
             }
 
             $extends = false;
@@ -76,7 +76,7 @@ class RegisterQueryTypePass implements CompilerPassInterface
             }
 
             if (!$extends) {
-                throw new InvalidArgumentException(\sprintf('The getTypes() method for service "%s" does not return any types.', $reference));
+                throw new InvalidArgumentException(sprintf('The getTypes() method for service "%s" does not return any types.', $reference));
             }
         }
 

@@ -181,7 +181,7 @@ class Scraper
             $namespacePaths = $this->loader->getPaths($namespace);
 
             if (\count($namespacePaths) === 0) {
-                throw new \Exception(\sprintf('Namespace %s not found. Use Twig namespace notation for themes', $namespace));
+                throw new \Exception(sprintf('Namespace %s not found. Use Twig namespace notation for themes', $namespace));
             }
         } else {
             $namespacePaths = $this->loader->getPaths();
@@ -196,7 +196,7 @@ class Scraper
         }
 
         if (!$template) {
-            throw new \Exception(\sprintf('Template %s not found', $templateName));
+            throw new \Exception(sprintf('Template %s not found', $templateName));
         }
 
         return file_get_contents($template);

@@ -44,7 +44,7 @@ class UrlExtension implements TypeExtensionInterface
             // remove app_*.php
             $url = preg_replace('/\/app_(.+?)\.php/', '', $url);
 
-            $container->set(\sprintf('url_%s', $channel->getId()), $url);
+            $container->set(sprintf('url_%s', $channel->getId()), $url);
         }
     }
 

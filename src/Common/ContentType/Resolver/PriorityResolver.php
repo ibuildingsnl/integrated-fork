@@ -80,7 +80,7 @@ class PriorityResolver implements ResolverInterface
             return $resolver->getType($type);
         }
 
-        throw new InvalidArgumentException(\sprintf('Could not resolve the content type based on the given type "%s"', $type));
+        throw new InvalidArgumentException(sprintf('Could not resolve the content type based on the given type "%s"', $type));
     }
 
     public function hasType($type)

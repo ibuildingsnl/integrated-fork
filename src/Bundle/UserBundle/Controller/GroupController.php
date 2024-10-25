@@ -70,7 +70,7 @@ class GroupController extends AbstractController
                 $user = $form->getData();
 
                 $this->manager->persist($user);
-                $this->addFlash('success', \sprintf('The group %s is created', $user->getName()));
+                $this->addFlash('success', sprintf('The group %s is created', $user->getName()));
 
                 return $this->redirectToRoute('integrated_user_group_index');
             }
@@ -104,7 +104,7 @@ class GroupController extends AbstractController
 
             if ($form->isValid()) {
                 $this->manager->persist($group);
-                $this->addFlash('success', \sprintf('The changes to the group %s are saved', $group->getName()));
+                $this->addFlash('success', sprintf('The changes to the group %s are saved', $group->getName()));
 
                 return $this->redirectToRoute('integrated_user_group_index');
             }
@@ -140,7 +140,7 @@ class GroupController extends AbstractController
 
             if ($form->isValid()) {
                 $this->manager->remove($group);
-                $this->addFlash('success', \sprintf('The group %s is removed', $group->getName()));
+                $this->addFlash('success', sprintf('The group %s is removed', $group->getName()));
 
                 return $this->redirectToRoute('integrated_user_group_index');
             }

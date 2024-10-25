@@ -30,11 +30,11 @@ class ContentTypeControllersPass implements CompilerPassInterface
 
             foreach ($tags as $attributes) {
                 if (!($attributes['class'] ?? null)) {
-                    throw new LogicException(\sprintf('The tag integrated_page.contenttype_controller for service "%s" does not have the required class attribute set.', $id));
+                    throw new LogicException(sprintf('The tag integrated_page.contenttype_controller for service "%s" does not have the required class attribute set.', $id));
                 }
 
                 if ($services[$attributes['class']] ?? null) {
-                    throw new LogicException(\sprintf('There is more the one service tagged with integrated_page.contenttype_controller for the content class "%s".', $attributes['class']));
+                    throw new LogicException(sprintf('There is more the one service tagged with integrated_page.contenttype_controller for the content class "%s".', $attributes['class']));
                 }
 
                 $services[$attributes['class']] = [

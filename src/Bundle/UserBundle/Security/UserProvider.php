@@ -37,7 +37,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
 
         if (!is_subclass_of($this->manager->getClassName(), IntegratedUserInterface::class)) {
             throw new UnsupportedUserException(
-                \sprintf(
+                sprintf(
                     'The user class "%s" is not subclass of %s',
                     $this->manager->getClassName(),
                     IntegratedUserInterface::class
@@ -60,7 +60,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
         $user = $this->manager->findEnabledByUsernameAndScope($username);
 
         if (!$user) {
-            $exception = new UserNotFoundException(\sprintf('No user with the username "%s" exists', $username));
+            $exception = new UserNotFoundException(sprintf('No user with the username "%s" exists', $username));
             $exception->setUserIdentifier($username);
 
             throw $exception;
@@ -73,7 +73,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
     {
         if (!$this->supportsClass($user::class)) {
             throw new UnsupportedUserException(
-                \sprintf(
+                sprintf(
                     'The user class "%s" is not a instance or subclass of %s',
                     $user::class,
                     $this->manager->getClassName()
@@ -86,7 +86,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
 
         if (!$loaded) {
             $exception = new UserNotFoundException(
-                \sprintf(
+                sprintf(
                     'The user with id "%s" could not be refreshed',
                     $user->getId()
                 )

@@ -51,7 +51,7 @@ class CleanCommand extends Command
         $cleanFileSystem = new CleanFilesystem($this->registry, $this->database);
         $cleanFileSystem->clean($filesystem, $directory);
 
-        $output->writeln(\sprintf('Cleanable files for %s have been moved to %s', $filesystem, $directory));
+        $output->writeln(sprintf('Cleanable files for %s have been moved to %s', $filesystem, $directory));
 
         return self::SUCCESS;
     }

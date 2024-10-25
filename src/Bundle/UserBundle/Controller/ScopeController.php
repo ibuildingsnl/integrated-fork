@@ -79,7 +79,7 @@ class ScopeController extends AbstractController
                 $scope = $form->getData();
 
                 $this->scopeManager->persist($scope);
-                $this->addFlash('success', \sprintf('The scope %s is created', $scope->getName()));
+                $this->addFlash('success', sprintf('The scope %s is created', $scope->getName()));
 
                 return $this->redirectToRoute('integrated_user_scope_index');
             }
@@ -107,7 +107,7 @@ class ScopeController extends AbstractController
 
             if ($form->isValid()) {
                 $this->scopeManager->persist($scope);
-                $this->addFlash('success', \sprintf('The changes to the scope %s are saved', $scope->getName()));
+                $this->addFlash('success', sprintf('The changes to the scope %s are saved', $scope->getName()));
 
                 return $this->redirectToRoute('integrated_user_scope_index');
             }
@@ -160,7 +160,7 @@ class ScopeController extends AbstractController
 
             if (false === $hasRelations) {
                 $this->scopeManager->remove($scope);
-                $this->addFlash('success', \sprintf('The scope %s is removed', $scope->getName()));
+                $this->addFlash('success', sprintf('The scope %s is removed', $scope->getName()));
 
                 return $this->redirectToRoute('integrated_user_scope_index');
             }

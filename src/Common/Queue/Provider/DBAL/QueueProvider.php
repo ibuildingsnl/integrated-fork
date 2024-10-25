@@ -72,14 +72,14 @@ class QueueProvider implements QueueProviderInterface
 
         $where = 'channel = ? AND time_execute <= ?';
         if (isset($this->options['where'])) {
-            $where = \sprintf('%s AND %s', $where, $this->options['where']);
+            $where = sprintf('%s AND %s', $where, $this->options['where']);
         }
 
         if ($limit > 0) {
             $query = $this->platform->modifyLimitQuery($query, $limit);
         }
 
-        $query = \sprintf(
+        $query = sprintf(
             $query,
             $this->platform->quoteIdentifier($this->options['queue_table_name']),
             $where
@@ -112,7 +112,7 @@ class QueueProvider implements QueueProviderInterface
     public function count($channel = null)
     {
         $query = 'SELECT COUNT(id) AS count FROM %s';
-        $query = \sprintf(
+        $query = sprintf(
             $query,
             $this->platform->quoteIdentifier($this->options['queue_table_name'])
         );
@@ -131,7 +131,7 @@ class QueueProvider implements QueueProviderInterface
         $where[] = 'time_execute <= '.time();
 
         if (\count($where)) {
-            $query = \sprintf('%s WHERE %s', $query, implode(' AND ', $where));
+            $query = sprintf('%s WHERE %s', $query, implode(' AND ', $where));
         }
 
         return $this->connection->fetchOne($query, $params);
@@ -145,7 +145,7 @@ class QueueProvider implements QueueProviderInterface
     public function setOption($name, $value)
     {
         if (isset($this->options[$name])) {
-            throw new \InvalidArgumentException(\sprintf('Option %s already set.', $name));
+            throw new \InvalidArgumentException(sprintf('Option %s already set.', $name));
         }
 
         $this->options[$name] = $value;

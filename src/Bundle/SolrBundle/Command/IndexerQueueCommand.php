@@ -128,7 +128,7 @@ The <info>%command.name%</info> command starts a index of the site.
         }
 
         if ($invalid) {
-            $text = \sprintf('The content types "%s" do not exists', implode(', ', $invalid));
+            $text = sprintf('The content types "%s" do not exists', implode(', ', $invalid));
 
             if ($input->getOption('no-interaction')) {
                 throw new \InvalidArgumentException($text);

@@ -38,7 +38,7 @@ class DependencyInjectionProvider implements TypeProviderInterface
     public function getType(string $name): TypeInterface
     {
         if (!$this->container->has($name)) {
-            throw new InvalidArgumentException(\sprintf('The query type "%s" is not registered in the service container.', $name));
+            throw new InvalidArgumentException(sprintf('The query type "%s" is not registered in the service container.', $name));
         }
 
         return $this->container->get($name);
@@ -63,7 +63,7 @@ class DependencyInjectionProvider implements TypeProviderInterface
 
             // validate the result of getTypes() to ensure it is consistent with the service definition
             if (!\in_array($name, $types, true)) {
-                throw new InvalidArgumentException(\sprintf(
+                throw new InvalidArgumentException(sprintf(
                     'The type "%s" specified for the type extension class "%s" does not match any of the actual types (["%s"]).',
                     $name,
                     $extension::class,

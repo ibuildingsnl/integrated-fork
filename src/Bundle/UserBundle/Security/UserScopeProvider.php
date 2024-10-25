@@ -28,7 +28,7 @@ class UserScopeProvider extends UserProvider
     public function loadUserByIdentifier($username): UserInterface
     {
         if (!$user = $this->manager->findEnabledByUsernameAndScope($username, $this->context->getScope())) {
-            $exception = new UserNotFoundException(\sprintf('No user with the username "%s" exists', $username));
+            $exception = new UserNotFoundException(sprintf('No user with the username "%s" exists', $username));
             $exception->setUserIdentifier($username);
 
             throw $exception;

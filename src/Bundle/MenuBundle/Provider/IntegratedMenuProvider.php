@@ -34,7 +34,7 @@ class IntegratedMenuProvider implements MenuProviderInterface
             return $menu;
         }
 
-        throw new \Exception(\sprintf('Menu %s not found on channel', $name));
+        throw new \Exception(sprintf('Menu %s not found on channel', $name));
     }
 
     public function has(string $name, array $options = []): bool

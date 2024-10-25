@@ -172,7 +172,7 @@ class MenuItem extends KnpMenuItem
         }
 
         if (!$child instanceof self) {
-            throw new \InvalidArgumentException(\sprintf('Child needs to be an instance of %s', self::class));
+            throw new \InvalidArgumentException(sprintf('Child needs to be an instance of %s', self::class));
         }
 
         $child->setParent($this);

@@ -23,7 +23,7 @@ class SortOptions
         foreach ($options as $index => $option) {
             if (!$option instanceof SortOption) {
                 throw new \InvalidArgumentException(
-                    \sprintf('Sorting option "%s" is not an instance of "%s"', $index, SortOption::class)
+                    sprintf('Sorting option "%s" is not an instance of "%s"', $index, SortOption::class)
                 );
             }
 
@@ -53,7 +53,7 @@ class SortOptions
             return $this->options[$name];
         }
 
-        throw new \InvalidArgumentException(\sprintf('Sorting option "%s" does not exist', $name));
+        throw new \InvalidArgumentException(sprintf('Sorting option "%s" does not exist', $name));
     }
 
     public function getByField(string $fieldName): SortOption
@@ -64,7 +64,7 @@ class SortOptions
             }
         }
 
-        throw new \InvalidArgumentException(\sprintf('Sorting option "%s" does not exist', $fieldName));
+        throw new \InvalidArgumentException(sprintf('Sorting option "%s" does not exist', $fieldName));
     }
 
     public function all(): array

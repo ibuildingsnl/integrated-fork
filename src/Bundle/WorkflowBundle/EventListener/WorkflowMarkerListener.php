@@ -56,7 +56,7 @@ class WorkflowMarkerListener implements EventSubscriberInterface
         }
 
         if (!$query instanceof Query) {
-            throw new \InvalidArgumentException(\sprintf('$query must be of type %s', Query::class));
+            throw new \InvalidArgumentException(sprintf('$query must be of type %s', Query::class));
         }
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {

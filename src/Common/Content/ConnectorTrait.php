@@ -40,7 +40,7 @@ trait ConnectorTrait
             }
         }
 
-        throw new \InvalidArgumentException(\sprintf('No connector found with configId %d', $configId));
+        throw new \InvalidArgumentException(sprintf('No connector found with configId %d', $configId));
     }
 
     /**

@@ -36,7 +36,7 @@ class CommentTagTransformer implements DataTransformerInterface
         }
 
         if (!\is_string($content)) {
-            throw new TransformationFailedException(\sprintf(
+            throw new TransformationFailedException(sprintf(
                 'Expected string, %s given',
                 \gettype($content)
             ));
@@ -64,7 +64,7 @@ class CommentTagTransformer implements DataTransformerInterface
         }
 
         if (!\is_string($content)) {
-            throw new TransformationFailedException(\sprintf(
+            throw new TransformationFailedException(sprintf(
                 'Expected string, %s given',
                 \gettype($content)
             ));

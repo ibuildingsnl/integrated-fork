@@ -189,7 +189,7 @@ class ChannelType extends AbstractType
                 } elseif (preg_match('/[\s\\\[\],;:+\/\?^`=&%"\'#<>@*!()|]/', $domain, $matches)) {
                     $form->get('domains')->addError(
                         new FormError(
-                            \sprintf('Character "%s" in domain name "%s" is not allowed', $matches[0], $domain)
+                            sprintf('Character "%s" in domain name "%s" is not allowed', $matches[0], $domain)
                         )
                     );
                 }

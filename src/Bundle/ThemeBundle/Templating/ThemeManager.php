@@ -63,7 +63,7 @@ class ThemeManager
     public function registerTheme($id, array $paths, array $fallback = [])
     {
         if ($this->hasTheme($id)) {
-            throw new \InvalidArgumentException(\sprintf('Theme "%s" already exists.', $id));
+            throw new \InvalidArgumentException(sprintf('Theme "%s" already exists.', $id));
         }
 
         $this->themes[$id] = new Theme($id, $paths, $fallback);
@@ -108,7 +108,7 @@ class ThemeManager
     public function getTheme($id)
     {
         if (!$this->hasTheme($id)) {
-            throw new \InvalidArgumentException(\sprintf('Theme "%s" not exists.', $id));
+            throw new \InvalidArgumentException(sprintf('Theme "%s" not exists.', $id));
         }
 
         return $this->themes[$id];
@@ -140,7 +140,7 @@ class ThemeManager
     public function setActiveTheme($id)
     {
         if (!$this->hasTheme($id)) {
-            throw new \InvalidArgumentException(\sprintf('Theme "%s" not exists.', $id));
+            throw new \InvalidArgumentException(sprintf('Theme "%s" not exists.', $id));
         }
 
         $this->activeTheme = $id;
@@ -215,7 +215,7 @@ class ThemeManager
             $paths = [];
             $namespacePaths = $this->loader->getPaths($namespace[0]);
             if (\count($namespacePaths) === 0) {
-                throw new \Exception(\sprintf('Namespace %s not found. Use Twig namespace notation for themes', $namespace[0]));
+                throw new \Exception(sprintf('Namespace %s not found. Use Twig namespace notation for themes', $namespace[0]));
             }
             foreach ($namespacePaths as $namespacePath) {
                 if (!$this->isAbsolutePath($namespacePath)) {

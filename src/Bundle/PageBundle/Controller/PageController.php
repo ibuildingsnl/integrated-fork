@@ -125,7 +125,7 @@ class PageController extends AbstractController
 
             $this->routeCache->clear();
 
-            $this->addFlash('success', \sprintf('Page "%s" has been created', $page->getTitle()));
+            $this->addFlash('success', sprintf('Page "%s" has been created', $page->getTitle()));
 
             $this->setLastEditPage($request->getSession(), $page);
 
@@ -155,7 +155,7 @@ class PageController extends AbstractController
 
                 $this->routeCache->clear();
 
-                $this->addFlash('success', \sprintf('Page "%s" has been updated', $page->getTitle()));
+                $this->addFlash('success', sprintf('Page "%s" has been updated', $page->getTitle()));
 
                 $this->setLastEditPage($request->getSession(), $page);
 
@@ -176,7 +176,7 @@ class PageController extends AbstractController
         }
 
         if ($page->isLocked()) {
-            throw $this->createNotFoundException(\sprintf('Page "%s" is locked.', $page->getId()));
+            throw $this->createNotFoundException(sprintf('Page "%s" is locked.', $page->getId()));
         }
 
         $form = $this->createDeleteForm($page->getId());

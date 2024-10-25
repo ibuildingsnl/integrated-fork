@@ -71,7 +71,7 @@ class IpListController extends AbstractController
 
                 $this->manager->persist($list);
 
-                $this->addFlash('success', \sprintf(
+                $this->addFlash('success', sprintf(
                     'Added the ip %s to the whitelist',
                     $list->getIp()->getProtocolAppropriateAddress()
                 ));
@@ -103,7 +103,7 @@ class IpListController extends AbstractController
             if ($form->isValid()) {
                 $this->manager->persist($list);
 
-                $this->addFlash('success', \sprintf(
+                $this->addFlash('success', sprintf(
                     'The changes to the ip %s are saved',
                     $list->getIp()->getProtocolAppropriateAddress()
                 ));
@@ -136,7 +136,7 @@ class IpListController extends AbstractController
             if ($form->isValid()) {
                 $this->manager->remove($list);
 
-                $this->addFlash('success', \sprintf(
+                $this->addFlash('success', sprintf(
                     'The ip %s is removed from the whitelist',
                     $list->getIp()->getProtocolAppropriateAddress()
                 ));

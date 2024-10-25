@@ -125,7 +125,7 @@ class ConfigFormType extends AbstractType
 
             if (!$adapter instanceof AdapterInterface) {
                 throw new InvalidOptionsException(
-                    \sprintf(
+                    sprintf(
                         'The option "%s" could not be normalized to a valid "%s" object',
                         'adapter',
                         'Integrated\\Common\\Channel\\Connector\\AdapterInterface'

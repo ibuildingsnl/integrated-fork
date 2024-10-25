@@ -44,7 +44,7 @@ class ContentRankTransformer implements DataTransformerInterface
             return $value->getRank();
         }
 
-        throw new TransformationFailedException(\sprintf('Expected integrated rankable content, "%s" given', \gettype($value)));
+        throw new TransformationFailedException(sprintf('Expected integrated rankable content, "%s" given', \gettype($value)));
     }
 
     /**
@@ -60,6 +60,6 @@ class ContentRankTransformer implements DataTransformerInterface
             return $value;
         }
 
-        throw new TransformationFailedException(\sprintf('Expected string, "%s" given', \gettype($value)));
+        throw new TransformationFailedException(sprintf('Expected string, "%s" given', \gettype($value)));
     }
 }

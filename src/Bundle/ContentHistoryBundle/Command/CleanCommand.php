@@ -67,7 +67,7 @@ class CleanCommand extends Command
             }
 
             if (!class_exists($className)) {
-                $output->writeln(\sprintf('Warning: class %s does not seem to exist', $className));
+                $output->writeln(sprintf('Warning: class %s does not seem to exist', $className));
             }
 
             $cleanTable[$className][] = $field;

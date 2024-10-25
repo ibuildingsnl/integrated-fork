@@ -203,7 +203,7 @@ class ContentFormType extends AbstractType
 
             if (!$value instanceof ContentTypeInterface) {
                 throw new InvalidOptionsException(
-                    \sprintf(
+                    sprintf(
                         'The option "%s" could not be normalized to a valid "%s" object',
                         'content_type',
                         ContentTypeInterface::class

@@ -61,7 +61,7 @@ class AuthenticatorType extends AbstractType
                 }
             }
 
-            throw new InvalidOptionsException(\sprintf('The option "user" with is expected to be of type "%s"', UserInterface::class));
+            throw new InvalidOptionsException(sprintf('The option "user" with is expected to be of type "%s"', UserInterface::class));
         });
 
         $resolver->setDefault('constraints', function (Options $options, $value) {

@@ -57,7 +57,7 @@ class ConnectorController extends AbstractController
             $config->setName("{$brand->getName()} {$link->getName()} connector");
         } else {
             $request->getSession()->set(
-                \sprintf(ConnectorDeletionRedirectListener::SESSION_PATH, $config->getAdapter()),
+                sprintf(ConnectorDeletionRedirectListener::SESSION_PATH, $config->getAdapter()),
                 $this->generateUrl('integrated_content_brand_edit', ['id' => $brand->getId()])
             );
         }
@@ -102,7 +102,7 @@ class ConnectorController extends AbstractController
                 ->getResponse();
 
             if (!$response) {
-                $this->addFlash('success', \sprintf($message, $config->getName()));
+                $this->addFlash('success', sprintf($message, $config->getName()));
                 $response = $this->redirectToRoute('integrated_content_brand_edit', ['id' => $brand->getId()]);
             }
             $response = $this->dispatcher

@@ -54,7 +54,7 @@ class WriteFilesystem
 
         // Well that escalated quickly
         throw new \LogicException(
-            \sprintf(
+            sprintf(
                 'A instanceof Gaufrette\File was excepted (given: %s).',
                 $storage::class
             )

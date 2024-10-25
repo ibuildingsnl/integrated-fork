@@ -54,6 +54,6 @@ class ColorTransformer implements DataTransformerInterface
             return $value;
         }
 
-        throw new TransformationFailedException(\sprintf('The value %s is not a valid hexadecimal color string.', $value));
+        throw new TransformationFailedException(sprintf('The value %s is not a valid hexadecimal color string.', $value));
     }
 }

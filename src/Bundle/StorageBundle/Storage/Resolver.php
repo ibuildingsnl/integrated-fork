@@ -68,7 +68,7 @@ class Resolver implements ResolverInterface
 
         // Show never happen, a resolver can not fail and at least one resolver must be defined in the configuration
         throw new \LogicException(
-            \sprintf(
+            sprintf(
                 'No valid public path found for %s in filesystems: %s',
                 $storage->getIdentifier(),
                 implode(', ', $storage->getFilesystems()->toArray())
@@ -100,7 +100,7 @@ class Resolver implements ResolverInterface
         }
 
         throw new \LogicException(
-            \sprintf(
+            sprintf(
                 'Class %s must implement Integrated\Bundle\StorageBundle\Storage\Resolver\ResolverInterface',
                 $resolver::class
             )

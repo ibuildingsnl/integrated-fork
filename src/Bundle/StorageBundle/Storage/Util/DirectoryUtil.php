@@ -28,7 +28,7 @@ class DirectoryUtil
     {
         // Create the filename
         $file = new \SplFileInfo(
-            \sprintf(
+            sprintf(
                 '%s/%s/%s/%s',
                 $directory,
                 substr($storage->getIdentifier(), 0, 2),
@@ -61,7 +61,7 @@ class DirectoryUtil
 
                 // You might wanna read is as check as follows: if it exists, make it, check if it did
                 if (!is_dir($dir) && !@mkdir($dir) && !is_dir($dir)) {
-                    throw new \LogicException(\sprintf('Can not create directory %s', $dir));
+                    throw new \LogicException(sprintf('Can not create directory %s', $dir));
                 }
             }
         }

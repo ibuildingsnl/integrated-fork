@@ -301,7 +301,7 @@ class TailwindFormExtension extends AbstractExtension
      */
     public function formControlStaticFunction($label, $value)
     {
-        return \sprintf(
+        return sprintf(
             '<div class="form-group"><label class="w-full %s control-label">%s</label><div class="w-full %s"><p class="form-control-static">%s</p></div></div>',
             $this->getLabelCol(),
             $label,

@@ -64,7 +64,7 @@ trait RelationHelper
             $this->getDocumentManager()->persist($relation);
             $this->getDocumentManager()->flush();
 
-            $this->write(\sprintf('Added relation with id "%s".', $id));
+            $this->write(sprintf('Added relation with id "%s".', $id));
         }
 
         return $relation;
@@ -82,7 +82,7 @@ trait RelationHelper
             $dm->remove($relation);
             $dm->flush();
 
-            $this->write(\sprintf('Removed relation with id "%s".', $id));
+            $this->write(sprintf('Removed relation with id "%s".', $id));
         }
     }
 
@@ -99,7 +99,7 @@ trait RelationHelper
             $dm->remove($relation);
             $dm->flush();
 
-            $this->write(\sprintf('Removed relation with type "%s".', $type));
+            $this->write(sprintf('Removed relation with type "%s".', $type));
         }
 
         if ($removeReferences) {

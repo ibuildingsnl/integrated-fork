@@ -30,7 +30,7 @@ class ConfigRepository extends EntityRepository implements ConfigManagerInterfac
     {
         if (!$this->_class->getReflectionClass()->isInstance($object)) {
             throw new \InvalidArgumentException(
-                \sprintf('The object (%s) is not a instance of %s', $object::class, $this->getClassName())
+                sprintf('The object (%s) is not a instance of %s', $object::class, $this->getClassName())
             );
         }
 
@@ -45,7 +45,7 @@ class ConfigRepository extends EntityRepository implements ConfigManagerInterfac
     {
         if (!$this->_class->getReflectionClass()->isInstance($object)) {
             throw new \InvalidArgumentException(
-                \sprintf('The object (%s) is not a instance of %s', $object::class, $this->getClassName())
+                sprintf('The object (%s) is not a instance of %s', $object::class, $this->getClassName())
             );
         }
 

@@ -174,7 +174,7 @@ class XmlProvider extends AbstractFileProvider
         libxml_use_internal_errors($previous);
 
         if (!$xml) {
-            throw new RuntimeException(\sprintf('Unable to parse "%s" as the file contains errors "%s".', $file->getPathname(), $error));
+            throw new RuntimeException(sprintf('Unable to parse "%s" as the file contains errors "%s".', $file->getPathname(), $error));
         }
 
         return $xml;

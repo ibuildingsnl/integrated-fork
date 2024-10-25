@@ -31,7 +31,7 @@ class BlockHandlerRegistry implements BlockHandlerRegistryInterface
     public function registerHandler($type, BlockHandlerInterface $block)
     {
         if ($this->hasHandler($type)) {
-            throw new InvalidArgumentException(\sprintf('Block handler "%s" is already registered', $type));
+            throw new InvalidArgumentException(sprintf('Block handler "%s" is already registered', $type));
         }
 
         $this->registry[$type] = $block;
