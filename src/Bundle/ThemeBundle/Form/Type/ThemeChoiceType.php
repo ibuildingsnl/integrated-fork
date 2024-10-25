@@ -31,9 +31,6 @@ class ThemeChoiceType extends AbstractType
         $this->themeManager = $themeManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -51,17 +48,11 @@ class ThemeChoiceType extends AbstractType
         return array_combine($themes, $themes);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): ?string
     {
         return ChoiceType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_theme_theme_choice';

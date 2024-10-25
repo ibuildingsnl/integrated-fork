@@ -275,11 +275,11 @@ final class TaxonomyIndexingTest extends TestCase
 
     private function taxonomy(
         string $id,
-        string $title = null,
-        string $slug = null,
-        string $rank = null,
-        string $parent = null,
-        string $contentType = 'taxonomy'
+        ?string $title = null,
+        ?string $slug = null,
+        ?string $rank = null,
+        ?string $parent = null,
+        string $contentType = 'taxonomy',
     ): Taxonomy {
         $taxonomy = new Taxonomy();
         $taxonomy->setId($id);

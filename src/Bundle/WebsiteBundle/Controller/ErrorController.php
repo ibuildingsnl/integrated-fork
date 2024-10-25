@@ -28,10 +28,10 @@ class ErrorController extends AbstractController
         $this->themeManager = $themeManager;
     }
 
-    public function show(Request $request, FlattenException $exception, DebugLoggerInterface $logger = null): Response
+    public function show(Request $request, FlattenException $exception, ?DebugLoggerInterface $logger = null): Response
     {
         try {
-            if ($template = $this->themeManager->locateTemplate(sprintf('error/%s.%s.twig', $exception->getStatusCode(), $request->getPreferredFormat()))) {
+            if ($template = $this->themeManager->locateTemplate(\sprintf('error/%s.%s.twig', $exception->getStatusCode(), $request->getPreferredFormat()))) {
                 return $this->render($template);
             }
         } catch (CircularFallbackException $e) {

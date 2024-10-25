@@ -29,9 +29,6 @@ class ChainProvider implements ConfigProviderInterface
         $this->providers = $providers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConfig(array $content)
     {
         $config = [];

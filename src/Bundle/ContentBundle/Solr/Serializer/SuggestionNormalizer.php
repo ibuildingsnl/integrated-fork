@@ -60,18 +60,16 @@ class SuggestionNormalizer implements NormalizerInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param Result $object  object to normalize
      * @param string $format  format the normalization result will be encoded as
      * @param array  $context Context options for the normalizer
      *
      * @return array
      */
-    public function normalize($object, $format = null, array $context = []): array|bool|string|int|float|null|\ArrayObject
+    public function normalize($object, $format = null, array $context = []): array|bool|string|int|float|\ArrayObject|null
     {
         if (!$this->supportsNormalization($object)) {
-            throw new InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(\sprintf(
                 'The object must be a instance of "%s" with a query instance of "%s".',
                 Result::class,
                 SuggestionQuery::class
@@ -106,9 +104,6 @@ class SuggestionNormalizer implements NormalizerInterface
         return ['query' => $query->getQuery(true)] + array_filter($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsNormalization($data, $format = null): bool
     {
         return $data instanceof Result && $data->getQuery() instanceof SuggestionQuery;

@@ -39,9 +39,6 @@ class RequestChannelInjectionListener implements EventSubscriberInterface
         $this->context = $context;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

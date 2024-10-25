@@ -13,7 +13,7 @@ class ImageMigrator
     private UTCDateTime $timeMax;
 
     public function __construct(
-        private readonly Database $db
+        private readonly Database $db,
     ) {
         $this->timeNow = new UTCDateTime((new \DateTime())->getTimestamp() * 1000);
         $this->timeMax = new UTCDateTime(253402214400000);

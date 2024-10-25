@@ -97,7 +97,7 @@ class Scraper
         $this->scraperPageLoader->pageListCacheWarmup(true);
     }
 
-    public function run(ScraperEntity $scraper = null): void
+    public function run(?ScraperEntity $scraper = null): void
     {
         if ($scraper === null) {
             $scapers = $this->entityManager->getRepository(ScraperEntity::class)->findAll();
@@ -175,13 +175,13 @@ class Scraper
 
     private function getTemplate(string $templateName): string
     {
-        if (strpos($templateName, '@') === 0) {
+        if (str_starts_with($templateName, '@')) {
             list($namespace, $templateName) = explode('/', substr($templateName, 1), 2);
 
             $namespacePaths = $this->loader->getPaths($namespace);
 
             if (\count($namespacePaths) === 0) {
-                throw new \Exception(sprintf('Namespace %s not found. Use Twig namespace notation for themes', $namespace));
+                throw new \Exception(\sprintf('Namespace %s not found. Use Twig namespace notation for themes', $namespace));
             }
         } else {
             $namespacePaths = $this->loader->getPaths();
@@ -196,7 +196,7 @@ class Scraper
         }
 
         if (!$template) {
-            throw new \Exception(sprintf('Template %s not found', $templateName));
+            throw new \Exception(\sprintf('Template %s not found', $templateName));
         }
 
         return file_get_contents($template);

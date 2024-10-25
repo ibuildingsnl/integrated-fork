@@ -21,9 +21,6 @@ use Twig\TwigFunction;
  */
 class TailwindLabelExtension extends AbstractExtension
 {
-    /**
-     * {@inheritDoc}
-     */
     public function getFunctions()
     {
         $options = ['pre_escape' => 'html', 'is_safe' => ['html']];
@@ -48,7 +45,7 @@ class TailwindLabelExtension extends AbstractExtension
      */
     public function labelFunction($text, $type = 'default')
     {
-        return sprintf('<span class="label%s">%s</span>', $type ? ' label-'.$type : '', $text);
+        return \sprintf('<span class="label%s">%s</span>', $type ? ' label-'.$type : '', $text);
     }
 
     /**
@@ -109,9 +106,6 @@ class TailwindLabelExtension extends AbstractExtension
         return $this->labelFunction($text, 'info');
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getName()
     {
         return 'braincrafted_tailwind_label';

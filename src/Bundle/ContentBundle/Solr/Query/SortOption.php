@@ -17,7 +17,7 @@ class SortOption
         public readonly string $name,
         public readonly string $label,
         public readonly string $field,
-        public readonly string $order
+        public readonly string $order,
     ) {
     }
 

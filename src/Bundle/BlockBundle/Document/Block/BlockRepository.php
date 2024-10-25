@@ -29,7 +29,7 @@ class BlockRepository extends DocumentRepository
     /**
      * @return array
      */
-    public function getTypeChoices(MetadataFactoryInterface $factory, array $ids = null)
+    public function getTypeChoices(MetadataFactoryInterface $factory, ?array $ids = null)
     {
         $qb = $this->createAggregationBuilder();
 
@@ -124,7 +124,7 @@ class BlockRepository extends DocumentRepository
      *
      * @throws \Exception
      */
-    public function getUsedBy(ArrayCollection $content, Relation $relation = null, Content $excludeContent = null, $filterPublished = true): Builder
+    public function getUsedBy(ArrayCollection $content, ?Relation $relation = null, ?Content $excludeContent = null, $filterPublished = true): Builder
     {
         if ($excludeContent !== null) {
             $excludeContent = $excludeContent->getId();

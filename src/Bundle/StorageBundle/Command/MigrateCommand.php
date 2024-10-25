@@ -118,7 +118,7 @@ class MigrateCommand extends Command
                         if (isset($row[$property->getPropertyName()])) {
                             // If the property exists, the only valid count is one, what else?
                             throw new \LogicException(
-                                sprintf(
+                                \sprintf(
                                     'The file %s was found zero times for document %s and property %s.',
                                     $filename,
                                     $row['_id'],
@@ -146,7 +146,7 @@ class MigrateCommand extends Command
         $finder = Finder::create()
             ->files()
             ->in($path)
-            ->name(sprintf('%s*', $fileId));
+            ->name(\sprintf('%s*', $fileId));
 
         if (1 == $finder->count()) {
             // Configure the iterator for the first entry
@@ -177,7 +177,7 @@ class MigrateCommand extends Command
             }
 
             // This can not be done
-            throw new \LogicException(sprintf(
+            throw new \LogicException(\sprintf(
                 'The file %s (for document: %s) has been found %d times on the given path.',
                 $fileId,
                 $documentId,

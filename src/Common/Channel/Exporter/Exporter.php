@@ -35,7 +35,7 @@ class Exporter implements ExporterInterface
     public function __construct(
         private readonly RegistryInterface $registry,
         private readonly ResolverInterface $resolver,
-        private readonly DocumentManager $dm
+        private readonly DocumentManager $dm,
     ) {
     }
 

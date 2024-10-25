@@ -56,7 +56,7 @@ class ContentSubscriber implements ContentSubscriberInterface
         private readonly MailerInterface $mailer,
         private readonly RouterInterface $router,
         private readonly ThemeManager $themeManager,
-        private readonly string $fromEmail
+        private readonly string $fromEmail,
     ) {
     }
 
@@ -106,7 +106,7 @@ class ContentSubscriber implements ContentSubscriberInterface
         }
 
         $data = \is_array($data = $event->getData()) ? array_filter($data) : []; // filter out empty fields
-        $data = $data + [
+        $data += [
             'comment' => '',
             'state' => ($state = $this->getState($content)) ? $state->getState() : null,
             'assigned' => null,

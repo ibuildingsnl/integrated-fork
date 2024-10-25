@@ -33,9 +33,6 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class IntegratedContentBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new ExtensionRegistryBuilderPass());

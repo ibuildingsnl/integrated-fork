@@ -16,7 +16,7 @@ namespace Integrated\Common\Content;
  */
 trait ExtensibleTrait
 {
-    protected $extensions = null;
+    protected $extensions;
 
     /**
      * Get list of all the extensions names.

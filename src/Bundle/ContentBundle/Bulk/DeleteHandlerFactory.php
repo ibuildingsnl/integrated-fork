@@ -47,9 +47,6 @@ class DeleteHandlerFactory implements HandlerFactoryInterface
             ->addAllowedTypes('removeReferences', 'boolean');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function createHandler(array $options)
     {
         $options = $this->resolver->resolve($options);

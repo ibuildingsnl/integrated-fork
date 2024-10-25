@@ -21,9 +21,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class ContentWorkflowIntegrationListener implements EventSubscriberInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

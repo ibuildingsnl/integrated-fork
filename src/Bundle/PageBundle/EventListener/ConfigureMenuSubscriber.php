@@ -37,9 +37,6 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -56,8 +53,8 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($this->authorizationChecker->isGranted(self::ROLE_WEBSITE_MANAGER) ||
-            $this->authorizationChecker->isGranted(self::ROLE_ADMIN)) {
+        if ($this->authorizationChecker->isGranted(self::ROLE_WEBSITE_MANAGER)
+            || $this->authorizationChecker->isGranted(self::ROLE_ADMIN)) {
             if (!$menuWebsite = $menu->getChild(self::MENU_WEBSITE)) {
                 $menuWebsite = $menu->addChild(self::MENU_WEBSITE)->setExtra('icon', 'iconoir-network-reverse');
             }

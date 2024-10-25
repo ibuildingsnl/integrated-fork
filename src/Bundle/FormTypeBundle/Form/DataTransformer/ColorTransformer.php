@@ -19,9 +19,6 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
  */
 class ColorTransformer implements DataTransformerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function transform($value)
     {
         $value = strtolower(trim((string) $value));
@@ -37,9 +34,6 @@ class ColorTransformer implements DataTransformerInterface
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($value)
     {
         if (null === $value) {
@@ -60,6 +54,6 @@ class ColorTransformer implements DataTransformerInterface
             return $value;
         }
 
-        throw new TransformationFailedException(sprintf('The value %s is not a valid hexadecimal color string.', $value));
+        throw new TransformationFailedException(\sprintf('The value %s is not a valid hexadecimal color string.', $value));
     }
 }

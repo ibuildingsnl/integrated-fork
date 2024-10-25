@@ -37,9 +37,6 @@ class ContainerAwareQueueListener extends QueueListener
         $this->service = $service;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getQueue()
     {
         $queue = parent::getQueue();

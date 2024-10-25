@@ -44,7 +44,7 @@ class ListCommand extends Command
     {
         foreach ($this->registry->getIterator() as $key => $filesystem) {
             $output->writeln(
-                sprintf(
+                \sprintf(
                     '<info>%s</info>: %s',
                     $key,
                     \get_class($filesystem->getAdapter())
@@ -54,11 +54,11 @@ class ListCommand extends Command
             if ($options = $this->resolverStorage->getOptions($key)) {
                 $output->writeln(
                     [
-                        sprintf(
+                        \sprintf(
                             "\t resolver_class: %s",
                             $options['resolver_class']
                         ),
-                        sprintf(
+                        \sprintf(
                             "\t public: %s",
                             $options['public']
                         ),

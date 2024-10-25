@@ -34,9 +34,6 @@ class BreadcrumbMenuProvider implements MenuProviderInterface
         $this->breadcrumbResolver = $breadcrumbResolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function get(string $name, array $options = []): ItemInterface
     {
         if ($name !== 'breadcrumb') {
@@ -54,9 +51,6 @@ class BreadcrumbMenuProvider implements MenuProviderInterface
         return $menu;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function has(string $name, array $options = []): bool
     {
         return $name === 'breadcrumb';

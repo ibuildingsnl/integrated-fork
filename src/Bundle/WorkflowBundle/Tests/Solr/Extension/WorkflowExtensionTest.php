@@ -354,11 +354,9 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param Definition\State $state
-     *
      * @return State
      */
-    protected function getWorkflow(Definition\State $state = null)
+    protected function getWorkflow(?Definition\State $state = null)
     {
         $mock = $this->createMock(State::class);
         $mock->expects($this->atLeastOnce())
@@ -369,11 +367,9 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param Definition\State $state
-     *
      * @return Definition
      */
-    protected function getDefinition(Definition\State $state = null)
+    protected function getDefinition(?Definition\State $state = null)
     {
         $mock = $this->createMock(Definition::class);
         $mock->expects($this->atLeastOnce())

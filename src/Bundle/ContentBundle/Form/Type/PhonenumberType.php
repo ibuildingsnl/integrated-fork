@@ -25,9 +25,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class PhonenumberType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (\in_array('type', $options['fields'])) {
@@ -51,9 +48,6 @@ class PhonenumberType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -67,9 +61,6 @@ class PhonenumberType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_phonenumber';

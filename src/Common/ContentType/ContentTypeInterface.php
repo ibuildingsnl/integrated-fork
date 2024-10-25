@@ -81,8 +81,6 @@ interface ContentTypeInterface
      * Get the value of the specified key.
      *
      * @param string $name
-     *
-     * @return mixed
      */
     public function getOption($name);
 

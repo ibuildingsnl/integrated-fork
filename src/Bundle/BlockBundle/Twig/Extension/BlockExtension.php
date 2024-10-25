@@ -75,7 +75,7 @@ class BlockExtension extends AbstractExtension
         MetadataFactoryInterface $metadataFactory,
         ChannelContextInterface $channelContext,
         LoggerInterface $logger,
-        string $environment
+        string $environment,
     ) {
         $this->blockManager = $blockManager;
         $this->themeManager = $themeManager;
@@ -86,9 +86,6 @@ class BlockExtension extends AbstractExtension
         $this->environment = $environment;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions()
     {
         return [
@@ -108,9 +105,6 @@ class BlockExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFilters()
     {
         return [
@@ -152,7 +146,7 @@ class BlockExtension extends AbstractExtension
             if ('prod' !== $this->environment) {
                 throw $e;
             }
-            $this->logger->error(sprintf('Block "%s" contains an error', $id));
+            $this->logger->error(\sprintf('Block "%s" contains an error', $id));
 
             return $environment->render($this->themeManager->locateTemplate('blocks/error.html.twig'), [
                 'id' => $id,
@@ -222,7 +216,7 @@ class BlockExtension extends AbstractExtension
      */
     public function getBlockTypeName(BlockInterface $block)
     {
-        return $this->metadataFactory->getMetadata(\get_class($block))->getType();
+        return $this->metadataFactory->getMetadata($block::class)->getType();
     }
 
     /**
@@ -254,9 +248,6 @@ class BlockExtension extends AbstractExtension
         return $array;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated_block_block';

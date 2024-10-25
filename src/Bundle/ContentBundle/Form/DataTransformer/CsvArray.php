@@ -19,11 +19,6 @@ use Symfony\Component\Form\DataTransformerInterface;
  */
 class CsvArray implements DataTransformerInterface
 {
-    /**
-     * @param mixed $value
-     *
-     * @return mixed
-     */
     public function transform($value)
     {
         if (empty($value)) {
@@ -34,8 +29,6 @@ class CsvArray implements DataTransformerInterface
     }
 
     /**
-     * @param mixed $value
-     *
      * @return array
      */
     public function reverseTransform($value)

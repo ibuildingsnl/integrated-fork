@@ -33,13 +33,10 @@ class TailwindIconExtension extends AbstractExtension
     {
         $this->iconPrefix = $iconPrefix;
         // TODO: figure out where 'span' comes from as iconTag.
-//        $this->iconTag = $iconTag;
+        //        $this->iconTag = $iconTag;
         $this->iconTag = 'i';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getFilters()
     {
         return [
@@ -51,9 +48,6 @@ class TailwindIconExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getFunctions()
     {
         return [
@@ -101,12 +95,9 @@ class TailwindIconExtension extends AbstractExtension
 
         $icon = str_replace('+', ' '.$iconSet.'-', $icon);
 
-        return sprintf('<%1$s class="%2$s %2$s-%3$s"></%1$s>', $this->iconTag, $iconSet, $icon);
+        return \sprintf('<%1$s class="%2$s %2$s-%3$s"></%1$s>', $this->iconTag, $iconSet, $icon);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getName()
     {
         return 'braincrafted_tailwind_icon';

@@ -26,8 +26,6 @@ interface ManagerInterface /* extends Countable */
     /**
      * Finds the object by its identifier.
      *
-     * @param mixed $id
-     *
      * @return object
      */
     public function find($id);

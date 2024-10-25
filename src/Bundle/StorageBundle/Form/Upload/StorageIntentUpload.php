@@ -34,7 +34,7 @@ class StorageIntentUpload extends File implements StorageInterface
      */
     protected $original;
 
-    public function __construct(StorageInterface $original = null, UploadedFile $uploadedFile)
+    public function __construct(?StorageInterface $original, UploadedFile $uploadedFile)
     {
         $this->original = $original;
         $this->uploadedFile = $uploadedFile;
@@ -42,25 +42,16 @@ class StorageIntentUpload extends File implements StorageInterface
         parent::__construct($uploadedFile->getPathname());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIdentifier()
     {
         return $this->uploadedFile->getFilename();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPathname()
     {
         return $this->uploadedFile->getPathname();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFilesystems()
     {
         return new ArrayCollection();

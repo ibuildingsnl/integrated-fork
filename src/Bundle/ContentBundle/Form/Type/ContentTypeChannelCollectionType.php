@@ -29,16 +29,13 @@ class ContentTypeChannelCollectionType extends AbstractType
     /**
      * @var null
      */
-    private $channels = null;
+    private $channels;
 
     public function __construct(ObjectRepository $repository)
     {
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         foreach ($this->getChannels() as $channel) {
@@ -46,9 +43,6 @@ class ContentTypeChannelCollectionType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_content_type_channel_collection';

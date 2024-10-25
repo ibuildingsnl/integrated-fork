@@ -24,8 +24,6 @@ interface RegistryInterface extends \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Add the value to the registry.
      *
-     * @param mixed $value
-     *
      * @return self
      */
     public function add($value);
@@ -34,7 +32,6 @@ interface RegistryInterface extends \ArrayAccess, \Countable, \IteratorAggregate
      * Set the value for the given key.
      *
      * @param string $key
-     * @param mixed  $value
      *
      * @return self
      */
@@ -42,8 +39,6 @@ interface RegistryInterface extends \ArrayAccess, \Countable, \IteratorAggregate
 
     /**
      * Get the value from the given key.
-     *
-     * @return mixed
      */
     public function get($key);
 

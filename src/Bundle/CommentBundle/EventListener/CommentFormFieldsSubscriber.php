@@ -58,14 +58,14 @@ class CommentFormFieldsSubscriber implements EventSubscriberInterface
     /**
      * @var array|null
      */
-    private $comments = null;
+    private $comments;
 
     public function __construct(
         DocumentManager $documentManager,
         UrlGeneratorInterface $generator,
         AssetManager $stylesheets,
         AssetManager $javascripts,
-        RequestStack $requestStack
+        RequestStack $requestStack,
     ) {
         $this->documentManager = $documentManager;
         $this->generator = $generator;

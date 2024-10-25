@@ -17,9 +17,6 @@ use Doctrine\ODM\MongoDB\Events;
 
 class DocumentNotFoundListener implements EventSubscriber
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribedEvents()
     {
         return [

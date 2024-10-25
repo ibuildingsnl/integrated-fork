@@ -38,7 +38,7 @@ class IpListManager implements IpListManagerInterface
         $this->repository = $this->om->getRepository($class);
 
         if (!is_a($this->repository->getClassName(), IpList::class, true)) {
-            throw new \InvalidArgumentException(sprintf('The class "%s" is not a instance of %s', $this->repository->getClassName(), IpList::class));
+            throw new \InvalidArgumentException(\sprintf('The class "%s" is not a instance of %s', $this->repository->getClassName(), IpList::class));
         }
     }
 
@@ -65,9 +65,6 @@ class IpListManager implements IpListManagerInterface
         return new $class($ip, $description);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function persist(IpList $list, $flush = true)
     {
         $this->om->persist($list);
@@ -77,9 +74,6 @@ class IpListManager implements IpListManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function remove(IpList $list, $flush = true)
     {
         $this->om->remove($list);
@@ -89,41 +83,26 @@ class IpListManager implements IpListManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear()
     {
         $this->om->clear();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function find($id)
     {
         return $this->repository->find($id);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findAll()
     {
         return $this->repository->findAll();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null)
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClassName()
     {
         return $this->repository->getClassName();

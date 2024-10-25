@@ -21,22 +21,16 @@ use Integrated\Common\Content\Channel\ChannelInterface;
  */
 class ConfigRepository extends EntityRepository implements ConfigManagerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function create()
     {
         return $this->_class->getReflectionClass()->newInstance();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function persist(ConfigInterface $object, $flush = true)
     {
         if (!$this->_class->getReflectionClass()->isInstance($object)) {
             throw new \InvalidArgumentException(
-                sprintf('The object (%s) is not a instance of %s', \get_class($object), $this->getClassName())
+                \sprintf('The object (%s) is not a instance of %s', $object::class, $this->getClassName())
             );
         }
 
@@ -47,14 +41,11 @@ class ConfigRepository extends EntityRepository implements ConfigManagerInterfac
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function remove(ConfigInterface $object, $flush = true)
     {
         if (!$this->_class->getReflectionClass()->isInstance($object)) {
             throw new \InvalidArgumentException(
-                sprintf('The object (%s) is not a instance of %s', \get_class($object), $this->getClassName())
+                \sprintf('The object (%s) is not a instance of %s', $object::class, $this->getClassName())
             );
         }
 
@@ -65,9 +56,6 @@ class ConfigRepository extends EntityRepository implements ConfigManagerInterfac
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByAdaptor($criteria)
     {
         return $this->findBy([
@@ -75,9 +63,6 @@ class ConfigRepository extends EntityRepository implements ConfigManagerInterfac
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByChannel($criteria)
     {
         if ($criteria instanceof ChannelInterface) {

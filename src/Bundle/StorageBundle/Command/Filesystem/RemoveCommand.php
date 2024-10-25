@@ -41,7 +41,7 @@ class RemoveCommand extends Command
         DatabaseInterface $database,
         FilesystemRegistry $registry,
         ManagerInterface $storage,
-        MetadataFactoryInterface $metadata
+        MetadataFactoryInterface $metadata,
     ) {
         $this->database = $database;
         $this->registry = $registry;
@@ -72,7 +72,7 @@ class RemoveCommand extends Command
                 ->walk(FilesystemWalk::remove($this->storage, $this->metadata, $filesystem))
                 ->walk(DocumentWalk::save($this->database));
         } else {
-            throw new \InvalidArgumentException(sprintf('The filesystem %s does not exist', $filesystem));
+            throw new \InvalidArgumentException(\sprintf('The filesystem %s does not exist', $filesystem));
         }
 
         return self::SUCCESS;

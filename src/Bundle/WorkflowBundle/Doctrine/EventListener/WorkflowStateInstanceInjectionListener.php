@@ -62,7 +62,7 @@ class WorkflowStateInstanceInjectionListener implements EventSubscriber
             return;
         }
 
-        $metadata = $args->getObjectManager()->getClassMetadata(\get_class($object));
+        $metadata = $args->getObjectManager()->getClassMetadata($object::class);
 
         // first the assigned object
 

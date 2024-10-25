@@ -21,9 +21,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class PasswordChangeType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('password', RepeatedType::class, [

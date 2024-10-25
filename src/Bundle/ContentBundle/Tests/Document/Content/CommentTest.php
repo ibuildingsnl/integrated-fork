@@ -22,7 +22,7 @@ class CommentTest extends TestCase
     use ContentTestTrait;
 
     /**
-     * @var comment
+     * @var Comment
      */
     private $comment;
 
@@ -79,9 +79,6 @@ class CommentTest extends TestCase
         $this->assertEquals($title, (string) $this->comment->setTitle($title));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getContent()
     {
         return $this->comment;

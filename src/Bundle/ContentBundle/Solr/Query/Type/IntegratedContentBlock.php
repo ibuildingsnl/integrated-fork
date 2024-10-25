@@ -24,7 +24,7 @@ class IntegratedContentBlock extends AbstractType
 {
     public function __construct(
         private readonly DocumentManager $manager,
-        private readonly SortOptions $sorting
+        private readonly SortOptions $sorting,
     ) {
     }
 

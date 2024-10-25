@@ -65,9 +65,6 @@ class ContainerBlock extends Block
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return 'container';

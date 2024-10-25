@@ -36,9 +36,9 @@ trait ContentTypeHelper
         $class,
         array $requiredFields = [],
         array $optionalFields = [],
-        array $options = []
+        array $options = [],
     ) {
-        $this->write(sprintf('Creating contentType with id: "%s"', $id));
+        $this->write(\sprintf('Creating contentType with id: "%s"', $id));
 
         $dm = $this->getDocumentManager();
 
@@ -67,7 +67,7 @@ trait ContentTypeHelper
     protected function setContentTypeFields(
         ContentType $contentType,
         array $requiredFields = [],
-        array $optionalFields = []
+        array $optionalFields = [],
     ) {
         $contentType->setFields([]);
 
@@ -87,7 +87,7 @@ trait ContentTypeHelper
 
         if (!$metadata = $metadataFactory->getMetadata($contentType->getClass())) {
             throw new NoSuchMetadataException(
-                sprintf('No class metadata defined for class "%s"', $contentType->getClass())
+                \sprintf('No class metadata defined for class "%s"', $contentType->getClass())
             );
         }
         $requiredFields = array_map('strtolower', $requiredFields);
@@ -184,7 +184,7 @@ trait ContentTypeHelper
         $contentType = $this->getDocumentManager()->getRepository(ContentType::class)->find($id);
 
         if (!$contentType && $throwNotFoundException) {
-            throw new DocumentNotFoundException(sprintf('ContentType "%s" not found.', $id));
+            throw new DocumentNotFoundException(\sprintf('ContentType "%s" not found.', $id));
         }
 
         return $contentType;
@@ -210,7 +210,7 @@ trait ContentTypeHelper
             $dm->remove($contentType);
             $dm->flush();
 
-            $this->write(sprintf('Removed contentType with id "%s".', $id));
+            $this->write(\sprintf('Removed contentType with id "%s".', $id));
         }
     }
 

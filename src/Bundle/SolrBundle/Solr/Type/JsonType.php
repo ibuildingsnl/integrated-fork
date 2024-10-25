@@ -19,9 +19,6 @@ use Symfony\Component\PropertyAccess\Exception\ExceptionInterface;
  */
 class JsonType extends FieldMapperType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         foreach ($this->groupFields($options) as $field => $config) {
@@ -38,8 +35,6 @@ class JsonType extends FieldMapperType
     }
 
     /**
-     * @param mixed $data
-     *
      * @return array
      */
     protected function readValues($data, array $paths)
@@ -81,9 +76,6 @@ class JsonType extends FieldMapperType
         return $extracted;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.json';

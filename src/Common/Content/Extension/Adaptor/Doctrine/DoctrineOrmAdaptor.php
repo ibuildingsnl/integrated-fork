@@ -23,9 +23,6 @@ use Integrated\Common\Content\Extension\Events;
  */
 class DoctrineOrmAdaptor extends AbstractAdaptor implements EventSubscriber
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribedEvents()
     {
         return [
@@ -64,7 +61,7 @@ class DoctrineOrmAdaptor extends AbstractAdaptor implements EventSubscriber
         $manager = $event->getObjectManager();
 
         if (!$manager instanceof EntityManager) {
-            throw new \LogicException(sprintf('The ObjectManger is not an instance of %s', EntityManager::class));
+            throw new \LogicException(\sprintf('The ObjectManger is not an instance of %s', EntityManager::class));
         }
 
         $uow = $manager->getUnitOfWork();

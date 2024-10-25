@@ -17,9 +17,6 @@ use Integrated\Common\Converter\Type\TypeExtensionInterface;
 
 class ShorttagFilterExtension implements TypeExtensionInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         if (!$data instanceof Content) {
@@ -35,9 +32,6 @@ class ShorttagFilterExtension implements TypeExtensionInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.fields';

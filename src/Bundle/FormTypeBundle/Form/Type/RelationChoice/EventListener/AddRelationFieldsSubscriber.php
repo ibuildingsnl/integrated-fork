@@ -72,7 +72,7 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
         $relations = $event->getData();
 
         if (!$relations instanceof Collection) {
-            throw new \Exception(sprintf('Relations should implement Collection, "%s" given', \gettype($relations)));
+            throw new \Exception(\sprintf('Relations should implement Collection, "%s" given', \gettype($relations)));
         }
 
         // get all relation ids
@@ -112,7 +112,7 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
     {
         $relation = $this->repo->find($relationId);
         if (!$relation instanceof Relation) {
-            throw new \Exception(sprintf('RelationId "%s" is not found', $relationId));
+            throw new \Exception(\sprintf('RelationId "%s" is not found', $relationId));
         }
 
         $relationSourceClasses = [];
@@ -122,10 +122,10 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
             $relationSourceClasses[] = $source->getClass();
         }
 
-        $formClass = \get_class($formData);
+        $formClass = $formData::class;
 
         if (!\in_array($formClass, $relationSourceClasses)) {
-            throw new \Exception(sprintf('RelationId "%s" does not have "%s" defined as source, perhaps you have chosen a wrong relation?', $relationId, $formClass));
+            throw new \Exception(\sprintf('RelationId "%s" does not have "%s" defined as source, perhaps you have chosen a wrong relation?', $relationId, $formClass));
         }
 
         $this->setRelation($relationId, $relation);

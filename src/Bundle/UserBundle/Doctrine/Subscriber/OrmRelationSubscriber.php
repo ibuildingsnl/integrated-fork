@@ -52,7 +52,7 @@ class OrmRelationSubscriber implements EventSubscriber
             return;
         }
 
-        $metadata = $args->getObjectManager()->getClassMetadata(\get_class($object));
+        $metadata = $args->getObjectManager()->getClassMetadata($object::class);
 
         $prop = $metadata->getReflectionClass()->getProperty('relation');
         $prop->setAccessible(true);

@@ -31,17 +31,11 @@ class EmbedOne implements PropertyInterface
         $this->property = $property;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPropertyName()
     {
         return $this->property;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFileId(array $document)
     {
         if (isset($document[$this->property]['$id'])) {

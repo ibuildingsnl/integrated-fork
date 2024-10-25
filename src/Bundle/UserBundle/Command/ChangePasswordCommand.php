@@ -36,7 +36,7 @@ class ChangePasswordCommand extends Command
     public function __construct(
         UserManager $userManager,
         ScopeManager $scopeManager,
-        PasswordHasherFactoryInterface $hasherFactory
+        PasswordHasherFactoryInterface $hasherFactory,
     ) {
         $this->userManager = $userManager;
         $this->scopeManager = $scopeManager;
@@ -69,7 +69,7 @@ The <info>%command.name%</info> command replaces the password of the user
         }
 
         if (!$scope = $this->scopeManager->findByName($scopeName)) {
-            $output->writeln(sprintf('Aborting: scope with name "%s" does not exist', $scopeName));
+            $output->writeln(\sprintf('Aborting: scope with name "%s" does not exist', $scopeName));
 
             return self::FAILURE;
         }
@@ -77,7 +77,7 @@ The <info>%command.name%</info> command replaces the password of the user
         $user = $this->findUserByScope($username, $scope);
 
         if (!$user) {
-            $output->writeln(sprintf('Aborting: user with username "%s" does not exist', $username));
+            $output->writeln(\sprintf('Aborting: user with username "%s" does not exist', $username));
 
             return self::FAILURE;
         }
@@ -97,7 +97,7 @@ The <info>%command.name%</info> command replaces the password of the user
         try {
             $this->userManager->persist($user);
         } catch (\Exception $e) {
-            $output->writeln(sprintf('Aborting: %s', $e->getMessage()));
+            $output->writeln(\sprintf('Aborting: %s', $e->getMessage()));
 
             return self::FAILURE;
         }

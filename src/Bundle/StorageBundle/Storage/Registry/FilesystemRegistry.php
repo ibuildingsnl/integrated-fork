@@ -33,17 +33,11 @@ class FilesystemRegistry implements FilesystemRegistryInterface
         $this->filesystemMap = $filesystemMap;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function get($filesystem)
     {
         return $this->filesystemMap->get($filesystem);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function keys()
     {
         $keys = [];
@@ -55,9 +49,6 @@ class FilesystemRegistry implements FilesystemRegistryInterface
         return $keys;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function exists($key)
     {
         foreach ($this->getIterator() as $currentKey => $filesystem) {
@@ -69,9 +60,6 @@ class FilesystemRegistry implements FilesystemRegistryInterface
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIterator()
     {
         return $this->filesystemMap->getIterator();

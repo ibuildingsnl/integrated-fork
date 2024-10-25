@@ -18,7 +18,7 @@ class SocialScriptExtension extends AbstractExtension
         ];
     }
 
-    public function getSocialMediaScripts(MetaData $meta): ?string
+    public function getSocialMediaScripts(Metadata $meta): ?string
     {
         $scripts = [];
 

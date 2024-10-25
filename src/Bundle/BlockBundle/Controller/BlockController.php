@@ -77,7 +77,7 @@ class BlockController extends AbstractController
             ['defaultSortFieldName' => 'title', 'defaultSortDirection' => 'asc', 'query_type' => 'block_overview']
         );
 
-        return $this->render(sprintf('@IntegratedBlock/block/index.%s.twig', $request->getRequestFormat()), [
+        return $this->render(\sprintf('@IntegratedBlock/block/index.%s.twig', $request->getRequestFormat()), [
             'blocks' => $pagination,
             'factory' => $this->metadataFactory,
             'facetFilter' => $facetFilter,
@@ -108,7 +108,7 @@ class BlockController extends AbstractController
         $block = class_exists($class) ? new $class() : null;
 
         if (!$block instanceof BlockInterface) {
-            throw $this->createNotFoundException(sprintf('Invalid block "%s"', $class));
+            throw $this->createNotFoundException(\sprintf('Invalid block "%s"', $class));
         }
 
         $form = $this->createForm(
@@ -139,7 +139,7 @@ class BlockController extends AbstractController
             }
         }
 
-        return $this->render(sprintf('@IntegratedBlock/block/new.%s.twig', $request->getRequestFormat()), [
+        return $this->render(\sprintf('@IntegratedBlock/block/new.%s.twig', $request->getRequestFormat()), [
             'form' => $form,
         ]);
     }
@@ -158,7 +158,7 @@ class BlockController extends AbstractController
             $block,
             [
                 'method' => 'POST',
-                'data_class' => \get_class($block),
+                'data_class' => $block::class,
                 'type' => $block->getType(),
             ]
         );
@@ -188,9 +188,9 @@ class BlockController extends AbstractController
             }
         }
 
-        $metadata = $this->metadataFactory->getMetadata(\get_class($block));
+        $metadata = $this->metadataFactory->getMetadata($block::class);
 
-        return $this->render(sprintf('@IntegratedBlock/block/edit.%s.twig', $request->getRequestFormat()), [
+        return $this->render(\sprintf('@IntegratedBlock/block/edit.%s.twig', $request->getRequestFormat()), [
             'block' => $block,
             'form' => $form,
             'blockType' => $metadata->getType(),
@@ -204,13 +204,13 @@ class BlockController extends AbstractController
         }
 
         if ($block->isLocked()) {
-            throw $this->createNotFoundException(sprintf('Block "%s" is locked.', $block->getId()));
+            throw $this->createNotFoundException(\sprintf('Block "%s" is locked.', $block->getId()));
         }
 
         /* check if current Block not used on some page */
         if ($this->container->has('integrated_page.form.type.page')) {
             if ($this->documentManager->getRepository(Block::class)->isUsed($block)) {
-                throw $this->createNotFoundException(sprintf('Block "%s" is used.', $block->getId()));
+                throw $this->createNotFoundException(\sprintf('Block "%s" is used.', $block->getId()));
             }
         }
 

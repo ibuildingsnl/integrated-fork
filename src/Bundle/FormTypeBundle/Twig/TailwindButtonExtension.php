@@ -29,9 +29,6 @@ class TailwindButtonExtension extends AbstractExtension
         $this->iconExtension = $iconExtension;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getFunctions()
     {
         return [
@@ -86,9 +83,6 @@ class TailwindButtonExtension extends AbstractExtension
         return $result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getName()
     {
         return 'braincrafted_tailwind_button';

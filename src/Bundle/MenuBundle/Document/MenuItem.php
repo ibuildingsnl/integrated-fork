@@ -156,9 +156,6 @@ class MenuItem extends KnpMenuItem
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addChild($child, array $options = []): ItemInterface
     {
         if ($child instanceof Menu) {
@@ -175,7 +172,7 @@ class MenuItem extends KnpMenuItem
         }
 
         if (!$child instanceof self) {
-            throw new \InvalidArgumentException(sprintf('Child needs to be an instance of %s', self::class));
+            throw new \InvalidArgumentException(\sprintf('Child needs to be an instance of %s', self::class));
         }
 
         $child->setParent($this);
@@ -185,9 +182,6 @@ class MenuItem extends KnpMenuItem
         return $child;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getChild($id): ?ItemInterface
     {
         /** @var MenuItem $child */

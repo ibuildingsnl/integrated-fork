@@ -31,9 +31,6 @@ class UserProfileExtensionListener implements EventSubscriberInterface
         $this->name = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

@@ -52,9 +52,6 @@ class RelatedContentBlockHandler extends BlockHandler
         $this->dm = $dm;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(BlockInterface $block, array $options)
     {
         if (!$block instanceof RelatedContentBlock) {
@@ -74,10 +71,10 @@ class RelatedContentBlockHandler extends BlockHandler
         }
 
         return $this->render([
-             'block' => $block,
-             'pagination' => $pagination,
-             'document' => $this->getDocument(),
-             'options' => $options,
+            'block' => $block,
+            'pagination' => $pagination,
+            'document' => $this->getDocument(),
+            'options' => $options,
         ]);
     }
 
@@ -161,7 +158,7 @@ class RelatedContentBlockHandler extends BlockHandler
     }
 
     /**
-     * @return \Doctrine\ODM\MongoDB\Query\Builder
+     * @return Builder
      */
     protected function getLinkedByQuery(Content $document, RelatedContentBlock $block)
     {

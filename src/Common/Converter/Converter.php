@@ -44,7 +44,7 @@ class Converter implements ConverterInterface
      *
      * @see ContainerFactory
      */
-    public function __construct(RegistryInterface $registry, ConfigResolverInterface $resolver, ContainerFactoryInterface $factory = null)
+    public function __construct(RegistryInterface $registry, ConfigResolverInterface $resolver, ?ContainerFactoryInterface $factory = null)
     {
         $this->registry = $registry;
         $this->resolver = $resolver;
@@ -53,8 +53,6 @@ class Converter implements ConverterInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @trows UnexpectedTypeException if $data is not a object
      */
     public function convert($data)
@@ -69,7 +67,7 @@ class Converter implements ConverterInterface
 
         $container = $this->factory->createContainer();
 
-        if ($config = $this->resolver->getConfig(\get_class($data))) {
+        if ($config = $this->resolver->getConfig($data::class)) {
             /** @var TypeConfigInterface $type */
             foreach (new ParentAwareConfigIterator($config) as $type) {
                 $this->registry->getType($type->getName())->build($container, $data, $type->getOptions() ?: []);

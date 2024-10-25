@@ -45,9 +45,6 @@ class AnnotationDriver implements DriverInterface
         $this->reader = $reader;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAllClassNames(): array
     {
         return array_filter($this->driver->getAllClassNames(), function (string $class) {
@@ -55,9 +52,6 @@ class AnnotationDriver implements DriverInterface
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadMetadataForClass(MetadataEditorInterface $metadata): void
     {
         /* @var $document Document */

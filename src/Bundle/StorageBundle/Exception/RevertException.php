@@ -25,7 +25,7 @@ class RevertException extends \ErrorException
     public static function writeFailed($filesystem, $identifier)
     {
         return new self(
-            sprintf(
+            \sprintf(
                 'The filesystem %s denied writing for key %s',
                 $filesystem,
                 $identifier

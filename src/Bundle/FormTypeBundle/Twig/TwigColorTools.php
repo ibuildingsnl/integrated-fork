@@ -176,7 +176,7 @@ class TwigColorTools extends AbstractExtension
     {
         $color = strtolower($color);
 
-        if (strpos($color, 'rgb') !== false) {
+        if (str_contains($color, 'rgb')) {
             $mode = 'rgb';
             $color = trim($color, 'rgba()');
             $color = str_replace(' ', '', $color);
@@ -211,9 +211,9 @@ class TwigColorTools extends AbstractExtension
     {
         switch ($mode) {
             case 'hex':
-                $red = sprintf('%02x', $color[0]);
-                $green = sprintf('%02x', $color[1]);
-                $blue = sprintf('%02x', $color[2]);
+                $red = \sprintf('%02x', $color[0]);
+                $green = \sprintf('%02x', $color[1]);
+                $blue = \sprintf('%02x', $color[2]);
                 $color = '#'.$red.$green.$blue;
                 break;
             case 'rgb':

@@ -20,9 +20,6 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class RegisterTaskHandlerPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('integrated_solr.worker.handler.registry_builder')) {

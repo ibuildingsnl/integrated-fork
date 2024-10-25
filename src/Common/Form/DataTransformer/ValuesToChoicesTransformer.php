@@ -33,9 +33,6 @@ class ValuesToChoicesTransformer implements DataTransformerInterface
         $this->choiceList = $choiceList;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transform($values)
     {
         if (null === $values) {
@@ -49,9 +46,6 @@ class ValuesToChoicesTransformer implements DataTransformerInterface
         return $this->choiceList->getChoicesForValues($values);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($values)
     {
         if (null === $values) {

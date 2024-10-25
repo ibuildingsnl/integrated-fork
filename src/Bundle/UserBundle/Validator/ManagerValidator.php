@@ -26,7 +26,7 @@ abstract class ManagerValidator extends ConstraintValidator
     /**
      * @var PropertyAccessor
      */
-    private $accessor = null;
+    private $accessor;
 
     /**
      * @param object $value
@@ -55,7 +55,7 @@ abstract class ManagerValidator extends ConstraintValidator
 
         foreach ($fields as $fieldName) {
             if (!$accessor->isReadable($value, $fieldName)) {
-                throw new ConstraintDefinitionException(sprintf("The field '%s' is not readable, so its value can not be determent.", $fieldName));
+                throw new ConstraintDefinitionException(\sprintf("The field '%s' is not readable, so its value can not be determent.", $fieldName));
             }
 
             $criteria[$fieldName] = $accessor->getValue($value, $fieldName);

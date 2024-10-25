@@ -42,7 +42,7 @@ class ContentTypeController extends AbstractController
         ContentTypeManager $contentTypeManager,
         EventDispatcherInterface $eventDispatcher,
         MetadataFactory $metadataFactory,
-        DocumentManager $documentManager
+        DocumentManager $documentManager,
     ) {
         $this->contentTypeManager = $contentTypeManager;
         $this->eventDispatcher = $eventDispatcher;
@@ -167,7 +167,7 @@ class ContentTypeController extends AbstractController
         $contentType = $this->getContentType($id);
 
         if ($contentType->isLocked()) {
-            throw new AccessDeniedHttpException(sprintf('Content type with id "%s" is locked.', $id));
+            throw new AccessDeniedHttpException(\sprintf('Content type with id "%s" is locked.', $id));
         }
 
         $form = $this->createDeleteForm($contentType);
@@ -217,7 +217,7 @@ class ContentTypeController extends AbstractController
         try {
             return $this->contentTypeManager->getType($id);
         } catch (\InvalidArgumentException $e) {
-            throw new NotFoundHttpException(sprintf('Content type with id "%s" not found.', $id));
+            throw new NotFoundHttpException(\sprintf('Content type with id "%s" not found.', $id));
         }
     }
 

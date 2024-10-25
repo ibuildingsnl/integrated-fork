@@ -30,9 +30,6 @@ class BlockTransformer implements DataTransformerInterface
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transform($block)
     {
         if ($block instanceof BlockInterface) {
@@ -42,9 +39,6 @@ class BlockTransformer implements DataTransformerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($id)
     {
         return $this->repository->find($id);

@@ -12,13 +12,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class ContentFeaturedImageListener implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly DocumentManager $documentManager
+        private readonly DocumentManager $documentManager,
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents()
     {
         return [

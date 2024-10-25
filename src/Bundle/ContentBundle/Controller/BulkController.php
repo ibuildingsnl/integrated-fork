@@ -31,14 +31,14 @@ class BulkController extends AbstractController
     public function __construct(
         DocumentManager $manager,
         ContentProvider $contentProvider,
-        BulkHandlerInterface $bulkHandler
+        BulkHandlerInterface $bulkHandler,
     ) {
         $this->manager = $manager;
         $this->contentProvider = $contentProvider;
         $this->bulkHandler = $bulkHandler;
     }
 
-    public function select(Request $request, BulkAction $bulk = null): Response
+    public function select(Request $request, ?BulkAction $bulk = null): Response
     {
         // Fetch Content selection.
         $limit = 1000;

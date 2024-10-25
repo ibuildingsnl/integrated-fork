@@ -20,8 +20,6 @@ use Symfony\Component\Form\DataTransformerInterface;
 class DefaultTransformer implements DataTransformerInterface
 {
     /**
-     * @param mixed $fields
-     *
      * @return array $return
      */
     public function transform($fields)
@@ -39,8 +37,6 @@ class DefaultTransformer implements DataTransformerInterface
     }
 
     /**
-     * @param mixed $values
-     *
      * @return mixed|null
      */
     public function reverseTransform($values)

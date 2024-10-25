@@ -40,9 +40,6 @@ class SearchSelectionChoiceType extends AbstractType
         $this->tokenStorage = $tokenStorage;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $choices = [];
@@ -71,17 +68,11 @@ class SearchSelectionChoiceType extends AbstractType
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): ?string
     {
         return ChoiceType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_search_selection_choice';

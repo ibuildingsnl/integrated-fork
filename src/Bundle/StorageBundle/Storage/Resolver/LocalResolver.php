@@ -28,20 +28,14 @@ class LocalResolver implements FileResolverInterface
      */
     protected $identifier;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(array $options, $identifier)
     {
         $this->options = $options;
         $this->identifier = $identifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getLocation()
     {
-        return sprintf('%s/%s', $this->options['public'], $this->identifier);
+        return \sprintf('%s/%s', $this->options['public'], $this->identifier);
     }
 }

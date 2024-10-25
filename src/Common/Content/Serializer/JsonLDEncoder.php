@@ -23,17 +23,11 @@ class JsonLDEncoder extends JsonEncoder
      */
     public const FORMAT = 'json-ld';
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsEncoding(string $format): bool
     {
         return self::FORMAT === $format;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsDecoding($format): bool
     {
         return self::FORMAT === $format;

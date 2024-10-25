@@ -30,9 +30,6 @@ class EmbeddedDocumentType extends AbstractType
         $this->metadataFactory = $metadataFactory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $metadata = $this->metadataFactory->getMetadata($options['data_class']);
@@ -42,9 +39,6 @@ class EmbeddedDocumentType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_embedded_document';

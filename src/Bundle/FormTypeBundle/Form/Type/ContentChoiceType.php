@@ -49,7 +49,7 @@ class ContentChoiceType extends AbstractType
      * @param string $repositoryClass
      * @param string $route
      */
-    public function __construct(DocumentManager $dm, $repositoryClass, $route, array $params = null)
+    public function __construct(DocumentManager $dm, $repositoryClass, $route, ?array $params = null)
     {
         $this->dm = $dm;
         $this->repositoryClass = $repositoryClass;
@@ -57,9 +57,6 @@ class ContentChoiceType extends AbstractType
         $this->params = $params;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if ($options['multiple']) {
@@ -75,9 +72,6 @@ class ContentChoiceType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $varNames = ['multiple', 'route', 'params', 'allow_clear'];
@@ -92,9 +86,6 @@ class ContentChoiceType extends AbstractType
         $view->vars['attr']['data-placeholder'] = $options['placeholder'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -109,9 +100,6 @@ class ContentChoiceType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_content_choice';

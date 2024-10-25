@@ -29,7 +29,7 @@ final class ArticleMother
         return $a;
     }
 
-    public function withChannel(string $id = null): Article
+    public function withChannel(?string $id = null): Article
     {
         $a = $this->withoutChannels();
         $a->addChannel($id ? ChannelMother::withId($id) : ChannelMother::make());
@@ -39,7 +39,7 @@ final class ArticleMother
 
     public function withPublication(
         PublishTime|\DateTimeInterface $publishTime,
-        string $channelId = null,
+        ?string $channelId = null,
         array $publicationSettings = [],
     ): Article {
         if ($publishTime instanceof \DateTimeInterface) {

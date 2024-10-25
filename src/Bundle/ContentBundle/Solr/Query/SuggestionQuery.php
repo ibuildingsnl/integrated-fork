@@ -26,7 +26,7 @@ class SuggestionQuery extends Query implements WorkflowMarkerInterface
     /**
      * @var string
      */
-    private $query = null;
+    private $query;
 
     /**
      * @param string|array $options
@@ -55,10 +55,7 @@ class SuggestionQuery extends Query implements WorkflowMarkerInterface
         return Normalizer::normalize($query);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setQuery(string $query, array $bind = null): QueryInterface
+    public function setQuery(string $query, ?array $bind = null): QueryInterface
     {
         $this->query = $this->normalize($query);
 
@@ -83,16 +80,13 @@ class SuggestionQuery extends Query implements WorkflowMarkerInterface
             ->removeFacet('suggest')
             ->addFacet($facet);
 
-        return parent::setQuery(sprintf(
+        return parent::setQuery(\sprintf(
             'title:((%1$s)^50 OR (%1$s~2)^20 OR(%2$s)^10 OR (%2$s*) OR (%2$s~))',
             $helper->escapePhrase($this->query),
             '+'.str_replace(' ', ' +', $helper->escapeTerm($this->query))
         ));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getQuery($original = false): ?string
     {
         if ($original) {

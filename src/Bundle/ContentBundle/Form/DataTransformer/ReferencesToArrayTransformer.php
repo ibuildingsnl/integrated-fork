@@ -32,9 +32,6 @@ class ReferencesToArrayTransformer implements DataTransformerInterface
         $this->dm = $dm;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transform($value)
     {
         $array = [];
@@ -52,9 +49,6 @@ class ReferencesToArrayTransformer implements DataTransformerInterface
         return $array;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($value)
     {
         if (!$value) {
@@ -68,7 +62,7 @@ class ReferencesToArrayTransformer implements DataTransformerInterface
             ->toArray();
 
         if (!$references) {
-            throw new TransformationFailedException(sprintf(
+            throw new TransformationFailedException(\sprintf(
                 'A content with ID "%s" does not exist!',
                 $value
             ));

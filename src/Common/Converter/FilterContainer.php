@@ -16,9 +16,6 @@ namespace Integrated\Common\Converter;
  */
 class FilterContainer extends Container
 {
-    /**
-     * {@inheritdoc}
-     */
     public function add($key, $value)
     {
         if (\is_string($value)) {

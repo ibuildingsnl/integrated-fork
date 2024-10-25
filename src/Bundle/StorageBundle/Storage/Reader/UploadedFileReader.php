@@ -38,18 +38,12 @@ class UploadedFileReader implements ReaderInterface
      */
     private $data;
 
-    /**
-     * @param IdentifierInterface $identifier
-     */
-    public function __construct(UploadedFile $uploadedFile, IdentifierInterface $identifier = null)
+    public function __construct(UploadedFile $uploadedFile, ?IdentifierInterface $identifier = null)
     {
         $this->uploadedFile = $uploadedFile;
         $this->identifier = $identifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function read()
     {
         if (null == $this->data) {

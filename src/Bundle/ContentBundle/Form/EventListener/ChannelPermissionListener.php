@@ -31,9 +31,6 @@ class ChannelPermissionListener implements EventSubscriberInterface
         $this->notPermittedChannels = $notPermittedChannels;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

@@ -48,7 +48,7 @@ class DoctrineDocument
         } else {
             // We can call methods, so it seems like we've been given something rather unpleasant
             throw new \InvalidArgumentException(
-                sprintf('Object of type %s is not a object', \gettype($document))
+                \sprintf('Object of type %s is not a object', \gettype($document))
             );
         }
     }
@@ -79,12 +79,10 @@ class DoctrineDocument
 
     /**
      * @param string $propertyName
-     *
-     * @return mixed
      */
     public function get($propertyName)
     {
-        $method = sprintf(self::GET_SIGNATURE, ucfirst($propertyName));
+        $method = \sprintf(self::GET_SIGNATURE, ucfirst($propertyName));
         if (method_exists($this->document, $method)) {
             return \call_user_func([$this->document, $method]);
         }
@@ -94,7 +92,7 @@ class DoctrineDocument
 
         // Well that did not go as planned
         throw new \LogicException(
-            sprintf(
+            \sprintf(
                 'Required method %s does not exist on class %s.',
                 $method,
                 \get_class($this->document)
@@ -105,12 +103,10 @@ class DoctrineDocument
     /**
      * @param string $propertyName
      * @param object $propertyValue
-     *
-     * @return mixed
      */
     public function set($propertyName, $propertyValue)
     {
-        $method = sprintf(self::SET_SIGNATURE, ucfirst($propertyName));
+        $method = \sprintf(self::SET_SIGNATURE, ucfirst($propertyName));
         if (method_exists($this->document, $method)) {
             // This keeps track of the times something updated, not changed
             ++$this->updates;
@@ -127,7 +123,7 @@ class DoctrineDocument
 
         // We need something to set it, seems like we can't
         throw new \LogicException(
-            sprintf(
+            \sprintf(
                 'Required method %s does not exist on class %s.',
                 $method,
                 \get_class($this->document)

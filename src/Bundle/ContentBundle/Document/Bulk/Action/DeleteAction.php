@@ -58,9 +58,6 @@ class DeleteAction implements BulkActionInterface
         return $this->removeReferences;
     }
 
-    /**
-     * @param bool $removeReferences
-     */
     public function setRemoveReferences(?bool $removeReferences): void
     {
         $this->removeReferences = $removeReferences;

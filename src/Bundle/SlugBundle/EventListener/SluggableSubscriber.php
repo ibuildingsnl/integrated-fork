@@ -56,9 +56,6 @@ class SluggableSubscriber implements EventSubscriber
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribedEvents()
     {
         return [
@@ -93,7 +90,7 @@ class SluggableSubscriber implements EventSubscriber
     {
         $object = $args->getObject();
         $om = $args->getObjectManager();
-        $class = \get_class($object);
+        $class = $object::class;
 
         if (!$om instanceof DocumentManager && !$om instanceof EntityManagerInterface) {
             return;
@@ -108,10 +105,10 @@ class SluggableSubscriber implements EventSubscriber
             if (\count($propertyMetadata->getFields())) {
                 $hasIdentifierFields = \count(array_intersect($identifierFields, $propertyMetadata->getFields())) > 0;
 
-                if ($event == 'prePersist' &&
-                    $hasIdentifierFields ||
-                    $event == 'postPersist' &&
-                    !$hasIdentifierFields
+                if ($event == 'prePersist'
+                    && $hasIdentifierFields
+                    || $event == 'postPersist'
+                    && !$hasIdentifierFields
                 ) {
                     continue; // generate slug in another event
                 }
@@ -194,7 +191,6 @@ class SluggableSubscriber implements EventSubscriber
 
     /**
      * @param object $object
-     * @param mixed  $value
      * @param array  $fields
      *
      * @return bool
@@ -227,7 +223,7 @@ class SluggableSubscriber implements EventSubscriber
             return null;
         }
 
-        $class = \get_class($object);
+        $class = $object::class;
 
         if ($this->isUniqueSlug($om, $class, $field, $slug, $id)) {
             return $slug;
@@ -399,7 +395,7 @@ class SluggableSubscriber implements EventSubscriber
     {
         /** @var DocumentManager|EntityManagerInterface $om */
         if ($om->contains($object)) {
-            $classMetadata = $om->getClassMetadata(\get_class($object));
+            $classMetadata = $om->getClassMetadata($object::class);
             $uow = $om->getUnitOfWork();
 
             if ($uow instanceof ODMUnitOfWork) {

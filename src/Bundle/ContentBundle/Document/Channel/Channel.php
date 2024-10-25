@@ -81,12 +81,12 @@ class Channel implements ChannelInterface
     /**
      * @var Scope
      */
-    protected $scopeInstance = null;
+    protected $scopeInstance;
 
     /**
      * @var null
      */
-    protected $scope = null;
+    protected $scope;
 
     /**
      * Constructor.

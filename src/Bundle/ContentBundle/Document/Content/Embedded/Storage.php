@@ -55,14 +55,11 @@ class Storage implements StorageInterface, \ArrayAccess
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function postWrite(
         $identity,
         ArrayCollection $filesystems,
         ResolverInterface $resolverStorage,
-        MetadataInterface $metadata
+        MetadataInterface $metadata,
     ) {
         $self = new static();
         $self->identifier = $identity;
@@ -73,33 +70,22 @@ class Storage implements StorageInterface, \ArrayAccess
         return $self;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIdentifier()
     {
         return $this->identifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPathname()
     {
         return $this->pathname;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFilesystems()
     {
         return new ArrayCollection($this->filesystems);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return Storage\Metadata
      */
     public function getMetadata()

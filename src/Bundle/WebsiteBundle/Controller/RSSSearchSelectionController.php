@@ -14,7 +14,7 @@ class RSSSearchSelectionController extends AbstractController
 {
     public function __construct(
         private readonly SolariumProvider $solariumProvider,
-        private readonly ThemeManager $themeManager
+        private readonly ThemeManager $themeManager,
     ) {
     }
 

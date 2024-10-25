@@ -40,10 +40,9 @@ class Lock implements LockInterface
     private $expires;
 
     /**
-     * @param string    $id
-     * @param \DateTime $expires
+     * @param string $id
      */
-    public function __construct($id, RequestInterface $request, \DateTime $created, \DateTime $expires = null)
+    public function __construct($id, RequestInterface $request, \DateTime $created, ?\DateTime $expires = null)
     {
         $this->id = (string) $id;
         $this->request = $request;
@@ -71,33 +70,21 @@ class Lock implements LockInterface
         return new self($data['id'], $request, $created, $expires);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRequest()
     {
         return $this->request;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCreated()
     {
         return $this->created;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExpires()
     {
         return $this->expires;

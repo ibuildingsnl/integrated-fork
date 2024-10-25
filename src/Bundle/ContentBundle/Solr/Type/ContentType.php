@@ -31,9 +31,6 @@ class ContentType implements TypeInterface
         $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         if (!$data instanceof ContentInterface) {
@@ -43,13 +40,10 @@ class ContentType implements TypeInterface
         $container->set('id', $data->getContentType().'-'.$data->getId());
 
         $container->set('type_name', $data->getContentType());
-        $container->set('type_class', $this->manager->getClassMetadata(\get_class($data))->getName()); // could be a doctrine proxy object but we need the actual class name.
+        $container->set('type_class', $this->manager->getClassMetadata($data::class)->getName()); // could be a doctrine proxy object but we need the actual class name.
         $container->set('type_id', $data->getId());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.content';

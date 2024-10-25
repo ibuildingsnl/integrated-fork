@@ -33,9 +33,6 @@ class RelationFormProvider implements ConfigProviderInterface
         $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConfig(array $content)
     {
         $types = [];
@@ -53,24 +50,24 @@ class RelationFormProvider implements ConfigProviderInterface
         foreach ($builder->getQuery()->getIterator() as $relation) {
             $config[] = new Config(
                 RelationAddHandler::class,
-                sprintf('add_%s', $relation->getId()),
+                \sprintf('add_%s', $relation->getId()),
                 BulkActionRelationType::class,
                 [
                     'relation' => $relation,
                     'relation_handler' => RelationAddHandler::class,
-                    'label' => sprintf('Add %s', $relation->getName()),
+                    'label' => \sprintf('Add %s', $relation->getName()),
                 ],
                 new RelationFormActionMatcher(RelationAddHandler::class, $relation->getId())
             );
 
             $config[] = new Config(
                 RelationRemoveHandler::class,
-                sprintf('remove_%s', $relation->getId()),
+                \sprintf('remove_%s', $relation->getId()),
                 BulkActionRelationType::class,
                 [
                     'relation' => $relation,
                     'relation_handler' => RelationRemoveHandler::class,
-                    'label' => sprintf('Remove %s', $relation->getName()),
+                    'label' => \sprintf('Remove %s', $relation->getName()),
                 ],
                 new RelationFormActionMatcher(RelationRemoveHandler::class, $relation->getId())
             );

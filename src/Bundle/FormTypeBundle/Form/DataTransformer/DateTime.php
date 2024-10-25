@@ -19,9 +19,6 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
  */
 class DateTime implements DataTransformerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function transform($datetime)
     {
         if ($datetime instanceof \DateTimeInterface) {
@@ -39,9 +36,6 @@ class DateTime implements DataTransformerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($string)
     {
         if (null !== $string && '' !== $string) {

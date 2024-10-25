@@ -41,8 +41,6 @@ class SearchContentReferenced
     }
 
     /**
-     * @param mixed $document
-     *
      * @return array
      *
      * @throws \Exception
@@ -55,7 +53,7 @@ class SearchContentReferenced
 
         $referenced = [];
 
-        /** @var ClassMetaData $classMetadata */
+        /** @var ClassMetadata $classMetadata */
         foreach ($allMetadata as $classMetadata) {
             if (\in_array($classMetadata->getName(), $this::IGNORE_CLASSES)) {
                 continue;
@@ -122,15 +120,13 @@ class SearchContentReferenced
     }
 
     /**
-     * @param mixed $document
-     *
      * @return array
      */
     public function getDeletedInfo($document, DocumentManager $documentManager)
     {
         $deleted = [
-            'className' => \get_class($document),
-            'metadata' => $documentManager->getClassMetadata(\get_class($document)),
+            'className' => $document::class,
+            'metadata' => $documentManager->getClassMetadata($document::class),
         ];
 
         $deleted['idField'] = current($deleted['metadata']->getIdentifier());
@@ -153,17 +149,17 @@ class SearchContentReferenced
     {
         $output = [];
         foreach ($referenced as $item) {
-            $key = \get_class($item).'-'.$item->getId();
+            $key = $item::class.'-'.$item->getId();
             if ($item instanceof Content) {
                 $output[$key] = [
                     'action' => 'integrated_content_content_edit',
                     'id' => $item->getId(),
-                    'name' => method_exists($item, 'getTitle') ? $item->getTitle() : \get_class($item),
+                    'name' => method_exists($item, 'getTitle') ? $item->getTitle() : $item::class,
                 ];
             } else {
                 $output[$key] = [
                     'id' => $item->getId(),
-                    'name' => \get_class($item),
+                    'name' => $item::class,
                 ];
             }
         }

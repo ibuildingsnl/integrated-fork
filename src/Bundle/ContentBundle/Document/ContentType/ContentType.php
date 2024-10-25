@@ -75,9 +75,6 @@ class ContentType implements ContentTypeInterface
         $this->createdAt = new \DateTime();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create()
     {
         $instance = new $this->class();
@@ -110,9 +107,6 @@ class ContentType implements ContentTypeInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClass()
     {
         return $this->class;
@@ -132,9 +126,6 @@ class ContentType implements ContentTypeInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->name;
@@ -160,17 +151,11 @@ class ContentType implements ContentTypeInterface
         return $this->getId();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFields()
     {
         return $this->fields;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getField($name)
     {
         foreach ($this->getFields() as $field) {
@@ -182,9 +167,6 @@ class ContentType implements ContentTypeInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasField($name)
     {
         foreach ($this->getFields() as $field) {
@@ -210,9 +192,6 @@ class ContentType implements ContentTypeInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOptions()
     {
         return $this->options;
@@ -236,9 +215,6 @@ class ContentType implements ContentTypeInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOption($name)
     {
         if (isset($this->options[$name])) {
@@ -267,9 +243,6 @@ class ContentType implements ContentTypeInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasOption($name)
     {
         return isset($this->options[$name]);
@@ -297,9 +270,6 @@ class ContentType implements ContentTypeInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isLocked()
     {
         return $this->locked;

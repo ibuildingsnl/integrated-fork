@@ -18,9 +18,6 @@ namespace Integrated\Bundle\SlugBundle\Slugger;
  */
 class Slugger implements SluggerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function slugify($string, $delimiter = '-')
     {
         if (!$string) {

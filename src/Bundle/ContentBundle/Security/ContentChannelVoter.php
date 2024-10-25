@@ -34,7 +34,7 @@ class ContentChannelVoter implements VoterInterface
 
     public function __construct(
         AccessDecisionManagerInterface $decisionManager,
-        array $permissions = []
+        array $permissions = [],
     ) {
         $this->decisionManager = $decisionManager;
         $this->permissions = $this->getOptionsResolver()->resolve($permissions);
@@ -56,17 +56,11 @@ class ContentChannelVoter implements VoterInterface
         return $resolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsAttribute($attribute)
     {
         return \in_array($attribute, $this->permissions);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function vote(TokenInterface $token, $content, array $attributes): int
     {
         if (!$content instanceof ChannelableInterface) {

@@ -94,7 +94,7 @@ The <info>%command.name%</info> command starts a index of all the content from t
                     }
 
                     if ($invalid) {
-                        throw new \InvalidArgumentException(sprintf(
+                        throw new \InvalidArgumentException(\sprintf(
                             'The workflow ids "%s" do not exists',
                             implode(', ', $invalid)
                         ));
@@ -119,13 +119,13 @@ The <info>%command.name%</info> command starts a index of all the content from t
             try {
                 $command = $this->getApplication()->find('solr:indexer:queue');
             } catch (\Exception $e) {
-                throw new \RuntimeException(sprintf('Could not find the command "%s"', 'solr:indexer:queue'));
+                throw new \RuntimeException(\sprintf('Could not find the command "%s"', 'solr:indexer:queue'));
             }
 
             try {
                 return $command->run(new ArrayInput(['--ignore' => true, 'id' => $types]), $output);
             } catch (\Exception $e) {
-                throw new \RuntimeException(sprintf(
+                throw new \RuntimeException(\sprintf(
                     'An error occurred when executing the command "%s"',
                     'solr:indexer:queue'
                 ), 0, $e);
@@ -140,7 +140,7 @@ The <info>%command.name%</info> command starts a index of all the content from t
      *
      * @return Definition[]
      */
-    private function findDefinition(array $ids = null): iterable
+    private function findDefinition(?array $ids = null): iterable
     {
         if (null === $ids) {
             return $this->workflowRepository->findAll();

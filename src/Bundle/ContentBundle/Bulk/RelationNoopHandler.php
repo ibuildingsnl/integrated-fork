@@ -19,9 +19,6 @@ use Integrated\Common\Content\ContentInterface;
  */
 class RelationNoopHandler implements HandlerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function execute(ContentInterface $content)
     {
         // This handler does nothing.

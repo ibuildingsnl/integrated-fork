@@ -52,9 +52,6 @@ class RelationAddHandler implements HandlerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(ContentInterface $content)
     {
         if (!\array_key_exists($content->getContentType(), $this->relationTypes)) {

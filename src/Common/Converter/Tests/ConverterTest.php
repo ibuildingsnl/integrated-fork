@@ -194,11 +194,10 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param string $name
-     * @param array  $options
      *
      * @return TypeConfigInterface|MockObject
      */
-    protected function getType($name, array $options = null)
+    protected function getType($name, ?array $options = null)
     {
         $mock = $this->createMock('Integrated\\Common\\Converter\\Config\\TypeConfigInterface');
 

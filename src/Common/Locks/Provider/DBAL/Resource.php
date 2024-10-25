@@ -26,11 +26,9 @@ class Resource extends BaseResource
      * array keys are type first and then the identity which is called id to
      * save some space.
      *
-     * @param ResourceInterface $resource
-     *
      * @return string
      */
-    public static function serialize(ResourceInterface $resource = null)
+    public static function serialize(?ResourceInterface $resource = null)
     {
         if ($resource === null) {
             return null;

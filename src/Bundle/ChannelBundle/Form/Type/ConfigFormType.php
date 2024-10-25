@@ -43,9 +43,6 @@ class ConfigFormType extends AbstractType
         $this->registry = $registry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var AdapterInterface|ConfigurableInterface $adapter */
@@ -91,9 +88,6 @@ class ConfigFormType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         // Add some extra block prefixes to the options options view. This will
@@ -118,9 +112,6 @@ class ConfigFormType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $adapterNormalizer = function (Options $options, $adapter) {
@@ -134,7 +125,7 @@ class ConfigFormType extends AbstractType
 
             if (!$adapter instanceof AdapterInterface) {
                 throw new InvalidOptionsException(
-                    sprintf(
+                    \sprintf(
                         'The option "%s" could not be normalized to a valid "%s" object',
                         'adapter',
                         'Integrated\\Common\\Channel\\Connector\\AdapterInterface'
@@ -152,9 +143,6 @@ class ConfigFormType extends AbstractType
         $resolver->setDefault('data_class', 'Integrated\\Bundle\\ChannelBundle\\Model\\Config');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_channel_config';

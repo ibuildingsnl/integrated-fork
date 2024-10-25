@@ -14,7 +14,7 @@ class Content extends AbstractType
 {
     public function __construct(
         private readonly SortOptions $sorting,
-        private readonly DocumentManager $manager
+        private readonly DocumentManager $manager,
     ) {
     }
 
@@ -119,7 +119,7 @@ class Content extends AbstractType
         if ($options['start'] instanceof \DateTimeInterface && $options['end'] instanceof \DateTimeInterface) {
             $query->createFilterQuery('pub_time')
                 ->addTag('pub_time')
-                ->setQuery(sprintf(
+                ->setQuery(\sprintf(
                     'pub_time: [%s TO %s]',
                     $options['start']->format("Y-m-d\TH:i:s.z\Z"),
                     $options['end']->format("Y-m-d\TH:i:s.z\Z"),

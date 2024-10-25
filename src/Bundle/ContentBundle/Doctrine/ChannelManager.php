@@ -37,7 +37,7 @@ class ChannelManager implements ChannelManagerInterface
         $this->repository = $this->om->getRepository($class);
 
         if (!is_subclass_of($this->repository->getClassName(), 'Integrated\\Common\\Content\\Channel\\ChannelInterface')) {
-            throw new \InvalidArgumentException(sprintf('The class "%s" is not subclass of Integrated\\Common\\Content\\Channel\\ChannelInterface', $this->repository->getClassName()));
+            throw new \InvalidArgumentException(\sprintf('The class "%s" is not subclass of Integrated\\Common\\Content\\Channel\\ChannelInterface', $this->repository->getClassName()));
         }
     }
 
@@ -57,9 +57,6 @@ class ChannelManager implements ChannelManagerInterface
         return $this->repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create()
     {
         $class = $this->getClassName();
@@ -67,9 +64,6 @@ class ChannelManager implements ChannelManagerInterface
         return new $class();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function persist(ChannelInterface $channel, $flush = true)
     {
         $this->om->persist($channel);
@@ -79,9 +73,6 @@ class ChannelManager implements ChannelManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function remove(ChannelInterface $channel, $flush = true)
     {
         $this->om->remove($channel);
@@ -91,33 +82,21 @@ class ChannelManager implements ChannelManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear()
     {
         $this->om->clear();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function find($id)
     {
         return $this->repository->find($id);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findAll()
     {
         return $this->repository->findBy([], ['name' => 1]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByDomain($criteria)
     {
         $channel = $this->repository->findOneBy(['domains' => $criteria]);
@@ -131,25 +110,16 @@ class ChannelManager implements ChannelManagerInterface
         return $channel;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByName($criteria)
     {
         return $this->repository->findOneBy(['shortName' => $criteria]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null)
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClassName()
     {
         return $this->repository->getClassName();

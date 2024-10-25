@@ -52,8 +52,6 @@ class JobFactory implements JobFactoryInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return Job
      */
     public function create($action, ContentInterface $content)
@@ -61,20 +59,20 @@ class JobFactory implements JobFactoryInterface
         $job = new Job(strtoupper($action));
 
         if ($job->getAction() == self::ADD) {
-            $job->setOption('document.id', sprintf('%s-%s', $content->getContentType(), $content->getId()));
+            $job->setOption('document.id', \sprintf('%s-%s', $content->getContentType(), $content->getId()));
 
             $job->setOption('document.data', $this->serializer->serialize($content, $this->serializerFormat));
-            $job->setOption('document.class', $this->manager->getClassMetadata(\get_class($content))->getName());
+            $job->setOption('document.class', $this->manager->getClassMetadata($content::class)->getName());
             $job->setOption('document.format', $this->serializerFormat);
 
             return $job;
         }
 
         if ($job->getAction() == self::DELETE) {
-            return $job->setOption('id', sprintf('%s-%s', $content->getContentType(), $content->getId()));
+            return $job->setOption('id', \sprintf('%s-%s', $content->getContentType(), $content->getId()));
         }
 
-        throw new OutOfBoundsException(sprintf(
+        throw new OutOfBoundsException(\sprintf(
             'The action "%s" does not exist, valid actions are "%s"',
             $job->getAction(),
             'ADD, DELETE'

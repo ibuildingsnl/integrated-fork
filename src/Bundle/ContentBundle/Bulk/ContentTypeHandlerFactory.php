@@ -54,9 +54,6 @@ class ContentTypeHandlerFactory implements HandlerFactoryInterface
             ->addAllowedTypes('contentType', 'string');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function createHandler(array $options)
     {
         $options = $this->resolver->resolve($options);

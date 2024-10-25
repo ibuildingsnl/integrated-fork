@@ -42,9 +42,6 @@ class ContainerAwareFileEventListener extends FileEventListener
         };
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function prePersist(LifecycleEventArgs $args)
     {
         $this->initializer && $this->initializer->__invoke();
@@ -52,17 +49,11 @@ class ContainerAwareFileEventListener extends FileEventListener
         parent::prePersist($args);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preRemove(LifecycleEventArgs $args)
     {
         $this->initializer && $this->initializer->__invoke();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preFlush(PreFlushEventArgs $args)
     {
         $this->initializer && $this->initializer->__invoke();
@@ -70,9 +61,6 @@ class ContainerAwareFileEventListener extends FileEventListener
         parent::preFlush($args);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onFlush(OnFlushEventArgs $args)
     {
         $this->initializer && $this->initializer->__invoke();

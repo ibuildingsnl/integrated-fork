@@ -16,5 +16,5 @@ interface ResolvedTypeFactoryInterface
     /**
      * @param TypeExtensionInterface[] $extensions
      */
-    public function create(TypeInterface $type, array $extensions, ResolvedTypeInterface $parent = null): ResolvedTypeInterface;
+    public function create(TypeInterface $type, array $extensions, ?ResolvedTypeInterface $parent = null): ResolvedTypeInterface;
 }

@@ -96,9 +96,6 @@ class ContentItemsBlock extends Block
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return 'content_items';

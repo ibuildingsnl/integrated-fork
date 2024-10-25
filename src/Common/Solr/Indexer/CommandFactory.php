@@ -47,13 +47,10 @@ class CommandFactory implements CommandFactoryInterface
         $this->serializer = $serializer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create(JobInterface $job)
     {
         if (!$job->hasAction()) {
-            throw new OutOfBoundsException(sprintf('The jobs action is empty, valid actions are "%s"', 'ADD, DELETE, OPTIMIZE, ROLLBACK or COMMIT'));
+            throw new OutOfBoundsException(\sprintf('The jobs action is empty, valid actions are "%s"', 'ADD, DELETE, OPTIMIZE, ROLLBACK or COMMIT'));
         }
 
         // Action specifies which command class to use where the options got
@@ -90,7 +87,7 @@ class CommandFactory implements CommandFactoryInterface
                 return $this->createRollback($job);
         }
 
-        throw new OutOfBoundsException(sprintf('The jobs action "%s" does not exist, valid actions are "%s"', $job->getAction(), 'ADD, DELETE, OPTIMIZE, ROLLBACK or COMMIT'));
+        throw new OutOfBoundsException(\sprintf('The jobs action "%s" does not exist, valid actions are "%s"', $job->getAction(), 'ADD, DELETE, OPTIMIZE, ROLLBACK or COMMIT'));
     }
 
     /**

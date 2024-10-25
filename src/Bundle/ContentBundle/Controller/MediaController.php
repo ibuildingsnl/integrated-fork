@@ -242,7 +242,7 @@ class MediaController extends AbstractController
         }
     }
 
-    public function bulkDelete(Request $request, DeleteHandler $deleteHandler = null): Response
+    public function bulkDelete(Request $request, ?DeleteHandler $deleteHandler = null): Response
     {
         $jsonContent = json_decode($request->getContent(), true);
 
@@ -325,9 +325,9 @@ class MediaController extends AbstractController
 
         if (\count($usesByTitles) > 0) {
             return new JsonResponse([
-                                        'message' => 'There exist some relations. Are you SURE?',
-                                        'used_by' => $usesByTitles,
-                                    ]);
+                'message' => 'There exist some relations. Are you SURE?',
+                'used_by' => $usesByTitles,
+            ]);
         } else {
             return new JsonResponse(['message' => 'Ok to delete, go for it!']);
         }

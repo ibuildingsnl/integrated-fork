@@ -32,8 +32,6 @@ class DocumentExtension extends AbstractExtension
     }
 
     /**
-     * @param mixed $data
-     *
      * @return ContentInterface|null
      *
      * @throws \Doctrine\ODM\MongoDB\LockException

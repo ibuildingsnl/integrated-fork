@@ -46,7 +46,7 @@ class CleanFilesystem
         $keys = array_flip($keys['keys']);
 
         if ($targetDirectory && !is_dir($targetDirectory)) {
-            throw new \RuntimeException(sprintf('Directory %s does not exists', $targetDirectory));
+            throw new \RuntimeException(\sprintf('Directory %s does not exists', $targetDirectory));
         }
 
         $objects = $this->database instanceof DoctrineODMDatabase ? $this->database->getStorageKeys() : [];
@@ -66,7 +66,7 @@ class CleanFilesystem
 
             $targetFile = rtrim($targetDirectory, '/').'/'.$key;
             if (file_exists($targetFile)) {
-                throw new \RuntimeException(sprintf('File %s does already exists', $targetFile));
+                throw new \RuntimeException(\sprintf('File %s does already exists', $targetFile));
             }
 
             if (file_put_contents($targetFile, $filesystem->read($key)) !== false) {

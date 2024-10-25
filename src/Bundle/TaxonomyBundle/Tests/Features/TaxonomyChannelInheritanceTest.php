@@ -96,8 +96,8 @@ final class TaxonomyChannelInheritanceTest extends TestCase
 
     private function taxonomy(
         string $id,
-        string $parent = null,
-        string ...$channels
+        ?string $parent = null,
+        string ...$channels,
     ): Taxonomy {
         $taxonomy = new Taxonomy();
         $taxonomy->setId($id);

@@ -46,9 +46,6 @@ class ContentTypePageLoader extends Loader
         $this->urlResolver = $urlResolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(mixed $resource, $type = null)
     {
         if (true === $this->loaded) {
@@ -59,7 +56,7 @@ class ContentTypePageLoader extends Loader
 
         $pages = $this->dm->getRepository(ContentTypePage::class)->findAll();
 
-        /** @var \Integrated\Bundle\PageBundle\Document\Page\ContentTypePage $page */
+        /** @var ContentTypePage $page */
         foreach ($pages as $page) {
             if (!$page->getControllerService()) {
                 continue;
@@ -83,9 +80,6 @@ class ContentTypePageLoader extends Loader
         return $routes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports($resource, $type = null): bool
     {
         return self::ROUTE_PREFIX === $type;
@@ -97,6 +91,6 @@ class ContentTypePageLoader extends Loader
             return $page->getControllerService();
         }
 
-        return sprintf('%s::%s', $page->getControllerService(), $page->getControllerAction());
+        return \sprintf('%s::%s', $page->getControllerService(), $page->getControllerAction());
     }
 }

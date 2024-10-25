@@ -129,8 +129,8 @@ class ContentController extends AbstractController
             $selection = new SearchSelection();
         }
         $editableSelection = $this->isGranted('ROLE_ADMIN') || (
-            !$selection->isPublic() &&
-            $selection->getUserId() === $this->getUser()->getId()
+            !$selection->isPublic()
+            && $selection->getUserId() === $this->getUser()->getId()
         );
 
         $searchSelectionForm = $this->createForm(SearchSelectionType::class, $selection);
@@ -328,7 +328,7 @@ class ContentController extends AbstractController
             }
         }
 
-        return $this->render(sprintf('@IntegratedContent/content/new.%s.twig', $request->getRequestFormat()), [
+        return $this->render(\sprintf('@IntegratedContent/content/new.%s.twig', $request->getRequestFormat()), [
             'taxonomyCategories' => $this->getTaxonomyCategories($content),
             'editable' => true,
             'type' => $contentType,
@@ -505,7 +505,7 @@ class ContentController extends AbstractController
                     }
                 }
 
-                $text = sprintf(
+                $text = \sprintf(
                     'The document is currently locked by %s, the document can not be edited until this lock is released.',
                     $user
                 );
@@ -558,7 +558,7 @@ class ContentController extends AbstractController
      */
     public function delete(Request $request, Content $content): Response
     {
-        /** @var \Integrated\Common\ContentType\ContentTypeInterface $type */
+        /** @var ContentTypeInterface $type */
         $type = $this->resolver->getType($content->getContentType());
 
         if (!$this->isGranted(Permissions::DELETE, $content)) {
@@ -665,7 +665,7 @@ class ContentController extends AbstractController
                     }
                 }
 
-                $text = sprintf(
+                $text = \sprintf(
                     'The document is currently locked by %s, the document can not be deleted until this lock is released.',
                     $user
                 );
@@ -693,7 +693,7 @@ class ContentController extends AbstractController
      * - user: this is the user the lock belongs to or null if the lock does
      *         not have a owner.
      */
-    private function getLock(object $object, int $timeout = null): array
+    private function getLock(object $object, ?int $timeout = null): array
     {
         if (!$this->isGranted(Permissions::EDIT, $object)) {
             return [
@@ -895,7 +895,7 @@ class ContentController extends AbstractController
         ]);
     }
 
-    public function mediaTypesAction(string $filter = null): Response
+    public function mediaTypesAction(?string $filter = null): Response
     {
         $output = [];
 
@@ -938,7 +938,7 @@ class ContentController extends AbstractController
         ContentTypeInterface $contentType,
         ContentInterface $content,
         array $locking,
-        Request $request = null
+        ?Request $request = null,
     ): FormInterface {
         $parameters = ($locking['lock'] ? [
             'id' => $content->getId(),

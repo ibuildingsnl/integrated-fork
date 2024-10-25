@@ -33,9 +33,6 @@ class StorageLocator extends FileLocator
         parent::__construct($kernel);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __sleep()
     {
         $this->cache = null;
@@ -43,9 +40,6 @@ class StorageLocator extends FileLocator
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function locate(string|StorageInterface $file, ?string $currentPath = null, bool $first = true): array|string
     {
         if ($file instanceof StorageInterface) {

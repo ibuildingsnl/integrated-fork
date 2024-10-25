@@ -27,10 +27,7 @@ class RequestSubscriber implements EventSubscriberInterface
      */
     protected $requestStack;
 
-    /**
-     * @param RequestStack $requestStack
-     */
-    public function __construct(RequestStack $requestStack = null)
+    public function __construct(?RequestStack $requestStack = null)
     {
         $this->requestStack = $requestStack;
     }

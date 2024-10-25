@@ -68,9 +68,6 @@ class FileType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('file', SymfonyFileType::class, [
@@ -88,17 +85,11 @@ class FileType extends AbstractType
         $builder->addEventSubscriber(new FileEventSubscriber($this->appCache));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_file';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $data = $form->getData();

@@ -37,9 +37,6 @@ class ContainerAwareDocumentNormalizer extends DocumentNormalizer
         $this->service = $service;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getDocumentManager()
     {
         if ($this->dm === null) {

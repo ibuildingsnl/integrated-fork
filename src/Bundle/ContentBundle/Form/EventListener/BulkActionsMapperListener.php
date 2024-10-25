@@ -40,9 +40,6 @@ class BulkActionsMapperListener implements EventSubscriberInterface
         $this->readonly = $readonly;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

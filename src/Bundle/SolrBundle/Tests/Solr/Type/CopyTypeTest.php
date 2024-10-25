@@ -105,7 +105,7 @@ class CopyTypeTest extends \PHPUnit\Framework\TestCase
             ],
             'advanced, field does not exist' => [
                 [['name' => 'field3', 'fieldx', 'fieldy']],
-                    ['field1' => ['value1'], 'field2' => ['value2', 'value3']],
+                ['field1' => ['value1'], 'field2' => ['value2', 'value3']],
             ],
         ];
     }

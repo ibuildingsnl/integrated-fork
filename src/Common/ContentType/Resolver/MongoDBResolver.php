@@ -49,15 +49,12 @@ class MongoDBResolver implements ResolverInterface
         $reflection = new \ReflectionClass($repository->getClassName());
 
         if (!$reflection->implementsInterface(self::CONTENT_TYPE_INTERFACE)) {
-            throw new InvalidArgumentException(sprintf('The document class "%s" of the DocumentRepository does not implement the "%s" interface.', $repository->getClassName(), self::CONTENT_TYPE_INTERFACE));
+            throw new InvalidArgumentException(\sprintf('The document class "%s" of the DocumentRepository does not implement the "%s" interface.', $repository->getClassName(), self::CONTENT_TYPE_INTERFACE));
         }
 
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType($type)
     {
         if (!\is_string($type)) {
@@ -66,7 +63,7 @@ class MongoDBResolver implements ResolverInterface
 
         if (!isset($this->types[$type])) {
             if (null === ($document = $this->repository->findOneBy(['id' => $type]))) {
-                throw new InvalidArgumentException(sprintf('Could not load content type bases on the given type "%s"', $type));
+                throw new InvalidArgumentException(\sprintf('Could not load content type bases on the given type "%s"', $type));
             }
 
             $this->types[$type] = $document;
@@ -75,9 +72,6 @@ class MongoDBResolver implements ResolverInterface
         return $this->types[$type];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasType($type)
     {
         try {
@@ -91,9 +85,6 @@ class MongoDBResolver implements ResolverInterface
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTypes()
     {
         return new MongoDBIterator($this->repository->findBy([], ['name' => 'ASC']));

@@ -19,9 +19,6 @@ use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 
 class UpdateAuthorRelationListener implements EventSubscriber
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribedEvents()
     {
         return [
@@ -58,7 +55,7 @@ class UpdateAuthorRelationListener implements EventSubscriber
                     $document->addRelation($relation);
                 }
 
-                $class = $dm->getClassMetadata(\get_class($document));
+                $class = $dm->getClassMetadata($document::class);
                 $uow->recomputeSingleDocumentChangeSet($class, $document);
             }
         }

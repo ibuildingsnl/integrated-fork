@@ -34,9 +34,6 @@ class XmlProvider extends AbstractFileProvider
         parent::__construct($finder, 'xml');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function load(SplFileInfo $file)
     {
         $types = [];
@@ -177,7 +174,7 @@ class XmlProvider extends AbstractFileProvider
         libxml_use_internal_errors($previous);
 
         if (!$xml) {
-            throw new RuntimeException(sprintf('Unable to parse "%s" as the file contains errors "%s".', $file->getPathname(), $error));
+            throw new RuntimeException(\sprintf('Unable to parse "%s" as the file contains errors "%s".', $file->getPathname(), $error));
         }
 
         return $xml;

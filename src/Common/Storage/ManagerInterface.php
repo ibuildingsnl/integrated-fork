@@ -43,13 +43,11 @@ interface ManagerInterface
     /**
      * Write the file in the storage, all filesystems or specified.
      *
-     * @param ArrayCollection $filesystems
-     *
      * @return StorageInterface
      *
      * @throws \Exception
      */
-    public function write(ReaderInterface $reader, ArrayCollection $filesystems = null);
+    public function write(ReaderInterface $reader, ?ArrayCollection $filesystems = null);
 
     /**
      * Move the file to the specified filesystems.

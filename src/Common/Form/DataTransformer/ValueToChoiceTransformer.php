@@ -33,17 +33,11 @@ class ValueToChoiceTransformer implements DataTransformerInterface
         $this->choiceList = $choiceList;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transform($value)
     {
         return current($this->choiceList->getChoicesForValues([$value]));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($value)
     {
         if (null === $value) {

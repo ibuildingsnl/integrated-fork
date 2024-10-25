@@ -37,17 +37,11 @@ class ActionsType extends AbstractType
         $this->buttons = $buttons;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventSubscriber(new ClickedButtonListener());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $buttonsNormalizer = function (Options $options, $buttons) {
@@ -55,7 +49,7 @@ class ActionsType extends AbstractType
 
             foreach ($buttons as $button) {
                 if (!isset($this->buttons[$button])) {
-                    throw new InvalidOptionsException(sprintf('The value "%s" for the option "%s" is missing a valid button configuration', $button, 'buttons'));
+                    throw new InvalidOptionsException(\sprintf('The value "%s" for the option "%s" is missing a valid button configuration', $button, 'buttons'));
                 }
 
                 $normalized[$button] = $this->buttons[$button];
@@ -67,9 +61,6 @@ class ActionsType extends AbstractType
         $resolver->setNormalizer('buttons', $buttonsNormalizer);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): ?string
     {
         return FormActionsType::class;

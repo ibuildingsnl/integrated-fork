@@ -38,7 +38,7 @@ class ProfileController extends AbstractController
         $user = $this->getUser();
 
         if (!$user instanceof UserInterface) {
-            throw new \LogicException(sprintf('$user is not and instance of %s', UserInterface::class));
+            throw new \LogicException(\sprintf('$user is not and instance of %s', UserInterface::class));
         }
 
         /** @var Form $form */

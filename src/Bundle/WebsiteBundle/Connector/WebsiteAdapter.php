@@ -37,17 +37,11 @@ class WebsiteAdapter implements AdapterInterface, ConfigurableInterface
         $this->configuration = $configuration;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getManifest()
     {
         return $this->manifest;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConfiguration()
     {
         return $this->configuration;

@@ -19,7 +19,7 @@ final class Exporter implements ExporterInterface
         private readonly ConnectorInterface $connector,
         private readonly ConfigInterface $config,
         private readonly LoggerInterface $logger,
-        private readonly PublicationRepositoryInterface $publications
+        private readonly PublicationRepositoryInterface $publications,
     ) {
     }
 
@@ -53,7 +53,7 @@ final class Exporter implements ExporterInterface
             $this->logger->error($e->getMessage()."\n".$e->getTraceAsString());
             $responseMessage = $e->getMessage();
         } catch (\Throwable $e) {
-            $this->logger->error('Error: '.\get_class($e).' - '.$e->getMessage());
+            $this->logger->error('Error: '.$e::class.' - '.$e->getMessage());
             $responseMessage = $e->getMessage();
         }
 

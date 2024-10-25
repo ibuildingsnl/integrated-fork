@@ -256,7 +256,7 @@ class SolariumProvider
                 'desc' => 'desc',
             ];
 
-            if (strpos($sort, 'custom:') === 0) {
+            if (str_starts_with($sort, 'custom:')) {
                 // support for custom query in database, while waiting for a better solution
                 $query->addParam('sort', substr($sort, 7));
             } else {

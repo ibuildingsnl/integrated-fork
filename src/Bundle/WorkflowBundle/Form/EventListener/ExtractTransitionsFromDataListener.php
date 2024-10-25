@@ -22,9 +22,6 @@ use Symfony\Component\Form\FormEvents;
  */
 class ExtractTransitionsFromDataListener implements EventSubscriberInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -61,8 +58,6 @@ class ExtractTransitionsFromDataListener implements EventSubscriberInterface
      * The states in the choice list are just extracted from the workflow the state is in. If
      * form some reason the data is not a State of it does not have a workflow then a empty
      * choices array is returned
-     *
-     * @param mixed $data
      *
      * @return array
      */

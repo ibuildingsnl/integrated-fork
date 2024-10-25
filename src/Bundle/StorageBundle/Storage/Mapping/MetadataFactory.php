@@ -55,9 +55,6 @@ class MetadataFactory implements MetadataFactoryInterface
         return new self($manager->getMetadataFactory(), $target);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMetadata($class)
     {
         if (isset($this->cache[$class])) {

@@ -40,9 +40,6 @@ class ContentRelationsIntegrationListener implements EventSubscriberInterface
         $this->type = $type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

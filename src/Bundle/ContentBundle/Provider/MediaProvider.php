@@ -34,7 +34,7 @@ class MediaProvider
 
     public function __construct(
         ContentTypeManager $contentTypeManager,
-        AuthorizationCheckerInterface $authorizationChecker
+        AuthorizationCheckerInterface $authorizationChecker,
     ) {
         $this->contentTypeManager = $contentTypeManager;
         $this->authorizationChecker = $authorizationChecker;

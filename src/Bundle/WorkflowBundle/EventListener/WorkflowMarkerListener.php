@@ -40,9 +40,6 @@ class WorkflowMarkerListener implements EventSubscriberInterface
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -59,7 +56,7 @@ class WorkflowMarkerListener implements EventSubscriberInterface
         }
 
         if (!$query instanceof Query) {
-            throw new \InvalidArgumentException(sprintf('$query must be of type %s', Query::class));
+            throw new \InvalidArgumentException(\sprintf('$query must be of type %s', Query::class));
         }
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {

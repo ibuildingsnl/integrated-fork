@@ -101,11 +101,9 @@ class FeaturedItemsItem
     }
 
     /**
-     * @param StorageInterface $image
-     *
      * @return $this
      */
-    public function setImage(StorageInterface $image = null)
+    public function setImage(?StorageInterface $image = null)
     {
         $this->image = $image;
 

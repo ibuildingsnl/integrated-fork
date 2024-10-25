@@ -45,9 +45,6 @@ class TailwindFormExtension extends AbstractExtension
     /** @var array */
     private $settingsStack = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions()
     {
         return [
@@ -92,9 +89,6 @@ class TailwindFormExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'braincrafted_tailwind_form';
@@ -307,7 +301,7 @@ class TailwindFormExtension extends AbstractExtension
      */
     public function formControlStaticFunction($label, $value)
     {
-        return sprintf(
+        return \sprintf(
             '<div class="form-group"><label class="w-full %s control-label">%s</label><div class="w-full %s"><p class="form-control-static">%s</p></div></div>',
             $this->getLabelCol(),
             $label,

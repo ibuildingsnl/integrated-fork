@@ -24,7 +24,7 @@ class Document
      *
      * @throws \BadMethodCallException
      */
-    public function __construct($exactly = [], string $name = null, array $extra = [])
+    public function __construct($exactly = [], ?string $name = null, array $extra = [])
     {
         if (\is_array($exactly)) {
             $extra = array_merge($exactly, $extra);
@@ -38,7 +38,7 @@ class Document
         foreach ($extra as $key => $value) {
             $method = 'set'.str_replace('_', '', $key);
             if (!method_exists($this, $method)) {
-                throw new \BadMethodCallException(sprintf("Unknown property '%s' on annotation '%s'.", $key, static::class));
+                throw new \BadMethodCallException(\sprintf("Unknown property '%s' on annotation '%s'.", $key, static::class));
             }
             $this->$method($value);
         }

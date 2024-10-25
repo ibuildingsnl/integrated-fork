@@ -78,7 +78,7 @@ class MenuExtension extends AbstractExtension
         Helper $helper,
         RecursiveActiveMatcher $matcher,
         RequestStack $requestStack,
-        $template
+        $template,
     ) {
         $this->provider = $provider;
         $this->factory = $factory;
@@ -97,9 +97,6 @@ class MenuExtension extends AbstractExtension
         $this->generator = new UuidGenerator();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions()
     {
         return [
@@ -158,11 +155,9 @@ class MenuExtension extends AbstractExtension
     }
 
     /**
-     * @param Menu $menu
-     *
      * @return string
      */
-    public function prepareMenu(Menu $menu = null, array $options = [])
+    public function prepareMenu(?Menu $menu = null, array $options = [])
     {
         $html = '';
 
@@ -214,9 +209,6 @@ class MenuExtension extends AbstractExtension
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated_website_menu';

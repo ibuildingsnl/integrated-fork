@@ -43,13 +43,10 @@ class MenuProvider implements MenuProviderInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function get(string $name, array $options = []): ItemInterface
     {
         if (!$this->has($name, $options)) {
-            throw new \InvalidArgumentException(sprintf('The menu "%s" is not defined.', $name));
+            throw new \InvalidArgumentException(\sprintf('The menu "%s" is not defined.', $name));
         }
 
         if (!isset($this->menus[$name])) {
@@ -64,11 +61,8 @@ class MenuProvider implements MenuProviderInterface
         return $this->menus[$name];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function has(string $name, array $options = []): bool
     {
-        return strpos($name, 'integrated_') === 0;
+        return str_starts_with($name, 'integrated_');
     }
 }

@@ -26,7 +26,7 @@ class QueueMessage implements QueueMessageInterface
     /**
      * @var mixed|null
      */
-    private $payload = null;
+    private $payload;
 
     /**
      * @var \Closure|null
@@ -46,9 +46,6 @@ class QueueMessage implements QueueMessageInterface
         $this->release = $release;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function delete()
     {
         if ($this->delete !== null) {
@@ -64,9 +61,6 @@ class QueueMessage implements QueueMessageInterface
         $this->release = null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function release($delay = 0)
     {
         if ($this->release !== null) {
@@ -92,17 +86,11 @@ class QueueMessage implements QueueMessageInterface
         return (string) $this->data['id'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAttempts()
     {
         return (int) $this->data['attempts'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPayload()
     {
         if ($this->payload === null) {
@@ -112,9 +100,6 @@ class QueueMessage implements QueueMessageInterface
         return $this->payload;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPriority()
     {
         return (int) $this->data['priority'];

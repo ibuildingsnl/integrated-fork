@@ -21,9 +21,6 @@ use Symfony\Component\Validator\Constraints\NotEqualTo;
 
 class PageCopyType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('action', HiddenType::class);
@@ -55,9 +52,6 @@ class PageCopyType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['sourceChannel']);

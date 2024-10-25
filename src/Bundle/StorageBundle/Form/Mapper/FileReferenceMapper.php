@@ -23,7 +23,7 @@ class FileReferenceMapper extends StorageReferenceMapper
 
     public function __construct(
         private readonly DocumentManager $manager,
-        private readonly array $channels
+        private readonly array $channels,
     ) {
     }
 

@@ -35,16 +35,13 @@ class BulkActionsType extends AbstractType
         $this->provider = $provider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $mapping = [];
 
         foreach ($this->provider->getConfig($options['content']) as $config) {
             $builder->add(
-                $name = sprintf('%s_%s', bin2hex($config->getHandler()), $config->getName()),
+                $name = \sprintf('%s_%s', bin2hex($config->getHandler()), $config->getName()),
                 BulkActionType::class,
                 [
                     'config' => $config,
@@ -61,9 +58,6 @@ class BulkActionsType extends AbstractType
         $builder->addEventSubscriber(new BulkActionsMapperListener($mapping, $options['readonly']));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         if (!$options['readonly']) {
@@ -84,9 +78,9 @@ class BulkActionsType extends AbstractType
         foreach ($view->children as $child) {
             $last = array_pop($child->vars['block_prefixes']);
 
-            $child->vars['block_prefixes'][] = sprintf('%s_readonly', end($child->vars['block_prefixes']));
+            $child->vars['block_prefixes'][] = \sprintf('%s_readonly', end($child->vars['block_prefixes']));
             $child->vars['block_prefixes'][] = $last;
-            $child->vars['block_prefixes'][] = sprintf('%s_readonly', $last);
+            $child->vars['block_prefixes'][] = \sprintf('%s_readonly', $last);
 
             if ($child->children) {
                 $this->updateReadonlyView($child);
@@ -94,9 +88,6 @@ class BulkActionsType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
@@ -116,9 +107,6 @@ class BulkActionsType extends AbstractType
             });
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_content_bulk_actions';

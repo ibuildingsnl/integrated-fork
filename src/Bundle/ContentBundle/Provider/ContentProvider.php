@@ -65,7 +65,7 @@ class ContentProvider
         DocumentManager $dm,
         TokenStorageInterface $tokenStorage,
         AuthorizationChecker $authorizationChecker,
-        $workflowExtension = false
+        $workflowExtension = false,
     ) {
         $this->client = $client;
         $this->dm = $dm;
@@ -379,7 +379,7 @@ class ContentProvider
     // Else, we are showing all the contenttypes
     // $contentType is what the user has in its selection,
     // $available_contenttypes is what the user can choose from
-    private function setContentTypes(array|null $contentType, FilterQuery $contentTypesQuery, \Closure $filter, Request $request): void
+    private function setContentTypes(?array $contentType, FilterQuery $contentTypesQuery, \Closure $filter, Request $request): void
     {
         if (\is_array($contentType) && \count($contentType) === 1) {
             $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);

@@ -217,16 +217,16 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
                 $this->getConfig('adapter2'),
                 $this->getConfig('adapter3'),
             ]));
-/*
-        $this->registry->expects($this->exactly(3))
-            ->method('getAdapter')
-            ->withConsecutive([$this->equalTo('adapter1')], [$this->equalTo('adapter2')], [$this->equalTo('adapter3')])
-            ->willReturnOnConsecutiveCalls(
-                $this->throwException(new \Exception('i-will-be-caught-and-not-cause-any-troubles')),
-                $this->getAdapter(),
-                $this->getAdapter()
-            );
-*/
+        /*
+                $this->registry->expects($this->exactly(3))
+                    ->method('getAdapter')
+                    ->withConsecutive([$this->equalTo('adapter1')], [$this->equalTo('adapter2')], [$this->equalTo('adapter3')])
+                    ->willReturnOnConsecutiveCalls(
+                        $this->throwException(new \Exception('i-will-be-caught-and-not-cause-any-troubles')),
+                        $this->getAdapter(),
+                        $this->getAdapter()
+                    );
+        */
         $exporter = $this->getInstance();
 
         $exporter->export($content, self::TEST_STATE, $channel);
@@ -313,12 +313,11 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string           $adaptor
-     * @param OptionsInterface $options
+     * @param string $adaptor
      *
      * @return ConfigInterface|MockObject
      */
-    protected function getConfig($adaptor, OptionsInterface $options = null)
+    protected function getConfig($adaptor, ?OptionsInterface $options = null)
     {
         $mock = $this->createMock(ConfigInterface::class);
         $mock->expects($this->once())
@@ -343,12 +342,9 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param ConfigInterface   $config
-     * @param ExporterInterface $exporter
-     *
      * @return AdapterInterface|ExportableInterface|MockObject
      */
-    protected function getAdapter(ConfigInterface $config = null, ExporterInterface $exporter = null)
+    protected function getAdapter(?ConfigInterface $config = null, ?ExporterInterface $exporter = null)
     {
         if ($config) {
             $mock = $this->createMock(ExportableInterface::class);

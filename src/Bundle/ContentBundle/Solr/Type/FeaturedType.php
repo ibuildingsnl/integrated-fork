@@ -23,9 +23,6 @@ use Integrated\Common\Converter\Type\TypeInterface;
  */
 class FeaturedType implements TypeInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         if (!$data instanceof Content) {
@@ -44,9 +41,6 @@ class FeaturedType implements TypeInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.featured';

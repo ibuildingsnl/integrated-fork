@@ -44,7 +44,7 @@ class ContentTypeMenuBuilder
     public function __construct(
         FactoryInterface $factory,
         ContentTypeManager $contentTypeManager,
-        AuthorizationCheckerInterface $authorizationChecker
+        AuthorizationCheckerInterface $authorizationChecker,
     ) {
         $this->factory = $factory;
         $this->contentTypeManager = $contentTypeManager;

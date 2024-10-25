@@ -26,22 +26,16 @@ class TraceableConfig extends Config implements TraceableConfigInterface
     private $class;
 
     /**
-     * {@inheritdoc}
-     *
      * @param string                $class
      * @param TypeConfigInterface[] $types
-     * @param ConfigInterface       $parent
      */
-    public function __construct($class, array $types, ConfigInterface $parent = null)
+    public function __construct($class, array $types, ?ConfigInterface $parent = null)
     {
         $this->class = $class;
 
         parent::__construct($types, $parent);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClass()
     {
         return $this->class;

@@ -26,9 +26,6 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class PublishTimeType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('startDate', DateTimeType::class, [
@@ -54,9 +51,6 @@ class PublishTimeType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
@@ -88,9 +82,6 @@ class PublishTimeType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_publish_time';

@@ -51,9 +51,6 @@ class OnTheFlyFormatConverterValidator extends ConstraintValidator
         $this->webFormats = new ArrayCollection($webFormats);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function validate($value, Constraint $constraint)
     {
         if (null === $value) {
@@ -69,10 +66,10 @@ class OnTheFlyFormatConverterValidator extends ConstraintValidator
             } else {
                 // This not happen
                 throw new LogicException(
-                    sprintf(
+                    \sprintf(
                         'Type of value must be %s but the given is %s',
                         UploadedFile::class,
-                        \is_object($value) ? \get_class($value) : \gettype($value)
+                        \is_object($value) ? $value::class : \gettype($value)
                     )
                 );
             }

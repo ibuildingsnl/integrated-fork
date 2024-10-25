@@ -43,7 +43,7 @@ class RelationController extends AbstractController
 
         $documents = $qb->getQuery()->execute();
 
-        return $this->render(sprintf('@IntegratedContent/relation/index.%s.twig', $request->getRequestFormat()), ['documents' => $documents]);
+        return $this->render(\sprintf('@IntegratedContent/relation/index.%s.twig', $request->getRequestFormat()), ['documents' => $documents]);
     }
 
     public function show(Relation $relation): Response

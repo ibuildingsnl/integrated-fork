@@ -28,7 +28,7 @@ class DefaultController extends AbstractController
     public function __construct(
         DocumentManager $manager,
         ChannelContextInterface $context,
-        ContentTypeInformation $contentTypeInformation
+        ContentTypeInformation $contentTypeInformation,
     ) {
         $this->manager = $manager;
         $this->context = $context;

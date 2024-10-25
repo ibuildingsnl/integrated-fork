@@ -21,7 +21,7 @@ class GetResponseConfigEvent extends ConfigEvent
     /**
      * @var Response
      */
-    private $response = null;
+    private $response;
 
     /**
      * @return Response
@@ -31,10 +31,7 @@ class GetResponseConfigEvent extends ConfigEvent
         return $this->response;
     }
 
-    /**
-     * @param Response $response
-     */
-    public function setResponse(Response $response = null)
+    public function setResponse(?Response $response = null)
     {
         $this->response = $response;
     }

@@ -30,9 +30,6 @@ class JsonLDExtension extends AbstractExtension
         $this->serializer = $serializer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFilters()
     {
         return [
@@ -41,8 +38,6 @@ class JsonLDExtension extends AbstractExtension
     }
 
     /**
-     * @param mixed $value
-     *
      * @return string
      */
     public function encode($value)
@@ -56,9 +51,6 @@ class JsonLDExtension extends AbstractExtension
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated_content_json_ld_extension';
