@@ -28,7 +28,7 @@ final class IndexedItem
             $taxonomy->getDescription(),
             $taxonomy->getSlug(),
             $taxonomy->getChannels(),
-            $taxonomy->getReferencesByRelationId('__children'),
+            new ArrayCollection($taxonomy->getReferencesByRelationId('__children')),
             $taxonomy->getLinkToChannel(),
             $usageCount,
             $depth,

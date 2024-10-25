@@ -12,6 +12,7 @@ use Integrated\Bundle\ContentBundle\Provider\SolariumProvider;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
+use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -82,7 +83,7 @@ class JSONController extends AbstractController
         return $this->render($this->themeManager->locateTemplate('json/related.'.$request->getRequestFormat('json').'.twig'), [
             'documents' => $pagination->getItems(),
             'totalCount' => $pagination->getTotalItemCount(),
-            'maxPages' => $pagination->getPageCount(),
+            'maxPages' => ($pagination instanceof SlidingPagination) ? $pagination->getPageCount() : 1,
         ]);
     }
 }

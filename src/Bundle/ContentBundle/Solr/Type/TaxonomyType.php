@@ -58,7 +58,7 @@ class TaxonomyType implements TypeInterface
                                 ->getQuery()
                                 ->execute();
 
-                            if ($childen > 0) {
+                            if (count($childen) > 0) {
                                 $container->add('taxonomy_parent_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());
                             } else {
                                 $container->add('taxonomy_child_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());

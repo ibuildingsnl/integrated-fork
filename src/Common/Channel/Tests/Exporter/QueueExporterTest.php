@@ -11,7 +11,7 @@
 
 namespace Integrated\Common\Channel\Tests\Exporter;
 
-use Integrated\Common\Channel\Exporter\ExporterInterface;
+use Integrated\Common\Channel\Connector\ExporterInterface;
 use Integrated\Common\Channel\Exporter\Queue\Request;
 use Integrated\Common\Channel\Exporter\Queue\RequestSerializerInterface;
 use Integrated\Common\Channel\Exporter\QueueExporter;
@@ -49,12 +49,12 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
     {
         $this->queue = $this->createMock('Integrated\\Common\\Queue\\QueueInterface');
         $this->serializer = $this->createMock('Integrated\\Common\\Channel\\Exporter\\Queue\\RequestSerializerInterface');
-        $this->exporter = $this->createMock('Integrated\\Common\\Channel\\Exporter\\ExporterInterface');
+        $this->exporter = $this->createMock(ExporterInterface::class);
     }
 
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Channel\\Exporter\\ExporterInterface', $this->getInstance());
+        self::assertInstanceOf(ExporterInterface::class, $this->getInstance());
     }
 
     public function testGetQueue()

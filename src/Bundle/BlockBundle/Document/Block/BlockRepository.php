@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\BlockBundle\Document\Block;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
@@ -121,11 +122,9 @@ class BlockRepository extends DocumentRepository
      *
      * @param bool $filterPublished
      *
-     * @return \Doctrine\MongoDB\Query\Builder
-     *
      * @throws \Exception
      */
-    public function getUsedBy(ArrayCollection $content, Relation $relation = null, Content $excludeContent = null, $filterPublished = true)
+    public function getUsedBy(ArrayCollection $content, Relation $relation = null, Content $excludeContent = null, $filterPublished = true): Builder
     {
         if ($excludeContent !== null) {
             $excludeContent = $excludeContent->getId();
@@ -142,11 +141,13 @@ class BlockRepository extends DocumentRepository
             }
 
             if ($contentItem instanceof DocumentInterface) {
-                if (!$excludeContent) {
-                    $excludeContent = $contentItem->type_id;
-                }
+                if (property_exists($contentItem, 'type_id')) {
+                    if (!$excludeContent) {
+                        $excludeContent = $contentItem->type_id;
+                    }
 
-                $contentIds[] = $contentItem->type_id;
+                    $contentIds[] = $contentItem->type_id;
+                }
             }
         }
 

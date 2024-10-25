@@ -15,6 +15,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Connector;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\Config\ResolverInterface;
+use Integrated\Common\Channel\Connector\ExporterInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface as ConnectorExporterInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\ConnectableInterface;
@@ -38,7 +39,7 @@ class Exporter implements ExporterInterface
     ) {
     }
 
-    public function export($content, $state, ChannelInterface $channel, array $settings = []): void
+    public function export(object $content, string $state, ChannelInterface $channel, array $settings = []): ?ExporterResponse
     {
         $publicationDate = null;
         if ($content instanceof PublishableInterface) {
@@ -61,6 +62,8 @@ class Exporter implements ExporterInterface
                 // @todo probably should log this somewhere
             }
         }
+
+        return null;
     }
 
     /**
@@ -68,7 +71,7 @@ class Exporter implements ExporterInterface
      *
      * @return ConnectorExporterInterface[]
      */
-    protected function getExporters(ChannelInterface $channel, $publicationDate)
+    protected function getExporters(ChannelInterface $channel, ?\DateTimeInterface $publicationDate): array
     {
         if (!\array_key_exists($channel->getId(), $this->cache)) {
             $exporters = [];

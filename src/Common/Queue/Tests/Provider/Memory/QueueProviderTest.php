@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Queue\Tests\Provider\Memory;
 
+use Integrated\Common\Queue\Provider\Memory\QueueMessage;
 use Integrated\Common\Queue\Provider\Memory\QueueProvider;
 
 /**

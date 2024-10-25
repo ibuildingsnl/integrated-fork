@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Channel;
 
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Common\Content\Channel\ChannelInterface;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -20,7 +19,7 @@ use Integrated\Common\Content\Channel\ChannelInterface;
 class ChannelTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ChannelInterface
+     * @var Channel
      */
     private $channel;
 
