@@ -1,7 +1,7 @@
 {
-  "bundles/integratedintegrated/turbo.js": "/bundles/integratedintegrated/turbo.js",
   "bundles/integratedintegrated/app.css": "/bundles/integratedintegrated/app.css",
   "bundles/integratedintegrated/app.js": "/bundles/integratedintegrated/app.js",
+  "bundles/integratedintegrated/appStimulus.js": "/bundles/integratedintegrated/appStimulus.js",
   "bundles/integratedintegrated/edit.css": "/bundles/integratedintegrated/edit.css",
   "bundles/integratedintegrated/edit.js": "/bundles/integratedintegrated/edit.js",
   "bundles/integratedintegrated/collection.js": "/bundles/integratedintegrated/collection.js",

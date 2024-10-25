@@ -10,6 +10,9 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
         './src/Bundle/WorkflowBundle/Resources/assets/css/style.css',
         './src/Bundle/ContentBundle/Resources/assets/js/main.js'
     ])
+    .addEntry('appStimulus', [
+        './src/Bundle/ContentBundle/Resources/assets/app.js'
+    ])
     .addEntry('edit', [
         './node_modules/jquery-datetimepicker/jquery.datetimepicker.css',
         './src/Bundle/ContentBundle/Resources/assets/js/edit.js',
@@ -57,6 +60,9 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
         './src/Bundle/WorkflowBundle/Resources/assets/js/defaultSelection.js',
         './src/Bundle/WorkflowBundle/Resources/assets/js/select2_init.js',
     ])
+    .addAliases({
+        '@symfony/stimulus-bridge/controllers.json': './src/Bundle/ContentBundle/Resources/assets/controllers.json'
+    })
     .enableStimulusBridge('./src/Bundle/ContentBundle/Resources/assets/controllers.json')
     .copyFiles({
         from: './node_modules/tinymce/skins',
