@@ -117,13 +117,15 @@ class ArticleSearchController extends AbstractController
              */
             function ($contentItem) use ($channel, &$contentIds) {
                 $contentIds[] = $contentItem->type_id;
+                $content = \is_array($contentItem->content) ? implode('', $contentItem->content) : $contentItem->content;
+                $content = substr(strip_tags($content), 0, 255);
 
                 return [
                     'id' => $contentItem->type_id,
                     'title' => $contentItem->title,
                     'subtitle' => ucfirst($contentItem->type_name).' | '.
                     (new \DateTimeImmutable($contentItem->pub_time))->format('d-m-Y'),
-                    'text' => substr(strip_tags(implode('', $contentItem->content)), 0, 255),
+                    'text' => $content,
                     'url' => $contentItem['url_'.$channel->getId()],
                 ];
             },
@@ -132,7 +134,7 @@ class ArticleSearchController extends AbstractController
 
         $ret = array_map(function ($contentItem) use ($channel) {
             return array_merge($contentItem, [
-                'url' => 'https://' . $channel->getPrimaryDomain().$contentItem['url'],
+                'url' => 'https://'.$channel->getPrimaryDomain().$contentItem['url'],
             ]);
         }, $ret);
 

@@ -5,14 +5,21 @@ tinymce.PluginManager.add('articlelinksearch', (editor, url) => {
     const protocol = window.location.protocol;
 
     const openDialog = function () {
-        const selectedNode = editor.selection.getNode();
         let data;
+        let selectedNode = editor.selection.getNode();
+        let anchorNode = null;
 
-        if(selectedNode.nodeName.toLocaleUpperCase() === 'A') {
+        if (selectedNode.nodeName.toUpperCase() === 'A') {
+            anchorNode = selectedNode;
+        } else if (selectedNode.parentNode && selectedNode.parentNode.nodeName.toUpperCase() === 'A') {
+            anchorNode = selectedNode.parentNode;
+        }
+
+        if (anchorNode) {
             data = {
-                selectionText: selectedNode.innerText,
-                url: selectedNode.getAttribute('href'),
-                openInNewTab: (selectedNode.getAttribute('target') ?? '') === '_blank',
+                selectionText: anchorNode.textContent,
+                url: anchorNode.getAttribute('href'),
+                openInNewTab: (anchorNode.getAttribute('target') ?? '') === '_blank',
                 existing: true,
             };
         } else {
