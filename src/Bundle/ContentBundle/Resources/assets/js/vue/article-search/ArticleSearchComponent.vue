@@ -43,7 +43,7 @@ const activeContentTypes = computed(() => {
 });
 
 const ensureHttps = (url) => {
-    if (url.startsWith('/') || url.startsWith('#')) {
+    if (url.startsWith('/') || url.startsWith('#') || url.startsWith('mailto:') || url.startsWith('tel:')) {
         return url;
     }
     if (!url.startsWith('https://') && !url.startsWith('http://')) {
@@ -56,7 +56,7 @@ const hasValidUrl = computed(() => {
     try {
         return new URL(searchTerm.value);
     } catch {
-        if (searchTerm.value.startsWith('/') || searchTerm.value.startsWith('#')) {
+        if (searchTerm.value.startsWith('/') || searchTerm.value.startsWith('#') || searchTerm.value.startsWith('mailto:') || searchTerm.value.startsWith('tel:')) {
             return true;
         }
 
@@ -121,13 +121,13 @@ const finishSelection = () => {
             window.parent.postMessage({
                 mceAction: 'linkMakerReplace',
                 href: finalUrl,
-                newTab: openInNewTab.value && !finalUrl.startsWith('#'),
+                newTab: openInNewTab.value && !finalUrl.startsWith('#') && !finalUrl.startsWith('mailto:') && !finalUrl.startsWith('tel:'),
                 linkText: linkText.value,
             }, '*');
         } else {
             window.parent.postMessage({
                 mceAction: 'insertContent',
-                content: `<a href="${finalUrl}"${openInNewTab.value && !finalUrl.startsWith('#') ? ' target="_blank"' : ''}>${linkText.value}</a>`
+                content: `<a href="${finalUrl}"${openInNewTab.value && !finalUrl.startsWith('#') && !finalUrl.startsWith('mailto:') && !finalUrl.startsWith('tel:') ? ' target="_blank"' : ''}>${linkText.value}</a>`
             }, '*');
         }
 
@@ -156,7 +156,7 @@ const finishSelection = () => {
     } else {
         window.parent.postMessage({
             mceAction: 'insertContent',
-            content: `<a href="${finalItemUrl}"${openInNewTab.value && !finalItemUrl.startsWith('#') ? ' target="_blank"' : ''}>${linkText.value}</a>`
+            content: `<a href="${finalItemUrl}"${openInNewTab.value && !finalItemUrl.startsWith('#') && !finalItemUrl.startsWith('mailto:') && !finalItemUrl.startsWith('tel:') ? ' target="_blank"' : ''}>${linkText.value}</a>`
         }, '*');
     }
 
