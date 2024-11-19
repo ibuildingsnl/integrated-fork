@@ -1,5 +1,8 @@
 --TEST--
 "integrated_javascripts" prepend javascript
+--DEPRECATION--
+Since twig/twig 3.12: The "tag" constructor argument of the "Integrated\Bundle\AssetBundle\Twig\Node\AssetNode" class is deprecated and ignored (check which TokenParser class set it to "integrated_javascripts"), the tag is now automatically set by the Parser when needed.
+Since twig/twig 3.12: The "tag" constructor argument of the "Integrated\Bundle\AssetBundle\Twig\Node\AssetNode" class is deprecated and ignored (check which TokenParser class set it to "integrated_javascripts"), the tag is now automatically set by the Parser when needed.
 --TEMPLATE--
 {% integrated_javascripts mode='append'
     'script2.js' %}
