@@ -74,6 +74,11 @@
             <tag name="twig.extension" />
         </service>
 
+        <service id="Integrated\Bundle\ContentBundle\Twig\Extension\SocialScriptExtension">
+            <argument id="doctrine_mongodb.odm.document_manager" type="service"/>
+            <tag name="twig.extension"/>
+        </service>
+
         <service id="integrated_content.twig_title.channel" class="Integrated\Bundle\ContentBundle\Twig\Resolver\ChannelTitleResolver">
             <argument type="service" id="integrated_channel.repository.channel" />
         </service>
