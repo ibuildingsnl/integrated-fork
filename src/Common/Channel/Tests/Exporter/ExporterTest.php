@@ -97,13 +97,15 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
             ]));
 
         $this->registry->expects($this->exactly(3))
-            ->method('getAdapter')
-            ->withConsecutive([$this->equalTo('adapter1')], [$this->equalTo('adapter2')], [$this->equalTo('adapter3')])
-            ->willReturnOnConsecutiveCalls(
-                $this->getAdapter($config1, $exporter1),
-                $this->getAdapter(),
-                $this->getAdapter($config3, $exporter3)
-            );
+                       ->method('getAdapter')
+                       ->willReturnCallback(function ($adapter) use ($config1, $exporter1, $config3, $exporter3) {
+                           return match ($adapter) {
+                               'adapter1' => $this->getAdapter($config1, $exporter1),
+                               'adapter2' => $this->getAdapter(),
+                               'adapter3' => $this->getAdapter($config3, $exporter3),
+                               default => throw new \InvalidArgumentException('Unexpected adapter: '.$adapter),
+                           };
+                       });
 
         $exporter = $this->getInstance();
 
@@ -166,13 +168,15 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
             ]));
 
         $this->registry->expects($this->exactly(3))
-            ->method('getAdapter')
-            ->withConsecutive(
-                [$this->equalTo('adapter1')],
-                [$this->equalTo('adapter2')],
-                [$this->equalTo('adapter3')]
-            )
-            ->willReturnOnConsecutiveCalls($this->getAdapter(), $this->getAdapter(), $this->getAdapter());
+                      ->method('getAdapter')
+                      ->willReturnCallback(function ($adapter) {
+                          return match ($adapter) {
+                              'adapter1' => $this->getAdapter(),
+                              'adapter2' => $this->getAdapter(),
+                              'adapter3' => $this->getAdapter(),
+                              default => throw new \InvalidArgumentException('Unexpected adapter: '.$adapter),
+                          };
+                      });
 
         $exporter = $this->getInstance();
 
@@ -195,13 +199,15 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
             ]));
 
         $this->registry->expects($this->exactly(3))
-            ->method('getAdapter')
-            ->withConsecutive([$this->equalTo('adapter1')], [$this->equalTo('adapter2')], [$this->equalTo('adapter3')])
-            ->willReturnOnConsecutiveCalls(
-                $this->throwException(new \Exception('i-will-be-caught-and-not-cause-any-troubles')),
-                $this->getAdapter(),
-                $this->getAdapter()
-            );
+                      ->method('getAdapter')
+                      ->willReturnCallback(function ($adapter) {
+                          return match ($adapter) {
+                              'adapter1' => throw new \Exception('i-will-be-caught-and-not-cause-any-troubles'),
+                              'adapter2' => $this->getAdapter(),
+                              'adapter3' => $this->getAdapter(),
+                              default => throw new \InvalidArgumentException('Unexpected adapter: '.$adapter),
+                          };
+                      });
 
         $exporter = $this->getInstance();
 
