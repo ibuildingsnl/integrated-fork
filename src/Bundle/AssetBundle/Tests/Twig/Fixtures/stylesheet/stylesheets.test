@@ -1,5 +1,7 @@
 --TEST--
 "integrated_stylesheets" add external stylesheet
+--DEPRECATION--
+Since twig/twig 3.12: The "tag" constructor argument of the "Integrated\Bundle\AssetBundle\Twig\Node\AssetNode" class is deprecated and ignored (check which TokenParser class set it to "integrated_stylesheets"), the tag is now automatically set by the Parser when needed.
 --TEMPLATE--
 {% integrated_stylesheets
     'style.css' %}
