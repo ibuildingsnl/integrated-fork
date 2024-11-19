@@ -264,7 +264,7 @@ class Article extends Content implements RankableInterface
         $this->source = $source;
     }
 
-    public function getSourceUrl(): string
+    public function getSourceUrl(): ?string
     {
         return $this->sourceUrl;
     }
@@ -284,7 +284,7 @@ class Article extends Content implements RankableInterface
         $this->locale = $locale;
     }
 
-    public function getIntro(): string
+    public function getIntro(): ?string
     {
         return $this->intro;
     }
@@ -294,7 +294,7 @@ class Article extends Content implements RankableInterface
         $this->intro = (string) $intro;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
