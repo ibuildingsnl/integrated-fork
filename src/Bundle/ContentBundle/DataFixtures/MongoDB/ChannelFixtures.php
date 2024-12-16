@@ -27,6 +27,7 @@ class ChannelFixtures extends AbstractFixture
         $channel->setName('My channel');
         $channel->setDomains(['localhost', 'localhost.e-active.nl']);
         $channel->setPrimaryDomain('localhost.e-active.nl');
+        $channel->setPrimaryDomainRedirect(false);
 
         $this->addReference(self::CHANNEL, $channel);
 

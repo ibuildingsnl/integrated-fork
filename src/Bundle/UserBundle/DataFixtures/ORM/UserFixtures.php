@@ -32,7 +32,7 @@ class UserFixtures extends AbstractFixture implements DependentFixtureInterface
     {
         $user = new User();
 
-        $user->setUsername('admin');
+        $user->setUsername('admin@example.com');
         $user->setPassword($this->factory->getPasswordHasher($user)->hash('admin'));
         $user->setGroups([$this->getReference('administrators', Group::class)]);
         $user->setScope($this->getReference('integrated', Scope::class));
@@ -41,7 +41,7 @@ class UserFixtures extends AbstractFixture implements DependentFixtureInterface
 
         $user = new User();
 
-        $user->setUsername('public');
+        $user->setUsername('public@example.com');
         $user->setPassword($this->factory->getPasswordHasher($user)->hash('public'));
         $user->setScope($this->getReference('public', Scope::class));
 

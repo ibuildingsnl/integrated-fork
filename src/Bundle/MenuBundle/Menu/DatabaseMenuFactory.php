@@ -29,7 +29,7 @@ class DatabaseMenuFactory implements FactoryInterface
     protected $menuClass;
 
     /**
-     * @var string
+     * @var class-string<\Integrated\Bundle\MenuBundle\Document\MenuItem>
      */
     protected $menuItemClass;
 
@@ -139,6 +139,8 @@ class DatabaseMenuFactory implements FactoryInterface
     }
 
     /**
+     * @param class-string<\Integrated\Bundle\MenuBundle\Document\MenuItem> $class
+     *
      * @return \Integrated\Bundle\MenuBundle\Document\MenuItem
      */
     protected function getItem($class, $name, array $options = [])

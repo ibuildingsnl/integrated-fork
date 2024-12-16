@@ -1,9 +1,8 @@
 <div class="row flex flex-wrap">
 {% for item in block.items %}
 {#    <div class="{% for key, size in item.sizes %}w-{{ size }}/12{% else %}w-full{% endfor %}"> //TODO: Check if this works #}
-    <div class="{% for key, size in item.sizes %}col-{{ key }}-{{ size }}{% else %}col-sm-12{% endfor %}">
+    <div class="{% for key, size in item.sizes %}col-{{ key }}-{{ size }} {% else %}col-sm-12{% endfor %}">
         {{ integrated_block(item.block, {'gridLevel': options.gridLevel }) }}
     </div>
-
 {% endfor %}
 </div>

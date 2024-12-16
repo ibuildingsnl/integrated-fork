@@ -78,7 +78,7 @@ class Mailer
         $message = (new TemplatedEmail())
             ->from(new Address($this->from, $this->name))
             ->to($user->getUserIdentifier())
-            ->htmlTemplate($this->themeManager->locateTemplate('/mail/password.reset.html.twig'))
+            ->htmlTemplate($this->themeManager->locateTemplate('mail/password.reset.html.twig'))
             ->subject($data['subject'])
             ->context($data);
 
@@ -100,7 +100,7 @@ class Mailer
         $message = (new TemplatedEmail())
             ->from(new Address($this->from, $this->name))
             ->to($user->getUserIdentifier())
-            ->htmlTemplate($this->themeManager->locateTemplate('/mail/activate.html.twig'))
+            ->htmlTemplate($this->themeManager->locateTemplate('mail/activate.html.twig'))
             ->subject($data['subject'])
             ->context($data);
 
@@ -120,7 +120,7 @@ class Mailer
         $message = (new TemplatedEmail())
             ->from(new Address($this->from, $this->name))
             ->to($user->getUserIdentifier())
-            ->htmlTemplate($this->themeManager->locateTemplate('/mail/account-activated.html.twig'))
+            ->htmlTemplate($this->themeManager->locateTemplate('mail/account-activated.html.twig'))
             ->subject($data['subject'])
             ->context($data);
 

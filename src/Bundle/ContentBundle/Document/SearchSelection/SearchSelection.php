@@ -149,8 +149,8 @@ class SearchSelection
     }
 
     /**
-     * @param string $key
-     * @param string $value
+     * @param string          $key
+     * @param string|string[] $value
      *
      * @return SearchSelection
      */

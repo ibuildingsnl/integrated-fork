@@ -1,4 +1,5 @@
-{% set thumbnail = integrated_image(media.file).cropResize(200, 200) %}
+{% set file = media.file|default(media.featuredImage|default) %}
+{% set thumbnail = integrated_image(file).cropResize(200, 200) %}
 {% set description = media.description|default('') %}
 {% set credits = media.credits|default('') %}
 
@@ -8,9 +9,9 @@
     data-id="{{ media.id }}"
     data-media_id="{{ loop.index }}"
     data-thumbnail="{{ thumbnail }}"
-    data-file="{{ media.file }}"
+    data-file="{{ file }}"
     data-title="{{ media.title }}"
-    data-mime="{{ media.file.getMetadata().mimeType|default('') }}"
+    data-mime="{{ file.getMetadata().mimeType|default('') }}"
     >
     <div class="media-preview">
         <div class="thumbnail">
@@ -18,9 +19,9 @@
                 <img src="{{ thumbnail }}" alt="{{ media.title }}">
             </div>
         </div>
-        {% if media.file is defined and media.file|split('.')|last|lower not in not_shown_filetypes %}
+        {% if file is defined and file|split('.')|last|lower not in not_shown_filetypes %}
             <div class="filetype">
-                {{ media.file|split('.')|last|lower }}
+                {{ file|split('.')|last|lower }}
             </div>
         {% endif %}
     </div>
