@@ -160,4 +160,11 @@ class SuggestionNormalizer implements NormalizerInterface
 
         return null;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Result::class => true,
+        ];
+    }
 }

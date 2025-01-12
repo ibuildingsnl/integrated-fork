@@ -41,7 +41,7 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
         return $this->dm;
     }
 
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize($data, $class, $format = null, array $context = []): mixed
     {
         try {
             $document = $this->getDocumentManager()->getRepository($class)->find($data);
@@ -102,5 +102,10 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
         }
 
         return false;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return ['*' => false];
     }
 }

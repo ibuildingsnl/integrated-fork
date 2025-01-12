@@ -41,7 +41,7 @@ class PageLoader implements LoaderInterface
         $this->dm = $dm;
     }
 
-    public function load(mixed $resource, $type = null)
+    public function load(mixed $resource, ?string $type = null): RouteCollection
     {
         if (true === $this->loaded) {
             throw new \RuntimeException('Page loader is already added');
@@ -89,7 +89,7 @@ class PageLoader implements LoaderInterface
         return new LoaderResolver();
     }
 
-    public function setResolver(LoaderResolverInterface $resolver)
+    public function setResolver(LoaderResolverInterface $resolver): void
     {
     }
 }

@@ -50,4 +50,11 @@ class JsonLDNormalizer implements \Symfony\Component\Serializer\Normalizer\Norma
     {
         return self::FORMAT === $format && $data instanceof ContentInterface;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            ContentInterface::class => true,
+        ];
+    }
 }

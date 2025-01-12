@@ -55,6 +55,8 @@
         "symfony/asset": "^7.1",
         "symfony/cache": "^7.1",
         "symfony/css-selector": "^7.1",
+        "symfony/console": "^7.1",
+        "symfony/debug-bundle": "^7.1",
         "symfony/dom-crawler": "^7.1",
         "symfony/event-dispatcher": "^7.1",
         "symfony/expression-language": "^7.1",
