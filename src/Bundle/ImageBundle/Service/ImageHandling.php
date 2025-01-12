@@ -27,6 +27,11 @@ class ImageHandling
     private $cacheDirMode;
 
     /**
+     * @var string
+     */
+    private $webDirectory;
+
+    /**
      * @var ContainerInterface
      */
     private $container;
@@ -61,7 +66,7 @@ class ImageHandling
      * @param bool                                 $throwException
      * @param string                               $fallbackImage
      */
-    public function __construct($cacheDirectory, $cacheDirMode, $handlerClass, ContainerInterface $container, Packages $assetsPackages, $fileLocator, $throwException, $fallbackImage)
+    public function __construct($cacheDirectory, $cacheDirMode, $webDirectory, $handlerClass, Packages $assetsPackages, $fileLocator, $throwException, $fallbackImage)
     {
         if (!$fileLocator instanceof FileLocatorInterface && $fileLocator instanceof KernelInterface) {
             throw new \InvalidArgumentException(
@@ -81,8 +86,8 @@ class ImageHandling
 
         $this->cacheDirectory = $cacheDirectory;
         $this->cacheDirMode = (int) $cacheDirMode;
+        $this->webDirectory = $webDirectory;
         $this->handlerClass = $handlerClass;
-        $this->container = $container;
         $this->assetsPackages = $assetsPackages;
         $this->fileLocator = $fileLocator;
         $this->throwException = $throwException;
@@ -141,26 +146,17 @@ class ImageHandling
      */
     private function createInstance($file, $w = null, $h = null)
     {
-        $container = $this->container;
-        $webDir = $container->getParameter('gregwar_image.web_dir');
-
         $handlerClass = $this->handlerClass;
         /** @var ImageHandler $image */
         $image = new $handlerClass($file, $w, $h, $this->throwException, $this->fallbackImage);
 
         $image->setCacheDir($this->cacheDirectory);
         $image->setCacheDirMode($this->cacheDirMode);
-        $image->setActualCacheDir($webDir.'/'.$this->cacheDirectory);
+        $image->setActualCacheDir($this->webDirectory.'/'.$this->cacheDirectory);
 
-        if ($container->has('templating.helper.assets')) {
-            $image->setFileCallback(function ($file) use ($container) {
-                return $container->get('templating.helper.assets')->getUrl($file);
-            });
-        } else {
-            $image->setFileCallback(function ($file) {
-                return $this->assetsPackages->getUrl($file);
-            });
-        }
+        $image->setFileCallback(function ($file) {
+            return $this->assetsPackages->getUrl($file);
+        });
 
         return $image;
     }

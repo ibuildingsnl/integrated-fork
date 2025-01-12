@@ -14,8 +14,8 @@
         <service id="image.handling" class="%image.handling.class%" public="true">
             <argument>%gregwar_image.cache_dir%</argument>
             <argument>%gregwar_image.cache_dir_mode%</argument>
+            <argument>%gregwar_image.web_dir%</argument>
             <argument>%image.handler.class%</argument>
-            <argument>@service_container</argument>
             <argument>@assets.packages</argument>
             <argument>@file_locator</argument>
             <argument>%gregwar_image.throw_exception%</argument>
