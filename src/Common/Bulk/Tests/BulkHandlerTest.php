@@ -27,7 +27,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class BulkHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var HandlerFactoryRegistry|MockObject
+     * @var HandlerFactoryRegistry&MockObject
      */
     private $registry;
 

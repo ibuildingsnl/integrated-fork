@@ -24,7 +24,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface as SymfonyNormal
 class JsonLDNormalizerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var NormalizerInterface|MockObject
+     * @var NormalizerInterface&MockObject
      */
     private $normalizer;
 

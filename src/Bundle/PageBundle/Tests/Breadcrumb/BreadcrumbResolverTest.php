@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Integrated package.
  *
@@ -31,27 +32,27 @@ class BreadcrumbResolverTest extends TestCase
     public const TEMPLATE = 'default';
 
     /**
-     * @var DocumentManager|MockObject
+     * @var DocumentManager&MockObject
      */
     protected $documentManager;
 
     /**
-     * @var UrlResolver|MockObject
+     * @var UrlResolver&MockObject
      */
     protected $urlResolver;
 
     /**
-     * @var ChannelContextInterface|MockObject
+     * @var ChannelContextInterface&MockObject
      */
     protected $channelContext;
 
     /**
-     * @var RequestStack|MockObject
+     * @var RequestStack&MockObject
      */
     protected $requestStack;
 
     /**
-     * @var Request|MockObject
+     * @var Request&MockObject
      */
     protected $request;
 

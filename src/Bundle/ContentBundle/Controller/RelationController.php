@@ -43,7 +43,7 @@ class RelationController extends AbstractController
 
         $documents = $qb->getQuery()->execute();
 
-        return $this->render(sprintf('@IntegratedContent/relation/index.%s.twig', $request->getRequestFormat()), ['documents' => $documents]);
+        return $this->render(\sprintf('@IntegratedContent/relation/index.%s.twig', $request->getRequestFormat()), ['documents' => $documents]);
     }
 
     public function show(Relation $relation): Response
@@ -185,7 +185,7 @@ class RelationController extends AbstractController
     {
         $form = $this->createFormBuilder()
                      ->setAction($this->generateUrl('integrated_content_relation_delete', ['id' => $relation->getId()]))
-                     ->setMethod('DELETE');
+                     ->setMethod(Request::METHOD_DELETE);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 

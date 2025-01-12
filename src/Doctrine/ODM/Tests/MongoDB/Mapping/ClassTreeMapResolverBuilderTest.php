@@ -21,7 +21,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ClassTreeMapResolverBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ClassLocatorInterface|MockObject
+     * @var ClassLocatorInterface&MockObject
      */
     private $locator;
 

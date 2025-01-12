@@ -49,7 +49,7 @@ class ActionsType extends AbstractType
 
             foreach ($buttons as $button) {
                 if (!isset($this->buttons[$button])) {
-                    throw new InvalidOptionsException(sprintf('The value "%s" for the option "%s" is missing a valid button configuration', $button, 'buttons'));
+                    throw new InvalidOptionsException(\sprintf('The value "%s" for the option "%s" is missing a valid button configuration', $button, 'buttons'));
                 }
 
                 $normalized[$button] = $this->buttons[$button];

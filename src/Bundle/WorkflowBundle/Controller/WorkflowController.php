@@ -111,7 +111,7 @@ class WorkflowController extends AbstractController
             if ($form->isValid()) {
                 $this->entityManager->flush();
 
-                $this->addFlash('success', sprintf('The changes to the workflow %s are saved', $workflow->getName()));
+                $this->addFlash('success', \sprintf('The changes to the workflow %s are saved', $workflow->getName()));
 
                 return $this->redirectToRoute('integrated_workflow_edit', ['id' => $workflow->getId()]);
             }
@@ -147,7 +147,7 @@ class WorkflowController extends AbstractController
                 $this->entityManager->remove($workflow);
                 $this->entityManager->flush();
 
-                $this->addFlash('success', sprintf('The workflow %s is removed', $workflow->getName()));
+                $this->addFlash('success', \sprintf('The workflow %s is removed', $workflow->getName()));
 
                 return $this->redirectToRoute('integrated_workflow_index');
             }
@@ -266,7 +266,7 @@ class WorkflowController extends AbstractController
         return new JsonResponse(['users' => $users, 'fields' => $fieldsCodes]);
     }
 
-    private function createNewForm(): FormInterface
+    private function createNewForm(): Form
     {
         $form = $this->createForm(DefinitionFormType::class, null, [
             'action' => $this->generateUrl('integrated_workflow_new'),
@@ -277,7 +277,7 @@ class WorkflowController extends AbstractController
         return $form;
     }
 
-    private function createEditForm(Definition $workflow): FormInterface
+    private function createEditForm(Definition $workflow): Form
     {
         $form = $this->createForm(DefinitionFormType::class, $workflow, [
             'action' => $this->generateUrl('integrated_workflow_edit', ['id' => $workflow->getId()]),
@@ -288,7 +288,7 @@ class WorkflowController extends AbstractController
         return $form;
     }
 
-    private function createDeleteForm(Definition $workflow): FormInterface
+    private function createDeleteForm(Definition $workflow): Form
     {
         $form = $this->createForm(DeleteFormType::class, $workflow, [
             'action' => $this->generateUrl('integrated_workflow_delete', ['id' => $workflow->getId()]),

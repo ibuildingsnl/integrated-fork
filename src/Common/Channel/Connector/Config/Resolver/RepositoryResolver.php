@@ -46,7 +46,7 @@ class RepositoryResolver implements ResolverInterface
             return $config;
         }
 
-        throw new InvalidArgumentException(sprintf('Could not load config with the name "%s"', $name));
+        throw new InvalidArgumentException(\sprintf('Could not load config with the name "%s"', $name));
     }
 
     public function getConfigs(ChannelInterface $channel)

@@ -23,7 +23,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 class IndexerEventTest extends TestCase
 {
     /**
-     * @var IndexerInterface|MockObject
+     * @var IndexerInterface&MockObject
      */
     protected $indexer;
 

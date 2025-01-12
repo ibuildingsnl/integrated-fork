@@ -21,12 +21,12 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ErrorEventTest extends WorkerEventTest
 {
     /**
-     * @var \Exception|MockObject
+     * @var \Exception&MockObject
      */
     protected $exception;
 
     /**
-     * @var QueueMessageInterface|MockObject
+     * @var QueueMessageInterface&MockObject
      */
     protected $message;
 

@@ -21,7 +21,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class DocumentNormalizerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DocumentManager|MockObject
+     * @var DocumentManager&MockObject
      */
     private $manger;
 

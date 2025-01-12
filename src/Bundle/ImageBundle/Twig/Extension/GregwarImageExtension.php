@@ -2,7 +2,7 @@
 
 namespace Integrated\Bundle\ImageBundle\Twig\Extension;
 
-use Gregwar\ImageBundle\Services\ImageHandling;
+use Integrated\Bundle\ImageBundle\Services\ImageHandling;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -12,7 +12,7 @@ use Twig\TwigFunction;
  * @author Gregwar <g.passault@gmail.com>
  * @author bzikarsky <benjamin.zikarsky@perbility.de>
  */
-class ImageTwig extends AbstractExtension
+class GregwarImageExtension extends AbstractExtension
 {
     /**
      * @var ImageHandling
@@ -25,8 +25,7 @@ class ImageTwig extends AbstractExtension
     private $webDir;
 
     /**
-     * @param ImageHandling $imageHandling
-     * @param string        $webDir
+     * @param string $webDir
      */
     public function __construct(ImageHandling $imageHandling, $webDir)
     {
@@ -34,16 +33,13 @@ class ImageTwig extends AbstractExtension
         $this->webDir = $webDir;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions()
     {
-        return array(
-            new TwigFunction('image', $this->image(...), array('is_safe' => array('html'))),
-            new TwigFunction('new_image', $this->newImage(...), array('is_safe' => array('html'))),
-            new TwigFunction('web_image', $this->webImage(...), array('is_safe' => array('html'))),
-        );
+        return [
+            new TwigFunction('image', $this->image(...), ['is_safe' => ['html']]),
+            new TwigFunction('new_image', $this->newImage(...), ['is_safe' => ['html']]),
+            new TwigFunction('web_image', $this->webImage(...), ['is_safe' => ['html']]),
+        ];
     }
 
     /**
@@ -79,9 +75,6 @@ class ImageTwig extends AbstractExtension
         return $this->imageHandling->create($width, $height);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'image';

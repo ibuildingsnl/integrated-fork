@@ -25,12 +25,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 class JobFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var SerializerInterface|MockObject
+     * @var SerializerInterface&MockObject
      */
     private $serializer;
 
     /**
-     * @var ObjectManager|MockObject
+     * @var ObjectManager&MockObject
      */
     private $manager;
 

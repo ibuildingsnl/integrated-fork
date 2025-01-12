@@ -21,7 +21,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContentSubscriber|MockObject
+     * @var ContentSubscriber&MockObject
      */
     private $subscriber;
 

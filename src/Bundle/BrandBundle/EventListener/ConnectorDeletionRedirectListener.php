@@ -20,7 +20,7 @@ class ConnectorDeletionRedirectListener implements EventSubscriberInterface
 
     public function redirect(FilterResponseConfigEvent $event): void
     {
-        $key = sprintf(self::SESSION_PATH, $event->getConfig()->getAdapter());
+        $key = \sprintf(self::SESSION_PATH, $event->getConfig()->getAdapter());
         $session = $event->getRequest()->getSession();
 
         if ($session->has($key)) {

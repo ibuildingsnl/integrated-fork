@@ -21,7 +21,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ErrorEventTest extends MessageEventTest
 {
     /**
-     * @var ExceptionInterface|MockObject
+     * @var ExceptionInterface&MockObject
      */
     protected $exception;
 

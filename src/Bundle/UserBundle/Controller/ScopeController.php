@@ -66,7 +66,6 @@ class ScopeController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        /** @var Form $form */
         $form = $this->createNewForm();
         $form->handleRequest($request);
 
@@ -79,7 +78,7 @@ class ScopeController extends AbstractController
                 $scope = $form->getData();
 
                 $this->scopeManager->persist($scope);
-                $this->addFlash('success', sprintf('The scope %s is created', $scope->getName()));
+                $this->addFlash('success', \sprintf('The scope %s is created', $scope->getName()));
 
                 return $this->redirectToRoute('integrated_user_scope_index');
             }
@@ -96,7 +95,6 @@ class ScopeController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        /** @var Form $form */
         $form = $this->createEditForm($scope);
         $form->handleRequest($request);
 
@@ -107,7 +105,7 @@ class ScopeController extends AbstractController
 
             if ($form->isValid()) {
                 $this->scopeManager->persist($scope);
-                $this->addFlash('success', sprintf('The changes to the scope %s are saved', $scope->getName()));
+                $this->addFlash('success', \sprintf('The changes to the scope %s are saved', $scope->getName()));
 
                 return $this->redirectToRoute('integrated_user_scope_index');
             }
@@ -129,7 +127,6 @@ class ScopeController extends AbstractController
             return $this->redirectToRoute('integrated_user_scope_index');
         }
 
-        /** @var Form $form */
         $form = $this->createDeleteForm($scope);
 
         if ($request->isMethod('delete')) {
@@ -160,7 +157,7 @@ class ScopeController extends AbstractController
 
             if (false === $hasRelations) {
                 $this->scopeManager->remove($scope);
-                $this->addFlash('success', sprintf('The scope %s is removed', $scope->getName()));
+                $this->addFlash('success', \sprintf('The scope %s is removed', $scope->getName()));
 
                 return $this->redirectToRoute('integrated_user_scope_index');
             }
@@ -172,7 +169,7 @@ class ScopeController extends AbstractController
         ]);
     }
 
-    private function createNewForm(): FormInterface
+    private function createNewForm(): Form
     {
         $form = $this->createForm(ScopeFormType::class, null, [
             'action' => $this->generateUrl('integrated_user_scope_new'),
@@ -183,7 +180,7 @@ class ScopeController extends AbstractController
         return $form;
     }
 
-    private function createEditForm(Scope $scope): FormInterface
+    private function createEditForm(Scope $scope): Form
     {
         $form = $this->createForm(ScopeFormType::class, $scope, [
             'action' => $this->generateUrl('integrated_user_scope_edit', ['id' => $scope->getId()]),
@@ -194,7 +191,7 @@ class ScopeController extends AbstractController
         return $form;
     }
 
-    private function createDeleteForm(Scope $scope): FormInterface
+    private function createDeleteForm(Scope $scope): Form
     {
         $form = $this->createForm(DeleteFormType::class, $scope, [
             'action' => $this->generateUrl('integrated_user_scope_delete', ['id' => $scope->getId()]),

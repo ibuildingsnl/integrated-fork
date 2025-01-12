@@ -146,7 +146,7 @@ class BlockExtension extends AbstractExtension
             if ('prod' !== $this->environment) {
                 throw $e;
             }
-            $this->logger->error(sprintf('Block "%s" contains an error', $id));
+            $this->logger->error(\sprintf('Block "%s" contains an error', $id));
 
             return $environment->render($this->themeManager->locateTemplate('blocks/error.html.twig'), [
                 'id' => $id,

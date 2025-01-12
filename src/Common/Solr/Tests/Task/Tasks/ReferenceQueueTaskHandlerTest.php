@@ -25,17 +25,17 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ReferenceQueueTaskHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContentProviderInterface|MockObject
+     * @var ContentProviderInterface&MockObject
      */
     protected $provider;
 
     /**
-     * @var QueueInterface|MockObject
+     * @var QueueInterface&MockObject
      */
     protected $queue;
 
     /**
-     * @var JobFactory|MockObject
+     * @var JobFactory&MockObject
      */
     protected $factory;
 
@@ -103,7 +103,7 @@ class ReferenceQueueTaskHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $id
      *
-     * @return ReferenceQueueTask|MockObject
+     * @return ReferenceQueueTask&MockObject
      */
     protected function getTask($id)
     {
@@ -116,7 +116,7 @@ class ReferenceQueueTaskHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ContentInterface|MockObject
+     * @return ContentInterface&MockObject
      */
     protected function getContent()
     {

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Integrated package.
  *
@@ -59,22 +60,22 @@ class CustomFieldListenerTest extends \PHPUnit\Framework\TestCase
      */
     public function testOnPostBuildFunctionWithCustomFields()
     {
-        /** @var BuilderEvent|MockObject $event */
+        /** @var BuilderEvent&MockObject $event */
         $event = $this->getMockBuilder(BuilderEvent::class)->disableOriginalConstructor()->getMock();
 
-        /** @var ContentTypeInterface|MockObject $contentType */
+        /** @var ContentTypeInterface&MockObject $contentType */
         $contentType = $this->createMock(ContentTypeInterface::class);
 
-        /** @var FormBuilderInterface|MockObject $builder */
+        /** @var FormBuilderInterface&MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
 
-        /** @var Field|MockObject $field */
+        /** @var Field&MockObject $field */
         $field = $this->createMock(Field::class);
 
-        /** @var CustomField|MockObject $customField */
+        /** @var CustomField&MockObject $customField */
         $customField = $this->createMock(CustomField::class);
 
-        /** @var CustomField|MockObject $customField2 */
+        /** @var CustomField&MockObject $customField2 */
         $customField2 = $this->createMock(CustomField::class);
 
         $event
@@ -119,16 +120,16 @@ class CustomFieldListenerTest extends \PHPUnit\Framework\TestCase
      */
     public function testOnPostBuildFunctionWithNoCustomFields()
     {
-        /** @var BuilderEvent|MockObject $event */
+        /** @var BuilderEvent&MockObject $event */
         $event = $this->getMockBuilder(BuilderEvent::class)->disableOriginalConstructor()->getMock();
 
-        /** @var ContentTypeInterface|MockObject $contentType */
+        /** @var ContentTypeInterface&MockObject $contentType */
         $contentType = $this->createMock(ContentTypeInterface::class);
 
-        /** @var FormBuilderInterface|MockObject $builder */
+        /** @var FormBuilderInterface&MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
 
-        /** @var Field|MockObject $field */
+        /** @var Field&MockObject $field */
         $field = $this->createMock(Field::class);
 
         $event

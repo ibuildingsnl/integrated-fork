@@ -2,10 +2,10 @@
 
 namespace Integrated\Bundle\ImageBundle\Services;
 
-use Integrated\Bundle\ImageBundle\ImageHandler;
+use Integrated\Bundle\ImageBundle\Image\ImageHandler;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
@@ -51,11 +51,12 @@ class ImageHandling
      */
     private $throwException;
 
+    private $fallbackImage;
+
     /**
      * @param string                               $cacheDirectory
      * @param int                                  $cacheDirMode
      * @param string                               $handlerClass
-     * @param ContainerInterface                   $container
      * @param KernelInterface|FileLocatorInterface $fileLocator
      * @param bool                                 $throwException
      * @param string                               $fallbackImage
@@ -74,12 +75,12 @@ class ImageHandling
                 'Pass Symfony\Component\HttpKernel\KernelInterface to '.__CLASS__.
                 ' is deprecated since version 2.1.0 and will be removed in 3.0.'.
                 ' Use Symfony\Component\Config\FileLocatorInterface instead.',
-                E_USER_DEPRECATED
+                \E_USER_DEPRECATED
             );
         }
 
         $this->cacheDirectory = $cacheDirectory;
-        $this->cacheDirMode = intval($cacheDirMode);
+        $this->cacheDirMode = (int) $cacheDirMode;
         $this->handlerClass = $handlerClass;
         $this->container = $container;
         $this->assetsPackages = $assetsPackages;
@@ -97,7 +98,7 @@ class ImageHandling
      */
     public function open($file)
     {
-        if (strlen($file) >= 1 && $file[0] == '@') {
+        if ($file !== '' && $file[0] == '@') {
             try {
                 if ($this->fileLocator instanceof FileLocatorInterface) {
                     $file = $this->fileLocator->locate($file);
@@ -156,7 +157,7 @@ class ImageHandling
                 return $container->get('templating.helper.assets')->getUrl($file);
             });
         } else {
-            $image->setFileCallback(function ($file) use ($container) {
+            $image->setFileCallback(function ($file) {
                 return $this->assetsPackages->getUrl($file);
             });
         }

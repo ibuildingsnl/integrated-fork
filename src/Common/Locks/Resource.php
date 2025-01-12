@@ -112,7 +112,7 @@ class Resource implements ResourceInterface
      */
     public function __toString()
     {
-        return sprintf(
+        return \sprintf(
             'Resource(%s, %s)',
             $this->type,
             $this->identifier === null ? 'NULL' : $this->identifier

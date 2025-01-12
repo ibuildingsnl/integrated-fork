@@ -22,17 +22,17 @@ use Symfony\Component\Form\FormEvents;
 class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \Symfony\Component\Form\FormInterface|MockObject
+     * @var \Symfony\Component\Form\FormInterface&MockObject
      */
     private $form;
 
     /**
-     * @var \Symfony\Component\Form\FormEvent|MockObject
+     * @var \Symfony\Component\Form\FormEvent&MockObject
      */
     private $event;
 
     /**
-     * @var \Integrated\Bundle\WorkflowBundle\Entity\Definition|MockObject
+     * @var \Integrated\Bundle\WorkflowBundle\Entity\Definition&MockObject
      */
     private $definition;
 
@@ -342,13 +342,13 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
 
         $states = $this->getForm();
 
-        /** @var State|MockObject $state1 */
+        /** @var State&MockObject $state1 */
         $state1 = $this->createMock('Integrated\Bundle\WorkflowBundle\Entity\Definition\State');
 
-        /** @var State|MockObject $state2 */
+        /** @var State&MockObject $state2 */
         $state2 = $this->createMock('Integrated\Bundle\WorkflowBundle\Entity\Definition\State');
 
-        /** @var State|MockObject $state3 */
+        /** @var State&MockObject $state3 */
         $state3 = $this->createMock('Integrated\Bundle\WorkflowBundle\Entity\Definition\State');
 
         // Get three different form types
@@ -391,7 +391,7 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
      */
     protected function getFormChild(?State $state = null, $withDefaultState = null, $getOrSet = 'get')
     {
-        /** @var \Symfony\Component\Form\FormInterface|MockObject $child */
+        /** @var \Symfony\Component\Form\FormInterface&MockObject $child */
         $child = $this->createMock('Symfony\Component\Form\FormInterface');
 
         // Stub getData, returns $state
@@ -431,7 +431,7 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
                     ->willReturn(true)
                 ;
 
-                /** @var \Symfony\Component\Form\FormInterface|MockObject $default */
+                /** @var \Symfony\Component\Form\FormInterface&MockObject $default */
                 $default = $this->createMock('Symfony\Component\Form\FormInterface');
 
                 // Stub get, returns $default
@@ -489,7 +489,7 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
     }
 
     /**
-     * @return MockObject | \Symfony\Component\Form\FormInterface'
+     * @return MockObject|\Symfony\Component\Form\FormInterface
      */
     protected function getForm($data = null)
     {

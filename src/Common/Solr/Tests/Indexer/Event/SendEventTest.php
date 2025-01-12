@@ -21,7 +21,7 @@ use Solarium\QueryType\Update\Query\Query;
 class SendEventTest extends IndexerEventTest
 {
     /**
-     * @var Query|MockObject
+     * @var Query&MockObject
      */
     protected $query;
 

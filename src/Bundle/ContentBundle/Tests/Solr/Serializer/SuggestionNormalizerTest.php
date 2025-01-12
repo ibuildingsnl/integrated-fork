@@ -34,17 +34,17 @@ class SuggestionNormalizerTest extends TestCase
     public const ROUTE = 'this-is-the-route';
 
     /**
-     * @var UrlGeneratorInterface|MockObject
+     * @var UrlGeneratorInterface&MockObject
      */
     protected $generator;
 
     /**
-     * @var ResolverInterface|MockObject
+     * @var ResolverInterface&MockObject
      */
     protected $resolver;
 
     /**
-     * @var ImageExtension|MockObject
+     * @var ImageExtension&MockObject
      */
     protected $imageExtension;
 

@@ -20,7 +20,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class TypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Type|MockObject
+     * @var Type&MockObject
      */
     protected $type;
 

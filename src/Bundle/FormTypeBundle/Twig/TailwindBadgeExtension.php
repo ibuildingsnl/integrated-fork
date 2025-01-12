@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of BraincraftedTailwindBundle.
  *
@@ -41,7 +42,7 @@ class TailwindBadgeExtension extends AbstractExtension
      */
     public function badgeFunction($text)
     {
-        return sprintf('<span class="badge">%s</span>', $text);
+        return \sprintf('<span class="badge">%s</span>', $text);
     }
 
     public function getName()

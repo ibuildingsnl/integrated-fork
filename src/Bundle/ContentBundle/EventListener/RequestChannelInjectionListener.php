@@ -58,7 +58,7 @@ class RequestChannelInjectionListener implements EventSubscriberInterface
             && $event->getRequest()->getMethod() == 'GET'
         ) {
             $url = $event->getRequest()->getScheme().'://'.$channel->getPrimaryDomain().$event->getRequest()->getRequestUri();
-            $event->setResponse(new RedirectResponse($url, 301));
+            $event->setResponse(new RedirectResponse($url, \Symfony\Component\HttpFoundation\Response::HTTP_MOVED_PERMANENTLY));
         }
     }
 

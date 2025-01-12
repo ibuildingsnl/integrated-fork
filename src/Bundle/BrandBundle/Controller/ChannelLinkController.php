@@ -120,7 +120,7 @@ class ChannelLinkController extends AbstractController
         $this->checkPermissions();
 
         $form = $this->createFormBuilder()
-            ->setMethod('DELETE')
+            ->setMethod(Request::METHOD_DELETE)
             ->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']])
             ->getForm();
 

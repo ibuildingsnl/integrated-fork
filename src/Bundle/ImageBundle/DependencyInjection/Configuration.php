@@ -11,8 +11,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('gregwar_image');
-        $rootNode = method_exists(TreeBuilder::class, 'getRootNode') ?
-            $treeBuilder->getRootNode() : $treeBuilder->root('gregwar_image');
+        $rootNode = $treeBuilder->getRootNode();
 
         $webDirectory = '%kernel.project_dir%/public';
 

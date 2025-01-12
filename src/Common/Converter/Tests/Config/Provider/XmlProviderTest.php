@@ -29,7 +29,7 @@ class XmlProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testFinderFileExtension()
     {
-        /** @var Finder|MockObject $finder */
+        /** @var Finder&MockObject $finder */
         $finder = $this->getMockBuilder('Symfony\Component\Finder\Finder')->disableOriginalConstructor()->getMock();
 
         $finder->expects($this->atLeastOnce())

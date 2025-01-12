@@ -26,7 +26,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class MongoDBContenTypeListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QueueInterface|MockObject
+     * @var QueueInterface&MockObject
      */
     private $queue;
 
@@ -79,7 +79,7 @@ class MongoDBContenTypeListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $id
      *
-     * @return ContentTypeInterface|MockObject
+     * @return ContentTypeInterface&MockObject
      */
     protected function getContentType($id)
     {
@@ -94,7 +94,7 @@ class MongoDBContenTypeListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param object $document
      *
-     * @return LifecycleEventArgs|MockObject
+     * @return LifecycleEventArgs&MockObject
      */
     protected function getEvent($document)
     {

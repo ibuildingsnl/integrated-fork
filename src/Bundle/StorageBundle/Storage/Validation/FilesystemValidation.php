@@ -45,7 +45,7 @@ class FilesystemValidation
         foreach ($filesystems as $key) {
             if (!$this->registry->exists($key)) {
                 throw new \InvalidArgumentException(
-                    sprintf(
+                    \sprintf(
                         'The filesystem %s does not exist.',
                         $key
                     )

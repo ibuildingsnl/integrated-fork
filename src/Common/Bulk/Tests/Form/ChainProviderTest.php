@@ -22,12 +22,12 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ChainProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConfigProviderInterface|MockObject
+     * @var ConfigProviderInterface&MockObject
      */
     private $provider1;
 
     /**
-     * @var ConfigProviderInterface|MockObject
+     * @var ConfigProviderInterface&MockObject
      */
     private $provider2;
 

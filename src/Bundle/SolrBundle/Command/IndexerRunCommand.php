@@ -177,7 +177,7 @@ The <info>%command.name%</info> command starts a indexer run.
                 $process->start();
 
                 // Tell somebody
-                $output->writeln(sprintf('Started process %d with pid %d to run the queue', $i + 1, $process->getPid()));
+                $output->writeln(\sprintf('Started process %d with pid %d to run the queue', $i + 1, $process->getPid()));
             }
 
             if ($input->getOption('blocking')) {
@@ -188,16 +188,16 @@ The <info>%command.name%</info> command starts a indexer run.
                     foreach ($pool as $i => $process) {
                         // Read stout for anything to pass thru
                         if ($processOutput = $process->getIncrementalOutput()) {
-                            $output->writeln(sprintf('Prcocess %d: %s', $i, $processOutput));
+                            $output->writeln(\sprintf('Prcocess %d: %s', $i, $processOutput));
                         }
                         // Read sterr for anything to pass thru
                         if ($processOutput = $process->getIncrementalErrorOutput()) {
-                            $output->writeln(sprintf('Prcocess %d: %s', $i, $processOutput));
+                            $output->writeln(\sprintf('Prcocess %d: %s', $i, $processOutput));
                         }
 
                         if (!$process->isRunning()) {
                             // Tell the user
-                            $output->writeln(sprintf('Process %d finished', $i + 1));
+                            $output->writeln(\sprintf('Process %d finished', $i + 1));
 
                             // This one is important
                             $pool->removeElement($process);
@@ -210,7 +210,7 @@ The <info>%command.name%</info> command starts a indexer run.
             }
         } else {
             // Set the modulo to run over the data set with x processes, creating a unique list per thread
-            $this->queueProvider->setOption('where', sprintf('(id %% %d) = %d', $argument->getProcessMax(), $argument->getProcessNumber()));
+            $this->queueProvider->setOption('where', \sprintf('(id %% %d) = %d', $argument->getProcessMax(), $argument->getProcessNumber()));
 
             // Add the clear event listener only for the thread
             $this->indexer->getEventDispatcher()->addSubscriber($this->clearEventSubscriber);

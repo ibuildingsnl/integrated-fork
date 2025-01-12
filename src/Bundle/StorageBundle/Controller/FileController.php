@@ -11,9 +11,9 @@
 
 namespace Integrated\Bundle\StorageBundle\Controller;
 
-use Gregwar\ImageBundle\Services\ImageHandling;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ImageBundle\Converter\WebFormatConverter;
+use Integrated\Bundle\ImageBundle\Services\ImageHandling;
 use Integrated\Bundle\StorageBundle\Storage\Accessor\DoctrineDocument;
 use Integrated\Bundle\StorageBundle\Storage\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
@@ -69,7 +69,7 @@ class FileController
 
         // Everything ends here, no file found in the property
         throw new NotFoundHttpException(
-            sprintf('There is no file found in the %s object', $document->getId())
+            \sprintf('There is no file found in the %s object', $document->getId())
         );
     }
 }

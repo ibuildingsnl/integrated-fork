@@ -57,7 +57,6 @@ class GroupController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        /** @var Form $form */
         $form = $this->createNewForm();
         $form->handleRequest($request);
 
@@ -70,7 +69,7 @@ class GroupController extends AbstractController
                 $user = $form->getData();
 
                 $this->manager->persist($user);
-                $this->addFlash('success', sprintf('The group %s is created', $user->getName()));
+                $this->addFlash('success', \sprintf('The group %s is created', $user->getName()));
 
                 return $this->redirectToRoute('integrated_user_group_index');
             }
@@ -93,7 +92,6 @@ class GroupController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        /** @var Form $form */
         $form = $this->createEditForm($group);
         $form->handleRequest($request);
 
@@ -104,7 +102,7 @@ class GroupController extends AbstractController
 
             if ($form->isValid()) {
                 $this->manager->persist($group);
-                $this->addFlash('success', sprintf('The changes to the group %s are saved', $group->getName()));
+                $this->addFlash('success', \sprintf('The changes to the group %s are saved', $group->getName()));
 
                 return $this->redirectToRoute('integrated_user_group_index');
             }
@@ -128,7 +126,6 @@ class GroupController extends AbstractController
             return $this->redirectToRoute('integrated_user_group_index'); // group is already gone
         }
 
-        /** @var Form $form */
         $form = $this->createDeleteForm($group);
         $form->handleRequest($request);
 
@@ -140,7 +137,7 @@ class GroupController extends AbstractController
 
             if ($form->isValid()) {
                 $this->manager->remove($group);
-                $this->addFlash('success', sprintf('The group %s is removed', $group->getName()));
+                $this->addFlash('success', \sprintf('The group %s is removed', $group->getName()));
 
                 return $this->redirectToRoute('integrated_user_group_index');
             }
@@ -152,7 +149,7 @@ class GroupController extends AbstractController
         ]);
     }
 
-    private function createNewForm(): FormInterface
+    private function createNewForm(): Form
     {
         $form = $this->createForm(GroupFormType::class, null, [
             'action' => $this->generateUrl('integrated_user_group_new'),
@@ -163,7 +160,7 @@ class GroupController extends AbstractController
         return $form;
     }
 
-    private function createEditForm(GroupInterface $group): FormInterface
+    private function createEditForm(GroupInterface $group): Form
     {
         $form = $this->createForm(GroupFormType::class, $group, [
             'action' => $this->generateUrl('integrated_user_group_edit', ['id' => $group->getId()]),
@@ -174,7 +171,7 @@ class GroupController extends AbstractController
         return $form;
     }
 
-    private function createDeleteForm(GroupInterface $group): FormInterface
+    private function createDeleteForm(GroupInterface $group): Form
     {
         $form = $this->createForm(DeleteFormType::class, $group, [
             'action' => $this->generateUrl('integrated_user_group_delete', ['id' => $group->getId()]),

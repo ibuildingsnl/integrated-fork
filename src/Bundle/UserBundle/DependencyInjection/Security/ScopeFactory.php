@@ -49,7 +49,7 @@ class ScopeFactory implements AuthenticatorFactoryInterface, FirewallListenerFac
         return 'scope';
     }
 
-    public function addConfiguration(NodeDefinition $node)
+    public function addConfiguration(NodeDefinition $node): void
     {
     }
 }

@@ -25,7 +25,7 @@ class NoFilesystemAvailableException extends \ErrorException
     {
         // Just to the last resort
         return new self(
-            sprintf(
+            \sprintf(
                 'The file %s has no available filesystem(s) for a read operation tried: %s.',
                 $storage->getIdentifier(),
                 implode(', ', $storage->getFilesystems()->toArray())

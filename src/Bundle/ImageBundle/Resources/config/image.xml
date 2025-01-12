@@ -23,7 +23,7 @@
         </service>
 
         <!-- Helper Twig -->
-        <service id="twig.extension.image" class="Gregwar\ImageBundle\Extensions\ImageTwig">
+        <service id="twig.extension.image" class="Integrated\Bundle\ImageBundle\Twig\Extension\GregwarImageExtension">
             <argument>@image.handling</argument>
             <argument>%gregwar_image.web_dir%</argument>
             <tag name="twig.extension" />

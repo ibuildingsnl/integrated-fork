@@ -72,7 +72,7 @@ class FacetBlock extends Block
     }
 
     /**
-     * @return \Integrated\Bundle\ContentBundle\Document\Block\Embedded\FacetField[]
+     * @return Embedded\FacetField[]
      */
     public function getFields()
     {

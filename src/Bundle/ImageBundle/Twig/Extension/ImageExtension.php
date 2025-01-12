@@ -11,10 +11,9 @@
 
 namespace Integrated\Bundle\ImageBundle\Twig\Extension;
 
-use Gregwar\ImageBundle\Extensions\ImageTwig;
-use Gregwar\ImageBundle\Services\ImageHandling;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage;
 use Integrated\Bundle\ImageBundle\Converter\WebFormatConverter;
+use Integrated\Bundle\ImageBundle\Services\ImageHandling;
 use Integrated\Bundle\ImageBundle\Factory\StorageModelFactory;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Twig\Extension\AbstractExtension;
@@ -36,7 +35,7 @@ class ImageExtension extends AbstractExtension
     private $webFormatConverter;
 
     /**
-     * @var ImageTwig
+     * @var GregwarImageExtension
      */
     private $imageTwig;
 
@@ -50,7 +49,7 @@ class ImageExtension extends AbstractExtension
      */
     private $imageMimicHandling;
 
-    public function __construct(ImageHandling $imageHandling, ImageTwig $imageTwig, WebFormatConverter $webFormatConverter, array $mimicFormats, ImageHandling $imageMimicHandling)
+    public function __construct(ImageHandling $imageHandling, GregwarImageExtension $imageTwig, WebFormatConverter $webFormatConverter, array $mimicFormats, ImageHandling $imageMimicHandling)
     {
         $this->imageHandling = $imageHandling;
         $this->webFormatConverter = $webFormatConverter;
@@ -72,7 +71,7 @@ class ImageExtension extends AbstractExtension
     }
 
     /**
-     * @return \Gregwar\ImageBundle\ImageHandler
+     * @return \Integrated\Bundle\ImageBundle\Image\ImageHandler
      */
     public function imageJson($image)
     {
@@ -96,7 +95,7 @@ class ImageExtension extends AbstractExtension
     }
 
     /**
-     * @return \Gregwar\ImageBundle\ImageHandler
+     * @return \Integrated\Bundle\ImageBundle\Image\ImageHandler
      */
     public function webImage($image)
     {
@@ -113,7 +112,7 @@ class ImageExtension extends AbstractExtension
     }
 
     /**
-     * @return \Gregwar\ImageBundle\ImageHandler
+     * @return \Integrated\Bundle\ImageBundle\Image\ImageHandler
      */
     public function image($image)
     {

@@ -37,7 +37,7 @@ class JsonLDNormalizer implements \Symfony\Component\Serializer\Normalizer\Norma
     /**
      * @param ContentInterface $object
      */
-    public function normalize($object, $format = null, array $context = []): array|bool|string|int|float|null|\ArrayObject
+    public function normalize($object, $format = null, array $context = []): array|bool|string|int|float|\ArrayObject|null
     {
         if ($normalized = $this->normalizer->normalize($object, $context)) {
             return $normalized + ['@context' => 'http://schema.org'];

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of BraincraftedBootstrapBundle.
  * (c) 2012-2013 by Florian Eckerstorfer.

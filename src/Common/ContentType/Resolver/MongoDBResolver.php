@@ -49,7 +49,7 @@ class MongoDBResolver implements ResolverInterface
         $reflection = new \ReflectionClass($repository->getClassName());
 
         if (!$reflection->implementsInterface(self::CONTENT_TYPE_INTERFACE)) {
-            throw new InvalidArgumentException(sprintf('The document class "%s" of the DocumentRepository does not implement the "%s" interface.', $repository->getClassName(), self::CONTENT_TYPE_INTERFACE));
+            throw new InvalidArgumentException(\sprintf('The document class "%s" of the DocumentRepository does not implement the "%s" interface.', $repository->getClassName(), self::CONTENT_TYPE_INTERFACE));
         }
 
         $this->repository = $repository;
@@ -63,7 +63,7 @@ class MongoDBResolver implements ResolverInterface
 
         if (!isset($this->types[$type])) {
             if (null === ($document = $this->repository->findOneBy(['id' => $type]))) {
-                throw new InvalidArgumentException(sprintf('Could not load content type bases on the given type "%s"', $type));
+                throw new InvalidArgumentException(\sprintf('Could not load content type bases on the given type "%s"', $type));
             }
 
             $this->types[$type] = $document;

@@ -26,17 +26,17 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ConverterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RegistryInterface|MockObject
+     * @var RegistryInterface&MockObject
      */
     private $registry;
 
     /**
-     * @var ConfigResolverInterface|MockObject
+     * @var ConfigResolverInterface&MockObject
      */
     private $resolver;
 
     /**
-     * @var ContainerFactoryInterface|MockObject
+     * @var ContainerFactoryInterface&MockObject
      */
     private $factory;
 

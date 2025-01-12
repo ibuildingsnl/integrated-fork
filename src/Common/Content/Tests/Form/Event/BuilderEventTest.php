@@ -21,7 +21,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 class BuilderEventTest extends FormEventTest
 {
     /**
-     * @var FormBuilderInterface|MockObject
+     * @var FormBuilderInterface&MockObject
      */
     protected $builder;
 

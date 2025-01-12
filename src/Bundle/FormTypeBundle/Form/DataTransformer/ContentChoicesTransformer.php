@@ -39,14 +39,14 @@ class ContentChoicesTransformer implements DataTransformerInterface
     public function transform($value): mixed
     {
         if (\is_string($value) || \is_object($value)) {
-            throw new TransformationFailedException(sprintf('Expected array, "%s" given', \gettype($value)));
+            throw new TransformationFailedException(\sprintf('Expected array, "%s" given', \gettype($value)));
         }
 
         if (\is_array($value)) {
             $values = [];
             foreach ($value as $content) {
                 if (!$content instanceof ContentInterface) {
-                    throw new TransformationFailedException(sprintf('Expected integrated content, "%s" given', \gettype($content)));
+                    throw new TransformationFailedException(\sprintf('Expected integrated content, "%s" given', \gettype($content)));
                 }
                 $values[] = $content->getId();
             }
@@ -91,6 +91,6 @@ class ContentChoicesTransformer implements DataTransformerInterface
             return $documents;
         }
 
-        throw new TransformationFailedException(sprintf('Expected array, "%s" given', \gettype($value)));
+        throw new TransformationFailedException(\sprintf('Expected array, "%s" given', \gettype($value)));
     }
 }

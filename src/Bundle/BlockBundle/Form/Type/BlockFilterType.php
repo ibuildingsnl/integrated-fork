@@ -54,7 +54,7 @@ class BlockFilterType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->setMethod('GET');
+        $builder->setMethod(\Symfony\Component\HttpFoundation\Request::METHOD_GET);
 
         $builder->add(
             'q',

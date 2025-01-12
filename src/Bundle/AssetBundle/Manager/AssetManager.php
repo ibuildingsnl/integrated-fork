@@ -41,7 +41,7 @@ class AssetManager
     public function add($asset, $inline = false, $mode = self::MODE_APPEND)
     {
         if (!\in_array($mode, [self::MODE_APPEND, self::MODE_PREPEND])) {
-            throw new \InvalidArgumentException(sprintf('Invalid mode "%s".', $mode));
+            throw new \InvalidArgumentException(\sprintf('Invalid mode "%s".', $mode));
         }
 
         $function = self::MODE_PREPEND === $mode ? 'array_unshift' : 'array_push';

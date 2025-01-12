@@ -22,7 +22,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ConfigIteratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConfigInterface|MockObject
+     * @var ConfigInterface&MockObject
      */
     private $config;
 

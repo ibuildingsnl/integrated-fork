@@ -202,7 +202,7 @@ class SearchSelectionController extends AbstractController
     {
         $form = $this->createFormBuilder()
                      ->setAction($this->generateUrl('integrated_content_search_selection_delete', ['id' => $id]))
-                     ->setMethod('DELETE');
+                     ->setMethod(Request::METHOD_DELETE);
 
         if ($notDelete) {
             $form->add('actions', ActionsType::class, ['buttons' => ['reload', 'cancel']]);

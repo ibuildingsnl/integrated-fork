@@ -86,18 +86,18 @@ class WorkflowExtension extends AbstractTypeExtension
             // allow content with group access
 
             if ($groups) {
-                $query[] = sprintf('security_workflow_read: ((%s))', implode(' ) OR (', $groups));
+                $query[] = \sprintf('security_workflow_read: ((%s))', implode(' ) OR (', $groups));
             }
         }
 
         if ($user instanceof UserInterface) {
             // always allow access to assigned content
-            $query[] = sprintf('facet_workflow_assigned_id: %s', $user->getId());
+            $query[] = \sprintf('facet_workflow_assigned_id: %s', $user->getId());
         }
 
         if ($user instanceof User) {
             if ($person = $user->getRelation()) {
-                $query[] = sprintf('author: %s', $person->getId());
+                $query[] = \sprintf('author: %s', $person->getId());
             }
         }
 

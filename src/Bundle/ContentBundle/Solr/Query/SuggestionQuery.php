@@ -80,7 +80,7 @@ class SuggestionQuery extends Query implements WorkflowMarkerInterface
             ->removeFacet('suggest')
             ->addFacet($facet);
 
-        return parent::setQuery(sprintf(
+        return parent::setQuery(\sprintf(
             'title:((%1$s)^50 OR (%1$s~2)^20 OR(%2$s)^10 OR (%2$s*) OR (%2$s~))',
             $helper->escapePhrase($this->query),
             '+'.str_replace(' ', ' +', $helper->escapeTerm($this->query))

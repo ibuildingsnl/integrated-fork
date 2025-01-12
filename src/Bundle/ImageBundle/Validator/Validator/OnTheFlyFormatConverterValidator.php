@@ -66,7 +66,7 @@ class OnTheFlyFormatConverterValidator extends ConstraintValidator
             } else {
                 // This not happen
                 throw new LogicException(
-                    sprintf(
+                    \sprintf(
                         'Type of value must be %s but the given is %s',
                         UploadedFile::class,
                         \is_object($value) ? $value::class : \gettype($value)

@@ -46,7 +46,7 @@ class MenuProvider implements MenuProviderInterface
     public function get(string $name, array $options = []): ItemInterface
     {
         if (!$this->has($name, $options)) {
-            throw new \InvalidArgumentException(sprintf('The menu "%s" is not defined.', $name));
+            throw new \InvalidArgumentException(\sprintf('The menu "%s" is not defined.', $name));
         }
 
         if (!isset($this->menus[$name])) {

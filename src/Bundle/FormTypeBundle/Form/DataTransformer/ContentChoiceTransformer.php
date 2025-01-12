@@ -46,7 +46,7 @@ class ContentChoiceTransformer implements DataTransformerInterface
             return $value->getId();
         }
 
-        throw new TransformationFailedException(sprintf('Expected integrated content, "%s" given', \gettype($value)));
+        throw new TransformationFailedException(\sprintf('Expected integrated content, "%s" given', \gettype($value)));
     }
 
     /**
@@ -67,9 +67,9 @@ class ContentChoiceTransformer implements DataTransformerInterface
                 return $result;
             }
 
-            throw new TransformationFailedException(sprintf('Document with id "%s" not found', $value));
+            throw new TransformationFailedException(\sprintf('Document with id "%s" not found', $value));
         }
 
-        throw new TransformationFailedException(sprintf('Expected string, "%s" given', \gettype($value)));
+        throw new TransformationFailedException(\sprintf('Expected string, "%s" given', \gettype($value)));
     }
 }

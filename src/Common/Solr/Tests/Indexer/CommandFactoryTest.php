@@ -32,12 +32,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 class CommandFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConverterInterface|MockObject
+     * @var ConverterInterface&MockObject
      */
     private $converter;
 
     /**
-     * @var SerializerInterface|MockObject
+     * @var SerializerInterface&MockObject
      */
     private $serializer;
 

@@ -36,6 +36,6 @@ class LocalResolver implements FileResolverInterface
 
     public function getLocation()
     {
-        return sprintf('%s/%s', $this->options['public'], $this->identifier);
+        return \sprintf('%s/%s', $this->options['public'], $this->identifier);
     }
 }

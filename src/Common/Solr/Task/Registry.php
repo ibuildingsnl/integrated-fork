@@ -54,7 +54,7 @@ class Registry
             return $handler;
         }
 
-        throw new InvalidArgumentException(sprintf('Could not find a handler for task "%s"', $task));
+        throw new InvalidArgumentException(\sprintf('Could not find a handler for task "%s"', $task));
     }
 
     /**

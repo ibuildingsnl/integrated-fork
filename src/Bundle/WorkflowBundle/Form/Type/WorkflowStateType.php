@@ -78,7 +78,7 @@ class WorkflowStateType extends AbstractType
             }
 
             if (!$workflow instanceof Definition) {
-                throw new InvalidOptionsException(sprintf(
+                throw new InvalidOptionsException(\sprintf(
                     'The option "%s" could not be normalized to a valid "%s" object',
                     'workflow',
                     'Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition'

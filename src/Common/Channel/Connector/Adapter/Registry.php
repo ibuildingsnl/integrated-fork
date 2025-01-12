@@ -45,7 +45,7 @@ class Registry implements RegistryInterface
             return $this->adapters[$name];
         }
 
-        throw new InvalidArgumentException(sprintf('Could not load adaptor "%s"', $name));
+        throw new InvalidArgumentException(\sprintf('Could not load adaptor "%s"', $name));
     }
 
     public function hasAdapter($name)

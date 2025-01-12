@@ -21,7 +21,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class HandlerFactoryRegistryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var HandlerFactoryInterface[]|MockObject[]
+     * @var HandlerFactoryInterface[]&MockObject[]
      */
     protected $factories = [];
 

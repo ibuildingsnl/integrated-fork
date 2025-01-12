@@ -25,9 +25,6 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
  */
 class UniqueEntryValidator extends ConstraintValidator
 {
-    /**
-     * @var ExecutionContextInterface
-     */
     protected ExecutionContextInterface $context;
 
     /**
@@ -59,7 +56,7 @@ class UniqueEntryValidator extends ConstraintValidator
 
             foreach ($fields as $fieldName) {
                 if (!$accessor->isReadable($entry, $fieldName)) {
-                    throw new ConstraintDefinitionException(sprintf("The field '%s' is not readable, so its value can not be determent.", $fieldName));
+                    throw new ConstraintDefinitionException(\sprintf("The field '%s' is not readable, so its value can not be determent.", $fieldName));
                 }
 
                 if (null === ($value = $accessor->getValue($entry, $fieldName))) {

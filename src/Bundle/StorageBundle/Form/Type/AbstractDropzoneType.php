@@ -89,7 +89,7 @@ abstract class AbstractDropzoneType extends AbstractType
 
         // builds the variable options passed to the javascript
         $dropzone['captions'] = [
-            'removeConfirmation' => $this->translator->trans(sprintf('Are you sure you want to remove this %s?', $this->type)),
+            'removeConfirmation' => $this->translator->trans(\sprintf('Are you sure you want to remove this %s?', $this->type)),
             'errors' => [
                 'filesLimit' => $this->translator->trans('You can only upload one '.$this->type),
                 'filesType' => $this->translator->trans('Only Images are allowed to be uploaded.'),

@@ -23,7 +23,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 class WorkerEventTest extends TestCase
 {
     /**
-     * @var Worker|MockObject
+     * @var Worker&MockObject
      */
     protected $worker;
 

@@ -38,17 +38,17 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     public const TEST_STATE = 'TEST';
 
     /**
-     * @var RegistryInterface|MockObject
+     * @var RegistryInterface&MockObject
      */
     private $registry;
 
     /**
-     * @var ResolverInterface|MockObject
+     * @var ResolverInterface&MockObject
      */
     private $resolver;
 
     /**
-     * @var DocumentManager|MockObject
+     * @var DocumentManager&MockObject
      */
     private $dm;
 

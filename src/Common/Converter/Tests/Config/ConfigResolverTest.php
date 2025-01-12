@@ -24,7 +24,7 @@ class ConfigResolverTest extends \PHPUnit\Framework\TestCase
     protected $CONFIG_INTERFACE = 'Integrated\\Common\\Converter\\Config\\ConfigInterface';
 
     /**
-     * @var TypeProviderInterface|MockObject
+     * @var TypeProviderInterface&MockObject
      */
     protected $provider;
 

@@ -25,7 +25,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class QueueListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QueueInterface|MockObject
+     * @var QueueInterface&MockObject
      */
     protected $queue;
 

@@ -34,6 +34,6 @@ class ConfigRegistry implements ConfigRegistryInterface
             return $this->configs[$firewall];
         }
 
-        throw new \InvalidArgumentException(sprintf('There is no two-factor config for the firewall %s', $firewall));
+        throw new \InvalidArgumentException(\sprintf('There is no two-factor config for the firewall %s', $firewall));
     }
 }

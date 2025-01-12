@@ -42,7 +42,7 @@ class IpListFactory implements AuthenticatorFactoryInterface, FirewallListenerFa
         return 'ip_list';
     }
 
-    public function addConfiguration(NodeDefinition $node)
+    public function addConfiguration(NodeDefinition $node): void
     {
     }
 }

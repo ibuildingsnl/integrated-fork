@@ -24,7 +24,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class DiscriminatorMapMetadataSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DiscriminatorMapResolverInterface|MockObject
+     * @var DiscriminatorMapResolverInterface&MockObject
      */
     private $resolver;
 
@@ -100,7 +100,7 @@ class DiscriminatorMapMetadataSubscriberTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return LoadClassMetadataEventArgs|MockObject
+     * @return LoadClassMetadataEventArgs&MockObject
      */
     protected function getEvent($metadata)
     {
@@ -115,7 +115,7 @@ class DiscriminatorMapMetadataSubscriberTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $name
      *
-     * @return ClassMetadata|MockObject
+     * @return ClassMetadata&MockObject
      */
     protected function getMetadata($name)
     {

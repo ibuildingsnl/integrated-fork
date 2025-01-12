@@ -31,17 +31,17 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
     public const TEST_STATE = 'TEST';
 
     /**
-     * @var QueueInterface|MockObject
+     * @var QueueInterface&MockObject
      */
     private $queue;
 
     /**
-     * @var RequestSerializerInterface|MockObject
+     * @var RequestSerializerInterface&MockObject
      */
     private $serializer;
 
     /**
-     * @var ExporterInterface|MockObject
+     * @var ExporterInterface&MockObject
      */
     private $exporter;
 

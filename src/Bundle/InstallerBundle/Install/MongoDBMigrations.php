@@ -55,9 +55,6 @@ class MongoDBMigrations
         $versions = $configuration->getMigrationsToExecute(self::DOCTRINE_MIGRATIONS_DIRECTION_UP, $to);
         foreach ($versions as $version) {
             $migration = $version->getMigration();
-            if ($migration instanceof ContainerAwareInterface) {
-                $migration->setContainer($this->container);
-            }
         }
 
         $migration = new Migration($configuration);

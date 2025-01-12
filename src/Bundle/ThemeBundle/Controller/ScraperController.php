@@ -100,7 +100,7 @@ class ScraperController extends AbstractController
         ]);
     }
 
-    public function deleteAction(Scraper $scraper, Request $request): Response
+    public function delete(Scraper $scraper, Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 

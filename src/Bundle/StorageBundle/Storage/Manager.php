@@ -92,7 +92,7 @@ class Manager implements ManagerInterface
             } catch (Exception $e) {
                 if ($this->logger) {
                     $this->logger->alert(
-                        sprintf(
+                        \sprintf(
                             '%sThe filesystem %s did not properly return the file %s: %s',
                             self::LOG_PREFIX,
                             $key,
@@ -123,7 +123,7 @@ class Manager implements ManagerInterface
                 // Log it
                 if ($this->logger) {
                     $this->logger->info(
-                        sprintf(
+                        \sprintf(
                             '%sGoing to write %s in filesystem %s',
                             self::LOG_PREFIX,
                             $identifier,
@@ -148,7 +148,7 @@ class Manager implements ManagerInterface
             // Attempt to log it, then just pass along
             if ($this->logger) {
                 $this->logger->critical(
-                    sprintf(
+                    \sprintf(
                         '%s%s',
                         self::LOG_PREFIX,
                         $e->getMessage()
@@ -179,7 +179,7 @@ class Manager implements ManagerInterface
 
                 if ($this->logger) {
                     $this->logger->notice(
-                        sprintf(
+                        \sprintf(
                             '%sFile %s delete from filesystem %s',
                             self::LOG_PREFIX,
                             $storage->getIdentifier(),
@@ -191,7 +191,7 @@ class Manager implements ManagerInterface
                 // Seems like we're not in sync
                 if ($this->logger) {
                     $this->logger->error(
-                        sprintf(
+                        \sprintf(
                             '%sRemote filesystem %s does not contain %s file',
                             self::LOG_PREFIX,
                             $key,
@@ -255,7 +255,7 @@ class Manager implements ManagerInterface
                 // Just log it
                 if ($this->logger) {
                     $this->logger->critical(
-                        sprintf(
+                        \sprintf(
                             '%s%s',
                             self::LOG_PREFIX,
                             $e->getMessage()
@@ -269,7 +269,7 @@ class Manager implements ManagerInterface
 
         // No filesystem defined
         throw new \LogicException(
-            sprintf(
+            \sprintf(
                 'No filesystems to defined to move the file %s to.',
                 $storage->getIdentifier()
             )
@@ -291,7 +291,7 @@ class Manager implements ManagerInterface
 
         // We must return some sort specialization like Filesystem ainit?
         throw new \LogicException(
-            sprintf(
+            \sprintf(
                 'A instanceof Gaufrette\Filesystem was expected (given: %s).',
                 \is_object($filesystem) ? $filesystem::class : \gettype($filesystem)
             )

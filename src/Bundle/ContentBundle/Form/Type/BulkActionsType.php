@@ -41,7 +41,7 @@ class BulkActionsType extends AbstractType
 
         foreach ($this->provider->getConfig($options['content']) as $config) {
             $builder->add(
-                $name = sprintf('%s_%s', bin2hex($config->getHandler()), $config->getName()),
+                $name = \sprintf('%s_%s', bin2hex($config->getHandler()), $config->getName()),
                 BulkActionType::class,
                 [
                     'config' => $config,
@@ -78,9 +78,9 @@ class BulkActionsType extends AbstractType
         foreach ($view->children as $child) {
             $last = array_pop($child->vars['block_prefixes']);
 
-            $child->vars['block_prefixes'][] = sprintf('%s_readonly', end($child->vars['block_prefixes']));
+            $child->vars['block_prefixes'][] = \sprintf('%s_readonly', end($child->vars['block_prefixes']));
             $child->vars['block_prefixes'][] = $last;
-            $child->vars['block_prefixes'][] = sprintf('%s_readonly', $last);
+            $child->vars['block_prefixes'][] = \sprintf('%s_readonly', $last);
 
             if ($child->children) {
                 $this->updateReadonlyView($child);

@@ -29,12 +29,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QueueInterface|MockObject
+     * @var QueueInterface&MockObject
      */
     private $queue;
 
     /**
-     * @var SerializerInterface|MockObject
+     * @var SerializerInterface&MockObject
      */
     private $serializer;
 
@@ -191,7 +191,7 @@ class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
      * @param string $id
      * @param string $type
      *
-     * @return ContentInterface|MockObject
+     * @return ContentInterface&MockObject
      */
     protected function getDocument($id, $type)
     {
@@ -225,7 +225,7 @@ class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
     /**
      * @param object $document
      *
-     * @return LifecycleEventArgs|MockObject
+     * @return LifecycleEventArgs&MockObject
      */
     protected function getEvent($document, $manager = null)
     {

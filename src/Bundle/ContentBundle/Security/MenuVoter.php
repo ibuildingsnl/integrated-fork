@@ -28,7 +28,7 @@ class MenuVoter implements VoterInterface
     private $resolver;
 
     /**
-     * @var array`
+     * @var array
      */
     private $permissions;
 

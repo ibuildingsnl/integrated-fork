@@ -125,7 +125,7 @@ class PageController extends AbstractController
 
             $this->routeCache->clear();
 
-            $this->addFlash('success', sprintf('Page "%s" has been created', $page->getTitle()));
+            $this->addFlash('success', \sprintf('Page "%s" has been created', $page->getTitle()));
 
             $this->setLastEditPage($request->getSession(), $page);
 
@@ -155,7 +155,7 @@ class PageController extends AbstractController
 
                 $this->routeCache->clear();
 
-                $this->addFlash('success', sprintf('Page "%s" has been updated', $page->getTitle()));
+                $this->addFlash('success', \sprintf('Page "%s" has been updated', $page->getTitle()));
 
                 $this->setLastEditPage($request->getSession(), $page);
 
@@ -176,7 +176,7 @@ class PageController extends AbstractController
         }
 
         if ($page->isLocked()) {
-            throw $this->createNotFoundException(sprintf('Page "%s" is locked.', $page->getId()));
+            throw $this->createNotFoundException(\sprintf('Page "%s" is locked.', $page->getId()));
         }
 
         $form = $this->createDeleteForm($page->getId());
@@ -273,7 +273,7 @@ class PageController extends AbstractController
         $builder = $this->createFormBuilder();
 
         $builder->setAction($this->generateUrl('integrated_page_page_delete', ['id' => $id]));
-        $builder->setMethod('DELETE');
+        $builder->setMethod(Request::METHOD_DELETE);
         $builder->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 
         return $builder->getForm();

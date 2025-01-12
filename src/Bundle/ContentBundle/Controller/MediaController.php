@@ -238,7 +238,7 @@ class MediaController extends AbstractController
             return (new JsonResponse(
                 ['error' => 'This file is not uploaded. Is this filetype allowed? Is the file too big?']
             ))
-                ->setStatusCode(422);
+                ->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 

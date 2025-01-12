@@ -69,7 +69,7 @@ class SuggestionNormalizer implements NormalizerInterface
     public function normalize($object, $format = null, array $context = []): array|bool|string|int|float|\ArrayObject|null
     {
         if (!$this->supportsNormalization($object)) {
-            throw new InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(\sprintf(
                 'The object must be a instance of "%s" with a query instance of "%s".',
                 Result::class,
                 SuggestionQuery::class

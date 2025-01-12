@@ -24,7 +24,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ResolvedProcessorFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContainerFactoryInterface|MockObject
+     * @var ContainerFactoryInterface&MockObject
      */
     private $factory;
 

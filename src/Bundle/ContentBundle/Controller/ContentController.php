@@ -328,7 +328,7 @@ class ContentController extends AbstractController
             }
         }
 
-        return $this->render(sprintf('@IntegratedContent/content/new.%s.twig', $request->getRequestFormat()), [
+        return $this->render(\sprintf('@IntegratedContent/content/new.%s.twig', $request->getRequestFormat()), [
             'taxonomyCategories' => $this->getTaxonomyCategories($content),
             'editable' => true,
             'type' => $contentType,
@@ -505,7 +505,7 @@ class ContentController extends AbstractController
                     }
                 }
 
-                $text = sprintf(
+                $text = \sprintf(
                     'The document is currently locked by %s, the document can not be edited until this lock is released.',
                     $user
                 );
@@ -665,7 +665,7 @@ class ContentController extends AbstractController
                     }
                 }
 
-                $text = sprintf(
+                $text = \sprintf(
                     'The document is currently locked by %s, the document can not be deleted until this lock is released.',
                     $user
                 );
@@ -895,7 +895,7 @@ class ContentController extends AbstractController
         ]);
     }
 
-    public function mediaTypesAction(?string $filter = null): Response
+    public function mediaTypes(?string $filter = null): Response
     {
         $output = [];
 

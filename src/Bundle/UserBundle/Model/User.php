@@ -343,7 +343,7 @@ class User implements UserInterface
      */
     public function __toString()
     {
-        return sprintf(
+        return \sprintf(
             "ID: %s\nUsername: %s\n CreatedAt: %s\nEnabled: %s",
             $this->getId(),
             $this->getUserIdentifier(),

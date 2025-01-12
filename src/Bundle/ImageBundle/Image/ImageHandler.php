@@ -11,7 +11,7 @@ use Gregwar\Image\Image;
  */
 class ImageHandler extends Image
 {
-    protected $fileCallback = null;
+    protected $fileCallback;
 
     /**
      * @param null $originalFile

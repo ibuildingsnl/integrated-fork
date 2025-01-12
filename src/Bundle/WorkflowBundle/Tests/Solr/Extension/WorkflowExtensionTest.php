@@ -31,17 +31,17 @@ use PHPUnit\Framework\MockObject\MockObject;
 class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ResolverInterface|MockObject
+     * @var ResolverInterface&MockObject
      */
     private $resolver;
 
     /**
-     * @var ObjectRepository|MockObject
+     * @var ObjectRepository&MockObject
      */
     private $workflow;
 
     /**
-     * @var ObjectRepository|MockObject
+     * @var ObjectRepository&MockObject
      */
     private $definition;
 

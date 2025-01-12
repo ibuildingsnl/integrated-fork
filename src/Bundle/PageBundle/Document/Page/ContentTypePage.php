@@ -59,7 +59,7 @@ class ContentTypePage extends AbstractPage
         if ($path) {
             $this->setPath($path);
         } else {
-            $this->setPath(sprintf('/content/%s/{slug}', $contentType->getId()));
+            $this->setPath(\sprintf('/content/%s/{slug}', $contentType->getId()));
         }
     }
 

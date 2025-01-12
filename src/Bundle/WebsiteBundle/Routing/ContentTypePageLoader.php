@@ -91,6 +91,6 @@ class ContentTypePageLoader extends Loader
             return $page->getControllerService();
         }
 
-        return sprintf('%s::%s', $page->getControllerService(), $page->getControllerAction());
+        return \sprintf('%s::%s', $page->getControllerService(), $page->getControllerAction());
     }
 }

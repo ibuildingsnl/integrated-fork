@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of BraincraftedTailwindBundle.
  *
@@ -45,7 +46,7 @@ class TailwindLabelExtension extends AbstractExtension
      */
     public function labelFunction($text, $type = 'default')
     {
-        return sprintf('<span class="label%s">%s</span>', $type ? ' label-'.$type : '', $text);
+        return \sprintf('<span class="label%s">%s</span>', $type ? ' label-'.$type : '', $text);
     }
 
     /**
