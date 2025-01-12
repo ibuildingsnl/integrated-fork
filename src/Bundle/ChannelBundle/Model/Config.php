@@ -68,17 +68,11 @@ class Config implements ConfigInterface
         $this->updated = new \DateTime();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): ?string
     {
         return $this->name;
@@ -94,9 +88,6 @@ class Config implements ConfigInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAdapter(): string
     {
         return $this->adapter;
@@ -192,9 +183,6 @@ class Config implements ConfigInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOptions(): OptionsInterface
     {
         if (!$this->options instanceof Options) {
@@ -205,11 +193,9 @@ class Config implements ConfigInterface
     }
 
     /**
-     * @param OptionsInterface $options
-     *
      * @return $this
      */
-    public function setOptions(OptionsInterface $options = null)
+    public function setOptions(?OptionsInterface $options = null)
     {
         if ($options === null) {
             $options = new Options();
@@ -222,17 +208,11 @@ class Config implements ConfigInterface
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getPublicationStartDate(): ?\DateTime
     {
         return $this->publicationStartDate;
     }
 
-    /**
-     * @param \DateTime $publicationStartDate
-     */
     public function setPublicationStartDate(?\DateTime $publicationStartDate): void
     {
         $this->publicationStartDate = $publicationStartDate;

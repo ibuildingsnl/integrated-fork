@@ -21,7 +21,7 @@ class EditorImageRelationExtension extends AbstractTypeExtension
      */
     private $parser;
 
-    public function __construct(DocumentManager $manager, HtmlRelation $parser = null)
+    public function __construct(DocumentManager $manager, ?HtmlRelation $parser = null)
     {
         $this->manager = $manager;
         $this->parser = $parser ?: new HtmlRelation();

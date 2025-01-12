@@ -21,9 +21,6 @@ use Twig\TwigFunction;
  */
 class TailwindBadgeExtension extends AbstractExtension
 {
-    /**
-     * {@inheritDoc}
-     */
     public function getFunctions()
     {
         return [
@@ -47,9 +44,6 @@ class TailwindBadgeExtension extends AbstractExtension
         return sprintf('<span class="badge">%s</span>', $text);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getName()
     {
         return 'braincrafted_tailwind_badge';

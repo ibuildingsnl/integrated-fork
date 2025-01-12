@@ -23,9 +23,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class DefaultType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var MetadataInterface $metadata */
@@ -41,18 +38,12 @@ class DefaultType extends AbstractType
         $builder->addModelTransformer(new DefaultTransformer());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['metadata']);
         $resolver->setAllowedTypes('metadata', 'Integrated\\Common\\Form\\Mapping\\MetadataInterface');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_content_type_default_fields';

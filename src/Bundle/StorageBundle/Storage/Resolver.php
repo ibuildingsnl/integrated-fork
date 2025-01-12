@@ -47,10 +47,7 @@ class Resolver implements ResolverInterface
         $this->registry = $registry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resolve(StorageInterface $storage, ArrayCollection $filesystem = null)
+    public function resolve(StorageInterface $storage, ?ArrayCollection $filesystem = null)
     {
         $priority = $filesystem ?: $storage->getFilesystems();
         $priority = iterator_to_array($priority);
@@ -79,17 +76,11 @@ class Resolver implements ResolverInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIdentifier(ReaderInterface $reader)
     {
         return $this->identifier->getIdentifier($reader);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOptions($filesystem)
     {
         if (isset($this->resolverMap[$filesystem])) {
@@ -99,9 +90,6 @@ class Resolver implements ResolverInterface
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getResolverClass($filesystem, $identifier)
     {
         $className = $this->resolverMap[$filesystem]['resolver_class'];
@@ -114,7 +102,7 @@ class Resolver implements ResolverInterface
         throw new \LogicException(
             sprintf(
                 'Class %s must implement Integrated\Bundle\StorageBundle\Storage\Resolver\ResolverInterface',
-                \get_class($resolver)
+                $resolver::class
             )
         );
     }

@@ -34,18 +34,13 @@ class FieldMapperType implements TypeInterface
 
     /**
      * Constructor.
-     *
-     * @param PropertyAccessorInterface $accessor
      */
-    public function __construct(PropertyAccessorInterface $accessor = null)
+    public function __construct(?PropertyAccessorInterface $accessor = null)
     {
         $this->timezone = new \DateTimeZone('UTC');
         $this->accessor = $accessor ?: PropertyAccess::createPropertyAccessor();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         foreach ($this->groupFields($options) as $field => $config) {
@@ -57,9 +52,6 @@ class FieldMapperType implements TypeInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.fields';
@@ -135,7 +127,6 @@ class FieldMapperType implements TypeInterface
     }
 
     /**
-     * @param mixed  $data
      * @param string $separator
      *
      * @return string[]
@@ -192,7 +183,6 @@ class FieldMapperType implements TypeInterface
     }
 
     /**
-     * @param mixed  $data
      * @param string $path
      */
     protected function readString($data, $path)
@@ -223,8 +213,6 @@ class FieldMapperType implements TypeInterface
      * Convert the data to a string.
      *
      * If the value can not be converted to a string then return null.
-     *
-     * @param mixed $data
      */
     protected function convert($data)
     {

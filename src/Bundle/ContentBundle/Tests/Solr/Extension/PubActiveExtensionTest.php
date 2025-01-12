@@ -112,7 +112,7 @@ class PubActiveExtensionTest extends TestCase
     /**
      * @return ResolverInterface|MockObject
      */
-    protected function getResolver(string $type = null, ContentTypeInterface $contentType = null)
+    protected function getResolver(?string $type = null, ?ContentTypeInterface $contentType = null)
     {
         $mock = $this->createMock(ResolverInterface::class);
 

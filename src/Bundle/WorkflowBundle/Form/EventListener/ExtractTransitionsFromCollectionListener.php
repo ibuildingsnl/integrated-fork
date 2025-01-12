@@ -33,17 +33,12 @@ class ExtractTransitionsFromCollectionListener implements EventSubscriberInterfa
 
     /**
      * Creates a new transition from collection extractor listener.
-     *
-     * @param PropertyAccessorInterface $accessor
      */
-    public function __construct(PropertyAccessorInterface $accessor = null)
+    public function __construct(?PropertyAccessorInterface $accessor = null)
     {
         $this->accessor = $accessor ?: PropertyAccess::createPropertyAccessor();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

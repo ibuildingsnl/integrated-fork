@@ -38,7 +38,7 @@ class MediaFixtures extends AbstractFixture implements DependentFixtureInterface
     private ManagerInterface $manager;
     private Generator $faker;
 
-    public function __construct(ManagerInterface $manager, Generator $faker = null)
+    public function __construct(ManagerInterface $manager, ?Generator $faker = null)
     {
         $this->manager = $manager;
         $this->faker = $faker ?: Factory::create();

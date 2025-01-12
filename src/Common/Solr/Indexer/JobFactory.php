@@ -52,8 +52,6 @@ class JobFactory implements JobFactoryInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return Job
      */
     public function create($action, ContentInterface $content)
@@ -64,7 +62,7 @@ class JobFactory implements JobFactoryInterface
             $job->setOption('document.id', sprintf('%s-%s', $content->getContentType(), $content->getId()));
 
             $job->setOption('document.data', $this->serializer->serialize($content, $this->serializerFormat));
-            $job->setOption('document.class', $this->manager->getClassMetadata(\get_class($content))->getName());
+            $job->setOption('document.class', $this->manager->getClassMetadata($content::class)->getName());
             $job->setOption('document.format', $this->serializerFormat);
 
             return $job;

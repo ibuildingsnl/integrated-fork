@@ -32,9 +32,6 @@ class DoctrineODMDatabase implements DatabaseInterface
         $this->dm = $dm;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRows()
     {
         return $this->dm->getClient()
@@ -46,9 +43,6 @@ class DoctrineODMDatabase implements DatabaseInterface
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function saveRow(array $row)
     {
         return $this->dm->getClient()
@@ -93,7 +87,7 @@ class DoctrineODMDatabase implements DatabaseInterface
         $allMetadata = $metadataFactory->getAllMetadata();
         $keys = [];
 
-        /** @var ClassMetaData $classMetadata */
+        /** @var ClassMetadata $classMetadata */
         foreach ($allMetadata as $classMetadata) {
             if ($classMetadata->isMappedSuperclass || $classMetadata->isEmbeddedDocument) {
                 continue;

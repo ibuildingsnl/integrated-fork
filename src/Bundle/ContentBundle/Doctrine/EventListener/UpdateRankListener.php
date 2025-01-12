@@ -26,9 +26,6 @@ class UpdateRankListener implements EventSubscriber
     public const ASCII_TABLE_POS_UPPER_A = 65;
     public const ALPHABET_LENGTH = 26;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribedEvents()
     {
         return [
@@ -83,7 +80,7 @@ class UpdateRankListener implements EventSubscriber
 
                 $document->setRank($this->calculateRank($min, $max));
 
-                $class = $dm->getClassMetadata(\get_class($document));
+                $class = $dm->getClassMetadata($document::class);
                 $uow->recomputeSingleDocumentChangeSet($class, $document);
             }
         }
@@ -97,11 +94,11 @@ class UpdateRankListener implements EventSubscriber
     private function calculateRank(string $min, string $max)
     {
         while (\strlen($min) < \strlen($max)) {
-            $min = $min.self::RANK_MIN_CHAR;
+            $min .= self::RANK_MIN_CHAR;
         }
 
         while (\strlen($max) < \strlen($min)) {
-            $max = $max.self::RANK_MAX_CHAR;
+            $max .= self::RANK_MAX_CHAR;
         }
 
         $result = '';
@@ -133,9 +130,9 @@ class UpdateRankListener implements EventSubscriber
     {
         $number = \ord($char);
         if ($number >= self::ASCII_TABLE_POS_LOWER_A) {
-            $number = $number - (self::ASCII_TABLE_POS_LOWER_A - self::ALPHABET_LENGTH);
+            $number -= (self::ASCII_TABLE_POS_LOWER_A - self::ALPHABET_LENGTH);
         } else {
-            $number = $number - self::ASCII_TABLE_POS_UPPER_A;
+            $number -= self::ASCII_TABLE_POS_UPPER_A;
         }
 
         return $number;
@@ -149,9 +146,9 @@ class UpdateRankListener implements EventSubscriber
     private function numToChar(int $number)
     {
         if ($number < self::ALPHABET_LENGTH) {
-            $number = $number + self::ASCII_TABLE_POS_UPPER_A;
+            $number += self::ASCII_TABLE_POS_UPPER_A;
         } else {
-            $number = $number + (self::ASCII_TABLE_POS_LOWER_A - self::ALPHABET_LENGTH);
+            $number += (self::ASCII_TABLE_POS_LOWER_A - self::ALPHABET_LENGTH);
         }
 
         return \chr($number);

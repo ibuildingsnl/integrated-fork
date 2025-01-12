@@ -32,9 +32,6 @@ class SearchSelectionType extends AbstractType
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('title', TextType::class);
@@ -67,9 +64,6 @@ class SearchSelectionType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_search_selection';

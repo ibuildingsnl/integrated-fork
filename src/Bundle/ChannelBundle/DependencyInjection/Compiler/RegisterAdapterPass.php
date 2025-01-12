@@ -20,9 +20,6 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class RegisterAdapterPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('integrated_channel.adapter.registry_builder')) {

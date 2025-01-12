@@ -19,9 +19,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class SocialType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (\in_array('url', $options['fields'])) {
@@ -35,9 +32,6 @@ class SocialType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -47,9 +41,6 @@ class SocialType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix()
     {
         return 'integrated_social';

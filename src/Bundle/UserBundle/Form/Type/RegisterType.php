@@ -37,9 +37,6 @@ class RegisterType extends AbstractType
         $builder->add('Register', SubmitType::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('data_class', User::class);

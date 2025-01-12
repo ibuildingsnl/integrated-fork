@@ -23,9 +23,6 @@ class ChainProvider implements TypeProviderInterface
      */
     private $providers = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTypes($class)
     {
         $types = [];

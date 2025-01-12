@@ -526,7 +526,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @return FormBuilderInterface|MockObject
      */
     protected function getBuilder()
     {
@@ -534,7 +534,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return FormView|\PHPUnit\Framework\MockObject\MockObject
+     * @return FormView|MockObject
      */
     protected function getView()
     {
@@ -542,7 +542,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return FormInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @return FormInterface|MockObject
      */
     protected function getForm()
     {
@@ -550,7 +550,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return OptionsResolver|\PHPUnit\Framework\MockObject\MockObject
+     * @return OptionsResolver|MockObject
      */
     protected function getResolver()
     {
@@ -561,7 +561,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
      * @param string $name
      * @param string $type
      *
-     * @return AttributeInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @return AttributeInterface|MockObject
      */
     protected function getAttribute($name, $type, array $options = [], $location = Field::LOCATION_EDITOR)
     {
@@ -588,7 +588,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $name
      *
-     * @return ContentTypeFieldInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @return ContentTypeFieldInterface|MockObject
      */
     protected function getField($name, array $options = [])
     {

@@ -48,8 +48,6 @@ interface AttributeInterface
 
     /**
      * @param string $name
-     *
-     * @return mixed
      */
     public function getOption($name);
 

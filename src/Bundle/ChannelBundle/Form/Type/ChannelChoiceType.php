@@ -16,13 +16,10 @@ class ChannelChoiceType extends AbstractType
      * Constructor.
      */
     public function __construct(
-        private readonly ObjectRepository $repository
+        private readonly ObjectRepository $repository,
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!$options['return_object']) {
@@ -30,9 +27,6 @@ class ChannelChoiceType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('class', Channel::class);
@@ -41,17 +35,11 @@ class ChannelChoiceType extends AbstractType
         $resolver->setDefault('return_object', false);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): ?string
     {
         return DocumentType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_channel_choice';

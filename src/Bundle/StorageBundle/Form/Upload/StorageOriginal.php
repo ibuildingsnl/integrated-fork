@@ -47,17 +47,11 @@ class StorageOriginal extends File implements StorageInterface
         return $this->original;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIdentifier()
     {
         return $this->original->getIdentifier();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFilesystems()
     {
         return new ArrayCollection();

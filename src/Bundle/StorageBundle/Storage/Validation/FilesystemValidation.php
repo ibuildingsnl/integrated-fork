@@ -32,13 +32,11 @@ class FilesystemValidation
     /**
      * Returns a valid list of filesystems.
      *
-     * @param ArrayCollection $filesystems
-     *
      * @return ArrayCollection $filesystems
      *
      * @throws \InvalidArgumentException
      */
-    public function getValidFilesystems(ArrayCollection $filesystems = null)
+    public function getValidFilesystems(?ArrayCollection $filesystems = null)
     {
         if (null === $filesystems) {
             $filesystems = new ArrayCollection($this->registry->keys());

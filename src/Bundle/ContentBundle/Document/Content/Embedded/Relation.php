@@ -61,9 +61,6 @@ class Relation implements RelationInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRelationId()
     {
         return $this->relationId;
@@ -81,9 +78,6 @@ class Relation implements RelationInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRelationType()
     {
         return $this->relationType;
@@ -104,9 +98,6 @@ class Relation implements RelationInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReferences()
     {
         return $this->references->toArray();

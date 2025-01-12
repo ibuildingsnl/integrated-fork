@@ -32,9 +32,6 @@ class ReferencesToArrayTransformer implements DataTransformerInterface
         $this->dm = $dm;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transform($value)
     {
         $array = [];
@@ -52,9 +49,6 @@ class ReferencesToArrayTransformer implements DataTransformerInterface
         return $array;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($value)
     {
         if (!$value) {

@@ -33,9 +33,6 @@ class QueueFactory implements QueueFactoryInterface
         $this->provider = $provider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getQueue($channel)
     {
         if (!isset($this->registry[$channel])) {

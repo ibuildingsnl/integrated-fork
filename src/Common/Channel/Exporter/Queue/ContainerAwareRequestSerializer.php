@@ -47,9 +47,6 @@ class ContainerAwareRequestSerializer extends RequestSerializer
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSerializer()
     {
         if (null === $this->serializer) {
@@ -59,9 +56,6 @@ class ContainerAwareRequestSerializer extends RequestSerializer
         return $this->serializer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getManager()
     {
         if (null === $this->manager) {

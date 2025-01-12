@@ -173,7 +173,7 @@ final class TaxonomyListTest extends TestCase
     private function taxonomy(
         string $id,
         string $title,
-        string ...$channels
+        string ...$channels,
     ): Taxonomy {
         $taxonomy = new Taxonomy();
         $taxonomy->setId($id);

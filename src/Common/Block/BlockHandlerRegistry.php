@@ -37,17 +37,11 @@ class BlockHandlerRegistry implements BlockHandlerRegistryInterface
         $this->registry[$type] = $block;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasHandler($type)
     {
         return isset($this->registry[$type]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getHandler($type)
     {
         if ($this->hasHandler($type)) {

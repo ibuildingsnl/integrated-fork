@@ -44,7 +44,7 @@ class ParentIDController extends AbstractController
     public function __construct(
         DocumentManager $dm,
         ContentProvider $contentProvider,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
     ) {
         $this->dm = $dm;
         $this->contentProvider = $contentProvider;

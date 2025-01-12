@@ -21,7 +21,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class FileReferenceType extends AbstractType
 {
     public function __construct(
-        private readonly DocumentManager $manager
+        private readonly DocumentManager $manager,
     ) {
     }
 
@@ -49,9 +49,6 @@ class FileReferenceType extends AbstractType
         parent::configureOptions($resolver);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix()
     {
         return 'integrated_file_reference';

@@ -23,9 +23,6 @@ use Integrated\Common\Content\Extension\Events;
  */
 class DoctrineMongodbAdaptor extends AbstractAdaptor implements EventSubscriber
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribedEvents()
     {
         return [

@@ -37,9 +37,6 @@ class HandleRequestEvent extends Event
         return $this->form;
     }
 
-    /**
-     * @return mixed
-     */
     public function getData()
     {
         return $this->form->getData();

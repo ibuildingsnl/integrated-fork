@@ -25,9 +25,6 @@ use Integrated\Common\Converter\Type\TypeInterface;
  */
 class HasImageType implements TypeInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         if (!$data instanceof Content) {
@@ -57,9 +54,6 @@ class HasImageType implements TypeInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.has_image';

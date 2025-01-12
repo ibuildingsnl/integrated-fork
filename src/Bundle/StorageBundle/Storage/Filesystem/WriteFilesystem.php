@@ -33,8 +33,6 @@ class WriteFilesystem
     /**
      * @param string $identifier
      *
-     * @return mixed
-     *
      * @throws \LogicException
      */
     public function write($identifier, ReaderInterface $reader)
@@ -58,7 +56,7 @@ class WriteFilesystem
         throw new \LogicException(
             sprintf(
                 'A instanceof Gaufrette\File was excepted (given: %s).',
-                \get_class($storage)
+                $storage::class
             )
         );
     }

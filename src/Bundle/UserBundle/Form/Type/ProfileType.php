@@ -31,9 +31,6 @@ class ProfileType extends AbstractType
         $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('class', $this->manager->getClassName());
@@ -42,17 +39,11 @@ class ProfileType extends AbstractType
         $resolver->setDefault('choice_label', 'username');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): ?string
     {
         return EntityType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_user_profile_choice';

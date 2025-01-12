@@ -31,8 +31,6 @@ class ContentTypeField implements DataTransformerInterface
     }
 
     /**
-     * @param mixed $field
-     *
      * @return array
      */
     public function transform($field)
@@ -58,8 +56,6 @@ class ContentTypeField implements DataTransformerInterface
     }
 
     /**
-     * @param mixed $value
-     *
      * @return Field|null
      */
     public function reverseTransform($value)

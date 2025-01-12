@@ -19,9 +19,6 @@ use Integrated\Common\Channel\Connector\ConfigurationInterface;
  */
 class WebsiteConfiguration implements ConfigurationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getForm()
     {
         return ConfigurationType::class;

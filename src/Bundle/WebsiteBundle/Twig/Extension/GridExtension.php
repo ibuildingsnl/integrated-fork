@@ -45,9 +45,6 @@ class GridExtension extends AbstractExtension
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions()
     {
         return [
@@ -86,9 +83,6 @@ class GridExtension extends AbstractExtension
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated_website_grid';

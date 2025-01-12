@@ -21,9 +21,6 @@ use Integrated\Common\Storage\Reader\ReaderInterface;
  */
 class FileIdentifier implements IdentifierInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getIdentifier(ReaderInterface $reader)
     {
         return sprintf('%s.%s', md5($reader->read()), $reader->getMetadata()->getExtension());

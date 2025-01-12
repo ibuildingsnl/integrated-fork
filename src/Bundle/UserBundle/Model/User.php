@@ -38,12 +38,12 @@ class User implements UserInterface
     /**
      * @var string|null
      */
-    protected $salt = null;
+    protected $salt;
 
     /**
      * @var string|null
      */
-    protected $email = null;
+    protected $email;
 
     /**
      * @var \DateTimeInterface
@@ -68,7 +68,7 @@ class User implements UserInterface
     /**
      * @var string
      */
-    protected $relation = null;
+    protected $relation;
 
     /**
      * @var Scope
@@ -88,7 +88,7 @@ class User implements UserInterface
     /**
      * @var \Integrated\Bundle\ContentBundle\Document\Content\Relation\Relation
      */
-    protected $relation_instance = null;
+    protected $relation_instance;
 
     public function __construct()
     {
@@ -97,9 +97,6 @@ class User implements UserInterface
         $this->createdAt = new \DateTime();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function serialize()
     {
         return serialize([
@@ -110,9 +107,6 @@ class User implements UserInterface
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function unserialize($serialized)
     {
         $data = unserialize($serialized);
@@ -124,81 +118,51 @@ class User implements UserInterface
             $this->salt) = $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setUsername($username)
     {
         $this->username = (string) $username;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getUsername()
     {
         return $this->username;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getUserIdentifier(): string
     {
         return $this->username;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setPassword($password)
     {
         $this->password = (string) $password;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setSalt($salt)
     {
         $this->salt = $salt !== null ? (string) $salt : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSalt(): ?string
     {
         return $this->salt;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setEmail($email)
     {
         $this->email = $email !== null ? (string) $email : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getEmail()
     {
         return $this->email;
@@ -232,9 +196,6 @@ class User implements UserInterface
         return $this->groups->contains($group);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getGroups()
     {
         return $this->groups->toArray();
@@ -272,9 +233,6 @@ class User implements UserInterface
         return $this->roles->contains($role);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRoles(): array
     {
         $roles = [];
@@ -342,9 +300,6 @@ class User implements UserInterface
         return $this->enabled;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function eraseCredentials(): void
     {
         /* do nothing as there are no unsecured credentials, password should be encrypted */

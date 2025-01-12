@@ -17,9 +17,6 @@ use Integrated\Common\Bulk\Form\ConfigProviderInterface;
 
 class ContentTypeFormProvider implements ConfigProviderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getConfig(array $content)
     {
         $config = [];

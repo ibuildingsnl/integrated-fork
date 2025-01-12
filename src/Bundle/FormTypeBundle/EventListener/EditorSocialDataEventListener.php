@@ -2,7 +2,6 @@
 
 namespace Integrated\Bundle\FormTypeBundle\EventListener;
 
-use DOMElement;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Std\DOMDocument;
 use Integrated\Bundle\FormTypeBundle\Form\Type\EditorType;
@@ -69,7 +68,7 @@ class EditorSocialDataEventListener implements EventSubscriberInterface
         $query = "//*[contains(@class, 'embed-content')]";
 
         foreach ($xpath->query($query) as $elm) {
-            if ($elm instanceof DOMElement) {
+            if ($elm instanceof \DOMElement) {
                 $classes = explode(' ', $elm->getAttribute('class'));
                 foreach ($classes as $class) {
                     if ($class !== 'embed-content') {

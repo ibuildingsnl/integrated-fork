@@ -24,9 +24,6 @@ class CustomFieldListener implements EventSubscriberInterface
 {
     public const FORM_NAME = 'customFields';
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

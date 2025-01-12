@@ -19,13 +19,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class PublicationRemovalListener implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly PublicationRepositoryInterface $publicationRepository
+        private readonly PublicationRepositoryInterface $publicationRepository,
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

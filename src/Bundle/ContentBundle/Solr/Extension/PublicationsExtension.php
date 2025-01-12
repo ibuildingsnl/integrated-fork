@@ -2,7 +2,6 @@
 
 namespace Integrated\Bundle\ContentBundle\Solr\Extension;
 
-use DateTime;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Common\Converter\ContainerInterface;
@@ -38,7 +37,7 @@ class PublicationsExtension implements TypeExtensionInterface
 
             if (method_exists($time, 'setTimezone')) {
                 $container->add(
-                    'publication_end_' . $publication->getChannel()->getId() . '_index_date',
+                    'publication_end_'.$publication->getChannel()->getId().'_index_date',
                     $time->setTimezone($this->timezone)->format('Y-m-d\TG:i:s\Z'),
                 );
             }

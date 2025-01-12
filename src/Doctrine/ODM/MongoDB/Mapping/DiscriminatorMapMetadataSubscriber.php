@@ -34,9 +34,6 @@ class DiscriminatorMapMetadataSubscriber implements EventSubscriber
         $this->resolver = $resolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribedEvents()
     {
         return [

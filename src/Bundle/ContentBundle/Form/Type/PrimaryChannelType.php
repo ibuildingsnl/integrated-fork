@@ -35,9 +35,6 @@ class PrimaryChannelType extends AbstractType
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -56,9 +53,6 @@ class PrimaryChannelType extends AbstractType
         return DocumentType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_primary_channel';

@@ -10,13 +10,10 @@ class ChannelTransformer implements DataTransformerInterface
 {
     public function __construct(
         private readonly ChannelRepository $repository,
-        private readonly bool $multiple = false
+        private readonly bool $multiple = false,
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transform($value)
     {
         if (!$this->multiple) {
@@ -30,9 +27,6 @@ class ChannelTransformer implements DataTransformerInterface
         return $this->repository->findByIds($value);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($value)
     {
         if (!$this->multiple) {

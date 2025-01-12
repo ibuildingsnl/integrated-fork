@@ -29,9 +29,6 @@ class MultipleFileTransformer implements DataTransformerInterface
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transform($list)
     {
         if (\is_array($list)) {
@@ -50,9 +47,6 @@ class MultipleFileTransformer implements DataTransformerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($input)
     {
         $ids = explode(',', $input);

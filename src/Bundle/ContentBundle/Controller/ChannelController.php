@@ -37,7 +37,7 @@ class ChannelController extends AbstractController
     public function __construct(
         DocumentManager $documentManager,
         SearchContentReferenced $searchContentReferenced,
-        EventDispatcherInterface $dispatcher
+        EventDispatcherInterface $dispatcher,
     ) {
         $this->searchContentReferenced = $searchContentReferenced;
         $this->documentManager = $documentManager;

@@ -34,7 +34,7 @@ class Group implements GroupInterface
      */
     protected $roles;
 
-    public function __construct(string $id = null)
+    public function __construct(?string $id = null)
     {
         $this->roles = new ArrayCollection();
         $this->id = $id;
@@ -48,17 +48,11 @@ class Group implements GroupInterface
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setName($name)
     {
         $this->name = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->name;
@@ -108,9 +102,6 @@ class Group implements GroupInterface
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRoles()
     {
         $roles = [];

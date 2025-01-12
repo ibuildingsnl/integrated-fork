@@ -36,9 +36,6 @@ class MongoDBReferencesListener implements EventSubscriber
         $this->queue = $queue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribedEvents()
     {
         return [

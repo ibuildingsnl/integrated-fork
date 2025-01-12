@@ -23,9 +23,6 @@ class UniqueConfigIterator extends \IteratorIterator
      */
     private $accepted = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function key(): ?string
     {
         if ($this->valid()) {
@@ -35,9 +32,6 @@ class UniqueConfigIterator extends \IteratorIterator
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function next(): void
     {
         do {
@@ -45,9 +39,6 @@ class UniqueConfigIterator extends \IteratorIterator
         } while ($this->valid() && !$this->accept());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rewind(): void
     {
         parent::rewind();

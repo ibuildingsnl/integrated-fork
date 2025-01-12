@@ -21,9 +21,6 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class UniqueGroupValidator extends ManagerValidator
 {
-    /**
-     * {@inheritdoc}
-     */
     public function validate($object, Constraint $constraint)
     {
         if (!$constraint instanceof UniqueGroup) {

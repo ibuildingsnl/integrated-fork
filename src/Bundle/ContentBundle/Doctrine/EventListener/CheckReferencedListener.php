@@ -26,9 +26,6 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class CheckReferencedListener implements EventSubscriber
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribedEvents()
     {
         return [

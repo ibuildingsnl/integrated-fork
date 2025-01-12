@@ -25,7 +25,7 @@ class JSONController extends AbstractController
         private readonly PaginatorInterface $paginator,
         private readonly RequestStack $requestStack,
         private readonly DocumentManager $documentManager,
-        private readonly ThemeManager $themeManager
+        private readonly ThemeManager $themeManager,
     ) {
     }
 

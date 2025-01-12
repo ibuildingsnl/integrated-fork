@@ -21,9 +21,6 @@ use Symfony\Component\Form\FormEvents;
  */
 class ClickedButtonListener implements EventSubscriberInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

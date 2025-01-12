@@ -20,9 +20,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BulkActionContentTypeType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
@@ -35,9 +32,6 @@ class BulkActionContentTypeType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
@@ -49,9 +43,6 @@ class BulkActionContentTypeType extends AbstractType
             });
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_content_bulk_action_content_type';

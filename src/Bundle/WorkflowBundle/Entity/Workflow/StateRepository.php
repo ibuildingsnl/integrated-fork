@@ -22,18 +22,12 @@ use Symfony\Component\Security\Acl\Util\ClassUtils;
  */
 class StateRepository extends EntityRepository
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null)
     {
         return parent::findBy($this->convertCriteria($criteria), $orderBy, $limit, $offset);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findOneBy(array $criteria, array $orderBy = null)
+    public function findOneBy(array $criteria, ?array $orderBy = null)
     {
         return parent::findOneBy($this->convertCriteria($criteria), $orderBy);
     }

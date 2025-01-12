@@ -37,9 +37,6 @@ class ImageMagickAdapter implements AdapterInterface
         $this->cache = $cache;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function convert($outputFormat, StorageInterface $image)
     {
         $file = $this->cache->path($image);
@@ -101,9 +98,6 @@ class ImageMagickAdapter implements AdapterInterface
         throw RunTimeFormatException::conversionFileCreateFail(self::NAME, $image->getPathname(), $outputFormat);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function formats()
     {
         if (class_exists('\Imagick')) {

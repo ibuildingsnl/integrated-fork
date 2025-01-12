@@ -19,9 +19,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class ExtensionRegistryBuilderPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('integrated_content.extension.registry.builder')) {

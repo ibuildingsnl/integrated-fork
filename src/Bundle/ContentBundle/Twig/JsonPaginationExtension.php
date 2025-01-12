@@ -31,9 +31,6 @@ class JsonPaginationExtension extends AbstractExtension
         $this->generator = $generator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFilters()
     {
         return [
@@ -100,9 +97,6 @@ class JsonPaginationExtension extends AbstractExtension
         return $return;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated_content_json_pagination_extension';

@@ -21,23 +21,16 @@ interface PublishTimeInterface
     public function getStartDate(): ?\DateTimeInterface;
 
     /**
-     * @param \DateTimeInterface $startDate
-     *
      * @return $this
      */
-    public function setStartDate(\DateTimeInterface $startDate = null);
+    public function setStartDate(?\DateTimeInterface $startDate = null);
 
     public function getEndDate(): ?\DateTimeInterface;
 
     /**
-     * @param \DateTimeInterface $endDate
-     *
      * @return $this
      */
-    public function setEndDate(\DateTimeInterface $endDate = null);
+    public function setEndDate(?\DateTimeInterface $endDate = null);
 
-    /**
-     * @param \DateTimeInterface $date
-     */
-    public function isPublished(\DateTimeInterface $date = null): bool;
+    public function isPublished(?\DateTimeInterface $date = null): bool;
 }

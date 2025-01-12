@@ -19,7 +19,7 @@ class QueueExporter implements ExporterInterface, QueueExporterInterface
         private readonly RequestSerializerInterface $serializer,
         private readonly ExporterInterface $exporter,
         private readonly int $maxAttempts,
-        \Closure $retryDelay = null,
+        ?\Closure $retryDelay = null,
     ) {
         $this->retryDelay = $retryDelay ?: fn (int $attempt) => 150 + $attempt * 150;
     }
@@ -90,9 +90,6 @@ class QueueExporter implements ExporterInterface, QueueExporterInterface
         return $message;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function export(object $content, string $state, ChannelInterface $channel, array $settings = []): ?ExporterResponse
     {
         return $this->exporter->export($content, $state, $channel, $settings);

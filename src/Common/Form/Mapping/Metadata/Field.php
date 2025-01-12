@@ -58,25 +58,16 @@ class Field implements AttributeEditorInterface
         $this->name = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return $this->type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setType($type)
     {
         $this->type = $type;
@@ -84,17 +75,11 @@ class Field implements AttributeEditorInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getLocation()
     {
         return $this->location;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setLocation($location)
     {
         $this->location = $location;
@@ -102,17 +87,11 @@ class Field implements AttributeEditorInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIcon()
     {
         return $this->icon;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setIcon($icon)
     {
         $this->icon = $icon;
@@ -120,17 +99,11 @@ class Field implements AttributeEditorInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getState()
     {
         return $this->state;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setState($state)
     {
         $this->state = $state;
@@ -138,17 +111,11 @@ class Field implements AttributeEditorInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOptions()
     {
         return $this->options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setOptions(array $options)
     {
         $this->options = $options;
@@ -156,25 +123,16 @@ class Field implements AttributeEditorInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOption($name)
     {
         return $this->hasOption($name) ? $this->options[$name] : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasOption($name)
     {
         return isset($this->options[$name]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setOption($name, $value)
     {
         $this->options[$name] = $value;

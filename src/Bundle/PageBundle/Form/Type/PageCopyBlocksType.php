@@ -17,9 +17,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PageCopyBlocksType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         foreach ($options['blocks'] as $id => $block) {
@@ -31,9 +28,6 @@ class PageCopyBlocksType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['blocks', 'channel', 'targetChannel']);

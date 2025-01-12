@@ -57,9 +57,6 @@ class ChannelHandlerFactory implements HandlerFactoryInterface
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function createHandler(array $options)
     {
         $options = $this->resolver->resolve($options);

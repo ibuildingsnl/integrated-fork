@@ -22,9 +22,6 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class IntegratedWebsiteExtension extends Extension implements PrependExtensionInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function load(array $configs, ContainerBuilder $container)
     {
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
@@ -39,9 +36,6 @@ class IntegratedWebsiteExtension extends Extension implements PrependExtensionIn
         $loader->load('solr.xml');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function prepend(ContainerBuilder $container)
     {
         if ($container->getParameter('kernel.environment') === 'dev') {

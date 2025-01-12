@@ -163,7 +163,7 @@ abstract class Relation extends Content implements RankableInterface
         }
     }
 
-    public function addPhonenumber(string|Phonenumber $phonenumber, string $type = null): void
+    public function addPhonenumber(string|Phonenumber $phonenumber, ?string $type = null): void
     {
         if ($phonenumber === null) {
             return;
@@ -223,7 +223,7 @@ abstract class Relation extends Content implements RankableInterface
         }
     }
 
-    public function addAddress(Address $address = null): void
+    public function addAddress(?Address $address = null): void
     {
         if ($address !== null) {
             $this->addresses->add($address);

@@ -21,9 +21,6 @@ use Integrated\Common\Normalizer\Processor\ProcessorInterface;
  */
 class PersonProcessor implements ProcessorInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerInterface $data, $object, Context $context)
     {
         if (!$object instanceof Person) {

@@ -14,7 +14,7 @@ class Content extends AbstractType
 {
     public function __construct(
         private readonly SortOptions $sorting,
-        private readonly DocumentManager $manager
+        private readonly DocumentManager $manager,
     ) {
     }
 

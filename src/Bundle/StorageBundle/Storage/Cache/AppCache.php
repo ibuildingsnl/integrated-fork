@@ -51,8 +51,6 @@ class AppCache implements CacheInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws \LogicException
      */
     public function path(StorageInterface $storage)

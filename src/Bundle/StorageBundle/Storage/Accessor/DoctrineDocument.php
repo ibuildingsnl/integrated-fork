@@ -79,8 +79,6 @@ class DoctrineDocument
 
     /**
      * @param string $propertyName
-     *
-     * @return mixed
      */
     public function get($propertyName)
     {
@@ -105,8 +103,6 @@ class DoctrineDocument
     /**
      * @param string $propertyName
      * @param object $propertyValue
-     *
-     * @return mixed
      */
     public function set($propertyName, $propertyValue)
     {

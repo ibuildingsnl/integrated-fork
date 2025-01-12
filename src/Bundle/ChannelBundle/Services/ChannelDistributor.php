@@ -37,7 +37,7 @@ class ChannelDistributor
         }
     }
 
-    private function distributeTo(ChannelInterface $channel, Content $content, Publication $publication = null): void
+    private function distributeTo(ChannelInterface $channel, Content $content, ?Publication $publication = null): void
     {
         if ($content->isDisabled()) {
             $this->push($content, $channel, false);
@@ -70,7 +70,7 @@ class ChannelDistributor
         ChannelInterface $channel,
         bool $add,
         ?\DateTimeInterface $when = null,
-        array $settings = []
+        array $settings = [],
     ): void {
         $this->queue->push(
             new Request($content, $add ? 'add' : 'delete', $channel, $settings),

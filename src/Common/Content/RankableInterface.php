@@ -15,5 +15,5 @@ interface RankableInterface
 {
     public function getRank(): ?string;
 
-    public function setRank(string $rank = null);
+    public function setRank(?string $rank = null);
 }

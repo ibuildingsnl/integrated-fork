@@ -37,7 +37,7 @@ class SearchSelectionController extends AbstractController
         RequestStack $requestStack,
         DocumentManager $documentManager,
         PaginatorInterface $paginator,
-        SearchContentReferenced $searchContentReferenced
+        SearchContentReferenced $searchContentReferenced,
     ) {
         $this->requestStack = $requestStack;
         $this->documentManager = $documentManager;

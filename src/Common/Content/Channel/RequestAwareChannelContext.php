@@ -51,9 +51,6 @@ class RequestAwareChannelContext implements ChannelContextInterface
         $this->attribute = $attribute;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getChannel()
     {
         $request = $this->getRequest();
@@ -69,10 +66,7 @@ class RequestAwareChannelContext implements ChannelContextInterface
         return $this->manager->find($request->attributes->get($this->attribute));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setChannel(ChannelInterface $channel = null)
+    public function setChannel(?ChannelInterface $channel = null)
     {
         $request = $this->getRequest();
 

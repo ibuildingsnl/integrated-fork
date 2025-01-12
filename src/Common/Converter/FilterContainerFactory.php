@@ -17,8 +17,6 @@ namespace Integrated\Common\Converter;
 class FilterContainerFactory implements ContainerFactoryInterface
 {
     /**
-     * {@inheritdoc}
-     *
      * @return FilterContainer
      */
     public function createContainer()

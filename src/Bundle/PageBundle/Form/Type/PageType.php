@@ -48,9 +48,6 @@ class PageType extends AbstractType
         $this->themeResolver = $themeResolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $channel = $this->channelContext->getChannel();
@@ -89,7 +86,7 @@ class PageType extends AbstractType
             ],
         ]);
 
-        $formModifier = function (FormInterface $form, ChannelInterface $channel = null) {
+        $formModifier = function (FormInterface $form, ?ChannelInterface $channel = null) {
             $theme = null === $channel ? 'default' : $this->themeResolver->getTheme($channel);
 
             $form->add('layout', LayoutChoiceType::class, [
@@ -128,9 +125,6 @@ class PageType extends AbstractType
         ));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_page_page';

@@ -34,25 +34,16 @@ class BlockType extends AbstractType
         $this->repository = $dm->getRepository(Block::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addModelTransformer(new BlockTransformer($this->repository));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): ?string
     {
         return TextType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_block';

@@ -49,9 +49,6 @@ class Manager implements ManagerInterface
         $this->options = $options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function acquire(RequestInterface $request, $timeout = 0)
     {
         if ($owner = $request->getOwner()) {
@@ -89,9 +86,6 @@ class Manager implements ManagerInterface
         return Lock::factory($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function release($lock)
     {
         if ($lock instanceof LockInterface) {
@@ -109,9 +103,6 @@ class Manager implements ManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function refresh($lock)
     {
         if ($lock instanceof LockInterface) {
@@ -152,9 +143,6 @@ class Manager implements ManagerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function find($lock)
     {
         if ($lock instanceof LockInterface) {
@@ -180,17 +168,11 @@ class Manager implements ManagerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findAll()
     {
         return $this->findBy([]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByResource(ResourceInterface $resource)
     {
         $filter = new Filter();
@@ -199,9 +181,6 @@ class Manager implements ManagerInterface
         return $this->findBy($filter);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByOwner(ResourceInterface $resource)
     {
         $filter = new Filter();
@@ -210,9 +189,6 @@ class Manager implements ManagerInterface
         return $this->findBy($filter);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findBy($filters)
     {
         if (!\is_array($filters)) {
@@ -274,9 +250,6 @@ class Manager implements ManagerInterface
         return $results;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear()
     {
         try {

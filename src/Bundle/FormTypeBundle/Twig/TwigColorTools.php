@@ -176,7 +176,7 @@ class TwigColorTools extends AbstractExtension
     {
         $color = strtolower($color);
 
-        if (strpos($color, 'rgb') !== false) {
+        if (str_contains($color, 'rgb')) {
             $mode = 'rgb';
             $color = trim($color, 'rgba()');
             $color = str_replace(' ', '', $color);

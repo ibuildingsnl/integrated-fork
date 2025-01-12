@@ -19,9 +19,6 @@ use Twig\TwigFilter;
  */
 class JsonExtension extends AbstractExtension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getFilters()
     {
         return [
@@ -30,8 +27,6 @@ class JsonExtension extends AbstractExtension
     }
 
     /**
-     * @param mixed $value
-     *
      * @return string
      */
     public function decode($value)
@@ -39,9 +34,6 @@ class JsonExtension extends AbstractExtension
         return json_decode($value, true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated_content_json_extension';

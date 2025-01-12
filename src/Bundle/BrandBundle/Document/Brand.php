@@ -20,7 +20,7 @@ class Brand
 
     public ?BrandProfile $profile;
 
-    public function __construct(BrandProfile $profile = null)
+    public function __construct(?BrandProfile $profile = null)
     {
         $this->profile = $profile;
         $this->channelLinks = new ArrayCollection();

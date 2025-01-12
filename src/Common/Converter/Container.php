@@ -23,9 +23,6 @@ class Container implements ContainerInterface
      */
     protected $data = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function add($key, $value)
     {
         if ($value === null) {
@@ -37,9 +34,6 @@ class Container implements ContainerInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function set($key, $value)
     {
         $this->remove($key);
@@ -51,9 +45,6 @@ class Container implements ContainerInterface
         return $this->add($key, $value);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function remove($key)
     {
         unset($this->data[$key]);
@@ -61,25 +52,16 @@ class Container implements ContainerInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function has($key)
     {
         return isset($this->data[$key]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function get($key)
     {
         return isset($this->data[$key]) ? $this->data[$key] : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear()
     {
         $this->data = [];
@@ -87,9 +69,6 @@ class Container implements ContainerInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function toArray()
     {
         return $this->data;
@@ -97,8 +76,6 @@ class Container implements ContainerInterface
 
     /**
      * Check if the value is one of the allowed types or throw a exception.
-     *
-     * @param mixed $value
      *
      * @trows UnexpectedTypeException if $value is not a scalar type
      */
@@ -111,17 +88,11 @@ class Container implements ContainerInterface
         throw new UnexpectedTypeException($value, 'null, string, float, int or bool');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function count(): int
     {
         return \count($this->data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->data);

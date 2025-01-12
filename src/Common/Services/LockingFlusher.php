@@ -10,7 +10,7 @@ final class LockingFlusher implements Flusher
 {
     public function __construct(
         private readonly LockFactory $lockFactory,
-        private readonly Flusher $next
+        private readonly Flusher $next,
     ) {
     }
 

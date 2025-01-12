@@ -30,9 +30,6 @@ class Field implements ContentTypeFieldInterface
      */
     protected $options = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->name;
@@ -52,9 +49,6 @@ class Field implements ContentTypeFieldInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOptions()
     {
         return $this->options;

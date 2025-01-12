@@ -72,9 +72,6 @@ class FileTest extends TestCase
         $this->assertEquals($title, (string) $this->file->setTitle($title));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getContent()
     {
         return $this->file;

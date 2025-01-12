@@ -22,9 +22,6 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class IntegratedSlugBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new DriverRegistryPass('integrated_slug.metadata.driver.registry', 'integrated_slug.mapping.driver'), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);

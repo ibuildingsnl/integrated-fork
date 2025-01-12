@@ -29,9 +29,6 @@ class ContentTypeFormActionMatcher implements ActionMatcherInterface
         $this->handler = (string) $handler;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function match(BulkActionInterface $action)
     {
         if ($action->getHandler() !== $this->handler) {

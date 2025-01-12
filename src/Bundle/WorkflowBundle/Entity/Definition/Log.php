@@ -21,7 +21,7 @@ class Log
     /**
      * @var int
      */
-    protected $id = null;
+    protected $id;
 
     /**
      * @var Definition

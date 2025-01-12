@@ -53,9 +53,6 @@ class BulkActionRelationReferencesType extends AbstractType
         return ChoiceType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_content_bulk_action_relation_references';

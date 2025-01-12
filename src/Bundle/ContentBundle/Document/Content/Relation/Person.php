@@ -231,7 +231,7 @@ class Person extends Relation
         return $this->picture;
     }
 
-    public function setPicture(Image $picture = null): static
+    public function setPicture(?Image $picture = null): static
     {
         $this->picture = $picture;
 

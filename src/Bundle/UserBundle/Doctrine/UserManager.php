@@ -68,9 +68,6 @@ class UserManager implements UserManagerInterface
         return $this->repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create()
     {
         $class = $this->getClassName();
@@ -78,9 +75,6 @@ class UserManager implements UserManagerInterface
         return new $class();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function persist(UserInterface $user, $flush = true)
     {
         $this->om->persist($user);
@@ -90,9 +84,6 @@ class UserManager implements UserManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function remove(UserInterface $user, $flush = true)
     {
         $this->om->remove($user);
@@ -102,49 +93,31 @@ class UserManager implements UserManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear()
     {
         $this->om->clear();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function find($id)
     {
         return $this->repository->find($id);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findAll()
     {
         return $this->repository->findAll();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByUsername($criteria)
     {
         return $this->repository->findOneBy(['username' => $criteria]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByEmail($criteria)
     {
         return $this->repository->findOneBy(['email' => $criteria]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByUsernameOrEmail($criteria)
     {
         if ($user = $this->findByUsername($criteria)) {
@@ -154,10 +127,7 @@ class UserManager implements UserManagerInterface
         return $this->findByEmail($criteria);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null)
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
@@ -167,17 +137,11 @@ class UserManager implements UserManagerInterface
         return $this->repository->findOneBy($criteria);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClassName()
     {
         return $this->repository->getClassName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findEnabledByUsernameAndScope($username, ?ScopeInterface $scope = null)
     {
         $builder = $this->createQueryBuilder()

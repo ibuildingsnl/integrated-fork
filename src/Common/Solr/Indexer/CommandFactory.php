@@ -47,9 +47,6 @@ class CommandFactory implements CommandFactoryInterface
         $this->serializer = $serializer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create(JobInterface $job)
     {
         if (!$job->hasAction()) {

@@ -33,9 +33,6 @@ class CsvArray extends AbstractType
         return 'integrated_csv_array';
     }
 
-    /**
-     * @return string
-     */
     public function getParent(): ?string
     {
         return TextType::class;

@@ -51,7 +51,7 @@ class ContentTypeChangedListener implements EventSubscriberInterface
         DocumentManager $dm,
         ContentTypePageService $contentTypePageService,
         RouteCache $routeCache,
-        ContentTypeInformation $contentTypeInformation
+        ContentTypeInformation $contentTypeInformation,
     ) {
         $this->dm = $dm;
         $this->contentTypePageService = $contentTypePageService;
@@ -59,9 +59,6 @@ class ContentTypeChangedListener implements EventSubscriberInterface
         $this->contentTypeInformation = $contentTypeInformation;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

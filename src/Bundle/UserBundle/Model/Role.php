@@ -19,7 +19,7 @@ class Role implements RoleInterface
     /**
      * @var string
      */
-    protected $id = null;
+    protected $id;
 
     /**
      * @var string
@@ -29,12 +29,12 @@ class Role implements RoleInterface
     /**
      * @var string
      */
-    protected $label = null;
+    protected $label;
 
     /**
      * @var string
      */
-    protected $description = null;
+    protected $description;
 
     /**
      * @var bool
@@ -56,49 +56,31 @@ class Role implements RoleInterface
         $this->setDescription($description);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRole()
     {
         return $this->role;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setLabel($label)
     {
         $this->label = $label !== null ? (string) $label : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getLabel()
     {
         return $this->label;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDescription($description)
     {
         $this->description = $description !== null ? (string) $description : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDescription()
     {
         return $this->description;

@@ -46,9 +46,6 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -193,11 +190,9 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
     }
 
     /**
-     * @param array $ids
-     *
      * @return ChannelInterface[]
      */
-    protected function getChannels(array $ids = null): array
+    protected function getChannels(?array $ids = null): array
     {
         if ($ids === []) {
             return [];

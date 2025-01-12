@@ -42,7 +42,7 @@ class ContentTypeController extends AbstractController
         ContentTypeManager $contentTypeManager,
         EventDispatcherInterface $eventDispatcher,
         MetadataFactory $metadataFactory,
-        DocumentManager $documentManager
+        DocumentManager $documentManager,
     ) {
         $this->contentTypeManager = $contentTypeManager;
         $this->eventDispatcher = $eventDispatcher;

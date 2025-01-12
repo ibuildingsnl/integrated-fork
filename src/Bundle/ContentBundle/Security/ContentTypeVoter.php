@@ -53,17 +53,11 @@ class ContentTypeVoter implements VoterInterface
         return $resolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsAttribute($attribute)
     {
         return \in_array($attribute, $this->permissions);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function vote(TokenInterface $token, $contentType, array $attributes): int
     {
         if (!$contentType instanceof ContentTypeInterface) {

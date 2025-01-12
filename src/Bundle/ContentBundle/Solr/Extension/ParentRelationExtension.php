@@ -18,7 +18,7 @@ use Integrated\Common\Converter\Type\TypeExtensionInterface;
 class ParentRelationExtension implements TypeExtensionInterface
 {
     /**
-    /**
+     * /**
      * {@inheritdoc}
      */
     public function build(ContainerInterface $container, $data, array $options = [])
@@ -32,9 +32,6 @@ class ParentRelationExtension implements TypeExtensionInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.content';

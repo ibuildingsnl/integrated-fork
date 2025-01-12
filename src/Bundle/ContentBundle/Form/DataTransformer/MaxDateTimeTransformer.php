@@ -19,9 +19,6 @@ use Symfony\Component\Form\DataTransformerInterface;
  */
 class MaxDateTimeTransformer implements DataTransformerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function transform($dateTime)
     {
         if ($dateTime == new \DateTime(PublishTimeInterface::DATE_MAX)) {
@@ -31,9 +28,6 @@ class MaxDateTimeTransformer implements DataTransformerInterface
         return $dateTime;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($dateTime)
     {
         return $dateTime;

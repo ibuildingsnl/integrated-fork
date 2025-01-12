@@ -46,9 +46,6 @@ class BulkActionRelationType extends AbstractType
         $this->routeParams = $routeParams;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
@@ -65,9 +62,6 @@ class BulkActionRelationType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
@@ -85,9 +79,6 @@ class BulkActionRelationType extends AbstractType
             });
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_content_bulk_action_relation';

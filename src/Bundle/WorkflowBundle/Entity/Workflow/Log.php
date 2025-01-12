@@ -23,7 +23,7 @@ class Log
     /**
      * @var int
      */
-    private $id = null;
+    private $id;
 
     /**
      * @var State
@@ -38,17 +38,17 @@ class Log
     /**
      * @var string
      */
-    private $user_id = null;
+    private $user_id;
 
     /**
      * @var string
      */
-    private $user_class = null;
+    private $user_class;
 
     /**
      * @var UserInterface
      */
-    private $user_instance = null;
+    private $user_instance;
 
     /**
      * @var Definition\State
@@ -58,12 +58,12 @@ class Log
     /**
      * @var string
      */
-    private $comment = null;
+    private $comment;
 
     /**
      * @var \DateTime
      */
-    private $deadline = null;
+    private $deadline;
 
     public function __construct()
     {
@@ -87,11 +87,9 @@ class Log
     }
 
     /**
-     * @param State $state
-     *
      * @return $this
      */
-    public function setOwner(State $state = null)
+    public function setOwner(?State $state = null)
     {
         if ($this->owner !== $state && $this->owner !== null) {
             $this->owner->removeLog($this);
@@ -115,11 +113,9 @@ class Log
     }
 
     /**
-     * @param \DateTime $timestamp
-     *
      * @return $this
      */
-    public function setTimestamp(\DateTime $timestamp = null)
+    public function setTimestamp(?\DateTime $timestamp = null)
     {
         $this->timestamp = $timestamp;
 
@@ -178,10 +174,7 @@ class Log
         return $this->state;
     }
 
-    /**
-     * @param Definition\State $state
-     */
-    public function setState(Definition\State $state = null)
+    public function setState(?Definition\State $state = null)
     {
         $this->state = $state;
     }
@@ -215,11 +208,9 @@ class Log
     }
 
     /**
-     * @param \DateTime $deadline
-     *
      * @return $this
      */
-    public function setDeadline(\DateTime $deadline = null)
+    public function setDeadline(?\DateTime $deadline = null)
     {
         $this->deadline = $deadline;
 

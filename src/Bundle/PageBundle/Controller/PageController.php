@@ -41,7 +41,7 @@ class PageController extends AbstractController
         DocumentManager $documentManager,
         PaginatorInterface $paginator,
         PageCopyService $pageCopyService,
-        RouteCache $routeCache
+        RouteCache $routeCache,
     ) {
         $this->documentManager = $documentManager;
         $this->paginator = $paginator;

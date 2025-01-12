@@ -20,9 +20,6 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class IntegratedImageBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new ImageConverterCompilerPass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);

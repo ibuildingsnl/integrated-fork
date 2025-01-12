@@ -27,14 +27,12 @@ class BatchOperation
     /**
      * @var AbstractCommand|null
      */
-    private $command = null;
+    private $command;
 
     /**
      * Create a batch operation.
-     *
-     * @param AbstractCommand $command
      */
-    public function __construct(QueueMessageInterface $message, AbstractCommand $command = null)
+    public function __construct(QueueMessageInterface $message, ?AbstractCommand $command = null)
     {
         $this->message = $message;
         $this->command = $command;
@@ -65,10 +63,8 @@ class BatchOperation
      *
      * This allows for the command to be changed or even
      * to be removed.
-     *
-     * @param AbstractCommand $command
      */
-    public function setCommand(AbstractCommand $command = null)
+    public function setCommand(?AbstractCommand $command = null)
     {
         $this->command = $command;
     }

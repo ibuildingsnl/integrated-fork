@@ -24,7 +24,7 @@ class PublicationExporterDecorator implements ExporterInterface
         private readonly RegistryInterface $registry,
         private readonly ResolverInterface $resolver,
         private readonly DocumentManager $manager,
-        private readonly PublicationRepositoryInterface $repository
+        private readonly PublicationRepositoryInterface $repository,
     ) {
     }
 

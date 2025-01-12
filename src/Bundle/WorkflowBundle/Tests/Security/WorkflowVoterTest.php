@@ -60,12 +60,12 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
     /**
      * @var Definition
      */
-    private $workflow = null;
+    private $workflow;
 
     /**
      * @var State
      */
-    private $state = null;
+    private $state;
 
     protected function setUp(): void
     {
@@ -232,7 +232,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
     public function testVoteNoWorkflowMetadata()
     {
         $content = $this->createMock('Integrated\\Common\\Content\\ContentInterface');
-        $class = \get_class($content);
+        $class = $content::class;
 
         $this->setUpMetadata($class, false);
 
@@ -246,7 +246,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getContentType')
             ->willReturn('type');
 
-        $class = \get_class($content);
+        $class = $content::class;
 
         $this->setUpMetadata($class);
         $this->setUpResolver(false);
@@ -261,7 +261,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getContentType')
             ->willReturn('type');
 
-        $class = \get_class($content);
+        $class = $content::class;
 
         $this->setUpMetadata($class);
 
@@ -283,7 +283,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getContentType')
             ->willReturn('type');
 
-        $class = \get_class($content);
+        $class = $content::class;
 
         $this->setUpMetadata($class);
         $this->setUpResolver();
@@ -300,7 +300,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getContentType')
             ->willReturn('type');
 
-        $class = \get_class($content);
+        $class = $content::class;
 
         $this->setUpMetadata($class);
         $this->setUpResolver();
@@ -325,7 +325,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getContentType')
             ->willReturn('type');
 
-        $class = \get_class($content);
+        $class = $content::class;
 
         $this->setUpMetadata($class);
         $this->setUpResolver();
@@ -350,7 +350,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getContentType')
             ->willReturn('type');
 
-        $class = \get_class($content);
+        $class = $content::class;
 
         $this->setUpMetadata($class);
         $this->setUpResolver();
@@ -378,7 +378,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getContentType')
             ->willReturn('type');
 
-        $class = \get_class($content);
+        $class = $content::class;
 
         $this->setUpMetadata($class);
         $this->setUpResolver();
@@ -410,7 +410,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getContentType')
             ->willReturn('type');
 
-        $class = \get_class($content);
+        $class = $content::class;
 
         $this->setUpMetadata($class);
         $this->setUpResolver();

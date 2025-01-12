@@ -39,9 +39,6 @@ class CustomType extends AbstractType
         $this->registry = $registry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('name', HiddenType::class);
@@ -76,9 +73,6 @@ class CustomType extends AbstractType
         $builder->addModelTransformer(new CustomTransformer());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_content_type_field_custom';

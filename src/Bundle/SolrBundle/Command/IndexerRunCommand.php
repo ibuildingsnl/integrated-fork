@@ -104,7 +104,7 @@ The <info>%command.name%</info> command starts a indexer run.
         return $this->runInternal($output);
     }
 
-    private function runInternal(OutputInterface $output, ArgumentProcess $argument = null): int
+    private function runInternal(OutputInterface $output, ?ArgumentProcess $argument = null): int
     {
         try {
             $this->lock(self::class.md5(__DIR__.$this->getName().($argument ? ':'.$argument->getProcessNumber() : '')), true);
@@ -130,7 +130,7 @@ The <info>%command.name%</info> command starts a indexer run.
     private function runExternal(InputInterface $input, OutputInterface $output): int
     {
         $wait = (int) $input->getOption('wait');
-        $wait = $wait * 1000; // convert from milli to micro
+        $wait *= 1000; // convert from milli to micro
 
         while (true) {
             // Run a external process

@@ -36,7 +36,7 @@ class ChangePasswordCommand extends Command
     public function __construct(
         UserManager $userManager,
         ScopeManager $scopeManager,
-        PasswordHasherFactoryInterface $hasherFactory
+        PasswordHasherFactoryInterface $hasherFactory,
     ) {
         $this->userManager = $userManager;
         $this->scopeManager = $scopeManager;

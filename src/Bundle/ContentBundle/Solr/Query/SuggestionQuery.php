@@ -26,7 +26,7 @@ class SuggestionQuery extends Query implements WorkflowMarkerInterface
     /**
      * @var string
      */
-    private $query = null;
+    private $query;
 
     /**
      * @param string|array $options
@@ -55,10 +55,7 @@ class SuggestionQuery extends Query implements WorkflowMarkerInterface
         return Normalizer::normalize($query);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setQuery(string $query, array $bind = null): QueryInterface
+    public function setQuery(string $query, ?array $bind = null): QueryInterface
     {
         $this->query = $this->normalize($query);
 
@@ -90,9 +87,6 @@ class SuggestionQuery extends Query implements WorkflowMarkerInterface
         ));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getQuery($original = false): ?string
     {
         if ($original) {

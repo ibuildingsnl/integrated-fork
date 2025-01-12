@@ -12,5 +12,5 @@ class Authenticator extends Constraint
     /**
      * @var TwoFactorInterface
      */
-    public $user = null;
+    public $user;
 }

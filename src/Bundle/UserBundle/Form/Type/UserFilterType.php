@@ -21,9 +21,6 @@ class UserFilterType extends AbstractType
         $this->filterQueryProvider = $filterQueryProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->setMethod('GET');
@@ -50,9 +47,6 @@ class UserFilterType extends AbstractType
         $resolver->setRequired('data');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_user_filter';

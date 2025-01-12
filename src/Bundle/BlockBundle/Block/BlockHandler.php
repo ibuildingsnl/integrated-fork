@@ -24,7 +24,7 @@ use Twig\Environment;
 class BlockHandler implements BlockHandlerInterface
 {
     /**
-     * @var \Twig\Environment
+     * @var Environment
      */
     private $twig;
 
@@ -100,9 +100,6 @@ class BlockHandler implements BlockHandlerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(BlockInterface $block, array $options)
     {
         if (!$this->isAllowed($block)) {

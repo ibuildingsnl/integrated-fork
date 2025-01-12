@@ -42,9 +42,6 @@ class GroupFormType extends AbstractType
         $this->roleManager = $roleManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('name', TextType::class, [
@@ -55,9 +52,6 @@ class GroupFormType extends AbstractType
         $builder->get('roles')->addModelTransformer(new RoleToEntityTransformer($this->roleManager));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('empty_data', function (FormInterface $form) {
@@ -67,9 +61,6 @@ class GroupFormType extends AbstractType
         $resolver->setDefault('constraints', new UniqueGroup($this->manager));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_user_group_form';

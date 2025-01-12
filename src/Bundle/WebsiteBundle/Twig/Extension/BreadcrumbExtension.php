@@ -45,7 +45,7 @@ class BreadcrumbExtension extends AbstractExtension
         BreadcrumbMenuProvider $provider,
         Helper $helper,
         BreadcrumbResolver $breadcrumbResolver,
-        string $template
+        string $template,
     ) {
         $this->provider = $provider;
         $this->helper = $helper;
@@ -53,9 +53,6 @@ class BreadcrumbExtension extends AbstractExtension
         $this->template = $template;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions()
     {
         return [
@@ -104,9 +101,6 @@ class BreadcrumbExtension extends AbstractExtension
         return $this->breadcrumbResolver->getBreadcrumb();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated_breadcrumb_menu';

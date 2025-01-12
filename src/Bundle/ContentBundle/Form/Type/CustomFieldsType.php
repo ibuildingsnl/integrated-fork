@@ -23,9 +23,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class CustomFieldsType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var ContentTypeInterface $contentType */
@@ -44,9 +41,6 @@ class CustomFieldsType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
@@ -54,9 +48,6 @@ class CustomFieldsType extends AbstractType
             ->setAllowedTypes('contentType', ContentTypeInterface::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_custom_fields';

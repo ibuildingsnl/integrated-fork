@@ -31,7 +31,7 @@ class MenuController extends AbstractController
         DocumentManager $documentManager,
         IntegratedMenuProvider $menuProvider,
         DatabaseMenuFactory $menuFactory,
-        ChannelContextInterface $channelContext
+        ChannelContextInterface $channelContext,
     ) {
         $this->documentManager = $documentManager;
         $this->menuProvider = $menuProvider;

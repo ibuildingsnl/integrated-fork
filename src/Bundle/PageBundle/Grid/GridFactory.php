@@ -33,7 +33,7 @@ class GridFactory
     }
 
     /**
-     * @return \Integrated\Bundle\PageBundle\Document\Page\Grid\Grid|null
+     * @return Grid|null
      */
     public function fromArray(array $array = [])
     {

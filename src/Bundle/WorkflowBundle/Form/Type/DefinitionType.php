@@ -34,17 +34,11 @@ class DefinitionType extends AbstractType
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addModelTransformer(new DefinitionTransformer($this->repository));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $classNormalizer = function (Options $options) {
@@ -60,17 +54,11 @@ class DefinitionType extends AbstractType
         $resolver->setDefault('required', false);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): ?string
     {
         return EntityType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_workflow_definition_choice';

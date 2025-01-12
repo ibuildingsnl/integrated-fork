@@ -41,8 +41,6 @@ interface ScopeManagerInterface extends ManagerInterface
     /**
      * Finds the scope by its identifier.
      *
-     * @param mixed $id
-     *
      * @return ScopeInterface
      */
     public function find($id);

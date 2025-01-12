@@ -24,13 +24,10 @@ class IntegratedMenuProvider implements MenuProviderInterface
         private readonly ChannelContextInterface $channelContext,
         private readonly DocumentRepository $repository,
         private readonly SolariumProvider $solariumProvider,
-        private readonly SolrUrlExtractor $urlExtractor
+        private readonly SolrUrlExtractor $urlExtractor,
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function get(string $name, array $options = []): ItemInterface
     {
         if ($menu = $this->find($name, $options)) {
@@ -40,17 +37,11 @@ class IntegratedMenuProvider implements MenuProviderInterface
         throw new \Exception(sprintf('Menu %s not found on channel', $name));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function has(string $name, array $options = []): bool
     {
         return null !== $this->find($name, $options);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     private function find($name, array $options = []): ?ItemInterface
     {
         $channel = $this->channelContext->getChannel();

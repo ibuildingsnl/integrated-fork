@@ -46,7 +46,7 @@ class TypeConfigTest extends \PHPUnit\Framework\TestCase
     /**
      * @return TypeConfig
      */
-    protected function getInstance(array $options = null)
+    protected function getInstance(?array $options = null)
     {
         return new TypeConfig($this->name, $options);
     }

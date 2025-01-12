@@ -32,8 +32,6 @@ class ContentChoicesTransformer implements DataTransformerInterface
     }
 
     /**
-     * @param mixed $value
-     *
      * @return array|null
      *
      * @throws TransformationFailedException
@@ -60,8 +58,6 @@ class ContentChoicesTransformer implements DataTransformerInterface
     }
 
     /**
-     * @param mixed $value
-     *
      * @return array
      *
      * @throws TransformationFailedException

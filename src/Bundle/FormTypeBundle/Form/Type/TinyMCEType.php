@@ -21,9 +21,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class TinyMCEType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         @trigger_error(
@@ -34,17 +31,11 @@ class TinyMCEType extends AbstractType
         parent::configureOptions($resolver);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): ?string
     {
         return EditorType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_tinymce';

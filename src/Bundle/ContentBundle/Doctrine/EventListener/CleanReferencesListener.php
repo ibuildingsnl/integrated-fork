@@ -22,9 +22,6 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
  */
 class CleanReferencesListener implements EventSubscriber
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribedEvents()
     {
         return [

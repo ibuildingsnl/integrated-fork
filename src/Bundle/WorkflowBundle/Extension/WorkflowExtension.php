@@ -31,9 +31,6 @@ class WorkflowExtension implements ExtensionInterface
         $this->contentSubscriber = $contentSubscriber;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribers()
     {
         return [
@@ -42,9 +39,6 @@ class WorkflowExtension implements ExtensionInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.extension.workflow';

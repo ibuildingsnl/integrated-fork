@@ -30,9 +30,6 @@ class ImageTransformer implements DataTransformerInterface
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transform($image)
     {
         if ($image instanceof Image) {
@@ -40,9 +37,6 @@ class ImageTransformer implements DataTransformerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($id)
     {
         return $this->repository->find($id);

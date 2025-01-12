@@ -35,9 +35,6 @@ class AuthorTransformer implements DataTransformerInterface
         $this->mr = $mr;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transform($arrayCollection)
     {
         if ($arrayCollection == null) {
@@ -75,9 +72,6 @@ class AuthorTransformer implements DataTransformerInterface
         return $collection;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($array)
     {
         $mr = $this->mr->getManager();

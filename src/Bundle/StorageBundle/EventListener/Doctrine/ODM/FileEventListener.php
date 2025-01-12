@@ -41,9 +41,6 @@ class FileEventListener implements EventSubscriber
         $this->intentTransformer = $intentTransformer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribedEvents()
     {
         return [

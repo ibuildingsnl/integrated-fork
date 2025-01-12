@@ -27,9 +27,6 @@ use Integrated\Bundle\PageBundle\Document\Page\Page;
  */
 class GridItemSubscriber implements EventSubscriber
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribedEvents()
     {
         return [

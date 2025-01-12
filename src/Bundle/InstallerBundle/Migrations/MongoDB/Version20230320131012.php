@@ -18,9 +18,6 @@ final class Version20230320131012 extends AbstractMigration
         return 'Convert image files to content';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function up(Database $db)
     {
         $migrator = new ImageMigrator($db);

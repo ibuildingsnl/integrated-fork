@@ -64,8 +64,8 @@ class AbstractController extends BaseAbstractController
     {
         return [
             ...BaseAbstractController::getSubscribedServices(),
-            'doctrine' => '?'. ORMManagerRegistry::class,
-            'doctrine_mongodb' => '?'. ODMManagerRegistry::class,
+            'doctrine' => '?'.ORMManagerRegistry::class,
+            'doctrine_mongodb' => '?'.ODMManagerRegistry::class,
             'knp_paginator' => '?'.PaginatorInterface::class,
             'solarium.client' => '?'.Client::class,
             'translator' => '?'.TranslatorInterface::class,

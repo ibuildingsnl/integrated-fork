@@ -19,9 +19,6 @@ use Twig\TwigFilter;
  */
 class TypeExtension extends AbstractExtension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getFilters()
     {
         return [
@@ -31,8 +28,6 @@ class TypeExtension extends AbstractExtension
     }
 
     /**
-     * @param mixed $value
-     *
      * @return string
      */
     public function getType($value)
@@ -41,18 +36,13 @@ class TypeExtension extends AbstractExtension
     }
 
     /**
-     * @param mixed $value
-     *
      * @return string
      */
     public function getClass($value)
     {
-        return \get_class($value);
+        return $value::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated_content_history_type';

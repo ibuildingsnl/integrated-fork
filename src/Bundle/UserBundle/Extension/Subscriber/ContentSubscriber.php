@@ -40,9 +40,6 @@ class ContentSubscriber implements ContentSubscriberInterface
         $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

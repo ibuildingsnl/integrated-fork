@@ -34,7 +34,7 @@ class ContextTest extends \PHPUnit\Framework\TestCase
     /**
      * @var Context|MockObject
      */
-    private $nesting = null;
+    private $nesting;
 
     protected function setUp(): void
     {

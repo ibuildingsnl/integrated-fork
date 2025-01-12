@@ -41,7 +41,7 @@ class RemoveCommand extends Command
         DatabaseInterface $database,
         FilesystemRegistry $registry,
         ManagerInterface $storage,
-        MetadataFactoryInterface $metadata
+        MetadataFactoryInterface $metadata,
     ) {
         $this->database = $database;
         $this->registry = $registry;

@@ -20,33 +20,21 @@ class WebsiteManifest implements ManifestInterface
 {
     public const NAME = 'website';
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getLabel()
     {
         return 'website';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDescription()
     {
         return 'Configure website';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getVersion()
     {
         return '1.0';

@@ -25,41 +25,26 @@ class MongoDBIterator implements IteratorInterface
         $this->types = $types;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function current(): mixed
     {
         return current($this->types) ?: null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function next(): void
     {
         next($this->types);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function key(): mixed
     {
         return $this->valid() ? $this->current()->getId() : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function valid(): bool
     {
         return key($this->types) !== null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rewind(): void
     {
         reset($this->types);

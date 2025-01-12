@@ -31,9 +31,6 @@ class IpListFormType extends AbstractType
         $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('ip', IpAddressType::class);
@@ -43,9 +40,6 @@ class IpListFormType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('empty_data', function (FormInterface $form) {
@@ -62,9 +56,6 @@ class IpListFormType extends AbstractType
         $resolver->setDefault('data_class', $this->getManager()->getClassName());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_user_iplist_form';

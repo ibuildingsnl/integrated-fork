@@ -185,7 +185,7 @@ class Comment
         return $this->author;
     }
 
-    public function setAuthor(Person $author = null)
+    public function setAuthor(?Person $author = null)
     {
         $this->author = $author;
     }

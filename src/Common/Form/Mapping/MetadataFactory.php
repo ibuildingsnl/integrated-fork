@@ -25,7 +25,7 @@ class MetadataFactory implements MetadataFactoryInterface
     /**
      * @var EventDispatcherInterface
      */
-    private $dispatcher = null;
+    private $dispatcher;
 
     /**
      * @var DriverRegistry
@@ -42,7 +42,7 @@ class MetadataFactory implements MetadataFactoryInterface
      */
     protected $data = [];
 
-    public function __construct(DriverRegistry $registry, string $type = null)
+    public function __construct(DriverRegistry $registry, ?string $type = null)
     {
         $this->registry = $registry;
         $this->type = $type;
@@ -75,9 +75,6 @@ class MetadataFactory implements MetadataFactoryInterface
         return $this->registry->getDrivers()[0];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAllMetadata()
     {
         $metadata = [];
@@ -95,9 +92,6 @@ class MetadataFactory implements MetadataFactoryInterface
         return $metadata;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMetadata($class)
     {
         if (isset($this->data[$class])) {

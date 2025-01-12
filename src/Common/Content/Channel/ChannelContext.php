@@ -21,20 +21,14 @@ class ChannelContext implements ChannelContextInterface
     /**
      * @var ChannelInterface|null
      */
-    private $channel = null;
+    private $channel;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getChannel()
     {
         return $this->channel;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setChannel(ChannelInterface $channel = null)
+    public function setChannel(?ChannelInterface $channel = null)
     {
         $this->channel = $channel;
     }

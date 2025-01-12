@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 class LocaleSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly ChannelManagerInterface $manager
+        private readonly ChannelManagerInterface $manager,
     ) {
     }
 

@@ -17,9 +17,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PermissionsType extends CommonPermissionsType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);

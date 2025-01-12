@@ -122,7 +122,7 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
             $relationSourceClasses[] = $source->getClass();
         }
 
-        $formClass = \get_class($formData);
+        $formClass = $formData::class;
 
         if (!\in_array($formClass, $relationSourceClasses)) {
             throw new \Exception(sprintf('RelationId "%s" does not have "%s" defined as source, perhaps you have chosen a wrong relation?', $relationId, $formClass));

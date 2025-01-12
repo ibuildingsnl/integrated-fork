@@ -19,17 +19,11 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
  */
 class WysiHtml5xType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): ?string
     {
         return TextareaType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_wysihtml5x';

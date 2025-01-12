@@ -32,7 +32,7 @@ class Slug
     /**
      * @throws \BadMethodCallException
      */
-    public function __construct(array $exactly = null, array $fields = null, string $separator = null, int $lengthLimit = null, $extra = [])
+    public function __construct(?array $exactly = null, ?array $fields = null, ?string $separator = null, ?int $lengthLimit = null, $extra = [])
     {
         if (\is_array($exactly)) {
             $extra = array_merge($exactly, $extra);

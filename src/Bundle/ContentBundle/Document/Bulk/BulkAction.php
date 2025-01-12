@@ -38,7 +38,7 @@ class BulkAction
     /**
      * @var string|null
      */
-    private $filters = null;
+    private $filters;
 
     /**
      * @var ArrayCollection|ContentInterface[]
@@ -112,10 +112,7 @@ class BulkAction
         return $this->filters === null ? null : json_decode($this->filters, true);
     }
 
-    /**
-     * @param array $filters
-     */
-    public function setFilters(array $filters = null)
+    public function setFilters(?array $filters = null)
     {
         $this->filters = $filters === null ? null : json_encode($filters);
     }

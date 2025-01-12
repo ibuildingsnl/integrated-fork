@@ -54,9 +54,6 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
         return $this->manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadUserByIdentifier($username): UserInterface
     {
         /** @var User $user */
@@ -72,16 +69,13 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
         return $user;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function refreshUser(UserInterface $user): UserInterface
     {
         if (!$this->supportsClass($user::class)) {
             throw new UnsupportedUserException(
                 sprintf(
                     'The user class "%s" is not a instance or subclass of %s',
-                    \get_class($user),
+                    $user::class,
                     $this->manager->getClassName()
                 )
             );
@@ -105,17 +99,11 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
         return $loaded;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsClass(string $class): bool
     {
         return is_a($class, $this->manager->getClassName(), true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
         if (!$user instanceof IntegratedUserInterface) {

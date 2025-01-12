@@ -21,13 +21,10 @@ use Integrated\Common\Converter\Type\TypeInterface;
 class TaxonomyType implements TypeInterface
 {
     public function __construct(
-        private readonly DocumentManager $documentManager
+        private readonly DocumentManager $documentManager,
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         if (!$data instanceof Content) {
@@ -58,7 +55,7 @@ class TaxonomyType implements TypeInterface
                                 ->getQuery()
                                 ->execute();
 
-                            if (count($childen) > 0) {
+                            if (\count($childen) > 0) {
                                 $container->add('taxonomy_parent_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());
                             } else {
                                 $container->add('taxonomy_child_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());
@@ -71,9 +68,6 @@ class TaxonomyType implements TypeInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.taxonomy';

@@ -37,7 +37,7 @@ class State
     /**
      * @var Definition|null
      */
-    protected $workflow = null;
+    protected $workflow;
 
     /**
      * @var string
@@ -163,7 +163,7 @@ class State
     /**
      * @return $this
      */
-    public function setWorkflow(Definition $workflow = null)
+    public function setWorkflow(?Definition $workflow = null)
     {
         if ($this->workflow !== $workflow && $this->workflow !== null) {
             $this->workflow->removeState($this);
@@ -414,7 +414,7 @@ class State
             // NOTE: This also means that all the changes to the entity that is removed from
             // the collection wont be recorded by doctrine anymore.
 
-            if ($found = $uow->tryGetById([$permission->getGroup(), $this->getId()], \get_class($permission))) {
+            if ($found = $uow->tryGetById([$permission->getGroup(), $this->getId()], $permission::class)) {
                 if ($found !== $permission && ($found->getState() === null || $found->getState() === $this)) {
                     $this->permissions->removeElement($permission);
                     $this->permissions->add($found);

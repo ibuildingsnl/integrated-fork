@@ -74,9 +74,6 @@ class PriorityResolver implements ResolverInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType($type)
     {
         if ($resolver = $this->findResolver($type)) {
@@ -86,9 +83,6 @@ class PriorityResolver implements ResolverInterface
         throw new InvalidArgumentException(sprintf('Could not resolve the content type based on the given type "%s"', $type));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasType($type)
     {
         if ($this->findResolver($type)) {
@@ -98,9 +92,6 @@ class PriorityResolver implements ResolverInterface
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTypes()
     {
         return new PriorityIterator($this->resolvers);

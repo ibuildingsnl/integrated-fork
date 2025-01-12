@@ -52,9 +52,6 @@ class WorkflowExtension implements TypeExtensionInterface
         $this->definition = $definition;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         if (!$data instanceof ContentInterface) {
@@ -135,9 +132,6 @@ class WorkflowExtension implements TypeExtensionInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.content';

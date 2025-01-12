@@ -26,8 +26,5 @@ interface PropertyMetadataInterface
 
     public function getValue(object $object);
 
-    /**
-     * @param mixed $value
-     */
     public function setValue(object $object, $value): void;
 }

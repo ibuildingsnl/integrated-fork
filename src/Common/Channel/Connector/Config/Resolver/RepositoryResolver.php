@@ -35,17 +35,11 @@ class RepositoryResolver implements ResolverInterface
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasConfig($name)
     {
         return ($this->repository->find($name)) ? true : false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConfig($name)
     {
         if ($config = $this->repository->find($name)) {
@@ -55,9 +49,6 @@ class RepositoryResolver implements ResolverInterface
         throw new InvalidArgumentException(sprintf('Could not load config with the name "%s"', $name));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigs(ChannelInterface $channel)
     {
         return new ConfigIterator($this->repository->findByChannel($channel));

@@ -22,9 +22,6 @@ use Integrated\Common\Converter\Type\TypeInterface;
  */
 class PremiumType implements TypeInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         if (!$data instanceof Content) {
@@ -42,9 +39,6 @@ class PremiumType implements TypeInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.premium';

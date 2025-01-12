@@ -58,8 +58,8 @@ class Manager implements ManagerInterface
     public function __construct(
         FilesystemRegistryInterface $registry,
         ResolverInterface $resolveStorage,
-        LoggerInterface $logger = null,
-        QueuedCommandBusInterface $busInterface = null
+        ?LoggerInterface $logger = null,
+        ?QueuedCommandBusInterface $busInterface = null,
     ) {
         $this->registry = $registry;
         $this->resolver = $resolveStorage;
@@ -67,9 +67,6 @@ class Manager implements ManagerInterface
         $this->commandBus = $busInterface;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function handle(CommandInterface $command)
     {
         if (null == $this->commandBus) {
@@ -79,9 +76,6 @@ class Manager implements ManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function read(StorageInterface $storage)
     {
         // Walk over all filesystems that should contain the file
@@ -113,10 +107,7 @@ class Manager implements ManagerInterface
         throw NoFilesystemAvailableException::readOperation($storage);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function write(ReaderInterface $reader, ArrayCollection $filesystems = null)
+    public function write(ReaderInterface $reader, ?ArrayCollection $filesystems = null)
     {
         // Required data for the storage object
         $identifier = $this->resolver->getIdentifier($reader);
@@ -177,9 +168,6 @@ class Manager implements ManagerInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function delete(StorageInterface $storage)
     {
         // Delete it in all the known filesystems for the file
@@ -215,9 +203,6 @@ class Manager implements ManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function move(StorageInterface $storage, ArrayCollection $filesystems)
     {
         // The file, read by ourselves
@@ -308,7 +293,7 @@ class Manager implements ManagerInterface
         throw new \LogicException(
             sprintf(
                 'A instanceof Gaufrette\Filesystem was expected (given: %s).',
-                \is_object($filesystem) ? \get_class($filesystem) : \gettype($filesystem)
+                \is_object($filesystem) ? $filesystem::class : \gettype($filesystem)
             )
         );
     }

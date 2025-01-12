@@ -37,17 +37,11 @@ class ActionsType extends AbstractType
         $this->buttons = $buttons;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventSubscriber(new ClickedButtonListener());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $buttonsNormalizer = function (Options $options, $buttons) {
@@ -67,9 +61,6 @@ class ActionsType extends AbstractType
         $resolver->setNormalizer('buttons', $buttonsNormalizer);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): ?string
     {
         return FormActionsType::class;

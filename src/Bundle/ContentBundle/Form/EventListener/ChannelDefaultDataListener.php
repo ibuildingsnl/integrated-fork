@@ -37,9 +37,6 @@ class ChannelDefaultDataListener implements EventSubscriberInterface
         $this->channels = $channels;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

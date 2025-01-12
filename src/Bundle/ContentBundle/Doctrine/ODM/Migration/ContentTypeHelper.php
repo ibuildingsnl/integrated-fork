@@ -36,7 +36,7 @@ trait ContentTypeHelper
         $class,
         array $requiredFields = [],
         array $optionalFields = [],
-        array $options = []
+        array $options = [],
     ) {
         $this->write(sprintf('Creating contentType with id: "%s"', $id));
 
@@ -67,7 +67,7 @@ trait ContentTypeHelper
     protected function setContentTypeFields(
         ContentType $contentType,
         array $requiredFields = [],
-        array $optionalFields = []
+        array $optionalFields = [],
     ) {
         $contentType->setFields([]);
 

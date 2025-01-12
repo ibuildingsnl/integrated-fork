@@ -32,9 +32,6 @@ class WorkflowLogInstanceInjectionListener implements EventSubscriber
         $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribedEvents()
     {
         return [
@@ -53,7 +50,7 @@ class WorkflowLogInstanceInjectionListener implements EventSubscriber
             return;
         }
 
-        $metadata = $args->getObjectManager()->getClassMetadata(\get_class($object));
+        $metadata = $args->getObjectManager()->getClassMetadata($object::class);
 
         $prop = $metadata->getReflectionClass()->getProperty('user_class');
         $prop->setAccessible(true);

@@ -19,9 +19,6 @@ use Integrated\Bundle\ContentBundle\Document\Content\File;
 
 class UpdateStorageMetadataListener implements EventSubscriber
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribedEvents()
     {
         return [
@@ -41,7 +38,7 @@ class UpdateStorageMetadataListener implements EventSubscriber
                     $document->getFile()->getMetadata()->setCredits($document->getCredits());
                     $document->getFile()->getMetadata()->setDescription($document->getDescription());
 
-                    $class = $dm->getClassMetadata(\get_class($document));
+                    $class = $dm->getClassMetadata($document::class);
                     $uow->recomputeSingleDocumentChangeSet($class, $document);
                 }
             }
