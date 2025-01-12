@@ -16,15 +16,15 @@
             <argument>%gregwar_image.cache_dir_mode%</argument>
             <argument>%gregwar_image.web_dir%</argument>
             <argument>%image.handler.class%</argument>
-            <argument>@assets.packages</argument>
-            <argument>@file_locator</argument>
+            <argument type="service" id="assets.packages"></argument>
+            <argument type="service" id="file_locator"></argument>
             <argument>%gregwar_image.throw_exception%</argument>
             <argument>%gregwar_image.fallback_image%</argument>
         </service>
 
         <!-- Helper Twig -->
         <service id="twig.extension.image" class="Integrated\Bundle\ImageBundle\Twig\Extension\GregwarImageExtension">
-            <argument>@image.handling</argument>
+            <argument type="service" id="image.handling"></argument>
             <argument>%gregwar_image.web_dir%</argument>
             <tag name="twig.extension" />
         </service>
