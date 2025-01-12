@@ -14,7 +14,7 @@ namespace Integrated\Bundle\ImageBundle\Twig\Extension;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage;
 use Integrated\Bundle\ImageBundle\Converter\WebFormatConverter;
 use Integrated\Bundle\ImageBundle\Factory\StorageModelFactory;
-use Integrated\Bundle\ImageBundle\Services\ImageHandling;
+use Integrated\Bundle\ImageBundle\Service\ImageHandling;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;

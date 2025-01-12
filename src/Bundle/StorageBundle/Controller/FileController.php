@@ -13,7 +13,7 @@ namespace Integrated\Bundle\StorageBundle\Controller;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ImageBundle\Converter\WebFormatConverter;
-use Integrated\Bundle\ImageBundle\Services\ImageHandling;
+use Integrated\Bundle\ImageBundle\Service\ImageHandling;
 use Integrated\Bundle\StorageBundle\Storage\Accessor\DoctrineDocument;
 use Integrated\Bundle\StorageBundle\Storage\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;

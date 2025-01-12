@@ -1,6 +1,6 @@
 <?php
 
-namespace Integrated\Bundle\ImageBundle\Services;
+namespace Integrated\Bundle\ImageBundle\Service;
 
 use Integrated\Bundle\ImageBundle\Image\ImageHandler;
 use Symfony\Component\Asset\Packages;

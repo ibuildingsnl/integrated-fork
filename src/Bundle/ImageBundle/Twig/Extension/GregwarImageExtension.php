@@ -2,7 +2,7 @@
 
 namespace Integrated\Bundle\ImageBundle\Twig\Extension;
 
-use Integrated\Bundle\ImageBundle\Services\ImageHandling;
+use Integrated\Bundle\ImageBundle\Service\ImageHandling;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
