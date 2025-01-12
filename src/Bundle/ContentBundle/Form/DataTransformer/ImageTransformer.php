@@ -35,6 +35,8 @@ class ImageTransformer implements DataTransformerInterface
         if ($image instanceof Image) {
             return $image->getId();
         }
+
+        return $image;
     }
 
     public function reverseTransform($id): mixed

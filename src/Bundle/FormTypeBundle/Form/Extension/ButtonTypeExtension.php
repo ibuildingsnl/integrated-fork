@@ -19,7 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ButtonTypeExtension extends AbstractTypeExtension
 {
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['button_class'] = $form->getConfig()->getOption('button_class');
         $view->vars['as_link'] = $form->getConfig()->getOption('as_link');
@@ -32,7 +32,7 @@ class ButtonTypeExtension extends AbstractTypeExtension
      * Add the icon option
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefined(['button_class', 'as_link', 'icon']);
     }

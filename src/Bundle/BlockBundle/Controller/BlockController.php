@@ -259,7 +259,6 @@ class BlockController extends AbstractController
             ->equals($content->getId())
             ->getQuery();
 
-        /** @var \Knp\Component\Pager\Paginator $pagination */
         $pagination = $this->paginator->paginate(
             $query,
             $request->query->get('page', 1),

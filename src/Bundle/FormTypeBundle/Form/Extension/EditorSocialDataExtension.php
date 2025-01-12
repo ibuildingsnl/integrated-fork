@@ -13,7 +13,7 @@ class EditorSocialDataExtension extends AbstractTypeExtension
     {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber(new EditorSocialDataEventListener());
     }

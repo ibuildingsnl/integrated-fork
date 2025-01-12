@@ -25,7 +25,7 @@ class StorageTest extends \PHPUnit\Framework\TestCase
      */
     public function testPostWriteMethod()
     {
-        /** @var MockObject|\Integrated\Common\Storage\ResolverInterface $resolver */
+        /** @var MockObject&\Integrated\Common\Storage\ResolverInterface $resolver */
         $resolver = $this->createMock('Integrated\Common\Storage\ResolverInterface');
         $resolver->expects($this->once())
             ->method('resolve')

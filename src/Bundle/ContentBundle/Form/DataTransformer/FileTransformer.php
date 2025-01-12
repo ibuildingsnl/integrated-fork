@@ -35,6 +35,8 @@ class FileTransformer implements DataTransformerInterface
         if ($file instanceof File) {
             return $file->getId();
         }
+
+        return $file;
     }
 
     public function reverseTransform($id): mixed

@@ -19,7 +19,7 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
  */
 class ColorTransformer implements DataTransformerInterface
 {
-    public function transform($value)
+    public function transform($value): mixed
     {
         $value = strtolower(trim((string) $value));
 
@@ -34,7 +34,7 @@ class ColorTransformer implements DataTransformerInterface
         return '';
     }
 
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (null === $value) {
             return '';

@@ -55,9 +55,6 @@ class ContentTypeField implements DataTransformerInterface
         return [];
     }
 
-    /**
-     * @return \Field|null
-     */
     public function reverseTransform($value): ?Field
     {
         if (\is_array($value)) {

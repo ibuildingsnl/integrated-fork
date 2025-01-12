@@ -45,6 +45,8 @@ class MultipleFileTransformer implements DataTransformerInterface
 
             return implode(',', $data);
         }
+
+        return $list;
     }
 
     public function reverseTransform($input): mixed
