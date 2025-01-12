@@ -96,7 +96,7 @@ class ExportCommand extends Command
                 null,
                 null
             );
-            $process->run(function ($type, $buffer) use ($output) {
+            $process->run(function ($type, $buffer) use ($output): void {
                 $output->write($buffer, false, OutputInterface::OUTPUT_RAW);
             });
 

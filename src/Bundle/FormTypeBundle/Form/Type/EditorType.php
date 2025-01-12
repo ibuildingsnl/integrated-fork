@@ -40,7 +40,7 @@ class EditorType extends AbstractType
         $view->vars['content_styles'] = $this->contentStyles;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'mode' => 'default',

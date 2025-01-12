@@ -104,7 +104,7 @@ class SuggestionNormalizer implements NormalizerInterface
         return ['query' => $query->getQuery(true)] + array_filter($data);
     }
 
-    public function supportsNormalization($data, $format = null): bool
+    public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         return $data instanceof Result && $data->getQuery() instanceof SuggestionQuery;
     }

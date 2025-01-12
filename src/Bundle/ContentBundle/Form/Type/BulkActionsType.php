@@ -35,7 +35,7 @@ class BulkActionsType extends AbstractType
         $this->provider = $provider;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $mapping = [];
 
@@ -88,7 +88,7 @@ class BulkActionsType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setDefault('readonly', false)

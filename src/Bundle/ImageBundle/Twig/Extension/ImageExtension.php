@@ -62,12 +62,12 @@ class ImageExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('integrated_image', [$this, 'image'], ['is_safe' => ['html']]),
-            new TwigFunction('integrated_image_credits', [$this, 'imageCredits'], ['is_safe' => ['html']]),
-            new TwigFunction('integrated_image_description', [$this, 'imageDescription'], ['is_safe' => ['html']]),
-            new TwigFunction('image_json', [$this, 'imageJson'], ['is_safe' => ['html']]),
-            new TwigFunction('web_image', [$this, 'webImage'], ['is_safe' => ['html']]),
-            new TwigFunction('image', [$this, 'image'], ['is_safe' => ['html']]),
+            new TwigFunction('integrated_image', $this->image(...), ['is_safe' => ['html']]),
+            new TwigFunction('integrated_image_credits', $this->imageCredits(...), ['is_safe' => ['html']]),
+            new TwigFunction('integrated_image_description', $this->imageDescription(...), ['is_safe' => ['html']]),
+            new TwigFunction('image_json', $this->imageJson(...), ['is_safe' => ['html']]),
+            new TwigFunction('web_image', $this->webImage(...), ['is_safe' => ['html']]),
+            new TwigFunction('image', $this->image(...), ['is_safe' => ['html']]),
         ];
     }
 

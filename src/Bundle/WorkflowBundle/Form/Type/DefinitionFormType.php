@@ -31,7 +31,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class DefinitionFormType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('name', TextType::class, [
             'constraints' => [
@@ -81,7 +81,7 @@ class DefinitionFormType extends AbstractType
         $child->vars['block_prefixes'][] = $last;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $emptyData = function (FormInterface $form) {
             return new Definition();

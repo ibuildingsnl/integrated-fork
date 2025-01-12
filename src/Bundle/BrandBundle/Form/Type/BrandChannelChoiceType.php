@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BrandChannelChoiceType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $brandName = strtolower($options['brand_name']); // Convert to lower case
         $brandName = preg_replace('/\s+/', '', $brandName); // Strip spaces
@@ -49,7 +49,7 @@ class BrandChannelChoiceType extends AbstractType
         ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(['brand_name', 'links']);
         $resolver->setDefault('publish', false);

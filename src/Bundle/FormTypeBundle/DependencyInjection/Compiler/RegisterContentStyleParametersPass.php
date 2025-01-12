@@ -32,7 +32,7 @@ class RegisterContentStyleParametersPass implements CompilerPassInterface
     {
         $this->parameters = [self::CONTENT_CSS => [], self::STYLE_FORMAT => []];
 
-        foreach ($container->getParameter('kernel.bundles') as $name => $class) {
+        foreach ($container->getParameter('kernel.bundles') as $class) {
             $this->addParameters(\dirname((new \ReflectionClass($class))->getFileName()).'/Resources/config');
         }
 

@@ -26,7 +26,7 @@ class TailwindBadgeExtension extends AbstractExtension
         return [
             new TwigFunction(
                 'badge',
-                [$this, 'badgeFunction'],
+                $this->badgeFunction(...),
                 ['pre_escape' => 'html', 'is_safe' => ['html']]
             ),
         ];

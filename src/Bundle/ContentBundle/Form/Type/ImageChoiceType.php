@@ -33,7 +33,7 @@ class ImageChoiceType extends AbstractType
         $this->repository = $manager->getRepository(Image::class);
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new ImageTransformer($this->repository));
     }

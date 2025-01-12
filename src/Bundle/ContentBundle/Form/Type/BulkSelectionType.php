@@ -23,7 +23,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class BulkSelectionType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('selection', ChoiceType::class, [
             'label' => false,
@@ -34,7 +34,7 @@ class BulkSelectionType extends AbstractType
         ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setRequired('content')

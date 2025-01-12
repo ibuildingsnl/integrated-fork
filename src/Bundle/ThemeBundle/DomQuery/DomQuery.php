@@ -1008,7 +1008,7 @@ class DomQuery extends DomQueryNodes
      */
     public function append(...$content)
     {
-        $this->importNodes($content, function ($node, $imported_node) {
+        $this->importNodes($content, function ($node, $imported_node): void {
             $node->appendChild($imported_node);
         });
 
@@ -1041,7 +1041,7 @@ class DomQuery extends DomQueryNodes
      */
     public function prepend(...$content)
     {
-        $this->importNodes($content, function ($node, $imported_node) {
+        $this->importNodes($content, function ($node, $imported_node): void {
             $node->insertBefore($imported_node, $node->childNodes->item(0));
         });
 
@@ -1074,7 +1074,7 @@ class DomQuery extends DomQueryNodes
      */
     public function before(...$content)
     {
-        $this->importNodes($content, function ($node, $imported_node) {
+        $this->importNodes($content, function ($node, $imported_node): void {
             if ($node->parentNode instanceof \DOMDocument) {
                 throw new \Exception('Can not set before root element '.$node->tagName.' of document');
             }
@@ -1094,7 +1094,7 @@ class DomQuery extends DomQueryNodes
      */
     public function after(...$content)
     {
-        $this->importNodes($content, function ($node, $imported_node) {
+        $this->importNodes($content, function ($node, $imported_node): void {
             if ($node->nextSibling) {
                 $node->parentNode->insertBefore($imported_node, $node->nextSibling);
             } else { // node is last, so there is no next sibling to insert before
@@ -1117,7 +1117,7 @@ class DomQuery extends DomQueryNodes
     {
         $removed_nodes = new self();
 
-        $this->importNodes($content, function ($node, $imported_node) use (&$removed_nodes) {
+        $this->importNodes($content, function ($node, $imported_node) use (&$removed_nodes): void {
             if ($node->nextSibling) {
                 $node->parentNode->insertBefore($imported_node, $node->nextSibling);
             } else { // node is last, so there is no next sibling to insert before
@@ -1145,7 +1145,7 @@ class DomQuery extends DomQueryNodes
      */
     public function wrap(...$content)
     {
-        $this->importNodes($content, function ($node, $imported_node) {
+        $this->importNodes($content, function ($node, $imported_node): void {
             if ($node->parentNode instanceof \DOMDocument) {
                 throw new \Exception('Can not wrap inside root element '.$node->tagName.' of document');
             }
@@ -1175,7 +1175,7 @@ class DomQuery extends DomQueryNodes
         $wrapper_node = null; // node given as wrapper
         $wrap_target_node = null; // node that wil be parent of content to be wrapped
 
-        $this->importNodes($content, function ($node, $imported_node) use (&$wrapper_node, &$wrap_target_node) {
+        $this->importNodes($content, function ($node, $imported_node) use (&$wrapper_node, &$wrap_target_node): void {
             if ($node->parentNode instanceof \DOMDocument) {
                 throw new \Exception('Can not wrap inside root element '.$node->tagName.' of document');
             }

@@ -31,7 +31,7 @@ class ChannelExtension extends AbstractExtension implements GlobalsInterface
     public function getFilters()
     {
         return [
-            new TwigFilter('integrated_channel', [$this, 'getChannel']),
+            new TwigFilter('integrated_channel', $this->getChannel(...)),
         ];
     }
 

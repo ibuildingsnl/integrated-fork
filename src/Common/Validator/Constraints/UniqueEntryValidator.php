@@ -28,7 +28,7 @@ class UniqueEntryValidator extends ConstraintValidator
     /**
      * @var ExecutionContextInterface
      */
-    protected $context;
+    protected ExecutionContextInterface $context;
 
     /**
      * @var PropertyAccessor

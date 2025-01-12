@@ -36,8 +36,8 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 
     public function testInterface()
     {
-        $message = new QueueMessage($this->data, function () {
-        }, function () {
+        $message = new QueueMessage($this->data, function (): void {
+        }, function (): void {
         });
 
         $this->assertInstanceOf(QueueMessageInterface::class, $message);
@@ -45,8 +45,8 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPayload()
     {
-        $message = new QueueMessage($this->data, function () {
-        }, function () {
+        $message = new QueueMessage($this->data, function (): void {
+        }, function (): void {
         });
 
         $this->assertInstanceOf('stdClass', $message->getPayload());
@@ -54,8 +54,8 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPayloadCached()
     {
-        $message = new QueueMessage($this->data, function () {
-        }, function () {
+        $message = new QueueMessage($this->data, function (): void {
+        }, function (): void {
         });
 
         $this->assertSame($message->getPayload(), $message->getPayload());
@@ -63,8 +63,8 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 
     public function testGetAttempts()
     {
-        $message = new QueueMessage($this->data, function () {
-        }, function () {
+        $message = new QueueMessage($this->data, function (): void {
+        }, function (): void {
         });
 
         $this->assertSame(42, $message->getAttempts());
@@ -72,8 +72,8 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 
     public function testGetId()
     {
-        $message = new QueueMessage($this->data, function () {
-        }, function () {
+        $message = new QueueMessage($this->data, function (): void {
+        }, function (): void {
         });
 
         $this->assertSame('ThisIsTheID', $message->getId());
@@ -81,8 +81,8 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 
     public function testGetData()
     {
-        $message = new QueueMessage($this->data, function () {
-        }, function () {
+        $message = new QueueMessage($this->data, function (): void {
+        }, function (): void {
         });
 
         $this->assertSame($this->data, $message->getData());
@@ -92,9 +92,9 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
     {
         $count = 0;
 
-        $message = new QueueMessage($this->data, function () {
+        $message = new QueueMessage($this->data, function (): void {
             throw new \LogicException('Method was not expected to be called');
-        }, function ($delay) use (&$count) {
+        }, function ($delay) use (&$count): void {
             ++$count;
 
             Assert::assertEquals(0, $delay);
@@ -110,8 +110,8 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 
     public function testReleaseWithDelay()
     {
-        $message = new QueueMessage($this->data, function () {
-        }, function ($delay) {
+        $message = new QueueMessage($this->data, function (): void {
+        }, function ($delay): void {
             Assert::assertEquals(42, $delay);
         });
 
@@ -122,9 +122,9 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
     {
         $count = 0;
 
-        $message = new QueueMessage($this->data, function () use (&$count) {
+        $message = new QueueMessage($this->data, function () use (&$count): void {
             ++$count;
-        }, function () {
+        }, function (): void {
             throw new \LogicException('Method was not expected to be called');
         });
 

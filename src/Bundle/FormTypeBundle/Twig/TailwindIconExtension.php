@@ -42,7 +42,7 @@ class TailwindIconExtension extends AbstractExtension
         return [
             new TwigFilter(
                 'parse_icons',
-                [$this, 'parseIconsFilter'],
+                $this->parseIconsFilter(...),
                 ['pre_escape' => 'html', 'is_safe' => ['html']]
             ),
         ];
@@ -53,7 +53,7 @@ class TailwindIconExtension extends AbstractExtension
         return [
             new TwigFunction(
                 'icon',
-                [$this, 'iconFunction'],
+                $this->iconFunction(...),
                 ['pre_escape' => 'html', 'is_safe' => ['html']]
             ),
         ];

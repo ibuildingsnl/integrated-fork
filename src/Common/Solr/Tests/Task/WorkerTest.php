@@ -87,10 +87,10 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
             ->willReturnOnConsecutiveCalls([$this->getMessage($task1)], [$this->getMessage($task2)], []);
 
         $callback = [
-            function ($argument) use ($task1) {
+            function ($argument) use ($task1): void {
                 self::assertSame($task1, $argument);
             },
-            function ($argument) use ($task2) {
+            function ($argument) use ($task2): void {
                 self::assertSame($task2, $argument);
             },
         ];
@@ -151,7 +151,7 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
                 []
             );
 
-        $callback = function ($argument) use ($task) {
+        $callback = function ($argument) use ($task): void {
             self::assertSame($task, $argument);
         };
 
@@ -194,7 +194,7 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
         $this->registry->expects($this->exactly($count))
             ->method('getHandler')
             ->with($this->equalTo('stdClass'))
-            ->willReturn(function () {
+            ->willReturn(function (): void {
             });
 
         $instance->execute();

@@ -18,7 +18,7 @@ class AuthorType extends AbstractType
     ) {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $transformer = new AuthorTransformer($this->mr);
 

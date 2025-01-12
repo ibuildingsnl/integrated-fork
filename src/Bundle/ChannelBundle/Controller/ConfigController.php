@@ -115,7 +115,7 @@ class ConfigController extends AbstractController
         return $this->render('@IntegratedChannel/config/new.html.twig', [
             'adapter' => $adapter,
             'data' => $data,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
@@ -237,7 +237,7 @@ class ConfigController extends AbstractController
         return $this->render('@IntegratedChannel/config/delete.html.twig', [
             'adapter' => $this->registry->hasAdapter($data->getAdapter()) ? $this->registry->getAdapter($data->getAdapter()) : null,
             'data' => $data,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 

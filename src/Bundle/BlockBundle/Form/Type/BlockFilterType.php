@@ -52,7 +52,7 @@ class BlockFilterType extends AbstractType
         $this->blockUsageProvider = $blockUsageProvider;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->setMethod('GET');
 
@@ -90,7 +90,7 @@ class BlockFilterType extends AbstractType
         ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired('blockIds');
         $resolver->setAllowedTypes('blockIds', 'array');

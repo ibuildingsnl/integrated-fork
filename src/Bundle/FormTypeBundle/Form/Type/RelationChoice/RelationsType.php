@@ -32,12 +32,12 @@ class RelationsType extends AbstractType
         $this->dm = $dm;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber(new AddRelationFieldsSubscriber($this->dm, $options));
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'options' => [],

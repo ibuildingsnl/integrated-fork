@@ -41,7 +41,7 @@ class FileType extends AbstractType
         $this->appCache = $appCache;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         // The field might not be required in the integrated content type
         $resolver->setDefaults([
@@ -68,7 +68,7 @@ class FileType extends AbstractType
         );
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('file', SymfonyFileType::class, [
             'required' => $options['required'],

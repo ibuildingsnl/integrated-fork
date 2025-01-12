@@ -102,10 +102,10 @@ class MenuExtension extends AbstractExtension
         return [
             new TwigFunction(
                 'integrated_menu',
-                [$this, 'renderMenu'],
+                $this->renderMenu(...),
                 ['is_safe' => ['html'], 'needs_context' => true]
             ),
-            new TwigFunction('integrated_menu_prepare', [$this, 'prepareMenu'], ['is_safe' => ['html']]),
+            new TwigFunction('integrated_menu_prepare', $this->prepareMenu(...), ['is_safe' => ['html']]),
         ];
     }
 

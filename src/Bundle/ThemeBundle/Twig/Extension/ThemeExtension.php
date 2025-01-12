@@ -33,7 +33,7 @@ class ThemeExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('integrated_active_theme', [$this, 'getActiveTheme']),
+            new TwigFunction('integrated_active_theme', $this->getActiveTheme(...)),
         ];
     }
 

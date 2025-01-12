@@ -29,7 +29,7 @@ class RelationExtension extends AbstractExtension
     public function getFilters()
     {
         return [
-            new TwigFilter('integrated_relation', [$this, 'getRelation']),
+            new TwigFilter('integrated_relation', $this->getRelation(...)),
         ];
     }
 

@@ -29,7 +29,7 @@ class AddressType extends AbstractType
      */
     public const PROPERTIES = ['type', 'name', 'country', 'address1', 'address2', 'zipcode', 'city'];
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         foreach ($options['fields'] as $field) {
             // Variables
@@ -67,7 +67,7 @@ class AddressType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         // Set defaults for the resolver
         $resolver->setDefaults([

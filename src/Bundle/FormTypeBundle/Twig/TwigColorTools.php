@@ -10,9 +10,9 @@ class TwigColorTools extends AbstractExtension
     public function getFilters()
     {
         return [
-            new TwigFilter('lighten', [$this, 'lighten']),
-            new TwigFilter('darken', [$this, 'darken']),
-            new TwigFilter('alpha', [$this, 'alpha']),
+            new TwigFilter('lighten', $this->lighten(...)),
+            new TwigFilter('darken', $this->darken(...)),
+            new TwigFilter('alpha', $this->alpha(...)),
             new TwigFilter('color_red', [$this, 'color_red']),
             new TwigFilter('color_blue', [$this, 'color_blue']),
             new TwigFilter('color_green', [$this, 'color_green']),

@@ -32,7 +32,7 @@ class ReferencesToArrayTransformer implements DataTransformerInterface
         $this->dm = $dm;
     }
 
-    public function transform($value)
+    public function transform($value): array
     {
         $array = [];
 
@@ -49,7 +49,7 @@ class ReferencesToArrayTransformer implements DataTransformerInterface
         return $array;
     }
 
-    public function reverseTransform($value)
+    public function reverseTransform($value): ArrayCollection
     {
         if (!$value) {
             return new ArrayCollection();

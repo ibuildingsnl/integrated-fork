@@ -42,7 +42,7 @@ class GroupFormType extends AbstractType
         $this->roleManager = $roleManager;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('name', TextType::class, [
             'required' => false,
@@ -52,7 +52,7 @@ class GroupFormType extends AbstractType
         $builder->get('roles')->addModelTransformer(new RoleToEntityTransformer($this->roleManager));
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('empty_data', function (FormInterface $form) {
             return $this->getManager()->create();

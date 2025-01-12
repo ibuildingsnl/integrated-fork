@@ -91,25 +91,25 @@ class BlockExtension extends AbstractExtension
         return [
             new TwigFunction(
                 'integrated_block',
-                [$this, 'renderBlock'],
+                $this->renderBlock(...),
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
             new TwigFunction(
                 'integrated_channel_block',
-                [$this, 'renderChannelBlock'],
+                $this->renderChannelBlock(...),
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
-            new TwigFunction('integrated_find_channels', [$this, 'findChannels']),
-            new TwigFunction('integrated_find_pages', [$this, 'findPages']),
-            new TwigFunction('integrated_find_block_types', [$this, 'findBlockTypes']),
+            new TwigFunction('integrated_find_channels', $this->findChannels(...)),
+            new TwigFunction('integrated_find_pages', $this->findPages(...)),
+            new TwigFunction('integrated_find_block_types', $this->findBlockTypes(...)),
         ];
     }
 
     public function getFilters()
     {
         return [
-            new TwigFilter('integrated_block_type', [$this, 'getBlockTypeName']),
-            new TwigFilter('integrated_sort_blocks', [$this, 'sortByType']),
+            new TwigFilter('integrated_block_type', $this->getBlockTypeName(...)),
+            new TwigFilter('integrated_sort_blocks', $this->sortByType(...)),
         ];
     }
 

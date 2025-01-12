@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class BrandType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('profile', BrandProfileType::class, ['data_class' => BrandProfile::class, 'label' => false]);
     }

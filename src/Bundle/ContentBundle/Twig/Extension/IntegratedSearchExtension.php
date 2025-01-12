@@ -31,8 +31,8 @@ class IntegratedSearchExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('integrated_search_sorting_options', [$this, 'getSortingOptions']),
-            new TwigFunction('integrated_search_sorting_option', [$this, 'getSortingOption']),
+            new TwigFunction('integrated_search_sorting_options', $this->getSortingOptions(...)),
+            new TwigFunction('integrated_search_sorting_option', $this->getSortingOption(...)),
         ];
     }
 

@@ -15,7 +15,7 @@ class PublicationsType extends AbstractType
     ) {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var ChannelInterface $channel */
         foreach ($options['channels'] as $channel) {
@@ -45,7 +45,7 @@ class PublicationsType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('channels', []);
         $resolver->setAllowedTypes('channels', ChannelInterface::class.'[]');

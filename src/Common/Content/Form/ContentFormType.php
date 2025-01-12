@@ -194,7 +194,7 @@ class ContentFormType extends AbstractType
         );
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $contentTypeNormalizer = function (Options $options, $value) {
             if (\is_string($value)) {

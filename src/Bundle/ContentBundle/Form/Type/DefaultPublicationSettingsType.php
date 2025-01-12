@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class DefaultPublicationSettingsType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('time', PublishTimeType::class, ['label' => false]);
     }

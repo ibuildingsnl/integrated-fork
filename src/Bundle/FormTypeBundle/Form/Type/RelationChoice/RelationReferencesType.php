@@ -26,7 +26,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class RelationReferencesType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $formType = $options['options']['form_type'];
         unset($options['options']['form_type']);
@@ -44,7 +44,7 @@ class RelationReferencesType extends AbstractType
         $view->vars = array_replace($view->vars, ['label' => false]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => 'Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation',

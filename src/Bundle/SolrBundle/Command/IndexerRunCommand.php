@@ -140,7 +140,7 @@ The <info>%command.name%</info> command starts a indexer run.
             );
 
             $process->setTimeout(0);
-            $process->run(function ($type, $buffer) use ($output) {
+            $process->run(function ($type, $buffer) use ($output): void {
                 if (Process::ERR === $type) {
                     $output->write($buffer);
                 } else {

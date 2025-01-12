@@ -32,7 +32,7 @@ class ColorType extends AbstractType
         $this->manager = $manager;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addViewTransformer(new ColorTransformer());
     }

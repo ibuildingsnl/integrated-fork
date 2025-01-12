@@ -23,7 +23,7 @@ class MediaGalleryType extends AbstractType
         $this->repository = $manager->getRepository(File::class);
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new FileTransformer($this->repository));
     }
@@ -33,12 +33,12 @@ class MediaGalleryType extends AbstractType
         $view->vars['attr']['data-multiple'] = '';
     }
 
-    public function getParent()
+    public function getParent(): ?string
     {
         return TextType::class;
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_media_gallery_image';
     }

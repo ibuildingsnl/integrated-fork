@@ -22,8 +22,8 @@ class TypeExtension extends AbstractExtension
     public function getFilters()
     {
         return [
-            new TwigFilter('get_type', [$this, 'getType']),
-            new TwigFilter('get_class', [$this, 'getClass']),
+            new TwigFilter('get_type', $this->getType(...)),
+            new TwigFilter('get_class', $this->getClass(...)),
         ];
     }
 

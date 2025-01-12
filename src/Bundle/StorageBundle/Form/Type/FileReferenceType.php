@@ -25,14 +25,14 @@ class FileReferenceType extends AbstractType
     ) {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('file', FileType::class);
 
         $builder->setDataMapper(new FileReferenceMapper($this->manager, $options['channels']));
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('channels', []);
 
@@ -49,7 +49,7 @@ class FileReferenceType extends AbstractType
         parent::configureOptions($resolver);
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_file_reference';
     }

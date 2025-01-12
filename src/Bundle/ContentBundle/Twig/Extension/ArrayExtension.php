@@ -22,7 +22,7 @@ class ArrayExtension extends AbstractExtension
     public function getFilters()
     {
         return [
-            new TwigFilter('unset_value', [$this, 'unsetValue']),
+            new TwigFilter('unset_value', $this->unsetValue(...)),
         ];
     }
 

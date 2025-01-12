@@ -23,7 +23,7 @@ class CommentExtension extends AbstractExtension
     public function getFilters()
     {
         return [
-            new TwigFilter('remove_comments', [$this, 'escape'], ['is_safe' => ['html']]),
+            new TwigFilter('remove_comments', $this->escape(...), ['is_safe' => ['html']]),
         ];
     }
 

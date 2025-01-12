@@ -101,7 +101,7 @@ class IntegratedInstallCommand extends Command
 
         $process = Process::fromShellCommandline($command);
         $process->setTimeout(0);
-        $process->run(function ($type, $buffer) use ($output) {
+        $process->run(function ($type, $buffer) use ($output): void {
             if (Process::ERR === $type) {
                 $output->write($buffer, false, $output::OUTPUT_RAW | $output::VERBOSITY_NORMAL);
             } else {

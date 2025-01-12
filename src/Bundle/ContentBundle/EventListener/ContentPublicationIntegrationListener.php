@@ -55,7 +55,7 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
             ],
         ]);
 
-        $form->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+        $form->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
             $content = $event->getData();
 
             if (!$content instanceof Content) {

@@ -128,7 +128,7 @@ class ConnectorController extends AbstractController
             'new' => $new,
             'adapter' => $adapter,
             'config' => $config,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 }

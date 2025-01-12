@@ -74,7 +74,7 @@ class ChannelLinkController extends AbstractController
         return $this->render('@IntegratedBrand/brand/channel_add.html.twig', [
             'linkType' => $channelType,
             'brand' => $brand,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
@@ -111,7 +111,7 @@ class ChannelLinkController extends AbstractController
             'channel' => $link->channel,
             'link' => $link,
             'brand' => $brand,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
@@ -143,7 +143,7 @@ class ChannelLinkController extends AbstractController
         return $this->render('@IntegratedBrand/brand/channel_remove.html.twig', [
             'brand' => $brand,
             'link' => $link,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 

@@ -92,7 +92,7 @@ final class IndexController extends AbstractController
         $page = $request->query->getInt('page', 1);
 
         return $this->render('@IntegratedTaxonomy/index/index.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'filter_options' => $this->indexer->childrenOf($contentType->getId(), 'root'),
             'filter' => $filter,
             'content_type' => $contentType,

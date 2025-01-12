@@ -28,7 +28,7 @@ class PeriodExtension extends AbstractExtension
         return [
             new TwigFunction(
                 'integrated_period_formatter',
-                [$this, 'periodFilter'],
+                $this->periodFilter(...),
                 ['needs_environment' => true]
             ),
         ];

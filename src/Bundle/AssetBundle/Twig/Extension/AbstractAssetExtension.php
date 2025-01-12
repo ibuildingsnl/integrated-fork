@@ -44,7 +44,7 @@ abstract class AbstractAssetExtension extends AbstractExtension
         return [
             new TwigFunction(
                 $this->getTag(),
-                [$this, 'render'],
+                $this->render(...),
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
         ];

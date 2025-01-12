@@ -31,7 +31,7 @@ class IpListFormType extends AbstractType
         $this->manager = $manager;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('ip', IpAddressType::class);
         $builder->add('description', TextareaType::class, [
@@ -40,7 +40,7 @@ class IpListFormType extends AbstractType
         ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('empty_data', function (FormInterface $form) {
             if ($form->get('ip')->getData()) {

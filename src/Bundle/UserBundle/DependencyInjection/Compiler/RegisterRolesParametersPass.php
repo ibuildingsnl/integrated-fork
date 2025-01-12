@@ -26,7 +26,7 @@ class RegisterRolesParametersPass implements CompilerPassInterface
     {
         $parameters = [];
 
-        foreach ($container->getParameter('kernel.bundles') as $name => $class) {
+        foreach ($container->getParameter('kernel.bundles') as $class) {
             $this->addParameters(\dirname((new \ReflectionClass($class))->getFileName()), $parameters);
         }
 

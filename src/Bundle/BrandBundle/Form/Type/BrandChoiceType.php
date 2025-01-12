@@ -14,7 +14,7 @@ class BrandChoiceType extends AbstractType
     ) {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         foreach ($this->brands->all() as $brand) {
             $links = [];

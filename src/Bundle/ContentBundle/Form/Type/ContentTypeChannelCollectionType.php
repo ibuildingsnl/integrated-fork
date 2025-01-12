@@ -36,7 +36,7 @@ class ContentTypeChannelCollectionType extends AbstractType
         $this->repository = $repository;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         foreach ($this->getChannels() as $channel) {
             $builder->add($channel->getId(), ContentTypeChannelType::class, ['channel' => $channel]);

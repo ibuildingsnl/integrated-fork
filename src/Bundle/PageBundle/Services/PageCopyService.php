@@ -78,7 +78,7 @@ class PageCopyService
                 $copiedPage->setCreatedAt(new \DateTime());
                 $copiedPage->setChannel($targetChannel);
 
-                foreach ($copiedPage->getGrids() as $key => $grid) {
+                foreach ($copiedPage->getGrids() as $grid) {
                     $this->copyGridBlocks($grid, $data['pages']['page'.$page->getId()]['blocks'], $copiedPage);
                 }
 
@@ -96,7 +96,7 @@ class PageCopyService
     private function copyGridBlocks(ItemsInterface $grid, array $data, AbstractPage $copiedPage)
     {
         $gridItems = $grid->getItems();
-        foreach ($gridItems as $key => $item) {
+        foreach ($gridItems as $item) {
             if (!$item instanceof Item) {
                 continue;
             }
@@ -158,7 +158,7 @@ class PageCopyService
             }
 
             if ($item->getRow()) {
-                foreach ($item->getRow()->getColumns() as $columnKey => $column) {
+                foreach ($item->getRow()->getColumns() as $column) {
                     $this->copyGridBlocks($column, $data, $copiedPage);
                 }
             }

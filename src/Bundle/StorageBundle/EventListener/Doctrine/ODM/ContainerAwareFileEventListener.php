@@ -32,7 +32,7 @@ class ContainerAwareFileEventListener extends FileEventListener
      */
     public function __construct(ContainerInterface $container, $manager, $intentTransformer)
     {
-        $this->initializer = function () use ($container, $manager, $intentTransformer) {
+        $this->initializer = function () use ($container, $manager, $intentTransformer): void {
             parent::__construct(
                 $container->get($manager),
                 $container->get($intentTransformer)

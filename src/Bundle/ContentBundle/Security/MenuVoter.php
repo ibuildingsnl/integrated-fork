@@ -57,7 +57,7 @@ class MenuVoter implements VoterInterface
         return \in_array($attribute, $this->permissions);
     }
 
-    public function vote(TokenInterface $token, $menu, array $attributes)
+    public function vote(TokenInterface $token, $menu, array $attributes): int
     {
         if (!$menu instanceof Taxonomy) {
             return VoterInterface::ACCESS_ABSTAIN;

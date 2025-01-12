@@ -41,7 +41,7 @@ class UrlExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('integrated_url', [$this, 'getUrl']),
+            new TwigFunction('integrated_url', $this->getUrl(...)),
         ];
     }
 

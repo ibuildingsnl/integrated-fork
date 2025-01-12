@@ -96,7 +96,7 @@ class RelationController extends AbstractController
         $form = $this->createEditForm($relation);
 
         return $this->render('@IntegratedContent/relation/edit.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'relation' => $relation,
         ]);
     }
@@ -155,7 +155,7 @@ class RelationController extends AbstractController
 
         return $this->render('@IntegratedContent/relation/delete.html.twig', [
             'relation' => $relation,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 

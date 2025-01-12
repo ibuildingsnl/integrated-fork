@@ -37,12 +37,12 @@ class ActionsType extends AbstractType
         $this->buttons = $buttons;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber(new ClickedButtonListener());
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $buttonsNormalizer = function (Options $options, $buttons) {
             $normalized = [];

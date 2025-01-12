@@ -61,7 +61,7 @@ class ContentRankType extends AbstractType
         $view->vars['attr']['data-placeholder'] = $options['placeholder'];
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'repository_class' => $this->repositoryClass,

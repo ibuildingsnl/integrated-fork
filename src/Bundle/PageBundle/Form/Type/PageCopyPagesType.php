@@ -32,7 +32,7 @@ class PageCopyPagesType extends AbstractType
         $this->documentManager = $documentManager;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $queryBuilder = $this->documentManager->createQueryBuilder(Page::class)
             ->field('channel.$id')->equals($options['channel']);
@@ -51,7 +51,7 @@ class PageCopyPagesType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(['channel', 'targetChannel']);
         $resolver->setAllowedTypes('channel', 'string');

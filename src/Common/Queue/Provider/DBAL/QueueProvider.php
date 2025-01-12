@@ -88,11 +88,11 @@ class QueueProvider implements QueueProviderInterface
         $results = [];
 
         foreach ($this->connection->fetchAllAssociative($query, [$channel, time()]) as $row) {
-            $delete = function () use ($row) {
+            $delete = function () use ($row): void {
                 $this->delete($row['id']);
             };
 
-            $release = function ($delay) use ($row) {
+            $release = function ($delay) use ($row): void {
                 $this->release($row['id'], $delay);
             };
 

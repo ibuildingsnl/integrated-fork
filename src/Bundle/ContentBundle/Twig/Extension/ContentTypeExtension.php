@@ -31,7 +31,7 @@ class ContentTypeExtension extends AbstractExtension
     public function getFilters()
     {
         return [
-            new TwigFilter('integrated_content_type', [$this, 'getContentType']),
+            new TwigFilter('integrated_content_type', $this->getContentType(...)),
         ];
     }
 

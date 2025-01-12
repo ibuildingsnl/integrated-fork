@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SeoMetaType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('focusKeyphrase', TextType::class, [
             'priority' => 999,
@@ -34,7 +34,7 @@ class SeoMetaType extends AbstractType
         ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
             [
@@ -43,7 +43,7 @@ class SeoMetaType extends AbstractType
         );
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_seo_meta';
     }

@@ -61,7 +61,7 @@ class ContentParentIDType extends AbstractType
         $view->vars['attr']['data-placeholder'] = $options['placeholder'];
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'repository_class' => $this->repositoryClass,
@@ -74,7 +74,7 @@ class ContentParentIDType extends AbstractType
         ]);
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_content_parent_id';
     }

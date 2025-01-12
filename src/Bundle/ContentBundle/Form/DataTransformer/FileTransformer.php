@@ -30,14 +30,14 @@ class FileTransformer implements DataTransformerInterface
         $this->repository = $repository;
     }
 
-    public function transform($file)
+    public function transform($file): mixed
     {
         if ($file instanceof File) {
             return $file->getId();
         }
     }
 
-    public function reverseTransform($id)
+    public function reverseTransform($id): mixed
     {
         return $this->repository->find($id);
     }

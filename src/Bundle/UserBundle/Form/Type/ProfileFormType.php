@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ProfileFormType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('password', Type\RepeatedType::class, [
             'type' => Type\PasswordType::class,

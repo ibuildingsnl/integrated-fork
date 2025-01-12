@@ -65,7 +65,7 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
         return $keys;
     }
 
-    public function supportsDenormalization($data, $type, $format = null): bool
+    public function supportsDenormalization($data, $type, $format = null, array $context = []): bool
     {
         if (!\is_array($data)) {
             return false;
@@ -74,7 +74,7 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
         return $this->supports($type);
     }
 
-    public function supportsNormalization($data, $format = null): bool
+    public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         if (!\is_object($data)) {
             return false;
