@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<routes xmlns="http://symfony.com/schema/routing"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <route id="integrated_content_brand_index" path="/" methods="GET">
+        <default key="_controller">Integrated\Bundle\BrandBundle\Controller\BrandController::index</default>
+    </route>
+
+    <route id="integrated_content_brand_new" path="/new" methods="GET,POST">
+        <default key="_controller">Integrated\Bundle\BrandBundle\Controller\BrandController::create</default>
+    </route>
+
+    <route id="integrated_content_brand_edit" path="/{id}/edit" methods="GET,PUT">
+        <default key="_controller">Integrated\Bundle\BrandBundle\Controller\BrandController::edit</default>
+    </route>
+
+    <route id="integrated_content_brand_delete" path="/{id}/delete" methods="GET,DELETE">
+        <default key="_controller">Integrated\Bundle\BrandBundle\Controller\BrandController::delete</default>
+    </route>
+
+    <route id="integrated_content_brand_add_channel" path="/{id}/add/{type}" methods="GET,POST">
+        <default key="_controller">Integrated\Bundle\BrandBundle\Controller\ChannelLinkController::addChannel</default>
+    </route>
+
+    <route id="integrated_content_brand_edit_channel" path="/{id}/edit/{link}" methods="GET,PUT">
+        <default key="_controller">Integrated\Bundle\BrandBundle\Controller\ChannelLinkController::editChannel</default>
+    </route>
+
+    <route id="integrated_content_brand_remove_channel" path="/{id}/remove/{link}" methods="GET,DELETE">
+        <default key="_controller">Integrated\Bundle\BrandBundle\Controller\ChannelLinkController::removeChannel</default>
+    </route>
+
+    <route id="integrated_content_brand_manage_connector" path="/{id}/connector/{link}" methods="GET,POST,PUT">
+        <default key="_controller">Integrated\Bundle\BrandBundle\Controller\ConnectorController::configure</default>
+    </route>
+
+</routes>

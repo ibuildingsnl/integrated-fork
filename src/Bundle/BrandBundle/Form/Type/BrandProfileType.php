@@ -32,6 +32,7 @@ class BrandProfileType extends AbstractType
                     'location' => 'sidebar',
                     'style' => 'sidebar',
                     'icon' => 'droplet',
+                    'state' => 'show',
                 ],
             ])->add(
                 'color',
@@ -61,6 +62,25 @@ class BrandProfileType extends AbstractType
                     'data-types' => '[{"type":"image","name":"Image"}]',
                     'data-emptytext' => 'Select logo',
                     'data-multiple' => false,
+                    'state' => 'show',
+                ],
+            ]
+        );
+
+        $builder->add(
+            'favicon',
+            MediaGalleryType::class,
+            [
+                'attr' => [
+                    'location' => 'sidebar',
+                    'style' => 'sidebar',
+                    'icon' => 'media-image',
+                    'data-types' => '[{"type":"image","name":"Image"}]',
+                    'data-emptytext' => 'Select Favicon 512x512',
+                    'data-multiple' => false,
+                    'help_text' => '<span>Use a 512x512 sized image for the best result</span>',
+                    'data-exclusive-to' => 'website',
+                    'state' => 'show',
                 ],
             ]
         );
@@ -84,6 +104,7 @@ class BrandProfileType extends AbstractType
                     'location' => 'sidebar',
                     'style' => 'sidebar',
                     'icon' => 'city',
+                    'state' => 'show',
                 ],
             ])->add(
                 'companyId',
@@ -107,6 +128,18 @@ class BrandProfileType extends AbstractType
                 'location' => 'sidebar',
                 'style' => 'sidebar',
                 'icon' => 'graph-up',
+                'state' => 'show',
+            ],
+            'required' => false,
+        ]);
+
+        $builder->add('analyticsPropertyId', TextType::class, [
+            'label' => 'Analytics Property ID',
+            'attr' => [
+                'location' => 'sidebar',
+                'style' => 'sidebar',
+                'icon' => 'graph-up',
+                'state' => 'show',
             ],
             'required' => false,
         ]);

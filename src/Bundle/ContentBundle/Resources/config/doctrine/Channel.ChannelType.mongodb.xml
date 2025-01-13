@@ -1,0 +1,17 @@
+<doctrine-mongo-mapping xmlns="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
+                    http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
+
+    <document name="Integrated\Bundle\ContentBundle\Document\Channel\ChannelType">
+
+        <id field-name="id" strategy="NONE" />
+        <field field-name="name" type="string" />
+        <field field-name="canBePrimary" type="boolean" />
+        <field field-name="canBeSetGlobally" type="boolean" />
+        <field field-name="connector" type="string" nullable="true" />
+        <field field-name="publicationSettingsForm" type="string" nullable="true" />
+        <field field-name="icon" type="string" nullable="true" />
+
+    </document>
+</doctrine-mongo-mapping>

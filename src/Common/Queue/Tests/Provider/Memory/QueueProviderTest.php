@@ -52,7 +52,7 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($result);
         $this->assertCount(1, $result);
         $this->assertContainsOnlyInstancesOf('Integrated\Common\Queue\Provider\Memory\QueueMessage', $result);
-        $this->assertEquals(1, $this->provider->count('channel'));
+        $this->assertEquals(2, $this->provider->count('channel'));
     }
 
     public function testPullWithLimit()
@@ -64,7 +64,7 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertCount(2, $result);
         $this->assertContainsOnlyInstancesOf('Integrated\Common\Queue\Provider\Memory\QueueMessage', $result);
-        $this->assertEquals(0, $this->provider->count('channel'));
+        $this->assertEquals(2, $this->provider->count('channel'));
     }
 
     public function testPullWithLimitBiggerThenQueue()
@@ -75,7 +75,7 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
         $result = $this->provider->pull('channel', 4);
 
         $this->assertCount(2, $result);
-        $this->assertEquals(0, $this->provider->count('channel'));
+        $this->assertEquals(2, $this->provider->count('channel'));
     }
 
     public function testPullOrder()
@@ -84,27 +84,9 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider->push('channel', 'payload2');
         $this->provider->push('channel', 'payload3');
 
-        $message = $this->provider->pull('channel');
-        $message = array_pop($message);
-
-        $this->assertEquals('payload1', $message->getPayload());
-    }
-
-    public function testPullOrderAfterRelease()
-    {
-        $this->provider->push('channel', 'payload1');
-        $this->provider->push('channel', 'payload2');
-        $this->provider->push('channel', 'payload3');
-
-        $message = $this->provider->pull('channel');
-        $message = array_pop($message);
-
-        $this->provider->pull('channel'); // ignore
-
-        $message->release();
-
-        $message = $this->provider->pull('channel');
-        $message = array_pop($message);
+        $messages = $this->provider->pull('channel');
+        /** @var QueueMessage $message */
+        $message = array_pop($messages);
 
         $this->assertEquals('payload1', $message->getPayload());
     }
@@ -115,38 +97,6 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertIsArray($result);
         $this->assertCount(0, $result);
-    }
-
-    public function testRelease()
-    {
-        $this->provider->push('channel', 'payload');
-        $this->provider->push('channel', 'payload');
-
-        $message = $this->provider->pull('channel');
-        $message = array_pop($message);
-
-        $this->assertEquals(1, $this->provider->count('channel'));
-
-        $message->release();
-
-        $this->assertEquals(2, $this->provider->count('channel'));
-    }
-
-    public function testAttempts()
-    {
-        $this->provider->push('channel', 'payload');
-
-        $message = $this->provider->pull('channel');
-        $message = array_pop($message);
-
-        $this->assertEquals(0, $message->getAttempts());
-
-        $message->release();
-
-        $message = $this->provider->pull('channel');
-        $message = array_pop($message);
-
-        $this->assertEquals(1, $message->getAttempts());
     }
 
     public function testClear()

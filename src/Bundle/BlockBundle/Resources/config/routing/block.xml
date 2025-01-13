@@ -31,4 +31,13 @@
         <default key="_controller">Integrated\Bundle\BlockBundle\Controller\BlockController::delete</default>
     </route>
 
+    <route id="integrated_block_block_used_by" path="/{id}/used-by/{_format}"  methods="GET">
+        <default key="_controller">Integrated\Bundle\BlockBundle\Controller\BlockController::usedBy</default>
+        <default key="_format">html</default>
+        <requirement key="_format">html|json</requirement>
+    </route>
+
+    <route id="integrated_block_inline_text_block_create" path="/inline-text/new/{id}" methods="GET|PUT">
+        <default key="_controller">Integrated\Bundle\BlockBundle\Controller\InlineTextBlockController::create</default>
+    </route>
 </routes>

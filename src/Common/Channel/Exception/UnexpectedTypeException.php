@@ -19,7 +19,7 @@ class UnexpectedTypeException extends InvalidArgumentException
     /**
      * Constructor.
      *
-     * @param string $value        the value with the incorrect type
+     * @param mixed  $value        the value with the incorrect type
      * @param string $expectedType string of type(s) that are accepted
      */
     public function __construct($value, $expectedType)

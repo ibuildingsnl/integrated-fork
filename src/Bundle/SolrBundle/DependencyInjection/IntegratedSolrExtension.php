@@ -43,6 +43,7 @@ class IntegratedSolrExtension extends Extension
         $loader->load('command.xml');
         $loader->load('indexer.xml');
         $loader->load('search.xml');
+        $loader->load('serializer.xml');
         $loader->load('lock.xml');
         $loader->load('queue.xml');
         $loader->load('solarium.xml');

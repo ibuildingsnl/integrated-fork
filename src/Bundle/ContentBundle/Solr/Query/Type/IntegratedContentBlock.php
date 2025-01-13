@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Solr\Query\Type;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
+use Integrated\Bundle\ContentBundle\Solr\Query\SortOptions;
 use Integrated\Common\Solr\Search\Type\AbstractType;
 use Solarium\Component\Facet\Field;
 use Solarium\QueryType\Select\Query\Query;
@@ -21,11 +22,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IntegratedContentBlock extends AbstractType
 {
-    private DocumentManager $manager;
-
-    public function __construct(DocumentManager $manager)
-    {
-        $this->manager = $manager;
+    public function __construct(
+        private readonly DocumentManager $manager,
+        private readonly SortOptions $sorting
+    ) {
     }
 
     public function build(Query $query, array $options): void
@@ -170,6 +170,47 @@ class IntegratedContentBlock extends AbstractType
             }
 
             return array_filter($relations);
+        });
+
+        $resolver->setNormalizer('sort', function (Options $options, $value) {
+            $value = strtolower(trim($value));
+
+            if (str_starts_with($value, 'custom:')) {
+                // support for custom query in database, while waiting for a better solution
+                $sortOption = explode(' ', $value, 2);
+
+                return substr($sortOption[0], 7);
+            }
+
+            if ($this->sorting->hasByField($value)) {
+                // rel is only allowed if there is a query
+                if ($value !== 'rel' || $options['q']) {
+                    return $this->sorting->getByField($value)->field;
+                }
+            }
+
+            if ($options['q']) {
+                return $this->sorting->get('rel')->field;
+            }
+
+            return $this->sorting->get('time')->field;
+        });
+
+        $resolver->setNormalizer('order', function (Options $options, $value) {
+            $value = strtolower(trim($value));
+
+            if (str_starts_with($value, 'custom:')) {
+                // support for custom query in database, while waiting for a better solution
+                $sortOption = explode(' ', $value, 2);
+
+                return $sortOption[1];
+            }
+
+            if (\is_string($value) && \in_array($value, ['asc', 'desc'])) {
+                return $value;
+            }
+
+            return $this->sorting->getByField($options['sort'])->order;
         });
     }
 

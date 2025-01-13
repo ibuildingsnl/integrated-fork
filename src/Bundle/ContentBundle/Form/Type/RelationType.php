@@ -41,7 +41,7 @@ class RelationType extends AbstractType
                         'Cover' => 'cover',
                         'Slider' => 'slider',
                         'Taxonomy' => 'taxonomy',
-                        'Category' => 'taxonomy_category',
+                        'Taxonomy (Expanded)' => 'taxonomy_category',
                         'Tags' => 'taxonomy_tags',
                         'Edition' => 'edition',
                         'Commercial' => 'commercial',

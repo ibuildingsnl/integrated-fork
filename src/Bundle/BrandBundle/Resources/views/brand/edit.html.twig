@@ -1,11 +1,13 @@
 {% extends '@IntegratedContent/base.html.twig' %}
+
 {% block title %}
     {% if brand|default %}
         {% trans %}Edit {% endtrans %} {{ brand.name }}
     {% else %}
-        {% trans %}New{% endtrans %} {% trans %}Brand{% endtrans %}
+        {% trans %}New brand{% endtrans %}
     {% endif %}
 {% endblock title %}
+
 {% block style %}
     {{ parent() }}
 
@@ -26,7 +28,7 @@
                     {% block sidebar %}
                         <div class="aside-header">
                             <button class="toggle-filters toggle-options-sidebar"  data-target="aside-options" type="button">
-                                <i class="iconoir-cancel"></i></button>
+                                <i class="iconoir-xmark"></i></button>
                             <span>{% trans %}Options{% endtrans %}</span>
                         </div>
                         {% block content_meta %}

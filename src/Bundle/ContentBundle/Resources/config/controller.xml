@@ -25,6 +25,7 @@
             <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="Integrated\Bundle\ContentBundle\Services\CalendarOptions" />
+            <argument type="service" id="integrated_content.publication_repository" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
@@ -107,6 +108,15 @@
         <service id="Integrated\Bundle\ContentBundle\Controller\YoastSeoLanguageProvider">
             <argument type="service" id="file_locator" />
             <argument>@IntegratedContentBundle/YoastSeo/lang</argument>
+
+            <tag name="controller.service_arguments" />
+        </service>
+
+        <service id="Integrated\Bundle\ContentBundle\Controller\OEmbedController">
+            <argument>%env(resolve:FACEBOOK_OEMBED_APP_ID)%</argument>
+            <argument>%env(resolve:FACEBOOK_OEMBED_APP_SECRET)%</argument>
+            <argument>%env(resolve:TWITTER_CONSUMER_KEY)%</argument>
+            <argument>%env(resolve:TWITTER_CONSUMER_SECRET)%</argument>
 
             <tag name="controller.service_arguments" />
         </service>

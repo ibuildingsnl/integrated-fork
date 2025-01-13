@@ -39,6 +39,15 @@
             <tag name="kernel.event_listener" event="content.event" method="process" />
         </service>
 
+
+        <service id="integrated_website.event_subscriber.locale_subscriber" class="Integrated\Bundle\WebsiteBundle\EventListener\LocaleSubscriber">
+            <argument type="service" id="integrated_content.channel.manager"/>
+
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+
+
     </services>
 
 </container>

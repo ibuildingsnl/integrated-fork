@@ -15,9 +15,6 @@ use Integrated\Bundle\ThemeBundle\Form\Type\ThemeChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class ConfigurationType extends AbstractType
 {
     /**

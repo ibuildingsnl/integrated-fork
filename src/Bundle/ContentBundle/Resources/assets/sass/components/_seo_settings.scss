@@ -45,6 +45,11 @@ body.hide-options .aside-options.publication-settings-aside.seo-settings {
 .publication-settings-aside.seo-settings {
     width: 700px;
     transform: translateX(700px);
+    @include media(max-sm) {
+        width: 100%;
+        transform: translateX(700px);
+        top: 39px;
+    }
     &.show {
         transform: translateX(0px);
     }

@@ -15,6 +15,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
+use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\UserBundle\Model\Group;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
@@ -32,78 +33,30 @@ use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Security\PermissionInterface;
 use Integrated\Common\Workflow\Event\WorkflowStateChangedEvent;
 use Integrated\Common\Workflow\Events as WorkflowEvents;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ContentSubscriber implements ContentSubscriberInterface
 {
     public const CONTENT_CLASS = 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Relation\\Relation';
 
-    /**
-     * @var UserManagerInterface
-     */
-    private $userManager;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
-
-    /**
-     * @var ResolverInterface
-     */
-    private $resolver;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var DocumentManager
-     */
-    private $documentManager;
-
-    /**
-     * @var MailerInterface
-     */
-    private $mailer;
-
-    /**
-     * @var string
-     */
-    private $fromEmail;
-
-    /**
-     * @var ExtensionInterface
-     */
-    private $extension;
+    private ExtensionInterface $extension;
 
     public function __construct(
-        UserManagerInterface $userManager,
-        EventDispatcherInterface $eventDispatcher,
-        TokenStorageInterface $tokenStorage,
-        ResolverInterface $resolver,
-        EntityManagerInterface $entityManager,
-        DocumentManager $documentManager,
-        MailerInterface $mailer,
-        string $fromEmail
+        private readonly UserManagerInterface $userManager,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly ResolverInterface $resolver,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly DocumentManager $documentManager,
+        private readonly MailerInterface $mailer,
+        private readonly RouterInterface $router,
+        private readonly ThemeManager $themeManager,
+        private readonly string $fromEmail
     ) {
-        $this->userManager = $userManager;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->tokenStorage = $tokenStorage;
-        $this->resolver = $resolver;
-        $this->entityManager = $entityManager;
-        $this->documentManager = $documentManager;
-        $this->mailer = $mailer;
-        $this->fromEmail = $fromEmail;
     }
 
     public static function getSubscribedEvents(): array
@@ -180,14 +133,25 @@ class ContentSubscriber implements ContentSubscriberInterface
          */
         $state = $data['state'];
 
-        if ($content instanceof MetadataInterface) {
-            $content->getMetadata()->set('workflow', $state->getWorkflow()->getId());
-            $content->getMetadata()->set('workflow_state', $state->getId());
+        try {
+            $state->getWorkflow();
+        } catch (\Exception $e) {
+            error_log('Failed to get workflow: '.$e->getMessage());
+            $state = false;
+            // TODO: Entry should be removed from workflow_states table
         }
 
-        // hax: setDisabled is not in the interface
-        if (method_exists($content, 'setDisabled')) {
-            $content->setDisabled(!$state->isPublishable());
+        if ($content instanceof MetadataInterface && $state) {
+            $content->getMetadata()->set('workflow', $state->getWorkflow()?->getId());
+            $content->getMetadata()->set('workflow_state', $state->getId());
+
+            // hax: setDisabled is not in the interface
+            if (method_exists($content, 'setDisabled')) {
+                $content->setDisabled(!$state->isPublishable());
+            }
+        } else {
+            $content->getMetadata()->remove('workflow');
+            $content->getMetadata()->remove('workflow_state');
         }
     }
 
@@ -247,18 +211,33 @@ class ContentSubscriber implements ContentSubscriberInterface
                             $title = $content->getName();
                         }
 
-                        $message = (new Email())
-                            ->from($this->fromEmail)
-                            ->to($person->getEmail())
-                            ->subject('[Integrated] "'.$title.'" has been assigned to you')
-                            ->text(
-                                'An item has been assigned to you:
+                        $link = $this->router->generate('integrated_content_content_edit', ['id' => $content->getId()]);
 
-Name: '.$title.'
-E-mail: '.$person->getEmail().''
-                            );
+                        $baseUrl = $content->getPrimaryChannel()?->getPrimaryDomain() ??
+                                   ((isset($_SERVER['HTTPS']) ? 'https' : 'http')."://$_SERVER[HTTP_HOST]");
 
-                        $this->mailer->send($message);
+                        $template = $this->themeManager->locateTemplate('/mail/workflow-notification.html.twig');
+
+                        $lines = [
+                            'A new item has been assigned to you:',
+                            "Document: <a href=\"{$baseUrl}{$link}\">{$title}</a>",
+                            "E-mail: {$person->getEmail()}",
+                            $data['deadline'] ?? false ? "Deadline: {$data['deadline']->format('d-m-Y H:i:s')}" : '',
+                        ];
+
+                        $email['emailContent'] = implode('<br>', $lines);
+                        $email['subject'] = 'A new item has been assigned to you: "'.$title.'"';
+
+                        try {
+                            $message = (new TemplatedEmail())
+                                ->from($this->fromEmail)
+                                ->to($person->getEmail())
+                                ->htmlTemplate($this->themeManager->locateTemplate('/mail/workflow-notification.html.twig'))
+                                ->subject($email['subject'])
+                                ->context($email);
+                            $this->mailer->send($message);
+                        } catch (\Exception $e) {
+                        }
                     }
                 }
             }
@@ -357,14 +336,14 @@ E-mail: '.$person->getEmail().''
         return null;
     }
 
-    public function getExtension(): ExtensionInterface
-    {
-        return $this->extension;
-    }
-
     public function setExtension(ExtensionInterface $extension): void
     {
         $this->extension = $extension;
+    }
+
+    public function getExtension(): ExtensionInterface
+    {
+        return $this->extension;
     }
 
     protected function hasAssignedAccess(User $assigned, Definition\State $state, ContentInterface $content): bool

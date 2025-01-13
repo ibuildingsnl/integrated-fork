@@ -82,7 +82,7 @@ class BlockEditType extends AbstractType
                     'data-placeholder' => 'Block managers only',
                     'location' => 'sidebar',
                     'style' => 'sidebar',
-                    'icon' => 'key-alt-plus',
+                    'icon' => 'key-plus',
                     'state' => 'show',
                 ],
             ]);

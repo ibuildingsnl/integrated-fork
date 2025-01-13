@@ -140,10 +140,10 @@
             <aside>
                 <div class="aside-holder section-gray section-radius">
                     <div class="aside-header">
-                        <button class="toggle-filters toggle-data-target"  data-target="aside-filters"><i class="iconoir-cancel"></i></button>
+                        <button class="toggle-filters toggle-data-target"  data-target="aside-filters"><i class="iconoir-xmark"></i></button>
                         <span>{% trans %}Filters{% endtrans %}</span>
                         <a href="{{ path('integrated_page_page_index') }}" class="clear-filters"><span>{% trans %}Remove active filters{% endtrans %}</span>
-                            <i class="iconoir-cancel"></i>
+                            <i class="iconoir-xmark"></i>
                         </a>
                     </div>
                     {{ form_start(filterForm) }}
@@ -169,7 +169,7 @@
                     {% if filterForm.channel is defined %}
                         <div
                             class="aside-item-holder{% if filterForm.channel.vars.choices|length == 0 %} hidden{% endif %}">
-                            {{ form_row(filterForm.channel, {'style':'sidebar', 'icon':'network-alt', 'state':'show search'}) }}
+                            {{ form_row(filterForm.channel, {'style':'sidebar', 'icon':'network-reverse', 'state':'show search'}) }}
                         </div>
                     {% endif %}
                     <div class="aside-item-holder">

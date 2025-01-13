@@ -21,5 +21,5 @@ interface FeaturedInterface
     /**
      * Get the featured status of the document.
      */
-    public function isFeatured(): bool;
+    public function isFeatured(): ?bool;
 }

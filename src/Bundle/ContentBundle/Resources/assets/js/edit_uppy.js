@@ -1,14 +1,14 @@
 import Uppy from '@uppy/core'
-global.Uppy = Uppy
-
 import Dashboard from '@uppy/dashboard'
-global.Dashboard = Dashboard
-
 import XHRUpload from '@uppy/xhr-upload'
-global.XHRUpload = XHRUpload
-
 import ImageEditor from '@uppy/image-editor'
+
+global.Uppy = Uppy
+global.Dashboard = Dashboard
+global.XHRUpload = XHRUpload
 global.ImageEditor = ImageEditor
+
+
 
 function addShowPopupButton() {
     const statusBar = document.querySelector('#uppy-DashboardContent-panel--editor .uppy-DashboardContent-bar')
@@ -97,11 +97,11 @@ async function inititalizeUppy(uppyOptions) {
 
     await loadCurrentFile(uppy, uppyOptions)
 
-    hideDefaultButtons()
+    await loadUsedBy(uppyOptions).then(() => {
+        hideDefaultButtons()
+        addShowPopupButton() 
+    });
 
-    addShowPopupButton()
-
-    await loadUsedBy(uppyOptions)
 
     //I cant hook on the file-editor:cancel event, but this works as well:
     //Most likely this is because of an open issue: https://github.com/transloadit/uppy/issues/4045
@@ -119,8 +119,21 @@ async function loadUsedBy(uppyOptions) {
     try {
         const response = await fetch(uppyOptions.usedByPath.replace("REPLACE", uppyOptions.id) + '/json?limit=10');
         const usedBy = await response.json();
+        const blockResponse = await fetch(uppyOptions.usedByBlockPath.replace("REPLACE", uppyOptions.id) + '/json?limit=10');
+        const usedByBlocks = await blockResponse.json();
+
+        let allUsedBy = [];
+
         if (usedBy?.items.length > 0) {
-            applyUsedBy(usedBy)
+            allUsedBy = [...allUsedBy, ...usedBy.items];
+        }
+
+        if (usedByBlocks?.items.length > 0) {
+            allUsedBy = [...allUsedBy, ...usedByBlocks.items];
+        }
+
+        if (allUsedBy?.length > 0) {
+            applyUsedBy(allUsedBy)
         }
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -132,7 +145,7 @@ function applyUsedBy(usedBy) {
     document.querySelector('#not-used-by').hidden = true
 
     const targetElement = document.getElementById('used-by-list'); // Replace 'target' with the ID of the element you want to append to
-    usedBy?.items.forEach((item) => {
+    usedBy?.forEach((item) => {
         const newLink = document.createElement('li');
         newLink.innerHTML = `<a href="${item.href}">${item.title}</a>`;
         targetElement.appendChild(newLink);
