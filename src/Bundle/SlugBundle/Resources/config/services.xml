@@ -23,9 +23,6 @@
         <service id="integrated_slug.event_listener.sluggable_subscriber.slugger" class="Integrated\Bundle\SlugBundle\EventListener\SluggableSubscriber">
             <argument type="service" id="Integrated\Bundle\SlugBundle\Mapping\MetadataFactory" />
             <argument type="service" id="integrated_slug.slugger" />
-
-            <tag name="doctrine_mongodb.odm.event_subscriber" />
-            <tag name="doctrine.event_subscriber" />
         </service>
 
         <service id="integrated_slug.twig.slugger_extension" class="Integrated\Bundle\SlugBundle\Twig\Extension\SluggerExtension">

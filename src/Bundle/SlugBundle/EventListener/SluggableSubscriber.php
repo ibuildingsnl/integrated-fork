@@ -11,15 +11,18 @@
 
 namespace Integrated\Bundle\SlugBundle\EventListener;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
+use Doctrine\ODM\MongoDB\Events;
+use Doctrine\ODM\MongoDB\Event\PostPersistEventArgs;
+use Doctrine\ODM\MongoDB\Event\PrePersistEventArgs;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\ODM\MongoDB\UnitOfWork as ODMUnitOfWork;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\UnitOfWork as ORMUnitOfWork;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Persistence\ObjectManager;
 use Integrated\Bundle\SlugBundle\Mapping\MetadataFactoryInterface;
 use Integrated\Bundle\SlugBundle\Slugger\SluggerInterface;
@@ -32,7 +35,10 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
  *
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class SluggableSubscriber implements EventSubscriber
+#[AsDocumentListener(event: Events::prePersist)]
+#[AsDocumentListener(event: Events::postPersist)]
+#[AsDocumentListener(event: Events::preUpdate)]
+class SluggableSubscriber
 {
     /**
      * @var MetadataFactoryInterface
@@ -56,40 +62,25 @@ class SluggableSubscriber implements EventSubscriber
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
-    public function getSubscribedEvents()
-    {
-        return [
-            'prePersist',
-            'postPersist',
-            'preUpdate',
-            // 'onFlush', // @todo implement to support update after a persist (INTEGRATED-294)
-        ];
-    }
-
     public function prePersist(LifecycleEventArgs $args)
     {
         // used for slug as id
-        $this->handleEvent($args, 'prePersist');
+        $this->handleEvent($args->getObject(), $args->getObjectManager(), 'prePersist');
     }
 
     public function postPersist(LifecycleEventArgs $args)
     {
         // used for id in slug
-        $this->handleEvent($args, 'postPersist');
+        $this->handleEvent($args->getObject(), $args->getObjectManager(), 'postPersist');
     }
 
     public function preUpdate(LifecycleEventArgs $args)
     {
-        $this->handleEvent($args, 'preUpdate');
+        $this->handleEvent($args->getObject(), $args->getObjectManager(), 'preUpdate');
     }
 
-    /**
-     * @param string $event
-     */
-    protected function handleEvent(LifecycleEventArgs $args, $event)
+    protected function handleEvent(object $object, $om, string $event)
     {
-        $object = $args->getObject();
-        $om = $args->getObjectManager();
         $class = $object::class;
 
         if (!$om instanceof DocumentManager && !$om instanceof EntityManagerInterface) {
