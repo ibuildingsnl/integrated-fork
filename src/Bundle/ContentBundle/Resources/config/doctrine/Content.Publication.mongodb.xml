@@ -1,0 +1,29 @@
+<doctrine-mongo-mapping xmlns="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
+                    http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
+
+    <document
+        name="Integrated\Bundle\ContentBundle\Document\Content\Publication"
+        repository-class="Integrated\Bundle\ContentBundle\Document\Content\PublicationRepository"
+    >
+        <id field-name="id" />
+        <reference-one
+            field="content"
+            target-document="Integrated\Bundle\ContentBundle\Document\Content\Content"
+        />
+        <reference-one
+            field="channel"
+            target-document="Integrated\Bundle\ContentBundle\Document\Channel\Channel"
+        />
+        <embed-one
+            field="time"
+            target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime"
+        />
+        <field field-name="response" type="string" />
+        <field field-name="status" type="string" />
+        <field field-name="settings" type="hash" />
+
+    </document>
+
+</doctrine-mongo-mapping>

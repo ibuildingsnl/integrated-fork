@@ -22,9 +22,6 @@ use Twig\TwigFunction;
  */
 class IntegrationTest extends IntegrationTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getExtensions()
     {
         return [
@@ -33,9 +30,6 @@ class IntegrationTest extends IntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getTwigFunctions()
     {
         return [
@@ -50,7 +44,7 @@ class IntegrationTest extends IntegrationTestCase
      */
     public function testIntegration($file, $message, $condition, $templates, $exception, $outputs, $deprecation = '')
     {
-        $templates = $templates + [
+        $templates += [
             '@IntegratedAsset/asset/javascripts.html.twig' => file_get_contents(
                 __DIR__.'/../../Resources/views/asset/javascripts.html.twig'
             ),
@@ -62,9 +56,6 @@ class IntegrationTest extends IntegrationTestCase
         $this->doIntegrationTest($file, $message, $condition, $templates, $exception, $outputs, $deprecation);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getFixturesDir()
     {
         return __DIR__.'/Fixtures/';

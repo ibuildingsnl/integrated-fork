@@ -1203,32 +1203,144 @@
                 <target>Kopieer</target>
             </trans-unit>
             <trans-unit id="305">
+                <source>New brand</source>
+                <target>Nieuw merk</target>
+            </trans-unit>
+            <trans-unit id="306">
+                <source>Brands</source>
+                <target>Merken</target>
+            </trans-unit>
+            <trans-unit id="307">
                 <source>Remove images</source>
                 <target>Verwijder afbeeldingen</target>
             </trans-unit>
-            <trans-unit id="306">
+            <trans-unit id="308">
                 <source>Delete images</source>
                 <target>Verwijder afbeeldingen</target>
             </trans-unit>
-            <trans-unit id="307">
+            <trans-unit id="309">
                 <source>Are you sure you want to delete these files?</source>
                 <target>Weet je zeker dat deze afbeeldingen verwijderd kunnen worden?</target>
             </trans-unit>
-            <trans-unit id="308">
+            <trans-unit id="310">
                 <source>These images are currently used in other content</source>
                 <target>Deze afbeeldingen zijn op dit moment in gebruik bij deze content</target>
             </trans-unit>
-            <trans-unit id="309">
+            <trans-unit id="311">
+                <source>Apply to</source>
+                <target>Toepassen op</target>
+            </trans-unit>
+            <trans-unit id="312">
+                <source>Apply to all</source>
+                <target>Toepassen op alle</target>
+            </trans-unit>
+            <trans-unit id="313">
+                <source>Apply to specific</source>
+                <target>Toepassen op specifieke</target>
+            </trans-unit>
+            <trans-unit id="314">
+                <source>Publish to</source>
+                <target>Publiceren naar</target>
+            </trans-unit>
+            <trans-unit id="315">
+                <source>Apply</source>
+                <target>Toepassen</target>
+            </trans-unit>
+            <trans-unit id="316">
+                <source>Show full history</source>
+                <target>Toon alle geschiedenis</target>
+            </trans-unit>
+            <trans-unit id="317">
+                <source>History</source>
+                <target>Geschiedenis</target>
+            </trans-unit>
+            <trans-unit id="318">
+                <source>Set deadline</source>
+                <target>Deadline instellen</target>
+            </trans-unit>
+            <trans-unit id="319">
+                <source>Set depublication date</source>
+                <target>Einddatum instellen</target>
+            </trans-unit>
+            <trans-unit id="320">
+                <source>Set publication date</source>
+                <target>Publicatiedatum instellen</target>
+            </trans-unit>
+            <trans-unit id="321">
+                <source>End date</source>
+                <target>Einddatum</target>
+            </trans-unit>
+            <trans-unit id="322">
+                <source>Start date</source>
+                <target>Publicatiedatum</target>
+            </trans-unit>
+            <trans-unit id="323">
+                <source>Don't change status</source>
+                <target>Status niet veranderen</target>
+            </trans-unit>
+            <trans-unit id="324">
                 <source>Your content starts here</source>
                 <target>Je content begint hier</target>
             </trans-unit>
-            <trans-unit id="310">
+            <trans-unit id="325">
                 <source>Select</source>
                 <target>Selecteer</target>
             </trans-unit>
-            <trans-unit id="311">
+            <trans-unit id="326">
                 <source>Settings</source>
                 <target>Instellingen</target>
+            </trans-unit>
+            <trans-unit id="327">
+                <source>images</source>
+                <target>afbeeldingen</target>
+            </trans-unit>
+            <trans-unit id="328">
+                <source>image</source>
+                <target>afbeelding</target>
+            </trans-unit>
+            <trans-unit id="329">
+                <source>Publications</source>
+                <target>Publicaties</target>
+            </trans-unit>
+            <trans-unit id="330">
+                <source>Removing a published Social Media publication will not remove it from the respected platform. Removing a planned (purple) publication will stop it from publishing to that Social Media Channel</source>
+                <target>Het verwijderen van een gepubliceerde Social Media-publicatie zal deze niet verwijderen van het betreffende platform. Het verwijderen van een geplande (paarse) publicatie zal voorkomen dat deze wordt gepubliceerd op dat Social Media-kanaal.</target>
+            </trans-unit>
+            <trans-unit id="331">
+                <source>Planned</source>
+                <target>Ingepland</target>
+            </trans-unit>
+            <trans-unit id="332">
+                <source>Apply</source>
+                <target>Toepassen</target>
+            </trans-unit>
+            <trans-unit id="333">
+                <source>Select image</source>
+                <target>Selecteer afbeelding</target>
+            </trans-unit>
+            <trans-unit id="334">
+                <source>Create a new publication</source>
+                <target>Nieuwe publicatie aanmaken</target>
+            </trans-unit>
+            <trans-unit id="335">
+                <source>, do you want to make a new publication?</source>
+                <target>, wil je een nieuwe publicatie maken?</target>
+            </trans-unit>
+            <trans-unit id="336">
+                <source>You have already published to</source>
+                <target>Je hebt al gepubliceerd naar</target>
+            </trans-unit>
+            <trans-unit id="337">
+                <source>Select </source>
+                <target>Selecteer </target>
+            </trans-unit>
+            <trans-unit id="338">
+                <source>Only show Premium content</source>
+                <target>Toon enkel Premium content</target>
+            </trans-unit>
+            <trans-unit id="339">
+                <source>Taxonomy (Expanded)</source>
+                <target>Categorie (Uitgebreid)</target>
             </trans-unit>
         </body>
     </file>

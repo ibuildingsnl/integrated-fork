@@ -13,6 +13,11 @@
             <argument>Integrated\Bundle\ContentBundle\Document\ContentType\ContentType</argument>
         </service>
 
+        <service id="integrated_content.content_repository" class="Integrated\Bundle\ContentBundle\Document\Content\ContentRepository">
+            <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
+            <argument>Integrated\Bundle\ContentBundle\Document\Content\Content</argument>
+        </service>
+
         <service id="integrated_content.search_selection_repository" class="Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository">
             <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
             <argument type="string">\Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection</argument>
@@ -21,6 +26,10 @@
         <service id="Integrated\Bundle\ContentBundle\Document\Content\ContentRepository" autoconfigure="true" autowire="true">
         </service>
 
+        <service id="integrated_content.publication_repository" class="Doctrine\Persistence\ObjectRepository">
+            <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
+            <argument>Integrated\Bundle\ContentBundle\Document\Content\Publication</argument>
+        </service>
     </services>
 
 </container>

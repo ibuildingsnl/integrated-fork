@@ -37,6 +37,10 @@
             <tag name="integrated_solr.type" />
         </service>
 
+        <service id="integrated_content.solr.custom_field.type" class="Integrated\Bundle\ContentBundle\Solr\Type\CustomFieldsType" public="false">
+            <tag name="integrated_solr.type" />
+        </service>
+
         <service id="integrated_content.solr.channel.extension" class="Integrated\Bundle\ContentBundle\Solr\Extension\ChannelExtension" public="false">
             <argument type="service" id="integrated_content.resolver" />
             <tag name="integrated_solr.type_extension" />
@@ -53,6 +57,11 @@
 
         <service id="integrated_content.solr.pub_active.extension" class="Integrated\Bundle\ContentBundle\Solr\Extension\PubActiveExtension" public="false">
             <argument type="service" id="integrated_content.resolver" />
+            <tag name="integrated_solr.type_extension" />
+        </service>
+
+        <service id="integrated_content.solr.publications.extension" class="Integrated\Bundle\ContentBundle\Solr\Extension\PublicationsExtension" public="false">
+            <argument type="service" id="integrated_content.publication_repository" />
             <tag name="integrated_solr.type_extension" />
         </service>
 
@@ -79,7 +88,10 @@
 
         <service id="integrated_content.solr.query.integrated_content" class="Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent" />
 
-        <service id="integrated_content.solr.query.integrated_content_block" class="Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContentBlock" />
+        <service id="integrated_content.solr.query.integrated_content_block" class="Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContentBlock">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="integrated_content.solr.query.sorting_options" />
+        </service>
 
         <service id="integrated_content.solr.query.sorting_options" class="Integrated\Bundle\ContentBundle\Solr\Query\SortOptions">
             <argument type="collection">

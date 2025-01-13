@@ -50,6 +50,7 @@ class IntegratedChannelExtension extends Extension implements PrependExtensionIn
 
         $loader->load('manager.xml');
         $loader->load('repository.xml');
+        $loader->load('services.xml');
 
         $config = $this->processConfiguration(new Configuration(), $config);
 

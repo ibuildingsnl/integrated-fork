@@ -74,10 +74,10 @@ class RelatedContentBlockHandler extends BlockHandler
         }
 
         return $this->render([
-            'block' => $block,
-            'pagination' => $pagination,
-            'document' => $this->getDocument(),
-            'options' => $options,
+             'block' => $block,
+             'pagination' => $pagination,
+             'document' => $this->getDocument(),
+             'options' => $options,
         ]);
     }
 
@@ -86,9 +86,9 @@ class RelatedContentBlockHandler extends BlockHandler
      *
      * @throws \Exception
      */
-    public function getPagination(RelatedContentBlock $block, Request $request)
+    public function getPagination(RelatedContentBlock $block, Request $request, $document = null)
     {
-        $target = $this->getQuery($block);
+        $target = $this->getQuery($block, $document);
 
         if (null === $target) {
             return null;
@@ -110,11 +110,12 @@ class RelatedContentBlockHandler extends BlockHandler
     /**
      * @return Builder|null
      */
-    protected function getQuery(RelatedContentBlock $block)
+    protected function getQuery(RelatedContentBlock $block, $document)
     {
-        /** @var Article $document */
-        $document = $this->getDocument();
-
+        if (!$document) {
+            /** @var Article $document */
+            $document = $this->getDocument();
+        }
         if (!$document instanceof Content) {
             return null;
         }
@@ -171,7 +172,7 @@ class RelatedContentBlockHandler extends BlockHandler
         }
 
         return $this->dm->createQueryBuilder(Content::class)
-            ->field('_id')->in($ids);
+                        ->field('_id')->in($ids);
     }
 
     /**

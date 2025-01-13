@@ -37,6 +37,7 @@ class Article extends Content implements RankableInterface
             'state' => 'title_tinymce',
             'class' => 'fancy_tinymce',
             'style' => 'horizontal',
+            'required' => 'required',
         ],
     ], location: 'editor')]
     protected ?string $title = '';
@@ -144,7 +145,7 @@ class Article extends Content implements RankableInterface
         'priority' => 430,
         'attr' => [
             'style' => 'sidebar',
-            'icon' => 'pin-alt',
+            'icon' => 'map-pin',
         ],
     ], location: 'sidebar')]
     protected $address;
@@ -157,7 +158,7 @@ class Article extends Content implements RankableInterface
         'attr' => [
             'label' => 'Seo Metadata',
             'style' => 'none',
-            'icon' => 'pin-alt',
+            'icon' => 'map-pin',
         ],
     ])]
     protected $seoMetadata;
@@ -204,14 +205,14 @@ class Article extends Content implements RankableInterface
         $this->slug = $slug;
     }
 
-    public function getSubtitle(): ?string
+    public function getSubtitle(): string
     {
         return $this->subtitle;
     }
 
-    public function setSubtitle(string $subtitle): void
+    public function setSubtitle(?string $subtitle): void
     {
-        $this->subtitle = $subtitle;
+        $this->subtitle = (string) $subtitle;
     }
 
     public function getFeaturedImage(): ?Image
@@ -265,9 +266,9 @@ class Article extends Content implements RankableInterface
         return $this->sourceUrl;
     }
 
-    public function setSourceUrl(string $sourceUrl): void
+    public function setSourceUrl(?string $sourceUrl): void
     {
-        $this->sourceUrl = $sourceUrl;
+        $this->sourceUrl = (string) $sourceUrl;
     }
 
     public function getLocale(): ?string
@@ -285,9 +286,9 @@ class Article extends Content implements RankableInterface
         return $this->intro;
     }
 
-    public function setIntro(string $intro): void
+    public function setIntro(?string $intro): void
     {
-        $this->intro = $intro;
+        $this->intro = (string) $intro;
     }
 
     public function getDescription(): ?string
@@ -295,9 +296,9 @@ class Article extends Content implements RankableInterface
         return $this->description;
     }
 
-    public function setDescription($description): void
+    public function setDescription(?string $description): void
     {
-        $this->description = $description;
+        $this->description = (string) $description;
     }
 
     public function setSeoMetadata(Embedded\SeoMeta $seoMetadata): void
@@ -344,6 +345,6 @@ class Article extends Content implements RankableInterface
 
     public function __toString(): string
     {
-        return (string) $this->title;
+        return $this->title;
     }
 }

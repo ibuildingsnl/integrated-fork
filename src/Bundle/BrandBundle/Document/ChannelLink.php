@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\BrandBundle\Document;
 
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
 class ChannelLink
@@ -9,7 +10,7 @@ class ChannelLink
     private ?string $id = null;
 
     public function __construct(
-        public LinkType $type,
+        public ChannelType $type,
         public ?ChannelInterface $channel,
         public bool $default,
     ) {

@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\PageBundle\Document\Page;
 
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -48,7 +48,7 @@ class ContentTypePage extends AbstractPage
      * @param string $layout
      * @param null   $path
      */
-    public function __construct(ContentType $contentType, Channel $channel, $layout = 'default.html.twig', $path = null)
+    public function __construct(ContentType $contentType, ChannelInterface $channel, $layout = 'default.html.twig', $path = null)
     {
         parent::__construct();
 

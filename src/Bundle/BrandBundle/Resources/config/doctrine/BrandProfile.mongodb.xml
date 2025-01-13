@@ -12,7 +12,9 @@
         <field field-name="vat" type="string" />
         <field field-name="companyId" type="string" />
         <field field-name="analytics" type="string" />
+        <field field-name="analyticsPropertyId" type="string" />
         <reference-one field="logo" target-document="Integrated\Bundle\ContentBundle\Document\Content\Image" />
+        <reference-one field="favicon" target-document="Integrated\Bundle\ContentBundle\Document\Content\Image" />
         <embed-many field="contacts" target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Contact" />
         <embed-many field="socials" target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Social" />
 

@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the Integrated package.
- *
- * (c) e-Active B.V. <integrated@e-active.nl>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Integrated\Bundle\ContentBundle\Block;
 
 use Integrated\Bundle\BlockBundle\Block\BlockHandler;
@@ -21,27 +12,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * Facet block handler.
- *
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class FacetBlockHandler extends BlockHandler
 {
-    /**
-     * @var BlockHandlerRegistryInterface
-     */
-    private $blockRegistry;
-
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
-    public function __construct(BlockHandlerRegistryInterface $blockRegistry, RequestStack $requestStack)
-    {
-        $this->blockRegistry = $blockRegistry;
-        $this->requestStack = $requestStack;
+    public function __construct(
+        private readonly BlockHandlerRegistryInterface $blockRegistry,
+        private readonly RequestStack $requestStack
+    ) {
     }
 
     /**

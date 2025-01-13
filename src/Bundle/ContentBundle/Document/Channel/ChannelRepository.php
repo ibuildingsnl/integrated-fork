@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Document\Channel;
 
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -19,7 +20,7 @@ use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 class ChannelRepository extends DocumentRepository
 {
     /**
-     * @return Channel[]
+     * @return ChannelInterface[]
      */
     public function findByIds(array $ids)
     {

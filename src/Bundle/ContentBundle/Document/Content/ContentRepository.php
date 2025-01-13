@@ -104,4 +104,9 @@ class ContentRepository extends DocumentRepository
 
         $this->dm->flush();
     }
+
+    public function add(Content $content): void
+    {
+        $this->getDocumentManager()->persist($content);
+    }
 }

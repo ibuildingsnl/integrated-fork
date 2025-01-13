@@ -20,6 +20,7 @@ use Integrated\Bundle\PageBundle\Services\ContentTypePageService;
 use Integrated\Bundle\PageBundle\Services\RouteCache;
 use Integrated\Common\Channel\Event\ChannelEvent;
 use Integrated\Common\Channel\Events;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -105,7 +106,7 @@ class ChannelChangedListener implements EventSubscriberInterface
         $this->deletePagesByChannel($event->getChannel());
     }
 
-    protected function deletePagesByChannel(Channel $channel)
+    protected function deletePagesByChannel(ChannelInterface $channel)
     {
         $pages = $this->getPageRepository()->findBy(['channel.$id' => $channel->getId()]);
 

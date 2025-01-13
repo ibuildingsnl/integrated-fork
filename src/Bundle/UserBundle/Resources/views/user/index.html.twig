@@ -31,10 +31,10 @@
             <aside>
                 <div class="aside-holder section-gray section-radius">
                     <div class="aside-header">
-                        <button class="toggle-filters toggle-data-target"  data-target="aside-filters"><i class="iconoir-cancel"></i></button>
+                        <button class="toggle-filters toggle-data-target"  data-target="aside-filters"><i class="iconoir-xmark"></i></button>
                         <span>{% trans %}Filters{% endtrans %}</span>
                         <a href="{{ path('integrated_user_user_index') }}" class="clear-filters"><span>{% trans %}Remove active filters{% endtrans %}</span>
-                            <i class="iconoir-cancel"></i>
+                            <i class="iconoir-xmark"></i>
                         </a>
                     </div>
                     {{ form_start(facetFilter) }}
@@ -57,7 +57,7 @@
 
                     {% block user_filter_scope %}
                     <div class="aside-item-holder {% if facetFilter.scope|length == 0 %} hidden{% endif %}">
-                        {{ form_row(facetFilter.scope, {'style':'sidebar', 'icon':'network-alt', 'state': 'show'}) }}
+                        {{ form_row(facetFilter.scope, {'style':'sidebar', 'icon':'network-reverse', 'state': 'show'}) }}
                     </div>
                     {% endblock %}
 

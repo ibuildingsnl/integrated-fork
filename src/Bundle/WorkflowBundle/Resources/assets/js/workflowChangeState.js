@@ -27,25 +27,39 @@ $(document).ready(function () {
                 var selected = $('option:selected', $assigned).val();
 
                 var $firstOption = $('option:first', $assigned);
+                var $option = $firstOption.clone();
                 $firstOption.siblings().remove();
-                $.each(response.users, function (index, user) {
-                    var newOption = new Option(user.name, user.id, (user.id == selected), (user.id == selected));
-                    $assigned.append(newOption);
+
+                $.each(response.users, function(index, user) {
+                    var $tmp = $('<option></option>').val(user.id).text(user.name);
+
+                    if (user.id==selected) {
+                        $tmp.attr('selected','selected');
+                    }
+
+                    $tmp.appendTo($assigned);
                 });
                 $assigned.removeAttr('disabled');
 
                 $.each(response.fields, function(field, values) {
-                    var $el = $('.' + field);
+                    var $el = $('.form-item.' + field);
 
-                    if ($el) {
-                        $el.removeAttr('required');
-                        $el.removeAttr('disabled');
-                        $el.parents('.form-group').show();
+                    if ($el.length) {
+                        var $inputs = $el.find('select, input, textarea');
+
+                        $inputs.removeAttr('required').removeAttr('disabled');
+
+                        $el.show();
 
                         if (values.disabled) {
-                            $el.attr('disabled', 'disabled').parents('.form-group').hide();
+                            $inputs.attr('disabled', 'disabled');
+                            $el.hide();
                         } else if (values.required) {
-                            $el.attr('required', 'required');
+                            $inputs.attr('required', 'required');
+                        }
+
+                        if ($inputs.hasClass('select2-hidden-accessible')) {
+                            $inputs.trigger('change.select2');
                         }
                     }
                 });

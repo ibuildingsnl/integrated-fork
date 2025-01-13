@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <!-- We don't want the normalizer and encoder to be autoconfigured in symfony serializer so autoconfigure="false" -->
+        <defaults autowire="true" autoconfigure="false" />
+
+
+        <service id="integrated_solr.indexer.serializer" class="Symfony\Component\Serializer\Serializer" public="true">
+            <argument type="collection">
+                <argument type="service" id="integrated_solr.indexer.serializer.normalizer.mongodb" /> <!-- normalizers should be taggable -->
+            </argument>
+            <argument type="collection">
+                <argument type="service" id="integrated_solr.indexer.serializer.encoder.json" /> <!-- encoders should be taggable -->
+            </argument>
+        </service>
+
+        <service id="integrated_solr.indexer.serializer.normalizer.mongodb" class="Integrated\MongoDB\Serializer\Normalizer\ContainerAwareDocumentNormalizer" public="false">
+            <argument type="service" id="service_container"/>
+            <argument type="string">doctrine_mongodb.odm.document_manager</argument> <!-- should be a config option -->
+        </service>
+
+        <service id="integrated_solr.indexer.serializer.encoder.json" class="Symfony\Component\Serializer\Encoder\JsonEncoder" public="false" />
+    </services>
+</container>
