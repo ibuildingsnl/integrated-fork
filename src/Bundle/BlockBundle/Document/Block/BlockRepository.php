@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\BlockBundle\Document\Block;
 
+use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
+use Doctrine\Bundle\MongoDBBundle\Repository\ServiceDocumentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
@@ -24,8 +26,13 @@ use Solarium\Core\Query\DocumentInterface;
 /**
  * @author Vasil Pascal <developer.optimum@gmail.com>
  */
-class BlockRepository extends DocumentRepository
+class BlockRepository extends ServiceDocumentRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Block::class);
+    }
+
     /**
      * @return array
      */

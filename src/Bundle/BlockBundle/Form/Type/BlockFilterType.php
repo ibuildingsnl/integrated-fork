@@ -13,6 +13,7 @@ namespace Integrated\Bundle\BlockBundle\Form\Type;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
+use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
 use Integrated\Bundle\BlockBundle\Provider\BlockUsageProvider;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Symfony\Component\Form\AbstractType;
@@ -42,14 +43,18 @@ class BlockFilterType extends AbstractType
      */
     private $blockUsageProvider;
 
+    private BlockRepository $blockRepository;
+
     public function __construct(
         MetadataFactoryInterface $factory,
         DocumentManager $dm,
         BlockUsageProvider $blockUsageProvider,
+        BlockRepository $blockRepository,
     ) {
         $this->factory = $factory;
         $this->dm = $dm;
         $this->blockUsageProvider = $blockUsageProvider;
+        $this->blockRepository = $blockRepository;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -103,7 +108,7 @@ class BlockFilterType extends AbstractType
 
     private function getTypeChoices(array $blockIds)
     {
-        return $this->dm->getRepository(Block::class)->getTypeChoices(
+        return $this->blockRepository->getTypeChoices(
             $this->factory,
             $blockIds
         );

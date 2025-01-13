@@ -315,7 +315,6 @@ class ContentFixtures extends AbstractFixture implements DependentFixtureInterfa
         $object->setAddress1($this->faker->address());
         $object->setZipcode($this->faker->postcode());
         $object->setCity($this->faker->city());
-        $object->setState($this->faker->state());
         $object->setCountry($this->faker->country());
 
         return $object;

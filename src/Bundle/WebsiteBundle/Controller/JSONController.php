@@ -7,6 +7,7 @@ use Integrated\Bundle\ContentBundle\Block\RelatedContentBlockHandler;
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
 use Integrated\Bundle\ContentBundle\Document\Block\RelatedContentBlock;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\ContentRepository;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Provider\SolariumProvider;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
@@ -26,6 +27,7 @@ class JSONController extends AbstractController
         private readonly RequestStack $requestStack,
         private readonly DocumentManager $documentManager,
         private readonly ThemeManager $themeManager,
+        private readonly ContentRepository $contentRepository,
     ) {
     }
 
@@ -70,13 +72,13 @@ class JSONController extends AbstractController
         /** @var RelatedContentBlock $block * */
         $block = $this->documentManager->getRepository(RelatedContentBlock::class)->find($blockId);
 
-        $document = $this->documentManager->getRepository(Content::class)->find($documentId);
+        $document = $this->contentRepository->find($documentId);
 
         if (!$block || !$document) {
             return new Response('', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $blockHandler = new RelatedContentBlockHandler($this->paginator, $this->requestStack, $this->documentManager);
+        $blockHandler = new RelatedContentBlockHandler($this->paginator, $this->requestStack, $this->documentManager, $this->contentRepository);
 
         $pagination = $blockHandler->getPagination($block, $request, $document);
 

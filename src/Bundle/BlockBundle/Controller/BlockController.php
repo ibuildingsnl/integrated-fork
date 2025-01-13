@@ -13,6 +13,7 @@ namespace Integrated\Bundle\BlockBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
+use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
 use Integrated\Bundle\BlockBundle\Form\Type\BlockEditType;
 use Integrated\Bundle\BlockBundle\Form\Type\BlockFilterType;
 use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
@@ -32,28 +33,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class BlockController extends AbstractController
 {
-    private MetadataFactoryInterface $metadataFactory;
-    private DocumentManager $documentManager;
-    private PaginatorInterface $paginator;
-    private FilterQueryProvider $provider;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
-
     public function __construct(
-        MetadataFactoryInterface $metadataFactory,
-        DocumentManager $documentManager,
-        PaginatorInterface $paginator,
-        FilterQueryProvider $provider,
-        EventDispatcherInterface $dispatcher,
+        private MetadataFactoryInterface $metadataFactory,
+        private DocumentManager $documentManager,
+        private PaginatorInterface $paginator,
+        private FilterQueryProvider $provider,
+        private EventDispatcherInterface $dispatcher,
+        private BlockRepository $blockRepository,
     ) {
-        $this->metadataFactory = $metadataFactory;
-        $this->documentManager = $documentManager;
-        $this->paginator = $paginator;
-        $this->provider = $provider;
-        $this->dispatcher = $dispatcher;
     }
 
     public function index(Request $request): Response
@@ -209,7 +196,7 @@ class BlockController extends AbstractController
 
         /* check if current Block not used on some page */
         if ($this->container->has('integrated_page.form.type.page')) {
-            if ($this->documentManager->getRepository(Block::class)->isUsed($block)) {
+            if ($this->blockRepository->isUsed($block)) {
                 throw $this->createNotFoundException(\sprintf('Block "%s" is used.', $block->getId()));
             }
         }
