@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\PageBundle\Grid;
 
-use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Column;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Grid;

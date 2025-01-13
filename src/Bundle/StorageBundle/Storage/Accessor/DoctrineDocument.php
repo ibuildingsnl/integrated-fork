@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Accessor;
 
-use Doctrine\Common\Util\ClassUtils;
+use Doctrine\Persistence\Proxy;
 
 /**
  * @author Johnny Borg <johnny@e-active.nl>
@@ -66,7 +66,11 @@ class DoctrineDocument
      */
     public function getClassName()
     {
-        return ClassUtils::getRealClass(\get_class($this->document));
+        if ($this->document instanceof Proxy) {
+            return get_parent_class($this->document);
+        }
+
+        return \get_class($this->document);
     }
 
     /**

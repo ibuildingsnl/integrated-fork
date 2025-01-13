@@ -28,7 +28,7 @@ class UserFixtures extends AbstractFixture implements DependentFixtureInterface
         $this->factory = $factory;
     }
 
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $user = new User();
 
@@ -51,7 +51,7 @@ class UserFixtures extends AbstractFixture implements DependentFixtureInterface
         $manager->flush();
     }
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             GroupFixtures::class,

@@ -21,6 +21,7 @@ class DOMDocument extends \DOMDocument
     /**
      * @throws InvalidHTMLException
      */
+    #[\ReturnTypeWillChange]
     public function loadHTML($source, $options = 0)
     {
         // Allow HTML5 tags to be passed as HTML

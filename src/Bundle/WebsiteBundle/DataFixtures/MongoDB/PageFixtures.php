@@ -80,7 +80,7 @@ class PageFixtures extends AbstractFixture implements DependentFixtureInterface
         return $object;
     }
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             BlockFixtures::class,

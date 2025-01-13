@@ -12,10 +12,10 @@
 namespace Integrated\Bundle\StorageBundle\EventListener\Doctrine\ODM;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Common\Proxy\Proxy;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Event\PreFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events;
+use Doctrine\Persistence\Proxy;
 use Integrated\Bundle\StorageBundle\Doctrine\ODM\Transformer\StorageIntentTransformer;
 use Integrated\Bundle\StorageBundle\Storage\Accessor\DoctrineDocument;
 use Integrated\Common\Storage\ManagerInterface;

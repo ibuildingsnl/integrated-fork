@@ -86,7 +86,7 @@ class ContentFixtures extends AbstractFixture implements DependentFixtureInterfa
         $this->faker = $faker ?: Factory::create();
     }
 
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $this->faker->seed(123456789);
 
@@ -358,7 +358,7 @@ class ContentFixtures extends AbstractFixture implements DependentFixtureInterfa
         }
     }
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             ChannelFixtures::class,
