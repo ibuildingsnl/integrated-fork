@@ -11,7 +11,7 @@
 
 namespace Integrated\MongoDB\Solr\Indexer;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Events;
 use Integrated\Common\Content\ContentInterface;
@@ -22,28 +22,27 @@ use Symfony\Component\Serializer\SerializerInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class QueueSubscriber implements EventSubscriber
+#[AsDocumentListener(event: Events::postPersist)]
+#[AsDocumentListener(event: Events::postUpdate)]
+#[AsDocumentListener(event: Events::postRemove)]
+class QueueSubscriber
 {
     /**
      * @var QueueInterface
      */
     private $queue;
-
     /**
      * @var SerializerInterface
      */
     private $serializer;
-
     /**
      * @var string
      */
     private $format;
-
     /**
      * @var int
      */
     private $priority = 0;
-
     /**
      * @param int $priority
      */
@@ -53,12 +52,10 @@ class QueueSubscriber implements EventSubscriber
         $this->setSerializer($serializer);
         $this->setPriority($priority);
     }
-
     public function setQueue(QueueInterface $queue)
     {
         $this->queue = $queue;
     }
-
     /**
      * @return QueueInterface
      */
@@ -66,12 +63,10 @@ class QueueSubscriber implements EventSubscriber
     {
         return $this->queue;
     }
-
     public function setSerializer(SerializerInterface $serializer)
     {
         $this->serializer = $serializer;
     }
-
     /**
      * @return SerializerInterface
      */
@@ -79,7 +74,6 @@ class QueueSubscriber implements EventSubscriber
     {
         return $this->serializer;
     }
-
     /**
      * @param string $format
      */
@@ -87,7 +81,6 @@ class QueueSubscriber implements EventSubscriber
     {
         $this->format = $format;
     }
-
     /**
      * @return string
      */
@@ -99,7 +92,6 @@ class QueueSubscriber implements EventSubscriber
 
         return $this->format;
     }
-
     /**
      * @param int $priority
      */
@@ -107,7 +99,6 @@ class QueueSubscriber implements EventSubscriber
     {
         $this->priority = (int) $priority;
     }
-
     /**
      * @return int
      */
@@ -115,31 +106,18 @@ class QueueSubscriber implements EventSubscriber
     {
         return $this->priority;
     }
-
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::postPersist,
-            Events::postUpdate,
-            Events::postRemove,
-        ];
-    }
-
     public function postPersist(LifecycleEventArgs $event)
     {
         $this->process('ADD', $event);
     }
-
     public function postUpdate(LifecycleEventArgs $event)
     {
         $this->process('ADD', $event);
     }
-
     public function postRemove(LifecycleEventArgs $event)
     {
         $this->process('DELETE', $event);
     }
-
     protected function process($action, LifecycleEventArgs $event)
     {
         $document = $event->getDocument();

@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\PageBundle\EventListener;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Event\PreUpdateEventArgs;
@@ -25,16 +25,10 @@ use Integrated\Bundle\PageBundle\Document\Page\Page;
 /**
  * @author Johan Liefers <johan@e-active.nl>
  */
-class GridItemSubscriber implements EventSubscriber
+#[AsDocumentListener(event: Events::preRemove)]
+#[AsDocumentListener(event: Events::preUpdate)]
+class GridItemSubscriber
 {
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::preRemove => 'preRemove',
-            Events::preUpdate => 'preUpdate',
-        ];
-    }
-
     public function preRemove(LifecycleEventArgs $args)
     {
         $document = $args->getDocument();
@@ -47,7 +41,6 @@ class GridItemSubscriber implements EventSubscriber
             $args->getDocumentManager()->remove($block);
         }
     }
-
     public function preUpdate(PreUpdateEventArgs $args)
     {
         $document = $args->getDocument();
@@ -64,7 +57,6 @@ class GridItemSubscriber implements EventSubscriber
             $args->getDocumentManager()->remove($removedBlock);
         }
     }
-
     /**
      * @return array|InlineTextBlock[]
      */
@@ -72,7 +64,6 @@ class GridItemSubscriber implements EventSubscriber
     {
         return $dm->getRepository(InlineTextBlock::class)->findBy(['page' => $page]);
     }
-
     /**
      * @return array
      */
@@ -88,7 +79,6 @@ class GridItemSubscriber implements EventSubscriber
 
         return $blocks;
     }
-
     /**
      * @return array
      */

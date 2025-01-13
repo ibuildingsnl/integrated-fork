@@ -11,7 +11,7 @@
 
 namespace Integrated\Doctrine\ODM\MongoDB\Mapping;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\Events;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\Persistence\Event\LoadClassMetadataEventArgs;
@@ -19,13 +19,13 @@ use Doctrine\Persistence\Event\LoadClassMetadataEventArgs;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class DiscriminatorMapMetadataSubscriber implements EventSubscriber
+#[AsDocumentListener(event: Events::loadClassMetadata)]
+class DiscriminatorMapMetadataSubscriber
 {
     /**
      * @var DiscriminatorMapResolverInterface
      */
     private $resolver;
-
     /**
      * Constructor.
      */
@@ -33,14 +33,6 @@ class DiscriminatorMapMetadataSubscriber implements EventSubscriber
     {
         $this->resolver = $resolver;
     }
-
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::loadClassMetadata,
-        ];
-    }
-
     /**
      * Resolve and replace the discriminator map.
      *

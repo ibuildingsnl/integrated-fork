@@ -11,21 +11,15 @@
 
 namespace Integrated\Bundle\ContentBundle\Doctrine\EventListener;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 
-class UpdateStorageMetadataListener implements EventSubscriber
+#[AsDocumentListener(event: Events::onFlush)]
+class UpdateStorageMetadataListener
 {
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::onFlush,
-        ];
-    }
-
     public function onFlush(OnFlushEventArgs $args)
     {
         $dm = $args->getDocumentManager();

@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Content\Extension\Adaptor\Doctrine;
 
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Event\PreFlushEventArgs;
@@ -21,41 +22,31 @@ use Integrated\Common\Content\Extension\Events;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class DoctrineMongodbAdaptor extends AbstractAdaptor implements EventSubscriber
+#[AsDocumentListener(event: 'preRemove')]
+#[AsDocumentListener(event: 'postRemove')]
+#[AsDocumentListener(event: 'prePersist')]
+#[AsDocumentListener(event: 'postPersist')]
+#[AsDocumentListener(event: 'preFlush')]
+#[AsDocumentListener(event: 'postUpdate')]
+#[AsDocumentListener(event: 'postLoad')]
+class DoctrineMongodbAdaptor extends AbstractAdaptor
 {
-    public function getSubscribedEvents()
-    {
-        return [
-            'preRemove',
-            'postRemove',
-            'prePersist',
-            'postPersist',
-            'preFlush', // calculate our of preUpdate
-            'postUpdate', // probably should to postUpdate along the lines of the preUpdate
-            'postLoad',
-        ];
-    }
-
     public function preRemove(LifecycleEventArgs $args)
     {
         $this->dispatch(Events::PRE_DELETE, $args->getDocument());
     }
-
     public function postRemove(LifecycleEventArgs $args)
     {
         $this->dispatch(Events::POST_DELETE, $args->getDocument());
     }
-
     public function prePersist(LifecycleEventArgs $args)
     {
         $this->dispatch(Events::PRE_CREATE, $args->getDocument());
     }
-
     public function postPersist(LifecycleEventArgs $args)
     {
         $this->dispatch(Events::POST_CREATE, $args->getDocument());
     }
-
     public function preFlush(PreFlushEventArgs $event)
     {
         $manager = $event->getDocumentManager();
@@ -81,17 +72,14 @@ class DoctrineMongodbAdaptor extends AbstractAdaptor implements EventSubscriber
             }
         }
     }
-
     public function postUpdate(LifecycleEventArgs $args)
     {
         $this->dispatch(Events::POST_UPDATE, $args->getDocument());
     }
-
     public function postLoad(LifecycleEventArgs $args)
     {
         $this->dispatch(Events::POST_READ, $args->getDocument());
     }
-
     protected function dispatch($event, $object)
     {
         if (($dispatcher = $this->getDispatcher()) === null) {

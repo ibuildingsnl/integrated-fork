@@ -11,19 +11,13 @@
 
 namespace Integrated\Bundle\ContentBundle\Doctrine\EventListener;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\Event\DocumentNotFoundEventArgs;
 use Doctrine\ODM\MongoDB\Events;
 
-class DocumentNotFoundListener implements EventSubscriber
+#[AsDocumentListener(event: Events::documentNotFound)]
+class DocumentNotFoundListener
 {
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::documentNotFound,
-        ];
-    }
-
     public function documentNotFound(DocumentNotFoundEventArgs $args)
     {
         $args->disableException();

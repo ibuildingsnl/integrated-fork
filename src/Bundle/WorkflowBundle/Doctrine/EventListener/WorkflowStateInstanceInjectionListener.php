@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Doctrine\EventListener;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Persistence\ManagerRegistry;
@@ -20,36 +20,22 @@ use Integrated\Bundle\WorkflowBundle\Entity\Workflow\State;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class WorkflowStateInstanceInjectionListener implements EventSubscriber
+#[AsDoctrineListener(event: Events::postLoad)]
+class WorkflowStateInstanceInjectionListener
 {
     /**
      * @var ManagerRegistry
      */
     protected $orm;
-
     /**
      * @var ManagerRegistry
      */
     protected $odm;
-
     public function __construct(ManagerRegistry $orm, ManagerRegistry $odm)
     {
         $this->orm = $orm;
         $this->odm = $odm;
     }
-
-    /**
-     * Returns an array of events this subscriber wants to listen to.
-     *
-     * @return array
-     */
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::postLoad,
-        ];
-    }
-
     /**
      * Add the user and content instance or a proxy of the instances to the State
      * entity.
@@ -96,7 +82,6 @@ class WorkflowStateInstanceInjectionListener implements EventSubscriber
         $prop->setAccessible(true);
         $prop->setValue($object, $this->getODMInstance($class, $id));
     }
-
     /**
      * Try to get a reference to the user object else fetch it immediately from the
      * repository.
@@ -120,7 +105,6 @@ class WorkflowStateInstanceInjectionListener implements EventSubscriber
 
         return $manager->getRepository($class)->find($id);
     }
-
     /**
      * Try to get a reference to the content object else fetch it immediately from the
      * repository.

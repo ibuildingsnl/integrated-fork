@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Doctrine\EventListener;
 
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
@@ -20,25 +21,17 @@ use Integrated\Bundle\WorkflowBundle\Entity\Workflow\Log;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class WorkflowLogInstanceInjectionListener implements EventSubscriber
+#[AsDoctrineListener(event: Events::postLoad)]
+class WorkflowLogInstanceInjectionListener
 {
     /**
      * @var ManagerRegistry
      */
     protected $manager;
-
     public function __construct(ManagerRegistry $manager)
     {
         $this->manager = $manager;
     }
-
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::postLoad,
-        ];
-    }
-
     /**
      * Add the user instance or a proxy to this user instance to the Log entity.
      */
@@ -66,7 +59,6 @@ class WorkflowLogInstanceInjectionListener implements EventSubscriber
         $prop->setAccessible(true);
         $prop->setValue($object, $this->getInstance($class, $id));
     }
-
     /**
      * Try to get a reference to the user object else fetch it immediately from the
      * repository.
