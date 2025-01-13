@@ -15,8 +15,6 @@ use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Events;
-use Doctrine\ODM\MongoDB\Event\PostPersistEventArgs;
-use Doctrine\ODM\MongoDB\Event\PrePersistEventArgs;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\ODM\MongoDB\UnitOfWork as ODMUnitOfWork;
 use Doctrine\ORM\EntityManager;
@@ -79,7 +77,7 @@ class SluggableSubscriber
         $this->handleEvent($args->getObject(), $args->getObjectManager(), 'preUpdate');
     }
 
-    protected function handleEvent(object $object, $om, string $event)
+    protected function handleEvent(object $object, ObjectManager $om, string $event)
     {
         $class = $object::class;
 

@@ -31,11 +31,13 @@ class WorkflowStateInstanceInjectionListener
      * @var ManagerRegistry
      */
     protected $odm;
+
     public function __construct(ManagerRegistry $orm, ManagerRegistry $odm)
     {
         $this->orm = $orm;
         $this->odm = $odm;
     }
+
     /**
      * Add the user and content instance or a proxy of the instances to the State
      * entity.
@@ -82,6 +84,7 @@ class WorkflowStateInstanceInjectionListener
         $prop->setAccessible(true);
         $prop->setValue($object, $this->getODMInstance($class, $id));
     }
+
     /**
      * Try to get a reference to the user object else fetch it immediately from the
      * repository.
@@ -105,6 +108,7 @@ class WorkflowStateInstanceInjectionListener
 
         return $manager->getRepository($class)->find($id);
     }
+
     /**
      * Try to get a reference to the content object else fetch it immediately from the
      * repository.

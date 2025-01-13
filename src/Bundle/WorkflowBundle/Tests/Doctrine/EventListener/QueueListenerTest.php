@@ -34,19 +34,6 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
         $this->queue = $this->createMock('Integrated\\Common\\Queue\\QueueInterface');
     }
 
-    public function testInterface()
-    {
-        $this->assertInstanceOf('Doctrine\\Common\\EventSubscriber', $this->getInstance());
-    }
-
-    public function testGetSubscribedEvents()
-    {
-        $this->assertEquals([
-            Events::postPersist,
-            Events::postUpdate,
-        ], $this->getInstance()->getSubscribedEvents());
-    }
-
     public function testSetGetQueue()
     {
         $listener = $this->getInstance();

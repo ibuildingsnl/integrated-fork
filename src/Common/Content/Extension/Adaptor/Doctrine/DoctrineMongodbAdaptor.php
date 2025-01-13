@@ -12,7 +12,6 @@
 namespace Integrated\Common\Content\Extension\Adaptor\Doctrine;
 
 use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Event\PreFlushEventArgs;
 use Doctrine\Persistence\Proxy;
@@ -35,18 +34,22 @@ class DoctrineMongodbAdaptor extends AbstractAdaptor
     {
         $this->dispatch(Events::PRE_DELETE, $args->getDocument());
     }
+
     public function postRemove(LifecycleEventArgs $args)
     {
         $this->dispatch(Events::POST_DELETE, $args->getDocument());
     }
+
     public function prePersist(LifecycleEventArgs $args)
     {
         $this->dispatch(Events::PRE_CREATE, $args->getDocument());
     }
+
     public function postPersist(LifecycleEventArgs $args)
     {
         $this->dispatch(Events::POST_CREATE, $args->getDocument());
     }
+
     public function preFlush(PreFlushEventArgs $event)
     {
         $manager = $event->getDocumentManager();
@@ -72,14 +75,17 @@ class DoctrineMongodbAdaptor extends AbstractAdaptor
             }
         }
     }
+
     public function postUpdate(LifecycleEventArgs $args)
     {
         $this->dispatch(Events::POST_UPDATE, $args->getDocument());
     }
+
     public function postLoad(LifecycleEventArgs $args)
     {
         $this->dispatch(Events::POST_READ, $args->getDocument());
     }
+
     protected function dispatch($event, $object)
     {
         if (($dispatcher = $this->getDispatcher()) === null) {

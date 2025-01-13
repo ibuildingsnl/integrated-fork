@@ -12,7 +12,6 @@
 namespace Integrated\Common\Content\Extension\Adaptor\Doctrine;
 
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Persistence\Proxy;
@@ -35,18 +34,22 @@ class DoctrineOrmAdaptor extends AbstractAdaptor
     {
         $this->dispatch(Events::PRE_DELETE, $args->getObject());
     }
+
     public function postRemove(LifecycleEventArgs $args)
     {
         $this->dispatch(Events::POST_DELETE, $args->getObject());
     }
+
     public function prePersist(LifecycleEventArgs $args)
     {
         $this->dispatch(Events::PRE_CREATE, $args->getObject());
     }
+
     public function postPersist(LifecycleEventArgs $args)
     {
         $this->dispatch(Events::POST_CREATE, $args->getObject());
     }
+
     public function preFlush(LifecycleEventArgs $event)
     {
         $manager = $event->getObjectManager();
@@ -77,14 +80,17 @@ class DoctrineOrmAdaptor extends AbstractAdaptor
             }
         }
     }
+
     public function postUpdate(LifecycleEventArgs $args)
     {
         $this->dispatch(Events::POST_UPDATE, $args->getObject());
     }
+
     public function postLoad(LifecycleEventArgs $args)
     {
         $this->dispatch(Events::POST_READ, $args->getObject());
     }
+
     protected function dispatch($event, $object)
     {
         if (($dispatcher = $this->getDispatcher()) === null) {

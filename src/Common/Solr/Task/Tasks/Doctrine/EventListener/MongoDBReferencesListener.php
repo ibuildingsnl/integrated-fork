@@ -29,6 +29,7 @@ class MongoDBReferencesListener
      * @var QueueInterface
      */
     private $queue;
+
     /**
      * constructor.
      */
@@ -36,14 +37,17 @@ class MongoDBReferencesListener
     {
         $this->queue = $queue;
     }
+
     public function postPersist(LifecycleEventArgs $event)
     {
         $this->process($event);
     }
+
     public function postUpdate(LifecycleEventArgs $event)
     {
         $this->process($event);
     }
+
     protected function process(LifecycleEventArgs $event)
     {
         $document = $event->getDocument();

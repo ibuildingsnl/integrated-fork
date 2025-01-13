@@ -9343,12 +9343,6 @@ parameters:
 			path: src/Bundle/ContentHistoryBundle/EventListener/ContentHistorySubscriber.php
 
 		-
-			message: '#^Method Integrated\\Bundle\\ContentHistoryBundle\\EventListener\\ContentHistorySubscriber\:\:getSubscribedEvents\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Bundle/ContentHistoryBundle/EventListener/ContentHistorySubscriber.php
-
-		-
 			message: '#^Method Integrated\\Bundle\\ContentHistoryBundle\\EventListener\\ContentHistorySubscriber\:\:onFlush\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -12169,20 +12163,8 @@ parameters:
 			path: src/Bundle/SlugBundle/EventListener/SluggableSubscriber.php
 
 		-
-			message: '#^Method Integrated\\Bundle\\SlugBundle\\EventListener\\SluggableSubscriber\:\:handleEvent\(\) has parameter \$args with generic class Doctrine\\Persistence\\Event\\LifecycleEventArgs but does not specify its types\: TObjectManager$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Bundle/SlugBundle/EventListener/SluggableSubscriber.php
-
-		-
 			message: '#^Method Integrated\\Bundle\\SlugBundle\\EventListener\\SluggableSubscriber\:\:postPersist\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: src/Bundle/SlugBundle/EventListener/SluggableSubscriber.php
-
-		-
-			message: '#^Method Integrated\\Bundle\\SlugBundle\\EventListener\\SluggableSubscriber\:\:postPersist\(\) has parameter \$args with generic class Doctrine\\Persistence\\Event\\LifecycleEventArgs but does not specify its types\: TObjectManager$#'
-			identifier: missingType.generics
 			count: 1
 			path: src/Bundle/SlugBundle/EventListener/SluggableSubscriber.php
 
@@ -12193,20 +12175,8 @@ parameters:
 			path: src/Bundle/SlugBundle/EventListener/SluggableSubscriber.php
 
 		-
-			message: '#^Method Integrated\\Bundle\\SlugBundle\\EventListener\\SluggableSubscriber\:\:prePersist\(\) has parameter \$args with generic class Doctrine\\Persistence\\Event\\LifecycleEventArgs but does not specify its types\: TObjectManager$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Bundle/SlugBundle/EventListener/SluggableSubscriber.php
-
-		-
 			message: '#^Method Integrated\\Bundle\\SlugBundle\\EventListener\\SluggableSubscriber\:\:preUpdate\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: src/Bundle/SlugBundle/EventListener/SluggableSubscriber.php
-
-		-
-			message: '#^Method Integrated\\Bundle\\SlugBundle\\EventListener\\SluggableSubscriber\:\:preUpdate\(\) has parameter \$args with generic class Doctrine\\Persistence\\Event\\LifecycleEventArgs but does not specify its types\: TObjectManager$#'
-			identifier: missingType.generics
 			count: 1
 			path: src/Bundle/SlugBundle/EventListener/SluggableSubscriber.php
 
@@ -15763,12 +15733,6 @@ parameters:
 			path: src/Bundle/UserBundle/Doctrine/ScopeManager.php
 
 		-
-			message: '#^Method Integrated\\Bundle\\UserBundle\\Doctrine\\Subscriber\\OrmRelationSubscriber\:\:getSubscribedEvents\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Bundle/UserBundle/Doctrine/Subscriber/OrmRelationSubscriber.php
-
-		-
 			message: '#^Method Integrated\\Bundle\\UserBundle\\Doctrine\\Subscriber\\OrmRelationSubscriber\:\:postLoad\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -17611,12 +17575,6 @@ parameters:
 			path: src/Bundle/WorkflowBundle/Doctrine/EventListener/WorkflowStateInstanceInjectionListener.php
 
 		-
-			message: '#^Method Integrated\\Bundle\\WorkflowBundle\\Doctrine\\EventListener\\WorkflowStateInstanceInjectionListener\:\:getSubscribedEvents\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Bundle/WorkflowBundle/Doctrine/EventListener/WorkflowStateInstanceInjectionListener.php
-
-		-
 			message: '#^Method Integrated\\Bundle\\WorkflowBundle\\Doctrine\\EventListener\\WorkflowStateInstanceInjectionListener\:\:postLoad\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -18423,18 +18381,6 @@ parameters:
 		-
 			message: '#^Method Integrated\\Bundle\\WorkflowBundle\\Tests\\Doctrine\\EventListener\\QueueListenerTest\:\:getState\(\) has parameter \$id with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: src/Bundle/WorkflowBundle/Tests/Doctrine/EventListener/QueueListenerTest.php
-
-		-
-			message: '#^Method Integrated\\Bundle\\WorkflowBundle\\Tests\\Doctrine\\EventListener\\QueueListenerTest\:\:testGetSubscribedEvents\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Bundle/WorkflowBundle/Tests/Doctrine/EventListener/QueueListenerTest.php
-
-		-
-			message: '#^Method Integrated\\Bundle\\WorkflowBundle\\Tests\\Doctrine\\EventListener\\QueueListenerTest\:\:testInterface\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: src/Bundle/WorkflowBundle/Tests/Doctrine/EventListener/QueueListenerTest.php
 
@@ -27265,18 +27211,6 @@ parameters:
 			path: src/Common/Solr/Tests/Task/Tasks/ContentTypeQueueTaskTest.php
 
 		-
-			message: '#^Method Integrated\\Common\\Solr\\Tests\\Task\\Tasks\\Doctrine\\EventListener\\MongoDBContenTypeListenerTest\:\:testGetSubscribedEvents\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Common/Solr/Tests/Task/Tasks/Doctrine/EventListener/MongoDBContenTypeListenerTest.php
-
-		-
-			message: '#^Method Integrated\\Common\\Solr\\Tests\\Task\\Tasks\\Doctrine\\EventListener\\MongoDBContenTypeListenerTest\:\:testInterface\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Common/Solr/Tests/Task/Tasks/Doctrine/EventListener/MongoDBContenTypeListenerTest.php
-
-		-
 			message: '#^Method Integrated\\Common\\Solr\\Tests\\Task\\Tasks\\Doctrine\\EventListener\\MongoDBContenTypeListenerTest\:\:testPostUpdate\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -27287,18 +27221,6 @@ parameters:
 			identifier: missingType.return
 			count: 1
 			path: src/Common/Solr/Tests/Task/Tasks/Doctrine/EventListener/MongoDBContenTypeListenerTest.php
-
-		-
-			message: '#^Method Integrated\\Common\\Solr\\Tests\\Task\\Tasks\\Doctrine\\EventListener\\MongoDBReferencesListenerTest\:\:testGetSubscribedEvents\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Common/Solr/Tests/Task/Tasks/Doctrine/EventListener/MongoDBReferencesListenerTest.php
-
-		-
-			message: '#^Method Integrated\\Common\\Solr\\Tests\\Task\\Tasks\\Doctrine\\EventListener\\MongoDBReferencesListenerTest\:\:testInterface\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Common/Solr/Tests/Task/Tasks/Doctrine/EventListener/MongoDBReferencesListenerTest.php
 
 		-
 			message: '#^Method Integrated\\Common\\Solr\\Tests\\Task\\Tasks\\Doctrine\\EventListener\\MongoDBReferencesListenerTest\:\:testPostPersist\(\) has no return type specified\.$#'
@@ -27673,18 +27595,6 @@ parameters:
 			path: src/Doctrine/ODM/Tests/MongoDB/Mapping/DiscriminatorMapMetadataSubscriberTest.php
 
 		-
-			message: '#^Method Integrated\\Doctrine\\ODM\\Tests\\MongoDB\\Mapping\\DiscriminatorMapMetadataSubscriberTest\:\:testGetSubscribedEvents\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Doctrine/ODM/Tests/MongoDB/Mapping/DiscriminatorMapMetadataSubscriberTest.php
-
-		-
-			message: '#^Method Integrated\\Doctrine\\ODM\\Tests\\MongoDB\\Mapping\\DiscriminatorMapMetadataSubscriberTest\:\:testInterface\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Doctrine/ODM/Tests/MongoDB/Mapping/DiscriminatorMapMetadataSubscriberTest.php
-
-		-
 			message: '#^Method Integrated\\Doctrine\\ODM\\Tests\\MongoDB\\Mapping\\DiscriminatorMapMetadataSubscriberTest\:\:testLoadClassMetadata\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -27896,18 +27806,6 @@ parameters:
 
 		-
 			message: '#^Method Integrated\\MongoDB\\Solr\\Tests\\Indexer\\QueueSubscriberTest\:\:testGetDefaultSerializerFormat\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/MongoDB/Solr/Tests/Indexer/QueueSubscriberTest.php
-
-		-
-			message: '#^Method Integrated\\MongoDB\\Solr\\Tests\\Indexer\\QueueSubscriberTest\:\:testGetSubscribedEvents\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/MongoDB/Solr/Tests/Indexer/QueueSubscriberTest.php
-
-		-
-			message: '#^Method Integrated\\MongoDB\\Solr\\Tests\\Indexer\\QueueSubscriberTest\:\:testInterface\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
 			path: src/MongoDB/Solr/Tests/Indexer/QueueSubscriberTest.php

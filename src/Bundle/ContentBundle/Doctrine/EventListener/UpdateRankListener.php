@@ -26,6 +26,7 @@ class UpdateRankListener
     public const ASCII_TABLE_POS_LOWER_A = 97;
     public const ASCII_TABLE_POS_UPPER_A = 65;
     public const ALPHABET_LENGTH = 26;
+
     /**
      * @throws \Exception
      */
@@ -78,6 +79,7 @@ class UpdateRankListener
             }
         }
     }
+
     /**
      * Calculate a new rank by calculating the middle between the min and max string.
      *
@@ -112,6 +114,7 @@ class UpdateRankListener
 
         return $result;
     }
+
     /**
      * Get a numeric representation of an a-zA-Z character, starting with A.
      *
@@ -128,6 +131,7 @@ class UpdateRankListener
 
         return $number;
     }
+
     /**
      * Convert a numeric representation of an a-zA-Z character (starting with A) back to the character.
      *

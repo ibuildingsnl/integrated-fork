@@ -51,11 +51,6 @@ class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
         $this->subscriber = new QueueSubscriber($this->queue, $this->serializer);
     }
 
-    public function testInterface()
-    {
-        $this->assertInstanceOf(EventSubscriber::class, $this->subscriber);
-    }
-
     public function testSetAndGetQueue()
     {
         $this->assertSame($this->queue, $this->subscriber->getQueue());
@@ -94,14 +89,6 @@ class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
         $this->subscriber->setPriority(42);
 
         $this->assertSame(42, $this->subscriber->getPriority());
-    }
-
-    public function testGetSubscribedEvents()
-    {
-        $this->assertEquals(
-            [Events::postPersist, Events::postUpdate, Events::postRemove],
-            $this->subscriber->getSubscribedEvents()
-        );
     }
 
     public function testPostPersist()

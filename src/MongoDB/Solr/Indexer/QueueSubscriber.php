@@ -43,6 +43,7 @@ class QueueSubscriber
      * @var int
      */
     private $priority = 0;
+
     /**
      * @param int $priority
      */
@@ -52,10 +53,12 @@ class QueueSubscriber
         $this->setSerializer($serializer);
         $this->setPriority($priority);
     }
+
     public function setQueue(QueueInterface $queue)
     {
         $this->queue = $queue;
     }
+
     /**
      * @return QueueInterface
      */
@@ -63,10 +66,12 @@ class QueueSubscriber
     {
         return $this->queue;
     }
+
     public function setSerializer(SerializerInterface $serializer)
     {
         $this->serializer = $serializer;
     }
+
     /**
      * @return SerializerInterface
      */
@@ -74,6 +79,7 @@ class QueueSubscriber
     {
         return $this->serializer;
     }
+
     /**
      * @param string $format
      */
@@ -81,6 +87,7 @@ class QueueSubscriber
     {
         $this->format = $format;
     }
+
     /**
      * @return string
      */
@@ -92,6 +99,7 @@ class QueueSubscriber
 
         return $this->format;
     }
+
     /**
      * @param int $priority
      */
@@ -99,6 +107,7 @@ class QueueSubscriber
     {
         $this->priority = (int) $priority;
     }
+
     /**
      * @return int
      */
@@ -106,18 +115,22 @@ class QueueSubscriber
     {
         return $this->priority;
     }
+
     public function postPersist(LifecycleEventArgs $event)
     {
         $this->process('ADD', $event);
     }
+
     public function postUpdate(LifecycleEventArgs $event)
     {
         $this->process('ADD', $event);
     }
+
     public function postRemove(LifecycleEventArgs $event)
     {
         $this->process('DELETE', $event);
     }
+
     protected function process($action, LifecycleEventArgs $event)
     {
         $document = $event->getDocument();

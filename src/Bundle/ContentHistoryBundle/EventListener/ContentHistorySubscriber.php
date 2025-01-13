@@ -33,6 +33,7 @@ class ContentHistorySubscriber
      * @var string
      */
     protected $className;
+
     /**
      * @param string $className
      */
@@ -41,6 +42,7 @@ class ContentHistorySubscriber
         $this->eventDispatcher = $eventDispatcher;
         $this->className = $className;
     }
+
     public function onFlush(OnFlushEventArgs $args)
     {
         $dm = $args->getDocumentManager();
@@ -50,6 +52,7 @@ class ContentHistorySubscriber
         $this->dispatch($dm, $uow->getScheduledDocumentUpdates(), ContentHistoryEvent::UPDATE);
         $this->dispatch($dm, $uow->getScheduledDocumentDeletions(), ContentHistoryEvent::DELETE);
     }
+
     /**
      * @param string $action
      */
@@ -73,6 +76,7 @@ class ContentHistorySubscriber
             }
         }
     }
+
     /**
      * @param string $action
      *

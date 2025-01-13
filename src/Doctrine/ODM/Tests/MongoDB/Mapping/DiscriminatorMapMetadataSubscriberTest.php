@@ -33,16 +33,6 @@ class DiscriminatorMapMetadataSubscriberTest extends \PHPUnit\Framework\TestCase
         $this->resolver = $this->createMock('Integrated\\Doctrine\\ODM\\MongoDB\\Mapping\\DiscriminatorMapResolverInterface');
     }
 
-    public function testInterface()
-    {
-        self::assertInstanceOf('Doctrine\\Common\\EventSubscriber', $this->getInstance());
-    }
-
-    public function testGetSubscribedEvents()
-    {
-        self::assertEquals([Events::loadClassMetadata], $this->getInstance()->getSubscribedEvents());
-    }
-
     public function testLoadClassMetadata()
     {
         $this->resolver->expects($this->once())

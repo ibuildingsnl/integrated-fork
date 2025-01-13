@@ -92,7 +92,7 @@ class ContentProvider
             }
         }
 
-        if (count($contentType)) {
+        if (\count($contentType)) {
             $contentTypesQuery = $query->createFilterQuery('contenttypes');
             $this->setContentTypes($contentType, $contentTypesQuery, $filter, $request);
         }

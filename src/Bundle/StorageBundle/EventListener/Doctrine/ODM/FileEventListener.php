@@ -35,11 +35,13 @@ class FileEventListener
      * @var StorageIntentTransformer
      */
     private $intentTransformer;
+
     public function __construct(ManagerInterface $manager, StorageIntentTransformer $intentTransformer)
     {
         $this->manager = $manager;
         $this->intentTransformer = $intentTransformer;
     }
+
     /**
      * This event will be called on a document persist.
      */
@@ -47,6 +49,7 @@ class FileEventListener
     {
         $this->intentTransformer->transform(new DoctrineDocument($args->getDocument()));
     }
+
     /**
      * This event will be called on any flush in doctrine.
      */

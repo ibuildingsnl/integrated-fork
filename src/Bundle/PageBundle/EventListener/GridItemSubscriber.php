@@ -41,6 +41,7 @@ class GridItemSubscriber
             $args->getDocumentManager()->remove($block);
         }
     }
+
     public function preUpdate(PreUpdateEventArgs $args)
     {
         $document = $args->getDocument();
@@ -57,6 +58,7 @@ class GridItemSubscriber
             $args->getDocumentManager()->remove($removedBlock);
         }
     }
+
     /**
      * @return array|InlineTextBlock[]
      */
@@ -64,6 +66,7 @@ class GridItemSubscriber
     {
         return $dm->getRepository(InlineTextBlock::class)->findBy(['page' => $page]);
     }
+
     /**
      * @return array
      */
@@ -79,6 +82,7 @@ class GridItemSubscriber
 
         return $blocks;
     }
+
     /**
      * @return array
      */

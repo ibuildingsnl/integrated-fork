@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\WorkflowBundle\Doctrine\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Persistence\ManagerRegistry;
@@ -28,10 +27,12 @@ class WorkflowLogInstanceInjectionListener
      * @var ManagerRegistry
      */
     protected $manager;
+
     public function __construct(ManagerRegistry $manager)
     {
         $this->manager = $manager;
     }
+
     /**
      * Add the user instance or a proxy to this user instance to the Log entity.
      */
@@ -59,6 +60,7 @@ class WorkflowLogInstanceInjectionListener
         $prop->setAccessible(true);
         $prop->setValue($object, $this->getInstance($class, $id));
     }
+
     /**
      * Try to get a reference to the user object else fetch it immediately from the
      * repository.

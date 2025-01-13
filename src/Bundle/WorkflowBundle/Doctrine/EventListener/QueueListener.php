@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\WorkflowBundle\Doctrine\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;

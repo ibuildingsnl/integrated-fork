@@ -28,6 +28,7 @@ class MongoDBContentTypeListener
      * @var QueueInterface
      */
     private $queue;
+
     /**
      * constructor.
      */
@@ -35,6 +36,7 @@ class MongoDBContentTypeListener
     {
         $this->queue = $queue;
     }
+
     public function postUpdate(LifecycleEventArgs $event)
     {
         $document = $event->getDocument();

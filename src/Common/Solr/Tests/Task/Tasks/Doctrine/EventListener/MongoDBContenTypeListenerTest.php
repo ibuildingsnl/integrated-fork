@@ -35,18 +35,6 @@ class MongoDBContenTypeListenerTest extends \PHPUnit\Framework\TestCase
         $this->queue = $this->createMock(QueueInterface::class);
     }
 
-    public function testInterface()
-    {
-        $this->assertInstanceOf(EventSubscriber::class, $this->getInstance());
-    }
-
-    public function testGetSubscribedEvents()
-    {
-        self::assertEquals([
-            Events::postUpdate,
-        ], $this->getInstance()->getSubscribedEvents());
-    }
-
     public function testPostUpdate()
     {
         $this->queue->expects($this->once())

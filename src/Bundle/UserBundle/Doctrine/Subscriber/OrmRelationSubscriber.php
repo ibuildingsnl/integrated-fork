@@ -27,10 +27,12 @@ class OrmRelationSubscriber
      * @var ManagerRegistry
      */
     protected $dm;
+
     public function __construct(ManagerRegistry $dm)
     {
         $this->dm = $dm;
     }
+
     public function postLoad(LifecycleEventArgs $args)
     {
         $object = $args->getObject();

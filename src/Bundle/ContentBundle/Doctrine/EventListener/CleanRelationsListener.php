@@ -25,6 +25,7 @@ use Integrated\Common\ContentType\ContentTypeInterface;
 class CleanRelationsListener
 {
     public const RELATION_DOCUMENT = 'Integrated\Bundle\ContentBundle\Document\Relation\Relation';
+
     public function preRemove(LifecycleEventArgs $args)
     {
         // Get document

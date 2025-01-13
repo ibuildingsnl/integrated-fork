@@ -26,6 +26,7 @@ class DiscriminatorMapMetadataSubscriber
      * @var DiscriminatorMapResolverInterface
      */
     private $resolver;
+
     /**
      * Constructor.
      */
@@ -33,6 +34,7 @@ class DiscriminatorMapMetadataSubscriber
     {
         $this->resolver = $resolver;
     }
+
     /**
      * Resolve and replace the discriminator map.
      *

@@ -35,19 +35,6 @@ class MongoDBReferencesListenerTest extends \PHPUnit\Framework\TestCase
         $this->queue = $this->createMock(QueueInterface::class);
     }
 
-    public function testInterface()
-    {
-        $this->assertInstanceOf(EventSubscriber::class, $this->getInstance());
-    }
-
-    public function testGetSubscribedEvents()
-    {
-        self::assertEquals([
-            Events::postPersist,
-            Events::postUpdate,
-        ], $this->getInstance()->getSubscribedEvents());
-    }
-
     public function testPostPersist()
     {
         $this->queue->expects($this->once())
