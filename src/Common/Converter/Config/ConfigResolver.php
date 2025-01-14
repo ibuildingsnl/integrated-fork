@@ -99,7 +99,7 @@ class ConfigResolver implements ConfigResolverInterface
     /**
      * Add a new config to the to the resolved instances cache.
      *
-     * @param string $class
+     * @param class-string $class
      */
     protected function setInstance($class, ?ConfigInterface $config = null)
     {
