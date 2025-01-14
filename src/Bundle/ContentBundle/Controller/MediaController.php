@@ -138,6 +138,10 @@ class MediaController extends AbstractController
             $options['contenttypes'] = array_intersect($options['contenttypes'], $request->query->all('contenttypes'));
         }
 
+        if (!\count($options['contenttypes'])) {
+            $options['contenttypes'] = ['file'];
+        }
+
         $this->setYearMonthFilter($options, $request->query->get('year_month'));
 
         $client = $this->getSolarium();

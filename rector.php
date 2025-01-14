@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\Doctrine\Set\DoctrineSetList;
 use Rector\Symfony\Set\SymfonySetList;
 
 return RectorConfig::configure()
@@ -13,22 +14,22 @@ return RectorConfig::configure()
     // ->withPhpSets()
     //->withSymfonyContainerXml(__DIR__ . '/var/cache/dev/App_KernelDevDebugContainer.xml')
     ->withSets([
-        \Rector\Doctrine\Set\DoctrineSetList::TYPED_COLLECTIONS,
-        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_CODE_QUALITY,
-        \Rector\Doctrine\Set\DoctrineSetList::YAML_TO_ANNOTATIONS,
-        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_COMMON_20,
-        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_COLLECTION_22,
-        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_DBAL_211,
-        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_DBAL_30,
-        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_DBAL_40,
-        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_ORM_25,
-        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_ORM_29,
-        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_ORM_213,
-        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_ORM_214,
-        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_BUNDLE_210,
-        \Rector\Doctrine\Set\DoctrineSetList::ANNOTATIONS_TO_ATTRIBUTES,
-        \Rector\Doctrine\Set\DoctrineSetList::GEDMO_ANNOTATIONS_TO_ATTRIBUTES,
-        \Rector\Doctrine\Set\DoctrineSetList::MONGODB__ANNOTATIONS_TO_ATTRIBUTES,
+        DoctrineSetList::TYPED_COLLECTIONS,
+        DoctrineSetList::DOCTRINE_CODE_QUALITY,
+        DoctrineSetList::YAML_TO_ANNOTATIONS,
+        DoctrineSetList::DOCTRINE_COMMON_20,
+        DoctrineSetList::DOCTRINE_COLLECTION_22,
+        DoctrineSetList::DOCTRINE_DBAL_211,
+        DoctrineSetList::DOCTRINE_DBAL_30,
+        DoctrineSetList::DOCTRINE_DBAL_40,
+        DoctrineSetList::DOCTRINE_ORM_25,
+        DoctrineSetList::DOCTRINE_ORM_29,
+        DoctrineSetList::DOCTRINE_ORM_213,
+        DoctrineSetList::DOCTRINE_ORM_214,
+        DoctrineSetList::DOCTRINE_BUNDLE_210,
+        DoctrineSetList::ANNOTATIONS_TO_ATTRIBUTES,
+        DoctrineSetList::GEDMO_ANNOTATIONS_TO_ATTRIBUTES,
+        DoctrineSetList::MONGODB__ANNOTATIONS_TO_ATTRIBUTES,
 
         SymfonySetList::CONFIGS,
         SymfonySetList::SYMFONY_50_TYPES,
