@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Tests\Doctrine\EventListener;
 
-use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Integrated\Bundle\WorkflowBundle\Doctrine\EventListener\QueueListener;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;

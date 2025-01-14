@@ -13,6 +13,23 @@ return RectorConfig::configure()
     // ->withPhpSets()
     //->withSymfonyContainerXml(__DIR__ . '/var/cache/dev/App_KernelDevDebugContainer.xml')
     ->withSets([
+        \Rector\Doctrine\Set\DoctrineSetList::TYPED_COLLECTIONS,
+        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_CODE_QUALITY,
+        \Rector\Doctrine\Set\DoctrineSetList::YAML_TO_ANNOTATIONS,
+        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_COMMON_20,
+        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_COLLECTION_22,
+        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_DBAL_211,
+        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_DBAL_30,
+        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_DBAL_40,
+        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_ORM_25,
+        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_ORM_29,
+        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_ORM_213,
+        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_ORM_214,
+        \Rector\Doctrine\Set\DoctrineSetList::DOCTRINE_BUNDLE_210,
+        \Rector\Doctrine\Set\DoctrineSetList::ANNOTATIONS_TO_ATTRIBUTES,
+        \Rector\Doctrine\Set\DoctrineSetList::GEDMO_ANNOTATIONS_TO_ATTRIBUTES,
+        \Rector\Doctrine\Set\DoctrineSetList::MONGODB__ANNOTATIONS_TO_ATTRIBUTES,
+
         SymfonySetList::CONFIGS,
         SymfonySetList::SYMFONY_50_TYPES,
         SymfonySetList::SYMFONY_CODE_QUALITY,

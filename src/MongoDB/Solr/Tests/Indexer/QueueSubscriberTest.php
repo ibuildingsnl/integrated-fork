@@ -11,10 +11,8 @@
 
 namespace Integrated\MongoDB\Solr\Tests\Indexer;
 
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use Doctrine\ODM\MongoDB\Events;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Queue\QueueInterface;
