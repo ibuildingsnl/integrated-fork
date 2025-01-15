@@ -24,11 +24,11 @@ class BrandExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('integrated_brand', [$this, 'getBrandForChannel']),
-            new TwigFilter('integrated_brands', [$this, 'getAllBrands']),
-            new TwigFilter('integrated_other_brands', [$this, 'getAllOtherBrands']),
-            new TwigFilter('integrated_brand_profile', [$this, 'getBrandProfileForChannel']),
-            new TwigFilter('integrated_brand_website_channel', [$this, 'getBrandWebsiteChannel']),
+            new TwigFilter('integrated_brand', $this->getBrandForChannel(...)),
+            new TwigFilter('integrated_brands', $this->getAllBrands(...)),
+            new TwigFilter('integrated_other_brands', $this->getAllOtherBrands(...)),
+            new TwigFilter('integrated_brand_profile', $this->getBrandProfileForChannel(...)),
+            new TwigFilter('integrated_brand_website_channel', $this->getBrandWebsiteChannel(...)),
         ];
     }
 

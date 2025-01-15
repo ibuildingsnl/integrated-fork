@@ -11,12 +11,13 @@
 
 namespace Integrated\Bundle\ContentBundle\Doctrine\EventListener;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Common\Content\RankableInterface;
 
-class UpdateRankListener implements EventSubscriber
+#[AsDocumentListener(event: 'onFlush')]
+class UpdateRankListener
 {
     public const RANK_FIRST_TAG = '-first-';
     public const RANK_MIN_CHAR = 'A';
@@ -25,13 +26,6 @@ class UpdateRankListener implements EventSubscriber
     public const ASCII_TABLE_POS_LOWER_A = 97;
     public const ASCII_TABLE_POS_UPPER_A = 65;
     public const ALPHABET_LENGTH = 26;
-
-    public function getSubscribedEvents()
-    {
-        return [
-            'onFlush',
-        ];
-    }
 
     /**
      * @throws \Exception

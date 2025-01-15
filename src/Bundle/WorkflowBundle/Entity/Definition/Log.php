@@ -57,7 +57,7 @@ class Log
     }
 
     /**
-     * @return $this;
+     * @return $this
      */
     public function setWorkflow(Definition $workflow)
     {

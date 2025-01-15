@@ -41,7 +41,7 @@ class RelationsType extends AbstractType
         $this->manager = $manager;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var ContentTypeInterface $type */
         $type = $options['content_type'];
@@ -82,7 +82,7 @@ class RelationsType extends AbstractType
         $builder->addModelTransformer(new RelationsTransformer($relations, $this->manager->getManager()));
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(['data_class' => null]);
         $resolver->setRequired(['content_type']);

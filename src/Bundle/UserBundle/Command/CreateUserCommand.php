@@ -140,7 +140,7 @@ The <info>%command.name%</info> command creates a new user
                     $this->roleManager->persist($objectRole);
                     $user->addRole($objectRole);
                 } else {
-                    $output->writeln(sprintf('The role %s not found ', $role));
+                    $output->writeln(\sprintf('The role %s not found ', $role));
                 }
             }
         }
@@ -148,7 +148,7 @@ The <info>%command.name%</info> command creates a new user
         try {
             $this->userManager->persist($user);
         } catch (\Exception $e) {
-            $output->writeln(sprintf('Aborting: %s', $e->getMessage()));
+            $output->writeln(\sprintf('Aborting: %s', $e->getMessage()));
 
             return self::FAILURE;
         }

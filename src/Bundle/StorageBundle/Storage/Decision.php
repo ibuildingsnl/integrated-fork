@@ -12,7 +12,7 @@
 namespace Integrated\Bundle\StorageBundle\Storage;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityManagerInterface;
 use Integrated\Common\Storage\DecisionInterface;
 use Integrated\Common\Storage\FilesystemRegistryInterface;
 
@@ -31,15 +31,18 @@ class Decision implements DecisionInterface
      */
     protected $decisionMap;
 
-    public function __construct(FilesystemRegistryInterface $registry, array $decisionMap)
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(FilesystemRegistryInterface $registry, array $decisionMap, EntityManagerInterface $entityManager)
     {
         $this->registry = $registry;
         $this->decisionMap = $decisionMap;
+        $this->entityManager = $entityManager;
     }
 
     public function getFilesystems($object)
     {
-        $className = ClassUtils::getRealClass($object::class);
+        $className = $this->entityManager->getClassMetadata($object::class)->getName();
         if (isset($this->decisionMap[$className])) {
             return new ArrayCollection(array_values($this->decisionMap[$className]));
         }

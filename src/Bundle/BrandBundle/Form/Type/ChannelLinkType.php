@@ -24,7 +24,7 @@ class ChannelLinkType extends AbstractType
     ) {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('type', ChoiceType::class, [
             'choices' => $this->linkTypeRegistry->allTypes(),
@@ -56,7 +56,7 @@ class ChannelLinkType extends AbstractType
                 'return_object' => true,
                 'label' => $this->translator->trans('Channel'),
             ]);
-            $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
                 $form = $event->getForm();
                 $link = $event->getData();
                 if ($form->get('choose_channel')?->getData() && $link instanceof ChannelLink) {
@@ -66,7 +66,7 @@ class ChannelLinkType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('brand_name', $this->translator->trans('this'));
         $resolver->setDefault('allow_choose', false);

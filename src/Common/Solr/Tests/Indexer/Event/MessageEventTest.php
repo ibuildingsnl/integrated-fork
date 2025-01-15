@@ -21,7 +21,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class MessageEventTest extends IndexerEventTest
 {
     /**
-     * @var QueueMessageInterface|MockObject
+     * @var QueueMessageInterface&MockObject
      */
     protected $message;
 

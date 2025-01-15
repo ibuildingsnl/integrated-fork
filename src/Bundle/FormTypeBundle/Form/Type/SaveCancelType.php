@@ -21,7 +21,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class SaveCancelType extends SubmitType
 {
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         parent::buildView($view, $form, $options);
 
@@ -30,7 +30,7 @@ class SaveCancelType extends SubmitType
         $view->vars['cancel_route_parameters'] = $options['cancel_route_parameters'];
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 

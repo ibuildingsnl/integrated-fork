@@ -22,7 +22,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ActionMatcherInterface|MockObject
+     * @var ActionMatcherInterface&MockObject
      */
     private $matcher;
 

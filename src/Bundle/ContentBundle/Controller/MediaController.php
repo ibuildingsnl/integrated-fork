@@ -138,6 +138,10 @@ class MediaController extends AbstractController
             $options['contenttypes'] = array_intersect($options['contenttypes'], $request->query->all('contenttypes'));
         }
 
+        if (!\count($options['contenttypes'])) {
+            $options['contenttypes'] = ['file'];
+        }
+
         $this->setYearMonthFilter($options, $request->query->get('year_month'));
 
         $client = $this->getSolarium();
@@ -238,7 +242,7 @@ class MediaController extends AbstractController
             return (new JsonResponse(
                 ['error' => 'This file is not uploaded. Is this filetype allowed? Is the file too big?']
             ))
-                ->setStatusCode(422);
+                ->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 

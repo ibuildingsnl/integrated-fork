@@ -16,6 +16,7 @@ use Integrated\Bundle\UserBundle\Model\GroupableInterface;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\Solr\Search\Type\AbstractTypeExtension;
+use Solarium\Component\Facet\Field;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -43,12 +44,15 @@ class WorkflowExtension extends AbstractTypeExtension
         $facet = $query->getFacetSet();
         $facet->setMinCount(1);
 
-        $facet->createFacetField('workflow_state')
-            ->setField('facet_workflow_state')
+        /** @var Field $facetField */
+        $facetField = $facet->createFacetField('workflow_state');
+
+        $facetField->setField('facet_workflow_state')
             ->getLocalParameters()->setExclude('workflow_state');
 
-        $facet->createFacetField('workflow_assigned')
-            ->setField('facet_workflow_assigned')
+        /** @var Field $facetField */
+        $facetField = $facet->createFacetField('workflow_assigned');
+        $facetField->setField('facet_workflow_assigned')
             ->getLocalParameters()->setExclude('workflow_assigned');
 
         $helper = $query->getHelper();
@@ -86,18 +90,18 @@ class WorkflowExtension extends AbstractTypeExtension
             // allow content with group access
 
             if ($groups) {
-                $query[] = sprintf('security_workflow_read: ((%s))', implode(' ) OR (', $groups));
+                $query[] = \sprintf('security_workflow_read: ((%s))', implode(' ) OR (', $groups));
             }
         }
 
         if ($user instanceof UserInterface) {
             // always allow access to assigned content
-            $query[] = sprintf('facet_workflow_assigned_id: %s', $user->getId());
+            $query[] = \sprintf('facet_workflow_assigned_id: %s', $user->getId());
         }
 
         if ($user instanceof User) {
             if ($person = $user->getRelation()) {
-                $query[] = sprintf('author: %s', $person->getId());
+                $query[] = \sprintf('author: %s', $person->getId());
             }
         }
 

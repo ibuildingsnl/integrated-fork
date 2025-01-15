@@ -72,22 +72,22 @@ class CustomFieldsTypeTest extends TypeTestCase
      */
     protected function getContentType()
     {
-        /** @var ContentTypeInterface|MockObject $contentType */
+        /** @var ContentTypeInterface&MockObject $contentType */
         $contentType = $this->createMock(ContentTypeInterface::class);
 
-        /** @var Field|MockObject $defaultField */
+        /** @var Field&MockObject $defaultField */
         $defaultField = $this->createMock(Field::class);
 
-        /** @var CustomField|MockObject $customField1 */
+        /** @var CustomField&MockObject $customField1 */
         $customField1 = $this->createMock(CustomField::class);
 
-        /** @var CustomField|MockObject $customField2 */
+        /** @var CustomField&MockObject $customField2 */
         $customField2 = $this->createMock(CustomField::class);
 
-        /** @var CustomField|MockObject $customField3 */
+        /** @var CustomField&MockObject $customField3 */
         $customField3 = $this->createMock(CustomField::class);
 
-        /** @var CustomField|MockObject $customField4 */
+        /** @var CustomField&MockObject $customField4 */
         $customField4 = $this->createMock(CustomField::class);
 
         // Stub the customField getters so we can check the outcome

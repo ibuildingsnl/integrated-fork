@@ -30,7 +30,7 @@ class EmbeddedDocumentType extends AbstractType
         $this->metadataFactory = $metadataFactory;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $metadata = $this->metadataFactory->getMetadata($options['data_class']);
 

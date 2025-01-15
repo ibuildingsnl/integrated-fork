@@ -21,7 +21,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class TinyMCEType extends AbstractType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         @trigger_error(
             'The formtype TinyMCEType is deprecated in favour of EditorType and will be removed in the future',

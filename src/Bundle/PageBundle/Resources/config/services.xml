@@ -18,7 +18,6 @@
         </service>
 
         <service id="integrated_page.grid.factory" class="Integrated\Bundle\PageBundle\Grid\GridFactory" public="true">
-            <argument type="service" id="integrated_block.block_repository" />
         </service>
 
         <service id="integrated_page.services.content_type_controller_manager" class="Integrated\Bundle\PageBundle\Services\ContentTypeControllerManager" />

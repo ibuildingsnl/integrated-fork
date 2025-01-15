@@ -47,6 +47,7 @@ class StorageIntentUpload extends File implements StorageInterface
         return $this->uploadedFile->getFilename();
     }
 
+    #[\ReturnTypeWillChange]
     public function getPathname()
     {
         return $this->uploadedFile->getPathname();

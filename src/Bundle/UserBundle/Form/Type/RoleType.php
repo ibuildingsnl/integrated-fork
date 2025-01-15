@@ -34,7 +34,7 @@ class RoleType extends AbstractType
         $this->manager = $manager;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('multiple', true);
 

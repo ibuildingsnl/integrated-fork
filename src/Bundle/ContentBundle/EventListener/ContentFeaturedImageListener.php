@@ -16,7 +16,7 @@ class ContentFeaturedImageListener implements EventSubscriberInterface
     ) {
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::CONTENT_DISTRIBUTED => ['buildForm', -60],

@@ -46,7 +46,7 @@ class ContentTypeChoice extends AbstractType
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $choices = [];
         foreach ($this->contentTypeManager->getAll() as $contentType) {

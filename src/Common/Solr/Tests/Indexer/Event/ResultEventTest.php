@@ -21,7 +21,7 @@ use Solarium\Core\Query\Result\ResultInterface;
 class ResultEventTest extends IndexerEventTest
 {
     /**
-     * @var ResultInterface|MockObject
+     * @var ResultInterface&MockObject
      */
     protected $result;
 

@@ -34,7 +34,7 @@ class SearchSelectionsExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('getSearchSelections', [$this, 'getSearchSelections']),
+            new TwigFunction('getSearchSelections', $this->getSearchSelections(...)),
         ];
     }
 

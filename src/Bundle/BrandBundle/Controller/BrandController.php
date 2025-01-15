@@ -62,7 +62,7 @@ class BrandController extends AbstractController
         }
 
         return $this->render('@IntegratedBrand/brand/edit.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'linkTypes' => $this->linkTypeRegistry->allTypes(),
         ]);
     }
@@ -98,7 +98,7 @@ class BrandController extends AbstractController
         }
 
         return $this->render('@IntegratedBrand/brand/edit.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'linkTypes' => $this->linkTypeRegistry->allTypes(),
             'brand' => $brand,
         ]);
@@ -109,7 +109,7 @@ class BrandController extends AbstractController
         $this->checkPermissions();
 
         $form = $this->createFormBuilder()
-            ->setMethod('DELETE')
+            ->setMethod(Request::METHOD_DELETE)
             ->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']])
             ->getForm();
 
@@ -131,7 +131,7 @@ class BrandController extends AbstractController
 
         return $this->render('@IntegratedBrand/brand/delete.html.twig', [
             'brand' => $brand,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 

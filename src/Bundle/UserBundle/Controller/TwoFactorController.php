@@ -18,7 +18,6 @@ use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -73,7 +72,7 @@ class TwoFactorController extends AbstractController
         ]);
     }
 
-    private function createDeleteForm(UserInterface $user): FormInterface
+    private function createDeleteForm(UserInterface $user): Form
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();

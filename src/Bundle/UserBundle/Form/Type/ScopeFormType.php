@@ -36,14 +36,14 @@ class ScopeFormType extends AbstractType
         $this->manager = $manager;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('name', TextType::class, [
             'required' => false,
         ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('empty_data', function (FormInterface $form) {
             return $this->getManager()->create();

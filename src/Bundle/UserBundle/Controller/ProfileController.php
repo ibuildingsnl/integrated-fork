@@ -17,7 +17,6 @@ use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
@@ -38,10 +37,9 @@ class ProfileController extends AbstractController
         $user = $this->getUser();
 
         if (!$user instanceof UserInterface) {
-            throw new \LogicException(sprintf('$user is not and instance of %s', UserInterface::class));
+            throw new \LogicException(\sprintf('$user is not and instance of %s', UserInterface::class));
         }
 
-        /** @var Form $form */
         $form = $this->createProfileForm($user);
         $form->handleRequest($request);
 
@@ -67,7 +65,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    protected function createProfileForm(UserInterface $user): FormInterface
+    protected function createProfileForm(UserInterface $user): Form
     {
         $form = $this->createForm(ProfileFormType::class, $user, [
             'action' => $this->generateUrl('integrated_user_profile_index'),

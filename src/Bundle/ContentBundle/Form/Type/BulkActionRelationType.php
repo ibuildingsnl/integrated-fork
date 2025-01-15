@@ -46,7 +46,7 @@ class BulkActionRelationType extends AbstractType
         $this->routeParams = $routeParams;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
             'references',
@@ -62,7 +62,7 @@ class BulkActionRelationType extends AbstractType
         );
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setRequired(['relation', 'relation_handler'])

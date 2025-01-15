@@ -32,7 +32,7 @@ class PermissionsType extends AbstractType
         $this->repository = $repository;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addViewTransformer($this->getTransformer());
 
@@ -57,7 +57,7 @@ class PermissionsType extends AbstractType
         ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $emptyData = function (FormInterface $form) {
             return new ArrayCollection();

@@ -22,7 +22,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ProcessorRegistryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ProcessorInterface[][]|MockObject[][]
+     * @var ProcessorInterface[][]&MockObject[][]
      */
     protected $processors = [];
 

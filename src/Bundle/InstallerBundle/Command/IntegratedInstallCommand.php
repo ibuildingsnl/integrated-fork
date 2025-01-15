@@ -97,11 +97,11 @@ class IntegratedInstallCommand extends Command
     {
         $command = implode(' ', [$this->php, 'bin/console', $command, '-e', $this->kernel->getEnvironment()]);
 
-        $output->writeln(sprintf('Execute %s', $command), OutputInterface::VERBOSITY_VERY_VERBOSE);
+        $output->writeln(\sprintf('Execute %s', $command), OutputInterface::VERBOSITY_VERY_VERBOSE);
 
         $process = Process::fromShellCommandline($command);
         $process->setTimeout(0);
-        $process->run(function ($type, $buffer) use ($output) {
+        $process->run(function ($type, $buffer) use ($output): void {
             if (Process::ERR === $type) {
                 $output->write($buffer, false, $output::OUTPUT_RAW | $output::VERBOSITY_NORMAL);
             } else {
@@ -110,7 +110,7 @@ class IntegratedInstallCommand extends Command
         });
 
         if (!$process->isSuccessful()) {
-            $output->writeln(sprintf('Command %s failed', $command));
+            $output->writeln(\sprintf('Command %s failed', $command));
         }
     }
 

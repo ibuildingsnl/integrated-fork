@@ -14,7 +14,7 @@ class SocialScriptExtension extends AbstractExtension
     public function getFilters()
     {
         return [
-            new TwigFilter('get_social_media_scripts', [$this, 'getSocialMediaScripts']),
+            new TwigFilter('get_social_media_scripts', $this->getSocialMediaScripts(...)),
         ];
     }
 

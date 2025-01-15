@@ -46,7 +46,7 @@ class WorkflowFormType extends AbstractType
         $this->tokenStorage = $tokenStorage;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
             'state',
@@ -115,7 +115,7 @@ class WorkflowFormType extends AbstractType
         return $users;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired('workflow');
         $resolver->setRequired('contentType');

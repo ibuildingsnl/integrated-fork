@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\UserBundle\Doctrine\Subscriber;
 
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Integrated\Bundle\UserBundle\Model\User;
@@ -20,7 +20,8 @@ use Integrated\Bundle\UserBundle\Model\User;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class OrmRelationSubscriber implements EventSubscriber
+#[AsDoctrineListener(event: Events::postLoad)]
+class OrmRelationSubscriber
 {
     /**
      * @var ManagerRegistry
@@ -30,18 +31,6 @@ class OrmRelationSubscriber implements EventSubscriber
     public function __construct(ManagerRegistry $dm)
     {
         $this->dm = $dm;
-    }
-
-    /**
-     * Returns an array of events this subscriber wants to listen to.
-     *
-     * @return array
-     */
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::postLoad,
-        ];
     }
 
     public function postLoad(LifecycleEventArgs $args)

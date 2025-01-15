@@ -54,7 +54,7 @@ class IpListChannelListener implements EventSubscriberInterface
 
         if ($channel instanceof Channel && $channel->isIpProtected() && !$this->matcher->match($event->getRequest())) {
             $response = new Response();
-            $response->setStatusCode(403, 'IP address rejected');
+            $response->setStatusCode(Response::HTTP_FORBIDDEN, 'IP address rejected');
 
             $event->setResponse($response);
         }

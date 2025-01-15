@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Doctrine\EventListener;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Persistence\ManagerRegistry;
@@ -20,13 +20,13 @@ use Integrated\Bundle\WorkflowBundle\Entity\Workflow\State;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class WorkflowStateInstanceInjectionListener implements EventSubscriber
+#[AsDoctrineListener(event: Events::postLoad)]
+class WorkflowStateInstanceInjectionListener
 {
     /**
      * @var ManagerRegistry
      */
     protected $orm;
-
     /**
      * @var ManagerRegistry
      */
@@ -36,18 +36,6 @@ class WorkflowStateInstanceInjectionListener implements EventSubscriber
     {
         $this->orm = $orm;
         $this->odm = $odm;
-    }
-
-    /**
-     * Returns an array of events this subscriber wants to listen to.
-     *
-     * @return array
-     */
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::postLoad,
-        ];
     }
 
     /**

@@ -49,13 +49,13 @@ class ContentTypePageListener implements EventSubscriberInterface
         $controller = $this->manager->getController($class = $contentTypePage->getContentType()->getClass());
 
         if (!$controller) {
-            throw new \Exception(sprintf('Controller service for class "%s" is not defined', $class));
+            throw new \Exception(\sprintf('Controller service for class "%s" is not defined', $class));
         }
 
         $contentTypePage->setControllerService($controller['serviceId']);
 
         if (!preg_match('/Content\\\(.+)Controller$/', $controller['class'], $match)) {
-            throw new \InvalidArgumentException(sprintf('The %s class is not a contentTypeController class (the namespace must contain Controller\Content and the class name must end with Controller)', $controller['class']));
+            throw new \InvalidArgumentException(\sprintf('The %s class is not a contentTypeController class (the namespace must contain Controller\Content and the class name must end with Controller)', $controller['class']));
         }
 
         $form = $event->getForm();
@@ -70,7 +70,7 @@ class ContentTypePageListener implements EventSubscriberInterface
 
         $form->add('layout', LayoutChoiceType::class, [
             'theme' => $this->resolver->getTheme($contentTypePage->getChannel()),
-            'directory' => strtolower(sprintf('/content/%s/%s', $match[1], $contentTypePage->getControllerAction())),
+            'directory' => strtolower(\sprintf('/content/%s/%s', $match[1], $contentTypePage->getControllerAction())),
         ]);
     }
 }

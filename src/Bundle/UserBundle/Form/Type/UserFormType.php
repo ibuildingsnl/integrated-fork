@@ -55,7 +55,7 @@ class UserFormType extends AbstractType
         $this->hasherFactory = $hasherFactory;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if ($options['optional']) {
             $builder->add(
@@ -133,7 +133,7 @@ class UserFormType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $emptyData = function (Options $options, $previous) {
             if (!$options['optional']) {

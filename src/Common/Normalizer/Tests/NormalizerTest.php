@@ -24,7 +24,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class NormalizerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ResolverInterface|MockObject
+     * @var ResolverInterface&MockObject
      */
     private $resolver;
 

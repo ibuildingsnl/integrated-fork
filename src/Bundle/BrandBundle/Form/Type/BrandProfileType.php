@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints\Length;
 
 class BrandProfileType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('name', TextType::class, [
             'priority' => 990,

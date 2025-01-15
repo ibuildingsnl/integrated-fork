@@ -27,7 +27,7 @@ class EditorImageRelationExtension extends AbstractTypeExtension
         $this->parser = $parser ?: new HtmlRelation();
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber(new EditorImageRelationEventListener($this->manager, $this->parser));
     }

@@ -23,7 +23,7 @@ use Integrated\Common\Content\Serializer\JsonLDNormalizer;
  */
 class Normalizer extends JsonLDNormalizer
 {
-    public function supportsNormalization($data, $format = null): bool
+    public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         return parent::supportsNormalization($data, $format) && (
             $data instanceof Article

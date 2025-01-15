@@ -43,7 +43,7 @@ class ConfigFormType extends AbstractType
         $this->registry = $registry;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var AdapterInterface|ConfigurableInterface $adapter */
         $adapter = $options['adapter'];
@@ -112,7 +112,7 @@ class ConfigFormType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $adapterNormalizer = function (Options $options, $adapter) {
             if (\is_string($adapter)) {
@@ -125,7 +125,7 @@ class ConfigFormType extends AbstractType
 
             if (!$adapter instanceof AdapterInterface) {
                 throw new InvalidOptionsException(
-                    sprintf(
+                    \sprintf(
                         'The option "%s" could not be normalized to a valid "%s" object',
                         'adapter',
                         'Integrated\\Common\\Channel\\Connector\\AdapterInterface'

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Integrated package.
  *
@@ -10,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Doctrine\EventListener;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Events;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
@@ -20,15 +21,9 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class CleanReferencesListener implements EventSubscriber
+#[AsDocumentListener(event: Events::preRemove)]
+class CleanReferencesListener
 {
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::preRemove,
-        ];
-    }
-
     public function preRemove(LifecycleEventArgs $args)
     {
         // Get document

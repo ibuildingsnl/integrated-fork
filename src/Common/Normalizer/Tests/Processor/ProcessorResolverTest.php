@@ -29,12 +29,12 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ProcessorResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RegistryInterface|MockObject
+     * @var RegistryInterface&MockObject
      */
     private $registry;
 
     /**
-     * @var ResolvedProcessorFactoryInterface|MockObject
+     * @var ResolvedProcessorFactoryInterface&MockObject
      */
     private $factory;
 

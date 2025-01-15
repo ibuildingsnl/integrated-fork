@@ -64,7 +64,7 @@ class LoginFormType extends AbstractType
         $this->translationDomain = $translationDomain;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('_username', TextType::class);
         $builder->add('_password', PasswordType::class);
@@ -105,7 +105,7 @@ class LoginFormType extends AbstractType
         $view->vars['full_name'] = ''; // field names should not be prefixed
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('method', 'post');
 

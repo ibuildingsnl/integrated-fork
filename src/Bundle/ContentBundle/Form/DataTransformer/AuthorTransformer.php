@@ -35,7 +35,7 @@ class AuthorTransformer implements DataTransformerInterface
         $this->mr = $mr;
     }
 
-    public function transform($arrayCollection)
+    public function transform($arrayCollection): mixed
     {
         if ($arrayCollection == null) {
             return [];
@@ -72,7 +72,7 @@ class AuthorTransformer implements DataTransformerInterface
         return $collection;
     }
 
-    public function reverseTransform($array)
+    public function reverseTransform($array): mixed
     {
         $mr = $this->mr->getManager();
         $collection = [];

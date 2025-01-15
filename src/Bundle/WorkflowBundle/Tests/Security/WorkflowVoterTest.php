@@ -35,17 +35,17 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ManagerRegistry|MockObject
+     * @var ManagerRegistry&MockObject
      */
     private $manager;
 
     /**
-     * @var ResolverInterface|MockObject
+     * @var ResolverInterface&MockObject
      */
     private $resolver;
 
     /**
-     * @var MetadataFactoryInterface|MockObject
+     * @var MetadataFactoryInterface&MockObject
      */
     private $metadata;
 
@@ -563,7 +563,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return GroupableInterface|MockObject
+     * @return GroupableInterface&MockObject
      */
     protected function getUser(array $groups = [])
     {
@@ -597,7 +597,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return Definition|MockObject
+     * @return Definition&MockObject
      */
     protected function getWorkflow()
     {
@@ -609,7 +609,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return State|MockObject
+     * @return State&MockObject
      */
     protected function getState(array $permissions = [], $never = false)
     {
@@ -629,7 +629,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
      * @param bool   $read
      * @param bool   $write
      *
-     * @return Permission|MockObject
+     * @return Permission&MockObject
      */
     protected function getPermission($group, $read, $write)
     {

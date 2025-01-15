@@ -21,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ContainerAwareRequestSerializerTest extends RequestSerializerTest
 {
     /**
-     * @var ContainerInterface|MockObject
+     * @var ContainerInterface&MockObject
      */
     private $container;
 

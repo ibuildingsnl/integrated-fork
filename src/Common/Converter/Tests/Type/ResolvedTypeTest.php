@@ -22,7 +22,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ResolvedTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var TypeInterface|MockObject
+     * @var TypeInterface&MockObject
      */
     private $type;
 

@@ -93,7 +93,7 @@ class BulkController extends AbstractController
         return $this->render('@IntegratedContent/bulk/configure.html.twig', [
             'id' => $bulk->getId(),
             'selection' => \count($bulk->getSelection()),
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
@@ -129,7 +129,7 @@ class BulkController extends AbstractController
         return $this->render('@IntegratedContent/bulk/confirm.html.twig', [
             'id' => $bulk->getId(),
             'selection' => \count($bulk->getSelection()),
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 

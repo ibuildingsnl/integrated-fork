@@ -11,7 +11,7 @@
 
 namespace Integrated\MongoDB\Solr\Indexer;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Events;
 use Integrated\Common\Content\ContentInterface;
@@ -22,23 +22,23 @@ use Symfony\Component\Serializer\SerializerInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class QueueSubscriber implements EventSubscriber
+#[AsDocumentListener(event: Events::postPersist)]
+#[AsDocumentListener(event: Events::postUpdate)]
+#[AsDocumentListener(event: Events::postRemove)]
+class QueueSubscriber
 {
     /**
      * @var QueueInterface
      */
     private $queue;
-
     /**
      * @var SerializerInterface
      */
     private $serializer;
-
     /**
      * @var string
      */
     private $format;
-
     /**
      * @var int
      */
@@ -114,15 +114,6 @@ class QueueSubscriber implements EventSubscriber
     public function getPriority()
     {
         return $this->priority;
-    }
-
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::postPersist,
-            Events::postUpdate,
-            Events::postRemove,
-        ];
     }
 
     public function postPersist(LifecycleEventArgs $event)

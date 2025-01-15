@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of BraincraftedTailwindBundle.
  *
@@ -26,12 +27,12 @@ class TailwindLabelExtension extends AbstractExtension
         $options = ['pre_escape' => 'html', 'is_safe' => ['html']];
 
         return [
-            new TwigFunction('label', [$this, 'labelFunction'], $options),
-            new TwigFunction('label_primary', [$this, 'labelPrimaryFunction'], $options),
-            new TwigFunction('label_success', [$this, 'labelSuccessFunction'], $options),
-            new TwigFunction('label_info', [$this, 'labelInfoFunction'], $options),
-            new TwigFunction('label_warning', [$this, 'labelWarningFunction'], $options),
-            new TwigFunction('label_danger', [$this, 'labelDangerFunction'], $options),
+            new TwigFunction('label', $this->labelFunction(...), $options),
+            new TwigFunction('label_primary', $this->labelPrimaryFunction(...), $options),
+            new TwigFunction('label_success', $this->labelSuccessFunction(...), $options),
+            new TwigFunction('label_info', $this->labelInfoFunction(...), $options),
+            new TwigFunction('label_warning', $this->labelWarningFunction(...), $options),
+            new TwigFunction('label_danger', $this->labelDangerFunction(...), $options),
         ];
     }
 
@@ -45,7 +46,7 @@ class TailwindLabelExtension extends AbstractExtension
      */
     public function labelFunction($text, $type = 'default')
     {
-        return sprintf('<span class="label%s">%s</span>', $type ? ' label-'.$type : '', $text);
+        return \sprintf('<span class="label%s">%s</span>', $type ? ' label-'.$type : '', $text);
     }
 
     /**

@@ -29,14 +29,14 @@ class CommentTagTransformer implements DataTransformerInterface
      *
      * @throws TransformationFailedException
      */
-    public function transform($content)
+    public function transform($content): mixed
     {
         if (null === $content) {
             return null;
         }
 
         if (!\is_string($content)) {
-            throw new TransformationFailedException(sprintf(
+            throw new TransformationFailedException(\sprintf(
                 'Expected string, %s given',
                 \gettype($content)
             ));
@@ -57,14 +57,14 @@ class CommentTagTransformer implements DataTransformerInterface
      *
      * @throws TransformationFailedException
      */
-    public function reverseTransform($content)
+    public function reverseTransform($content): mixed
     {
         if (null === $content) {
             return null;
         }
 
         if (!\is_string($content)) {
-            throw new TransformationFailedException(sprintf(
+            throw new TransformationFailedException(\sprintf(
                 'Expected string, %s given',
                 \gettype($content)
             ));

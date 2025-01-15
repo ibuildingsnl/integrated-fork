@@ -21,7 +21,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class BatchEventTest extends IndexerEventTest
 {
     /**
-     * @var BatchOperation|MockObject
+     * @var BatchOperation&MockObject
      */
     protected $operation;
 

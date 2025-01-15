@@ -53,7 +53,7 @@ class MediaGalleryMenu
             return;
         }
 
-        foreach ($inArray as $key => $tuple) {
+        foreach ($inArray as $tuple) {
             if ($tuple['parent_id'] == $currentParentId) {
                 $tuple['children'] = [];
                 $this->makeParentChildRelations($inArray, $tuple['children'], $tuple['ID']);

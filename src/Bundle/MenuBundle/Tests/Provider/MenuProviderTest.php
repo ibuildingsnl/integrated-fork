@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Integrated package.
  *
@@ -32,12 +33,12 @@ class MenuProviderTest extends TestCase
     protected $provider;
 
     /**
-     * @var \Knp\Menu\FactoryInterface|MockObject
+     * @var \Knp\Menu\FactoryInterface&MockObject
      */
     protected $factory;
 
     /**
-     * @var EventDispatcherInterface|MockObject
+     * @var EventDispatcherInterface&MockObject
      */
     protected $eventDispatcher;
 
@@ -90,7 +91,7 @@ class MenuProviderTest extends TestCase
      */
     public function testGetFunctionTwiceWithValidMenu()
     {
-        /** @var ItemInterface|MockObject $menu */
+        /** @var ItemInterface&MockObject $menu */
         $menu = $this->createMock('Knp\Menu\ItemInterface');
 
         $this->factory

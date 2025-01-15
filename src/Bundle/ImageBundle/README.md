@@ -1,5 +1,5 @@
 # IntegratedImageBundle #
-Overwrites Gregwar\ImageBundle to provide additional functionality
+Implements and overwrites Gregwar\ImageBundle to provide additional functionality
 
 ## Requirements ##
 * See the require section in the composer.json

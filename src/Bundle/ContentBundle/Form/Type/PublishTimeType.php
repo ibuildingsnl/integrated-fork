@@ -26,7 +26,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class PublishTimeType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('startDate', DateTimeType::class, [
             'placeholder' => ' ',
@@ -51,12 +51,12 @@ class PublishTimeType extends AbstractType
         );
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
             [
                 'data_class' => 'Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime',
-                'constraints' => new Callback(function (?PublishTime $publishTime, ExecutionContextInterface $context) {
+                'constraints' => new Callback(function (?PublishTime $publishTime, ExecutionContextInterface $context): void {
                     if (!$publishTime) {
                         return;
                     }

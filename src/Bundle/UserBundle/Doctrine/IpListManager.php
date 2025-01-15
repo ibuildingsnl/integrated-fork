@@ -38,7 +38,7 @@ class IpListManager implements IpListManagerInterface
         $this->repository = $this->om->getRepository($class);
 
         if (!is_a($this->repository->getClassName(), IpList::class, true)) {
-            throw new \InvalidArgumentException(sprintf('The class "%s" is not a instance of %s', $this->repository->getClassName(), IpList::class));
+            throw new \InvalidArgumentException(\sprintf('The class "%s" is not a instance of %s', $this->repository->getClassName(), IpList::class));
         }
     }
 

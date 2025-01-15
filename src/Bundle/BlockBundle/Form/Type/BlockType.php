@@ -34,7 +34,7 @@ class BlockType extends AbstractType
         $this->repository = $dm->getRepository(Block::class);
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new BlockTransformer($this->repository));
     }

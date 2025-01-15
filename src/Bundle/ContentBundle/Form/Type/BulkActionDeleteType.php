@@ -21,7 +21,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BulkActionDeleteType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
             'removeReferences',
@@ -34,7 +34,7 @@ class BulkActionDeleteType extends AbstractType
         );
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setDefault('data_class', DeleteAction::class)

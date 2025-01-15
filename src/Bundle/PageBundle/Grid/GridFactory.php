@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\PageBundle\Grid;
 
-use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Column;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Grid;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Item;
@@ -23,11 +23,11 @@ use Integrated\Bundle\PageBundle\Document\Page\Grid\Row;
 class GridFactory
 {
     /**
-     * @var DocumentRepository
+     * @var BlockRepository
      */
     protected $blockRepository;
 
-    public function __construct(DocumentRepository $blockRepository)
+    public function __construct(BlockRepository $blockRepository)
     {
         $this->blockRepository = $blockRepository;
     }

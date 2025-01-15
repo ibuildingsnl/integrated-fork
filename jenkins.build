@@ -1,14 +1,14 @@
 set -e
 
-curl -sS https://getcomposer.org/installer | php8.1
+curl -sS https://getcomposer.org/installer | php8.3
 
 rm -Rf vendor
-php8.1 composer.phar update -n --ansi
-php8.1 vendor/bin/php-cs-fixer fix --verbose --show-progress=none --dry-run
-php8.1 vendor/bin/phpunit
-php8.1 vendor/bin/phpstan analyse --no-progress
+php8.3 composer.phar update -n --ansi
+php8.3 vendor/bin/php-cs-fixer fix --verbose --show-progress=none --dry-run
+php8.3 vendor/bin/phpunit
+php8.3 vendor/bin/phpstan analyse --no-progress
 
 rm -Rf vendor
-php8.1 composer.phar update -n --ansi --prefer-lowest
-php8.1 vendor/bin/phpunit
-php8.1 vendor/bin/phpstan analyse --no-progress
+php8.3 composer.phar update -n --ansi --prefer-lowest
+php8.3 vendor/bin/phpunit
+php8.3 vendor/bin/phpstan analyse --no-progress --configuration=phpstan.lowest.neon

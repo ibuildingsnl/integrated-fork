@@ -34,12 +34,12 @@ class DefinitionType extends AbstractType
         $this->repository = $repository;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new DefinitionTransformer($this->repository));
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $classNormalizer = function (Options $options) {
             return $this->repository->getClassName(); // force the class to always be the same as the repository

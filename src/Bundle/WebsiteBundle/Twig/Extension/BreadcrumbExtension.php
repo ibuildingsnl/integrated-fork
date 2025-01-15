@@ -58,12 +58,12 @@ class BreadcrumbExtension extends AbstractExtension
         return [
             new TwigFunction(
                 'integrated_breadcrumb',
-                [$this, 'renderBreadcrumb'],
+                $this->renderBreadcrumb(...),
                 ['is_safe' => ['html'], 'needs_context' => false]
             ),
             new TwigFunction(
                 'integrated_breadcrumb_items',
-                [$this, 'getBreadcrumb'],
+                $this->getBreadcrumb(...),
                 ['is_safe' => ['html'], 'needs_context' => false]
             ),
         ];

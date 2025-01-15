@@ -19,7 +19,7 @@ use Integrated\Bundle\UserBundle\Model\Role;
 
 class GroupFixtures extends AbstractFixture implements DependentFixtureInterface
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $group = new Group();
 
@@ -32,7 +32,7 @@ class GroupFixtures extends AbstractFixture implements DependentFixtureInterface
         $manager->flush();
     }
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             RoleFixtures::class,

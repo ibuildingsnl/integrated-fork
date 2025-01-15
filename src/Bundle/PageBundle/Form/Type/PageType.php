@@ -48,7 +48,7 @@ class PageType extends AbstractType
         $this->themeResolver = $themeResolver;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $channel = $this->channelContext->getChannel();
 
@@ -86,7 +86,7 @@ class PageType extends AbstractType
             ],
         ]);
 
-        $formModifier = function (FormInterface $form, ?ChannelInterface $channel = null) {
+        $formModifier = function (FormInterface $form, ?ChannelInterface $channel = null): void {
             $theme = null === $channel ? 'default' : $this->themeResolver->getTheme($channel);
 
             $form->add('layout', LayoutChoiceType::class, [
@@ -96,7 +96,7 @@ class PageType extends AbstractType
 
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) use ($formModifier) {
+            function (FormEvent $event) use ($formModifier): void {
                 $data = $event->getData();
 
                 $channel = $this->channelContext->getChannel();
@@ -110,7 +110,7 @@ class PageType extends AbstractType
 
         $builder->get('channel')->addEventListener(
             FormEvents::POST_SUBMIT,
-            function (FormEvent $event) use ($formModifier) {
+            function (FormEvent $event) use ($formModifier): void {
                 $formModifier($event->getForm()->getParent(), $event->getForm()->getData());
             }
         );

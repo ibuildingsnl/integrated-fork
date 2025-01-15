@@ -19,6 +19,7 @@ use Integrated\Common\Solr\Indexer\Job;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -128,7 +129,7 @@ The <info>%command.name%</info> command starts a index of the site.
         }
 
         if ($invalid) {
-            $text = sprintf('The content types "%s" do not exists', implode(', ', $invalid));
+            $text = \sprintf('The content types "%s" do not exists', implode(', ', $invalid));
 
             if ($input->getOption('no-interaction')) {
                 throw new \InvalidArgumentException($text);
@@ -138,7 +139,8 @@ The <info>%command.name%</info> command starts a index of the site.
 
             $output->writeln($text);
 
-            if (!$this->getHelper('question')->ask(
+            $helper = $this->getHelper('question');
+            if (!($helper instanceof QuestionHelper) || !$helper->ask(
                 $input,
                 $output,
                 new ConfirmationQuestion('Would you want to continue? [y/N] ', false)

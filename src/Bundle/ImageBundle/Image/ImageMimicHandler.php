@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\ImageBundle\Image;
 
 use Gregwar\Image\Source\File;
-use Gregwar\ImageBundle\ImageHandler;
 
 class ImageMimicHandler extends ImageHandler
 {

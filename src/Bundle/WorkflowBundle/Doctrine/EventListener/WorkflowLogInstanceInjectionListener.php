@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Doctrine\EventListener;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Persistence\ManagerRegistry;
@@ -20,7 +20,8 @@ use Integrated\Bundle\WorkflowBundle\Entity\Workflow\Log;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class WorkflowLogInstanceInjectionListener implements EventSubscriber
+#[AsDoctrineListener(event: Events::postLoad)]
+class WorkflowLogInstanceInjectionListener
 {
     /**
      * @var ManagerRegistry
@@ -30,13 +31,6 @@ class WorkflowLogInstanceInjectionListener implements EventSubscriber
     public function __construct(ManagerRegistry $manager)
     {
         $this->manager = $manager;
-    }
-
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::postLoad,
-        ];
     }
 
     /**

@@ -20,7 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RegisterType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('username', Type\EmailType::class, ['label' => 'E-mail address']);
 
@@ -37,7 +37,7 @@ class RegisterType extends AbstractType
         $builder->add('Register', SubmitType::class);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('data_class', User::class);
         $resolver->setDefault('validation_groups', 'Register');

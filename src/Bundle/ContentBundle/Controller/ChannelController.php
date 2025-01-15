@@ -205,7 +205,7 @@ class ChannelController extends AbstractController
     {
         $form = $this->createFormBuilder()
             ->setAction($this->generateUrl('integrated_content_channel_delete', ['id' => $id]))
-            ->setMethod('DELETE');
+            ->setMethod(Request::METHOD_DELETE);
         if ($deleteAllowed) {
             $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
         } else {

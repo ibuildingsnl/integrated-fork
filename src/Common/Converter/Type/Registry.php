@@ -63,6 +63,6 @@ class Registry implements RegistryInterface
             return $this->resolved[$name];
         }
 
-        throw new InvalidArgumentException(sprintf('Could not load converter type "%s"', $name));
+        throw new InvalidArgumentException(\sprintf('Could not load converter type "%s"', $name));
     }
 }

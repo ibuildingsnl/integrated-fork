@@ -30,7 +30,7 @@ class IntegratedContentExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('integrated_content', [$this, 'integratedContent'], ['is_safe' => ['html']]),
+            new TwigFilter('integrated_content', $this->integratedContent(...), ['is_safe' => ['html']]),
         ];
     }
 

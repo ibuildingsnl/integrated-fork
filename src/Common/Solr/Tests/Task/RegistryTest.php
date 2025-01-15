@@ -21,11 +21,11 @@ class RegistryTest extends \PHPUnit\Framework\TestCase
     public function testHasHandler()
     {
         $handlers = [
-            'class1' => function () {
+            'class1' => function (): void {
             },
-            'class2' => function () {
+            'class2' => function (): void {
             },
-            'class3' => function () {
+            'class3' => function (): void {
             },
         ];
 
@@ -40,11 +40,11 @@ class RegistryTest extends \PHPUnit\Framework\TestCase
     public function testGetHandler()
     {
         $handlers = [
-            'class1' => function () {
+            'class1' => function (): void {
             },
-            'class2' => function () {
+            'class2' => function (): void {
             },
-            'class3' => function () {
+            'class3' => function (): void {
             },
         ];
 
@@ -66,11 +66,11 @@ class RegistryTest extends \PHPUnit\Framework\TestCase
     public function testGetHandlers()
     {
         $handlers = [
-            'class1' => function () {
+            'class1' => function (): void {
             },
-            'class2' => function () {
+            'class2' => function (): void {
             },
-            'class3' => function () {
+            'class3' => function (): void {
             },
         ];
 

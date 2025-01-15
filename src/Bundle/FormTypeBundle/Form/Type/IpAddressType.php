@@ -19,12 +19,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IpAddressType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new IpAddressTransformer());
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('invalid_message', 'This is not a valid IP address.');
     }

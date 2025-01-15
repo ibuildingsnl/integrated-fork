@@ -19,7 +19,6 @@ use Integrated\Bundle\UserBundle\Model\IpListManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -57,7 +56,6 @@ class IpListController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        /** @var Form $form */
         $form = $this->createNewForm();
         $form->handleRequest($request);
 
@@ -71,7 +69,7 @@ class IpListController extends AbstractController
 
                 $this->manager->persist($list);
 
-                $this->addFlash('success', sprintf(
+                $this->addFlash('success', \sprintf(
                     'Added the ip %s to the whitelist',
                     $list->getIp()->getProtocolAppropriateAddress()
                 ));
@@ -91,7 +89,6 @@ class IpListController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        /** @var Form $form */
         $form = $this->createEditForm($list);
         $form->handleRequest($request);
 
@@ -103,7 +100,7 @@ class IpListController extends AbstractController
             if ($form->isValid()) {
                 $this->manager->persist($list);
 
-                $this->addFlash('success', sprintf(
+                $this->addFlash('success', \sprintf(
                     'The changes to the ip %s are saved',
                     $list->getIp()->getProtocolAppropriateAddress()
                 ));
@@ -124,7 +121,6 @@ class IpListController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        /** @var Form $form */
         $form = $this->createDeleteForm($list);
         $form->handleRequest($request);
 
@@ -136,7 +132,7 @@ class IpListController extends AbstractController
             if ($form->isValid()) {
                 $this->manager->remove($list);
 
-                $this->addFlash('success', sprintf(
+                $this->addFlash('success', \sprintf(
                     'The ip %s is removed from the whitelist',
                     $list->getIp()->getProtocolAppropriateAddress()
                 ));
@@ -151,7 +147,7 @@ class IpListController extends AbstractController
         ]);
     }
 
-    private function createNewForm(): FormInterface
+    private function createNewForm(): Form
     {
         $form = $this->createForm(IpListFormType::class, null, [
             'action' => $this->generateUrl('integrated_user_iplist_new'),
@@ -162,7 +158,7 @@ class IpListController extends AbstractController
         return $form;
     }
 
-    private function createEditForm(IpList $list): FormInterface
+    private function createEditForm(IpList $list): Form
     {
         $form = $this->createForm(IpListFormType::class, $list, [
             'action' => $this->generateUrl('integrated_user_iplist_edit', ['id' => $list->getId()]),
@@ -173,7 +169,7 @@ class IpListController extends AbstractController
         return $form;
     }
 
-    private function createDeleteForm(IpList $list): FormInterface
+    private function createDeleteForm(IpList $list): Form
     {
         $form = $this->createForm(DeleteFormType::class, $list, [
             'action' => $this->generateUrl('integrated_user_iplist_delete', ['id' => $list->getId()]),

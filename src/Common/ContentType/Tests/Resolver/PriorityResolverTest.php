@@ -23,12 +23,12 @@ use PHPUnit\Framework\MockObject\MockObject;
 class PriorityResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContentTypeInterface[]|MockObject[]
+     * @var ContentTypeInterface[]&MockObject[]
      */
     protected $types = [];
 
     /**
-     * @var ResolverInterface[]|MockObject[]
+     * @var ResolverInterface[]&MockObject[]
      */
     protected $resolvers = [];
 

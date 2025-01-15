@@ -194,7 +194,7 @@ class ContentFormType extends AbstractType
         );
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $contentTypeNormalizer = function (Options $options, $value) {
             if (\is_string($value)) {
@@ -203,7 +203,7 @@ class ContentFormType extends AbstractType
 
             if (!$value instanceof ContentTypeInterface) {
                 throw new InvalidOptionsException(
-                    sprintf(
+                    \sprintf(
                         'The option "%s" could not be normalized to a valid "%s" object',
                         'content_type',
                         ContentTypeInterface::class

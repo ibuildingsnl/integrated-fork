@@ -101,7 +101,7 @@ class ConfigController extends AbstractController
             );
 
             if (!$response = $event->getResponse()) {
-                $this->addFlash('success', sprintf('The config %s is saved', $data->getName()));
+                $this->addFlash('success', \sprintf('The config %s is saved', $data->getName()));
 
                 $response = $this->redirectToRoute('integrated_channel_config_index');
             }
@@ -115,7 +115,7 @@ class ConfigController extends AbstractController
         return $this->render('@IntegratedChannel/config/new.html.twig', [
             'adapter' => $adapter,
             'data' => $data,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
@@ -160,7 +160,7 @@ class ConfigController extends AbstractController
             $this->manager->persist($data);
 
             if (!$response = $event->getResponse()) {
-                $this->addFlash('success', sprintf('The changes to the config %s are saved', $data->getName()));
+                $this->addFlash('success', \sprintf('The changes to the config %s are saved', $data->getName()));
 
                 $response = $this->redirectToRoute('integrated_channel_config_index');
             }
@@ -224,7 +224,7 @@ class ConfigController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->manager->remove($data);
 
-            $this->addFlash('success', sprintf('The config %s is removed', $data->getName()));
+            $this->addFlash('success', \sprintf('The config %s is removed', $data->getName()));
 
             $response = $this->redirectToRoute('integrated_channel_config_index');
 
@@ -237,7 +237,7 @@ class ConfigController extends AbstractController
         return $this->render('@IntegratedChannel/config/delete.html.twig', [
             'adapter' => $this->registry->hasAdapter($data->getAdapter()) ? $this->registry->getAdapter($data->getAdapter()) : null,
             'data' => $data,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 

@@ -25,7 +25,7 @@ class FormatException extends \ErrorException
     public static function noSupportingConverter($inputFormat, $outputFormat)
     {
         return new self(
-            sprintf(
+            \sprintf(
                 'Format %s can not be converted in to %s, there is not converter supporting this format.',
                 $inputFormat,
                 $outputFormat

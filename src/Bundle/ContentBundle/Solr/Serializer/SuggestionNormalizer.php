@@ -69,7 +69,7 @@ class SuggestionNormalizer implements NormalizerInterface
     public function normalize($object, $format = null, array $context = []): array|bool|string|int|float|\ArrayObject|null
     {
         if (!$this->supportsNormalization($object)) {
-            throw new InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(\sprintf(
                 'The object must be a instance of "%s" with a query instance of "%s".',
                 Result::class,
                 SuggestionQuery::class
@@ -104,7 +104,7 @@ class SuggestionNormalizer implements NormalizerInterface
         return ['query' => $query->getQuery(true)] + array_filter($data);
     }
 
-    public function supportsNormalization($data, $format = null): bool
+    public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         return $data instanceof Result && $data->getQuery() instanceof SuggestionQuery;
     }
@@ -159,5 +159,12 @@ class SuggestionNormalizer implements NormalizerInterface
         }
 
         return null;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Result::class => true,
+        ];
     }
 }

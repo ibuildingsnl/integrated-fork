@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
 class MongoDBResolverTest extends TestCase
 {
     /**
-     * @var DocumentRepository|MockObject
+     * @var DocumentRepository&MockObject
      */
     private $repository;
 

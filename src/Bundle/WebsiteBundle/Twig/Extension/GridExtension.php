@@ -50,7 +50,7 @@ class GridExtension extends AbstractExtension
         return [
             new TwigFunction(
                 'integrated_grid',
-                [$this, 'renderGrid'],
+                $this->renderGrid(...),
                 ['is_safe' => ['html'], 'needs_environment' => true, 'needs_context' => true]
             ),
         ];

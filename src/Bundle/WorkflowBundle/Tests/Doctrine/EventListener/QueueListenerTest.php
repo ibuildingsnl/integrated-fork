@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Tests\Doctrine\EventListener;
 
-use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Integrated\Bundle\WorkflowBundle\Doctrine\EventListener\QueueListener;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
@@ -25,26 +24,13 @@ use PHPUnit\Framework\MockObject\MockObject;
 class QueueListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QueueInterface|MockObject
+     * @var QueueInterface&MockObject
      */
     protected $queue;
 
     protected function setUp(): void
     {
         $this->queue = $this->createMock('Integrated\\Common\\Queue\\QueueInterface');
-    }
-
-    public function testInterface()
-    {
-        $this->assertInstanceOf('Doctrine\\Common\\EventSubscriber', $this->getInstance());
-    }
-
-    public function testGetSubscribedEvents()
-    {
-        $this->assertEquals([
-            Events::postPersist,
-            Events::postUpdate,
-        ], $this->getInstance()->getSubscribedEvents());
     }
 
     public function testSetGetQueue()

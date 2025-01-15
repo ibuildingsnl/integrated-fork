@@ -300,7 +300,7 @@ class User implements UserInterface
         return $this->enabled;
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
         /* do nothing as there are no unsecured credentials, password should be encrypted */
     }
@@ -343,7 +343,7 @@ class User implements UserInterface
      */
     public function __toString()
     {
-        return sprintf(
+        return \sprintf(
             "ID: %s\nUsername: %s\n CreatedAt: %s\nEnabled: %s",
             $this->getId(),
             $this->getUserIdentifier(),

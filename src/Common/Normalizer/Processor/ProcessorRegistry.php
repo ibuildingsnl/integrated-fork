@@ -55,6 +55,6 @@ class ProcessorRegistry implements RegistryInterface
             return $this->processors[$class];
         }
 
-        throw new InvalidArgumentException(sprintf('No processors found for class "%s"', $class));
+        throw new InvalidArgumentException(\sprintf('No processors found for class "%s"', $class));
     }
 }

@@ -29,7 +29,7 @@ class ObjectWithRelations extends Content
         $this->addRelation($relation);
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return self::class;
     }

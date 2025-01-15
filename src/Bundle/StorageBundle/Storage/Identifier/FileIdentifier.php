@@ -23,6 +23,6 @@ class FileIdentifier implements IdentifierInterface
 {
     public function getIdentifier(ReaderInterface $reader)
     {
-        return sprintf('%s.%s', md5($reader->read()), $reader->getMetadata()->getExtension());
+        return \sprintf('%s.%s', md5($reader->read()), $reader->getMetadata()->getExtension());
     }
 }

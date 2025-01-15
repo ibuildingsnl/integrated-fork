@@ -35,13 +35,13 @@ class YoastSeoLanguageProvider extends AbstractController
 
         $locale = $this->getValidLocale($interfaceLanguage);
 
-        $path = $this->locator->locate(sprintf('%s/%s.json', $this->location, $locale));
+        $path = $this->locator->locate(\sprintf('%s/%s.json', $this->location, $locale));
 
         if (file_exists($path)) {
             return new JsonResponse(file_get_contents($path), Response::HTTP_OK, [], true);
         } else {
             return new JsonResponse(
-                ['error' => sprintf('No translation available for language %s', $interfaceLanguage)]
+                ['error' => \sprintf('No translation available for language %s', $interfaceLanguage)]
             );
         }
     }

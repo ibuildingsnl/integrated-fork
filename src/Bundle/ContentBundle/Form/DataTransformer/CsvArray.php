@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Integrated package.
  *
@@ -19,7 +20,7 @@ use Symfony\Component\Form\DataTransformerInterface;
  */
 class CsvArray implements DataTransformerInterface
 {
-    public function transform($value)
+    public function transform($value): mixed
     {
         if (empty($value)) {
             $value = [];
@@ -31,7 +32,7 @@ class CsvArray implements DataTransformerInterface
     /**
      * @return array
      */
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (empty($value)) {
             $value = '';

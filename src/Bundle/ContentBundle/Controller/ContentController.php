@@ -228,7 +228,7 @@ class ContentController extends AbstractController
                 'selection' => $selection,
                 'isSelectionEditable' => $editableSelection,
                 'searchSelections' => $this->getUser() ? $repo->findForUser($this->getUser()) : [],
-                'searchSelectionForm' => $searchSelectionForm->createView(),
+                'searchSelectionForm' => $searchSelectionForm,
                 'contentTypes' => $this->contentTypeManager->getAll(),
                 'route' => $request->attributes->get('_route'),
                 'queryParams' => array_merge($request->query->all(), $options),
@@ -328,7 +328,7 @@ class ContentController extends AbstractController
             }
         }
 
-        return $this->render(sprintf('@IntegratedContent/content/new.%s.twig', $request->getRequestFormat()), [
+        return $this->render(\sprintf('@IntegratedContent/content/new.%s.twig', $request->getRequestFormat()), [
             'taxonomyCategories' => $this->getTaxonomyCategories($content),
             'editable' => true,
             'type' => $contentType,
@@ -505,7 +505,7 @@ class ContentController extends AbstractController
                     }
                 }
 
-                $text = sprintf(
+                $text = \sprintf(
                     'The document is currently locked by %s, the document can not be edited until this lock is released.',
                     $user
                 );
@@ -665,7 +665,7 @@ class ContentController extends AbstractController
                     }
                 }
 
-                $text = sprintf(
+                $text = \sprintf(
                     'The document is currently locked by %s, the document can not be deleted until this lock is released.',
                     $user
                 );
@@ -701,7 +701,7 @@ class ContentController extends AbstractController
                 'user' => null,
                 'owner' => false,
                 'new' => false,
-                'release' => function () {
+                'release' => function (): void {
                 },
             ];
         }
@@ -726,7 +726,7 @@ class ContentController extends AbstractController
                     'user' => $this->getUser(),
                     'owner' => true,
                     'new' => true,
-                    'release' => function () use ($lock) {
+                    'release' => function () use ($lock): void {
                         $this->lockManager->release($lock);
                     },
                 ];
@@ -742,7 +742,7 @@ class ContentController extends AbstractController
                     'user' => $this->getUser(),
                     'owner' => true,
                     'new' => false,
-                    'release' => function () use ($lock) {
+                    'release' => function () use ($lock): void {
                         $this->lockManager->release($lock);
                     },
                 ];
@@ -762,7 +762,7 @@ class ContentController extends AbstractController
                 'user' => $user,
                 'owner' => false,
                 'new' => false,
-                'release' => function () use ($lock) {
+                'release' => function () use ($lock): void {
                     $this->lockManager->release($lock);
                 },
             ];
@@ -773,7 +773,7 @@ class ContentController extends AbstractController
             'user' => null,
             'owner' => false,
             'new' => false,
-            'release' => function () {
+            'release' => function (): void {
             },
         ];
     }
@@ -895,7 +895,7 @@ class ContentController extends AbstractController
         ]);
     }
 
-    public function mediaTypesAction(?string $filter = null): Response
+    public function mediaTypes(?string $filter = null): Response
     {
         $output = [];
 

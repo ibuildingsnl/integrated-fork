@@ -11,10 +11,8 @@
 
 namespace Integrated\MongoDB\Solr\Tests\Indexer;
 
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use Doctrine\ODM\MongoDB\Events;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Queue\QueueInterface;
@@ -29,12 +27,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QueueInterface|MockObject
+     * @var QueueInterface&MockObject
      */
     private $queue;
 
     /**
-     * @var SerializerInterface|MockObject
+     * @var SerializerInterface&MockObject
      */
     private $serializer;
 
@@ -49,11 +47,6 @@ class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
         $this->serializer = $this->createMock(SerializerInterface::class);
 
         $this->subscriber = new QueueSubscriber($this->queue, $this->serializer);
-    }
-
-    public function testInterface()
-    {
-        $this->assertInstanceOf(EventSubscriber::class, $this->subscriber);
     }
 
     public function testSetAndGetQueue()
@@ -94,14 +87,6 @@ class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
         $this->subscriber->setPriority(42);
 
         $this->assertSame(42, $this->subscriber->getPriority());
-    }
-
-    public function testGetSubscribedEvents()
-    {
-        $this->assertEquals(
-            [Events::postPersist, Events::postUpdate, Events::postRemove],
-            $this->subscriber->getSubscribedEvents()
-        );
     }
 
     public function testPostPersist()
@@ -191,7 +176,7 @@ class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
      * @param string $id
      * @param string $type
      *
-     * @return ContentInterface|MockObject
+     * @return ContentInterface&MockObject
      */
     protected function getDocument($id, $type)
     {
@@ -225,7 +210,7 @@ class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
     /**
      * @param object $document
      *
-     * @return LifecycleEventArgs|MockObject
+     * @return LifecycleEventArgs&MockObject
      */
     protected function getEvent($document, $manager = null)
     {

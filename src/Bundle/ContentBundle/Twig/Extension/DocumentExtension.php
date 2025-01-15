@@ -27,7 +27,7 @@ class DocumentExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('integrated_document', [$this, 'getDocument']),
+            new TwigFunction('integrated_document', $this->getDocument(...)),
         ];
     }
 

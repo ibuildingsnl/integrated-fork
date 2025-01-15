@@ -22,7 +22,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var TypeConfigInterface[]|MockObject[]
+     * @var TypeConfigInterface[]&MockObject[]
      */
     protected $types = [];
 

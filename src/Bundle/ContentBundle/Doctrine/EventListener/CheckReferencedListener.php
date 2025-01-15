@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Doctrine\EventListener;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Events;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
@@ -24,15 +24,9 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  *
  * @author Vasil Pascal <developer.optimum@gmail.com>
  */
-class CheckReferencedListener implements EventSubscriber
+#[AsDocumentListener(event: Events::preRemove)]
+class CheckReferencedListener
 {
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::preRemove,
-        ];
-    }
-
     /**
      * @throws AccessDeniedException
      */

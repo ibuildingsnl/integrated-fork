@@ -32,7 +32,7 @@ class TailwindCollectionType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $optionsNormalizer = function (Options $options, $value) {
             // @codeCoverageIgnoreStart
@@ -61,12 +61,12 @@ class TailwindCollectionType extends AbstractType
         $resolver->setNormalizer('options', $optionsNormalizer);
     }
 
-    public function getParent()
+    public function getParent(): ?string
     {
         return CollectionType::class;
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'tailwind_collection';
     }

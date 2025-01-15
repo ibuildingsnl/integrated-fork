@@ -23,7 +23,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class RepositoryResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConfigRepositoryInterface|MockObject
+     * @var ConfigRepositoryInterface&MockObject
      */
     private $repository;
 

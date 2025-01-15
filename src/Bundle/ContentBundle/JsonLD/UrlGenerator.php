@@ -66,7 +66,7 @@ class UrlGenerator
         }
 
         if ($domain) {
-            return sprintf(
+            return \sprintf(
                 'https://%s/storage/%s',
                 $domain,
                 $content->getFile()->getIdentifier()
@@ -95,7 +95,7 @@ class UrlGenerator
         }
 
         if ($domain) {
-            return sprintf(
+            return \sprintf(
                 'https://%s/content/%s/%s',
                 $domain,
                 strtolower($content->getContentType()),

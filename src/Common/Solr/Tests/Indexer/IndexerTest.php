@@ -36,7 +36,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class IndexerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CommandFactoryInterface|MockObject
+     * @var CommandFactoryInterface&MockObject
      */
     private $factory;
 
@@ -46,17 +46,17 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
     private $batch;
 
     /**
-     * @var QueueInterface|MockObject
+     * @var QueueInterface&MockObject
      */
     private $queue;
 
     /**
-     * @var Client|MockObject
+     * @var Client&MockObject
      */
     private $client;
 
     /**
-     * @var EventDispatcherInterface|MockObject
+     * @var EventDispatcherInterface&MockObject
      */
     private $dispatcher;
 

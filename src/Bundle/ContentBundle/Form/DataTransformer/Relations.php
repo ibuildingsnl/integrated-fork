@@ -51,7 +51,7 @@ class Relations implements DataTransformerInterface
      *
      * {@inheritdoc}
      */
-    public function transform($value)
+    public function transform($value): array
     {
         $return = [];
         if (\is_array($value) || $value instanceof \Traversable) {
@@ -78,7 +78,7 @@ class Relations implements DataTransformerInterface
      *
      * {@inheritdoc}
      */
-    public function reverseTransform($value)
+    public function reverseTransform($value): ArrayCollection
     {
         $relations = new ArrayCollection();
 

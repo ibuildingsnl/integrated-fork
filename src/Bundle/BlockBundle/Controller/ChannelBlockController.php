@@ -43,7 +43,7 @@ class ChannelBlockController extends AbstractController
         $block = class_exists($class) ? new $class($id) : null;
 
         if (!$block instanceof Block) {
-            throw $this->createNotFoundException(sprintf('Invalid block "%s"', $class));
+            throw $this->createNotFoundException(\sprintf('Invalid block "%s"', $class));
         }
 
         $block->setTitle($name);

@@ -92,8 +92,10 @@ class ContentProvider
             }
         }
 
-        $contentTypesQuery = $query->createFilterQuery('contenttypes');
-        $this->setContentTypes($contentType, $contentTypesQuery, $filter, $request);
+        if (\count($contentType)) {
+            $contentTypesQuery = $query->createFilterQuery('contenttypes');
+            $this->setContentTypes($contentType, $contentTypesQuery, $filter, $request);
+        }
 
         // Filter on Category
         if ($selectedCategory = $request->query->get('MediaTaxonomy')) {

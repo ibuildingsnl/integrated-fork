@@ -11,9 +11,7 @@
 
 namespace Integrated\Common\Solr\Tests\Task\Tasks\Doctrine\EventListener;
 
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use Doctrine\ODM\MongoDB\Events;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Solr\Task\Tasks\ContentTypeQueueTask;
@@ -26,25 +24,13 @@ use PHPUnit\Framework\MockObject\MockObject;
 class MongoDBContenTypeListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QueueInterface|MockObject
+     * @var QueueInterface&MockObject
      */
     private $queue;
 
     protected function setUp(): void
     {
         $this->queue = $this->createMock(QueueInterface::class);
-    }
-
-    public function testInterface()
-    {
-        $this->assertInstanceOf(EventSubscriber::class, $this->getInstance());
-    }
-
-    public function testGetSubscribedEvents()
-    {
-        self::assertEquals([
-            Events::postUpdate,
-        ], $this->getInstance()->getSubscribedEvents());
     }
 
     public function testPostUpdate()
@@ -79,7 +65,7 @@ class MongoDBContenTypeListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $id
      *
-     * @return ContentTypeInterface|MockObject
+     * @return ContentTypeInterface&MockObject
      */
     protected function getContentType($id)
     {
@@ -94,7 +80,7 @@ class MongoDBContenTypeListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param object $document
      *
-     * @return LifecycleEventArgs|MockObject
+     * @return LifecycleEventArgs&MockObject
      */
     protected function getEvent($document)
     {

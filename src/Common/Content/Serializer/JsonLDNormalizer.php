@@ -37,7 +37,7 @@ class JsonLDNormalizer implements \Symfony\Component\Serializer\Normalizer\Norma
     /**
      * @param ContentInterface $object
      */
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($object, $format = null, array $context = []): array|bool|string|int|float|\ArrayObject|null
     {
         if ($normalized = $this->normalizer->normalize($object, $context)) {
             return $normalized + ['@context' => 'http://schema.org'];
@@ -46,8 +46,15 @@ class JsonLDNormalizer implements \Symfony\Component\Serializer\Normalizer\Norma
         return null;
     }
 
-    public function supportsNormalization($data, $format = null): bool
+    public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         return self::FORMAT === $format && $data instanceof ContentInterface;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            ContentInterface::class => true,
+        ];
     }
 }

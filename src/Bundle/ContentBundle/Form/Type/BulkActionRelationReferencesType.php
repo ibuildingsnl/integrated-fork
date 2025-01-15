@@ -33,14 +33,14 @@ class BulkActionRelationReferencesType extends AbstractType
         $this->dm = $dm;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->addModelTransformer(new ReferencesToArrayTransformer($this->dm))
             ->resetViewTransformers();
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'multiple' => true,

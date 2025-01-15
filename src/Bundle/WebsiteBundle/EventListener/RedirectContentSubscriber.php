@@ -107,6 +107,6 @@ class RedirectContentSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $event->setResponse(new RedirectResponse($url, 301));
+        $event->setResponse(new RedirectResponse($url, \Symfony\Component\HttpFoundation\Response::HTTP_MOVED_PERMANENTLY));
     }
 }

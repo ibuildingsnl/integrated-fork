@@ -23,7 +23,7 @@ class CircularFallbackException extends \ErrorException
      */
     public static function templateNotFound($template, array $fallbackStack)
     {
-        return new self(sprintf(
+        return new self(\sprintf(
             'Circular theme fallback detected for template "%s", %s',
             $template,
             implode(' -> ', $fallbackStack)

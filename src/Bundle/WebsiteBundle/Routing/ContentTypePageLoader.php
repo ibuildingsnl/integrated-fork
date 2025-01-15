@@ -46,7 +46,7 @@ class ContentTypePageLoader extends Loader
         $this->urlResolver = $urlResolver;
     }
 
-    public function load(mixed $resource, $type = null)
+    public function load(mixed $resource, $type = null): RouteCollection
     {
         if (true === $this->loaded) {
             throw new \RuntimeException('Page loader is already added');
@@ -91,6 +91,6 @@ class ContentTypePageLoader extends Loader
             return $page->getControllerService();
         }
 
-        return sprintf('%s::%s', $page->getControllerService(), $page->getControllerAction());
+        return \sprintf('%s::%s', $page->getControllerService(), $page->getControllerAction());
     }
 }

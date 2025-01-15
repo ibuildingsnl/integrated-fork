@@ -18,7 +18,7 @@ use Symfony\Component\Form\DataTransformerInterface;
  */
 class ChannelsTransformer implements DataTransformerInterface
 {
-    public function transform($value)
+    public function transform($value): mixed
     {
         $result = [
             'options' => null,
@@ -66,7 +66,7 @@ class ChannelsTransformer implements DataTransformerInterface
         return $result;
     }
 
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         $result = [
             'disabled' => 0,

@@ -23,7 +23,7 @@ class ContainerAwareQueueListenerTest extends QueueListenerTest
     public const SERVICE_NAME = 'the.queue.service.name';
 
     /**
-     * @var ContainerInterface|MockObject
+     * @var ContainerInterface&MockObject
      */
     protected $container;
 

@@ -40,7 +40,7 @@ class SearchSelectionChoiceType extends AbstractType
         $this->tokenStorage = $tokenStorage;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $choices = [];
         if ($user = $this->getUser()) {

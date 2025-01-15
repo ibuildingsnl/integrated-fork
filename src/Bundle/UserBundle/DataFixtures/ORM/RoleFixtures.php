@@ -17,7 +17,7 @@ use Integrated\Bundle\UserBundle\Model\Role;
 
 class RoleFixtures extends AbstractFixture
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $manager->persist($this->createRole('ROLE_ADMIN', 'Administrator'));
         $manager->persist($this->createRole('ROLE_USER_MANAGER', 'User manager'));

@@ -21,7 +21,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var OptionsInterface|MockObject
+     * @var OptionsInterface&MockObject
      */
     private $options;
 

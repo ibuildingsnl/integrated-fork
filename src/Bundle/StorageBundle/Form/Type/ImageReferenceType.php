@@ -25,14 +25,14 @@ class ImageReferenceType extends AbstractType
     ) {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('image', ImageType::class);
 
         $builder->setDataMapper(new ImageReferenceMapper($this->manager, $options['channels']));
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('channels', []);
 
@@ -49,7 +49,7 @@ class ImageReferenceType extends AbstractType
         parent::configureOptions($resolver);
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_image_reference';
     }

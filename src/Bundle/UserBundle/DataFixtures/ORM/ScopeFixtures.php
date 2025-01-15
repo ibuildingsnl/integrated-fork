@@ -17,7 +17,7 @@ use Integrated\Bundle\UserBundle\Model\Scope;
 
 class ScopeFixtures extends AbstractFixture
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $manager->persist($this->createScope('Integrated', true));
         $manager->persist($this->createScope('Public', false));

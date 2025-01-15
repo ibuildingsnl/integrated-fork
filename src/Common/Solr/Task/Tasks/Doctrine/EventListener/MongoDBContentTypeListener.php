@@ -11,7 +11,7 @@
 
 namespace Integrated\Common\Solr\Task\Tasks\Doctrine\EventListener;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Events;
 use Integrated\Common\ContentType\ContentTypeInterface;
@@ -21,7 +21,8 @@ use Integrated\Common\Solr\Task\Tasks\ContentTypeQueueTask;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class MongoDBContentTypeListener implements EventSubscriber
+#[AsDocumentListener(event: Events::postUpdate)]
+class MongoDBContentTypeListener
 {
     /**
      * @var QueueInterface
@@ -34,13 +35,6 @@ class MongoDBContentTypeListener implements EventSubscriber
     public function __construct(QueueInterface $queue)
     {
         $this->queue = $queue;
-    }
-
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::postUpdate,
-        ];
     }
 
     public function postUpdate(LifecycleEventArgs $event)

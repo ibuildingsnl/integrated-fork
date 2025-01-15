@@ -29,12 +29,12 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
     public const TEST_STATE = 'TEST';
 
     /**
-     * @var SerializerInterface|MockObject
+     * @var SerializerInterface&MockObject
      */
     protected $serializer;
 
     /**
-     * @var ChannelManagerInterface|MockObject
+     * @var ChannelManagerInterface&MockObject
      */
     protected $manager;
 

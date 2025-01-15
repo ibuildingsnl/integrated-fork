@@ -14,7 +14,7 @@ class ChannelTransformer implements DataTransformerInterface
     ) {
     }
 
-    public function transform($value)
+    public function transform($value): mixed
     {
         if (!$this->multiple) {
             return $this->repository->findOneBy(['id' => $value]);
@@ -27,7 +27,7 @@ class ChannelTransformer implements DataTransformerInterface
         return $this->repository->findByIds($value);
     }
 
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (!$this->multiple) {
             if ($value instanceof ChannelInterface) {

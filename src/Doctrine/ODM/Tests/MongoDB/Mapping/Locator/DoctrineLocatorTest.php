@@ -21,7 +21,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class DoctrineLocatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var MappingDriver|MockObject
+     * @var MappingDriver&MockObject
      */
     private $driver;
 

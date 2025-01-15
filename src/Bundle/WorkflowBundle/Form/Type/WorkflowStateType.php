@@ -37,7 +37,7 @@ class WorkflowStateType extends AbstractType
         $this->repository = $repository;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // The content of this form type is solely based on state that is not set yet. So
         // the only thing that is added is a listener that will update this type with more
@@ -70,7 +70,7 @@ class WorkflowStateType extends AbstractType
         $child->vars['block_prefixes'][] = $last;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $workflowNormalizer = function (Options $options, $workflow) {
             if (\is_string($workflow)) {
@@ -78,7 +78,7 @@ class WorkflowStateType extends AbstractType
             }
 
             if (!$workflow instanceof Definition) {
-                throw new InvalidOptionsException(sprintf(
+                throw new InvalidOptionsException(\sprintf(
                     'The option "%s" could not be normalized to a valid "%s" object',
                     'workflow',
                     'Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition'

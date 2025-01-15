@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Integrated package.
  *
@@ -30,12 +31,12 @@ class ConfigureMenuEventTest extends TestCase
     protected $event;
 
     /**
-     * @var FactoryInterface|MockObject
+     * @var FactoryInterface&MockObject
      */
     protected $factory;
 
     /**
-     * @var ItemInterface|MockObject
+     * @var ItemInterface&MockObject
      */
     protected $menu;
 

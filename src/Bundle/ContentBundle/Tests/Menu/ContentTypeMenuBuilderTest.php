@@ -31,17 +31,17 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class ContentTypeMenuBuilderTest extends TestCase
 {
     /**
-     * @var FactoryInterface|MockObject
+     * @var FactoryInterface&MockObject
      */
     protected $factory;
 
     /**
-     * @var ContentTypeManager|MockObject
+     * @var ContentTypeManager&MockObject
      */
     protected $contentTypeManager;
 
     /**
-     * @var AuthorizationCheckerInterface|MockObject
+     * @var AuthorizationCheckerInterface&MockObject
      */
     protected $authorizationChecker;
 
@@ -62,7 +62,7 @@ class ContentTypeMenuBuilderTest extends TestCase
     {
         $builder = $this->getInstance();
 
-        /** @var ItemInterface|MockObject $menu */
+        /** @var ItemInterface&MockObject $menu */
         $menu = $this->createMock(ItemInterface::class);
 
         $this->factory
@@ -88,7 +88,7 @@ class ContentTypeMenuBuilderTest extends TestCase
     {
         $builder = $this->getInstance();
 
-        /** @var ItemInterface|MockObject $menu */
+        /** @var ItemInterface&MockObject $menu */
         $menu = $this->createMock(ItemInterface::class);
 
         $this->factory
@@ -104,7 +104,7 @@ class ContentTypeMenuBuilderTest extends TestCase
             ->willReturn($this->getItemWithoutParent())
         ;
 
-        /** @var ItemInterface|MockObject $child */
+        /** @var ItemInterface&MockObject $child */
         $child = $this->createMock(ItemInterface::class);
 
         $child
@@ -129,7 +129,7 @@ class ContentTypeMenuBuilderTest extends TestCase
     {
         $builder = $this->getInstance();
 
-        /** @var ItemInterface|MockObject $menu */
+        /** @var ItemInterface&MockObject $menu */
         $menu = $this->createMock(ItemInterface::class);
 
         $this->factory
@@ -145,7 +145,7 @@ class ContentTypeMenuBuilderTest extends TestCase
             ->willReturn($this->getItems())
         ;
 
-        /** @var ItemInterface|MockObject $child1 */
+        /** @var ItemInterface&MockObject $child1 */
         $child1 = $this->createMock(ItemInterface::class);
 
         $child1
@@ -153,7 +153,7 @@ class ContentTypeMenuBuilderTest extends TestCase
             ->method('addChild')
         ;
 
-        /** @var ItemInterface|MockObject $child2 */
+        /** @var ItemInterface&MockObject $child2 */
         $child2 = $this->createMock(ItemInterface::class);
 
         $child2
@@ -182,7 +182,7 @@ class ContentTypeMenuBuilderTest extends TestCase
 
         $items = $this->getItems();
 
-        /** @var ItemInterface|MockObject $menu */
+        /** @var ItemInterface&MockObject $menu */
         $menu = $this->createMock(ItemInterface::class);
 
         $this->factory
@@ -208,7 +208,7 @@ class ContentTypeMenuBuilderTest extends TestCase
             )
         ;
 
-        /** @var ItemInterface|MockObject $child1 */
+        /** @var ItemInterface&MockObject $child1 */
         $child1 = $this->createMock(ItemInterface::class);
 
         $child1
@@ -216,7 +216,7 @@ class ContentTypeMenuBuilderTest extends TestCase
             ->method('addChild')
         ;
 
-        /** @var ItemInterface|MockObject $child2 */
+        /** @var ItemInterface&MockObject $child2 */
         $child2 = $this->createMock(ItemInterface::class);
 
         $child2

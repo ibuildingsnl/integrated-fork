@@ -42,27 +42,27 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContentTypeInterface|MockObject
+     * @var ContentTypeInterface&MockObject
      */
     private $type;
 
     /**
-     * @var MetadataFactoryInterface|MockObject
+     * @var MetadataFactoryInterface&MockObject
      */
     private $metadataFactory;
 
     /**
-     * @var MetadataInterface|MockObject
+     * @var MetadataInterface&MockObject
      */
     private $metadata;
 
     /**
-     * @var ResolverInterface|MockObject
+     * @var ResolverInterface&MockObject
      */
     private $resolver;
 
     /**
-     * @var EventDispatcherInterface|MockObject
+     * @var EventDispatcherInterface&MockObject
      */
     private $dispatcher;
 

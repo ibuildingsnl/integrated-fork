@@ -52,12 +52,12 @@ class BlockEditType extends AbstractType
         $this->groupManager = $groupManager;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $layouts = $this->layoutLocator->getLayouts($options['type']);
 
         if (\count($layouts) === 1) {
-            $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($layouts) {
+            $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($layouts): void {
                 $data = $event->getData();
                 if ($data instanceof Block) {
                     $data->setLayout(current($layouts));
@@ -94,7 +94,7 @@ class BlockEditType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(['type']);
     }

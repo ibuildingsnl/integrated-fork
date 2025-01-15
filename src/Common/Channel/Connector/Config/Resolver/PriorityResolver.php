@@ -73,7 +73,7 @@ class PriorityResolver implements ResolverInterface
             return $resolver->getConfig($name);
         }
 
-        throw new InvalidArgumentException(sprintf('Could not load config with the name "%s"', $name));
+        throw new InvalidArgumentException(\sprintf('Could not load config with the name "%s"', $name));
     }
 
     public function getConfigs(ChannelInterface $channel)
