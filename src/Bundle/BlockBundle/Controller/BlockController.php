@@ -158,7 +158,7 @@ class BlockController extends AbstractController
             $block,
             [
                 'method' => 'POST',
-                'data_class' => \get_class($block),
+                'data_class' => $block::class,
                 'type' => $block->getType(),
             ]
         );
@@ -188,7 +188,7 @@ class BlockController extends AbstractController
             }
         }
 
-        $metadata = $this->metadataFactory->getMetadata(\get_class($block));
+        $metadata = $this->metadataFactory->getMetadata($block::class);
 
         return $this->render(sprintf('@IntegratedBlock/block/edit.%s.twig', $request->getRequestFormat()), [
             'block' => $block,
@@ -259,7 +259,7 @@ class BlockController extends AbstractController
             ->equals($content->getId())
             ->getQuery();
 
-        /** @var $paginator \Knp\Component\Pager\Paginator */
+        /** @var \Knp\Component\Pager\Paginator $pagination */
         $pagination = $this->paginator->paginate(
             $query,
             $request->query->get('page', 1),

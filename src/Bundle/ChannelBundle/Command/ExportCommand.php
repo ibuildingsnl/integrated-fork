@@ -86,7 +86,7 @@ class ExportCommand extends Command
     private function runExternal(InputInterface $input, OutputInterface $output): int
     {
         $wait = (int) $input->getOption('wait');
-        $wait = $wait * 1000; // convert from milli to micro
+        $wait *= 1000; // convert from milli to micro
 
         while (true) {
             $process = new Process(

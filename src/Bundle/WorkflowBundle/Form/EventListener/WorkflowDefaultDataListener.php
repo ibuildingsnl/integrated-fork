@@ -32,9 +32,6 @@ class WorkflowDefaultDataListener implements EventSubscriberInterface
         $this->storage = $storage;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

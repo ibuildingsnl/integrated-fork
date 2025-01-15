@@ -51,7 +51,6 @@ interface AttributeEditorInterface extends AttributeInterface
 
     /**
      * @param string $name
-     * @param mixed  $value
      *
      * @return self
      */

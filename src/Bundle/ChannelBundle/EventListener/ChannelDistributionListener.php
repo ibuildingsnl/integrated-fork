@@ -20,13 +20,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class ChannelDistributionListener implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly ChannelDistributor $distributor
+        private readonly ChannelDistributor $distributor,
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

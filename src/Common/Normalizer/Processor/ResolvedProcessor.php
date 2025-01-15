@@ -39,9 +39,6 @@ class ResolvedProcessor implements ResolvedProcessorInterface
         $this->factory = $factory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function process($object, Context $context)
     {
         if (!$this->processors) {

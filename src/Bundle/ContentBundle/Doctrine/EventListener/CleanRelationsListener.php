@@ -25,9 +25,6 @@ class CleanRelationsListener implements EventSubscriber
 {
     public const RELATION_DOCUMENT = 'Integrated\Bundle\ContentBundle\Document\Relation\Relation';
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribedEvents()
     {
         return [

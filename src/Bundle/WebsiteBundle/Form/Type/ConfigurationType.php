@@ -17,17 +17,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ConfigurationType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('theme', ThemeChoiceType::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_website_configuration';

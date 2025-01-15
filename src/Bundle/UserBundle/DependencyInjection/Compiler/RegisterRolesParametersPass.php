@@ -22,9 +22,6 @@ class RegisterRolesParametersPass implements CompilerPassInterface
 {
     public const PARAMETER_NAME = 'integrated_roles';
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container)
     {
         $parameters = [];

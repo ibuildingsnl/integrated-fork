@@ -128,9 +128,6 @@ class TextBlock extends Block implements BlockRequiredItemsInterface
         $this->requiredItems = new ArrayCollection($requiredItems);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return 'text';

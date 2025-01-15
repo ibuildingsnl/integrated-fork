@@ -20,9 +20,6 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class IntegratedThemeBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new ThemeManagerPass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);

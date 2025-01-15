@@ -111,7 +111,7 @@ class CustomTransformerTest extends TestCase
     #[DataProvider('getValidReverseTransformData')]
     public function testReverseTransformFunctionWithValidData(array $input)
     {
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField $output */
+        /** @var CustomField $output */
         $output = $this->customTransformer->reverseTransform($input);
 
         $this->assertInstanceOf('\Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField', $output);

@@ -191,9 +191,6 @@ class PersonTest extends TestCase
         $this->assertEquals($lastName, (string) $this->person->setLastName($lastName));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getContent()
     {
         return $this->person;

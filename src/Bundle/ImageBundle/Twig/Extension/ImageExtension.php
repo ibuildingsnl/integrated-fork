@@ -59,9 +59,6 @@ class ImageExtension extends AbstractExtension
         $this->imageMimicHandling = $imageMimicHandling;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions()
     {
         return [
@@ -137,7 +134,7 @@ class ImageExtension extends AbstractExtension
         }
 
         // detect json format
-        if (strpos($image, '{') === 0) {
+        if (str_starts_with($image, '{')) {
             return $this->imageJson($image);
         }
 
@@ -151,11 +148,11 @@ class ImageExtension extends AbstractExtension
         }
         if (file_exists($image)) {
             $mime = mime_content_type($image);
-            if (strpos($mime, 'video/') === 0) {
+            if (str_starts_with($mime, 'video/')) {
                 return $this->imageHandling->open('bundles/integratedintegrated/images/fallbacks/video-fallback.jpg');
             }
         }
-        if (!file_exists($image) && (strpos($image, '@') === false)) {
+        if (!file_exists($image) && (!str_contains($image, '@'))) {
             return $this->imageHandling->open('bundles/integratedintegrated/images/fallbacks/fallback.jpg');
         }
 
@@ -172,7 +169,7 @@ class ImageExtension extends AbstractExtension
         }
 
         // detect json format
-        if (strpos($image, '{') === 0) {
+        if (str_starts_with($image, '{')) {
             $imageData = @json_decode($image);
 
             return $imageData->metadata->credits ?? null;
@@ -191,7 +188,7 @@ class ImageExtension extends AbstractExtension
         }
 
         // detect json format
-        if (strpos($image, '{') === 0) {
+        if (str_starts_with($image, '{')) {
             $imageData = @json_decode($image);
 
             return $imageData->metadata->description ?? null;
@@ -200,9 +197,6 @@ class ImageExtension extends AbstractExtension
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated_image_json';

@@ -33,9 +33,6 @@ class RelationFormProvider implements ConfigProviderInterface
         $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConfig(array $content)
     {
         $types = [];

@@ -38,9 +38,6 @@ class ContentBlockHandler extends BlockHandler
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(BlockInterface $block, array $options)
     {
         if (!$block instanceof ContentBlock) {
@@ -72,9 +69,6 @@ class ContentBlockHandler extends BlockHandler
         return $this->provider->get($block, $request->duplicate(), $options);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

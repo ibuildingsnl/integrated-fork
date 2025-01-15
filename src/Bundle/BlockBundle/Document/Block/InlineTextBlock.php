@@ -96,9 +96,6 @@ class InlineTextBlock extends Block
         return $this->page;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return 'inline_text';

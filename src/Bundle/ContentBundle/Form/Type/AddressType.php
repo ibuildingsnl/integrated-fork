@@ -29,9 +29,6 @@ class AddressType extends AbstractType
      */
     public const PROPERTIES = ['type', 'name', 'country', 'address1', 'address2', 'zipcode', 'city'];
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         foreach ($options['fields'] as $field) {
@@ -70,9 +67,6 @@ class AddressType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         // Set defaults for the resolver
@@ -83,9 +77,6 @@ class AddressType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_address';

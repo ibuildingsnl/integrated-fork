@@ -39,9 +39,6 @@ class QueueListener implements EventSubscriber, QueueAwareInterface
         $this->setQueue($queue);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setQueue(QueueInterface $queue)
     {
         $this->queue = $queue;
@@ -55,9 +52,6 @@ class QueueListener implements EventSubscriber, QueueAwareInterface
         return $this->queue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribedEvents()
     {
         return [
@@ -97,8 +91,6 @@ class QueueListener implements EventSubscriber, QueueAwareInterface
 
     /**
      * Try to extract a Definition id from the $data.
-     *
-     * @param mixed $data
      */
     protected function getId($data)
     {

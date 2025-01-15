@@ -18,7 +18,7 @@ class IpList
     /**
      * @var string
      */
-    protected $id = null;
+    protected $id;
 
     /**
      * @var IP

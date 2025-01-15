@@ -31,9 +31,6 @@ class ContentTypeExtension implements TypeExtensionInterface
         $this->resolver = $resolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         if (!$data instanceof ContentInterface) {
@@ -45,9 +42,6 @@ class ContentTypeExtension implements TypeExtensionInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.content';

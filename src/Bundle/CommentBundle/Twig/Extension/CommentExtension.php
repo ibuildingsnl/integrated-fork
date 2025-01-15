@@ -20,9 +20,6 @@ use Twig\TwigFilter;
  */
 class CommentExtension extends AbstractExtension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getFilters()
     {
         return [
@@ -40,9 +37,6 @@ class CommentExtension extends AbstractExtension
         return StripTagsUtil::replaceCommentWith($content, StripTagsUtil::ONLY_CONTENT_REPLACEMENT);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated_comment';

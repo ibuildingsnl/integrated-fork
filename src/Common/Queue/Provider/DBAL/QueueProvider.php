@@ -42,9 +42,6 @@ class QueueProvider implements QueueProviderInterface
         $this->options = $options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function push($channel, $payload, $delay = 0, $priority = 0, $attempt = 0)
     {
         $channel = (string) $channel;
@@ -64,9 +61,6 @@ class QueueProvider implements QueueProviderInterface
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function pull($channel, $limit = 1)
     {
         $query = '
@@ -108,9 +102,6 @@ class QueueProvider implements QueueProviderInterface
         return $results;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear($channel)
     {
         $channel = (string) $channel;
@@ -118,9 +109,6 @@ class QueueProvider implements QueueProviderInterface
         $this->connection->delete($this->options['queue_table_name'], ['channel' => $channel]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function count($channel = null)
     {
         $query = 'SELECT COUNT(id) AS count FROM %s';
@@ -153,7 +141,6 @@ class QueueProvider implements QueueProviderInterface
      * Set a option for the current queue channel.
      *
      * @param string $name
-     * @param mixed  $value
      */
     public function setOption($name, $value)
     {

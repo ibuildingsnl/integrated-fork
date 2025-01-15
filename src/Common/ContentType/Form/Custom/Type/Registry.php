@@ -23,9 +23,6 @@ class Registry implements RegistryInterface
      */
     protected $types = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function add(TypeInterface $type)
     {
         $this->types[spl_object_hash($type)] = $type;
@@ -33,9 +30,6 @@ class Registry implements RegistryInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function has(TypeInterface $type)
     {
         return \array_key_exists(spl_object_hash($type), $this->types);

@@ -156,9 +156,6 @@ class MenuItem extends KnpMenuItem
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addChild($child, array $options = []): ItemInterface
     {
         if ($child instanceof Menu) {
@@ -185,9 +182,6 @@ class MenuItem extends KnpMenuItem
         return $child;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getChild($id): ?ItemInterface
     {
         /** @var MenuItem $child */

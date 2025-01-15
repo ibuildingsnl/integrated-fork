@@ -97,7 +97,7 @@ class Scraper
         $this->scraperPageLoader->pageListCacheWarmup(true);
     }
 
-    public function run(ScraperEntity $scraper = null): void
+    public function run(?ScraperEntity $scraper = null): void
     {
         if ($scraper === null) {
             $scapers = $this->entityManager->getRepository(ScraperEntity::class)->findAll();
@@ -175,7 +175,7 @@ class Scraper
 
     private function getTemplate(string $templateName): string
     {
-        if (strpos($templateName, '@') === 0) {
+        if (str_starts_with($templateName, '@')) {
             list($namespace, $templateName) = explode('/', substr($templateName, 1), 2);
 
             $namespacePaths = $this->loader->getPaths($namespace);

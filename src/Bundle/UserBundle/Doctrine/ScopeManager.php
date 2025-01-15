@@ -60,9 +60,6 @@ class ScopeManager implements ScopeManagerInterface
         return $this->repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create()
     {
         $class = $this->getClassName();
@@ -70,9 +67,6 @@ class ScopeManager implements ScopeManagerInterface
         return new $class();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function persist(ScopeInterface $scope, $flush = true)
     {
         $this->om->persist($scope);
@@ -82,9 +76,6 @@ class ScopeManager implements ScopeManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function remove(ScopeInterface $scope, $flush = true)
     {
         $this->om->remove($scope);
@@ -94,25 +85,16 @@ class ScopeManager implements ScopeManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear()
     {
         $this->om->clear();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function find($id)
     {
         return $this->repository->find($id);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findAll()
     {
         return $this->repository->findBy(['admin' => false]);
@@ -126,17 +108,11 @@ class ScopeManager implements ScopeManagerInterface
         return $this->repository->findOneBy(['name' => $name]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null)
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClassName()
     {
         return $this->repository->getClassName();

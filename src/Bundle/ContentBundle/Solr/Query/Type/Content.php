@@ -14,7 +14,7 @@ class Content extends AbstractType
 {
     public function __construct(
         private readonly SortOptions $sorting,
-        private readonly DocumentManager $manager
+        private readonly DocumentManager $manager,
     ) {
     }
 
@@ -50,8 +50,9 @@ class Content extends AbstractType
         $facetField->setField('facet_channels')
             ->getLocalParameters()->setExclude('channels');
 
-        $facet->createFacetField('brands')
-            ->setField('facet_brands')
+        /** @var Field $facetField */
+        $facetField = $facet->createFacetField('brands');
+        $facetField->setField('facet_brands')
             ->getLocalParameters()->setExclude('brands');
 
         /** @var Field $facetField */

@@ -21,9 +21,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BulkActionDeleteType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
@@ -37,9 +34,6 @@ class BulkActionDeleteType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
@@ -51,9 +45,6 @@ class BulkActionDeleteType extends AbstractType
             });
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_content_bulk_action_delete';

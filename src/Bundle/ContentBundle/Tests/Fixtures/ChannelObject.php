@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Fixtures;
 
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
@@ -23,27 +24,27 @@ class ChannelObject implements ChannelInterface
         $this->id = $id;
     }
 
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function getName()
+    public function getName(): ?string
     {
         throw new \Exception();
     }
 
-    public function getPermissions()
+    public function getPermissions(): iterable
     {
         throw new \Exception();
     }
 
-    public function getPrimaryDomain()
+    public function getPrimaryDomain(): ?string
     {
         throw new \Exception();
     }
 
-    public function getPrimaryDomainRedirect()
+    public function getPrimaryDomainRedirect(): bool
     {
         throw new \Exception();
     }
@@ -54,6 +55,11 @@ class ChannelObject implements ChannelInterface
     }
 
     public function getColor(): ?string
+    {
+        throw new \Exception();
+    }
+
+    public function getType(): ?ChannelType
     {
         throw new \Exception();
     }

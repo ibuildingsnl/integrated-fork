@@ -38,9 +38,6 @@ class UrlExtension extends AbstractExtension
         $this->solrUrlExtractor = $solrUrlExtractor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions()
     {
         return [
@@ -49,9 +46,8 @@ class UrlExtension extends AbstractExtension
     }
 
     /**
-     * @param mixed $document
-     * @param null  $channelId
-     * @param bool  $fallback
+     * @param null $channelId
+     * @param bool $fallback
      *
      * @return string|null
      */
@@ -65,9 +61,6 @@ class UrlExtension extends AbstractExtension
         return $this->solrUrlExtractor->getUrl($document, $channelId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated_page_url';

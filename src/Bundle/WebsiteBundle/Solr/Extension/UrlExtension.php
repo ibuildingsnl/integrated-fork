@@ -32,9 +32,6 @@ class UrlExtension implements TypeExtensionInterface
         $this->urlResolver = $urlResolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         if (!$data instanceof ChannelableInterface || !$data instanceof ContentInterface) {
@@ -51,9 +48,6 @@ class UrlExtension implements TypeExtensionInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.content';

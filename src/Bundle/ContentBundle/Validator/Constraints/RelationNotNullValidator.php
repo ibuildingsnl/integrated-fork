@@ -20,9 +20,6 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class RelationNotNullValidator extends ConstraintValidator
 {
-    /**
-     * {@inheritdoc}
-     */
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof RelationNotNull) {

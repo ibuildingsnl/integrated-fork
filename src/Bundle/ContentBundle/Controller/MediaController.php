@@ -14,6 +14,7 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
+use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
 use Integrated\Bundle\ContentBundle\Bulk\DeleteHandler;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\ContentRepository;
@@ -241,7 +242,7 @@ class MediaController extends AbstractController
         }
     }
 
-    public function bulkDelete(Request $request, DeleteHandler $deleteHandler = null): Response
+    public function bulkDelete(Request $request, ?DeleteHandler $deleteHandler = null): Response
     {
         $jsonContent = json_decode($request->getContent(), true);
 
@@ -286,9 +287,11 @@ class MediaController extends AbstractController
                     ->getQuery()
                     ->execute();
 
-                $usedByBlocks = $this->documentManager
-                    ->getRepository(Block::class)
-                    ->getUsedBy(new ArrayCollection([$content]), null, null, false)
+                /** @var BlockRepository $repository */
+                $repository = $this->documentManager
+                    ->getRepository(Block::class);
+
+                $usedByBlocks = $repository->getUsedBy(new ArrayCollection([$content]), null, null, false)
                     ->getQuery()
                     ->execute();
 
@@ -322,9 +325,9 @@ class MediaController extends AbstractController
 
         if (\count($usesByTitles) > 0) {
             return new JsonResponse([
-                                        'message' => 'There exist some relations. Are you SURE?',
-                                        'used_by' => $usesByTitles,
-                                    ]);
+                'message' => 'There exist some relations. Are you SURE?',
+                'used_by' => $usesByTitles,
+            ]);
         } else {
             return new JsonResponse(['message' => 'Ok to delete, go for it!']);
         }

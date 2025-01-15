@@ -34,7 +34,7 @@ trait RankTrait
         return $this->rank;
     }
 
-    public function setRank(string $rank = null)
+    public function setRank(?string $rank = null)
     {
         $this->rank = $rank;
     }

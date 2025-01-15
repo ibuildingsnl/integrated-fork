@@ -26,9 +26,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class RelationReferencesType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $formType = $options['options']['form_type'];
@@ -41,18 +38,12 @@ class RelationReferencesType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         // label is rendered with the reference
         $view->vars = array_replace($view->vars, ['label' => false]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -111,9 +102,6 @@ class RelationReferencesType extends AbstractType
         $resolver->setNormalizer('options', $optionsNormalizer);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_relation_references';

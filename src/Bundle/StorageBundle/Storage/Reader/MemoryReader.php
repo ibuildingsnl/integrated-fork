@@ -38,17 +38,11 @@ class MemoryReader implements ReaderInterface
         $this->metadata = $metadata;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function read()
     {
         return $this->content;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMetadata()
     {
         return $this->metadata;

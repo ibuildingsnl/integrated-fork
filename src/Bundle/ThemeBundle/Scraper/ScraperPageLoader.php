@@ -45,7 +45,7 @@ class ScraperPageLoader implements LoaderInterface
     /**
      * @var array
      */
-    private $pageList = null;
+    private $pageList;
 
     /**
      * @var int

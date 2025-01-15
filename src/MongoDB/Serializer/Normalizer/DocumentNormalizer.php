@@ -11,7 +11,6 @@
 
 namespace Integrated\MongoDB\Serializer\Normalizer;
 
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -27,7 +26,7 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
     /**
      * @var DocumentManager
      */
-    protected $dm = null;
+    protected $dm;
 
     public function __construct(DocumentManager $dm)
     {
@@ -42,9 +41,6 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
         return $this->dm;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
         try {
@@ -56,12 +52,9 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
         return $document;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($object, $format = null, array $context = []): array|bool|string|int|float|null|\ArrayObject
+    public function normalize($object, $format = null, array $context = []): array|bool|string|int|float|\ArrayObject|null
     {
-        $meta = $this->getDocumentManager()->getClassMetadata(\get_class($object));
+        $meta = $this->getDocumentManager()->getClassMetadata($object::class);
 
         $keys = [];
 
@@ -72,9 +65,6 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
         return $keys;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsDenormalization($data, $type, $format = null): bool
     {
         if (!\is_array($data)) {
@@ -84,16 +74,13 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
         return $this->supports($type);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsNormalization($data, $format = null): bool
     {
         if (!\is_object($data)) {
             return false;
         }
 
-        return $this->supports(\get_class($data));
+        return $this->supports($data::class);
     }
 
     /**

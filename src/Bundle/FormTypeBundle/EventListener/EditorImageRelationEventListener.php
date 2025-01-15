@@ -30,9 +30,6 @@ class EditorImageRelationEventListener implements EventSubscriberInterface
         $this->parser = $parser;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

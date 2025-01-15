@@ -40,7 +40,7 @@ class ImageDropzoneType extends AbstractDropzoneType
         TranslatorInterface $translator,
         ImageExtension $imageExtension,
         WebFormat $webFormat,
-        Container $converterContainer
+        Container $converterContainer,
     ) {
         $this->webFormat = $webFormat;
         $this->converterContainer = $converterContainer;
@@ -58,17 +58,11 @@ class ImageDropzoneType extends AbstractDropzoneType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_image_dropzone';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): ?string
     {
         return ImageType::class;

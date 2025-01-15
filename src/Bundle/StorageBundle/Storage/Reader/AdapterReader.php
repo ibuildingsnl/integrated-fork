@@ -36,27 +36,18 @@ class AdapterReader implements ReaderInterface
      */
     protected $identifier;
 
-    /**
-     * @param IdentifierInterface $identifier
-     */
-    public function __construct(Adapter $adapter, StorageInterface $storage, IdentifierInterface $identifier = null)
+    public function __construct(Adapter $adapter, StorageInterface $storage, ?IdentifierInterface $identifier = null)
     {
         $this->adapter = $adapter;
         $this->storage = $storage;
         $this->identifier = $identifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function read()
     {
         return $this->adapter->read($this->storage->getIdentifier());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMetadata()
     {
         return $this->storage->getMetadata();

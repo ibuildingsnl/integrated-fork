@@ -35,7 +35,7 @@ class ParentAwareConfigIterator implements \Iterator
      *
      * @var ConfigIterator
      */
-    private $current = null;
+    private $current;
 
     /**
      * @var int
@@ -57,8 +57,6 @@ class ParentAwareConfigIterator implements \Iterator
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return TypeConfigInterface
      */
     public function current(): mixed
@@ -66,9 +64,6 @@ class ParentAwareConfigIterator implements \Iterator
         return $this->current ? $this->current->current() : false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function next(): void
     {
         if (!$this->current) {
@@ -81,25 +76,16 @@ class ParentAwareConfigIterator implements \Iterator
         $this->validate();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function key(): ?int
     {
         return $this->current ? $this->counter : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function valid(): bool
     {
         return $this->current ? true : false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rewind(): void
     {
         reset($this->iterators);

@@ -114,7 +114,7 @@ class MongoDBReferencesListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param object$document
+     * @param object $document
      *
      * @return LifecycleEventArgs|MockObject
      */

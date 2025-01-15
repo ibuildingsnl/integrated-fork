@@ -37,9 +37,6 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [ConfigureMenuEvent::CONFIGURE => 'onMenuConfigure'];
@@ -52,8 +49,8 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($this->authorizationChecker->isGranted(self::ROLE_CHANNEL_MANAGER) ||
-            $this->authorizationChecker->isGranted(self::ROLE_ADMIN)) {
+        if ($this->authorizationChecker->isGranted(self::ROLE_CHANNEL_MANAGER)
+            || $this->authorizationChecker->isGranted(self::ROLE_ADMIN)) {
             if (!$menuAdmin = $menu->getChild(self::MENU_ADMIN)) {
                 $menuAdmin = $menu->addChild(self::MENU_ADMIN);
             }

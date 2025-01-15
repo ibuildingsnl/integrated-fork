@@ -45,7 +45,7 @@ trait ParentIDTrait
         return $this->parent_id;
     }
 
-    public function setParentID(string $parent_id = null): void
+    public function setParentID(?string $parent_id = null): void
     {
         $this->parent_id = $parent_id;
     }
@@ -55,7 +55,7 @@ trait ParentIDTrait
         return $this->link_to_channel;
     }
 
-    public function setLinkToChannel(string $link_to_channel = null): void
+    public function setLinkToChannel(?string $link_to_channel = null): void
     {
         $this->link_to_channel = $link_to_channel;
     }

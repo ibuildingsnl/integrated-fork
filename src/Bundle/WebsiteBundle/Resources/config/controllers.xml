@@ -40,7 +40,7 @@
             <tag name="container.service_subscriber" />
         </service>
 
-        <service id="Integrated\Bundle\WebsiteBundle\Controller\SearchSelectionController">
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\RSSSearchSelectionController">
             <argument type="service" id="integrated_content.provider.solarium" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
 

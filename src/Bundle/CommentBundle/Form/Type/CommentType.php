@@ -25,9 +25,6 @@ class CommentType extends AbstractType
         $builder->add('text', TextType::class, ['attr' => ['placeholder' => 'Your comment']]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_comment';

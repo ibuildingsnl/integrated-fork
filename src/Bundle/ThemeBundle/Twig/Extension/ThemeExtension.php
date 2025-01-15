@@ -30,9 +30,6 @@ class ThemeExtension extends AbstractExtension
         $this->themeManager = $themeManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions()
     {
         return [
@@ -52,9 +49,6 @@ class ThemeExtension extends AbstractExtension
         return $this->themeManager->locateTemplate($template);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated_theme_theme';

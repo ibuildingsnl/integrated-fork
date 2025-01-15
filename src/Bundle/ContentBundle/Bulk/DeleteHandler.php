@@ -44,7 +44,6 @@ class DeleteHandler implements HandlerInterface
      * @param SearchContentReferenced $searchContentReferenced service to find out if a content item is in use
      *                                                         somewhere - we don't allow a class change when the
      *                                                         content item is referenced
-     * @param bool                    $removeReferences
      */
     public function __construct(DocumentManager $documentManager, SearchContentReferenced $searchContentReferenced, ?bool $removeReferences)
     {
@@ -53,9 +52,6 @@ class DeleteHandler implements HandlerInterface
         $this->removeReferences = $removeReferences;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(ContentInterface $content)
     {
         if ($this->removeReferences === true) {

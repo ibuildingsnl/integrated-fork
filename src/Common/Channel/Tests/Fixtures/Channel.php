@@ -11,8 +11,9 @@
 
 namespace Integrated\Common\Channel\Tests\Fixtures;
 
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
-use Integrated\Common\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 class Channel implements ChannelInterface
 {
@@ -23,27 +24,27 @@ class Channel implements ChannelInterface
         $this->id = $id;
     }
 
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function getName()
+    public function getName(): ?string
     {
         throw new \LogicException('Not implemented');
     }
 
-    public function getPermissions()
+    public function getPermissions(): iterable
     {
         throw new \LogicException('Not implemented');
     }
 
-    public function getPrimaryDomain()
+    public function getPrimaryDomain(): ?string
     {
         throw new \LogicException('Not implemented');
     }
 
-    public function getPrimaryDomainRedirect()
+    public function getPrimaryDomainRedirect(): bool
     {
         throw new \LogicException('Not implemented');
     }
@@ -54,6 +55,11 @@ class Channel implements ChannelInterface
     }
 
     public function getColor(): ?string
+    {
+        throw new \LogicException('Not implemented');
+    }
+
+    public function getType(): ?ChannelType
     {
         throw new \LogicException('Not implemented');
     }

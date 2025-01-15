@@ -43,8 +43,6 @@ interface RoleManagerInterface extends ManagerInterface
     /**
      * Finds the role by its identifier.
      *
-     * @param mixed $id
-     *
      * @return RoleInterface
      */
     public function find($id);

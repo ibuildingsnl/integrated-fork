@@ -20,9 +20,6 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class PriorityResolverBuilderPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('integrated_content.resolver.priority.builder')) {

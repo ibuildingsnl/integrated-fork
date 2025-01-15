@@ -38,7 +38,7 @@ class Worker extends Configurable
     /**
      * @var EventDispatcherInterface
      */
-    private $dispatcher = null;
+    private $dispatcher;
 
     /**
      * Constructor.
@@ -51,9 +51,6 @@ class Worker extends Configurable
         $this->queue = $queue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -126,6 +123,6 @@ class Worker extends Configurable
      */
     protected function getCallable($task)
     {
-        return $this->registry->getHandler(\get_class($task));
+        return $this->registry->getHandler($task::class);
     }
 }

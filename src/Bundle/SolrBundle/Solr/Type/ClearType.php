@@ -19,17 +19,11 @@ use Integrated\Common\Converter\Type\TypeInterface;
  */
 class ClearType implements TypeInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         $container->clear();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.clear';

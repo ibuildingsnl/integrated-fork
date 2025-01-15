@@ -69,11 +69,9 @@ class Item
     }
 
     /**
-     * @param Block $block
-     *
      * @return $this
      */
-    public function setBlock(Block $block = null)
+    public function setBlock(?Block $block = null)
     {
         if ($block && $this->row) {
             throw new \RuntimeException('Row is already defined');
@@ -93,11 +91,9 @@ class Item
     }
 
     /**
-     * @param Row $row
-     *
      * @return $this
      */
-    public function setRow(Row $row = null)
+    public function setRow(?Row $row = null)
     {
         if ($row && $this->block) {
             throw new \RuntimeException('Block is already defined');

@@ -18,9 +18,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class IpListFactory implements AuthenticatorFactoryInterface, FirewallListenerFactoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProviderId): string|array
     {
         return [];
@@ -35,25 +32,16 @@ class IpListFactory implements AuthenticatorFactoryInterface, FirewallListenerFa
         return [$listenerId];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPriority(): int
     {
         return -30;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getKey(): string
     {
         return 'ip_list';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addConfiguration(NodeDefinition $node)
     {
     }

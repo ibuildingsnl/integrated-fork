@@ -41,8 +41,6 @@ interface UserManagerInterface extends ManagerInterface
     /**
      * Finds the user by its identifier.
      *
-     * @param mixed $id
-     *
      * @return UserInterface|null
      */
     public function find($id);
@@ -104,8 +102,6 @@ interface UserManagerInterface extends ManagerInterface
 
     /**
      * Finds the user by its username and scope.
-     *
-     * @param ScopeInterface $scope
      *
      * @return UserInterface|null
      */

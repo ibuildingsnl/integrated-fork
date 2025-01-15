@@ -16,13 +16,10 @@ class FacetBlockHandler extends BlockHandler
 {
     public function __construct(
         private readonly BlockHandlerRegistryInterface $blockRegistry,
-        private readonly RequestStack $requestStack
+        private readonly RequestStack $requestStack,
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(BlockInterface $block, array $options)
     {
         if (!$block instanceof FacetBlock) {
@@ -82,9 +79,6 @@ class FacetBlockHandler extends BlockHandler
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

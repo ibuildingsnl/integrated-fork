@@ -22,17 +22,11 @@ use Symfony\Component\Form\FormView;
  */
 class TypeSetterExtension extends AbstractTypeExtension
 {
-    /**
-     * {@inheritDoc}
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['original_type'] = $form->getConfig()->getType()->getBlockPrefix();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public static function getExtendedTypes(): iterable
     {
         return [FormType::class];

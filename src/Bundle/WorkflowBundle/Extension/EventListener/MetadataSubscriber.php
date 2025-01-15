@@ -32,9 +32,6 @@ class MetadataSubscriber implements MetadataSubscriberInterface
         $this->extension = $extension;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -42,9 +39,6 @@ class MetadataSubscriber implements MetadataSubscriberInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtension()
     {
         return $this->extension;

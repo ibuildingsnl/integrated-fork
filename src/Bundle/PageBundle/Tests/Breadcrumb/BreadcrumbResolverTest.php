@@ -36,7 +36,7 @@ class BreadcrumbResolverTest extends TestCase
     protected $documentManager;
 
     /**
-     * @var urlResolver|MockObject
+     * @var UrlResolver|MockObject
      */
     protected $urlResolver;
 

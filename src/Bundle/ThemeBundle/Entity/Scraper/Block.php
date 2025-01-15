@@ -73,9 +73,6 @@ class Block
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
     public function getMode(): ?string
     {
         return $this->mode;
@@ -91,9 +88,6 @@ class Block
         return $this->selector;
     }
 
-    /**
-     * @param string $selector|null
-     */
     public function setSelector(?string $selector): void
     {
         $this->selector = $selector;

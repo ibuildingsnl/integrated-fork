@@ -25,11 +25,9 @@ class Permission extends CommonPermission
     protected $state;
 
     /**
-     * @param State $state
-     *
      * @return $this
      */
-    public function setState(State $state = null)
+    public function setState(?State $state = null)
     {
         if ($this->state !== $state && $this->state !== null) {
             $this->state->removePermission($this);

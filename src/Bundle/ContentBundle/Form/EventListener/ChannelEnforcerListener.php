@@ -61,9 +61,6 @@ class ChannelEnforcerListener implements EventSubscriberInterface
         $this->operand = $operand;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

@@ -81,7 +81,7 @@ class ContentFixtures extends AbstractFixture implements DependentFixtureInterfa
      */
     private array $images;
 
-    public function __construct(Generator $faker = null)
+    public function __construct(?Generator $faker = null)
     {
         $this->faker = $faker ?: Factory::create();
     }

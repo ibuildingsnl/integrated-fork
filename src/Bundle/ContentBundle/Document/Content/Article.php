@@ -139,7 +139,7 @@ class Article extends Content implements RankableInterface
     protected $description;
 
     /**
-     * @var Embedded\Address
+     * @var Address
      */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\AddressType', options: [
         'priority' => 430,
@@ -151,7 +151,7 @@ class Article extends Content implements RankableInterface
     protected $address;
 
     /**
-     * @var Embedded\SeoMeta
+     * @var SeoMeta
      */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\SeoMetaType', options: [
         'priority' => 430,
@@ -301,22 +301,22 @@ class Article extends Content implements RankableInterface
         $this->description = (string) $description;
     }
 
-    public function setSeoMetadata(Embedded\SeoMeta $seoMetadata): void
+    public function setSeoMetadata(SeoMeta $seoMetadata): void
     {
         $this->seoMetadata = $seoMetadata;
     }
 
-    public function getSeoMetadata(): ?Embedded\SeoMeta
+    public function getSeoMetadata(): ?SeoMeta
     {
         return $this->seoMetadata;
     }
 
-    public function getAddress(): ?Embedded\Address
+    public function getAddress(): ?Address
     {
         return $this->address;
     }
 
-    public function setAddress(Embedded\Address $address = null): void
+    public function setAddress(?Address $address = null): void
     {
         $this->address = $address;
     }

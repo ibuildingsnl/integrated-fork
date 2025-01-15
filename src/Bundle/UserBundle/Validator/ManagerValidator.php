@@ -26,7 +26,7 @@ abstract class ManagerValidator extends ConstraintValidator
     /**
      * @var PropertyAccessor
      */
-    private $accessor = null;
+    private $accessor;
 
     /**
      * @param object $value

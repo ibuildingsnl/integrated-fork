@@ -34,7 +34,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
     protected $authorizationChecker;
 
     /**
-     * @var \Integrated\Bundle\MenuBundle\Event\ConfigureMenuEvent|MockObject
+     * @var ConfigureMenuEvent|MockObject
      */
     protected $event;
 
@@ -266,7 +266,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param \Integrated\Bundle\MenuBundle\Event\ConfigureMenuEvent|MockObject $event
+     * @param ConfigureMenuEvent|MockObject $event
      *
      * @return \Knp\Menu\ItemInterface|MockObject
      */

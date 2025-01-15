@@ -29,22 +29,22 @@ class BlockUsageProvider
     /**
      * @var array|null
      */
-    protected $blockPages = null;
+    protected $blockPages;
 
     /**
      * @var array|null
      */
-    protected $channelBlocks = null;
+    protected $channelBlocks;
 
     /**
      * @var array|null
      */
-    protected $currentPage = null;
+    protected $currentPage;
 
     /**
      * @var array|null
      */
-    protected $currentChannel = null;
+    protected $currentChannel;
 
     /**
      * @var ChannelInterface[]

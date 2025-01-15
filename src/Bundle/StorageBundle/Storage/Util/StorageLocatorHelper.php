@@ -52,41 +52,26 @@ class StorageLocatorHelper implements StorageInterface
         $this->filesystems = new ArrayCollection($filesystems);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIdentifier()
     {
         return $this->identifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPathname()
     {
         return $this->pathname;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFilesystems()
     {
         return new ArrayCollection($this->filesystems);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMetadata()
     {
         return $this->metadata;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __toString()
     {
         return $this->pathname;

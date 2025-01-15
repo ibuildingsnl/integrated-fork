@@ -18,9 +18,6 @@ class ContentTypeManagerPass implements CompilerPassInterface
 {
     public const SERVICE_ID = 'integrated_content.resolver.xml_file.builder';
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition(self::SERVICE_ID)) {

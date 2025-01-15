@@ -26,17 +26,21 @@ class PublicationsExtension implements TypeExtensionInterface
         foreach ($this->publications->forContent($data) as $publication) {
             $time = clone $publication->getTime()->getStartDate(); // don't change to original value
 
-            $container->add(
-                'publication_start_'.$publication->getChannel()->getId().'_index_date',
-                $time->setTimezone($this->timezone)->format('Y-m-d\TG:i:s\Z'),
-            );
+            if (method_exists($time, 'setTimezone')) {
+                $container->add(
+                    'publication_start_'.$publication->getChannel()->getId().'_index_date',
+                    $time->setTimezone($this->timezone)->format('Y-m-d\TG:i:s\Z'),
+                );
+            }
 
             $time = clone $publication->getTime()->getEndDate();
 
-            $container->add(
-                'publication_end_'.$publication->getChannel()->getId().'_index_date',
-                $time->setTimezone($this->timezone)->format('Y-m-d\TG:i:s\Z'),
-            );
+            if (method_exists($time, 'setTimezone')) {
+                $container->add(
+                    'publication_end_'.$publication->getChannel()->getId().'_index_date',
+                    $time->setTimezone($this->timezone)->format('Y-m-d\TG:i:s\Z'),
+                );
+            }
         }
     }
 

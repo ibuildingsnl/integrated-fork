@@ -21,9 +21,6 @@ use Symfony\Component\Form\FormEvents;
  */
 class UserProfileOptionalListener implements EventSubscriberInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

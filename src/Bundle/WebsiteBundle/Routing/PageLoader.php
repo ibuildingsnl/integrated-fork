@@ -41,9 +41,6 @@ class PageLoader implements LoaderInterface
         $this->dm = $dm;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(mixed $resource, $type = null)
     {
         if (true === $this->loaded) {
@@ -54,7 +51,7 @@ class PageLoader implements LoaderInterface
 
         $pages = $this->dm->getRepository(Page::class)->findBy(['disabled' => false]);
 
-        /** @var \Integrated\Bundle\PageBundle\Document\Page\Page $page */
+        /** @var Page $page */
         foreach ($pages as $page) {
             $condition = '';
 
@@ -82,25 +79,16 @@ class PageLoader implements LoaderInterface
         return $routes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports($resource, $type = null): bool
     {
         return 'integrated_website_page' === $type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getResolver(): LoaderResolverInterface
     {
         return new LoaderResolver();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setResolver(LoaderResolverInterface $resolver)
     {
     }

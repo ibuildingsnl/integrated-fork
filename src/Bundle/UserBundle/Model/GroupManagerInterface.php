@@ -41,8 +41,6 @@ interface GroupManagerInterface extends ManagerInterface
     /**
      * Finds the group by its identifier.
      *
-     * @param mixed $id
-     *
      * @return GroupInterface
      */
     public function find($id);

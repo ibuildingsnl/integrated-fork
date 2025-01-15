@@ -22,9 +22,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class BulkActionType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var ConfigInterface $config */
@@ -37,9 +34,6 @@ class BulkActionType extends AbstractType
         $builder->add('action', $config->getType(), $config->getOptions());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
@@ -47,9 +41,6 @@ class BulkActionType extends AbstractType
             ->setAllowedTypes('config', ConfigInterface::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_content_bulk_action';

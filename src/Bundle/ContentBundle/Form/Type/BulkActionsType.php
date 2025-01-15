@@ -35,9 +35,6 @@ class BulkActionsType extends AbstractType
         $this->provider = $provider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $mapping = [];
@@ -61,9 +58,6 @@ class BulkActionsType extends AbstractType
         $builder->addEventSubscriber(new BulkActionsMapperListener($mapping, $options['readonly']));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         if (!$options['readonly']) {
@@ -94,9 +88,6 @@ class BulkActionsType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
@@ -116,9 +107,6 @@ class BulkActionsType extends AbstractType
             });
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_content_bulk_actions';

@@ -5,7 +5,6 @@ namespace Integrated\Bundle\WebsiteBundle\Controller;
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Provider\SolariumProvider;
-use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +14,7 @@ class RSSSearchSelectionController extends AbstractController
 {
     public function __construct(
         private readonly SolariumProvider $solariumProvider,
-        private readonly ThemeManager $themeManager
+        private readonly ThemeManager $themeManager,
     ) {
     }
 

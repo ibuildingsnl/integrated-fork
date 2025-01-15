@@ -47,4 +47,9 @@ class ObjectWithChannels implements ChannelableInterface
     {
         throw new \Exception();
     }
+
+    public function removeChannels()
+    {
+        throw new \Exception();
+    }
 }

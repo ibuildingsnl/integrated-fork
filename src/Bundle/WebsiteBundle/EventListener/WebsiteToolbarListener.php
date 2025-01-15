@@ -39,9 +39,6 @@ class WebsiteToolbarListener implements EventSubscriberInterface
         $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [KernelEvents::RESPONSE => ['onKernelResponse', -128]];

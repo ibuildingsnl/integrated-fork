@@ -29,9 +29,6 @@ class Normalizer implements NormalizerInterface
         $this->resolver = $resolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function normalize($object, array $options = [])
     {
         if (\is_object($object)) {

@@ -40,7 +40,7 @@ class BreadcrumbResolver
     /**
      * @var BreadcrumbItem[]
      */
-    protected $breadcrumbItems = null;
+    protected $breadcrumbItems;
 
     /**
      * @var Request|null
@@ -94,7 +94,7 @@ class BreadcrumbResolver
             // support Content
             if (!empty($part) && $content = $contentRepository->findOneBy(['slug' => $part, 'channels.$id' => $channel->getId()])) {
                 /* @var Content $content */
-                if ($content->isPublished() && strpos($this->urlResolver->generateUrl($content), $url) !== false) {
+                if ($content->isPublished() && str_contains($this->urlResolver->generateUrl($content), $url)) {
                     $this->breadcrumbItems[] = new BreadcrumbItem((string) $content, $url);
                 }
                 continue;

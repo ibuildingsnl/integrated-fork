@@ -36,9 +36,6 @@ class ScopeFormType extends AbstractType
         $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('name', TextType::class, [
@@ -46,9 +43,6 @@ class ScopeFormType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('empty_data', function (FormInterface $form) {
@@ -57,9 +51,6 @@ class ScopeFormType extends AbstractType
         $resolver->setDefault('data_class', $this->getManager()->getClassName());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_user_scope_form';

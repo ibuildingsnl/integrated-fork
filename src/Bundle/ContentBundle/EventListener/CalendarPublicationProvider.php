@@ -134,7 +134,7 @@ class CalendarPublicationProvider implements EventSubscriberInterface
             if ($brandProfile instanceof BrandProfile && $currentBrand instanceof Brand) {
                 $data = [
                     'id' => $publication->getContent()->getId(),
-                    'title' => $publication->getContent()->getTitle(),
+                    'title' => (string) $publication->getContent(),
                     'premium' => $publication->getContent()->isPremium(),
                     'type' => $type->getId(),
                     'typename' => $type->getName(),

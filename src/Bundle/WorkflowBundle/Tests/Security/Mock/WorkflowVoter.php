@@ -25,12 +25,12 @@ class WorkflowVoter extends BaseWorkflowVoter
     /*
      * Store the last used state
      */
-    public $state = null;
+    public $state;
 
     /*
      * the permissions that will be returned
      */
-    public $permissions = null;
+    public $permissions;
 
     /**
      * @return State

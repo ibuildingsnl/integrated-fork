@@ -55,6 +55,7 @@ class DomQuery extends DomQueryNodes
 
             return $this;
         }
+
         // get html for first node
         return $this->getInnerHtml();
     }
@@ -87,11 +88,9 @@ class DomQuery extends DomQueryNodes
      * Store arbitrary data associated with the matched elements or return the value at
      * the named data store for the first element in the set of matched elements.
      *
-     * @param string $key
-     *
      * @return $this|string|object
      */
-    public function data(string $key = null, $val = null)
+    public function data(?string $key = null, $val = null)
     {
         $doc_hash = spl_object_hash($this->document);
 
@@ -120,7 +119,7 @@ class DomQuery extends DomQueryNodes
             if ($key === null) { // object with all data
                 $data = [];
                 foreach ($node->attributes as $attr) {
-                    if (strpos($attr->nodeName, 'data-') === 0) {
+                    if (str_starts_with($attr->nodeName, 'data-')) {
                         $val = $attr->nodeValue[0] === '{' ? json_decode($attr->nodeValue) : $attr->nodeValue;
                         $data[substr($attr->nodeName, 5)] = $val;
                     }
@@ -959,7 +958,7 @@ class DomQuery extends DomQueryNodes
                 $this->importNodes($item, $import_function);
             }
         } else {
-            if (\is_string($content) && strpos($content, "\n") !== false) {
+            if (\is_string($content) && str_contains($content, "\n")) {
                 $this->preserve_no_newlines = false;
                 if (isset($this->root_instance)) {
                     $this->root_instance->preserve_no_newlines = false;
@@ -993,7 +992,7 @@ class DomQuery extends DomQueryNodes
      */
     private function getTargetResult($target, $context = null)
     {
-        if ($context === null && \is_string($target) && strpos($target, '<') === false) {
+        if ($context === null && \is_string($target) && !str_contains($target, '<')) {
             $context = $this->document;
         }
 

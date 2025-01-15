@@ -20,9 +20,6 @@ use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
  */
 class CustomField extends Field
 {
-    /**
-     * {@inheritdoc}
-     */
     #[Slug(fields: ['getLabel'])]
     protected $name;
 

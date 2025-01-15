@@ -24,39 +24,29 @@ class Config implements ConfigInterface
     /**
      * @var ConfigInterface|null
      */
-    private $parent = null;
+    private $parent;
 
     /**
      * Constructor.
      *
      * @param TypeConfigInterface[] $types
-     * @param ConfigInterface       $parent
      */
-    public function __construct(array $types, ConfigInterface $parent = null)
+    public function __construct(array $types, ?ConfigInterface $parent = null)
     {
         $this->types = $types;
         $this->parent = $parent;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTypes()
     {
         return $this->types;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasParent()
     {
         return $this->parent !== null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent()
     {
         return $this->parent;

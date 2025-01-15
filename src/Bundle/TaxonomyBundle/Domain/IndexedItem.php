@@ -9,12 +9,12 @@ final class IndexedItem
 {
     public function __construct(
         private readonly string $taxonomyId,
-        private readonly string|null $title,
-        private readonly string|null $description,
-        private readonly string|null $slug,
+        private readonly ?string $title,
+        private readonly ?string $description,
+        private readonly ?string $slug,
         private readonly array $channels,
         private readonly ArrayCollection $references,
-        private readonly string|null $linkToChannel,
+        private readonly ?string $linkToChannel,
         private readonly int $count,
         private readonly int $depth,
     ) {
@@ -28,7 +28,7 @@ final class IndexedItem
             $taxonomy->getDescription(),
             $taxonomy->getSlug(),
             $taxonomy->getChannels(),
-            $taxonomy->getReferencesByRelationId('__children'),
+            new ArrayCollection($taxonomy->getReferencesByRelationId('__children')),
             $taxonomy->getLinkToChannel(),
             $usageCount,
             $depth,

@@ -18,8 +18,6 @@ interface FilesystemRegistryInterface
 {
     /**
      * @param string $filesystem
-     *
-     * @return mixed
      */
     public function get($filesystem);
 

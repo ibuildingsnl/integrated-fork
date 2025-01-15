@@ -35,9 +35,6 @@ class PermissionTransformer implements DataTransformerInterface
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transform($value)
     {
         $permissionClass = $this->getPermissionClass();
@@ -81,9 +78,6 @@ class PermissionTransformer implements DataTransformerInterface
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($value)
     {
         if (!\is_array($value)) {

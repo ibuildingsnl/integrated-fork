@@ -21,9 +21,6 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class IntegratedThemeExtension extends Extension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function load(array $configs, ContainerBuilder $container)
     {
         $config = $this->processConfiguration(new Configuration(), $configs);

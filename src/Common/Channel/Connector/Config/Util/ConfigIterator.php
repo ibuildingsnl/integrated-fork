@@ -18,9 +18,6 @@ use Integrated\Common\Channel\Connector\Config\ConfigInterface;
  */
 class ConfigIterator extends \ArrayIterator
 {
-    /**
-     * {@inheritdoc}
-     */
     public function key(): ?string
     {
         if ($this->valid()) {
@@ -30,9 +27,6 @@ class ConfigIterator extends \ArrayIterator
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function next(): void
     {
         do {
@@ -40,9 +34,6 @@ class ConfigIterator extends \ArrayIterator
         } while ($this->valid() && !$this->accept());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rewind(): void
     {
         parent::rewind();

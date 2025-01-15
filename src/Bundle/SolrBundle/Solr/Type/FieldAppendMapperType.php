@@ -18,9 +18,6 @@ use Integrated\Common\Converter\ContainerInterface;
  */
 class FieldAppendMapperType extends FieldMapperType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.fields.append';

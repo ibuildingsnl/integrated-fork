@@ -45,16 +45,13 @@ class BlockFilterType extends AbstractType
     public function __construct(
         MetadataFactoryInterface $factory,
         DocumentManager $dm,
-        BlockUsageProvider $blockUsageProvider
+        BlockUsageProvider $blockUsageProvider,
     ) {
         $this->factory = $factory;
         $this->dm = $dm;
         $this->blockUsageProvider = $blockUsageProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->setMethod('GET');
@@ -99,17 +96,11 @@ class BlockFilterType extends AbstractType
         $resolver->setAllowedTypes('blockIds', 'array');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_block_filter';
     }
 
-    /**
-     * @return mixed
-     */
     private function getTypeChoices(array $blockIds)
     {
         return $this->dm->getRepository(Block::class)->getTypeChoices(

@@ -33,11 +33,8 @@ class UniqueEntryValidator extends ConstraintValidator
     /**
      * @var PropertyAccessor
      */
-    private $accessor = null;
+    private $accessor;
 
-    /**
-     * {@inheritdoc}
-     */
     public function validate($entries, Constraint $constraint)
     {
         if (!$constraint instanceof UniqueEntry) {

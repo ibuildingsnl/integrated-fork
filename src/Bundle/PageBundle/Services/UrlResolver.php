@@ -53,7 +53,7 @@ class UrlResolver
         ContentTypeControllerManager $controllerManager,
         ChannelContextInterface $channelContext,
         RouterInterface $router,
-        DocumentManager $dm
+        DocumentManager $dm,
     ) {
         $this->controllerManager = $controllerManager;
         $this->channelContext = $channelContext;

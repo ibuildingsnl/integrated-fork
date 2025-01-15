@@ -90,31 +90,31 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 self::getState(),
-                [],
+                ['workflow_deadline' => [0 => 0]],
             ],
             [
                 self::getState([self::getPermission('group1', false, false), self::getPermission('group2', false, false)]),
-                [],
+                ['workflow_deadline' => [0 => 0]],
             ],
             [
                 self::getState([self::getPermission('group1', true, false), self::getPermission('group2', false, true)]),
-                ['security_workflow_read' => ['group1'], 'security_workflow_write' => ['group2']],
+                ['security_workflow_read' => ['group1'], 'security_workflow_write' => ['group2'], 'workflow_deadline' => [0 => 0]],
             ],
             [
                 self::getState([self::getPermission('group1', false, false), self::getPermission('group2', true, true)]),
-                ['security_workflow_read' => ['group2'], 'security_workflow_write' => ['group2']],
+                ['security_workflow_read' => ['group2'], 'security_workflow_write' => ['group2'], 'workflow_deadline' => [0 => 0]],
             ],
             [
                 self::getState([self::getPermission('group1', true, true), self::getPermission('group2', true, true)]),
-                ['security_workflow_read' => ['group1', 'group2'], 'security_workflow_write' => ['group1', 'group2']],
+                ['security_workflow_read' => ['group1', 'group2'], 'security_workflow_write' => ['group1', 'group2'], 'workflow_deadline' => [0 => 0]],
             ],
             [
                 self::getState([self::getPermission('group1', true, false), self::getPermission('group2', false, false)]),
-                ['security_workflow_read' => ['group1']],
+                ['security_workflow_read' => ['group1'], 'workflow_deadline' => [0 => 0]],
             ],
             [
                 self::getState([self::getPermission('group1', false, false), self::getPermission('group2', false, true)]),
-                ['security_workflow_write' => ['group2']],
+                ['security_workflow_write' => ['group2'], 'workflow_deadline' => [0 => 0]],
             ],
         ];
     }
@@ -354,11 +354,9 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param Definition\State $state
-     *
      * @return State
      */
-    protected function getWorkflow(Definition\State $state = null)
+    protected function getWorkflow(?Definition\State $state = null)
     {
         $mock = $this->createMock(State::class);
         $mock->expects($this->atLeastOnce())
@@ -369,11 +367,9 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param Definition\State $state
-     *
      * @return Definition
      */
-    protected function getDefinition(Definition\State $state = null)
+    protected function getDefinition(?Definition\State $state = null)
     {
         $mock = $this->createMock(Definition::class);
         $mock->expects($this->atLeastOnce())

@@ -56,25 +56,16 @@ class StaticPermissionVoter implements VoterInterface
         return $resolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsAttribute($attribute)
     {
         return \in_array($attribute, $this->permissions);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsClass($class)
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function vote(TokenInterface $token, $object, array $attributes): int
     {
         foreach ($attributes as $attribute) {

@@ -31,7 +31,7 @@ trait PermissionTrait
     /**
      * @return Permission[]
      */
-    public function getPermissions()
+    public function getPermissions(): iterable
     {
         $this->initPermissions();
 

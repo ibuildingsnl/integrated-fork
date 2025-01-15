@@ -30,17 +30,11 @@ class DefinitionTransformer implements DataTransformerInterface
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transform($value)
     {
         return $this->repository->findOneBy(['id' => $value]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($value)
     {
         if ($value instanceof Definition) {

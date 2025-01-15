@@ -32,9 +32,6 @@ class LayoutChoiceType extends AbstractType
         $this->locator = $locator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
@@ -51,17 +48,11 @@ class LayoutChoiceType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): ?string
     {
         return ChoiceType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_page_layout_choice';

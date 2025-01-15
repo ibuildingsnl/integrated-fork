@@ -20,9 +20,6 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class ImageConverterCompilerPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container)
     {
         $definition = $container->getDefinition('integrated_image.container_converter');

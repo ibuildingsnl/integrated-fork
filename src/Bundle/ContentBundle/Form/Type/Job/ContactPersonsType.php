@@ -32,9 +32,6 @@ class ContactPersonsType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): ?string
     {
         return TailwindCollectionType::class;

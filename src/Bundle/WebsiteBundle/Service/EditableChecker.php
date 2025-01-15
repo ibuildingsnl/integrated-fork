@@ -41,7 +41,7 @@ class EditableChecker
     public function __construct(
         AuthorizationChecker $authorizationChecker,
         TokenStorageInterface $tokenStorage,
-        RequestStack $requestStack
+        RequestStack $requestStack,
     ) {
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenStorage = $tokenStorage;
@@ -68,8 +68,8 @@ class EditableChecker
         $route = $this->request->attributes->get('_route');
 
         // check if route begins with page or contentTypePage prefix
-        if (0 === strpos($route, ContentTypePageLoader::ROUTE_PREFIX) ||
-            0 === strpos($route, PageLoader::ROUTE_PREFIX)
+        if (str_starts_with($route, ContentTypePageLoader::ROUTE_PREFIX)
+              || str_starts_with($route, PageLoader::ROUTE_PREFIX)
         ) {
             return true;
         }

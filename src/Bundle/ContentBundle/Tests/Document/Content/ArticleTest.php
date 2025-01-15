@@ -199,9 +199,6 @@ class ArticleTest extends TestCase
         $this->assertEquals($title, (string) $this->article);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getContent()
     {
         return $this->article;

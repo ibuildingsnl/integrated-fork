@@ -41,7 +41,7 @@ class CreateUserCommand extends Command
         ScopeManager $scopeManager,
         RoleManager $roleManager,
         ValidatorInterface $validator,
-        PasswordHasherFactoryInterface $hasherFactory
+        PasswordHasherFactoryInterface $hasherFactory,
     ) {
         $this->scopeManager = $scopeManager;
         $this->roleManager = $roleManager;

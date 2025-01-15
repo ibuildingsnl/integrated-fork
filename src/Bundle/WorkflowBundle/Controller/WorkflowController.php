@@ -235,7 +235,7 @@ class WorkflowController extends AbstractController
                 $users[] = [
                     'id' => $item->getId(),
                     'name' => $item->getRelation()->getFirstname().' '.$item->getRelation()->getLastName(),
-                    ];
+                ];
             } else {
                 $users[] = [
                     'id' => $item->getId(),

@@ -30,9 +30,6 @@ class FileTransformer implements DataTransformerInterface
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transform($file)
     {
         if ($file instanceof File) {
@@ -40,9 +37,6 @@ class FileTransformer implements DataTransformerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($id)
     {
         return $this->repository->find($id);

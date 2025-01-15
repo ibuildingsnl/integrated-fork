@@ -55,41 +55,26 @@ class Config implements ConfigInterface
         $this->matcher = $matcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getHandler()
     {
         return $this->handler;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return $this->type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOptions()
     {
         return $this->options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMatcher()
     {
         return $this->matcher;

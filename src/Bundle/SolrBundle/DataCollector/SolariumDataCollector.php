@@ -37,9 +37,6 @@ class SolariumDataCollector extends AbstractPlugin implements DataCollectorInter
      */
     protected $startTime;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function initPluginType()
     {
         $dispatcher = $this->client->getEventDispatcher();
@@ -50,10 +47,7 @@ class SolariumDataCollector extends AbstractPlugin implements DataCollectorInter
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function collect(Request $request, Response $response, \Throwable $exception = null)
+    public function collect(Request $request, Response $response, ?\Throwable $exception = null)
     {
         $time = 0;
 
@@ -103,33 +97,21 @@ class SolariumDataCollector extends AbstractPlugin implements DataCollectorInter
         return isset($this->data['total_time']) ? $this->data['total_time'] : 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return 'solr';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reset()
     {
         $this->data = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function serialize()
     {
         return serialize($this->data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function unserialize($data)
     {
         $this->data = unserialize($data);

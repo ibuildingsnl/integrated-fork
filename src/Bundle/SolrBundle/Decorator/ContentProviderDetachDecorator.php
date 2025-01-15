@@ -36,9 +36,6 @@ class ContentProviderDetachDecorator implements ContentProviderInterface
         $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReferenced($id)
     {
         return new DetachIterator($this->provider->getReferenced($id), $this->manager);

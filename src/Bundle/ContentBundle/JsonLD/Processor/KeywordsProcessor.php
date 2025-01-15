@@ -22,9 +22,6 @@ use Integrated\Common\Normalizer\Processor\ProcessorInterface;
  */
 class KeywordsProcessor implements ProcessorInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerInterface $data, $object, Context $context)
     {
         if (!$object instanceof Content) {

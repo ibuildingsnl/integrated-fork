@@ -23,14 +23,11 @@ class QueueProvider implements QueueProviderInterface
     private array $queue = [];
     private readonly Clock $clock;
 
-    public function __construct(Clock $clock = null)
+    public function __construct(?Clock $clock = null)
     {
         $this->clock = $clock ?: new DateTimeClock();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function push($channel, $payload, $delay = 0, $priority = 0, $attempt = 0)
     {
         // TODO: add priority
@@ -52,9 +49,6 @@ class QueueProvider implements QueueProviderInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function pull($channel, $limit = 1)
     {
         // this is a in memory queue so delay is ignored.
@@ -71,17 +65,11 @@ class QueueProvider implements QueueProviderInterface
         return \array_slice($this->currentlyAvailable($channel), 0, $limit);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear($channel)
     {
         $this->queue[$channel] = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function count($channel): int
     {
         return \count($this->currentlyAvailable($channel));

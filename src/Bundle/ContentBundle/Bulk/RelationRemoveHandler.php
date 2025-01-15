@@ -43,9 +43,6 @@ class RelationRemoveHandler implements HandlerInterface
         $this->references = $references;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(ContentInterface $content)
     {
         $embedded = $content->getRelation($this->relation->getId());

@@ -39,8 +39,6 @@ class ConfigResolver implements ConfigResolverInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @trows UnexpectedTypeException if $class is not a string
      */
     public function getConfig($class)
@@ -101,10 +99,9 @@ class ConfigResolver implements ConfigResolverInterface
     /**
      * Add a new config to the to the resolved instances cache.
      *
-     * @param string          $class
-     * @param ConfigInterface $config
+     * @param class-string $class
      */
-    protected function setInstance($class, ConfigInterface $config = null)
+    protected function setInstance($class, ?ConfigInterface $config = null)
     {
         return $this->resolved[$class] = $config;
     }
@@ -114,11 +111,10 @@ class ConfigResolver implements ConfigResolverInterface
      *
      * @param string                $class
      * @param TypeConfigInterface[] $types
-     * @param ConfigInterface       $parent
      *
      * @return ConfigInterface
      */
-    protected function newInstance($class, array $types, ConfigInterface $parent = null)
+    protected function newInstance($class, array $types, ?ConfigInterface $parent = null)
     {
         return $this->setInstance($class, new Config($types, $parent));
     }

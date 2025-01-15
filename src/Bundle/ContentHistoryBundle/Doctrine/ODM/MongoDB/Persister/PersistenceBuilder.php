@@ -44,7 +44,7 @@ class PersistenceBuilder
             throw new \RuntimeException('The given argument should be an object.');
         }
 
-        $class = $this->dm->getClassMetadata(\get_class($document));
+        $class = $this->dm->getClassMetadata($document::class);
         $data = [];
 
         foreach ($class->getFieldNames() as $field) {

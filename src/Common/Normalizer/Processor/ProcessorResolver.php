@@ -41,13 +41,10 @@ class ProcessorResolver implements ResolverInterface
         $this->factory = $factory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getProcessor($object)
     {
         if (\is_object($object)) {
-            $object = \get_class($object);
+            $object = $object::class;
         }
 
         if (!\is_string($object)) {

@@ -45,7 +45,7 @@ class BlockManager
     protected $repository;
 
     /**
-     * @var \Twig\Environment
+     * @var Environment
      */
     protected $twig;
 

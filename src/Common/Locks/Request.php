@@ -24,37 +24,28 @@ class Request implements RequestInterface
     /**
      * @var ResourceInterface|null
      */
-    protected $owner = null;
+    protected $owner;
 
     /**
      * @var int|null
      */
-    protected $timeout = null;
+    protected $timeout;
 
     public function __construct(ResourceInterface $resource)
     {
         $this->resource = $resource;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getResource()
     {
         return $this->resource;
     }
 
-    /**
-     * @param ResourceInterface $owner
-     */
-    public function setOwner(ResourceInterface $owner = null)
+    public function setOwner(?ResourceInterface $owner = null)
     {
         $this->owner = $owner;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOwner()
     {
         return $this->owner;
@@ -68,9 +59,6 @@ class Request implements RequestInterface
         $this->timeout = $timeout === null ? null : (int) $timeout;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTimeout()
     {
         return $this->timeout;

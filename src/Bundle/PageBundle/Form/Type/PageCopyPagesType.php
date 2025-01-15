@@ -32,9 +32,6 @@ class PageCopyPagesType extends AbstractType
         $this->documentManager = $documentManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $queryBuilder = $this->documentManager->createQueryBuilder(Page::class)
@@ -54,9 +51,6 @@ class PageCopyPagesType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['channel', 'targetChannel']);

@@ -81,9 +81,6 @@ class CompanyTest extends TestCase
         $this->assertEquals($name, (string) $this->company->setName($name));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getContent()
     {
         return $this->company;

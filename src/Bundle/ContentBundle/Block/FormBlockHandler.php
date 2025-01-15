@@ -78,7 +78,7 @@ class FormBlockHandler extends BlockHandler
         RequestStack $requestStack,
         FormMailer $formMailer,
         ChannelContextInterface $channelContext,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
     ) {
         $this->formFactory = $formFactory;
         $this->documentManager = $documentManager;
@@ -88,9 +88,6 @@ class FormBlockHandler extends BlockHandler
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(BlockInterface $block, array $options)
     {
         if (!$block instanceof FormBlock) {
@@ -150,12 +147,9 @@ class FormBlockHandler extends BlockHandler
     }
 
     /**
-     * @param mixed     $data
-     * @param FormBlock $block
-     *
      * @return FormInterface
      */
-    protected function createForm($data = null, array $options = [], FormBlock $block = null)
+    protected function createForm($data = null, array $options = [], ?FormBlock $block = null)
     {
         $form = $this->formFactory->createBuilder(ContentFormType::class, $data, $options);
 

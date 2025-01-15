@@ -112,9 +112,6 @@ class ProductTest extends TestCase
         $this->assertEquals($title, (string) $this->product->setTitle($title));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getContent()
     {
         return $this->product;

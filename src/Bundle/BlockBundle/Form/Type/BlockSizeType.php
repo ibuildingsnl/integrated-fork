@@ -24,9 +24,6 @@ use Symfony\Component\Validator\Constraints\Range;
  */
 class BlockSizeType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('block', BlockType::class);
@@ -84,9 +81,6 @@ class BlockSizeType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -94,9 +88,6 @@ class BlockSizeType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_block_size';

@@ -556,8 +556,7 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param mixed $payload
-     * @param bool  $delete
+     * @param bool $delete
      *
      * @return QueueMessageInterface|MockObject
      */

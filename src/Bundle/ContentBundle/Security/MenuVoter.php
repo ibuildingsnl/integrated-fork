@@ -52,17 +52,11 @@ class MenuVoter implements VoterInterface
         return $resolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsAttribute($attribute)
     {
         return \in_array($attribute, $this->permissions);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function vote(TokenInterface $token, $menu, array $attributes)
     {
         if (!$menu instanceof Taxonomy) {

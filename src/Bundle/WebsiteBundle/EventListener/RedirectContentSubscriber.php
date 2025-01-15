@@ -53,7 +53,7 @@ class RedirectContentSubscriber implements EventSubscriberInterface
         ChannelContextInterface $channelContext,
         DocumentManager $documentManager,
         UrlResolver $urlResolver,
-        UrlMatcherInterface $matcher
+        UrlMatcherInterface $matcher,
     ) {
         $this->channelContext = $channelContext;
         $this->documentManager = $documentManager;
@@ -61,9 +61,6 @@ class RedirectContentSubscriber implements EventSubscriberInterface
         $this->matcher = $matcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [KernelEvents::EXCEPTION => 'onKernelException'];

@@ -89,9 +89,6 @@ class FacetBlock extends Block
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return 'facet';

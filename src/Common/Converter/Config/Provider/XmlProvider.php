@@ -34,9 +34,6 @@ class XmlProvider extends AbstractFileProvider
         parent::__construct($finder, 'xml');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function load(SplFileInfo $file)
     {
         $types = [];

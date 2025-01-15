@@ -22,9 +22,6 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class NotEmptyCollectionValidator extends ConstraintValidator
 {
-    /**
-     * {@inheritdoc}
-     */
     public function validate(mixed $value, Constraint $constraint)
     {
         if (!$constraint instanceof ManagerConstraint) {

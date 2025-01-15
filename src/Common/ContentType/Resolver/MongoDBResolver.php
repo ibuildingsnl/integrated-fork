@@ -55,9 +55,6 @@ class MongoDBResolver implements ResolverInterface
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType($type)
     {
         if (!\is_string($type)) {
@@ -75,9 +72,6 @@ class MongoDBResolver implements ResolverInterface
         return $this->types[$type];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasType($type)
     {
         try {
@@ -91,9 +85,6 @@ class MongoDBResolver implements ResolverInterface
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTypes()
     {
         return new MongoDBIterator($this->repository->findBy([], ['name' => 'ASC']));

@@ -44,7 +44,7 @@ class AddCommand extends Command
         FilesystemRegistry $registry,
         ManagerInterface $storage,
         DecisionInterface $decision,
-        MetadataFactoryInterface $metadata
+        MetadataFactoryInterface $metadata,
     ) {
         $this->database = $database;
         $this->registry = $registry;

@@ -60,9 +60,6 @@ class ConfigureMenuListener implements EventSubscriberInterface
         $this->filterQueryProvider = $filterQueryProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -72,8 +69,8 @@ class ConfigureMenuListener implements EventSubscriberInterface
 
     public function onMenuConfigure(ConfigureMenuEvent $event)
     {
-        if (!$this->authorizationChecker->isGranted(self::ROLE_WEBSITE_MANAGER) &&
-            !$this->authorizationChecker->isGranted(self::ROLE_ADMIN)) {
+        if (!$this->authorizationChecker->isGranted(self::ROLE_WEBSITE_MANAGER)
+            && !$this->authorizationChecker->isGranted(self::ROLE_ADMIN)) {
             $session = $this->requestStack->getSession();
             $hasBlocks = $session->get('hasBlocks', false);
 

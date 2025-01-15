@@ -38,9 +38,6 @@ class MemoryResolver implements ResolverInterface
         $this->types = $types;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType($type)
     {
         if (!\is_string($type)) {
@@ -54,9 +51,6 @@ class MemoryResolver implements ResolverInterface
         throw new InvalidArgumentException(sprintf('Could not resolve the content type based on the given type "%s"', $type));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasType($type)
     {
         try {
@@ -70,9 +64,6 @@ class MemoryResolver implements ResolverInterface
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTypes()
     {
         return new Iterator($this->types);

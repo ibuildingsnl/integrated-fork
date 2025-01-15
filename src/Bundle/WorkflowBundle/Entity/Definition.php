@@ -149,11 +149,9 @@ class Definition
     }
 
     /**
-     * @param State $default
-     *
      * @return $this
      */
-    public function setDefault(State $default = null)
+    public function setDefault(?State $default = null)
     {
         $this->default = $default;
 

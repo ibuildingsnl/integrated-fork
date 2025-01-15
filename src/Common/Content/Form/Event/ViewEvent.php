@@ -36,15 +36,12 @@ class ViewEvent extends FormEvent
      */
     private $options = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(
         ContentTypeInterface $contentType,
         MetadataInterface $metadata,
         FormView $view,
         FormInterface $form,
-        array $options
+        array $options,
     ) {
         parent::__construct($contentType, $metadata);
 

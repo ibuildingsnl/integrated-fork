@@ -29,17 +29,12 @@ class PropertyType implements TypeInterface
 
     /**
      * Constructor.
-     *
-     * @param PropertyAccessorInterface $accessor
      */
-    public function __construct(PropertyAccessorInterface $accessor = null)
+    public function __construct(?PropertyAccessorInterface $accessor = null)
     {
         $this->accessor = $accessor ?: PropertyAccess::createPropertyAccessor();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         if (!($data instanceof ContentInterface)) {
@@ -59,9 +54,6 @@ class PropertyType implements TypeInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.properties';

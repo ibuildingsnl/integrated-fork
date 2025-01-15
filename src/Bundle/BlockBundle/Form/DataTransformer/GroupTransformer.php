@@ -26,9 +26,6 @@ class GroupTransformer implements DataTransformerInterface
         $this->groupManager = $groupManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transform($groupsIds)
     {
         if ($groupsIds === null) {
@@ -45,9 +42,6 @@ class GroupTransformer implements DataTransformerInterface
         return $groups;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($groups)
     {
         return $groups;

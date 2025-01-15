@@ -37,12 +37,9 @@ class Decision implements DecisionInterface
         $this->decisionMap = $decisionMap;
     }
 
-    /**
-     * {@inheritdoc}
-     **/
     public function getFilesystems($object)
     {
-        $className = ClassUtils::getRealClass(\get_class($object));
+        $className = ClassUtils::getRealClass($object::class);
         if (isset($this->decisionMap[$className])) {
             return new ArrayCollection(array_values($this->decisionMap[$className]));
         }

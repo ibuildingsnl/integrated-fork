@@ -272,9 +272,11 @@ abstract class AbstractPage
             return $channel->getPrimaryDomain();
         }
 
-        $domains = $channel->getDomains();
-        if (\count($domains)) {
-            return $domains[0];
+        if ($channel instanceof Channel) {
+            $domains = $channel->getDomains();
+            if (\count($domains)) {
+                return $domains[0];
+            }
         }
 
         return null;

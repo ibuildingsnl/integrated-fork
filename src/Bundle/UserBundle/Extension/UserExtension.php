@@ -28,9 +28,6 @@ class UserExtension implements ExtensionInterface
         $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSubscribers()
     {
         return [
@@ -39,9 +36,6 @@ class UserExtension implements ExtensionInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.extension.user';

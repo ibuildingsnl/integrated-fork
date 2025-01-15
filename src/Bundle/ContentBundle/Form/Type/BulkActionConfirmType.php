@@ -21,26 +21,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class BulkActionConfirmType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('actions', BulkActionsType::class, ['content' => $options['content'], 'readonly' => true]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired('content');
         $resolver->setDefault('data_class', BulkAction::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_content_bulk_comfirm';

@@ -31,9 +31,6 @@ class PubActiveExtension implements TypeExtensionInterface
         $this->resolver = $resolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         if (!$data instanceof Content) {
@@ -50,9 +47,6 @@ class PubActiveExtension implements TypeExtensionInterface
         $container->set('published', $data->isPublished(false));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.content';

@@ -2,6 +2,7 @@
 
 namespace Integrated\Common\Channel\Exporter;
 
+use Integrated\Common\Channel\Connector\ExporterInterface;
 use Integrated\Common\Channel\Exporter\Queue\RequestSerializerInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Queue\QueueInterface;
@@ -18,7 +19,7 @@ class QueueExporter implements ExporterInterface, QueueExporterInterface
         private readonly RequestSerializerInterface $serializer,
         private readonly ExporterInterface $exporter,
         private readonly int $maxAttempts,
-        \Closure $retryDelay = null,
+        ?\Closure $retryDelay = null,
     ) {
         $this->retryDelay = $retryDelay ?: fn (int $attempt) => 150 + $attempt * 150;
     }
@@ -89,11 +90,8 @@ class QueueExporter implements ExporterInterface, QueueExporterInterface
         return $message;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function export(object $content, string $state, ChannelInterface $channel, array $settings = []): void
+    public function export(object $content, string $state, ChannelInterface $channel, array $settings = []): ?ExporterResponse
     {
-        $this->exporter->export($content, $state, $channel, $settings);
+        return $this->exporter->export($content, $state, $channel, $settings);
     }
 }

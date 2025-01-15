@@ -29,7 +29,7 @@ class ResolvedType implements ResolvedTypeInterface
     /**
      * @param TypeExtensionInterface[] $extensions
      */
-    public function __construct(TypeInterface $type, array $extensions = [], ResolvedTypeInterface $parent = null)
+    public function __construct(TypeInterface $type, array $extensions = [], ?ResolvedTypeInterface $parent = null)
     {
         $this->type = $type;
         $this->extensions = $extensions;

@@ -50,33 +50,21 @@ class Config implements ConfigInterface
         $this->publicationStartDate = $publicationStartDate;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAdapter()
     {
         return $this->adaptor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOptions()
     {
         return $this->options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPublicationStartDate(): ?\DateTime
     {
         return $this->publicationStartDate;

@@ -32,9 +32,6 @@ abstract class AbstractAssetExtension extends AbstractExtension
         $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTokenParsers()
     {
         return [
@@ -42,9 +39,6 @@ abstract class AbstractAssetExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions()
     {
         return [

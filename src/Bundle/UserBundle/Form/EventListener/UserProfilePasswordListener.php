@@ -34,9 +34,6 @@ class UserProfilePasswordListener implements EventSubscriberInterface
         $this->hasherFactory = $hasherFactory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

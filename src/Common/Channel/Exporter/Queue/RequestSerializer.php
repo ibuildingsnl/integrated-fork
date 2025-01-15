@@ -14,12 +14,12 @@ class RequestSerializer implements RequestSerializerInterface
     /**
      * @var SerializerInterface
      */
-    protected $serializer = null;
+    protected $serializer;
 
     /**
      * @var ChannelManagerInterface
      */
-    protected $manager = null;
+    protected $manager;
 
     /**
      * Constructor.
@@ -46,9 +46,6 @@ class RequestSerializer implements RequestSerializerInterface
         return $this->manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function serialize(Request $data)
     {
         return json_encode(
@@ -64,9 +61,6 @@ class RequestSerializer implements RequestSerializerInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function deserialize($data)
     {
         $data = json_decode($data, true);

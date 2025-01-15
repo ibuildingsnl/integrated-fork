@@ -63,9 +63,6 @@ class ContentTypeHandler implements HandlerInterface
         $this->contentType = $contentType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(ContentInterface $content)
     {
         $contentType = $this->documentManager->getRepository(ContentType::class)->find($this->contentType);

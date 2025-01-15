@@ -55,33 +55,21 @@ class StorageModel implements StorageInterface, \ArrayAccess
         $this->metadata = $metadata;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIdentifier()
     {
         return $this->identifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPathname()
     {
         return $this->pathname;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFilesystems()
     {
         return $this->filesystems;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMetadata()
     {
         return $this->metadata;

@@ -104,9 +104,6 @@ class SecurityLoginListener implements EventSubscriberInterface
         return $this->translationDomain;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

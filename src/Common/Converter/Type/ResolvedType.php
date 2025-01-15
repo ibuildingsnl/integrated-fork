@@ -40,9 +40,6 @@ class ResolvedType implements ResolvedTypeInterface
         $this->extensions = $extensions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         $this->type->build($container, $data, $options);
@@ -52,25 +49,16 @@ class ResolvedType implements ResolvedTypeInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->type->getName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return $this->type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTypeExtensions()
     {
         return $this->extensions;

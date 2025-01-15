@@ -61,9 +61,6 @@ class TaxonomyTest extends TestCase
         $this->assertEquals($title, (string) $this->taxonomy->setTitle($title));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getContent()
     {
         return $this->taxonomy;

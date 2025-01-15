@@ -140,7 +140,7 @@ The <info>%command.name%</info> command starts a index of all the content from t
      *
      * @return Definition[]
      */
-    private function findDefinition(array $ids = null): iterable
+    private function findDefinition(?array $ids = null): iterable
     {
         if (null === $ids) {
             return $this->workflowRepository->findAll();

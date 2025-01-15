@@ -194,11 +194,9 @@ class Contact
     }
 
     /**
-     * @param Location $location
-     *
      * @return $this
      */
-    public function setLocation(Location $location = null): static
+    public function setLocation(?Location $location = null): static
     {
         $this->location = $location;
 

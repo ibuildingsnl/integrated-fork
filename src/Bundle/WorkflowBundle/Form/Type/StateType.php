@@ -30,12 +30,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class StateType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('name', Type\TextType::class, [
+        $builder->add('name', TextType::class, [
             'constraints' => [
                 new NotBlank(),
                 new Length(['min' => 3]),
@@ -80,8 +77,8 @@ class StateType extends AbstractType
                 'label' => 'Status icon',
                 'required' => false,
                 'attr' => [
-                        'help_text' => '<span>You can use any <a href="https://iconoir.com/" target="_blank">Iconoir</a> icon</span>',
-                    ],
+                    'help_text' => '<span>You can use any <a href="https://iconoir.com/" target="_blank">Iconoir</a> icon</span>',
+                ],
             ]
         );
 
@@ -137,9 +134,6 @@ class StateType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $emptyData = function (FormInterface $form) {
@@ -153,9 +147,6 @@ class StateType extends AbstractType
         $resolver->setAllowedValues('transitions', ['data', 'empty', 'none']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'integrated_workflow_definition_state';

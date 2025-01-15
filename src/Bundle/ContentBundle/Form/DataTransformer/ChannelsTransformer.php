@@ -18,9 +18,6 @@ use Symfony\Component\Form\DataTransformerInterface;
  */
 class ChannelsTransformer implements DataTransformerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function transform($value)
     {
         $result = [
@@ -69,9 +66,6 @@ class ChannelsTransformer implements DataTransformerInterface
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($value)
     {
         $result = [

@@ -57,9 +57,6 @@ class GroupManager implements GroupManagerInterface
         return $this->repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create()
     {
         $class = $this->getClassName();
@@ -67,9 +64,6 @@ class GroupManager implements GroupManagerInterface
         return new $class();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function persist(GroupInterface $group, $flush = true)
     {
         $this->om->persist($group);
@@ -79,9 +73,6 @@ class GroupManager implements GroupManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function remove(GroupInterface $group, $flush = true)
     {
         $this->om->remove($group);
@@ -91,49 +82,31 @@ class GroupManager implements GroupManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear()
     {
         $this->om->clear();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function find($id)
     {
         return $this->repository->find($id);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findAll()
     {
         return $this->repository->findAll();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByName($criteria)
     {
         return $this->repository->findOneBy(['name' => $criteria]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null)
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClassName()
     {
         return $this->repository->getClassName();

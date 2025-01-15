@@ -20,9 +20,6 @@ use Symfony\Component\Form\DataTransformerInterface;
  */
 class OptionsTransformer implements DataTransformerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function transform($value)
     {
         $result = [];
@@ -34,9 +31,6 @@ class OptionsTransformer implements DataTransformerInterface
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($value)
     {
         if (!\is_array($value)) {

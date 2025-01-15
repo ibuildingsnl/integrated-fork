@@ -43,8 +43,6 @@ interface ChannelManagerInterface
     /**
      * Finds the user by its identifier.
      *
-     * @param mixed $id
-     *
      * @return ChannelInterface
      */
     public function find($id);

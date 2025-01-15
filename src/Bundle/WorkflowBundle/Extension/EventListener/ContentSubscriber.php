@@ -13,6 +13,7 @@ namespace Integrated\Bundle\WorkflowBundle\Extension\EventListener;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
@@ -55,7 +56,7 @@ class ContentSubscriber implements ContentSubscriberInterface
         private readonly MailerInterface $mailer,
         private readonly RouterInterface $router,
         private readonly ThemeManager $themeManager,
-        private readonly string $fromEmail
+        private readonly string $fromEmail,
     ) {
     }
 
@@ -105,7 +106,7 @@ class ContentSubscriber implements ContentSubscriberInterface
         }
 
         $data = \is_array($data = $event->getData()) ? array_filter($data) : []; // filter out empty fields
-        $data = $data + [
+        $data += [
             'comment' => '',
             'state' => ($state = $this->getState($content)) ? $state->getState() : null,
             'assigned' => null,
@@ -141,17 +142,19 @@ class ContentSubscriber implements ContentSubscriberInterface
             // TODO: Entry should be removed from workflow_states table
         }
 
-        if ($content instanceof MetadataInterface && $state) {
-            $content->getMetadata()->set('workflow', $state->getWorkflow()?->getId());
-            $content->getMetadata()->set('workflow_state', $state->getId());
+        if ($content instanceof MetadataInterface) {
+            if ($state) {
+                $content->getMetadata()->set('workflow', $state->getWorkflow()?->getId());
+                $content->getMetadata()->set('workflow_state', $state->getId());
 
-            // hax: setDisabled is not in the interface
-            if (method_exists($content, 'setDisabled')) {
-                $content->setDisabled(!$state->isPublishable());
+                // hax: setDisabled is not in the interface
+                if (method_exists($content, 'setDisabled')) {
+                    $content->setDisabled(!$state->isPublishable());
+                }
+            } else {
+                $content->getMetadata()->remove('workflow');
+                $content->getMetadata()->remove('workflow_state');
             }
-        } else {
-            $content->getMetadata()->remove('workflow');
-            $content->getMetadata()->remove('workflow_state');
         }
     }
 
@@ -213,7 +216,7 @@ class ContentSubscriber implements ContentSubscriberInterface
 
                         $link = $this->router->generate('integrated_content_content_edit', ['id' => $content->getId()]);
 
-                        $baseUrl = $content->getPrimaryChannel()?->getPrimaryDomain() ??
+                        $baseUrl = (($content instanceof Content) ? $content->getPrimaryChannel()?->getPrimaryDomain() : null) ??
                                    ((isset($_SERVER['HTTPS']) ? 'https' : 'http')."://$_SERVER[HTTP_HOST]");
 
                         $template = $this->themeManager->locateTemplate('/mail/workflow-notification.html.twig');

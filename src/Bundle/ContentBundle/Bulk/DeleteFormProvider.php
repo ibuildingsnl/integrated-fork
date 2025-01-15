@@ -17,9 +17,6 @@ use Integrated\Common\Bulk\Form\ConfigProviderInterface;
 
 class DeleteFormProvider implements ConfigProviderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getConfig(array $content)
     {
         $config = [];

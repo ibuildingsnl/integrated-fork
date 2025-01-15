@@ -26,9 +26,6 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class IntegratedChannelExtension extends Extension implements PrependExtensionInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function load(array $config, ContainerBuilder $container)
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
@@ -108,9 +105,6 @@ class IntegratedChannelExtension extends Extension implements PrependExtensionIn
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function prepend(ContainerBuilder $container)
     {
         foreach ($container->getExtensions() as $name => $extension) {

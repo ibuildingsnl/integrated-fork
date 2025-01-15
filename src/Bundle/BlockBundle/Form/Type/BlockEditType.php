@@ -45,16 +45,13 @@ class BlockEditType extends AbstractType
     public function __construct(
         LayoutLocator $layoutLocator,
         AuthorizationCheckerInterface $authorizationChecker,
-        GroupManagerInterface $groupManager
+        GroupManagerInterface $groupManager,
     ) {
         $this->layoutLocator = $layoutLocator;
         $this->authorizationChecker = $authorizationChecker;
         $this->groupManager = $groupManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $layouts = $this->layoutLocator->getLayouts($options['type']);
@@ -97,17 +94,11 @@ class BlockEditType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['type']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): ?string
     {
         return MetadataType::class;
