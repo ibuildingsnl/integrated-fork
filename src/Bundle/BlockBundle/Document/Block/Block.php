@@ -106,6 +106,9 @@ abstract class Block implements BlockInterface
      */
     protected $groups = [];
 
+    /**
+     * @param string|null $id
+     */
     public function __construct($id = null)
     {
         if ($id) {

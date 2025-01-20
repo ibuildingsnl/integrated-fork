@@ -199,12 +199,6 @@ parameters:
 			path: src/Bundle/BlockBundle/Document/Block/Block.php
 
 		-
-			message: '#^Method Integrated\\Bundle\\BlockBundle\\Document\\Block\\Block\:\:__construct\(\) has parameter \$id with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Bundle/BlockBundle/Document/Block/Block.php
-
-		-
 			message: '#^Method Integrated\\Bundle\\BlockBundle\\Document\\Block\\Block\:\:addRelation\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -3041,12 +3035,6 @@ parameters:
 			identifier: identical.alwaysFalse
 			count: 1
 			path: src/Bundle/ContentBundle/Document/Block/ContentBlock.php
-
-		-
-			message: '#^Method Integrated\\Bundle\\ContentBundle\\Document\\Block\\FacetBlock\:\:__construct\(\) has parameter \$id with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Bundle/ContentBundle/Document/Block/FacetBlock.php
 
 		-
 			message: '#^Method Integrated\\Bundle\\ContentBundle\\Document\\Block\\FacetBlock\:\:setFields\(\) has parameter \$fields with no value type specified in iterable type array\.$#'
@@ -22633,12 +22621,6 @@ parameters:
 			path: src/Common/Converter/Config/ConfigInterface.php
 
 		-
-			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/Common/Converter/Config/ConfigResolver.php
-
-		-
 			message: '#^Method Integrated\\Common\\Converter\\Config\\ConfigResolver\:\:getConfig\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -22665,12 +22647,6 @@ parameters:
 		-
 			message: '#^Method Integrated\\Common\\Converter\\Config\\ConfigResolver\:\:setInstance\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: src/Common/Converter/Config/ConfigResolver.php
-
-		-
-			message: '#^Parameter \#1 \$objectOrClass of class ReflectionClass constructor expects class\-string\<T of object\>\|T of object, string given\.$#'
-			identifier: argument.type
 			count: 1
 			path: src/Common/Converter/Config/ConfigResolver.php
 
@@ -23007,12 +22983,6 @@ parameters:
 		-
 			message: '#^Method Integrated\\Common\\Converter\\Tests\\Config\\ConfigResolverTest\:\:testInterface\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: src/Common/Converter/Tests/Config/ConfigResolverTest.php
-
-		-
-			message: '#^Parameter \#1 \$class of method Integrated\\Common\\Converter\\Config\\ConfigResolver\:\:getConfig\(\) expects string, int given\.$#'
-			identifier: argument.type
 			count: 1
 			path: src/Common/Converter/Tests/Config/ConfigResolverTest.php
 

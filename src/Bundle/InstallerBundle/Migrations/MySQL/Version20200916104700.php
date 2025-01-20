@@ -12,8 +12,8 @@ final class Version20200916104700 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->abortIf(
-            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQLPlatform,
-            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQLPlatform'."
+            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\AbstractMySQLPlatform,
+            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\AbstractMySQLPlatform'."
         );
 
         $this->addSql('CREATE INDEX IDX_F83F464362894749 ON security_users (relation)');
@@ -22,8 +22,8 @@ final class Version20200916104700 extends AbstractMigration
     public function down(Schema $schema): void
     {
         $this->abortIf(
-            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQLPlatform,
-            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQLPlatform'."
+            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\AbstractMySQLPlatform,
+            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\AbstractMySQLPlatform'."
         );
 
         $this->addSql('DROP INDEX idx_f83f464362894749 ON security_users');

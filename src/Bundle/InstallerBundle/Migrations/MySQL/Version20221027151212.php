@@ -17,8 +17,8 @@ final class Version20221027151212 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->abortIf(
-            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQLPlatform,
-            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQLPlatform'."
+            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\AbstractMySQLPlatform,
+            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\AbstractMySQLPlatform'."
         );
 
         $this->addSql('ALTER TABLE `security_users` DROP INDEX `UNIQ_F83F4643E7927C74`');
@@ -27,8 +27,8 @@ final class Version20221027151212 extends AbstractMigration
     public function down(Schema $schema): void
     {
         $this->abortIf(
-            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQLPlatform,
-            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQLPlatform'."
+            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\AbstractMySQLPlatform,
+            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\AbstractMySQLPlatform'."
         );
 
         $this->addSql('ALTER TABLE `security_users` ADD UNIQUE INDEX UNIQ_F83F4643E7927C74 (email)');

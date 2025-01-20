@@ -118,12 +118,12 @@ class ConfigResolverTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(\Integrated\Common\Converter\Exception\ExceptionInterface::class);
 
-        $this->getInstance()->getConfig(42);
+        $this->getInstance()->getConfig(42); // @phpstan-ignore-line
     }
 
     public function testGetConfigInvalidClass()
     {
-        self::assertNull($this->getInstance()->getConfig('Integrated\\Tests\\Common\\Converter\\Config\\Fixtures\\DoesNotExist'));
+        self::assertNull($this->getInstance()->getConfig('Integrated\\Tests\\Common\\Converter\\Config\\Fixtures\\DoesNotExist')); // @phpstan-ignore-line
     }
 
     /**
