@@ -19,7 +19,7 @@ interface ConfigResolverInterface
     /**
      * Get the config for the $class.
      *
-     * @param string $class
+     * @param class-string $class
      */
     public function getConfig($class);
 }

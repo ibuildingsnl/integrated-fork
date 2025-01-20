@@ -39,24 +39,24 @@ class Channel implements ChannelInterface
      * @var string the name of the channel
      */
     #[Assert\NotBlank]
-    protected $name;
+    protected $name = '';
 
     protected ?ChannelType $type = null;
 
     /**
      * @var array
      */
-    protected $domains;
+    protected $domains = [];
 
     /**
      * @var string
      */
-    protected $primaryDomain;
+    protected $primaryDomain = '';
 
     /**
      * @var bool
      */
-    protected $primaryDomainRedirect;
+    protected $primaryDomainRedirect = false;
 
     /**
      * @var mixed[]

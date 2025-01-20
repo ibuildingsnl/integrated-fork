@@ -12,8 +12,8 @@ final class Version20200713140837 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->abortIf(
-            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQLPlatform,
-            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQLPlatform'."
+            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\AbstractMySQLPlatform,
+            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\AbstractMySQLPlatform'."
         );
 
         $this->addSql('CREATE TABLE scraper (
@@ -50,8 +50,8 @@ final class Version20200713140837 extends AbstractMigration
     public function down(Schema $schema): void
     {
         $this->abortIf(
-            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQLPlatform,
-            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQLPlatform'."
+            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\AbstractMySQLPlatform,
+            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\AbstractMySQLPlatform'."
         );
 
         $this->addSql('ALTER TABLE scraper_block_link DROP FOREIGN KEY FK_E45CDE15A68BBF9');

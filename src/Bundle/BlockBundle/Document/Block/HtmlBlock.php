@@ -66,7 +66,7 @@ class HtmlBlock extends Block implements BlockRequiredItemsInterface
     /**
      * General object init.
      *
-     * @param null $id
+     * @param string|null $id
      */
     public function __construct($id = null)
     {

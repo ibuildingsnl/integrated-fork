@@ -53,7 +53,7 @@
                                 {% trans %}Edit page{% endtrans %}
                             </a>
                             {% if page.type == 'content_type_page' %}
-                                <a href="{{ path('integrated_page_content_type_page_edit', {'id': app.request.attributes.get('page').id}) }}"
+                                <a href="{{ path('integrated_page_content_type_page_edit', {'id': page.id}) }}"
                                    class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>
                             {% else %}
                                 <a href="{{ path('integrated_page_page_edit', {'id': page.id}) }}"

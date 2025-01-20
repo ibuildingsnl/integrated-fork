@@ -6,6 +6,5 @@
     'html' : integrated_block(block),
     'cssClass' : block.cssClass
 } %}
-
-{{ data|json_encode|raw }}
 {% endapply %}
+{{ data|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}

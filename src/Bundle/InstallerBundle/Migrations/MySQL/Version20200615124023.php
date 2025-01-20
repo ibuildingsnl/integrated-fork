@@ -12,8 +12,8 @@ final class Version20200615124023 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->abortIf(
-            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQLPlatform,
-            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQLPlatform'."
+            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\AbstractMySQLPlatform,
+            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\AbstractMySQLPlatform'."
         );
 
         $this->addSql('ALTER TABLE security_users ADD created_at DATETIME NOT NULL');
@@ -23,8 +23,8 @@ final class Version20200615124023 extends AbstractMigration
     public function down(Schema $schema): void
     {
         $this->abortIf(
-            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQLPlatform,
-            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQLPlatform'."
+            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\AbstractMySQLPlatform,
+            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\AbstractMySQLPlatform'."
         );
 
         $this->addSql('ALTER TABLE security_users DROP created_at');

@@ -43,7 +43,7 @@ class ConfigResolver implements ConfigResolverInterface
      */
     public function getConfig($class)
     {
-        if (!\is_string($class)) {
+        if (!\is_string($class)) { // @phpstan-ignore-line we want to be sure this is correct
             throw new UnexpectedTypeException($class, 'string');
         }
 
@@ -56,7 +56,7 @@ class ConfigResolver implements ConfigResolverInterface
 
         try {
             $reflection = new \ReflectionClass($class);
-        } catch (\Exception $e) {
+        } catch (\Exception $e) {  // @phpstan-ignore-line we want to be sure this is correct
             return $this->setInstance($class, null);
         }
 
@@ -109,7 +109,7 @@ class ConfigResolver implements ConfigResolverInterface
     /**
      * Create a new config instance and added it to the other resolved instances cache.
      *
-     * @param string                $class
+     * @param class-string          $class
      * @param TypeConfigInterface[] $types
      *
      * @return ConfigInterface

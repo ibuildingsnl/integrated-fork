@@ -17,18 +17,12 @@ final class Version20200615124024 extends AbstractMigration implements EntityMan
     public function up(Schema $schema): void
     {
         $this->abortIf(
-            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQLPlatform,
-            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQLPlatform'."
+            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\AbstractMySQLPlatform,
+            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\AbstractMySQLPlatform'."
         );
 
         if (!$scope = $this->manager->getRepository(Scope::class)->findOneBy(['admin' => true])) {
-            $scope = new Scope();
-            $scope
-                ->setName('Integrated')
-                ->setAdmin(true);
-
-            $this->manager->persist($scope);
-            $this->manager->flush();
+            $this->addSql('INSERT INTO `security_scopes` (`name`, `admin`) VALUES (\'Integrated\', \'1\')');
         }
     }
 

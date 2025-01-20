@@ -219,7 +219,7 @@ class ContentSubscriber implements ContentSubscriberInterface
                         $baseUrl = (($content instanceof Content) ? $content->getPrimaryChannel()?->getPrimaryDomain() : null) ??
                                    ((isset($_SERVER['HTTPS']) ? 'https' : 'http')."://$_SERVER[HTTP_HOST]");
 
-                        $template = $this->themeManager->locateTemplate('/mail/workflow-notification.html.twig');
+                        $template = $this->themeManager->locateTemplate('mail/workflow-notification.html.twig');
 
                         $lines = [
                             'A new item has been assigned to you:',
@@ -235,7 +235,7 @@ class ContentSubscriber implements ContentSubscriberInterface
                             $message = (new TemplatedEmail())
                                 ->from($this->fromEmail)
                                 ->to($person->getEmail())
-                                ->htmlTemplate($this->themeManager->locateTemplate('/mail/workflow-notification.html.twig'))
+                                ->htmlTemplate($this->themeManager->locateTemplate('mail/workflow-notification.html.twig'))
                                 ->subject($email['subject'])
                                 ->context($email);
                             $this->mailer->send($message);
