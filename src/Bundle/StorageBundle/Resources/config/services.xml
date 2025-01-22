@@ -33,6 +33,7 @@
                 Second argument is injected in the bundle extension (see DependencyInjection)
             -->
             <argument />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
         </service>
 
         <service id="integrated_storage.registry" class="Integrated\Bundle\StorageBundle\Storage\Registry\FilesystemRegistry">

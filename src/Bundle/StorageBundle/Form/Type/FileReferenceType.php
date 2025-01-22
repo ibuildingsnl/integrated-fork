@@ -46,7 +46,6 @@ class FileReferenceType extends AbstractType
 
             return true;
         });
-        parent::configureOptions($resolver);
     }
 
     public function getBlockPrefix(): string

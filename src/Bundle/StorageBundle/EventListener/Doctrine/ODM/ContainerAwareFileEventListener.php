@@ -11,14 +11,17 @@
 
 namespace Integrated\Bundle\StorageBundle\EventListener\Doctrine\ODM;
 
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Event\PreFlushEventArgs;
+use Doctrine\ODM\MongoDB\Events;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
+#[AsDocumentListener(event: Events::prePersist)]
+#[AsDocumentListener(event: Events::preRemove)]
+#[AsDocumentListener(event: Events::preFlush)]
+#[AsDocumentListener(event: Events::onFlush)]
 class ContainerAwareFileEventListener extends FileEventListener
 {
     /**
