@@ -33,6 +33,7 @@ class Article extends Content implements RankableInterface
 
     #[Type\Field(options: [
         'priority' => 990,
+        'empty_data' => '',
         'attr' => [
             'state' => 'title_tinymce',
             'class' => 'fancy_tinymce',
