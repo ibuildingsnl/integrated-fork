@@ -14,7 +14,7 @@
             {% block content_website_links %}
                 {% if content is defined and preview is same as (true) %}
                     <div class="preview">
-                        {% if content.getChannels|length > 0 %}
+                        {% if content.channels|length > 0 %}
                             <ul class="options-no-bg">
                                 <li class="dropdown close-outside" data-underlay="no">
                                     <a data-toggle="dropdown" role="button" id="drop_1"
@@ -23,7 +23,7 @@
                                         <i class="iconoir-nav-arrow-down"></i>
                                     </a>
                                     <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu alt" id="menu_1">
-                                        {% for channel in content.getChannels %}
+                                        {% for channel in content.channels %}
                                             {% set domain = channel.primaryDomain|default(channel.domains|first)|default("") %}
                                             {% set url = integrated_url(content, channel.id, false) %}
                                             {% if (domain != "" and url) %}

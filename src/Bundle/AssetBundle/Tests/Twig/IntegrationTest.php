@@ -42,7 +42,7 @@ class IntegrationTest extends IntegrationTestCase
     /**
      * @dataProvider getTests
      */
-    public function testIntegration($file, $message, $condition, $templates, $exception, $outputs, $deprecation = '')
+    public function testIntegration($file, $message, $condition, $templates, $exception, $outputs, $deprecation = ''): void
     {
         $templates += [
             '@IntegratedAsset/asset/javascripts.html.twig' => file_get_contents(

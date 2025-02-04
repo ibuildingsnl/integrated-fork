@@ -9,7 +9,8 @@
     }]) %}
 {% endfor %}
 
-{% set json = {'blocks': data,
+{% set json = {
+    'blocks': data,
     'filters': {
         'type': facetFilter.type.vars.choices,
         'channels': facetFilter.channels.vars.choices
@@ -17,4 +18,4 @@
     'pagination': blocks|json_pagination
 } %}
 {% endapply %}
-{{ data|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+{{ json|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}

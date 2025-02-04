@@ -21,27 +21,17 @@ use Integrated\Common\Content\Channel\ChannelInterface;
  */
 class ContentTypePageService
 {
-    /**
-     * @var ContentTypeControllerManager
-     */
-    protected $controllerManager;
-
-    /**
-     * @var DocumentManager
-     */
-    protected $dm;
-
-    public function __construct(ContentTypeControllerManager $controllerManager, DocumentManager $dm)
-    {
-        $this->controllerManager = $controllerManager;
-        $this->dm = $dm;
+    public function __construct(
+        protected readonly ContentTypeControllerManager $controllerManager,
+        protected readonly DocumentManager $dm,
+    ) {
     }
 
     public function addContentType(ContentType $contentType, ChannelInterface $channel)
     {
         $controller = $this->controllerManager->getController($contentType->getClass());
 
-        if (!$controller || $channel->getType()->getName() != 'Website') {
+        if (!$controller || !($type = $channel->getType()) || $type->getName() != 'Website') {
             return;
         }
 

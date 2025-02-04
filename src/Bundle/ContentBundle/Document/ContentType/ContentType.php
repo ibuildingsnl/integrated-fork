@@ -36,7 +36,7 @@ class ContentType implements ContentTypeInterface
     protected $id;
 
     /**
-     * @var string The class of the content type
+     * @var class-string<\Integrated\Bundle\ContentBundle\Document\Content\Content>
      */
     #[Assert\NotBlank]
     protected $class;
