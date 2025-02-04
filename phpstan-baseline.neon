@@ -55,12 +55,6 @@ parameters:
 			path: src/Bundle/AssetBundle/Tests/Manager/AssetManagerTest.php
 
 		-
-			message: '#^Method Integrated\\Bundle\\AssetBundle\\Tests\\Twig\\IntegrationTest\:\:testIntegration\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Bundle/AssetBundle/Tests/Twig/IntegrationTest.php
-
-		-
 			message: '#^Method Integrated\\Bundle\\AssetBundle\\Tests\\Twig\\IntegrationTest\:\:testIntegration\(\) has parameter \$condition with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
@@ -1987,7 +1981,7 @@ parameters:
 			path: src/Bundle/ContentBundle/Bulk/ChannelRemoveHandler.php
 
 		-
-			message: '#^Cannot call method setContentType\(\) on object\|null\.$#'
+			message: '#^Cannot call method setContentType\(\) on Integrated\\Common\\Content\\ContentInterface\|null\.$#'
 			identifier: method.nonObject
 			count: 1
 			path: src/Bundle/ContentBundle/Bulk/ContentTypeHandler.php
@@ -2005,13 +1999,7 @@ parameters:
 			path: src/Bundle/ContentBundle/Bulk/ContentTypeHandler.php
 
 		-
-			message: '#^Parameter \#1 \$className of method Doctrine\\ODM\\MongoDB\\DocumentManager\:\:getRepository\(\) expects class\-string\<object\>, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Bundle/ContentBundle/Bulk/ContentTypeHandler.php
-
-		-
-			message: '#^Parameter \#2 \$contentItem of method Integrated\\Bundle\\ContentBundle\\Bulk\\ContentTypeHandler\:\:deleteFromSolr\(\) expects Integrated\\Common\\Content\\ContentInterface, object\|null given\.$#'
+			message: '#^Parameter \#2 \$contentItem of method Integrated\\Bundle\\ContentBundle\\Bulk\\ContentTypeHandler\:\:deleteFromSolr\(\) expects Integrated\\Common\\Content\\ContentInterface, Integrated\\Common\\Content\\ContentInterface\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Bundle/ContentBundle/Bulk/ContentTypeHandler.php
@@ -2025,12 +2013,6 @@ parameters:
 		-
 			message: '#^Property Integrated\\Bundle\\ContentBundle\\Bulk\\ContentTypeHandler\:\:\$contentType \(Integrated\\Bundle\\ContentBundle\\Document\\ContentType\\ContentType\) does not accept string\.$#'
 			identifier: assign.propertyType
-			count: 1
-			path: src/Bundle/ContentBundle/Bulk/ContentTypeHandler.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to method Doctrine\\ODM\\MongoDB\\DocumentManager\:\:getRepository\(\)$#'
-			identifier: argument.templateType
 			count: 1
 			path: src/Bundle/ContentBundle/Bulk/ContentTypeHandler.php
 
@@ -2407,12 +2389,6 @@ parameters:
 			path: src/Bundle/ContentBundle/Controller/ContentTypeController.php
 
 		-
-			message: '#^Parameter \#1 \$className of method Doctrine\\ODM\\MongoDB\\DocumentManager\:\:getRepository\(\) expects class\-string\<object\>, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Bundle/ContentBundle/Controller/ContentTypeController.php
-
-		-
 			message: '#^Parameter \#1 \$contentType of class Integrated\\Common\\ContentType\\Event\\ContentTypeEvent constructor expects Integrated\\Bundle\\ContentBundle\\Document\\ContentType\\ContentType, Integrated\\Common\\ContentType\\ContentTypeInterface given\.$#'
 			identifier: argument.type
 			count: 2
@@ -2427,12 +2403,6 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$type of method Integrated\\Bundle\\ContentBundle\\Controller\\ContentTypeController\:\:createEditForm\(\) expects Integrated\\Bundle\\ContentBundle\\Document\\ContentType\\ContentType, Integrated\\Common\\ContentType\\ContentTypeInterface given\.$#'
 			identifier: argument.type
-			count: 1
-			path: src/Bundle/ContentBundle/Controller/ContentTypeController.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to method Doctrine\\ODM\\MongoDB\\DocumentManager\:\:getRepository\(\)$#'
-			identifier: argument.templateType
 			count: 1
 			path: src/Bundle/ContentBundle/Controller/ContentTypeController.php
 
@@ -4135,12 +4105,6 @@ parameters:
 			path: src/Bundle/ContentBundle/Document/Content/Taxonomy.php
 
 		-
-			message: '#^Call to an undefined method object\:\:setContentType\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Bundle/ContentBundle/Document/ContentType/ContentType.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -4149,12 +4113,6 @@ parameters:
 		-
 			message: '#^Instanceof between Doctrine\\Common\\Collections\\ArrayCollection and Doctrine\\Common\\Collections\\Collection will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
-			count: 1
-			path: src/Bundle/ContentBundle/Document/ContentType/ContentType.php
-
-		-
-			message: '#^Method Integrated\\Bundle\\ContentBundle\\Document\\ContentType\\ContentType\:\:create\(\) should return Integrated\\Common\\Content\\ContentInterface but returns object\.$#'
-			identifier: return.type
 			count: 1
 			path: src/Bundle/ContentBundle/Document/ContentType/ContentType.php
 
@@ -4197,6 +4155,12 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$groupId of method Integrated\\Bundle\\ContentBundle\\Document\\ContentType\\ContentType\:\:getPermission\(\) expects int, string given\.$#'
 			identifier: argument.type
+			count: 1
+			path: src/Bundle/ContentBundle/Document/ContentType/ContentType.php
+
+		-
+			message: '#^Property Integrated\\Bundle\\ContentBundle\\Document\\ContentType\\ContentType\:\:\$class \(class\-string\<Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content\>\) does not accept string\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/Bundle/ContentBundle/Document/ContentType/ContentType.php
 
@@ -5439,12 +5403,6 @@ parameters:
 		-
 			message: '#^Method Integrated\\Bundle\\ContentBundle\\Menu\\ContentTypeMenuBuilder\:\:group\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: src/Bundle/ContentBundle/Menu/ContentTypeMenuBuilder.php
-
-		-
-			message: '#^Parameter \#1 \$objectOrClass of class ReflectionClass constructor expects class\-string\<T of object\>\|T of object, string given\.$#'
-			identifier: argument.type
 			count: 1
 			path: src/Bundle/ContentBundle/Menu/ContentTypeMenuBuilder.php
 
@@ -11897,12 +11855,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Bundle/PageBundle/Services/ContentTypeControllerManager.php
-
-		-
-			message: '#^Cannot call method getName\(\) on Integrated\\Bundle\\ContentBundle\\Document\\Channel\\ChannelType\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Bundle/PageBundle/Services/ContentTypePageService.php
 
 		-
 			message: '#^Method Integrated\\Bundle\\PageBundle\\Services\\ContentTypePageService\:\:addContentType\(\) has no return type specified\.$#'

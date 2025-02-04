@@ -29,7 +29,7 @@ interface ContentTypeInterface
     /**
      * Get the class of the content type.
      *
-     * @return string
+     * @return class-string<\Integrated\Bundle\ContentBundle\Document\Content\Content>
      */
     public function getClass();
 
