@@ -47,7 +47,7 @@ class FacetBlockHandler extends BlockHandler
             return;
         }
 
-        $options['exclude'] = false; // don't exclude already shown items
+        $options['exclude'] = false;
 
         $pagination = $handler->getPagination($contentBlock, $request, $options);
 
@@ -64,12 +64,56 @@ class FacetBlockHandler extends BlockHandler
         }
 
         $facets = [];
+        $orderedFacets = [];
+
         foreach ($block->getFields() as $field) {
+            $facetValues = $facetSet->getFacet($field->getField())->getValues();
+
             $facets[$field->getField()] = [
                 'name' => $field->getName(),
                 'values' => $facetSet->getFacet($field->getField()),
             ];
+
+            $sortedFacetValues = [];
+
+            foreach ($facetValues as $name => $count) {
+                $issue = 0;
+                $year = 0;
+
+                if (preg_match('/(\d+) (\d{4})/', $name, $matches)) {
+                    $issue = (int)$matches[1];
+                    $year = (int)$matches[2];
+                } elseif (preg_match('/(\d{4})/', $name, $matches)) {
+                    $year = (int)$matches[1];
+                    $issue = 99;
+                } else {
+                    $issue = 0;
+                    $year = 0;
+                }
+
+                $sortedFacetValues[] = [
+                    'name' => $name,
+                    'count' => $count,
+                    'issue' => $issue,
+                    'year' => $year,
+                ];
         }
+
+            usort($sortedFacetValues, function ($a, $b) {
+                return $b['year'] <=> $a['year'] ?: $b['issue'] <=> $a['issue'];
+            });
+
+            $facetValuesSorted = [];
+            foreach ($sortedFacetValues as $entry) {
+                $facetValuesSorted[$entry['name']] = $entry['count'];
+            }
+
+            $orderedFacets[$field->getField()] = [
+                'name' => $field->getName(),
+                'values' => $facetValuesSorted,
+            ];
+        }
+
 
         if (!\count($facets)) {
             return;
@@ -78,6 +122,7 @@ class FacetBlockHandler extends BlockHandler
         return $this->render([
             'block' => $block,
             'facets' => $facets,
+            'orderedFacets' => $orderedFacets,
             'options' => $options,
         ]);
     }
