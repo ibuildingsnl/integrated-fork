@@ -97,7 +97,7 @@ class FacetBlockHandler extends BlockHandler
                     'issue' => $issue,
                     'year' => $year,
                 ];
-        }
+            }
 
             usort($sortedFacetValues, function ($a, $b) {
                 return $b['year'] <=> $a['year'] ?: $b['issue'] <=> $a['issue'];
@@ -113,7 +113,6 @@ class FacetBlockHandler extends BlockHandler
                 'values' => $facetValuesSorted,
             ];
         }
-
 
         if (!\count($facets)) {
             return;
