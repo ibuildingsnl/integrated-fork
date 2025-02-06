@@ -70,11 +70,6 @@ class ChannelController extends AbstractController
 
     public function new(Request $request): Response|RedirectResponse
     {
-        return $this->create($request);
-    }
-
-    public function create(Request $request): Response|RedirectResponse
-    {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
