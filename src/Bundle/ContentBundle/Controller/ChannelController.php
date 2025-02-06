@@ -68,19 +68,9 @@ class ChannelController extends AbstractController
         ]);
     }
 
-    public function new(): Response
+    public function new(Request $request): Response|RedirectResponse
     {
-        if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $channel = new Channel();
-
-        $form = $this->createCreateForm($channel);
-
-        return $this->render('@IntegratedContent/channel/new.html.twig', [
-            'form' => $form,
-        ]);
+        return $this->create($request);
     }
 
     public function create(Request $request): Response|RedirectResponse
