@@ -186,9 +186,9 @@ class Channel implements ChannelInterface
         return $this->primaryDomain;
     }
 
-    public function setPrimaryDomain(string $primaryDomain): void
+    public function setPrimaryDomain(?string $primaryDomain): void
     {
-        $this->primaryDomain = $primaryDomain;
+        $this->primaryDomain = (string) $primaryDomain;
     }
 
     public function getPrimaryDomainRedirect(): bool
