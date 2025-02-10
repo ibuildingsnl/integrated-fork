@@ -15,6 +15,7 @@ use Integrated\Bundle\WebsiteBundle\Routing\ContentTypePageLoader;
 use Integrated\Bundle\WebsiteBundle\Routing\PageLoader;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
@@ -23,28 +24,14 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
  */
 class EditableChecker
 {
-    /**
-     * @var AuthorizationChecker
-     */
-    protected $authorizationChecker;
-
-    /**
-     * @var TokenStorageInterface
-     */
-    protected $tokenStorage;
-
-    /**
-     * @var Request|null
-     */
-    protected $request;
+    protected ?Request $request;
 
     public function __construct(
-        AuthorizationChecker $authorizationChecker,
-        TokenStorageInterface $tokenStorage,
-        RequestStack $requestStack,
+        protected readonly AuthorizationChecker $authorizationChecker,
+        protected readonly TokenStorageInterface $tokenStorage,
+        protected readonly RequestStack $requestStack,
+        protected readonly RouterInterface $router
     ) {
-        $this->authorizationChecker = $authorizationChecker;
-        $this->tokenStorage = $tokenStorage;
         $this->request = $requestStack->getMainRequest();
     }
 
@@ -66,6 +53,12 @@ class EditableChecker
         }
 
         $route = $this->request->attributes->get('_route');
+
+        if ($routeObject = $this->router->getRouteCollection()->get($route)) {
+            if ($routeObject->getOption('integratedEditable')) {
+                return true;
+            }
+        }
 
         // check if route begins with page or contentTypePage prefix
         if (str_starts_with($route, ContentTypePageLoader::ROUTE_PREFIX)
