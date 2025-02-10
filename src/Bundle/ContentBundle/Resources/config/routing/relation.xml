@@ -16,10 +16,6 @@
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\RelationController::edit</default>
     </route>
 
-    <route id="integrated_content_relation_update" path="/{id}" methods="PUT">
-        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\RelationController::update</default>
-    </route>
-
     <route id="integrated_content_relation_delete" path="/{id}/delete" methods="GET,DELETE">
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\RelationController::delete</default>
     </route>

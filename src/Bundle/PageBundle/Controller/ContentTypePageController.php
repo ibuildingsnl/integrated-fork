@@ -64,7 +64,6 @@ class ContentTypePageController extends AbstractController
             $page,
             [
                 'method' => 'PUT',
-                'controller' => $this->container->get($page->getControllerService()),
             ]
         );
 

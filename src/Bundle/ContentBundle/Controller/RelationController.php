@@ -89,22 +89,7 @@ class RelationController extends AbstractController
     /**
      * Display a form to edit an existing Relation document.
      */
-    public function edit(Relation $relation): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        $form = $this->createEditForm($relation);
-
-        return $this->render('@IntegratedContent/relation/edit.html.twig', [
-            'form' => $form,
-            'relation' => $relation,
-        ]);
-    }
-
-    /**
-     * Edits an existing Relation document.
-     */
-    public function update(Request $request, Relation $relation): Response|RedirectResponse
+    public function edit(Relation $relation, Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -126,6 +111,7 @@ class RelationController extends AbstractController
 
         return $this->render('@IntegratedContent/relation/edit.html.twig', [
             'form' => $form,
+            'relation' => $relation,
         ]);
     }
 

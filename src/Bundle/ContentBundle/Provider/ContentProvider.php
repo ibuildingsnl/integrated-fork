@@ -178,15 +178,17 @@ class ContentProvider
         }
 
         /* @var Relation $relation */
-        foreach ($request->query->get('relation') as $relationId => $value) {
-            $relation = $this->dm->getRepository(Relation::class)->find($relationId);
-            $relationfilter = $value;
+        if ($request->query->get('relation')) {
+            foreach ($request->query->all('relation') as $relationId => $value) {
+                $relation = $this->dm->getRepository(Relation::class)->find($relationId);
+                $relationfilter = $value;
 
-            if (\is_array($relationfilter)) {
-                $query
-                    ->createFilterQuery($relationId)
-                    ->addTag($relationId)
-                    ->setQuery('facet_'.$relation->getId().': ((%1%))', [implode(') OR (', array_map($filter, $relationfilter))]);
+                if (\is_array($relationfilter)) {
+                    $query
+                        ->createFilterQuery($relationId)
+                        ->addTag($relationId)
+                        ->setQuery('facet_'.$relation->getId().': ((%1%))', [implode(') OR (', array_map($filter, $relationfilter))]);
+                }
             }
         }
 
