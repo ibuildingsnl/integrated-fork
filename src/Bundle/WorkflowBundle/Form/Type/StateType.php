@@ -13,14 +13,13 @@ namespace Integrated\Bundle\WorkflowBundle\Form\Type;
 
 use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\ColorType;
-use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
+use Integrated\Bundle\WorkflowBundle\Form\EventListener\ExtractTransitionsFromCollectionListener;
 use Integrated\Bundle\WorkflowBundle\Form\EventListener\ExtractTransitionsFromDataListener;
 use Integrated\Bundle\WorkflowBundle\Utils\StateVisibleConfig;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -113,38 +112,27 @@ class StateType extends AbstractType
             'attr' => ['data-itemorder' => 'collection'],
         ]);
 
-        if ($options['transitions'] == 'data') {
-            $builder->addEventSubscriber(new ExtractTransitionsFromDataListener());
-        }
+        $builder->add('transitions', Type\ChoiceType::class, [
+            'required' => false,
+            'mapped' => false,
+            'label' => 'Transitions to',
+            'choices' => [],
 
-        if ($options['transitions'] == 'empty') {
-            $builder->add('transitions', Type\ChoiceType::class, [
-                'required' => false,
-                'mapped' => false,
-                'label' => 'Transitions to',
-                'choices' => [],
+            'multiple' => true,
+            'expanded' => false,
 
-                'multiple' => true,
-                'expanded' => false,
+            'attr' => [
+                'class' => 'state_transitions_input_field',
+            ],
+        ]);
 
-                'attr' => [
-                    'class' => 'state_transitions_input_field',
-                ],
-            ]);
-        }
+        $builder->addEventSubscriber(new ExtractTransitionsFromCollectionListener($options['states']));
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $emptyData = function (FormInterface $form) {
-            return new State();
-        };
-
-        $resolver->setDefault('empty_data', $emptyData);
+        $resolver->setDefault('states', null);
         $resolver->setDefault('data_class', 'Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition\\State');
-        $resolver->setDefault('transitions', 'data');
-
-        $resolver->setAllowedValues('transitions', ['data', 'empty', 'none']);
     }
 
     public function getBlockPrefix(): string
