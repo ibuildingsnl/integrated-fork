@@ -14,7 +14,6 @@ namespace Integrated\Bundle\WorkflowBundle\Form\Type;
 use Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Form\EventListener\ExtractDefaultStateFromCollectionListener;
-use Integrated\Bundle\WorkflowBundle\Form\EventListener\ExtractTransitionsFromCollectionListener;
 use Integrated\Common\Validator\Constraints\UniqueEntry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;

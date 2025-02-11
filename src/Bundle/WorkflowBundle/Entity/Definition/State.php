@@ -79,7 +79,7 @@ class State
         return $this->name;
     }
 
-    public function getColor(): string
+    public function getColor(): ?string
     {
         return $this->color;
     }

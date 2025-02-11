@@ -55,7 +55,7 @@ class CompanyJobType extends BaseType
     protected function getContentTypes()
     {
         $contentTypes = $this->contentTypeManager->filterInstanceOf(Company::class);
-        if (!count($contentTypes)) {
+        if (!\count($contentTypes)) {
             return ['none'];
         }
 

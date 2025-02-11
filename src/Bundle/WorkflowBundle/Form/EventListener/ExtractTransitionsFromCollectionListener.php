@@ -28,11 +28,6 @@ class ExtractTransitionsFromCollectionListener implements EventSubscriberInterfa
     private array $states;
 
     /**
-     * @var PropertyAccessorInterface
-     */
-    private $accessor;
-
-    /**
      * @var Model\State[]
      */
     private array $choices;
@@ -40,7 +35,7 @@ class ExtractTransitionsFromCollectionListener implements EventSubscriberInterfa
     /**
      * Creates a new transition from collection extractor listener.
      *
-     * @param $states array<State>
+     * @param State[] $states
      */
     public function __construct(?array $states)
     {

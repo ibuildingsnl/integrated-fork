@@ -14,7 +14,6 @@ namespace Integrated\Bundle\WorkflowBundle\Form\Type;
 use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\ColorType;
 use Integrated\Bundle\WorkflowBundle\Form\EventListener\ExtractTransitionsFromCollectionListener;
-use Integrated\Bundle\WorkflowBundle\Form\EventListener\ExtractTransitionsFromDataListener;
 use Integrated\Bundle\WorkflowBundle\Utils\StateVisibleConfig;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;

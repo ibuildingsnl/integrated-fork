@@ -55,7 +55,7 @@ class Job
         return $this->company;
     }
 
-    public function setCompany(?Company $company)
+    public function setCompany(?Company $company): self
     {
         $this->company = $company;
 

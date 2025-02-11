@@ -32,8 +32,10 @@ class ContentTypeManagerPass implements CompilerPassInterface
             }
         }
 
-        if (is_file($file = $container->getParameter('kernel.project_dir') . '/config/integrated/content_types.xml')) {
-            $container->getDefinition(self::SERVICE_ID)->addMethodCall('registerFile', [$file]);
+        if (\is_string($container->getParameter('kernel.project_dir'))) {
+            if (is_file($file = $container->getParameter('kernel.project_dir').'/config/integrated/content_types.xml')) {
+                $container->getDefinition(self::SERVICE_ID)->addMethodCall('registerFile', [$file]);
+            }
         }
     }
 }

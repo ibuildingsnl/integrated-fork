@@ -30,7 +30,7 @@ class EditableChecker
         protected readonly AuthorizationChecker $authorizationChecker,
         protected readonly TokenStorageInterface $tokenStorage,
         protected readonly RequestStack $requestStack,
-        protected readonly RouterInterface $router
+        protected readonly RouterInterface $router,
     ) {
         $this->request = $requestStack->getMainRequest();
     }

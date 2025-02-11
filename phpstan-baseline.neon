@@ -5431,12 +5431,6 @@ parameters:
 			path: src/Bundle/ContentBundle/Provider/ContentProvider.php
 
 		-
-			message: '#^Argument of an invalid type string\|null supplied for foreach, only iterables are supported\.$#'
-			identifier: foreach.nonIterable
-			count: 1
-			path: src/Bundle/ContentBundle/Provider/ContentProvider.php
-
-		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -9640,12 +9634,6 @@ parameters:
 			message: '#^Property Integrated\\Bundle\\FormTypeBundle\\Form\\DataTransformer\\ContentChoiceTransformer\:\:\$repo with generic class Doctrine\\ODM\\MongoDB\\Repository\\DocumentRepository does not specify its types\: TDocumentClass$#'
 			identifier: missingType.generics
 			count: 1
-			path: src/Bundle/FormTypeBundle/Form/DataTransformer/ContentChoiceTransformer.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 2
 			path: src/Bundle/FormTypeBundle/Form/DataTransformer/ContentChoiceTransformer.php
 
 		-
@@ -17945,24 +17933,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: src/Bundle/WorkflowBundle/Form/EventListener/ExtractTransitionsFromCollectionListener.php
-
-		-
-			message: '#^Method Integrated\\Bundle\\WorkflowBundle\\Form\\EventListener\\ExtractTransitionsFromDataListener\:\:getChoices\(\) has parameter \$data with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Bundle/WorkflowBundle/Form/EventListener/ExtractTransitionsFromDataListener.php
-
-		-
-			message: '#^Method Integrated\\Bundle\\WorkflowBundle\\Form\\EventListener\\ExtractTransitionsFromDataListener\:\:getChoices\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Bundle/WorkflowBundle/Form/EventListener/ExtractTransitionsFromDataListener.php
-
-		-
-			message: '#^Method Integrated\\Bundle\\WorkflowBundle\\Form\\EventListener\\ExtractTransitionsFromDataListener\:\:onPreSetData\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Bundle/WorkflowBundle/Form/EventListener/ExtractTransitionsFromDataListener.php
 
 		-
 			message: '#^Method Integrated\\Bundle\\WorkflowBundle\\Form\\EventListener\\WorkflowDefaultDataListener\:\:getUser\(\) should return string but returns null\.$#'

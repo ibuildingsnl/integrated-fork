@@ -32,8 +32,6 @@ class ContentChoiceTransformer implements DataTransformerInterface
     }
 
     /**
-     * @param ContentInterface|null $value
-     *
      * @return string|null
      *
      * @throws TransformationFailedException
