@@ -53,4 +53,9 @@ class State
     {
         return $this->label;
     }
+
+    public function __toString(): string
+    {
+        return $this->getLabel();
+    }
 }

@@ -14,7 +14,6 @@ namespace Integrated\Bundle\WorkflowBundle\Form\Type;
 use Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Form\EventListener\ExtractDefaultStateFromCollectionListener;
-use Integrated\Bundle\WorkflowBundle\Form\EventListener\ExtractTransitionsFromCollectionListener;
 use Integrated\Common\Validator\Constraints\UniqueEntry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -43,26 +42,17 @@ class DefinitionFormType extends AbstractType
         $builder->add('states', SortableCollectionType::class, [
             'label' => 'Statuses',
             'entry_type' => StateType::class,
+            'entry_options' => ['states' => $builder->getData()?->getStates()],
+            'prototype_data' => new Definition\State(),
             'allow_add' => true,
             'allow_delete' => true,
             'default_title' => 'New workflow state',
             'add_button_text' => 'Add workflow state',
-            'entry_options' => ['transitions' => 'empty'],
             'constraints' => [
                 new Count(['min' => 1]),
                 new UniqueEntry(['fields' => ['name'], 'caseInsensitive' => true]),
             ],
         ]);
-
-        // Transitions are actually part of the "workflow_definition_state" but they are based
-        // on states in the collection. The problem is that only the last state in the collection
-        // will have full access to the all the states in the collection in its listener. Now
-        // you could try to work around this by using the POST_* events but POST_SUBMIT will not
-        // allow you to modify the form anymore. So to make this work the collection it self
-        // will manager the transitions field for the "workflow_definition_state" form type as
-        // the collection will have access to all the required state data in its PRE_* events.
-
-        $builder->get('states')->addEventSubscriber(new ExtractTransitionsFromCollectionListener());
 
         // Add eventSubscriber which extracts the default State from the State Collection
         $builder->addEventSubscriber(new ExtractDefaultStateFromCollectionListener());

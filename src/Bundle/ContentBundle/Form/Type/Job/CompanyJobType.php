@@ -40,6 +40,7 @@ class CompanyJobType extends BaseType
         $builder->add('company', ContentChoiceType::class, [
             'params' => ['_format' => 'json', 'contenttypes' => $this->getContentTypes()],
             'multiple' => false,
+            'required' => false,
         ]);
 
         $builder->add('function', TextType::class);
@@ -54,6 +55,9 @@ class CompanyJobType extends BaseType
     protected function getContentTypes()
     {
         $contentTypes = $this->contentTypeManager->filterInstanceOf(Company::class);
+        if (!\count($contentTypes)) {
+            return ['none'];
+        }
 
         return array_map(function ($contentType) {
             return $contentType->getId();

@@ -20,85 +20,42 @@ use Integrated\Bundle\ContentBundle\Document\Content\Relation\Company;
  */
 class Job
 {
-    /**
-     * @var string
-     */
-    protected $function;
+    protected ?string $function = null;
 
-    /**
-     * @var string
-     */
-    protected $department;
+    protected ?string $department = null;
 
-    /**
-     * @var Company
-     */
-    protected $company;
+    protected ?Company $company = null;
 
-    /**
-     * Get the function of the document.
-     *
-     * @return string
-     */
-    public function getFunction()
+    public function getFunction(): ?string
     {
         return $this->function;
     }
 
-    /**
-     * Set the function of the document.
-     *
-     * @param string $function
-     *
-     * @return $this
-     */
-    public function setFunction($function)
+    public function setFunction(?string $function): self
     {
         $this->function = $function;
 
         return $this;
     }
 
-    /**
-     * Get the department of the document.
-     *
-     * @return string
-     */
-    public function getDepartment()
+    public function getDepartment(): ?string
     {
         return $this->department;
     }
 
-    /**
-     * Set the department of the document.
-     *
-     * @param string $department
-     *
-     * @return $this
-     */
-    public function setDepartment($department)
+    public function setDepartment(?string $department): self
     {
         $this->department = $department;
 
         return $this;
     }
 
-    /**
-     * Get the company of the document.
-     *
-     * @return Company
-     */
-    public function getCompany()
+    public function getCompany(): ?Company
     {
         return $this->company;
     }
 
-    /**
-     * Set the company of the document.
-     *
-     * @return $this
-     */
-    public function setCompany(Company $company)
+    public function setCompany(?Company $company): self
     {
         $this->company = $company;
 

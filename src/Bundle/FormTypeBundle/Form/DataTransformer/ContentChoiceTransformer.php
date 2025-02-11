@@ -32,8 +32,6 @@ class ContentChoiceTransformer implements DataTransformerInterface
     }
 
     /**
-     * @param ContentInterface|null $value
-     *
      * @return string|null
      *
      * @throws TransformationFailedException
@@ -58,9 +56,7 @@ class ContentChoiceTransformer implements DataTransformerInterface
      */
     public function reverseTransform($value): mixed
     {
-        if (null === $value) {
-            return null;
-        } elseif (\is_string($value)) {
+        if (\is_string($value) && $value) {
             $result = $this->repo->find($value);
 
             if ($result instanceof ContentInterface) {
@@ -70,6 +66,6 @@ class ContentChoiceTransformer implements DataTransformerInterface
             throw new TransformationFailedException(\sprintf('Document with id "%s" not found', $value));
         }
 
-        throw new TransformationFailedException(\sprintf('Expected string, "%s" given', \gettype($value)));
+        return null;
     }
 }

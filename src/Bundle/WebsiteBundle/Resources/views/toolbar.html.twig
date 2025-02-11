@@ -13,7 +13,7 @@
         </a>
 
         <div class="integrated-website-toolbar-tools">
-            <div class="integrated-website-toolbar-left flex">
+            <div class="integrated-website-toolbar-left">
                 {% block website_navigation_buttons %}
                     {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ChannelController::getChannels')) }}
                 {% endblock website_navigation_buttons %}
@@ -52,15 +52,17 @@
                                class="integrated-website-toolbar-button btn btn-green">
                                 {% trans %}Edit page{% endtrans %}
                             </a>
-                            {% if page.type == 'content_type_page' %}
-                                <a href="{{ path('integrated_page_content_type_page_edit', {'id': page.id}) }}"
-                                   class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>
-                            {% else %}
-                                <a href="{{ path('integrated_page_page_edit', {'id': page.id}) }}"
-                                   class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>
+                            {% if page %}
+                                {% if page.type == 'content_type_page' %}
+                                    <a href="{{ path('integrated_page_content_type_page_edit', {'id': page.id}) }}"
+                                       class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>
+                                {% else %}
+                                    <a href="{{ path('integrated_page_page_edit', {'id': page.id}) }}"
+                                       class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>
+                                {% endif %}
+                                <a href="{{ path('integrated_page_page_index') }}"
+                                   class="btn btn-white">{% trans %}Go to page overview{% endtrans %}</a>
                             {% endif %}
-                            <a href="{{ path('integrated_page_page_index') }}"
-                               class="btn btn-white">{% trans %}Go to page overview{% endtrans %}</a>
                         </div>
                     {% endif %}
                 {% endif %}

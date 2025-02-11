@@ -18,10 +18,8 @@ use Doctrine\ODM\MongoDB\Event\PreFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-#[AsDocumentListener(event: Events::prePersist)]
-#[AsDocumentListener(event: Events::preRemove)]
 #[AsDocumentListener(event: Events::preFlush)]
-#[AsDocumentListener(event: Events::onFlush)]
+#[AsDocumentListener(event: Events::prePersist)]
 class ContainerAwareFileEventListener extends FileEventListener
 {
     /**

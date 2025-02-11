@@ -8,6 +8,8 @@
 
         <defaults autowire="true" autoconfigure="true"/>
 
+        <prototype namespace="Integrated\Bundle\ContentBundle\Controller\" resource="../../Controller" />
+
         <service id="Integrated\Bundle\ContentBundle\Controller\ContentController">
             <argument type="service" id="integrated.form.resolver" />
             <argument type="service" id="integrated_content.content_type.manager" />
@@ -60,15 +62,6 @@
             <call method="setContainer">
                 <argument type="service" id="service_container" />
             </call>
-        </service>
-
-        <service id="Integrated\Bundle\ContentBundle\Controller\ParentIDController">
-            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
-            <argument type="service" id="Integrated\Bundle\ContentBundle\Provider\ContentProvider" />
-            <argument type="service" id="translator" />
-
-            <tag name="controller.service_arguments" />
-            <tag name="container.service_subscriber" />
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Controller\RelationController">
