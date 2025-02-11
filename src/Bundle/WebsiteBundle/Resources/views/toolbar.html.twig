@@ -13,7 +13,7 @@
         </a>
 
         <div class="integrated-website-toolbar-tools">
-            <div class="integrated-website-toolbar-left flex">
+            <div class="integrated-website-toolbar-left">
                 {% block website_navigation_buttons %}
                     {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ChannelController::getChannels')) }}
                 {% endblock website_navigation_buttons %}
