@@ -24,12 +24,9 @@ class LayoutLocator
     }
 
     /**
-     * @param string $theme
-     * @param string $directory
-     *
      * @return array<string, string>
      */
-    public function getLayouts($theme, $directory = null): array
+    public function getLayouts(string $theme, ?string $directory = null): array
     {
         $layouts = [];
 
