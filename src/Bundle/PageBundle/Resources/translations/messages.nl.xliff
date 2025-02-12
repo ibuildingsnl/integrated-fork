@@ -94,6 +94,10 @@
                 <source>This item is currently unpublished</source>
                 <target>Dit item is niet gepubliceerd</target>
             </trans-unit>
+            <trans-unit id="24">
+                <source>Create a new page on</source>
+                <target>Maak een nieuwe pagina aan voor</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -3,7 +3,22 @@
 {% block title %}Page not found{% endblock %}
 
 {% block content %}
-    <h1>Page not found</h1>
+    <div class="container">
+        <h1>{% trans %}Page not found{% endtrans %}</h1>
 
-    <p>The page could not be found</p>
+        <p>{% trans %}The page could not be found.{% endtrans %}</p>
+
+
+        <div id="panel-create-page" class="mt-5">
+        </div>
+        <script>
+            fetch('{{ path('integrated_page_website_create_page', {'path': app.request.pathinfo }) }}')
+                .then(function(response) {
+                    return response.text();
+                })
+                .then(function(body) {
+                    document.querySelector('#panel-create-page').innerHTML = body;
+                });
+        </script>
+    </div>
 {% endblock %}
