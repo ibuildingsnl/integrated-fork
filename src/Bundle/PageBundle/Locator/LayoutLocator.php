@@ -19,53 +19,38 @@ use Symfony\Component\Finder\Finder;
  */
 class LayoutLocator
 {
-    /**
-     * @var ThemeManager
-     */
-    protected $themeManager;
-
-    /**
-     * @var array
-     */
-    private $layouts;
-
-    public function __construct(ThemeManager $themeManager)
+    public function __construct(private readonly ThemeManager $themeManager)
     {
-        $this->themeManager = $themeManager;
     }
 
     /**
-     * @param string $theme
-     * @param string $directory
-     *
-     * @return array
+     * @return array<string, string>
      */
-    public function getLayouts($theme, $directory = null)
+    public function getLayouts(string $theme, ?string $directory = null): array
     {
-        if (null === $this->layouts) {
-            $this->layouts = [];
-            foreach ($this->themeManager->getThemes() as $id => $theme2) {
-                if ($theme === $id
-                    || \in_array($id, $this->themeManager->getTheme($theme)->getFallback())
-                    || $id === 'default') {
-                    foreach ($theme2->getPaths() as $resource) {
-                        foreach ($this->themeManager->locateResources($resource) as $path) {
-                            $path .= $directory;
-                            if (is_dir($path)) {
-                                $finder = new Finder();
-                                $finder->files()->in($path)->depth(0)->name('*.html.twig');
+        $layouts = [];
 
-                                /** @var \Symfony\Component\Finder\SplFileInfo $file */
-                                foreach ($finder as $file) {
-                                    $f = fopen($file, 'r');
-                                    $line = fgets($f);
-                                    fclose($f);
-                                    if (str_starts_with($line, '{#')) {
-                                        preg_match('/(?<=\{# Template name: )(.*?)(?=\ #})/', $line, $matchedLine);
-                                        $this->layouts[$matchedLine[0]] = $file->getRelativePathname();
-                                    } else {
-                                        $this->layouts[$file->getRelativePathname()] = $file->getRelativePathname();
-                                    }
+        foreach ($this->themeManager->getThemes() as $id => $theme2) {
+            if ($theme === $id
+                || \in_array($id, $this->themeManager->getTheme($theme)->getFallback())
+                || $id === 'default') {
+                foreach ($theme2->getPaths() as $resource) {
+                    foreach ($this->themeManager->locateResources($resource) as $path) {
+                        $path .= $directory;
+                        if (is_dir($path)) {
+                            $finder = new Finder();
+                            $finder->files()->in($path)->depth(0)->name('*.html.twig');
+
+                            /** @var \Symfony\Component\Finder\SplFileInfo $file */
+                            foreach ($finder as $file) {
+                                $f = fopen($file, 'r');
+                                $line = fgets($f);
+                                fclose($f);
+                                if (str_starts_with($line, '{#')) {
+                                    preg_match('/(?<=\{# Template name: )(.*?)(?=\ #})/', $line, $matchedLine);
+                                    $layouts[$matchedLine[0]] = $file->getRelativePathname();
+                                } else {
+                                    $layouts[$file->getRelativePathname()] = $file->getRelativePathname();
                                 }
                             }
                         }
@@ -74,6 +59,6 @@ class LayoutLocator
             }
         }
 
-        return $this->layouts;
+        return $layouts;
     }
 }
