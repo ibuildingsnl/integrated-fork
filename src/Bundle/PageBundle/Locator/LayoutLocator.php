@@ -19,30 +19,20 @@ use Symfony\Component\Finder\Finder;
  */
 class LayoutLocator
 {
-    /**
-     * @var ThemeManager
-     */
-    protected $themeManager;
-
-    /**
-     * @var array
-     */
-    private $layouts;
-
-    public function __construct(ThemeManager $themeManager)
+    public function __construct(private readonly ThemeManager $themeManager)
     {
-        $this->themeManager = $themeManager;
     }
 
     /**
      * @param string $theme
      * @param string $directory
      *
-     * @return array
+     * @return array<string, string>
      */
-    public function getLayouts($theme, $directory = null)
+    public function getLayouts($theme, $directory = null): array
     {
-        $this->layouts = [];
+        $layouts = [];
+
         foreach ($this->themeManager->getThemes() as $id => $theme2) {
             if ($theme === $id
                 || \in_array($id, $this->themeManager->getTheme($theme)->getFallback())
@@ -61,9 +51,9 @@ class LayoutLocator
                                 fclose($f);
                                 if (str_starts_with($line, '{#')) {
                                     preg_match('/(?<=\{# Template name: )(.*?)(?=\ #})/', $line, $matchedLine);
-                                    $this->layouts[$matchedLine[0]] = $file->getRelativePathname();
+                                    $layouts[$matchedLine[0]] = $file->getRelativePathname();
                                 } else {
-                                    $this->layouts[$file->getRelativePathname()] = $file->getRelativePathname();
+                                    $layouts[$file->getRelativePathname()] = $file->getRelativePathname();
                                 }
                             }
                         }
@@ -72,6 +62,6 @@ class LayoutLocator
             }
         }
 
-        return $this->layouts;
+        return $layouts;
     }
 }
