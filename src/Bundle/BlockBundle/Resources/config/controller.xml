@@ -8,19 +8,15 @@
 
         <defaults autowire="true" autoconfigure="true"/>
 
+        <prototype namespace="Integrated\Bundle\BlockBundle\Controller\" resource="../../Controller" />
+
         <service id="Integrated\Bundle\BlockBundle\Controller\BlockController">
             <argument type="service" id="integrated_block.metadata.factory"/>
             <argument type="service" id="doctrine_mongodb.odm.document_manager"/>
             <argument type="service" id="knp_paginator"/>
             <argument type="service" id="integrated_block.provider.filter_query"/>
             <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
-
-            <tag name="controller.service_arguments"/>
-            <tag name="container.service_subscriber" />
         </service>
-
-        <service id="Integrated\Bundle\BlockBundle\Controller\ChannelBlockController" />
-        <service id="Integrated\Bundle\BlockBundle\Controller\InlineTextBlockController" />
 
     </services>
 

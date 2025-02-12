@@ -37,7 +37,7 @@
         <requirement key="_format">html|json</requirement>
     </route>
 
-    <route id="integrated_block_inline_text_block_create" path="/inline-text/new/{id}" methods="GET|PUT">
-        <default key="_controller">Integrated\Bundle\BlockBundle\Controller\InlineTextBlockController::create</default>
+    <route id="integrated_block_inline_text_block_create" path="/inline-text/new/{id}" methods="GET|PUT|POST">
+        <default key="_controller">Integrated\Bundle\BlockBundle\Controller\InlineTextBlockController::new</default>
     </route>
 </routes>

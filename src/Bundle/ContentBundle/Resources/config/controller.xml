@@ -106,10 +106,10 @@
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Controller\OEmbedController">
-            <argument>%env(resolve:FACEBOOK_OEMBED_APP_ID)%</argument>
-            <argument>%env(resolve:FACEBOOK_OEMBED_APP_SECRET)%</argument>
-            <argument>%env(resolve:TWITTER_CONSUMER_KEY)%</argument>
-            <argument>%env(resolve:TWITTER_CONSUMER_SECRET)%</argument>
+            <argument>%env(default:"":FACEBOOK_OEMBED_APP_ID)%</argument>
+            <argument>%env(default:"":FACEBOOK_OEMBED_APP_SECRET)%</argument>
+            <argument>%env(default:"":TWITTER_CONSUMER_KEY)%</argument>
+            <argument>%env(default:"":TWITTER_CONSUMER_SECRET)%</argument>
 
             <tag name="controller.service_arguments" />
         </service>
