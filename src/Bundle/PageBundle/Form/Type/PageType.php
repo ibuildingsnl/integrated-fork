@@ -24,6 +24,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
 
@@ -65,9 +66,12 @@ class PageType extends AbstractType
         ]);
 
         $builder->add('title', TextType::class);
-        $builder->add('description', TextareaType::class, [
-            'required' => false,
-        ]);
+
+        if (!$options['short']) {
+            $builder->add('description', TextareaType::class, [
+                'required' => false,
+            ]);
+        }
 
         $builder->add('path', TextType::class, [
             'label' => 'URL',
@@ -78,13 +82,15 @@ class PageType extends AbstractType
             ],
         ]);
 
-        $builder->add('disabled', CheckboxSwitcherType::class, [
-            'label' => false,
-            'required' => false,
-            'attr' => [
-                'align_with_widget' => true,
-            ],
-        ]);
+        if (!$options['short']) {
+            $builder->add('disabled', CheckboxSwitcherType::class, [
+                'label' => false,
+                'required' => false,
+                'attr' => [
+                    'align_with_widget' => true,
+                ],
+            ]);
+        }
 
         $formModifier = function (FormInterface $form, ?ChannelInterface $channel = null): void {
             $theme = null === $channel ? 'default' : $this->themeResolver->getTheme($channel);
@@ -123,6 +129,11 @@ class PageType extends AbstractType
                 return '/'.$path;
             }
         ));
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefault('short', false);
     }
 
     public function getBlockPrefix(): string

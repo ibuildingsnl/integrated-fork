@@ -6,6 +6,7 @@
 
     <import resource="@IntegratedSitemapBundle/Resources/config/routing.xml" type="xml" />
     <import resource="@IntegratedStorageBundle/Resources/config/routing.xml" type="xml" />
+    <import resource="@IntegratedPageBundle/Resources/config/routing.website.xml" type="xml" />
     <import resource="@IntegratedWebsiteBundle/Resources/config/routing.xml" type="xml" />
 
 </routes>
