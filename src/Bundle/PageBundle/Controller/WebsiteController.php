@@ -27,7 +27,7 @@ class WebsiteController extends AbstractController
         }
 
         $page = new Page();
-        $page->setPath($request->query->get('path'));
+        $page->setPath($request->query->get('path', ''));
 
         $form = $this->createForm(PageType::class, $page, [
             'action' => $this->generateUrl('integrated_page_page_new', ['returnUrl' => $request->query->get('path')]),
