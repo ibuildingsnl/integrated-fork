@@ -119,17 +119,23 @@ class PageController extends AbstractController
         $form = $this->createCreateForm($page);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->documentManager->persist($page);
-            $this->documentManager->flush();
+        if ($form->isSubmitted()) {
+            if ($form->get('actions')->getData() == 'cancel') {
+                return $this->redirectToRoute('integrated_page_page_index');
+            }
 
-            $this->routeCache->clear();
+            if ($form->isValid()) {
+                $this->documentManager->persist($page);
+                $this->documentManager->flush();
 
-            $this->addFlash('success', \sprintf('Page "%s" has been created', $page->getTitle()));
+                $this->routeCache->clear();
 
-            $this->setLastEditPage($request->getSession(), $page);
+                $this->addFlash('success', \sprintf('Page "%s" has been created', $page->getTitle()));
 
-            return $this->redirectToRoute('integrated_page_page_index');
+                $this->setLastEditPage($request->getSession(), $page);
+
+                return $this->redirectToRoute('integrated_page_page_index');
+            }
         }
 
         return $this->render('@IntegratedPage/page/new.html.twig', [
@@ -150,6 +156,7 @@ class PageController extends AbstractController
             if ($form->get('actions')->getData() == 'cancel') {
                 return $this->redirectToRoute('integrated_page_page_index');
             }
+
             if ($form->isValid()) {
                 $this->documentManager->flush();
 
