@@ -92,7 +92,7 @@
                 </div>
 
                 <div class="mt-2">
-                    {{ knp_pagination_render(paginator) }}
+                    {{ knp_pagination_render(paginator, '@KnpPaginator/Pagination/sliding.html.twig') }}
                     <div class="flex justify-center">
                         <span>{% trans %} Total {% endtrans %}
                             {{ paginator.getTotalItemCount() }}
