@@ -1,0 +1,12 @@
+{% form_theme form with ['form_table_layout.html.twig'] only %}
+
+<style>
+#integrated_page_page td {
+    padding: 5px;
+    padding-right: 15px;
+}
+</style>
+<div class="integrated-page-website-create-page">
+    <h2>{% trans %}Create a new page on{% endtrans %} "{{ app.request.query.get('path') }}"</h2>
+    {{ form(form) }}
+</div>

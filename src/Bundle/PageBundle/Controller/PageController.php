@@ -134,6 +134,10 @@ class PageController extends AbstractController
 
                 $this->setLastEditPage($request->getSession(), $page);
 
+                if ($request->query->get('returnUrl')) {
+                    return $this->redirect($request->query->get('returnUrl'));
+                }
+
                 return $this->redirectToRoute('integrated_page_page_index');
             }
         }
