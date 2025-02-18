@@ -216,7 +216,7 @@ class PageController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        if ($formData = $request->request->get('page_copy', null)) {
+        if ($formData = $request->request->all('page_copy', null)) {
             $targetChannel = $formData['targetChannel'] ?? null;
             $sourceChannel = $formData['sourceChannel'] ?? null;
         } else {
