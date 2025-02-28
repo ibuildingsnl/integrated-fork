@@ -21,12 +21,15 @@ const translations = JSON.parse(props.translations);
 const searchParams = JSON.parse(new URLSearchParams(window.location.search).get('data'));
 const endpoint = `${window.location.protocol}//${window.location.host}/admin`;
 const linkText = ref(searchParams.selectionText ?? '');
+const linkTitle = ref(searchParams.title ?? '');
 const openInNewTab = ref(searchParams.openInNewTab ?? false);
 const existing = ref(searchParams.existing ?? false);
 const results = ref([]);
 const searchTerm = ref(searchParams.url ?? '');
 const selections = ref([]);
 const loading = ref(false);
+
+console.log(searchParams);
 
 const channels = ref(JSON.parse(props.channels).map((channel) => {
     return {value: channel.key, ...channel}
@@ -70,7 +73,7 @@ const hasValidUrl = computed(() => {
 
 const isStateValid = computed(() => {
     // Either valid url and link text contains something or valid selection and link text contains something
-    return (hasValidUrl.value || (selections.value.length > 0 && results.value.length > 0)) && linkText.value.length > 0;
+    return (hasValidUrl.value || (selections.value.length > 0 && results.value.length > 0)) && linkText.value.length > 0 && linkTitle.value.length > 0;
 });
 
 const attemptSearch = () => {
@@ -120,6 +123,7 @@ const finishSelection = () => {
         if (existing.value) {
             window.parent.postMessage({
                 mceAction: 'linkMakerReplace',
+                title: linkTitle.value,
                 href: finalUrl,
                 newTab: openInNewTab.value && !finalUrl.startsWith('#') && !finalUrl.startsWith('mailto:') && !finalUrl.startsWith('tel:'),
                 linkText: linkText.value,
@@ -127,7 +131,7 @@ const finishSelection = () => {
         } else {
             window.parent.postMessage({
                 mceAction: 'insertContent',
-                content: `<a href="${finalUrl}"${openInNewTab.value && !finalUrl.startsWith('#') && !finalUrl.startsWith('mailto:') && !finalUrl.startsWith('tel:') ? ' target="_blank"' : ''}>${linkText.value}</a>`
+                content: `<a href="${finalUrl}"${openInNewTab.value && !finalUrl.startsWith('#') && !finalUrl.startsWith('mailto:') && !finalUrl.startsWith('tel:') ? ' target="_blank"' : ''} title="${linkTitle.value}">${linkText.value}</a>`
             }, '*');
         }
 
@@ -138,7 +142,7 @@ const finishSelection = () => {
         return;
     }
 
-    if (selections.value.length === 0 || results.value.length === 0 || linkText.value.length === 0) {
+    if (selections.value.length === 0 || results.value.length === 0 || linkText.value.length === 0 || linkTitle.value.length === 0) {
         return;
     }
 
@@ -149,6 +153,7 @@ const finishSelection = () => {
     if (existing.value) {
         window.parent.postMessage({
             mceAction: 'linkMakerReplace',
+            title: linkTitle.value,
             href: finalItemUrl,
             newTab: openInNewTab.value && !finalItemUrl.startsWith('#'),
             linkText: linkText.value,
@@ -156,7 +161,7 @@ const finishSelection = () => {
     } else {
         window.parent.postMessage({
             mceAction: 'insertContent',
-            content: `<a href="${finalItemUrl}"${openInNewTab.value && !finalItemUrl.startsWith('#') && !finalItemUrl.startsWith('mailto:') && !finalItemUrl.startsWith('tel:') ? ' target="_blank"' : ''}>${linkText.value}</a>`
+            content: `<a href="${finalItemUrl}"${openInNewTab.value && !finalItemUrl.startsWith('#') && !finalItemUrl.startsWith('mailto:') && !finalItemUrl.startsWith('tel:') ? ' target="_blank"' : ''} title="${linkTitle.value}">${linkText.value}</a>`
         }, '*');
     }
 
@@ -226,6 +231,11 @@ watchEffect(() => {
                     :error-text="linkText.length > 0 ? '' : translations.require_link_text"
                     :placeholder="translations.link_text"
                 />
+                <TextInput
+                    v-model="linkTitle"
+                    :error-text="linkTitle.length > 0 ? '' : translations.require_link_title"
+                    :placeholder="translations.link_title"
+                />
                 <SuggestionTextInput
                     :permanent="true"
                     :suggestions="results"
@@ -241,6 +251,7 @@ watchEffect(() => {
                     <ArticleSearchWarningStatus :text="translations.select_channel" v-else-if="activeChannel.length === 0"/>
                     <ArticleSearchWarningStatus :text="translations.no_results" v-else-if="results.length === 0 && !hasValidUrl"/>
                     <ArticleSearchWarningStatus :text="translations.require_link_text" v-else-if="linkText.length === 0"/>
+                    <ArticleSearchWarningStatus :text="translations.require_link_title" v-else-if="linkTitle.length === 0"/>
                     <ArticleSearchSuccessStatus :text="translations.ready" v-else/>
                 </SuggestionTextInput>
                 <div class="form-group mt-2">

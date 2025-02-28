@@ -67,6 +67,7 @@ class ArticleSearchController extends AbstractController
                 'channels' => $this->getTranslator()->trans('Channels'),
                 'content_types' => $this->getTranslator()->trans('Content types'),
                 'link_text' => $this->getTranslator()->trans('Link text'),
+                'link_title' => $this->getTranslator()->trans('Link title'),
                 'url_or_searchterm' => $this->getTranslator()->trans('URL or search term'),
                 'ready' => $this->getTranslator()->trans('Good to go!'),
             ]),

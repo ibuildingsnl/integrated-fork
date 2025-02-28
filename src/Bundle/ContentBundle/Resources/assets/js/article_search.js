@@ -18,6 +18,7 @@ tinymce.PluginManager.add('articlelinksearch', (editor, url) => {
         if (anchorNode) {
             data = {
                 selectionText: anchorNode.textContent,
+                title: anchorNode.getAttribute('title'),
                 url: anchorNode.getAttribute('href'),
                 openInNewTab: (anchorNode.getAttribute('target') ?? '') === '_blank',
                 existing: true,
@@ -39,6 +40,7 @@ tinymce.PluginManager.add('articlelinksearch', (editor, url) => {
                         if(selectedNode.nodeName.toLocaleUpperCase() === 'A') {
                             selectedNode.innerText = data.linkText;
                             editor.dom.setAttrib(selectedNode, 'href', data.href);
+                            editor.dom.setAttrib(selectedNode, 'title', data.title);
                             editor.dom.setAttrib(selectedNode, 'target', data.newTab ? '_blank' : '');
                             break;
                         }
