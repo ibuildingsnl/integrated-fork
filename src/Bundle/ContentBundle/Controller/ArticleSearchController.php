@@ -67,6 +67,7 @@ class ArticleSearchController extends AbstractController
                 'channels' => $this->getTranslator()->trans('Channels'),
                 'content_types' => $this->getTranslator()->trans('Content types'),
                 'link_text' => $this->getTranslator()->trans('Link text'),
+                'link_title' => $this->getTranslator()->trans('Link title'),
                 'url_or_searchterm' => $this->getTranslator()->trans('URL or search term'),
                 'ready' => $this->getTranslator()->trans('Good to go!'),
             ]),
@@ -120,13 +121,20 @@ class ArticleSearchController extends AbstractController
                 $content = \is_array($contentItem->content) ? implode('', $contentItem->content) : $contentItem->content;
                 $content = substr(strip_tags($content), 0, 255);
 
+                if ($contentItem->file) {
+                    $fileData = json_decode($contentItem->file, true); // Decode to an associative array
+                    $url = $fileData['pathname'] ?? null; // Access the 'pathname' key
+                } else {
+                    $url = $contentItem['url_' . $channel->getId()];
+                }
+
                 return [
                     'id' => $contentItem->type_id,
                     'title' => $contentItem->title,
                     'subtitle' => ucfirst($contentItem->type_name).' | '.
                     (new \DateTimeImmutable($contentItem->pub_time))->format('d-m-Y'),
                     'text' => $content,
-                    'url' => $contentItem['url_'.$channel->getId()],
+                    'url' => $url,
                 ];
             },
             $items
