@@ -55,7 +55,7 @@ class TaxonomyType implements TypeInterface
                                 ->getQuery()
                                 ->execute();
 
-                            if ((int) $childrenCount > 0) {
+                            if (is_int($childrenCount) && $childrenCount > 0) {
                                 $container->add('taxonomy_parent_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());
                             } else {
                                 $container->add('taxonomy_child_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());
