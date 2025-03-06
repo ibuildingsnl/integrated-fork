@@ -25,7 +25,7 @@
         </service>
 
         <service id="integrated_image.image_mimic_handling" parent="image.handling">
-            <argument index="2">Integrated\Bundle\ImageBundle\Image\ImageMimicHandler</argument>
+            <argument index="3">Integrated\Bundle\ImageBundle\Image\ImageMimicHandler</argument>
         </service>
 
     </services>
