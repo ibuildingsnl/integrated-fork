@@ -366,6 +366,7 @@
     {% endintegrated_javascripts %}
     {% set attr = attr|merge({
         'data-ajax-url' : path(route, params),
+        'data-types' : content_types|default(''),
         'data-allow-clear' : (allow_clear ? 'true' : 'false'),
         'class' : (attr.class|default('') ~ ' form-control integrated_content_choice')|trim
     }) %}
