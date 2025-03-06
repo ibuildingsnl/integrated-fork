@@ -6535,12 +6535,6 @@ parameters:
 			path: src/Bundle/ContentBundle/Solr/Type/TaxonomyType.php
 
 		-
-			message: '#^Parameter \#1 \$value of function count expects array\|Countable, array\<string, mixed\>\|int\|object\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Bundle/ContentBundle/Solr/Type/TaxonomyType.php
-
-		-
 			message: '#^Method Integrated\\Bundle\\ContentBundle\\Tests\\Document\\Channel\\ChannelTest\:\:testDefaultValues\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1

@@ -54,7 +54,7 @@ class NewsController extends AbstractController
             ->getQuery()
             ->getIterator();
 
-        return $this->render('@IntegratedSitemapBundle/News/index.html.twig', [
+        return $this->render('@IntegratedSitemap/news/index.xml.twig', [
             'channel' => $channel,
             'locale' => $this->getParameter('kernel.default_locale'),
             'documents' => $documents,

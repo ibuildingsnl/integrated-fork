@@ -62,7 +62,7 @@ class DefaultController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        return $this->render('@IntegratedSitemapBundle/Default/index.html.twig', [
+        return $this->render('@IntegratedSitemap/default/index.xml.twig', [
             'count' => min(ceil((int) $count / 50000), 50000),
         ]);
     }
@@ -98,7 +98,7 @@ class DefaultController extends AbstractController
             ->getQuery()
             ->getIterator();
 
-        return $this->render('@IntegratedSitemapBundle/Default/list.html.twig', [
+        return $this->render('@IntegratedSitemap/default/list.xml.twig', [
             'documents' => $documents,
         ]);
     }

@@ -18,6 +18,6 @@ class RobotsController extends AbstractController
 {
     public function index(): Response
     {
-        return $this->render('@IntegratedSitemapBundle/Robots/index.html.twig');
+        return $this->render('@IntegratedSitemap/robots/index.txt.twig');
     }
 }
