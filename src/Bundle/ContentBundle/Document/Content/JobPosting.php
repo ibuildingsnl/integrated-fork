@@ -37,39 +37,21 @@ class JobPosting extends Article
     #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
     protected $applyUrl;
 
-    /**
-     * @var string
-     */
     #[Type\Field(options: ['label' => 'Functieprofiel', 'attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
-    protected $functionProfile;
+    protected ?string $functionProfile = null;
 
-    /**
-     * @var string
-     */
     #[Type\Field(options: ['label' => 'Regio\'s', 'attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
-    protected $regions;
+    protected ?string $regions = null;
 
-    /**
-     * @var string
-     */
     #[Type\Field(options: ['label' => 'Opleidingsniveau', 'attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
-    protected $educationLevel;
+    protected ?string $educationLevel = null;
 
-    /**
-     * @var string
-     */
     #[Type\Field(options: ['label' => 'Contract Type', 'attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
-    protected $contractTypes;
+    protected ?string $contractTypes = null;
 
-    /**
-     * @var string
-     */
     #[Type\Field(options: ['label' => 'Working Hours', 'attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
-    protected $workingHours;
+    protected ?string $workingHours = null;
 
-    /**
-     * @var \DateTime
-     */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\DateTimeType', options: [
         'priority' => 495,
         'label' => 'Apply before',
@@ -83,7 +65,7 @@ class JobPosting extends Article
         'date_widget' => 'single_text',
         'time_widget' => 'single_text',
     ], location: 'sidebar')]
-    protected $applyBefore;
+    protected ?\DateTime $applyBefore = null;
 
     /**
      * @var Relation\Company
@@ -155,40 +137,24 @@ class JobPosting extends Article
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getWorkingHours()
+    public function getWorkingHours(): ?string
     {
         return $this->workingHours;
     }
 
-    /**
-     * @param string $workingHours
-     *
-     * @return $this
-     */
-    public function setWorkingHours($workingHours)
+    public function setWorkingHours(?string $workingHours): self
     {
         $this->workingHours = $workingHours;
 
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getApplyBefore()
+    public function getApplyBefore(): ?\DateTime
     {
         return $this->applyBefore;
     }
 
-    /**
-     * @param \DateTime $applyBefore
-     *
-     * @return $this
-     */
-    public function setApplyBefore(\DateTime $applyBefore = null)
+    public function setApplyBefore(?\DateTime $applyBefore = null): self
     {
         $this->applyBefore = $applyBefore;
 

@@ -27,9 +27,6 @@ class FeaturedItemsItem
     #[Type\Field]
     protected $title;
 
-    /**
-     * @var Image
-     */
     #[Type\Field(type: MediaGalleryType::class, options: [
         'priority' => 500,
         'attr' => [
@@ -39,7 +36,7 @@ class FeaturedItemsItem
             'data-multiple' => false,
         ],
     ], location: 'sidebar')]
-    protected $image;
+    protected ?Image $image = null;
 
     /**
      * @var string
@@ -101,22 +98,12 @@ class FeaturedItemsItem
         return $this;
     }
 
-    /**
-     * Get the file of the document.
-     *
-     * @return Image
-     */
-    public function getImage()
+    public function getImage(): ?Image
     {
         return $this->image;
     }
 
-    /**
-     * Set the image of the document.
-     *
-     * @return $this
-     */
-    public function setImage(Image $image = null)
+    public function setImage(?Image $image = null): self
     {
         $this->image = $image;
 

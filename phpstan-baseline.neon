@@ -337,12 +337,6 @@ parameters:
 			path: src/Bundle/BlockBundle/Document/Block/Embedded/BlockSize.php
 
 		-
-			message: '#^Property Integrated\\Bundle\\BlockBundle\\Document\\Block\\Embedded\\FeaturedItemsItem\:\:\$image \(Integrated\\Common\\Content\\Document\\Storage\\Embedded\\StorageInterface\) does not accept Integrated\\Common\\Content\\Document\\Storage\\Embedded\\StorageInterface\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Bundle/BlockBundle/Document/Block/Embedded/FeaturedItemsItem.php
-
-		-
 			message: '#^Method Integrated\\Bundle\\BlockBundle\\Document\\Block\\Embedded\\Relation\:\:addReferences\(\) has parameter \$references with generic interface Doctrine\\Common\\Collections\\Collection but does not specify its types\: TKey, T$#'
 			identifier: missingType.generics
 			count: 1

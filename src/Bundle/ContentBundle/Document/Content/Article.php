@@ -91,24 +91,18 @@ class Article extends Content implements RankableInterface
     ], location: 'sidebar')]
     protected $authors;
 
-    /**
-     * @var string
-     */
     #[Type\Field(options: [
         'priority' => 450,
         'attr' => ['style' => 'sidebar', 'icon' => 'megaphone'],
     ], location: 'sidebar')]
-    protected $source;
+    protected ?string $source = null;
 
-    /**
-     * @var string
-     */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\UrlType', options: [
         'priority' => 440,
         'label' => 'Source URL',
         'attr' => ['style' => 'sidebar', 'icon' => 'open-new-window'],
     ], location: 'sidebar')]
-    protected $sourceUrl;
+    protected ?string $sourceUrl = null;
 
     /**
      * @var string

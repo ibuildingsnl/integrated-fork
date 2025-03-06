@@ -82,7 +82,7 @@ class AuthorTransformer implements DataTransformerInterface
             $persons = $repo->findBy(['_id' => ['$in' => $array['persons']]]);
 
             foreach ($persons as $person) {
-                if ($person && isset($array['types'][$person->getId()])) {
+                if (isset($array['types'][$person->getId()])) {
                     $author = new Author();
                     $author->setType($array['types'][$person->getId()]);
                     $author->setPerson($person);

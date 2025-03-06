@@ -34,7 +34,7 @@ class ContentTypeManager
 
         if (!is_subclass_of($class, ContentTypeInterface::class)) {
             throw new InvalidArgumentException(
-                sprintf('The class "%s" is not subclass of %s', $class, ContentTypeInterface::class)
+                \sprintf('The class "%s" is not subclass of %s', $class, ContentTypeInterface::class)
             );
         }
     }

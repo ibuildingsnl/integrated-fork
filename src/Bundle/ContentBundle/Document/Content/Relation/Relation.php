@@ -67,16 +67,13 @@ abstract class Relation extends Content implements RankableInterface
     ], location: 'editor')]
     protected $phonenumbers;
 
-    /**
-     * @var string
-     */
     #[Type\Field(type: EmailType::class, options: [
         'attr' => [
             'style' => 'editor',
             'state' => 'show',
         ],
     ], location: 'editor')]
-    protected $email;
+    protected ?string $email = null;
 
     /**
      * @var Collection<Address>
