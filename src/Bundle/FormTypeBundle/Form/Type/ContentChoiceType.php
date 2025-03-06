@@ -85,10 +85,15 @@ class ContentChoiceType extends AbstractType
             $view->vars[$varName] = $options[$varName];
         }
 
+        if ($options['content_types']) {
+            $view->vars['content_types'] = $options['content_types'];
+        }
+
         if ($options['multiple']) {
             $view->vars['full_name'] .= '[]';
             $view->vars['attr']['multiple'] = 'multiple';
         }
+
         $view->vars['attr']['data-placeholder'] = $options['placeholder'];
     }
 
@@ -97,16 +102,23 @@ class ContentChoiceType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'repository_class' => $this->repositoryClass, // repository for finding the contentItems, default: IntegratedContentBundle:Content\Content
-            'route' => $this->route, // api route for getting the ajax results, default: integrated_content_content_index
-            'params' => $this->params, // additional parameters for the api route, default: ['_format' => 'json']
-            'multiple' => true,
-            'compound' => false,
-            'required' => false,
-            'placeholder' => null,
-            'allow_clear' => false, // if set to true the user is able to clear the selection
-        ]);
+        $resolver->setDefaults(
+            [
+                'repository_class' => $this->repositoryClass,
+                // repository for finding the contentItems, default: IntegratedContentBundle:Content\Content
+                'route' => $this->route,
+                // api route for getting the ajax results, default: integrated_content_content_index
+                'params' => $this->params,
+                // additional parameters for the api route, default: ['_format' => 'json']
+                'content_types' => null,
+                'multiple' => true,
+                'compound' => false,
+                'required' => false,
+                'placeholder' => null,
+                'allow_clear' => false,
+                // if set to true the user is able to clear the selection
+            ]
+        );
     }
 
     /**

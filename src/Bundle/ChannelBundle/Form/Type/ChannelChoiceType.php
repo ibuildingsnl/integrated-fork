@@ -8,13 +8,11 @@ use Integrated\Bundle\ChannelBundle\Form\DataTransformer\ChannelTransformer;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ChannelChoiceType extends AbstractType
 {
-    /**
-     * Constructor.
-     */
     public function __construct(
         private readonly ObjectRepository $repository
     ) {
@@ -39,6 +37,11 @@ class ChannelChoiceType extends AbstractType
         $resolver->setDefault('choice_label', 'name');
         $resolver->setDefault('placeholder', 'Select a channel');
         $resolver->setDefault('return_object', false);
+        $resolver->setDefault('filter', []);
+
+        $resolver->setNormalizer('choices', function (Options $options, mixed $value) {
+            return $this->repository->findBy($options['filter']);
+        });
     }
 
     /**

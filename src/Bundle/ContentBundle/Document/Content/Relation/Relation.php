@@ -196,7 +196,7 @@ abstract class Relation extends Content implements RankableInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): void
+    public function setEmail(?string $email): void
     {
         $this->email = $email;
     }
