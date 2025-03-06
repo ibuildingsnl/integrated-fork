@@ -11,7 +11,8 @@
 
 namespace Integrated\Bundle\BlockBundle\Document\Block\Embedded;
 
-use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
+use Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryType;
 use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
@@ -27,9 +28,17 @@ class FeaturedItemsItem
     protected $title;
 
     /**
-     * @var StorageInterface
+     * @var Image
      */
-    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType')]
+    #[Type\Field(type: MediaGalleryType::class, options: [
+        'priority' => 500,
+        'attr' => [
+            'icon' => 'media-image',
+            'data-types' => '[{"type":"image","name":"Image"}]',
+            'data-emptytext' => 'Select Image',
+            'data-multiple' => false,
+        ],
+    ], location: 'sidebar')]
     protected $image;
 
     /**
@@ -93,7 +102,9 @@ class FeaturedItemsItem
     }
 
     /**
-     * @return StorageInterface
+     * Get the file of the document.
+     *
+     * @return Image
      */
     public function getImage()
     {
@@ -101,11 +112,11 @@ class FeaturedItemsItem
     }
 
     /**
-     * @param StorageInterface $image
+     * Set the image of the document.
      *
      * @return $this
      */
-    public function setImage(StorageInterface $image = null)
+    public function setImage(Image $image = null)
     {
         $this->image = $image;
 
