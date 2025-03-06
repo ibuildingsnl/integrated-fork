@@ -205,7 +205,7 @@ if (typeof publicationSchedule === 'object') {
         <label class="checkbox-container">
             <input type="checkbox" name="${filterName}" value="${value}">
             <span class="checkmark"></span>
-            <div class="facet-wrappper">
+            <div class="facet-wrapper">
                 <span class="facet-title">${value}</span>
                 <span class="facet-count"></span>
             </div>

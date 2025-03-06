@@ -26,7 +26,7 @@ $(".relation-items").each(function () {
             data: (param) => ({
                 relation: relation_id,
                 limit: 100,
-                sort: 'title',
+                sort: 'title_sort',
                 q: param.term ? param.term + '*' : ''
             }),
             processResults: (data) => ({
