@@ -4,7 +4,7 @@
         <span>{% trans %}Websites{% endtrans %}</span>
         <i class="iconoir-nav-arrow-down"></i>
     </a>
-    <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu alt flex-col" id="menu_1">
+    <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
         {% for channel in channels %}
             {% set domain = channel.primaryDomain|default(channel.domains|first)|default("") %}
             {% if (domain != "") %}

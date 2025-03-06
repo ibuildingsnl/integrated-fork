@@ -47,7 +47,7 @@ class TaxonomyType implements TypeInterface
                     if ($content instanceof Taxonomy) {
                         $container->add('taxonomy_'.$relation->getRelationId().'_string', $content->getTitle());
                         foreach ($content->getChannels() as $channel) {
-                            $childen = $this->documentManager
+                            $childrenCount = $this->documentManager
                                 ->getRepository(Content::class)
                                 ->createQueryBuilder()->count()
                                 ->field('class')->equals(Taxonomy::class)
@@ -55,7 +55,7 @@ class TaxonomyType implements TypeInterface
                                 ->getQuery()
                                 ->execute();
 
-                            if (\count($childen) > 0) {
+                            if ($childrenCount > 0) {
                                 $container->add('taxonomy_parent_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());
                             } else {
                                 $container->add('taxonomy_child_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());
