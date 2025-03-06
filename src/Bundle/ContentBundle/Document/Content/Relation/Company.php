@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the Integrated package.
- *
- * (c) e-Active B.V. <integrated@e-active.nl>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Integrated\Bundle\ContentBundle\Document\Content\Relation;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
@@ -18,11 +9,6 @@ use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Content\Document\Storage\FileInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
 
-/**
- * Document type Relation\Company.
- *
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- */
 #[Type\Document('Company')]
 class Company extends Relation
 {
@@ -30,10 +16,10 @@ class Company extends Relation
      * @var string
      */
     #[Type\Field(options: [
+        'priority' => 990,
         'attr' => [
-            'state' => 'title_tinymce',
-            'class' => 'fancy_tinymce',
-            'style' => 'horizontal',
+            'style' => 'editor',
+            'state' => 'show',
         ],
     ], location: 'editor')]
     protected $name;

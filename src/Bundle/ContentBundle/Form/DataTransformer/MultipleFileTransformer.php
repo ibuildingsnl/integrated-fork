@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Form\DataTransformer;
 
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Symfony\Component\Form\DataTransformerInterface;
 
 /**
@@ -34,7 +35,7 @@ class MultipleFileTransformer implements DataTransformerInterface
         if (\is_array($list)) {
             $data = [];
             foreach ($list as $item) {
-                if (\count($item) > 0) {
+                if ($item instanceof File || \count($item) > 0) {
                     if (\is_array($item)) {
                         $data[] = $item['$id'];
                     } else {

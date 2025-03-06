@@ -26,7 +26,7 @@ $(".relation-items").each(function () {
             data: (param) => ({
                 relation: relation_id,
                 limit: 100,
-                sort: 'title',
+                sort: 'title_sort',
                 q: param.term ? param.term + '*' : ''
             }),
             processResults: (data) => ({
@@ -55,12 +55,45 @@ $(".relation-items").each(function () {
     $addWrapper.html(template({relations: contentRelation}));
 });
 
+const trackedModals = new Set();
+const becomesHiddenObserver = new MutationObserver((entries, watcher) => {
+    const entry = entries[0];
+    const setElement = Array.from(trackedModals.values()).find((v) => v.modal === entry.target);
+
+    if (!setElement) {
+        console.error('No tracked modal found');
+        return;
+    }
+
+    if (entry.target.classList.contains('show')) {
+        return;
+    }
+
+    $(setElement.modal).detach();
+    $(setElement.parent).append(entry.target);
+});
+
 $('.relations').on('click', '[data-modal]', function (e) {
     e.preventDefault();
     const modal = $(this).closest('.add-relation').length ? $(this).closest('.add-relation').next('#relation-add-modal') : $(this).next('#relation-add-modal');
     const iFrame = modal.find('iframe');
+    const parent = modal.parent()[0];
+    const modalEl = modal[0];
 
     modal.find('.modal-title').text($(this).data('title'));
+
+    modal.detach();
+    $('body').append(modal);
+
+    const trackedData = {
+        parent: parent,
+        modal: modalEl,
+    };
+
+    if (!trackedModals.has(trackedData)) {
+        trackedModals.add(trackedData);
+        becomesHiddenObserver.observe(modalEl, {attributes: true});
+    }
 
     iFrame.css('display', 'block').attr('src', $(this).data('href')).on('load', function () {
         iFrame.show();

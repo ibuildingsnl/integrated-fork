@@ -14,6 +14,7 @@ namespace Integrated\Bundle\AssetBundle\Tests\Twig;
 use Integrated\Bundle\AssetBundle\Manager\AssetManager;
 use Integrated\Bundle\AssetBundle\Twig\Extension\JavascriptExtension;
 use Integrated\Bundle\AssetBundle\Twig\Extension\StylesheetExtension;
+use Twig\Error\Error;
 use Twig\Test\IntegrationTestCase;
 use Twig\TwigFunction;
 
@@ -41,6 +42,8 @@ class IntegrationTest extends IntegrationTestCase
 
     /**
      * @dataProvider getTests
+     *
+     * @throws Error
      */
     public function testIntegration($file, $message, $condition, $templates, $exception, $outputs, $deprecation = ''): void
     {

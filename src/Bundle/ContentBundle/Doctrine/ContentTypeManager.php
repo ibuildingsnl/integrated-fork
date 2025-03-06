@@ -33,17 +33,24 @@ class ContentTypeManager
         $this->resolver = $resolver;
 
         if (!is_subclass_of($class, ContentTypeInterface::class)) {
-            throw new InvalidArgumentException(\sprintf('The class "%s" is not subclass of %s', $class, ContentTypeInterface::class));
+            throw new InvalidArgumentException(
+                sprintf('The class "%s" is not subclass of %s', $class, ContentTypeInterface::class)
+            );
         }
     }
 
     /** @return ContentTypeInterface[] */
-    public function filterInstanceOf(string $className): array
+    public function filterInstanceOf(string $className, bool $strict = false): array
     {
         $contentTypes = [];
 
         foreach ($this->getAll() as $contentType) {
-            if (is_a($contentType->getClass(), $className, true)) {
+            if ($strict === true && $contentType->getClass() === $className) {
+                $contentTypes[] = $contentType;
+                continue;
+            }
+
+            if ($strict === false && is_a($contentType->getClass(), $className, true)) {
                 $contentTypes[] = $contentType;
             }
         }
