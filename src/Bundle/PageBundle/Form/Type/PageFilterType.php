@@ -43,6 +43,7 @@ class PageFilterType extends AbstractType
         $builder->add('channel', ChannelChoiceType::class, [
             'label' => 'Channel',
             'required' => false,
+            'filter' => ['type.$id' => 'website'],
         ]);
 
         $builder->add('submit', SubmitType::class, [

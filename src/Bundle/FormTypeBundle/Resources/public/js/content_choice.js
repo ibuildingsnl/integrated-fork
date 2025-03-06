@@ -3,10 +3,8 @@ $(function() {
 });
 
 function initContentChoice() {
-    $('select.integrated_content_choice').select2({
-        ajax: {
-            processResults: function (data) {
-                var items = [];
+    $('select.integrated_content_choice').each(function() {
+        const $element = $(this);
 
         $element.select2({
             ajax: {
@@ -18,7 +16,7 @@ function initContentChoice() {
                 data: (param) => ({
                     contenttypes: $element.data('types'),
                     limit: 100,
-                    sort: 'title_sort',
+                    sort: 'title',
                     q: param.term ? param.term + '*' : ''
                 }),
                 processResults: function (data) {
@@ -33,13 +31,13 @@ function initContentChoice() {
                                     item.text = item.path + ' > ' + item.text;
                                 }
                             }
+                            items.push(item);
                         }
-                        items.push(item);
                     }
-                }
 
-                return { results: items };
+                    return { results: items };
+                }
             }
-        }
+        });
     });
 }
