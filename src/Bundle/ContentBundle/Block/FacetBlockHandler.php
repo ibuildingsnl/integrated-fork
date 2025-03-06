@@ -81,10 +81,10 @@ class FacetBlockHandler extends BlockHandler
                 $year = 0;
 
                 if (preg_match('/(\d+) (\d{4})/', $name, $matches)) {
-                    $issue = (int)$matches[1];
-                    $year = (int)$matches[2];
+                    $issue = (int) $matches[1];
+                    $year = (int) $matches[2];
                 } elseif (preg_match('/(\d{4})/', $name, $matches)) {
-                    $year = (int)$matches[1];
+                    $year = (int) $matches[1];
                     $issue = 99;
                 } else {
                     $issue = 0;
