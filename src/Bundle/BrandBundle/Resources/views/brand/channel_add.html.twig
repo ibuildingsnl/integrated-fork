@@ -106,7 +106,7 @@ const addOrChooseChannel = function() {
 document.querySelector('[data-choose-channel]').addEventListener('change', addOrChooseChannel);
 addOrChooseChannel();
 
-document.querySelector('[name$="[channel][name]"]').value = '{{ brand.name }} {{ linkType.name }}';
+document.querySelector('[name$="[channel][name]"]').value = '{{ brand.name }}';
 </script>
 
 <script src="{{ asset('bundles/integratedcontent/js/channel.js') }}"></script>
