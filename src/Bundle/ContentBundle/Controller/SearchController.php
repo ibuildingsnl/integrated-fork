@@ -16,14 +16,14 @@ use Solarium\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class SearchController extends AbstractController
 {
     private Client $client;
-    private Serializer $serializer;
+    private SerializerInterface $serializer;
 
-    public function __construct(Client $client, Serializer $serializer)
+    public function __construct(Client $client, SerializerInterface $serializer)
     {
         $this->client = $client;
         $this->serializer = $serializer;
@@ -37,6 +37,6 @@ class SearchController extends AbstractController
             $response = $this->client->select(new SuggestionQuery($query));
         }
 
-        return new Response($this->serializer->serialize($response, $request->getRequestFormat('json')));
+        return new Response($this->serializer->serialize($response, (string) $request->getRequestFormat('json')));
     }
 }
