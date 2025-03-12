@@ -119,6 +119,7 @@ class WP
         $content = str_ireplace('[/vc_column]', '', $content);
         $content = str_ireplace('[/vc_column_text]', '', $content);
         $content = str_ireplace(' ', ' ', $content);
+        $content = str_ireplace("\u{a0}", ' ', $content);
         $content = str_ireplace('<h4>Wil je meer te weten komen over woningaanpassingen? <a href="https://supportmagazine.nl/abonneren/" target="_blank" rel="noopener">Neem dan nu extra voordelig een abonnement op Support Magazine!</a></h4>', '', $content);
         $content = str_ireplace('IK WORD ABONNEE[/su_button]', '[/su_button]', $content);
         $content = preg_replace('/\[(\/)?su_.*?\]/', '', $content); // Strip shortcodes

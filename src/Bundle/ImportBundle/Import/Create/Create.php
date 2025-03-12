@@ -198,7 +198,7 @@ class Create
                 $newRelation->addReference($parentBrandTaxonomy);
             }
 
-            if (array_key_exists('Image Caption', $newData) && strlen($newData['Image Caption']) > 0) {
+            if (\array_key_exists('Image Caption', $newData) && $newData['Image Caption'] !== '') {
                 $caption = html_entity_decode($newData['Image Caption']);
                 $newFile->setDescription($caption);
                 $result['messages'][] = "[CAPTION] Trying to set Caption '{$caption}'";
@@ -212,7 +212,7 @@ class Create
 
             $documentManager->flush();
         } else {
-            if (array_key_exists('Image Caption', $newData) && strlen($newData['Image Caption']) > 0) {
+            if (\array_key_exists('Image Caption', $newData) && $newData['Image Caption'] !== '') {
                 $caption = html_entity_decode($newData['Image Caption']);
                 $file->setDescription($caption);
                 $result['messages'][] = "[CAPTION] Trying to set Caption '{$caption}'";
@@ -259,7 +259,7 @@ class Create
 
             $parent = false;
 
-            if (strlen($title) > 0 && !$parent = $documentManager->getRepository(Content::class)
+            if ($title !== '' && !$parent = $documentManager->getRepository(Content::class)
                                                                  ->createQueryBuilder()->select()
                                                                  ->field('title')->equals($title)
 //                                                                 ->field('parent_id')->equals($parentBrandTaxonomy->getId())

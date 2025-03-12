@@ -286,7 +286,7 @@ class BaseConverter
                         $title = str_replace('.' . pathinfo($href, \PATHINFO_EXTENSION), '', $title);
                     }
 
-                    if (strlen($element->caption) > 0) {
+                    if ($element->caption !== '') {
                         $newData['Image Caption'] = $element->caption;
                         $result['messages'][] = '[CAPTION] Caption found: ' . $element->caption;
                     }
