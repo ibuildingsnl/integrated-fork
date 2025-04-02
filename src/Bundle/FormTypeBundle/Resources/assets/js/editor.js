@@ -41,12 +41,14 @@ $('.integrated_tinymce').each(function(key, elem){
 
     let style_formats = [
         {title: 'Paragraph', format: 'p'},
-        {title: 'Heading', block: 'h2' },
-        {title: 'Subheading', block: 'h3' },
+        {title: 'Heading 2', block: 'h2' },
+        {title: 'Heading 3', block: 'h3' },
         {title: 'Heading 4', block: 'h4' },
         {title: 'Heading 5', block: 'h5' },
         {title: 'Blockquote', format: 'blockquote'},
         {title: 'Cite', format: 'cite'},
+        {title: 'Superscript', icon: 'superscript', inline: 'sup'},
+        {title: 'Subscript', icon: 'subscript', inline: 'sub'},
     ];
 
     let custom_styles = element.data('format_styles');

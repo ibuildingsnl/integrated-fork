@@ -38,6 +38,54 @@ class JobPosting extends Article
     protected $applyUrl;
 
     /**
+     * @var string
+     */
+    #[Type\Field(options: ['label' => 'Functieprofiel', 'attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
+    protected $functionProfile;
+
+    /**
+     * @var string
+     */
+    #[Type\Field(options: ['label' => 'Regio\'s', 'attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
+    protected $regions;
+
+    /**
+     * @var string
+     */
+    #[Type\Field(options: ['label' => 'Opleidingsniveau', 'attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
+    protected $educationLevel;
+
+    /**
+     * @var string
+     */
+    #[Type\Field(options: ['label' => 'Contract Type', 'attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
+    protected $contractTypes;
+
+    /**
+     * @var string
+     */
+    #[Type\Field(options: ['label' => 'Working Hours', 'attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
+    protected $workingHours;
+
+    /**
+     * @var \DateTime
+     */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\DateTimeType', options: [
+        'priority' => 495,
+        'label' => 'Apply before',
+        'attr' => [
+            'style' => 'sidebar',
+            'icon' => 'calendar',
+            'class' => 'datetime',
+            'data-set-date-text' => 'Set end date',
+        ],
+        'html5' => true,
+        'date_widget' => 'single_text',
+        'time_widget' => 'single_text',
+    ], location: 'sidebar')]
+    protected $applyBefore;
+
+    /**
      * @var Relation\Company
      */
     protected $company;
@@ -108,6 +156,46 @@ class JobPosting extends Article
     }
 
     /**
+     * @return string
+     */
+    public function getWorkingHours()
+    {
+        return $this->workingHours;
+    }
+
+    /**
+     * @param string $workingHours
+     *
+     * @return $this
+     */
+    public function setWorkingHours($workingHours)
+    {
+        $this->workingHours = $workingHours;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getApplyBefore()
+    {
+        return $this->applyBefore;
+    }
+
+    /**
+     * @param \DateTime $applyBefore
+     *
+     * @return $this
+     */
+    public function setApplyBefore(\DateTime $applyBefore = null)
+    {
+        $this->applyBefore = $applyBefore;
+
+        return $this;
+    }
+
+    /**
      * @return Relation\Company
      */
     public function getCompany()
@@ -145,5 +233,45 @@ class JobPosting extends Article
         $this->contact = $contact;
 
         return $this;
+    }
+
+    public function getFunctionProfile(): ?string
+    {
+        return $this->functionProfile;
+    }
+
+    public function setFunctionProfile(?string $functionProfile): void
+    {
+        $this->functionProfile = $functionProfile;
+    }
+
+    public function getRegions(): ?string
+    {
+        return $this->regions;
+    }
+
+    public function setRegions(?string $regions): void
+    {
+        $this->regions = $regions;
+    }
+
+    public function getEducationLevel(): ?string
+    {
+        return $this->educationLevel;
+    }
+
+    public function setEducationLevel(?string $educationLevel): void
+    {
+        $this->educationLevel = $educationLevel;
+    }
+
+    public function getContractTypes(): ?string
+    {
+        return $this->contractTypes;
+    }
+
+    public function setContractTypes(?string $contractTypes): void
+    {
+        $this->contractTypes = $contractTypes;
     }
 }

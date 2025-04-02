@@ -22,6 +22,10 @@
                 <source>User group access</source>
                 <target>Toegang voor gebruikersgroepen</target>
             </trans-unit>
+            <trans-unit id="6">
+                <source>New block</source>
+                <target>Nieuw blok</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

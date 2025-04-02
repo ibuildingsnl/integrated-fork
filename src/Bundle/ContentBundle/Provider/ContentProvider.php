@@ -180,14 +180,32 @@ class ContentProvider
         }
 
         /* @var Relation $relation */
-        foreach ($request->query->get('relation') as $relationId => $value) {
-            $relation = $this->dm->getRepository(Relation::class)->find($relationId);
-            $relationfilter = $value;
+        if ($request->query->has('relation')) {
+            foreach ($request->query->get('relation') as $relationId => $value) {
+                $relation = $this->dm->getRepository(Relation::class)->find($relationId);
+                $relationfilter = $value;
+
+                if (\is_array($relationfilter)) {
+                    $query
+                        ->createFilterQuery($relationId)
+                        ->addTag($relationId)
+                        ->setQuery(
+                            'facet_'.$relation->getId().': ((%1%))',
+                            [implode(') OR (', array_map($filter, $relationfilter))]
+                        );
+                }
+            }
+        }
+
+        foreach ($this->dm->getRepository(Relation::class)->findAll() as $relation) {
+            $name = preg_replace('/[^a-zA-Z]/', '', $relation->getName());
+            $facetTitles[$name] = $relation->getName();
+            $relationfilter = $request->query->get($name);
 
             if (\is_array($relationfilter)) {
                 $query
-                    ->createFilterQuery($relationId)
-                    ->addTag($relationId)
+                    ->createFilterQuery($name)
+                    ->addTag($name)
                     ->setQuery('facet_'.$relation->getId().': ((%1%))', [implode(') OR (', array_map($filter, $relationfilter))]);
             }
         }
