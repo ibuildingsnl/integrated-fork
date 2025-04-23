@@ -60,7 +60,7 @@ class ContentTypePageType extends AbstractType
         $builder->add('channel', ChannelChoiceType::class, [
             'return_object' => true,
             'disabled' => true,
-            'filter' => ['type.$id' => 'website']
+            'filter' => ['type.$id' => 'website'],
         ]);
 
         $builder->add('path', TextType::class, [

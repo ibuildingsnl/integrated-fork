@@ -8,6 +8,10 @@
         <field field-name="jobTitle" type="string" />
         <field field-name="salary" type="string" />
         <field field-name="applyUrl" type="string" />
+        <field field-name="functionProfile" type="string" />
+        <field field-name="educationLevel" type="string" />
+        <field field-name="regions" type="string" />
+        <field field-name="contractTypes" type="string" />
         <field field-name="workingHours" type="string" />
         <field field-name="applyBefore" type="date" />
 

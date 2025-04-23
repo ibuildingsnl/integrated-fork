@@ -13,7 +13,6 @@ namespace Integrated\Bundle\BlockBundle\Document\Block\Embedded;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryType;
-use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
@@ -123,7 +122,6 @@ class FeaturedItemsItem
 
         return $this;
     }
-
 
     /**
      * @return string

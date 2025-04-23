@@ -125,7 +125,7 @@ class ArticleSearchController extends AbstractController
                     $fileData = json_decode($contentItem->file, true); // Decode to an associative array
                     $url = $fileData['pathname'] ?? null; // Access the 'pathname' key
                 } else {
-                    $url = $contentItem['url_' . $channel->getId()];
+                    $url = $contentItem['url_'.$channel->getId()];
                 }
 
                 return [
