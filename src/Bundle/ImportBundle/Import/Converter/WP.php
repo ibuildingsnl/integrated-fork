@@ -110,6 +110,7 @@ class WP
         }
 
         $content = preg_replace('/<a[^>]*>\s*<\/a>/', '', $content);
+        $content = str_ireplace('data-image-caption', 'caption', $content);
         $content = preg_replace('/\[caption.*?\]/', '', $content);
         $content = str_ireplace('[/caption]', '', $content);
         $content = str_ireplace('[vc_row]', '', $content);

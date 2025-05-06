@@ -98,8 +98,11 @@ class Create
 
         $extension = pathinfo($href, \PATHINFO_EXTENSION);
 
+        $hrefWithoutQuery = strtok($href, '?');
+        $extension = pathinfo($hrefWithoutQuery, PATHINFO_EXTENSION);
+
         if ($extension === '' || !in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'pdf'])) {
-            $result['messages'][] = "[INFO] No valid image or file has been found at {$href}";
+            $result['messages'][] = "[INFO] No valid image or file has been found at {$hrefWithoutQuery}";
 
             return [
                 'file' => false,
@@ -107,7 +110,7 @@ class Create
             ];
         }
 
-        $tmpfile = tempnam('/tmp/', 'img') . '.' . pathinfo($href, \PATHINFO_EXTENSION);
+        $tmpfile = tempnam('/tmp/', 'img') . '.' . pathinfo($hrefWithoutQuery, \PATHINFO_EXTENSION);
         file_put_contents($tmpfile, @file_get_contents($href));
         if (filesize($tmpfile) == 0) {
             unlink($tmpfile);
