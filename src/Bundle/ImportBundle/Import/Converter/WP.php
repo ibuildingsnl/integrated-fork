@@ -109,8 +109,32 @@ class WP
             $content = preg_replace('/<img[^>]+>/', '', $content, 1);
         }
 
-        $content = preg_replace('/<a[^>]*>\s*<\/a>/', '', $content);
+        $content = preg_replace_callback('/style="([^"]+)"/i', function ($matches) {
+            // Split styles into individual declarations
+            $styles = explode(';', $matches[1]);
+            $filtered = [];
+
+            foreach ($styles as $style) {
+                $style = trim($style);
+                // Remove if the style is font-weight, font-size, or color
+                if (!preg_match('/^(font-weight|font-size|color)\s*:/i', $style)) {
+                    $filtered[] = $style;
+                }
+            }
+
+            if (!empty($filtered)) {
+                return 'style="' . implode('; ', $filtered) . '"';
+            }
+
+            // Remove empty style attributes
+            return '';
+        }, $content);
+
+        $content = preg_replace('/<h1[^>]*>.*?<\/h1>/is', '', $content);
+        $content = preg_replace('/\[(av_[^\s\]]+)[^\]]*\/\]/i', '', $content);
+        $content = preg_replace('/\[(\/?av_[^\s\]]+)[^\]]*\]/i', '', $content);
         $content = str_ireplace('data-image-caption', 'caption', $content);
+        $content = preg_replace('/<a[^>]*>\s*<\/a>/', '', $content);
         $content = preg_replace('/\[caption.*?\]/', '', $content);
         $content = str_ireplace('[/caption]', '', $content);
         $content = str_ireplace('[vc_row]', '', $content);

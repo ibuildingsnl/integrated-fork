@@ -34,7 +34,7 @@
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="Integrated\Bundle\ImportBundle\Import\Provider\File" />
-
+            <argument type="service" id="integrated_content.publication_repository" />
         </service>
 
         <service id="Integrated\Bundle\ImportBundle\Import\ImportProcessor">

@@ -8,6 +8,8 @@ use Doctrine\ORM\EntityManager;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
+use Integrated\Bundle\ContentBundle\Document\Content\Publication;
+use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
@@ -39,6 +41,7 @@ class ImportController extends AbstractController
         private DocumentManager $documentManager,
         private EntityManager $entityManager,
         private ImportFile $importFile,
+        private PublicationRepositoryInterface $publications,
         private Doctrine $doctrine,
         private Manager $storageManager,
         private ImportProcessor $processor
@@ -519,15 +522,15 @@ class ImportController extends AbstractController
                         ++$col;
                     }
 
-                    if (!in_array('author-author', $fieldMapping) && $newObject instanceof Article) {
-                        $checkResult = BaseConverter::authorProcessor(
-                            $row,
-                            $newObject,
-                            $importDefinition,
-                            $this->documentManager
-                        );
-                        $result['messages'] = array_merge($result['messages'], $checkResult['messages']);
-                    }
+//                    if (!in_array('author-author', $fieldMapping) && $newObject instanceof Article) {
+//                        $checkResult = BaseConverter::authorProcessor(
+//                            $row,
+//                            $newObject,
+//                            $importDefinition,
+//                            $this->documentManager
+//                        );
+//                        $result['messages'] = array_merge($result['messages'], $checkResult['messages']);
+//                    }
 
 
                     if ($newObject instanceof Article || $newObject instanceof Person || $newObject instanceof Taxonomy) {
@@ -599,6 +602,15 @@ class ImportController extends AbstractController
                     $import_id = $newObject->getId();
                     if (isset($row['wp:post_id'])) {
                         $import_id = $row['wp:post_id'];
+                    }
+
+                    if (!count($this->publications->forContent($newObject)) > 0) {
+                        foreach ($newObject->getChannels() as $channel) {
+                            $time = $newObject->getPublishTime();
+                            $this->publications->add(
+                                new Publication($newObject, $channel, $time, [])
+                            );
+                        }
                     }
 
                     $result['messages'][] = '[SUCCES] Item ' . $import_id . ' (' . (string)$newObject . ') ' . ($updating ? 'updated' : 'created');
