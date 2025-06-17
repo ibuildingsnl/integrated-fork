@@ -52,7 +52,7 @@
         </service>
 
         <service id="integrated_content.services.flusher" class="Integrated\Common\Services\LockingFlusher">
-            <argument type="service" id="integrated_workflow.lock.factory" />
+            <argument type="service" id="lock.factory" />
             <argument type="service" id="integrated_content.services.main_flusher" />
         </service>
     </services>
