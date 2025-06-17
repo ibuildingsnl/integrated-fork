@@ -72,6 +72,6 @@ final class Exporter implements ExporterInterface
             $publication->setStatus($status);
         }
 
-        return $responseMessage instanceof ExporterResponse ? $responseMessage : null;
+        return $response;
     }
 }
