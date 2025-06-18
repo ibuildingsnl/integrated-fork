@@ -34,14 +34,6 @@ final class Exporter implements ExporterInterface
         }
 
         $this->logger->info("Publishing to {$this->connector->getName()}...");
-        if ($content->hasConnector($this->config->getId())) {
-            foreach ($this->publications->forContentOnChannel($content, $channel) as $publication) {
-                $publication->setResponse('Content already published on this connector');
-                $publication->setStatus(Publication::STATUS_FAILED);
-            }
-
-            return null;
-        }
 
         $responseMessage = null;
         $externalId = null;

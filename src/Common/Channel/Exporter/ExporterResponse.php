@@ -35,7 +35,7 @@ class ExporterResponse
         return $this->configAdapter;
     }
 
-    public function getExternalId(): string
+    public function getExternalId(): string|null
     {
         return $this->externalId;
     }
@@ -43,7 +43,7 @@ class ExporterResponse
     /**
      * @return $this
      */
-    public function setExternalId(string $externalId)
+    public function setExternalId(string|null $externalId)
     {
         $this->externalId = $externalId;
 
