@@ -99,13 +99,20 @@ class ArticleSearchController extends AbstractController
         /** @var Channel $channel */
         $channel = $this->documentManager->getRepository(Channel::class)->find($channelId);
 
+        $criteria = [
+            'contenttypes' => explode(',', $contentTypeIds),
+            'sort' => 'rel',
+            'q' => $q,
+        ];
+
+        $contentTypes = explode(',', $contentTypeIds);
+
+        if (!in_array('image', $contentTypes) || !in_array('file', $contentTypes)) {
+            $criteria['channels'] = explode(',', $channelId);
+        }
+
         $query = $this->queryFactory
-            ->createQuery(IntegratedContent::class, [
-                'contenttypes' => explode(',', $contentTypeIds),
-                'channels' => explode(',', $channelId),
-                'sort' => 'rel',
-                'q' => $q,
-            ])
+            ->createQuery(IntegratedContent::class, $criteria)
             ->getQuery();
 
         /** @var Document[] $items */
