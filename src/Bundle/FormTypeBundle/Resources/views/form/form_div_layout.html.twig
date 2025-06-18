@@ -616,6 +616,31 @@
             {{ form_errors(form) }}
             <input hidden type="text" class="w-full mediagallery_selector_input" name="{{ form.vars.full_name }}">
         </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const container = document.querySelector('#{{ form.vars.id }} .selected_images');
+
+                if (container) {
+                    new Sortable(container, {
+                        animation: 150,
+                        onEnd: function () {
+                            const input = container.closest('.mediagallery_selector').querySelector('.mediagallery_selector_input');
+                            const ids = Array.from(container.querySelectorAll('li.media-item'))
+                            .map(item => item.id);
+                            input.value = ids.join(',');
+                        }
+                    });
+
+                    const input = container.closest('.mediagallery_selector').querySelector('.mediagallery_selector_input');
+                    const ids = Array.from(container.querySelectorAll('li.media-item'))
+                    .map(item => item.id);
+                    input.value = ids.join(',');
+                }
+            });
+        </script>
     {% endapply %}
 
 {% endblock %}
