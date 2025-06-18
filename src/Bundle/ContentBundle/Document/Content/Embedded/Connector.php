@@ -71,7 +71,7 @@ class Connector
     /**
      * Get the externalId of the document.
      */
-    public function getExternalId(): string
+    public function getExternalId(): string|null
     {
         return $this->externalId;
     }
@@ -81,7 +81,7 @@ class Connector
      *
      * @return $this
      */
-    public function setExternalId(string $externalId)
+    public function setExternalId(string|null $externalId)
     {
         $this->externalId = $externalId;
 
