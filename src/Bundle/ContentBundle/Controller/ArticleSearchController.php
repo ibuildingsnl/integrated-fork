@@ -101,14 +101,15 @@ class ArticleSearchController extends AbstractController
 
         $criteria = [
             'contenttypes' => explode(',', $contentTypeIds),
+            'channels' => explode(',', $channelId),
             'sort' => 'rel',
             'q' => $q,
         ];
 
         $contentTypes = explode(',', $contentTypeIds);
 
-        if (!in_array('image', $contentTypes) || !in_array('file', $contentTypes)) {
-            $criteria['channels'] = explode(',', $channelId);
+        if (\in_array('image', $contentTypes) || \in_array('file', $contentTypes)) {
+            $criteria['channels'] = [];
         }
 
         $query = $this->queryFactory
