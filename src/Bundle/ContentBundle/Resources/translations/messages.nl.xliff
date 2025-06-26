@@ -1343,14 +1343,42 @@
                 <target>Categorie (Uitgebreid)</target>
             </trans-unit>
             <trans-unit id="340">
+                <source>Open in new tab</source>
+                <target>Open in nieuw tabblad</target>
+            </trans-unit>
+            <trans-unit id="341">
+                <source>Good to go!</source>
+                <target>Gereed!</target>
+            </trans-unit>
+            <trans-unit id="342">
+                <source>Please fill in the link text</source>
+                <target>Vul de link text in</target>
+            </trans-unit>
+            <trans-unit id="343">
+                <source>Enter a search term to begin searching</source>
+                <target>Voer een zoekterm in om te beginnen met zoeken</target>
+            </trans-unit>
+            <trans-unit id="344">
+                <source>Searching...</source>
+                <target>Zoeken...</target>
+            </trans-unit>
+            <trans-unit id="345">
+                <source>Link text</source>
+                <target>Link tekst</target>
+            </trans-unit>
+            <trans-unit id="346">
+                <source>URL or search term</source>
+                <target>URL of zoekterm</target>
+            </trans-unit>
+            <trans-unit id="347">
                 <source>Working Hours</source>
                 <target>Werk uren</target>
             </trans-unit>
-            <trans-unit id="341">
+            <trans-unit id="348">
                 <source>Apply before</source>
                 <target>Einddatum aanmeldingen</target>
             </trans-unit>
-            <trans-unit id="342">
+            <trans-unit id="349">
                 <source>SeoMetadata</source>
                 <target>Seo Metadata</target>
             </trans-unit>

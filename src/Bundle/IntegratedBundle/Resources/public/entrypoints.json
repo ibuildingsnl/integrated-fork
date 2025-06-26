@@ -74,6 +74,14 @@
       "js": [
         "/bundles/integratedintegrated/workflow.js"
       ]
+    },
+    "article-search": {
+      "css": [
+        "/bundles/integratedintegrated/article-search.css"
+      ],
+      "js": [
+        "/bundles/integratedintegrated/article-search.js"
+      ]
     }
   }
 }
