@@ -71,7 +71,7 @@ class Create
                 ->setLastname($lastname);
 
             $dm->persist($person);
-            $dm->flush($person);
+            $dm->flush();
         }
 
         return $person;
@@ -95,8 +95,6 @@ class Create
 
         $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
         $href = $checkResult['url'];
-
-        $extension = pathinfo($href, \PATHINFO_EXTENSION);
 
         $hrefWithoutQuery = strtok($href, '?');
         $extension = pathinfo($hrefWithoutQuery, PATHINFO_EXTENSION);

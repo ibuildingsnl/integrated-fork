@@ -286,7 +286,12 @@ class BaseConverter
                         $title = str_replace('.' . pathinfo($href, \PATHINFO_EXTENSION), '', $title);
                     }
 
-                    if ($element->caption !== '') {
+                    if ($element->title !== '') {
+                        $newData['Image Caption'] = $element->title;
+                        $result['messages'][] = '[CAPTION] Caption found: ' . $element->title;
+                    }
+
+                    if (!$newData['Image Caption'] && $element->caption !== '') {
                         $newData['Image Caption'] = $element->caption;
                         $result['messages'][] = '[CAPTION] Caption found: ' . $element->caption;
                     }
@@ -299,7 +304,8 @@ class BaseConverter
                             $importDefinition,
                             $storageManager,
                             $documentManager,
-                            $title
+                            $title,
+                            false
                         );
 
                         $image = $checkResult['file'];
@@ -714,7 +720,7 @@ class BaseConverter
                 }
             }
 
-            if ($field === 'featured_image') {
+            if ($field === 'featured_image' || $field === 'image') {
                 // TODO: Add more options for example Drupal
                 $href = '';
                 if (preg_match('/^[0-9]+$/', $value)) {
@@ -803,6 +809,7 @@ class BaseConverter
                 'contentitem_id' => 'contentitem_id',
                 'wp:post_id' => 'wpPostId',
                 'id' => 'PostId',
+                'nid' => 'PostId'
             ];
 
             foreach ($fields as $field => $dbField) {

@@ -162,11 +162,11 @@ class WP
         if ($importType === 'WordPress') {
             $newHtml = self::formatContentLines($content);
         } else { // content as text
-//            foreach (explode("\n", $content) as $line) {
-//                $line = trim($line);
-//                $line = '<p>'.$line.'</p>';
-//                $newHtml .= $line."\n";
-//            }
+            foreach (explode("\n", $content) as $line) {
+                $line = trim($line);
+                $line = '<p>'.$line.'</p>';
+                $newHtml .= $line."\n";
+            }
         }
 
 
@@ -281,6 +281,13 @@ class WP
         }
 
         if (isset($row['id'])) {
+            $newObject->getMetadata()->set('PostId', $row['id']);
+            $newObject->getMetadata()->set('wpUrl', (isset($row['Permalink'])) ? $row['Permalink'] : '');
+            $newObject->getMetadata()->set('importDate', date('Ymd'));
+            $newObject->getMetadata()->set('importWebsiteBaseUrl', $importDefinition->getWebsiteBaseUrl());
+        }
+
+        if (isset($row['nid'])) {
             $newObject->getMetadata()->set('PostId', $row['id']);
             $newObject->getMetadata()->set('wpUrl', (isset($row['Permalink'])) ? $row['Permalink'] : '');
             $newObject->getMetadata()->set('importDate', date('Ymd'));
