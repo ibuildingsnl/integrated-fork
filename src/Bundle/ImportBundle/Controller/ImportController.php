@@ -438,14 +438,17 @@ class ImportController extends AbstractController
 //
 //                $result['messages'] = array_merge($result['messages'], $checkResult['messages']);
 
-                BaseConverter::setObjectProperties(
+                $checkResult = BaseConverter::setObjectProperties(
                     $newData,
                     $newObject,
                     $importDefinition,
                     $this->storageManager,
                     $this->documentManager,
-                    $importType
+                    $importType,
+                    $row
                 );
+
+                $result['messages'] = array_merge($result['messages'], $checkResult['messages']);
 
                 if ($importDefinition->getImageRelation()) {
                     if ($relation = $newObject->getRelation($importDefinition->getImageRelation()->getId())) {

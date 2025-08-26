@@ -480,7 +480,11 @@ class BaseConverter
             $newRelation->setRelationType($relation->getType());
 
             if (!\is_array($value)) {
-                $value = preg_split('/[|]/', $value);
+                if (strpos($value, '|') !== false) {
+                    $value = preg_split('/[|]/', $value);
+                } else {
+                    $value = preg_split('/,/', $value);
+                }
             }
 
             foreach ($value as $valueName) {
@@ -645,13 +649,27 @@ class BaseConverter
         }
     }
 
+    public static function strip_cdata_and_html(string $content): string {
+        // CDATA weghalen
+        $clean = str_replace(['<![CDATA[', ']]>'], '', $content);
+
+        // HTML tags verwijderen
+        $clean = strip_tags($clean);
+
+        // Spaties netter maken
+        $clean = trim(preg_replace('/\s+/', ' ', $clean));
+
+        return $clean;
+    }
+
     public static function setObjectProperties(
         $newData,
         $newObject,
         $importDefinition,
         $storageManager,
         $documentManager,
-        $importType
+        $importType,
+        $row
     ) {
         $result = ExecuteImporter::initializeResult();
 
@@ -737,6 +755,16 @@ class BaseConverter
 
                 if ($href === '') {
                     $result['messages'][] = "[WARNING] {$field} {$value} does not contain a valid link or id";
+                }
+
+                if ($row['field_credit']) {
+                    $content = self::strip_cdata_and_html($row['field_credit']);
+                    $newData['featured_credit'] = $content;
+                }
+
+                if ($row['field_onderschrift']) {
+                    $content = self::strip_cdata_and_html($row['field_onderschrift']);
+                    $newData['featured_description'] = $content;
                 }
 
                 $checkResult = Create::createFileFromUrl(

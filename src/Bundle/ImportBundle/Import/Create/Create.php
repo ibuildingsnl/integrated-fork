@@ -109,10 +109,10 @@ class Create
         }
 
         $tmpfile = tempnam('/tmp/', 'img') . '.' . pathinfo($hrefWithoutQuery, \PATHINFO_EXTENSION);
-        file_put_contents($tmpfile, @file_get_contents($href));
+        file_put_contents($tmpfile, @file_get_contents($hrefWithoutQuery));
         if (filesize($tmpfile) == 0) {
             unlink($tmpfile);
-            $result['messages'][] = "[INFO] Image {$href} has 0 bites";
+            $result['messages'][] = "[INFO] Image {$hrefWithoutQuery} has 0 bites";
 
             return [
                 'file' => false,
@@ -124,7 +124,7 @@ class Create
             new MemoryReader(
                 file_get_contents($tmpfile),
                 new StorageMetadata(
-                    pathinfo($href, \PATHINFO_EXTENSION),
+                    pathinfo($hrefWithoutQuery, \PATHINFO_EXTENSION),
                     mime_content_type($tmpfile),
                     new ArrayCollection(),
                     new ArrayCollection()
@@ -135,9 +135,9 @@ class Create
         unlink($tmpfile);
 
         if (!$title) {
-            $title = parse_url($href, \PHP_URL_PATH);
+            $title = parse_url($hrefWithoutQuery, \PHP_URL_PATH);
             $title = basename($title);
-            $title = str_replace('.' . pathinfo($href, \PATHINFO_EXTENSION), '', $title);
+            $title = str_replace('.' . pathinfo($hrefWithoutQuery, \PATHINFO_EXTENSION), '', $title);
         }
 
         if (\in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'bmp'])) {
@@ -199,6 +199,18 @@ class Create
                 $newRelation->addReference($parentBrandTaxonomy);
             }
 
+            if (\array_key_exists('featured_credit', $newData) && $newData['featured_credit'] !== '') {
+                $credit = html_entity_decode($newData['featured_credit']);
+                $newFile->setCredits($credit);
+                $result['messages'][] = "[CREDIT] Trying to set Credit '{$credit}'";
+            }
+
+            if (\array_key_exists('featured_description', $newData) && $newData['featured_description'] !== '') {
+                $description = html_entity_decode($newData['featured_description']);
+                $newFile->setDescription($description);
+                $result['messages'][] = "[CAPTION] Trying to set Caption '{$description}'";
+            }
+
             if (\array_key_exists('Image Caption', $newData) && $newData['Image Caption'] !== '') {
                 $caption = html_entity_decode($newData['Image Caption']);
                 $newFile->setDescription($caption);
@@ -217,6 +229,18 @@ class Create
                 $caption = html_entity_decode($newData['Image Caption']);
                 $file->setDescription($caption);
                 $result['messages'][] = "[CAPTION] Trying to set Caption '{$caption}'";
+            }
+
+            if (\array_key_exists('featured_credit', $newData) && $newData['featured_credit'] !== '') {
+                $credit = html_entity_decode($newData['featured_credit']);
+                $file->setCredits($credit);
+                $result['messages'][] = "[CREDIT] Trying to set Credit '{$credit}'";
+            }
+
+            if (\array_key_exists('featured_description', $newData) && $newData['featured_description'] !== '') {
+                $description = html_entity_decode($newData['featured_description']);
+                $file->setDescription($description);
+                $result['messages'][] = "[CAPTION] Trying to set Caption '{$description}'";
             }
 
             $result['messages'][] = "[INFO] {$targetContentType->getName()} {$title} already existed";
