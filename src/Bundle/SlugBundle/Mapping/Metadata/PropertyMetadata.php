@@ -42,6 +42,7 @@ class PropertyMetadata implements PropertyMetadataInterface
 
     /**
      * @param class-string $class
+     *
      * @throws \ReflectionException
      */
     public function __construct(string $class, string $name, array $fields, string $separator, int $lengthLimit)

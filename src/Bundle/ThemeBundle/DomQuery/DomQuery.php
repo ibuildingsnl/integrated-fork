@@ -342,7 +342,7 @@ class DomQuery extends DomQueryNodes
                         }
                     }
                 }
-                if ($class_removed && is_array($node_classes)) {
+                if ($class_removed && \is_array($node_classes)) {
                     $node->setAttribute('class', implode(' ', $node_classes));
                 }
             }

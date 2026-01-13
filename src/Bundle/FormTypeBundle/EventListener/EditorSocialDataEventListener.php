@@ -68,7 +68,7 @@ class EditorSocialDataEventListener implements EventSubscriberInterface
         $query = "//*[contains(@class, 'embed-content')]";
 
         if (!$result = $xpath->query($query)) {
-             return;
+            return;
         }
 
         foreach ($result as $elm) {
