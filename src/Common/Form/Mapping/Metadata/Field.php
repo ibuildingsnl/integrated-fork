@@ -12,6 +12,7 @@
 namespace Integrated\Common\Form\Mapping\Metadata;
 
 use Integrated\Common\Form\Mapping\AttributeEditorInterface;
+use Symfony\Component\Form\FormTypeInterface;
 
 /**
  * Class for storing metadata properties of a field.
@@ -26,7 +27,7 @@ class Field implements AttributeEditorInterface
     protected $name;
 
     /**
-     * @var string
+     * @var class-string<FormTypeInterface<mixed>>
      */
     protected $type;
 
@@ -63,11 +64,17 @@ class Field implements AttributeEditorInterface
         return $this->name;
     }
 
+    /**
+     * @return class-string<FormTypeInterface<mixed>>
+     */
     public function getType()
     {
         return $this->type;
     }
 
+    /**
+     * @param class-string<FormTypeInterface<mixed>> $type
+     */
     public function setType($type)
     {
         $this->type = $type;

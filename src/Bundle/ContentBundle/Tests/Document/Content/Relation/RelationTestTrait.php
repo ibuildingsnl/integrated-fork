@@ -30,6 +30,9 @@ trait RelationTestTrait
      */
     public function testGetAndSetAccountnumberFunction()
     {
+        /**
+         * @var Relation $content
+         */
         $content = $this->getContent();
         $content->setAccountnumber($accountnumber = 'accountnumber');
 
@@ -41,6 +44,9 @@ trait RelationTestTrait
      */
     public function testGetAndSetDescriptionFunction()
     {
+        /**
+         * @var Relation $content
+         */
         $content = $this->getContent();
         $content->setDescription($description = 'accountnumber');
 

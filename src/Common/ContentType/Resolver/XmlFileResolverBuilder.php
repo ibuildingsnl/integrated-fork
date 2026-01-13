@@ -20,12 +20,16 @@ class XmlFileResolverBuilder extends MemoryResolverBuilder
     /**
      * @param string $file
      */
-    public function registerFile($file)
+    public function registerFile($file): void
     {
         $xpath = new \DOMXPath(XmlUtils::loadFile($file));
 
+        if (!$result = $xpath->query('//content-types/content-type')) {
+            return;
+        }
+
         /** @var \DOMElement $element */
-        foreach ($xpath->query('//content-types/content-type') as $element) {
+        foreach ($result as $element) {
             $contentType = new ContentType();
 
             $contentType->setLocked();

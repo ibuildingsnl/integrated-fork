@@ -44,7 +44,10 @@ class RegisterRolesParametersPass implements CompilerPassInterface
             return null;
         }
 
-        $content = file_get_contents($filePath);
+        if (!$content = file_get_contents($filePath)) {
+            return null;
+        }
+
         $crawler = new Crawler($content);
         $options = $crawler->filter('roles')->children();
 
