@@ -12,14 +12,12 @@
 namespace Integrated\Common\Channel\Exporter;
 
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
+use Integrated\Common\Channel\Connector\ExporterInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
 interface ExportableInterface
 {
-    /**
-     * @return ConfigInterface
-     */
-    public function getExporter(ConfigInterface $config);
+    public function getExporter(ConfigInterface $config): ExporterInterface;
 }

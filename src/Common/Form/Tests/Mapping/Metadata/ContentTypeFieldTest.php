@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Form\Tests\Mapping\Metadata;
 
+use Integrated\Bundle\ContentBundle\Form\Type\ContentTypeFormType;
 use Integrated\Common\Form\Mapping\Metadata\Field;
 
 /**
@@ -46,7 +47,7 @@ class ContentTypeFieldTest extends \PHPUnit\Framework\TestCase
      */
     public function testType()
     {
-        $type = 'Henk';
+        $type = ContentTypeFormType::class;
         $this->contentTypeField->setType($type);
         $this->assertEquals($type, $this->contentTypeField->getType());
     }
