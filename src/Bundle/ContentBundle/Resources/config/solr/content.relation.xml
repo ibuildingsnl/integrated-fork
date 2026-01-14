@@ -17,6 +17,10 @@
 
                 <string key="website">website</string>
 
+                <string key="profile_type">profileType</string>
+
+                <string key="profile_type_sort_text">profileType</string>
+
                 <array>
                     <string key="name">phonenumber_text</string>
                     <array>

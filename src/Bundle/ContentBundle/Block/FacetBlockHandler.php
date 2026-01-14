@@ -77,18 +77,20 @@ class FacetBlockHandler extends BlockHandler
             $sortedFacetValues = [];
 
             foreach ($facetValues as $name => $count) {
-                $issue = 0;
-                $year = 0;
+                $issue = null;
+                $year = null;
+                $isSpecialEdition = false;
 
-                if (preg_match('/(\d+) (\d{4})/', $name, $matches)) {
+                if (preg_match('/Nummer (\d+) van (\d{4})/', $name, $matches)) {
                     $issue = (int)$matches[1];
                     $year = (int)$matches[2];
                 } elseif (preg_match('/(\d{4})/', $name, $matches)) {
                     $year = (int)$matches[1];
-                    $issue = 99;
-                } else {
                     $issue = 0;
+                } else {
+                    $isSpecialEdition = true;
                     $year = 0;
+                    $issue = -1;
                 }
 
                 $sortedFacetValues[] = [
@@ -96,6 +98,7 @@ class FacetBlockHandler extends BlockHandler
                     'count' => $count,
                     'issue' => $issue,
                     'year' => $year,
+                    'is_special' => $isSpecialEdition,
                 ];
             }
 
@@ -113,7 +116,6 @@ class FacetBlockHandler extends BlockHandler
                 'values' => $facetValuesSorted,
             ];
         }
-
 
         if (!\count($facets)) {
             return;
