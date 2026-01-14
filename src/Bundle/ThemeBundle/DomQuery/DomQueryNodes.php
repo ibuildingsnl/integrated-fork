@@ -240,7 +240,7 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
             throw new \Exception('DOMDocument is missing!');
         }
 
-        if ($dom_node_list->length > 0) {
+        if ($dom_node_list->length > 0 && $dom_node_list->item(0)) {
             $this->setDomDocument($dom_node_list->item(0)->ownerDocument);
         }
 
@@ -656,9 +656,11 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
         $xpath = new \DOMXPath($this->document);
 
         if ($this->xml_mode) { // register all name spaces
-            foreach ($xpath->query('namespace::*') as $node) {
-                if ($node->prefix !== 'xml') {
-                    $xpath->registerNamespace($node->prefix, $node->namespaceURI);
+            if ($result = $xpath->query('namespace::*')) {
+                foreach ($result as $node) {
+                    if ($node->prefix !== 'xml') {
+                        $xpath->registerNamespace($node->prefix, $node->namespaceURI);
+                    }
                 }
             }
         }

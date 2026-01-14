@@ -67,7 +67,11 @@ class EditorSocialDataEventListener implements EventSubscriberInterface
         $xpath = new \DOMXPath($document);
         $query = "//*[contains(@class, 'embed-content')]";
 
-        foreach ($xpath->query($query) as $elm) {
+        if (!$result = $xpath->query($query)) {
+            return;
+        }
+
+        foreach ($result as $elm) {
             if ($elm instanceof \DOMElement) {
                 $classes = explode(' ', $elm->getAttribute('class'));
                 foreach ($classes as $class) {

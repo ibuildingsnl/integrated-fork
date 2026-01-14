@@ -709,12 +709,6 @@ parameters:
 			path: src/Bundle/BlockBundle/Locator/LayoutLocator.php
 
 		-
-			message: '#^Offset 0 might not exist on array\{0\?\: string, 1\?\: string\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: src/Bundle/BlockBundle/Locator/LayoutLocator.php
-
-		-
 			message: '#^Parameter \#1 \$haystack of function str_starts_with expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
@@ -743,12 +737,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Bundle/BlockBundle/Locator/LayoutLocator.php
-
-		-
-			message: '#^Invalid array key type array\.$#'
-			identifier: offsetAccess.invalidOffset
-			count: 1
-			path: src/Bundle/BlockBundle/Provider/BlockUsageProvider.php
 
 		-
 			message: '#^Method Integrated\\Bundle\\BlockBundle\\Provider\\BlockUsageProvider\:\:convertPages\(\) has no return type specified\.$#'
@@ -783,6 +771,12 @@ parameters:
 		-
 			message: '#^Offset ''_id'' might not exist on array\|null\.$#'
 			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Bundle/BlockBundle/Provider/BlockUsageProvider.php
+
+		-
+			message: '#^Possibly invalid array key type array\.$#'
+			identifier: offsetAccess.invalidOffset
 			count: 1
 			path: src/Bundle/BlockBundle/Provider/BlockUsageProvider.php
 
@@ -1411,7 +1405,7 @@ parameters:
 			path: src/Bundle/ChannelBundle/Form/Type/ConfigFormType.php
 
 		-
-			message: '#^Parameter \#2 \$type of method Symfony\\Component\\Form\\FormBuilderInterface\<mixed\>\:\:create\(\) expects string\|null, string\|Symfony\\Component\\Form\\FormTypeInterface given\.$#'
+			message: '#^Parameter \#2 \$type of method Symfony\\Component\\Form\\FormBuilderInterface\<mixed\>\:\:create\(\) expects class\-string\<Symfony\\Component\\Form\\FormTypeInterface\>\|null, string\|Symfony\\Component\\Form\\FormTypeInterface given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Bundle/ChannelBundle/Form/Type/ConfigFormType.php
@@ -2083,7 +2077,7 @@ parameters:
 			path: src/Bundle/ContentBundle/Controller/BulkController.php
 
 		-
-			message: '#^Parameter \#1 \$inputs of method Symfony\\Component\\HttpFoundation\\InputBag\<string\>\:\:replace\(\) expects array, array\|null given\.$#'
+			message: '#^Parameter \#1 \$inputs of method Symfony\\Component\\HttpFoundation\\InputBag\<string\>\:\:replace\(\) expects array\<string, mixed\>, array\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Bundle/ContentBundle/Controller/BulkController.php
@@ -3319,6 +3313,18 @@ parameters:
 			path: src/Bundle/ContentBundle/Document/Channel/ChannelRepository.php
 
 		-
+			message: '#^Property Integrated\\Bundle\\ContentBundle\\Document\\Channel\\ChannelType\:\:\$canBeSetGlobally on left side of \?\? is not nullable nor uninitialized\.$#'
+			identifier: nullCoalesce.initializedProperty
+			count: 1
+			path: src/Bundle/ContentBundle/Document/Channel/ChannelType.php
+
+		-
+			message: '#^Property Integrated\\Bundle\\ContentBundle\\Document\\Channel\\ChannelType\:\:\$name on left side of \?\? is not nullable nor uninitialized\.$#'
+			identifier: nullCoalesce.initializedProperty
+			count: 1
+			path: src/Bundle/ContentBundle/Document/Channel/ChannelType.php
+
+		-
 			message: '#^Instanceof between Integrated\\Common\\Content\\Document\\Storage\\Embedded\\StorageInterface and Integrated\\Common\\Content\\Document\\Storage\\Embedded\\StorageInterface will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
 			count: 2
@@ -4411,6 +4417,12 @@ parameters:
 			path: src/Bundle/ContentBundle/EventListener/ContentRelationsIntegrationListener.php
 
 		-
+			message: '#^Parameter \#2 \$type of method Symfony\\Component\\Form\\FormBuilderInterface\<mixed\>\:\:add\(\) expects class\-string\<Symfony\\Component\\Form\\FormTypeInterface\>\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Bundle/ContentBundle/EventListener/ContentRelationsIntegrationListener.php
+
+		-
 			message: '#^Method Integrated\\Bundle\\ContentBundle\\EventListener\\PaginateSolariumQuerySubscriber\:\:items\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -4819,6 +4831,12 @@ parameters:
 			path: src/Bundle/ContentBundle/Form/Type/BulkActionType.php
 
 		-
+			message: '#^Parameter \#2 \$type of method Symfony\\Component\\Form\\FormBuilderInterface\<mixed\>\:\:add\(\) expects class\-string\<Symfony\\Component\\Form\\FormTypeInterface\>\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Bundle/ContentBundle/Form/Type/BulkActionType.php
+
+		-
 			message: '#^Class Integrated\\Bundle\\ContentBundle\\Form\\Type\\BulkActionsType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
 			identifier: missingType.generics
 			count: 1
@@ -4971,6 +4989,12 @@ parameters:
 		-
 			message: '#^Class Integrated\\Bundle\\ContentBundle\\Form\\Type\\CustomFieldsType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
 			identifier: missingType.generics
+			count: 1
+			path: src/Bundle/ContentBundle/Form/Type/CustomFieldsType.php
+
+		-
+			message: '#^Parameter \#2 \$type of method Symfony\\Component\\Form\\FormBuilderInterface\<mixed\>\:\:add\(\) expects class\-string\<Symfony\\Component\\Form\\FormTypeInterface\>\|null, string given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Bundle/ContentBundle/Form/Type/CustomFieldsType.php
 
@@ -5371,6 +5395,12 @@ parameters:
 			path: src/Bundle/ContentBundle/Mailer/FormMailer.php
 
 		-
+			message: '#^Call to function is_a\(\) with Integrated\\Bundle\\ContentBundle\\Document\\ContentType\\ContentType and ''Integrated\\\\Bundle…'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Bundle/ContentBundle/Menu/ContentTypeMenuBuilder.php
+
+		-
 			message: '#^Cannot call method getShortName\(\) on ReflectionClass\|true\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -5533,13 +5563,19 @@ parameters:
 			path: src/Bundle/ContentBundle/Provider/ContentProvider.php
 
 		-
+			message: '#^Offset ''changed''\|''created''\|''random''\|''rank''\|''rel''\|''time''\|''title'' might not exist on array\{rel\?\: array\{name\: ''rel'', field\: ''score'', label\: ''relevance'', order\: ''desc''\}, time\: array\{name\: ''time'', field\: ''pub_time'', label\: ''publication date'', order\: ''desc''\}, changed\: array\{name\: ''changed'', field\: ''pub_edited'', label\: ''date modified'', order\: ''desc''\}, created\: array\{name\: ''created'', field\: ''pub_created'', label\: ''date created'', order\: ''desc''\}, title\: array\{name\: ''title'', field\: ''title_sort'', label\: ''title'', order\: ''asc''\}, random\: array\{name\: ''random'', field\: non\-falsy\-string, label\: ''random'', order\: ''desc''\}, rank\: array\{name\: ''rank'', field\: ''rank'', label\: ''rank'', order\: ''asc''\}\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 2
+			path: src/Bundle/ContentBundle/Provider/ContentProvider.php
+
+		-
 			message: '#^Parameter \#1 \$tag of method Solarium\\QueryType\\Select\\Query\\FilterQuery\:\:addTag\(\) expects string, string\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Bundle/ContentBundle/Provider/ContentProvider.php
 
 		-
-			message: '#^Parameter \#2 \$array of function implode expects array\|null, string given\.$#'
+			message: '#^Parameter \#2 \$array of function implode expects array, string given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Bundle/ContentBundle/Provider/ContentProvider.php
@@ -5653,7 +5689,7 @@ parameters:
 			path: src/Bundle/ContentBundle/Provider/SolariumProvider.php
 
 		-
-			message: '#^Argument of an invalid type DOMNodeList\<DOMNode\>\|false supplied for foreach, only iterables are supported\.$#'
+			message: '#^Argument of an invalid type DOMNodeList\<DOMNameSpaceNode\|DOMNode\>\|false supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 1
 			path: src/Bundle/ContentBundle/Relation/HtmlRelation.php
@@ -6169,12 +6205,6 @@ parameters:
 			path: src/Bundle/ContentBundle/Solr/Extension/PublicationsExtension.php
 
 		-
-			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, DateTimeInterface\|null given\.$#'
-			identifier: argument.type
-			count: 2
-			path: src/Bundle/ContentBundle/Solr/Extension/PublicationsExtension.php
-
-		-
 			message: '#^Method Integrated\\Bundle\\ContentBundle\\Solr\\Extension\\ShorttagFilterExtension\:\:build\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -6577,12 +6607,6 @@ parameters:
 			path: src/Bundle/ContentBundle/Tests/Document/Content/ArticleTest.php
 
 		-
-			message: '#^Method Integrated\\Bundle\\ContentBundle\\Tests\\Document\\Content\\ArticleTest\:\:getContent\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Bundle/ContentBundle/Tests/Document/Content/ArticleTest.php
-
-		-
 			message: '#^Method Integrated\\Bundle\\ContentBundle\\Tests\\Document\\Content\\ArticleTest\:\:testAddAuthorFunction\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -6776,12 +6800,6 @@ parameters:
 
 		-
 			message: '#^Method Integrated\\Bundle\\ContentBundle\\Tests\\Document\\Content\\CommentTest\:\:getChannels\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Bundle/ContentBundle/Tests/Document/Content/CommentTest.php
-
-		-
-			message: '#^Method Integrated\\Bundle\\ContentBundle\\Tests\\Document\\Content\\CommentTest\:\:getContent\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
 			path: src/Bundle/ContentBundle/Tests/Document/Content/CommentTest.php
@@ -7075,12 +7093,6 @@ parameters:
 			path: src/Bundle/ContentBundle/Tests/Document/Content/FileTest.php
 
 		-
-			message: '#^Method Integrated\\Bundle\\ContentBundle\\Tests\\Document\\Content\\FileTest\:\:getContent\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Bundle/ContentBundle/Tests/Document/Content/FileTest.php
-
-		-
 			message: '#^Method Integrated\\Bundle\\ContentBundle\\Tests\\Document\\Content\\FileTest\:\:testAddChannelFunction\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -7214,12 +7226,6 @@ parameters:
 
 		-
 			message: '#^Method Integrated\\Bundle\\ContentBundle\\Tests\\Document\\Content\\ProductTest\:\:getChannels\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Bundle/ContentBundle/Tests/Document/Content/ProductTest.php
-
-		-
-			message: '#^Method Integrated\\Bundle\\ContentBundle\\Tests\\Document\\Content\\ProductTest\:\:getContent\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
 			path: src/Bundle/ContentBundle/Tests/Document/Content/ProductTest.php
@@ -7393,13 +7399,31 @@ parameters:
 			path: src/Bundle/ContentBundle/Tests/Document/Content/ReferenceTest.php
 
 		-
-			message: '#^Method Integrated\\Bundle\\ContentBundle\\Tests\\Document\\Content\\Relation\\CompanyTest\:\:getChannels\(\) has no return type specified\.$#'
-			identifier: missingType.return
+			message: '#^Call to an undefined method Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content\:\:addPhonenumber\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: src/Bundle/ContentBundle/Tests/Document/Content/Relation/CompanyTest.php
+
+		-
+			message: '#^Call to an undefined method Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content\:\:getPhonenumbers\(\)\.$#'
+			identifier: method.notFound
+			count: 5
+			path: src/Bundle/ContentBundle/Tests/Document/Content/Relation/CompanyTest.php
+
+		-
+			message: '#^Call to an undefined method Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content\:\:removePhonenumber\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Bundle/ContentBundle/Tests/Document/Content/Relation/CompanyTest.php
 
 		-
-			message: '#^Method Integrated\\Bundle\\ContentBundle\\Tests\\Document\\Content\\Relation\\CompanyTest\:\:getContent\(\) has no return type specified\.$#'
+			message: '#^Call to an undefined method Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content\:\:setPhonenumbers\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Bundle/ContentBundle/Tests/Document/Content/Relation/CompanyTest.php
+
+		-
+			message: '#^Method Integrated\\Bundle\\ContentBundle\\Tests\\Document\\Content\\Relation\\CompanyTest\:\:getChannels\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
 			path: src/Bundle/ContentBundle/Tests/Document/Content/Relation/CompanyTest.php
@@ -7591,13 +7615,31 @@ parameters:
 			path: src/Bundle/ContentBundle/Tests/Document/Content/Relation/CompanyTest.php
 
 		-
-			message: '#^Method Integrated\\Bundle\\ContentBundle\\Tests\\Document\\Content\\Relation\\PersonTest\:\:getChannels\(\) has no return type specified\.$#'
-			identifier: missingType.return
+			message: '#^Call to an undefined method Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content\:\:addPhonenumber\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: src/Bundle/ContentBundle/Tests/Document/Content/Relation/PersonTest.php
+
+		-
+			message: '#^Call to an undefined method Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content\:\:getPhonenumbers\(\)\.$#'
+			identifier: method.notFound
+			count: 5
+			path: src/Bundle/ContentBundle/Tests/Document/Content/Relation/PersonTest.php
+
+		-
+			message: '#^Call to an undefined method Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content\:\:removePhonenumber\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Bundle/ContentBundle/Tests/Document/Content/Relation/PersonTest.php
 
 		-
-			message: '#^Method Integrated\\Bundle\\ContentBundle\\Tests\\Document\\Content\\Relation\\PersonTest\:\:getContent\(\) has no return type specified\.$#'
+			message: '#^Call to an undefined method Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content\:\:setPhonenumbers\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Bundle/ContentBundle/Tests/Document/Content/Relation/PersonTest.php
+
+		-
+			message: '#^Method Integrated\\Bundle\\ContentBundle\\Tests\\Document\\Content\\Relation\\PersonTest\:\:getChannels\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
 			path: src/Bundle/ContentBundle/Tests/Document/Content/Relation/PersonTest.php
@@ -7838,12 +7880,6 @@ parameters:
 
 		-
 			message: '#^Method Integrated\\Bundle\\ContentBundle\\Tests\\Document\\Content\\TaxonomyTest\:\:getChannels\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Bundle/ContentBundle/Tests/Document/Content/TaxonomyTest.php
-
-		-
-			message: '#^Method Integrated\\Bundle\\ContentBundle\\Tests\\Document\\Content\\TaxonomyTest\:\:getContent\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
 			path: src/Bundle/ContentBundle/Tests/Document/Content/TaxonomyTest.php
@@ -9187,6 +9223,12 @@ parameters:
 			path: src/Bundle/ContentHistoryBundle/Doctrine/ODM/MongoDB/Persister/PersistenceBuilder.php
 
 		-
+			message: '#^Cannot call method getValue\(\) on ReflectionProperty\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Bundle/ContentHistoryBundle/Doctrine/ODM/MongoDB/Persister/PersistenceBuilder.php
+
+		-
 			message: '#^Method Integrated\\Bundle\\ContentHistoryBundle\\Doctrine\\ODM\\MongoDB\\Persister\\PersistenceBuilder\:\:prepareData\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -9517,7 +9559,7 @@ parameters:
 			path: src/Bundle/FormTypeBundle/DependencyInjection/Compiler/RegisterContentStyleParametersPass.php
 
 		-
-			message: '#^Parameter \#1 \$node of class Symfony\\Component\\DomCrawler\\Crawler constructor expects array\|DOMNode\|\(DOMNodeList&iterable\<DOMNode\>\)\|string\|null, string\|false given\.$#'
+			message: '#^Parameter \#1 \$node of class Symfony\\Component\\DomCrawler\\Crawler constructor expects array\<DOMNode\>\|DOMNode\|DOMNodeList\<DOMNode\>\|string\|null, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Bundle/FormTypeBundle/DependencyInjection/Compiler/RegisterContentStyleParametersPass.php
@@ -9545,12 +9587,6 @@ parameters:
 			identifier: missingType.return
 			count: 1
 			path: src/Bundle/FormTypeBundle/EventListener/EditorImageRelationEventListener.php
-
-		-
-			message: '#^Argument of an invalid type DOMNodeList\<DOMNode\>\|false supplied for foreach, only iterables are supported\.$#'
-			identifier: foreach.nonIterable
-			count: 1
-			path: src/Bundle/FormTypeBundle/EventListener/EditorSocialDataEventListener.php
 
 		-
 			message: '#^Method Integrated\\Bundle\\FormTypeBundle\\EventListener\\EditorSocialDataEventListener\:\:read\(\) has no return type specified\.$#'
@@ -10873,6 +10909,24 @@ parameters:
 			path: src/Bundle/InstallerBundle/Migrations/MongoDB/Version20220609071330.php
 
 		-
+			message: '#^Cannot access offset ''_id'' on array\|object\|null\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: src/Bundle/InstallerBundle/Migrations/MongoDB/Version20230317121211.php
+
+		-
+			message: '#^Cannot access offset ''filters'' on array\|object\|null\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Bundle/InstallerBundle/Migrations/MongoDB/Version20230317121211.php
+
+		-
+			message: '#^Cannot access offset ''name'' on array\|object\|null\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Bundle/InstallerBundle/Migrations/MongoDB/Version20230317121211.php
+
+		-
 			message: '#^Method Integrated\\Bundle\\InstallerBundle\\Migrations\\MongoDB\\Version20230317121211\:\:down\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -10881,12 +10935,6 @@ parameters:
 		-
 			message: '#^Method Integrated\\Bundle\\InstallerBundle\\Migrations\\MongoDB\\Version20230317121211\:\:up\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: src/Bundle/InstallerBundle/Migrations/MongoDB/Version20230317121211.php
-
-		-
-			message: '#^Possibly invalid array key type \(list\<string\>\|string\|null\)\.$#'
-			identifier: offsetAccess.invalidOffset
 			count: 1
 			path: src/Bundle/InstallerBundle/Migrations/MongoDB/Version20230317121211.php
 
@@ -11767,12 +11815,6 @@ parameters:
 			path: src/Bundle/PageBundle/Grid/GridFactory.php
 
 		-
-			message: '#^Offset 0 might not exist on array\{0\?\: string, 1\?\: string\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: src/Bundle/PageBundle/Locator/LayoutLocator.php
-
-		-
 			message: '#^Parameter \#1 \$haystack of function str_starts_with expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
@@ -12163,6 +12205,12 @@ parameters:
 			path: src/Bundle/SlugBundle/Mapping/Attributes/Slug.php
 
 		-
+			message: '#^Parameter \#1 \$class of class Integrated\\Bundle\\SlugBundle\\Mapping\\Metadata\\PropertyMetadata constructor expects class\-string, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Bundle/SlugBundle/Mapping/Driver/AttributeDriver.php
+
+		-
 			message: '#^Parameter \#1 \$objectOrClass of class ReflectionClass constructor expects class\-string\<T of object\>\|T of object, string given\.$#'
 			identifier: argument.type
 			count: 1
@@ -12273,6 +12321,12 @@ parameters:
 		-
 			message: '#^Method Integrated\\Bundle\\SlugBundle\\Tests\\Mapping\\Metadata\\PropertyMetadataTest\:\:testProperties\(\) has parameter \$fields with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
+			count: 1
+			path: src/Bundle/SlugBundle/Tests/Mapping/Metadata/PropertyMetadataTest.php
+
+		-
+			message: '#^Parameter \#1 \$class of class Integrated\\Bundle\\SlugBundle\\Mapping\\Metadata\\PropertyMetadata constructor expects class\-string, string given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Bundle/SlugBundle/Tests/Mapping/Metadata/PropertyMetadataTest.php
 
@@ -12433,7 +12487,7 @@ parameters:
 			path: src/Bundle/SolrBundle/EventListener/IndexerErrorLogger.php
 
 		-
-			message: '#^Method Integrated\\Bundle\\SolrBundle\\EventListener\\SolariumQueryPageFixerSubscriber\:\:getSubscribedEvents\(\) should return array\<string, array\<int\|string, array\<int\|string, int\|string\>\|int\|string\>\|string\> but returns array\<string, array\<int, float\|string\>\>\.$#'
+			message: '#^Method Integrated\\Bundle\\SolrBundle\\EventListener\\SolariumQueryPageFixerSubscriber\:\:getSubscribedEvents\(\) should return array\<string, list\<array\{0\: string, 1\?\: int\}\|int\|string\>\|string\> but returns array\{''knp_pager\.items''\: array\{''items'', 0\.5\}\}\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Bundle/SolrBundle/EventListener/SolariumQueryPageFixerSubscriber.php
@@ -12907,6 +12961,48 @@ parameters:
 			path: src/Bundle/SolrBundle/Tests/Solr/Type/RemoveTypeTest.php
 
 		-
+			message: '#^Call to an undefined method MongoDB\\Driver\\CursorInterface\:\:count\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Bundle/StorageBundle/Command/MigrateCommand.php
+
+		-
+			message: '#^Cannot access offset ''_id'' on array\|object\|null\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Bundle/StorageBundle/Command/MigrateCommand.php
+
+		-
+			message: '#^Cannot access offset ''class'' on array\|object\|null\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Bundle/StorageBundle/Command/MigrateCommand.php
+
+		-
+			message: '#^Cannot access offset string on array\|object\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: src/Bundle/StorageBundle/Command/MigrateCommand.php
+
+		-
+			message: '#^Cannot access offset string on array\|object\|null\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Bundle/StorageBundle/Command/MigrateCommand.php
+
+		-
+			message: '#^Parameter \#1 \$document of method Integrated\\Bundle\\StorageBundle\\Storage\\Mapping\\PropertyInterface\:\:getFileId\(\) expects array, array\|object\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Bundle/StorageBundle/Command/MigrateCommand.php
+
+		-
+			message: '#^Parameter \#1 \$row of method Integrated\\Common\\Storage\\Database\\DatabaseInterface\:\:saveRow\(\) expects array, array\|ArrayAccess given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Bundle/StorageBundle/Command/MigrateCommand.php
+
+		-
 			message: '#^Parameter \#2 \$code of class LogicException constructor expects int, string given\.$#'
 			identifier: argument.type
 			count: 1
@@ -13209,12 +13305,6 @@ parameters:
 		-
 			message: '#^Method Integrated\\Bundle\\StorageBundle\\Storage\\Database\\DoctrineODMDatabase\:\:getObjects\(\) return type with generic interface Doctrine\\ODM\\MongoDB\\Iterator\\Iterator does not specify its types\: TValue$#'
 			identifier: missingType.generics
-			count: 1
-			path: src/Bundle/StorageBundle/Storage/Database/DoctrineODMDatabase.php
-
-		-
-			message: '#^Method Integrated\\Bundle\\StorageBundle\\Storage\\Database\\DoctrineODMDatabase\:\:getRows\(\) should return MongoCursor but returns Iterator&MongoDB\\Driver\\CursorInterface\.$#'
-			identifier: return.type
 			count: 1
 			path: src/Bundle/StorageBundle/Storage/Database/DoctrineODMDatabase.php
 
@@ -14041,48 +14131,6 @@ parameters:
 			path: src/Bundle/ThemeBundle/DomQuery/CssToXpath.php
 
 		-
-			message: '#^Offset 4 might not exist on array\{0\: string, 1\: non\-empty\-string, 2\?\: string, 3\: ''\!'', 4\?\: non\-empty\-string\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: src/Bundle/ThemeBundle/DomQuery/CssToXpath.php
-
-		-
-			message: '#^Offset 4 might not exist on array\{0\: string, 1\: non\-empty\-string, 2\?\: string, 3\: ''\$'', 4\?\: non\-empty\-string\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
-			path: src/Bundle/ThemeBundle/DomQuery/CssToXpath.php
-
-		-
-			message: '#^Offset 4 might not exist on array\{0\: string, 1\: non\-empty\-string, 2\?\: string, 3\: '''', 4\?\: non\-empty\-string\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: src/Bundle/ThemeBundle/DomQuery/CssToXpath.php
-
-		-
-			message: '#^Offset 4 might not exist on array\{0\: string, 1\: non\-empty\-string, 2\?\: string, 3\: ''\*'', 4\?\: non\-empty\-string\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: src/Bundle/ThemeBundle/DomQuery/CssToXpath.php
-
-		-
-			message: '#^Offset 4 might not exist on array\{0\: string, 1\: non\-empty\-string, 2\?\: string, 3\: ''\^'', 4\?\: non\-empty\-string\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: src/Bundle/ThemeBundle/DomQuery/CssToXpath.php
-
-		-
-			message: '#^Offset 4 might not exist on array\{0\: string, 1\: non\-empty\-string, 2\?\: string, 3\: ''\|'', 4\?\: non\-empty\-string\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
-			path: src/Bundle/ThemeBundle/DomQuery/CssToXpath.php
-
-		-
-			message: '#^Offset 4 might not exist on array\{0\: string, 1\: non\-empty\-string, 2\?\: string, 3\: ''~'', 4\?\: non\-empty\-string\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: src/Bundle/ThemeBundle/DomQuery/CssToXpath.php
-
-		-
 			message: '#^Parameter \#1 \$codepoint of function chr expects int, string given\.$#'
 			identifier: argument.type
 			count: 1
@@ -14287,12 +14335,6 @@ parameters:
 			path: src/Bundle/ThemeBundle/DomQuery/DomQuery.php
 
 		-
-			message: '#^Parameter \#2 \$array of function implode expects array\|null, array\<int\<0, max\>, string\>\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Bundle/ThemeBundle/DomQuery/DomQuery.php
-
-		-
 			message: '#^Parameter \#2 \$haystack of function array_search expects array, array\<int\<0, max\>, string\>\|false given\.$#'
 			identifier: argument.type
 			count: 1
@@ -14335,12 +14377,6 @@ parameters:
 			path: src/Bundle/ThemeBundle/DomQuery/DomQuery.php
 
 		-
-			message: '#^Argument of an invalid type DOMNodeList\<DOMNode\>\|false supplied for foreach, only iterables are supported\.$#'
-			identifier: foreach.nonIterable
-			count: 1
-			path: src/Bundle/ThemeBundle/DomQuery/DomQueryNodes.php
-
-		-
 			message: '#^Call to function is_array\(\) with array\<DOMNode\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -14350,12 +14386,6 @@ parameters:
 			message: '#^Call to function is_bool\(\) with bool will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 2
-			path: src/Bundle/ThemeBundle/DomQuery/DomQueryNodes.php
-
-		-
-			message: '#^Cannot access property \$ownerDocument on DOMNode\|null\.$#'
-			identifier: property.nonObject
-			count: 1
 			path: src/Bundle/ThemeBundle/DomQuery/DomQueryNodes.php
 
 		-
@@ -14482,6 +14512,12 @@ parameters:
 			message: '#^Parameter \#1 \$document of method Integrated\\Bundle\\ThemeBundle\\DomQuery\\DomQueryNodes\:\:setDomDocument\(\) expects DOMDocument, DOMDocument\|null given\.$#'
 			identifier: argument.type
 			count: 2
+			path: src/Bundle/ThemeBundle/DomQuery/DomQueryNodes.php
+
+		-
+			message: '#^Parameter \#1 \$dom_node of method Integrated\\Bundle\\ThemeBundle\\DomQuery\\DomQueryNodes\:\:addDomNode\(\) expects DOMNode, DOMNameSpaceNode\|DOMNode given\.$#'
+			identifier: argument.type
+			count: 1
 			path: src/Bundle/ThemeBundle/DomQuery/DomQueryNodes.php
 
 		-
@@ -15116,12 +15152,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$haystack of function strpos expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Bundle/UserBundle/DependencyInjection/Compiler/RegisterRolesParametersPass.php
-
-		-
-			message: '#^Parameter \#1 \$node of class Symfony\\Component\\DomCrawler\\Crawler constructor expects array\|DOMNode\|\(DOMNodeList&iterable\<DOMNode\>\)\|string\|null, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Bundle/UserBundle/DependencyInjection/Compiler/RegisterRolesParametersPass.php
@@ -16715,12 +16745,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Bundle/UserBundle/Security/TwoFactor/Http/WhitelistMatcher.php
-
-		-
-			message: '#^Class Integrated\\Bundle\\UserBundle\\Security\\UserProvider implements generic interface Symfony\\Component\\Security\\Core\\User\\PasswordUpgraderInterface but does not specify its types\: TUser$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Bundle/UserBundle/Security/UserProvider.php
 
 		-
 			message: '#^Class Integrated\\Bundle\\UserBundle\\Security\\UserProvider implements generic interface Symfony\\Component\\Security\\Core\\User\\UserProviderInterface but does not specify its types\: TUser$#'
@@ -19639,6 +19663,12 @@ parameters:
 			path: src/Common/Channel/Connector/Config/Resolver/MemoryResolverBuilder.php
 
 		-
+			message: '#^Property Integrated\\Common\\Channel\\Connector\\Config\\Resolver\\MemoryResolverBuilder\:\:\$config_channels \(array\<array\<string\>\>\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Common/Channel/Connector/Config/Resolver/MemoryResolverBuilder.php
+
+		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -19753,12 +19783,6 @@ parameters:
 			path: src/Common/Channel/Exporter/Exporter.php
 
 		-
-			message: '#^Property Integrated\\Common\\Channel\\Exporter\\Exporter\:\:\$cache \(array\<string, array\<Integrated\\Common\\Channel\\Connector\\ExporterInterface\>\>\) does not accept array\<string, array\<Integrated\\Common\\Channel\\Connector\\Config\\ConfigInterface\|Integrated\\Common\\Channel\\Connector\\ExporterInterface\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Common/Channel/Exporter/Exporter.php
-
-		-
 			message: '#^Method Integrated\\Common\\Channel\\Exporter\\PublicationExporterDecorator\:\:export\(\) has parameter \$content with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
@@ -19779,12 +19803,6 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$key of function array_key_exists expects int\|string, string\|null given\.$#'
 			identifier: argument.type
-			count: 1
-			path: src/Common/Channel/Exporter/PublicationExporterDecorator.php
-
-		-
-			message: '#^Property Integrated\\Common\\Channel\\Exporter\\PublicationExporterDecorator\:\:\$cache \(array\<string, array\<Integrated\\Common\\Channel\\Connector\\ExporterInterface\>\>\) does not accept array\<string, array\<Integrated\\Common\\Channel\\Connector\\Config\\ConfigInterface\|Integrated\\Common\\Channel\\Connector\\ExporterInterface\>\>\.$#'
-			identifier: assign.propertyType
 			count: 1
 			path: src/Common/Channel/Exporter/PublicationExporterDecorator.php
 
@@ -22043,18 +22061,6 @@ parameters:
 			identifier: deadCode.unreachable
 			count: 2
 			path: src/Common/ContentType/Resolver/PriorityResolver.php
-
-		-
-			message: '#^Argument of an invalid type DOMNodeList\<DOMNode\>\|false supplied for foreach, only iterables are supported\.$#'
-			identifier: foreach.nonIterable
-			count: 1
-			path: src/Common/ContentType/Resolver/XmlFileResolverBuilder.php
-
-		-
-			message: '#^Method Integrated\\Common\\ContentType\\Resolver\\XmlFileResolverBuilder\:\:registerFile\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Common/ContentType/Resolver/XmlFileResolverBuilder.php
 
 		-
 			message: '#^Parameter \#1 \$name of method Integrated\\Bundle\\ContentBundle\\Document\\ContentType\\Embedded\\Field\:\:setName\(\) expects string, string\|null given\.$#'
