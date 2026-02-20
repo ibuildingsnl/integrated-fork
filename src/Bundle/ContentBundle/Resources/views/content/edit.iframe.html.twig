@@ -33,13 +33,6 @@
 
     <script>
         function initMediaEditPanel() {
-            const goToEditor = document.querySelector('#go_to_editor');
-            if (goToEditor) {
-                goToEditor.addEventListener('click', (event) => {
-                    dispatchEvent(event);
-                });
-            }
-
             const form = document.querySelector('.content-form');
             const submitButton = document.getElementById('integrated_content_actions_save');
             if (form && submitButton) {
@@ -64,13 +57,6 @@
                             });
                     });
             });
-        }
-
-        // This loads the edit image screen. This can be a full redirect, or a modal.
-        function dispatchEvent() {
-            let event = new CustomEvent('editImageClick');
-            const parentDocument = window.parent && window.parent !== window ? window.parent.document : document;
-            parentDocument.dispatchEvent(event);
         }
 
         document.addEventListener('DOMContentLoaded', initMediaEditPanel);

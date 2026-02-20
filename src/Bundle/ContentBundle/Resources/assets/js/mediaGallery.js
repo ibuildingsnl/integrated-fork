@@ -146,6 +146,7 @@ function bindMediaItemActions() {
                 window.location.href = editImageIframePath.replace('REPLACE', mediaId);
             }
         });
+
 }
 
 function bindEditPanelForm() {

@@ -13,7 +13,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
     // If selected_modus is something else (select_multiple, select_one) then this is loaded via an iframe
     // And then we load the same page without sidebar and header
 
-    if (selected_modus == 'media_gallery') {
+    var selectedModus = typeof selected_modus !== 'undefined' && selected_modus && selected_modus !== 'undefined' ? selected_modus : 'media_gallery';
+    if (selectedModus == 'media_gallery') {
       window.location.href = edit_image_path.replace('REPLACE', media_id);
     } else {
       window.location.href = edit_image_iframe_path.replace('REPLACE', media_id);
