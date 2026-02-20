@@ -44,7 +44,7 @@
                                 {% set thumbnail = integrated_image(image).scaleResize(300) %}
                                 <div class="thumbnail-holder" style="background-image:url('{{ thumbnail }}');">
                                     {% if form.vars.data.contentType == 'image'  %}
-                                        <button id="go_to_editor" class="no-icon btn btn-white">Edit image</button>
+                                        <button id="go_to_editor" type="button" class="no-icon btn btn-white">Edit image</button>
                                     {% endif %}
                                 </div>
                             {% endif %}
@@ -60,7 +60,7 @@
                         {% block content_editor %}
                             {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR')) %}
                                 {% if child.vars.name is not same as('brands') %}
-                                    {{ form_row(child, { 'style': 'inline'}) }}
+                                    {{ form_row(child, { 'style': 'inline', 'label_col': 'w-full', 'widget_col': 'w-full' }) }}
                                 {% endif %}
                             {% endfor %}
                         {% endblock %}
@@ -68,7 +68,7 @@
                         {% block content_meta %}
                             {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR')) %}
                                 {% if child.vars.name is not same as('brands') %}
-                                    {{ form_row(child, { 'style': 'inline'}) }}
+                                    {{ form_row(child, { 'style': 'inline', 'label_col': 'w-full', 'widget_col': 'w-full' }) }}
                                 {% endif %}
                             {% endfor %}
                         {% endblock %}
@@ -78,7 +78,7 @@
                                 <input type="hidden" id="default_references" value="{{ references }}">
                                 {% for relation in form.relations %}
                                     <div class="form-item ">
-                                        <label class="control-label w-full md:w-3/12 xl:w-2/12 3xl:w-1/12"
+                                        <label class="control-label w-full"
                                                for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
                                         <div class="w-full widget">
                                             {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
@@ -106,12 +106,6 @@
                         {% endblock %}
 
                         <div class="aside-item-wrapper" id="used-by"></div>
-
-                        {% block content_history %}
-                            {% if showContentHistory %}
-                                {{ render(controller('Integrated\\Bundle\\ContentHistoryBundle\\Controller\\ContentHistoryController::historyIframe', { 'content': content })) }}
-                            {% endif %}
-                        {% endblock %}
                     {% endblock %}
                 </div>
             </aside>

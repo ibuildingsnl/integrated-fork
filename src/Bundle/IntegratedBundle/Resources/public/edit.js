@@ -14031,6 +14031,9 @@ function toggleDropDownBackGround(hidden) {
   var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
   var taxonomyDropDownUnderlays = document.querySelectorAll('.taxonomy_backdrop');
   document.querySelector('body').classList.remove('popup-open');
+  if (!menuItemDropDownUnderlay) {
+    return;
+  }
   menuItemDropDownUnderlay.classList.toggle('hide', hidden);
   menuItemDropDownUnderlay.innerHTML = '';
   taxonomyDropDownUnderlays.forEach(function (taxonomyDropDownUnderlay) {

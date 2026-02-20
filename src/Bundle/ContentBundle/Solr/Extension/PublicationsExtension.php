@@ -24,19 +24,33 @@ class PublicationsExtension implements TypeExtensionInterface
         }
 
         foreach ($this->publications->forContent($data) as $publication) {
-            $time = clone $publication->getTime()->getStartDate(); // don't change to original value
+            $timeRange = $publication->getTime();
+            $channel = $publication->getChannel();
+            if (!$timeRange || !$channel) {
+                continue;
+            }
 
-            $container->add(
-                'publication_start_'.$publication->getChannel()->getId().'_index_date',
-                $time->setTimezone($this->timezone)->format('Y-m-d\TG:i:s\Z'),
-            );
+            $channelId = $channel->getId();
 
-            $time = clone $publication->getTime()->getEndDate();
+            $startDate = $timeRange->getStartDate();
+            if ($startDate instanceof \DateTimeInterface) {
+                $time = clone $startDate; // don't change original value
 
-            $container->add(
-                'publication_end_'.$publication->getChannel()->getId().'_index_date',
-                $time->setTimezone($this->timezone)->format('Y-m-d\TG:i:s\Z'),
-            );
+                $container->add(
+                    'publication_start_'.$channelId.'_index_date',
+                    $time->setTimezone($this->timezone)->format('Y-m-d\TG:i:s\Z'),
+                );
+            }
+
+            $endDate = $timeRange->getEndDate();
+            if ($endDate instanceof \DateTimeInterface) {
+                $time = clone $endDate;
+
+                $container->add(
+                    'publication_end_'.$channelId.'_index_date',
+                    $time->setTimezone($this->timezone)->format('Y-m-d\TG:i:s\Z'),
+                );
+            }
         }
     }
 

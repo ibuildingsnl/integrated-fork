@@ -11,7 +11,7 @@
             <div class="aside-item-list-container">
             {% for document in documents|slice(0, limit) %}
                 <div class="media">
-                    <a href="{{ path('integrated_content_history_show_iframe', { 'id': document.id }) }}">
+                    <a href="{{ path('integrated_content_history_show_iframe', { 'id': document.id }) }}" data-turbo-frame="_top">
                         <div class="media-left">
                             <img class="media-object img-circle" src="https://www.gravatar.com/avatar/d41d8cd98f00b204e9800998ecf8427e?s=36" alt="">
                         </div>
@@ -33,10 +33,9 @@
 
             {% if documents|length > limit %}
                 <br />
-                <a href="{{ path('integrated_content_history_index_iframe', { 'id': content.id }) }}">{% trans %}Show full history{% endtrans %}</a>
+                <a href="{{ path('integrated_content_history_index_iframe', { 'id': content.id }) }}" data-turbo-frame="_top">{% trans %}Show full history{% endtrans %}</a>
             {% endif %}
             </div>
         </div>
     </div>
 {% endif %}
-

@@ -314,6 +314,9 @@ function toggleDropDownBackGround(hidden) {
     let menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
     let taxonomyDropDownUnderlays = document.querySelectorAll('.taxonomy_backdrop');
     document.querySelector('body').classList.remove('popup-open');
+    if (!menuItemDropDownUnderlay) {
+        return;
+    }
     menuItemDropDownUnderlay.classList.toggle('hide', hidden);
     menuItemDropDownUnderlay.innerHTML = '';
 

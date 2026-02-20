@@ -1,3 +1,5 @@
+import 'select2/dist/js/select2.full';
+
 const MEDIA_GALLERY_NS = '.mediaGallery';
 
 function bindMediaGalleryEvents() {
@@ -115,6 +117,35 @@ function bindMediaItemActions() {
         .on('click' + MEDIA_GALLERY_NS, '.close-media-edit-form', function(event) {
             handleMediaEditClose(event);
         });
+
+    doc.off('click' + MEDIA_GALLERY_NS, '#go_to_editor')
+        .on('click' + MEDIA_GALLERY_NS, '#go_to_editor', function(event) {
+            event.preventDefault();
+
+            const panel = document.querySelector('#media-edit-panel');
+            const wrapper = document.querySelector('#editimagewrapper');
+            if (!panel || !wrapper) {
+                return;
+            }
+
+            const mediaId = panel.dataset.mediaId;
+            const selectedModusRaw = panel.dataset.selectedModus;
+            const selectedModus = (!selectedModusRaw || selectedModusRaw === 'undefined')
+                ? 'media_gallery'
+                : selectedModusRaw;
+            const editImagePath = wrapper.dataset.editimagepath;
+            const editImageIframePath = wrapper.dataset.editimageiframepath;
+
+            if (!mediaId || !editImagePath || !editImageIframePath) {
+                return;
+            }
+
+            if (selectedModus === 'media_gallery') {
+                window.location.href = editImagePath.replace('REPLACE', mediaId);
+            } else {
+                window.location.href = editImageIframePath.replace('REPLACE', mediaId);
+            }
+        });
 }
 
 function bindEditPanelForm() {
@@ -190,14 +221,112 @@ function bindEditPanelSaveButton() {
     form.addEventListener('input', showSubmitButton);
 }
 
+function initEditPanelUi() {
+    const panel = document.querySelector('#media-edit-panel');
+    if (!panel || typeof window.jQuery === 'undefined') {
+        return;
+    }
+
+    const $ = window.jQuery;
+    if (!$.fn || typeof $.fn.select2 !== 'function') {
+        return;
+    }
+
+    $(panel).find('select.select2, .basic-multiple').each(function() {
+        const $el = $(this);
+        if (!$el.hasClass('select2-hidden-accessible')) {
+            if ($el.hasClass('basic-multiple')) {
+                $el.select2();
+            } else {
+                $el.select2({
+                    placeholder: $el.data('placeholder'),
+                });
+            }
+        }
+    });
+}
+
+function initRelationItemsInPanel() {
+    const panel = document.querySelector('#media-edit-panel');
+    if (!panel || typeof window.jQuery === 'undefined') {
+        return;
+    }
+
+    const $ = window.jQuery;
+    if (!$.fn || typeof $.fn.select2 !== 'function') {
+        return;
+    }
+
+    $(panel).find('.relation-items').each(function() {
+        const $relation = $(this);
+        if ($relation.hasClass('select2-hidden-accessible')) {
+            return;
+        }
+
+        const relationId = $relation.attr('id');
+        let defaultValues = {};
+        try {
+            defaultValues = $.parseJSON(panel.querySelector('#default_references')?.value || '{}') || {};
+        } catch (e) {
+            defaultValues = {};
+        }
+
+        if (defaultValues[relationId]) {
+            defaultValues[relationId].forEach(({id, title, image}) => {
+                $relation.append(`<option selected value="${id}" data-image="${image || ''}">${title}</option>`);
+            });
+        }
+
+        const updateSelected = (data) => {
+            const image = data.image || $(data.element).data('image');
+            return $('<div class="select2-selected">' + (image ? `<img src="${image}" />` : '') + data.text + '</div>');
+        };
+
+        $relation.select2({
+            multiple: $relation.data('multiple'),
+            allowClear: !$relation.data('multiple'),
+            placeholder: '',
+            ajax: {
+                type: 'GET',
+                url: $relation.data('url'),
+                dataType: 'json',
+                data: (param) => ({
+                    relation: relationId,
+                    limit: 100,
+                    sort: 'title_sort',
+                    q: param.term ? param.term + '*' : '',
+                }),
+                processResults: (data) => ({
+                    results: data.items.map(item => {
+                        item.text = (item.path ? item.path + ' > ' : '') + item.title;
+                        return item;
+                    }),
+                }),
+            },
+            templateResult: (state) => {
+                if (!state.id) return state.text;
+                const image = state.image ? `<img src="${state.image}" class="select2-dropdown-image" />` : '';
+                return $(`<span>${image}${state.text}</span>`);
+            },
+            templateSelection: (data) => data.id ? updateSelected(data) : data.text,
+        }).on('change', function() {
+            $(`[data-relation="${relationId}"]`).val($(this).val());
+        });
+    });
+}
+
 document.addEventListener('turbo:frame-load', function(event) {
     if (event.target && event.target.id === 'media-edit-panel') {
         bindEditPanelSaveButton();
+        initEditPanelUi();
+        initRelationItemsInPanel();
     }
 });
 
 function initMediaGallery() {
     bindEditPanelSaveButton();
+    initEditPanelUi();
+    initRelationItemsInPanel();
     bindMediaGalleryEvents();
 }
 
