@@ -93,48 +93,54 @@
                     </thead>
                     <tbody>
                     {% for link in brand.channelLinks|default([]) %}
-                        <tr class="has-options">
-                            <td class="name">
-                                <strong>
-                                    <a href="{{ path('integrated_content_brand_edit_channel', {'id': brand.id, 'link': link.id}) }}">
-                                        {{ link.name }}
-                                    </a>
-                                </strong>
-                                <div class="row-options">
-                                    <a
-                                        href="{{ path('integrated_content_brand_edit_channel', {'id': brand.id, 'link': link.id}) }}"
-                                        title="{% trans with {'%brand%': brand.name, '%type%': link.name } %}Edit %brand%'s %type% Channel{% endtrans %}"
-                                    >
-                                        {% trans %}Edit{% endtrans %}
-                                    </a> |
-                                    {% if link.type.connector %}
+                        {% if link %}
+                            <tr class="has-options">
+                                <td class="name">
+                                    <strong>
+                                        <a href="{{ path('integrated_content_brand_edit_channel', {'id': brand.id, 'link': link.id}) }}">
+                                            {{ link.name }}
+                                        </a>
+                                    </strong>
+                                    <div class="row-options">
                                         <a
-                                            href="{{ path('integrated_content_brand_manage_connector', {'id': brand.id, 'link': link.id}) }}"
-                                            title="{% trans with {'%brand%': brand.name, '%type%': link.name} %}Manage %brand%'s %type% Connector{% endtrans %}"
+                                            href="{{ path('integrated_content_brand_edit_channel', {'id': brand.id, 'link': link.id}) }}"
+                                            title="{% trans with {'%brand%': brand.name, '%type%': link.name } %}Edit %brand%'s %type% Channel{% endtrans %}"
                                         >
-                                            {% trans %}Connector{% endtrans %}
+                                            {% trans %}Edit{% endtrans %}
                                         </a> |
+                                        {% if link.type.connector %}
+                                            <a
+                                                href="{{ path('integrated_content_brand_manage_connector', {'id': brand.id, 'link': link.id}) }}"
+                                                title="{% trans with {'%brand%': brand.name, '%type%': link.name} %}Manage %brand%'s %type% Connector{% endtrans %}"
+                                            >
+                                                {% trans %}Connector{% endtrans %}
+                                            </a> |
+                                        {% endif %}
+                                        <a
+                                            class="color-red"
+                                            href="{{ path('integrated_content_brand_remove_channel', {'id': brand.id, 'link': link.id}) }}"
+                                            title="{% trans with {'%brand%': brand.name, '%type%': link.name } %}Remove %type% from %brand%{% endtrans %}"
+                                        >
+                                            {% trans %}Remove{% endtrans %}
+                                        </a>
+                                    </div>
+                                </td>
+                                <td class="default">
+                                    {% if link.default %}
+                                        {% trans %}Yes{% endtrans %}
+                                    {% else %}
+                                        {% trans %}No{% endtrans %}
                                     {% endif %}
-                                    <a
-                                        class="color-red"
-                                        href="{{ path('integrated_content_brand_remove_channel', {'id': brand.id, 'link': link.id}) }}"
-                                        title="{% trans with {'%brand%': brand.name, '%type%': link.name } %}Remove %type% from %brand%{% endtrans %}"
-                                    >
-                                        {% trans %}Remove{% endtrans %}
-                                    </a>
-                                </div>
-                            </td>
-                            <td class="default">
-                                {% if link.default %}
-                                    {% trans %}Yes{% endtrans %}
-                                {% else %}
-                                    {% trans %}No{% endtrans %}
-                                {% endif %}
-                            </td>
-                            <td class="channel">
-                                {{ link.channel.name }}
-                            </td>
-                        </tr>
+                                </td>
+                                <td class="channel">
+                                    {% if link.channel %}
+                                        {{ link.channel.name }}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endif %}
                     {% else %}
                         <tr>
                             <td colspan="3">

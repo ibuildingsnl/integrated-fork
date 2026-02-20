@@ -16,6 +16,7 @@ use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Event\ContentDeletedEvent;
+use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
@@ -226,6 +227,18 @@ class ChannelController extends AbstractController
 
                 foreach ($referencedDocuments as $document) {
                     if ($document instanceof Content) {
+                        $channels = $document->getChannels() ?? [];
+                        $onlyThisChannel = \count($channels) <= 1;
+                        if (!$onlyThisChannel) {
+                            $document->removeChannel($channel);
+                            $primary = $document->getPrimaryChannel();
+                            if ($primary && $primary->getId() === $channel->getId()) {
+                                $document->setPrimaryChannel(null);
+                            }
+                            $this->documentManager->persist($document);
+                            continue;
+                        }
+
                         if ($this->dispatcher->hasListeners(ContentEvents::CONTENT_DELETED)) {
                             $this->dispatcher->dispatch(
                                 new ContentDeletedEvent($document),
@@ -242,8 +255,6 @@ class ChannelController extends AbstractController
                     }
 
                     if ($document instanceof ChannelLink) {
-                        $document->channel = null;
-                        $this->documentManager->persist($document);
                         continue;
                     }
 
@@ -271,6 +282,25 @@ class ChannelController extends AbstractController
                 $this->documentManager->remove($publication);
             }
 
+            $brands = $this->documentManager->getRepository(Brand::class)->findAll();
+            foreach ($brands as $brand) {
+                $changed = false;
+                foreach ($brand->getChannelLinks()->toArray() as $link) {
+                    if (!$link->channel) {
+                        $brand->removeChannelLink($link);
+                        $changed = true;
+                        continue;
+                    }
+                    if ($link->channel->getId() === $channel->getId()) {
+                        $brand->removeChannelLink($link);
+                        $changed = true;
+                    }
+                }
+                if ($changed) {
+                    $this->documentManager->persist($brand);
+                }
+            }
+
             $this->documentManager->remove($channel);
             $this->documentManager->flush();
 
@@ -278,13 +308,7 @@ class ChannelController extends AbstractController
 
             $this->addFlash('success', 'Channel deleted');
 
-            if ($this->isTurboStreamRequest($request)) {
-                $content = $this->renderView('@IntegratedContent/channel/delete.turbo_stream.html.twig');
-
-                return new TurboStreamResponse($content);
-            }
-
-            return $this->redirectToRoute('integrated_content_channel_index');
+            return $this->redirectToRoute('integrated_content_channel_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('@IntegratedContent/channel/delete.html.twig', [

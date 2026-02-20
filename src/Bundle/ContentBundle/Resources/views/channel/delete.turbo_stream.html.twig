@@ -1,7 +1,7 @@
 {{ include('@IntegratedContent/content/flash.turbo_stream.html.twig') }}
 <turbo-stream action="append" target="body">
     <template>
-        <script>
+        <script data-turbo-eval="true">
             Turbo.visit('{{ path('integrated_content_channel_index') }}');
         </script>
     </template>
