@@ -17,6 +17,11 @@ class BrandChannelChoiceType extends AbstractType
         $brandName = preg_replace('/\s+/', '', $brandName); // Strip spaces
         $brandName = preg_replace('/[^a-z0-9]/', '', $brandName); // Remove special characters
 
+        $links = array_filter(
+            $options['links'],
+            static fn (ChannelLink $link) => $link->channel !== null
+        );
+
         $builder->add('publish', CheckboxType::class, [
             'required' => false,
             'value' => $brandName,
@@ -28,9 +33,11 @@ class BrandChannelChoiceType extends AbstractType
 
         $builder->add('channels', ChoiceType::class, [
             'label' => false,
-            'choices' => $options['links'],
+            'choices' => $links,
             'choice_label' => 'type.name',
-            'choice_value' => 'channel.id',
+            'choice_value' => static function (ChannelLink $link = null) {
+                return $link?->channel?->getId();
+            },
             'choice_attr' => fn (ChannelLink $link) => array_merge(
                 [
                     'class' => 'brand-channel-choice',
@@ -39,7 +46,7 @@ class BrandChannelChoiceType extends AbstractType
                     'data-channel-type-icon' => $link->type->getIcon(),
                     'data-channel-default' => $link->default ? true : false,
                 ],
-                \is_array($options['choice_attr']) ? $options['choice_attr'] : $options['choice_attr']($link->channel),
+                \is_array($options['choice_attr']) ? $options['choice_attr'] : ($link->channel ? $options['choice_attr']($link->channel) : []),
             ),
             'multiple' => true,
             'expanded' => true,

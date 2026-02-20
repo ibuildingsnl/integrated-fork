@@ -65,7 +65,7 @@ class Brand
     public function hasChannel(ChannelInterface $channel): bool
     {
         foreach ($this->channelLinks as $link) {
-            if ($link->channel->getId() === $channel->getId()) {
+            if ($link->channel && $link->channel->getId() === $channel->getId()) {
                 return true;
             }
         }
@@ -76,7 +76,7 @@ class Brand
     public function linkTypeForChannel(ChannelInterface $channel): ?ChannelType
     {
         foreach ($this->channelLinks as $link) {
-            if ($link->channel->getId() === $channel->getId()) {
+            if ($link->channel && $link->channel->getId() === $channel->getId()) {
                 return $link->type;
             }
         }
@@ -88,7 +88,7 @@ class Brand
     {
         foreach ($channels as $channel) {
             foreach ($this->channelLinks as $link) {
-                if ($link->channel->getId() === $channel->getId()) {
+                if ($link->channel && $link->channel->getId() === $channel->getId()) {
                     return true;
                 }
             }
@@ -106,7 +106,7 @@ class Brand
     public function getWebsiteChannel(): ?Channel
     {
         foreach ($this->channelLinks as $link) {
-            if ($link->getName() === 'Website') {
+            if ($link->channel && $link->getName() === 'Website') {
                 return $link->channel;
             }
         }
@@ -134,7 +134,7 @@ class Brand
     public function hasPublished(Content $content): bool
     {
         foreach ($this->channelLinks as $link) {
-            if ($content->hasChannel($link->channel)) {
+            if ($link->channel && $content->hasChannel($link->channel)) {
                 return true;
             }
         }

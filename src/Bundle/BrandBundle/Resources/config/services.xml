@@ -91,6 +91,12 @@
             <tag name="kernel.event_subscriber"/>
         </service>
 
+        <service id="integrated_brand.event_listener.channel.deleted" class="Integrated\Bundle\BrandBundle\EventListener\ChannelDeletedListener">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="integrated_brand.brand.repository" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+
         <service id="integrated_brand.event_listener.solr.brand_facet" class="Integrated\Bundle\BrandBundle\Solr\EventListener\BrandFacetListener">
 
             <tag name="kernel.event_subscriber"/>
