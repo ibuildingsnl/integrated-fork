@@ -1,11 +1,11 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/Bundle/ContentBundle/Resources/assets/js/collection.js":
+/***/ "./src/Bundle/ContentBundle/Resources/assets/js/collection.js"
 /*!********************************************************************!*\
   !*** ./src/Bundle/ContentBundle/Resources/assets/js/collection.js ***!
   \********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
@@ -113,13 +113,13 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('[data-prototype]').each(function 
   }
 });
 
-/***/ }),
+/***/ },
 
-/***/ "./node_modules/jquery/dist/jquery.js":
+/***/ "./node_modules/jquery/dist/jquery.js"
 /*!********************************************!*\
   !*** ./node_modules/jquery/dist/jquery.js ***!
   \********************************************/
-/***/ (function(module, exports) {
+(module, exports) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
  * jQuery JavaScript Library v3.7.1
@@ -10840,13 +10840,13 @@ return jQuery;
 } );
 
 
-/***/ }),
+/***/ },
 
-/***/ "./node_modules/select2/dist/js/select2.js":
+/***/ "./node_modules/select2/dist/js/select2.js"
 /*!*************************************************!*\
   !*** ./node_modules/select2/dist/js/select2.js ***!
   \*************************************************/
-/***/ ((module, exports, __webpack_require__) => {
+(module, exports, __webpack_require__) {
 
 /* provided dependency */ var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10863,7 +10863,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 		(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-  } else {}
+  } else // removed by dead control flow
+{}
 } (function (jQuery) {
   // This is needed so we can catch the AMD loader configuration and use it
   // The inner file should be wrapped (by `banner.start.js`) in a function that
@@ -16941,7 +16942,7 @@ S2.define('jquery.select2',[
 }));
 
 
-/***/ })
+/***/ }
 
 /******/ 	});
 /************************************************************************/
@@ -16954,6 +16955,12 @@ S2.define('jquery.select2',[
 /******/ 		var cachedModule = __webpack_module_cache__[moduleId];
 /******/ 		if (cachedModule !== undefined) {
 /******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Check if module exists (development only)
+/******/ 		if (__webpack_modules__[moduleId] === undefined) {
+/******/ 			var e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
@@ -17024,7 +17031,7 @@ S2.define('jquery.select2',[
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry needs to be wrapped in an IIFE because it needs to be in strict mode.
 (() => {
 "use strict";
 var __webpack_exports__ = {};
@@ -17110,7 +17117,7 @@ function register() {
 }
 })();
 
-// This entry need to be wrapped in an IIFE because it need to be isolated against other entry modules.
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other entry modules.
 (() => {
 /*!***************************************************************************!*\
   !*** ./src/Bundle/WorkflowBundle/Resources/assets/js/defaultSelection.js ***!
@@ -17136,7 +17143,7 @@ $(document).ready(function () {
 });
 })();
 
-// This entry need to be wrapped in an IIFE because it need to be isolated against other entry modules.
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other entry modules.
 (() => {
 /*!***********************************************************************!*\
   !*** ./src/Bundle/WorkflowBundle/Resources/assets/js/select2_init.js ***!

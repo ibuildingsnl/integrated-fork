@@ -6,7 +6,7 @@
     id="{{ media.id }}"
     data-content_type="{{ media.contenttype }}"
     data-id="{{ media.id }}"
-    data-media_id="{{ loop.index }}"
+    data-media_id="{{ loop is defined ? loop.index : media.id }}"
     data-thumbnail="{{ thumbnail }}"
     data-file="{{ media.file }}"
     data-title="{{ media.title }}"

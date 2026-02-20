@@ -23,6 +23,7 @@
     },
     "dependencies": {
         "@melloware/coloris": "^0.16.1",
+        "@hotwired/turbo": "^8.0.4",
         "@uppy/locales": "^3.0.4",
         "ajv": "^8.12.0",
         "bootstrap-sass": "^3.4.1",

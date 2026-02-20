@@ -11,7 +11,7 @@
 
 {% endblock %}
 
-{% block webpack_js %}
+{% block head_javascript %}
     <script>
         const path = '{{ path('integrated_content_media_manage_relations') }}'
         const bulkdelete_path = '{{ path('integrated_content_media_bulkdelete') }}'
@@ -19,5 +19,8 @@
     </script>
 
     <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
+{% endblock %}
+
+{% block webpack_js %}
     <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
 {% endblock %}

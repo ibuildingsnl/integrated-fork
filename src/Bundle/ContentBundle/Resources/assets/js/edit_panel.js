@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function(event){
     const edit_image_iframe_path = document.querySelector('#editimagewrapper').dataset.editimageiframepath
 
     function handleEvent(e) {
-        const media_id = document.querySelector('iframe').dataset.media_id
+        const media_id = document.querySelector('#media-edit-panel').dataset.mediaId
 
         // If selected modus == media gallery, we should go to the page with a redirect,
         // If selected_modus is something else (select_multiple, select_one) then this is loaded via an iframe
@@ -18,4 +18,3 @@ document.addEventListener("DOMContentLoaded", function(event){
         }
     }
 });
-

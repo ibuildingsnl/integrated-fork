@@ -1,8 +1,114 @@
 /*!**********************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-13.use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-13.use[2]!./node_modules/resolve-url-loader/index.js??clonedRuleSet-13.use[3]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-13.use[4]!./src/Bundle/ContentBundle/Resources/assets/sass/components/vue/vue.scss ***!
   \**********************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
-/*
-! tailwindcss v3.4.10 | MIT License | https://tailwindcss.com
+*, ::before, ::after {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x:  ;
+  --tw-pan-y:  ;
+  --tw-pinch-zoom:  ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position:  ;
+  --tw-gradient-via-position:  ;
+  --tw-gradient-to-position:  ;
+  --tw-ordinal:  ;
+  --tw-slashed-zero:  ;
+  --tw-numeric-figure:  ;
+  --tw-numeric-spacing:  ;
+  --tw-numeric-fraction:  ;
+  --tw-ring-inset:  ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur:  ;
+  --tw-brightness:  ;
+  --tw-contrast:  ;
+  --tw-grayscale:  ;
+  --tw-hue-rotate:  ;
+  --tw-invert:  ;
+  --tw-saturate:  ;
+  --tw-sepia:  ;
+  --tw-drop-shadow:  ;
+  --tw-backdrop-blur:  ;
+  --tw-backdrop-brightness:  ;
+  --tw-backdrop-contrast:  ;
+  --tw-backdrop-grayscale:  ;
+  --tw-backdrop-hue-rotate:  ;
+  --tw-backdrop-invert:  ;
+  --tw-backdrop-opacity:  ;
+  --tw-backdrop-saturate:  ;
+  --tw-backdrop-sepia:  ;
+  --tw-contain-size:  ;
+  --tw-contain-layout:  ;
+  --tw-contain-paint:  ;
+  --tw-contain-style:  ;
+}
+
+::backdrop {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x:  ;
+  --tw-pan-y:  ;
+  --tw-pinch-zoom:  ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position:  ;
+  --tw-gradient-via-position:  ;
+  --tw-gradient-to-position:  ;
+  --tw-ordinal:  ;
+  --tw-slashed-zero:  ;
+  --tw-numeric-figure:  ;
+  --tw-numeric-spacing:  ;
+  --tw-numeric-fraction:  ;
+  --tw-ring-inset:  ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur:  ;
+  --tw-brightness:  ;
+  --tw-contrast:  ;
+  --tw-grayscale:  ;
+  --tw-hue-rotate:  ;
+  --tw-invert:  ;
+  --tw-saturate:  ;
+  --tw-sepia:  ;
+  --tw-drop-shadow:  ;
+  --tw-backdrop-blur:  ;
+  --tw-backdrop-brightness:  ;
+  --tw-backdrop-contrast:  ;
+  --tw-backdrop-grayscale:  ;
+  --tw-backdrop-hue-rotate:  ;
+  --tw-backdrop-invert:  ;
+  --tw-backdrop-opacity:  ;
+  --tw-backdrop-saturate:  ;
+  --tw-backdrop-sepia:  ;
+  --tw-contain-size:  ;
+  --tw-contain-layout:  ;
+  --tw-contain-paint:  ;
+  --tw-contain-style:  ;
+}/*
+! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com
 *//*
 1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
 2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
@@ -386,116 +492,8 @@ video {
 }
 
 /* Make elements with the HTML hidden attribute stay hidden by default */
-[hidden] {
+[hidden]:where(:not([hidden="until-found"])) {
   display: none;
-}
-
-*, ::before, ::after {
-  --tw-border-spacing-x: 0;
-  --tw-border-spacing-y: 0;
-  --tw-translate-x: 0;
-  --tw-translate-y: 0;
-  --tw-rotate: 0;
-  --tw-skew-x: 0;
-  --tw-skew-y: 0;
-  --tw-scale-x: 1;
-  --tw-scale-y: 1;
-  --tw-pan-x:  ;
-  --tw-pan-y:  ;
-  --tw-pinch-zoom:  ;
-  --tw-scroll-snap-strictness: proximity;
-  --tw-gradient-from-position:  ;
-  --tw-gradient-via-position:  ;
-  --tw-gradient-to-position:  ;
-  --tw-ordinal:  ;
-  --tw-slashed-zero:  ;
-  --tw-numeric-figure:  ;
-  --tw-numeric-spacing:  ;
-  --tw-numeric-fraction:  ;
-  --tw-ring-inset:  ;
-  --tw-ring-offset-width: 0px;
-  --tw-ring-offset-color: #fff;
-  --tw-ring-color: rgb(59 130 246 / 0.5);
-  --tw-ring-offset-shadow: 0 0 #0000;
-  --tw-ring-shadow: 0 0 #0000;
-  --tw-shadow: 0 0 #0000;
-  --tw-shadow-colored: 0 0 #0000;
-  --tw-blur:  ;
-  --tw-brightness:  ;
-  --tw-contrast:  ;
-  --tw-grayscale:  ;
-  --tw-hue-rotate:  ;
-  --tw-invert:  ;
-  --tw-saturate:  ;
-  --tw-sepia:  ;
-  --tw-drop-shadow:  ;
-  --tw-backdrop-blur:  ;
-  --tw-backdrop-brightness:  ;
-  --tw-backdrop-contrast:  ;
-  --tw-backdrop-grayscale:  ;
-  --tw-backdrop-hue-rotate:  ;
-  --tw-backdrop-invert:  ;
-  --tw-backdrop-opacity:  ;
-  --tw-backdrop-saturate:  ;
-  --tw-backdrop-sepia:  ;
-  --tw-contain-size:  ;
-  --tw-contain-layout:  ;
-  --tw-contain-paint:  ;
-  --tw-contain-style:  ;
-}
-
-::backdrop {
-  --tw-border-spacing-x: 0;
-  --tw-border-spacing-y: 0;
-  --tw-translate-x: 0;
-  --tw-translate-y: 0;
-  --tw-rotate: 0;
-  --tw-skew-x: 0;
-  --tw-skew-y: 0;
-  --tw-scale-x: 1;
-  --tw-scale-y: 1;
-  --tw-pan-x:  ;
-  --tw-pan-y:  ;
-  --tw-pinch-zoom:  ;
-  --tw-scroll-snap-strictness: proximity;
-  --tw-gradient-from-position:  ;
-  --tw-gradient-via-position:  ;
-  --tw-gradient-to-position:  ;
-  --tw-ordinal:  ;
-  --tw-slashed-zero:  ;
-  --tw-numeric-figure:  ;
-  --tw-numeric-spacing:  ;
-  --tw-numeric-fraction:  ;
-  --tw-ring-inset:  ;
-  --tw-ring-offset-width: 0px;
-  --tw-ring-offset-color: #fff;
-  --tw-ring-color: rgb(59 130 246 / 0.5);
-  --tw-ring-offset-shadow: 0 0 #0000;
-  --tw-ring-shadow: 0 0 #0000;
-  --tw-shadow: 0 0 #0000;
-  --tw-shadow-colored: 0 0 #0000;
-  --tw-blur:  ;
-  --tw-brightness:  ;
-  --tw-contrast:  ;
-  --tw-grayscale:  ;
-  --tw-hue-rotate:  ;
-  --tw-invert:  ;
-  --tw-saturate:  ;
-  --tw-sepia:  ;
-  --tw-drop-shadow:  ;
-  --tw-backdrop-blur:  ;
-  --tw-backdrop-brightness:  ;
-  --tw-backdrop-contrast:  ;
-  --tw-backdrop-grayscale:  ;
-  --tw-backdrop-hue-rotate:  ;
-  --tw-backdrop-invert:  ;
-  --tw-backdrop-opacity:  ;
-  --tw-backdrop-saturate:  ;
-  --tw-backdrop-sepia:  ;
-  --tw-contain-size:  ;
-  --tw-contain-layout:  ;
-  --tw-contain-paint:  ;
-  --tw-contain-style:  ;
 }
 .container {
   width: 100%;
@@ -806,23 +804,23 @@ video {
 }
 .\!border-red-400 {
   --tw-border-opacity: 1 !important;
-  border-color: rgb(248 113 113 / var(--tw-border-opacity)) !important;
+  border-color: rgb(248 113 113 / var(--tw-border-opacity, 1)) !important;
 }
 .border-gray-200 {
   --tw-border-opacity: 1;
-  border-color: rgb(229 231 235 / var(--tw-border-opacity));
+  border-color: rgb(229 231 235 / var(--tw-border-opacity, 1));
 }
 .border-gray-300 {
   --tw-border-opacity: 1;
-  border-color: rgb(209 213 219 / var(--tw-border-opacity));
+  border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
 }
 .bg-\[\#007b67\] {
   --tw-bg-opacity: 1;
-  background-color: rgb(0 123 103 / var(--tw-bg-opacity));
+  background-color: rgb(0 123 103 / var(--tw-bg-opacity, 1));
 }
 .bg-white {
   --tw-bg-opacity: 1;
-  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
 .p-2 {
   padding: 0.5rem;
@@ -868,15 +866,15 @@ video {
 }
 .text-black {
   --tw-text-opacity: 1;
-  color: rgb(0 0 0 / var(--tw-text-opacity));
+  color: rgb(0 0 0 / var(--tw-text-opacity, 1));
 }
 .text-zinc-300 {
   --tw-text-opacity: 1;
-  color: rgb(212 212 216 / var(--tw-text-opacity));
+  color: rgb(212 212 216 / var(--tw-text-opacity, 1));
 }
 .text-zinc-400 {
   --tw-text-opacity: 1;
-  color: rgb(161 161 170 / var(--tw-text-opacity));
+  color: rgb(161 161 170 / var(--tw-text-opacity, 1));
 }
 .antialiased {
   -webkit-font-smoothing: antialiased;
@@ -1104,6 +1102,13 @@ label {
   padding-left: 1rem;
   padding-right: 1rem;
   flex: 1;
+}
+.nav-form-holder::after {
+  clear: both;
+  content: "";
+  display: table;
+}
+.nav-form-holder {
   display: -webkit-box;
   display: -moz-box;
   display: box;
@@ -1112,11 +1117,6 @@ label {
   display: -ms-flexbox;
   display: flex;
   flex-direction: row-reverse;
-}
-.nav-form-holder::after {
-  clear: both;
-  content: "";
-  display: table;
 }
 @media only screen and (max-width: 640px) {
   .nav-form-holder {
@@ -1255,15 +1255,15 @@ label {
     margin-top: 10px;
   }
 }
-.selected-pictures-holder .pictures-holder-item {
-  display: table;
-  width: 100%;
-  table-layout: fixed;
-}
 .selected-pictures-holder .pictures-holder-item::after {
   clear: both;
   content: "";
   display: table;
+}
+.selected-pictures-holder .pictures-holder-item {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
 .selected-pictures-holder .pictures-holder-item a {
   display: table-cell;
@@ -1367,10 +1367,6 @@ label {
   user-select: none;
   font-weight: 300;
   /* Hide the browser's default checkbox */
-  /* Create a custom checkbox */
-  /* On mouse-over, add a grey background color */
-  /* When the checkbox is checked, add a blue background */
-  /* Show the checkmark when checked */
 }
 .checkbox-container input {
   position: absolute;
@@ -1378,6 +1374,9 @@ label {
   cursor: pointer;
   height: 0;
   width: 0;
+}
+.checkbox-container {
+  /* Create a custom checkbox */
 }
 .checkbox-container .checkmark {
   background-color: #f2f2f2;
@@ -1391,12 +1390,16 @@ label {
   width: 16px;
   margin-right: 10px;
   /* Create the checkmark/indicator (hidden when not checked) */
-  /* Style the checkmark/indicator */
 }
 .checkbox-container .checkmark:after {
   content: "";
   position: absolute;
   display: none;
+}
+.checkbox-container .checkmark {
+  /* Style the checkmark/indicator */
+}
+.checkbox-container .checkmark:after {
   left: 5px;
   top: 2px;
   width: 4px;
@@ -1407,13 +1410,22 @@ label {
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
+.checkbox-container {
+  /* On mouse-over, add a grey background color */
+}
 .checkbox-container:hover input ~ .checkmark {
   background-color: #f2f2f2;
   border-color: #00b2ee;
 }
+.checkbox-container {
+  /* When the checkbox is checked, add a blue background */
+}
 .checkbox-container input:checked ~ .checkmark {
   background-color: #00b2ee;
   border-color: #00b2ee;
+}
+.checkbox-container {
+  /* Show the checkmark when checked */
 }
 .checkbox-container input:checked ~ .checkmark:after {
   display: block;
@@ -1430,8 +1442,6 @@ label {
   cursor: pointer;
   box-sizing: content-box;
   padding: 0 !important;
-  /* Transition
-  ========================== */
 }
 .checkbox-switcher .switch-input {
   position: absolute;
@@ -1505,6 +1515,10 @@ label {
   right: 4px;
   border-color: #007cba;
 }
+.checkbox-switcher {
+  /* Transition
+  ========================== */
+}
 .checkbox-switcher .switch-label, .checkbox-switcher .switch-handle {
   transition: All 0.3s ease;
   -webkit-transition: All 0.3s ease;
@@ -1529,10 +1543,6 @@ label {
   border-radius: 8px;
   border: 1px solid #dfe3e9;
   /* Hide the browser's default checkbox */
-  /* Create a custom checkbox */
-  /* On mouse-over, add a grey background color */
-  /* When the checkbox is checked, add a blue background */
-  /* Show the checkmark when checked */
 }
 .radiobutton-container input {
   position: absolute;
@@ -1540,6 +1550,9 @@ label {
   cursor: pointer;
   height: 0;
   width: 0;
+}
+.radiobutton-container {
+  /* Create a custom checkbox */
 }
 .radiobutton-container .radiobutton {
   background-color: #f2f2f2;
@@ -1559,14 +1572,23 @@ label {
   position: absolute;
   display: none;
 }
+.radiobutton-container {
+  /* On mouse-over, add a grey background color */
+}
 .radiobutton-container:hover input ~ .radiobutton {
   background-color: #f2f2f2;
   border-color: #00b2ee;
+}
+.radiobutton-container {
+  /* When the checkbox is checked, add a blue background */
 }
 .radiobutton-container input:checked ~ .radiobutton {
   background-color: #00b2ee;
   border: 2px solid white;
   outline: 1px solid #00b2ee !important;
+}
+.radiobutton-container {
+  /* Show the checkmark when checked */
 }
 .radiobutton-container input:checked ~ .radiobutton:after {
   display: block;
@@ -1598,11 +1620,11 @@ label {
   right: 6px;
 }
 
-.form-item {
-  margin-bottom: 1rem;
-}
 .form-item.required {
   background-color: #ffd4d5;
+}
+.form-item {
+  margin-bottom: 1rem;
 }
 .form-item .control-label {
   display: flex;
@@ -1724,7 +1746,6 @@ label {
   top: 7px;
   padding: 0 1rem;
   border-radius: 8px 0 0 8px;
-  /* On mouse-over, add a grey background color */
 }
 .channel-domains .panel label .background {
   background-color: #f2f2f2;
@@ -1740,6 +1761,9 @@ label {
 }
 .channel-domains .panel label .radiobutton {
   border: 1px solid #6f6f6f;
+}
+.channel-domains .panel label {
+  /* On mouse-over, add a grey background color */
 }
 .channel-domains .panel label:hover input ~ .radiobutton {
   background-color: #00b2ee;
@@ -2173,7 +2197,7 @@ button * {
 }
 .btn.btn-gray:hover, .btn.btn-gray:focus {
   color: #ffffff;
-  background: #949494;
+  background: rgb(147.5, 147.5, 147.5);
 }
 .btn.btn-gray-thin {
   color: #ADADAD;
@@ -2181,7 +2205,7 @@ button * {
 }
 .btn.btn-gray-thin:hover, .btn.btn-gray-thin:focus {
   color: #ADADAD;
-  background: #d2d2d2;
+  background: rgb(209.5, 209.5, 209.5);
 }
 .btn.btn-primary {
   background: #005d93;
@@ -2190,7 +2214,7 @@ button * {
 }
 .btn.btn-primary:hover, .btn.btn-primary:focus {
   color: #ffffff;
-  background: #003d60;
+  background: rgb(0, 60.7346938776, 96);
 }
 .btn.btn-select {
   background: #fff;
@@ -2233,8 +2257,8 @@ button * {
 }
 .btn.btn-orange:hover, .btn.btn-orange:focus {
   color: white;
-  background-color: #b96f00;
-  border-color: #b96f00;
+  background-color: rgb(185, 111.1659192825, 0);
+  border-color: rgb(185, 111.1659192825, 0);
 }
 .btn.btn-green {
   background-color: #00AE93;
@@ -2243,8 +2267,8 @@ button * {
 }
 .btn.btn-green:hover, .btn.btn-green:focus {
   color: white;
-  background-color: #00483d;
-  border-color: #00483d;
+  background-color: rgb(0, 72, 60.8275862069);
+  border-color: rgb(0, 72, 60.8275862069);
 }
 .btn.btn-white {
   background-color: white;
@@ -2262,7 +2286,7 @@ button * {
 }
 .btn.btn-dark-green:hover, .btn.btn-dark-green:focus {
   color: white;
-  background-color: #111d23;
+  background-color: rgb(17.2207792208, 29.3766233766, 34.7792207792);
 }
 .btn.btn-action {
   background-color: #E5F6F4;
@@ -2272,7 +2296,7 @@ button * {
 }
 .btn.btn-action:hover, .btn.btn-action:focus {
   color: #0D4E4D;
-  background-color: #99dcd4;
+  background-color: rgb(153.2285714286, 219.7714285714, 211.9428571429);
 }
 .btn.btn-red {
   background: #c6422f;
@@ -2281,8 +2305,8 @@ button * {
 }
 .btn.btn-red:hover, .btn.btn-red:focus {
   color: white;
-  background: #74271b;
-  border-color: #74271b;
+  background: rgb(115.5673469388, 38.5224489796, 27.4326530612);
+  border-color: rgb(115.5673469388, 38.5224489796, 27.4326530612);
 }
 .btn.btn-light-red {
   background: #f6e9e5;
@@ -2291,8 +2315,8 @@ button * {
 }
 .btn.btn-light-red:hover, .btn.btn-light-red:focus {
   color: #4e150d;
-  background: #dca999;
-  border-color: #dca999;
+  background: rgb(219.7714285714, 168.8857142857, 153.2285714286);
+  border-color: rgb(219.7714285714, 168.8857142857, 153.2285714286);
 }
 
 body {
@@ -2378,7 +2402,7 @@ input[type=text] {
 
 .disabled\:hover\:bg-\[\#007b67\]:hover:disabled {
   --tw-bg-opacity: 1;
-  background-color: rgb(0 123 103 / var(--tw-bg-opacity));
+  background-color: rgb(0 123 103 / var(--tw-bg-opacity, 1));
 }
 
 @media (min-width: 640px) {

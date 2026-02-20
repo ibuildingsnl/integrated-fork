@@ -16,6 +16,7 @@ use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
+use Integrated\Bundle\ContentBundle\Controller\MediaController;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
@@ -57,6 +58,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\UX\Turbo\TurboStreamResponse;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -433,6 +435,8 @@ class ContentController extends AbstractController
 
             // this is not rest compatible since a button click is required to save
             if ($form->get('actions')->getData() == 'save') {
+                $saved = false;
+
                 if (!$locking['locked'] && $form->isValid()) {
                     if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
                         $this->dispatcher->dispatch(
@@ -480,6 +484,30 @@ class ContentController extends AbstractController
                     if (!$locking['locked']) {
                         $locking['release']();
                     }
+
+                    $saved = true;
+                }
+
+                if ($this->isTurboStreamRequest($request) && $request->query->getBoolean('frame')) {
+                    $isMedia = $content instanceof File || $content instanceof Image;
+
+                    $content = $this->renderView('@IntegratedContent/content/edit.iframe.turbo_stream.html.twig', [
+                        'editable' => $this->isGranted(Permissions::EDIT, $content),
+                        'taxonomyCategories' => $this->getTaxonomyCategories($content),
+                        'type' => $contentType,
+                        'form' => $form->createView(),
+                        'formRelations' => $this->getFormRelations($form),
+                        'content' => $content,
+                        'locking' => $locking,
+                        'showContentHistory' => true,
+                        'references' => json_encode($this->getReferences($content)),
+                        'not_shown_filetypes' => array_map('strtolower', MediaController::NOT_SHOWN_FILETYPES),
+                        'selected_ids' => [],
+                        'is_media' => $isMedia,
+                        'saved' => $saved,
+                    ]);
+
+                    return new TurboStreamResponse($content);
                 }
 
                 return $this->redirectToRoute($request->get('_route'), ['id' => $content->getId()]);
@@ -518,7 +546,9 @@ class ContentController extends AbstractController
             $this->addFlash('danger', $text);
         }
 
-        if ($request->get('_route') == 'integrated_content_content_edit_iframe') {
+        if ($request->query->getBoolean('frame')) {
+            $renderTo = '@IntegratedContent/content/edit.iframe.html.twig';
+        } elseif ($request->get('_route') == 'integrated_content_content_edit_iframe') {
             $renderTo = '@IntegratedContent/content/edit.iframe.html.twig';
         } elseif ($request->get('_route') == 'integrated_content_content_edit_modal_iframe') {
             $renderTo = '@IntegratedContent/content/edit.modal.iframe.html.twig';
@@ -537,6 +567,13 @@ class ContentController extends AbstractController
             'showContentHistory' => true,
             'references' => json_encode($this->getReferences($content)),
         ]);
+    }
+
+    private function isTurboStreamRequest(Request $request): bool
+    {
+        $accept = (string) $request->headers->get('Accept');
+
+        return str_contains($accept, 'text/vnd.turbo-stream.html');
     }
 
     private function getFormRelations(Form $form): array

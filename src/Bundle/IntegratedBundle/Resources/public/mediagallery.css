@@ -2,7 +2,7 @@
   !*** css ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-4.use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-4.use[2]!./node_modules/jquery-ui/themes/base/core.css ***!
   \*****************************************************************************************************************************************************************************************/
 /*!
- * jQuery UI CSS Framework 1.13.3
+ * jQuery UI CSS Framework 1.14.2
  * https://jqueryui.com
  *
  * Copyright OpenJS Foundation and other contributors
@@ -53,7 +53,6 @@
 	left: 0;
 	position: absolute;
 	opacity: 0;
-	-ms-filter: "alpha(opacity=0)"; /* support: IE8 */
 }
 
 .ui-front {
@@ -103,7 +102,7 @@
   !*** css ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-4.use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-4.use[2]!./node_modules/jquery-ui/themes/base/theme.css ***!
   \******************************************************************************************************************************************************************************************/
 /*!
- * jQuery UI CSS Framework 1.13.3
+ * jQuery UI CSS Framework 1.14.2
  * https://jqueryui.com
  *
  * Copyright OpenJS Foundation and other contributors
@@ -276,18 +275,13 @@ a.ui-button:active,
 .ui-widget-content .ui-priority-secondary,
 .ui-widget-header .ui-priority-secondary {
 	opacity: .7;
-	-ms-filter: "alpha(opacity=70)"; /* support: IE8 */
 	font-weight: normal;
 }
 .ui-state-disabled,
 .ui-widget-content .ui-state-disabled,
 .ui-widget-header .ui-state-disabled {
 	opacity: .35;
-	-ms-filter: "alpha(opacity=35)"; /* support: IE8 */
 	background-image: none;
-}
-.ui-state-disabled .ui-icon {
-	-ms-filter: "alpha(opacity=35)"; /* support: IE8 - See #6059 */
 }
 
 /* Icons
@@ -542,10 +536,8 @@ a.ui-button:active,
 .ui-widget-overlay {
 	background: #aaaaaa/*{bgColorOverlay}*/ /*{bgImgUrlOverlay}*/ /*{bgOverlayXPos}*/ /*{bgOverlayYPos}*/ /*{bgOverlayRepeat}*/;
 	opacity: .3/*{opacityOverlay}*/;
-	-ms-filter: "alpha(opacity=30)"/*{opacityFilterOverlay}*/; /* support: IE8 */
 }
 .ui-widget-shadow {
-	-webkit-box-shadow: 0/*{offsetLeftShadow}*/ 0/*{offsetTopShadow}*/ 5px/*{thicknessShadow}*/ #666666/*{bgColorShadow}*/;
 	box-shadow: 0/*{offsetLeftShadow}*/ 0/*{offsetTopShadow}*/ 5px/*{thicknessShadow}*/ #666666/*{bgColorShadow}*/;
 }
 
@@ -553,7 +545,7 @@ a.ui-button:active,
   !*** css ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-4.use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-4.use[2]!./node_modules/jquery-ui/themes/base/selectable.css ***!
   \***********************************************************************************************************************************************************************************************/
 /*!
- * jQuery UI Selectable 1.13.3
+ * jQuery UI Selectable 1.14.2
  * https://jqueryui.com
  *
  * Copyright OpenJS Foundation and other contributors
@@ -561,7 +553,6 @@ a.ui-button:active,
  * https://jquery.org/license
  */
 .ui-selectable {
-	-ms-touch-action: none;
 	touch-action: none;
 }
 .ui-selectable-helper {
@@ -574,7 +565,7 @@ a.ui-button:active,
   !*** css ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-4.use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-4.use[2]!./node_modules/jquery-ui/themes/base/draggable.css ***!
   \**********************************************************************************************************************************************************************************************/
 /*!
- * jQuery UI Draggable 1.13.3
+ * jQuery UI Draggable 1.14.2
  * https://jqueryui.com
  *
  * Copyright OpenJS Foundation and other contributors
@@ -582,7 +573,6 @@ a.ui-button:active,
  * https://jquery.org/license
  */
 .ui-draggable-handle {
-	-ms-touch-action: none;
 	touch-action: none;
 }
 

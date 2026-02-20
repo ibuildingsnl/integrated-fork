@@ -21,6 +21,8 @@
 
         {{ integrated_stylesheets() }}
 
+        {% block head_javascript %}{% endblock %}
+
         <script>
             var loadedScripts = [],
                 callbacks = [];
