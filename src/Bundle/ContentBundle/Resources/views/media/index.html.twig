@@ -18,9 +18,8 @@
         const selected_modus = '{{ selected_modus|default('media_gallery') }}'
     </script>
 
-    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
+    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}" defer data-turbo-track="reload"></script>
 {% endblock %}
 
 {% block webpack_js %}
-    <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
 {% endblock %}

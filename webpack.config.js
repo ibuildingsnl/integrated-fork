@@ -25,7 +25,6 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
         './src/Bundle/ContentBundle/Resources/assets/js/collection.js',
     ])
     .addEntry('mediagallery', [
-        './node_modules/@hotwired/turbo/dist/turbo.es2017-esm.js',
         './src/Bundle/ContentBundle/Resources/assets/js/jqueryui.js',
         './src/Bundle/ContentBundle/Resources/assets/js/mediaGallery.js',
     ])

@@ -3,6 +3,8 @@ jQuery = $;
 global.$ = global.jQuery = $;
 window.$ = window.jQuery = $;
 
+import '@hotwired/turbo';
+
 import Handlebars from 'handlebars';
 global.Handlebars = Handlebars;
 

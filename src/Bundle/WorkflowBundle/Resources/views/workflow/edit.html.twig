@@ -33,5 +33,5 @@
 {% block javascript %}
 {{ parent() }}
 
-<script src="{{ asset('bundles/integratedintegrated/workflow.js') }}"></script>
+<script src="{{ asset('bundles/integratedintegrated/workflow.js') }}" defer data-turbo-track="reload"></script>
 {% endblock %}

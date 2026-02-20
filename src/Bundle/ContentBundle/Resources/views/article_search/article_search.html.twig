@@ -10,7 +10,7 @@
 <div id="app" data-x-selection="">
     <article-search-component translations="{{ translations }}" channels="{{ channels }}" content-types="{{ contentTypes }}"/>
 </div>
-<script src="{{ asset('bundles/integratedintegrated/article-search.js') }}"></script>
+<script src="{{ asset('bundles/integratedintegrated/article-search.js') }}" defer data-turbo-track="reload"></script>
 <script>
     window.addEventListener('message', (event) => {
         let data = event.data;

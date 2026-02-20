@@ -481,7 +481,7 @@ class ContentController extends AbstractController
                         $lock->release();
                     }
 
-                    if (!$locking['locked']) {
+                    if (!$locking['locked'] && !$this->isTurboStreamRequest($request)) {
                         $locking['release']();
                     }
 
@@ -506,6 +506,12 @@ class ContentController extends AbstractController
                         'is_media' => $isMedia,
                         'saved' => $saved,
                     ]);
+
+                    return new TurboStreamResponse($content);
+                }
+
+                if ($this->isTurboStreamRequest($request) && !$request->query->getBoolean('frame')) {
+                    $content = $this->renderView('@IntegratedContent/content/flash.turbo_stream.html.twig');
 
                     return new TurboStreamResponse($content);
                 }

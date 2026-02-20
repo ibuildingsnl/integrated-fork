@@ -53,23 +53,44 @@ const init = () => {
     const searchFormControl = document.querySelector(
         '.search-form .form-control');
     if (searchFormControl) {
-        searchFormControl.addEventListener('focus', showDropDownBackGround);
-        searchFormControl.addEventListener('blur', hideDropDownBackGround);
+        if (!searchFormControl.dataset.boundFocus) {
+            searchFormControl.addEventListener('focus', showDropDownBackGround);
+            searchFormControl.addEventListener('blur', hideDropDownBackGround);
+            searchFormControl.dataset.boundFocus = 'true';
+        }
     }
 
     document.querySelectorAll('a[data-toggle="dropdown"]').
-        forEach(el => el.addEventListener('click', toggleDropdown));
+        forEach(el => {
+            if (el.dataset.boundToggleDropdown) return;
+            el.addEventListener('click', toggleDropdown);
+            el.dataset.boundToggleDropdown = 'true';
+        });
     document.querySelectorAll('.toggle-data-target').
-        forEach(el => el.addEventListener('click', toggleDataTarget));
+        forEach(el => {
+            if (el.dataset.boundToggleDataTarget) return;
+            el.addEventListener('click', toggleDataTarget);
+            el.dataset.boundToggleDataTarget = 'true';
+        });
     document.querySelectorAll('.menu-label').
-        forEach(el => el.addEventListener('click', toggleSidebarElement));
+        forEach(el => {
+            if (el.dataset.boundToggleSidebar) return;
+            el.addEventListener('click', toggleSidebarElement);
+            el.dataset.boundToggleSidebar = 'true';
+        });
     document.querySelectorAll('.toggle-options-sidebar').
-        forEach(el => el.addEventListener('click', toggleOptionsSidebar));
+        forEach(el => {
+            if (el.dataset.boundToggleOptions) return;
+            el.addEventListener('click', toggleOptionsSidebar);
+            el.dataset.boundToggleOptions = 'true';
+        });
 
     const listSearchElements = document.querySelectorAll('.list-search');
     listSearchElements.forEach(el => {
+        if (el.dataset.boundListSearch) return;
         el.addEventListener('change', asideItemsSearch);
         el.addEventListener('keyup', asideItemsSearch);
+        el.dataset.boundListSearch = 'true';
     });
 
     const filterElements = document.querySelectorAll('.aside-item-list');
@@ -78,15 +99,23 @@ const init = () => {
     }
 
     const submitButtons = document.querySelectorAll('button[type=submit]');
-    submitButtons.forEach(submitButton => submitButton.addEventListener('click',
-        onSubmitButtonClick));
+    submitButtons.forEach(submitButton => {
+        if (submitButton.dataset.boundSubmitClick) return;
+        submitButton.addEventListener('click', onSubmitButtonClick);
+        submitButton.dataset.boundSubmitClick = 'true';
+    });
 
     const asideHolder = document.querySelector('.aside-holder');
-    if (asideHolder) asideHolder.addEventListener('click', onAsideHolderClick);
+    if (asideHolder && !asideHolder.dataset.boundAsideHolder) {
+        asideHolder.addEventListener('click', onAsideHolderClick);
+        asideHolder.dataset.boundAsideHolder = 'true';
+    }
 
     const editorSection = document.querySelector('section.editor');
-    if (editorSection) editorSection.addEventListener('click',
-        onEditorSectionClick);
+    if (editorSection && !editorSection.dataset.boundEditorSection) {
+        editorSection.addEventListener('click', onEditorSectionClick);
+        editorSection.dataset.boundEditorSection = 'true';
+    }
 
     if (document.body.classList.contains('integrated_content_content_index')) {
         const filterElements = document.querySelectorAll('.aside-item-list');
@@ -171,18 +200,21 @@ function hideButtonIfNoOptions() {
     const optionsToggle = document.querySelector('.toggle-settings');
     const optionsDiv = document.querySelector('.aside-options');
     if (optionsDiv && (optionsDiv.childNodes.length === 0)) {
-        optionsToggle.classList.add('hidden');
+        optionsToggle && optionsToggle.classList.add('hidden');
     }
     const actionsToggle = document.querySelector('.form-actions-extra-toggle');
     const actionsDiv = document.querySelector('.form-actions-extra');
     if (actionsDiv && (actionsDiv.childNodes.length < 2)) {
-        actionsToggle.classList.add('hidden');
+        actionsToggle && actionsToggle.classList.add('hidden');
     }
 }
 
 function toggleOptionsSidebar() {
     const viewportWidth = window.innerWidth;
     const optionsMenu = document.querySelector('.aside-options');
+    if (!optionsMenu) {
+        return;
+    }
     const shouldShow = (viewportWidth < 1025 &&
             !optionsMenu.classList.contains('show')) ||
         document.body.classList.contains('hide-options');
@@ -197,6 +229,9 @@ function toggleOptionsSidebar() {
 function toggleDataTarget(el) {
     const targetElement = document.querySelector(
         '.' + el.target.getAttribute('data-target'));
+    if (!targetElement) {
+        return;
+    }
     const shouldShow = !targetElement.classList.contains('show');
     targetElement.classList.toggle('show', shouldShow);
 
@@ -208,6 +243,9 @@ function toggleDataTarget(el) {
 function toggleDropdown(el) {
     popupShown = true;
     const dropdown = el.target.closest('.dropdown');
+    if (!dropdown) {
+        return;
+    }
     const shouldShow = !dropdown.classList.contains('show');
 
     if (shouldShow) {
@@ -305,7 +343,7 @@ function showDropDownBackGround() {
     toggleDropDownBackGround(false);
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+function initDismissibleAlerts() {
     var dismissibleAlerts = document.querySelectorAll('.alert-dismissible');
 
     setTimeout(function() {
@@ -313,9 +351,31 @@ document.addEventListener('DOMContentLoaded', function() {
             alert.remove();
         });
     }, 10000);
-});
+}
 
 // Initialization
 
+document.addEventListener('DOMContentLoaded', initDismissibleAlerts);
 document.addEventListener('DOMContentLoaded', hideButtonIfNoOptions);
 document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('turbo:load', initDismissibleAlerts);
+document.addEventListener('turbo:load', hideButtonIfNoOptions);
+document.addEventListener('turbo:load', init);
+document.addEventListener('turbo:render', hideButtonIfNoOptions);
+document.addEventListener('turbo:render', init);
+document.addEventListener('turbo:load', () => {
+    if (window.registerIntegratedHandlebarsHelpers) {
+        window.registerIntegratedHandlebarsHelpers();
+    }
+});
+document.addEventListener('turbo:render', () => {
+    if (window.registerIntegratedHandlebarsHelpers) {
+        window.registerIntegratedHandlebarsHelpers();
+    }
+});
+document.addEventListener('turbo:before-cache', () => {
+    const flashContainer = document.getElementById('flash-messages');
+    if (flashContainer) {
+        flashContainer.innerHTML = '';
+    }
+});

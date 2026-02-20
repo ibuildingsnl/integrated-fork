@@ -110,7 +110,7 @@
 {% endblock %}
 
 {% block webpack_js %}
-    <script src="{{ asset('bundles/integratedintegrated/edit.js') }}"></script>
+    <script src="{{ asset('bundles/integratedintegrated/edit.js') }}" defer data-turbo-track="reload"></script>
 {% endblock %}
 
 {% block style %}

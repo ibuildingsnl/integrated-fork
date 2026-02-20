@@ -16,12 +16,17 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
 
-    {% block style %}
-        <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/app.css') }}">
+        {% block style %}
+            <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/app.css') }}">
 
-        {{ integrated_stylesheets() }}
+            {{ integrated_stylesheets() }}
 
-        {% block head_javascript %}{% endblock %}
+        {% block head_javascript %}
+            <script src="{{ asset('bundles/integratedintegrated/vue.js') }}" defer data-turbo-track="reload"></script>
+            <script src="{{ asset('bundles/integratedintegrated/app.js') }}" defer data-turbo-track="reload"></script>
+
+            {% block webpack_js %}{% endblock %}
+        {% endblock %}
 
         <script>
             var loadedScripts = [],
@@ -111,36 +116,32 @@
                 </div>
             {% endblock sidebar_menu %}
             <div class="content-wrapper">
-                {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning', 'error']) %}
-                    {% for message in messages %}
-                        {% if label == 'alert' %}
-                            {% set label = 'warning' %}
-                        {% elseif label == 'error' %}
-                            {% set label = 'danger' %}
-                        {% endif %}
-                        <div class="alert alert-{{ label }} alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert"><i class="iconoir-xmark"></i>
-                            </button>
-                            {{ message|trans }}
-                        </div>
+                <div id="flash-messages">
+                    {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning', 'error']) %}
+                        {% for message in messages %}
+                            {% if label == 'alert' %}
+                                {% set label = 'warning' %}
+                            {% elseif label == 'error' %}
+                                {% set label = 'danger' %}
+                            {% endif %}
+                            <div class="alert alert-{{ label }} alert-dismissible">
+                                <button type="button" class="close" data-dismiss="alert"><i class="iconoir-xmark"></i>
+                                </button>
+                                {{ message|trans }}
+                            </div>
+                        {% endfor %}
                     {% endfor %}
-                {% endfor %}
+                </div>
 
                 {% block content %}{% endblock content %}
             </div>
         </div>
     {% endblock body %}
 </div>
-<script src="{{ asset('bundles/integratedintegrated/vue.js') }}"></script>
-
 {% block edit_modal %}
 {% endblock edit_modal %}
 
 {% block javascript %}
-{% block webpack_js %}
-    <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
-{% endblock %}
-
 {% if app.request.locale %}
 <script>
     moment.locale('{{ app.request.locale }}');

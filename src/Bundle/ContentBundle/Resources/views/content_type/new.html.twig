@@ -53,5 +53,5 @@
 
 {% block webpack_js %}
     {{ parent() }}
-    <script src="{{ asset('bundles/integratedintegrated/collection.js') }}"></script>
+    <script src="{{ asset('bundles/integratedintegrated/collection.js') }}" defer data-turbo-track="reload"></script>
 {% endblock %}

@@ -11,13 +11,20 @@ let enabled_channels = []
 let current_relation = {}
 let selected_tab = ''
 
-document.addEventListener("DOMContentLoaded", function(event) {
+function initTaxonomyCategory() {
     setupRelations()
+    if (!relations.length) {
+        return;
+    }
     brand_checkboxes = setupChannels()
     addEventListeners(brand_checkboxes)
     updateDOMForAllRelations()
     filterBasedOnChannels()
-});
+}
+
+document.addEventListener("DOMContentLoaded", initTaxonomyCategory);
+document.addEventListener("turbo:load", initTaxonomyCategory);
+document.addEventListener("turbo:render", initTaxonomyCategory);
 
 function setupRelations() {
     const relevant_relations = document.querySelectorAll('.taxonomy_category');
@@ -28,7 +35,7 @@ function setupRelations() {
         popup_selector: '#' + relation.id + ' ' + popup_selector,
         category_checkboxes: relation.querySelectorAll('.categories_checkboxes_basic input[type=checkbox]'),
         all_category_checkboxes: relation.querySelectorAll('.categories_checkboxes input[type=checkbox]'),
-        enabled_categories: new Set(relation.querySelector('.enabled_categories').dataset.ids.split(",").filter(Boolean)),
+        enabled_categories: new Set((relation.querySelector('.enabled_categories')?.dataset.ids || '').split(",").filter(Boolean)),
         popup_tabs: relation.querySelectorAll('.category_tab')
     }));
 }
@@ -55,22 +62,33 @@ function getEnabledChannels(checkboxes) {
 function addEventListeners(brand_checkboxes) {
     for (relation of relations) {
         relation.all_category_checkboxes.forEach(item => {
+            if (item.dataset.boundTaxonomyCategory) return;
             item.addEventListener('change', handleCategoryClick)
+            item.dataset.boundTaxonomyCategory = 'true';
         })
     }
     document.querySelectorAll('.categories_tabs .category_tab').forEach(item => {
+        if (item.dataset.boundTaxonomyCategoryTab) return;
         item.addEventListener('click', handleTabClick)
+        item.dataset.boundTaxonomyCategoryTab = 'true';
     })
     brand_checkboxes.forEach(item => {
+        if (item.dataset.boundTaxonomyCategoryChannel) return;
         item.addEventListener('change', handleChannelClick)
+        item.dataset.boundTaxonomyCategoryChannel = 'true';
     })
     document.querySelectorAll('.togglefullscreen').forEach(item => {
+        if (item.dataset.boundTaxonomyCategoryFullscreen) return;
         item.addEventListener('click', toggleFullscreen)
+        item.dataset.boundTaxonomyCategoryFullscreen = 'true';
     })
     //listen to the closing of the popup. The event will be sent from global.js
-    document.addEventListener("cancelPopupEvent", function(e) {
-        handleClosePopup()
-    });
+    if (!document.body.dataset.boundTaxonomyCategoryCancel) {
+        document.addEventListener("cancelPopupEvent", function(e) {
+            handleClosePopup()
+        });
+        document.body.dataset.boundTaxonomyCategoryCancel = 'true';
+    }
 }
 
 //this function will run, when:
@@ -106,11 +124,21 @@ function setCurrentRelation(relation_id) {
 }
 
 function setActiveTab() {
+    if (!current_relation || !current_relation.popup_tabs) {
+        return;
+    }
     selected_tab = Array.from(current_relation.popup_tabs).find(item => item.classList.contains('hidden') === false)
 }
 
 function togglePopup() {
-    document.querySelector(current_relation.popup_selector).classList.toggle("show");
+    if (!current_relation || !current_relation.popup_selector) {
+        return;
+    }
+    const popup = document.querySelector(current_relation.popup_selector);
+    if (!popup) {
+        return;
+    }
+    popup.classList.toggle("show");
     let taxonomyDropDownUnderlays = document.querySelectorAll('.taxonomy_backdrop');
     taxonomyDropDownUnderlays.forEach(taxonomyDropDownUnderlay => {
         taxonomyDropDownUnderlay.classList.toggle("hide");
