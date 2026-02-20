@@ -29,4 +29,9 @@ final class TaxonomyLister implements TaxonomyOverview
             ),
         );
     }
+
+    public function countFor(string $contentType, string $filter = 'root'): int
+    {
+        return $this->taxonomies->count($contentType);
+    }
 }

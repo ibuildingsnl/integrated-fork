@@ -9,6 +9,9 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class TaxonomyIndexer implements TaxonomyOverview
 {
+    /** @var array<string, array<string, Taxonomy[]>> */
+    private array $byParentCache = [];
+
     public function __construct(
         private readonly TaxonomyRepositoryInterface $taxonomies,
         private readonly AuthorizationCheckerInterface $authorization,
@@ -41,6 +44,40 @@ final class TaxonomyIndexer implements TaxonomyOverview
         ));
     }
 
+    public function countFor(string $contentType, string $filter = 'root'): int
+    {
+        $root = $filter ?: 'root';
+        $filtered = $root !== 'root';
+
+        $taxonomy = $this->taxonomies->byId($root);
+        if (!$taxonomy && $filtered) {
+            return 0;
+        }
+
+        $byParent = $this->listByParent($contentType);
+        $descendants = $this->countByParent($byParent, $root);
+
+        return $filtered ? 1 + $descendants : $descendants;
+    }
+
+    /**
+     * @param Taxonomy[][] $byParent
+     */
+    private function countByParent(array $byParent, ?string $key): int
+    {
+        if (null === $key || !isset($byParent[$key])) {
+            return 0;
+        }
+
+        $count = 0;
+        foreach ($byParent[$key] as $taxonomy) {
+            $count++;
+            $count += $this->countByParent($byParent, $taxonomy->getId());
+        }
+
+        return $count;
+    }
+
     private function slice(TaxonomyOptions $options, IndexedItem ...$items): array
     {
         return \array_slice($items, $options->offset, $options->limit);
@@ -49,6 +86,10 @@ final class TaxonomyIndexer implements TaxonomyOverview
     /** @return Taxonomy[][] */
     private function listByParent(string $contentType): array
     {
+        if (isset($this->byParentCache[$contentType])) {
+            return $this->byParentCache[$contentType];
+        }
+
         $byParent = [];
 
         foreach ($this->taxonomies->byType($contentType) as $taxonomy) {
@@ -56,6 +97,8 @@ final class TaxonomyIndexer implements TaxonomyOverview
                 $byParent[$taxonomy->getParentID() ?: 'root'][$taxonomy->getId()] = $taxonomy;
             }
         }
+
+        $this->byParentCache[$contentType] = $byParent;
 
         return $byParent;
     }
