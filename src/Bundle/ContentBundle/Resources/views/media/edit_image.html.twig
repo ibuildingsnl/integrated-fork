@@ -52,6 +52,8 @@
 {% endblock %}
 
 {% block head_javascript %}
+    {{ parent() }}
+
     <script>
         const path = '{{ path('integrated_content_media_manage_relations') }}'
         const previous_url = '{{ previous_url }}'
