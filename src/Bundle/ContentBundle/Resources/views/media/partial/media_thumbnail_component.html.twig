@@ -2,7 +2,7 @@
 {% set description = media.description|default('') %}
 {% set credits = media.credits|default('') %}
 
-<li class="media-item ui-widget-content ui-corner-tr grid {{ media.contentType }}"
+<li class="media-item ui-widget-content ui-corner-tr grid {{ media.contentType }}{% if media.id in (selected_ids|default([])) %} selected{% endif %}"
     id="{{ media.id }}"
     data-content_type="{{ media.contenttype }}"
     data-id="{{ media.id }}"

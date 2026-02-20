@@ -193,13 +193,10 @@ function showMediaGallery(selected_relation) {
     window.popupShown = true;
 
     const iframe = document.querySelector(selected_relation.iframe_selector);
-    const currentSrc = iframe.getAttribute('src');
-
-    // Check if the 'src' attribute is not set or empty
-    if (!currentSrc) {
-        const link = `${mediagallery_link}${selected_relation.modus}?page=1&${selected_relation.types_url}`;
-        iframe.setAttribute('src', link);
-    }
+    const selectedIds = selected_relation.selected_images.map(item => item.id).filter(Boolean).join(',');
+    const selectedIdsQuery = selectedIds.length ? `&selected_ids=${encodeURIComponent(selectedIds)}` : '';
+    const link = `${mediagallery_link}${selected_relation.modus}?page=1&${selected_relation.types_url}${selectedIdsQuery}`;
+    iframe.setAttribute('src', link);
 
     document.querySelector(selected_relation.wrap_selector).classList.add('show');
     document.querySelector('#dropdown_overlay').classList.remove('hide');

@@ -82,8 +82,24 @@
                         </div>
                     {% endif %}
                     <ul class="flex flex-wrap gallery ui-helper-reset ui-helper-clearfix" id="gallery">
-                        {% for media in paginator.items %}
+                        {% set selected_ids = [] %}
+                        {% for media in selectedMedia|default([]) %}
+                            {% set selected_ids = selected_ids|merge([media.id]) %}
+                        {% endfor %}
+
+                        {% for media in selectedMedia|default([]) %}
                             {% include '@IntegratedContent/media/partial/media_thumbnail_component.html.twig' %}
+                        {% endfor %}
+
+                        {% set per_page = paginator.getItemNumberPerPage() %}
+                        {% set remaining = per_page - (selected_ids|length) %}
+                        {% if remaining < 0 %}{% set remaining = 0 %}{% endif %}
+                        {% set shown = 0 %}
+                        {% for media in paginator.items %}
+                            {% if media.id not in selected_ids and shown < remaining %}
+                                {% include '@IntegratedContent/media/partial/media_thumbnail_component.html.twig' %}
+                                {% set shown = shown + 1 %}
+                            {% endif %}
                         {% endfor %}
                     </ul>
                 </div>

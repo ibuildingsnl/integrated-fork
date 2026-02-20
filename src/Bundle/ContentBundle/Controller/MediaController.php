@@ -161,10 +161,13 @@ class MediaController extends AbstractController
         $dateFilter = $this->getYearMonthDates($requestCopy, $contentTypeSelectOptions);
         $dateFilterOptions = $this->getDateFilterOptions($requestCopy, $dateFilter);
 
+        $selectedMedia = $this->getSelectedMedia($requestSource);
+
         $requestSource = $this->removeIdsFromRequest($requestSource);
 
         return [
             'paginator' => $paginator,
+            'selectedMedia' => $selectedMedia,
             'contentTypeSelectOptions' => $this->removeStandardClasses($contentTypeSelectOptions),
             'contentTypeFilterOptions' => $contentTypeFilterOptions,
             'dateFilterOptions' => $dateFilterOptions,
@@ -204,6 +207,42 @@ class MediaController extends AbstractController
         $request->query->remove('ids');
 
         return $request;
+    }
+
+    /**
+     * @return Content[]
+     */
+    private function getSelectedMedia(Request $request): array
+    {
+        $ids = $this->getSelectedIds($request->get('selected_ids'));
+        if (!$ids) {
+            return [];
+        }
+
+        $repo = $this->documentManager->getRepository(Content::class);
+        $selected = [];
+        foreach ($ids as $id) {
+            if ($content = $repo->find($id)) {
+                $selected[$content->getId()] = $content;
+            }
+        }
+
+        return array_values($selected);
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getSelectedIds(?string $ids): array
+    {
+        if (!$ids) {
+            return [];
+        }
+
+        return array_values(array_filter(
+            array_map('trim', explode(',', $ids)),
+            static fn (string $value) => (bool) preg_match('/^[a-z0-9]{32}$/', $value)
+        ));
     }
 
     private function removeStandardClasses($contentTypeSelectOptions): array
