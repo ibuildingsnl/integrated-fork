@@ -22,7 +22,6 @@
             {{ integrated_stylesheets() }}
 
         {% block head_javascript %}
-            <script src="{{ asset('bundles/integratedintegrated/vue.js') }}" defer data-turbo-track="reload"></script>
             <script src="{{ asset('bundles/integratedintegrated/app.js') }}" defer data-turbo-track="reload"></script>
 
             {% block webpack_js %}{% endblock %}
@@ -144,9 +143,61 @@
 {% block javascript %}
 {% if app.request.locale %}
 <script>
-    moment.locale('{{ app.request.locale }}');
+    (function setMomentLocale(locale) {
+        var attempts = 0;
+        var maxAttempts = 20;
+
+        function applyLocale() {
+            if (window.moment && typeof window.moment.locale === 'function') {
+                window.moment.locale(locale);
+                return;
+            }
+
+            attempts += 1;
+            if (attempts < maxAttempts) {
+                window.setTimeout(applyLocale, 100);
+            }
+        }
+
+        applyLocale();
+    })('{{ app.request.locale }}');
 </script>
 {% endif %}
+
+<script>
+    (function defineIntegratedJQReady() {
+        if (window.IntegratedJQReady) {
+            return;
+        }
+
+        window.IntegratedJQReady = function (callback) {
+            function runWhenReady() {
+                if (!window.jQuery || typeof callback !== 'function') {
+                    return false;
+                }
+
+                window.jQuery(function () {
+                    callback(window.jQuery);
+                });
+
+                return true;
+            }
+
+            if (runWhenReady()) {
+                return;
+            }
+
+            var attempts = 0;
+            var maxAttempts = 100;
+            var interval = window.setInterval(function () {
+                attempts += 1;
+                if (runWhenReady() || attempts >= maxAttempts) {
+                    window.clearInterval(interval);
+                }
+            }, 50);
+        };
+    })();
+</script>
 
 {{ integrated_javascripts() }}
 

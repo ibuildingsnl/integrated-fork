@@ -5,7 +5,30 @@
 {% endblock header %}
 {% block sidebar_menu %}
 {% endblock sidebar_menu %}
+
+{% macro render_history_value(value) %}
+    {% if value.type == 'empty' %}
+        <span class="history-value-empty">—</span>
+    {% elseif value.type == 'image' %}
+        <div class="history-value-image">
+            <img src="{{ value.src }}" alt="{{ value.label|default('image') }}" loading="lazy">
+            <p class="history-value-caption">{{ value.label }}</p>
+        </div>
+    {% elseif value.type == 'html' %}
+        <div class="history-value-html">{{ value.html|raw }}</div>
+    {% elseif value.type == 'paragraphs' %}
+        <div class="history-value-paragraphs">
+            {% for paragraph in value.paragraphs %}
+                <p>{{ paragraph }}</p>
+            {% endfor %}
+        </div>
+    {% else %}
+        <span>{{ value.text }}</span>
+    {% endif %}
+{% endmacro %}
+
 {% block content %}
+    {% import _self as history %}
     <div class="row flex flex-wrap">
         {% block toolbar %}
             <div id="toolbar" class="w-full flex justify-between">
@@ -27,10 +50,22 @@
                     <b>{% trans %}Action{% endtrans %}:</b> {{ contentHistory.action|trans }}<br/>
                     <b>{% trans %}User{% endtrans %}
                         :</b> {{ contentHistory.user.name|default('Unknown'|trans) }} {% if contentHistory.user.id is defined %}(#{{ contentHistory.user.id }}){% endif %}
-                    <br/>
-                    <b>{% trans %}Endpoint{% endtrans %}:</b> {{ contentHistory.request.endpoint }}<br/>
-                    <b>{% trans %}IP address{% endtrans %}:</b> {{ contentHistory.request.ipAddress }}
                 </p>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <details class="history-admin-details">
+                        <summary>{% trans %}Show technical request details{% endtrans %}</summary>
+                        <div class="history-admin-grid">
+                            <div>
+                                <span class="history-meta-label">{% trans %}Endpoint{% endtrans %}</span>
+                                <div class="history-meta-value history-code">{{ contentHistory.request.endpoint|default('—') }}</div>
+                            </div>
+                            <div>
+                                <span class="history-meta-label">{% trans %}IP address{% endtrans %}</span>
+                                <div class="history-meta-value">{{ contentHistory.request.ipAddress|default('—') }}</div>
+                            </div>
+                        </div>
+                    </details>
+                {% endif %}
 
                 {% set showOld = contentHistory.action in ['delete', 'update'] %}
                 {% set showNew = contentHistory.action in ['insert', 'update'] %}
@@ -49,20 +84,18 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for line in changeSet %}
+                    {% for line in displayChangeSet %}
                         {% if changeSet is not null %}
-                            {% set isUpdate = contentHistory.action == 'update' %}
-
                             <tr>
                                 <td>{{ line.name }}</td>
                                 {% if showOld %}
                                     <td>
-                                        {{ line.old }}
+                                        {{ history.render_history_value(line.oldDisplay) }}
                                     </td>
                                 {% endif %}
                                 {% if showNew %}
                                     <td>
-                                        {{ line.new }}
+                                        {{ history.render_history_value(line.newDisplay) }}
                                     </td>
                                 {% endif %}
                             </tr>

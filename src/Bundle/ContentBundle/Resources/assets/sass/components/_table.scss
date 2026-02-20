@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 /* TABLE */
 .table {
     width: 100%;
@@ -43,7 +45,7 @@
             color: #2271b1;
 
             &:hover {
-                color: darken(#2271b1, 20%);
+                color: color.adjust(#2271b1, $lightness: -20%);
             }
 
             &.color-red {

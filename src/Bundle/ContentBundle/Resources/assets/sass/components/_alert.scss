@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 .alert {
     bottom: 2rem;
     box-shadow: 0 0 15px 5px rgba(0,0,0,0.1);
@@ -62,7 +64,7 @@
 }
 
 @mixin alert($name,$bgColor) {
-    $accentColor: darken($bgColor, 50);
+    $accentColor: color.adjust($bgColor, $lightness: -50%);
     .#{$name} {
         background-color:white;
         border: 1px solid $accentColor;

@@ -1382,6 +1382,18 @@
                 <source>SeoMetadata</source>
                 <target>Seo Metadata</target>
             </trans-unit>
+            <trans-unit id="350">
+                <source>Old value</source>
+                <target>Oude waarde</target>
+            </trans-unit>
+            <trans-unit id="351">
+                <source>New value</source>
+                <target>Nieuwe waarde</target>
+            </trans-unit>
+            <trans-unit id="352">
+                <source>Show technical request details</source>
+                <target>Toon technische verzoekdetails</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
