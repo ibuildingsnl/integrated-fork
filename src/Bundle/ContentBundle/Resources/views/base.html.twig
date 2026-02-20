@@ -116,7 +116,7 @@
                 </div>
             {% endblock sidebar_menu %}
             <div class="content-wrapper">
-                <div id="flash-messages">
+                <div id="flash-messages" data-turbo-temporary>
                     {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning', 'error']) %}
                         {% for message in messages %}
                             {% if label == 'alert' %}

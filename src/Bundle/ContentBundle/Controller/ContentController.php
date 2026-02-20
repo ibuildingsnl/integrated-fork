@@ -370,8 +370,15 @@ class ContentController extends AbstractController
      *
      * @return Response
      */
-    public function edit(Request $request, Content $content)
+    public function edit(Request $request, string $id)
     {
+        $content = $this->documentManager->getRepository(Content::class)->find($id);
+        if (!$content) {
+            $this->addFlash('warning', 'Content not found');
+
+            return $this->redirectToRoute('integrated_content_content_index');
+        }
+
         /** @var ContentTypeInterface $contentType */
         $contentType = $this->contentTypeManager->getType($content->getContentType());
 
@@ -386,9 +393,8 @@ class ContentController extends AbstractController
             $locking['locked'] = false;
         } else {
             if ($locking['lock'] && $locking['owner']) {
-                if ($request->query->has('lock') && $locking['lock']->getId() == $request->query->get('lock')) {
-                    $locking['locked'] = false;
-                }
+                // If you own the lock, allow editing even if the lock id isn't in the URL.
+                $locking['locked'] = false;
 
                 if ($locking['new']) {
                     if ($request->isMethod('get')) {
@@ -399,8 +405,6 @@ class ContentController extends AbstractController
 
                         return $this->redirectToRoute($request->get('_route'), $parameters);
                     }
-
-                    $locking['locked'] = false;
                 }
             }
         }

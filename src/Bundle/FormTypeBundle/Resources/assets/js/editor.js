@@ -49,6 +49,7 @@ function initTinyMceEditors(root = document) {
             return;
         }
 
+
     let style_formats = [
         {title: 'Paragraph', format: 'p'},
         {title: 'Heading 2', block: 'h2' },

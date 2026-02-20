@@ -17,19 +17,34 @@ function initCommonUi() {
         $(this).closest('.nav-form-inner').removeClass('full-width');
     });
 
-    //Select 2 initial
-    $(".basic-multiple").each(function() {
-        if (!$(this).hasClass('select2-hidden-accessible')) {
-            $(this).select2();
+    function initSelect2ForElement($el) {
+        if ($el.hasClass('select2-hidden-accessible')) {
+            return;
         }
-    });
-
-    $('select.select2').each(function() {
-        if (!$(this).hasClass('select2-hidden-accessible')) {
-            $(this).select2({
-                placeholder: $(this).data('placeholder')
+        if ($el.hasClass('basic-multiple')) {
+            $el.select2();
+            return;
+        }
+        if ($el.is('select.select2')) {
+            $el.select2({
+                placeholder: $el.data('placeholder')
             });
         }
+    }
+
+    function initVisibleSelect2() {
+        $('.basic-multiple, select.select2').each(function() {
+            const $el = $(this);
+            if ($el.is(':visible')) {
+                initSelect2ForElement($el);
+            }
+        });
+    }
+
+    initVisibleSelect2();
+
+    $(document).off('focusin.commonUiSelect2').on('focusin.commonUiSelect2', 'select.select2, .basic-multiple', function() {
+        initSelect2ForElement($(this));
     });
 
     $('button[type="submit"]').off('click.commonUi').on('click.commonUi', function() {

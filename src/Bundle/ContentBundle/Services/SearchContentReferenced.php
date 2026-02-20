@@ -49,6 +49,58 @@ class SearchContentReferenced
      */
     public function getReferenced($document)
     {
+        return $this->prepareReferenced($this->findReferencedDocuments($document));
+    }
+
+    /**
+     * @param mixed $document
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public function getReferencedDocuments($document)
+    {
+        return $this->findReferencedDocuments($document);
+    }
+
+    /**
+     * @param mixed $document
+     *
+     * @return array
+     *
+     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
+     * @throws \Exception
+     */
+    public function getDeletedInfo($document, DocumentManager $documentManager)
+    {
+        $deleted = [
+            'className' => \get_class($document),
+            'metadata' => $documentManager->getClassMetadata(\get_class($document)),
+        ];
+
+        $deleted['idField'] = current($deleted['metadata']->getIdentifier());
+        $deleted['idValue'] = $deleted['metadata']->getFieldValue($document, $deleted['idField']);
+
+        if (MongoType::hasType($deleted['metadata']->getTypeOfField($deleted['idField']))) {
+            $typeClass = MongoType::getType($deleted['metadata']->getTypeOfField($deleted['idField']));
+            $deleted['idValue'] = $typeClass->convertToDatabaseValue($deleted['idValue']);
+        } else {
+            throw new \Exception('The identifer of the deleted object must have a valid Doctrine field type');
+        }
+
+        return $deleted;
+    }
+
+    /**
+     * @param mixed $document
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    private function findReferencedDocuments($document): array
+    {
         $metadataFactory = $this->dm->getMetadataFactory();
         $deleted = $this->getDeletedInfo($document, $this->dm);
         $allMetadata = $metadataFactory->getAllMetadata();
@@ -114,39 +166,9 @@ class SearchContentReferenced
             }
         }
 
-        $referenced = array_filter($referenced, function ($item) {
+        return array_filter($referenced, function ($item) {
             return !($item instanceof Publication);
         });
-
-        return $this->prepareReferenced($referenced);
-    }
-
-    /**
-     * @param mixed $document
-     *
-     * @return array
-     *
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
-     * @throws \Exception
-     */
-    public function getDeletedInfo($document, DocumentManager $documentManager)
-    {
-        $deleted = [
-            'className' => \get_class($document),
-            'metadata' => $documentManager->getClassMetadata(\get_class($document)),
-        ];
-
-        $deleted['idField'] = current($deleted['metadata']->getIdentifier());
-        $deleted['idValue'] = $deleted['metadata']->getFieldValue($document, $deleted['idField']);
-
-        if (MongoType::hasType($deleted['metadata']->getTypeOfField($deleted['idField']))) {
-            $typeClass = MongoType::getType($deleted['metadata']->getTypeOfField($deleted['idField']));
-            $deleted['idValue'] = $typeClass->convertToDatabaseValue($deleted['idValue']);
-        } else {
-            throw new \Exception('The identifer of the deleted object must have a valid Doctrine field type');
-        }
-
-        return $deleted;
     }
 
     /**
