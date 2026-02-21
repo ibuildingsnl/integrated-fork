@@ -54,6 +54,11 @@ class MenuItem extends KnpMenuItem
     protected $maxItems;
 
     /**
+     * @var bool
+     */
+    protected $targetBlank = false;
+
+    /**
      * @param string $name
      */
     public function __construct($name, DatabaseMenuFactory $factory)
@@ -131,6 +136,18 @@ class MenuItem extends KnpMenuItem
     public function setMaxItems($maxItems): self
     {
         $this->maxItems = $maxItems;
+
+        return $this;
+    }
+
+    public function isTargetBlank(): bool
+    {
+        return (bool) $this->targetBlank;
+    }
+
+    public function setTargetBlank(bool $targetBlank): self
+    {
+        $this->targetBlank = $targetBlank;
 
         return $this;
     }
@@ -249,6 +266,10 @@ class MenuItem extends KnpMenuItem
 
         if ($this->getMaxItems()) {
             $array['maxItems'] = $this->getMaxItems();
+        }
+
+        if ($this->isTargetBlank()) {
+            $array['targetBlank'] = true;
         }
 
         if (true === $nested) {

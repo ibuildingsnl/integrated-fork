@@ -125,6 +125,18 @@ class DatabaseMenuFactory implements FactoryInterface
                     $child->setMaxItems($value['maxItems']);
                 }
 
+                if (isset($value['targetBlank'])) {
+                    $child->setTargetBlank((bool) $value['targetBlank']);
+                }
+
+                if ($child->isTargetBlank()) {
+                    $child->setLinkAttribute('target', '_blank');
+                    $child->setLinkAttribute('rel', 'noopener noreferrer');
+                } else {
+                    $child->setLinkAttribute('target', null);
+                    $child->setLinkAttribute('rel', null);
+                }
+
                 if (isset($value['children'])) {
                     $child->setChildren($this->parseChildren((array) $value['children']));
                 }

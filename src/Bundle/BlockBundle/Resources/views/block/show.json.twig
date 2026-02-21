@@ -1,3 +1,4 @@
+{% autoescape false %}
 {% apply spaceless %}
 {% set data = {
     'id'   : block.id,
@@ -9,3 +10,4 @@
 
 {{ data|json_encode|raw }}
 {% endapply %}
+{% endautoescape %}

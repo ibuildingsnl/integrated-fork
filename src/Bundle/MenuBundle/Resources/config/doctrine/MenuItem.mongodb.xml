@@ -9,6 +9,7 @@
         <field field-name="name" type="string" />
         <field field-name="uri" type="string" />
         <field field-name="maxItems" type="int" />
+        <field field-name="targetBlank" type="bool" />
 
         <reference-one
             field="searchSelection"

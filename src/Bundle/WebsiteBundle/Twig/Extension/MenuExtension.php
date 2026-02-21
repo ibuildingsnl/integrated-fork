@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\WebsiteBundle\Twig\Extension;
 
-use Doctrine\ODM\MongoDB\Id\UuidGenerator;
 use Integrated\Bundle\MenuBundle\Document\Menu;
 use Integrated\Bundle\MenuBundle\Document\MenuItem;
 use Integrated\Bundle\MenuBundle\Matcher\RecursiveActiveMatcher;
@@ -55,11 +54,6 @@ class MenuExtension extends AbstractExtension
     protected $resolver;
 
     /**
-     * @var UuidGenerator
-     */
-    protected $generator;
-
-    /**
      * @var RecursiveActiveMatcher
      */
     private $matcher;
@@ -94,7 +88,6 @@ class MenuExtension extends AbstractExtension
             'editMode' => false,
         ]);
 
-        $this->generator = new UuidGenerator();
     }
 
     /**
@@ -196,20 +189,7 @@ class MenuExtension extends AbstractExtension
             $this->prepareItems($child, $options, $depth + 1); // recursion
         }
 
-        if (isset($options['depth']) && $depth <= (int) $options['depth']) {
-            $uuid = $this->generator->generateV5($this->generator->generateV4(), uniqid(rand(), true));
-
-            $child = $menu->addChild('+', [
-                'uri' => '#',
-                'attributes' => [
-                    'class' => 'integrated-website-menu-item',
-                    'data-action' => 'integrated-website-menu-item-add',
-                ],
-            ]);
-
-            $child->setId($uuid);
-            $child->setAttribute('data-json', json_encode($child->toArray(false)));
-        }
+        // New menu items are created via the sidebar builder; do not inject "+" placeholders in the page markup.
     }
 
     /**

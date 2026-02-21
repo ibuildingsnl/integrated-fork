@@ -1,14 +1,186 @@
 <script>
     !function(JSON) {
+        var currentItem = null;
+        var builderPanel = null;
+        var builderPanelContainerClass = 'integrated-menu-builder-open';
+        var workspaceCurrentMenu = null;
+        var workspaceActiveList = null;
+        var workspaceOriginalParent = null;
+        var workspaceOriginalNextSibling = null;
+
+        var parseMenuDatasetJson = function(value) {
+            if (!value) {
+                return null;
+            }
+
+            try {
+                return JSON.parse(value);
+            } catch (e) {
+                if (value.indexOf('\\u') === 0) {
+                    var decoded = value.replace(/\\u([0-9a-fA-F]{4})/g, function(_, code) {
+                        return String.fromCharCode(parseInt(code, 16));
+                    });
+
+                    return JSON.parse(decoded);
+                }
+
+                throw e;
+            }
+        };
+
+        var escapeHtml = function(value) {
+            if (value === null || typeof value === 'undefined') {
+                return '';
+            }
+
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        };
+
+        var getItemTypeLabel = function(data) {
+            return String(data.typeLink) === '1' ? '{% trans %}Search selection{% endtrans %}' : '{% trans %}URL{% endtrans %}';
+        };
+
+        var getItemTypeClass = function(data) {
+            return String(data.typeLink) === '1' ? 'integrated-menu-node-type-search' : 'integrated-menu-node-type-url';
+        };
+
+        var getItemMeta = function(data) {
+            if (String(data.typeLink) === '1') {
+                if (!data.searchSelection) {
+                    return '{% trans %}No search selection selected{% endtrans %}';
+                }
+
+                if (data.maxItems) {
+                    return '#' + data.searchSelection + ' · ' + data.maxItems + ' {% trans %}items{% endtrans %}';
+                }
+
+                return '#' + data.searchSelection;
+            }
+
+            return data.uri || '{% trans %}No URL configured{% endtrans %}';
+        };
+
+        var searchSelections = [
+            {id: '', title: '{% trans %}Choose a search selection{% endtrans %}'},
+            {% set searchSelections = getSearchSelections() %}
+            {% for searchSelection in searchSelections %}
+            {id: '{{ searchSelection.id }}', title: '{{ searchSelection.title|e('js') }}'}{{ loop.last ? '' : ',' }}
+            {% endfor %}
+        ];
+
+        var renderSearchSelectionOptions = function(selectedId) {
+            return searchSelections.map(function(option) {
+                var selected = String(option.id) === String(selectedId || '') ? ' selected="selected"' : '';
+                return '<option value="' + escapeHtml(option.id) + '"' + selected + '>' + escapeHtml(option.title) + '</option>';
+            }).join('');
+        };
+
+        var hideAddPlaceholders = function(root) {
+            if (!root) {
+                return;
+            }
+
+            root.querySelectorAll('[data-action="integrated-website-menu-item-add"]').forEach(function(node) {
+                node.style.display = 'none';
+            });
+        };
+
+        var createElementFromHTML = function(html) {
+            var wrapper = document.createElement('div');
+            wrapper.innerHTML = html.trim();
+            return wrapper.firstChild;
+        };
+
+        var createFragmentFromHTML = function(html) {
+            var template = document.createElement('template');
+            template.innerHTML = html.trim();
+            return template.content;
+        };
+
+        var getNodeLabelFromElement = function(element) {
+            ensureNodeData(element);
+            var data = element && element.data ? element.data : null;
+
+            if (data && data.name) {
+                return data.name;
+            }
+
+            var anchor = element ? element.querySelector(':scope > a') : null;
+            if (anchor) {
+                return anchor.textContent.trim();
+            }
+
+            return '{% trans %}Menu item{% endtrans %}';
+        };
+
+        var ensureNodeData = function(node) {
+            if (!node || node.data) {
+                return;
+            }
+
+            if (node.dataset && node.dataset.json) {
+                node.data = parseMenuDatasetJson(node.dataset.json);
+                node.removeAttribute('data-json');
+            }
+        };
+
+        var getMenuRootFromElement = function(element) {
+            var root = element.closest('.integrated-website-menu');
+            if (root) {
+                return root;
+            }
+
+            var workspace = element.closest('.integrated-menu-workspace');
+            if (workspace) {
+                var rootId = workspace.dataset.menuRootId;
+                if (rootId) {
+                    return document.getElementById(rootId);
+                }
+            }
+
+            var topLevelList = getTopLevelListFromElement(element);
+            if (topLevelList && topLevelList.parentElement) {
+                return topLevelList.parentElement;
+            }
+
+            return null;
+        };
+
+        var getTopLevelListFromElement = function(element) {
+            var list = element.closest('.integrated-website-menu-list');
+            if (!list) {
+                return null;
+            }
+
+            var current = list;
+            while (current.parentElement) {
+                var parentItem = current.parentElement.closest('.integrated-website-menu-item');
+                if (!parentItem) {
+                    break;
+                }
+
+                var parentList = parentItem.closest('.integrated-website-menu-list');
+                if (!parentList || parentList === current) {
+                    break;
+                }
+
+                current = parentList;
+            }
+
+            return current;
+        };
+
         var Menu = function(element) {
             this.element = element;
         };
 
-        var currentItem = null;
-
         Menu.prototype.load = function(data, success) {
             var element = this.element;
-            var menu = this;
 
             fetch('{{ path('integrated_website_menu_render') }}', {
                 method: 'POST',
@@ -17,31 +189,23 @@
                 },
                 body: data
             })
-                .then(response => response.json())
-                .then(data => {
-                    // success
-                    element.dataOptions = data.options;
-                    element.innerHTML = data.html;
+                .then(function(response) { return response.json(); })
+                .then(function(payload) {
+                    element.dataOptions = payload.options;
+                    element.innerHTML = payload.html;
 
-                    element.querySelectorAll('.integrated-website-menu-list, .integrated-website-menu-item').forEach(item => {
-                            if (item.dataset.json) {
-                                item.data = JSON.parse(item.dataset.json);
-                                item.removeAttribute('data-json');
-                            }
+                    element.querySelectorAll('.integrated-website-menu-list, .integrated-website-menu-item').forEach(function(item) {
+                        if (item.dataset.json) {
+                            item.data = parseMenuDatasetJson(item.dataset.json);
+                            item.removeAttribute('data-json');
                         }
-                    );
+                    });
 
-                    element.querySelectorAll('.integrated-website-menu-list').forEach(item => {
-                            new Sortable(item, {
-                                scroll: true,
-                                group: "integrated-menu",
-                                sort: true,
-                                draggable: '[data-action="integrated-website-menu-item-edit"]',
-                                ghostClass: "integrated-website-item-ghost",
-                                dragClass: "integrated-website-item-dragging"
-                            });
-                        }
-                    );
+                    ensureMenuRootId(element);
+                    hideAddPlaceholders(element);
+                    initializeSortable(element);
+                    syncWorkspaceTreeIfNeeded(element);
+                    ensureEmptyMenuAction(element);
 
                     if (success) {
                         success();
@@ -57,13 +221,17 @@
         };
 
         Menu.prototype.getData = function(id) {
-            let menu = this.element.closestChildren('.integrated-website-menu-list');
-            let data = menu.item(0).data;
+            var list = getActiveListForMenu(this.element);
+            var data = list && list.data ? list.data : (this.element.data || {});
 
             data.children = [];
 
-            menu.item(0).closestChildren('.integrated-website-menu-item').forEach(item => {
-                var item = new Item(item);
+            if (!list) {
+                return data;
+            }
+
+            list.closestChildren('.integrated-website-menu-item').forEach(function(node) {
+                var item = new Item(node);
                 var result = item.getData(id);
 
                 if (result) {
@@ -80,7 +248,7 @@
 
         var Item = function(element) {
             this.element = element;
-            this.menu = new Menu(this.element.closest('.integrated-website-menu'));
+            this.menu = new Menu(getMenuRootFromElement(this.element));
         };
 
         Item.prototype.getMenu = function() {
@@ -92,7 +260,7 @@
 
             var data = item.data;
 
-            if (id && data.id == id || 'integrated-website-menu-item-edit' == item.dataset.action) {
+            if ((id && data.id == id) || item.dataset.action === 'integrated-website-menu-item-edit') {
                 var items = item.closestChildren('.integrated-website-menu-item');
 
                 if (items.length) {
@@ -120,11 +288,14 @@
         Item.prototype.update = function(json) {
             var data = this.element.data;
 
-            for (const [key, value] of Object.entries(json)) {
-                data[key] = value;
+            for (var key in json) {
+                if (Object.prototype.hasOwnProperty.call(json, key)) {
+                    data[key] = json[key];
+                }
             }
 
             this.element.data = data;
+            this.element.dataset.action = 'integrated-website-menu-item-edit';
             this.menu.refresh(data.id);
         };
 
@@ -133,191 +304,628 @@
             this.menu.refresh();
         };
 
-        Integrated = {...Integrated, ...{
-                Menu: {
-                    create: function(element) {
-                        return new Menu(element);
-                    },
-                    updateLinkType: function() {
-                        if (document.getElementById('typeLinkUri').checked) {
-                            document.getElementById('integrated-uri-label').style.display = 'block';
-                            document.getElementById('integrated-uri-control').style.display = 'block';
-                            document.getElementById('integrated-search-selection-label').style.display = 'none';
-                            document.getElementById('integrated-search-selection-control').style.display = 'none';
-                            document.getElementById('integrated-maxitems-label').style.display = 'none';
-                            document.getElementById('integrated-maxitems-control').style.display = 'none';
-                        }
+        Item.prototype.getOrCreateAddChildPlaceholder = function() {
+            var list = this.element.querySelector(':scope > .integrated-website-menu-list');
 
-                        if (document.getElementById('typeLinkSearchSelection').checked) {
-                            document.getElementById('integrated-uri-label').style.display = 'none';
-                            document.getElementById('integrated-uri-control').style.display = 'none';
-                            document.getElementById('integrated-search-selection-label').style.display = 'block';
-                            document.getElementById('integrated-search-selection-control').style.display = 'block';
-                            document.getElementById('integrated-maxitems-label').style.display = 'block';
-                            document.getElementById('integrated-maxitems-control').style.display = 'block';
-                        }
-                    }
+            if (!list) {
+                list = document.createElement('ul');
+                list.className = 'integrated-website-menu-list';
+                this.element.appendChild(list);
+            }
+
+            var placeholders = list.querySelectorAll(':scope > .integrated-website-menu-item[data-action="integrated-website-menu-item-add"]');
+            if (placeholders.length) {
+                return new Item(placeholders[0]);
+            }
+
+            var placeholder = document.createElement('li');
+            placeholder.className = 'integrated-website-menu-item';
+            placeholder.dataset.action = 'integrated-website-menu-item-add';
+
+            placeholder.data = {
+                id: 'tmp-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+                name: '',
+                typeLink: 0,
+                uri: '',
+                searchSelection: '',
+                maxItems: '',
+                children: []
+            };
+
+            list.appendChild(placeholder);
+
+            return new Item(placeholder);
+        };
+
+        var initializeSortable = function(root) {
+            root.querySelectorAll('.integrated-website-menu-list').forEach(function(item) {
+                if (item.dataset.integratedSortable === '1') {
+                    return;
                 }
-            }};
 
-        var editMenuModalTemplateHTML = function(data, showRemove = false) {
-            var output = `<form>
-            <div class="integrated-form-grid">
-                <div class="integrated-form-grid-col-1">
-                    <label>{% trans %}Link type{% endtrans %}</label>
-                </div>
-                <div class="integrated-form-grid-col-2">
-                    <div>
-                        <label for="typeLinkUri" class="required">
-                            <input type="radio" id="typeLinkUri" name="integrated-menu-linktype" required="required" value="0" ${data.typeLinkUri ? " checked=\"checked\"" : ""} onchange="Integrated.Menu.updateLinkType();">{% trans %}URL{% endtrans %}
-                        </label>
-                    </div>
-                    <div>
-                        <label for="typeLinkSearchSelection" class="required">
-                            <input type="radio" id="typeLinkSearchSelection" name="integrated-menu-linktype" required="required" value="1" ${data.typeLinkSearchSelection ? " checked=\"checked\"" : ""} onchange="Integrated.Menu.updateLinkType();">{% trans %}Search selection{% endtrans %}
-                        </label>
-                    </div>
-                </div>
-                <div class="integrated-form-grid-col-1">
-                    <label for="name">{% trans %}Name{% endtrans %}</label>
-                </div>
-                <div class="integrated-form-grid-col-2">
-                    <input id="integrated-menu-name" name="name" type="text" value="${data.name}" class="integrated-form-control" />
-                </div>
-                <div class="integrated-form-grid-col-1" id="integrated-uri-label">
-                    <label for="uri">{% trans %}URL{% endtrans %}</label>
-                </div>
-                <div class="integrated-form-grid-col-2" id="integrated-uri-control">
-                    <input id="integrated-menu-uri" name="uri" type="text" value="${data.uri}" class="integrated-form-control" autocomplete="off" />
-                </div>
-                <div class="integrated-form-grid-col-1" id="integrated-search-selection-label">
-                    <label for="uri">{% trans %}Search selection{% endtrans %}</label>
-                </div>
-                <div class="integrated-form-grid-col-2" id="integrated-search-selection-control">
-                    <select id="integrated-menu-search-selection" name="searchSelection" required="required" class="integrated-form-control">
-                    <option value="">{% trans %}Choose a search selection{% endtrans %}</option>
-                    {% set searchSelections = getSearchSelections() %}
-                    {% for searchSelection in searchSelections %}
-                        <option value="{{ searchSelection.id }}" ${data.searchSelection == '{{ searchSelection.id }}' ? " selected=\"selected\"" : ""}>{{ searchSelection.title }}</option>
-                    {% endfor %}
-                    </select>
-                </div>
-                <div class="integrated-form-grid-col-1" id="integrated-maxitems-label">
-                    <label for="uri">{% trans %}Number of items{% endtrans %}</label>
-                </div>
-                <div class="integrated-form-grid-col-2" id="integrated-maxitems-control">
-                    <input id="integrated-menu-maxitems" name="maxItems" type="text" value="${data.maxItems}" class="integrated-form-control" />
-                </div>
-                <div class="integrated-form-grid-col-1">
-                </div>
-                <div class="integrated-form-grid-col-2">
-                    <input type="submit" data-action="integrated-website-menu-item-save" class="integrated-button btn btn-green" value="{% trans %}Save{% endtrans %}" />
-                    ${showRemove ? '<input type="button" data-action="integrated-website-menu-item-remove" class="integrated-button integrated-button-red integrated-button-right btn btn-red" value="{% trans %}Remove menu item{% endtrans %}" />' : ''}
-                </div>
-            </div>
-        </form>`;
+                new Sortable(item, {
+                    scroll: true,
+                    group: 'integrated-menu',
+                    sort: true,
+                    draggable: '[data-action="integrated-website-menu-item-edit"]',
+                    handle: '.integrated-menu-drag-handle',
+                    filter: '.integrated-menu-node-action',
+                    ghostClass: 'integrated-website-item-ghost',
+                    dragClass: 'integrated-website-item-dragging'
+                });
 
-            return output;
-        }
+                item.dataset.integratedSortable = '1';
+            });
+        };
 
-        function init() {
-            document.querySelectorAll('.integrated-website-menu').forEach(item => {
-                    let menu = new Menu(item);
-                    let script = item.querySelector('script[type="text/json"]');
+        var getActiveListForMenu = function(menuRoot) {
+            if (!menuRoot) {
+                return null;
+            }
 
-                    menu.load(script.innerHTML);
-                    script.parentNode.removeChild(script);
-                }
+            var list = menuRoot.querySelector(':scope > .integrated-website-menu-list');
+            if (list) {
+                return list;
+            }
+
+            if (builderPanel && workspaceCurrentMenu === menuRoot) {
+                return builderPanel.querySelector('.integrated-menu-workspace-tree > .integrated-website-menu-list');
+            }
+
+            return null;
+        };
+
+        var ensureEmptyMenuAction = function(menuRoot) {
+            var list = getActiveListForMenu(menuRoot);
+            if (!list) {
+                return;
+            }
+
+            list.querySelectorAll(':scope > .integrated-menu-empty-action').forEach(function(item) {
+                item.remove();
+            });
+
+            var hasItems = !!list.querySelector(':scope > .integrated-website-menu-item[data-action="integrated-website-menu-item-edit"]');
+            if (hasItems) {
+                return;
+            }
+
+            var emptyAction = createElementFromHTML(
+                '<li class="integrated-menu-empty-action">' +
+                    '<button type="button" class="btn btn-green" data-action="integrated-website-menu-empty-open">' +
+                        '<i class="iconoir-plus"></i><span>{% trans %}Add first menu item{% endtrans %}</span>' +
+                    '</button>' +
+                '</li>'
             );
-        }
 
-        if (document.readyState != 'loading'){
+            list.appendChild(emptyAction);
+        };
+
+        var closeAllNodeSettings = function(menuRoot) {
+            var list = getActiveListForMenu(menuRoot);
+            if (!list) {
+                return;
+            }
+
+            list.querySelectorAll('.integrated-menu-node-settings-open').forEach(function(node) {
+                node.classList.remove('integrated-menu-node-settings-open');
+            });
+        };
+
+        var openNodeSettings = function(menuRoot, node) {
+            closeAllNodeSettings(menuRoot);
+            if (node) {
+                node.classList.add('integrated-menu-node-settings-open');
+            }
+        };
+
+        var buildEditNodeShell = function(node) {
+            var data = node.data || {};
+            var name = data.name || '{% trans %}Untitled{% endtrans %}';
+            var typeLabel = getItemTypeLabel(data);
+            var metaLabel = getItemMeta(data);
+            var childList = node.querySelector(':scope > .integrated-website-menu-list');
+            var hasChildren = !!(childList && childList.querySelector(':scope > [data-action="integrated-website-menu-item-edit"]'));
+            var typeLink = (typeof data.typeLink === 'undefined' || String(data.typeLink) === '0') ? '0' : '1';
+            var searchFieldClass = typeLink === '1' ? '' : ' style="display:none"';
+            var uriFieldClass = typeLink === '0' ? '' : ' style="display:none"';
+
+            var html = '' +
+                '<div class="integrated-menu-node-shell">' +
+                    '<button type="button" class="integrated-menu-drag-handle" aria-label="{% trans %}Drag menu item{% endtrans %}"><i class="iconoir-menu-scale"></i></button>' +
+                    (hasChildren
+                        ? '<button type="button" class="integrated-menu-node-expand" data-action="integrated-website-menu-item-toggle" aria-label="{% trans %}Toggle submenu{% endtrans %}"><i class="iconoir-nav-arrow-down"></i></button>'
+                        : '<span class="integrated-menu-node-expand-placeholder"></span>') +
+                    '<div class="integrated-menu-node-content">' +
+                        '<div class="integrated-menu-node-title-row">' +
+                            '<span class="integrated-menu-node-title">' + escapeHtml(name) + '</span>' +
+                            '<span class="integrated-menu-node-type ' + getItemTypeClass(data) + '">' + escapeHtml(typeLabel) + '</span>' +
+                        '</div>' +
+                        '<div class="integrated-menu-node-meta">' + escapeHtml(metaLabel) + '</div>' +
+                    '</div>' +
+                    '<button type="button" class="integrated-menu-node-settings-toggle" data-action="integrated-website-menu-item-settings-toggle" aria-label="{% trans %}Toggle settings{% endtrans %}"><i class="iconoir-settings"></i></button>' +
+                '</div>' +
+                '<div class="integrated-menu-node-settings">' +
+                    '<div class="integrated-menu-node-settings-grid">' +
+                        '<label>{% trans %}Name{% endtrans %}<input type="text" class="integrated-menu-setting-name integrated-form-control" value="' + escapeHtml(data.name || '') + '" /></label>' +
+                        '<label>{% trans %}Link type{% endtrans %}<select class="integrated-menu-setting-type integrated-form-control"><option value="0"' + (typeLink === '0' ? ' selected="selected"' : '') + '>{% trans %}URL{% endtrans %}</option><option value="1"' + (typeLink === '1' ? ' selected="selected"' : '') + '>{% trans %}Search selection{% endtrans %}</option></select></label>' +
+                        '<label class="integrated-menu-setting-uri-wrap"' + uriFieldClass + '>{% trans %}URL{% endtrans %}<input type="text" class="integrated-menu-setting-uri integrated-form-control" value="' + escapeHtml(data.uri || '') + '" /></label>' +
+                        '<label class="integrated-menu-setting-search-wrap"' + searchFieldClass + '>{% trans %}Search selection{% endtrans %}<select class="integrated-menu-setting-search integrated-form-control">' + renderSearchSelectionOptions(data.searchSelection || '') + '</select></label>' +
+                        '<label class="integrated-menu-setting-maxitems-wrap"' + searchFieldClass + '>{% trans %}Number of items{% endtrans %}<input type="number" min="1" class="integrated-menu-setting-maxitems integrated-form-control" value="' + escapeHtml((typeof data.maxItems === 'undefined' || data.maxItems === null) ? '' : data.maxItems) + '" /></label>' +
+                        '<label class="integrated-menu-setting-targetblank"><input type="checkbox" class="integrated-menu-setting-targetblank-input"' + (data.targetBlank ? ' checked="checked"' : '') + ' /> {% trans %}Open in new tab{% endtrans %}</label>' +
+                    '</div>' +
+                    '<div class="integrated-menu-node-settings-actions">' +
+                        '<button type="button" class="btn btn-green" data-action="integrated-website-menu-item-inline-save">{% trans %}Save{% endtrans %}</button>' +
+                        '<button type="button" class="btn btn-red" data-action="integrated-website-menu-item-inline-remove">{% trans %}Remove{% endtrans %}</button>' +
+                    '</div>' +
+                '</div>';
+
+            return createFragmentFromHTML(html);
+        };
+
+        var ensureMenuRootId = function(menuRoot) {
+            if (!menuRoot.id) {
+                menuRoot.id = 'integrated-menu-root-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+            }
+
+            return menuRoot.id;
+        };
+
+        var decorateWorkspaceNode = function(node) {
+            if (node.dataset.action === 'integrated-website-menu-item-add') {
+                node.style.display = 'none';
+                return;
+            }
+
+            node.classList.remove('integrated-menu-add-node');
+            node.style.display = '';
+            var existingShell = node.querySelector(':scope > .integrated-menu-node-shell');
+            if (existingShell) {
+                existingShell.remove();
+            }
+            var existingSettings = node.querySelector(':scope > .integrated-menu-node-settings');
+            if (existingSettings) {
+                existingSettings.remove();
+            }
+
+            var shellFragment = buildEditNodeShell(node);
+            node.insertBefore(shellFragment, node.firstChild);
+
+            var directAnchor = node.querySelector(':scope > a');
+            if (directAnchor) {
+                directAnchor.style.display = 'none';
+            }
+
+            // Always ensure a direct child list exists so items can be dragged under this node.
+            var childList = node.querySelector(':scope > .integrated-website-menu-list');
+            if (!childList) {
+                childList = document.createElement('ul');
+                childList.className = 'integrated-website-menu-list';
+                childList.dataset.integratedSyntheticList = '1';
+                node.appendChild(childList);
+            }
+        };
+
+        var decorateWorkspaceTree = function(root) {
+            root.querySelectorAll('.integrated-website-menu-item').forEach(function(node) {
+                decorateWorkspaceNode(node);
+            });
+
+            root.querySelectorAll('.integrated-website-menu-list').forEach(function(list) {
+                if (typeof list.dataset.integratedOriginalClass === 'undefined') {
+                    list.dataset.integratedOriginalClass = list.getAttribute('class') || '';
+                }
+                list.classList.add('integrated-menu-tree-list');
+            });
+        };
+
+        var undecorateWorkspaceTree = function(root) {
+            root.querySelectorAll('.integrated-menu-node-shell, .integrated-menu-node-settings').forEach(function(node) {
+                node.remove();
+            });
+
+            root.querySelectorAll('.integrated-website-menu-item').forEach(function(node) {
+                node.classList.remove('integrated-menu-add-node', 'integrated-menu-node-collapsed');
+                node.style.display = '';
+                var anchor = node.querySelector(':scope > a');
+                if (anchor) {
+                    anchor.style.display = '';
+                }
+            });
+
+            var lists = [];
+            if (root.classList && root.classList.contains('integrated-website-menu-list')) {
+                lists.push(root);
+            }
+            root.querySelectorAll('.integrated-website-menu-list').forEach(function(list) {
+                lists.push(list);
+            });
+
+            lists.forEach(function(list) {
+                var hasItems = !!list.querySelector(':scope > .integrated-website-menu-item[data-action="integrated-website-menu-item-edit"]');
+                if (list.dataset.integratedSyntheticList === '1' && !hasItems) {
+                    list.remove();
+                    return;
+                }
+
+                if (typeof list.dataset.integratedOriginalClass !== 'undefined') {
+                    var originalClass = list.dataset.integratedOriginalClass;
+                    if (originalClass) {
+                        list.setAttribute('class', originalClass);
+                    } else {
+                        list.removeAttribute('class');
+                    }
+                    delete list.dataset.integratedOriginalClass;
+                } else {
+                    list.classList.remove('integrated-menu-tree-list');
+                }
+
+                if (list.dataset.integratedSyntheticList === '1') {
+                    delete list.dataset.integratedSyntheticList;
+                }
+                list.style.display = '';
+            });
+        };
+
+        var syncWorkspaceTreeIfNeeded = function(menuRoot) {
+            if (!workspaceCurrentMenu || workspaceCurrentMenu !== menuRoot || !builderPanel) {
+                return;
+            }
+
+            var target = builderPanel.querySelector('.integrated-menu-workspace-tree');
+            if (!target) {
+                return;
+            }
+
+            var list = getActiveListForMenu(menuRoot);
+            if (!list) {
+                return;
+            }
+
+            workspaceActiveList = list;
+            if (list.parentElement && !list.parentElement.classList.contains('integrated-menu-workspace-tree')) {
+                workspaceOriginalParent = list.parentElement;
+                workspaceOriginalNextSibling = list.nextSibling;
+            }
+
+            target.innerHTML = '';
+            target.appendChild(list);
+            decorateWorkspaceTree(target);
+            initializeSortable(target);
+            ensureEmptyMenuAction(menuRoot);
+        };
+
+        var getBuilderPanel = function() {
+            if (builderPanel) {
+                return builderPanel;
+            }
+
+            var html = '' +
+                '<div class="integrated-menu-builder-overlay" data-action="integrated-menu-builder-close"></div>' +
+                '<aside class="integrated-menu-builder-panel" aria-live="polite">' +
+                    '<div class="integrated-menu-builder-header">' +
+                        '<div>' +
+                            '<div class="integrated-menu-builder-eyebrow">{% trans %}Menu builder{% endtrans %}</div>' +
+                            '<h3 class="integrated-menu-builder-title">{% trans %}Menu items{% endtrans %}</h3>' +
+                            '<p class="integrated-menu-builder-context"></p>' +
+                        '</div>' +
+                        '<button type="button" class="integrated-menu-builder-close" data-action="integrated-menu-builder-close" aria-label="{% trans %}Close{% endtrans %}"><i class="iconoir-xmark"></i></button>' +
+                    '</div>' +
+                    '<div class="integrated-menu-workspace-actions">' +
+                        '<button type="button" class="btn btn-green" data-action="integrated-website-menu-item-add-root"><i class="iconoir-plus"></i><span>{% trans %}Add menu item{% endtrans %}</span></button>' +
+                    '</div>' +
+                    '<div class="integrated-menu-workspace-tree"></div>' +
+                '</aside>';
+
+            builderPanel = createElementFromHTML('<div class="integrated-menu-builder integrated-menu-workspace">' + html + '</div>');
+            document.body.appendChild(builderPanel);
+
+            builderPanel.addEventListener('click', function(event) {
+                var actionEl = event.target.closest('[data-action]');
+
+                if (!actionEl) {
+                    return;
+                }
+
+                var action = actionEl.dataset.action;
+
+                if (action === 'integrated-menu-builder-close') {
+                    closeMenuBuilderPanel();
+                    return;
+                }
+
+                if (action === 'integrated-website-menu-item-add-root') {
+                    if (workspaceCurrentMenu) {
+                        openCreateRootItem(workspaceCurrentMenu);
+                    }
+                    return;
+                }
+            });
+
+            return builderPanel;
+        };
+
+        var getOrCreateRootAddPlaceholder = function(menuRoot) {
+            var list = getActiveListForMenu(menuRoot);
+            if (!list) {
+                return null;
+            }
+
+            var placeholder = list.querySelector(':scope > .integrated-website-menu-item[data-action="integrated-website-menu-item-add"]');
+            if (!placeholder) {
+                placeholder = document.createElement('li');
+                placeholder.className = 'integrated-website-menu-item';
+                placeholder.dataset.action = 'integrated-website-menu-item-add';
+                placeholder.data = {
+                    id: 'tmp-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+                    name: '',
+                    typeLink: 0,
+                    uri: '',
+                    searchSelection: '',
+                    maxItems: '',
+                    children: []
+                };
+                list.appendChild(placeholder);
+            }
+
+            ensureNodeData(placeholder);
+
+            return placeholder;
+        };
+
+        var openCreateRootItem = function(menuRoot) {
+            var placeholder = getOrCreateRootAddPlaceholder(menuRoot);
+            if (!placeholder) {
+                return;
+            }
+
+            if (!placeholder.data) {
+                placeholder.data = {};
+            }
+
+            placeholder.dataset.action = 'integrated-website-menu-item-edit';
+            placeholder.data.name = placeholder.data.name || '{% trans %}New menu item{% endtrans %}';
+            placeholder.data.typeLink = typeof placeholder.data.typeLink === 'undefined' ? 0 : placeholder.data.typeLink;
+            placeholder.data.uri = placeholder.data.uri || '/';
+            placeholder.data.targetBlank = !!placeholder.data.targetBlank;
+
+            decorateWorkspaceNode(placeholder);
+            openNodeSettings(menuRoot, placeholder);
+            ensureEmptyMenuAction(menuRoot);
+        };
+
+        var openWorkspace = function(menuRoot) {
+            var panel = getBuilderPanel();
+
+            workspaceCurrentMenu = menuRoot;
+            workspaceActiveList = null;
+            workspaceOriginalParent = null;
+            workspaceOriginalNextSibling = null;
+            panel.dataset.menuRootId = ensureMenuRootId(menuRoot);
+            panel.querySelector('.integrated-menu-builder-context').textContent = '{% trans %}Drag to reorder, drag between levels for subitems{% endtrans %}';
+
+            document.body.classList.add(builderPanelContainerClass);
+            syncWorkspaceTreeIfNeeded(menuRoot);
+        };
+
+        var closeMenuBuilderPanel = function() {
+            if (workspaceCurrentMenu) {
+                closeAllNodeSettings(workspaceCurrentMenu);
+            }
+
+            if (workspaceActiveList) {
+                undecorateWorkspaceTree(workspaceActiveList);
+            }
+
+            if (workspaceActiveList && workspaceOriginalParent) {
+                if (workspaceOriginalNextSibling && workspaceOriginalNextSibling.parentNode === workspaceOriginalParent) {
+                    workspaceOriginalParent.insertBefore(workspaceActiveList, workspaceOriginalNextSibling);
+                } else {
+                    workspaceOriginalParent.appendChild(workspaceActiveList);
+                }
+            }
+
+            hideAddPlaceholders(workspaceCurrentMenu);
+            ensureEmptyMenuAction(workspaceCurrentMenu);
+
+            document.body.classList.remove(builderPanelContainerClass);
+            workspaceCurrentMenu = null;
+            workspaceActiveList = null;
+            workspaceOriginalParent = null;
+            workspaceOriginalNextSibling = null;
+        };
+
+        var init = function() {
+            document.querySelectorAll('.integrated-website-menu').forEach(function(item) {
+                var menu = new Menu(item);
+                var script = item.querySelector('script[type="text/json"]');
+
+                if (!script) {
+                    return;
+                }
+
+                menu.load(script.innerHTML);
+                script.parentNode.removeChild(script);
+            });
+        };
+
+        if (document.readyState !== 'loading') {
             init();
         } else {
             document.addEventListener('DOMContentLoaded', init);
         }
 
         document.body.addEventListener('click', function(e) {
-            element = e.target.closest('[data-action="integrated-website-menu-item-add"]');
-            if (!element) {
+            if (
+                document.body.classList.contains(builderPanelContainerClass) &&
+                !e.target.closest('.integrated-menu-builder-panel') &&
+                !e.target.closest('.integrated-website-menu [data-action="integrated-website-menu-item-edit"]')
+            ) {
+                closeMenuBuilderPanel();
                 return;
             }
 
-            e.stopPropagation();
+            var emptyOpen = e.target.closest('[data-action="integrated-website-menu-empty-open"]');
+            if (emptyOpen) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var emptyRoot = getMenuRootFromElement(emptyOpen);
+                if (emptyRoot) {
+                    openWorkspace(emptyRoot);
+                    openCreateRootItem(emptyRoot);
+                }
+
+                return;
+            }
+
+            var pageMenuNode = e.target.closest('[data-action="integrated-website-menu-item-edit"]');
+            if (pageMenuNode && e.target.closest('.integrated-menu-builder')) {
+                pageMenuNode = null;
+            }
+            if (pageMenuNode) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var menuRoot = getMenuRootFromElement(pageMenuNode);
+                if (menuRoot) {
+                    openWorkspace(menuRoot);
+                }
+
+                return;
+            }
+
+            var toggleTrigger = e.target.closest('[data-action="integrated-website-menu-item-toggle"]');
+            if (toggleTrigger) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var toggleNode = toggleTrigger.closest('.integrated-website-menu-item[data-action="integrated-website-menu-item-edit"]');
+                if (toggleNode) {
+                    toggleNode.classList.toggle('integrated-menu-node-collapsed');
+                }
+
+                return;
+            }
+
+            var settingsToggle = e.target.closest('[data-action="integrated-website-menu-item-settings-toggle"]');
+            if (settingsToggle) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var settingsNode = settingsToggle.closest('.integrated-website-menu-item[data-action="integrated-website-menu-item-edit"]');
+                if (settingsNode) {
+                    var settingsRoot = getMenuRootFromElement(settingsNode);
+                    if (settingsNode.classList.contains('integrated-menu-node-settings-open')) {
+                        settingsNode.classList.remove('integrated-menu-node-settings-open');
+                    } else {
+                        openNodeSettings(settingsRoot, settingsNode);
+                    }
+                }
+                return;
+            }
+
+            var inlineSave = e.target.closest('[data-action="integrated-website-menu-item-inline-save"]');
+            if (inlineSave) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var saveNode = inlineSave.closest('.integrated-website-menu-item[data-action="integrated-website-menu-item-edit"]');
+                if (!saveNode) {
+                    return;
+                }
+
+                ensureNodeData(saveNode);
+                var typeValue = saveNode.querySelector('.integrated-menu-setting-type').value;
+                var payload = {
+                    typeLink: typeValue,
+                    name: (saveNode.querySelector('.integrated-menu-setting-name').value || '').trim(),
+                    uri: (saveNode.querySelector('.integrated-menu-setting-uri').value || '').trim(),
+                    searchSelection: (saveNode.querySelector('.integrated-menu-setting-search').value || ''),
+                    maxItems: (saveNode.querySelector('.integrated-menu-setting-maxitems').value || ''),
+                    targetBlank: !!saveNode.querySelector('.integrated-menu-setting-targetblank-input').checked
+                };
+
+                if (!payload.name) {
+                    alert('{% trans %}Name is required{% endtrans %}');
+                    return;
+                }
+
+                if (String(typeValue) === '1' && !payload.searchSelection) {
+                    alert('{% trans %}Search selection is required{% endtrans %}');
+                    return;
+                }
+
+                if (String(typeValue) === '0' && !payload.uri) {
+                    alert('{% trans %}URL is required{% endtrans %}');
+                    return;
+                }
+
+                new Item(saveNode).update(payload);
+                return;
+            }
+
+            var inlineRemove = e.target.closest('[data-action="integrated-website-menu-item-inline-remove"]');
+            if (inlineRemove) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var removeNode = inlineRemove.closest('.integrated-website-menu-item[data-action="integrated-website-menu-item-edit"]');
+                if (!removeNode) {
+                    return;
+                }
+
+                if (!confirm('{% trans %}Are you sure you want to remove this menu item?{% endtrans %}')) {
+                    return;
+                }
+
+                new Item(removeNode).remove();
+                return;
+            }
+
+            var rowNode = e.target.closest('[data-action="integrated-website-menu-item-edit"]');
+            if (!rowNode || e.target.closest('.integrated-menu-node-settings') || e.target.closest('.integrated-menu-add-button') || e.target.closest('.integrated-menu-drag-handle')) {
+                return;
+            }
+
             e.preventDefault();
-
-            var item = new Item(element);
-            var html = editMenuModalTemplateHTML({
-                name: '',
-                uri: '',
-                typeLinkUri: true,
-                typeLinkSearchSelection: false,
-                searchSelection: null,
-                maxItems: ''
-            });
-
-            currentItem = item;
-            Integrated.showModal('{% trans %}Add menu item{% endtrans %}', html);
-            Integrated.Menu.updateLinkType();
-        });
-
-        document.body.addEventListener('click', function(e) {
-            element = e.target.closest('[data-action="integrated-website-menu-item-edit"]');
-            if (!element || e.target.closest('[data-action="integrated-website-menu-item-add"]')) {
-                return;
-            }
-
-            e.preventDefault();
             e.stopPropagation();
-
-            var item = new Item(element);
-            var html = editMenuModalTemplateHTML({
-                name:     item.getValue('name'),
-                uri:      item.getValue('uri'),
-                typeLinkUri: (typeof(item.getValue('typeLink')) == 'undefined' || item.getValue('typeLink') == 0) ? true : false,
-                typeLinkSearchSelection: (item.getValue('typeLink') == 1) ? true : false,
-                searchSelection: item.getValue('searchSelection'),
-                maxItems: (typeof(item.getValue('maxItems')) == 'undefined') ? '' : item.getValue('maxItems'),
-            }, true);
-            currentItem = item;
-
-            Integrated.showModal('{% trans %}Edit menu item{% endtrans %}', html);
-            Integrated.Menu.updateLinkType();
+            var rowRoot = getMenuRootFromElement(rowNode);
+            if (rowNode.classList.contains('integrated-menu-node-settings-open')) {
+                rowNode.classList.remove('integrated-menu-node-settings-open');
+            } else {
+                openNodeSettings(rowRoot, rowNode);
+            }
         });
 
-        document.body.addEventListener('click', function(e) {
-            element = e.target.closest('[data-action="integrated-website-menu-item-remove"]');
-            if (!element) {
+        document.body.addEventListener('change', function(e) {
+            var typeChange = e.target.closest('.integrated-menu-setting-type');
+            if (!typeChange) {
                 return;
             }
 
-            if (!confirm('{% trans %}Are you sure you want to remove this menu item?{% endtrans %}')) {
+            var typeNode = typeChange.closest('.integrated-website-menu-item[data-action="integrated-website-menu-item-edit"]');
+            if (!typeNode) {
                 return;
             }
 
-            currentItem.remove();
-            Integrated.hideModal();
+            var showSearch = String(typeChange.value) === '1';
+            var searchWrap = typeNode.querySelector('.integrated-menu-setting-search-wrap');
+            var maxWrap = typeNode.querySelector('.integrated-menu-setting-maxitems-wrap');
+            var uriWrap = typeNode.querySelector('.integrated-menu-setting-uri-wrap');
+            if (searchWrap) { searchWrap.style.display = showSearch ? '' : 'none'; }
+            if (maxWrap) { maxWrap.style.display = showSearch ? '' : 'none'; }
+            if (uriWrap) { uriWrap.style.display = showSearch ? 'none' : ''; }
         });
 
-        document.body.addEventListener('click', function(e) {
-            element = e.target.closest('[data-action="integrated-website-menu-item-save"]');
-            if (!element) {
-                return;
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.body.classList.contains(builderPanelContainerClass)) {
+                closeMenuBuilderPanel();
             }
-
-            currentItem.update({
-                typeLink: document.querySelector("[name=integrated-menu-linktype]:checked").value,
-                name:     document.getElementById('integrated-menu-name').value,
-                uri:      document.getElementById('integrated-menu-uri').value,
-                searchSelection: document.querySelector("#integrated-menu-search-selection option:checked").value,
-                maxItems: document.getElementById('integrated-menu-maxitems').value,
-            });
-
-            Integrated.hideModal();
         });
 
         Element.prototype.closestChildren = function(selector) {
-            var children = this.querySelectorAll(':scope > '+selector);
+            var children = this.querySelectorAll(':scope > ' + selector);
 
             if (children.length) {
                 return children;
@@ -327,7 +935,7 @@
 
             if (children.length) {
                 for (var i = 0; i < children.length; i++) {
-                    child = children[i];
+                    var child = children[i];
                     if (child.querySelectorAll(selector).length) {
                         return child.closestChildren(selector);
                     }
@@ -337,6 +945,45 @@
             return {};
         };
 
+        Integrated = Object.assign({}, Integrated || {}, {
+            Menu: {
+                create: function(element) {
+                    return new Menu(element);
+                },
+                updateLinkType: function() {
+                    var typeUrl = document.getElementById('typeLinkUri');
+                    var typeSearch = document.getElementById('typeLinkSearchSelection');
+                    var uriLabel = document.getElementById('integrated-uri-label');
+                    var uriControl = document.getElementById('integrated-uri-control');
+                    var selectionLabel = document.getElementById('integrated-search-selection-label');
+                    var selectionControl = document.getElementById('integrated-search-selection-control');
+                    var maxItemsLabel = document.getElementById('integrated-maxitems-label');
+                    var maxItemsControl = document.getElementById('integrated-maxitems-control');
+
+                    if (!typeUrl || !typeSearch || !uriLabel || !uriControl || !selectionLabel || !selectionControl || !maxItemsLabel || !maxItemsControl) {
+                        return;
+                    }
+
+                    if (typeUrl.checked) {
+                        uriLabel.style.display = 'block';
+                        uriControl.style.display = 'block';
+                        selectionLabel.style.display = 'none';
+                        selectionControl.style.display = 'none';
+                        maxItemsLabel.style.display = 'none';
+                        maxItemsControl.style.display = 'none';
+                    }
+
+                    if (typeSearch.checked) {
+                        uriLabel.style.display = 'none';
+                        uriControl.style.display = 'none';
+                        selectionLabel.style.display = 'block';
+                        selectionControl.style.display = 'block';
+                        maxItemsLabel.style.display = 'block';
+                        maxItemsControl.style.display = 'block';
+                    }
+                }
+            }
+        });
     }(JSON);
 
     var Integrated = Integrated || {};

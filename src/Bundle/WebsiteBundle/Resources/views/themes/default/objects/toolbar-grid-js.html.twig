@@ -32,6 +32,12 @@
          * @type object|null
          */
         var $blockTarget = null;
+        var $columnLayoutTarget = null;
+        var $columnLayoutInsertBefore = null;
+        var COLUMN_GRID_UNITS = 12;
+        var historyPast = [];
+        var historyFuture = [];
+        var historyLimit = 40;
 
         /**
          * @param Element $element
@@ -89,6 +95,8 @@
                     if (buttons) {
                         $block.prepend(createBlockButtons(), $block.firstChild);
                     }
+
+                    rememberState();
                 });
 
         };
@@ -137,6 +145,109 @@
             return element;
         };
 
+        var normalizeColumnSizes = function(sizes) {
+            var normalized = sizes
+                .map(size => parseInt(size, 10))
+                .filter(size => Number.isInteger(size) && size > 0);
+
+            if (!normalized.length) {
+                return [COLUMN_GRID_UNITS];
+            }
+
+            var sum = normalized.reduce((total, size) => total + size, 0);
+
+            if (sum !== COLUMN_GRID_UNITS) {
+                return null;
+            }
+
+            return normalized;
+        };
+
+        var getRowColumnSizes = function($row) {
+            return Array.from($row.querySelectorAll(':scope > [data-block-type="column"]'))
+                .map(column => parseInt(column.dataset.size, 10))
+                .filter(size => Number.isInteger(size) && size > 0);
+        };
+
+        var buildEvenSizes = function(count) {
+            var parsedCount = parseInt(count, 10);
+            if (!Number.isInteger(parsedCount) || parsedCount < 1 || parsedCount > COLUMN_GRID_UNITS) {
+                return [COLUMN_GRID_UNITS];
+            }
+
+            var base = Math.floor(COLUMN_GRID_UNITS / parsedCount);
+            var remainder = COLUMN_GRID_UNITS % parsedCount;
+            var sizes = [];
+
+            for (var i = 0; i < parsedCount; i++) {
+                sizes.push(base + (i < remainder ? 1 : 0));
+            }
+
+            return sizes;
+        };
+
+        var renderColumnInputs = function(sizes) {
+            return sizes.map((size, index) => '' +
+                '<label class="integrated-column-layout-field">' +
+                '  <span>{% trans %}Column{% endtrans %} ' + (index + 1) + '</span>' +
+                '  <input type="number" min="1" max="' + COLUMN_GRID_UNITS + '" value="' + size + '" data-role="column-size" class="integrated-form-control">' +
+                '</label>').join('');
+        };
+
+        var renderColumnLayoutModal = function(mode, sizes) {
+            var normalizedSizes = sizes && sizes.length ? sizes : [COLUMN_GRID_UNITS];
+            var title = mode === 'add' ? '{% trans %}Add columns{% endtrans %}' : '{% trans %}Configure columns{% endtrans %}';
+
+            return '' +
+                '<div class="integrated-column-layout-modal">' +
+                '  <p class="integrated-column-layout-help">{% trans %}Choose a layout preset or set column widths manually. Total must be 12.{% endtrans %}</p>' +
+                '  <div class="integrated-column-layout-presets">' +
+                '    <button type="button" class="btn btn-white" data-role="layout-preset" data-layout="12">1/1</button>' +
+                '    <button type="button" class="btn btn-white" data-role="layout-preset" data-layout="6-6">1/2 + 1/2</button>' +
+                '    <button type="button" class="btn btn-white" data-role="layout-preset" data-layout="4-4-4">1/3 + 1/3 + 1/3</button>' +
+                '    <button type="button" class="btn btn-white" data-role="layout-preset" data-layout="3-3-3-3">1/4 + 1/4 + 1/4 + 1/4</button>' +
+                '    <button type="button" class="btn btn-white" data-role="layout-preset" data-layout="8-4">2/3 + 1/3</button>' +
+                '    <button type="button" class="btn btn-white" data-role="layout-preset" data-layout="4-8">1/3 + 2/3</button>' +
+                '    <button type="button" class="btn btn-white" data-role="layout-preset" data-layout="3-6-3">1/4 + 1/2 + 1/4</button>' +
+                '  </div>' +
+                '  <form id="integrated-column-layout-form" class="integrated-column-layout-form" data-mode="' + mode + '">' +
+                '    <label class="integrated-column-layout-count">' +
+                '      <span>{% trans %}Number of columns{% endtrans %}</span>' +
+                '      <input type="number" min="1" max="' + COLUMN_GRID_UNITS + '" value="' + normalizedSizes.length + '" data-role="column-count" class="integrated-form-control">' +
+                '    </label>' +
+                '    <div id="integrated-column-layout-fields" class="integrated-column-layout-fields">' + renderColumnInputs(normalizedSizes) + '</div>' +
+                '    <p class="integrated-column-layout-total">{% trans %}Total{% endtrans %}: <strong data-role="column-total">' + normalizedSizes.reduce((sum, value) => sum + value, 0) + '</strong>/12</p>' +
+                '    <div class="integrated-column-layout-actions">' +
+                '      <button type="submit" class="btn btn-green"><span>' + title + '</span></button>' +
+                '      <button type="button" class="btn btn-white" data-action="integrated-column-layout-cancel"><span>{% trans %}Cancel{% endtrans %}</span></button>' +
+                '    </div>' +
+                '  </form>' +
+                '</div>';
+        };
+
+        var readColumnSizesFromForm = function($form) {
+            return Array.from($form.querySelectorAll('[data-role="column-size"]'))
+                .map(input => parseInt(input.value, 10))
+                .filter(size => Number.isInteger(size) && size > 0);
+        };
+
+        var syncColumnLayoutTotal = function($form) {
+            var total = readColumnSizesFromForm($form).reduce((sum, size) => sum + size, 0);
+            var $total = $form.querySelector('[data-role="column-total"]');
+            if ($total) {
+                $total.textContent = total;
+            }
+        };
+
+        var openColumnLayoutModal = function(mode, sizes, $targetRow, $insertBefore) {
+            $columnLayoutTarget = $targetRow || null;
+            $columnLayoutInsertBefore = $insertBefore || null;
+            Integrated.showModal(
+                mode === 'add' ? '{% trans %}Add columns{% endtrans %}' : '{% trans %}Configure columns{% endtrans %}',
+                renderColumnLayoutModal(mode, sizes),
+            );
+        };
+
         /**
          * @return Element
          */
@@ -144,6 +255,9 @@
             var element = document.createElement('div');
             element.classList.add('integrated-row-buttons');
             element.innerHTML = '' +
+                '<span class="integrated-block-button integrated-drag-handle" title="{% trans %}Drag row{% endtrans %}">' +
+                '  <i class="iconoir-drag-hand-gesture"></i>' +
+                '</span>' +
                 '<a href="javascript:;" class="integrated-block-button integrated-website-block-column-add" data-action="integrated-website-block-add" title="{% trans %}Add block{% endtrans %}">' +
                 '  <i class="iconoir-plus"></i>' +
                 '</a>' +
@@ -184,6 +298,9 @@
             var element = document.createElement('div');
             element.classList.add('integrated-block-buttons');
             element.innerHTML =
+                '<span class="integrated-block-button integrated-drag-handle" title="{% trans %}Drag block{% endtrans %}">' +
+                '  <i class="iconoir-drag-hand-gesture"></i>' +
+                '</span>' +
                 '<a href="javascript:;" class="integrated-block-button" data-action="integrated-website-block-add" title="{% trans %}Add{% endtrans %}">' +
                 '  <i class="iconoir-plus"></i>' +
                 '</a>' +
@@ -197,6 +314,61 @@
                 '</a>';
 
             return element;
+        };
+
+        var getGridRoots = function() {
+            return Array.from(document.querySelectorAll('.integrated-website-grid'));
+        };
+
+        var serializeGridState = function() {
+            return JSON.stringify(getGridRoots().map(item => item.innerHTML));
+        };
+
+        var restoreGridState = function(serializedState) {
+            var state = JSON.parse(serializedState);
+            var roots = getGridRoots();
+
+            roots.forEach((root, index) => {
+                root.innerHTML = state[index] || '';
+            });
+
+            document.querySelectorAll('.integrated-website-droppable').forEach(item => {
+                initSortable(item);
+            });
+        };
+
+        var rememberState = function() {
+            var state = serializeGridState();
+            if (historyPast.length && historyPast[historyPast.length - 1] === state) {
+                return;
+            }
+
+            historyPast.push(state);
+            if (historyPast.length > historyLimit) {
+                historyPast.shift();
+            }
+
+            historyFuture = [];
+        };
+
+        var undoState = function() {
+            if (historyPast.length < 2) {
+                return;
+            }
+
+            var current = historyPast.pop();
+            historyFuture.push(current);
+            restoreGridState(historyPast[historyPast.length - 1]);
+        };
+
+        var redoState = function() {
+            if (!historyFuture.length) {
+                return;
+            }
+
+            var state = historyFuture.pop();
+            historyPast.push(state);
+            restoreGridState(state);
         };
 
         var showLoader = function() {
@@ -262,9 +434,12 @@
                         </div>\n
                         <div id="add_block_results">\n
                            ${data.blocks.map(
-                block => `<div class="integrated-card" data-action="integrated-website-block-choose" data-id="${block.id}">
-                                    <p><b>${block.title}</b></p>
-                                    <p>${block.type}</p>
+                block => `<div class="integrated-card integrated-block-result-card" data-action="integrated-website-block-choose" data-id="${block.id}">
+                                    <p class="integrated-block-result-title"><b>${block.title}</b></p>
+                                    <p class="integrated-block-result-meta">
+                                        <span class="integrated-block-result-type">${block.type}</span>
+                                        <span class="integrated-block-result-id">#${block.id.slice(0, 8)}</span>
+                                    </p>
                                 </div>`).join('')}
                         </div>\n
                         <div>`;
@@ -325,6 +500,8 @@
             document.querySelectorAll('.integrated-website-droppable').forEach(item =>
                 initSortable(item),
             );
+
+            rememberState();
         }
 
         if (document.readyState != 'loading') {
@@ -462,6 +639,7 @@
             if (confirm('Are you sure?')) {
                 removeElement = element.parentNode.parentNode;
                 removeElement.parentNode.removeChild(removeElement);
+                rememberState();
             }
         });
 
@@ -479,6 +657,7 @@
             if (confirm('Are you sure?')) {
                 removeElement = element.parentNode.parentNode;
                 removeElement.parentNode.removeChild(removeElement);
+                rememberState();
             }
         });
 
@@ -521,43 +700,7 @@
             }
 
             e.preventDefault();
-
-            var total = parseInt(prompt('How many columns do you want?'));
-
-            if (total > 12) {
-                alert('A maxiumum of 12 columns is supported');
-                return;
-            }
-
-            if (total > 0) {
-                var $row = createRow();
-                var doneSize = 0;
-
-                for (var i = 0; i < total; i++) {
-                    var size = parseInt(
-                        prompt('Size of column ' + (i + 1) + '? (' + (12 - doneSize) + ' or 12 available)'));
-
-                    if (size < 1) {
-                        alert('Size must be at least one');
-
-                        return;
-                    }
-
-                    if (size > (12 - doneSize)) {
-                        alert('Size must be at most ' + (12 - doneSize));
-
-                        return;
-                    }
-
-                    doneSize = doneSize + size;
-
-                    $row.append(createColumn(size));
-                }
-
-                $row.append(createRowButtons());
-
-                element.parentNode.insertAdjacentElement('beforebegin', $row);
-            }
+            openColumnLayoutModal('add', [COLUMN_GRID_UNITS], null, element.parentNode);
         });
 
         /**
@@ -572,43 +715,103 @@
             e.preventDefault();
 
             var $row = element.parentNode.parentNode;
-            var $oldColumns = $row.querySelectorAll(':scope > [data-block-type="column"]');
-            //TODO: Decide how to define the framework we use for css, Maybe define it in a config, output it in body class so we can pick it up in JS?.
+            var sizes = getRowColumnSizes($row);
+            openColumnLayoutModal('config', sizes, $row, null);
+        });
 
-            var total = parseInt(prompt('How many columns do you want?', $oldColumns.length));
-
-            if (total > 12) {
-                alert('A maxiumum of 12 columns is supported');
+        document.body.addEventListener('click', function(e) {
+            element = e.target.closest('[data-role="layout-preset"]');
+            if (!element) {
                 return;
             }
 
-            if (total > 0) {
-                var doneSize = 0;
-                for (var i = 0; i < total; i++) {
-                    var oldSize = '';
+            e.preventDefault();
 
-                    if ($oldColumns[i]) {
-                        oldSize = $oldColumns[i].dataset.size;
-                    }
+            var $form = document.querySelector('#integrated-column-layout-form');
+            if (!$form) {
+                return;
+            }
 
-                    var size = parseInt(
-                        prompt('Size of column ' + (i + 1) + '? (' + (12 - doneSize) + ' or 12 available)', oldSize));
+            var sizes = element.dataset.layout.split('-').map(size => parseInt(size, 10));
+            $form.querySelector('[data-role="column-count"]').value = sizes.length;
+            $form.querySelector('#integrated-column-layout-fields').innerHTML = renderColumnInputs(sizes);
+            syncColumnLayoutTotal($form);
+        });
 
-                    if (size < 1) {
-                        alert('Size must be at least one');
+        document.body.addEventListener('change', function(e) {
+            var $count = e.target.closest('[data-role="column-count"]');
+            if (!$count) {
+                return;
+            }
 
-                        return;
-                    }
+            var $form = $count.closest('#integrated-column-layout-form');
+            if (!$form) {
+                return;
+            }
 
-                    if (size > (12 - doneSize)) {
-                        alert('Size must be at most ' + (12 - doneSize));
+            var sizes = buildEvenSizes($count.value);
+            $form.querySelector('#integrated-column-layout-fields').innerHTML = renderColumnInputs(sizes);
+            syncColumnLayoutTotal($form);
+        });
 
-                        return;
-                    }
+        document.body.addEventListener('input', function(e) {
+            var $size = e.target.closest('[data-role="column-size"]');
+            if (!$size) {
+                return;
+            }
 
-                    doneSize = doneSize + size;
+            var $form = $size.closest('#integrated-column-layout-form');
+            if ($form) {
+                syncColumnLayoutTotal($form);
+            }
+        });
 
-                    let colClass = ' w-full';
+        document.body.addEventListener('click', function(e) {
+            element = e.target.closest('[data-action="integrated-column-layout-cancel"]');
+            if (!element) {
+                return;
+            }
+
+            e.preventDefault();
+            Integrated.hideModal();
+            $columnLayoutTarget = null;
+            $columnLayoutInsertBefore = null;
+        });
+
+        document.body.addEventListener('submit', function(e) {
+            if (e.target.id !== 'integrated-column-layout-form') {
+                return;
+            }
+
+            e.preventDefault();
+
+            var $form = e.target;
+            var mode = $form.dataset.mode;
+            var sizes = normalizeColumnSizes(readColumnSizesFromForm($form));
+
+            if (!sizes) {
+                alert('{% trans %}Column sizes must add up to 12{% endtrans %}');
+                return;
+            }
+
+            if (mode === 'add') {
+                if (!$columnLayoutInsertBefore) {
+                    Integrated.hideModal();
+                    return;
+                }
+
+                var $row = createRow();
+                sizes.forEach(size => $row.append(createColumn(size)));
+                $row.append(createRowButtons());
+                $columnLayoutInsertBefore.insertAdjacentElement('beforebegin', $row);
+            }
+
+            if (mode === 'config' && $columnLayoutTarget) {
+                var $oldColumns = $columnLayoutTarget.querySelectorAll(':scope > [data-block-type="column"]');
+
+                for (var i = 0; i < sizes.length; i++) {
+                    var size = sizes[i];
+                    var colClass = ' w-full';
 
                     if (typeof framework !== 'undefined' && (size !== 12 && framework === 'tailwind')) {
                         colClass = ' w-full md:w-' + size + '/12';
@@ -617,25 +820,56 @@
                     }
 
                     if ($oldColumns[i]) {
-                        $oldColumns[i].setAttribute('class',
-                            'integrated-website-col integrated-website-droppable' + colClass);
+                        $oldColumns[i].setAttribute('class', 'integrated-website-col integrated-website-droppable' + colClass);
                         $oldColumns[i].dataset.size = size;
                     } else {
-                        $row.appendChild(createColumn(size));
+                        $columnLayoutTarget.appendChild(createColumn(size));
                     }
                 }
 
-                //if there were more columns, remove the last columns
                 while (typeof $oldColumns[i] !== 'undefined') {
                     $oldColumns[i].parentNode.removeChild($oldColumns[i]);
+                    i++;
                 }
-
-                $row.insertBefore($row.firstChild);
             }
 
-            if (total === 0) {
-                //no count, so remove entire row
-                $row.parentNode.removeChild($row);
+            Integrated.hideModal();
+            $columnLayoutTarget = null;
+            $columnLayoutInsertBefore = null;
+            rememberState();
+        });
+
+        document.body.addEventListener('click', function(e) {
+            element = e.target.closest('[data-action="integrated-website-history-undo"]');
+            if (!element) {
+                return;
+            }
+
+            e.preventDefault();
+            undoState();
+        });
+
+        document.body.addEventListener('click', function(e) {
+            element = e.target.closest('[data-action="integrated-website-history-redo"]');
+            if (!element) {
+                return;
+            }
+
+            e.preventDefault();
+            redoState();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z') {
+                e.preventDefault();
+                undoState();
+                return;
+            }
+
+            if (((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'z') || ((e.ctrlKey || e.metaKey) &&
+                e.key.toLowerCase() === 'y')) {
+                e.preventDefault();
+                redoState();
             }
         });
 
@@ -748,9 +982,13 @@
                 forceFallback: true,
                 scrollSpeed: 80,
                 draggable: '.integrated-website-sortable',
+                handle: '.integrated-drag-handle',
                 ghostClass: 'integrated-website-item-ghost',
-                filter: '.integrated-block-buttons',
+                filter: '.integrated-block-button:not(.integrated-drag-handle)',
                 dragClass: 'integrated-website-item-dragging',
+                onEnd: function() {
+                    rememberState();
+                },
             });
         };
 
@@ -829,6 +1067,21 @@
                 document.querySelector('#add_block_results').parentElement.outerHTML = addBlockModalTemplateHTML(data);
             });
         }
+
+        var blockFilterDebounce;
+        document.addEventListener('input', function(e) {
+            if (e.target.id !== 'integrated_block_filter_q') {
+                return;
+            }
+
+            window.clearTimeout(blockFilterDebounce);
+            blockFilterDebounce = window.setTimeout(function() {
+                var form = document.querySelector('#add_block_filters_form');
+                if (form) {
+                    refreshBlockData(form);
+                }
+            }, 220);
+        });
     }(window.Routing);
 
     var Integrated = Integrated || {};
