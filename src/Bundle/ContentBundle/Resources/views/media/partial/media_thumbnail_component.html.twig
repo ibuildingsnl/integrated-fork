@@ -1,10 +1,15 @@
 {% set thumbnail = integrated_image(media.file).cropResize(200, 200) %}
 {% set description = media.description|default('') %}
 {% set credits = media.credits|default('') %}
+{% set contentType = media.contentType is defined ? media.contentType : (media.contenttype is defined ? media.contenttype : '') %}
+{% set fileRaw = media.file is defined ? (media.file ~ '') : '' %}
+{% set filePath = fileRaw|split('"')|first|split(',')|first %}
+{% set filetypeCandidate = filePath|split('.')|last|lower %}
+{% set filetype = filetypeCandidate matches '/^[a-z0-9]{1,5}$/' ? filetypeCandidate : '' %}
 
-<li class="media-item ui-widget-content ui-corner-tr grid {{ media.contentType }}{% if media.id in (selected_ids|default([])) %} selected{% endif %}"
+<li class="media-item ui-widget-content ui-corner-tr grid {{ contentType }}{% if media.id in (selected_ids|default([])) %} selected{% endif %}"
     id="{{ media.id }}"
-    data-content_type="{{ media.contenttype }}"
+    data-content_type="{{ contentType }}"
     data-id="{{ media.id }}"
     data-media_id="{{ loop is defined ? loop.index : media.id }}"
     data-thumbnail="{{ thumbnail }}"
@@ -18,9 +23,9 @@
                 <img src="{{ thumbnail }}" alt="{{ media.title }}">
             </div>
         </div>
-        {% if media.file is defined and media.file|split('.')|last|lower not in not_shown_filetypes %}
+        {% if filetype and filetype not in not_shown_filetypes %}
             <div class="filetype">
-                {{ media.file|split('.')|last|lower }}
+                {{ filetype|upper }}
             </div>
         {% endif %}
     </div>

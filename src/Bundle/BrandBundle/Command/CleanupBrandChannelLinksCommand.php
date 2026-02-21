@@ -4,11 +4,16 @@ namespace Integrated\Bundle\BrandBundle\Command;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BrandBundle\Document\Brand;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(
+    name: 'integrated:brand:cleanup-channel-links',
+    description: 'Remove brand channel links that have null or a specific channel',
+)]
 class CleanupBrandChannelLinksCommand extends Command
 {
     protected static $defaultName = 'integrated:brand:cleanup-channel-links';

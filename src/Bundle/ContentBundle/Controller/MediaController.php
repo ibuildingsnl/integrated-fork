@@ -139,7 +139,7 @@ class MediaController extends AbstractController
         }
 
         if (!\count($options['contenttypes'])) {
-            $options['contenttypes'] = ['file'];
+            $options['contenttypes'] = array_keys($this::DEFAULT_FILE_TYPES);
         }
 
         $this->setYearMonthFilter($options, $request->query->get('year_month'));
@@ -162,15 +162,12 @@ class MediaController extends AbstractController
         $dateFilterOptions = $this->getDateFilterOptions($request, $dateFilter);
 
         $request = $this->removeIdsFromRequest($request);
-
-        $selectedMedia = $this->getSelectedMedia($requestSource);
-
-        $requestSource = $this->removeIdsFromRequest($requestSource);
+        $selectedMedia = $this->getSelectedMedia($request);
 
         return [
             'paginator' => $paginator,
             'selectedMedia' => $selectedMedia,
-            'contentTypeSelectOptions' => $this->removeStandardClasses($contentTypeSelectOptions),
+            'contentTypeSelectOptions' => $this->removeStandardClasses($contentTypes),
             'contentTypeFilterOptions' => $contentTypeFilterOptions,
             'dateFilterOptions' => $dateFilterOptions,
             'menu' => $menu,

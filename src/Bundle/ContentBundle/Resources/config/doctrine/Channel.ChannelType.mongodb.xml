@@ -7,8 +7,8 @@
 
         <id field-name="id" strategy="NONE" />
         <field field-name="name" type="string" />
-        <field field-name="canBePrimary" type="boolean" />
-        <field field-name="canBeSetGlobally" type="boolean" />
+        <field field-name="canBePrimary" type="bool" />
+        <field field-name="canBeSetGlobally" type="bool" />
         <field field-name="connector" type="string" nullable="true" />
         <field field-name="publicationSettingsForm" type="string" nullable="true" />
         <field field-name="icon" type="string" nullable="true" />

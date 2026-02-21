@@ -9,19 +9,42 @@
         Menu.prototype.load = function(data, success) {
             var element = this.element;
             var menu = this;
+            var payload = data;
+
+            if (typeof payload !== 'string') {
+                payload = JSON.stringify(payload || {});
+            }
 
             fetch('{{ path('integrated_website_menu_render') }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: data
+                body: payload
             })
                 .then(response => response.json())
-                .then(data => {
+                .then(result => {
+                    if (typeof result === 'string') {
+                        try {
+                            result = JSON.parse(result);
+                        } catch (e) {
+                            result = {};
+                        }
+                    }
+
+                    if (!result || typeof result !== 'object') {
+                        result = {};
+                    }
+
                     // success
-                    element.dataOptions = data.options;
-                    element.innerHTML = data.html;
+                    element.dataOptions = result.options || {};
+
+                    var html = result.html;
+                    if (html === undefined || html === null || html === 'undefined') {
+                        html = '';
+                    }
+
+                    element.innerHTML = html;
 
                     element.querySelectorAll('.integrated-website-menu-list, .integrated-website-menu-item').forEach(item => {
                             if (item.dataset.json) {

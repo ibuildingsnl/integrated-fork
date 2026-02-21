@@ -322,9 +322,8 @@ class ContentController extends AbstractController
 
                 return $this->redirectToRoute(
                     'integrated_content_content_edit',
-                    ['remember' => 1, 'id' => $content->getId()]
+                    ['id' => $content->getId()]
                 );
-                // TODO: Remember is broken, needs fixin.
             }
         }
 
@@ -362,13 +361,16 @@ class ContentController extends AbstractController
     /**
      * Update a existing document.
      */
-    public function edit(Request $request, Content $content): Response
+    public function edit(Request $request, string $id): Response
     {
+        /** @var Content|null $content */
         $content = $this->documentManager->getRepository(Content::class)->find($id);
-        if (!$content) {
-            $this->addFlash('warning', 'Content not found');
+        if (!$content && preg_match('/^[a-z0-9_]+-([a-f0-9]{24}|[a-f0-9]{32})$/i', $id, $matches)) {
+            $content = $this->documentManager->getRepository(Content::class)->find($matches[1]);
+        }
 
-            return $this->redirectToRoute('integrated_content_content_index');
+        if (!$content) {
+            throw $this->createNotFoundException('Content not found.');
         }
 
         /** @var ContentTypeInterface $contentType */

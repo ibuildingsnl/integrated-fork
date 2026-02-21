@@ -123,8 +123,30 @@ function placeClone(clone) {
 }
 
 function filterImages(selection) {
-    const allowed_types = selected_relation.types.map(item => item.type);
-    return selection.filter(item => allowed_types.includes(item.content_type));
+    const allowed_types = selected_relation.types
+        .map(item => String(item.type || '').toLowerCase())
+        .filter(Boolean);
+
+    if (allowed_types.length === 0) {
+        return selection;
+    }
+
+    return selection.filter(item => {
+        const contentType = String(
+            item.content_type ||
+            item.contentType ||
+            item.contenttype ||
+            item.type ||
+            ''
+        ).toLowerCase();
+
+        // Keep items without type metadata instead of silently dropping valid selections.
+        if (!contentType) {
+            return true;
+        }
+
+        return allowed_types.includes(contentType);
+    });
 }
 
 function addImageIDsToInputField() {

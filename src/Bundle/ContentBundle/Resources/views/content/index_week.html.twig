@@ -179,7 +179,7 @@
                                             {% for brandName, channels in groupedChannels %}
                                                 {% for channel in channels %}
                                                     {% if channel|integrated_brand_profile.favicon.file is defined %}
-                                                        <div class="channel-favicon" style="background-image:url('{{ image(channel|integrated_brand_profile.favicon.file).cropResize(36, 36)|default }}')"
+                                                        <div class="channel-favicon" style="background-image:url('{{ image(channel|integrated_brand_profile.favicon.file).cropResize(36, 36) }}')"
                                                              title="{{ channel|integrated_brand_profile.name|default('') }}">
                                                         </div>
                                                     {% else %}

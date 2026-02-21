@@ -28,13 +28,24 @@
 
 {% block webpack_js %}
     <script>
-        $(document).keyup(function(e) {
-            if (e.key === 'Escape') {
-                let closeOutside = parent.$('.close-outside.show');
-                closeOutside.removeClass('show');
-                parent.$('#dropdown_overlay').addClass('hide');
-                window.popupShown = false;
+        document.addEventListener('keyup', function (e) {
+            if (e.key !== 'Escape') {
+                return;
             }
+
+            const parentDocument = window.parent && window.parent.document ? window.parent.document : null;
+            if (parentDocument) {
+                parentDocument
+                    .querySelectorAll('.close-outside.show')
+                    .forEach((element) => element.classList.remove('show'));
+
+                const dropdownOverlay = parentDocument.querySelector('#dropdown_overlay');
+                if (dropdownOverlay) {
+                    dropdownOverlay.classList.add('hide');
+                }
+            }
+
+            window.popupShown = false;
         });
     </script>
 {% endblock %}
