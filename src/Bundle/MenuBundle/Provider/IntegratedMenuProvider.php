@@ -77,6 +77,16 @@ class IntegratedMenuProvider implements MenuProviderInterface
         foreach ($menu->getChildren() as $child) {
             $child->setParent($menu);
 
+            if ($child instanceof MenuItem) {
+                if ($child->isTargetBlank()) {
+                    $child->setLinkAttribute('target', '_blank');
+                    $child->setLinkAttribute('rel', 'noopener noreferrer');
+                } else {
+                    $child->setLinkAttribute('target', null);
+                    $child->setLinkAttribute('rel', null);
+                }
+            }
+
             if ($child->hasChildren()) {
                 $this->resolveParent($child); // recursion
             }

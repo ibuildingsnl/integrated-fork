@@ -11,3 +11,7 @@
 {% block sidebar_menu %}{% endblock %}
 {% block filters %}{% endblock %}
 {% block main_title %}{% endblock %}
+
+{% block form_start %}
+    {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
+{% endblock %}
