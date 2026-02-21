@@ -296,12 +296,14 @@
 
             this.element.data = data;
             this.element.dataset.action = 'integrated-website-menu-item-edit';
-            this.menu.refresh(data.id);
+            this.element.classList.remove('integrated-menu-node-settings-open');
+            decorateWorkspaceNode(this.element);
+            this.element.classList.add('integrated-menu-node-settings-open');
         };
 
         Item.prototype.remove = function() {
             this.element.remove();
-            this.menu.refresh();
+            ensureEmptyMenuAction(this.menu.element);
         };
 
         Item.prototype.getOrCreateAddChildPlaceholder = function() {
@@ -435,7 +437,7 @@
                     '<button type="button" class="integrated-menu-drag-handle" aria-label="{% trans %}Drag menu item{% endtrans %}"><i class="iconoir-menu-scale"></i></button>' +
                     (hasChildren
                         ? '<button type="button" class="integrated-menu-node-expand" data-action="integrated-website-menu-item-toggle" aria-label="{% trans %}Toggle submenu{% endtrans %}"><i class="iconoir-nav-arrow-down"></i></button>'
-                        : '<span class="integrated-menu-node-expand-placeholder"></span>') +
+                        : '') +
                     '<div class="integrated-menu-node-content">' +
                         '<div class="integrated-menu-node-title-row">' +
                             '<span class="integrated-menu-node-title">' + escapeHtml(name) + '</span>' +
@@ -530,7 +532,10 @@
                 var anchor = node.querySelector(':scope > a');
                 if (anchor) {
                     anchor.style.display = '';
+                    anchor.removeAttribute('style');
+                    anchor.removeAttribute('draggable');
                 }
+                node.removeAttribute('draggable');
             });
 
             var lists = [];
@@ -564,6 +569,7 @@
                     delete list.dataset.integratedSyntheticList;
                 }
                 list.style.display = '';
+                list.removeAttribute('draggable');
             });
         };
 

@@ -1024,7 +1024,7 @@
         line-height: 1.5;
     }
 
-    .integrated-website-toolbar .btn {
+    .integrated-website-toolbar .btn, .integrated-menu-node-settings-actions .btn {
         align-items: center;
         -webkit-appearance: none;
         -moz-appearance: none;
@@ -1620,16 +1620,6 @@
         margin-top: 10px;
     }
 
-    .integrated-menu-node-settings-actions .btn {
-        border-radius: 0;
-        height: 32px;
-        line-height: 32px;
-        font-size: 14px;
-        padding: 0 0.8rem;
-        display: inline-flex;
-        align-items: center;
-    }
-
     .integrated-menu-add-node {
         margin: 10px 0 8px;
         cursor: default;
@@ -1753,14 +1743,39 @@
     }
 
     .integrated-menu-workspace-actions .btn {
-        display: inline-flex;
-        align-items: center;
         gap: 6px;
-        border-radius: 0;
-        height: 32px;
-        line-height: 32px;
+    }
+
+    .integrated-menu-builder-panel .btn {
+        align-items: center;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        -ms-appearance: none;
+        -o-appearance: none;
+        appearance: none;
+        border: 1px solid;
+        border-radius: 8px;
+        cursor: pointer;
+        display: inline-flex;
         font-size: 14px;
+        font-weight: 300;
+        height: 32px;
+        line-height: 40px;
         padding: 0 0.8rem;
+        text-decoration: none;
+        outline: none;
+    }
+
+    .integrated-menu-builder-panel .btn-green {
+        background-color: #00ae93;
+        border: #00ae93;
+        color: white;
+    }
+
+    .integrated-menu-builder-panel .btn-red {
+        background-color: #c10000;
+        border: #c10000;
+        color: white;
     }
 
     #integrated_block_filter_channels {
