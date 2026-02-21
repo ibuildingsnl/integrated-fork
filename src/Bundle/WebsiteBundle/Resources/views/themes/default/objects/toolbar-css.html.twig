@@ -1381,15 +1381,24 @@
     }
 
     .integrated-menu-tree-list .integrated-menu-tree-list {
-        margin-left: 22px;
-        padding-left: 14px;
+        margin-left: 16px;
+        margin-top: 6px;
+        padding-left: 10px;
         border-left: 1px dashed #ced7e2;
         display: block !important;
+        min-height: 34px;
+        box-sizing: border-box;
     }
 
     .integrated-menu-tree-list .integrated-menu-tree-list:empty {
-        min-height: 16px;
-        margin-top: 6px;
+        min-height: 40px;
+        padding-top: 8px;
+    }
+
+    .integrated-menu-tree-list .integrated-menu-tree-list.integrated-menu-drop-target {
+        border-left-color: #00ae93;
+        background: rgba(0, 174, 147, 0.08);
+        border-radius: 8px;
     }
 
     .integrated-menu-tree-list > .integrated-website-menu-item {
@@ -1738,6 +1747,7 @@
     .integrated-menu-workspace-tree {
         flex: 1;
         overflow: auto;
+        overflow-x: hidden;
         padding: 16px;
     }
 

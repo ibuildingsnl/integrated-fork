@@ -42,15 +42,26 @@ class MenuController extends AbstractController
     public function renderMenu(Request $request): Response
     {
         $data = (array) json_decode($request->getContent(), true);
+        $options = isset($data['options']) ? (array) $data['options'] : [];
         $menu = null;
 
         if (isset($data['data'])) {
             $menu = $this->menuFactory->fromArray($data['data']);
         }
 
+        // In edit mode we still need a root menu object so the UI can render an add-item placeholder.
+        if (!$menu && !empty($options['editMode'])) {
+            $name = 'menu';
+            if (isset($data['data']) && is_array($data['data']) && !empty($data['data']['name'])) {
+                $name = (string) $data['data']['name'];
+            }
+
+            $menu = $this->menuFactory->createItem($name);
+        }
+
         return $this->render('@IntegratedWebsite/menu/render.'.$request->getRequestFormat('json').'.twig', [
             'menu' => $menu,
-            'options' => isset($data['options']) ? $data['options'] : [],
+            'options' => $options,
         ]);
     }
 
@@ -64,7 +75,12 @@ class MenuController extends AbstractController
 
         if (isset($data['menu'])) {
             foreach ((array) $data['menu'] as $array) { // support multiple menu's
-                if ($menu = $this->menuFactory->fromArray((array) $array)) {
+                $sanitized = $this->sanitizeMenuArray((array) $array, true);
+                if (!$sanitized) {
+                    continue;
+                }
+
+                if ($menu = $this->menuFactory->fromArray($sanitized)) {
                     if ($this->menuProvider->has($menu->getName())) {
                         $menu2 = $this->menuProvider->get($menu->getName());
                         $menu2->setChildren($menu->getChildren());
@@ -80,5 +96,33 @@ class MenuController extends AbstractController
         }
 
         return new JsonResponse();
+    }
+
+    private function sanitizeMenuArray(array $item, bool $isRoot = false): ?array
+    {
+        $children = [];
+        foreach ((array) ($item['children'] ?? []) as $child) {
+            $sanitizedChild = $this->sanitizeMenuArray((array) $child);
+            if ($sanitizedChild) {
+                $children[] = $sanitizedChild;
+            }
+        }
+        $item['children'] = $children;
+
+        if ($isRoot) {
+            return $item;
+        }
+
+        $name = trim((string) ($item['name'] ?? ''));
+        $uri = trim((string) ($item['uri'] ?? ''));
+        $searchSelection = trim((string) ($item['searchSelection'] ?? ''));
+        $hasChildren = \count($children) > 0;
+
+        $isPlaceholder = ($name === '' || $name === '+')
+            && ($uri === '' || $uri === '#')
+            && $searchSelection === ''
+            && !$hasChildren;
+
+        return $isPlaceholder ? null : $item;
     }
 }

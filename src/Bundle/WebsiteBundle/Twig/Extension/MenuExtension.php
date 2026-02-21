@@ -185,7 +185,32 @@ class MenuExtension extends AbstractExtension
             $this->prepareItems($child, $options, $depth + 1); // recursion
         }
 
-        // New menu items are created via the sidebar builder; do not inject "+" placeholders in the page markup.
+        $showAddButton = isset($options['depth']) && $depth <= (int) $options['depth'];
+
+        // Keep empty menus editable in website edit mode by ensuring a root add placeholder exists.
+        if (!$showAddButton && !empty($options['editMode']) && 1 === $depth) {
+            $showAddButton = true;
+        }
+
+        if ($showAddButton) {
+            $uuid = sprintf(
+                'tmp-%s-%d',
+                bin2hex(random_bytes(8)),
+                random_int(1000, 9999)
+            );
+
+            /** @var MenuItem $child */
+            $child = $menu->addChild('+', [
+                'uri' => '#',
+                'attributes' => [
+                    'class' => 'integrated-website-menu-item',
+                    'data-action' => 'integrated-website-menu-item-add',
+                ],
+            ]);
+
+            $child->setId($uuid);
+            $child->setAttribute('data-json', json_encode($child->toArray(false)));
+        }
     }
 
     public function getName()
