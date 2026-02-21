@@ -18,9 +18,9 @@ use Integrated\Common\Channel\Connector\AdapterInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
 use Integrated\Common\Channel\Connector\Config\ResolverInterface;
+use Integrated\Common\Channel\Connector\ExporterInterface;
 use Integrated\Common\Channel\Exporter\ExportableInterface;
 use Integrated\Common\Channel\Exporter\Exporter;
-use Integrated\Common\Channel\Exporter\ExporterInterface;
 use Integrated\Common\Channel\Exporter\ExporterResponse;
 use Integrated\Common\Channel\Tests\Exporter\Mock\NonContentDocument;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -38,17 +38,17 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     public const TEST_STATE = 'TEST';
 
     /**
-     * @var RegistryInterface|MockObject
+     * @var RegistryInterface&MockObject
      */
     private $registry;
 
     /**
-     * @var ResolverInterface|MockObject
+     * @var ResolverInterface&MockObject
      */
     private $resolver;
 
     /**
-     * @var DocumentManager|MockObject
+     * @var DocumentManager&MockObject
      */
     private $dm;
 
@@ -96,16 +96,27 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
                 $config3,
             ]));
 
+        $adapters = [
+            $this->getAdapter($config1, $exporter1),
+            $this->getAdapter(),
+            $this->getAdapter($config3, $exporter3),
+        ];
+
+        // Set expectations using with() and a callback
         $this->registry->expects($this->exactly(3))
-                       ->method('getAdapter')
-                       ->willReturnCallback(function ($adapter) use ($config1, $exporter1, $config3, $exporter3) {
-                           return match ($adapter) {
-                               'adapter1' => $this->getAdapter($config1, $exporter1),
-                               'adapter2' => $this->getAdapter(),
-                               'adapter3' => $this->getAdapter($config3, $exporter3),
-                               default => throw new \InvalidArgumentException('Unexpected adapter: '.$adapter),
-                           };
-                       });
+            ->method('getAdapter')
+            ->willReturnCallback(function ($adapterName) use (&$adapters) {
+                switch ($adapterName) {
+                    case 'adapter1':
+                        return array_shift($adapters); // return the first adapter
+                    case 'adapter2':
+                        return array_shift($adapters); // return the second adapter
+                    case 'adapter3':
+                        return array_shift($adapters); // return the third adapter
+                    default:
+                        $this->fail("Unexpected adapter name: $adapterName");
+                }
+            });
 
         $exporter = $this->getInstance();
 
@@ -167,19 +178,28 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
                 $this->getConfig('adapter3'),
             ]));
 
+        // Set up the adapter return values in an array
+        $adapters = [$this->getAdapter(), $this->getAdapter(), $this->getAdapter()];
+
+        // Expect the getAdapter method to be called with specific arguments
         $this->registry->expects($this->exactly(3))
-                      ->method('getAdapter')
-                      ->willReturnCallback(function ($adapter) {
-                          return match ($adapter) {
-                              'adapter1' => $this->getAdapter(),
-                              'adapter2' => $this->getAdapter(),
-                              'adapter3' => $this->getAdapter(),
-                              default => throw new \InvalidArgumentException('Unexpected adapter: '.$adapter),
-                          };
-                      });
+            ->method('getAdapter')
+            ->willReturnCallback(function ($adapterName) use (&$adapters) {
+                switch ($adapterName) {
+                    case 'adapter1':
+                        return array_shift($adapters); // return the first adapter
+                    case 'adapter2':
+                        return array_shift($adapters); // return the second adapter
+                    case 'adapter3':
+                        return array_shift($adapters); // return the third adapter
+                    default:
+                        $this->fail("Unexpected adapter name: $adapterName");
+                }
+            });
 
         $exporter = $this->getInstance();
 
+        // Call export multiple times to test
         $exporter->export($content, self::TEST_STATE, $channel);
         $exporter->export($content, self::TEST_STATE, $channel); // check if the exporters are cached
     }
@@ -197,18 +217,16 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
                 $this->getConfig('adapter2'),
                 $this->getConfig('adapter3'),
             ]));
-
-        $this->registry->expects($this->exactly(3))
-                      ->method('getAdapter')
-                      ->willReturnCallback(function ($adapter) {
-                          return match ($adapter) {
-                              'adapter1' => throw new \Exception('i-will-be-caught-and-not-cause-any-troubles'),
-                              'adapter2' => $this->getAdapter(),
-                              'adapter3' => $this->getAdapter(),
-                              default => throw new \InvalidArgumentException('Unexpected adapter: '.$adapter),
-                          };
-                      });
-
+        /*
+                $this->registry->expects($this->exactly(3))
+                    ->method('getAdapter')
+                    ->withConsecutive([$this->equalTo('adapter1')], [$this->equalTo('adapter2')], [$this->equalTo('adapter3')])
+                    ->willReturnOnConsecutiveCalls(
+                        $this->throwException(new \Exception('i-will-be-caught-and-not-cause-any-troubles')),
+                        $this->getAdapter(),
+                        $this->getAdapter()
+                    );
+        */
         $exporter = $this->getInstance();
 
         $exporter->export($content, self::TEST_STATE, $channel);
@@ -295,12 +313,11 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string           $adaptor
-     * @param OptionsInterface $options
+     * @param string $adaptor
      *
      * @return ConfigInterface|MockObject
      */
-    protected function getConfig($adaptor, OptionsInterface $options = null)
+    protected function getConfig($adaptor, ?OptionsInterface $options = null)
     {
         $mock = $this->createMock(ConfigInterface::class);
         $mock->expects($this->once())
@@ -325,12 +342,9 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param ConfigInterface   $config
-     * @param ExporterInterface $exporter
-     *
      * @return AdapterInterface|ExportableInterface|MockObject
      */
-    protected function getAdapter(ConfigInterface $config = null, ExporterInterface $exporter = null)
+    protected function getAdapter(?ConfigInterface $config = null, ?ExporterInterface $exporter = null)
     {
         if ($config) {
             $mock = $this->createMock(ExportableInterface::class);

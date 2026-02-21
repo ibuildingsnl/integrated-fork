@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\PageBundle\Document\Page\Grid;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Column document.
@@ -26,7 +27,7 @@ class Column implements ItemsInterface
     protected $size;
 
     /**
-     * @var Item[]
+     * @var Collection<Item>
      */
     protected $items;
 

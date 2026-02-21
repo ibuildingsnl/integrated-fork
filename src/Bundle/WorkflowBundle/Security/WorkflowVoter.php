@@ -85,30 +85,12 @@ class WorkflowVoter implements VoterInterface
         return $resolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsAttribute($attribute)
     {
         return \in_array($attribute, $this->permissions);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsClass($class)
-    {
-        if (\is_object($class)) {
-            $class = \get_class($class);
-        }
-
-        return is_subclass_of($class, 'Integrated\\Bundle\\UserBundle\\Model\\GroupableInterface');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function vote(TokenInterface $token, $object, array $attributes)
+    public function vote(TokenInterface $token, $object, array $attributes): int
     {
         if (!$object instanceof ContentInterface) {
             return VoterInterface::ACCESS_ABSTAIN;
@@ -174,23 +156,8 @@ class WorkflowVoter implements VoterInterface
             return VoterInterface::ACCESS_GRANTED;
         }
 
-        // security checks are group based so deny every token class that
-        // does not support groups.
-
-        if (!$this->supportsClass($token->getUser())) {
-            // if any of the attributes is supported then deny else abstain
-
-            foreach ($attributes as $attribute) {
-                if ($this->supportsAttribute($attribute)) {
-                    return VoterInterface::ACCESS_DENIED;
-                }
-            }
-
-            return VoterInterface::ACCESS_ABSTAIN;
-        }
-
-        $permissions = $this->getPermissions($token->getUser(), $permissionGroups);
-        $isAssigned = $this->isAssigned($token->getUser(), $object);
+        $permissions = $this->getPermissions($user, $permissionGroups);
+        $isAssigned = $this->isAssigned($user, $object);
 
         // check the permissions: create requires write permission, view
         // requires the read permission, edit and delete required both.
@@ -206,7 +173,7 @@ class WorkflowVoter implements VoterInterface
 
             if (!$isAssigned) {
                 if ($this->permissions['view'] == $attribute) {
-                    if (!$permissions['read'] && !$this->isAuthor($token->getUser(), $object)) {
+                    if (!$permissions['read'] && !$this->isAuthor($user, $object)) {
                         return VoterInterface::ACCESS_DENIED;
                     }
                 }
@@ -300,7 +267,7 @@ class WorkflowVoter implements VoterInterface
     /**
      * @return bool
      */
-    protected function isAssigned(GroupableInterface $user, ContentInterface $content)
+    protected function isAssigned(UserInterface $user, ContentInterface $content)
     {
         if ($content instanceof ExtensibleInterface) {
             /** @var Registry $extensions */
@@ -330,9 +297,9 @@ class WorkflowVoter implements VoterInterface
     /**
      * @return bool
      */
-    protected function isAuthor(User $user, ContentInterface $content)
+    protected function isAuthor(UserInterface $user, ContentInterface $content)
     {
-        if (($userRelation = $user->getRelation()) && $content instanceof Article) {
+        if ($user instanceof User && ($userRelation = $user->getRelation()) && $content instanceof Article) {
             /** @var Author $author */
             foreach ($content->getAuthors() as $author) {
                 /** @var Person $person */

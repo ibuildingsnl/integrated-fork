@@ -31,7 +31,7 @@ class ClassTreeMapResolver implements DiscriminatorMapResolverInterface
     /**
      * @var string[][]
      */
-    private $map = null;
+    private $map;
 
     /**
      * Constructor.
@@ -62,9 +62,6 @@ class ClassTreeMapResolver implements DiscriminatorMapResolverInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function resolve($class)
     {
         $root = $this->resolveRoot($class);

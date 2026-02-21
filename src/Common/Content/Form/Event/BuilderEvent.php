@@ -33,17 +33,14 @@ class BuilderEvent extends FormEvent
     /**
      * @var string|null
      */
-    private $field = null;
+    private $field;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(
         ContentTypeInterface $contentType,
         MetadataInterface $metadata,
         FormBuilderInterface $builder,
         array $options,
-        $field = null
+        $field = null,
     ) {
         parent::__construct($contentType, $metadata);
 

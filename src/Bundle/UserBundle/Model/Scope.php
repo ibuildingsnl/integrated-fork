@@ -39,9 +39,6 @@ class Scope implements ScopeInterface
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setName($name)
     {
         $this->name = $name;
@@ -49,25 +46,16 @@ class Scope implements ScopeInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isAdmin()
     {
         return $this->admin;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setAdmin($admin)
     {
         $this->admin = $admin;

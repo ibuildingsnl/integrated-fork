@@ -62,7 +62,7 @@ class RoleManager implements RoleManagerInterface
         $this->roles = $roles;
 
         if (!is_subclass_of($this->repository->getClassName(), RoleInterface::class)) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new \InvalidArgumentException(\sprintf(
                 'The class "%s" is not subclass of Integrated\\Bundle\\UserBundle\\Model\\RoleInterface',
                 $this->repository->getClassName()
             ));
@@ -85,9 +85,6 @@ class RoleManager implements RoleManagerInterface
         return $this->repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create($role)
     {
         $class = $this->getClassName();
@@ -95,10 +92,7 @@ class RoleManager implements RoleManagerInterface
         return new $class($role);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function persist(roleInterface $role, $flush = true)
+    public function persist(RoleInterface $role, $flush = true)
     {
         $this->om->persist($role);
 
@@ -107,10 +101,7 @@ class RoleManager implements RoleManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function remove(roleInterface $role, $flush = true)
+    public function remove(RoleInterface $role, $flush = true)
     {
         $this->om->remove($role);
 
@@ -119,49 +110,31 @@ class RoleManager implements RoleManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear()
     {
-        $this->om->clear($this->repository->getClassName());
+        $this->om->clear();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function find($id)
     {
         return $this->repository->find($id);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findAll()
     {
         return $this->repository->findAll();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByName($criteria)
     {
         return $this->repository->findOneBy(['name' => $criteria]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null)
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClassName()
     {
         return $this->repository->getClassName();

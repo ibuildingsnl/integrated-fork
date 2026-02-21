@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Doctrine\EventListener;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
@@ -22,7 +22,9 @@ use Integrated\Common\Queue\QueueInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class QueueListener implements EventSubscriber, QueueAwareInterface
+#[AsDoctrineListener(event: Events::postPersist)]
+#[AsDoctrineListener(event: Events::postUpdate)]
+class QueueListener implements QueueAwareInterface
 {
     /**
      * @var QueueInterface
@@ -39,9 +41,6 @@ class QueueListener implements EventSubscriber, QueueAwareInterface
         $this->setQueue($queue);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setQueue(QueueInterface $queue)
     {
         $this->queue = $queue;
@@ -53,17 +52,6 @@ class QueueListener implements EventSubscriber, QueueAwareInterface
     public function getQueue()
     {
         return $this->queue;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::postPersist,
-            Events::postUpdate,
-        ];
     }
 
     public function postPersist(LifecycleEventArgs $event)
@@ -97,8 +85,6 @@ class QueueListener implements EventSubscriber, QueueAwareInterface
 
     /**
      * Try to extract a Definition id from the $data.
-     *
-     * @param mixed $data
      */
     protected function getId($data)
     {

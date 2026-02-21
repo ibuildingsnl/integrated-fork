@@ -12,6 +12,7 @@
 namespace Integrated\Common\Storage\Database;
 
 use Doctrine\ODM\MongoDB\Iterator\Iterator;
+use MongoDB\Driver\CursorInterface;
 
 /**
  * @author Johnny Borg <johnny@e-active.nl>
@@ -19,7 +20,7 @@ use Doctrine\ODM\MongoDB\Iterator\Iterator;
 interface DatabaseInterface
 {
     /**
-     * @return \MongoCursor
+     * @return CursorInterface
      */
     public function getRows();
 

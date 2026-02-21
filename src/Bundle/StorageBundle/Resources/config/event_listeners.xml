@@ -12,8 +12,6 @@
             <argument type="service" id="service_container" />
             <argument type="string">integrated_storage.manager</argument>
             <argument type="string">integrated_storage.intent_writer</argument>
-
-            <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
         </service>
 
     </services>

@@ -19,10 +19,9 @@ use Integrated\Bundle\ContentBundle\Std\Exception\InvalidHTMLException;
 class DOMDocument extends \DOMDocument
 {
     /**
-     * {@inheritdoc}
-     *
-     * @throws \Integrated\Bundle\ContentBundle\Std\Exception\InvalidHTMLException
+     * @throws InvalidHTMLException
      */
+    #[\ReturnTypeWillChange]
     public function loadHTML($source, $options = 0)
     {
         // Allow HTML5 tags to be passed as HTML

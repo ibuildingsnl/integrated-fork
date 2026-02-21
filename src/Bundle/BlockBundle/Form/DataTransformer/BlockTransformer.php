@@ -30,10 +30,7 @@ class BlockTransformer implements DataTransformerInterface
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function transform($block)
+    public function transform($block): mixed
     {
         if ($block instanceof BlockInterface) {
             return $block->getId();
@@ -42,10 +39,7 @@ class BlockTransformer implements DataTransformerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function reverseTransform($id)
+    public function reverseTransform($id): mixed
     {
         return $this->repository->find($id);
     }

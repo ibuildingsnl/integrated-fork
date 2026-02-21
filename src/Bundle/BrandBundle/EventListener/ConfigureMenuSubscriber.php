@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class ConfigureMenuSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly AuthorizationCheckerInterface $permission
+        private readonly AuthorizationCheckerInterface $permission,
     ) {
     }
 

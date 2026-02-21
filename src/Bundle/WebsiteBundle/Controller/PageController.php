@@ -14,26 +14,18 @@ namespace Integrated\Bundle\WebsiteBundle\Controller;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class PageController extends AbstractController
 {
-    /**
-     * @var ThemeManager
-     */
-    protected $themeManager;
+    private ThemeManager $themeManager;
 
     public function __construct(ThemeManager $themeManager)
     {
         $this->themeManager = $themeManager;
     }
 
-    /**
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function showAction(Page $page)
+    public function show(Page $page): Response
     {
         return $this->render($this->themeManager->locateTemplate($page->getLayout()), [
             'page' => $page,

@@ -123,8 +123,8 @@ final class TaxonomyPermissionsTest extends TestCase
 
     private function taxonomy(
         string $id,
-        string $parent = null,
-        string ...$channels
+        ?string $parent = null,
+        string ...$channels,
     ): void {
         $taxonomy = new Taxonomy();
         $taxonomy->setId($id);

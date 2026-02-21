@@ -21,27 +21,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class BulkConfigureType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('actions', BulkActionsType::class, ['content' => $options['content']]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired('content');
         $resolver->setDefault('data_class', BulkAction::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_content_bulk_configure';
     }

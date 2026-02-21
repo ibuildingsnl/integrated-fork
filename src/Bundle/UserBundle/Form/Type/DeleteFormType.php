@@ -18,10 +18,7 @@ use Symfony\Component\Form\AbstractType;
  */
 class DeleteFormType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_user_delete';
     }

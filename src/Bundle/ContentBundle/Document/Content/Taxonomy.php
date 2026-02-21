@@ -35,12 +35,9 @@ class Taxonomy extends Content implements RankableInterface
     #[Type\Field(options: ['priority' => 990, 'attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
     protected $title;
 
-    /**
-     * @var string
-     */
     #[Slug(fields: ['title'])]
     #[Type\Field(options: ['priority' => 500, 'attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
-    protected $slug;
+    protected ?string $slug = null;
 
     /**
      * @var string

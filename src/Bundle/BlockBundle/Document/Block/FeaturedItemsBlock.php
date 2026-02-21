@@ -89,9 +89,6 @@ class FeaturedItemsBlock extends Block
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return 'featured_items';

@@ -24,7 +24,7 @@ class DocumentWalk
      */
     public static function save(DatabaseInterface $database)
     {
-        return function (DoctrineDocument $document) use ($database) {
+        return function (DoctrineDocument $document) use ($database): void {
             if ($document->hasUpdates()) {
                 $database->saveObject($document->getDocument());
             }

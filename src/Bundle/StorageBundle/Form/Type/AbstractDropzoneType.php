@@ -59,7 +59,7 @@ abstract class AbstractDropzoneType extends AbstractType
         AssetManager $javascripts,
         TranslatorInterface $translator,
         ImageExtension $imageExtension,
-        $type
+        $type,
     ) {
         $this->stylesheets = $stylesheets;
         $this->javascripts = $javascripts;
@@ -68,10 +68,7 @@ abstract class AbstractDropzoneType extends AbstractType
         $this->type = $type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // make hidden instead of checkbox
         $builder->add('remove', HiddenType::class, [
@@ -83,9 +80,6 @@ abstract class AbstractDropzoneType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $this->stylesheets->add('bundles/integratedintegrated/drag-drop.css');
@@ -95,11 +89,11 @@ abstract class AbstractDropzoneType extends AbstractType
 
         // builds the variable options passed to the javascript
         $dropzone['captions'] = [
-                'removeConfirmation' => $this->translator->trans(sprintf('Are you sure you want to remove this %s?', $this->type)),
-                'errors' => [
-                    'filesLimit' => $this->translator->trans('You can only upload one '.$this->type),
-                    'filesType' => $this->translator->trans('Only Images are allowed to be uploaded.'),
-                ],
+            'removeConfirmation' => $this->translator->trans(\sprintf('Are you sure you want to remove this %s?', $this->type)),
+            'errors' => [
+                'filesLimit' => $this->translator->trans('You can only upload one '.$this->type),
+                'filesType' => $this->translator->trans('Only Images are allowed to be uploaded.'),
+            ],
         ];
 
         if (isset($view->vars['preview']) && $view->vars['preview'] instanceof StorageInterface) {
@@ -116,10 +110,7 @@ abstract class AbstractDropzoneType extends AbstractType
         $view->vars['options'] = $dropzone;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
+    public function getParent(): ?string
     {
         return FileType::class;
     }

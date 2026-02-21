@@ -58,14 +58,14 @@ class CommentFormFieldsSubscriber implements EventSubscriberInterface
     /**
      * @var array|null
      */
-    private $comments = null;
+    private $comments;
 
     public function __construct(
         DocumentManager $documentManager,
         UrlGeneratorInterface $generator,
         AssetManager $stylesheets,
         AssetManager $javascripts,
-        RequestStack $requestStack
+        RequestStack $requestStack,
     ) {
         $this->documentManager = $documentManager;
         $this->generator = $generator;
@@ -74,10 +74,7 @@ class CommentFormFieldsSubscriber implements EventSubscriberInterface
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::BUILD_FIELD => 'onBuildField',

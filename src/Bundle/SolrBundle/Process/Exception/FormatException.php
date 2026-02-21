@@ -17,10 +17,10 @@ namespace Integrated\Bundle\SolrBundle\Process\Exception;
 class FormatException extends \Exception
 {
     /**
-     * @return static
+     * @return self
      */
     public static function noRegexMatch()
     {
-        return new static('Format does not required pattern');
+        return new self('Format does not required pattern');
     }
 }

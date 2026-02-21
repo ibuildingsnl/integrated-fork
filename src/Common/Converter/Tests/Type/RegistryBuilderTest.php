@@ -23,7 +23,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ResolvedTypeFactoryInterface|MockObject
+     * @var ResolvedTypeFactoryInterface&MockObject
      */
     private $factory;
 

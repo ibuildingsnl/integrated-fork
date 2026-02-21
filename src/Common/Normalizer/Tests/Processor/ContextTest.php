@@ -22,7 +22,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ContextTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ResolverInterface|MockObject
+     * @var ResolverInterface&MockObject
      */
     private $resolver;
 
@@ -32,9 +32,9 @@ class ContextTest extends \PHPUnit\Framework\TestCase
     private $options = [];
 
     /**
-     * @var Context|MockObject
+     * @var Context&MockObject
      */
-    private $nesting = null;
+    private $nesting;
 
     protected function setUp(): void
     {

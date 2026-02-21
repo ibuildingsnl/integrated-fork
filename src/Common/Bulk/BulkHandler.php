@@ -30,9 +30,6 @@ class BulkHandler implements BulkHandlerInterface
         $this->registry = $registry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute($content, $actions)
     {
         if (!\is_array($content) && !$content instanceof \Traversable) {

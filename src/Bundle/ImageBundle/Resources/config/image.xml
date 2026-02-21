@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="image.handling.class">Integrated\Bundle\ImageBundle\Service\ImageHandling</parameter>
+        <parameter key="image.handler.class">Integrated\Bundle\ImageBundle\Image\ImageHandler</parameter>
+    </parameters>
+
+    <services>
+        <!-- Image handling factory -->
+        <service id="image.handling" class="%image.handling.class%" public="true">
+            <argument>%gregwar_image.cache_dir%</argument>
+            <argument>%gregwar_image.cache_dir_mode%</argument>
+            <argument>%gregwar_image.web_dir%</argument>
+            <argument>%image.handler.class%</argument>
+            <argument type="service" id="assets.packages"></argument>
+            <argument type="service" id="file_locator"></argument>
+            <argument>%gregwar_image.throw_exception%</argument>
+            <argument>%gregwar_image.fallback_image%</argument>
+        </service>
+
+        <!-- Helper Twig -->
+        <service id="twig.extension.image" class="Integrated\Bundle\ImageBundle\Twig\Extension\GregwarImageExtension">
+            <argument type="service" id="image.handling"></argument>
+            <argument>%gregwar_image.web_dir%</argument>
+            <tag name="twig.extension" />
+        </service>
+    </services>
+</container>

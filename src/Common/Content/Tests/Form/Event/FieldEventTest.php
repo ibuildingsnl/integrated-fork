@@ -21,7 +21,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class FieldEventTest extends FormEventTest
 {
     /**
-     * @var AttributeEditorInterface|MockObject
+     * @var AttributeEditorInterface&MockObject
      */
     protected $field;
 

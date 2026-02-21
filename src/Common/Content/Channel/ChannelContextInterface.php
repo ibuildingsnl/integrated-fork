@@ -25,8 +25,6 @@ interface ChannelContextInterface
 
     /**
      * Set the current channel.
-     *
-     * @param ChannelInterface $channel
      */
-    public function setChannel(ChannelInterface $channel = null);
+    public function setChannel(?ChannelInterface $channel = null);
 }

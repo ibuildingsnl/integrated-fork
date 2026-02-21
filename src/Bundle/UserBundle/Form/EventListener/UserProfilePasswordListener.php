@@ -29,18 +29,12 @@ class UserProfilePasswordListener implements EventSubscriberInterface
      */
     private $hasherFactory;
 
-    /**
-     * @param PasswordHasherFactoryInterface $encoder
-     */
     public function __construct(PasswordHasherFactoryInterface $hasherFactory)
     {
         $this->hasherFactory = $hasherFactory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             FormEvents::POST_SET_DATA => 'onPostSetData',

@@ -46,7 +46,7 @@ class BrandProfile
         $this->logo = $logo;
     }
 
-    public function getFavicon(): Image|null
+    public function getFavicon(): ?Image
     {
         return $this->favicon;
     }
@@ -87,7 +87,7 @@ class BrandProfile
         $this->contacts = $contacts;
     }
 
-    public function addContact(Contact $contact = null): void
+    public function addContact(?Contact $contact = null): void
     {
         if ($contact !== null) {
             $this->contacts->add($contact);

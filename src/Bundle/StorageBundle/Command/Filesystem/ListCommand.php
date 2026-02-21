@@ -13,26 +13,19 @@ namespace Integrated\Bundle\StorageBundle\Command\Filesystem;
 
 use Integrated\Bundle\StorageBundle\Storage\Registry\FilesystemRegistry;
 use Integrated\Bundle\StorageBundle\Storage\Resolver;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * Lists the configured filesystem(s).
- *
- * @author Johnny Borg <johnny@e-active.nl>
- */
+#[AsCommand(
+    name: 'storage:filesystem:list',
+    description: 'Lists the configured filesystem(s)',
+)]
 class ListCommand extends Command
 {
-    /**
-     * @var FilesystemRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var Resolver
-     */
-    protected $resolverStorage;
+    private FilesystemRegistry $registry;
+    private Resolver $resolverStorage;
 
     public function __construct(FilesystemRegistry $registry, Resolver $resolverStorage)
     {
@@ -42,25 +35,16 @@ class ListCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    protected function configure(): void
     {
-        $this
-            ->setName('storage:list')
-            ->setDescription('Lists the configured filesystem(s).')
-            ->setHelp('The <info>%command.name%</info> lists the existing filesystem(s).');
+        $this->setHelp('The <info>%command.name%</info> lists the existing filesystem(s).');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         foreach ($this->registry->getIterator() as $key => $filesystem) {
             $output->writeln(
-                sprintf(
+                \sprintf(
                     '<info>%s</info>: %s',
                     $key,
                     \get_class($filesystem->getAdapter())
@@ -70,11 +54,11 @@ class ListCommand extends Command
             if ($options = $this->resolverStorage->getOptions($key)) {
                 $output->writeln(
                     [
-                        sprintf(
+                        \sprintf(
                             "\t resolver_class: %s",
                             $options['resolver_class']
                         ),
-                        sprintf(
+                        \sprintf(
                             "\t public: %s",
                             $options['public']
                         ),
@@ -83,6 +67,6 @@ class ListCommand extends Command
             }
         }
 
-        return 0;
+        return self::SUCCESS;
     }
 }

@@ -92,6 +92,8 @@ class DatabaseMenuFactory implements FactoryInterface
 
             return $menu;
         }
+
+        return null;
     }
 
     /**
@@ -148,7 +150,7 @@ class DatabaseMenuFactory implements FactoryInterface
         $item = new $class($name, $this);
 
         if (!$item instanceof ItemInterface) {
-            throw new \InvalidArgumentException(sprintf('Class "%s" must be an instanceof "ItemInterface".', $class));
+            throw new \InvalidArgumentException(\sprintf('Class "%s" must be an instanceof "ItemInterface".', $class));
         }
 
         foreach ($this->getExtensions() as $extension) {

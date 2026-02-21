@@ -19,10 +19,7 @@ use Symfony\Component\Validator\Constraints\Email;
 
 class PasswordResetType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('email', EmailType::class, [
             'label' => 'E-mail address',

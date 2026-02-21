@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Integrated package.
  *
@@ -28,12 +29,12 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
     protected $subscriber;
 
     /**
-     * @var AuthorizationCheckerInterface|MockObject
+     * @var AuthorizationCheckerInterface&MockObject
      */
     protected $authorizationChecker;
 
     /**
-     * @var \Integrated\Bundle\MenuBundle\Event\ConfigureMenuEvent|MockObject
+     * @var ConfigureMenuEvent&MockObject
      */
     protected $event;
 
@@ -60,7 +61,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
      */
     public function testOnMenuConfigureFunctionWithInvalidMenu()
     {
-        /** @var \Knp\Menu\ItemInterface|MockObject $menu */
+        /** @var \Knp\Menu\ItemInterface&MockObject $menu */
         $menu = $this->createMock('Knp\Menu\ItemInterface');
 
         $this->event
@@ -90,7 +91,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
     {
         $menu = $this->getValidMenu($this->event);
 
-        /** @var \Knp\Menu\ItemInterface|MockObject $menuContent */
+        /** @var \Knp\Menu\ItemInterface&MockObject $menuManage */
         $menuManage = $this->createMock('Knp\Menu\ItemInterface');
 
         $menu
@@ -127,7 +128,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
     {
         $menu = $this->getValidMenu($this->event);
 
-        /** @var \Knp\Menu\ItemInterface|MockObject $menuContent */
+        /** @var \Knp\Menu\ItemInterface&MockObject $menuManage */
         $menuManage = $this->createMock('Knp\Menu\ItemInterface');
 
         $menu
@@ -168,13 +169,13 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param \Integrated\Bundle\MenuBundle\Event\ConfigureMenuEvent|MockObject $event
+     * @param ConfigureMenuEvent&MockObject $event
      *
-     * @return \Knp\Menu\ItemInterface|MockObject
+     * @return \Knp\Menu\ItemInterface&MockObject
      */
     protected function getValidMenu($event = null)
     {
-        /** @var \Knp\Menu\ItemInterface|MockObject $menu */
+        /** @var \Knp\Menu\ItemInterface&MockObject $menu */
         $menu = $this->createMock('Knp\Menu\ItemInterface');
 
         $menu

@@ -26,24 +26,22 @@
         <service id="integrated_block.configure_menu" class="Integrated\Bundle\BlockBundle\EventListener\ConfigureMenuListener">
             <argument type="service" id="security.authorization_checker" />
             <argument type="service" id="security.token_storage" />
+            <argument type="service" id="request_stack" />
             <argument type="service" id="integrated_block.provider.filter_query" />
 
             <tag name="kernel.event_subscriber" />
         </service>
 
         <service id="integrated_block.provider.block_usage" class="Integrated\Bundle\BlockBundle\Provider\BlockUsageProvider">
-            <argument type="service" id="doctrine_mongodb" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
         </service>
 
         <service id="integrated_block.provider.filter_query" class="Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider" public="true">
-            <argument type="service" id="doctrine_mongodb" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_block.provider.block_usage" />
         </service>
 
-        <service id="integrated_block.block_repository" class="Doctrine\Persistence\ObjectRepository">
-            <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
-            <argument>Integrated\Bundle\BlockBundle\Document\Block\Block</argument>
-        </service>
+        <service id="Integrated\Bundle\BlockBundle\Document\Block\BlockRepository"></service>
 
     </services>
 

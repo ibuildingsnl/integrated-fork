@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\SeoMeta;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
@@ -32,11 +31,9 @@ class Article extends Content implements RankableInterface
 {
     use RankTrait;
 
-    /**
-     * @var string
-     */
     #[Type\Field(options: [
         'priority' => 990,
+        'empty_data' => '',
         'attr' => [
             'state' => 'title_tinymce',
             'class' => 'fancy_tinymce',
@@ -44,7 +41,7 @@ class Article extends Content implements RankableInterface
             'required' => 'required',
         ],
     ], location: 'editor')]
-    protected $title;
+    protected ?string $title = '';
 
     /**
      * @var string
@@ -59,12 +56,9 @@ class Article extends Content implements RankableInterface
     ], location: 'editor')]
     protected $content;
 
-    /**
-     * @var string
-     */
     #[Slug(fields: ['title'])]
     #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
-    protected $slug;
+    protected ?string $slug = null;
 
     /**
      * @var string
@@ -97,24 +91,18 @@ class Article extends Content implements RankableInterface
     ], location: 'sidebar')]
     protected $authors;
 
-    /**
-     * @var string
-     */
     #[Type\Field(options: [
         'priority' => 450,
         'attr' => ['style' => 'sidebar', 'icon' => 'megaphone'],
     ], location: 'sidebar')]
-    protected $source;
+    protected ?string $source = null;
 
-    /**
-     * @var string
-     */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\UrlType', options: [
         'priority' => 440,
         'label' => 'Source URL',
         'attr' => ['style' => 'sidebar', 'icon' => 'open-new-window'],
     ], location: 'sidebar')]
-    protected $sourceUrl;
+    protected ?string $sourceUrl = null;
 
     /**
      * @var string
@@ -146,7 +134,7 @@ class Article extends Content implements RankableInterface
     protected $description;
 
     /**
-     * @var Embedded\Address
+     * @var Address
      */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\AddressType', options: [
         'priority' => 430,
@@ -158,7 +146,7 @@ class Article extends Content implements RankableInterface
     protected $address;
 
     /**
-     * @var Embedded\SeoMeta
+     * @var SeoMeta
      */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\SeoMetaType', options: [
         'priority' => 430,
@@ -184,7 +172,7 @@ class Article extends Content implements RankableInterface
 
     public function getTitle(): string
     {
-        return $this->title;
+        return (string) $this->title;
     }
 
     public function setTitle(string $title): void
@@ -202,7 +190,7 @@ class Article extends Content implements RankableInterface
         $this->content = $content;
     }
 
-    public function getSlug(): string
+    public function getSlug(): ?string
     {
         return $this->slug;
     }
@@ -232,14 +220,18 @@ class Article extends Content implements RankableInterface
         $this->featuredImage = $featuredImage;
     }
 
-    public function getAuthors(): ?Collection
+    public function getAuthors(): array
     {
-        return $this->authors;
+        return $this->authors->toArray();
     }
 
-    public function setAuthors(Collection $authors): void
+    public function setAuthors(iterable $authors): void
     {
-        $this->authors = $authors;
+        $this->authors = new ArrayCollection();
+
+        foreach ($authors as $author) {
+            $this->addAuthor($author);
+        }
     }
 
     public function addAuthor(Embedded\Author $author): void
@@ -304,22 +296,22 @@ class Article extends Content implements RankableInterface
         $this->description = (string) $description;
     }
 
-    public function setSeoMetadata(Embedded\SeoMeta $seoMetadata): void
+    public function setSeoMetadata(SeoMeta $seoMetadata): void
     {
         $this->seoMetadata = $seoMetadata;
     }
 
-    public function getSeoMetadata(): ?Embedded\SeoMeta
+    public function getSeoMetadata(): ?SeoMeta
     {
         return $this->seoMetadata;
     }
 
-    public function getAddress(): ?Embedded\Address
+    public function getAddress(): ?Address
     {
         return $this->address;
     }
 
-    public function setAddress(Embedded\Address $address = null): void
+    public function setAddress(?Address $address = null): void
     {
         $this->address = $address;
     }

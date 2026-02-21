@@ -16,21 +16,12 @@ use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\Service\ContentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class EventController extends AbstractController
 {
-    /**
-     * @var ContentService
-     */
-    private $contentService;
-
-    /**
-     * @var ThemeManager
-     */
-    protected $themeManager;
+    private ContentService $contentService;
+    private ThemeManager $themeManager;
 
     public function __construct(ContentService $contentService, ThemeManager $themeManager)
     {
@@ -38,19 +29,13 @@ class EventController extends AbstractController
         $this->themeManager = $themeManager;
     }
 
-    /**
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function showAction(ContentTypePage $page, Event $event)
+    public function show(ContentTypePage $page, Event $event): Response
     {
         $this->contentService->prepare($event);
 
-        return $this->render(
-            $this->themeManager->locateTemplate('content/event/show/'.$page->getLayout()),
-            [
-                'event' => $event,
-                'page' => $page,
-            ]
-        );
+        return $this->render($this->themeManager->locateTemplate('content/event/show/'.$page->getLayout()), [
+            'event' => $event,
+            'page' => $page,
+        ]);
     }
 }

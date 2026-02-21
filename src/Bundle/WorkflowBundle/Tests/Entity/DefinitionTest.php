@@ -20,7 +20,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class DefinitionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \Integrated\Bundle\WorkflowBundle\Entity\Definition\State|MockObject
+     * @var Definition\State&MockObject
      */
     private $state;
 
@@ -60,7 +60,7 @@ class DefinitionTest extends \PHPUnit\Framework\TestCase
     {
         $instance = $this->getInstance();
 
-        /** @var \Integrated\Bundle\WorkflowBundle\Entity\Definition\State|MockObject $state */
+        /** @var Definition\State&MockObject $state */
         $state = $this->createMock('Integrated\Bundle\WorkflowBundle\Entity\Definition\State');
 
         // First add the state and then remove it with the setDefault function

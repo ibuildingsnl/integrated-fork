@@ -41,7 +41,7 @@ class LayoutLocator
         if (!isset($this->layouts[$type])) {
             $this->layouts[$type] = [];
 
-            foreach ($this->themeManager->getThemes() as $id => $theme) {
+            foreach ($this->themeManager->getThemes() as $theme) {
                 foreach ($theme->getPaths() as $path) {
                     foreach ($this->themeManager->locateResources($path) as $path) {
                         $path = $path.'/blocks/'.$type;

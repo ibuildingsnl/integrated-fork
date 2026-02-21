@@ -25,10 +25,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PageCopyPageType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('selected', CheckboxType::class, [
             'required' => false,
@@ -51,10 +48,7 @@ class PageCopyPageType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(['page', 'copyAction', 'channel', 'targetChannel']);
         $resolver->setAllowedTypes('page', Page::class);
@@ -63,9 +57,6 @@ class PageCopyPageType extends AbstractType
         $resolver->setAllowedTypes('targetChannel', 'string');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         parent::buildView($view, $form, $options);

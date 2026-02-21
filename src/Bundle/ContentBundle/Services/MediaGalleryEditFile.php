@@ -13,7 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Services;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\ContentRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 
@@ -30,6 +30,7 @@ class MediaGalleryEditFile
     public function __construct(
         private DocumentManager $documentManager,
         private MediaGalleryUploadFile $mediaGalleryUploadFile,
+        private ContentRepository $contentRepository,
     ) {
     }
 
@@ -86,7 +87,7 @@ class MediaGalleryEditFile
      */
     public function changeImageLinksInContent($oldImageFile, $image, $newFileStorage): void
     {
-        $linkedItemsQuery = $this->documentManager->getRepository(Content::class)->getUsedBy(new ArrayCollection([$image]), null, null, false);
+        $linkedItemsQuery = $this->contentRepository->getUsedBy(new ArrayCollection([$image]), null, null, false);
         foreach ($linkedItemsQuery->getQuery()->execute() as $item) {
             $relatedArticleContent = $item->getContent();
             foreach ($item->getReferencesByRelationType('embedded') as $embeddedImage) {

@@ -23,34 +23,22 @@ class MediaGalleryMultipleType extends AbstractType
         $this->repository = $manager->getRepository(File::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new MultipleFileTransformer($this->repository));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['attr']['data-multiple'] = \is_bool($view->vars['attr']['data-multiple']) ? $view->vars['attr']['data-multiple'] : true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
+    public function getParent(): ?string
     {
         return TextType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_media_gallery_image';
     }

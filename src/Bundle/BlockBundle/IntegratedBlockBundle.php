@@ -21,14 +21,11 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class IntegratedBlockBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
 
-        $container->addCompilerPass(new BlockHandlerRegistryPass());
-        $container->addCompilerPass(new ThemeManagerPass());
+        $container->addCompilerPass(new BlockHandlerRegistryPass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
+        $container->addCompilerPass(new ThemeManagerPass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
     }
 }

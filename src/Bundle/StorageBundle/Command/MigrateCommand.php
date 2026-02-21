@@ -18,6 +18,7 @@ use Integrated\Bundle\StorageBundle\Storage\Mapping\MetadataFactoryInterface;
 use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
 use Integrated\Common\Storage\Database\DatabaseInterface;
 use Integrated\Common\Storage\ManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -27,25 +28,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
-/**
- * @author Johnny Borg <johnny@e-active.nl>
- */
+#[AsCommand(
+    name: 'storage:migrate',
+    description: 'Imports the old file notation in the new notation and places the files in configured storage',
+)]
 class MigrateCommand extends Command
 {
-    /**
-     * @var DatabaseInterface
-     */
-    protected $database;
-
-    /**
-     * @var ManagerInterface
-     */
-    protected $storage;
-
-    /**
-     * @var MetadataFactoryInterface
-     */
-    private $metadata;
+    private DatabaseInterface $database;
+    private ManagerInterface $storage;
+    private MetadataFactoryInterface $metadata;
 
     public function __construct(DatabaseInterface $database, ManagerInterface $storage, MetadataFactoryInterface $metadata)
     {
@@ -56,45 +47,16 @@ class MigrateCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('storage:migrate')
-            ->setDescription('Imports the old file notation in the new notation and places the files in configured storage.')
             ->setHelp('The <info>%command.name%</info> migrates all the old style notation files into the new notation.')
-            ->setDefinition([
-                new InputArgument(
-                    'path',
-                    InputArgument::REQUIRED,
-                    'A local path where (might have a directroy structure) the files can be resolved'
-                ),
-                new InputOption(
-                    'delete',
-                    'd',
-                    InputOption::VALUE_NONE,
-                    'Delete the local file after placing it in the storage'
-                ),
-                new InputOption(
-                    'ignore-duplicates',
-                    'i',
-                    InputOption::VALUE_NONE,
-                    'Ignore duplicate files errors and grab the newest version'
-                ),
-                new InputOption(
-                    'find-empty',
-                    'f',
-                    InputOption::VALUE_NONE,
-                    'Attempt to find a file if the property is empty'
-                ),
-            ]);
+            ->addArgument('path', InputArgument::REQUIRED, 'A local path where (might have a directroy structure) the files can be resolved')
+            ->addOption('delete', 'd', InputOption::VALUE_NONE, 'Delete the local file after placing it in the storage')
+            ->addOption('ignore-duplicates', 'i', InputOption::VALUE_NONE, 'Ignore duplicate files errors and grab the newest version')
+            ->addOption('find-empty', 'f', InputOption::VALUE_NONE, 'Attempt to find a file if the property is empty');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // Fetch all data from database
@@ -156,7 +118,7 @@ class MigrateCommand extends Command
                         if (isset($row[$property->getPropertyName()])) {
                             // If the property exists, the only valid count is one, what else?
                             throw new \LogicException(
-                                sprintf(
+                                \sprintf(
                                     'The file %s was found zero times for document %s and property %s.',
                                     $filename,
                                     $row['_id'],
@@ -175,24 +137,16 @@ class MigrateCommand extends Command
         // Release the output
         $progress->finish();
 
-        return 0;
+        return self::SUCCESS;
     }
 
-    /**
-     * @param string $path
-     * @param string $fileId
-     * @param string $documentId
-     * @param bool   $allowDuplicate
-     *
-     * @return bool|SplFileInfo
-     */
-    protected function getFile($path, $fileId, $documentId, $allowDuplicate = false)
+    private function getFile(string $path, string $fileId, string $documentId, bool $allowDuplicate = false): ?SplFileInfo
     {
         // Make a search for a file
         $finder = Finder::create()
             ->files()
             ->in($path)
-            ->name(sprintf('%s*', $fileId));
+            ->name(\sprintf('%s*', $fileId));
 
         if (1 == $finder->count()) {
             // Configure the iterator for the first entry
@@ -223,7 +177,7 @@ class MigrateCommand extends Command
             }
 
             // This can not be done
-            throw new \LogicException(sprintf(
+            throw new \LogicException(\sprintf(
                 'The file %s (for document: %s) has been found %d times on the given path.',
                 $fileId,
                 $documentId,
@@ -231,6 +185,6 @@ class MigrateCommand extends Command
             ));
         }
 
-        return false;
+        return null;
     }
 }

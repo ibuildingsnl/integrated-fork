@@ -32,9 +32,6 @@ class Container implements ContainerInterface
      */
     private $type = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function add($key, $value)
     {
         if (!isset($this->type[$key]) || $this->type[$key] !== self::ARRAY_TYPE) {
@@ -47,9 +44,6 @@ class Container implements ContainerInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function set($key, $value)
     {
         $this->data[$key] = self::validateAndReturn($value);
@@ -58,9 +52,6 @@ class Container implements ContainerInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function remove($key)
     {
         unset($this->data[$key]);
@@ -69,25 +60,16 @@ class Container implements ContainerInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function has($key)
     {
         return \array_key_exists($key, $this->data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function get($key)
     {
         return \array_key_exists($key, $this->data) ? $this->data[$key] : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear()
     {
         $this->data = [];
@@ -98,8 +80,6 @@ class Container implements ContainerInterface
 
     /**
      * Check if the value is one of the allowed types or throw a exception.
-     *
-     * @param mixed $value
      *
      * @trows UnexpectedTypeException if $value is not a scalar or array type
      */
@@ -112,25 +92,16 @@ class Container implements ContainerInterface
         throw new UnexpectedTypeException($value, 'null, string, float, int, bool or array');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function toArray()
     {
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function count(): int
     {
         return \count($this->data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->data);

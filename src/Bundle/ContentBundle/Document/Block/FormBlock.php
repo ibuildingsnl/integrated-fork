@@ -55,9 +55,7 @@ class FormBlock extends Block
     protected string $textAfterSubmit;
 
     /**
-     * @Assert\All({
-     *     @Assert\Email
-     * })
+     * @var array
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType', options: [
         'priority' => 450,
@@ -67,7 +65,9 @@ class FormBlock extends Block
         'allow_delete' => true,
         'required' => false,
     ])]
-    protected array $emailAddresses = [];
+    #[Assert\All([new Assert\Email()])]
+    #[Assert\Email]
+    protected $emailAddresses = [];
 
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType', options: [
         'priority' => 440,
@@ -171,9 +171,6 @@ class FormBlock extends Block
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return 'form';

@@ -12,37 +12,33 @@
 namespace Integrated\Bundle\PageBundle\Form\EventListener;
 
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
+use Integrated\Bundle\PageBundle\Form\Type\LayoutChoiceType;
+use Integrated\Bundle\PageBundle\Resolver\ThemeResolver;
 use Integrated\Bundle\PageBundle\Services\ContentTypeControllerManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-/**
- * @author Johan Liefers <johan@e-active.nl>
- */
 class ContentTypePageListener implements EventSubscriberInterface
 {
-    /**
-     * @var ContentTypeControllerManager
-     */
-    protected $controllerManager;
+    private ContentTypeControllerManager $manager;
+    private ThemeResolver $resolver;
 
-    public function __construct(ContentTypeControllerManager $controllerManager)
+    public function __construct(ContentTypeControllerManager $manager, ThemeResolver $resolver)
     {
-        $this->controllerManager = $controllerManager;
+        $this->manager = $manager;
+        $this->resolver = $resolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             FormEvents::PRE_SET_DATA => 'preSetData',
         ];
     }
 
-    public function preSetData(FormEvent $event)
+    public function preSetData(FormEvent $event): void
     {
         $contentTypePage = $event->getData();
 
@@ -50,21 +46,31 @@ class ContentTypePageListener implements EventSubscriberInterface
             return;
         }
 
-        $className = $contentTypePage->getContentType()->getClass();
-        $controller = $this->controllerManager->getController($className);
+        $controller = $this->manager->getController($class = $contentTypePage->getContentType()->getClass());
 
-        if (!\is_array($controller)) {
-            throw new \Exception(sprintf('Controller service for class "%s" is not defined', $className));
+        if (!$controller) {
+            throw new \Exception(\sprintf('Controller service for class "%s" is not defined', $class));
         }
 
-        $contentTypePage->setControllerService($controller['service']);
+        $contentTypePage->setControllerService($controller['serviceId']);
 
-        if (\count($controller['controller_actions']) > 1) {
-            $event->getForm()->add('controller_action', 'choice', [
-                'choices' => array_combine($controller['controller_actions'], $controller['controller_actions']),
+        if (!preg_match('/Content\\\(.+)Controller$/', $controller['class'], $match)) {
+            throw new \InvalidArgumentException(\sprintf('The %s class is not a contentTypeController class (the namespace must contain Controller\Content and the class name must end with Controller)', $controller['class']));
+        }
+
+        $form = $event->getForm();
+
+        if (\count($controller['actions']) > 1) {
+            $form->add('controller_action', ChoiceType::class, [
+                'choices' => array_combine($controller['actions'], $controller['actions']),
             ]);
         } else {
-            $contentTypePage->setControllerAction($controller['controller_actions'][0]);
+            $contentTypePage->setControllerAction($controller['actions'][0]);
         }
+
+        $form->add('layout', LayoutChoiceType::class, [
+            'theme' => $this->resolver->getTheme($contentTypePage->getChannel()),
+            'directory' => strtolower(\sprintf('/content/%s/%s', $match[1], $contentTypePage->getControllerAction())),
+        ]);
     }
 }

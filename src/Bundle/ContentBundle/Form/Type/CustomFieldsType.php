@@ -23,10 +23,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class CustomFieldsType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var ContentTypeInterface $contentType */
         $contentType = $options['contentType'];
@@ -44,20 +41,14 @@ class CustomFieldsType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setRequired(['contentType'])
             ->setAllowedTypes('contentType', ContentTypeInterface::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_custom_fields';
     }

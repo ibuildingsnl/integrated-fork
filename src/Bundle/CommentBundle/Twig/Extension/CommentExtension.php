@@ -20,13 +20,10 @@ use Twig\TwigFilter;
  */
 class CommentExtension extends AbstractExtension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getFilters()
     {
         return [
-            new TwigFilter('remove_comments', [$this, 'escape'], ['is_safe' => ['html']]),
+            new TwigFilter('remove_comments', $this->escape(...), ['is_safe' => ['html']]),
         ];
     }
 
@@ -40,9 +37,6 @@ class CommentExtension extends AbstractExtension
         return StripTagsUtil::replaceCommentWith($content, StripTagsUtil::ONLY_CONTENT_REPLACEMENT);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated_comment';

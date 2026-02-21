@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentHistoryBundle\EventListener;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events;
@@ -22,13 +22,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class ContentHistorySubscriber implements EventSubscriber
+#[AsDocumentListener(event: Events::onFlush)]
+class ContentHistorySubscriber
 {
     /**
      * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
-
     /**
      * @var string
      */
@@ -41,16 +41,6 @@ class ContentHistorySubscriber implements EventSubscriber
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->className = $className;
-    }
-
-    /**
-     * @return array
-     */
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::onFlush,
-        ];
     }
 
     public function onFlush(OnFlushEventArgs $args)
@@ -98,7 +88,7 @@ class ContentHistorySubscriber implements EventSubscriber
             return [];
         }
 
-        return (array) $dm->createQueryBuilder(\get_class($document))->hydrate(false)
+        return (array) $dm->createQueryBuilder($document::class)->hydrate(false)
             ->field('id')->equals($document->getId())
             ->getQuery()->getSingleResult();
     }

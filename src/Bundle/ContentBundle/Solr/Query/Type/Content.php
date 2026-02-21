@@ -3,9 +3,9 @@
 namespace Integrated\Bundle\ContentBundle\Solr\Query\Type;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Solr\Query\SortOptions;
 use Integrated\Common\Solr\Search\Type\AbstractType;
+use Solarium\Component\Facet\Field;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -14,7 +14,7 @@ class Content extends AbstractType
 {
     public function __construct(
         private readonly SortOptions $sorting,
-        private readonly DocumentManager $manager
+        private readonly DocumentManager $manager,
     ) {
     }
 
@@ -40,24 +40,29 @@ class Content extends AbstractType
         $facet = $query->getFacetSet();
         $facet->setMinCount(1);
 
-        $facet->createFacetField('contenttypes')
-            ->setField('type_name')
+        /** @var Field $facetField */
+        $facetField = $facet->createFacetField('contenttypes');
+        $facetField->setField('type_name')
             ->getLocalParameters()->setExclude('contenttypes');
 
-        $facet->createFacetField('channels')
-            ->setField('facet_channels')
+        /** @var Field $facetField */
+        $facetField = $facet->createFacetField('channels');
+        $facetField->setField('facet_channels')
             ->getLocalParameters()->setExclude('channels');
 
-        $facet->createFacetField('brands')
-              ->setField('facet_brands')
-              ->getLocalParameters()->setExclude('brands');
+        /** @var Field $facetField */
+        $facetField = $facet->createFacetField('brands');
+        $facetField->setField('facet_brands')
+            ->getLocalParameters()->setExclude('brands');
 
-        $facet->createFacetField('authors')
-            ->setField('facet_authors')
+        /** @var Field $facetField */
+        $facetField = $facet->createFacetField('authors');
+        $facetField->setField('facet_authors')
             ->getLocalParameters()->setExclude('authors');
 
-        $facet->createFacetField('properties')
-            ->setField('facet_properties')
+        /** @var Field $facetField */
+        $facetField = $facet->createFacetField('properties');
+        $facetField->setField('facet_properties')
             ->getLocalParameters()->setExclude('properties');
 
         $helper = $query->getHelper();
@@ -97,31 +102,24 @@ class Content extends AbstractType
                 ->setQuery('facet_properties: ((%1%))', [implode(') OR (', array_map($escape, $options['properties']))]);
         }
 
+        if ($created = $options['created']) {
+            $from =
+            $query
+                ->createFilterQuery('pub_created')
+                ->setQuery('pub_created: ['.$created['start'].' TO '.$created['end'].']');
+        }
+
         // handler filters
 
         foreach ($options['filter'] as $field => $value) {
             $query->createFilterQuery($field)->setQuery('%1%:%P2%', [$field, $value]);
         }
 
-        // handle relations
-
-        foreach ($this->manager->getRepository(Relation::class)->findAll() as $relation) {
-            $facet->createFacetField($name = 'relation_'.$relation->getId())
-                ->setField($field = 'facet_'.$relation->getId())
-                ->getLocalParameters()->setExclude($name);
-
-            if ($options['relation'][$relation->getId()] ?? []) {
-                $query->createFilterQuery($name)
-                    ->addTag($name)
-                    ->setQuery($field.': ((%1%))', [implode(') OR (', array_map($escape, $options['relation'][$relation->getId()]))]);
-            }
-        }
-
         // handle start/end dates
         if ($options['start'] instanceof \DateTimeInterface && $options['end'] instanceof \DateTimeInterface) {
             $query->createFilterQuery('pub_time')
                 ->addTag('pub_time')
-                ->setQuery(sprintf(
+                ->setQuery(\sprintf(
                     'pub_time: [%s TO %s]',
                     $options['start']->format("Y-m-d\TH:i:s.z\Z"),
                     $options['end']->format("Y-m-d\TH:i:s.z\Z"),
@@ -136,6 +134,7 @@ class Content extends AbstractType
             'sort' => '',
             'order' => '',
             'ids' => '',
+            'created' => null,
         ]);
 
         $resolver->setNormalizer('q', function (Options $options, $value) {
@@ -179,6 +178,17 @@ class Content extends AbstractType
             return array_filter($value, function (string $value) {
                 return preg_match('/[a-z0-9]{32}/', $value);
             });
+        });
+
+        $resolver->setNormalizer('created', function (Options $options, $value) {
+            if (!\is_array($value)) {
+                return null;
+            }
+
+            return [
+                'start' => preg_replace('/[^0-9\*\-\:TZ]/', '', $value['start'] ?? '*'),
+                'end' => preg_replace('/[^0-9\*\-\:TZ]/', '', $value['end'] ?? '*'),
+            ];
         });
 
         $resolver->setDefaults([
@@ -226,41 +236,6 @@ class Content extends AbstractType
             }
 
             return $filters;
-        });
-
-        // handle relations
-        $resolver->setDefaults([
-            'relation' => [],
-        ]);
-
-        $resolver->setNormalizer('relation', function (Options $options, $values) {
-            $relations = [];
-
-            if (!\is_array($values)) {
-                return $relations;
-            }
-
-            $allowed = [];
-
-            foreach ($this->manager->getRepository(Relation::class)->findAll() as $relation) {
-                $allowed[] = $relation->getId();
-            }
-
-            foreach ($values as $key => $value) {
-                if (!\is_array($value)) {
-                    continue;
-                }
-
-                $key = trim($key);
-
-                if (!\in_array($key, $allowed)) {
-                    continue;
-                }
-
-                $relations[$key] = array_filter(array_map('trim', $value));
-            }
-
-            return array_filter($relations);
         });
 
         // handle start/end dates

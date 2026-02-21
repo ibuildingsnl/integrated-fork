@@ -35,10 +35,7 @@ class AuthorTransformer implements DataTransformerInterface
         $this->mr = $mr;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function transform($arrayCollection)
+    public function transform($arrayCollection): mixed
     {
         if ($arrayCollection == null) {
             return [];
@@ -75,10 +72,7 @@ class AuthorTransformer implements DataTransformerInterface
         return $collection;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function reverseTransform($array)
+    public function reverseTransform($array): mixed
     {
         $mr = $this->mr->getManager();
         $collection = [];
@@ -88,7 +82,7 @@ class AuthorTransformer implements DataTransformerInterface
             $persons = $repo->findBy(['_id' => ['$in' => $array['persons']]]);
 
             foreach ($persons as $person) {
-                if ($person && isset($array['types'][$person->getId()])) {
+                if (isset($array['types'][$person->getId()])) {
                     $author = new Author();
                     $author->setType($array['types'][$person->getId()]);
                     $author->setPerson($person);

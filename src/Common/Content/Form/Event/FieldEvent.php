@@ -35,19 +35,13 @@ class FieldEvent extends FormEvent
      */
     private $ignore = false;
 
-    /**
-     * @var mixed
-     */
-    private $data = null;
+    private $data;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(
         ContentTypeInterface $type,
         MetadataInterface $metadata,
         AttributeEditorInterface $field,
-        array $options
+        array $options,
     ) {
         parent::__construct($type, $metadata);
 
@@ -87,17 +81,12 @@ class FieldEvent extends FormEvent
         return $this->ignore;
     }
 
-    /**
-     * @return mixed
-     */
     public function getData()
     {
         return $this->data;
     }
 
     /**
-     * @param mixed $data
-     *
      * @return $this
      */
     public function setData($data)

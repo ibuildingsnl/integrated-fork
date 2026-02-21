@@ -11,9 +11,9 @@
 
 namespace Integrated\Bundle\StorageBundle\Controller;
 
-use Gregwar\ImageBundle\Services\ImageHandling;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ImageBundle\Converter\WebFormatConverter;
+use Integrated\Bundle\ImageBundle\Service\ImageHandling;
 use Integrated\Bundle\StorageBundle\Storage\Accessor\DoctrineDocument;
 use Integrated\Bundle\StorageBundle\Storage\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
@@ -21,25 +21,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/**
- * @author Johnny Borg <johnny@e-active.nl>
- */
 class FileController
 {
-    /**
-     * @var MetadataFactoryInterface
-     */
-    private $metadata;
-
-    /**
-     * @var WebFormatConverter
-     */
-    private $webFormatConverter;
-
-    /**
-     * @var ImageHandling
-     */
-    private $imageHandling;
+    private MetadataFactoryInterface $metadata;
+    private WebFormatConverter $webFormatConverter;
+    private ImageHandling $imageHandling;
 
     public function __construct(MetadataFactoryInterface $metadata, WebFormatConverter $webFormatConverter, ImageHandling $imageHandling)
     {
@@ -48,13 +34,10 @@ class FileController
         $this->imageHandling = $imageHandling;
     }
 
-    /**
-     * @return RedirectResponse
-     */
-    public function file(Content $document, int $width = null, int $height = null)
+    public function file(Content $document, ?int $width = null, ?int $height = null): Response
     {
         // Read properties in the document containing a storage object
-        foreach ($this->metadata->getMetadata(\get_class($document))->getProperties() as $property) {
+        foreach ($this->metadata->getMetadata($document::class)->getProperties() as $property) {
             // Read out a property an check if its there is something and not void
             $reader = new DoctrineDocument($document);
             if ($storage = $reader->get($property->getPropertyName())) {
@@ -78,7 +61,7 @@ class FileController
                 // This may never happen, reflection gave an invalid result
                 throw new \LogicException(
                     'Invalid instance %s provided trough reflection while %s was expected.',
-                    \is_object($storage) ? \get_class($storage) : \gettype($storage),
+                    \is_object($storage) ? $storage::class : \gettype($storage),
                     StorageInterface::class
                 );
             }
@@ -86,7 +69,7 @@ class FileController
 
         // Everything ends here, no file found in the property
         throw new NotFoundHttpException(
-            sprintf('There is no file found in the %s object', $document->getId())
+            \sprintf('There is no file found in the %s object', $document->getId())
         );
     }
 }

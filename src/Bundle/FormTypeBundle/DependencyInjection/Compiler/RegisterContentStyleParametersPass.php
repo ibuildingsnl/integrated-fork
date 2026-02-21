@@ -28,14 +28,11 @@ class RegisterContentStyleParametersPass implements CompilerPassInterface
     /** @var array */
     private $parameters;
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container)
     {
         $this->parameters = [self::CONTENT_CSS => [], self::STYLE_FORMAT => []];
 
-        foreach ($container->getParameter('kernel.bundles') as $name => $class) {
+        foreach ($container->getParameter('kernel.bundles') as $class) {
             $this->addParameters(\dirname((new \ReflectionClass($class))->getFileName()).'/Resources/config');
         }
 
@@ -61,7 +58,7 @@ class RegisterContentStyleParametersPass implements CompilerPassInterface
         $options = $crawler->filter('styles')->children();
 
         foreach ($options as $option) {
-            /** @var $option \DOMElement */
+            /** @var \DOMElement $option */
             $type = $option->getAttribute('type');
             if (!\in_array($type, [self::STYLE_FORMAT, self::CONTENT_CSS])) {
                 throw new FileException("The file $filePath is not valid");
@@ -76,7 +73,7 @@ class RegisterContentStyleParametersPass implements CompilerPassInterface
                         continue;
                     }
 
-                    /** @var $formatParam \DOMElement */
+                    /** @var \DOMElement $formatParam */
                     if (!\in_array($formatParam->tagName, $availableFormatParams)) {
                         throw new FileException("The file $filePath is not valid");
                     }

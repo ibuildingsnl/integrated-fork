@@ -53,18 +53,12 @@ class ContentTypeVoter implements VoterInterface
         return $resolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsAttribute($attribute)
     {
         return \in_array($attribute, $this->permissions);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function vote(TokenInterface $token, $contentType, array $attributes)
+    public function vote(TokenInterface $token, $contentType, array $attributes): int
     {
         if (!$contentType instanceof ContentTypeInterface) {
             return VoterInterface::ACCESS_ABSTAIN;
@@ -83,8 +77,8 @@ class ContentTypeVoter implements VoterInterface
         $permissionGroups = $contentType->getPermissions();
 
         if ($workflowId = $contentType->getOption('workflow')) {
-            /** @var Definition $workflow */
             if ($workflow = $this->repository->find($workflowId)) {
+                /** @var Definition $workflow */
                 $state = $workflow->getDefault();
 
                 if (\count($state->getPermissions())) {

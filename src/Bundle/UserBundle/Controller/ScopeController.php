@@ -15,55 +15,40 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManager;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
-use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\UserBundle\Form\Type\ScopeFormType;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Integrated\Bundle\UserBundle\Model\ScopeManagerInterface;
 use Integrated\Bundle\UserBundle\Model\User;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/**
- * @author Michael Jongman <michael@e-active.nl>
- */
 class ScopeController extends AbstractController
 {
-    /**
-     * @var DocumentManager
-     */
-    private $documentManager;
+    private DocumentManager $documentManager;
+    private EntityManager $entityManager;
+    private PaginatorInterface $paginator;
+    private ScopeManagerInterface $scopeManager;
 
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
-     * @var ScopeManagerInterface
-     */
-    private $scopeManager;
-
-    public function __construct(DocumentManager $documentManager, EntityManager $entityManager, ScopeManagerInterface $scopeManager)
+    public function __construct(DocumentManager $documentManager, EntityManager $entityManager, PaginatorInterface $paginator, ScopeManagerInterface $scopeManager)
     {
         $this->documentManager = $documentManager;
         $this->entityManager = $entityManager;
+        $this->paginator = $paginator;
         $this->scopeManager = $scopeManager;
     }
 
-    /**
-     * @return Response
-     */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        $paginator = $this->getPaginator()->paginate(
+        $paginator = $this->paginator->paginate(
             $this->scopeManager->findAll(),
             $request->query->get('page', 1),
             15
@@ -74,10 +59,7 @@ class ScopeController extends AbstractController
         ]);
     }
 
-    /**
-     * @return Response
-     */
-    public function new(Request $request)
+    public function new(Request $request): Response
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -87,7 +69,7 @@ class ScopeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->get('actions')->get('cancel')->isClicked()) {
+            if ($form->getClickedButton()?->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_user_scope_index');
             }
 
@@ -95,23 +77,18 @@ class ScopeController extends AbstractController
                 $scope = $form->getData();
 
                 $this->scopeManager->persist($scope);
-                $this->addFlash('success', sprintf('The scope %s is created', $scope->getName()));
+                $this->addFlash('success', \sprintf('The scope %s is created', $scope->getName()));
 
                 return $this->redirectToRoute('integrated_user_scope_index');
             }
         }
 
         return $this->render('@IntegratedUser/scope/new.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return Response
-     *
-     * @throws NotFoundHttpException
-     */
-    public function edit(Scope $scope, Request $request)
+    public function edit(Scope $scope, Request $request): Response
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -121,13 +98,13 @@ class ScopeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->get('actions')->get('cancel')->isClicked()) {
+            if ($form->getClickedButton()?->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_user_scope_index');
             }
 
             if ($form->isValid()) {
                 $this->scopeManager->persist($scope);
-                $this->addFlash('success', sprintf('The changes to the scope %s are saved', $scope->getName()));
+                $this->addFlash('success', \sprintf('The changes to the scope %s are saved', $scope->getName()));
 
                 return $this->redirectToRoute('integrated_user_scope_index');
             }
@@ -135,14 +112,11 @@ class ScopeController extends AbstractController
 
         return $this->render('@IntegratedUser/scope/edit.html.twig', [
             'scope' => $scope,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return Response
-     */
-    public function delete(Scope $scope, Request $request)
+    public function delete(Scope $scope, Request $request): Response
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -157,14 +131,14 @@ class ScopeController extends AbstractController
         if ($request->isMethod('delete')) {
             $form->handleRequest($request);
 
-            // check for cancel click else its a submit
-            if ($form->get('actions')->get('cancel')->isClicked()) {
+            // check for cancel click else it's a submit
+            if ($form->getClickedButton()?->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_user_scope_index');
             }
 
             $hasRelations = false;
 
-            if ($channels = $this->documentManager->getRepository(Channel::class)->findBy(['scope' => (string) $scope->getId()])) {
+            if ($this->documentManager->getRepository(Channel::class)->findBy(['scope' => (string) $scope->getId()])) {
                 $form->addError(
                     new FormError('This scope is in use by channels.')
                 );
@@ -172,7 +146,7 @@ class ScopeController extends AbstractController
                 $hasRelations = true;
             }
 
-            if ($users = $this->entityManager->getRepository(User::class)->findBy(['scope' => $scope])) {
+            if ($this->entityManager->getRepository(User::class)->findBy(['scope' => $scope])) {
                 $form->addError(
                     new FormError('This scope is in use by users.')
                 );
@@ -182,7 +156,7 @@ class ScopeController extends AbstractController
 
             if (false === $hasRelations) {
                 $this->scopeManager->remove($scope);
-                $this->addFlash('success', sprintf('The scope %s is removed', $scope->getName()));
+                $this->addFlash('success', \sprintf('The scope %s is removed', $scope->getName()));
 
                 return $this->redirectToRoute('integrated_user_scope_index');
             }
@@ -190,61 +164,37 @@ class ScopeController extends AbstractController
 
         return $this->render('@IntegratedUser/scope/delete.html.twig', [
             'scope' => $scope,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createNewForm()
+    private function createNewForm(): Form
     {
-        $form = $this->createForm(
-            ScopeFormType::class,
-            null,
-            [
-                'action' => $this->generateUrl('integrated_user_scope_new'),
-                'method' => 'POST',
-            ]
-        );
+        $form = $this->createForm(ScopeFormType::class, null, [
+            'action' => $this->generateUrl('integrated_user_scope_new'),
+        ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
         return $form;
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createEditForm(Scope $scope)
+    private function createEditForm(Scope $scope): Form
     {
-        $form = $this->createForm(
-            ScopeFormType::class,
-            $scope,
-            [
-                'action' => $this->generateUrl('integrated_user_scope_edit', ['id' => $scope->getId()]),
-                'method' => 'PUT',
-            ]
-        );
+        $form = $this->createForm(ScopeFormType::class, $scope, [
+            'action' => $this->generateUrl('integrated_user_scope_edit', ['id' => $scope->getId()]),
+        ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createDeleteForm(Scope $scope)
+    private function createDeleteForm(Scope $scope): Form
     {
-        $form = $this->createForm(
-            DeleteFormType::class,
-            $scope,
-            [
-                'action' => $this->generateUrl('integrated_user_scope_delete', ['id' => $scope->getId()]),
-                'method' => 'DELETE',
-            ]
-        );
+        $form = $this->createForm(DeleteFormType::class, $scope, [
+            'action' => $this->generateUrl('integrated_user_scope_delete', ['id' => $scope->getId()]),
+        ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 

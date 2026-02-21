@@ -49,9 +49,6 @@ class Metadata implements MetadataInterface
      */
     protected $metadata = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct($extension, $mimeType, ArrayCollection $headers, ArrayCollection $metadata)
     {
         $this->extension = $extension;
@@ -60,9 +57,6 @@ class Metadata implements MetadataInterface
         $this->metadata = $metadata->toArray();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function storageData()
     {
         return new ArrayCollection(
@@ -77,65 +71,41 @@ class Metadata implements MetadataInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtension()
     {
         return $this->extension;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMimeType()
     {
         return $this->mimeType;
     }
 
-    /**
-     * @return ?string
-     */
     public function getCredits(): ?string
     {
         return $this->credits;
     }
 
-    /**
-     * @param ?string $credits
-     */
     public function setCredits(?string $credits): void
     {
         $this->credits = $credits;
     }
 
-    /**
-     * @return ?string
-     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * @param ?string $description
-     */
     public function setDescription(?string $description): void
     {
         $this->description = $description;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getHeaders()
     {
         return new ArrayCollection($this->headers);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMetadata()
     {
         return new ArrayCollection($this->metadata);

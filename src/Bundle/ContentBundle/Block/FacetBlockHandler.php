@@ -16,35 +16,32 @@ class FacetBlockHandler extends BlockHandler
 {
     public function __construct(
         private readonly BlockHandlerRegistryInterface $blockRegistry,
-        private readonly RequestStack $requestStack
+        private readonly RequestStack $requestStack,
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(BlockInterface $block, array $options)
     {
         if (!$block instanceof FacetBlock) {
-            return;
+            return null;
         }
 
         $contentBlock = $block->getBlock();
 
         if (!$contentBlock instanceof ContentBlock) {
-            return;
+            return null;
         }
 
         $handler = $this->blockRegistry->getHandler($contentBlock->getType());
 
         if (!$handler instanceof ContentBlockHandler) {
-            return;
+            return null;
         }
 
         $request = $this->requestStack->getCurrentRequest();
 
         if (!$request instanceof Request) {
-            return;
+            return null;
         }
 
         $options['exclude'] = false; // don't exclude already shown items
@@ -54,13 +51,13 @@ class FacetBlockHandler extends BlockHandler
         $result = $pagination->getCustomParameter('result');
 
         if (!$result instanceof Result) {
-            return;
+            return null;
         }
 
         $facetSet = $result->getFacetSet();
 
         if (null === $facetSet) {
-            return;
+            return null;
         }
 
         $facets = [];
@@ -72,7 +69,7 @@ class FacetBlockHandler extends BlockHandler
         }
 
         if (!\count($facets)) {
-            return;
+            return null;
         }
 
         return $this->render([
@@ -82,9 +79,6 @@ class FacetBlockHandler extends BlockHandler
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

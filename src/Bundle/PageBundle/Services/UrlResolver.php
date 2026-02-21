@@ -53,7 +53,7 @@ class UrlResolver
         ContentTypeControllerManager $controllerManager,
         ChannelContextInterface $channelContext,
         RouterInterface $router,
-        DocumentManager $dm
+        DocumentManager $dm,
     ) {
         $this->controllerManager = $controllerManager;
         $this->channelContext = $channelContext;
@@ -71,7 +71,7 @@ class UrlResolver
         return preg_replace_callback(
             '/(#)([\s\S]+?)(#)/',
             function ($matches) {
-                return sprintf('{%s}', $matches[2]);
+                return \sprintf('{%s}', $matches[2]);
             },
             $page->getPath()
         );
@@ -82,7 +82,7 @@ class UrlResolver
      */
     public function getRouteName(ContentTypePage $page)
     {
-        return sprintf('%s_%s', ContentTypePageLoader::ROUTE_PREFIX, $page->getId());
+        return \sprintf('%s_%s', ContentTypePageLoader::ROUTE_PREFIX, $page->getId());
     }
 
     /**
@@ -103,7 +103,7 @@ class UrlResolver
         }
 
         // fallback /app_*.php/content/contentType/slug, in production /content/contentType/slug
-        return sprintf(
+        return \sprintf(
             '%s/content/%s/%s',
             $this->router->getContext()->getBaseUrl(),
             $document->getContentType(),

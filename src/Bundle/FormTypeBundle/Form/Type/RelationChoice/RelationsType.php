@@ -32,18 +32,12 @@ class RelationsType extends AbstractType
         $this->dm = $dm;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber(new AddRelationFieldsSubscriber($this->dm, $options));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'options' => [],
@@ -54,10 +48,7 @@ class RelationsType extends AbstractType
         $resolver->setAllowedTypes('relations', ['array']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_relations_choice';
     }

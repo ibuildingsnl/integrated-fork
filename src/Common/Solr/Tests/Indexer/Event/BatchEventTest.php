@@ -18,10 +18,10 @@ use PHPUnit\Framework\MockObject\MockObject;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class BatchEventTest extends AbstractEventTest
+class BatchEventTest extends IndexerEventTest
 {
     /**
-     * @var BatchOperation|MockObject
+     * @var BatchOperation&MockObject
      */
     protected $operation;
 

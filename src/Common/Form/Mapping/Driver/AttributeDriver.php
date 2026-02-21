@@ -30,9 +30,6 @@ class AttributeDriver implements DriverInterface
         $this->reader = new AttributeReader();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAllClassNames(): array
     {
         return array_filter($this->driver->getAllClassNames(), function (string $class) {
@@ -40,9 +37,6 @@ class AttributeDriver implements DriverInterface
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadMetadataForClass(MetadataEditorInterface $metadata): void
     {
         /* @var $document Document */

@@ -53,8 +53,8 @@ class BrandDefaultDataListener implements EventSubscriberInterface
             $publish = true;
 
             if ($brand->hasPublished($content)) {
-                $condition = fn (ChannelLink $link) => $link->channel && $content->hasChannel($link->channel);
-            } elseif (\count($content->getChannels()) || !$brand->hasAtLeastOneOfChannels(...$defaultChannels)) {
+                $condition = fn (ChannelLink $link) => $content->hasChannel($link->channel);
+            } elseif (\count($content->getChannels()) || !$brand->hasAtLeastOneOfChannels(...array_filter($defaultChannels))) {
                 $publish = false;
             }
 

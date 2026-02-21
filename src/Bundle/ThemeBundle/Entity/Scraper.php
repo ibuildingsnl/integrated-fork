@@ -98,9 +98,6 @@ class Scraper
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
     public function getChannelId(): ?string
     {
         return $this->channelId;
@@ -111,9 +108,6 @@ class Scraper
         $this->channelId = $channelId;
     }
 
-    /**
-     * @return string
-     */
     public function getTemplateName(): ?string
     {
         return $this->templateName;
@@ -159,9 +153,6 @@ class Scraper
         return $this->lastError;
     }
 
-    /**
-     * @param string $lastError
-     */
     public function setLastError(?string $lastError = null): void
     {
         $this->lastError = \is_string($lastError) ? substr($lastError, 0, 800) : null;

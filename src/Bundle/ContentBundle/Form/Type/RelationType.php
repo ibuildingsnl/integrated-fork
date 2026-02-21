@@ -25,10 +25,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class RelationType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('name')
@@ -57,7 +54,7 @@ class RelationType extends AbstractType
                     'required' => false,
                     'attr' => [
                         'help_text' => 'Select the Content Types where you want this Relation to be shown.',
-                        ],
+                    ],
                 ]
             )->add(
                 'targets',
@@ -136,20 +133,14 @@ class RelationType extends AbstractType
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-                                   'data_class' => 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation',
-                               ]);
+            'data_class' => 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation',
+        ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_relation';
     }

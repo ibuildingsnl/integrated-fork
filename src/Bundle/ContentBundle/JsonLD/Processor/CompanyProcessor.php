@@ -29,9 +29,6 @@ class CompanyProcessor implements ProcessorInterface
         $this->generator = $generator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerInterface $data, $object, Context $context)
     {
         if (!$object instanceof Company) {

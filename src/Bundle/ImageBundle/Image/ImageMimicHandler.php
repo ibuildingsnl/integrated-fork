@@ -12,13 +12,9 @@
 namespace Integrated\Bundle\ImageBundle\Image;
 
 use Gregwar\Image\Source\File;
-use Gregwar\ImageBundle\ImageHandler;
 
 class ImageMimicHandler extends ImageHandler
 {
-    /**
-     * {@inheritdoc}
-     */
     public function save($file, $type = 'mimic', $quality = 100)
     {
         try {
@@ -37,17 +33,11 @@ class ImageMimicHandler extends ImageHandler
         return $file;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function correct()
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function guessType()
     {
         if ($this->source instanceof File) {
@@ -57,9 +47,6 @@ class ImageMimicHandler extends ImageHandler
         return parent::guessType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __toString()
     {
         return $this->cacheFile($this->guessType());

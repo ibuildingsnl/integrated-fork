@@ -12,12 +12,15 @@
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Content;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class TaxonomyTest extends ContentTest
+class TaxonomyTest extends TestCase
 {
+    use ContentTestTrait;
+
     /**
      * @var Taxonomy
      */
@@ -58,9 +61,6 @@ class TaxonomyTest extends ContentTest
         $this->assertEquals($title, (string) $this->taxonomy->setTitle($title));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getContent()
     {
         return $this->taxonomy;

@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\FormTypeBundle\EventListener;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Std\DOMDocument;
 use Integrated\Bundle\FormTypeBundle\Form\Type\EditorType;
 use Integrated\Common\Content\ContentInterface;
@@ -15,7 +16,7 @@ class EditorSocialDataEventListener implements EventSubscriberInterface
     {
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             FormEvents::POST_SUBMIT => 'setSocialEmbedMeta',
@@ -50,9 +51,11 @@ class EditorSocialDataEventListener implements EventSubscriberInterface
             }
         }
 
-        foreach ($socialEmbeds as $provider => $value) {
-            $provider = strtolower($provider);
-            $content->getMetadata()->set("embed_{$provider}", $value);
+        if ($content instanceof Content) {
+            foreach ($socialEmbeds as $provider => $value) {
+                $provider = strtolower($provider);
+                $content->getMetadata()->set("embed_{$provider}", $value);
+            }
         }
     }
 
@@ -64,11 +67,17 @@ class EditorSocialDataEventListener implements EventSubscriberInterface
         $xpath = new \DOMXPath($document);
         $query = "//*[contains(@class, 'embed-content')]";
 
-        foreach ($xpath->query($query) as $elm) {
-            $classes = explode(' ', $elm->getAttribute('class'));
-            foreach ($classes as $class) {
-                if ($class !== 'embed-content') {
-                    yield $class;
+        if (!$result = $xpath->query($query)) {
+            return;
+        }
+
+        foreach ($result as $elm) {
+            if ($elm instanceof \DOMElement) {
+                $classes = explode(' ', $elm->getAttribute('class'));
+                foreach ($classes as $class) {
+                    if ($class !== 'embed-content') {
+                        yield $class;
+                    }
                 }
             }
         }

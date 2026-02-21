@@ -20,10 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class ScopeFactory implements AuthenticatorFactoryInterface, FirewallListenerFactoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProviderId)
+    public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProviderId): string|array
     {
         return [];
     }
@@ -37,34 +34,22 @@ class ScopeFactory implements AuthenticatorFactoryInterface, FirewallListenerFac
         return [$listenerId];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPosition()
     {
         return 'remember_me';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPriority(): int
     {
         return -40;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getKey()
+    public function getKey(): string
     {
         return 'scope';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addConfiguration(NodeDefinition $node)
+    public function addConfiguration(NodeDefinition $node): void
     {
     }
 }

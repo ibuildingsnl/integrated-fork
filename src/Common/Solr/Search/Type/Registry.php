@@ -65,11 +65,11 @@ class Registry implements RegistryInterface
 
             if (!$type) {
                 if (!class_exists($name)) {
-                    throw new InvalidArgumentException(sprintf('Could not load type "%s": class does not exist.', $name));
+                    throw new InvalidArgumentException(\sprintf('Could not load type "%s": class does not exist.', $name));
                 }
 
                 if (!is_subclass_of($name, TypeInterface::class)) {
-                    throw new InvalidArgumentException(sprintf('Could not load type "%s": class does not implement "%s".', $name, TypeInterface::class));
+                    throw new InvalidArgumentException(\sprintf('Could not load type "%s": class does not implement "%s".', $name, TypeInterface::class));
                 }
 
                 $type = new $name();
@@ -84,7 +84,7 @@ class Registry implements RegistryInterface
     private function resolveType(TypeInterface $type): ResolvedTypeInterface
     {
         if (isset($this->checked[$type::class])) {
-            throw new LogicException(sprintf(
+            throw new LogicException(\sprintf(
                 'Circular reference detected for type "%s" (%s).',
                 $type::class,
                 implode(' > ', array_merge(array_keys($this->checked), [$type::class]))

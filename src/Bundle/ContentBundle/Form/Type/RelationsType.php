@@ -41,10 +41,7 @@ class RelationsType extends AbstractType
         $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var ContentTypeInterface $type */
         $type = $options['content_type'];
@@ -77,7 +74,7 @@ class RelationsType extends AbstractType
                 'data-icon' => $relation->getIcon(),
                 'data-location' => $relation->getLocation(),
                 'data-types' => json_encode($contentTypes),
-                ],
+            ],
                 'constraints' => $constraints,
             ]);
         }
@@ -85,20 +82,14 @@ class RelationsType extends AbstractType
         $builder->addModelTransformer(new RelationsTransformer($relations, $this->manager->getManager()));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(['data_class' => null]);
         $resolver->setRequired(['content_type']);
         $resolver->setAllowedTypes('content_type', 'Integrated\\Common\\ContentType\\ContentTypeInterface');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_content_relations';
     }

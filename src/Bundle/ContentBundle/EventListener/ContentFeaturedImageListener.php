@@ -12,14 +12,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class ContentFeaturedImageListener implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly DocumentManager $documentManager
+        private readonly DocumentManager $documentManager,
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::CONTENT_DISTRIBUTED => ['buildForm', -60],

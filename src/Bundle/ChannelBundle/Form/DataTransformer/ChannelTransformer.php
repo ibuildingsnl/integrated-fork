@@ -10,14 +10,11 @@ class ChannelTransformer implements DataTransformerInterface
 {
     public function __construct(
         private readonly ChannelRepository $repository,
-        private readonly bool $multiple = false
+        private readonly bool $multiple = false,
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function transform($value)
+    public function transform($value): mixed
     {
         if (!$this->multiple) {
             return $this->repository->findOneBy(['id' => $value]);
@@ -30,10 +27,7 @@ class ChannelTransformer implements DataTransformerInterface
         return $this->repository->findByIds($value);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (!$this->multiple) {
             if ($value instanceof ChannelInterface) {

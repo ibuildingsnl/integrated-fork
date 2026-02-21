@@ -32,10 +32,7 @@ class PermissionsType extends AbstractType
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addViewTransformer($this->getTransformer());
 
@@ -60,10 +57,7 @@ class PermissionsType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $emptyData = function (FormInterface $form) {
             return new ArrayCollection();
@@ -87,10 +81,7 @@ class PermissionsType extends AbstractType
         return new PermissionTransformer($this->repository);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_permissions';
     }

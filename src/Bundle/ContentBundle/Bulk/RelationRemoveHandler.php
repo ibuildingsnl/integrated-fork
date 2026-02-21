@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Bulk;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use Integrated\Common\Bulk\Action\HandlerInterface;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Relation\RelationInterface;
@@ -42,14 +43,11 @@ class RelationRemoveHandler implements HandlerInterface
         $this->references = $references;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(ContentInterface $content)
     {
         $embedded = $content->getRelation($this->relation->getId());
 
-        if (!$embedded) {
+        if (!$embedded instanceof Relation) {
             return;
         }
 

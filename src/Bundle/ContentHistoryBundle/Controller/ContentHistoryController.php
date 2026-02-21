@@ -24,30 +24,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class ContentHistoryController extends AbstractController
 {
-    /**
-     * @var DocumentRepository
-     */
-    protected $manager;
-
-    /**
-     * @var Parser
-     */
-    protected $parser;
-
-    /**
-     * @var PaginatorInterface
-     */
-    protected $paginator;
-
-    /**
-     * @var ContentTypeManager
-     */
-    protected $contentTypeManager;
+    private DocumentManager $manager;
+    private Parser $parser;
+    private PaginatorInterface $paginator;
+    private ContentTypeManager $contentTypeManager;
 
     public function __construct(DocumentManager $manager, Parser $parser, PaginatorInterface $paginator, ContentTypeManager $contentTypeManager)
     {

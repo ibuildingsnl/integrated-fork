@@ -19,7 +19,7 @@ class RegistryBuilder implements RegistryBuilderInterface
     /**
      * @var ResolvedTypeFactoryInterface
      */
-    private $factory = null;
+    private $factory;
 
     /**
      * @var TypeInterface[]
@@ -31,9 +31,6 @@ class RegistryBuilder implements RegistryBuilderInterface
      */
     private $extensions = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function setResolvedTypeFactory(ResolvedTypeFactoryInterface $factory)
     {
         $this->factory = $factory;
@@ -41,9 +38,6 @@ class RegistryBuilder implements RegistryBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addType(TypeInterface $type)
     {
         $this->types[$type->getName()] = $type;
@@ -51,9 +45,6 @@ class RegistryBuilder implements RegistryBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addTypes(array $types)
     {
         foreach ($types as $type) {
@@ -63,17 +54,11 @@ class RegistryBuilder implements RegistryBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addTypeExtension(TypeExtensionInterface $extension)
     {
         $this->extensions[$extension->getName()][] = $extension;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addTypeExtensions(array $extensions)
     {
         foreach ($extensions as $extension) {

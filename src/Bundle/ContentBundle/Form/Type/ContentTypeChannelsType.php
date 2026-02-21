@@ -21,10 +21,7 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class ContentTypeChannelsType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('options', ChoiceType::class, [
             'choices' => [
@@ -44,10 +41,7 @@ class ContentTypeChannelsType extends AbstractType
         $builder->addViewTransformer(new ChannelsTransformer());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_content_type_channels';
     }

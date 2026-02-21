@@ -78,7 +78,7 @@ class PageCopyService
                 $copiedPage->setCreatedAt(new \DateTime());
                 $copiedPage->setChannel($targetChannel);
 
-                foreach ($copiedPage->getGrids() as $key => $grid) {
+                foreach ($copiedPage->getGrids() as $grid) {
                     $this->copyGridBlocks($grid, $data['pages']['page'.$page->getId()]['blocks'], $copiedPage);
                 }
 
@@ -96,7 +96,7 @@ class PageCopyService
     private function copyGridBlocks(ItemsInterface $grid, array $data, AbstractPage $copiedPage)
     {
         $gridItems = $grid->getItems();
-        foreach ($gridItems as $key => $item) {
+        foreach ($gridItems as $item) {
             if (!$item instanceof Item) {
                 continue;
             }
@@ -105,9 +105,9 @@ class PageCopyService
 
             if ($block instanceof Block) {
                 // copy block
-                if (isset($data['block_'.$block->getId()]['operation']) &&
-                    $data['block_'.$block->getId()]['operation'] == 'clone') {
-                    $classMetadata = $this->documentManager->getClassMetadata(\get_class($block));
+                if (isset($data['block_'.$block->getId()]['operation'])
+                    && $data['block_'.$block->getId()]['operation'] == 'clone') {
+                    $classMetadata = $this->documentManager->getClassMetadata($block::class);
 
                     if (!$existingBlock = $this->documentManager
                         ->getRepository(Block::class)
@@ -128,10 +128,10 @@ class PageCopyService
 
                         foreach ($reflector->getMethods() as $method) {
                             $methodName = $method->getName();
-                            if (strpos($methodName, 'get') === 0 && $method->getNumberOfParameters() === 0) {
+                            if (str_starts_with($methodName, 'get') && $method->getNumberOfParameters() === 0) {
                                 $getters[] = $methodName;
                             }
-                            if (strpos($methodName, 'set') === 0 && $method->getNumberOfParameters() > 0) {
+                            if (str_starts_with($methodName, 'set') && $method->getNumberOfParameters() > 0) {
                                 $setters[] = $methodName;
                             }
                         }
@@ -158,7 +158,7 @@ class PageCopyService
             }
 
             if ($item->getRow()) {
-                foreach ($item->getRow()->getColumns() as $columnKey => $column) {
+                foreach ($item->getRow()->getColumns() as $column) {
                     $this->copyGridBlocks($column, $data, $copiedPage);
                 }
             }

@@ -15,6 +15,7 @@ use Integrated\Bundle\SolrBundle\Solr\Type\FieldMapperType;
 use Integrated\Bundle\SolrBundle\Tests\Fixtures\TestObject;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @covers \Integrated\Bundle\SolrBundle\Solr\Type\FieldMapperType
@@ -28,9 +29,7 @@ class FieldMapperTypeTest extends \PHPUnit\Framework\TestCase
         self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\TypeInterface', $this->getInstance());
     }
 
-    /**
-     * @dataProvider buildProvider
-     */
+    #[DataProvider('buildProvider')]
     public function testBuild(array $options, array $expected)
     {
         $container = $this->getContainer();
@@ -42,10 +41,7 @@ class FieldMapperTypeTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expected, $container->toArray());
     }
 
-    /**
-     * @return array
-     */
-    public function buildProvider()
+    public static function buildProvider(): array
     {
         return [
             'simple' => [
@@ -127,9 +123,7 @@ class FieldMapperTypeTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @dataProvider buildSpecialOrErrorConditionsProvider
-     */
+    #[DataProvider('buildSpecialOrErrorConditionsProvider')]
     public function testBuildSpecialOrErrorConditions(array $options, array $expected)
     {
         $container = $this->getContainer();
@@ -140,10 +134,7 @@ class FieldMapperTypeTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expected, $container->toArray());
     }
 
-    /**
-     * @return array
-     */
-    public function buildSpecialOrErrorConditionsProvider()
+    public static function buildSpecialOrErrorConditionsProvider(): array
     {
         return [
             'simple, field does not exist' => [
@@ -177,9 +168,7 @@ class FieldMapperTypeTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @dataProvider buildStringConversionProvider
-     */
+    #[DataProvider('buildStringConversionProvider')]
     public function testBuildStringConversion(array $options, array $expected)
     {
         $container = $this->getContainer();
@@ -190,10 +179,7 @@ class FieldMapperTypeTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expected, $container->toArray());
     }
 
-    /**
-     * @return array
-     */
-    public function buildStringConversionProvider()
+    public static function buildStringConversionProvider(): array
     {
         return [
             'boolean, false' => [

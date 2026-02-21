@@ -60,29 +60,20 @@ class MemoryResolver implements ResolverInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasConfig($name)
     {
         return isset($this->configs[$name]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConfig($name)
     {
         if (isset($this->configs[$name])) {
             return $this->configs[$name];
         }
 
-        throw new InvalidArgumentException(sprintf('Could not load config with the name "%s"', $name));
+        throw new InvalidArgumentException(\sprintf('Could not load config with the name "%s"', $name));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigs(ChannelInterface $channel)
     {
         $configs = $this->defaults;

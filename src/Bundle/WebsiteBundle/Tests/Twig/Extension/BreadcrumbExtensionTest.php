@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Integrated package.
  *
@@ -25,22 +26,22 @@ class BreadcrumbExtensionTest extends \PHPUnit\Framework\TestCase
     public const TEMPLATE = 'default';
 
     /**
-     * @var Helper|MockObject
+     * @var Helper&MockObject
      */
     protected $menuTwigHelper;
 
     /**
-     * @var BreadcrumbMenuProvider|MockObject
+     * @var BreadcrumbMenuProvider&MockObject
      */
     protected $breadcrumbMenuProvider;
 
     /**
-     * @var BreadcrumbResolver|MockObject
+     * @var BreadcrumbResolver&MockObject
      */
     protected $breadcrumbResolver;
 
     /**
-     * @var BreadcrumbExtension|MockObject
+     * @var BreadcrumbExtension&MockObject
      */
     protected $breadcrumbExtension;
 

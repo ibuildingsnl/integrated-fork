@@ -28,25 +28,16 @@ class Registry implements RegistryInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasExtension($name)
     {
         return isset($this->extensions[$name]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtension($name)
     {
         return $this->extensions[$name];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtensions()
     {
         return $this->extensions;

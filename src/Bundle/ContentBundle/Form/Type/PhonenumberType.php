@@ -11,10 +11,12 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Phonenumber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -23,10 +25,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class PhonenumberType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (\in_array('type', $options['fields'])) {
             $builder->add('type', ChoiceType::class, [
@@ -49,23 +48,20 @@ class PhonenumberType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Embedded\\Phonenumber',
+            'data_class' => Phonenumber::class,
+            'empty_data' => function (FormInterface $form) {
+                return new Phonenumber($form->get('number')->getData());
+            },
             'fields' => ['type', 'number'], // @todo validate options (INTEGRATED-627)
             'label_type' => 'Type',
             'label_number' => 'Phone number',
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_phonenumber';
     }

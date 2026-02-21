@@ -17,9 +17,6 @@ use Integrated\Common\Converter\Type\TypeInterface;
 
 class CustomFieldsType implements TypeInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         if (!$data instanceof Content) {
@@ -33,9 +30,6 @@ class CustomFieldsType implements TypeInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.customFields';

@@ -8,15 +8,11 @@
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ChannelController::index</default>
     </route>
 
-    <route id="integrated_content_channel_new" path="/new" methods="GET">
+    <route id="integrated_content_channel_new" path="/new">
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ChannelController::new</default>
     </route>
 
-    <route id="integrated_content_channel_create" path="/" methods="POST">
-        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ChannelController::create</default>
-    </route>
-
-    <route id="integrated_content_channel_edit" path="/{id}/edit" methods="GET">
+    <route id="integrated_content_channel_edit" path="/{id}/edit">
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ChannelController::edit</default>
     </route>
 
@@ -28,7 +24,7 @@
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ChannelController::delete</default>
     </route>
 
-    <route id="integrated_content_channel_show" path="/{id}" methods="GET">
+    <route id="integrated_content_channel_show" path="/{id}">
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ChannelController::show</default>
     </route>
 

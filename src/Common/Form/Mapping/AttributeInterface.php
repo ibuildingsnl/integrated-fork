@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\Form\Mapping;
 
+use Symfony\Component\Form\FormTypeInterface;
+
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
@@ -22,7 +24,7 @@ interface AttributeInterface
     public function getName();
 
     /**
-     * @return string
+     * @return class-string<FormTypeInterface<mixed>>
      */
     public function getType();
 
@@ -48,8 +50,6 @@ interface AttributeInterface
 
     /**
      * @param string $name
-     *
-     * @return mixed
      */
     public function getOption($name);
 

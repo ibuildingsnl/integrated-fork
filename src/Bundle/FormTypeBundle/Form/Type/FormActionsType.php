@@ -11,19 +11,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FormActionsType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         foreach ($options['buttons'] as $name => $config) {
             $this->addButton($builder, $name, $config);
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         if ($form->count() == 0) {
@@ -60,33 +54,17 @@ class FormActionsType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-                'buttons' => [],
-                'options' => [],
-                'mapped' => false,
-            ]);
+            'buttons' => [],
+            'options' => [],
+            'mapped' => false,
+        ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'form_actions';
-    }
-
-    /**
-     * Backward compatibility for SF < 3.0.
-     *
-     * @return string|null
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
     }
 }

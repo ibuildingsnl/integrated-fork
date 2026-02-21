@@ -31,12 +31,9 @@ class Context implements NormalizerInterface
     /**
      * @var Context
      */
-    private $nesting = null;
+    private $nesting;
 
-    /**
-     * @param Context $nesting
-     */
-    public function __construct(ResolverInterface $resolver, array $options, self $nesting = null)
+    public function __construct(ResolverInterface $resolver, array $options, ?self $nesting = null)
     {
         $this->resolver = $resolver;
         $this->options = $options;
@@ -59,9 +56,6 @@ class Context implements NormalizerInterface
         return $this->nesting;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function normalize($object, array $options = [])
     {
         if (\is_object($object)) {

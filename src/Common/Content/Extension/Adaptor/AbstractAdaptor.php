@@ -22,7 +22,7 @@ abstract class AbstractAdaptor implements AdaptorInterface
     /**
      * @var DispatcherInterface|null
      */
-    protected $dispatcher = null;
+    protected $dispatcher;
 
     public function setDispatcher(DispatcherInterface $dispatcher)
     {

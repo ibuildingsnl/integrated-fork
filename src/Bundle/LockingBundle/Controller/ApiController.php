@@ -11,31 +11,23 @@
 
 namespace Integrated\Bundle\LockingBundle\Controller;
 
-use Integrated\Common\Locks;
+use Integrated\Common\Locks\ManagerInterface;
 use Integrated\Common\Locks\Resource;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
 class ApiController extends AbstractController
 {
-    /**
-     * @var Locks\ManagerInterface|null
-     */
-    private $manager;
+    private ?ManagerInterface $manager;
 
-    public function __construct(?Locks\ManagerInterface $manager)
+    public function __construct(?ManagerInterface $manager)
     {
         $this->manager = $manager;
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function refresh(Request $request)
+    public function refresh(Request $request): Response
     {
         if (!$this->manager) {
             $response = [

@@ -24,9 +24,6 @@ use Symfony\Component\Finder\Finder;
  */
 class RegisterConfigFileProviderPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('integrated_solr.converter.config.provider.chain')) {

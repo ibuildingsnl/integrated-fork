@@ -12,7 +12,7 @@
 namespace Integrated\Bundle\BlockBundle\Form\Type;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\BlockBundle\Document\Block\Block;
+use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
 use Integrated\Bundle\BlockBundle\Provider\BlockUsageProvider;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Symfony\Component\Form\AbstractType;
@@ -42,22 +42,23 @@ class BlockFilterType extends AbstractType
      */
     private $blockUsageProvider;
 
+    private BlockRepository $blockRepository;
+
     public function __construct(
         MetadataFactoryInterface $factory,
         DocumentManager $dm,
-        BlockUsageProvider $blockUsageProvider
+        BlockUsageProvider $blockUsageProvider,
+        BlockRepository $blockRepository,
     ) {
         $this->factory = $factory;
         $this->dm = $dm;
         $this->blockUsageProvider = $blockUsageProvider;
+        $this->blockRepository = $blockRepository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->setMethod('GET');
+        $builder->setMethod(\Symfony\Component\HttpFoundation\Request::METHOD_GET);
 
         $builder->add(
             'q',
@@ -93,26 +94,20 @@ class BlockFilterType extends AbstractType
         ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired('blockIds');
         $resolver->setAllowedTypes('blockIds', 'array');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_block_filter';
     }
 
-    /**
-     * @return mixed
-     */
     private function getTypeChoices(array $blockIds)
     {
-        return $this->dm->getRepository(Block::class)->getTypeChoices(
+        return $this->blockRepository->getTypeChoices(
             $this->factory,
             $blockIds
         );

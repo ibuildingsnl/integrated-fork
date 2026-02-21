@@ -76,9 +76,6 @@ class SearchBlock extends Block
         $this->url = $url;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return 'search';

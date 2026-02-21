@@ -14,7 +14,7 @@ namespace Integrated\Bundle\BlockBundle\EventListener;
 use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
 use Integrated\Bundle\MenuBundle\Event\ConfigureMenuEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -39,6 +39,11 @@ class ConfigureMenuListener implements EventSubscriberInterface
     private $tokenStorage;
 
     /**
+     * @var RequestStack
+     */
+    private $requestStack;
+
+    /**
      * @var FilterQueryProvider
      */
     private $filterQueryProvider;
@@ -46,17 +51,16 @@ class ConfigureMenuListener implements EventSubscriberInterface
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
         TokenStorageInterface $tokenStorage,
-        FilterQueryProvider $filterQueryProvider
+        RequestStack $requestStack,
+        FilterQueryProvider $filterQueryProvider,
     ) {
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenStorage = $tokenStorage;
+        $this->requestStack = $requestStack;
         $this->filterQueryProvider = $filterQueryProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             ConfigureMenuEvent::CONFIGURE => 'onMenuConfigure',
@@ -65,9 +69,9 @@ class ConfigureMenuListener implements EventSubscriberInterface
 
     public function onMenuConfigure(ConfigureMenuEvent $event)
     {
-        if (!$this->authorizationChecker->isGranted(self::ROLE_WEBSITE_MANAGER) &&
-            !$this->authorizationChecker->isGranted(self::ROLE_ADMIN)) {
-            $session = new Session();
+        if (!$this->authorizationChecker->isGranted(self::ROLE_WEBSITE_MANAGER)
+            && !$this->authorizationChecker->isGranted(self::ROLE_ADMIN)) {
+            $session = $this->requestStack->getSession();
             $hasBlocks = $session->get('hasBlocks', false);
 
             if (!$session->has('hasBlocks') && $user = $this->tokenStorage->getToken()->getUser()) {

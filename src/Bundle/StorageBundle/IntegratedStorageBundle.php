@@ -20,11 +20,8 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class IntegratedStorageBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
-        $container->addCompilerPass(new FileLocatorOverwritePass());
+        $container->addCompilerPass(new FileLocatorOverwritePass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
     }
 }

@@ -5,6 +5,9 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="Integrated\Bundle\TaxonomyBundle\Controller\IndexController">
             <argument type="service" id="integrated_taxonomy.taxonomy.overview"/>
             <argument type="service" id="integrated.form.resolver" />
@@ -13,13 +16,7 @@
             <argument type="service" id="knp_paginator"/>
             <argument type="service" id="integrated_content.metadata.factory"/>
             <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
-
-            <tag name="controller.service_arguments" />
-            <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
+
     </services>
 </container>

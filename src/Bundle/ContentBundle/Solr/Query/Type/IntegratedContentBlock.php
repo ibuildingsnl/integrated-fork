@@ -15,6 +15,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Solr\Query\SortOptions;
 use Integrated\Common\Solr\Search\Type\AbstractType;
+use Solarium\Component\Facet\Field;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -23,7 +24,7 @@ class IntegratedContentBlock extends AbstractType
 {
     public function __construct(
         private readonly DocumentManager $manager,
-        private readonly SortOptions $sorting
+        private readonly SortOptions $sorting,
     ) {
     }
 
@@ -49,9 +50,9 @@ class IntegratedContentBlock extends AbstractType
         $facet = $query->getFacetSet();
 
         foreach ($options['facets'] as $field => $value) {
-            $facet
-                ->createFacetField($field)
-                ->setField($field)
+            /** @var Field $facetField */
+            $facetField = $facet->createFacetField($field);
+            $facetField->setField($field)
                 ->setMinCount(1)
                 ->getLocalParameters()->setExclude($field);
 
@@ -64,9 +65,9 @@ class IntegratedContentBlock extends AbstractType
         }
 
         foreach ($options['facets_search_selection'] as $field => $value) {
-            $facet
-                ->createFacetField($field.'_search_selection')
-                ->setField($field)
+            /** @var Field $facetField */
+            $facetField = $facet->createFacetField($field.'_search_selection');
+            $facetField->setField($field)
                 ->setMinCount(1);
 
             if ($value) {
@@ -81,14 +82,17 @@ class IntegratedContentBlock extends AbstractType
             $query->addParam($key, $value);
         }
 
-        foreach ($this->manager->getRepository(Relation::class)->findAll() as $relation) {
-            $facet->createFacetField($name = 'relation_'.$relation->getId().'_search_selection')
-                ->setField($field = 'facet_'.$relation->getId());
+        if (\count($options['relation_search_selection'])) {
+            foreach ($this->manager->getRepository(Relation::class)->findAll() as $relation) {
+                if ($value = $options['relation_search_selection'][$relation->getId()] ?? []) {
+                    /** @var Field $facetField */
+                    $facetField = $facet->createFacetField($name = 'relation_'.$relation->getId().'_search_selection');
+                    $facetField->setField($field = 'facet_'.$relation->getId());
 
-            if ($value = $options['relation_search_selection'][$relation->getId()] ?? []) {
-                $query->createFilterQuery($name)
-                    ->addTag($name)
-                    ->setQuery($field.': ((%1%))', [implode(') OR (', array_map($escape, $value))]);
+                    $query->createFilterQuery($name)
+                        ->addTag($name)
+                        ->setQuery($field.': ((%1%))', [implode(') OR (', array_map($escape, $value))]);
+                }
             }
         }
     }

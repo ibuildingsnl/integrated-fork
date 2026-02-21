@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Content\Embedded;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Common\Content\ContentInterface;
 
 /**
@@ -32,7 +31,7 @@ interface RelationInterface
     /**
      * Get references of Relation.
      *
-     * @return ContentInterface[]|ArrayCollection
+     * @return ContentInterface[]
      */
     public function getReferences();
 }

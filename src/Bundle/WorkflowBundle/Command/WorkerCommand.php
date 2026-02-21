@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\WorkflowBundle\Command;
 
 use Integrated\Common\Queue\QueueInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,43 +20,29 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
+#[AsCommand(
+    name: 'workflow:worker:run',
+    description: 'Process the workflow queue messages',
+)]
 class WorkerCommand extends Command
 {
     use LockableTrait;
-    /**
-     * @var QueueInterface
-     */
-    private $queue;
 
-    /**
-     * @var string
-     */
-    private $workingDirectory;
+    private QueueInterface $queue;
+    private string $workingDirectory;
 
-    public function __construct(
-        QueueInterface $queue,
-        string $workingDirectory
-    ) {
-        parent::__construct();
-
+    public function __construct(QueueInterface $queue, string $workingDirectory)
+    {
         $this->queue = $queue;
         $this->workingDirectory = $workingDirectory;
+
+        parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('workflow:worker:run')
-
             ->addOption('batch', 'b', InputOption::VALUE_REQUIRED, 'The queue batch size to process in one worker run', 10)
-
-            ->setDescription('Process the workflow queue messages')
             ->setHelp('
 The <info>%command.name%</info> .
 
@@ -63,15 +50,12 @@ The <info>%command.name%</info> .
 ');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$this->lock(self::class.md5(__DIR__.$this->getName()))) {
             $output->writeln('The command is already running in another process.');
 
-            return 0;
+            return self::SUCCESS;
         }
 
         try {
@@ -107,21 +91,20 @@ The <info>%command.name%</info> .
         } catch (\Exception $e) {
             $output->writeln('Aborting: '.$e->getMessage());
 
-            return 1;
+            return self::FAILURE;
         } finally {
             $this->release();
         }
 
-        return 0;
+        return self::SUCCESS;
     }
 
     /**
-     * @param string   $command
      * @param string[] $arguments
      *
      * @throws \Exception
      */
-    protected function executeCommand(InputInterface $input, OutputInterface $output, $command, array $arguments = [])
+    protected function executeCommand(InputInterface $input, OutputInterface $output, string $command, array $arguments = []): void
     {
         // run in a different process for isolation like memory issues.
         $process = new Process(
@@ -130,7 +113,7 @@ The <info>%command.name%</info> .
         );
         $process->run();
 
-        $process->run(function ($type, $buffer) use ($output) {
+        $process->run(function ($type, $buffer) use ($output): void {
             if (Process::ERR === $type) {
                 $output->write($buffer);
             } else {

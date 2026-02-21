@@ -23,10 +23,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class FieldsType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var MetadataInterface $metadata */
         $metadata = $options['metadata'];
@@ -56,19 +53,13 @@ class FieldsType extends AbstractType
         $builder->addModelTransformer(new FieldsTransformer());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(['metadata']);
         $resolver->setAllowedTypes('metadata', 'Integrated\\Common\\Form\\Mapping\\MetadataInterface');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_content_type_fields';
     }

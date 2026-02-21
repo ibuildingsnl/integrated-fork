@@ -21,49 +21,30 @@ use Integrated\Bundle\StorageBundle\Storage\Util\ProgressIteratorUtil;
 use Integrated\Common\Storage\Database\DatabaseInterface;
 use Integrated\Common\Storage\DecisionInterface;
 use Integrated\Common\Storage\ManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * Redistribute files in the database over the filesystems.
- *
- * @author Johnny Borg <johnny@e-active.nl>
- */
+#[AsCommand(
+    name: 'storage:filesystem:add',
+    description: 'Add files into the filesystem',
+)]
 class AddCommand extends Command
 {
-    /**
-     * @var DatabaseInterface
-     */
-    protected $database;
-
-    /**
-     * @var FilesystemRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var ManagerInterface
-     */
-    protected $storage;
-
-    /**
-     * @var DecisionInterface
-     */
-    private $decision;
-
-    /**
-     * @var MetadataFactoryInterface
-     */
-    private $metadata;
+    private DatabaseInterface $database;
+    private FilesystemRegistry $registry;
+    private ManagerInterface $storage;
+    private DecisionInterface $decision;
+    private MetadataFactoryInterface $metadata;
 
     public function __construct(
         DatabaseInterface $database,
         FilesystemRegistry $registry,
         ManagerInterface $storage,
         DecisionInterface $decision,
-        MetadataFactoryInterface $metadata
+        MetadataFactoryInterface $metadata,
     ) {
         $this->database = $database;
         $this->registry = $registry;
@@ -74,26 +55,11 @@ class AddCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    protected function configure(): void
     {
-        $this->setName('storage:filesystem:add')
-            ->setDescription('Add files into the filesystem.')
-            ->setDefinition([
-                new InputArgument(
-                    'filesystem',
-                    InputArgument::REQUIRED,
-                    ''
-                ),
-            ])
-        ;
+        $this->addArgument('filesystem', InputArgument::REQUIRED, 'Name of the filesystem add files to');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $filesystem = $input->getArgument('filesystem');
@@ -108,12 +74,11 @@ class AddCommand extends Command
                 ->map(ContentReflectionMap::storageProperties($this->metadata))
                 ->map(FileMap::documentAllowed($this->decision, $filesystem))
                 ->walk(FilesystemWalk::add($this->storage, $this->metadata, $filesystem))
-                ->walk(DocumentWalk::save($this->database))
-            ;
+                ->walk(DocumentWalk::save($this->database));
         } else {
-            throw new \InvalidArgumentException(sprintf('The filesystem %s does not exist', $filesystem));
+            throw new \InvalidArgumentException(\sprintf('The filesystem %s does not exist', $filesystem));
         }
 
-        return 0;
+        return self::SUCCESS;
     }
 }

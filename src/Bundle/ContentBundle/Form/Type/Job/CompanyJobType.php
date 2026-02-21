@@ -35,11 +35,12 @@ class CompanyJobType extends BaseType
         $this->contentTypeManager = $contentTypeManager;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('company', ContentChoiceType::class, [
             'params' => ['_format' => 'json', 'contenttypes' => $this->getContentTypes()],
             'multiple' => false,
+            'required' => false,
         ]);
 
         $builder->add('function', TextType::class);
@@ -54,21 +55,21 @@ class CompanyJobType extends BaseType
     protected function getContentTypes()
     {
         $contentTypes = $this->contentTypeManager->filterInstanceOf(Company::class);
+        if (!\count($contentTypes)) {
+            return ['none'];
+        }
 
         return array_map(function ($contentType) {
             return $contentType->getId();
         }, $contentTypes);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('data_class', Job::class);
     }
 
-    /**
-     * @return string
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_company_job';
     }

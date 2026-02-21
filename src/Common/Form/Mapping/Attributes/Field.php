@@ -38,7 +38,7 @@ class Field
      *
      * @throws \BadMethodCallException
      */
-    public function __construct($exactly = null, string $type = null, array $options = null, string $location = null, array $extra = [])
+    public function __construct($exactly = null, ?string $type = null, ?array $options = null, ?string $location = null, array $extra = [])
     {
         if (\is_array($exactly)) {
             $extra = array_merge($exactly, $extra);
@@ -56,7 +56,7 @@ class Field
         foreach ($extra as $key => $value) {
             $method = 'set'.str_replace('_', '', $key);
             if (!method_exists($this, $method)) {
-                throw new \BadMethodCallException(sprintf("Unknown property '%s' on annotation '%s'.", $key, static::class));
+                throw new \BadMethodCallException(\sprintf("Unknown property '%s' on annotation '%s'.", $key, static::class));
             }
             $this->$method($value);
         }

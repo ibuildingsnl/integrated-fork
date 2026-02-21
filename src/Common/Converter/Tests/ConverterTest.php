@@ -26,17 +26,17 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ConverterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RegistryInterface|MockObject
+     * @var RegistryInterface&MockObject
      */
     private $registry;
 
     /**
-     * @var ConfigResolverInterface|MockObject
+     * @var ConfigResolverInterface&MockObject
      */
     private $resolver;
 
     /**
-     * @var ContainerFactoryInterface|MockObject
+     * @var ContainerFactoryInterface&MockObject
      */
     private $factory;
 
@@ -194,11 +194,10 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param string $name
-     * @param array  $options
      *
      * @return TypeConfigInterface|MockObject
      */
-    protected function getType($name, array $options = null)
+    protected function getType($name, ?array $options = null)
     {
         $mock = $this->createMock('Integrated\\Common\\Converter\\Config\\TypeConfigInterface');
 

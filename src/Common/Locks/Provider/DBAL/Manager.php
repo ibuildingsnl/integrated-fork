@@ -49,9 +49,6 @@ class Manager implements ManagerInterface
         $this->options = $options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function acquire(RequestInterface $request, $timeout = 0)
     {
         if ($owner = $request->getOwner()) {
@@ -89,9 +86,6 @@ class Manager implements ManagerInterface
         return Lock::factory($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function release($lock)
     {
         if ($lock instanceof LockInterface) {
@@ -109,9 +103,6 @@ class Manager implements ManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function refresh($lock)
     {
         if ($lock instanceof LockInterface) {
@@ -127,9 +118,10 @@ class Manager implements ManagerInterface
             $builder
                 ->select('l.*')
                 ->from($this->options['lock_table_name'], 'l')
-                ->where('l.id = '.$builder->createPositionalParameter($lock));
+                ->where('l.id = '.$builder->createPositionalParameter($lock))
+                ->forUpdate();
 
-            if ($data = $this->connection->fetchAssociative($builder->getSQL().' '.$this->platform->getForUpdateSQL(), array_values($builder->getParameters()))) {
+            if ($data = $this->connection->fetchAssociative($builder->getSQL(), array_values($builder->getParameters()))) {
                 if ($data['timeout'] !== null) {
                     $data['expires'] = time() + $data['timeout'];
 
@@ -151,9 +143,6 @@ class Manager implements ManagerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function find($lock)
     {
         if ($lock instanceof LockInterface) {
@@ -179,17 +168,11 @@ class Manager implements ManagerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findAll()
     {
         return $this->findBy([]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByResource(ResourceInterface $resource)
     {
         $filter = new Filter();
@@ -198,9 +181,6 @@ class Manager implements ManagerInterface
         return $this->findBy($filter);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByOwner(ResourceInterface $resource)
     {
         $filter = new Filter();
@@ -209,9 +189,6 @@ class Manager implements ManagerInterface
         return $this->findBy($filter);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findBy($filters)
     {
         if (!\is_array($filters)) {
@@ -238,7 +215,7 @@ class Manager implements ManagerInterface
 
             if (!empty($resources)) {
                 $resources = array_map(['Integrated\\Common\\Locks\\Provider\\DBAL\\Resource', 'serialize'], $resources);
-                $resources = array_map([$builder->getConnection(), 'quote'], $resources);
+                $resources = array_map([$this->connection, 'quote'], $resources);
 
                 $where[] = $builder->expr()->and($builder->expr()->in('l.resource', $resources));
             }
@@ -248,7 +225,7 @@ class Manager implements ManagerInterface
 
             if (!empty($owners)) {
                 $owners = array_map(['Integrated\\Common\\Locks\\Provider\\DBAL\\Resource', 'serialize'], $owners);
-                $owners = array_map([$builder->getConnection(), 'quote'], $owners);
+                $owners = array_map([$this->connection, 'quote'], $owners);
 
                 $where[] = $builder->expr()->and($builder->expr()->in('l.resource_owner', $owners));
             }
@@ -273,9 +250,6 @@ class Manager implements ManagerInterface
         return $results;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear()
     {
         try {
@@ -300,7 +274,7 @@ class Manager implements ManagerInterface
                 ->delete($this->options['lock_table_name'])
                 ->where('expires IS NOT NULL AND expires < '.$builder->createPositionalParameter(time()));
 
-            $builder->execute();
+            $builder->executeStatement();
         } catch (\Exception $e) {
             // probably should raise a error
         }

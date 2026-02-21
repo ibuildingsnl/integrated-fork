@@ -11,52 +11,35 @@
 
 namespace Integrated\Bundle\WebsiteBundle\EventListener;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\WebsiteBundle\Service\EditableChecker;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Twig\Environment;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class WebsiteToolbarListener implements EventSubscriberInterface
 {
-    /**
-     * @var \Twig_Environment
-     */
-    protected $twig;
+    private Environment $twig;
+    private EditableChecker $websiteEditableChecker;
+    private DocumentManager $manager;
 
-    /**
-     * @var EditableChecker
-     */
-    protected $websiteEditableChecker;
+    private string $toolbarMessage = '';
 
-    /*
-     * @var string
-     */
-    protected $toolbarMessage = '';
+    private ?Content $contentItem = null;
 
-    /*
-     * @var Content
-     */
-    protected $contentItem = null;
-
-    public function __construct(Environment $twig, EditableChecker $websiteEditableChecker)
+    public function __construct(Environment $twig, EditableChecker $websiteEditableChecker, DocumentManager $manager)
     {
         $this->twig = $twig;
         $this->websiteEditableChecker = $websiteEditableChecker;
+        $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [KernelEvents::RESPONSE => ['onKernelResponse', -128]];
     }
@@ -68,19 +51,11 @@ class WebsiteToolbarListener implements EventSubscriberInterface
         }
 
         if ($this->websiteEditableChecker->checkEditable() || $this->contentItem !== null) {
-            $this->injectToolbar($event->getResponse());
+            $this->injectToolbar($event->getRequest(), $event->getResponse());
         }
     }
 
-    /**
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     */
-    protected function injectToolbar(Response $response)
+    private function injectToolbar(Request $request, Response $response)
     {
         $content = $response->getContent();
         $pos = stripos($content, '<body');
@@ -92,6 +67,7 @@ class WebsiteToolbarListener implements EventSubscriberInterface
                     'message' => $this->toolbarMessage,
                     'layoutEditable' => $this->websiteEditableChecker->checkEditable(),
                     'content' => $this->contentItem,
+                    'page' => $this->manager->getRepository(AbstractPage::class)->find($request->attributes->get('page')),
                 ]
             );
 

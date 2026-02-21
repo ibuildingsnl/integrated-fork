@@ -24,10 +24,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PageCopyBlockType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('operation', ChoiceType::class, [
             'required' => false,
@@ -50,7 +47,7 @@ class PageCopyBlockType extends AbstractType
             ],
         ]);
 
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
             $data = $event->getData();
             $form = $event->getForm();
 
@@ -63,10 +60,7 @@ class PageCopyBlockType extends AbstractType
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(['block', 'channel', 'targetChannel']);
         $resolver->setAllowedTypes('block', Block::class);
@@ -74,9 +68,6 @@ class PageCopyBlockType extends AbstractType
         $resolver->setAllowedTypes('targetChannel', 'string');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         parent::buildView($view, $form, $options);

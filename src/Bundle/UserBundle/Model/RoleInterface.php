@@ -16,8 +16,6 @@ namespace Integrated\Bundle\UserBundle\Model;
  */
 interface RoleInterface
 {
-    public function __construct($role);
-
     /**
      * Returns the identity of the role.
      *

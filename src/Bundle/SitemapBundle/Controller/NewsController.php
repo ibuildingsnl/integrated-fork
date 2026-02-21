@@ -11,45 +11,25 @@
 
 namespace Integrated\Bundle\SitemapBundle\Controller;
 
-use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\News;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
 class NewsController extends AbstractController
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
+    private DocumentManager $manager;
+    private ChannelContextInterface $context;
 
-    /**
-     * @var ChannelContextInterface
-     */
-    private $context;
-
-    public function __construct(
-        ManagerRegistry $registry,
-        ChannelContextInterface $context,
-        ContainerInterface $container
-    ) {
-        $this->registry = $registry;
+    public function __construct(DocumentManager $manager, ChannelContextInterface $context)
+    {
+        $this->manager = $manager;
         $this->context = $context;
-        $this->container = $container;
     }
 
-    /**
-     * @Template
-     *
-     * @throws \Exception
-     */
-    public function index(): array
+    public function index(): Response
     {
         $channel = $this->context->getChannel();
 
@@ -59,7 +39,7 @@ class NewsController extends AbstractController
 
         $now = new \DateTime();
 
-        $queryBuilder = $this->registry->getManagerForClass(News::class)->createQueryBuilder(News::class);
+        $queryBuilder = $this->manager->createQueryBuilder(News::class);
         $documents = $queryBuilder
             ->select('contentType', 'slug', 'publishTime', 'title', 'relations')
             ->field('channels.$id')->equals($channel->getId())
@@ -74,10 +54,10 @@ class NewsController extends AbstractController
             ->getQuery()
             ->getIterator();
 
-        return [
+        return $this->render('@IntegratedSitemap/news/index.xml.twig', [
             'channel' => $channel,
             'locale' => $this->getParameter('kernel.default_locale'),
             'documents' => $documents,
-        ];
+        ]);
     }
 }

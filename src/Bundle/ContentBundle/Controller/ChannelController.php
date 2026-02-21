@@ -20,7 +20,7 @@ use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
-use Integrated\Bundle\ContentBundle\Form\Type as Form;
+use Integrated\Bundle\ContentBundle\Form\Type\ChannelType;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\Channel\Event\ChannelEvent;
@@ -36,32 +36,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\UX\Turbo\TurboStreamResponse;
 
-/**
- * Controller for CRUD actions Channel document.
- *
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- */
 class ChannelController extends AbstractController
 {
-    /**
-     * @var DocumentManager
-     */
-    protected $documentManager;
-
-    /**
-     * @var SearchContentReferenced
-     */
-    protected $searchContentReferenced;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
+    private DocumentManager $documentManager;
+    private SearchContentReferenced $searchContentReferenced;
+    private EventDispatcherInterface $dispatcher;
 
     public function __construct(
         DocumentManager $documentManager,
         SearchContentReferenced $searchContentReferenced,
-        EventDispatcherInterface $dispatcher
+        EventDispatcherInterface $dispatcher,
     ) {
         $this->searchContentReferenced = $searchContentReferenced;
         $this->documentManager = $documentManager;
@@ -92,22 +76,7 @@ class ChannelController extends AbstractController
         ]);
     }
 
-    public function new(): Response
-    {
-        if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $channel = new Channel();
-
-        $form = $this->createCreateForm($channel);
-
-        return $this->render('@IntegratedContent/channel/new.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
-    public function create(Request $request): Response|RedirectResponse
+    public function new(Request $request): Response|RedirectResponse
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -134,25 +103,11 @@ class ChannelController extends AbstractController
         }
 
         return $this->render('@IntegratedContent/channel/new.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    public function edit(Channel $channel): Response
-    {
-        if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $form = $this->createEditForm($channel);
-
-        return $this->render('@IntegratedContent/channel/edit.html.twig', [
-            'form' => $form->createView(),
-            'channel' => $channel,
-        ]);
-    }
-
-    public function update(Request $request, Channel $channel): Response|RedirectResponse
+    public function edit(Channel $channel, Request $request): Response
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -176,7 +131,7 @@ class ChannelController extends AbstractController
         }
 
         return $this->render('@IntegratedContent/channel/edit.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'channel' => $channel,
         ]);
     }
@@ -313,21 +268,16 @@ class ChannelController extends AbstractController
 
         return $this->render('@IntegratedContent/channel/delete.html.twig', [
             'channel' => $channel,
-            'form' => $form->createView(),
+            'form' => $form,
             'referenced' => $referenced,
         ]);
     }
 
     protected function createCreateForm(Channel $channel): FormInterface
     {
-        $form = $this->createForm(
-            Form\ChannelType::class,
-            $channel,
-            [
-                'action' => $this->generateUrl('integrated_content_channel_create'),
-                'method' => 'POST',
-            ]
-        );
+        $form = $this->createForm(ChannelType::class, $channel, [
+            'action' => $this->generateUrl('integrated_content_channel_new'),
+        ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
@@ -336,9 +286,8 @@ class ChannelController extends AbstractController
 
     protected function createEditForm(Channel $channel): FormInterface
     {
-        $form = $this->createForm(Form\ChannelType::class, $channel, [
-            'action' => $this->generateUrl('integrated_content_channel_update', ['id' => $channel->getId()]),
-            'method' => 'PUT',
+        $form = $this->createForm(ChannelType::class, $channel, [
+            'action' => $this->generateUrl('integrated_content_channel_edit', ['id' => $channel->getId()]),
         ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
@@ -349,7 +298,7 @@ class ChannelController extends AbstractController
     /**
      * @param mixed $id The document id
      */
-    protected function createDeleteForm($id, bool $deleteAllowed): FormInterface
+    protected function createDeleteForm($id, bool $deleteAllowed): Form
     {
         $form = $this->createFormBuilder()
             ->setAction($this->generateUrl('integrated_content_channel_delete', ['id' => $id, '_format' => 'turbo-stream']))

@@ -38,30 +38,6 @@ class AssetNode extends Node
         parent::__construct($nodes, $attributes, $lineno, $tag);
     }
 
-    //    /**
-    //     * @param \Twig_Node $body
-    //     * @param array      $assets
-    //     * @param bool       $inline
-    //     * @param string     $mode
-    //     * @param int        $lineno
-    //     * @param string     $tag
-    //     */
-    //    public function __construct(
-    //        \Twig_Node $body,
-    //        array $assets = [],
-    //        $inline = false,
-    //        $mode = null,
-    //        $lineno = 0,
-    //        $tag = null
-    //    ) {
-    //        parent::__construct(
-    //            ['body' => $body],
-    //            ['assets' => $assets, 'inline' => $inline, 'mode' => $mode],
-    //            $lineno,
-    //            $tag
-    //        );
-    //    }
-
     public function compile(Compiler $compiler)
     {
         $body = $this->getNode('body');

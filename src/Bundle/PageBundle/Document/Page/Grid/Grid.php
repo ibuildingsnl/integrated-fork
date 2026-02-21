@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\PageBundle\Document\Page\Grid;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Grid document.
@@ -26,7 +27,7 @@ class Grid implements ItemsInterface
     protected $id;
 
     /**
-     * @var Item[]
+     * @var Collection<Item>
      */
     protected $items;
 

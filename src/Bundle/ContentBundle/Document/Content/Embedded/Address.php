@@ -171,7 +171,7 @@ class Address
         return $this->location;
     }
 
-    public function setLocation(Location $location = null): void
+    public function setLocation(?Location $location = null): void
     {
         $this->location = $location;
     }

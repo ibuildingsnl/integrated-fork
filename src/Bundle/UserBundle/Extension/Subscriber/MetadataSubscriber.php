@@ -35,10 +35,7 @@ class MetadataSubscriber implements MetadataSubscriberInterface
         $this->extension = $extension;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::METADATA => 'process',

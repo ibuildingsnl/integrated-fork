@@ -14,6 +14,7 @@ namespace Integrated\Bundle\WorkflowBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -23,7 +24,7 @@ class Definition
     /**
      * @var string
      */
-    protected $id = null;
+    protected $id;
 
     /**
      * @var string
@@ -42,6 +43,7 @@ class Definition
 
     public function __construct()
     {
+        $this->id = Uuid::uuid4()->toString();
         $this->states = new ArrayCollection();
     }
 
@@ -86,7 +88,7 @@ class Definition
      *
      * @return $this
      */
-    public function setStates(Collection $states)
+    public function setStates(iterable $states)
     {
         foreach ($this->states as $state) {
             $this->removeState($state);
@@ -147,11 +149,9 @@ class Definition
     }
 
     /**
-     * @param State $default
-     *
      * @return $this
      */
-    public function setDefault(State $default = null)
+    public function setDefault(?State $default = null)
     {
         $this->default = $default;
 

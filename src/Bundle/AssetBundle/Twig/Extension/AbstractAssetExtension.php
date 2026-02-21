@@ -32,9 +32,6 @@ abstract class AbstractAssetExtension extends AbstractExtension
         $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTokenParsers()
     {
         return [
@@ -42,15 +39,12 @@ abstract class AbstractAssetExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions()
     {
         return [
             new TwigFunction(
                 $this->getTag(),
-                [$this, 'render'],
+                $this->render(...),
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
         ];
@@ -61,7 +55,6 @@ abstract class AbstractAssetExtension extends AbstractExtension
      */
     public function render(Environment $environment)
     {
-        /** @var \Twig_Template $template */
         $template = $environment->load($this->getTemplate());
 
         $html = [];

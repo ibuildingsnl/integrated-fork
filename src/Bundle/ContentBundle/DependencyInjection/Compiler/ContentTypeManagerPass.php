@@ -18,9 +18,6 @@ class ContentTypeManagerPass implements CompilerPassInterface
 {
     public const SERVICE_ID = 'integrated_content.resolver.xml_file.builder';
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition(self::SERVICE_ID)) {
@@ -31,6 +28,12 @@ class ContentTypeManagerPass implements CompilerPassInterface
             $reflection = new \ReflectionClass($bundle);
 
             if (is_file($file = \dirname($reflection->getFilename()).'/Resources/config/integrated/content_types.xml')) {
+                $container->getDefinition(self::SERVICE_ID)->addMethodCall('registerFile', [$file]);
+            }
+        }
+
+        if (\is_string($container->getParameter('kernel.project_dir'))) {
+            if (is_file($file = $container->getParameter('kernel.project_dir').'/config/integrated/content_types.xml')) {
                 $container->getDefinition(self::SERVICE_ID)->addMethodCall('registerFile', [$file]);
             }
         }

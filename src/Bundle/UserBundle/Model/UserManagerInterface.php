@@ -41,9 +41,7 @@ interface UserManagerInterface extends ManagerInterface
     /**
      * Finds the user by its identifier.
      *
-     * @param mixed $id
-     *
-     * @return UserInterface
+     * @return UserInterface|null
      */
     public function find($id);
 
@@ -59,7 +57,7 @@ interface UserManagerInterface extends ManagerInterface
      *
      * @param string $criteria
      *
-     * @return UserInterface
+     * @return UserInterface|null
      */
     public function findByUsername($criteria);
 
@@ -68,7 +66,7 @@ interface UserManagerInterface extends ManagerInterface
      *
      * @param string $criteria
      *
-     * @return UserInterface
+     * @return UserInterface|null
      */
     public function findByEmail($criteria);
 
@@ -77,7 +75,7 @@ interface UserManagerInterface extends ManagerInterface
      *
      * @param string $criteria
      *
-     * @return UserInterface
+     * @return UserInterface|null
      */
     public function findByUsernameOrEmail($criteria);
 
@@ -91,7 +89,7 @@ interface UserManagerInterface extends ManagerInterface
     /**
      * Finds an user by a set of criteria.
      *
-     * @return UserInterface
+     * @return UserInterface|null
      */
     public function findOneBy(array $criteria);
 
@@ -105,9 +103,7 @@ interface UserManagerInterface extends ManagerInterface
     /**
      * Finds the user by its username and scope.
      *
-     * @param ScopeInterface $scope
-     *
-     * @return UserInterface
+     * @return UserInterface|null
      */
     public function findEnabledByUsernameAndScope($username, ?ScopeInterface $scope = null);
 }

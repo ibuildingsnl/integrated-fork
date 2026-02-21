@@ -43,7 +43,7 @@ class ContentRankType extends AbstractType
      * @param string $repositoryClass
      * @param string $route
      */
-    public function __construct(DocumentManager $dm, $repositoryClass, $route, array $params = null)
+    public function __construct(DocumentManager $dm, $repositoryClass, $route, ?array $params = null)
     {
         $this->dm = $dm;
         $this->repositoryClass = $repositoryClass;
@@ -51,9 +51,6 @@ class ContentRankType extends AbstractType
         $this->params = $params;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $varNames = ['route', 'params', 'allow_clear'];
@@ -64,10 +61,7 @@ class ContentRankType extends AbstractType
         $view->vars['attr']['data-placeholder'] = $options['placeholder'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'repository_class' => $this->repositoryClass,
@@ -80,10 +74,7 @@ class ContentRankType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_content_rank';
     }

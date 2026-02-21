@@ -12,12 +12,15 @@
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Content;
 
 use Integrated\Bundle\ContentBundle\Document\Content\File;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class FileTest extends ContentTest
+class FileTest extends TestCase
 {
+    use ContentTestTrait;
+
     /**
      * @var File
      */
@@ -69,9 +72,6 @@ class FileTest extends ContentTest
         $this->assertEquals($title, (string) $this->file->setTitle($title));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getContent()
     {
         return $this->file;

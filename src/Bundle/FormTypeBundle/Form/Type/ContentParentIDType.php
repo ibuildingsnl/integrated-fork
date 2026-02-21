@@ -44,7 +44,7 @@ class ContentParentIDType extends AbstractType
      * @param string $repositoryClass
      * @param string $route
      */
-    public function __construct(DocumentManager $dm, $repositoryClass, $route, array $params = null)
+    public function __construct(DocumentManager $dm, $repositoryClass, $route, ?array $params = null)
     {
         $this->dm = $dm;
         $this->repositoryClass = $repositoryClass;
@@ -52,9 +52,6 @@ class ContentParentIDType extends AbstractType
         $this->params = $params;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         foreach ($this::VARNAMES as $varName) {
@@ -64,10 +61,7 @@ class ContentParentIDType extends AbstractType
         $view->vars['attr']['data-placeholder'] = $options['placeholder'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'repository_class' => $this->repositoryClass,
@@ -80,10 +74,7 @@ class ContentParentIDType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_content_parent_id';
     }

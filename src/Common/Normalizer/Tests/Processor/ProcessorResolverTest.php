@@ -20,6 +20,7 @@ use Integrated\Common\Normalizer\Processor\ResolverInterface;
 use Integrated\Common\Normalizer\Tests\Fixtures\TestChild;
 use Integrated\Common\Normalizer\Tests\Fixtures\TestClass;
 use Integrated\Common\Normalizer\Tests\Fixtures\TestParent;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -28,12 +29,12 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ProcessorResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RegistryInterface|MockObject
+     * @var RegistryInterface&MockObject
      */
     private $registry;
 
     /**
-     * @var ResolvedProcessorFactoryInterface|MockObject
+     * @var ResolvedProcessorFactoryInterface&MockObject
      */
     private $factory;
 
@@ -48,9 +49,7 @@ class ProcessorResolverTest extends \PHPUnit\Framework\TestCase
         self::assertInstanceOf(ResolverInterface::class, $this->getInstance());
     }
 
-    /**
-     * @dataProvider createGetProcessor
-     */
+    #[DataProvider('createGetProcessor')]
     public function testGetProcessor($argument)
     {
         $processors = [
@@ -90,7 +89,7 @@ class ProcessorResolverTest extends \PHPUnit\Framework\TestCase
         self::assertSame($processor, $resolver->getProcessor($argument));
     }
 
-    public function createGetProcessor()
+    public static function createGetProcessor()
     {
         return [
             'string' => [TestChild::class],

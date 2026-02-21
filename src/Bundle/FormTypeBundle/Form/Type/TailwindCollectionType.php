@@ -12,9 +12,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TailwindCollectionType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars = array_replace(
@@ -35,10 +32,7 @@ class TailwindCollectionType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $optionsNormalizer = function (Options $options, $value) {
             // @codeCoverageIgnoreStart
@@ -67,18 +61,12 @@ class TailwindCollectionType extends AbstractType
         $resolver->setNormalizer('options', $optionsNormalizer);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getParent()
+    public function getParent(): ?string
     {
         return CollectionType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'tailwind_collection';
     }

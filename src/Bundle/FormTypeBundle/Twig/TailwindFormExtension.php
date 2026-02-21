@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of BraincraftedtailwindBundle.
  * (c) 2012-2013 by Florian Eckerstorfer.
@@ -45,30 +46,27 @@ class TailwindFormExtension extends AbstractExtension
     /** @var array */
     private $settingsStack = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions()
     {
         return [
-            new TwigFunction('tailwind_set_style', [$this, 'setStyle']),
-            new TwigFunction('tailwind_get_style', [$this, 'getStyle']),
-            new TwigFunction('tailwind_set_widget_col', [$this, 'setWidgetCol']),
-            new TwigFunction('tailwind_get_widget_col', [$this, 'getWidgetCol']),
-            new TwigFunction('tailwind_set_label_col', [$this, 'setLabelCol']),
-            new TwigFunction('tailwind_get_label_col', [$this, 'getLabelCol']),
-            new TwigFunction('tailwind_set_simple_col', [$this, 'setSimpleCol']),
-            new TwigFunction('tailwind_get_simple_col', [$this, 'getSimpleCol']),
-            new TwigFunction('tailwind_set_show_label', [$this, 'setShowLabel']),
-            new TwigFunction('tailwind_get_show_label', [$this, 'getShowLabel']),
-            new TwigFunction('tailwind_set_icon', [$this, 'setIcon']),
-            new TwigFunction('tailwind_get_icon', [$this, 'getIcon']),
-            new TwigFunction('tailwind_set_state', [$this, 'setState']),
-            new TwigFunction('tailwind_get_state', [$this, 'getState']),
-            new TwigFunction('tailwind_set_show_placeholder', [$this, 'setShowPlaceholder']),
-            new TwigFunction('tailwind_get_show_placeholder', [$this, 'getShowPlaceholder']),
-            new TwigFunction('tailwind_backup_form_settings', [$this, 'backupFormSettings']),
-            new TwigFunction('tailwind_restore_form_settings', [$this, 'restoreFormSettings']),
+            new TwigFunction('tailwind_set_style', $this->setStyle(...)),
+            new TwigFunction('tailwind_get_style', $this->getStyle(...)),
+            new TwigFunction('tailwind_set_widget_col', $this->setWidgetCol(...)),
+            new TwigFunction('tailwind_get_widget_col', $this->getWidgetCol(...)),
+            new TwigFunction('tailwind_set_label_col', $this->setLabelCol(...)),
+            new TwigFunction('tailwind_get_label_col', $this->getLabelCol(...)),
+            new TwigFunction('tailwind_set_simple_col', $this->setSimpleCol(...)),
+            new TwigFunction('tailwind_get_simple_col', $this->getSimpleCol(...)),
+            new TwigFunction('tailwind_set_show_label', $this->setShowLabel(...)),
+            new TwigFunction('tailwind_get_show_label', $this->getShowLabel(...)),
+            new TwigFunction('tailwind_set_icon', $this->setIcon(...)),
+            new TwigFunction('tailwind_get_icon', $this->getIcon(...)),
+            new TwigFunction('tailwind_set_state', $this->setState(...)),
+            new TwigFunction('tailwind_get_state', $this->getState(...)),
+            new TwigFunction('tailwind_set_show_placeholder', $this->setShowPlaceholder(...)),
+            new TwigFunction('tailwind_get_show_placeholder', $this->getShowPlaceholder(...)),
+            new TwigFunction('tailwind_backup_form_settings', $this->backupFormSettings(...)),
+            new TwigFunction('tailwind_restore_form_settings', $this->restoreFormSettings(...)),
             new TwigFunction(
                 'checkbox_row',
                 null,
@@ -86,15 +84,12 @@ class TailwindFormExtension extends AbstractExtension
             ),
             new TwigFunction(
                 'form_control_static',
-                [$this, 'formControlStaticFunction'],
+                $this->formControlStaticFunction(...),
                 ['is_safe' => ['html']]
             ),
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'braincrafted_tailwind_form';
@@ -172,8 +167,6 @@ class TailwindFormExtension extends AbstractExtension
 
     /**
      * Returns the value of true or false to show or hide Labels.
-     *
-     * @param bool $showLabel true or false
      */
     public function getShowLabel()
     {
@@ -192,8 +185,6 @@ class TailwindFormExtension extends AbstractExtension
 
     /**
      * Returns the value of Icon.
-     *
-     * @param bool $icon true or false
      */
     public function getIcon()
     {
@@ -212,8 +203,6 @@ class TailwindFormExtension extends AbstractExtension
 
     /**
      * Returns the value of State.
-     *
-     * @param bool $state true or false
      */
     public function getState()
     {
@@ -232,8 +221,6 @@ class TailwindFormExtension extends AbstractExtension
 
     /**
      * Returns the value of true or false to show or hide Placeholders.
-     *
-     * @param bool $showPlaceholder true or false
      */
     public function getShowPlaceholder()
     {
@@ -315,7 +302,7 @@ class TailwindFormExtension extends AbstractExtension
      */
     public function formControlStaticFunction($label, $value)
     {
-        return sprintf(
+        return \sprintf(
             '<div class="form-group"><label class="w-full %s control-label">%s</label><div class="w-full %s"><p class="form-control-static">%s</p></div></div>',
             $this->getLabelCol(),
             $label,

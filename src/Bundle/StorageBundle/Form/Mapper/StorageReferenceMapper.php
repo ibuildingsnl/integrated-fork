@@ -15,7 +15,7 @@ abstract class StorageReferenceMapper implements DataMapperInterface
 
     public function mapDataToForms($viewData, \Traversable $forms): void
     {
-        if ($viewData !== null && !\get_class($viewData) == static::CLASSNAME) {
+        if ($viewData !== null && !$viewData::class == static::CLASSNAME) {
             return;
         }
 
@@ -37,7 +37,7 @@ abstract class StorageReferenceMapper implements DataMapperInterface
             return;
         }
 
-        if (!$viewData || \get_class($viewData) != static::CLASSNAME) {
+        if (!$viewData || $viewData::class != static::CLASSNAME) {
             $viewData = $this->newFile($data);
 
             return;

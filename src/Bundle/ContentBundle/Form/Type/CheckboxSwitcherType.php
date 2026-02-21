@@ -21,10 +21,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CheckboxSwitcherType extends CheckboxType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $emptyData = function (FormInterface $form, $viewData) {
             return $viewData;
@@ -54,10 +51,7 @@ class CheckboxSwitcherType extends CheckboxType
         $resolver->setAllowedTypes('false_values', 'array');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'checkbox_switcher';
     }

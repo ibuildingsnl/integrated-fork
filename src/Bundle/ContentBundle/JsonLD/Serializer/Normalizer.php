@@ -23,17 +23,14 @@ use Integrated\Common\Content\Serializer\JsonLDNormalizer;
  */
 class Normalizer extends JsonLDNormalizer
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         return parent::supportsNormalization($data, $format) && (
-            $data instanceof Article ||
-            $data instanceof Event || // also instance of Article
-            $data instanceof Company ||
-            $data instanceof Person ||
-            $data instanceof Taxonomy
+            $data instanceof Article
+            || $data instanceof Event // also instance of Article
+            || $data instanceof Company
+            || $data instanceof Person
+            || $data instanceof Taxonomy
         );
     }
 }

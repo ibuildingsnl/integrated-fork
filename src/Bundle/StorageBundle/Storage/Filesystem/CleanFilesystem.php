@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Filesystem;
 
+use Integrated\Bundle\StorageBundle\Storage\Database\DoctrineODMDatabase;
 use Integrated\Bundle\StorageBundle\Storage\Registry\FilesystemRegistry;
 use Integrated\Common\Storage\Database\DatabaseInterface;
 
@@ -35,11 +36,9 @@ class CleanFilesystem
     /**
      * Finds unused files in the storage and moves them to the given directory.
      *
-     * @param string|null $targetDirectory
-     *
      * @return void
      */
-    public function clean(string $identifier, string $targetDirectory)
+    public function clean(string $identifier, ?string $targetDirectory)
     {
         $filesystem = $this->registry->get($identifier);
 
@@ -47,10 +46,10 @@ class CleanFilesystem
         $keys = array_flip($keys['keys']);
 
         if ($targetDirectory && !is_dir($targetDirectory)) {
-            throw new \RuntimeException(sprintf('Directory %s does not exists', $targetDirectory));
+            throw new \RuntimeException(\sprintf('Directory %s does not exists', $targetDirectory));
         }
 
-        $objects = $this->database->getStorageKeys();
+        $objects = $this->database instanceof DoctrineODMDatabase ? $this->database->getStorageKeys() : [];
 
         foreach ($keys as $key => $value) {
             if (substr($key, 0, 1) === '.') {
@@ -67,7 +66,7 @@ class CleanFilesystem
 
             $targetFile = rtrim($targetDirectory, '/').'/'.$key;
             if (file_exists($targetFile)) {
-                throw new \RuntimeException(sprintf('File %s does already exists', $targetFile));
+                throw new \RuntimeException(\sprintf('File %s does already exists', $targetFile));
             }
 
             if (file_put_contents($targetFile, $filesystem->read($key)) !== false) {

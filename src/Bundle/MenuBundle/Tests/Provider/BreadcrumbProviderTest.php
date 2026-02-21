@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Integrated package.
  *
@@ -24,17 +25,17 @@ class BreadcrumbProviderTest extends TestCase
     public const INVALID_MENU = 'invalid_menu';
 
     /**
-     * @var FactoryInterface|MockObject
+     * @var FactoryInterface&MockObject
      */
     protected $menuFactory;
 
     /**
-     * @var BreadcrumbMenuProvider|MockObject
+     * @var BreadcrumbMenuProvider&MockObject
      */
     protected $breadcrumbMenuProvider;
 
     /**
-     * @var BreadcrumbResolver|MockObject
+     * @var BreadcrumbResolver&MockObject
      */
     protected $breadcrumbResolver;
 

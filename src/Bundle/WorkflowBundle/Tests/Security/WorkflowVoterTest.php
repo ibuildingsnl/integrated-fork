@@ -14,6 +14,7 @@ namespace Integrated\Bundle\WorkflowBundle\Tests\Security;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Model\GroupableInterface;
+use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\Permission;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
@@ -22,8 +23,10 @@ use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Form\Mapping\MetadataInterface;
 use Integrated\Common\Security\PermissionInterface;
 use Integrated\Common\Security\Permissions;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 /**
@@ -32,17 +35,17 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ManagerRegistry|MockObject
+     * @var ManagerRegistry&MockObject
      */
     private $manager;
 
     /**
-     * @var ResolverInterface|MockObject
+     * @var ResolverInterface&MockObject
      */
     private $resolver;
 
     /**
-     * @var MetadataFactoryInterface|MockObject
+     * @var MetadataFactoryInterface&MockObject
      */
     private $metadata;
 
@@ -57,12 +60,12 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
     /**
      * @var Definition
      */
-    private $workflow = null;
+    private $workflow;
 
     /**
      * @var State
      */
-    private $state = null;
+    private $state;
 
     protected function setUp(): void
     {
@@ -217,19 +220,6 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($voter->supportsAttribute('SUPPORTED'));
     }
 
-    public function testSupportsClass()
-    {
-        $voter = $this->getInstance();
-
-        $object = $this->createMock(GroupableInterface::class);
-        $class = \get_class($object);
-
-        $this->assertTrue($voter->supportsClass($class));
-        $this->assertTrue($voter->supportsClass($object));
-        $this->assertFalse($voter->supportsClass('stdClass'));
-        $this->assertFalse($voter->supportsClass(new \stdClass()));
-    }
-
     public function testVoteNoContent()
     {
         $this->manager->expects($this->never())->method($this->anything());
@@ -242,7 +232,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
     public function testVoteNoWorkflowMetadata()
     {
         $content = $this->createMock('Integrated\\Common\\Content\\ContentInterface');
-        $class = \get_class($content);
+        $class = $content::class;
 
         $this->setUpMetadata($class, false);
 
@@ -256,7 +246,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getContentType')
             ->willReturn('type');
 
-        $class = \get_class($content);
+        $class = $content::class;
 
         $this->setUpMetadata($class);
         $this->setUpResolver(false);
@@ -271,7 +261,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getContentType')
             ->willReturn('type');
 
-        $class = \get_class($content);
+        $class = $content::class;
 
         $this->setUpMetadata($class);
 
@@ -293,7 +283,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getContentType')
             ->willReturn('type');
 
-        $class = \get_class($content);
+        $class = $content::class;
 
         $this->setUpMetadata($class);
         $this->setUpResolver();
@@ -310,7 +300,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getContentType')
             ->willReturn('type');
 
-        $class = \get_class($content);
+        $class = $content::class;
 
         $this->setUpMetadata($class);
         $this->setUpResolver();
@@ -335,7 +325,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getContentType')
             ->willReturn('type');
 
-        $class = \get_class($content);
+        $class = $content::class;
 
         $this->setUpMetadata($class);
         $this->setUpResolver();
@@ -360,7 +350,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getContentType')
             ->willReturn('type');
 
-        $class = \get_class($content);
+        $class = $content::class;
 
         $this->setUpMetadata($class);
         $this->setUpResolver();
@@ -380,9 +370,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($this->getState(), $voter->state);
     }
 
-    /**
-     * @dataProvider voteNotSupportedProvider
-     */
+    #[DataProvider('voteNotSupportedProvider')]
     public function testVoteNotSupported(TokenInterface $token, array $attributes, $expected)
     {
         $content = $this->createMock('Integrated\\Common\\Content\\ContentInterface');
@@ -390,7 +378,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getContentType')
             ->willReturn('type');
 
-        $class = \get_class($content);
+        $class = $content::class;
 
         $this->setUpMetadata($class);
         $this->setUpResolver();
@@ -399,24 +387,22 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->getInstance()->vote($token, $content, $attributes));
     }
 
-    public function voteNotSupportedProvider()
+    public static function voteNotSupportedProvider()
     {
         return [
             'class' => [
-                $this->getToken(), [], VoterInterface::ACCESS_ABSTAIN,
+                self::getToken(), [], VoterInterface::ACCESS_ABSTAIN,
             ],
             'class but valid attribute' => [
-                $this->getToken(), [Permissions::VIEW, Permissions::EDIT], VoterInterface::ACCESS_GRANTED,
+                self::getToken(), [Permissions::VIEW, Permissions::EDIT], VoterInterface::ACCESS_GRANTED,
             ],
             'class but invalid attribute' => [
-                $this->getToken(), ['NOTSUPPORTED'], VoterInterface::ACCESS_ABSTAIN,
+                self::getToken(), ['NOTSUPPORTED'], VoterInterface::ACCESS_ABSTAIN,
             ],
         ];
     }
 
-    /**
-     * @dataProvider voteProvider
-     */
+    #[DataProvider('voteProvider')]
     public function testVote(array $permissions, array $attributes, $expected)
     {
         $content = $this->createMock('Integrated\\Common\\Content\\ContentInterface');
@@ -424,7 +410,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getContentType')
             ->willReturn('type');
 
-        $class = \get_class($content);
+        $class = $content::class;
 
         $this->setUpMetadata($class);
         $this->setUpResolver();
@@ -437,7 +423,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($this->getState(), $voter->state);
     }
 
-    public function voteProvider()
+    public static function voteProvider()
     {
         return [
             'view' => [
@@ -577,7 +563,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return GroupableInterface|MockObject
+     * @return GroupableInterface&MockObject
      */
     protected function getUser(array $groups = [])
     {
@@ -605,28 +591,13 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
         return $mock;
     }
 
-    /**
-     * @param mixed $object
-     *
-     * @return TokenInterface|MockObject
-     */
-    protected function getToken($object = null)
+    protected static function getToken(): TokenInterface
     {
-        $mock = $this->createMock('Symfony\\Component\\Security\\Core\\Authentication\\Token\\TokenInterface');
-
-        if ($object === null) {
-            $object = $this->getUser();
-        }
-
-        $mock->expects($this->any())
-            ->method('getUser')
-            ->willReturn($object);
-
-        return $mock;
+        return new UsernamePasswordToken(new User(), 'main');
     }
 
     /**
-     * @return Definition|MockObject
+     * @return Definition&MockObject
      */
     protected function getWorkflow()
     {
@@ -638,7 +609,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return State|MockObject
+     * @return State&MockObject
      */
     protected function getState(array $permissions = [], $never = false)
     {
@@ -658,7 +629,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
      * @param bool   $read
      * @param bool   $write
      *
-     * @return Permission|MockObject
+     * @return Permission&MockObject
      */
     protected function getPermission($group, $read, $write)
     {

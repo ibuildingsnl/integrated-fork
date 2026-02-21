@@ -33,9 +33,6 @@ class ChannelExtension implements TypeExtensionInterface
         $this->resolver = $resolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         if (!$data instanceof ChannelableInterface) {
@@ -60,9 +57,6 @@ class ChannelExtension implements TypeExtensionInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.content';

@@ -32,9 +32,6 @@ class ProcessorRegistry implements RegistryInterface
         $this->processors = $processors;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasProcessors($class)
     {
         if (!\is_string($class)) {
@@ -48,9 +45,6 @@ class ProcessorRegistry implements RegistryInterface
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getProcessors($class)
     {
         if (!\is_string($class)) {
@@ -61,6 +55,6 @@ class ProcessorRegistry implements RegistryInterface
             return $this->processors[$class];
         }
 
-        throw new InvalidArgumentException(sprintf('No processors found for class "%s"', $class));
+        throw new InvalidArgumentException(\sprintf('No processors found for class "%s"', $class));
     }
 }

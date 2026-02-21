@@ -154,9 +154,9 @@ final class TaxonomyFilteringTest extends TestCase
         string $id,
         string $title,
         string $slug,
-        string $rank = null,
-        string $parent = null,
-        string $contentType = 'taxonomy'
+        ?string $rank = null,
+        ?string $parent = null,
+        string $contentType = 'taxonomy',
     ): Taxonomy {
         $taxonomy = new Taxonomy();
         $taxonomy->setId($id);

@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\UserBundle\Doctrine;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Model\ScopeInterface;
@@ -24,12 +26,12 @@ use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 class UserManager implements UserManagerInterface
 {
     /**
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     private $om;
 
     /**
-     * @var ObjectRepository
+     * @var EntityRepository
      */
     private $repository;
 
@@ -38,13 +40,13 @@ class UserManager implements UserManagerInterface
      */
     private $hasherFactory;
 
-    public function __construct(ObjectManager $om, $class, PasswordHasherFactoryInterface $hasherFactory)
+    public function __construct(EntityManagerInterface $om, string $class, PasswordHasherFactoryInterface $hasherFactory)
     {
         $this->om = $om;
         $this->repository = $this->om->getRepository($class);
 
         if (!is_subclass_of($this->repository->getClassName(), 'Integrated\\Bundle\\UserBundle\\Model\\UserInterface')) {
-            throw new \InvalidArgumentException(sprintf('The class "%s" is not subclass of Integrated\\Bundle\\UserBundle\\Model\\UserInterface', $this->repository->getClassName()));
+            throw new \InvalidArgumentException(\sprintf('The class "%s" is not subclass of Integrated\\Bundle\\UserBundle\\Model\\UserInterface', $this->repository->getClassName()));
         }
 
         $this->hasherFactory = $hasherFactory;
@@ -66,9 +68,6 @@ class UserManager implements UserManagerInterface
         return $this->repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create()
     {
         $class = $this->getClassName();
@@ -76,9 +75,6 @@ class UserManager implements UserManagerInterface
         return new $class();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function persist(UserInterface $user, $flush = true)
     {
         $this->om->persist($user);
@@ -88,9 +84,6 @@ class UserManager implements UserManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function remove(UserInterface $user, $flush = true)
     {
         $this->om->remove($user);
@@ -100,49 +93,31 @@ class UserManager implements UserManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear()
     {
-        $this->om->clear($this->repository->getClassName());
+        $this->om->clear();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function find($id)
     {
         return $this->repository->find($id);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findAll()
     {
         return $this->repository->findAll();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByUsername($criteria)
     {
         return $this->repository->findOneBy(['username' => $criteria]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByEmail($criteria)
     {
         return $this->repository->findOneBy(['email' => $criteria]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByUsernameOrEmail($criteria)
     {
         if ($user = $this->findByUsername($criteria)) {
@@ -152,10 +127,7 @@ class UserManager implements UserManagerInterface
         return $this->findByEmail($criteria);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null)
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
@@ -165,17 +137,11 @@ class UserManager implements UserManagerInterface
         return $this->repository->findOneBy($criteria);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClassName()
     {
         return $this->repository->getClassName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findEnabledByUsernameAndScope($username, ?ScopeInterface $scope = null)
     {
         $builder = $this->createQueryBuilder()

@@ -15,6 +15,7 @@ use Integrated\Bundle\UserBundle\Doctrine\RoleManager;
 use Integrated\Bundle\UserBundle\Doctrine\ScopeManager;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,42 +24,24 @@ use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\PasswordHasher\LegacyPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
+#[AsCommand(
+    name: 'user:create',
+    description: 'Create a user',
+)]
 class CreateUserCommand extends Command
 {
-    /**
-     * @var ScopeManager
-     */
-    private $scopeManager;
-
-    /**
-     * @var RoleManager
-     */
-    private $roleManager;
-
-    /**
-     * @var UserManagerInterface
-     */
-    private $userManager;
-
-    /**
-     * @var ValidatorInterface
-     */
-    private $validator;
-
-    /**
-     * @var PasswordHasherFactoryInterface
-     */
-    private $hasherFactory;
+    private UserManagerInterface $userManager;
+    private ScopeManager $scopeManager;
+    private RoleManager $roleManager;
+    private ValidatorInterface $validator;
+    private PasswordHasherFactoryInterface $hasherFactory;
 
     public function __construct(
+        UserManagerInterface $userManager,
         ScopeManager $scopeManager,
         RoleManager $roleManager,
-        UserManagerInterface $userManager,
         ValidatorInterface $validator,
-        PasswordHasherFactoryInterface $hasherFactory
+        PasswordHasherFactoryInterface $hasherFactory,
     ) {
         $this->scopeManager = $scopeManager;
         $this->roleManager = $roleManager;
@@ -69,21 +52,14 @@ class CreateUserCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * @see Command
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('user:create')
-
             ->addArgument('username', InputArgument::REQUIRED, 'The username')
             ->addArgument('password', InputArgument::REQUIRED, 'The password')
             ->addArgument('scope', InputArgument::OPTIONAL, 'The scope')
             ->addArgument('roles', InputArgument::OPTIONAL, 'Roles')
             ->addArgument('email', InputArgument::OPTIONAL, 'The email address')
-
-            ->setDescription('Create a user')
             ->setHelp('
 The <info>%command.name%</info> command creates a new user
 
@@ -91,9 +67,6 @@ The <info>%command.name%</info> command creates a new user
 ');
     }
 
-    /**
-     * @see Command::execute()
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $username = $input->getArgument('username');
@@ -146,9 +119,13 @@ The <info>%command.name%</info> command creates a new user
         $errors = $this->validator->validate($user);
 
         if (\count($errors) > 0) {
-            $output->writeln(sprintf('Aborting: user model not valid: %s', (string) $errors));
+            $output->writeln('Aborting: user model not valid:');
 
-            return 1;
+            foreach ($errors as $error) {
+                $output->writeln($error->getMessage());
+            }
+
+            return self::FAILURE;
         }
 
         if ($roles) {
@@ -163,7 +140,7 @@ The <info>%command.name%</info> command creates a new user
                     $this->roleManager->persist($objectRole);
                     $user->addRole($objectRole);
                 } else {
-                    $output->writeln(sprintf('The role %s not found ', $role));
+                    $output->writeln(\sprintf('The role %s not found ', $role));
                 }
             }
         }
@@ -171,11 +148,11 @@ The <info>%command.name%</info> command creates a new user
         try {
             $this->userManager->persist($user);
         } catch (\Exception $e) {
-            $output->writeln(sprintf('Aborting: %s', $e->getMessage()));
+            $output->writeln(\sprintf('Aborting: %s', $e->getMessage()));
 
-            return 1;
+            return self::FAILURE;
         }
 
-        return 0;
+        return self::SUCCESS;
     }
 }

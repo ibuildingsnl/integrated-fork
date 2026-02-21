@@ -12,26 +12,27 @@
 namespace Integrated\Bundle\FormTypeBundle\Validator\Constraints;
 
 use Doctrine\Common\Collections\Collection;
+use Integrated\Bundle\UserBundle\Validator\ManagerConstraint;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
  * @author Johan Liefers <johan@e-active.nl>
  */
 class NotEmptyCollectionValidator extends ConstraintValidator
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function validate($value, Constraint $constraint)
+    public function validate(mixed $value, Constraint $constraint)
     {
+        if (!$constraint instanceof ManagerConstraint) {
+            throw new UnexpectedTypeException($constraint, NotEmptyCollection::class);
+        }
+
         if (null === $value) {
-            $this->context->buildViolation($constraint->message)
-                ->addViolation();
+            $this->context->buildViolation($constraint->message)->addViolation();
         } elseif ($value instanceof Collection) {
             if (!$value->count()) {
-                $this->context->buildViolation($constraint->message)
-                    ->addViolation();
+                $this->context->buildViolation($constraint->message)->addViolation();
             }
         }
     }

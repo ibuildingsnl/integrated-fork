@@ -19,9 +19,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class FormFactoryEventDispatcherPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('integrated_content.form.factory.event_dispatcher')) {

@@ -55,10 +55,7 @@ class UserFormType extends AbstractType
         $this->hasherFactory = $hasherFactory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if ($options['optional']) {
             $builder->add(
@@ -136,10 +133,7 @@ class UserFormType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $emptyData = function (Options $options, $previous) {
             if (!$options['optional']) {
@@ -198,10 +192,7 @@ class UserFormType extends AbstractType
         $resolver->setAllowedTypes('optional', ['bool']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_user_user_form';
     }

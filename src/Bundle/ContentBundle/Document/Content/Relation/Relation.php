@@ -56,7 +56,7 @@ abstract class Relation extends Content implements RankableInterface
     protected $description;
 
     /**
-     * @var Phonenumber[]|Collection
+     * @var Collection<Phonenumber>
      */
     #[Type\Field(type: SortableCollectionType::class, options: [
         'entry_type' => PhonenumberType::class,
@@ -67,19 +67,16 @@ abstract class Relation extends Content implements RankableInterface
     ], location: 'editor')]
     protected $phonenumbers;
 
-    /**
-     * @var string
-     */
     #[Type\Field(type: EmailType::class, options: [
         'attr' => [
             'style' => 'editor',
             'state' => 'show',
         ],
     ], location: 'editor')]
-    protected $email;
+    protected ?string $email = null;
 
     /**
-     * @var Address[]|Collection
+     * @var Collection<Address>
      */
     #[Type\Field(type: SortableCollectionType::class, options: [
         'entry_type' => AddressType::class,
@@ -148,15 +145,22 @@ abstract class Relation extends Content implements RankableInterface
             return $result;
         }
 
-        return $this->phonenumbers;
+        return $this->phonenumbers->toArray();
     }
 
-    public function setPhonenumbers(Collection $phonenumbers): void
+    /**
+     * @param Phonenumber[] $phonenumbers
+     */
+    public function setPhonenumbers(iterable $phonenumbers): void
     {
-        $this->phonenumbers = $phonenumbers;
+        $this->phonenumbers = new ArrayCollection();
+
+        foreach ($phonenumbers as $phonenumber) {
+            $this->addPhonenumber($phonenumber);
+        }
     }
 
-    public function addPhonenumber(string|Phonenumber $phonenumber, string $type = null): void
+    public function addPhonenumber(string|Phonenumber $phonenumber, ?string $type = null): void
     {
         if ($phonenumber === null) {
             return;
@@ -165,9 +169,7 @@ abstract class Relation extends Content implements RankableInterface
         if ($phonenumber instanceof Phonenumber) {
             $obj = $phonenumber;
         } else {
-            $obj = new Phonenumber();
-            $obj->setNumber($phonenumber);
-            $obj->setType($type);
+            $obj = new Phonenumber($phonenumber, $type);
         }
 
         $this->phonenumbers->add($obj);
@@ -203,15 +205,22 @@ abstract class Relation extends Content implements RankableInterface
 
     public function getAddresses(): array|Collection
     {
-        return $this->addresses;
+        return $this->addresses->toArray();
     }
 
-    public function setAddresses(Collection $addresses): void
+    /**
+     * @param Address[] $addresses
+     */
+    public function setAddresses(iterable $addresses): void
     {
-        $this->addresses = $addresses;
+        $this->addresses = new ArrayCollection();
+
+        foreach ($addresses as $address) {
+            $this->addAddress($address);
+        }
     }
 
-    public function addAddress(Address $address = null): void
+    public function addAddress(?Address $address = null): void
     {
         if ($address !== null) {
             $this->addresses->add($address);

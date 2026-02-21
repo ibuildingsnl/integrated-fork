@@ -18,48 +18,20 @@ use Integrated\Bundle\CommentBundle\Form\Type\CommentType;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\UserBundle\Model\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Class DefaultController.
- */
 class DefaultController extends AbstractController
 {
-    /**
-     * @var DocumentManager
-     */
-    protected $dm;
+    private DocumentManager $manager;
 
-    /**
-     * @var FormFactory
-     */
-    protected $formFactory;
-
-    /**
-     * @var TokenStorageInterface
-     */
-    protected $tokenStorage;
-
-    public function __construct(
-        DocumentManager $dm,
-        FormFactory $formFactory,
-        TokenStorageInterface $tokenStorage
-    ) {
-        $this->dm = $dm;
-        $this->formFactory = $formFactory;
-        $this->tokenStorage = $tokenStorage;
+    public function __construct(DocumentManager $manager)
+    {
+        $this->manager = $manager;
     }
 
-    /**
-     * @param string $field
-     *
-     * @return \Symfony\Component\HttpFoundation\Response|JsonResponse
-     */
-    public function new(Request $request, Content $content, $field)
+    public function new(Request $request, Content $content, string $field): Response
     {
         $comment = new Comment();
         $comment->setContent($content);
@@ -70,28 +42,25 @@ class DefaultController extends AbstractController
             $comment->setAuthor($relation);
         }
 
-        $form = $this->formFactory->create(CommentType::class, $comment, [
+        $form = $this->createForm(CommentType::class, $comment, [
             'action' => $request->getUri(),
         ]);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->dm->persist($comment);
-            $this->dm->flush();
+            $this->manager->persist($comment);
+            $this->manager->flush();
 
             return new JsonResponse(['id' => $comment->getId()]);
         }
 
         return $this->render('@IntegratedComment/comment/new.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return JsonResponse|\Symfony\Component\HttpFoundation\Response
-     */
-    public function getComment(Request $request, Comment $comment)
+    public function getComment(Request $request, Comment $comment): Response
     {
         $reply = new Reply();
         $reply->setDate(new \DateTime());
@@ -101,7 +70,7 @@ class DefaultController extends AbstractController
             $comment->setAuthor($relation);
         }
 
-        $form = $this->formFactory->create(CommentType::class, $reply, [
+        $form = $this->createForm(CommentType::class, $reply, [
             'action' => $request->getUri(),
         ]);
 
@@ -109,24 +78,21 @@ class DefaultController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $comment->addReply($reply);
-            $this->dm->flush();
+            $this->manager->flush();
 
             return new JsonResponse(['id' => $comment->getId()]);
         }
 
         return $this->render('@IntegratedComment/comment/get.html.twig', [
             'comment' => $comment,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function delete(Comment $comment)
+    public function delete(Comment $comment): Response
     {
-        $this->dm->remove($comment);
-        $this->dm->flush();
+        $this->manager->remove($comment);
+        $this->manager->flush();
 
         return new JsonResponse([
             'deleted' => true,
@@ -134,34 +100,15 @@ class DefaultController extends AbstractController
         ]);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function deleteReply(Comment $comment, $replyId)
+    public function deleteReply(Comment $comment, $replyId): Response
     {
         $result = $comment->removeReplyById($replyId);
 
-        $this->dm->flush();
+        $this->manager->flush();
 
         return new JsonResponse([
             'deleted' => $result,
             'id' => $replyId,
         ]);
-    }
-
-    /**
-     * @return UserInterface|null
-     */
-    protected function getUser()
-    {
-        if (null === $token = $this->tokenStorage->getToken()) {
-            return null;
-        }
-
-        if (!\is_object($user = $token->getUser())) {
-            return null;
-        }
-
-        return $user;
     }
 }

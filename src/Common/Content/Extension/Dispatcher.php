@@ -76,33 +76,21 @@ class Dispatcher implements DispatcherInterface, RegistryInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtensions()
     {
         return $this->registry->getExtensions();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasExtension($name)
     {
         return $this->registry->hasExtension($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtension($name)
     {
         return $this->registry->getExtension($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function dispatch($eventName, $object)
     {
         if ($object instanceof ContentInterface) {

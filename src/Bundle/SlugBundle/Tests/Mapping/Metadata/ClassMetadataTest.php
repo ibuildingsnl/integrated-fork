@@ -30,7 +30,7 @@ class ClassMetadataTest extends TestCase
 
     public function testProperties()
     {
-        /** @var PropertyMetadataInterface|MockObject $prop1 */
+        /** @var PropertyMetadataInterface&MockObject $prop1 */
         $prop1 = $this->getMockBuilder(PropertyMetadataInterface::class)->getMock();
 
         $prop1
@@ -39,7 +39,7 @@ class ClassMetadataTest extends TestCase
             ->willReturn('prop1')
         ;
 
-        /** @var PropertyMetadataInterface|MockObject $prop2 */
+        /** @var PropertyMetadataInterface&MockObject $prop2 */
         $prop2 = $this->getMockBuilder(PropertyMetadataInterface::class)->getMock();
 
         $prop2
@@ -48,7 +48,7 @@ class ClassMetadataTest extends TestCase
             ->willReturn('prop2')
         ;
 
-        /** @var PropertyMetadataInterface|MockObject $propDuplicate */
+        /** @var PropertyMetadataInterface&MockObject $propDuplicate */
         $propDuplicate = $this->getMockBuilder(PropertyMetadataInterface::class)->getMock();
 
         $propDuplicate

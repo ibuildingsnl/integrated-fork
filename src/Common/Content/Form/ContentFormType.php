@@ -46,24 +46,18 @@ class ContentFormType extends AbstractType
     /**
      * @var EventDispatcherInterface
      */
-    protected $dispatcher = null;
+    protected $dispatcher;
 
-    /**
-     * @param EventDispatcherInterface $dispatcher
-     */
     public function __construct(
         MetadataFactoryInterface $metadataFactory,
         ResolverInterface $resolver,
-        EventDispatcherInterface $dispatcher = null
+        ?EventDispatcherInterface $dispatcher = null,
     ) {
         $this->metadataFactory = $metadataFactory;
         $this->resolver = $resolver;
         $this->dispatcher = $dispatcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $dispatcher = $this->getEventDispatcher();
@@ -152,9 +146,6 @@ class ContentFormType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $dispatcher = $this->getEventDispatcher();
@@ -179,9 +170,6 @@ class ContentFormType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $dispatcher = $this->getEventDispatcher();
@@ -206,10 +194,7 @@ class ContentFormType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $contentTypeNormalizer = function (Options $options, $value) {
             if (\is_string($value)) {
@@ -218,7 +203,7 @@ class ContentFormType extends AbstractType
 
             if (!$value instanceof ContentTypeInterface) {
                 throw new InvalidOptionsException(
-                    sprintf(
+                    \sprintf(
                         'The option "%s" could not be normalized to a valid "%s" object',
                         'content_type',
                         ContentTypeInterface::class
@@ -245,10 +230,7 @@ class ContentFormType extends AbstractType
             ->setNormalizer('empty_data', $emptyDataNormalizer);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_content';
     }

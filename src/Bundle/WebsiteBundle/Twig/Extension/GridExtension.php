@@ -45,15 +45,12 @@ class GridExtension extends AbstractExtension
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions()
     {
         return [
             new TwigFunction(
                 'integrated_grid',
-                [$this, 'renderGrid'],
+                $this->renderGrid(...),
                 ['is_safe' => ['html'], 'needs_environment' => true, 'needs_context' => true]
             ),
         ];
@@ -86,9 +83,6 @@ class GridExtension extends AbstractExtension
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated_website_grid';

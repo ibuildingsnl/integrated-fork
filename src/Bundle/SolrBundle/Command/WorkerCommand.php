@@ -12,46 +12,34 @@
 namespace Integrated\Bundle\SolrBundle\Command;
 
 use Integrated\Common\Solr\Task\Worker;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Lock\LockFactory;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
+#[AsCommand(
+    name: 'solr:worker:run',
+    description: 'Execute worker task from the queue',
+)]
 class WorkerCommand extends Command
 {
-    /**
-     * @var LockFactory
-     */
-    private $factory;
+    use LockableTrait;
 
-    /**
-     * @var Worker
-     */
-    private $worker;
+    private Worker $worker;
 
-    public function __construct(Worker $worker, LockFactory $factory)
+    public function __construct(Worker $worker)
     {
-        parent::__construct();
-
         $this->worker = $worker;
-        $this->factory = $factory;
+
+        parent::__construct();
     }
 
-    /**
-     * @see Command
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('solr:worker:run')
-
             ->addOption('tasks', 't', InputOption::VALUE_REQUIRED, 'The maximum number of tasks to execute in one worker run', null)
-
-            ->setDescription('Execute worker task from the queue.')
             ->setHelp('
 The <info>%command.name%</info> command starts a solr worker run.
 
@@ -59,15 +47,10 @@ The <info>%command.name%</info> command starts a solr worker run.
 ');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $lock = $this->factory->createLock(self::class.md5(__DIR__.$this->getName()));
-
-        if (!$lock->acquire()) {
-            return 0;
+        if (!$this->lock(self::class.md5(__DIR__.$this->getName()))) {
+            return self::SUCCESS;
         }
 
         try {
@@ -77,9 +60,9 @@ The <info>%command.name%</info> command starts a solr worker run.
 
             $this->worker->execute();
         } finally {
-            $lock->release();
+            $this->release();
         }
 
-        return 0;
+        return self::SUCCESS;
     }
 }

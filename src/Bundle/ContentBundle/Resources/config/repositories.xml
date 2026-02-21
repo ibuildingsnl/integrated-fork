@@ -23,6 +23,9 @@
             <argument type="string">\Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection</argument>
         </service>
 
+        <service id="Integrated\Bundle\ContentBundle\Document\Content\ContentRepository" autoconfigure="true" autowire="true">
+        </service>
+
         <service id="integrated_content.publication_repository" class="Doctrine\Persistence\ObjectRepository">
             <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
             <argument>Integrated\Bundle\ContentBundle\Document\Content\Publication</argument>

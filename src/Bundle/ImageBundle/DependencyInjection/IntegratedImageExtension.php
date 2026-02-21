@@ -21,17 +21,24 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class IntegratedImageExtension extends Extension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function load(array $configs, ContainerBuilder $container)
     {
+        $configuration = new Configuration();
+        $config = $this->processConfiguration($configuration, $configs);
+
+        $container->setParameter('gregwar_image.cache_dir', $config['cache_dir']);
+        $container->setParameter('gregwar_image.cache_dir_mode', $config['cache_dir_mode']);
+        $container->setParameter('gregwar_image.throw_exception', $config['throw_exception']);
+        $container->setParameter('gregwar_image.fallback_image', $config['fallback_image']);
+        $container->setParameter('gregwar_image.web_dir', $config['web_dir']);
+
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
         // Load the bundle service configuration
         $loader->load('converter.xml');
         $loader->load('services.xml');
         $loader->load('twig.xml');
+        $loader->load('image.xml');
         $loader->load('validator.xml');
     }
 }

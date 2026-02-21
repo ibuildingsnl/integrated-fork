@@ -16,21 +16,12 @@ use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\Service\ContentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class TaxonomyController extends AbstractController
 {
-    /**
-     * @var ContentService
-     */
-    private $contentService;
-
-    /**
-     * @var ThemeManager
-     */
-    protected $themeManager;
+    private ContentService $contentService;
+    private ThemeManager $themeManager;
 
     public function __construct(ContentService $contentService, ThemeManager $themeManager)
     {
@@ -38,19 +29,13 @@ class TaxonomyController extends AbstractController
         $this->themeManager = $themeManager;
     }
 
-    /**
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function showAction(ContentTypePage $page, Taxonomy $taxonomy)
+    public function show(ContentTypePage $page, Taxonomy $taxonomy): Response
     {
         $this->contentService->prepare($taxonomy);
 
-        return $this->render(
-            $this->themeManager->locateTemplate('content/taxonomy/show/'.$page->getLayout()),
-            [
-                'taxonomy' => $taxonomy,
-                'page' => $page,
-            ]
-        );
+        return $this->render($this->themeManager->locateTemplate('content/taxonomy/show/'.$page->getLayout()), [
+            'taxonomy' => $taxonomy,
+            'page' => $page,
+        ]);
     }
 }

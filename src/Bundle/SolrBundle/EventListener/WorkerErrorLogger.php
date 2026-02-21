@@ -24,12 +24,9 @@ class WorkerErrorLogger implements EventSubscriberInterface
     /**
      * @var LoggerInterface
      */
-    private $logger = null;
+    private $logger;
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::ERROR => 'onError',
@@ -47,10 +44,7 @@ class WorkerErrorLogger implements EventSubscriberInterface
         ]);
     }
 
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function setLogger(LoggerInterface $logger = null)
+    public function setLogger(?LoggerInterface $logger = null)
     {
         $this->logger = $logger;
     }

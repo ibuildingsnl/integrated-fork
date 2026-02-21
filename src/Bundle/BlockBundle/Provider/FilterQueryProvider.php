@@ -11,7 +11,8 @@
 
 namespace Integrated\Bundle\BlockBundle\Provider;
 
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Query\Builder;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\InlineTextBlock;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
@@ -23,31 +24,29 @@ use MongoDB\BSON\Regex;
 class FilterQueryProvider
 {
     /**
-     * @var ManagerRegistry
+     * @var DocumentManager
      */
-    protected $mr;
+    protected $manager;
 
     /**
      * @var BlockUsageProvider
      */
     protected $blockUsageProvider;
 
-    public function __construct(ManagerRegistry $mr, BlockUsageProvider $blockUsageProvider)
+    public function __construct(DocumentManager $manager, BlockUsageProvider $blockUsageProvider)
     {
-        $this->mr = $mr;
+        $this->manager = $manager;
         $this->blockUsageProvider = $blockUsageProvider;
     }
 
     /**
      * @param array|null $data
      *
-     * @return \Doctrine\ODM\MongoDB\Query\Builder
-     *
-     * @throws \MongoException
+     * @return Builder
      */
     public function getBlocksByChannelQueryBuilder($data, ?object $groupUser)
     {
-        $qb = $this->mr->getManager()->createQueryBuilder(Block::class);
+        $qb = $this->manager->createQueryBuilder(Block::class);
 
         $type = isset($data['type']) ? array_filter($data['type']) : null;
         if ($type) {

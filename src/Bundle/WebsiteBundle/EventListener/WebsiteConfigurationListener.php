@@ -42,17 +42,14 @@ class WebsiteConfigurationListener implements EventSubscriberInterface
     public function __construct(
         ChannelContextInterface $context,
         ThemeManager $themeManager,
-        ThemeResolver $resolver
+        ThemeResolver $resolver,
     ) {
         $this->context = $context;
         $this->themeManager = $themeManager;
         $this->resolver = $resolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::REQUEST => ['onKernelRequest', 32],

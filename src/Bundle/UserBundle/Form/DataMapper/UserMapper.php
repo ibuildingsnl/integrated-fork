@@ -19,10 +19,7 @@ use Symfony\Component\Form\FormInterface;
  */
 class UserMapper extends DataMapper
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function mapFormsToData($forms, &$data): void
+    public function mapFormsToData(\Traversable $forms, &$data): void
     {
         // we only want properties to be mapped back when the form is enabled else nothing should
         // be written to the $data.

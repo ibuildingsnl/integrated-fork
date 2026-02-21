@@ -30,7 +30,7 @@ class Resource implements ResourceInterface
     /**
      * @var string|null
      */
-    protected $identifier = null;
+    protected $identifier;
 
     /**
      * @param string      $type
@@ -90,25 +90,16 @@ class Resource implements ResourceInterface
         return new self(\is_object($user) ? ClassUtils::getRealClass($user) : ClassUtils::getRealClass($token), (string) $user);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return $this->type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIdentifier()
     {
         return $this->identifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function equals(ResourceInterface $resource)
     {
         return $this->type === $resource->getType() && $this->identifier === $resource->getIdentifier();
@@ -121,7 +112,7 @@ class Resource implements ResourceInterface
      */
     public function __toString()
     {
-        return sprintf(
+        return \sprintf(
             'Resource(%s, %s)',
             $this->type,
             $this->identifier === null ? 'NULL' : $this->identifier

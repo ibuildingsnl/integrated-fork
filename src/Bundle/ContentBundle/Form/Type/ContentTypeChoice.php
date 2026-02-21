@@ -46,7 +46,7 @@ class ContentTypeChoice extends AbstractType
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $choices = [];
         foreach ($this->contentTypeManager->getAll() as $contentType) {
@@ -70,18 +70,12 @@ class ContentTypeChoice extends AbstractType
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
+    public function getParent(): ?string
     {
         return ChoiceType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_content_type_choice';
     }

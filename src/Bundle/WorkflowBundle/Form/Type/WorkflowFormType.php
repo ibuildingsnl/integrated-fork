@@ -46,10 +46,7 @@ class WorkflowFormType extends AbstractType
         $this->tokenStorage = $tokenStorage;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
             'state',
@@ -118,10 +115,7 @@ class WorkflowFormType extends AbstractType
         return $users;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired('workflow');
         $resolver->setRequired('contentType');
@@ -129,10 +123,7 @@ class WorkflowFormType extends AbstractType
         $resolver->setAllowedTypes('contentType', 'string');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_workflow';
     }

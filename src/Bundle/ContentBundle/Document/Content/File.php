@@ -24,9 +24,6 @@ use Integrated\Common\Form\Mapping\Attributes as Type;
 #[Type\Document('File')]
 class File extends Content implements FileInterface
 {
-    /**
-     * @var string
-     */
     #[Slug(fields: ['title'])]
     #[Type\Field(options: [
         'priority' => 500,
@@ -36,7 +33,7 @@ class File extends Content implements FileInterface
             'icon' => 'link',
         ],
     ], location: 'sidebar')]
-    protected $slug;
+    protected ?string $slug = null;
 
     /**
      * @var StorageInterface
@@ -80,20 +77,15 @@ class File extends Content implements FileInterface
     ], location: 'sidebar')]
     protected $credits;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFile()
     {
         return $this->file;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return $this
      */
-    public function setFile(StorageInterface $file = null)
+    public function setFile(?StorageInterface $file = null)
     {
         $this->file = $file;
 
@@ -140,17 +132,11 @@ class File extends Content implements FileInterface
         return $this;
     }
 
-    /**
-     * @return ?string
-     */
     public function getCredits(): ?string
     {
         return $this->credits;
     }
 
-    /**
-     * @param string $credits
-     */
     public function setCredits(?string $credits): self
     {
         $this->credits = $credits;

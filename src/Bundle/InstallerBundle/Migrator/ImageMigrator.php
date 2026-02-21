@@ -2,10 +2,9 @@
 
 namespace Integrated\Bundle\InstallerBundle\Migrator;
 
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use MongoDB\BSON\UTCDateTime;
+use MongoDB\Database;
 use Ramsey\Uuid\Uuid;
 
 class ImageMigrator
@@ -14,17 +13,17 @@ class ImageMigrator
     private UTCDateTime $timeMax;
 
     public function __construct(
-        private readonly DocumentManager $manager
+        private readonly Database $db,
     ) {
         $this->timeNow = new UTCDateTime((new \DateTime())->getTimestamp() * 1000);
         $this->timeMax = new UTCDateTime(253402214400000);
     }
 
-    public function move(string $class, string $field): void
+    public function move(string $collection, ?string $class, string $field): void
     {
         $images = [];
 
-        foreach ($this->getImages($class, $field) as $image) {
+        foreach ($this->getImages($collection, $class, $field) as $image) {
             $images[$image['_id']] = $image;
 
             $images[$image['_id']]['_id'] = Uuid::uuid4()->getHex()->toString();
@@ -34,17 +33,17 @@ class ImageMigrator
             return;
         }
 
-        $this->manager->getDocumentCollection(Content::class)->insertMany(array_values($images));
+        $this->db->selectCollection('content')->insertMany(array_values($images));
 
-        $this->updateItems($class, $images);
+        $this->updateItems($collection, $field, $images);
     }
 
-    private function updateItems(string $class, array $images): void
+    private function updateItems(string $collection, string $field, array $images): void
     {
         foreach ($images as $id => $image) {
-            $this->manager->getDocumentCollection($class)->updateOne(['_id' => $id], [
+            $this->db->selectCollection($collection)->updateOne(['_id' => $id], [
                 '$set' => [
-                    'logo' => [
+                    $field => [
                         '$ref' => 'content',
                         '$id' => $image['_id'],
                     ],
@@ -53,15 +52,21 @@ class ImageMigrator
         }
     }
 
-    private function getImages(string $class, string $field): \Traversable
+    private function getImages(string $collection, ?string $class, string $field): \Traversable
     {
-        return $this->manager->getDocumentCollection($class)->aggregate([
+        $match = [
+            $field => ['$exists' => true],
+            $field.'.identifier' => ['$exists' => true],
+            $field.'.pathname' => ['$exists' => true],
+        ];
+
+        if ($class) {
+            $match['class'] = $class;
+        }
+
+        return $this->db->selectCollection($collection)->aggregate([
             [
-                '$match' => [
-                    $field => ['$exists' => true],
-                    $field.'.identifier' => ['$exists' => true],
-                    $field.'.pathname' => ['$exists' => true],
-                ],
+                '$match' => $match,
             ],
             [
                 '$project' => [

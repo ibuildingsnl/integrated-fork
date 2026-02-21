@@ -11,7 +11,6 @@
 
 namespace Integrated\MongoDB\Serializer\Normalizer;
 
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -27,7 +26,7 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
     /**
      * @var DocumentManager
      */
-    protected $dm = null;
+    protected $dm;
 
     public function __construct(DocumentManager $dm)
     {
@@ -42,10 +41,7 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
         return $this->dm;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize($data, $class, $format = null, array $context = []): mixed
     {
         try {
             $document = $this->getDocumentManager()->getRepository($class)->find($data);
@@ -56,12 +52,9 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
         return $document;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($object, $format = null, array $context = []): array|bool|string|int|float|\ArrayObject|null
     {
-        $meta = $this->getDocumentManager()->getClassMetadata(\get_class($object));
+        $meta = $this->getDocumentManager()->getClassMetadata($object::class);
 
         $keys = [];
 
@@ -72,10 +65,7 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
         return $keys;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, $type, $format = null, array $context = []): bool
     {
         if (!\is_array($data)) {
             return false;
@@ -84,28 +74,38 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
         return $this->supports($type);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, $format = null, array $context = []): bool
     {
-        return $this->supports(\get_class($data));
+        if (!\is_object($data)) {
+            return false;
+        }
+
+        return $this->supports($data::class);
     }
 
     /**
      * Check if the class is a mongodb document class registered by the
      * registered document manager.
      *
-     * @param string $class
-     *
-     * @return bool
+     * @param class-string $class
      */
-    protected function supports($class)
+    protected function supports(string $class): bool
     {
-        if ($this->getDocumentManager()->getMetadataFactory()->hasMetadataFor($class)) {
-            $class = $this->getDocumentManager()->getClassMetadata($class)->getName();
+        $factory = $this->getDocumentManager()->getMetadataFactory();
+
+        if ($factory->hasMetadataFor($class)) {
+            return true;
         }
 
-        return !$this->getDocumentManager()->getMetadataFactory()->isTransient(ClassUtils::getRealClass($class));
+        if (!$factory->isTransient($class)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return ['*' => false];
     }
 }

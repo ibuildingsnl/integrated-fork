@@ -17,198 +17,93 @@ use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\PersistentCollection;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Utils\StateVisibleConfig;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
 class State
 {
-    /**
-     * @var int
-     */
-    protected $id = null;
+    protected string $id = '';
+
+    protected string $name = '';
+
+    protected ?Definition $workflow = null;
+
+    private ?string $color = null;
+
+    private ?string $icon = null;
+
+    protected int $order = 0;
+
+    protected bool $publishable = false;
 
     /**
-     * @var string
+     * @var Collection<Permission>
      */
-    protected $name;
+    protected Collection $permissions;
 
     /**
-     * @var Definition|null
+     * @var Collection<State>
      */
-    protected $workflow = null;
+    protected Collection $transitions;
 
-    /**
-     * @var string
-     */
-    private $color;
+    protected int $comment = StateVisibleConfig::DISABLED;
 
-    /**
-     * @var string
-     */
-    private $icon;
+    protected int $assignee = StateVisibleConfig::DISABLED;
 
-    /**
-     * @var int
-     */
-    protected $order = 0;
-
-    /**
-     * @var bool
-     */
-    protected $publishable = false;
-
-    /**
-     * @var Collection|Permission[]
-     */
-    protected $permissions;
-
-    /**
-     * @var Collection|State[]
-     */
-    protected $transitions;
-
-    /**
-     * @var int
-     */
-    protected $comment = StateVisibleConfig::OPTIONAL;
-
-    /**
-     * @var int
-     */
-    protected $assignee = StateVisibleConfig::OPTIONAL;
-
-    /**
-     * @var int
-     */
-    protected $deadline = StateVisibleConfig::OPTIONAL;
-
-    /**
-     * @return int
-     */
-    public function getComment()
-    {
-        return $this->comment;
-    }
-
-    /**
-     * @param int $comment
-     */
-    public function setComment($comment)
-    {
-        $this->comment = $comment;
-    }
-
-    /**
-     * @return int
-     */
-    public function getAssignee()
-    {
-        return $this->assignee;
-    }
-
-    /**
-     * @param int $assignee
-     */
-    public function setAssignee($assignee)
-    {
-        $this->assignee = $assignee;
-    }
-
-    /**
-     * @return int
-     */
-    public function getDeadline()
-    {
-        return $this->deadline;
-    }
-
-    /**
-     * @param int $deadline
-     */
-    public function setDeadline($deadline)
-    {
-        $this->deadline = $deadline;
-    }
+    protected int $deadline = StateVisibleConfig::DISABLED;
 
     public function __construct()
     {
+        $this->id = Uuid::uuid4()->toString();
+
         $this->permissions = new ArrayCollection();
         $this->transitions = new ArrayCollection();
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function setName(?string $name): self
     {
         $this->name = (string) $name;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
-    public function getColor()
+    public function getColor(): ?string
     {
         return $this->color;
     }
 
-    /**
-     * @param string $color
-     *
-     * @return $this
-     */
-    public function setColor($color)
+    public function setColor(?string $color): self
     {
-        $this->color = $color;
+        $this->color = (string) $color;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getIcon()
+    public function getIcon(): ?string
     {
         return $this->icon;
     }
 
-    /**
-     * @param string $icon
-     *
-     * @return $this
-     */
-    public function setIcon($icon)
+    public function setIcon(?string $icon): self
     {
-        $this->icon = $icon;
+        $this->icon = (string) $icon;
 
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function setWorkflow(Definition $workflow = null)
+    public function setWorkflow(?Definition $workflow = null): self
     {
         if ($this->workflow !== $workflow && $this->workflow !== null) {
             $this->workflow->removeState($this);
@@ -231,52 +126,34 @@ class State
         return $this->workflow;
     }
 
-    /**
-     * @param int $order
-     *
-     * @return $this
-     */
-    public function setOrder($order)
+    public function setOrder(?int $order): self
     {
         $this->order = (int) $order;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getOrder()
+    public function getOrder(): int
     {
         return $this->order;
     }
 
-    /**
-     * @param bool $publish
-     *
-     * @return $this
-     */
-    public function setPublishable($publishable)
+    public function setPublishable(bool $publishable): self
     {
         $this->publishable = (bool) $publishable;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isPublishable()
+    public function isPublishable(): bool
     {
         return $this->publishable;
     }
 
     /**
      * @param Permission[] $permissions
-     *
-     * @return $this
      */
-    public function setPermissions(Collection $permissions)
+    public function setPermissions(iterable $permissions): self
     {
         foreach ($this->permissions as $permission) {
             $this->removePermission($permission);
@@ -292,15 +169,12 @@ class State
     /**
      * @return Permission[]
      */
-    public function getPermissions()
+    public function getPermissions(): array
     {
-        return $this->permissions;
+        return $this->permissions->toArray();
     }
 
-    /**
-     * @return $this
-     */
-    public function addPermission(Permission $permission)
+    public function addPermission(Permission $permission): self
     {
         if (!$this->permissions->contains($permission)) {
             $this->permissions->add($permission);
@@ -314,10 +188,7 @@ class State
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function removePermission(Permission $permission)
+    public function removePermission(Permission $permission): self
     {
         if ($this->permissions->removeElement($permission)) {
             $permission->setState(null);
@@ -326,10 +197,7 @@ class State
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function setTransitions(Collection $transitions)
+    public function setTransitions(iterable $transitions): self
     {
         $this->transitions->clear();
         $this->transitions = new ArrayCollection();
@@ -344,15 +212,12 @@ class State
     /**
      * @return State[]
      */
-    public function getTransitions()
+    public function getTransitions(): array
     {
         return $this->transitions->toArray();
     }
 
-    /**
-     * @return $this
-     */
-    public function addTransition(self $state)
+    public function addTransition(self $state): self
     {
         if (!$this->transitions->contains($state)) {
             $this->transitions->add($state);
@@ -361,26 +226,50 @@ class State
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function removeTransition(self $state)
+    public function removeTransition(self $state): self
     {
         $this->transitions->removeElement($state);
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isDefault()
+    public function isDefault(): bool
     {
         if (isset($this->workflow)) {
             return $this === $this->workflow->getDefault();
         }
 
         return false;
+    }
+
+    public function getComment(): int
+    {
+        return $this->comment;
+    }
+
+    public function setComment(int $comment)
+    {
+        $this->comment = $comment;
+    }
+
+    public function getAssignee(): int
+    {
+        return $this->assignee;
+    }
+
+    public function setAssignee(int $assignee)
+    {
+        $this->assignee = $assignee;
+    }
+
+    public function getDeadline(): int
+    {
+        return $this->deadline;
+    }
+
+    public function setDeadline(int $deadline)
+    {
+        $this->deadline = $deadline;
     }
 
     /**
@@ -411,7 +300,7 @@ class State
             // NOTE: This also means that all the changes to the entity that is removed from
             // the collection wont be recorded by doctrine anymore.
 
-            if ($found = $uow->tryGetById([$permission->getGroup(), $this->getId()], \get_class($permission))) {
+            if ($found = $uow->tryGetById([$permission->getGroup(), $this->getId()], $permission::class)) {
                 if ($found !== $permission && ($found->getState() === null || $found->getState() === $this)) {
                     $this->permissions->removeElement($permission);
                     $this->permissions->add($found);

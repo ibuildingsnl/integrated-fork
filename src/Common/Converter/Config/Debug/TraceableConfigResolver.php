@@ -19,10 +19,7 @@ use Integrated\Common\Converter\Config\ConfigResolver;
  */
 class TraceableConfigResolver extends ConfigResolver
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function newInstance($class, array $types, ConfigInterface $parent = null)
+    protected function newInstance($class, array $types, ?ConfigInterface $parent = null)
     {
         return $this->setInstance($class, new TraceableConfig($class, $types, $parent));
     }

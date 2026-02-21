@@ -28,7 +28,7 @@ class ContentPathExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('integrated_content_path', [$this, 'getContentPath']),
+            new TwigFunction('integrated_content_path', $this->getContentPath(...)),
         ];
     }
 
@@ -43,7 +43,7 @@ class ContentPathExtension extends AbstractExtension
             $data = $this->documentManager->getRepository(Content::class)->find($data['type_id']);
         }
 
-        if (!$data instanceof ContentInterface) {
+        if (!$data instanceof Content) {
             return false;
         }
 
@@ -53,7 +53,9 @@ class ContentPathExtension extends AbstractExtension
                 // circular reference
                 break;
             }
-            $path[$data->getId()] = (string) $relationReferences;
+            if ($relationReferences instanceof Content) {
+                $path[$data->getId()] = (string) $relationReferences;
+            }
         }
 
         if ($data instanceof Taxonomy) {
@@ -65,7 +67,7 @@ class ContentPathExtension extends AbstractExtension
                 if ($parent) {
                     $path[$parent->getId()] = $parent->getTitle();
                 }
-                if ($parentParent) {
+                if ($parentParent instanceof Taxonomy) {
                     $path[$parentParent->getId()] = $parentParent->getTitle();
                 }
             }

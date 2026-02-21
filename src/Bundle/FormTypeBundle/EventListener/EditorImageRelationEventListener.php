@@ -30,10 +30,7 @@ class EditorImageRelationEventListener implements EventSubscriberInterface
         $this->parser = $parser;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             FormEvents::POST_SUBMIT => 'handleRelations',
@@ -56,13 +53,13 @@ class EditorImageRelationEventListener implements EventSubscriberInterface
 
         $relation = $content->getRelation(EditorType::RELATION);
 
-        if (!$relation = $content->getRelation(EditorType::RELATION)) {
+        if (!$relation instanceof Relation) {
             $relation = (new Relation())
                 ->setRelationId(EditorType::RELATION)
                 ->setRelationType('embedded');
         }
 
-        $relation->getReferences()->clear();
+        $relation->clearReferences();
 
         foreach ($event->getForm() as $child) {
             if ($child->getConfig()->getType()->getInnerType() instanceof EditorType) {
@@ -78,7 +75,7 @@ class EditorImageRelationEventListener implements EventSubscriberInterface
             }
         }
 
-        if ($relation->getReferences()->count()) {
+        if (\count($relation->getReferences())) {
             $content->addRelation($relation);
         } else {
             $content->removeRelation($relation);

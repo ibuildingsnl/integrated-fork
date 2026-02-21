@@ -22,26 +22,17 @@ class UniqueEntry extends Constraint
     public $fields = [];
     public $caseInsensitive = false;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRequiredOptions()
+    public function getRequiredOptions(): array
     {
         return ['fields'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDefaultOption()
+    public function getDefaultOption(): ?string
     {
         return 'fields';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return Constraint::PROPERTY_CONSTRAINT;
     }

@@ -11,7 +11,8 @@
 
 namespace Integrated\Common\Content\Extension\Adaptor\Doctrine;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
+use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Persistence\Proxy;
 use Integrated\Common\Content\Extension\Adaptor\AbstractAdaptor;
@@ -20,24 +21,15 @@ use Integrated\Common\Content\Extension\Events;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class DoctrineOrmAdaptor extends AbstractAdaptor implements EventSubscriber
+#[AsDoctrineListener(event: 'preRemove')]
+#[AsDoctrineListener(event: 'postRemove')]
+#[AsDoctrineListener(event: 'prePersist')]
+#[AsDoctrineListener(event: 'postPersist')]
+#[AsDoctrineListener(event: 'preFlush')]
+#[AsDoctrineListener(event: 'postUpdate')]
+#[AsDoctrineListener(event: 'postLoad')]
+class DoctrineOrmAdaptor extends AbstractAdaptor
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getSubscribedEvents()
-    {
-        return [
-            'preRemove',
-            'postRemove',
-            'prePersist',
-            'postPersist',
-            'preFlush', // calculate our of preUpdate
-            'postUpdate',
-            'postLoad',
-        ];
-    }
-
     public function preRemove(LifecycleEventArgs $args)
     {
         $this->dispatch(Events::PRE_DELETE, $args->getObject());
@@ -61,6 +53,11 @@ class DoctrineOrmAdaptor extends AbstractAdaptor implements EventSubscriber
     public function preFlush(LifecycleEventArgs $event)
     {
         $manager = $event->getObjectManager();
+
+        if (!$manager instanceof EntityManager) {
+            throw new \LogicException(\sprintf('The ObjectManger is not an instance of %s', EntityManager::class));
+        }
+
         $uow = $manager->getUnitOfWork();
 
         foreach ($uow->getIdentityMap() as $class => $objects) {

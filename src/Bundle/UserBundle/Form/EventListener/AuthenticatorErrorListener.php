@@ -37,7 +37,7 @@ class AuthenticatorErrorListener implements EventSubscriberInterface
         $this->name = $name;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             FormEvents::PRE_SET_DATA => 'preSetData',

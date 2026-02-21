@@ -49,14 +49,11 @@ class RedirectContentSubscriber implements EventSubscriberInterface
      */
     private $matcher;
 
-    /**
-     * @param UrlMatcherInterface $router
-     */
     public function __construct(
         ChannelContextInterface $channelContext,
         DocumentManager $documentManager,
         UrlResolver $urlResolver,
-        UrlMatcherInterface $matcher
+        UrlMatcherInterface $matcher,
     ) {
         $this->channelContext = $channelContext;
         $this->documentManager = $documentManager;
@@ -64,10 +61,7 @@ class RedirectContentSubscriber implements EventSubscriberInterface
         $this->matcher = $matcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [KernelEvents::EXCEPTION => 'onKernelException'];
     }
@@ -113,6 +107,6 @@ class RedirectContentSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $event->setResponse(new RedirectResponse($url, 301));
+        $event->setResponse(new RedirectResponse($url, \Symfony\Component\HttpFoundation\Response::HTTP_MOVED_PERMANENTLY));
     }
 }

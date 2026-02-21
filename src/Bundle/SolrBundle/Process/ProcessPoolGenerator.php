@@ -14,7 +14,7 @@ namespace Integrated\Bundle\SolrBundle\Process;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\SolrBundle\Process\Exception\LogicException;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Process;
 
 /**
@@ -33,11 +33,11 @@ class ProcessPoolGenerator
     private $input;
 
     /**
-     * @var Kernel
+     * @var KernelInterface
      */
     private $kernel;
 
-    public function __construct(InputInterface $input, Kernel $kernel)
+    public function __construct(InputInterface $input, KernelInterface $kernel)
     {
         $this->input = $input;
         $this->kernel = $kernel;
@@ -56,7 +56,7 @@ class ProcessPoolGenerator
 
         for ($i = 0; $i < $argumentProcess->getProcessMax(); ++$i) {
             $result[] = Process::fromShellCommandline(
-                sprintf(
+                \sprintf(
                     self::COMMAND,
                     $this->input->getFirstArgument(),
                     $this->input->getParameterOption('command'),

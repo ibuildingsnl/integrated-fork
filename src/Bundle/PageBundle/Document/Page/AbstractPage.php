@@ -12,6 +12,8 @@
 namespace Integrated\Bundle\PageBundle\Document\Page;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Grid;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -43,7 +45,7 @@ abstract class AbstractPage
     protected $layout;
 
     /**
-     * @var Grid[]
+     * @var Collection<Grid>
      */
     protected $grids;
 
@@ -270,9 +272,11 @@ abstract class AbstractPage
             return $channel->getPrimaryDomain();
         }
 
-        $domains = $channel->getDomains();
-        if (\count($domains)) {
-            return $domains[0];
+        if ($channel instanceof Channel) {
+            $domains = $channel->getDomains();
+            if (\count($domains)) {
+                return $domains[0];
+            }
         }
 
         return null;

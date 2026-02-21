@@ -21,13 +21,10 @@ use Integrated\Common\Converter\Type\TypeInterface;
 class TaxonomyType implements TypeInterface
 {
     public function __construct(
-        private readonly DocumentManager $documentManager
+        private readonly DocumentManager $documentManager,
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         if (!$data instanceof Content) {
@@ -36,22 +33,21 @@ class TaxonomyType implements TypeInterface
 
         // Relation field and facet field for taxonomy, commercial and edition relations
         $items = array_merge(
-            $data->getRelationsByRelationType('taxonomy')->toArray(),
-            $data->getRelationsByRelationType('taxonomy_category')->toArray(),
-            $data->getRelationsByRelationType('commercial')->toArray(),
-            $data->getRelationsByRelationType('edition')->toArray()
+            $data->getRelationsByRelationType('taxonomy'),
+            $data->getRelationsByRelationType('taxonomy_category'),
+            $data->getRelationsByRelationType('commercial'),
+            $data->getRelationsByRelationType('edition')
         );
 
         foreach ($items as $relation) {
-            // check for each reference what the channel is
-            foreach ($relation->getReferences()->toArray() as $content) {
+            foreach ($relation->getReferences() as $content) {
                 if (($content instanceof Taxonomy || $content instanceof Article) && $content->getTitle()) {
                     $container->add('facet_'.$relation->getRelationId(), $content->getTitle());
 
                     if ($content instanceof Taxonomy) {
                         $container->add('taxonomy_'.$relation->getRelationId().'_string', $content->getTitle());
                         foreach ($content->getChannels() as $channel) {
-                            $childen = $this->documentManager
+                            $childrenCount = $this->documentManager
                                 ->getRepository(Content::class)
                                 ->createQueryBuilder()->count()
                                 ->field('class')->equals(Taxonomy::class)
@@ -59,7 +55,7 @@ class TaxonomyType implements TypeInterface
                                 ->getQuery()
                                 ->execute();
 
-                            if ($childen > 0) {
+                            if (\is_int($childrenCount) && $childrenCount > 0) {
                                 $container->add('taxonomy_parent_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());
                             } else {
                                 $container->add('taxonomy_child_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());
@@ -72,9 +68,6 @@ class TaxonomyType implements TypeInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.taxonomy';

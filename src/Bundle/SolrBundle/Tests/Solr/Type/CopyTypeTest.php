@@ -14,6 +14,7 @@ namespace Integrated\Bundle\SolrBundle\Tests\Solr\Type;
 use Integrated\Bundle\SolrBundle\Solr\Type\CopyType;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @covers \Integrated\Bundle\SolrBundle\Solr\Type\CopyType
@@ -27,9 +28,7 @@ class CopyTypeTest extends \PHPUnit\Framework\TestCase
         self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\TypeInterface', $this->getInstance());
     }
 
-    /**
-     * @dataProvider buildProvider
-     */
+    #[DataProvider('buildProvider')]
     public function testBuild(array $options, array $expected)
     {
         $container = $this->getContainer();
@@ -44,10 +43,7 @@ class CopyTypeTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expected, $container->toArray());
     }
 
-    /**
-     * @return array
-     */
-    public function buildProvider()
+    public static function buildProvider(): array
     {
         return [
             'simple' => [
@@ -86,9 +82,7 @@ class CopyTypeTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @dataProvider buildSpecialOrErrorConditionsProvider
-     */
+    #[DataProvider('buildSpecialOrErrorConditionsProvider')]
     public function testBuildSpecialOrErrorConditions(array $options, array $expected)
     {
         $container = $this->getContainer();
@@ -102,10 +96,7 @@ class CopyTypeTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expected, $container->toArray());
     }
 
-    /**
-     * @return array
-     */
-    public function buildSpecialOrErrorConditionsProvider()
+    public static function buildSpecialOrErrorConditionsProvider(): array
     {
         return [
             'simple, field does not exist' => [
@@ -114,7 +105,7 @@ class CopyTypeTest extends \PHPUnit\Framework\TestCase
             ],
             'advanced, field does not exist' => [
                 [['name' => 'field3', 'fieldx', 'fieldy']],
-                    ['field1' => ['value1'], 'field2' => ['value2', 'value3']],
+                ['field1' => ['value1'], 'field2' => ['value2', 'value3']],
             ],
         ];
     }

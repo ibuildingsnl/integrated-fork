@@ -39,24 +39,24 @@ class Channel implements ChannelInterface
      * @var string the name of the channel
      */
     #[Assert\NotBlank]
-    protected $name;
+    protected $name = '';
 
     protected ?ChannelType $type = null;
 
     /**
      * @var array
      */
-    protected $domains;
+    protected $domains = [];
 
     /**
      * @var string
      */
-    protected $primaryDomain;
+    protected $primaryDomain = '';
 
     /**
      * @var bool
      */
-    protected $primaryDomainRedirect;
+    protected $primaryDomainRedirect = false;
 
     /**
      * @var mixed[]
@@ -81,12 +81,12 @@ class Channel implements ChannelInterface
     /**
      * @var Scope
      */
-    protected $scopeInstance = null;
+    protected $scopeInstance;
 
     /**
      * @var null
      */
-    protected $scope = null;
+    protected $scope;
 
     /**
      * Constructor.
@@ -186,9 +186,9 @@ class Channel implements ChannelInterface
         return $this->primaryDomain;
     }
 
-    public function setPrimaryDomain(string $primaryDomain): void
+    public function setPrimaryDomain(?string $primaryDomain): void
     {
-        $this->primaryDomain = $primaryDomain;
+        $this->primaryDomain = (string) $primaryDomain;
     }
 
     public function getPrimaryDomainRedirect(): bool

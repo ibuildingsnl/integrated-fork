@@ -59,12 +59,10 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * LibXMl options used to load html for DOMDocument.
-     *
-     * @var mixed
      */
     public $libxml_options =
         \LIBXML_HTML_NOIMPLIED // turns off the automatic adding of implied html/body
-      | \LIBXML_HTML_NODEFDTD; // prevents a default doctype being added when one is not found
+        | \LIBXML_HTML_NODEFDTD; // prevents a default doctype being added when one is not found
 
     /**
      * Root instance who began the chain.
@@ -99,9 +97,9 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct()
+    final public function __construct()
     {
-        if (\func_num_args() === 2 && \is_string(func_get_arg(0)) && strpos(func_get_arg(0), '<') === false) {
+        if (\func_num_args() === 2 && \is_string(func_get_arg(0)) && !str_contains(func_get_arg(0), '<')) {
             $result = self::create(func_get_arg(1))->find(func_get_arg(0));
             $this->addNodes($result->nodes);
 
@@ -119,10 +117,10 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
                 $this->addNodes($arg);
             } elseif ($arg instanceof \DOMXPath) {
                 $this->dom_xpath = $arg;
-            } elseif (\is_string($arg) && strpos($arg, '<') !== false) {
+            } elseif (\is_string($arg) && str_contains($arg, '<')) {
                 $this->loadContent($arg);
             } elseif (\is_object($arg)) {
-                throw new \InvalidArgumentException('Unknown object '.\get_class($arg).' given as argument');
+                throw new \InvalidArgumentException('Unknown object '.$arg::class.' given as argument');
             } else {
                 throw new \InvalidArgumentException('Unknown argument '.\gettype($arg));
             }
@@ -242,7 +240,7 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
             throw new \Exception('DOMDocument is missing!');
         }
 
-        if ($dom_node_list->length > 0) {
+        if ($dom_node_list->length > 0 && $dom_node_list->item(0)) {
             $this->setDomDocument($dom_node_list->item(0)->ownerDocument);
         }
 
@@ -279,7 +277,7 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
      */
     public function loadContent(string $content, $encoding = 'UTF-8')
     {
-        $this->preserve_no_newlines = (strpos($content, '<') !== false && strpos($content, "\n") === false);
+        $this->preserve_no_newlines = (str_contains($content, '<') && !str_contains($content, "\n"));
 
         if (!\is_bool($this->xml_mode)) {
             $this->xml_mode = (stripos($content, '<?xml') === 0);
@@ -576,6 +574,8 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
                 return $node;
             }
         }
+
+        return null;
     }
 
     /**
@@ -611,8 +611,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
      *
      * @param string $name
      *
-     * @return mixed
-     *
      * @throws \Exception
      */
     public function __call($name, $arguments)
@@ -631,7 +629,7 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
      *
      * @throws \Exception
      */
-    public function xpathQuery(string $expression, \DOMNode $context_node = null)
+    public function xpathQuery(string $expression, ?\DOMNode $context_node = null)
     {
         if ($this->dom_xpath) {
             $node_list = $this->dom_xpath->query($expression, $context_node);
@@ -658,9 +656,11 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
         $xpath = new \DOMXPath($this->document);
 
         if ($this->xml_mode) { // register all name spaces
-            foreach ($xpath->query('namespace::*') as $node) {
-                if ($node->prefix !== 'xml') {
-                    $xpath->registerNamespace($node->prefix, $node->namespaceURI);
+            if ($result = $xpath->query('namespace::*')) {
+                foreach ($result as $node) {
+                    if ($node->prefix !== 'xml') {
+                        $xpath->registerNamespace($node->prefix, $node->namespaceURI);
+                    }
                 }
             }
         }
@@ -805,8 +805,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * ArrayAccess: offset exists.
-     *
-     * @param mixed $key
      */
     public function offsetExists($key): bool
     {
@@ -815,8 +813,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * ArrayAccess: get offset.
-     *
-     * @param mixed $key
      */
     public function offsetGet($key): self
     {
@@ -834,9 +830,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
     /**
      * ArrayAccess: set offset.
      *
-     * @param mixed $key
-     * @param mixed $value
-     *
      * @throws \BadMethodCallException when attempting to write to a read-only item
      */
     public function offsetSet($key, $value): void
@@ -846,8 +839,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * ArrayAccess: unset offset.
-     *
-     * @param mixed $key
      *
      * @throws \BadMethodCallException when attempting to unset a read-only item
      */

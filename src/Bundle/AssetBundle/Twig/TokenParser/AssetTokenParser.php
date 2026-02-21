@@ -41,9 +41,6 @@ class AssetTokenParser extends AbstractTokenParser
         $this->extension = $extension;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function parse(Token $token)
     {
         $assets = [];
@@ -85,8 +82,6 @@ class AssetTokenParser extends AbstractTokenParser
     }
 
     /**
-     * @param Twig_Token $token
-     *
      * @return bool
      */
     public function testEndTag(Token $token)
@@ -94,9 +89,6 @@ class AssetTokenParser extends AbstractTokenParser
         return $token->test(['end'.$this->getTag()]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTag()
     {
         return $this->tag;

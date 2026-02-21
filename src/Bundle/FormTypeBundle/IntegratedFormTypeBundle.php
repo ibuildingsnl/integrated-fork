@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\FormTypeBundle;
 
 use Integrated\Bundle\FormTypeBundle\DependencyInjection\Compiler\RegisterContentStyleParametersPass;
-use Integrated\Bundle\FormTypeBundle\DependencyInjection\IntegratedFormTypeExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -21,19 +20,8 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class IntegratedFormTypeBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
-        $container->addCompilerPass(new RegisterContentStyleParametersPass());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContainerExtension()
-    {
-        return new IntegratedFormTypeExtension();
+        $container->addCompilerPass(new RegisterContentStyleParametersPass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
     }
 }

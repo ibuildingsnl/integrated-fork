@@ -21,6 +21,8 @@
 
         <defaults autowire="true" autoconfigure="true"/>
 
+        <prototype namespace="Integrated\Bundle\ContentBundle\Controller\" resource="../../Controller" />
+
         <service id="Integrated\Bundle\ContentBundle\Controller\ContentController">
             <argument type="service" id="integrated.form.resolver" />
             <argument type="service" id="integrated_content.content_type.manager" />
@@ -42,10 +44,6 @@
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Controller\ContentTypeController">
@@ -56,57 +54,18 @@
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
-        <service id="Integrated\Bundle\ContentBundle\Controller\ChannelController">
+        <service id="Integrated\Bundle\ContentBundle\Controller\ChannelController" autowire="true" autoconfigure="true">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_content.services.search.content.referenced" />
             <argument type="service" id="event_dispatcher" />
-
-            <tag name="controller.service_arguments" />
-            <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
-        <service id="Integrated\Bundle\ContentBundle\Controller\MediaController">
-            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
-            <argument type="service" id="Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu" />
-            <argument type="service" id="Integrated\Bundle\ContentBundle\Provider\ContentProvider" />
-            <argument type="service" id="Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager" />
-            <argument type="service" id="security.authorization_checker" />
-            <argument type="service" id="Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile" />
-            <argument type="service" id="Integrated\Bundle\ContentBundle\Services\MediaGalleryEditFile" />
-
-            <tag name="controller.service_arguments" />
-            <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
+        <service id="Integrated\Bundle\ContentBundle\Controller\MediaController" autowire="true" autoconfigure="true">
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Controller\RankController">
-            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
-            <argument type="service" id="Integrated\Bundle\ContentBundle\Provider\ContentProvider" />
-            <argument type="service" id="translator" />
-
-            <tag name="controller.service_arguments" />
-            <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
-        </service>
-
-        <service id="Integrated\Bundle\ContentBundle\Controller\ParentIDController">
-            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="Integrated\Bundle\ContentBundle\Provider\ContentProvider" />
             <argument type="service" id="translator" />
 
@@ -123,50 +82,33 @@
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Controller\SearchController">
             <argument type="service" id="integrated_solr.indexer.client" />
             <argument type="service" id="serializer" />
-            <argument type="service" id="service_container" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Controller\SearchSelectionController">
             <argument type="service" id="request_stack" />
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="knp_paginator" />
             <argument type="service" id="integrated_content.services.search.content.referenced" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Controller\BulkController">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="Integrated\Bundle\ContentBundle\Provider\ContentProvider" />
             <argument type="service" id="integrated_content.bulk.handler" />
-            <argument type="service" id="service_container" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Controller\YoastSeoLanguageProvider">
@@ -177,10 +119,10 @@
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Controller\OEmbedController">
-            <argument>%env(resolve:FACEBOOK_OEMBED_APP_ID)%</argument>
-            <argument>%env(resolve:FACEBOOK_OEMBED_APP_SECRET)%</argument>
-            <argument>%env(resolve:TWITTER_CONSUMER_KEY)%</argument>
-            <argument>%env(resolve:TWITTER_CONSUMER_SECRET)%</argument>
+            <argument>%env(string:default::FACEBOOK_OEMBED_APP_ID)%</argument>
+            <argument>%env(string:default::FACEBOOK_OEMBED_APP_SECRET)%</argument>
+            <argument>%env(string:default::TWITTER_CONSUMER_KEY)%</argument>
+            <argument>%env(string:default::TWITTER_CONSUMER_SECRET)%</argument>
 
             <tag name="controller.service_arguments" />
         </service>

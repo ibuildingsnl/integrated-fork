@@ -41,17 +41,11 @@ class Job implements JobInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function serialize()
     {
         return serialize(['action' => $this->action, 'options' => $this->options]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function unserialize($serialized)
     {
         $data = unserialize($serialized);
@@ -74,17 +68,11 @@ class Job implements JobInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAction()
     {
         return $this->action;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasAction()
     {
         return (bool) $this->action;
@@ -105,17 +93,11 @@ class Job implements JobInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOption($name)
     {
         return isset($this->options[$name]) ? $this->options[$name] : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasOption($name)
     {
         return isset($this->options[$name]);

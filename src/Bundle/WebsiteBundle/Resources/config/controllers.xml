@@ -8,26 +8,18 @@
 
         <defaults autowire="true" autoconfigure="true" />
 
-        <service id="Integrated\Bundle\WebsiteBundle\Controller\ErrorController" public="true">
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\ErrorController">
             <argument type="service" id="integrated_theme.templating.theme_manager" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
-        <service id="integrated_website.controller.page" class="Integrated\Bundle\WebsiteBundle\Controller\PageController">
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\PageController">
             <argument type="service" id="integrated_theme.templating.theme_manager" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="Integrated\Bundle\WebsiteBundle\Controller\GridController">
@@ -36,10 +28,6 @@
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="Integrated\Bundle\WebsiteBundle\Controller\MenuController">
@@ -50,10 +38,6 @@
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="Integrated\Bundle\WebsiteBundle\Controller\RSSSearchSelectionController">
@@ -77,20 +61,14 @@
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="Integrated\Bundle\WebsiteBundle\Controller\SessionController">
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
+
+        <!-- content controllers -->
 
         <service id="integrated_website.controller.content.article" class="Integrated\Bundle\WebsiteBundle\Controller\Content\ArticleController">
             <argument type="service" id="integrated_website.service.content_service" />
@@ -99,10 +77,6 @@
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\Article" />
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="integrated_website.controller.content.news" class="Integrated\Bundle\WebsiteBundle\Controller\Content\NewsController">
@@ -112,10 +86,6 @@
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\News" />
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="integrated_website.controller.content.company" class="Integrated\Bundle\WebsiteBundle\Controller\Content\CompanyController">
@@ -125,10 +95,6 @@
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\Relation\Company" />
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="integrated_website.controller.content.event" class="Integrated\Bundle\WebsiteBundle\Controller\Content\EventController">
@@ -138,10 +104,6 @@
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\Event" />
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="integrated_website.controller.content.job_posting" class="Integrated\Bundle\WebsiteBundle\Controller\Content\JobPostingController">
@@ -151,10 +113,6 @@
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\JobPosting" />
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="integrated_website.controller.content.person" class="Integrated\Bundle\WebsiteBundle\Controller\Content\PersonController">
@@ -164,10 +122,6 @@
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\Relation\Person" />
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="integrated_website.controller.content.taxonomy" class="Integrated\Bundle\WebsiteBundle\Controller\Content\TaxonomyController">
@@ -177,10 +131,6 @@
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\Taxonomy" />
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
     </services>

@@ -29,7 +29,7 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
     protected $provider;
 
     /**
-     * @var Connection|MockObject
+     * @var Connection&MockObject
      */
     protected $connection;
 

@@ -15,9 +15,6 @@ final class Version20201214122713 extends AbstractMigration
         return '';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function up(Database $db)
     {
         $db->selectCollection('page')->createIndexes([

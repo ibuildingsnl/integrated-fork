@@ -26,17 +26,20 @@ abstract class ManagerValidator extends ConstraintValidator
     /**
      * @var PropertyAccessor
      */
-    private $accessor = null;
+    private $accessor;
 
     /**
-     * @param object $object
+     * @param object $value
      *
      * @throws UnexpectedTypeException
      * @throws ConstraintDefinitionException
      */
-    public function validate($object, Constraint $constraint)
+    public function validate(mixed $value, Constraint $constraint)
     {
-        /** @var $constraint ManagerConstraint */
+        if (!$constraint instanceof ManagerConstraint) {
+            throw new UnexpectedTypeException($constraint, ManagerConstraint::class);
+        }
+
         if (!\is_array($constraint->fields) && !\is_string($constraint->fields)) {
             throw new UnexpectedTypeException($constraint->fields, 'array');
         }
@@ -51,11 +54,11 @@ abstract class ManagerValidator extends ConstraintValidator
         $criteria = [];
 
         foreach ($fields as $fieldName) {
-            if (!$accessor->isReadable($object, $fieldName)) {
-                throw new ConstraintDefinitionException(sprintf("The field '%s' is not readable, so its value can not be determent.", $fieldName));
+            if (!$accessor->isReadable($value, $fieldName)) {
+                throw new ConstraintDefinitionException(\sprintf("The field '%s' is not readable, so its value can not be determent.", $fieldName));
             }
 
-            $criteria[$fieldName] = $accessor->getValue($object, $fieldName);
+            $criteria[$fieldName] = $accessor->getValue($value, $fieldName);
         }
 
         $result = $constraint->manger->{$constraint->method}($criteria);
@@ -68,7 +71,7 @@ abstract class ManagerValidator extends ConstraintValidator
         // strange reason the same object is in the array more then once.
 
         foreach ($result as $row) {
-            if ($object === $row) {
+            if ($value === $row) {
                 continue;
             }
 

@@ -23,7 +23,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 class FormEventTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContentTypeInterface|MockObject
+     * @var ContentTypeInterface&MockObject
      */
     protected $type;
 

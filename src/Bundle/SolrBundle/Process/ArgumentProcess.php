@@ -42,7 +42,7 @@ class ArgumentProcess
      */
     public function isParentProcess()
     {
-        return false === strpos($this->argument, ':');
+        return !str_contains($this->argument, ':');
     }
 
     /**

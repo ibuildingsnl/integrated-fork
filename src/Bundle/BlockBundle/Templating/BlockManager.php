@@ -45,7 +45,7 @@ class BlockManager
     protected $repository;
 
     /**
-     * @var \Twig_Environment
+     * @var Environment
      */
     protected $twig;
 
@@ -76,10 +76,10 @@ class BlockManager
         if ($block instanceof BlockInterface) {
             try {
                 if ($block instanceof Block && (!$block->isPublished() || $block->isDisabled())) {
-                    return;
+                    return null;
                 }
             } catch (DocumentNotFoundException $e) {
-                return;
+                return null;
             }
 
             $handler = $this->blockRegistry->getHandler($block->getType());
@@ -103,6 +103,8 @@ class BlockManager
                 return $handler->execute($block, $options);
             }
         }
+
+        return null;
     }
 
     /**

@@ -35,8 +35,6 @@ class Registry implements RegistryInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @trows UnexpectedTypeException if $name is not a string
      */
     public function hasType($name)
@@ -53,8 +51,6 @@ class Registry implements RegistryInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @trows UnexpectedTypeException if $name is not a string
      */
     public function getType($name)
@@ -67,6 +63,6 @@ class Registry implements RegistryInterface
             return $this->resolved[$name];
         }
 
-        throw new InvalidArgumentException(sprintf('Could not load converter type "%s"', $name));
+        throw new InvalidArgumentException(\sprintf('Could not load converter type "%s"', $name));
     }
 }

@@ -34,9 +34,6 @@ class StorageType implements TypeInterface
         $this->reader = PropertyAccess::createPropertyAccessor();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         foreach ($options as $key => $path) {
@@ -65,7 +62,7 @@ class StorageType implements TypeInterface
                 } else {
                     // Throw and release
                     throw new UnexpectedTypeException(
-                        \is_object($object) ? \get_class($object) : \gettype($object),
+                        \is_object($object) ? $object::class : \gettype($object),
                         'anything with a StorageInterface'
                     );
                 }
@@ -73,9 +70,6 @@ class StorageType implements TypeInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.storage';

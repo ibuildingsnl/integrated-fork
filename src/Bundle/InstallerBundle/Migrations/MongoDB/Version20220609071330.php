@@ -15,9 +15,6 @@ final class Version20220609071330 extends AbstractMigration
         return 'Convert max endDate to UTC timezone';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function up(Database $db)
     {
         $db->selectCollection('content')->updateMany(

@@ -46,9 +46,6 @@ class ChannelAddHandler implements HandlerInterface
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(ContentInterface $content)
     {
         if (!$content instanceof Content) {

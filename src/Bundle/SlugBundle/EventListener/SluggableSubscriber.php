@@ -11,17 +11,17 @@
 
 namespace Integrated\Bundle\SlugBundle\EventListener;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
+use Doctrine\ODM\MongoDB\Events;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\ODM\MongoDB\UnitOfWork as ODMUnitOfWork;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\UnitOfWork as ORMUnitOfWork;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Persistence\ObjectManager;
-use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\SlugBundle\Mapping\MetadataFactoryInterface;
 use Integrated\Bundle\SlugBundle\Slugger\SluggerInterface;
 use MongoDB\BSON\Regex;
@@ -33,7 +33,10 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
  *
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class SluggableSubscriber implements EventSubscriber
+#[AsDocumentListener(event: Events::prePersist)]
+#[AsDocumentListener(event: Events::postPersist)]
+#[AsDocumentListener(event: Events::preUpdate)]
+class SluggableSubscriber
 {
     /**
      * @var MetadataFactoryInterface
@@ -57,44 +60,26 @@ class SluggableSubscriber implements EventSubscriber
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getSubscribedEvents()
-    {
-        return [
-            'prePersist',
-            'postPersist',
-            'preUpdate',
-            // 'onFlush', // @todo implement to support update after a persist (INTEGRATED-294)
-        ];
-    }
-
     public function prePersist(LifecycleEventArgs $args)
     {
         // used for slug as id
-        $this->handleEvent($args, 'prePersist');
+        $this->handleEvent($args->getObject(), $args->getObjectManager(), 'prePersist');
     }
 
     public function postPersist(LifecycleEventArgs $args)
     {
         // used for id in slug
-        $this->handleEvent($args, 'postPersist');
+        $this->handleEvent($args->getObject(), $args->getObjectManager(), 'postPersist');
     }
 
     public function preUpdate(LifecycleEventArgs $args)
     {
-        $this->handleEvent($args, 'preUpdate');
+        $this->handleEvent($args->getObject(), $args->getObjectManager(), 'preUpdate');
     }
 
-    /**
-     * @param string $event
-     */
-    protected function handleEvent(LifecycleEventArgs $args, $event)
+    protected function handleEvent(object $object, ObjectManager $om, string $event)
     {
-        $object = $args->getObject();
-        $om = $args->getObjectManager();
-        $class = \get_class($object);
+        $class = $object::class;
 
         if (!$om instanceof DocumentManager && !$om instanceof EntityManagerInterface) {
             return;
@@ -109,10 +94,10 @@ class SluggableSubscriber implements EventSubscriber
             if (\count($propertyMetadata->getFields())) {
                 $hasIdentifierFields = \count(array_intersect($identifierFields, $propertyMetadata->getFields())) > 0;
 
-                if ($event == 'prePersist' &&
-                    $hasIdentifierFields ||
-                    $event == 'postPersist' &&
-                    !$hasIdentifierFields
+                if ($event == 'prePersist'
+                    && $hasIdentifierFields
+                    || $event == 'postPersist'
+                    && !$hasIdentifierFields
                 ) {
                     continue; // generate slug in another event
                 }
@@ -195,7 +180,6 @@ class SluggableSubscriber implements EventSubscriber
 
     /**
      * @param object $object
-     * @param mixed  $value
      * @param array  $fields
      *
      * @return bool
@@ -228,7 +212,7 @@ class SluggableSubscriber implements EventSubscriber
             return null;
         }
 
-        $class = \get_class($object);
+        $class = $object::class;
 
         if ($this->isUniqueSlug($om, $class, $field, $slug, $id)) {
             return $slug;
@@ -292,6 +276,7 @@ class SluggableSubscriber implements EventSubscriber
             }
         }
 
+        /** @var DocumentManager|EntityManagerInterface $om */
         $uow = $om->getUnitOfWork();
 
         // check in database
@@ -323,6 +308,7 @@ class SluggableSubscriber implements EventSubscriber
      */
     protected function findSimilarSlugs(ObjectManager $om, $class, $field, $slug, $separator = '-')
     {
+        /** @var DocumentManager|EntityManagerInterface $om */
         $objects = $this->getScheduledObjects($om);
         $uow = $om->getUnitOfWork();
 
@@ -344,6 +330,7 @@ class SluggableSubscriber implements EventSubscriber
      */
     protected function getScheduledObjects(ObjectManager $om)
     {
+        /** @var DocumentManager|EntityManagerInterface $om */
         $uow = $om->getUnitOfWork();
 
         if ($uow instanceof ODMUnitOfWork) {
@@ -359,10 +346,11 @@ class SluggableSubscriber implements EventSubscriber
      * @param ObjectManager|DocumentManager|EntityManager $om
      * @param string                                      $class
      *
-     * @return ObjectRepository|DocumentRepository|EntityRepository
+     * @return DocumentRepository|EntityRepository
      */
     protected function getRepository(ObjectManager $om, $class)
     {
+        /** @var DocumentManager|EntityManagerInterface $om */
         $uow = $om->getUnitOfWork();
 
         if ($uow instanceof ODMUnitOfWork) {
@@ -394,8 +382,9 @@ class SluggableSubscriber implements EventSubscriber
      */
     protected function recomputeSingleObjectChangeSet(ObjectManager $om, $object)
     {
+        /** @var DocumentManager|EntityManagerInterface $om */
         if ($om->contains($object)) {
-            $classMetadata = $om->getClassMetadata(\get_class($object));
+            $classMetadata = $om->getClassMetadata($object::class);
             $uow = $om->getUnitOfWork();
 
             if ($uow instanceof ODMUnitOfWork) {

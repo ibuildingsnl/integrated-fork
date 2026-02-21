@@ -20,9 +20,6 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class RegisterConfigPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('integrated_channel.config.resolver.memory_builder')) {

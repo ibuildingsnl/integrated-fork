@@ -29,27 +29,21 @@ class ContentTypeChannelCollectionType extends AbstractType
     /**
      * @var null
      */
-    private $channels = null;
+    private $channels;
 
     public function __construct(ObjectRepository $repository)
     {
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         foreach ($this->getChannels() as $channel) {
             $builder->add($channel->getId(), ContentTypeChannelType::class, ['channel' => $channel]);
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_content_type_channel_collection';
     }

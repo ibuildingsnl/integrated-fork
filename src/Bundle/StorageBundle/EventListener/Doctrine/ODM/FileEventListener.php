@@ -11,11 +11,11 @@
 
 namespace Integrated\Bundle\StorageBundle\EventListener\Doctrine\ODM;
 
-use Doctrine\Common\EventSubscriber;
-use Doctrine\Common\Proxy\Proxy;
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Event\PreFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events;
+use Doctrine\Persistence\Proxy;
 use Integrated\Bundle\StorageBundle\Doctrine\ODM\Transformer\StorageIntentTransformer;
 use Integrated\Bundle\StorageBundle\Storage\Accessor\DoctrineDocument;
 use Integrated\Common\Storage\ManagerInterface;
@@ -23,13 +23,14 @@ use Integrated\Common\Storage\ManagerInterface;
 /**
  * @author Johnny Borg <johnny@e-active.nl>
  */
-class FileEventListener implements EventSubscriber
+#[AsDocumentListener(event: Events::prePersist)]
+#[AsDocumentListener(event: Events::preFlush)]
+class FileEventListener
 {
     /**
      * @var ManagerInterface
      */
     private $manager;
-
     /**
      * @var StorageIntentTransformer
      */
@@ -39,17 +40,6 @@ class FileEventListener implements EventSubscriber
     {
         $this->manager = $manager;
         $this->intentTransformer = $intentTransformer;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::prePersist,
-            Events::preFlush,
-        ];
     }
 
     /**

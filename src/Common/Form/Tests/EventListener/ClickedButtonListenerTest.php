@@ -84,7 +84,7 @@ class ClickedButtonListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @return FormInterface|MockObject
      */
-    protected function getForm(array $children = null)
+    protected function getForm(?array $children = null)
     {
         // Form implements FormInterface and has a valid iterator interface
         $mock = $this->getMockBuilder('Symfony\\Component\\Form\\Form')->disableOriginalConstructor()->getMock();

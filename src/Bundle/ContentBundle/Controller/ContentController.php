@@ -32,6 +32,7 @@ use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
+use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Form\ContentFormType;
@@ -45,6 +46,7 @@ use Integrated\Common\Locks\Filter;
 use Integrated\Common\Locks\Provider\DBAL\Manager;
 use Integrated\Common\Locks\Resource;
 use Integrated\Common\Security\Permissions;
+use Integrated\Common\Solr\Configurable;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
 use Integrated\Common\Solr\Search\QueryFactoryInterface;
 use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
@@ -60,9 +62,6 @@ use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\UX\Turbo\TurboStreamResponse;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
 class ContentController extends AbstractController
 {
     /**
@@ -90,7 +89,7 @@ class ContentController extends AbstractController
     ) {
     }
 
-    public function index(Request $request, string $searchSelection = 'all'): Response
+    public function index(Request $request, string $searchSelection = 'all'): array|Response
     {
         // remember search state
         $session = $request->getSession();
@@ -130,8 +129,8 @@ class ContentController extends AbstractController
             $selection = new SearchSelection();
         }
         $editableSelection = $this->isGranted('ROLE_ADMIN') || (
-            !$selection->isPublic() &&
-            $selection->getUserId() === $this->getUser()->getId()
+            !$selection->isPublic()
+            && $selection->getUserId() === $this->getUser()->getId()
         );
 
         $searchSelectionForm = $this->createForm(SearchSelectionType::class, $selection);
@@ -170,7 +169,7 @@ class ContentController extends AbstractController
         $view = '';
         if (!empty($options['view']) && $options['view'] != 'list') {
             $request->query->set('page', 1);
-            $request->query->set('limit', 10000);
+            $request->query->set('limit', 1000);
             $options = $this->calendarOptions->prepare($options);
             $view = $options['_view'] ?? '';
             unset($options['_view']);
@@ -179,6 +178,8 @@ class ContentController extends AbstractController
         // all this relations stuff is only used on the json response
         $relations = [];
         if ($options['relation'] ?? null) {
+            $options['contenttypes'] = [];
+
             if ($relation = $this->getDoctrineODM()->getRepository(Relation::class)->find($options['relation'])) {
                 foreach ($relation->getTargets() as $target) {
                     $options['contenttypes'][] = $target->getId();
@@ -221,13 +222,13 @@ class ContentController extends AbstractController
             [
                 'params' => $query->getOptions(),
                 'pager' => $paginator,
-                'facets' => $paginator->getCustomParameters()['result']->getFacetSet()->getFacets(),
+                'facets' => $paginator->getCustomParameter('result')?->getFacetSet()?->getFacets(),
                 'locks' => $this->getLocks($paginator),
                 'relations' => $relations,
                 'selection' => $selection,
                 'isSelectionEditable' => $editableSelection,
                 'searchSelections' => $this->getUser() ? $repo->findForUser($this->getUser()) : [],
-                'searchSelectionForm' => $searchSelectionForm->createView(),
+                'searchSelectionForm' => $searchSelectionForm,
                 'contentTypes' => $this->contentTypeManager->getAll(),
                 'route' => $request->attributes->get('_route'),
                 'queryParams' => array_merge($request->query->all(), $options),
@@ -235,24 +236,14 @@ class ContentController extends AbstractController
         );
     }
 
-    /**
-     * Show a document.
-     *
-     * @return Response
-     */
-    public function show(Request $request, Content $content)
+    public function show(Request $request, Content $content): Response
     {
         return $this->render('@IntegratedContent/content/show.'.$request->getRequestFormat().'.twig', [
             'document' => $content,
         ]);
     }
 
-    /**
-     * Create a new document.
-     *
-     * @return Response
-     */
-    public function new(Request $request)
+    public function new(Request $request): Response
     {
         /** @var ContentTypeInterface $contentType */
         $contentType = $this->contentTypeManager->getType($request->get('type'));
@@ -300,7 +291,10 @@ class ContentController extends AbstractController
                 $lock->acquire(true);
 
                 try {
-                    $this->indexer->setOption('queue.size', 2);
+                    if ($this->indexer instanceof Configurable) {
+                        $this->indexer->setOption('queue.size', 2);
+                    }
+
                     $this->indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
                 } finally {
                     $lock->release();
@@ -334,11 +328,11 @@ class ContentController extends AbstractController
             }
         }
 
-        return $this->render(sprintf('@IntegratedContent/content/new.%s.twig', $request->getRequestFormat()), [
+        return $this->render(\sprintf('@IntegratedContent/content/new.%s.twig', $request->getRequestFormat()), [
             'taxonomyCategories' => $this->getTaxonomyCategories($content),
             'editable' => true,
             'type' => $contentType,
-            'form' => $form->createView(),
+            'form' => $form,
             'showContentHistory' => false,
             'references' => json_encode($this->getReferences($content)),
         ]);
@@ -367,10 +361,8 @@ class ContentController extends AbstractController
 
     /**
      * Update a existing document.
-     *
-     * @return Response
      */
-    public function edit(Request $request, string $id)
+    public function edit(Request $request, Content $content): Response
     {
         $content = $this->documentManager->getRepository(Content::class)->find($id);
         if (!$content) {
@@ -410,10 +402,9 @@ class ContentController extends AbstractController
         }
 
         $form = $this->createEditForm($contentType, $content, $locking, $request);
+        $form->handleRequest($request);
 
-        if ($request->isMethod('put')) {
-            $form->handleRequest($request);
-
+        if ($form->isSubmitted()) {
             // possible actions are cancel, back, reload, reload_changed and save
 
             if ($form->get('actions')->getData() == 'cancel' || $form->get('actions')->getData() == 'back') {
@@ -479,7 +470,10 @@ class ContentController extends AbstractController
                     $lock->acquire(true);
 
                     try {
-                        $this->indexer->setOption('queue.size', 2);
+                        if ($this->indexer instanceof Configurable) {
+                            $this->indexer->setOption('queue.size', 2);
+                        }
+
                         $this->indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
                     } finally {
                         $lock->release();
@@ -545,7 +539,7 @@ class ContentController extends AbstractController
                     }
                 }
 
-                $text = sprintf(
+                $text = \sprintf(
                     'The document is currently locked by %s, the document can not be edited until this lock is released.',
                     $user
                 );
@@ -570,7 +564,7 @@ class ContentController extends AbstractController
             'editable' => $this->isGranted(Permissions::EDIT, $content),
             'taxonomyCategories' => $this->getTaxonomyCategories($content),
             'type' => $contentType,
-            'form' => $form->createView(),
+            'form' => $form,
             'formRelations' => $this->getFormRelations($form),
             'content' => $content,
             'locking' => $locking,
@@ -590,9 +584,9 @@ class ContentController extends AbstractController
     {
         $relations = [];
 
-        foreach ($form->getData()->getRelations()->toArray() as $relation) {
+        foreach ($form->getData()->getRelations() as $relation) {
             $references = [];
-            foreach ($relation->getReferences()->toArray() as $imageObject) {
+            foreach ($relation->getReferences() as $imageObject) {
                 $references[$imageObject->getId()] = $imageObject;
             }
             $relations[$relation->getRelationId()] = $references;
@@ -603,12 +597,10 @@ class ContentController extends AbstractController
 
     /**
      * Delete a document.
-     *
-     * @return Response
      */
-    public function delete(Request $request, Content $content)
+    public function delete(Request $request, Content $content): Response
     {
-        /** @var $type \Integrated\Common\ContentType\ContentTypeInterface */
+        /** @var ContentTypeInterface $type */
         $type = $this->resolver->getType($content->getContentType());
 
         if (!$this->isGranted(Permissions::DELETE, $content)) {
@@ -682,7 +674,10 @@ class ContentController extends AbstractController
                         )
                     );
 
-                    $this->indexer->setOption('queue.size', 2);
+                    if ($this->indexer instanceof Configurable) {
+                        $this->indexer->setOption('queue.size', 2);
+                    }
+
                     $this->indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
 
                     if (!$locking['locked']) {
@@ -713,7 +708,7 @@ class ContentController extends AbstractController
                     }
                 }
 
-                $text = sprintf(
+                $text = \sprintf(
                     'The document is currently locked by %s, the document can not be deleted until this lock is released.',
                     $user
                 );
@@ -726,7 +721,7 @@ class ContentController extends AbstractController
 
         return $this->render('@IntegratedContent/content/delete.html.twig', [
             'type' => $type,
-            'form' => $form->createView(),
+            'form' => $form,
             'content' => $content,
             'locking' => $locking,
             'referenced' => $referenced,
@@ -740,13 +735,8 @@ class ContentController extends AbstractController
      * - lock: this will contain the instance of the lock object or null.
      * - user: this is the user the lock belongs to or null if the lock does
      *         not have a owner.
-     *
-     * @param object   $object
-     * @param int|null $timeout
-     *
-     * @return array
      */
-    protected function getLock($object, $timeout = null)
+    private function getLock(object $object, ?int $timeout = null): array
     {
         if (!$this->isGranted(Permissions::EDIT, $object)) {
             return [
@@ -754,16 +744,12 @@ class ContentController extends AbstractController
                 'user' => null,
                 'owner' => false,
                 'new' => false,
-                'release' => function () {
+                'release' => function (): void {
                 },
             ];
         }
 
-        /** @var Locks\ManagerInterface $service */
-        $service = $this->lockManager;
-
-        // Remove expired locks
-        $service->clean();
+        $this->lockManager->clean();
 
         $object = Resource::fromObject($object);
         $owner = null;
@@ -777,20 +763,20 @@ class ContentController extends AbstractController
             $request->setOwner($owner);
             $request->setTimeout($timeout);
 
-            if ($lock = $service->acquire($request)) {
+            if ($lock = $this->lockManager->acquire($request)) {
                 return [
                     'lock' => $lock,
                     'user' => $this->getUser(),
                     'owner' => true,
                     'new' => true,
-                    'release' => function () use ($service, $lock) {
-                        $service->release($lock);
+                    'release' => function () use ($lock): void {
+                        $this->lockManager->release($lock);
                     },
                 ];
             }
         } // can not acquire a lock if not logged in.
 
-        if ($lock = $service->findByResource($object)) {
+        if ($lock = $this->lockManager->findByResource($object)) {
             $lock = $lock[0];
 
             if ($owner && $owner->equals($lock->getRequest()->getOwner())) {
@@ -799,8 +785,8 @@ class ContentController extends AbstractController
                     'user' => $this->getUser(),
                     'owner' => true,
                     'new' => false,
-                    'release' => function () use ($service, $lock) {
-                        $service->release($lock);
+                    'release' => function () use ($lock): void {
+                        $this->lockManager->release($lock);
                     },
                 ];
             }
@@ -819,8 +805,8 @@ class ContentController extends AbstractController
                 'user' => $user,
                 'owner' => false,
                 'new' => false,
-                'release' => function () use ($service, $lock) {
-                    $service->release($lock);
+                'release' => function () use ($lock): void {
+                    $this->lockManager->release($lock);
                 },
             ];
         }
@@ -830,15 +816,12 @@ class ContentController extends AbstractController
             'user' => null,
             'owner' => false,
             'new' => false,
-            'release' => function () {
+            'release' => function (): void {
             },
         ];
     }
 
-    /**
-     * @return array
-     */
-    protected function getLocks(\Traversable $iterator)
+    private function getLocks(\Traversable $iterator): array
     {
         $results = [];
 
@@ -887,14 +870,11 @@ class ContentController extends AbstractController
         return $results;
     }
 
-    /**
-     * @return Response
-     */
-    public function navdropdowns(Request $request)
+    public function navdropdowns(Request $request): Response
     {
         $session = $request->getSession();
 
-        $queuecount = (int) $this->container->get('integrated_queue.dbal.provider')->count();
+        $queuecount = (int) 0; // $this->container->get('integrated_queue.dbal.provider')->count();
         $queuepercentage = 100;
         if ($queuecount > 0) {
             $queuemaxcount = max($queuecount, $session->get('queuemaxcount'));
@@ -908,15 +888,14 @@ class ContentController extends AbstractController
 
         $avatarurl = '//www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s=45';
 
-        /** @var $client \Solarium\Client */
-        //
         // Get documents assigned to this user
-        //
         $query = $this->getSolarium()->createSelect();
 
         $assignedContent = [];
 
-        if ($user = $this->getUser()) {
+        $user = $this->getUser();
+
+        if ($user instanceof UserInterface) {
             $userId = $user->getId();
 
             $query
@@ -939,10 +918,7 @@ class ContentController extends AbstractController
         ]);
     }
 
-    /**
-     * @return Response
-     */
-    public function usedBy(Content $content, Request $request)
+    public function usedBy(Content $content, Request $request): Response
     {
         $query = $this->documentManager
             ->createQueryBuilder(Content::class)
@@ -950,7 +926,6 @@ class ContentController extends AbstractController
             ->equals($content->getId())
             ->getQuery();
 
-        /** @var $paginator \Knp\Component\Pager\Paginator */
         $pagination = $this->getPaginator()->paginate(
             $query,
             $request->query->get('page', 1),
@@ -963,12 +938,7 @@ class ContentController extends AbstractController
         ]);
     }
 
-    /**
-     * @param null $filter
-     *
-     * @return JsonResponse
-     */
-    public function mediaTypesAction($filter = null)
+    public function mediaTypes(?string $filter = null): Response
     {
         $output = [];
 
@@ -987,10 +957,7 @@ class ContentController extends AbstractController
         return new JsonResponse($output);
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createNewForm(ContentTypeInterface $contentType, ContentInterface $content, Request $request)
+    protected function createNewForm(ContentTypeInterface $contentType, ContentInterface $content, Request $request): FormInterface
     {
         $parameters = array_merge($request->query->all(), [
             'type' => $request->get('type'),
@@ -1000,7 +967,6 @@ class ContentController extends AbstractController
 
         $form = $this->createForm(ContentFormType::class, $content, [
             'action' => $this->generateUrl('integrated_content_content_new', $parameters),
-            'method' => 'POST',
             'attr' => [
                 'class' => 'content-form',
                 'data-content-type' => $contentType->getId(),
@@ -1011,15 +977,12 @@ class ContentController extends AbstractController
         return $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
     }
 
-    /**
-     * @return FormInterface
-     */
     protected function createEditForm(
         ContentTypeInterface $contentType,
         ContentInterface $content,
         array $locking,
-        Request $request = null
-    ) {
+        ?Request $request = null,
+    ): FormInterface {
         $parameters = ($locking['lock'] ? [
             'id' => $content->getId(),
             'lock' => $locking['lock']->getId(),
@@ -1034,7 +997,6 @@ class ContentController extends AbstractController
                 $request->get('_route'),
                 $parameters
             ),
-            'method' => 'PUT',
             'attr' => [
                 'class' => 'content-form',
                 'data-content-id' => $content->getId(),
@@ -1068,12 +1030,7 @@ class ContentController extends AbstractController
         return $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
     }
 
-    /**
-     * @param bool $notDelete
-     *
-     * @return FormInterface
-     */
-    protected function createDeleteForm(ContentInterface $content, array $locking, $notDelete = false)
+    protected function createDeleteForm(ContentInterface $content, array $locking, bool $notDelete = false): FormInterface
     {
         $form = $this->createForm(DeleteFormType::class, null, [
             'action' => $this->generateUrl(
@@ -1094,10 +1051,7 @@ class ContentController extends AbstractController
         return $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
     }
 
-    /**
-     * @return array
-     */
-    protected function getReferences(ContentInterface $content)
+    protected function getReferences(ContentInterface $content): array
     {
         $references = [];
         /** @var \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation $relation */
@@ -1105,7 +1059,7 @@ class ContentController extends AbstractController
             foreach ($relation->getReferences() as $reference) {
                 $properties = [
                     'id' => $reference->getId(),
-                    'title' => (string) $reference,
+                    'title' => method_exists($reference, '__toString') ? (string) $reference : '',
                 ];
 
                 if ($reference instanceof Image) {

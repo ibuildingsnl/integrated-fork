@@ -15,11 +15,12 @@ use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Common\Content\PublishTimeInterface;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class ReferenceTest extends \PHPUnit\Framework\TestCase
+class ReferenceTest extends TestCase
 {
     /**
      * @var Taxonomy
@@ -49,7 +50,7 @@ class ReferenceTest extends \PHPUnit\Framework\TestCase
         $this->taxonomy->addRelation($relation);
 
         $this->assertCount(0, $this->taxonomy->getReferencesByRelationId($relation->getRelationId()));
-        $this->assertFalse($this->taxonomy->getReferenceByRelationId($relation->getRelationId()));
+        $this->assertNull($this->taxonomy->getReferenceByRelationId($relation->getRelationId()));
 
         // test published
 
@@ -64,11 +65,11 @@ class ReferenceTest extends \PHPUnit\Framework\TestCase
 
         $this->assertCount(1, $this->taxonomy->getReferencesByRelationId($relation->getRelationId()));
         $this->assertSame($reference2, $this->taxonomy->getReferenceByRelationId($relation->getRelationId()));
-        $this->assertEquals([$reference2], $this->taxonomy->getReferencesByRelationId($relation->getRelationId())->getValues());
+        $this->assertEquals([1 => $reference2], $this->taxonomy->getReferencesByRelationId($relation->getRelationId()));
 
         // test published parameter
 
         $this->assertCount(2, $this->taxonomy->getReferencesByRelationId($relation->getRelationId(), false));
-        $this->assertEquals([$reference1, $reference2], $this->taxonomy->getReferencesByRelationId($relation->getRelationId(), false)->getValues());
+        $this->assertEquals([$reference1, $reference2], $this->taxonomy->getReferencesByRelationId($relation->getRelationId(), false));
     }
 }

@@ -30,13 +30,10 @@ class ThemeExtension extends AbstractExtension
         $this->themeManager = $themeManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions()
     {
         return [
-            new TwigFunction('integrated_active_theme', [$this, 'getActiveTheme']),
+            new TwigFunction('integrated_active_theme', $this->getActiveTheme(...)),
         ];
     }
 
@@ -52,9 +49,6 @@ class ThemeExtension extends AbstractExtension
         return $this->themeManager->locateTemplate($template);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated_theme_theme';

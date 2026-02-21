@@ -11,70 +11,40 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Solr\Type;
 
-use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Solr\Type\PropertyType;
+use Integrated\Bundle\ContentBundle\Tests\Fixtures\Object1;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Converter\Container;
-use Integrated\Common\Converter\ContainerInterface;
+use Integrated\Common\Converter\Type\TypeInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
-class PropertyTypeTest extends \PHPUnit\Framework\TestCase
+class PropertyTypeTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\TypeInterface', $this->getInstance());
+        self::assertInstanceOf(TypeInterface::class, $this->getInstance());
     }
 
-    /**
-     * @dataProvider buildProvider
-     */
+    #[DataProvider('buildProvider')]
     public function testBuild(ContentInterface $content, array $options, array $expected)
     {
-        $container = $this->getContainer();
-
-        $this->getInstance()->build($container, $content, $options);
+        $this->getInstance()->build($container = new Container(), $content, $options);
 
         self::assertEquals($expected, $container->toArray());
     }
 
-    /**
-     * @return array
-     */
-    public function buildProvider()
+    public static function buildProvider(): array
     {
         return [
-            [$this->getStub(), [['field' => 'contentType', 'fieldValue' => 'type1', 'label' => 'Test 1']], ['facet_properties' => ['Test 1']]],
-            [$this->getStub(), [['field' => 'contentType', 'fieldValueNot' => 'type2', 'label' => 'Test 2']], ['facet_properties' => ['Test 2']]],
-            [$this->getStub(), [['field' => 'contentType', 'fieldValue' => 'type2', 'label' => 'Test 2']], []],
+            [new Object1(), [['field' => 'contentType', 'fieldValue' => 'type1', 'label' => 'Test 1']], ['facet_properties' => ['Test 1']]],
+            [new Object1(), [['field' => 'contentType', 'fieldValueNot' => 'type2', 'label' => 'Test 2']], ['facet_properties' => ['Test 2']]],
+            [new Object1(), [['field' => 'contentType', 'fieldValue' => 'type2', 'label' => 'Test 2']], []],
         ];
     }
 
-    /**
-     * @return PropertyType
-     */
-    protected function getInstance()
+    protected function getInstance(): PropertyType
     {
         return new PropertyType();
-    }
-
-    /**
-     * @return ContainerInterface
-     */
-    protected function getContainer()
-    {
-        return new Container();
-    }
-
-    /**
-     * @return Content
-     */
-    protected function getStub()
-    {
-        $stub = $this->createMock(Content::class);
-        $stub->method('getContentType')->willReturn('type1');
-
-        return $stub;
     }
 }

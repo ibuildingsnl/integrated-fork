@@ -12,56 +12,55 @@
 namespace Integrated\Bundle\ContentBundle\Tests\Solr\Extension;
 
 use Integrated\Bundle\ContentBundle\Solr\Extension\ChannelExtension;
-use Integrated\Common\Content\Channel\ChannelInterface;
+use Integrated\Bundle\ContentBundle\Tests\Fixtures\ChannelObject;
+use Integrated\Bundle\ContentBundle\Tests\Fixtures\ObjectWithChannels;
 use Integrated\Common\Content\ChannelableInterface;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
+use Integrated\Common\Converter\Type\TypeExtensionInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Integrated\Bundle\ContentBundle\Solr\Extension\ChannelExtension
- *
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
-class ChannelExtensionTest extends \PHPUnit\Framework\TestCase
+class ChannelExtensionTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\TypeExtensionInterface', $this->getInstance($this->getResolver()));
+        self::assertInstanceOf(TypeExtensionInterface::class, $this->getInstance($this->getResolver()));
     }
 
-    /**
-     * @dataProvider buildProvider
-     */
+    #[DataProvider('buildProvider')]
     public function testBuild(ChannelableInterface $content, array $expected)
     {
-        $container = $this->getContainer();
+        $extension = $this->getInstance($this->getResolver());
+        $extension->build($container = new Container(), $content);
 
-        $this->getInstance($this->getResolver())->build($container, $content);
-        $this->getInstance($this->getResolver())->build($container, $content); // should clear previous build
+        self::assertEquals($expected, $container->toArray());
+
+        $extension->build($container, $content); // should clear previous build and not add to it
 
         self::assertEquals($expected, $container->toArray());
     }
 
-    public function buildProvider()
+    public static function buildProvider(): array
     {
         return [
             [
-                $this->getContent([]),
+                new ObjectWithChannels(),
                 [],
             ],
             [
-                $this->getContent([$this->getChannel('id1'), $this->getChannel('id2')]),
+                new ObjectWithChannels([new ChannelObject('id1'), new ChannelObject('id2')]),
                 ['facet_channels' => ['id1', 'id2']],
             ],
             [
-                $this->getContent([$this->getChannel('id1'), new \stdClass(), $this->getChannel('id2')]),
+                new ObjectWithChannels([new ChannelObject('id1'), new \stdClass(), new ChannelObject('id2')]),
                 ['facet_channels' => ['id1', 'id2']],
             ],
             [
-                $this->getContent([new \stdClass(), new \stdClass()]),
+                new ObjectWithChannels([new \stdClass(), new \stdClass()]),
                 [],
             ],
         ];
@@ -69,11 +68,9 @@ class ChannelExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildNotChannelable()
     {
-        $container = $this->createMock('Integrated\\Common\\Converter\\ContainerInterface');
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->never())
             ->method($this->anything());
-
-        /* @var ContainerInterface $container */
 
         $this->getInstance($this->getResolver())->build($container, new \stdClass());
     }
@@ -92,52 +89,12 @@ class ChannelExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param ChannelInterface[] $channels
-     *
-     * @return ChannelableInterface
-     */
-    protected function getContent(array $channels)
-    {
-        $mock = $this->createMock('Integrated\\Common\\Content\\ChannelableInterface');
-        $mock->expects($this->atLeastOnce())
-            ->method('getChannels')
-            ->willReturn($channels);
-
-        return $mock;
-    }
-
-    /**
-     * @param string $id
-     *
-     * @return ChannelInterface
-     */
-    private function getChannel($id)
-    {
-        $mock = $this->createMock('Integrated\\Common\\Content\\Channel\\ChannelInterface');
-        $mock->expects($this->atLeastOnce())
-            ->method('getId')
-            ->willReturn($id);
-
-        return $mock;
-    }
-
-    /**
-     * @return ContainerInterface
-     */
-    protected function getContainer()
-    {
-        // Easier to check end result when using an actual container instead of mocking it away. Also
-        // the code coverage for the container class is ignored for these tests.
-
-        return new Container();
-    }
-
-    /**
      * @return ResolverInterface|MockObject
      */
-    protected function getResolver(string $type = null, ContentTypeInterface $contentType = null)
+    protected function getResolver(?string $type = null, ?ContentTypeInterface $contentType = null)
     {
         $mock = $this->createMock(ResolverInterface::class);
+
         if (null !== $type) {
             $mock->expects($this->any())
                 ->method('getType')

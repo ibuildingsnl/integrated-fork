@@ -32,7 +32,7 @@ class Slug
     /**
      * @throws \BadMethodCallException
      */
-    public function __construct(array $exactly = null, array $fields = null, string $separator = null, int $lengthLimit = null, $extra = [])
+    public function __construct(?array $exactly = null, ?array $fields = null, ?string $separator = null, ?int $lengthLimit = null, $extra = [])
     {
         if (\is_array($exactly)) {
             $extra = array_merge($exactly, $extra);
@@ -47,7 +47,7 @@ class Slug
         foreach ($extra as $key => $value) {
             $method = 'set'.str_replace('_', '', $key);
             if (!method_exists($this, $method)) {
-                throw new \BadMethodCallException(sprintf("Unknown property '%s' on attribute '%s'.", $key, static::class));
+                throw new \BadMethodCallException(\sprintf("Unknown property '%s' on attribute '%s'.", $key, static::class));
             }
             $this->$method($value);
         }

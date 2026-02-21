@@ -5,28 +5,33 @@ declare(strict_types=1);
 namespace Integrated\Bundle\InstallerBundle\Migrations\MySQL;
 
 use Doctrine\DBAL\Schema\Schema;
-use Integrated\Bundle\InstallerBundle\Doctrine\ORM\Migration\AbstractMigration;
+use Doctrine\Migrations\AbstractMigration;
+use Doctrine\ORM\EntityManagerInterface;
+use Integrated\Bundle\InstallerBundle\Doctrine\EntityManagerAwareInterface;
 use Integrated\Bundle\UserBundle\Model\Scope;
 
-final class Version20200615124024 extends AbstractMigration
+final class Version20200615124024 extends AbstractMigration implements EntityManagerAwareInterface
 {
+    private EntityManagerInterface $manager;
+
     public function up(Schema $schema): void
     {
-        $manager = $this->getEntityManager();
-        $repository = $manager->getRepository(Scope::class);
-        if (!$scope = $repository->findOneBy(['admin' => true])) {
-            $scope = new Scope();
-            $scope
-                ->setName('Integrated')
-                ->setAdmin(true)
-            ;
+        $this->abortIf(
+            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\AbstractMySQLPlatform,
+            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\AbstractMySQLPlatform'."
+        );
 
-            $manager->persist($scope);
-            $manager->flush();
+        if (!$scope = $this->manager->getRepository(Scope::class)->findOneBy(['admin' => true])) {
+            $this->addSql('INSERT INTO `security_scopes` (`name`, `admin`) VALUES (\'Integrated\', \'1\')');
         }
     }
 
     public function down(Schema $schema): void
     {
+    }
+
+    public function setEntityManager(?EntityManagerInterface $manager): void
+    {
+        $this->manager = $manager;
     }
 }

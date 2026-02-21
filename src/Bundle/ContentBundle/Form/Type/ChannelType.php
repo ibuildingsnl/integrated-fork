@@ -40,10 +40,7 @@ class ChannelType extends AbstractType
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('type', ChoiceType::class, [
             'choices' => $this->channelTypes->allTypes(),
@@ -173,7 +170,7 @@ class ChannelType extends AbstractType
         );
 
         // validate domain names
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
             $form = $event->getForm();
             $data = $event->getData();
 
@@ -192,7 +189,7 @@ class ChannelType extends AbstractType
                 } elseif (preg_match('/[\s\\\[\],;:+\/\?^`=&%"\'#<>@*!()|]/', $domain, $matches)) {
                     $form->get('domains')->addError(
                         new FormError(
-                            sprintf('Character "%s" in domain name "%s" is not allowed', $matches[0], $domain)
+                            \sprintf('Character "%s" in domain name "%s" is not allowed', $matches[0], $domain)
                         )
                     );
                 }
@@ -206,7 +203,7 @@ class ChannelType extends AbstractType
         $this->js->add('bundles/integratedcontent/js/channel_types.js');
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('can_change_type', true);
     }

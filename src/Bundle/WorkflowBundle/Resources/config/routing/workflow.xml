@@ -16,23 +16,11 @@
 		<default key="_controller">Integrated\Bundle\WorkflowBundle\Controller\WorkflowController::changeState</default>
 	</route>
 
-	<route id="integrated_workflow_new_rest" path="/" methods="POST">
-		<default key="_controller">Integrated\Bundle\WorkflowBundle\Controller\WorkflowController::new</default>
-	</route>
-
-	<route id="integrated_workflow_edit" path="/{id}"  methods="GET">
-		<default key="_controller">Integrated\Bundle\WorkflowBundle\Controller\WorkflowController::edit</default>
-	</route>
-
-	<route id="integrated_workflow_edit_rest" path="/{id}" methods="PUT">
+	<route id="integrated_workflow_edit" path="/{id}">
 		<default key="_controller">Integrated\Bundle\WorkflowBundle\Controller\WorkflowController::edit</default>
 	</route>
 
 	<route id="integrated_workflow_delete" path="/{id}/delete">
-		<default key="_controller">Integrated\Bundle\WorkflowBundle\Controller\WorkflowController::delete</default>
-	</route>
-
-	<route id="integrated_workflow_delete_rest" path="/{id}" methods="DELETE">
 		<default key="_controller">Integrated\Bundle\WorkflowBundle\Controller\WorkflowController::delete</default>
 	</route>
 

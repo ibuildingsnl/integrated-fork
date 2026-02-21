@@ -16,6 +16,7 @@ use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
 use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
 use Integrated\Bundle\ContentBundle\Form\Type\CustomFieldsType;
 use Integrated\Common\ContentType\ContentTypeInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -24,16 +25,9 @@ use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\Validator\ConstraintViolationList;
 
-/**
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- */
 class CustomFieldsTypeTest extends TypeTestCase
 {
-    /**
-     * @dataProvider getValidData
-     *
-     * @see http://symfony.com/doc/current/cookbook/form/unit_testing.html
-     */
+    #[DataProvider('getValidData')]
     public function testSubmitValidData(array $data)
     {
         $form = $this->factory->create(CustomFieldsType::class, [], [
@@ -53,10 +47,7 @@ class CustomFieldsTypeTest extends TypeTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function getValidData()
+    public static function getValidData(): array
     {
         return [
             [
@@ -81,22 +72,22 @@ class CustomFieldsTypeTest extends TypeTestCase
      */
     protected function getContentType()
     {
-        /** @var ContentTypeInterface|MockObject $contentType */
+        /** @var ContentTypeInterface&MockObject $contentType */
         $contentType = $this->createMock(ContentTypeInterface::class);
 
-        /** @var Field|MockObject $defaultField */
+        /** @var Field&MockObject $defaultField */
         $defaultField = $this->createMock(Field::class);
 
-        /** @var CustomField|MockObject $customField1 */
+        /** @var CustomField&MockObject $customField1 */
         $customField1 = $this->createMock(CustomField::class);
 
-        /** @var CustomField|MockObject $customField2 */
+        /** @var CustomField&MockObject $customField2 */
         $customField2 = $this->createMock(CustomField::class);
 
-        /** @var CustomField|MockObject $customField3 */
+        /** @var CustomField&MockObject $customField3 */
         $customField3 = $this->createMock(CustomField::class);
 
-        /** @var CustomField|MockObject $customField4 */
+        /** @var CustomField&MockObject $customField4 */
         $customField4 = $this->createMock(CustomField::class);
 
         // Stub the customField getters so we can check the outcome
@@ -168,9 +159,6 @@ class CustomFieldsTypeTest extends TypeTestCase
         return $contentType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getExtensions()
     {
         $validator = $this->createMock('\Symfony\Component\Validator\Validator\ValidatorInterface');

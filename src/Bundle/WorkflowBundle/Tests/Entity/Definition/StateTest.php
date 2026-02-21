@@ -28,7 +28,7 @@ class StateTest extends \PHPUnit\Framework\TestCase
         $state1 = $this->getInstance();
         $state2 = $this->getInstance();
 
-        /** @var \Integrated\Bundle\WorkflowBundle\Entity\Definition|MockObject $definition */
+        /** @var \Integrated\Bundle\WorkflowBundle\Entity\Definition&MockObject $definition */
         $definition = $this->createMock('Integrated\Bundle\WorkflowBundle\Entity\Definition');
 
         // Set workflow Mock for the two states

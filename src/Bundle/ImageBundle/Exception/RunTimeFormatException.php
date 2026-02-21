@@ -17,12 +17,12 @@ namespace Integrated\Bundle\ImageBundle\Exception;
 class RunTimeFormatException extends \ErrorException
 {
     /**
-     * @return static
+     * @return self
      */
     public static function conversionFileCreateFail($converter, $outputFormat, $file)
     {
-        return new static(
-            sprintf(
+        return new self(
+            \sprintf(
                 'The converter %s did not produce a file while converting %s to %s',
                 $converter,
                 $outputFormat,

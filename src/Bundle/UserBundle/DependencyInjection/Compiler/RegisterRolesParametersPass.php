@@ -22,14 +22,11 @@ class RegisterRolesParametersPass implements CompilerPassInterface
 {
     public const PARAMETER_NAME = 'integrated_roles';
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container)
     {
         $parameters = [];
 
-        foreach ($container->getParameter('kernel.bundles') as $name => $class) {
+        foreach ($container->getParameter('kernel.bundles') as $class) {
             $this->addParameters(\dirname((new \ReflectionClass($class))->getFileName()), $parameters);
         }
 
@@ -47,11 +44,14 @@ class RegisterRolesParametersPass implements CompilerPassInterface
             return null;
         }
 
-        $content = file_get_contents($filePath);
+        if (!$content = file_get_contents($filePath)) {
+            return null;
+        }
+
         $crawler = new Crawler($content);
         $options = $crawler->filter('roles')->children();
 
-        /** @var $option \DOMElement */
+        /** @var \DOMElement $option */
         foreach ($options as $option) {
             if ($option->tagName == 'role') {
                 $name = '';

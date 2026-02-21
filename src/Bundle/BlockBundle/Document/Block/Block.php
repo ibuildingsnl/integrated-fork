@@ -106,6 +106,9 @@ abstract class Block implements BlockInterface
      */
     protected $groups = [];
 
+    /**
+     * @param string|null $id
+     */
     public function __construct($id = null)
     {
         if ($id) {
@@ -117,9 +120,6 @@ abstract class Block implements BlockInterface
         $this->relations = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getId()
     {
         return $this->id;
@@ -130,9 +130,6 @@ abstract class Block implements BlockInterface
         $this->id = $id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTitle()
     {
         return $this->title;
@@ -150,9 +147,6 @@ abstract class Block implements BlockInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCssClass()
     {
         return $this->cssClass;
@@ -170,9 +164,6 @@ abstract class Block implements BlockInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getLayout()
     {
         return $this->layout;
@@ -239,11 +230,9 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * @param \DateTime $publishedAt
-     *
      * @return $this
      */
-    public function setPublishedAt(\DateTime $publishedAt = null)
+    public function setPublishedAt(?\DateTime $publishedAt = null)
     {
         $this->publishedAt = $publishedAt;
 
@@ -259,11 +248,9 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * @param \DateTime $publishedUntil
-     *
      * @return Block
      */
-    public function setPublishedUntil(\DateTime $publishedUntil = null)
+    public function setPublishedUntil(?\DateTime $publishedUntil = null)
     {
         $this->publishedUntil = $publishedUntil;
 
@@ -271,11 +258,9 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * @param \DateTime $date
-     *
      * @return bool
      */
-    public function isPublished(\DateTime $date = null)
+    public function isPublished(?\DateTime $date = null)
     {
         if (null === $date) {
             $date = new \DateTime();

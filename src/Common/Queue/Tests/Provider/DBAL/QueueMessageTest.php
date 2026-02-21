@@ -12,6 +12,8 @@
 namespace Integrated\Common\Queue\Tests\Provider\DBAL;
 
 use Integrated\Common\Queue\Provider\DBAL\QueueMessage;
+use Integrated\Common\Queue\QueueMessageInterface;
+use PHPUnit\Framework\Assert;
 use stdClass;
 
 /**
@@ -34,17 +36,17 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 
     public function testInterface()
     {
-        $message = new QueueMessage($this->data, function () {
-        }, function () {
+        $message = new QueueMessage($this->data, function (): void {
+        }, function (): void {
         });
 
-        $this->assertInstanceOf('Integrated\Common\Queue\QueueMessageInterface', $message);
+        $this->assertInstanceOf(QueueMessageInterface::class, $message);
     }
 
     public function testGetPayload()
     {
-        $message = new QueueMessage($this->data, function () {
-        }, function () {
+        $message = new QueueMessage($this->data, function (): void {
+        }, function (): void {
         });
 
         $this->assertInstanceOf('stdClass', $message->getPayload());
@@ -52,8 +54,8 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPayloadCached()
     {
-        $message = new QueueMessage($this->data, function () {
-        }, function () {
+        $message = new QueueMessage($this->data, function (): void {
+        }, function (): void {
         });
 
         $this->assertSame($message->getPayload(), $message->getPayload());
@@ -61,8 +63,8 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 
     public function testGetAttempts()
     {
-        $message = new QueueMessage($this->data, function () {
-        }, function () {
+        $message = new QueueMessage($this->data, function (): void {
+        }, function (): void {
         });
 
         $this->assertSame(42, $message->getAttempts());
@@ -70,8 +72,8 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 
     public function testGetId()
     {
-        $message = new QueueMessage($this->data, function () {
-        }, function () {
+        $message = new QueueMessage($this->data, function (): void {
+        }, function (): void {
         });
 
         $this->assertSame('ThisIsTheID', $message->getId());
@@ -79,8 +81,8 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 
     public function testGetData()
     {
-        $message = new QueueMessage($this->data, function () {
-        }, function () {
+        $message = new QueueMessage($this->data, function (): void {
+        }, function (): void {
         });
 
         $this->assertSame($this->data, $message->getData());
@@ -88,58 +90,47 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 
     public function testRelease()
     {
-        $delete = $this->getMockBuilder('stdClass')->addMethods(['callback'])->getMock();
-        $delete->expects($this->never())
-            ->method('callback');
+        $count = 0;
 
-        $release = $this->getMockBuilder('stdClass')->addMethods(['callback'])->getMock();
-        $release->expects($this->once())
-            ->method('callback')
-            ->with($this->identicalTo(0));
+        $message = new QueueMessage($this->data, function (): void {
+            throw new \LogicException('Method was not expected to be called');
+        }, function ($delay) use (&$count): void {
+            ++$count;
 
-        $message = new QueueMessage($this->data, function () use ($delete) {
-            $delete->callback();
-        }, function ($delay) use ($release) {
-            $release->callback($delay);
+            Assert::assertEquals(0, $delay);
         });
 
         $message->release();
         $message->release();
 
         $message->delete();
+
+        $this->assertEquals(1, $count, 'Method was not expected to be called more than once');
     }
 
     public function testReleaseWithDelay()
     {
-        $release = $this->getMockBuilder('stdClass')->addMethods(['callback'])->getMock();
-        $release->expects($this->once())
-            ->method('callback')
-            ->with($this->identicalTo(42));
-
-        $message = new QueueMessage($this->data, function () {
-        }, function ($delay) use ($release) {
-            $release->callback($delay);
+        $message = new QueueMessage($this->data, function (): void {
+        }, function ($delay): void {
+            Assert::assertEquals(42, $delay);
         });
+
         $message->release(42);
     }
 
     public function testDelete()
     {
-        $delete = $this->getMockBuilder('stdClass')->addMethods(['callback'])->getMock();
-        $delete->expects($this->once())
-            ->method('callback');
+        $count = 0;
 
-        $release = $this->getMockBuilder('stdClass')->addMethods(['callback'])->getMock();
-        $release->expects($this->never())
-            ->method('callback');
-
-        $message = new QueueMessage($this->data, function () use ($delete) {
-            $delete->callback();
-        }, function () use ($release) {
-            $release->callback();
+        $message = new QueueMessage($this->data, function () use (&$count): void {
+            ++$count;
+        }, function (): void {
+            throw new \LogicException('Method was not expected to be called');
         });
 
         $message->delete();
         $message->release();
+
+        $this->assertEquals(1, $count, 'Method was not expected to be called more than once');
     }
 }

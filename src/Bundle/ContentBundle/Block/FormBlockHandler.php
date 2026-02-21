@@ -78,7 +78,7 @@ class FormBlockHandler extends BlockHandler
         RequestStack $requestStack,
         FormMailer $formMailer,
         ChannelContextInterface $channelContext,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
     ) {
         $this->formFactory = $formFactory;
         $this->documentManager = $documentManager;
@@ -88,28 +88,26 @@ class FormBlockHandler extends BlockHandler
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(BlockInterface $block, array $options)
     {
         if (!$block instanceof FormBlock) {
-            return;
+            return null;
         }
 
         $request = $this->requestStack->getCurrentRequest();
 
         if (!$request instanceof Request) {
-            return;
+            return null;
         }
 
         $contentType = $block->getContentType();
 
+        /** @var Content $content */
         $content = $contentType->create();
 
         $this->eventDispatcher->dispatch(new FormBlockEvent($content, $block), FormBlockEvent::PRE_LOAD);
 
-        $form = $this->createForm($content, ['method' => 'post', 'content_type' => $contentType], $block);
+        $form = $this->createForm($content, ['method' => 'POST', 'content_type' => $contentType], $block);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -149,12 +147,9 @@ class FormBlockHandler extends BlockHandler
     }
 
     /**
-     * @param mixed     $data
-     * @param FormBlock $block
-     *
      * @return FormInterface
      */
-    protected function createForm($data = null, array $options = [], FormBlock $block = null)
+    protected function createForm($data = null, array $options = [], ?FormBlock $block = null)
     {
         $form = $this->formFactory->createBuilder(ContentFormType::class, $data, $options);
 

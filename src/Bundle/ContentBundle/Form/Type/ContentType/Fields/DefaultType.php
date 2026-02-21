@@ -24,10 +24,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class DefaultType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var AttributeInterface $field */
         $field = $options['field'];
@@ -46,19 +43,13 @@ class DefaultType extends AbstractType
         $builder->addModelTransformer(new ContentTypeFieldTransformer($field));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(['field']);
         $resolver->setAllowedTypes('field', AttributeInterface::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_content_type_field';
     }

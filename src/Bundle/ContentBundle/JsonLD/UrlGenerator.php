@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\JsonLD;
 
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
@@ -58,14 +59,14 @@ class UrlGenerator
         if ($channel = $content->getPrimaryChannel()) {
             $domain = $channel->getPrimaryDomain();
 
-            if (!$domain && \count($channel->getDomains())) {
+            if ($channel instanceof Channel && (!$domain && \count($channel->getDomains()))) {
                 $channels = $channel->getDomains();
                 $domain = reset($channels);
             }
         }
 
         if ($domain) {
-            return sprintf(
+            return \sprintf(
                 'https://%s/storage/%s',
                 $domain,
                 $content->getFile()->getIdentifier()
@@ -85,14 +86,16 @@ class UrlGenerator
         if ($channel = $content->getPrimaryChannel()) {
             $domain = $channel->getPrimaryDomain();
 
-            if (!$domain && \count($channel->getDomains())) {
-                $channels = $channel->getDomains();
-                $domain = reset($channels);
+            if ($channel instanceof Channel) {
+                if (!$domain && \count($channel->getDomains())) {
+                    $channels = $channel->getDomains();
+                    $domain = reset($channels);
+                }
             }
         }
 
         if ($domain) {
-            return sprintf(
+            return \sprintf(
                 'https://%s/content/%s/%s',
                 $domain,
                 strtolower($content->getContentType()),

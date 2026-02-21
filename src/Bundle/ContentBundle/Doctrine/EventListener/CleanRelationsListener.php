@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Doctrine\EventListener;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Events;
 use Integrated\Common\ContentType\ContentTypeInterface;
@@ -21,19 +21,10 @@ use Integrated\Common\ContentType\ContentTypeInterface;
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class CleanRelationsListener implements EventSubscriber
+#[AsDocumentListener(event: Events::preRemove)]
+class CleanRelationsListener
 {
     public const RELATION_DOCUMENT = 'Integrated\Bundle\ContentBundle\Document\Relation\Relation';
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::preRemove,
-        ];
-    }
 
     public function preRemove(LifecycleEventArgs $args)
     {

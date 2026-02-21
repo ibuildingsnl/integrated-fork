@@ -61,8 +61,6 @@ interface QueueInterface extends \Countable
      * @param int                  $delay    Delay in seconds
      * @param int                  $priority A priority number from -10 to and including 10
      * @param int                  $attempt  The amount of times the message has been rescheduled
-     *
-     * @return mixed
      */
     public function push($payload, $delay = 0, $priority = self::PRIORITY_MEDIUM, $attempt = 0);
 

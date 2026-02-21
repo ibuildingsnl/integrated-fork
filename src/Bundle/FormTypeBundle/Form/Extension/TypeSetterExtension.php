@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of BraincraftedBootstrapBundle.
  * (c) 2012-2013 by Florian Eckerstorfer.
@@ -22,17 +23,11 @@ use Symfony\Component\Form\FormView;
  */
 class TypeSetterExtension extends AbstractTypeExtension
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['original_type'] = $form->getConfig()->getType()->getBlockPrefix();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public static function getExtendedTypes(): iterable
     {
         return [FormType::class];

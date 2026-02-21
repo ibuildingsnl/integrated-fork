@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\UserBundle\Security;
 
 use Integrated\Bundle\UserBundle\Model\User;
+use Integrated\Bundle\UserBundle\Model\UserInterface as IntegratedUserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
@@ -34,11 +35,12 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
     {
         $this->manager = $manager;
 
-        if (!is_subclass_of($this->manager->getClassName(), 'Integrated\\Bundle\\UserBundle\\Model\\UserInterface')) {
+        if (!is_subclass_of($this->manager->getClassName(), IntegratedUserInterface::class)) {
             throw new UnsupportedUserException(
-                sprintf(
-                    'The user class "%s" is not subclass of Integrated\\Bundle\\UserBundle\\Model\\UserInterface',
-                    $this->manager->getClassName()
+                \sprintf(
+                    'The user class "%s" is not subclass of %s',
+                    $this->manager->getClassName(),
+                    IntegratedUserInterface::class
                 )
             );
         }
@@ -52,16 +54,13 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
         return $this->manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function loadUserByUsername($username)
+    public function loadUserByIdentifier($username): UserInterface
     {
         /** @var User $user */
         $user = $this->manager->findEnabledByUsernameAndScope($username);
 
         if (!$user) {
-            $exception = new UserNotFoundException(sprintf('No user with the username "%s" exists', $username));
+            $exception = new UserNotFoundException(\sprintf('No user with the username "%s" exists', $username));
             $exception->setUserIdentifier($username);
 
             throw $exception;
@@ -70,27 +69,24 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
         return $user;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function refreshUser(UserInterface $user)
+    public function refreshUser(UserInterface $user): UserInterface
     {
-        if (!$this->supportsClass($user)) {
+        if (!$this->supportsClass($user::class)) {
             throw new UnsupportedUserException(
-                sprintf(
+                \sprintf(
                     'The user class "%s" is not a instance or subclass of %s',
-                    \get_class($user),
+                    $user::class,
                     $this->manager->getClassName()
                 )
             );
         }
 
-        /** @var \Integrated\Bundle\UserBundle\Model\UserInterface $user */
+        /** @var IntegratedUserInterface $user */
         $loaded = $this->manager->find($user->getId());
 
         if (!$loaded) {
             $exception = new UserNotFoundException(
-                sprintf(
+                \sprintf(
                     'The user with id "%s" could not be refreshed',
                     $user->getId()
                 )
@@ -103,29 +99,20 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
         return $loaded;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsClass($class)
+    public function supportsClass(string $class): bool
     {
-        if (\is_object($class)) {
-            $class = \get_class($class);
-        }
-
-        return $class === $this->manager->getClassName() || is_subclass_of($class, $this->manager->getClassName());
+        return is_a($class, $this->manager->getClassName(), true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function upgradePassword(PasswordAuthenticatedUserInterface|UserInterface $user, string $newHashedPassword)
+    public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
-        if (!$this->supportsClass(\get_class($user))) {
+        if (!$user instanceof IntegratedUserInterface) {
             return;
         }
 
         $user->setPassword($newHashedPassword);
         $user->setSalt(null);
+
         $this->manager->persist($user);
     }
 }

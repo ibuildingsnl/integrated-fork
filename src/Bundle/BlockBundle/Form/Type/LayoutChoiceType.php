@@ -32,10 +32,7 @@ class LayoutChoiceType extends AbstractType
         $this->locator = $locator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'choice_label' => function ($value, $key) {
@@ -63,18 +60,12 @@ class LayoutChoiceType extends AbstractType
         return $layouts;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
+    public function getParent(): ?string
     {
         return ChoiceType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_block_layout_choice';
     }

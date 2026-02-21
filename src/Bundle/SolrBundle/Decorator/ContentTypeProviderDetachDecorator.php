@@ -36,9 +36,6 @@ class ContentTypeProviderDetachDecorator implements ContentTypeProviderInterface
         $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getContent($id)
     {
         return new DetachIterator($this->provider->getContent($id), $this->manager);

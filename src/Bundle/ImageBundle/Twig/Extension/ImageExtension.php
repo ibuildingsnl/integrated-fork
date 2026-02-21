@@ -11,11 +11,10 @@
 
 namespace Integrated\Bundle\ImageBundle\Twig\Extension;
 
-use Gregwar\ImageBundle\Extensions\ImageTwig;
-use Gregwar\ImageBundle\Services\ImageHandling;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage;
 use Integrated\Bundle\ImageBundle\Converter\WebFormatConverter;
 use Integrated\Bundle\ImageBundle\Factory\StorageModelFactory;
+use Integrated\Bundle\ImageBundle\Service\ImageHandling;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -36,7 +35,7 @@ class ImageExtension extends AbstractExtension
     private $webFormatConverter;
 
     /**
-     * @var ImageTwig
+     * @var GregwarImageExtension
      */
     private $imageTwig;
 
@@ -50,7 +49,7 @@ class ImageExtension extends AbstractExtension
      */
     private $imageMimicHandling;
 
-    public function __construct(ImageHandling $imageHandling, ImageTwig $imageTwig, WebFormatConverter $webFormatConverter, array $mimicFormats, ImageHandling $imageMimicHandling)
+    public function __construct(ImageHandling $imageHandling, GregwarImageExtension $imageTwig, WebFormatConverter $webFormatConverter, array $mimicFormats, ImageHandling $imageMimicHandling)
     {
         $this->imageHandling = $imageHandling;
         $this->webFormatConverter = $webFormatConverter;
@@ -59,23 +58,20 @@ class ImageExtension extends AbstractExtension
         $this->imageMimicHandling = $imageMimicHandling;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions()
     {
         return [
-            new TwigFunction('integrated_image', [$this, 'image'], ['is_safe' => ['html']]),
-            new TwigFunction('integrated_image_credits', [$this, 'imageCredits'], ['is_safe' => ['html']]),
-            new TwigFunction('integrated_image_description', [$this, 'imageDescription'], ['is_safe' => ['html']]),
-            new TwigFunction('image_json', [$this, 'imageJson'], ['is_safe' => ['html']]),
-            new TwigFunction('web_image', [$this, 'webImage'], ['is_safe' => ['html']]),
-            new TwigFunction('image', [$this, 'image'], ['is_safe' => ['html']]),
+            new TwigFunction('integrated_image', $this->image(...), ['is_safe' => ['html']]),
+            new TwigFunction('integrated_image_credits', $this->imageCredits(...), ['is_safe' => ['html']]),
+            new TwigFunction('integrated_image_description', $this->imageDescription(...), ['is_safe' => ['html']]),
+            new TwigFunction('image_json', $this->imageJson(...), ['is_safe' => ['html']]),
+            new TwigFunction('web_image', $this->webImage(...), ['is_safe' => ['html']]),
+            new TwigFunction('image', $this->image(...), ['is_safe' => ['html']]),
         ];
     }
 
     /**
-     * @return \Gregwar\ImageBundle\ImageHandler
+     * @return \Integrated\Bundle\ImageBundle\Image\ImageHandler
      */
     public function imageJson($image)
     {
@@ -99,7 +95,7 @@ class ImageExtension extends AbstractExtension
     }
 
     /**
-     * @return \Gregwar\ImageBundle\ImageHandler
+     * @return \Integrated\Bundle\ImageBundle\Image\ImageHandler
      */
     public function webImage($image)
     {
@@ -116,7 +112,7 @@ class ImageExtension extends AbstractExtension
     }
 
     /**
-     * @return \Gregwar\ImageBundle\ImageHandler
+     * @return \Integrated\Bundle\ImageBundle\Image\ImageHandler
      */
     public function image($image)
     {
@@ -137,7 +133,7 @@ class ImageExtension extends AbstractExtension
         }
 
         // detect json format
-        if (strpos($image, '{') === 0) {
+        if (str_starts_with($image, '{')) {
             return $this->imageJson($image);
         }
 
@@ -151,11 +147,11 @@ class ImageExtension extends AbstractExtension
         }
         if (file_exists($image)) {
             $mime = mime_content_type($image);
-            if (strpos($mime, 'video/') === 0) {
+            if (str_starts_with($mime, 'video/')) {
                 return $this->imageHandling->open('bundles/integratedintegrated/images/fallbacks/video-fallback.jpg');
             }
         }
-        if (!file_exists($image) && (strpos($image, '@') === false)) {
+        if (!file_exists($image) && (!str_contains($image, '@'))) {
             return $this->imageHandling->open('bundles/integratedintegrated/images/fallbacks/fallback.jpg');
         }
 
@@ -172,7 +168,7 @@ class ImageExtension extends AbstractExtension
         }
 
         // detect json format
-        if (strpos($image, '{') === 0) {
+        if (str_starts_with($image, '{')) {
             $imageData = @json_decode($image);
 
             return $imageData->metadata->credits ?? null;
@@ -191,7 +187,7 @@ class ImageExtension extends AbstractExtension
         }
 
         // detect json format
-        if (strpos($image, '{') === 0) {
+        if (str_starts_with($image, '{')) {
             $imageData = @json_decode($image);
 
             return $imageData->metadata->description ?? null;
@@ -200,9 +196,6 @@ class ImageExtension extends AbstractExtension
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated_image_json';

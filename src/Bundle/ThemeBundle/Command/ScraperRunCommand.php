@@ -3,44 +3,30 @@
 namespace Integrated\Bundle\ThemeBundle\Command;
 
 use Integrated\Bundle\ThemeBundle\Scraper\Scraper;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(
+    name: 'scraper:run',
+    description: 'Scrape scraper pages',
+)]
 class ScraperRunCommand extends Command
 {
-    /**
-     * @var Scraper
-     */
-    private $scraper;
+    private Scraper $scraper;
 
-    /**
-     * ScraperCommand constructor.
-     */
     public function __construct(Scraper $scraper)
     {
-        parent::__construct();
-
         $this->scraper = $scraper;
+
+        parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure(): void
-    {
-        $this
-            ->setName('scraper:run')
-            ->setDescription('Scrape scraper pages');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->scraper->run();
 
-        return 0;
+        return self::SUCCESS;
     }
 }

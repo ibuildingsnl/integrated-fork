@@ -12,9 +12,12 @@
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Content;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Product;
+use PHPUnit\Framework\TestCase;
 
-class ProductTest extends ContentTest
+class ProductTest extends TestCase
 {
+    use ContentTestTrait;
+
     /**
      * @var Product
      */
@@ -109,9 +112,6 @@ class ProductTest extends ContentTest
         $this->assertEquals($title, (string) $this->product->setTitle($title));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getContent()
     {
         return $this->product;

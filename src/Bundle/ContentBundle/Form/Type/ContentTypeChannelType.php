@@ -22,10 +22,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ContentTypeChannelType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var ChannelInterface $channel */
         $channel = $options['channel'];
@@ -44,19 +41,13 @@ class ContentTypeChannelType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(['channel']);
         $resolver->setAllowedTypes('channel', 'Integrated\\Bundle\\ContentBundle\\Document\\Channel\\Channel');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_content_type_channel';
     }

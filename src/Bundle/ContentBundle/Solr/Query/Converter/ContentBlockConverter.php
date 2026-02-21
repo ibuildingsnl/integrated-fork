@@ -31,12 +31,12 @@ class ContentBlockConverter
             $settings['relation_search_selection'] = $filters['relation'] ?? [];
             $settings['params'] = $selection->getInternalParams();
             $settings['sort'] = $filters['sort'] ?? '';
-            $settings['order'] = $filters['sort'] ?? '';
+            $settings['order'] = $filters['order'] ?? '';
         }
 
         $settings['facets'] = $this->getFacets($block, $request->query->all());
         $settings['filters'] = $options['filters'] ?? [];
-        $settings['relation'] = $request->query->get('relation', []);
+        $settings['relation'] = $request->query->all('relation');
 
         if (($options['exclude'] ?? false) && !$settings['q'] && 0 === \count(array_filter($settings['facets']))) {
             $settings['exclude'] = true;

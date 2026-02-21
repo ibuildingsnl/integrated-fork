@@ -38,10 +38,7 @@ class ContentSubscriber implements EventSubscriberInterface
         $this->documentManager = $documentManager;
     }
 
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             ContentHistoryEvent::INSERT => 'onInsert',

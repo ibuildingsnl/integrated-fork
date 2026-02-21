@@ -21,53 +21,41 @@ use Integrated\Common\Content\Channel\ChannelInterface;
  */
 class ConfigRepository extends EntityRepository implements ConfigManagerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function create()
     {
-        return $this->_class->getReflectionClass()->newInstance();
+        return $this->getClassMetadata()->getReflectionClass()->newInstance();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function persist(ConfigInterface $object, $flush = true)
     {
-        if (!$this->_class->getReflectionClass()->isInstance($object)) {
+        if (!$this->getClassMetadata()->getReflectionClass()->isInstance($object)) {
             throw new \InvalidArgumentException(
-                sprintf('The object (%s) is not a instance of %s', \get_class($object), $this->getClassName())
+                \sprintf('The object (%s) is not a instance of %s', $object::class, $this->getClassName())
             );
         }
 
-        $this->_em->persist($object);
+        $this->getEntityManager()->persist($object);
 
         if ($flush) {
-            $this->_em->flush();
+            $this->getEntityManager()->flush();
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function remove(ConfigInterface $object, $flush = true)
     {
-        if (!$this->_class->getReflectionClass()->isInstance($object)) {
+        if (!$this->getClassMetadata()->getReflectionClass()->isInstance($object)) {
             throw new \InvalidArgumentException(
-                sprintf('The object (%s) is not a instance of %s', \get_class($object), $this->getClassName())
+                \sprintf('The object (%s) is not a instance of %s', $object::class, $this->getClassName())
             );
         }
 
-        $this->_em->remove($object);
+        $this->getEntityManager()->remove($object);
 
         if ($flush) {
-            $this->_em->flush();
+            $this->getEntityManager()->flush();
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByAdaptor($criteria)
     {
         return $this->findBy([
@@ -75,20 +63,21 @@ class ConfigRepository extends EntityRepository implements ConfigManagerInterfac
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByChannel($criteria)
     {
         if ($criteria instanceof ChannelInterface) {
             $criteria = $criteria->getId();
         }
 
-        $expr = $this->_em->getExpressionBuilder();
+        $expr = $this->getEntityManager()->getExpressionBuilder();
 
         return $this->createQueryBuilder('r')
             ->where($expr->like('r.channels', $expr->literal('%'.json_encode($criteria).'%')))
             ->getQuery()
             ->getResult();
+    }
+
+    public function clear()
+    {
     }
 }

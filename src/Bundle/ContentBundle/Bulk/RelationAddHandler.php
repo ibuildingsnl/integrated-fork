@@ -52,9 +52,6 @@ class RelationAddHandler implements HandlerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(ContentInterface $content)
     {
         if (!\array_key_exists($content->getContentType(), $this->relationTypes)) {
@@ -72,8 +69,8 @@ class RelationAddHandler implements HandlerInterface
             $content->addRelation($embedded);
         }
 
-        foreach ($this->references as $reference) {
-            $embedded->addReference($reference);
+        if ($embedded instanceof Relation) {
+            $embedded->addReferences($this->references);
         }
     }
 }

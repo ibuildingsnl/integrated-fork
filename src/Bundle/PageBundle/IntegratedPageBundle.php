@@ -20,13 +20,8 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class IntegratedPageBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
-        parent::build($container);
-
-        $container->addCompilerPass(new ContentTypeControllersPass());
+        $container->addCompilerPass(new ContentTypeControllersPass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
     }
 }

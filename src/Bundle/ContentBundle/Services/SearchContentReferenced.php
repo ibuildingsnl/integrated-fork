@@ -41,8 +41,6 @@ class SearchContentReferenced
     }
 
     /**
-     * @param mixed $document
-     *
      * @return array
      *
      * @throws \Exception
@@ -107,7 +105,7 @@ class SearchContentReferenced
 
         $referenced = [];
 
-        /** @var ClassMetaData $classMetadata */
+        /** @var ClassMetadata $classMetadata */
         foreach ($allMetadata as $classMetadata) {
             if (\in_array($classMetadata->getName(), $this::IGNORE_CLASSES)) {
                 continue;
@@ -174,21 +172,44 @@ class SearchContentReferenced
     /**
      * @return array
      */
+    public function getDeletedInfo($document, DocumentManager $documentManager)
+    {
+        $deleted = [
+            'className' => $document::class,
+            'metadata' => $documentManager->getClassMetadata($document::class),
+        ];
+
+        $deleted['idField'] = current($deleted['metadata']->getIdentifier());
+        $deleted['idValue'] = $deleted['metadata']->getFieldValue($document, $deleted['idField']);
+
+        if (MongoType::hasType($deleted['metadata']->getTypeOfField($deleted['idField']))) {
+            $typeClass = MongoType::getType($deleted['metadata']->getTypeOfField($deleted['idField']));
+            $deleted['idValue'] = $typeClass->convertToDatabaseValue($deleted['idValue']);
+        } else {
+            throw new \Exception('The identifer of the deleted object must have a valid Doctrine field type');
+        }
+
+        return $deleted;
+    }
+
+    /**
+     * @return array
+     */
     private function prepareReferenced($referenced)
     {
         $output = [];
         foreach ($referenced as $item) {
-            $key = \get_class($item).'-'.$item->getId();
+            $key = $item::class.'-'.$item->getId();
             if ($item instanceof Content) {
                 $output[$key] = [
                     'action' => 'integrated_content_content_edit',
                     'id' => $item->getId(),
-                    'name' => method_exists($item, 'getTitle') ? $item->getTitle() : \get_class($item),
+                    'name' => method_exists($item, 'getTitle') ? $item->getTitle() : $item::class,
                 ];
             } else {
                 $output[$key] = [
                     'id' => $item->getId(),
-                    'name' => \get_class($item),
+                    'name' => $item::class,
                 ];
             }
         }

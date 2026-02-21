@@ -17,64 +17,44 @@ use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
-use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Integrated\Bundle\UserBundle\Model\UserInterface;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class SearchSelectionController extends AbstractController
 {
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
-    /**
-     * @var DocumentManager
-     */
-    private $documentManager;
-
-    /**
-     * @var SearchContentReferenced
-     */
-    private $searchContentReferenced;
+    private RequestStack $requestStack;
+    private DocumentManager $documentManager;
+    private PaginatorInterface $paginator;
+    private SearchContentReferenced $searchContentReferenced;
 
     public function __construct(
         RequestStack $requestStack,
         DocumentManager $documentManager,
-        SearchContentReferenced $searchContentReferenced
+        PaginatorInterface $paginator,
+        SearchContentReferenced $searchContentReferenced,
     ) {
         $this->requestStack = $requestStack;
         $this->documentManager = $documentManager;
+        $this->paginator = $paginator;
         $this->searchContentReferenced = $searchContentReferenced;
     }
 
-    /**
-     * Lists all the SearchSelection documents.
-     *
-     * @return Response
-     */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
-        $paginator = $this->getPaginator()->paginate($this->getQueryBuilder(), $request->query->get('page', 1), 25);
+        $paginator = $this->paginator->paginate($this->getQueryBuilder(), $request->query->get('page', 1), 25);
 
         return $this->render('@IntegratedContent/search_selection/index.html.twig', [
             'searchSelections' => $paginator,
         ]);
     }
 
-    /**
-     * Creates a new SearchSelection document.
-     *
-     * @return Response|RedirectResponse
-     */
-    public function new(Request $request)
+    public function new(Request $request): Response
     {
         $searchSelection = new SearchSelection();
 
@@ -99,16 +79,11 @@ class SearchSelectionController extends AbstractController
         }
 
         return $this->render('@IntegratedContent/search_selection/new.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * Edits an existing SearchSelection document.
-     *
-     * @return Response|RedirectResponse
-     */
-    public function edit(Request $request, SearchSelection $searchSelection)
+    public function edit(Request $request, SearchSelection $searchSelection): Response
     {
         // TODO: security check
 
@@ -132,16 +107,11 @@ class SearchSelectionController extends AbstractController
         }
 
         return $this->render('@IntegratedContent/search_selection/edit.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * Deletes a SearchSelection document.
-     *
-     * @return Response|RedirectResponse
-     */
-    public function delete(Request $request, SearchSelection $searchSelection)
+    public function delete(Request $request, SearchSelection $searchSelection): Response
     {
         // TODO: security check
 
@@ -165,7 +135,7 @@ class SearchSelectionController extends AbstractController
 
         return $this->render('@IntegratedContent/search_selection/delete.html.twig', [
             'searchSelection' => $searchSelection,
-            'form' => $form->createView(),
+            'form' => $form,
             'referenced' => $referenced,
         ]);
     }
@@ -232,7 +202,7 @@ class SearchSelectionController extends AbstractController
     {
         $form = $this->createFormBuilder()
                      ->setAction($this->generateUrl('integrated_content_search_selection_delete', ['id' => $id]))
-                     ->setMethod('DELETE');
+                     ->setMethod(Request::METHOD_DELETE);
 
         if ($notDelete) {
             $form->add('actions', ActionsType::class, ['buttons' => ['reload', 'cancel']]);
@@ -243,10 +213,7 @@ class SearchSelectionController extends AbstractController
         return $form->getForm();
     }
 
-    /**
-     * @return Builder
-     */
-    protected function getQueryBuilder()
+    private function getQueryBuilder(): Builder
     {
         $builder = $this->documentManager->createQueryBuilder(SearchSelection::class);
 
@@ -255,5 +222,16 @@ class SearchSelectionController extends AbstractController
         }
 
         return $builder;
+    }
+
+    protected function getUser(): ?UserInterface
+    {
+        $user = parent::getUser();
+
+        if (!$user instanceof UserInterface) {
+            return null;
+        }
+
+        return $user;
     }
 }

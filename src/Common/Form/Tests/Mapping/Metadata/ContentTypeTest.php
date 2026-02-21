@@ -57,7 +57,7 @@ class ContentTypeTest extends \PHPUnit\Framework\TestCase
      */
     public function testFields()
     {
-        /** @var Field|MockObject $field1 */
+        /** @var Field&MockObject $field1 */
         $field1 = $this->getMockBuilder(Field::class)->disableOriginalConstructor()->getMock();
 
         $field1
@@ -66,7 +66,7 @@ class ContentTypeTest extends \PHPUnit\Framework\TestCase
             ->willReturn('field1')
         ;
 
-        /** @var Field|MockObject $field2 */
+        /** @var Field&MockObject $field2 */
         $field2 = $this->getMockBuilder(Field::class)->disableOriginalConstructor()->getMock();
 
         // Set fields

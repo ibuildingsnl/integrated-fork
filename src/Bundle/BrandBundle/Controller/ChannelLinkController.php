@@ -74,7 +74,7 @@ class ChannelLinkController extends AbstractController
         return $this->render('@IntegratedBrand/brand/channel_add.html.twig', [
             'linkType' => $channelType,
             'brand' => $brand,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
@@ -111,7 +111,7 @@ class ChannelLinkController extends AbstractController
             'channel' => $link->channel,
             'link' => $link,
             'brand' => $brand,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
@@ -120,7 +120,7 @@ class ChannelLinkController extends AbstractController
         $this->checkPermissions();
 
         $form = $this->createFormBuilder()
-            ->setMethod('DELETE')
+            ->setMethod(Request::METHOD_DELETE)
             ->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']])
             ->getForm();
 
@@ -143,7 +143,7 @@ class ChannelLinkController extends AbstractController
         return $this->render('@IntegratedBrand/brand/channel_remove.html.twig', [
             'brand' => $brand,
             'link' => $link,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 

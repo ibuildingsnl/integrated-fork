@@ -63,9 +63,6 @@ class ContentTypeHandler implements HandlerInterface
         $this->contentType = $contentType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(ContentInterface $content)
     {
         $contentType = $this->documentManager->getRepository(ContentType::class)->find($this->contentType);
@@ -75,7 +72,7 @@ class ContentTypeHandler implements HandlerInterface
 
         $contentTypeOld = $this->documentManager->getRepository(ContentType::class)->find($content->getContentType());
         if (null === $contentTypeOld) {
-            throw new \Exception('Content type '.$content->getContentType().' for '.(string) $content.' does not exist');
+            throw new \Exception(\sprintf('Content type %s for content with id %s does not exist', $content->getContentType(), $content->getId()));
         }
 
         if ($contentType->getId() == $contentTypeOld->getId()) {
@@ -87,7 +84,7 @@ class ContentTypeHandler implements HandlerInterface
             // don't allow update when item is referenced, because class in reference need to be updated
             $referencedItems = $this->searchContentReferenced->getReferenced($content);
             if (\count($referencedItems) > 0) {
-                throw new \Exception('Item '.(string) $content.' is referenced by '.\count($referencedItems).' other content item(s) and can\'t be moved to another document type');
+                throw new \Exception(\sprintf('Item %s is referenced by %d other content item(s) and can\'t be moved to another document type', $content->getId(), \count($referencedItems)));
             }
 
             // update class of content, directly on the database because the documentManager doesn't support class updates

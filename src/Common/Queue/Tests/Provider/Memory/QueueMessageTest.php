@@ -12,6 +12,7 @@
 namespace Integrated\Common\Queue\Tests\Provider\Memory;
 
 use Integrated\Common\Queue\Provider\Memory\QueueMessage;
+use Integrated\Common\Queue\QueueMessageInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -22,7 +23,7 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
     {
         $message = new QueueMessage(null, 0, 0, 0, 0, 0);
 
-        $this->assertInstanceOf('Integrated\Common\Queue\QueueMessageInterface', $message);
+        $this->assertInstanceOf(QueueMessageInterface::class, $message);
     }
 
     public function testGetPayload()

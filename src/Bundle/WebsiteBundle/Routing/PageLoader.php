@@ -41,10 +41,7 @@ class PageLoader implements LoaderInterface
         $this->dm = $dm;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load($resource, $type = null)
+    public function load(mixed $resource, ?string $type = null): RouteCollection
     {
         if (true === $this->loaded) {
             throw new \RuntimeException('Page loader is already added');
@@ -54,7 +51,7 @@ class PageLoader implements LoaderInterface
 
         $pages = $this->dm->getRepository(Page::class)->findBy(['disabled' => false]);
 
-        /** @var \Integrated\Bundle\PageBundle\Document\Page\Page $page */
+        /** @var Page $page */
         foreach ($pages as $page) {
             $condition = '';
 
@@ -65,8 +62,8 @@ class PageLoader implements LoaderInterface
             $route = new Route(
                 $page->getPath(),
                 [
-                    '_controller' => 'integrated_website.controller.page:showAction',
-                    'id' => $page->getId(),
+                    '_controller' => 'Integrated\Bundle\WebsiteBundle\Controller\PageController::show',
+                    'page' => $page->getId(),
                 ],
                 [],
                 [],
@@ -82,26 +79,17 @@ class PageLoader implements LoaderInterface
         return $routes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($resource, $type = null)
+    public function supports($resource, $type = null): bool
     {
         return 'integrated_website_page' === $type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResolver()
+    public function getResolver(): LoaderResolverInterface
     {
         return new LoaderResolver();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setResolver(LoaderResolverInterface $resolver)
+    public function setResolver(LoaderResolverInterface $resolver): void
     {
     }
 }

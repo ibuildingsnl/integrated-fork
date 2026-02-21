@@ -54,6 +54,11 @@ class MenuItem extends KnpMenuItem
     protected $maxItems;
 
     /**
+     * @var DatabaseMenuFactory
+     */
+    protected $factory;
+
+    /**
      * @param string $name
      */
     public function __construct($name, DatabaseMenuFactory $factory)
@@ -151,9 +156,6 @@ class MenuItem extends KnpMenuItem
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addChild($child, array $options = []): ItemInterface
     {
         if ($child instanceof Menu) {
@@ -163,23 +165,23 @@ class MenuItem extends KnpMenuItem
             );
         }
 
-        if (!$child instanceof ItemInterface) {
+        if (\is_string($child)) {
             $child = $this->factory->createChild($child, $options);
         } elseif (null !== $child->getParent()) {
-            throw new \InvalidArgumentException(
-                'Cannot add menu item as child, it already belongs to another menu (e.g. has a parent).'
-            );
+            throw new \InvalidArgumentException('Cannot add menu item as child, it already belongs to another menu (e.g. has a parent).');
+        }
+
+        if (!$child instanceof self) {
+            throw new \InvalidArgumentException(\sprintf('Child needs to be an instance of %s', self::class));
         }
 
         $child->setParent($this);
+
         $this->children[$child->getId()] = $child;
 
         return $child;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getChild($id): ?ItemInterface
     {
         /** @var MenuItem $child */
@@ -193,7 +195,7 @@ class MenuItem extends KnpMenuItem
     }
 
     /**
-     * @return \Knp\Menu\ItemInterface[]
+     * @return ItemInterface[]
      */
     public function getChildren(): array
     {

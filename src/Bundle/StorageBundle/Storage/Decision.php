@@ -12,7 +12,8 @@
 namespace Integrated\Bundle\StorageBundle\Storage;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\Persistence\Mapping\MappingException;
 use Integrated\Common\Storage\DecisionInterface;
 use Integrated\Common\Storage\FilesystemRegistryInterface;
 
@@ -31,18 +32,23 @@ class Decision implements DecisionInterface
      */
     protected $decisionMap;
 
-    public function __construct(FilesystemRegistryInterface $registry, array $decisionMap)
+    private DocumentManager $manager;
+
+    public function __construct(FilesystemRegistryInterface $registry, array $decisionMap, DocumentManager $manager)
     {
         $this->registry = $registry;
         $this->decisionMap = $decisionMap;
+        $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     **/
     public function getFilesystems($object)
     {
-        $className = ClassUtils::getRealClass(\get_class($object));
+        try {
+            $className = $this->manager->getClassMetadata($object::class)->getName();
+        } catch (MappingException $e) {
+            $className = $object::class;
+        }
+
         if (isset($this->decisionMap[$className])) {
             return new ArrayCollection(array_values($this->decisionMap[$className]));
         }

@@ -33,9 +33,6 @@ class MongoDBProvider implements ContentProviderInterface, ContentTypeProviderIn
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReferenced($id)
     {
         $iterator = $this->repository->createQueryBuilder()
@@ -47,9 +44,6 @@ class MongoDBProvider implements ContentProviderInterface, ContentTypeProviderIn
         return $iterator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getContent($id)
     {
         $iterator = $this->repository->createQueryBuilder()

@@ -11,14 +11,15 @@
 
 namespace Integrated\Bundle\StorageBundle\EventListener\Doctrine\ODM;
 
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Event\PreFlushEventArgs;
+use Doctrine\ODM\MongoDB\Events;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
+#[AsDocumentListener(event: Events::preFlush)]
+#[AsDocumentListener(event: Events::prePersist)]
 class ContainerAwareFileEventListener extends FileEventListener
 {
     /**
@@ -32,7 +33,7 @@ class ContainerAwareFileEventListener extends FileEventListener
      */
     public function __construct(ContainerInterface $container, $manager, $intentTransformer)
     {
-        $this->initializer = function () use ($container, $manager, $intentTransformer) {
+        $this->initializer = function () use ($container, $manager, $intentTransformer): void {
             parent::__construct(
                 $container->get($manager),
                 $container->get($intentTransformer)
@@ -42,9 +43,6 @@ class ContainerAwareFileEventListener extends FileEventListener
         };
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function prePersist(LifecycleEventArgs $args)
     {
         $this->initializer && $this->initializer->__invoke();
@@ -52,17 +50,11 @@ class ContainerAwareFileEventListener extends FileEventListener
         parent::prePersist($args);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preRemove(LifecycleEventArgs $args)
     {
         $this->initializer && $this->initializer->__invoke();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preFlush(PreFlushEventArgs $args)
     {
         $this->initializer && $this->initializer->__invoke();
@@ -70,9 +62,6 @@ class ContainerAwareFileEventListener extends FileEventListener
         parent::preFlush($args);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onFlush(OnFlushEventArgs $args)
     {
         $this->initializer && $this->initializer->__invoke();

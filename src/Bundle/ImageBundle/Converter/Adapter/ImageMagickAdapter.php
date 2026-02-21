@@ -37,15 +37,12 @@ class ImageMagickAdapter implements AdapterInterface
         $this->cache = $cache;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function convert($outputFormat, StorageInterface $image)
     {
         $file = $this->cache->path($image);
 
         // Make a reasonable path based on the cache path but in a conversion folder
-        $cache = new \SplFileInfo(sprintf('%s/%s.%s', $file->getPath(), $file->getFilename(), $outputFormat));
+        $cache = new \SplFileInfo(\sprintf('%s/%s.%s', $file->getPath(), $file->getFilename(), $outputFormat));
 
         // Check if've got a
         if ($cache->isFile()) {
@@ -56,7 +53,7 @@ class ImageMagickAdapter implements AdapterInterface
         if (preg_match('/^video\/(.*)$/', $image->getMetadata()->getMimeType())) {
             // Open the file on the tenth frame, this saves a us a hell of a lot memory
             // When no frame is specified Imagick will write every frame on /tmp
-            $imagick = new \Imagick(sprintf('%s[10]', $file->getPathname()));
+            $imagick = new \Imagick(\sprintf('%s[10]', $file->getPathname()));
 
             $overlay = new \Imagick(__DIR__.'/../../Resources/images/play-overlay.png');
 
@@ -101,9 +98,6 @@ class ImageMagickAdapter implements AdapterInterface
         throw RunTimeFormatException::conversionFileCreateFail(self::NAME, $image->getPathname(), $outputFormat);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function formats()
     {
         if (class_exists('\Imagick')) {

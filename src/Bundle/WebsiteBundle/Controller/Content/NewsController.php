@@ -16,21 +16,12 @@ use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\Service\ContentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @author Koen Prins <koen@e-active.nl>
- */
 class NewsController extends AbstractController
 {
-    /**
-     * @var ContentService
-     */
-    private $contentService;
-
-    /**
-     * @var ThemeManager
-     */
-    protected $themeManager;
+    private ContentService $contentService;
+    private ThemeManager $themeManager;
 
     public function __construct(ContentService $contentService, ThemeManager $themeManager)
     {
@@ -38,19 +29,13 @@ class NewsController extends AbstractController
         $this->themeManager = $themeManager;
     }
 
-    /**
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function showAction(ContentTypePage $page, News $news)
+    public function show(ContentTypePage $page, News $news): Response
     {
         $this->contentService->prepare($news);
 
-        return $this->render(
-            $this->themeManager->locateTemplate('content/news/show/'.$page->getLayout()),
-            [
-                'news' => $news,
-                'page' => $page,
-            ]
-        );
+        return $this->render($this->themeManager->locateTemplate('content/news/show/'.$page->getLayout()), [
+            'news' => $news,
+            'page' => $page,
+        ]);
     }
 }

@@ -18,6 +18,7 @@ use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Knp\Component\Pager\PaginatorInterface;
 use Solarium\Client;
+use Solarium\Component\Facet\Field;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -212,8 +213,9 @@ class SolariumProvider
             $facetSet = $query->getFacetSet();
 
             foreach ($facetFields as $field) {
-                $facet = $facetSet
-                    ->createFacetField($field.$suffix)
+                /** @var Field $facetField */
+                $facetField = $facetSet->createFacetField($field.$suffix);
+                $facet = $facetField
                     ->setMinCount(1)
                     ->setField($field);
 
@@ -256,7 +258,7 @@ class SolariumProvider
                 'desc' => 'desc',
             ];
 
-            if (strpos($sort, 'custom:') === 0) {
+            if (str_starts_with($sort, 'custom:')) {
                 // support for custom query in database, while waiting for a better solution
                 $query->addParam('sort', substr($sort, 7));
             } else {

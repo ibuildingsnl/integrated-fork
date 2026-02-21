@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\WebsiteBundle\EventListener;
 
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Common\Content\Channel\ChannelManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -9,7 +10,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 class LocaleSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly ChannelManagerInterface $manager
+        private readonly ChannelManagerInterface $manager,
     ) {
     }
 
@@ -21,14 +22,16 @@ class LocaleSubscriber implements EventSubscriberInterface
             $channel = $this->manager->findByDomain($event->getRequest()->getHost());
 
             if ($channel) {
-                if ($channel->getLanguage() !== '') {
-                    $request->setLocale($channel->getLanguage());
+                if ($channel instanceof Channel && $channel->getLanguage() !== '') {
+                    if ($channel instanceof Channel) {
+                        $request->setLocale($channel->getLanguage());
+                    }
                 }
             }
         }
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             RequestEvent::class => [['onKernelRequest', 20]],

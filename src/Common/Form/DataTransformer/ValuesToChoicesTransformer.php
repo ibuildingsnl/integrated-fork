@@ -33,10 +33,7 @@ class ValuesToChoicesTransformer implements DataTransformerInterface
         $this->choiceList = $choiceList;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function transform($values)
+    public function transform($values): array
     {
         if (null === $values) {
             return [];
@@ -49,10 +46,7 @@ class ValuesToChoicesTransformer implements DataTransformerInterface
         return $this->choiceList->getChoicesForValues($values);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function reverseTransform($values)
+    public function reverseTransform($values): array
     {
         if (null === $values) {
             return [];

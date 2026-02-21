@@ -33,7 +33,7 @@ class AuthenticatorType extends AbstractType
         $this->storage = $storage;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'mapped' => false,
@@ -61,7 +61,7 @@ class AuthenticatorType extends AbstractType
                 }
             }
 
-            throw new InvalidOptionsException(sprintf('The option "user" with is expected to be of type "%s"', UserInterface::class));
+            throw new InvalidOptionsException(\sprintf('The option "user" with is expected to be of type "%s"', UserInterface::class));
         });
 
         $resolver->setDefault('constraints', function (Options $options, $value) {
@@ -76,7 +76,7 @@ class AuthenticatorType extends AbstractType
         });
     }
 
-    public function getParent()
+    public function getParent(): ?string
     {
         return TextType::class;
     }

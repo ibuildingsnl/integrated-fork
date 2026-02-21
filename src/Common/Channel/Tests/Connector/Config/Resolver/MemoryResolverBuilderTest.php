@@ -11,19 +11,19 @@
 
 namespace Integrated\Common\Channel\Tests\Connector\Config\Resolver;
 
-use Integrated\Common\Channel\Connector\Config\ConfigInterface;
+use Integrated\Common\Channel\Connector\Config\Config;
+use Integrated\Common\Channel\Connector\Config\Options;
 use Integrated\Common\Channel\Connector\Config\Resolver\MemoryResolverBuilder;
-use Integrated\Common\Content\Channel\ChannelInterface;
-use PHPUnit\Framework\MockObject\MockObject;
+use Integrated\Common\Channel\Tests\Fixtures\Channel;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class MemoryResolverBuilderTest extends \PHPUnit\Framework\TestCase
+class MemoryResolverBuilderTest extends TestCase
 {
-    /**
-     * @dataProvider addConfigProvider
-     */
+    #[DataProvider('addConfigProvider')]
     public function testAddConfig(array $calls, array $expected)
     {
         $builder = $this->getInstance();
@@ -46,9 +46,7 @@ class MemoryResolverBuilderTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @dataProvider addConfigProvider
-     */
+    #[DataProvider('addConfigProvider')]
     public function testAddConfigs(array $calls, array $expected)
     {
         $builder = $this->getInstance();
@@ -69,11 +67,11 @@ class MemoryResolverBuilderTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    public function addConfigProvider()
+    public static function addConfigProvider()
     {
-        $config1 = $this->getConfig('name1');
-        $config2 = $this->getConfig('name2');
-        $config3 = $this->getConfig('name3');
+        $config1 = new Config('name1', 'adaptor1', new Options(), null);
+        $config2 = new Config('name2', 'adaptor2', new Options(), null);
+        $config3 = new Config('name3', 'adaptor3', new Options(), null);
 
         return [
             'with channel string id' => [
@@ -84,13 +82,13 @@ class MemoryResolverBuilderTest extends \PHPUnit\Framework\TestCase
             ],
             'with channel object' => [
                 [
-                    [[$config1, $config2, $config3], $this->getChannel('channel')],
+                    [[$config1, $config2, $config3], new Channel('channel')],
                 ],
                 ['channels' => ['channel' => [$config1, $config2, $config3]], 'defaults' => []],
             ],
             'with mixed channels' => [
                 [
-                    [[$config1], 'channel1'], [[$config2], 'channel2'], [[$config3], $this->getChannel('channel2')],
+                    [[$config1], 'channel1'], [[$config2], 'channel2'], [[$config3], new Channel('channel2')],
                 ],
                 ['channels' => ['channel1' => [$config1], 'channel2' => [$config2, $config3]], 'defaults' => []],
             ],
@@ -120,7 +118,7 @@ class MemoryResolverBuilderTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\Integrated\Common\Channel\Exception\ExceptionInterface::class);
 
         $builder = $this->getInstance();
-        $builder->addConfig($this->getConfig('name'), 42);
+        $builder->addConfig(new Config('name', 'adaptor', new Options(), null), 42);
     }
 
     /**
@@ -129,33 +127,5 @@ class MemoryResolverBuilderTest extends \PHPUnit\Framework\TestCase
     protected function getInstance()
     {
         return new MemoryResolverBuilder();
-    }
-
-    /**
-     * @return ConfigInterface|MockObject
-     */
-    protected function getConfig($name)
-    {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\Connector\\Config\\ConfigInterface');
-        $mock->expects($this->any())
-            ->method('getName')
-            ->willReturn($name);
-
-        return $mock;
-    }
-
-    /**
-     * @param string $id
-     *
-     * @return ChannelInterface|MockObject
-     */
-    protected function getChannel($id)
-    {
-        $mock = $this->createMock(ChannelInterface::class);
-        $mock->expects($this->atLeastOnce())
-            ->method('getId')
-            ->willReturn($id);
-
-        return $mock;
     }
 }

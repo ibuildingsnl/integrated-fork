@@ -39,7 +39,7 @@ class FilesystemWalk
      */
     public static function remove(ManagerInterface $storage, MetadataFactoryInterface $metadata, $filesystem)
     {
-        return function (DoctrineDocument $document) use ($storage, $metadata, $filesystem) {
+        return function (DoctrineDocument $document) use ($storage, $metadata, $filesystem): void {
             foreach ($metadata->getMetadata($document->getClassName())->getProperties() as $property) {
                 /** @var StorageInterface|bool $file */
                 if ($file = $document->get($property->getPropertyName())) {
@@ -72,7 +72,7 @@ class FilesystemWalk
      */
     public static function add(ManagerInterface $storage, MetadataFactoryInterface $metadata, $filesystem)
     {
-        return function (DoctrineDocument $document) use ($storage, $metadata, $filesystem) {
+        return function (DoctrineDocument $document) use ($storage, $metadata, $filesystem): void {
             foreach ($metadata->getMetadata($document->getClassName())->getProperties() as $property) {
                 /** @var StorageInterface|bool $file */
                 if ($file = $document->get($property->getPropertyName())) {

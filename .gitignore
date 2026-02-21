@@ -6,7 +6,7 @@ vendor/
 node_modules/
 composer.lock
 composer.phar
-phpunit.xml
+/phpunit.xml
 .phpunit.result.cache
 phpcs.xml
 yarn-error.log

@@ -11,9 +11,7 @@
 
 namespace Integrated\Common\Solr\Tests\Task\Tasks\Doctrine\EventListener;
 
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use Doctrine\ODM\MongoDB\Events;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Solr\Task\Tasks\Doctrine\EventListener\MongoDBReferencesListener;
@@ -26,26 +24,13 @@ use PHPUnit\Framework\MockObject\MockObject;
 class MongoDBReferencesListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QueueInterface|MockObject
+     * @var QueueInterface&MockObject
      */
     private $queue;
 
     protected function setUp(): void
     {
         $this->queue = $this->createMock(QueueInterface::class);
-    }
-
-    public function testInterface()
-    {
-        $this->assertInstanceOf(EventSubscriber::class, $this->getInstance());
-    }
-
-    public function testGetSubscribedEvents()
-    {
-        self::assertEquals([
-            Events::postPersist,
-            Events::postUpdate,
-        ], $this->getInstance()->getSubscribedEvents());
     }
 
     public function testPostPersist()
@@ -101,7 +86,7 @@ class MongoDBReferencesListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $id
      *
-     * @return ContentInterface|MockObject
+     * @return ContentInterface&MockObject
      */
     protected function getContent($id)
     {
@@ -114,9 +99,9 @@ class MongoDBReferencesListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param object$document
+     * @param object $document
      *
-     * @return LifecycleEventArgs|MockObject
+     * @return LifecycleEventArgs&MockObject
      */
     protected function getEvent($document)
     {

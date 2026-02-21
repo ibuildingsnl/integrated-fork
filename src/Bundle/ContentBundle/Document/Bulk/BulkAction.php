@@ -38,7 +38,7 @@ class BulkAction
     /**
      * @var string|null
      */
-    private $filters = null;
+    private $filters;
 
     /**
      * @var ArrayCollection|ContentInterface[]
@@ -112,10 +112,7 @@ class BulkAction
         return $this->filters === null ? null : json_decode($this->filters, true);
     }
 
-    /**
-     * @param array $filters
-     */
-    public function setFilters(array $filters = null)
+    public function setFilters(?array $filters = null)
     {
         $this->filters = $filters === null ? null : json_encode($filters);
     }
@@ -133,13 +130,12 @@ class BulkAction
      *
      * @return $this
      */
-    public function setSelection($contents)
+    public function setSelection(iterable $contents)
     {
         $this->selection->clear();
-        if (\is_array($contents) || $contents instanceof \Traversable) {
-            foreach ($contents as $content) {
-                $this->addSelection($content);
-            }
+
+        foreach ($contents as $content) {
+            $this->addSelection($content);
         }
 
         return $this;
@@ -180,13 +176,12 @@ class BulkAction
      *
      * @return $this
      */
-    public function setActions($actions)
+    public function setActions(iterable $actions)
     {
         $this->actions->clear();
-        if (\is_array($actions) || $actions instanceof \Traversable) {
-            foreach ($actions as $action) {
-                $this->addAction($action);
-            }
+
+        foreach ($actions as $action) {
+            $this->addAction($action);
         }
 
         return $this;

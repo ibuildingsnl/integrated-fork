@@ -5,9 +5,7 @@
 
     <entity name="Integrated\Bundle\WorkflowBundle\Entity\Definition" table="workflow_definition">
 
-		<id name="id" column="id" type="string" length="36">
-			<generator strategy="UUID" />
-		</id>
+		<id name="id" column="id" type="string" length="36" />
 
 		<field name="name" column="name" type="string" length="255" unique="true" />
 

@@ -37,7 +37,7 @@ class IpListFirewallListener implements EventSubscriberInterface
         $this->matcher = $matcher;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::REQUEST => ['onRequest', 16],
@@ -55,7 +55,7 @@ class IpListFirewallListener implements EventSubscriberInterface
         if ($this->map instanceof FirewallMap && $config = $this->map->getFirewallConfig($request)) {
             if (\in_array('ip_list', $config->getAuthenticators(), true) && !$this->matcher->match($request)) {
                 $response = new Response();
-                $response->setStatusCode(403, 'IP address rejected');
+                $response->setStatusCode(Response::HTTP_FORBIDDEN, 'IP address rejected');
 
                 $event->setResponse($response);
             }

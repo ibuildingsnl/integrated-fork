@@ -19,9 +19,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class MetadataEventDispatcherPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('integrated_content.metadata.factory.event_dispatcher')) {

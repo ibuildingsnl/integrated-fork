@@ -14,11 +14,11 @@ class SocialScriptExtension extends AbstractExtension
     public function getFilters()
     {
         return [
-            new TwigFilter('get_social_media_scripts', [$this, 'getSocialMediaScripts']),
+            new TwigFilter('get_social_media_scripts', $this->getSocialMediaScripts(...)),
         ];
     }
 
-    public function getSocialMediaScripts(MetaData $meta): ?string
+    public function getSocialMediaScripts(Metadata $meta): ?string
     {
         $scripts = [];
 

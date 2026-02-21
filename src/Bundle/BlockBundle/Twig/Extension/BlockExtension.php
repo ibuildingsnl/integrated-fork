@@ -75,7 +75,7 @@ class BlockExtension extends AbstractExtension
         MetadataFactoryInterface $metadataFactory,
         ChannelContextInterface $channelContext,
         LoggerInterface $logger,
-        string $environment
+        string $environment,
     ) {
         $this->blockManager = $blockManager;
         $this->themeManager = $themeManager;
@@ -86,41 +86,34 @@ class BlockExtension extends AbstractExtension
         $this->environment = $environment;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions()
     {
         return [
             new TwigFunction(
                 'integrated_block',
-                [$this, 'renderBlock'],
+                $this->renderBlock(...),
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
             new TwigFunction(
                 'integrated_channel_block',
-                [$this, 'renderChannelBlock'],
+                $this->renderChannelBlock(...),
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
-            new TwigFunction('integrated_find_channels', [$this, 'findChannels']),
-            new TwigFunction('integrated_find_pages', [$this, 'findPages']),
-            new TwigFunction('integrated_find_block_types', [$this, 'findBlockTypes']),
+            new TwigFunction('integrated_find_channels', $this->findChannels(...)),
+            new TwigFunction('integrated_find_pages', $this->findPages(...)),
+            new TwigFunction('integrated_find_block_types', $this->findBlockTypes(...)),
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFilters()
     {
         return [
-            new TwigFilter('integrated_block_type', [$this, 'getBlockTypeName']),
-            new TwigFilter('integrated_sort_blocks', [$this, 'sortByType']),
+            new TwigFilter('integrated_block_type', $this->getBlockTypeName(...)),
+            new TwigFilter('integrated_sort_blocks', $this->sortByType(...)),
         ];
     }
 
     /**
-     * @param \Twig_Environment     $environment
      * @param BlockInterface|string $block
      *
      * @return string|null
@@ -153,7 +146,7 @@ class BlockExtension extends AbstractExtension
             if ('prod' !== $this->environment) {
                 throw $e;
             }
-            $this->logger->error(sprintf('Block "%s" contains an error', $id));
+            $this->logger->error(\sprintf('Block "%s" contains an error', $id));
 
             return $environment->render($this->themeManager->locateTemplate('blocks/error.html.twig'), [
                 'id' => $id,
@@ -163,14 +156,12 @@ class BlockExtension extends AbstractExtension
     }
 
     /**
-     * @param \Twig_Environment $environment
-     *
      * @return string|null
      *
      * @throws CircularFallbackException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      */
     public function renderChannelBlock(Environment $environment, string $id, string $name, string $class, array $options = [])
     {
@@ -225,7 +216,7 @@ class BlockExtension extends AbstractExtension
      */
     public function getBlockTypeName(BlockInterface $block)
     {
-        return $this->metadataFactory->getMetadata(\get_class($block))->getType();
+        return $this->metadataFactory->getMetadata($block::class)->getType();
     }
 
     /**
@@ -257,9 +248,6 @@ class BlockExtension extends AbstractExtension
         return $array;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated_block_block';

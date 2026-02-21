@@ -1,5 +1,4 @@
-$(function() {
-
+$(document).ready(function () {
     var $nextStatus = $('.next-status-choice');
     var $assigned = $('.assigned-choice');
 
@@ -28,17 +27,10 @@ $(function() {
                 var selected = $('option:selected', $assigned).val();
 
                 var $firstOption = $('option:first', $assigned);
-                var $option = $firstOption.clone();
                 $firstOption.siblings().remove();
-
-                $.each(response.users, function(index, user) {
-                    var $tmp = $('<option></option>').val(user.id).text(user.name);
-
-                    if (user.id==selected) {
-                        $tmp.attr('selected','selected');
-                    }
-
-                    $tmp.appendTo($assigned);
+                $.each(response.users, function (index, user) {
+                    var newOption = new Option(user.name, user.id, (user.id == selected), (user.id == selected));
+                    $assigned.append(newOption);
                 });
                 $assigned.removeAttr('disabled');
 
@@ -68,11 +60,8 @@ $(function() {
         });
     };
 
+    $('#integrated_content_extension_workflow_assigned').select2();
     $('select', $nextStatus).change(changeState);
     changeState();
 
-});
-
-$(document).ready(function () {
-    $('#integrated_content_extension_workflow_assigned').select2();
 });

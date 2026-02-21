@@ -48,7 +48,7 @@ class SolrUrlExtractor
             $channelId = $this->channelContext->getChannel()->getId();
         }
 
-        $arrayKey = sprintf('url_%s', $channelId);
+        $arrayKey = \sprintf('url_%s', $channelId);
 
         if (isset($document[$arrayKey])) {
             $url = $document[$arrayKey];

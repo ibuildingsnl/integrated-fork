@@ -17,9 +17,7 @@ use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\ExtensionRegist
 use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\FormFactoryEventDispatcherPass;
 use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\MetadataEventDispatcherPass;
 use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\PriorityResolverBuilderPass;
-use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\SetRouterPass;
 use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\ThemeManagerPass;
-use Integrated\Bundle\ContentBundle\DependencyInjection\IntegratedContentExtension;
 use Integrated\Common\Bulk\DependencyInjection\ConfigProviderBuilderPass;
 use Integrated\Common\Bulk\DependencyInjection\FactoryRegistryBuilderPass;
 use Integrated\Common\Mapping\Registry\DriverRegistryPass;
@@ -35,14 +33,8 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class IntegratedContentBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
-        parent::build($container);
-
-        $container->addCompilerPass(new SetRouterPass());
         $container->addCompilerPass(new ExtensionRegistryBuilderPass());
         $container->addCompilerPass(new FormFactoryEventDispatcherPass());
         $container->addCompilerPass(new MetadataEventDispatcherPass());
@@ -54,13 +46,5 @@ class IntegratedContentBundle extends Bundle
         $container->addCompilerPass(new ConfigProviderBuilderPass('integrated_content.bulk.form.chain_provider_builder', 'integrated_content.bulk.form.provider'));
         $container->addCompilerPass(new ContentProviderPass());
         $container->addCompilerPass(new DriverRegistryPass('integrated_content.metadata.driver.registry', 'integrated.mapping.driver'));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContainerExtension()
-    {
-        return new IntegratedContentExtension();
     }
 }

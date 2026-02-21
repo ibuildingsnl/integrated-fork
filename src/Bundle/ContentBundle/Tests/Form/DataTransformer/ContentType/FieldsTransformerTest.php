@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Integrated package.
  *
@@ -10,87 +11,39 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Form\DataTransformer\ContentType;
 
+use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField;
+use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\ContentType\FieldsTransformer;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\DataTransformerInterface;
 
-/**
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- */
-class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
+class FieldsTransformerTest extends TestCase
 {
-    /**
-     * @var FieldsTransformer
-     */
-    protected $fieldTransformer;
+    protected FieldsTransformer $fieldTransformer;
 
-    /**
-     * Setup the test.
-     */
     protected function setUp(): void
     {
         $this->fieldTransformer = new FieldsTransformer();
     }
 
-    /**
-     * Test instanceOf.
-     */
     public function testInstanceOf()
     {
-        $this->assertInstanceOf('Symfony\Component\Form\DataTransformerInterface', $this->fieldTransformer);
+        $this->assertInstanceOf(DataTransformerInterface::class, $this->fieldTransformer);
     }
 
     /**
      * Test transform function with empty data.
-     *
-     * @param mixed $input
-     *
-     * @dataProvider getInvalidTransformData
      */
+    #[DataProvider('getInvalidTransformData')]
     public function testTransformFunctionWithInvalidData($input)
     {
         $output = ['default' => [], 'custom' => []];
+
         $this->assertSame($output, $this->fieldTransformer->transform($input));
     }
 
-    /**
-     * Test transform function with data.
-     *
-     * @dataProvider getValidTransformData
-     */
-    public function testTransformFunctionWithValidData(array $input, array $output)
-    {
-        $this->assertEquals($output, $this->fieldTransformer->transform($input));
-    }
-
-    /**
-     * Test reverseTransform function with invalid data.
-     *
-     * @param mixed $input
-     *
-     * @dataProvider getInvalidReverseTransformData
-     */
-    public function testReverseTransformFunctionWithInvalidData($input)
-    {
-        $this->assertSame([], $this->fieldTransformer->reverseTransform($input));
-    }
-
-    /**
-     * Test reverseTransform function with valid data.
-     *
-     * @dataProvider getValidReverseTransformData
-     */
-    public function testReverseTransformFunctionWithValidData(array $input)
-    {
-        $this->assertSame(
-            array_merge($input['default'], $input['custom']),
-            $this->fieldTransformer->reverseTransform($input)
-        );
-    }
-
-    /**
-     * @return array
-     */
-    public function getInvalidTransformData()
+    public static function getInvalidTransformData(): array
     {
         return [
             'emptyData' => [
@@ -100,7 +53,7 @@ class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
                 'string',
             ],
             'invalidDataStdClass' => [
-                $this->createMock('stdClass'),
+                new \stdClass(),
             ],
             'invalidDataArray' => [
                 [],
@@ -109,53 +62,41 @@ class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
+     * Test transform function with data.
      */
-    public function getValidTransformData()
+    #[DataProvider('getValidTransformData')]
+    public function testTransformFunctionWithValidData(array $input, array $output)
     {
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field|MockObject $default1 */
-        $default1 = $this->createMock('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field');
-        $default1
-            ->expects($this->once())
-            ->method('getName')
-            ->willReturn('name')
-        ;
+        $this->assertEquals($output, $this->fieldTransformer->transform($input));
+    }
 
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field|MockObject $default2 */
-        $default2 = $this->createMock('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field');
-        $default2
-            ->expects($this->once())
-            ->method('getName')
-            ->willReturn('name2')
-        ;
+    public static function getValidTransformData(): array
+    {
+        $field1 = new Field();
+        $field1->setName('name1');
 
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field|MockObject $duplicateDefault */
-        $duplicateDefault = $this->createMock('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field');
-        $duplicateDefault
-            ->expects($this->once())
-            ->method('getName')
-            ->willReturn('name')
-        ;
+        $field2 = new Field();
+        $field2->setName('name2');
 
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField|MockObject $custom1 */
-        $custom1 = $this->createMock('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField');
+        $field3 = new Field();
+        $field3->setName('name1'); // duplicate of field1
 
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField|MockObject $custom2 */
-        $custom2 = $this->createMock('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField');
+        $custom1 = new CustomField();
+        $custom2 = new CustomField();
 
         return [
             'validData' => [
                 'input' => [
-                    $default1,
-                    $default2,
-                    $duplicateDefault,
+                    $field1,
+                    $field2,
+                    $field3,
                     $custom1,
                     $custom2,
                 ],
                 'output' => [
                     'default' => [
-                        'name' => $duplicateDefault,
-                        'name2' => $default2,
+                        'name1' => $field3,
+                        'name2' => $field2,
                     ],
                     'custom' => [
                         $custom1,
@@ -167,9 +108,15 @@ class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
+     * Test reverseTransform function with invalid data.
      */
-    public function getInvalidReverseTransformData()
+    #[DataProvider('getInvalidReverseTransformData')]
+    public function testReverseTransformFunctionWithInvalidData($input)
+    {
+        $this->assertSame([], $this->fieldTransformer->reverseTransform($input));
+    }
+
+    public static function getInvalidReverseTransformData(): array
     {
         return [
             'emptyData' => [
@@ -207,16 +154,22 @@ class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
+     * Test reverseTransform function with valid data.
      */
-    public function getValidReverseTransformData()
+    #[DataProvider('getValidReverseTransformData')]
+    public function testReverseTransformFunctionWithValidData(array $input)
+    {
+        $this->assertSame(array_merge($input['default'], $input['custom']), $this->fieldTransformer->reverseTransform($input));
+    }
+
+    public static function getValidReverseTransformData(): array
     {
         return [
             'onlyDefaultValues' => [
                 [
                     'default' => [
-                        $this->createMock('Integrated\Common\ContentType\ContentTypeFieldInterface'),
-                        $this->createMock('Integrated\Common\ContentType\ContentTypeFieldInterface'),
+                        new Field(),
+                        new Field(),
                     ],
                     'custom' => [],
                 ],
@@ -225,18 +178,18 @@ class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
                 [
                     'default' => [],
                     'custom' => [
-                        $this->createMock('Integrated\Common\ContentType\ContentTypeFieldInterface'),
+                        new CustomField(),
                     ],
                 ],
             ],
             'defaultAndCustomValues' => [
                 [
                     'default' => [
-                        $this->createMock('Integrated\Common\ContentType\ContentTypeFieldInterface'),
-                        $this->createMock('Integrated\Common\ContentType\ContentTypeFieldInterface'),
+                        new Field(),
+                        new Field(),
                     ],
                     'custom' => [
-                        $this->createMock('Integrated\Common\ContentType\ContentTypeFieldInterface'),
+                        new CustomField(),
                     ],
                 ],
             ],

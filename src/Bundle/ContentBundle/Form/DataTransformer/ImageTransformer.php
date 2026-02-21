@@ -30,20 +30,16 @@ class ImageTransformer implements DataTransformerInterface
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function transform($image)
+    public function transform($image): mixed
     {
         if ($image instanceof Image) {
             return $image->getId();
         }
+
+        return $image;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function reverseTransform($id)
+    public function reverseTransform($id): mixed
     {
         return $this->repository->find($id);
     }

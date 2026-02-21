@@ -17,12 +17,12 @@ class SortOption
         public readonly string $name,
         public readonly string $label,
         public readonly string $field,
-        public readonly string $order
+        public readonly string $order,
     ) {
     }
 
     public static function create(string $name, string $label, string $field, string $oder): static
     {
-        return new static($name, $label, $field, $oder);
+        return new self($name, $label, $field, $oder);
     }
 }

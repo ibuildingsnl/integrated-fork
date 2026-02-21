@@ -33,10 +33,7 @@ class FormFieldSubscriber implements EventSubscriberInterface
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::BUILD_FIELD => 'buildField',

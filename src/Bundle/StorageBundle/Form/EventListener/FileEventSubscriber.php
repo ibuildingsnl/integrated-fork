@@ -36,10 +36,7 @@ class FileEventSubscriber implements EventSubscriberInterface
         $this->appCache = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             FormEvents::SUBMIT => 'submit',

@@ -24,15 +24,12 @@ class FileDropzoneType extends AbstractDropzoneType
         AssetManager $stylesheets,
         AssetManager $javascripts,
         TranslatorInterface $translator,
-        ImageExtension $imageExtension
+        ImageExtension $imageExtension,
     ) {
         parent::__construct($stylesheets, $javascripts, $translator, $imageExtension, 'file');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_file_dropzone';
     }

@@ -34,9 +34,6 @@ class DetachIterator implements \Iterator
         $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function current(): mixed
     {
         $this->manager->detach($current = $this->iterator->current());
@@ -44,33 +41,21 @@ class DetachIterator implements \Iterator
         return $current;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function next(): void
     {
         $this->iterator->next();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function key(): mixed
     {
         return $this->iterator->key();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function valid(): bool
     {
         return $this->iterator->valid();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rewind(): void
     {
         $this->iterator->rewind();

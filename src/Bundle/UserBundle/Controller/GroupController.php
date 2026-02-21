@@ -12,41 +12,34 @@
 namespace Integrated\Bundle\UserBundle\Controller;
 
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
-use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\UserBundle\Form\Type\GroupFormType;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Bundle\UserBundle\Model\GroupManagerInterface;
-use Symfony\Component\Form\FormInterface;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
 class GroupController extends AbstractController
 {
-    /**
-     * @var GroupManagerInterface
-     */
-    private $manager;
+    private GroupManagerInterface $manager;
+    private PaginatorInterface $paginator;
 
-    public function __construct(GroupManagerInterface $manager)
+    public function __construct(GroupManagerInterface $manager, PaginatorInterface $paginator)
     {
         $this->manager = $manager;
+        $this->paginator = $paginator;
     }
 
-    /**
-     * @return Response
-     */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        $paginator = $this->getPaginator()->paginate(
+        $paginator = $this->paginator->paginate(
             $this->manager->findAll(),
             $request->query->get('page', 1),
             15
@@ -57,10 +50,7 @@ class GroupController extends AbstractController
         ]);
     }
 
-    /**
-     * @return Response
-     */
-    public function new(Request $request)
+    public function new(Request $request): Response
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -70,7 +60,7 @@ class GroupController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->get('actions')->get('cancel')->isClicked()) {
+            if ($form->getClickedButton()?->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_user_group_index');
             }
 
@@ -78,23 +68,18 @@ class GroupController extends AbstractController
                 $user = $form->getData();
 
                 $this->manager->persist($user);
-                $this->addFlash('success', sprintf('The group %s is created', $user->getName()));
+                $this->addFlash('success', \sprintf('The group %s is created', $user->getName()));
 
                 return $this->redirectToRoute('integrated_user_group_index');
             }
         }
 
         return $this->render('@IntegratedUser/group/new.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return Response
-     *
-     * @throws NotFoundHttpException
-     */
-    public function edit(Request $request)
+    public function edit(Request $request): Response
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -110,13 +95,13 @@ class GroupController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->get('actions')->get('cancel')->isClicked()) {
+            if ($form->getClickedButton()?->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_user_group_index');
             }
 
             if ($form->isValid()) {
                 $this->manager->persist($group);
-                $this->addFlash('success', sprintf('The changes to the group %s are saved', $group->getName()));
+                $this->addFlash('success', \sprintf('The changes to the group %s are saved', $group->getName()));
 
                 return $this->redirectToRoute('integrated_user_group_index');
             }
@@ -124,14 +109,11 @@ class GroupController extends AbstractController
 
         return $this->render('@IntegratedUser/group/edit.html.twig', [
             'group' => $group,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return Response
-     */
-    public function delete(Request $request)
+    public function delete(Request $request): Response
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -148,13 +130,13 @@ class GroupController extends AbstractController
 
         if ($form->isSubmitted()) {
             // check for cancel click else its a submit
-            if ($form->get('actions')->get('cancel')->isClicked()) {
+            if ($form->getClickedButton()?->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_user_group_index');
             }
 
             if ($form->isValid()) {
                 $this->manager->remove($group);
-                $this->addFlash('success', sprintf('The group %s is removed', $group->getName()));
+                $this->addFlash('success', \sprintf('The group %s is removed', $group->getName()));
 
                 return $this->redirectToRoute('integrated_user_group_index');
             }
@@ -162,61 +144,37 @@ class GroupController extends AbstractController
 
         return $this->render('@IntegratedUser/group/delete.html.twig', [
             'group' => $group,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createNewForm()
+    private function createNewForm(): Form
     {
-        $form = $this->createForm(
-            GroupFormType::class,
-            null,
-            [
-                'action' => $this->generateUrl('integrated_user_group_new'),
-                'method' => 'POST',
-            ]
-        );
+        $form = $this->createForm(GroupFormType::class, null, [
+            'action' => $this->generateUrl('integrated_user_group_new'),
+        ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
         return $form;
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createEditForm(GroupInterface $group)
+    private function createEditForm(GroupInterface $group): Form
     {
-        $form = $this->createForm(
-            GroupFormType::class,
-            $group,
-            [
-                'action' => $this->generateUrl('integrated_user_group_edit', ['id' => $group->getId()]),
-                'method' => 'POST',
-            ]
-        );
+        $form = $this->createForm(GroupFormType::class, $group, [
+            'action' => $this->generateUrl('integrated_user_group_edit', ['id' => $group->getId()]),
+        ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createDeleteForm(GroupInterface $group)
+    private function createDeleteForm(GroupInterface $group): Form
     {
-        $form = $this->createForm(
-            DeleteFormType::class,
-            $group,
-            [
-                'action' => $this->generateUrl('integrated_user_group_delete', ['id' => $group->getId()]),
-                'method' => 'DELETE',
-            ]
-        );
+        $form = $this->createForm(DeleteFormType::class, $group, [
+            'action' => $this->generateUrl('integrated_user_group_delete', ['id' => $group->getId()]),
+        ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 

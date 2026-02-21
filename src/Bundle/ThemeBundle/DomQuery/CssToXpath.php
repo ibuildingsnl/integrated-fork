@@ -28,7 +28,7 @@ class CssToXpath
         }
 
         $tmp_path = self::replaceCharInsideEnclosure($path, ',');
-        if (strpos($tmp_path, ',') !== false) {
+        if (str_contains($tmp_path, ',')) {
             $paths = explode(',', $tmp_path);
             $expressions = [];
 
@@ -84,7 +84,7 @@ class CssToXpath
      */
     private static function replaceCharInsideEnclosure($str, $search_char, $enclosure_open = '(', $enclosure_close = ')')
     {
-        if ($str === '' || strpos($str, $search_char) === false || strpos($str, $enclosure_open) === false) {
+        if ($str === '' || !str_contains($str, $search_char) || !str_contains($str, $enclosure_open)) {
             return $str;
         }
 
@@ -136,7 +136,7 @@ class CssToXpath
         }
 
         $char_tmp_replaced = false;
-        if (strpos($token, '\\') !== false) {
+        if (str_contains($token, '\\')) {
             $token = preg_replace_callback( // temporary replace escaped characters
                 '#(\\\\)(.{1})#',
                 function ($matches) {
@@ -262,7 +262,7 @@ class CssToXpath
         } elseif (preg_match('|contains\((.+)\)|i', $expression, $matches)) {
             return '[text()[contains(.,\''.$matches[1].'\')]]'; // contain the specified text
         } elseif (preg_match('|has\((.+)\)|i', $expression, $matches)) {
-            if (strpos($matches[1], '> ') === 0) {
+            if (str_starts_with($matches[1], '> ')) {
                 return '[child::'.ltrim(self::transform($matches[1]), '/').']';
             }
 

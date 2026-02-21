@@ -11,9 +11,10 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Relation;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
-use PHPUnit\Framework\MockObject\MockObject;
+use Integrated\Common\Content\Relation\RelationInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -25,7 +26,7 @@ class RelationTest extends \PHPUnit\Framework\TestCase
      */
     public function testInterface()
     {
-        $this->assertInstanceOf('Integrated\Common\Content\Relation\RelationInterface', $this->getInstance());
+        $this->assertInstanceOf(RelationInterface::class, $this->getInstance());
     }
 
     /**
@@ -34,9 +35,14 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     public function testDefaultValues()
     {
         $instance = $this->getInstance();
-        $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $instance->getTargets());
-        $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $instance->getSources());
-        $this->assertInstanceOf('\DateTime', $instance->getCreatedAt());
+
+        $this->assertSame([], $instance->getTargets());
+        $this->assertSame([], $instance->getSources());
+
+        $this->assertFalse($instance->isMultiple());
+        $this->assertFalse($instance->isRequired());
+
+        $this->assertInstanceOf(\DateTime::class, $instance->getCreatedAt());
     }
 
     /**
@@ -45,10 +51,8 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     public function testGetAndSetIdFunction()
     {
         $instance = $this->getInstance();
+        $instance->setId($id = 'id');
 
-        $id = 'id';
-
-        $this->assertSame($instance, $instance->setId($id));
         $this->assertEquals($id, $instance->getId());
     }
 
@@ -58,10 +62,8 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     public function testGetAndSetNameFunction()
     {
         $instance = $this->getInstance();
+        $instance->setName($name = 'name');
 
-        $name = 'name';
-
-        $this->assertSame($instance, $instance->setName($name));
         $this->assertEquals($name, $instance->getName());
     }
 
@@ -71,32 +73,28 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     public function testGetAndSetTypeFunction()
     {
         $instance = $this->getInstance();
+        $instance->setType($type = 'type');
 
-        $type = 'type';
-
-        $this->assertSame($instance, $instance->setType($type));
         $this->assertEquals($type, $instance->getType());
     }
 
     /**
      * Test get- and setSources function with valid collection.
-     *
-     * @dataProvider validCollectionProvider
      */
-    public function testGetAndSetSourcesFunctionWithValidCollection(ArrayCollection $collection)
+    #[DataProvider('validCollectionProvider')]
+    public function testGetAndSetSourcesFunctionWithValidCollection(array $collection)
     {
         $instance = $this->getInstance();
+        $instance->setSources($collection);
 
-        $this->assertSame($instance, $instance->setSources($collection));
         $this->assertEquals($collection, $instance->getSources());
     }
 
     /**
      * Test get- and setSources function with invalid collection.
-     *
-     * @dataProvider invalidCollectionProvider
      */
-    public function testGetAndSetSourcesFunctionWithInvalidCollection(ArrayCollection $collection)
+    #[DataProvider('invalidCollectionProvider')]
+    public function testGetAndSetSourcesFunctionWithInvalidCollection(array $collection)
     {
         $this->expectException(\TypeError::class);
 
@@ -111,14 +109,10 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     {
         $instance = $this->getInstance();
 
-        /** @var \Integrated\Common\ContentType\ContentTypeInterface|MockObject $source */
-        $source = $this->createMock('Integrated\Common\ContentType\ContentTypeInterface');
-
-        $instance->addSource($source);
-        $collection = $instance->getSources();
+        $instance->addSource($source = new ContentType());
         $instance->addSource($source);
 
-        $this->assertSame($collection, $instance->getSources());
+        $this->assertSame([$source], $instance->getSources());
     }
 
     /**
@@ -128,12 +122,10 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     {
         $instance = $this->getInstance();
 
-        /** @var \Integrated\Common\ContentType\ContentTypeInterface|MockObject $source */
-        $source = $this->createMock('Integrated\Common\ContentType\ContentTypeInterface');
+        $instance->addSource($source = new ContentType());
+        $instance->removeSource($source);
 
-        $instance->addSource($source);
-
-        $this->assertTrue($instance->removeSource($source));
+        $this->assertEmpty($instance->getSources());
     }
 
     /**
@@ -143,31 +135,29 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     {
         $instance = $this->getInstance();
 
-        /** @var \Integrated\Common\ContentType\ContentTypeInterface|MockObject $source */
-        $source = $this->createMock('Integrated\Common\ContentType\ContentTypeInterface');
+        $instance->addSource($source = new ContentType());
+        $instance->removeSource(new ContentType());
 
-        $this->assertFalse($instance->removeSource($source));
+        $this->assertSame([$source], $instance->getSources());
     }
 
     /**
      * Test get- and setTargets function with valid collection.
-     *
-     * @dataProvider validCollectionProvider
      */
-    public function testGetAndSetTargetsFunctionWithValidCollection(ArrayCollection $collection)
+    #[DataProvider('validCollectionProvider')]
+    public function testGetAndSetTargetsFunctionWithValidCollection(array $collection)
     {
         $instance = $this->getInstance();
+        $instance->setTargets($collection);
 
-        $this->assertSame($instance, $instance->setTargets($collection));
         $this->assertEquals($collection, $instance->getTargets());
     }
 
     /**
      * Test get- and setTargets function with invalid collection.
-     *
-     * @dataProvider invalidCollectionProvider
      */
-    public function testGetAndSetTargetsFunctionWithInvalidCollection(ArrayCollection $collection)
+    #[DataProvider('invalidCollectionProvider')]
+    public function testGetAndSetTargetsFunctionWithInvalidCollection(array $collection)
     {
         $this->expectException(\TypeError::class);
 
@@ -182,14 +172,12 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     {
         $instance = $this->getInstance();
 
-        /** @var \Integrated\Common\ContentType\ContentTypeInterface|MockObject $target */
-        $target = $this->createMock('Integrated\Common\ContentType\ContentTypeInterface');
-
-        $instance->addTarget($target);
-        $collection = $instance->getTargets();
+        $instance->addTarget($target = new ContentType());
         $instance->addTarget($target);
 
-        $this->assertSame($collection, $instance->getTargets());
+        $this->assertSame([$target], $instance->getTargets());
+
+        $instance = $this->getInstance();
     }
 
     /**
@@ -199,12 +187,10 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     {
         $instance = $this->getInstance();
 
-        /** @var \Integrated\Common\ContentType\ContentTypeInterface|MockObject $target */
-        $target = $this->createMock('Integrated\Common\ContentType\ContentTypeInterface');
+        $instance->addTarget($target = new ContentType());
+        $instance->removeTarget($target);
 
-        $instance->addTarget($target);
-
-        $this->assertTrue($instance->removeTarget($target));
+        $this->assertEmpty($instance->getTargets());
     }
 
     /**
@@ -214,10 +200,10 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     {
         $instance = $this->getInstance();
 
-        /** @var \Integrated\Common\ContentType\ContentTypeInterface|MockObject $source */
-        $source = $this->createMock('Integrated\Common\ContentType\ContentTypeInterface');
+        $instance->addTarget($target = new ContentType());
+        $instance->removeTarget(new ContentType());
 
-        $this->assertFalse($instance->removeTarget($source));
+        $this->assertSame([$target], $instance->getTargets());
     }
 
     /**
@@ -226,11 +212,13 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     public function testIsAndSetMultipleFunction()
     {
         $instance = $this->getInstance();
+        $instance->setMultiple(true);
 
-        $multiple = false;
+        $this->assertTrue($instance->isMultiple());
 
-        $this->assertSame($instance, $instance->setMultiple($multiple));
-        $this->assertEquals($multiple, $instance->isMultiple());
+        $instance->setMultiple(false);
+
+        $this->assertFalse($instance->isMultiple());
     }
 
     /**
@@ -239,11 +227,13 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     public function testIsAndSetRequiredFunction()
     {
         $instance = $this->getInstance();
+        $instance->setRequired(true);
 
-        $required = true;
+        $this->assertTrue($instance->isRequired());
 
-        $this->assertSame($instance, $instance->setRequired($required));
-        $this->assertEquals($required, $instance->isRequired());
+        $instance->setRequired(false);
+
+        $this->assertFalse($instance->isRequired());
     }
 
     /**
@@ -252,41 +242,28 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     public function testGetAndSetCreatedAtFunction()
     {
         $instance = $this->getInstance();
+        $instance->setCreatedAt($time = new \DateTime());
 
-        $createdAt = new \DateTime();
-
-        $this->assertSame($instance, $instance->setCreatedAt($createdAt));
-        $this->assertEquals($createdAt, $instance->getCreatedAt());
+        $this->assertEquals($time, $instance->getCreatedAt());
     }
 
-    /**
-     * @return array
-     */
-    public function validCollectionProvider()
+    public static function validCollectionProvider(): array
     {
         return [
             [
-                new ArrayCollection([
-                    $this->createMock('Integrated\Common\ContentType\ContentTypeInterface'),
-                    $this->createMock('Integrated\Common\ContentType\ContentTypeInterface'),
-                ]),
+                [new ContentType(), new ContentType()],
             ],
             [
-                new ArrayCollection([
-                    $this->createMock('Integrated\Common\ContentType\ContentTypeInterface'),
-                ]),
+                [new ContentType()],
             ],
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function invalidCollectionProvider()
+    public static function invalidCollectionProvider(): array
     {
         return [
             [
-                new ArrayCollection(['Invalid', true, ['types']]),
+                ['Invalid', true, ['types']],
             ],
         ];
     }

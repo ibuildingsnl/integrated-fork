@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\WebsiteBundle\Routing;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
 use Symfony\Component\Config\Loader\Loader;
@@ -47,10 +46,7 @@ class ContentTypePageLoader extends Loader
         $this->urlResolver = $urlResolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load($resource, $type = null)
+    public function load(mixed $resource, $type = null): RouteCollection
     {
         if (true === $this->loaded) {
             throw new \RuntimeException('Page loader is already added');
@@ -60,7 +56,7 @@ class ContentTypePageLoader extends Loader
 
         $pages = $this->dm->getRepository(ContentTypePage::class)->findAll();
 
-        /** @var \Integrated\Bundle\PageBundle\Document\Page\ContentTypePage $page */
+        /** @var ContentTypePage $page */
         foreach ($pages as $page) {
             if (!$page->getControllerService()) {
                 continue;
@@ -68,7 +64,7 @@ class ContentTypePageLoader extends Loader
 
             $route = new Route(
                 $this->urlResolver->getRoutePath($page),
-                ['_controller' => sprintf('%s:%s', $page->getControllerService(), $page->getControllerAction()), 'page' => $page->getId()],
+                ['_controller' => $this->getController($page), 'page' => $page->getId()],
                 [],
                 [],
                 '',
@@ -84,19 +80,17 @@ class ContentTypePageLoader extends Loader
         return $routes;
     }
 
-    /**
-     * @return \Doctrine\ODM\MongoDB\Repository\DocumentRepository
-     */
-    protected function getContentTypeRepo()
-    {
-        return $this->dm->getRepository(ContentType::class);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($resource, $type = null)
+    public function supports($resource, $type = null): bool
     {
         return self::ROUTE_PREFIX === $type;
+    }
+
+    private function getController(ContentTypePage $page): string
+    {
+        if ($page->getControllerAction() === '__invoke') {
+            return $page->getControllerService();
+        }
+
+        return \sprintf('%s::%s', $page->getControllerService(), $page->getControllerAction());
     }
 }

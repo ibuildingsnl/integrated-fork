@@ -28,9 +28,6 @@ class IntegratedStorageExtension extends Extension implements PrependExtensionIn
      */
     protected $formTemplate = '@IntegratedStorage/form/form_div_layout.html.twig';
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(array $configs, ContainerBuilder $container)
     {
         $config = $this->processConfiguration(new Configuration(), $configs);
@@ -43,7 +40,6 @@ class IntegratedStorageExtension extends Extension implements PrependExtensionIn
         $loader->load('form.xml');
         $loader->load('services.xml');
         $loader->load('solr.xml');
-        $loader->load('data_fixtures.xml');
 
         // Inject the "resolve" config (app/config.yml) in the file resolver service
         $container->getDefinition('integrated_storage.resolver')
@@ -56,9 +52,6 @@ class IntegratedStorageExtension extends Extension implements PrependExtensionIn
             ->replaceArgument(1, $config['decision_map']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function prepend(ContainerBuilder $container)
     {
         foreach ($container->getExtensions() as $name => $extension) {

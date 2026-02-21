@@ -16,7 +16,6 @@ use Integrated\Bundle\ThemeBundle\Entity\Scraper as ScraperEntity;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
-use Symfony\Contracts\Cache\CacheInterface;
 use Twig\Error\LoaderError;
 use Twig\Loader\LoaderInterface;
 use Twig\Source;
@@ -39,14 +38,14 @@ class ScraperPageLoader implements LoaderInterface
     private $entityManager;
 
     /**
-     * @var CacheInterface
+     * @var ApcuAdapter
      */
     private $cache;
 
     /**
      * @var array
      */
-    private $pageList = null;
+    private $pageList;
 
     /**
      * @var int
@@ -80,11 +79,11 @@ class ScraperPageLoader implements LoaderInterface
     public function getSourceContext($name): Source
     {
         if (!$channel = $this->channelContext->getChannel()) {
-            throw new LoaderError(sprintf('Unkown channel for template "%s"', $name));
+            throw new LoaderError(\sprintf('Unkown channel for template "%s"', $name));
         }
 
         if (!$template = $this->entityManager->getRepository(ScraperEntity::class)->findOneBy(['channelId' => $channel->getId(), 'templateName' => $name])) {
-            throw new LoaderError(sprintf('Template "%s" does not exist for channel', $name));
+            throw new LoaderError(\sprintf('Template "%s" does not exist for channel', $name));
         }
 
         return new Source($template->getTemplate(), $name);
@@ -131,11 +130,11 @@ class ScraperPageLoader implements LoaderInterface
     public function isFresh($name, $time): bool
     {
         if (!$channel = $this->channelContext->getChannel()) {
-            throw new LoaderError(sprintf('Unkown channel for template "%s"', $name));
+            throw new LoaderError(\sprintf('Unkown channel for template "%s"', $name));
         }
 
         if (!$template = $this->entityManager->getRepository(ScraperEntity::class)->findOneBy(['channelId' => $channel->getId(), 'templateName' => $name])) {
-            throw new LoaderError(sprintf('Template "%s" does not exist for channel', $name));
+            throw new LoaderError(\sprintf('Template "%s" does not exist for channel', $name));
         }
 
         return $time > $template->getLastModified();

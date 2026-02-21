@@ -6,7 +6,7 @@
 
     <services>
 
-        <defaults autowire="true" autoconfigure="true"/>
+        <defaults autowire="true" autoconfigure="true" />
 
         <service id="integrated_solr.indexer.error.subscriber" class="Integrated\Bundle\SolrBundle\EventListener\IndexerErrorLogger">
             <call method="setLogger">
@@ -17,28 +17,10 @@
             <tag name="kernel.event_subscriber" />
         </service>
 
-		<service id="integrated_solr.indexer.mongodb.subscriber" class="Integrated\MongoDB\Solr\Indexer\QueueSubscriber" public="true">
-			<argument type="service" id="integrated_solr.queue.indexer" /> <!-- should be a config option -->
-			<argument type="service" id="integrated_solr.indexer.serializer" />
-
-			<tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
-		</service>
-
-		<service id="integrated_solr.indexer.serializer" class="Symfony\Component\Serializer\Serializer" public="true">
-			<argument type="collection">
-				<argument type="service" id="integrated_solr.indexer.serializer.normalizer.mongodb" /> <!-- normalizers should be taggable -->
-			</argument>
-			<argument type="collection">
-				<argument type="service" id="integrated_solr.indexer.serializer.encoder.json" /> <!-- encoders should be taggable -->
-			</argument>
-		</service>
-
-		<service id="integrated_solr.indexer.serializer.normalizer.mongodb" class="Integrated\MongoDB\Serializer\Normalizer\ContainerAwareDocumentNormalizer" public="false">
-			<argument type="service" id="service_container"/>
-			<argument type="string">doctrine_mongodb.odm.document_manager</argument> <!-- should be a config option -->
-		</service>
-
-		<service id="integrated_solr.indexer.serializer.encoder.json" class="Symfony\Component\Serializer\Encoder\JsonEncoder" public="false" />
+        <service id="integrated_solr.indexer.mongodb.subscriber" class="Integrated\MongoDB\Solr\Indexer\QueueSubscriber" public="true">
+            <argument type="service" id="integrated_solr.queue.indexer" /> <!-- should be a config option -->
+            <argument type="service" id="integrated_solr.indexer.serializer" />
+        </service>
 
         <service id="integrated_solr.indexer.command_factory" class="Integrated\Common\Solr\Indexer\CommandFactory">
             <argument type="service" id="integrated_solr.converter" />
@@ -51,21 +33,21 @@
             <argument type="string">json</argument>
         </service>
 
-		<service id="integrated_solr.indexer.client" alias="integrated_solr.solarium.client.indexer" />
+        <service id="integrated_solr.indexer.client" alias="integrated_solr.solarium.client.indexer" />
 
-		<service id="integrated_solr.indexer" class="Integrated\Common\Solr\Indexer\Indexer" public="true">
+        <service id="integrated_solr.indexer" class="Integrated\Common\Solr\Indexer\Indexer" public="true">
             <argument type="service" id="integrated_solr.indexer.command_factory" />
 
-			<call method="setQueue">
-				<argument type="service" id="integrated_solr.queue.indexer" />
-			</call>
+            <call method="setQueue">
+                <argument type="service" id="integrated_solr.queue.indexer" />
+            </call>
             <call method="setEventDispatcher">
                 <argument type="service" id="event_dispatcher" />
             </call>
-			<call method="setClient">
-				<argument type="service" id="integrated_solr.solarium.client.indexer" />
-			</call>
-		</service>
+            <call method="setClient">
+                <argument type="service" id="integrated_solr.solarium.client.indexer" />
+            </call>
+        </service>
 
     </services>
 

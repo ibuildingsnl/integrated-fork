@@ -6,7 +6,6 @@ use AntiMattr\MongoDB\Migrations\Configuration\Configuration;
 use AntiMattr\MongoDB\Migrations\Migration;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class MongoDBMigrations
@@ -55,9 +54,6 @@ class MongoDBMigrations
         $versions = $configuration->getMigrationsToExecute(self::DOCTRINE_MIGRATIONS_DIRECTION_UP, $to);
         foreach ($versions as $version) {
             $migration = $version->getMigration();
-            if ($migration instanceof ContainerAwareInterface) {
-                $migration->setContainer($this->container);
-            }
         }
 
         $migration = new Migration($configuration);

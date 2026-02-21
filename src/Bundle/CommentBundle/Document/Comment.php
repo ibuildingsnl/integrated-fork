@@ -130,32 +130,33 @@ class Comment
     }
 
     /**
-     * @return ArrayCollection
+     * @return Reply[]
      */
-    public function getReplies()
+    public function getReplies(): iterable
     {
-        return $this->replies;
+        return $this->replies->toArray();
     }
 
     /**
-     * @param ArrayCollection $replies
+     * @param Reply[] $replies
      */
-    public function setReplies($replies)
+    public function setReplies(iterable $replies): void
     {
-        $this->replies = $replies;
+        $this->replies = new ArrayCollection();
+
+        foreach ($replies as $reply) {
+            $this->addReply($reply);
+        }
     }
 
-    public function addReply(Reply $reply)
+    public function addReply(Reply $reply): void
     {
         if (!$this->replies->contains($reply)) {
             $this->replies->add($reply);
         }
     }
 
-    /**
-     * @return Reply|null
-     */
-    public function getReplyById($replyId)
+    public function getReplyById($replyId): ?Reply
     {
         return $this->replies->filter(
             function (Reply $reply) use ($replyId) {
@@ -184,7 +185,7 @@ class Comment
         return $this->author;
     }
 
-    public function setAuthor(Person $author = null)
+    public function setAuthor(?Person $author = null)
     {
         $this->author = $author;
     }

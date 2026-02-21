@@ -8,6 +8,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Connector;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\Config\ResolverInterface;
+use Integrated\Common\Channel\Connector\ExporterInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface as ConnectorExporterInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
@@ -23,16 +24,14 @@ class PublicationExporterDecorator implements ExporterInterface
         private readonly RegistryInterface $registry,
         private readonly ResolverInterface $resolver,
         private readonly DocumentManager $manager,
-        private readonly PublicationRepositoryInterface $repository
+        private readonly PublicationRepositoryInterface $repository,
     ) {
     }
 
-    public function export($content, $state, ChannelInterface $channel, array $settings = [])
+    public function export($content, $state, ChannelInterface $channel, array $settings = []): ?ExporterResponse
     {
         if (!$content instanceof Content) {
-            $this->exporter->export($content, $state, $channel, $settings);
-
-            return;
+            return $this->exporter->export($content, $state, $channel, $settings);
         }
 
         if (!$content->isPublished()) {
@@ -63,7 +62,9 @@ class PublicationExporterDecorator implements ExporterInterface
         }
 
         if ($old) {
-            $this->exporter->export($content, $state, $channel, $settings);
+            return $this->exporter->export($content, $state, $channel, $settings);
+        } else {
+            return null;
         }
     }
 

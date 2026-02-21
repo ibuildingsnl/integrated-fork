@@ -11,120 +11,45 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Form\DataTransformer\ContentType\Field;
 
+use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField;
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\ContentType\Field\CustomTransformer;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\DataTransformerInterface;
 
-/**
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- */
-class CustomTransformerTest extends \PHPUnit\Framework\TestCase
+class CustomTransformerTest extends TestCase
 {
-    /**
-     * @var CustomTransformer
-     */
-    protected $customTransformer;
+    protected CustomTransformer $customTransformer;
 
-    /**
-     * Setup the test.
-     */
     protected function setUp(): void
     {
         $this->customTransformer = new CustomTransformer();
     }
 
-    /**
-     * Test instanceOf.
-     */
     public function testInstanceOf()
     {
-        $this->assertInstanceOf('Symfony\Component\Form\DataTransformerInterface', $this->customTransformer);
+        $this->assertInstanceOf(DataTransformerInterface::class, $this->customTransformer);
     }
 
     /**
      * Test transform function.
-     *
-     * @param mixed $input
-     *
-     * @dataProvider getTransformData
      */
+    #[DataProvider('getTransformData')]
     public function testTransformFunction($input, array $output)
     {
         $this->assertSame($output, $this->customTransformer->transform($input));
     }
 
-    /**
-     * Test reverseTransform function with invalid data.
-     *
-     * @param mixed $input
-     *
-     * @dataProvider getInvalidReverseTransformData
-     */
-    public function testReverseTransformFunctionWithInvalidData($input)
+    public static function getTransformData(): array
     {
-        $this->assertNull($this->customTransformer->reverseTransform($input));
-    }
+        $field = new CustomField();
 
-    /**
-     * Test reverseTransform function with valid data.
-     *
-     * @dataProvider getValidReverseTransformData
-     */
-    public function testReverseTransformFunctionWithValidData(array $input)
-    {
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField $output */
-        $output = $this->customTransformer->reverseTransform($input);
-
-        $this->assertInstanceOf('\Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField', $output);
-        $this->assertSame($input['label'], $output->getLabel());
-        $this->assertSame($input['type'], $output->getType());
-
-        if (!empty($input['required'])) {
-            $options = $output->getOptions();
-            $this->assertTrue($options['required']);
-        }
-
-        if (isset($input['name'])) {
-            $this->assertSame($input['name'], $output->getName());
-        }
-    }
-
-    /**
-     * @return array
-     */
-    public function getTransformData()
-    {
-        $output = [
-            'name' => 'name',
-            'type' => 'type',
-            'label' => null,
+        $field->setName('name');
+        $field->setType('type');
+        $field->setOptions([
+            'label' => 'label',
             'required' => false,
-        ];
-
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField|MockObject $field */
-        $field = $this->createMock('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField');
-        $field
-            ->expects($this->once())
-            ->method('getName')
-            ->willReturn($output['name'])
-        ;
-
-        $field
-            ->expects($this->once())
-            ->method('getType')
-            ->willReturn($output['type'])
-        ;
-
-        $field
-            ->expects($this->once())
-            ->method('getLabel')
-            ->willReturn($output['label'])
-        ;
-
-        $field
-            ->expects($this->once())
-            ->method('getOptions')
-            ->willReturn(['required' => $output['required']])
-        ;
+        ]);
 
         return [
             'emptyData' => [
@@ -137,15 +62,26 @@ class CustomTransformerTest extends \PHPUnit\Framework\TestCase
             ],
             'validData' => [
                 'input' => $field,
-                'output' => $output,
+                'output' => [
+                    'name' => 'name',
+                    'type' => 'type',
+                    'label' => 'label',
+                    'required' => false,
+                ],
             ],
         ];
     }
 
     /**
-     * @return array
+     * Test reverseTransform function with invalid data.
      */
-    public function getInvalidReverseTransformData()
+    #[DataProvider('getInvalidReverseTransformData')]
+    public function testReverseTransformFunctionWithInvalidData($input)
+    {
+        $this->assertNull($this->customTransformer->reverseTransform($input));
+    }
+
+    public static function getInvalidReverseTransformData(): array
     {
         return [
             'emptyData' => [
@@ -170,9 +106,29 @@ class CustomTransformerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
+     * Test reverseTransform function with valid data.
      */
-    public function getValidReverseTransformData()
+    #[DataProvider('getValidReverseTransformData')]
+    public function testReverseTransformFunctionWithValidData(array $input)
+    {
+        /** @var CustomField $output */
+        $output = $this->customTransformer->reverseTransform($input);
+
+        $this->assertInstanceOf('\Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField', $output);
+        $this->assertSame($input['label'], $output->getLabel());
+        $this->assertSame($input['type'], $output->getType());
+
+        if (!empty($input['required'])) {
+            $options = $output->getOptions();
+            $this->assertTrue($options['required']);
+        }
+
+        if (isset($input['name'])) {
+            $this->assertSame($input['name'], $output->getName());
+        }
+    }
+
+    public static function getValidReverseTransformData(): array
     {
         return [
             'requiredField' => [

@@ -74,11 +74,9 @@ class Event extends Article
     }
 
     /**
-     * @param \DateTime $startDate
-     *
      * @return $this
      */
-    public function setStartDate(\DateTime $startDate = null)
+    public function setStartDate(?\DateTime $startDate = null)
     {
         $this->startDate = $startDate;
 
@@ -94,11 +92,9 @@ class Event extends Article
     }
 
     /**
-     * @param \DateTime $endDate
-     *
      * @return $this
      */
-    public function setEndDate(\DateTime $endDate = null)
+    public function setEndDate(?\DateTime $endDate = null)
     {
         $this->endDate = $endDate;
 

@@ -21,7 +21,7 @@ use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
 class ValueToChoiceTransformerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ChoiceListInterface|MockObject
+     * @var ChoiceListInterface&MockObject
      */
     private $choiceList;
 

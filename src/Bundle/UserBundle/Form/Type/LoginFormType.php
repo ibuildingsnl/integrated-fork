@@ -54,10 +54,9 @@ class LoginFormType extends AbstractType
      * The container is used to retrieve the request so that the errors
      * and last username can be extracted from it.
      *
-     * @param TranslatorInterface $translator
-     * @param null                $translationDomain
+     * @param null $translationDomain
      */
-    public function __construct(RequestStack $request, TranslatorInterface $translator = null, $translationDomain = null)
+    public function __construct(RequestStack $request, ?TranslatorInterface $translator = null, $translationDomain = null)
     {
         $this->request = $request;
 
@@ -65,10 +64,7 @@ class LoginFormType extends AbstractType
         $this->translationDomain = $translationDomain;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('_username', TextType::class);
         $builder->add('_password', PasswordType::class);
@@ -104,18 +100,12 @@ class LoginFormType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['full_name'] = ''; // field names should not be prefixed
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('method', 'post');
 
@@ -136,10 +126,7 @@ class LoginFormType extends AbstractType
         $resolver->setAllowedTypes('translation_domain', ['null', 'string']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_user_security_login_form';
     }

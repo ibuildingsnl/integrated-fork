@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\WorkflowBundle;
 
-use Integrated\Bundle\WorkflowBundle\DependencyInjection\IntegratedWorkflowExtension;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -19,11 +18,4 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class IntegratedWorkflowBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getContainerExtension()
-    {
-        return new IntegratedWorkflowExtension();
-    }
 }

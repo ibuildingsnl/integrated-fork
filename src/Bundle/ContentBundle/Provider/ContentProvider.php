@@ -13,11 +13,12 @@ namespace Integrated\Bundle\ContentBundle\Provider;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
-use Integrated\Bundle\UserBundle\Model\GroupableInterface;
+use Integrated\Bundle\UserBundle\Model\User;
+use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\WorkflowBundle\Solr\Extension\WorkflowExtension;
 use Solarium\Client;
+use Solarium\Component\Result\Facet\Field;
 use Solarium\QueryType\Select\Query\FilterQuery;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\HttpFoundation\Request;
@@ -64,7 +65,7 @@ class ContentProvider
         DocumentManager $dm,
         TokenStorageInterface $tokenStorage,
         AuthorizationChecker $authorizationChecker,
-        $workflowExtension = false
+        $workflowExtension = false,
     ) {
         $this->client = $client;
         $this->dm = $dm;
@@ -83,16 +84,18 @@ class ContentProvider
         };
 
         // Filter on ContentType
-        $contentType = $request->query->get('contenttypes');
-        if (null === $contentType) {
+        $contentType = $request->query->all('contenttypes');
+        if (!\count($contentType)) {
             $contentType = [];
             foreach ($contentTypeSelectOptions as $contentTypeSelectOption) {
                 $contentType[] = $contentTypeSelectOption->getId();
             }
         }
 
-        $contentTypesQuery = $query->createFilterQuery('contenttypes');
-        $this->setContentTypes($contentType, $contentTypesQuery, $filter, $request);
+        if (\count($contentType)) {
+            $contentTypesQuery = $query->createFilterQuery('contenttypes');
+            $this->setContentTypes($contentType, $contentTypesQuery, $filter, $request);
+        }
 
         // Filter on Category
         if ($selectedCategory = $request->query->get('MediaTaxonomy')) {
@@ -121,6 +124,7 @@ class ContentProvider
 
         $resultSet = $this->client->select($query);
 
+        /** @var Field $facet */
         $facet = $resultSet->getFacetSet()->getFacet('pub_created');
 
         $facetValues = $facet->getValues();
@@ -141,12 +145,6 @@ class ContentProvider
     {
         $query = $this->client->createSelect();
 
-        if ($timePeriod = $request->query->get('year_month_day_filter')) {
-            $query
-                ->createFilterQuery('pub_created')
-                ->setQuery('pub_created: ['.$timePeriod.']');
-        }
-
         // If the request query contains a relation parameter we need to fetch all the targets of the relation in order
         // to filter on these targets.
         $relations = $request->query->get('relation');
@@ -161,7 +159,7 @@ class ContentProvider
                 }
             }
         } else {
-            $contentType = $request->query->get('contenttypes');
+            $contentType = $request->query->all('contenttypes');
         }
 
         $helper = $query->getHelper();
@@ -180,8 +178,8 @@ class ContentProvider
         }
 
         /* @var Relation $relation */
-        if ($request->query->has('relation')) {
-            foreach ($request->query->get('relation') as $relationId => $value) {
+        if ($request->query->get('relation')) {
+            foreach ($request->query->all('relation') as $relationId => $value) {
                 $relation = $this->dm->getRepository(Relation::class)->find($relationId);
                 $relationfilter = $value;
 
@@ -189,24 +187,8 @@ class ContentProvider
                     $query
                         ->createFilterQuery($relationId)
                         ->addTag($relationId)
-                        ->setQuery(
-                            'facet_'.$relation->getId().': ((%1%))',
-                            [implode(') OR (', array_map($filter, $relationfilter))]
-                        );
+                        ->setQuery('facet_'.$relation->getId().': ((%1%))', [implode(') OR (', array_map($filter, $relationfilter))]);
                 }
-            }
-        }
-
-        foreach ($this->dm->getRepository(Relation::class)->findAll() as $relation) {
-            $name = preg_replace('/[^a-zA-Z]/', '', $relation->getName());
-            $facetTitles[$name] = $relation->getName();
-            $relationfilter = $request->query->get($name);
-
-            if (\is_array($relationfilter)) {
-                $query
-                    ->createFilterQuery($name)
-                    ->addTag($name)
-                    ->setQuery('facet_'.$relation->getId().': ((%1%))', [implode(') OR (', array_map($filter, $relationfilter))]);
             }
         }
 
@@ -356,9 +338,6 @@ class ContentProvider
         return $contents;
     }
 
-    /**
-     * @return \Solarium\QueryType\Select\Query\FilterQuery
-     */
     protected function addWorkflowFilter(Query $query)
     {
         $filterWorkflow = [];
@@ -368,19 +347,21 @@ class ContentProvider
             return;
         }
 
-        $user = $this->tokenStorage->getToken()->getUser();
-
-        if ($user instanceof GroupableInterface) {
-            foreach ($user->getGroups() as $group) {
-                $filterWorkflow[] = $group->getId();
-            }
-        }
-
         // allow content without workflow
         $fq = $query->createFilterQuery('workflow')
                     ->addTag('workflow')
                     ->addTag('security')
                     ->setQuery('(*:* -security_workflow_read:[* TO *])');
+
+        $user = $this->tokenStorage->getToken()->getUser();
+
+        if (!$user instanceof UserInterface) {
+            return;
+        }
+
+        foreach ($user->getGroups() as $group) {
+            $filterWorkflow[] = $group->getId();
+        }
 
         // allow content with group access
         if ($filterWorkflow) {
@@ -390,12 +371,11 @@ class ContentProvider
         // always allow access to assinged content
         $fq->setQuery($fq->getQuery().' OR facet_workflow_assigned_id: %1%', [$user->getId()]);
 
-        /* @var Person $person */
-        if ($person = $user->getRelation()) {
-            $fq->setQuery($fq->getQuery().' OR author: %1%*', [$person->getId()]);
+        if ($user instanceof User) {
+            if ($person = $user->getRelation()) {
+                $fq->setQuery($fq->getQuery().' OR author: %1%*', [$person->getId()]);
+            }
         }
-
-        return $fq;
     }
 
     // If there is ONE contenttype selected, we only want to show files with this contenttype
@@ -403,15 +383,15 @@ class ContentProvider
     // Else, we are showing all the contenttypes
     // $contentType is what the user has in its selection,
     // $available_contenttypes is what the user can choose from
-    private function setContentTypes(array|null $contentType, FilterQuery $contentTypesQuery, \Closure $filter, Request $request): void
+    private function setContentTypes(?array $contentType, FilterQuery $contentTypesQuery, \Closure $filter, Request $request): void
     {
         if (\is_array($contentType) && \count($contentType) === 1) {
             $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
         } else {
-            $availableContenttypes = $request->query->get('available_contenttypes');
+            $availableContenttypes = $request->query->all('available_contenttypes');
             if (\is_array($availableContenttypes) && \count($availableContenttypes)) {
                 $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $availableContenttypes))]);
-            } elseif (\is_array($contentType)) {
+            } elseif (\is_array($contentType) && \count($contentType)) {
                 $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
             }
         }

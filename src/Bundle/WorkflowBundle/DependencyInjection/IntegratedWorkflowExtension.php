@@ -50,9 +50,6 @@ class IntegratedWorkflowExtension extends Extension implements PrependExtensionI
         $container->setParameter('integrated_workflow_email', $config['email']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function prepend(ContainerBuilder $container)
     {
         $this->configureTwigBundle($container);

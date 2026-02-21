@@ -38,10 +38,7 @@ class WebsiteEditableListener implements EventSubscriberInterface
         $this->javascripts = $javascripts;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::CONTROLLER => ['onController'],

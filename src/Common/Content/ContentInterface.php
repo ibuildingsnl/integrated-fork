@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Content;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Common\Content\Embedded\RelationInterface;
 
@@ -64,12 +63,12 @@ interface ContentInterface
     /**
      * Get the relations of the document.
      *
-     * @return ArrayCollection
+     * @return RelationInterface[]
      */
     public function getRelations();
 
     /**
-     * @return RelationInterface|bool
+     * @return RelationInterface|null
      */
     public function getRelation($relationId);
 
@@ -78,7 +77,7 @@ interface ContentInterface
      *
      * @return ContentInterface
      */
-    public function setRelations(Collection $relations);
+    public function setRelations(iterable $relations);
 
     /**
      * Add relation to relations collection.

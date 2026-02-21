@@ -40,8 +40,6 @@ interface IpListManagerInterface extends ManagerInterface
     /**
      * Finds the ip list by its identifier.
      *
-     * @param mixed $id
-     *
      * @return IpList
      */
     public function find($id);

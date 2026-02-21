@@ -27,7 +27,7 @@ class State
     /**
      * @var int
      */
-    private $id = null;
+    private $id;
 
     /**
      * @var Definition\State
@@ -47,32 +47,32 @@ class State
     /**
      * @var ContentInterface|null
      */
-    private $content_instance = null;
+    private $content_instance;
 
     /**
      * @var string
      */
-    private $assigned_id = null;
+    private $assigned_id;
 
     /**
      * @var string
      */
-    private $assigned_class = null;
+    private $assigned_class;
 
     /**
      * @var string
      */
-    private $assigned_type = null;
+    private $assigned_type;
 
     /**
      * @var UserInterface|GroupInterface|null
      */
-    private $assigned_instance = null;
+    private $assigned_instance;
 
     /**
      * @var \DateTime
      */
-    private $deadline = null;
+    private $deadline;
 
     /**
      * @var Collection|Log[]
@@ -217,11 +217,9 @@ class State
     }
 
     /**
-     * @param \DateTime $deadline
-     *
      * @return $this
      */
-    public function setDeadline(\DateTime $deadline = null)
+    public function setDeadline(?\DateTime $deadline = null)
     {
         $this->deadline = $deadline;
 
@@ -237,11 +235,11 @@ class State
     }
 
     /**
-     * @param log[] $logs
+     * @param Log[] $logs
      *
      * @return $this
      */
-    public function setLogs(Collection $logs)
+    public function setLogs(iterable $logs)
     {
         foreach ($this->logs as $log) {
             $this->removeLog($log);

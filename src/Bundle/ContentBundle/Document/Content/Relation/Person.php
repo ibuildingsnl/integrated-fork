@@ -72,12 +72,9 @@ class Person extends Relation
     #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'sidebar')]
     protected $nickname;
 
-    /**
-     * @var string
-     */
     #[Slug(fields: ['firstName', 'lastName'])]
     #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
-    protected $slug;
+    protected ?string $slug = null;
 
     /**
      * @var Collection Job[]
@@ -109,6 +106,7 @@ class Person extends Relation
     public function __construct()
     {
         parent::__construct();
+
         $this->jobs = new ArrayCollection();
     }
 
@@ -189,14 +187,25 @@ class Person extends Relation
         return $this;
     }
 
-    public function getJobs(): Collection
+    public function getJobs(): array
     {
-        return $this->jobs;
+        return $this->jobs->toArray();
     }
 
-    public function setJobs(Collection $jobs): static
+    /**
+     * Set the jobs of the document.
+     *
+     * @param Job[] $jobs
+     *
+     * @return $this
+     */
+    public function setJobs(iterable $jobs): static
     {
-        $this->jobs = $jobs;
+        $this->jobs = new ArrayCollection();
+
+        foreach ($jobs as $job) {
+            $this->addJob($job);
+        }
 
         return $this;
     }
@@ -222,7 +231,7 @@ class Person extends Relation
         return $this->picture;
     }
 
-    public function setPicture(Image $picture = null): static
+    public function setPicture(?Image $picture = null): static
     {
         $this->picture = $picture;
 

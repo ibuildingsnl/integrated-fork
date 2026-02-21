@@ -66,7 +66,7 @@ class HtmlBlock extends Block implements BlockRequiredItemsInterface
     /**
      * General object init.
      *
-     * @param null $id
+     * @param string|null $id
      */
     public function __construct($id = null)
     {
@@ -124,9 +124,6 @@ class HtmlBlock extends Block implements BlockRequiredItemsInterface
         $this->requiredItems = new ArrayCollection($requiredItems);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return 'html';

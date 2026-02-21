@@ -11,24 +11,15 @@
 
 namespace Integrated\Bundle\ContentBundle\Doctrine\EventListener;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 
-class UpdateStorageMetadataListener implements EventSubscriber
+#[AsDocumentListener(event: Events::onFlush)]
+class UpdateStorageMetadataListener
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::onFlush,
-        ];
-    }
-
     public function onFlush(OnFlushEventArgs $args)
     {
         $dm = $args->getDocumentManager();
@@ -36,12 +27,12 @@ class UpdateStorageMetadataListener implements EventSubscriber
 
         foreach (array_merge($uow->getScheduledDocumentInsertions(), $uow->getScheduledDocumentUpdates()) as $document) {
             if ($document instanceof File) {
-                /** @var $document File */
+                /** @var File $document */
                 if ($document->getFile() instanceof Storage) {
                     $document->getFile()->getMetadata()->setCredits($document->getCredits());
                     $document->getFile()->getMetadata()->setDescription($document->getDescription());
 
-                    $class = $dm->getClassMetadata(\get_class($document));
+                    $class = $dm->getClassMetadata($document::class);
                     $uow->recomputeSingleDocumentChangeSet($class, $document);
                 }
             }

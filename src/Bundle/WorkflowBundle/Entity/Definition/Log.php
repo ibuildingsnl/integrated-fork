@@ -21,7 +21,7 @@ class Log
     /**
      * @var int
      */
-    protected $id = null;
+    protected $id;
 
     /**
      * @var Definition
@@ -57,7 +57,7 @@ class Log
     }
 
     /**
-     * @return $this;
+     * @return $this
      */
     public function setWorkflow(Definition $workflow)
     {

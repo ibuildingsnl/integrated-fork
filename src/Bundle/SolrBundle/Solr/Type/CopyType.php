@@ -19,9 +19,6 @@ use Integrated\Common\Converter\Type\TypeInterface;
  */
 class CopyType implements TypeInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         $fields = [];
@@ -67,9 +64,6 @@ class CopyType implements TypeInterface
         $container->add($field, $value);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.copy';

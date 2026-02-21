@@ -13,44 +13,31 @@ namespace Integrated\Bundle\UserBundle\Extension;
 
 use Integrated\Bundle\UserBundle\Extension\Subscriber\ContentSubscriber;
 use Integrated\Bundle\UserBundle\Extension\Subscriber\MetadataSubscriber;
+use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Content\Extension\ExtensionInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class UserExtension implements ExtensionInterface, ContainerAwareInterface
+class UserExtension implements ExtensionInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container = null;
+    private UserManagerInterface $manager;
 
-    /**
-     * {@inheritdoc}
-     */
+    public function __construct(UserManagerInterface $manager)
+    {
+        $this->manager = $manager;
+    }
+
     public function getSubscribers()
     {
         return [
-            new ContentSubscriber($this, $this->container),
+            new ContentSubscriber($this, $this->manager),
             new MetadataSubscriber($this),
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.extension.user';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
     }
 }

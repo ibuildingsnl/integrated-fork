@@ -29,7 +29,7 @@ abstract class AbstractFileProvider implements TypeProviderInterface
     /**
      * @var TypeConfigInterface[][]
      */
-    private $types = null;
+    private $types;
 
     /**
      * Constructor.
@@ -49,9 +49,6 @@ abstract class AbstractFileProvider implements TypeProviderInterface
         $this->finder = $finder;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTypes($class)
     {
         $this->initialize();

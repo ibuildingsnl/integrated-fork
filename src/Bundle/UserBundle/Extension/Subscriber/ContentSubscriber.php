@@ -16,7 +16,6 @@ use Integrated\Common\Content\Extension\Event\ContentEvent;
 use Integrated\Common\Content\Extension\Event\Subscriber\ContentSubscriberInterface;
 use Integrated\Common\Content\Extension\Events;
 use Integrated\Common\Content\Extension\ExtensionInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -31,25 +30,17 @@ class ContentSubscriber implements ContentSubscriberInterface
     private $extension;
 
     /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
      * @var UserManagerInterface
      */
     private $manager;
 
-    public function __construct(ExtensionInterface $extension, ContainerInterface $container)
+    public function __construct(ExtensionInterface $extension, UserManagerInterface $manager)
     {
         $this->extension = $extension;
-        $this->container = $container;
+        $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::POST_READ => 'read',
@@ -87,9 +78,7 @@ class ContentSubscriber implements ContentSubscriberInterface
             return;
         }
 
-        $manager = $this->getManager();
-
-        if ($user = $manager->findBy(['relation' => $content->getId()])) {
+        if ($user = $this->manager->findBy(['relation' => $content->getId()])) {
             $event->setData(array_shift($user)); // get first user
         }
     }
@@ -105,7 +94,7 @@ class ContentSubscriber implements ContentSubscriberInterface
         if ($user = $event->getData()) {
             $user->setRelation($content);
 
-            $this->getManager()->persist($user);
+            $this->manager->persist($user);
         }
     }
 
@@ -116,29 +105,9 @@ class ContentSubscriber implements ContentSubscriberInterface
         }
 
         if ($user = $event->getData()) {
-            $this->getManager()->remove($user);
+            $this->manager->remove($user);
         }
 
         $event->setData(null);
-    }
-
-    /**
-     * @return ContainerInterface
-     */
-    protected function getContainer()
-    {
-        return $this->container;
-    }
-
-    /**
-     * @return UserManagerInterface
-     */
-    protected function getManager()
-    {
-        if ($this->manager === null) {
-            $this->manager = $this->getContainer()->get('integrated_user.user.manager');
-        }
-
-        return $this->manager;
     }
 }

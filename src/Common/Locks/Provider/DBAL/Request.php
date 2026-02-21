@@ -27,43 +27,33 @@ class Request implements RequestInterface
     /**
      * @var ResourceInterface|null
      */
-    protected $owner = null;
+    protected $owner;
 
     /**
      * @var int|null
      */
-    protected $timeout = null;
+    protected $timeout;
 
     /**
-     * @param ResourceInterface $owner
-     * @param null              $timeout
+     * @param null $timeout
      */
-    public function __construct(ResourceInterface $resource, ResourceInterface $owner = null, $timeout = null)
+    public function __construct(ResourceInterface $resource, ?ResourceInterface $owner = null, $timeout = null)
     {
         $this->resource = $resource;
         $this->owner = $owner;
         $this->timeout = $timeout;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getResource()
     {
         return $this->resource;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOwner()
     {
         return $this->owner;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTimeout()
     {
         return $this->timeout;
@@ -76,9 +66,9 @@ class Request implements RequestInterface
      */
     public function __toString()
     {
-        return sprintf(
+        return \sprintf(
             "Resource: %s\nResourceOwner: %s\ntimeout: %s",
-            (string) $this->resource,
+            method_exists($this->resource, '__toString') ? (string) $this->resource : $this->resource->getIdentifier(),
             $this->owner === null ? 'NULL' : $this->owner,
             $this->timeout === null ? 'NULL' : $this->timeout
         );

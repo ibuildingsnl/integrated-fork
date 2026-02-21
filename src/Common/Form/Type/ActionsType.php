@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Form\Type;
 
+use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Integrated\Common\Form\EventListener\ClickedButtonListener;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -36,25 +37,19 @@ class ActionsType extends AbstractType
         $this->buttons = $buttons;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber(new ClickedButtonListener());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $buttonsNormalizer = function (Options $options, $buttons) {
             $normalized = [];
 
             foreach ($buttons as $button) {
                 if (!isset($this->buttons[$button])) {
-                    throw new InvalidOptionsException(sprintf('The value "%s" for the option "%s" is missing a valid button configuration', $button, 'buttons'));
+                    throw new InvalidOptionsException(\sprintf('The value "%s" for the option "%s" is missing a valid button configuration', $button, 'buttons'));
                 }
 
                 $normalized[$button] = $this->buttons[$button];
@@ -66,11 +61,8 @@ class ActionsType extends AbstractType
         $resolver->setNormalizer('buttons', $buttonsNormalizer);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
+    public function getParent(): ?string
     {
-        return 'Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType';
+        return FormActionsType::class;
     }
 }

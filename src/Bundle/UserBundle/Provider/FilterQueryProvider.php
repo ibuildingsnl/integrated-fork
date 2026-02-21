@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\UserBundle\Provider;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Integrated\Bundle\UserBundle\Doctrine\UserManager;
 
@@ -60,9 +61,10 @@ class FilterQueryProvider
             GROUP BY g.group_id HAVING count > 0
         ';
 
-        $query = $this->userManager->getObjectManager()->createNativeQuery($sql, $this->getMapping());
+        /** @var EntityManagerInterface $manager */
+        $manager = $this->userManager->getObjectManager();
 
-        return $this->formatChoices($query, $data);
+        return $this->formatChoices($manager->createNativeQuery($sql, $this->getMapping()), $data);
     }
 
     public function getScopeChoices($data)
@@ -76,9 +78,10 @@ class FilterQueryProvider
             GROUP BY u.scope
         ';
 
-        $query = $this->userManager->getObjectManager()->createNativeQuery($sql, $this->getMapping());
+        /** @var EntityManagerInterface $manager */
+        $manager = $this->userManager->getObjectManager();
 
-        return $this->formatChoices($query, $data);
+        return $this->formatChoices($manager->createNativeQuery($sql, $this->getMapping()), $data);
     }
 
     private function getMapping()
@@ -98,7 +101,7 @@ class FilterQueryProvider
 
         $choices = [];
         foreach ($query->getResult() as $result) {
-            $choices[sprintf('%s %d', $result['name'], $result['count'])] = $result['id'];
+            $choices[\sprintf('%s %d', $result['name'], $result['count'])] = $result['id'];
         }
 
         return $choices;

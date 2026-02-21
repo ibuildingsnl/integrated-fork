@@ -29,17 +29,12 @@ class RelationJsonType implements TypeInterface
 
     /**
      * Constructor.
-     *
-     * @param PropertyAccessorInterface $accessor
      */
-    public function __construct(PropertyAccessorInterface $accessor = null)
+    public function __construct(?PropertyAccessorInterface $accessor = null)
     {
         $this->accessor = $accessor ?: PropertyAccess::createPropertyAccessor();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         if (!($data instanceof Content)) {
@@ -47,7 +42,6 @@ class RelationJsonType implements TypeInterface
         }
 
         $relations = $data->getReferencesByRelationId($options['relation_id']);
-
         $array = [];
 
         foreach ($relations as $key => $relation) {
@@ -59,9 +53,6 @@ class RelationJsonType implements TypeInterface
         $container->set($options['alias'], json_encode($array));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.relation_json';

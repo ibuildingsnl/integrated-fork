@@ -7,7 +7,6 @@ use Integrated\Bundle\StorageBundle\Form\EventListener\FileEventSubscriber;
 use Integrated\Bundle\StorageBundle\Form\Upload\StorageIntentUpload;
 use Integrated\Bundle\StorageBundle\Storage\Cache\AppCache;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
-use Integrated\Common\Storage\ManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType as SymfonyFileType;
@@ -24,15 +23,12 @@ class FileType extends AbstractType
      */
     private $appCache;
 
-    /**
-     * @param ManagerInterface $manager
-     */
     public function __construct(AppCache $appCache)
     {
         $this->appCache = $appCache;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         // The field might not be required in the integrated content type
         $resolver->setDefaults([
@@ -59,10 +55,7 @@ class FileType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('file', SymfonyFileType::class, [
             'required' => $options['required'],
@@ -79,17 +72,11 @@ class FileType extends AbstractType
         $builder->addEventSubscriber(new FileEventSubscriber($this->appCache));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_file';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $data = $form->getData();

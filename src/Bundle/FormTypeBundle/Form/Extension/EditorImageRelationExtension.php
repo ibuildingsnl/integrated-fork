@@ -21,13 +21,13 @@ class EditorImageRelationExtension extends AbstractTypeExtension
      */
     private $parser;
 
-    public function __construct(DocumentManager $manager, HtmlRelation $parser = null)
+    public function __construct(DocumentManager $manager, ?HtmlRelation $parser = null)
     {
         $this->manager = $manager;
         $this->parser = $parser ?: new HtmlRelation();
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber(new EditorImageRelationEventListener($this->manager, $this->parser));
     }

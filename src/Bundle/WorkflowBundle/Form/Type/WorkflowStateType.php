@@ -37,10 +37,7 @@ class WorkflowStateType extends AbstractType
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // The content of this form type is solely based on state that is not set yet. So
         // the only thing that is added is a listener that will update this type with more
@@ -53,9 +50,6 @@ class WorkflowStateType extends AbstractType
         $builder->addEventSubscriber(new WorkflowStateListener($options['workflow']));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         if (!$form->has('current')) {
@@ -76,10 +70,7 @@ class WorkflowStateType extends AbstractType
         $child->vars['block_prefixes'][] = $last;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $workflowNormalizer = function (Options $options, $workflow) {
             if (\is_string($workflow)) {
@@ -87,7 +78,7 @@ class WorkflowStateType extends AbstractType
             }
 
             if (!$workflow instanceof Definition) {
-                throw new InvalidOptionsException(sprintf(
+                throw new InvalidOptionsException(\sprintf(
                     'The option "%s" could not be normalized to a valid "%s" object',
                     'workflow',
                     'Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition'
@@ -106,10 +97,7 @@ class WorkflowStateType extends AbstractType
         $resolver->setDefault('data_class', 'Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition\\State');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_workflow_state';
     }

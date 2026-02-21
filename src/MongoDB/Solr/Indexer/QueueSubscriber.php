@@ -11,36 +11,34 @@
 
 namespace Integrated\MongoDB\Solr\Indexer;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Events;
 use Integrated\Common\Content\ContentInterface;
-use Integrated\Common\Queue\QueueAwareInterface;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Solr\Indexer\Job;
-use Symfony\Component\Serializer\SerializerAwareInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class QueueSubscriber implements EventSubscriber, QueueAwareInterface, SerializerAwareInterface
+#[AsDocumentListener(event: Events::postPersist)]
+#[AsDocumentListener(event: Events::postUpdate)]
+#[AsDocumentListener(event: Events::postRemove)]
+class QueueSubscriber
 {
     /**
      * @var QueueInterface
      */
     private $queue;
-
     /**
      * @var SerializerInterface
      */
     private $serializer;
-
     /**
      * @var string
      */
-    private $format = null;
-
+    private $format;
     /**
      * @var int
      */
@@ -56,9 +54,6 @@ class QueueSubscriber implements EventSubscriber, QueueAwareInterface, Serialize
         $this->setPriority($priority);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setQueue(QueueInterface $queue)
     {
         $this->queue = $queue;
@@ -72,9 +67,6 @@ class QueueSubscriber implements EventSubscriber, QueueAwareInterface, Serialize
         return $this->queue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setSerializer(SerializerInterface $serializer)
     {
         $this->serializer = $serializer;
@@ -124,18 +116,6 @@ class QueueSubscriber implements EventSubscriber, QueueAwareInterface, Serialize
         return $this->priority;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::postPersist,
-            Events::postUpdate,
-            Events::postRemove,
-        ];
-    }
-
     public function postPersist(LifecycleEventArgs $event)
     {
         $this->process('ADD', $event);
@@ -169,7 +149,7 @@ class QueueSubscriber implements EventSubscriber, QueueAwareInterface, Serialize
                 $job->setOption('document.id', $document->getContentType().'-'.$document->getId());
 
                 $job->setOption('document.data', $this->getSerializer()->serialize($document, $this->getSerializerFormat()));
-                $job->setOption('document.class', $event->getDocumentManager()->getClassMetadata(\get_class($document))->getName());
+                $job->setOption('document.class', $event->getDocumentManager()->getClassMetadata($document::class)->getName());
                 $job->setOption('document.format', $this->getSerializerFormat());
 
                 break;

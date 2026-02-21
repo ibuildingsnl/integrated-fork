@@ -18,9 +18,6 @@ use Integrated\Common\Converter\ContainerInterface;
  */
 class CopyAppendType extends CopyType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'integrated.copy.append';

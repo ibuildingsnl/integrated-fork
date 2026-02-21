@@ -18,6 +18,7 @@ use Integrated\Bundle\BlockBundle\Block\BlockHandler;
 use Integrated\Bundle\ContentBundle\Document\Block\RelatedContentBlock;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\ContentRepository;
 use Integrated\Common\Block\BlockInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,16 +46,16 @@ class RelatedContentBlockHandler extends BlockHandler
      */
     private $dm;
 
-    public function __construct(PaginatorInterface $paginator, RequestStack $requestStack, DocumentManager $dm)
+    private ContentRepository $contentRepository;
+
+    public function __construct(PaginatorInterface $paginator, RequestStack $requestStack, DocumentManager $dm, ContentRepository $contentRepository)
     {
         $this->paginator = $paginator;
         $this->requestStack = $requestStack;
         $this->dm = $dm;
+        $this->contentRepository = $contentRepository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(BlockInterface $block, array $options)
     {
         if (!$block instanceof RelatedContentBlock) {
@@ -74,10 +75,10 @@ class RelatedContentBlockHandler extends BlockHandler
         }
 
         return $this->render([
-             'block' => $block,
-             'pagination' => $pagination,
-             'document' => $this->getDocument(),
-             'options' => $options,
+            'block' => $block,
+            'pagination' => $pagination,
+            'document' => $this->getDocument(),
+            'options' => $options,
         ]);
     }
 
@@ -108,7 +109,7 @@ class RelatedContentBlockHandler extends BlockHandler
     }
 
     /**
-     * @return \Doctrine\MongoDB\Query\Builder|\Doctrine\Common\Collections\ArrayCollection|null
+     * @return Builder|null
      */
     protected function getQuery(RelatedContentBlock $block, $document)
     {
@@ -136,11 +137,11 @@ class RelatedContentBlockHandler extends BlockHandler
                     return null;
                 }
 
-                $query = $this->dm->getRepository(Content::class)->getUsedBy($linkedDocuments, $block->getRelation(), $document);
+                $query = $this->contentRepository->getUsedBy($linkedDocuments, $block->getRelation(), $document);
 
                 break;
             default:
-                $query = $this->dm->getRepository(Content::class)->getUsedBy(new ArrayCollection([$document]), $block->getRelation());
+                $query = $this->contentRepository->getUsedBy(new ArrayCollection([$document]), $block->getRelation());
 
                 break;
         }
@@ -161,7 +162,7 @@ class RelatedContentBlockHandler extends BlockHandler
     }
 
     /**
-     * @return \Doctrine\ODM\MongoDB\Query\Builder
+     * @return Builder
      */
     protected function getLinkedByQuery(Content $document, RelatedContentBlock $block)
     {

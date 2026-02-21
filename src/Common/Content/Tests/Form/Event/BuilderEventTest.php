@@ -21,7 +21,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 class BuilderEventTest extends FormEventTest
 {
     /**
-     * @var FormBuilderInterface|MockObject
+     * @var FormBuilderInterface&MockObject
      */
     protected $builder;
 
@@ -62,8 +62,6 @@ class BuilderEventTest extends FormEventTest
     }
 
     /**
-     * @param mixed $field
-     *
      * @return BuilderEvent
      */
     protected function getInstance($field = null)

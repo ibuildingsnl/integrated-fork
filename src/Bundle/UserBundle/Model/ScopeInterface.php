@@ -22,7 +22,9 @@ interface ScopeInterface
     public function getId();
 
     /**
-     * @return string
+     * @param string $name
+     *
+     * @return $this
      */
     public function setName($name);
 

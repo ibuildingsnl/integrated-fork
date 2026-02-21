@@ -30,10 +30,7 @@ class MultipleFileTransformer implements DataTransformerInterface
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function transform($list)
+    public function transform($list): mixed
     {
         if (\is_array($list)) {
             $data = [];
@@ -49,12 +46,11 @@ class MultipleFileTransformer implements DataTransformerInterface
 
             return implode(',', $data);
         }
+
+        return $list;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function reverseTransform($input)
+    public function reverseTransform($input): mixed
     {
         $ids = explode(',', $input);
         $files = [];

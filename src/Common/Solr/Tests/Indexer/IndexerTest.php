@@ -36,7 +36,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class IndexerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CommandFactoryInterface|MockObject
+     * @var CommandFactoryInterface&MockObject
      */
     private $factory;
 
@@ -46,28 +46,27 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
     private $batch;
 
     /**
-     * @var QueueInterface|MockObject
+     * @var QueueInterface&MockObject
      */
     private $queue;
 
     /**
-     * @var Client|MockObject
+     * @var Client&MockObject
      */
     private $client;
 
     /**
-     * @var EventDispatcherInterface|MockObject
+     * @var EventDispatcherInterface&MockObject
      */
     private $dispatcher;
 
     protected function setUp(): void
     {
         $this->factory = $this->createMock(CommandFactoryInterface::class);
-//        $this->batch = $this->createMock(Batch::class);
         $this->batch = new Batch();
         $this->queue = $this->createMock(QueueInterface::class);
         $this->client = $this->createMock(Client::class);
-        $this->dispatcher = $this->getMockBuilder(EventDispatcherInterface::class)->disableArgumentCloning()->getMock();
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function testInterface()
@@ -557,8 +556,7 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param mixed $payload
-     * @param bool  $delete
+     * @param bool $delete
      *
      * @return QueueMessageInterface|MockObject
      */

@@ -36,8 +36,6 @@ class ConfigIterator implements \Iterator
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return TypeConfigInterface
      */
     public function current(): mixed
@@ -45,17 +43,12 @@ class ConfigIterator implements \Iterator
         return current($this->types);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function next(): void
     {
         next($this->types);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return int
      */
     public function key(): mixed
@@ -63,17 +56,11 @@ class ConfigIterator implements \Iterator
         return key($this->types);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function valid(): bool
     {
         return key($this->types) !== null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rewind(): void
     {
         reset($this->types);

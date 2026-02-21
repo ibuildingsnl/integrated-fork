@@ -50,7 +50,7 @@ class AbstractController extends BaseAbstractController
         return $this->container->get('translator');
     }
 
-    protected function getUser()
+    protected function getUser(): ?User
     {
         $user = parent::getUser();
         if ($user && !$user instanceof User) {
@@ -60,14 +60,15 @@ class AbstractController extends BaseAbstractController
         return $user;
     }
 
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
-        return array_merge(parent::getSubscribedServices(), [
+        return [
+            ...BaseAbstractController::getSubscribedServices(),
             'doctrine' => '?'.ORMManagerRegistry::class,
             'doctrine_mongodb' => '?'.ODMManagerRegistry::class,
             'knp_paginator' => '?'.PaginatorInterface::class,
             'solarium.client' => '?'.Client::class,
             'translator' => '?'.TranslatorInterface::class,
-        ]);
+        ];
     }
 }

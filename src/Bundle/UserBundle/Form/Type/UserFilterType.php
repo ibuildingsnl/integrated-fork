@@ -21,12 +21,9 @@ class UserFilterType extends AbstractType
         $this->filterQueryProvider = $filterQueryProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->setMethod('GET');
+        $builder->setMethod(\Symfony\Component\HttpFoundation\Request::METHOD_GET);
 
         $builder
             ->add('q', TextType::class, [
@@ -45,15 +42,12 @@ class UserFilterType extends AbstractType
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired('data');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_user_filter';
     }

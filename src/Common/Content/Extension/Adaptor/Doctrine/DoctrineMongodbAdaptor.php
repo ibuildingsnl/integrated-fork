@@ -11,7 +11,7 @@
 
 namespace Integrated\Common\Content\Extension\Adaptor\Doctrine;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\MongoDBBundle\Attribute\AsDocumentListener;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Event\PreFlushEventArgs;
 use Doctrine\Persistence\Proxy;
@@ -21,24 +21,15 @@ use Integrated\Common\Content\Extension\Events;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class DoctrineMongodbAdaptor extends AbstractAdaptor implements EventSubscriber
+#[AsDocumentListener(event: 'preRemove')]
+#[AsDocumentListener(event: 'postRemove')]
+#[AsDocumentListener(event: 'prePersist')]
+#[AsDocumentListener(event: 'postPersist')]
+#[AsDocumentListener(event: 'preFlush')]
+#[AsDocumentListener(event: 'postUpdate')]
+#[AsDocumentListener(event: 'postLoad')]
+class DoctrineMongodbAdaptor extends AbstractAdaptor
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getSubscribedEvents()
-    {
-        return [
-            'preRemove',
-            'postRemove',
-            'prePersist',
-            'postPersist',
-            'preFlush', // calculate our of preUpdate
-            'postUpdate', // probably should to postUpdate along the lines of the preUpdate
-            'postLoad',
-        ];
-    }
-
     public function preRemove(LifecycleEventArgs $args)
     {
         $this->dispatch(Events::PRE_DELETE, $args->getDocument());

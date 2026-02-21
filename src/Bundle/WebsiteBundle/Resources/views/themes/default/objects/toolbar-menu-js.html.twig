@@ -40,6 +40,17 @@
                                 ghostClass: "integrated-website-item-ghost",
                                 dragClass: "integrated-website-item-dragging"
                             });
+
+                            item.querySelectorAll('.menu.level2').forEach((subItem, index) => {
+                                new Sortable(subItem, {
+                                    scroll: true,
+                                    group: "integrated-submenu-"+index,
+                                    sort: true,
+                                    draggable: '[data-action="integrated-website-menu-item-edit"]',
+                                    ghostClass: "integrated-website-item-ghost",
+                                    dragClass: "integrated-website-item-dragging"
+                                });
+                            });
                         }
                     );
 

@@ -15,13 +15,10 @@ class BlockImageListener implements EventSubscriberInterface
 {
     public function __construct(
         private readonly DocumentManager $documentManager,
-        private readonly MainFlusher $flusher
+        private readonly MainFlusher $flusher,
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

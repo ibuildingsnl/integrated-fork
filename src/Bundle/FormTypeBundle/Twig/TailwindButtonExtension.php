@@ -29,14 +29,11 @@ class TailwindButtonExtension extends AbstractExtension
         $this->iconExtension = $iconExtension;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getFunctions()
     {
         return [
-            new TwigFunction('button', [$this, 'buttonFunction'], ['is_safe' => ['html']]),
-            new TwigFunction('button_link', [$this, 'buttonLinkFunction'], ['is_safe' => ['html']]),
+            new TwigFunction('button', $this->buttonFunction(...), ['is_safe' => ['html']]),
+            new TwigFunction('button_link', $this->buttonLinkFunction(...), ['is_safe' => ['html']]),
         ];
     }
 
@@ -79,16 +76,13 @@ class TailwindButtonExtension extends AbstractExtension
     private function attributes(array $attributes)
     {
         $result = '';
-        array_walk($attributes, function ($value, $attr) use (&$result) {
+        array_walk($attributes, function ($value, $attr) use (&$result): void {
             $result .= " $attr=\"$value\"";
         });
 
         return $result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getName()
     {
         return 'braincrafted_tailwind_button';

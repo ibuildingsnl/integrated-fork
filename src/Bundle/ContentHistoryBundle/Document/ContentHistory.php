@@ -72,7 +72,7 @@ class ContentHistory
     {
         $this->contentId = $content->getId();
         $this->contentType = $content->getContentType();
-        $this->contentClass = \get_class($content);
+        $this->contentClass = $content::class;
         $this->action = $action;
         $this->date = new \DateTime();
     }
@@ -154,7 +154,7 @@ class ContentHistory
     /**
      * @return $this
      */
-    public function setRequest(Request $request = null)
+    public function setRequest(?Request $request = null)
     {
         $this->request = $request;
 
@@ -172,7 +172,7 @@ class ContentHistory
     /**
      * @return $this
      */
-    public function setUser(User $user = null)
+    public function setUser(?User $user = null)
     {
         $this->user = $user;
 
