@@ -2,16 +2,17 @@
 {% set description = media.description|default('') %}
 {% set credits = media.credits|default('') %}
 {% set contentType = media.contentType is defined ? media.contentType : (media.contenttype is defined ? media.contenttype : '') %}
+{% set contentId = media.type_id is defined ? media.type_id : (media.typeId is defined ? media.typeId : (media.typeid is defined ? media.typeid : media.id)) %}
 {% set fileRaw = media.file is defined ? (media.file ~ '') : '' %}
 {% set filePath = fileRaw|split('"')|first|split(',')|first %}
 {% set filetypeCandidate = filePath|split('.')|last|lower %}
 {% set filetype = filetypeCandidate matches '/^[a-z0-9]{1,5}$/' ? filetypeCandidate : '' %}
 
-<li class="media-item ui-widget-content ui-corner-tr grid {{ contentType }}{% if media.id in (selected_ids|default([])) %} selected{% endif %}"
-    id="{{ media.id }}"
+<li class="media-item ui-widget-content ui-corner-tr grid {{ contentType }}{% if contentId in (selected_ids|default([])) %} selected{% endif %}"
+    id="{{ contentId }}"
     data-content_type="{{ contentType }}"
-    data-id="{{ media.id }}"
-    data-media_id="{{ loop is defined ? loop.index : media.id }}"
+    data-id="{{ contentId }}"
+    data-media_id="{{ loop is defined ? loop.index : contentId }}"
     data-thumbnail="{{ thumbnail }}"
     data-file="{{ media.file }}"
     data-title="{{ media.title }}"
@@ -62,7 +63,7 @@
         <span class="screen-reader-text">{% trans %} Edit {% endtrans %}</span>
     </button>
 
-    <button id="bulkselection_{{ media.id }}" type="button" class="bulkselectionbutton check" tabindex="-1">
+    <button id="bulkselection_{{ contentId }}" type="button" class="bulkselectionbutton check" tabindex="-1">
         <span class="media-modal-icon">
             <i class="iconoir-check"></i>
         </span>

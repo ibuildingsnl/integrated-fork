@@ -41,6 +41,15 @@ class ImageTransformer implements DataTransformerInterface
 
     public function reverseTransform($id): mixed
     {
+        if (\is_string($id) && str_contains($id, ',')) {
+            $ids = array_values(array_filter(array_map('trim', explode(',', $id))));
+            $id = $ids[0] ?? null;
+        }
+
+        if (!$id) {
+            return null;
+        }
+
         return $this->repository->find($id);
     }
 }

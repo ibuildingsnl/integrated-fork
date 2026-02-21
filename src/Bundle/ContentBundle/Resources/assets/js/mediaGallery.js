@@ -439,14 +439,42 @@ window.onlyUnique = function(value, index, self) {
     return self.indexOf(value) === index;
 }
 
+function toggleMediaItemSelectedClass(id, selected) {
+    if (!id) {
+        return;
+    }
+
+    const node = document.getElementById(id);
+    if (!node) {
+        return;
+    }
+
+    node.classList.toggle('selected', !!selected);
+}
+
+function syncSelectionStateFromDOM() {
+    const selectedNodes = Array.from(document.querySelectorAll('.media-item.selected'));
+    const selectedIds = selectedNodes
+        .map(node => node.getAttribute('data-id'))
+        .filter(Boolean);
+
+    if (modi[selected_modus].selectOnlyOneEnabled) {
+        const selectedId = selectedIds.length > 0 ? selectedIds[selectedIds.length - 1] : null;
+        selectedNodes.forEach((node) => {
+            node.classList.toggle('selected', node.getAttribute('data-id') === selectedId);
+        });
+        bulkSelection = selectedId ? [selectedId] : [];
+    } else {
+        bulkSelection = selectedIds.filter(onlyUnique);
+    }
+}
+
 function handleBulkItemClick(event) {
     if (modi[selected_modus].selectOnlyOneEnabled) {
         const element_id = event.currentTarget.getAttribute('data-id');
-        if (bulkSelection.length > 0) {
-            $('#' + bulkSelection[0]).removeClass('selected');
-        }
+        document.querySelectorAll('.media-item.selected').forEach((node) => node.classList.remove('selected'));
         bulkSelection = [event.currentTarget.getAttribute('data-id')];
-        $('#' + element_id).addClass('selected');
+        toggleMediaItemSelectedClass(element_id, true);
     } else {
         let media_id = null;
         if (event.shiftKey === true) {
@@ -467,17 +495,17 @@ function handleBulkItemClick(event) {
                 media_id = element.getAttribute('data-id');
 
                 bulkSelection.push(media_id);
-                $('#' + media_id).addClass('selected');
+                toggleMediaItemSelectedClass(media_id, true);
             }
         } else {
             //SINGLE CLICK
             media_id = event.currentTarget.getAttribute('data-id');
             if (bulkSelection.includes(media_id)) {
                 bulkSelection = bulkSelection.filter(item => item !== media_id);
-                $('#' + media_id).removeClass('selected');
+                toggleMediaItemSelectedClass(media_id, false);
             } else {
                 bulkSelection.push(media_id);
-                $('#' + media_id).addClass('selected');
+                toggleMediaItemSelectedClass(media_id, true);
             }
         }
     }
@@ -710,6 +738,7 @@ window.asideFolderSearch = function(elem) {
 
 function initializeMediaGalleryFeatures() {
     initializeViewPreference();
+    syncSelectionStateFromDOM();
     setupDragAndDrop();
     setupSelectionUi();
 }

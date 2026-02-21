@@ -32,16 +32,21 @@ function populateSelectedImages() {
 function populateFormRelations() {
     document.querySelectorAll('.mediagallery_selector').forEach((item) => {
         const id = item.getAttribute('id');
-        const inputIdentifier = item.parentNode.classList.contains('relation') ?
-            `integrated_content[relations][${id}]` :
-            item.querySelector('.selected_images').getAttribute('data-fieldName');
+        const isRelationField = item.parentNode.classList.contains('relation');
+        const multipleValue = (item.querySelector('.select_multimedia_button').dataset.multiple || '').toLowerCase();
+        const isMultiple = multipleValue === 'true'
+            || multipleValue === '1'
+            || (multipleValue === '' && isRelationField);
+        const inputSelector = isRelationField
+            ? `input[name="integrated_content[relations][${id}]"]`
+            : `#${id} .mediagallery_selector_input`;
 
         form_relations[id] = {
-            modus: item.querySelector('.select_multimedia_button').dataset.multiple ? 'select_multiple' : 'select_one',
+            modus: isMultiple ? 'select_multiple' : 'select_one',
             selected_images: [],
             relationid: id,
             types: JSON.parse(item.querySelector('.select_multimedia_button').dataset.types),
-            input_selector: `input[name="${inputIdentifier}"]`,
+            input_selector: inputSelector,
             selected_images_selector: `#${id} .selected_images`,
             wrap_selector: `.${id}.wrap`,
             iframe_selector: `.${id}.iframe`,
@@ -150,7 +155,15 @@ function filterImages(selection) {
 }
 
 function addImageIDsToInputField() {
-    document.querySelector(selected_relation.input_selector).value = selected_relation.selected_images.map(item => item.id).join(',');
+    const input = document.querySelector(selected_relation.input_selector);
+    if (!input) {
+        return;
+    }
+
+    const selectedIds = selected_relation.selected_images.map(item => item.id).filter(Boolean);
+    input.value = selected_relation.modus === 'select_one'
+        ? (selectedIds[selectedIds.length - 1] || '')
+        : selectedIds.join(',');
 }
 
 function emptyShownImagesInDOM() {
@@ -159,7 +172,8 @@ function emptyShownImagesInDOM() {
 
 function selectImagesToShow(response_from_iframe) {
     if (selected_relation.modus == 'select_one') {
-        selected_relation.selected_images = response_from_iframe;
+        const selected = response_from_iframe.filter(item => item && item.id);
+        selected_relation.selected_images = selected.length > 0 ? [selected[selected.length - 1]] : [];
     } else {
         //concat AND filter for unique values:
         selected_relation.selected_images = [
@@ -181,7 +195,9 @@ window.addEventListener('message', function(e) {
         return;
     }
     if (typeof e.data === 'string' && e.data.length > 0) {
-        const response_from_iframe = filterImages(JSON.parse(e.data));
+        const parsedResponse = JSON.parse(e.data);
+        const filteredResponse = filterImages(parsedResponse);
+        const response_from_iframe = filteredResponse.length > 0 ? filteredResponse : parsedResponse;
         if (response_from_iframe.length > 0) {
             selectImagesToShow(response_from_iframe);
             rebuildDOM();
