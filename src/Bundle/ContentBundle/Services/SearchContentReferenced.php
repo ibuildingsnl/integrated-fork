@@ -172,29 +172,6 @@ class SearchContentReferenced
     /**
      * @return array
      */
-    public function getDeletedInfo($document, DocumentManager $documentManager)
-    {
-        $deleted = [
-            'className' => $document::class,
-            'metadata' => $documentManager->getClassMetadata($document::class),
-        ];
-
-        $deleted['idField'] = current($deleted['metadata']->getIdentifier());
-        $deleted['idValue'] = $deleted['metadata']->getFieldValue($document, $deleted['idField']);
-
-        if (MongoType::hasType($deleted['metadata']->getTypeOfField($deleted['idField']))) {
-            $typeClass = MongoType::getType($deleted['metadata']->getTypeOfField($deleted['idField']));
-            $deleted['idValue'] = $typeClass->convertToDatabaseValue($deleted['idValue']);
-        } else {
-            throw new \Exception('The identifer of the deleted object must have a valid Doctrine field type');
-        }
-
-        return $deleted;
-    }
-
-    /**
-     * @return array
-     */
     private function prepareReferenced($referenced)
     {
         $output = [];
