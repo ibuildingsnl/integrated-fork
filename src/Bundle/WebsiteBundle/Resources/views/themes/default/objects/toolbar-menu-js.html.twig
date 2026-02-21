@@ -7,6 +7,7 @@
         var workspaceActiveList = null;
         var workspaceOriginalParent = null;
         var workspaceOriginalNextSibling = null;
+        var workspaceVisualMirrorList = null;
 
         var parseMenuDatasetJson = function(value) {
             if (!value) {
@@ -735,22 +736,28 @@
             var childList = node.querySelector(':scope > .integrated-website-menu-list');
             if (!childList) {
                 childList = document.createElement('ul');
-                childList.className = 'integrated-website-menu-list';
+                childList.className = 'integrated-website-menu-list integrated-menu-tree-list';
+                childList.dataset.integratedOriginalClass = 'integrated-website-menu-list';
                 childList.dataset.integratedSyntheticList = '1';
                 node.appendChild(childList);
             }
         };
 
         var decorateWorkspaceTree = function(root) {
+            var normalizeWorkspaceListClass = function(list) {
+                if (typeof list.dataset.integratedOriginalClass === 'undefined') {
+                    list.dataset.integratedOriginalClass = list.getAttribute('class') || '';
+                }
+
+                list.className = 'integrated-website-menu-list integrated-menu-tree-list';
+            };
+
             root.querySelectorAll('.integrated-website-menu-item').forEach(function(node) {
                 decorateWorkspaceNode(node);
             });
 
             root.querySelectorAll('.integrated-website-menu-list').forEach(function(list) {
-                if (typeof list.dataset.integratedOriginalClass === 'undefined') {
-                    list.dataset.integratedOriginalClass = list.getAttribute('class') || '';
-                }
-                list.classList.add('integrated-menu-tree-list');
+                normalizeWorkspaceListClass(list);
             });
         };
 
@@ -825,6 +832,15 @@
             if (list.parentElement && !list.parentElement.classList.contains('integrated-menu-workspace-tree')) {
                 workspaceOriginalParent = list.parentElement;
                 workspaceOriginalNextSibling = list.nextSibling;
+
+                // Keep a visual copy in the page so the menu remains visible while editing in the panel.
+                if (!workspaceVisualMirrorList) {
+                    workspaceVisualMirrorList = list.cloneNode(true);
+                    workspaceVisualMirrorList.dataset.integratedMenuWorkspaceMirror = '1';
+                    hideAddPlaceholders(workspaceVisualMirrorList);
+                    normalizeHasChildrenClasses(workspaceVisualMirrorList);
+                    workspaceOriginalParent.insertBefore(workspaceVisualMirrorList, list);
+                }
             }
 
             target.innerHTML = '';
@@ -945,6 +961,7 @@
             workspaceActiveList = null;
             workspaceOriginalParent = null;
             workspaceOriginalNextSibling = null;
+            workspaceVisualMirrorList = null;
             panel.dataset.menuRootId = ensureMenuRootId(menuRoot);
             panel.querySelector('.integrated-menu-builder-context').textContent = '{% trans %}Drag to reorder, drag between levels for subitems{% endtrans %}';
 
@@ -1056,6 +1073,10 @@
                 }
             }
 
+            if (workspaceVisualMirrorList && workspaceVisualMirrorList.parentNode) {
+                workspaceVisualMirrorList.parentNode.removeChild(workspaceVisualMirrorList);
+            }
+
             hideAddPlaceholders(workspaceCurrentMenu);
             ensureEmptyMenuAction(workspaceCurrentMenu);
 
@@ -1075,6 +1096,7 @@
             workspaceActiveList = null;
             workspaceOriginalParent = null;
             workspaceOriginalNextSibling = null;
+            workspaceVisualMirrorList = null;
         };
 
         var init = function() {
