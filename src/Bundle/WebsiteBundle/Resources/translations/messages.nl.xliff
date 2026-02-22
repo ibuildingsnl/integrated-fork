@@ -54,6 +54,50 @@
                 <source>Heading item</source>
                 <target>Kopitem</target>
             </trans-unit>
+            <trans-unit id="14">
+                <source>Block builder</source>
+                <target>Blokbouwer</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>Choose an existing block or create a new one</source>
+                <target>Kies een bestaand blok of maak een nieuw blok</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>Layout builder</source>
+                <target>Layoutbouwer</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>Choose a structure and fine-tune widths</source>
+                <target>Kies een structuur en stel de breedtes nauwkeurig in</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>Loading blocks...</source>
+                <target>Blokken laden...</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>Unable to load blocks. Please try again.</source>
+                <target>Kan blokken niet laden. Probeer het opnieuw.</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>Add block</source>
+                <target>Blok toevoegen</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>Create block</source>
+                <target>Blok maken</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>Filter channel</source>
+                <target>Kanaal filteren</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>Filter type</source>
+                <target>Type filteren</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>Edit block</source>
+                <target>Blok bewerken</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
