@@ -2,24 +2,38 @@
 /*!********************************************************************!*\
   !*** ./src/Bundle/ContentBundle/Resources/assets/js/edit_panel.js ***!
   \********************************************************************/
-document.addEventListener("DOMContentLoaded", function (event) {
+function initEditPanel() {
+  var wrapper = document.querySelector('#editimagewrapper');
+  var panel = document.querySelector('#media-edit-panel');
+  if (!wrapper || !panel) {
+    return;
+  }
+  if (window.document.body.dataset.boundEditImageClick === 'true') {
+    return;
+  }
   window.document.addEventListener('editImageClick', handleEvent, false);
-  var edit_image_path = document.querySelector('#editimagewrapper').dataset.editimagepath;
-  var edit_image_iframe_path = document.querySelector('#editimagewrapper').dataset.editimageiframepath;
-  function handleEvent(e) {
-    var media_id = document.querySelector('#media-edit-panel').dataset.mediaId;
+  window.document.body.dataset.boundEditImageClick = 'true';
+  function handleEvent() {
+    var mediaId = panel.dataset.mediaId;
+    var editImagePath = wrapper.dataset.editimagepath;
+    var editImageIframePath = wrapper.dataset.editimageiframepath;
+    if (!mediaId || !editImagePath || !editImageIframePath) {
+      return;
+    }
 
     // If selected modus == media gallery, we should go to the page with a redirect,
     // If selected_modus is something else (select_multiple, select_one) then this is loaded via an iframe
     // And then we load the same page without sidebar and header
-
     var selectedModus = typeof selected_modus !== 'undefined' && selected_modus && selected_modus !== 'undefined' ? selected_modus : 'media_gallery';
     if (selectedModus == 'media_gallery') {
-      window.location.href = edit_image_path.replace('REPLACE', media_id);
+      window.location.href = editImagePath.replace('REPLACE', mediaId);
     } else {
-      window.location.href = edit_image_iframe_path.replace('REPLACE', media_id);
+      window.location.href = editImageIframePath.replace('REPLACE', mediaId);
     }
   }
-});
+}
+document.addEventListener('DOMContentLoaded', initEditPanel);
+document.addEventListener('turbo:load', initEditPanel);
+document.addEventListener('turbo:render', initEditPanel);
 /******/ })()
 ;

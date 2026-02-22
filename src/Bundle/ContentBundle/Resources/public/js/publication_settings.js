@@ -53,90 +53,110 @@ function openPublishingSettings(channelId, input) {
     window.dispatchEvent(openPublishSettingsEvent);
 }
 
-document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
-    const settings = document.querySelector(
-        '.publication-settings[data-publication-channel="'+input.dataset.channelSelector+'"]'
-    );
-    if (!settings) {
-        return;
-    }
+function initPublicationChannelSettingsButtons() {
+    document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
+        const settings = document.querySelector(
+            '.publication-settings[data-publication-channel="'+input.dataset.channelSelector+'"]'
+        );
+        if (!settings) {
+            return;
+        }
 
-    if (settings.dataset.channelType) {
-        const allOption = document.createElement('option');
-        allOption.value = 'type';
-        allOption.text = pubSettings.applyToAll + ' ' + settings.dataset.channelType + ' ' + pubSettings.channels;
-        const someOption = document.createElement('option');
-        someOption.value = 'choose';
-        someOption.text = pubSettings.applyToSpecific + ' ' + settings.dataset.channelType + ' ' + pubSettings.channels;
-    }
+        if (settings.dataset.channelType) {
+            const allOption = document.createElement('option');
+            allOption.value = 'type';
+            allOption.text = pubSettings.applyToAll + ' ' + settings.dataset.channelType + ' ' + pubSettings.channels;
+            const someOption = document.createElement('option');
+            someOption.value = 'choose';
+            someOption.text = pubSettings.applyToSpecific + ' ' + settings.dataset.channelType + ' ' + pubSettings.channels;
+        }
 
-    const openSettings = document.createElement('a');
-    openSettings.href = '#';
-    openSettings.title = 'Publication settings';
-    openSettings.innerHTML = '<i class="iconoir-settings"></i>';
-    openSettings.className = 'publication-settings-button';
-    openSettings.addEventListener('click', function (ev) {
-        openPublishingSettings(input.dataset.channelSelector, input);
-        ev.preventDefault();
-        ev.stopPropagation();
+        let openSettings = input.closest('.checkbox')?.parentNode?.querySelector('.publication-settings-button');
+        if (!openSettings) {
+            openSettings = document.createElement('a');
+            openSettings.href = '#';
+            openSettings.title = 'Publication settings';
+            openSettings.innerHTML = '<i class="iconoir-settings"></i>';
+            openSettings.className = 'publication-settings-button';
+            input.closest('.checkbox').insertAdjacentElement('afterend', openSettings);
+        }
+
+        if (openSettings.dataset.boundPublicationSettingsButton !== 'true') {
+            openSettings.addEventListener('click', function (ev) {
+                openPublishingSettings(input.dataset.channelSelector, input);
+                ev.preventDefault();
+                ev.stopPropagation();
+            });
+            openSettings.dataset.boundPublicationSettingsButton = 'true';
+        }
+
+        input.openSettings = openSettings;
+        if (input.dataset.boundPublicationSettingsChange !== 'true') {
+            input.addEventListener('change', () => showHidePublicationSettingsButton(input));
+            input.dataset.boundPublicationSettingsChange = 'true';
+        }
+        showHidePublicationSettingsButton(input);
     });
-
-    input.closest('.checkbox').insertAdjacentElement('afterend', openSettings);
-    input.openSettings = openSettings;
-    input.addEventListener('change', () => showHidePublicationSettingsButton(input));
-    showHidePublicationSettingsButton(input);
-});
+}
 
 // Save & exit publication settings
-document.querySelectorAll('.publication-settings-popup').forEach(function (settings) {
-    settings.querySelectorAll('a.btn').forEach(function(a) {
-        a.addEventListener('click', function (ev) {
-            let channelId = settings.querySelector('.publication-settings').getAttribute('data-publication-channel');
-            a.closest('.publication-settings-aside').classList.remove('show');
-            document.querySelectorAll('.editor-overlay').forEach(div => {
-                div.classList.remove('show');
-            });
-            const applyType = settings.querySelector('[data-apply-to]')?.value;
-            if (applyType === 'type') {
-                const pubInputSelector = 'input,select,textarea';
-                const data = {};
-                settings.querySelectorAll(pubInputSelector).forEach(function (input, i) {
-                    data[i] = input.value;
-                });
-                document.querySelectorAll('.publication-settings[data-channel-type="' + settings.querySelector('[data-channel-type]')?.dataset.channelType + '"]').forEach(function (container) {
-                    if (settings.contains(container)) {
-                        return;
-                    }
-                    container.querySelectorAll(pubInputSelector).forEach(function (input, i) {
-                        input.value = data[i];
-                    });
-                });
-            } else if (applyType === 'choose') {
-                const pubInputSelector = 'input,select,textarea';
-                const data = {};
-                settings.querySelectorAll(pubInputSelector).forEach(function (input, i) {
-                    data[i] = input.value;
-                });
-                document.querySelectorAll('.publication-settings[data-channel-type="' + settings.querySelector('[data-channel-type]')?.dataset.channelType + '"]'
-                ).forEach(function (container) {
-                    if (settings.contains(container)) {
-                        return;
-                    }
-                    if (!document.querySelector('[data-apply-channels] option:checked[value="'+container.dataset.publicationChannel+'"]')) {
-                        return;
-                    }
-                    container.querySelectorAll(pubInputSelector).forEach(function (input, i) {
-                        input.value = data[i];
-                    });
-                });
+function initPublicationSettingsPopupButtons() {
+    document.querySelectorAll('.publication-settings-popup').forEach(function (settings) {
+        settings.querySelectorAll('a.btn').forEach(function(a) {
+            if (a.dataset.boundPublicationSettingsSave === 'true') {
+                return;
             }
-            var event = new CustomEvent("ensurePublicationEvent", { detail: { channelId: channelId } });
-            document.dispatchEvent(event);
 
-            ev.preventDefault();
+            a.addEventListener('click', function (ev) {
+                let channelId = settings.querySelector('.publication-settings').getAttribute('data-publication-channel');
+                a.closest('.publication-settings-aside').classList.remove('show');
+                document.querySelectorAll('.editor-overlay').forEach(div => {
+                    div.classList.remove('show');
+                });
+                const applyType = settings.querySelector('[data-apply-to]')?.value;
+                if (applyType === 'type') {
+                    const pubInputSelector = 'input,select,textarea';
+                    const data = {};
+                    settings.querySelectorAll(pubInputSelector).forEach(function (input, i) {
+                        data[i] = input.value;
+                    });
+                    document.querySelectorAll('.publication-settings[data-channel-type="' + settings.querySelector('[data-channel-type]')?.dataset.channelType + '"]').forEach(function (container) {
+                        if (settings.contains(container)) {
+                            return;
+                        }
+                        container.querySelectorAll(pubInputSelector).forEach(function (input, i) {
+                            input.value = data[i];
+                        });
+                    });
+                } else if (applyType === 'choose') {
+                    const pubInputSelector = 'input,select,textarea';
+                    const data = {};
+                    settings.querySelectorAll(pubInputSelector).forEach(function (input, i) {
+                        data[i] = input.value;
+                    });
+                    document.querySelectorAll('.publication-settings[data-channel-type="' + settings.querySelector('[data-channel-type]')?.dataset.channelType + '"]'
+                    ).forEach(function (container) {
+                        if (settings.contains(container)) {
+                            return;
+                        }
+                        if (!document.querySelector('[data-apply-channels] option:checked[value="'+container.dataset.publicationChannel+'"]')) {
+                            return;
+                        }
+                        container.querySelectorAll(pubInputSelector).forEach(function (input, i) {
+                            input.value = data[i];
+                        });
+                    });
+                }
+                var event = new CustomEvent("ensurePublicationEvent", { detail: { channelId: channelId } });
+                document.dispatchEvent(event);
+
+                ev.preventDefault();
+            });
+
+            a.dataset.boundPublicationSettingsSave = 'true';
         });
     });
-});
+}
 
 document.addEventListener('click', function (ev) {
     if (document.querySelectorAll('.publication-settings-aside.show')) {
@@ -161,24 +181,27 @@ function setupTextareaCopyFeature() {
         if (textarea) {
             const copyIntroButton = createOrFindButton(textarea, 'copy-intro-btn', 'Copy Intro');
 
-            copyIntroButton.addEventListener('click', function() {
-                if (tinymce.get(editorID)) {
-                    const content = tinymce.get(editorID).getContent();
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = content;
-                    let textContent = tempDiv.textContent ||
-                        tempDiv.innerText || '';
+            if (copyIntroButton.dataset.boundCopyIntro !== 'true') {
+                copyIntroButton.addEventListener('click', function() {
+                    if (tinymce.get(editorID)) {
+                        const content = tinymce.get(editorID).getContent();
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = content;
+                        let textContent = tempDiv.textContent ||
+                            tempDiv.innerText || '';
 
-                    const maxChars = parseInt(textarea.getAttribute('data-maxchars'), 10);
-                    if (maxChars > 0) {
-                        if (textContent.length > maxChars) {
-                            textContent = textContent.substr(0, maxChars);
+                        const maxChars = parseInt(textarea.getAttribute('data-maxchars'), 10);
+                        if (maxChars > 0) {
+                            if (textContent.length > maxChars) {
+                                textContent = textContent.substr(0, maxChars);
+                            }
                         }
-                    }
 
-                    textarea.value = textContent;
-                }
-            });
+                        textarea.value = textContent;
+                    }
+                });
+                copyIntroButton.dataset.boundCopyIntro = 'true';
+            }
         }
     });
 }
@@ -194,12 +217,13 @@ function createOrFindButton(input, className, text) {
     return button;
 }
 
-document.addEventListener('DOMContentLoaded', setupTextareaCopyFeature);
-
 function initPublicationDelete() {
     const icons = document.querySelectorAll('.publication-item .icon.iconoir-xmark');
 
     icons.forEach(function(icon) {
+        if (icon.dataset.boundPublicationDelete === 'true') {
+            return;
+        }
         icon.addEventListener('click', function() {
             const channelSelector = icon.closest('.publication-item').getAttribute('data-channel');
 
@@ -216,6 +240,7 @@ function initPublicationDelete() {
                 publicationItem.remove();
             }
         });
+        icon.dataset.boundPublicationDelete = 'true';
     });
 }
 
@@ -236,12 +261,15 @@ function initPublicationItems() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+function initNewPublicationCheckboxes() {
     const newPublicationCheckboxes = document.querySelectorAll('.new-publication-check input[type="checkbox"]');
     let savedData = {};
     let savedImages = {};
 
     newPublicationCheckboxes.forEach((checkbox, index) => {
+        if (checkbox.dataset.boundNewPublicationCheckbox === 'true') {
+            return;
+        }
         checkbox.addEventListener('change', function () {
             const publicationSettingsAside = checkbox.closest('.publication-settings-aside');
             const publicationSettings = publicationSettingsAside.querySelector('.publication-settings');
@@ -315,11 +343,26 @@ document.addEventListener('DOMContentLoaded', function () {
             window.dispatchEvent(applyPublishSettingsEvent);
 
         });
+        checkbox.dataset.boundNewPublicationCheckbox = 'true';
     });
-});
+}
 
-document.addEventListener('DOMContentLoaded', initPublicationItems);
-document.addEventListener('DOMContentLoaded', initPublicationDelete);
+function initPublicationTextareaEnterStop() {
+    document.querySelectorAll('textarea.form-control:not(.title_tinymce_input)').forEach(function(textarea) {
+        if (textarea.dataset.boundStopEnterKey === 'true') {
+            return;
+        }
+        textarea.addEventListener('keypress', function(e) {
+            var key = e.keyCode || e.which;
+
+            // If the user has pressed enter
+            if (key === 13) {
+                e.stopPropagation();
+            }
+        });
+        textarea.dataset.boundStopEnterKey = 'true';
+    });
+}
 
 window.addEventListener('updatePublicationItems', function(e) {
     initPublicationItems();
@@ -329,13 +372,16 @@ window.addEventListener('updatePublicationItems', function(e) {
     initPublicationDelete();
 });
 
-document.querySelectorAll('textarea.form-control:not(.title_tinymce_input)').forEach(function(textarea) {
-    textarea.addEventListener('keypress', function(e) {
-        var key = e.keyCode || e.which;
+function initPublicationSettingsPage() {
+    initPublicationChannelSettingsButtons();
+    initPublicationSettingsPopupButtons();
+    setupTextareaCopyFeature();
+    initPublicationItems();
+    initPublicationDelete();
+    initNewPublicationCheckboxes();
+    initPublicationTextareaEnterStop();
+}
 
-        // If the user has pressed enter
-        if (key === 13) {
-            e.stopPropagation();
-        }
-    });
-});
+document.addEventListener('DOMContentLoaded', initPublicationSettingsPage);
+document.addEventListener('turbo:load', initPublicationSettingsPage);
+document.addEventListener('turbo:render', initPublicationSettingsPage);

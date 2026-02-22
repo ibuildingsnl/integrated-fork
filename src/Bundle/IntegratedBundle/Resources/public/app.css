@@ -13220,6 +13220,40 @@ input.clr-color:focus {
     border-top: 1px solid #e5e7eb;
   }
 }
+turbo-frame#content-navigator {
+  display: block;
+  position: relative;
+}
+turbo-frame#content-navigator::after {
+  content: "";
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #d9e3ea;
+  border-top-color: #01ae93;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease-in-out;
+  animation: content-navigator-spin 0.7s linear infinite;
+  z-index: 10;
+}
+turbo-frame#content-navigator[busy] .index-wrapper,
+turbo-frame#content-navigator[busy] .aside-filters {
+  opacity: 0.62;
+  transition: opacity 0.15s ease-in-out;
+}
+turbo-frame#content-navigator[busy]::after {
+  opacity: 1;
+}
+
+@keyframes content-navigator-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 div.heading-switcher {
   display: flex;
   align-items: center;

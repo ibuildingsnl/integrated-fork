@@ -7,15 +7,20 @@ import './unlock_article';
 import './taxonomy_category';
 
 function initializePage() {
+    bindPreventEnterOnContentForm();
+    initBrandChannelChoiceHandlers();
     prepDateTimeFields();
     setupCharacterCounters();
     updatePublicationsAndChannels();
     setPublicationDateTimes();
 
-    document.addEventListener('click', function(e) {
-        if (!e.target.classList.contains('ok-date')) return;
-        updatePublicationsAndChannels();
-    });
+    if (document.body.dataset.boundOkDateUpdate !== 'true') {
+        document.addEventListener('click', function(e) {
+            if (!e.target.classList.contains('ok-date')) return;
+            updatePublicationsAndChannels();
+        });
+        document.body.dataset.boundOkDateUpdate = 'true';
+    }
 }
 
 function prepDateTimeFields() {
@@ -103,13 +108,15 @@ function toggleDateSelection(showSelection, dateSelection, dateText) {
     }
 }
 
-$('form[name="integrated_content"]').on('keyup keypress', function(e) {
-    var keyCode = e.keyCode || e.which;
-    if (keyCode === 13) {
-        e.preventDefault();
-        return false;
-    }
-});
+function bindPreventEnterOnContentForm() {
+    $('form[name="integrated_content"]').off('keyup.preventEnter keypress.preventEnter').on('keyup.preventEnter keypress.preventEnter', function(e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13) {
+            e.preventDefault();
+            return false;
+        }
+    });
+}
 
 function updateDateText(dateSelection, dateText) {
     const dateInput = dateSelection.querySelector('input[type="date"]');
@@ -161,7 +168,10 @@ function setupCharacterCounters() {
         };
 
         updateCounter(); // Initial update
-        textarea.addEventListener('input', updateCounter);
+        if (textarea.dataset.boundCharCounterInput !== 'true') {
+            textarea.addEventListener('input', updateCounter);
+            textarea.dataset.boundCharCounterInput = 'true';
+        }
     });
 }
 
@@ -317,8 +327,9 @@ function updatePublicationStyles(publicationToUpdate, isDateValid) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+function initBrandChannelChoiceHandlers() {
     document.querySelectorAll('.brand-channel-choice').forEach(checkbox => {
+        if (checkbox.dataset.boundBrandChannelChoice !== 'true') {
         checkbox.addEventListener('change', function() {
             let channelName = checkbox.getAttribute('data-channel-name');
             let channelIcon = checkbox.getAttribute('data-channel-type-icon');
@@ -360,8 +371,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
             window.dispatchEvent(updatePublicationItems);
         });
+            checkbox.dataset.boundBrandChannelChoice = 'true';
+        }
     });
-});
+}
 
 function createPublicationItem(channelName, channelIcon, date, time, dataChannel) {
     const formattedDate = date.split('-').reverse().join('-');
@@ -426,15 +439,25 @@ function setPublicationDateTimes(){
     let mainStartDate = document.querySelector('#integrated_content_publishTime .startDate');
 
     if (mainStartDate) {
-        mainStartDate.querySelector('.date-text').addEventListener('click', function() {
+        const dateTextButton = mainStartDate.querySelector('.date-text');
+        const okDateButton = mainStartDate.querySelector('.ok-date');
+        if (!dateTextButton || !okDateButton) {
+            return;
+        }
+
+        if (dateTextButton.dataset.boundSetPublicationDateTimesClick !== 'true') {
+            dateTextButton.addEventListener('click', function() {
             let dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
             let timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
             prevDate = dateInput.value
             prevTime = timeInput.value
 
-        })
+            });
+            dateTextButton.dataset.boundSetPublicationDateTimesClick = 'true';
+        }
 
-        mainStartDate.querySelector('.ok-date').addEventListener('click', function() {
+        if (okDateButton.dataset.boundSetPublicationDateTimesOk !== 'true') {
+            okDateButton.addEventListener('click', function() {
             let dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
             let timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
             let newDate = dateInput.value;
@@ -463,6 +486,8 @@ function setPublicationDateTimes(){
             updatePublicationsAndChannels();
             prepDateTimeFields();
         });
+            okDateButton.dataset.boundSetPublicationDateTimesOk = 'true';
+        }
     }
 }
 
@@ -502,6 +527,8 @@ function ensurePublicationExists(channelId) {
 }
 
 document.addEventListener('DOMContentLoaded', initializePage);
+document.addEventListener('turbo:load', initializePage);
+document.addEventListener('turbo:render', initializePage);
 
 document.addEventListener("ensurePublicationEvent", function(e) {
     var channelId = e.detail.channelId; // Access channelId from the event detail

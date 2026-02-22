@@ -21,15 +21,17 @@ global.moment = moment;
 import 'select2/dist/js/select2.full';
 
 import Coloris from "@melloware/coloris";
-Coloris.init();
-
-Coloris({
-    el: '.coloris input',
-    themeMode: 'light',
-    clearButton: true,
-    clearLabel: 'Clear',
-    format: 'mixed',
-});
+if (!window.__integratedColorisInitialized) {
+    Coloris.init();
+    Coloris({
+        el: '.coloris input',
+        themeMode: 'light',
+        clearButton: true,
+        clearLabel: 'Clear',
+        format: 'mixed',
+    });
+    window.__integratedColorisInitialized = true;
+}
 
 import './global'
 
