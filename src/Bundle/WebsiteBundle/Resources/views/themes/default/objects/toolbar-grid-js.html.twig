@@ -32,6 +32,7 @@
          * @type object|null
          */
         var $blockTarget = null;
+        var $lastBlockAddTrigger = null;
         var $columnLayoutTarget = null;
         var $columnLayoutInsertBefore = null;
         var COLUMN_GRID_UNITS = 12;
@@ -63,6 +64,10 @@
          * @param element  $before
          */
         var addBlock = function(blockId, $before) {
+            if (!$before || !$before.parentNode) {
+                return;
+            }
+
             var element = document.createElement('div');
 
             element.dataset.id = blockId;
@@ -72,6 +77,71 @@
             $before.insertAdjacentElement('beforebegin', element);
 
             refreshBlock(element);
+        };
+
+        var ensureRootColumnButtons = function($grid) {
+            if (!$grid) {
+                return null;
+            }
+
+            var $buttons = null;
+            for (var i = 0; i < $grid.children.length; i++) {
+                var child = $grid.children[i];
+                if (child.classList && child.classList.contains('integrated-column-buttons')) {
+                    $buttons = child;
+                    break;
+                }
+            }
+            if ($buttons) {
+                return $buttons;
+            }
+
+            $buttons = createColumnButtons();
+            $grid.appendChild($buttons);
+
+            return $buttons;
+        };
+
+        var resolveBlockInsertTarget = function($trigger) {
+            if (!$trigger) {
+                return null;
+            }
+
+            var $blockButtons = $trigger.closest('.integrated-block-buttons');
+            if ($blockButtons) {
+                return $blockButtons;
+            }
+
+            var $column = $trigger.closest('[data-block-type="column"]');
+            if ($column) {
+                var $columnButtons = null;
+                for (var i = 0; i < $column.children.length; i++) {
+                    var child = $column.children[i];
+                    if (child.classList && child.classList.contains('integrated-column-buttons')) {
+                        $columnButtons = child;
+                        break;
+                    }
+                }
+                if ($columnButtons) {
+                    return $columnButtons;
+                }
+
+                $columnButtons = createColumnButtons();
+                $column.appendChild($columnButtons);
+
+                return $columnButtons;
+            }
+
+            var $grid = $trigger.closest('.integrated-website-grid');
+            if ($grid) {
+                return ensureRootColumnButtons($grid);
+            }
+
+            if ($trigger.parentNode) {
+                return $trigger.parentNode;
+            }
+
+            return null;
         };
 
         /**
@@ -194,27 +264,47 @@
                 '</label>').join('');
         };
 
+        var renderPresetVisual = function(layout) {
+            var widths = layout.split('-').map(part => parseInt(part, 10)).filter(width => Number.isInteger(width) && width > 0);
+
+            return widths.map(width => '' +
+                '<span class="integrated-column-layout-preset-segment" style="width:' + ((width / COLUMN_GRID_UNITS) * 100) + '%"></span>'
+            ).join('');
+        };
+
+        var renderPresetButton = function(layout, label, selectedLayout) {
+            return '' +
+                '<button type="button" class="integrated-column-layout-preset' + (layout === selectedLayout ? ' is-selected' : '') + '" data-role="layout-preset" data-layout="' + layout + '">' +
+                '  <span class="integrated-column-layout-preset-visual">' + renderPresetVisual(layout) + '</span>' +
+                '  <span class="integrated-column-layout-preset-label">' + label + '</span>' +
+                '</button>';
+        };
+
         var renderColumnLayoutModal = function(mode, sizes) {
             var normalizedSizes = sizes && sizes.length ? sizes : [COLUMN_GRID_UNITS];
+            var selectedLayout = normalizedSizes.join('-');
             var title = mode === 'add' ? '{% trans %}Add columns{% endtrans %}' : '{% trans %}Configure columns{% endtrans %}';
 
             return '' +
                 '<div class="integrated-column-layout-modal">' +
-                '  <p class="integrated-column-layout-help">{% trans %}Choose a layout preset or set column widths manually. Total must be 12.{% endtrans %}</p>' +
+                '  <h3 class="integrated-column-layout-title">{% trans %}Select your structure{% endtrans %}</h3>' +
+                '  <p class="integrated-column-layout-help">{% trans %}Choose a layout preset. You can fine-tune widths manually below. Total must be 12.{% endtrans %}</p>' +
                 '  <div class="integrated-column-layout-presets">' +
-                '    <button type="button" class="btn btn-white" data-role="layout-preset" data-layout="12">1/1</button>' +
-                '    <button type="button" class="btn btn-white" data-role="layout-preset" data-layout="6-6">1/2 + 1/2</button>' +
-                '    <button type="button" class="btn btn-white" data-role="layout-preset" data-layout="4-4-4">1/3 + 1/3 + 1/3</button>' +
-                '    <button type="button" class="btn btn-white" data-role="layout-preset" data-layout="3-3-3-3">1/4 + 1/4 + 1/4 + 1/4</button>' +
-                '    <button type="button" class="btn btn-white" data-role="layout-preset" data-layout="8-4">2/3 + 1/3</button>' +
-                '    <button type="button" class="btn btn-white" data-role="layout-preset" data-layout="4-8">1/3 + 2/3</button>' +
-                '    <button type="button" class="btn btn-white" data-role="layout-preset" data-layout="3-6-3">1/4 + 1/2 + 1/4</button>' +
+                renderPresetButton('12', '1/1', selectedLayout) +
+                renderPresetButton('6-6', '1/2 + 1/2', selectedLayout) +
+                renderPresetButton('4-4-4', '1/3 + 1/3 + 1/3', selectedLayout) +
+                renderPresetButton('3-3-3-3', '1/4 + 1/4 + 1/4 + 1/4', selectedLayout) +
+                renderPresetButton('8-4', '2/3 + 1/3', selectedLayout) +
+                renderPresetButton('4-8', '1/3 + 2/3', selectedLayout) +
+                renderPresetButton('3-6-3', '1/4 + 1/2 + 1/4', selectedLayout) +
                 '  </div>' +
                 '  <form id="integrated-column-layout-form" class="integrated-column-layout-form" data-mode="' + mode + '">' +
-                '    <label class="integrated-column-layout-count">' +
-                '      <span>{% trans %}Number of columns{% endtrans %}</span>' +
-                '      <input type="number" min="1" max="' + COLUMN_GRID_UNITS + '" value="' + normalizedSizes.length + '" data-role="column-count" class="integrated-form-control">' +
-                '    </label>' +
+                '    <div class="integrated-column-layout-manual">' +
+                '      <label class="integrated-column-layout-count">' +
+                '        <span>{% trans %}Number of columns{% endtrans %}</span>' +
+                '        <input type="number" min="1" max="' + COLUMN_GRID_UNITS + '" value="' + normalizedSizes.length + '" data-role="column-count" class="integrated-form-control">' +
+                '      </label>' +
+                '    </div>' +
                 '    <div id="integrated-column-layout-fields" class="integrated-column-layout-fields">' + renderColumnInputs(normalizedSizes) + '</div>' +
                 '    <p class="integrated-column-layout-total">{% trans %}Total{% endtrans %}: <strong data-role="column-total">' + normalizedSizes.reduce((sum, value) => sum + value, 0) + '</strong>/12</p>' +
                 '    <div class="integrated-column-layout-actions">' +
@@ -243,7 +333,7 @@
             $columnLayoutTarget = $targetRow || null;
             $columnLayoutInsertBefore = $insertBefore || null;
             Integrated.showModal(
-                mode === 'add' ? '{% trans %}Add columns{% endtrans %}' : '{% trans %}Configure columns{% endtrans %}',
+                '&nbsp;',
                 renderColumnLayoutModal(mode, sizes),
             );
         };
@@ -584,10 +674,18 @@
             e.preventDefault();
 
             showLoader();
+            $lastBlockAddTrigger = element;
+            try {
+                $blockTarget = resolveBlockInsertTarget(element);
+            } catch (err) {
+                $blockTarget = null;
+            }
 
-            $blockTarget = element.parentNode;
-            if (element.classList.contains('integrated-website-block-column-add')) {
-                $blockTarget = $blockTarget.parentNode;
+            if (!$blockTarget) {
+                $blockTarget = element.parentNode;
+                if (element.classList.contains('integrated-website-block-column-add') && $blockTarget) {
+                    $blockTarget = $blockTarget.parentNode;
+                }
             }
 
             fetch('{{ path('integrated_block_block_index', { '_format': 'json', 'limit': 10}) }}').
@@ -600,6 +698,9 @@
 
                     Integrated.showModal('{% trans %}Add block{% endtrans %}', addBlockModalTemplateHTML(data));
 
+                    hideLoader();
+                }).
+                catch(() => {
                     hideLoader();
                 });
         });
@@ -670,6 +771,14 @@
                 return;
             }
 
+            if (!$blockTarget) {
+                $blockTarget = resolveBlockInsertTarget($lastBlockAddTrigger);
+            }
+
+            if (!$blockTarget) {
+                return;
+            }
+
             addBlock(element.dataset.id, $blockTarget);
 
             Integrated.hideModal();
@@ -736,6 +845,12 @@
             $form.querySelector('[data-role="column-count"]').value = sizes.length;
             $form.querySelector('#integrated-column-layout-fields').innerHTML = renderColumnInputs(sizes);
             syncColumnLayoutTotal($form);
+
+            $form.closest('.integrated-column-layout-modal')
+                .querySelectorAll('[data-role="layout-preset"]')
+                .forEach(function($preset) {
+                    $preset.classList.toggle('is-selected', $preset === element);
+                });
         });
 
         document.body.addEventListener('change', function(e) {
@@ -752,6 +867,12 @@
             var sizes = buildEvenSizes($count.value);
             $form.querySelector('#integrated-column-layout-fields').innerHTML = renderColumnInputs(sizes);
             syncColumnLayoutTotal($form);
+
+            $form.closest('.integrated-column-layout-modal')
+                .querySelectorAll('[data-role="layout-preset"]')
+                .forEach(function($preset) {
+                    $preset.classList.remove('is-selected');
+                });
         });
 
         document.body.addEventListener('input', function(e) {

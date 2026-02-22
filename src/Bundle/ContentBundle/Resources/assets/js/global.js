@@ -241,8 +241,13 @@ function toggleDataTarget(el) {
 }
 
 function toggleDropdown(el) {
+    if (el && typeof el.preventDefault === 'function') {
+        el.preventDefault();
+    }
+
     popupShown = true;
-    const dropdown = el.target.closest('.dropdown');
+    const toggle = el.currentTarget || el.target.closest('a[data-toggle="dropdown"]');
+    const dropdown = toggle ? toggle.closest('.dropdown') : null;
     if (!dropdown) {
         return;
     }

@@ -18,5 +18,6 @@
     },
     'pagination': blocks|json_pagination
 } %}
+{{ json|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
 {% endapply %}
 {% endautoescape %}

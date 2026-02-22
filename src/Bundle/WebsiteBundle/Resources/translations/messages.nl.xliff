@@ -10,6 +10,50 @@
                 <source>The page could not be found.</source>
                 <target>De pagina kon niet worden gevonden.</target>
             </trans-unit>
+            <trans-unit id="3">
+                <source>Select your structure</source>
+                <target>Selecteer je structuur</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>Choose a layout preset. You can fine-tune widths manually below. Total must be 12.</source>
+                <target>Kies een layoutvoorinstelling. Je kunt de breedtes hieronder handmatig aanpassen. Het totaal moet 12 zijn.</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>Add columns</source>
+                <target>Kolommen toevoegen</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>Configure columns</source>
+                <target>Kolommen configureren</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>Number of columns</source>
+                <target>Aantal kolommen</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>Column</source>
+                <target>Kolom</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>Total</source>
+                <target>Totaal</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>Cancel</source>
+                <target>Annuleren</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>Column sizes must add up to 12</source>
+                <target>Kolombreedtes moeten samen 12 zijn</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>Heading</source>
+                <target>Kop</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>Heading item</source>
+                <target>Kopitem</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
