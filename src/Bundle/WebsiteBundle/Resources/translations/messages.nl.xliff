@@ -98,6 +98,118 @@
                 <source>Edit block</source>
                 <target>Blok bewerken</target>
             </trans-unit>
+            <trans-unit id="25">
+                <source>Menu builder</source>
+                <target>Menubouwer</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>Menu items</source>
+                <target>Menu-items</target>
+            </trans-unit>
+            <trans-unit id="27">
+                <source>Add menu item</source>
+                <target>Menu-item toevoegen</target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>Add first menu item</source>
+                <target>Voeg eerste menu-item toe</target>
+            </trans-unit>
+            <trans-unit id="29">
+                <source>Drag to reorder, drag between levels for subitems</source>
+                <target>Sleep om te herschikken, sleep tussen niveaus voor subitems</target>
+            </trans-unit>
+            <trans-unit id="30">
+                <source>Name</source>
+                <target>Naam</target>
+            </trans-unit>
+            <trans-unit id="31">
+                <source>Link type</source>
+                <target>Linktype</target>
+            </trans-unit>
+            <trans-unit id="32">
+                <source>Search selection</source>
+                <target>Zoekselectie</target>
+            </trans-unit>
+            <trans-unit id="33">
+                <source>Choose a search selection</source>
+                <target>Kies een zoekselectie</target>
+            </trans-unit>
+            <trans-unit id="34">
+                <source>No search selection selected</source>
+                <target>Geen zoekselectie gekozen</target>
+            </trans-unit>
+            <trans-unit id="35">
+                <source>Number of items</source>
+                <target>Aantal items</target>
+            </trans-unit>
+            <trans-unit id="36">
+                <source>Open in new tab</source>
+                <target>Open in nieuw tabblad</target>
+            </trans-unit>
+            <trans-unit id="37">
+                <source>Save</source>
+                <target>Opslaan</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>Remove</source>
+                <target>Verwijderen</target>
+            </trans-unit>
+            <trans-unit id="39">
+                <source>New menu item</source>
+                <target>Nieuw menu-item</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>Name is required</source>
+                <target>Naam is verplicht</target>
+            </trans-unit>
+            <trans-unit id="41">
+                <source>Search selection is required</source>
+                <target>Zoekselectie is verplicht</target>
+            </trans-unit>
+            <trans-unit id="42">
+                <source>No URL configured</source>
+                <target>Geen URL ingesteld</target>
+            </trans-unit>
+            <trans-unit id="43">
+                <source>Untitled</source>
+                <target>Zonder titel</target>
+            </trans-unit>
+            <trans-unit id="44">
+                <source>Drag menu item</source>
+                <target>Versleep menu-item</target>
+            </trans-unit>
+            <trans-unit id="45">
+                <source>Toggle submenu</source>
+                <target>Submenu in-/uitklappen</target>
+            </trans-unit>
+            <trans-unit id="46">
+                <source>Toggle settings</source>
+                <target>Instellingen in-/uitklappen</target>
+            </trans-unit>
+            <trans-unit id="47">
+                <source>Are you sure you want to remove this menu item?</source>
+                <target>Weet je zeker dat je dit menu-item wilt verwijderen?</target>
+            </trans-unit>
+            <trans-unit id="48">
+                <source>URL is required</source>
+                <target>URL is verplicht</target>
+            </trans-unit>
+            <trans-unit id="49">
+                <source>Close</source>
+                <target>Sluiten</target>
+            </trans-unit>
+            <trans-unit id="50">
+                <source>items</source>
+                <target>items</target>
+            </trans-unit>
+            <trans-unit id="51">
+                <source>Undo</source>
+                <target>Ongedaan maken</target>
+            </trans-unit>
+            <trans-unit id="52">
+                <source>Redo</source>
+                <target>Opnieuw</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

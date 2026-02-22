@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        parent.document.dispatchEvent(new CustomEvent('block-canceled'));
+
+        /**
+         * @type object|null
+         */
+        var tinymce = top.tinymce;
+
+        if ('undefined' != typeof(tinymce) && tinymce.activeEditor && tinymce.activeEditor.windowManager) {
+            tinymce.activeEditor.windowManager.close();
+        }
+    </script>
+</head>
+<body>
+</body>
+</html>

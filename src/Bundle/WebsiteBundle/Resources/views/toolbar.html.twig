@@ -27,14 +27,16 @@
                 {% set params = app.request.attributes.get('_route_params')|merge(app.request.query.all) %}
 
                 {% if app.request.query.get('integrated_website_edit') and layoutEditable %}
-                    <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white"
+                    <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white icon-left"
                        data-action="integrated-website-history-undo">
-                        {% trans %}Undo{% endtrans %}
+                        <i class="iconoir-undo"></i>
+                        <span>{% trans %}Undo{% endtrans %}</span>
                     </a>
 
-                    <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white"
+                    <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white icon-left"
                        data-action="integrated-website-history-redo">
-                        {% trans %}Redo{% endtrans %}
+                        <i class="iconoir-redo"></i>
+                        <span>{% trans %}Redo{% endtrans %}</span>
                     </a>
 
                     <a href="javascript:;" class="integrated-website-toolbar-button btn btn-green"

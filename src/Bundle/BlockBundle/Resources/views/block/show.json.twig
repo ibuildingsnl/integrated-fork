@@ -7,5 +7,6 @@
     'html' : integrated_block(block),
     'cssClass' : block.cssClass
 } %}
+{{ data|json_encode|raw }}
 {% endapply %}
 {% endautoescape %}

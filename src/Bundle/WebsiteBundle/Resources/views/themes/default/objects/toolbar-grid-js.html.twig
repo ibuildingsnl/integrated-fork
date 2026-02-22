@@ -152,13 +152,20 @@
             return wrapper.firstChild;
         };
 
+
         /**
          * @param element $block
          */
         var refreshBlock = function($block, buttons = true) {
             fetch(
-                '{{ path('integrated_block_block_show', {'id': 'block-id'}) }}'.replace('block-id', $block.dataset.id)).
-                then(response => response.json()).
+                '{{ path('integrated_block_block_show', {'id': 'block-id'}) }}'.replace('block-id', encodeURIComponent($block.dataset.id))).
+                then(response => {
+                    if (!response.ok) {
+                        throw new Error('Unable to load block preview');
+                    }
+
+                    return response.json();
+                }).
                 then(data => {
                     $block.innerHTML = data.html;
 
@@ -175,6 +182,9 @@
                     }
 
                     rememberState();
+                }).
+                catch(function() {
+                    $block.innerHTML = '<div class="integrated-menu-empty-action" style="padding:8px 12px">{% trans %}Unable to load block preview{% endtrans %}</div>';
                 });
 
         };
@@ -825,7 +835,7 @@
             var blockId = editElement.dataset.id;
             var url = '{{ path('integrated_block_block_edit', {'id': 'block-id', '_format':'iframe.html'}) }}'.replace(
                 'block-id', blockId);
-            createIframe(url, 'Edit block');
+            createBlockEditor(url, '{% trans %}Edit block{% endtrans %}');
         });
 
         /**
@@ -898,7 +908,7 @@
             e.preventDefault();
 
             closeBlockSelectorPanel();
-            createIframe(element.getAttribute('href'), '{% trans %}Add block{% endtrans %}');
+            createBlockEditor(element.getAttribute('href'), '{% trans %}Add block{% endtrans %}');
         });
 
         document.body.addEventListener('click', function(e) {
@@ -1181,7 +1191,7 @@
 
                 var url = '{{ path('integrated_block_block_edit', {'id': 'block-id', '_format':'iframe.html'}) }}'.replace(
                     'block-id', id);
-                createIframe(url, '{% trans %}Edit block{% endtrans %}');
+                createBlockEditor(url, '{% trans %}Edit block{% endtrans %}');
             });
 
         });
@@ -1204,44 +1214,32 @@
 
             var pageId = document.querySelector('[data-action="integrated-website-page-save"]').dataset.id;
 
-            createIframe(
-                '{{ path('integrated_block_inline_text_block_new', {'id': 'page-id'}) }}'.replace('page-id', pageId),
+            createBlockEditor(
+                '{{ path('integrated_block_inline_text_block_new', {'id': 'page-id', '_format':'iframe.html'}) }}'.replace('page-id', pageId),
                 '{% trans %}New block{% endtrans %}');
         });
 
         /**
-         * @param url
-         * @param title
+         * @param {string} url
+         * @param {string} title
          */
-        var createIframe = function(url, title) {
-            let element = document.createElement('iframe');
-            element.classList.add('integrated-iframe');
-            element.setAttribute('src', url);
-            element.style.height = (window.innerHeight - 120) + 'px';
-            openBlockSelectorPanel(element.outerHTML, {
+        var createBlockEditor = function(url, title) {
+            var frameUrl = url.replace('/turbo.html', '/iframe.html');
+
+            openBlockSelectorPanel(
+                '<div class="integrated-block-results-loading"><span class="integrated-inline-spinner"></span><span>{% trans %}Loading blocks...{% endtrans %}</span></div>',
+                {
                 eyebrow: '{% trans %}Block builder{% endtrans %}',
                 title: title,
                 context: '',
                 panelClass: 'integrated-block-selector-panel-iframe',
             });
 
-            //handle cancel button in iframe
-            iframe = blockSelectorPanel ? blockSelectorPanel.querySelector('.integrated-iframe') : null;
-            if (!iframe) {
-                return;
-            }
-
-            iframe.onload = function() {
-                cancelButton = iframe.contentWindow.document.querySelector('#block_edit_actions_cancel');
-                if (!cancelButton) {
-                    return;
-                }
-
-                cancelButton.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    closeBlockSelectorPanel();
-                });
-            };
+            var frame = document.createElement('iframe');
+            frame.className = 'integrated-iframe';
+            frame.setAttribute('src', frameUrl);
+            frame.setAttribute('frameborder', '0');
+            updateBlockSelectorPanelContent(frame.outerHTML);
         };
 
         /**
@@ -1265,7 +1263,7 @@
         };
 
         /**
-         * Handle block edit in iframe
+         * Handle block add/edit save callbacks.
          */
         document.addEventListener('block-added', function(e) {
             closeBlockSelectorPanel();
@@ -1280,6 +1278,10 @@
                     refreshBlock(item, true);
                 });
             }
+        }, false);
+
+        document.addEventListener('block-canceled', function() {
+            closeBlockSelectorPanel();
         }, false);
 
         /**

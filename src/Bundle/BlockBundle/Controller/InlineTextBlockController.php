@@ -46,13 +46,20 @@ class InlineTextBlockController extends AbstractController
         );
 
         $form->remove('layout');
+
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->manager->persist($block);
-            $this->manager->flush();
+        if ($form->isSubmitted()) {
+            if ($form->get('actions')->getData() === 'cancel') {
+                return $this->render('@IntegratedBlock/block/canceled.iframe.html.twig');
+            }
 
-            return $this->render('@IntegratedBlock/block/saved.iframe.html.twig', ['id' => $block->getId()]);
+            if ($form->isValid()) {
+                $this->manager->persist($block);
+                $this->manager->flush();
+
+                return $this->render('@IntegratedBlock/block/saved.iframe.html.twig', ['id' => $block->getId()]);
+            }
         }
 
         return $this->render('@IntegratedBlock/block/new.iframe.html.twig', [
