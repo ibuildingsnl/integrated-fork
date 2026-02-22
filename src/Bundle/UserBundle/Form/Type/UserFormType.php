@@ -12,14 +12,21 @@
 namespace Integrated\Bundle\UserBundle\Form\Type;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\UserBundle\Form\DataMapper\UserMapper;
 use Integrated\Bundle\UserBundle\Form\EventListener\UserProfileExtensionListener;
 use Integrated\Bundle\UserBundle\Form\EventListener\UserProfileOptionalListener;
 use Integrated\Bundle\UserBundle\Form\EventListener\UserProfilePasswordListener;
+use Integrated\Bundle\UserBundle\Model\UserInterface as IntegratedUserInterface;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\Extension\Validator\Constraints\FormValidator;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -96,6 +103,19 @@ class UserFormType extends AbstractType
         ]);
 
         if (!$options['optional']) {
+            $builder->add('relation', DocumentType::class, [
+                'class' => Person::class,
+                'required' => false,
+                'placeholder' => 'No author linked',
+                'choice_label' => static fn (Person $person): string => trim((string) $person) ?: (string) $person->getId(),
+                'query_builder' => static function (DocumentRepository $repository) {
+                    return $repository->createQueryBuilder()
+                        ->field('disabled')->equals(false)
+                        ->sort('firstName', 'asc')
+                        ->sort('lastName', 'asc');
+                },
+            ]);
+
             $builder->add(
                 'enabled',
                 Type\CheckboxType::class,
@@ -127,6 +147,39 @@ class UserFormType extends AbstractType
 
         $builder->addEventSubscriber(new UserProfilePasswordListener($this->hasherFactory));
         $builder->addEventSubscriber(new UserProfileExtensionListener('integrated.extension.user'));
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
+            $form = $event->getForm();
+            $user = $event->getData();
+
+            if (!$user instanceof IntegratedUserInterface || !method_exists($user, 'getRelation')) {
+                return;
+            }
+
+            $relation = $user->getRelation();
+            if (!$relation || !method_exists($relation, 'getId')) {
+                return;
+            }
+
+            $relationId = (string) $relation->getId();
+            if ($relationId === '') {
+                return;
+            }
+
+            $currentUserId = (string) $user->getId();
+            $existingUsers = $this->manager->findBy(['relation' => $relationId]);
+            foreach ($existingUsers as $existingUser) {
+                if (!$existingUser instanceof IntegratedUserInterface) {
+                    continue;
+                }
+
+                if ((string) $existingUser->getId() !== $currentUserId) {
+                    $errorTarget = $form->has('relation') ? $form->get('relation') : $form;
+                    $errorTarget->addError(new FormError('This author is already linked to another user.'));
+
+                    return;
+                }
+            }
+        });
 
         if ($options['optional']) {
             $builder->setDataMapper(new UserMapper());
