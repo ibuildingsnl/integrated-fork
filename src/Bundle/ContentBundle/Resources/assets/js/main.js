@@ -167,11 +167,11 @@ function initializePickr(root = document) {
 }
 initializePickr(document);
 
-if (document.body?.dataset.boundPickrTurboLoad !== 'true') {
+if (window.__pickrTurboLoadBound !== true) {
     document.addEventListener('turbo:load', (event) => {
         initializePickr(event.target || document);
     });
-    document.body.dataset.boundPickrTurboLoad = 'true';
+    window.__pickrTurboLoadBound = true;
 }
 
 import './global'
