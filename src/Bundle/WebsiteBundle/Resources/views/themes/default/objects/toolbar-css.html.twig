@@ -258,7 +258,7 @@
     }
 
 
-    -page-builder .integrated-modal .btn.btn-select {
+    .integrated-block-page-builder .integrated-modal .btn.btn-select {
         background: #fff;
         border-color: #DEE3E9;
         color: #515865;
@@ -283,11 +283,8 @@
 
     .integrated-block-page-builder .integrated-modal .options > ul {
         margin: 0;
-        display: flex;
-    }
-
-    .integrated-block-page-builder .integrated-modal .options > ul {
         padding: 0;
+        display: flex;
     }
 
     .integrated-block-page-builder .integrated-modal .options {
@@ -299,42 +296,28 @@
         margin-bottom: 10px;
     }
 
-    .integrated-block-page-builder .integrated-modal .integrated-block-workspace-actions,
-    .integrated-block-selector-panel .integrated-block-workspace-actions {
+    .integrated-block-workspace-actions,
+    .integrated-menu-workspace-actions {
         border-top: 1px solid #DEE3E9;
         border-bottom: 1px solid #DEE3E9;
         padding: 12px 16px;
     }
 
-    .integrated-block-page-builder .integrated-modal .integrated-block-workspace-actions > ul,
-    .integrated-block-selector-panel .integrated-block-workspace-actions > ul {
+    .integrated-block-workspace-actions > ul,
+    .integrated-menu-workspace-actions > ul {
         margin: 0;
         padding: 0;
         list-style: none;
         display: flex;
     }
 
-    .integrated-block-page-builder .integrated-modal .integrated-block-workspace-actions > ul > li,
-    .integrated-block-selector-panel .integrated-block-workspace-actions > ul > li {
+    .integrated-block-workspace-actions > ul > li,
+    .integrated-menu-workspace-actions > ul > li {
         display: inline-flex;
         position: relative;
     }
 
-    .integrated-block-page-builder .integrated-modal .integrated-block-workspace-actions .btn.btn-green,
-    .integrated-block-selector-panel .integrated-block-workspace-actions .btn.btn-green {
-        height: 36px;
-        min-height: 36px;
-        line-height: 36px;
-        padding: 0 14px;
-        border-radius: 8px;
-        gap: 8px;
-        background-color: #00ae93;
-        border: #00ae93;
-        color: white;
-    }
-
-    .integrated-block-page-builder .integrated-modal .integrated-block-workspace-actions li.dropdown .integrated-website-toolbar-dropdown,
-    .integrated-block-selector-panel .integrated-block-workspace-actions li.dropdown .integrated-website-toolbar-dropdown {
+    .integrated-block-workspace-actions li.dropdown .integrated-website-toolbar-dropdown {
         position: absolute;
         top: calc(100% + 8px);
         left: 0;
@@ -1081,6 +1064,45 @@
         justify-content: flex-end;
     }
 
+    .integrated-menu-workspace-actions .btn,
+    .integrated-block-workspace-actions .btn,
+    .integrated-column-layout-actions .btn {
+        align-items: center;
+        appearance: none;
+        border: 1px solid;
+        border-radius: 8px;
+        cursor: pointer;
+        display: inline-flex;
+        font-size: 14px;
+        font-weight: 300;
+        height: 32px;
+        line-height: 40px;
+        padding: 0 0.8rem;
+        text-decoration: none;
+        outline: none;
+        gap: 6px;
+    }
+
+    .integrated-menu-workspace-actions .btn.btn-green,
+    .integrated-block-workspace-actions .btn.btn-green,
+    .integrated-column-layout-actions .btn.btn-green {
+        background-color: #00ae93;
+        border-color: #00ae93;
+        color: #fff;
+    }
+
+    .integrated-column-layout-actions .btn.btn-white {
+        background-color: #fff;
+        border-color: #cfd9e4;
+        color: #304d69;
+    }
+
+    .integrated-column-layout-actions .btn.btn-white:hover,
+    .integrated-column-layout-actions .btn.btn-white:focus {
+        background-color: #f5f7fa;
+        border-color: #b9c8d8;
+    }
+
     .integrated-pagination .integrated-pagination-disabled {
         background-color: #DEE3E9;
         color: #000;
@@ -1670,10 +1692,6 @@
         height: 32px;
     }
 
-    #2integrated_block_filter_q {
-        width: 150px;
-    }
-
     #integrated-loader {
         width: 100vw;
         height: 100vh;
@@ -2100,17 +2118,6 @@
         overflow: auto;
         overflow-x: hidden;
         padding: 16px;
-    }
-
-    .integrated-menu-workspace-actions {
-        padding: 10px 16px;
-        border-top: 1px solid #dde5ee;
-        border-bottom: 1px solid #dde5ee;
-        background: #fff;
-    }
-
-    .integrated-menu-workspace-actions .btn {
-        gap: 6px;
     }
 
     .integrated-menu-builder-panel .btn {
