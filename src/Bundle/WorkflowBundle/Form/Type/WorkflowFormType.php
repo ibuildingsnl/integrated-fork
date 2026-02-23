@@ -83,6 +83,7 @@ class WorkflowFormType extends AbstractType
             'deadline',
             DateTimeType::class,
             [
+                'required' => false,
                 'placeholder' => ' ',
                 'attr' => ['class' => 'form-control deadline', 'data-set-date-text' => 'Set deadline'],
                 'html5' => true,
