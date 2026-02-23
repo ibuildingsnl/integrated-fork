@@ -107,7 +107,11 @@ class UserController extends AbstractController
         }
 
         $action = (string) $request->request->get('bulk_action', '');
-        $selectedIds = array_values(array_filter((array) $request->request->get('user_ids', []), static fn ($id) => $id !== ''));
+        $selectedValues = $request->request->all('user_ids');
+        $selectedIds = array_values(array_filter(array_map(
+            static fn ($id): string => is_scalar($id) ? (string) $id : '',
+            $selectedValues
+        ), static fn (string $id): bool => $id !== ''));
         if ($action === '' || $selectedIds === []) {
             $this->addFlash('warning', 'Select at least one user and a bulk action.');
 
@@ -289,6 +293,79 @@ class UserController extends AbstractController
         ]);
     }
 
+    public function enable(Request $request): Response
+    {
+        if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $user = $this->manager->find($request->get('id'));
+        if (!$user) {
+            return $this->redirectToRoute('integrated_user_user_index');
+        }
+
+        if (!$user->isEnabled()) {
+            $user->setEnabled(true);
+            $this->manager->persist($user);
+            $this->logger->info('User enabled', [
+                'actor' => $this->getUser()?->getUserIdentifier(),
+                'target_user_id' => $user->getId(),
+                'target_username' => $user->getUserIdentifier(),
+            ]);
+            $this->addFlash('success', \sprintf('The user %s is enabled', $user->getUserIdentifier()));
+        } else {
+            $this->addFlash('info', \sprintf('The user %s is already enabled', $user->getUserIdentifier()));
+        }
+
+        return $this->redirectToRoute('integrated_user_user_index');
+    }
+
+    public function deleteAccount(Request $request): Response
+    {
+        if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $user = $this->manager->find($request->get('id'));
+        if (!$user) {
+            return $this->redirectToRoute('integrated_user_user_index');
+        }
+
+        $currentUser = $this->getUser();
+        if ($currentUser instanceof UserInterface && $currentUser->getId() === $user->getId()) {
+            $this->addFlash('danger', 'You cannot delete your own account.');
+
+            return $this->redirectToRoute('integrated_user_user_index');
+        }
+
+        /** @var Form $form */
+        $form = $this->createDeleteAccountForm($user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            if ($form->getClickedButton()?->getName() === 'cancel') {
+                return $this->redirectToRoute('integrated_user_user_index');
+            }
+
+            if ($form->isValid()) {
+                $this->manager->remove($user);
+                $this->logger->info('User permanently deleted', [
+                    'actor' => $this->getUser()?->getUserIdentifier(),
+                    'target_user_id' => $user->getId(),
+                    'target_username' => $user->getUserIdentifier(),
+                ]);
+                $this->addFlash('success', \sprintf('The account %s has been permanently deleted', $user->getUserIdentifier()));
+
+                return $this->redirectToRoute('integrated_user_user_index');
+            }
+        }
+
+        return $this->render('@IntegratedUser/user/delete_account.html.twig', [
+            'user' => $user,
+            'form' => $form,
+        ]);
+    }
+
     protected function createNewForm(): Form
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
@@ -327,6 +404,21 @@ class UserController extends AbstractController
 
         $form = $this->createForm(DeleteFormType::class, $user, [
             'action' => $this->generateUrl('integrated_user_user_delete', ['id' => $user->getId()]),
+        ]);
+
+        $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
+
+        return $form;
+    }
+
+    protected function createDeleteAccountForm(UserInterface $user): Form
+    {
+        if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $form = $this->createForm(DeleteFormType::class, $user, [
+            'action' => $this->generateUrl('integrated_user_user_delete_account', ['id' => $user->getId()]),
         ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);

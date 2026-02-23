@@ -202,6 +202,86 @@
                 <source>Enter your 6-digit verification code to continue</source>
                 <target>Vul je 6-cijferige verificatiecode in om door te gaan</target>
             </trans-unit>
+            <trans-unit id="52">
+                <source>Enable account</source>
+                <target>Account activeren</target>
+            </trans-unit>
+            <trans-unit id="53">
+                <source>Delete account</source>
+                <target>Account verwijderen</target>
+            </trans-unit>
+            <trans-unit id="54">
+                <source>You are about to permanently delete the account "%name%". This action cannot be undone.</source>
+                <target>Je staat op het punt account "%name%" permanent te verwijderen. Deze actie kan niet ongedaan worden gemaakt.</target>
+            </trans-unit>
+            <trans-unit id="55">
+                <source>You cannot delete your own account.</source>
+                <target>Je kunt je eigen account niet verwijderen.</target>
+            </trans-unit>
+            <trans-unit id="56">
+                <source>The account %s has been permanently deleted</source>
+                <target>Het account %s is permanent verwijderd</target>
+            </trans-unit>
+            <trans-unit id="57">
+                <source>The user %s is enabled</source>
+                <target>De gebruiker %s is geactiveerd</target>
+            </trans-unit>
+            <trans-unit id="58">
+                <source>The user %s is already enabled</source>
+                <target>De gebruiker %s is al geactiveerd</target>
+            </trans-unit>
+            <trans-unit id="59">
+                <source>Disable login</source>
+                <target>Gebruiker mag niet inloggen</target>
+            </trans-unit>
+            <trans-unit id="60">
+                <source>Assign group</source>
+                <target>Groep toewijzen</target>
+            </trans-unit>
+            <trans-unit id="61">
+                <source>Change scope</source>
+                <target>Scope wijzigen</target>
+            </trans-unit>
+            <trans-unit id="62">
+                <source>Bulk action</source>
+                <target>Bulkactie</target>
+            </trans-unit>
+            <trans-unit id="63">
+                <source>Action</source>
+                <target>Actie</target>
+            </trans-unit>
+            <trans-unit id="64">
+                <source>Apply</source>
+                <target>Toepassen</target>
+            </trans-unit>
+            <trans-unit id="65">
+                <source>selected</source>
+                <target>geselecteerd</target>
+            </trans-unit>
+            <trans-unit id="66">
+                <source>Select group</source>
+                <target>Selecteer groep</target>
+            </trans-unit>
+            <trans-unit id="67">
+                <source>Select scope</source>
+                <target>Selecteer scope</target>
+            </trans-unit>
+            <trans-unit id="68">
+                <source>New user</source>
+                <target>Nieuwe gebruiker</target>
+            </trans-unit>
+            <trans-unit id="69">
+                <source>Author linked</source>
+                <target>Auteur gekoppeld</target>
+            </trans-unit>
+            <trans-unit id="70">
+                <source>Linked to author</source>
+                <target>Gekoppeld aan auteur</target>
+            </trans-unit>
+            <trans-unit id="71">
+                <source>Not linked</source>
+                <target>Niet gekoppeld</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

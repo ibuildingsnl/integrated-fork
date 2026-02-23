@@ -450,22 +450,31 @@
         window.addEventListener('tinyMCEInitialized', observeResize);
 
         function observeResize() {
+            const observedTitle = document.querySelector('.title_tinymce_input');
+            if (!observedTitle) {
+                return;
+            }
+
             const resize_ob = new ResizeObserver(function(entries) {
-                // since we are observing only a single element, so we access the first element in entries array
+                if (!entries.length || !entries[0].contentRect) {
+                    return;
+                }
+
                 const rect = entries[0].contentRect;
-
-                // current width & height
-                const width = rect.width;
                 const height = rect.height;
+                const editor = document.querySelector('div.tox-edit-area');
+                const wrapper = document.querySelector('div.tox-sidebar-wrap');
 
-                editor = document.querySelector('div.tox-edit-area');
-                wrapper = document.querySelector('div.tox-sidebar-wrap');
+                if (!editor || !wrapper) {
+                    return;
+                }
+
                 editor.style.top = (height) + 'px';
                 wrapper.style.paddingBottom = (height) + 'px';
             });
 
             // start observing for resize
-            resize_ob.observe(document.querySelector('.title_tinymce_input'));
+            resize_ob.observe(observedTitle);
         }
     }
 </script>

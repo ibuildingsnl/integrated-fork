@@ -475,6 +475,10 @@ body.hide-options {
     }
 }
 
+#bulk-actions #bulk_action {
+    padding: 3px 1rem;
+}
+
 .sr-only {
     clip: rect(0, 0, 0, 0);
     border-width: 0;

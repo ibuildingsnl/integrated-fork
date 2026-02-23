@@ -24,6 +24,14 @@
 		<default key="_controller">Integrated\Bundle\UserBundle\Controller\UserController::delete</default>
 	</route>
 
+	<route id="integrated_user_user_enable" path="/{id}/enable">
+		<default key="_controller">Integrated\Bundle\UserBundle\Controller\UserController::enable</default>
+	</route>
+
+	<route id="integrated_user_user_delete_account" path="/{id}/delete-account">
+		<default key="_controller">Integrated\Bundle\UserBundle\Controller\UserController::deleteAccount</default>
+	</route>
+
     <route id="integrated_user_user_delete_authenticator" path="/{id}/authenticator/delete">
         <default key="_controller">Integrated\Bundle\UserBundle\Controller\TwoFactorController::delete</default>
     </route>

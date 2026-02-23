@@ -4849,6 +4849,9 @@ video {
 .border{
   border-width: 1px;
 }
+.border-b{
+  border-bottom-width: 1px;
+}
 .border-b-0{
   border-bottom-width: 0px;
 }
@@ -4876,6 +4879,10 @@ video {
 .bg-\[\#007b67\]{
   --tw-bg-opacity: 1;
   background-color: rgb(0 123 103 / var(--tw-bg-opacity, 1));
+}
+.bg-gray-100{
+  --tw-bg-opacity: 1;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
 }
 .bg-white{
   --tw-bg-opacity: 1;
@@ -7658,6 +7665,10 @@ body.hide-options #wrapper-holder .editor-wrapper {
   padding: 0.2rem 1rem 0.2rem 2rem;
   font-size: 13px;
   color: black;
+}
+
+#bulk-actions #bulk_action {
+  padding: 3px 1rem;
 }
 
 .sr-only {
@@ -10821,6 +10832,14 @@ body.tox-fullscreen .content-wrapper {
   background-color: #515864;
   color: #fff;
   padding: 1rem;
+  border: none;
+  height: auto;
+  width: 100%;
+  line-height: unset;
+  justify-content: center;
+}
+.modal-wrapper .modal.auth .form-group a.btn {
+  padding-top: 1rem;
   border: none;
   height: auto;
   width: 100%;

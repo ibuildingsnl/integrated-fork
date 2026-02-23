@@ -9,53 +9,44 @@
         'createdAt': 'Date created'|trans,
         'username': 'Username'|trans,
         'scope.name': 'Scope'|trans,
-        'id': '#'
+        'id': 'ID'
     } %}
     <div class="row flex flex-wrap">
         <div class="index-wrapper">
-            <div class="page-title flex justify-between">
-                <div class="heading-switcher">
-                    <h1 class="heading">{% trans %}Users{% endtrans %}</h1>
-                    <div class="options">
-                        <ul class="content-navigator-menu">
-                            <li class="dropdown close-outside" data-underlay="no">
-                                <a data-toggle="dropdown" role="button" id="sorting-list" class="btn btn-select space-between">
-                                    <span>{% trans %}Sort by{% endtrans %}: {{ sortOptions[currentSort]|default(sortOptions['createdAt']) }}</span>
-                                    <i class="iconoir-nav-arrow-down"></i>
-                                </a>
-                                <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
-                                    {% for field, label in sortOptions %}
-                                        {% set nextDirection = (currentSort == field and currentDirection == 'asc') ? 'desc' : 'asc' %}
-                                        <li {% if currentSort == field %}class="active"{% endif %} role="presentation">
-                                            <a href="{{ path('integrated_user_user_index', app.request.query.all|merge({'sort': field, 'direction': nextDirection, 'page': 1})) }}" tabindex="-1" role="menuitem">{{ label }}</a>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            </li>
-                            <li class="dropdown close-outside" data-underlay="no">
-                                <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
-                                    <span>{% trans %}Tools{% endtrans %}</span>
-                                    <i class="iconoir-nav-arrow-down"></i>
-                                </a>
-                                <ul role="menu" class="dropdown-menu">
-                                    <li role="presentation">
-                                        <a href="#bulk-actions" tabindex="-1" role="menuitem">{% trans %}Bulk actions{% endtrans %}</a>
-                                    </li>
-                                    <li role="presentation">
-                                        <a href="{{ path('integrated_user_user_new') }}" tabindex="-1" role="menuitem">{% trans %}New user{% endtrans %}</a>
-                                    </li>
-                                    <li role="presentation">
-                                        <a href="{{ path('integrated_user_user_index') }}" tabindex="-1" role="menuitem">{% trans %}Remove active filters{% endtrans %}</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
+            <div class="page-title">
+                <div class="heading flex justify-between w-full">
+                    <div class="heading-switcher">
+                        <h1 class="heading">{% trans %}Users{% endtrans %}</h1>
                     </div>
+                    <button class="toggle-filters toggle-data-target btn btn-orange icon-left" data-target="aside-filters">
+                        <i class="iconoir-filter-alt"></i>
+                        <span>{% trans %}Filter{% endtrans %}</span>
+                    </button>
                 </div>
-                <button class="toggle-filters toggle-data-target btn btn-orange icon-left"  data-target="aside-filters">
-                    <i class="iconoir-filter-alt"></i>
-                    <span>{% trans %}Filter{% endtrans %}</span>
-                </button>
+                <div class="options">
+                    <ul class="content-navigator-menu">
+                        <li class="dropdown close-outside" data-underlay="no">
+                            <a data-toggle="dropdown" role="button" id="sorting-list" class="btn btn-select space-between">
+                                <span>{% trans %}Sort by{% endtrans %}: {{ sortOptions[currentSort]|default(sortOptions['createdAt']) }}</span>
+                                <i class="iconoir-nav-arrow-down"></i>
+                            </a>
+                            <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
+                                {% for field, label in sortOptions %}
+                                    {% set nextDirection = (currentSort == field and currentDirection == 'asc') ? 'desc' : 'asc' %}
+                                    <li {% if currentSort == field %}class="active"{% endif %} role="presentation">
+                                        <a href="{{ path('integrated_user_user_index', app.request.query.all|merge({'sort': field, 'direction': nextDirection, 'page': 1})) }}" tabindex="-1" role="menuitem">{{ label }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="btn btn-orange icon-left" href="{{ path('integrated_user_user_new') }}">
+                                <i class="iconoir-plus"></i>
+                                <span>{% trans %}New user{% endtrans %}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
 
             {% include '@IntegratedUser/user/partials/user_list.html.twig' %}

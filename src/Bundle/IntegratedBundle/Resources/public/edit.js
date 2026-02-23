@@ -16016,10 +16016,22 @@ $(document).ready(function () {
     $('.modal-backdrop').remove();
   }
   function leavePage(returnUrl) {
-    $('.return-url', form).val(returnUrl);
+    var returnUrlInput = $('.return-url', form);
+    var cancelButton = $('[name*=cancel]', form);
     window.onbeforeunload = null;
     form.data('changed', false);
-    $('[name*=cancel]', form).trigger('click');
+
+    // Edit forms can safely leave via cancel + return-url.
+    if (returnUrlInput.length && cancelButton.length) {
+      returnUrlInput.val(returnUrl);
+      cancelButton.trigger('click');
+      return;
+    }
+
+    // New forms don't always have a return-url field; navigate directly.
+    if (returnUrl) {
+      window.location.href = returnUrl;
+    }
   }
 });
 
