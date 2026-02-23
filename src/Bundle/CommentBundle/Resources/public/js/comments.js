@@ -1,4 +1,15 @@
-$(function () {
+(function initIntegratedCommentBundle() {
+    let initialized = false;
+
+    let bootstrap = function() {
+        if (initialized || typeof window.jQuery === 'undefined') {
+            return initialized;
+        }
+
+        initialized = true;
+        let $ = window.jQuery;
+
+        $(function () {
 
     /**
      * Show add comment button
@@ -337,5 +348,21 @@ $(function () {
         tinymce.activeEditor.dom.loadCSS("/bundles/integratedcomment/css/comments.css");
     };
 
-    let waitForTiny = setInterval(tinymceInit, 100);
-});
+            let waitForTiny = setInterval(tinymceInit, 100);
+        });
+
+        return true;
+    };
+
+    if (bootstrap()) {
+        return;
+    }
+
+    let retries = 0;
+    let timer = setInterval(function () {
+        retries += 1;
+        if (bootstrap() || retries >= 200) {
+            clearInterval(timer);
+        }
+    }, 50);
+})();
