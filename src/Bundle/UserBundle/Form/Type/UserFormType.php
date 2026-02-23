@@ -34,6 +34,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -65,6 +66,12 @@ class UserFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if ($options['optional']) {
+            $builder->add('existing_user', ProfileType::class, [
+                'mapped' => false,
+                'required' => false,
+                'placeholder' => 'Link existing user',
+            ]);
+
             $builder->add(
                 'enabled',
                 Type\CheckboxType::class,
@@ -93,6 +100,16 @@ class UserFormType extends AbstractType
             ],
             'attr' => ['autocomplete' => 'off'],
         ]);
+
+        if (!$options['optional']) {
+            $builder->add('email', Type\EmailType::class, [
+                'required' => false,
+                'constraints' => [
+                    new Email(),
+                ],
+                'attr' => ['autocomplete' => 'off'],
+            ]);
+        }
 
         $builder->add('password', Type\PasswordType::class, [
             'mapped' => false,
@@ -147,12 +164,33 @@ class UserFormType extends AbstractType
 
         $builder->addEventSubscriber(new UserProfilePasswordListener($this->hasherFactory));
         $builder->addEventSubscriber(new UserProfileExtensionListener('integrated.extension.user'));
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($options): void {
+            $form = $event->getForm();
+
+            if (!($options['optional'] ?? false) || !$form->has('existing_user')) {
+                return;
+            }
+
+            $existingUser = $form->get('existing_user')->getData();
+            $resolvedData = self::resolveOptionalExistingUser($existingUser, $event->getData());
+            if ($resolvedData !== $event->getData()) {
+                $event->setData($resolvedData);
+            }
+        });
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
             $form = $event->getForm();
             $user = $event->getData();
 
             if (!$user instanceof IntegratedUserInterface || !method_exists($user, 'getRelation')) {
                 return;
+            }
+
+            if (method_exists($user, 'getEmail') && method_exists($user, 'setEmail') && method_exists($user, 'getUsername')) {
+                $email = trim((string) $user->getEmail());
+                $username = trim((string) $user->getUsername());
+                if ($email === '' && filter_var($username, FILTER_VALIDATE_EMAIL)) {
+                    $user->setEmail($username);
+                }
             }
 
             $relation = $user->getRelation();
@@ -167,17 +205,9 @@ class UserFormType extends AbstractType
 
             $currentUserId = (string) $user->getId();
             $existingUsers = $this->manager->findBy(['relation' => $relationId]);
-            foreach ($existingUsers as $existingUser) {
-                if (!$existingUser instanceof IntegratedUserInterface) {
-                    continue;
-                }
-
-                if ((string) $existingUser->getId() !== $currentUserId) {
-                    $errorTarget = $form->has('relation') ? $form->get('relation') : $form;
-                    $errorTarget->addError(new FormError('This author is already linked to another user.'));
-
-                    return;
-                }
+            if (self::hasRelationConflict($relationId, $currentUserId, $existingUsers)) {
+                $errorTarget = $form->has('relation') ? $form->get('relation') : $form;
+                $errorTarget->addError(new FormError('This author is already linked to another user.'));
             }
         });
 
@@ -248,6 +278,34 @@ class UserFormType extends AbstractType
     public function getBlockPrefix(): string
     {
         return 'integrated_user_user_form';
+    }
+
+    public static function resolveOptionalExistingUser(mixed $existingUser, mixed $currentData): mixed
+    {
+        if ($existingUser instanceof IntegratedUserInterface) {
+            return $existingUser;
+        }
+
+        return $currentData;
+    }
+
+    public static function hasRelationConflict(string $relationId, string $currentUserId, iterable $existingUsers): bool
+    {
+        if ($relationId === '') {
+            return false;
+        }
+
+        foreach ($existingUsers as $existingUser) {
+            if (!$existingUser instanceof IntegratedUserInterface) {
+                continue;
+            }
+
+            if ((string) $existingUser->getId() !== $currentUserId) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

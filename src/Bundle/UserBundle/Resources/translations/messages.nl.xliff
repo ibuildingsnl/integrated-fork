@@ -95,8 +95,8 @@
                 <target>De wachtwoorden moeten hetzelfde zijn</target>
             </trans-unit>
             <trans-unit id="24">
-                <source>Authentication code</source>
-                <target>Authenticatiecode</target>
+                <source>2FA</source>
+                <target>2FA</target>
             </trans-unit>
             <trans-unit id="25">
                 <source>Activate</source>
@@ -133,6 +133,74 @@
             <trans-unit id="34">
                 <source>Click the button below to reset your password.</source>
                 <target>Klik op de knop hieronder om je wachtwoord te wijzigen.</target>
+            </trans-unit>
+            <trans-unit id="35">
+                <source>Two-factor authentication</source>
+                <target>Tweefactorauthenticatie</target>
+            </trans-unit>
+            <trans-unit id="36">
+                <source>Two-factor authentication is active for your account.</source>
+                <target>Tweefactorauthenticatie is actief voor je account.</target>
+            </trans-unit>
+            <trans-unit id="37">
+                <source>Two-factor authentication is not active yet. Activate it to better protect your account.</source>
+                <target>Tweefactorauthenticatie is nog niet actief. Activeer dit om je account beter te beschermen.</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>Activate 2FA</source>
+                <target>2FA activeren</target>
+            </trans-unit>
+            <trans-unit id="39">
+                <source>User info</source>
+                <target>Gebruikersinfo</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>No effective roles found</source>
+                <target>Geen effectieve rollen gevonden</target>
+            </trans-unit>
+            <trans-unit id="41">
+                <source>No author linked</source>
+                <target>Geen auteur gekoppeld</target>
+            </trans-unit>
+            <trans-unit id="42">
+                <source>Can't scan the QR code? Enter this setup key manually in your authenticator app:</source>
+                <target>Kun je de QR-code niet scannen? Voer deze instelsleutel handmatig in je authenticator-app in:</target>
+            </trans-unit>
+            <trans-unit id="43">
+                <source>Deactivate 2FA</source>
+                <target>2FA deactiveren</target>
+            </trans-unit>
+            <trans-unit id="44">
+                <source>Reset 2FA</source>
+                <target>2FA opnieuw instellen</target>
+            </trans-unit>
+            <trans-unit id="45">
+                <source>Are you sure you want to deactivate 2FA for your account?</source>
+                <target>Weet je zeker dat je 2FA voor je account wilt deactiveren?</target>
+            </trans-unit>
+            <trans-unit id="46">
+                <source>Invalid request token.</source>
+                <target>Ongeldig verzoektoken.</target>
+            </trans-unit>
+            <trans-unit id="47">
+                <source>Two-factor authentication is already disabled.</source>
+                <target>Tweefactorauthenticatie is al uitgeschakeld.</target>
+            </trans-unit>
+            <trans-unit id="48">
+                <source>Two-factor authentication has been deactivated for your account.</source>
+                <target>Tweefactorauthenticatie is gedeactiveerd voor je account.</target>
+            </trans-unit>
+            <trans-unit id="49">
+                <source>Are you sure you want to reset 2FA for your account?</source>
+                <target>Weet je zeker dat je 2FA voor je account opnieuw wilt instellen?</target>
+            </trans-unit>
+            <trans-unit id="50">
+                <source>Two-factor authentication has been reset. Please activate it again.</source>
+                <target>Tweefactorauthenticatie is opnieuw ingesteld. Activeer het opnieuw.</target>
+            </trans-unit>
+            <trans-unit id="51">
+                <source>Enter your 6-digit verification code to continue</source>
+                <target>Vul je 6-cijferige verificatiecode in om door te gaan</target>
             </trans-unit>
         </body>
     </file>

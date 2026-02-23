@@ -8,4 +8,11 @@
         <default key="_controller">Integrated\Bundle\UserBundle\Controller\ProfileController::index</default>
     </route>
 
+    <route id="integrated_user_profile_two_factor_deactivate" path="/two-factor/deactivate" methods="POST">
+        <default key="_controller">Integrated\Bundle\UserBundle\Controller\ProfileController::deactivateTwoFactor</default>
+    </route>
+    <route id="integrated_user_profile_two_factor_reset" path="/two-factor/reset" methods="POST">
+        <default key="_controller">Integrated\Bundle\UserBundle\Controller\ProfileController::resetTwoFactor</default>
+    </route>
+
 </routes>

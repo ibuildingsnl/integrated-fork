@@ -7,6 +7,7 @@
 
         <unique-constraints>
             <unique-constraint columns="username,scope"></unique-constraint>
+            <unique-constraint columns="relation"></unique-constraint>
         </unique-constraints>
 
         <indexes>

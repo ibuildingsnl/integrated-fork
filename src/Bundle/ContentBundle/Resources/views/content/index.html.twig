@@ -78,17 +78,18 @@
                         {% set type = contentTypes|filter(t => t.id == content.type_name)|first %}
                         <div>
                             <strong>
-                                <a href="{{ editLink }}">
+                                <a href="{{ editLink }}" data-turbo-frame="_top">
                                     {{ content.title|default }}
                                 </a>
                             </strong>
                         </div>
                         <div class="row-options">
-                            <a href="{{ editLink }}">
+                            <a href="{{ editLink }}" data-turbo-frame="_top">
                                 {% trans %}Edit{% endtrans %}
                             </a> |
                             <a class="color-red"
                                href="{{ path('integrated_content_content_delete', {'id': content.type_id}) }}"
+                               data-turbo-frame="_top"
                                tabindex="-1" role="option">
                                 {% trans %}Delete{% endtrans %}
                             </a>

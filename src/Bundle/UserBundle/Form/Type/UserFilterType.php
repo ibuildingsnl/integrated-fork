@@ -39,6 +39,16 @@ class UserFilterType extends AbstractType
                 'choices' => $this->filterQueryProvider->getScopeChoices($options['data']),
                 'multiple' => true,
                 'expanded' => true,
+            ])
+            ->add('has_relation', ChoiceType::class, [
+                'label' => 'Author linked',
+                'choices' => [
+                    'Linked to author' => '1',
+                    'Not linked' => '0',
+                ],
+                'multiple' => true,
+                'expanded' => true,
+                'required' => false,
             ]);
     }
 

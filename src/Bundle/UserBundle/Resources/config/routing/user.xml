@@ -12,6 +12,10 @@
 		<default key="_controller">Integrated\Bundle\UserBundle\Controller\UserController::new</default>
 	</route>
 
+	<route id="integrated_user_user_bulk" path="/bulk" methods="POST">
+		<default key="_controller">Integrated\Bundle\UserBundle\Controller\UserController::bulk</default>
+	</route>
+
 	<route id="integrated_user_user_edit" path="/{id}">
 		<default key="_controller">Integrated\Bundle\UserBundle\Controller\UserController::edit</default>
 	</route>

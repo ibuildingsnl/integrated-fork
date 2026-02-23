@@ -11,34 +11,27 @@
 {% endblock flash %}
 
 {% block body %}
-    {% apply spaceless %}
-
-        <div class="modal auth" role="dialog">
-
+    <div class="modal-wrapper auth">
+        <div class="logo"><img src="{{ asset('bundles/integratedintegrated/images/logo_white.svg') }}" alt=""></div>
+        <div class="auth modal" role="dialog">
             <div class="modal-dialog">
-
                 <div class="modal-content">
-
-                    <form action="{{ checkPathUrl ? checkPathUrl: path(checkPathRoute) }}" method="post" class="form-horizontal {% if authenticationError %}has-global-errors{% endif %}">
-
+                    <form action="{{ checkPathUrl ? checkPathUrl: path(checkPathRoute) }}" method="post" class="form-inline {% if authenticationError %}has-global-errors{% endif %}">
                         <div class="modal-header">
-                            <h4 class="modal-title">{{ "Authentication code"|trans }} {{ twoFactorProvider }}</h4>
+                            <h2 class="modal-title">{{ "2FA"|trans }}</h2>
+                            <p>{% trans %}Enter your 6-digit verification code to continue{% endtrans %}</p>
                         </div>
-
                         <div class="modal-body">
-
                             {% if authenticationError %}
-
                                 <div class="alert alert-danger">
                                     <ul>
                                         <li>{{ authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') }}</li>
                                     </ul>
                                 </div>
-
                             {% endif %}
 
-                            <div class="form-group">
-                                <div class="col-lg-12">
+                            <div class="form-group w-full flex flex-wrap">
+                                <div class="w-full widget">
                                     <input
                                         class="form-control"
                                         id="_auth_code"
@@ -48,34 +41,26 @@
                                         autofocus
                                         inputmode="numeric"
                                         pattern="[0-9]*"
+                                        placeholder="{{ 'Authentication code'|trans }}"
                                     />
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <div class="col-lg-12">
-                                    <button class="btn btn-primary" type="submit" id="login" name="login">{{ 'Login'|trans }}</button>
-                                    <a class="btn btn-link" href="{{ logoutPath }}">{{ "Cancel"|trans }}</a>
-                                </div>
+                            <div class="form-group w-full flex flex-wrap">
+                                <button class="no-icon btn btn-primary" type="submit" id="login" name="login">
+                                    <span>{{ 'Login'|trans }}</span>
+                                </button>
+                                <a class="btn btn-link" href="{{ path('integrated_user_login') }}">{{ "Cancel"|trans }}</a>
                             </div>
 
                             {% if isCsrfProtectionEnabled %}
-
                                 <input type="hidden" name="{{ csrfParameterName }}" value="{{ csrf_token(csrfTokenId) }}"/>
-
                             {% endif %}
-
                         </div>
-
                     </form>
-
                 </div>
-
             </div>
-
         </div>
-
+    </div>
         <div class="modal-backdrop"></div>
-
-    {% endapply %}
 {% endblock body %}

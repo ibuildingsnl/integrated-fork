@@ -159,7 +159,7 @@
 
                     {% set groupedChannels = groupedChannels|merge({(brandName): groupedChannels[brandName]|merge([channel])}) %}
                 {% endfor %}
-                    <a class="calendar-item {{ calendarState }}" href="{{ editLink }}" target="_blank"
+                    <a class="calendar-item {{ calendarState }}" href="{{ editLink }}" target="_blank" data-turbo-frame="_top"
                        data-id="{{ content.type_id }}" data-type="{{ type }}" data-brands="{{ groupedChannels|keys|join(', ')|default('') }}"
                        data-premium="{% if document.premium %}true{% endif %}"
                        data-title="Edit {{ type }}" data-time="{{ date(content.pub_time)|date('Hi') }}">

@@ -15,7 +15,7 @@
                                 </li>
                                 {% for doc in assignedContent %}
                                     <li class="assigned-item">
-                                        <a href="{{ path('integrated_content_content_edit', {id: doc.type_id}) }}">
+                                        <a href="{{ path('integrated_content_content_edit', {id: doc.type_id}) }}" data-turbo-frame="_top">
                                             {% if doc.workflow_color_string is defined %}
                                                 {% set status_color = doc.workflow_color_string|first %}
                                             {% else %}

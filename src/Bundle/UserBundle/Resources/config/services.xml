@@ -26,6 +26,8 @@
             <argument>%mailer_name%</argument>
         </service>
 
+        <service id="Integrated\Bundle\UserBundle\Service\BulkUserActionService" />
+
     </services>
 
 </container>
