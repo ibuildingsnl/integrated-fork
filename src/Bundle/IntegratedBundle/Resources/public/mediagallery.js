@@ -1,6 +1,37 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./src/Bundle/ContentBundle/Resources/assets/js/turbo_navigation.js"
+/*!**************************************************************************!*\
+  !*** ./src/Bundle/ContentBundle/Resources/assets/js/turbo_navigation.js ***!
+  \**************************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   reloadWithTurbo: () => (/* binding */ reloadWithTurbo),
+/* harmony export */   visitWithTurbo: () => (/* binding */ visitWithTurbo)
+/* harmony export */ });
+function visitWithTurbo(url, options) {
+  if (window.Turbo && typeof window.Turbo.visit === 'function') {
+    window.Turbo.visit(url, options);
+    return;
+  }
+  window.location.href = url;
+}
+function reloadWithTurbo() {
+  if (window.Turbo && typeof window.Turbo.visit === 'function') {
+    window.Turbo.visit(window.location.href, {
+      action: 'replace'
+    });
+    return;
+  }
+  window.location.reload();
+}
+
+/***/ },
+
 /***/ "./node_modules/jquery-ui/ui/data.js"
 /*!*******************************************!*\
   !*** ./node_modules/jquery-ui/ui/data.js ***!
@@ -21149,6 +21180,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var select2_dist_js_select2_full__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! select2/dist/js/select2.full */ "./node_modules/select2/dist/js/select2.full.js");
 /* harmony import */ var select2_dist_js_select2_full__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(select2_dist_js_select2_full__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _turbo_navigation__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./turbo_navigation */ "./src/Bundle/ContentBundle/Resources/assets/js/turbo_navigation.js");
 /* provided dependency */ var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* provided dependency */ var __webpack_provided_window_dot_jQuery = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
@@ -21159,23 +21191,8 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 
+
 var MEDIA_GALLERY_NS = '.mediaGallery';
-function visitWithTurbo(url) {
-  if (window.Turbo && typeof window.Turbo.visit === 'function') {
-    window.Turbo.visit(url);
-    return;
-  }
-  window.location.href = url;
-}
-function reloadWithTurbo() {
-  if (window.Turbo && typeof window.Turbo.visit === 'function') {
-    window.Turbo.visit(window.location.href, {
-      action: 'replace'
-    });
-    return;
-  }
-  window.location.reload();
-}
 function bindMediaGalleryEvents() {
   bindViewToggles();
   bindBulkActions();
@@ -21326,9 +21343,9 @@ function bindMediaItemActions() {
       return;
     }
     if (selectedModus === 'media_gallery') {
-      visitWithTurbo(editImagePath.replace('REPLACE', mediaId));
+      (0,_turbo_navigation__WEBPACK_IMPORTED_MODULE_1__.visitWithTurbo)(editImagePath.replace('REPLACE', mediaId));
     } else {
-      visitWithTurbo(editImageIframePath.replace('REPLACE', mediaId));
+      (0,_turbo_navigation__WEBPACK_IMPORTED_MODULE_1__.visitWithTurbo)(editImageIframePath.replace('REPLACE', mediaId));
     }
   });
 }
@@ -21371,7 +21388,7 @@ function bindEditPanelForm() {
 function closeUppyWithRefresh() {
   $('#upload_container').removeClass('show');
   $('#dropdown_overlay').addClass('hide');
-  reloadWithTurbo();
+  (0,_turbo_navigation__WEBPACK_IMPORTED_MODULE_1__.reloadWithTurbo)();
 }
 function bindEditPanelSaveButton() {
   var panel = document.querySelector('#media-edit-panel');
@@ -21876,7 +21893,7 @@ function _confirmDelete() {
             showUsedByPopup(json_response);
           } else {
             document.querySelector('#bulkdelete_confirm_popup').classList.add('hidden');
-            reloadWithTurbo();
+            (0,_turbo_navigation__WEBPACK_IMPORTED_MODULE_1__.reloadWithTurbo)();
           }
         case 3:
           return _context12.a(2);

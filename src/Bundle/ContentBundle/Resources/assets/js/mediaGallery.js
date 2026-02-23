@@ -1,24 +1,7 @@
 import 'select2/dist/js/select2.full';
+import {reloadWithTurbo, visitWithTurbo} from './turbo_navigation';
 
 const MEDIA_GALLERY_NS = '.mediaGallery';
-
-function visitWithTurbo(url) {
-    if (window.Turbo && typeof window.Turbo.visit === 'function') {
-        window.Turbo.visit(url);
-        return;
-    }
-
-    window.location.href = url;
-}
-
-function reloadWithTurbo() {
-    if (window.Turbo && typeof window.Turbo.visit === 'function') {
-        window.Turbo.visit(window.location.href, {action: 'replace'});
-        return;
-    }
-
-    window.location.reload();
-}
 
 function bindMediaGalleryEvents() {
     bindViewToggles();

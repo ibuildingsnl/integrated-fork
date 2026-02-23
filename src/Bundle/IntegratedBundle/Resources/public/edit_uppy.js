@@ -33,6 +33,37 @@ module.exports = function prettierBytes(num) {
 
 /***/ },
 
+/***/ "./src/Bundle/ContentBundle/Resources/assets/js/turbo_navigation.js"
+/*!**************************************************************************!*\
+  !*** ./src/Bundle/ContentBundle/Resources/assets/js/turbo_navigation.js ***!
+  \**************************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   reloadWithTurbo: () => (/* binding */ reloadWithTurbo),
+/* harmony export */   visitWithTurbo: () => (/* binding */ visitWithTurbo)
+/* harmony export */ });
+function visitWithTurbo(url, options) {
+  if (window.Turbo && typeof window.Turbo.visit === 'function') {
+    window.Turbo.visit(url, options);
+    return;
+  }
+  window.location.href = url;
+}
+function reloadWithTurbo() {
+  if (window.Turbo && typeof window.Turbo.visit === 'function') {
+    window.Turbo.visit(window.location.href, {
+      action: 'replace'
+    });
+    return;
+  }
+  window.location.reload();
+}
+
+/***/ },
+
 /***/ "./node_modules/cropperjs/dist/cropper.js"
 /*!************************************************!*\
   !*** ./node_modules/cropperjs/dist/cropper.js ***!
@@ -30102,6 +30133,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _uppy_dashboard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uppy/dashboard */ "./node_modules/@uppy/dashboard/lib/index.js");
 /* harmony import */ var _uppy_xhr_upload__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uppy/xhr-upload */ "./node_modules/@uppy/xhr-upload/lib/index.js");
 /* harmony import */ var _uppy_image_editor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uppy/image-editor */ "./node_modules/@uppy/image-editor/lib/index.js");
+/* harmony import */ var _turbo_navigation__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./turbo_navigation */ "./src/Bundle/ContentBundle/Resources/assets/js/turbo_navigation.js");
 /* provided dependency */ var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
@@ -30123,17 +30155,11 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 
 
 
+
 __webpack_require__.g.Uppy = _uppy_core__WEBPACK_IMPORTED_MODULE_0__["default"];
 __webpack_require__.g.Dashboard = _uppy_dashboard__WEBPACK_IMPORTED_MODULE_1__["default"];
 __webpack_require__.g.XHRUpload = _uppy_xhr_upload__WEBPACK_IMPORTED_MODULE_2__["default"];
 __webpack_require__.g.ImageEditor = _uppy_image_editor__WEBPACK_IMPORTED_MODULE_3__["default"];
-function visitWithTurbo(url) {
-  if (window.Turbo && typeof window.Turbo.visit === 'function') {
-    window.Turbo.visit(url);
-    return;
-  }
-  window.location.href = url;
-}
 function addShowPopupButton() {
   var statusBar = document.querySelector('#uppy-DashboardContent-panel--editor .uppy-DashboardContent-bar');
   var button = document.createElement('button');
@@ -30158,7 +30184,7 @@ function _inititalizeUppy() {
       while (1) switch (_context.n) {
         case 0:
           closeUppyWithRefresh = function _closeUppyWithRefresh() {
-            visitWithTurbo(previous_url);
+            (0,_turbo_navigation__WEBPACK_IMPORTED_MODULE_4__.visitWithTurbo)(previous_url);
           };
           default_height = '750px';
           default_language = ''; //defaults to eng
@@ -30234,7 +30260,7 @@ function _inititalizeUppy() {
           document.querySelectorAll('.uppy-DashboardContent-back').forEach(function (button) {
             button.addEventListener('click', function () {
               document.querySelector('.uppy-Root').hidden = true;
-              visitWithTurbo(previous_url);
+              (0,_turbo_navigation__WEBPACK_IMPORTED_MODULE_4__.visitWithTurbo)(previous_url);
             });
           });
           return _context.a(2, uppy);

@@ -1,3 +1,5 @@
+import {visitWithTurbo} from './turbo_navigation';
+
 function initEditPanel() {
     const wrapper = document.querySelector('#editimagewrapper');
     const panel = document.querySelector('#media-edit-panel');
@@ -28,20 +30,11 @@ function initEditPanel() {
             : 'media_gallery';
 
         if (selectedModus == 'media_gallery') {
-            navigateTo(editImagePath.replace('REPLACE', mediaId));
+            visitWithTurbo(editImagePath.replace('REPLACE', mediaId));
         } else {
-            navigateTo(editImageIframePath.replace('REPLACE', mediaId));
+            visitWithTurbo(editImageIframePath.replace('REPLACE', mediaId));
         }
     }
-}
-
-function navigateTo(url) {
-    if (window.Turbo && typeof window.Turbo.visit === 'function') {
-        window.Turbo.visit(url);
-        return;
-    }
-
-    window.location.href = url;
 }
 
 document.addEventListener('DOMContentLoaded', initEditPanel);

@@ -2,22 +2,12 @@ import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import XHRUpload from '@uppy/xhr-upload'
 import ImageEditor from '@uppy/image-editor'
+import {visitWithTurbo} from './turbo_navigation'
 
 global.Uppy = Uppy
 global.Dashboard = Dashboard
 global.XHRUpload = XHRUpload
 global.ImageEditor = ImageEditor
-
-function visitWithTurbo(url) {
-    if (window.Turbo && typeof window.Turbo.visit === 'function') {
-        window.Turbo.visit(url);
-        return;
-    }
-
-    window.location.href = url
-}
-
-
 
 function addShowPopupButton() {
     const statusBar = document.querySelector('#uppy-DashboardContent-panel--editor .uppy-DashboardContent-bar')

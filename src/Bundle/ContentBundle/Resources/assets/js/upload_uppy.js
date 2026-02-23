@@ -9,15 +9,7 @@ global.XHRUpload = XHRUpload
 
 import ImageEditor from '@uppy/image-editor'
 global.ImageEditor = ImageEditor
-
-function reloadWithTurbo() {
-    if (window.Turbo && typeof window.Turbo.visit === 'function') {
-        window.Turbo.visit(window.location.href, {action: 'replace'});
-        return;
-    }
-
-    window.location.reload();
-}
+import {reloadWithTurbo} from './turbo_navigation'
 
 function inititalizeUppy(uppyOptions) {
     let default_height = '750px'
