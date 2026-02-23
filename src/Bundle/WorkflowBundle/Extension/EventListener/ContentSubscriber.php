@@ -35,6 +35,7 @@ use Integrated\Common\Security\PermissionInterface;
 use Integrated\Common\Workflow\Event\WorkflowStateChangedEvent;
 use Integrated\Common\Workflow\Events as WorkflowEvents;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -43,6 +44,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 class ContentSubscriber implements ContentSubscriberInterface
 {
     public const CONTENT_CLASS = 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Relation\\Relation';
+    private const NAVDROPDOWNS_CACHE_NAMESPACE = 'integrated_content_fragments_navdropdowns';
 
     private ExtensionInterface $extension;
 
@@ -176,6 +178,7 @@ class ContentSubscriber implements ContentSubscriberInterface
         }
 
         $persist = false;
+        $assignedChanged = false;
 
         $log = new Log();
         $log->setUser($this->getUser());
@@ -199,6 +202,7 @@ class ContentSubscriber implements ContentSubscriberInterface
 
         if ($data['assigned'] !== $state->getAssigned()) {
             $state->setAssigned($data['assigned']);
+            $assignedChanged = true;
 
             // sent mail when user changed
 
@@ -260,6 +264,10 @@ class ContentSubscriber implements ContentSubscriberInterface
         }
 
         $this->entityManager->flush();
+
+        if ($persist || $assignedChanged) {
+            $this->invalidateNavdropdownCache();
+        }
     }
 
     public function delete(ContentEvent $event)
@@ -379,5 +387,10 @@ class ContentSubscriber implements ContentSubscriberInterface
         }
 
         return false;
+    }
+
+    private function invalidateNavdropdownCache(): void
+    {
+        (new FilesystemAdapter(self::NAVDROPDOWNS_CACHE_NAMESPACE))->clear();
     }
 }

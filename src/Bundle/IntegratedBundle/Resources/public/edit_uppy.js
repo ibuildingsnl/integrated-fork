@@ -30127,6 +30127,13 @@ __webpack_require__.g.Uppy = _uppy_core__WEBPACK_IMPORTED_MODULE_0__["default"];
 __webpack_require__.g.Dashboard = _uppy_dashboard__WEBPACK_IMPORTED_MODULE_1__["default"];
 __webpack_require__.g.XHRUpload = _uppy_xhr_upload__WEBPACK_IMPORTED_MODULE_2__["default"];
 __webpack_require__.g.ImageEditor = _uppy_image_editor__WEBPACK_IMPORTED_MODULE_3__["default"];
+function visitWithTurbo(url) {
+  if (window.Turbo && typeof window.Turbo.visit === 'function') {
+    window.Turbo.visit(url);
+    return;
+  }
+  window.location.href = url;
+}
 function addShowPopupButton() {
   var statusBar = document.querySelector('#uppy-DashboardContent-panel--editor .uppy-DashboardContent-bar');
   var button = document.createElement('button');
@@ -30151,7 +30158,7 @@ function _inititalizeUppy() {
       while (1) switch (_context.n) {
         case 0:
           closeUppyWithRefresh = function _closeUppyWithRefresh() {
-            window.location.href = previous_url;
+            visitWithTurbo(previous_url);
           };
           default_height = '750px';
           default_language = ''; //defaults to eng
@@ -30227,7 +30234,7 @@ function _inititalizeUppy() {
           document.querySelectorAll('.uppy-DashboardContent-back').forEach(function (button) {
             button.addEventListener('click', function () {
               document.querySelector('.uppy-Root').hidden = true;
-              window.location.href = previous_url;
+              visitWithTurbo(previous_url);
             });
           });
           return _context.a(2, uppy);

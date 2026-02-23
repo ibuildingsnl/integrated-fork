@@ -28,11 +28,20 @@ function initEditPanel() {
             : 'media_gallery';
 
         if (selectedModus == 'media_gallery') {
-            window.location.href = editImagePath.replace('REPLACE', mediaId);
+            navigateTo(editImagePath.replace('REPLACE', mediaId));
         } else {
-            window.location.href = editImageIframePath.replace('REPLACE', mediaId);
+            navigateTo(editImageIframePath.replace('REPLACE', mediaId));
         }
     }
+}
+
+function navigateTo(url) {
+    if (window.Turbo && typeof window.Turbo.visit === 'function') {
+        window.Turbo.visit(url);
+        return;
+    }
+
+    window.location.href = url;
 }
 
 document.addEventListener('DOMContentLoaded', initEditPanel);

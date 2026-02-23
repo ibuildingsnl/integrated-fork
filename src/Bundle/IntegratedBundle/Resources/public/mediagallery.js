@@ -21160,6 +21160,22 @@ function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 
 var MEDIA_GALLERY_NS = '.mediaGallery';
+function visitWithTurbo(url) {
+  if (window.Turbo && typeof window.Turbo.visit === 'function') {
+    window.Turbo.visit(url);
+    return;
+  }
+  window.location.href = url;
+}
+function reloadWithTurbo() {
+  if (window.Turbo && typeof window.Turbo.visit === 'function') {
+    window.Turbo.visit(window.location.href, {
+      action: 'replace'
+    });
+    return;
+  }
+  window.location.reload();
+}
 function bindMediaGalleryEvents() {
   bindViewToggles();
   bindBulkActions();
@@ -21310,9 +21326,9 @@ function bindMediaItemActions() {
       return;
     }
     if (selectedModus === 'media_gallery') {
-      window.location.href = editImagePath.replace('REPLACE', mediaId);
+      visitWithTurbo(editImagePath.replace('REPLACE', mediaId));
     } else {
-      window.location.href = editImageIframePath.replace('REPLACE', mediaId);
+      visitWithTurbo(editImageIframePath.replace('REPLACE', mediaId));
     }
   });
 }
@@ -21355,7 +21371,7 @@ function bindEditPanelForm() {
 function closeUppyWithRefresh() {
   $('#upload_container').removeClass('show');
   $('#dropdown_overlay').addClass('hide');
-  window.location.reload();
+  reloadWithTurbo();
 }
 function bindEditPanelSaveButton() {
   var panel = document.querySelector('#media-edit-panel');
@@ -21860,7 +21876,7 @@ function _confirmDelete() {
             showUsedByPopup(json_response);
           } else {
             document.querySelector('#bulkdelete_confirm_popup').classList.add('hidden');
-            window.location.reload();
+            reloadWithTurbo();
           }
         case 3:
           return _context12.a(2);

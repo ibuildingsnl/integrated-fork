@@ -26,11 +26,18 @@ function initEditPanel() {
     // And then we load the same page without sidebar and header
     var selectedModus = typeof selected_modus !== 'undefined' && selected_modus && selected_modus !== 'undefined' ? selected_modus : 'media_gallery';
     if (selectedModus == 'media_gallery') {
-      window.location.href = editImagePath.replace('REPLACE', mediaId);
+      navigateTo(editImagePath.replace('REPLACE', mediaId));
     } else {
-      window.location.href = editImageIframePath.replace('REPLACE', mediaId);
+      navigateTo(editImageIframePath.replace('REPLACE', mediaId));
     }
   }
+}
+function navigateTo(url) {
+  if (window.Turbo && typeof window.Turbo.visit === 'function') {
+    window.Turbo.visit(url);
+    return;
+  }
+  window.location.href = url;
 }
 document.addEventListener('DOMContentLoaded', initEditPanel);
 document.addEventListener('turbo:load', initEditPanel);

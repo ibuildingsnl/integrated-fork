@@ -40,6 +40,7 @@
             <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="Integrated\Bundle\ContentBundle\Services\CalendarOptions" />
+            <argument type="service" id="integrated_queue.dbal.provider" />
             <argument type="service" id="integrated_content.publication_repository" />
 
             <tag name="controller.service_arguments" />

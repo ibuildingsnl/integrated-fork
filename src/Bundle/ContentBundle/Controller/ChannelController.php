@@ -374,4 +374,5 @@ class ChannelController extends AbstractController
 
         return $allowed;
     }
+
 }

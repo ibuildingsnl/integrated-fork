@@ -10,6 +10,15 @@ global.XHRUpload = XHRUpload
 import ImageEditor from '@uppy/image-editor'
 global.ImageEditor = ImageEditor
 
+function reloadWithTurbo() {
+    if (window.Turbo && typeof window.Turbo.visit === 'function') {
+        window.Turbo.visit(window.location.href, {action: 'replace'});
+        return;
+    }
+
+    window.location.reload();
+}
+
 function inititalizeUppy(uppyOptions) {
     let default_height = '750px'
     let default_language = '' //defaults to eng
@@ -113,7 +122,7 @@ function inititalizeUppy(uppyOptions) {
     function closeUppyWithRefresh() {
         $('#upload_container').removeClass('show');
         $('#dropdown_overlay').addClass('hide');
-        window.location.reload();
+        reloadWithTurbo();
     }
 
     uppy.use(XHRUpload, {

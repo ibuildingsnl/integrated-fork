@@ -30126,6 +30126,15 @@ __webpack_require__.g.Dashboard = _uppy_dashboard__WEBPACK_IMPORTED_MODULE_1__["
 __webpack_require__.g.XHRUpload = _uppy_xhr_upload__WEBPACK_IMPORTED_MODULE_2__["default"];
 
 __webpack_require__.g.ImageEditor = _uppy_image_editor__WEBPACK_IMPORTED_MODULE_3__["default"];
+function reloadWithTurbo() {
+  if (window.Turbo && typeof window.Turbo.visit === 'function') {
+    window.Turbo.visit(window.location.href, {
+      action: 'replace'
+    });
+    return;
+  }
+  window.location.reload();
+}
 function inititalizeUppy(uppyOptions) {
   var default_height = '750px';
   var default_language = ''; //defaults to eng
@@ -30252,7 +30261,7 @@ function inititalizeUppy(uppyOptions) {
   function closeUppyWithRefresh() {
     $('#upload_container').removeClass('show');
     $('#dropdown_overlay').addClass('hide');
-    window.location.reload();
+    reloadWithTurbo();
   }
   uppy.use(_uppy_xhr_upload__WEBPACK_IMPORTED_MODULE_2__["default"], {
     endpoint: uppyOptions.endpoint

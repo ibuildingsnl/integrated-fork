@@ -8,6 +8,15 @@ global.Dashboard = Dashboard
 global.XHRUpload = XHRUpload
 global.ImageEditor = ImageEditor
 
+function visitWithTurbo(url) {
+    if (window.Turbo && typeof window.Turbo.visit === 'function') {
+        window.Turbo.visit(url);
+        return;
+    }
+
+    window.location.href = url
+}
+
 
 
 function addShowPopupButton() {
@@ -57,7 +66,7 @@ async function inititalizeUppy(uppyOptions) {
     });
 
     function closeUppyWithRefresh() {
-        window.location.href = previous_url
+        visitWithTurbo(previous_url)
     }
 
     uppy.use(XHRUpload, {
@@ -108,7 +117,7 @@ async function inititalizeUppy(uppyOptions) {
     document.querySelectorAll('.uppy-DashboardContent-back').forEach((button) => {
         button.addEventListener('click', () => {
             document.querySelector('.uppy-Root').hidden = true
-            window.location.href = previous_url
+            visitWithTurbo(previous_url)
         });
     })
 

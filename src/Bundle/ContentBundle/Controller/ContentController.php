@@ -20,6 +20,7 @@ use Integrated\Bundle\ContentBundle\Controller\MediaController;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
+use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepository;
 use Integrated\Bundle\ContentBundle\Event\ContentDeletedEvent;
 use Integrated\Bundle\ContentBundle\Event\ContentDistributedEvent;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
@@ -46,6 +47,7 @@ use Integrated\Common\Locks\Filter;
 use Integrated\Common\Locks\Provider\DBAL\Manager;
 use Integrated\Common\Locks\Resource;
 use Integrated\Common\Security\Permissions;
+use Integrated\Common\Queue\Provider\DBAL\QueueProvider;
 use Integrated\Common\Solr\Configurable;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
 use Integrated\Common\Solr\Search\QueryFactoryInterface;
@@ -89,6 +91,8 @@ class ContentController extends AbstractController
         private readonly EventDispatcherInterface $dispatcher,
         private readonly DocumentManager $documentManager,
         private readonly CalendarOptions $calendarOptions,
+        private readonly QueueProvider $queueProvider,
+        private readonly PublicationRepository $publicationRepository,
     ) {
     }
 
@@ -879,53 +883,27 @@ class ContentController extends AbstractController
     {
         $user = $this->getUser();
         $userId = $user instanceof UserInterface ? (string) $user->getId() : 'anonymous';
+
+        $queueStatus = $this->getQueueStatus($request);
+        $queuecount = $queueStatus['queuecount'];
+        $assignedContent = $this->getAssignedContent();
+        $assignedCount = \count($assignedContent);
+
         $cache = new FilesystemAdapter(self::NAVDROPDOWNS_CACHE_NAMESPACE);
-        $cacheItem = $cache->getItem('navdropdowns_'.md5($userId.'|'.$request->getLocale()));
+        $cacheItem = $cache->getItem('navdropdowns_'.md5($userId.'|'.$request->getLocale().'|'.$queuecount.'|'.$assignedCount));
 
         if ($cacheItem->isHit()) {
             return new Response((string) $cacheItem->get());
-        }
-
-        $session = $request->getSession();
-
-        $queuecount = (int) 0; // $this->container->get('integrated_queue.dbal.provider')->count();
-        $queuepercentage = 100;
-        if ($queuecount > 0) {
-            $queuemaxcount = max($queuecount, $session->get('queuemaxcount'));
-            $session->set('queuemaxcount', $queuemaxcount);
-            $queuepercentage = round(($queuemaxcount - $queuecount) / $queuemaxcount * 100);
-        } else {
-            $session->remove('queuemaxcount');
         }
 
         $email = '';
 
         $avatarurl = '//www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s=45';
 
-        // Get documents assigned to this user
-        $query = $this->getSolarium()->createSelect();
-
-        $assignedContent = [];
-
-        if ($user instanceof UserInterface) {
-            $userId = $user->getId();
-
-            $query
-                ->createFilterQuery('workflow_assigned_id')
-                ->setQuery('facet_workflow_assigned_id:'.$userId.'');
-
-            $query->createFilterQuery('pub_not_active')
-                  ->setQuery('-pub_active:true');
-
-            $result = $this->getSolarium()->select($query);
-
-            $assignedContent = $result->getDocuments();
-        }
-
         $html = $this->renderView('@IntegratedContent/content/navdropdowns.html.twig', [
             'avatarurl' => $avatarurl,
             'queuecount' => $queuecount,
-            'queuepercentage' => $queuepercentage,
+            'queuepercentage' => $queueStatus['queuepercentage'],
             'assignedContent' => $assignedContent,
         ]);
 
@@ -934,6 +912,119 @@ class ContentController extends AbstractController
         $cache->save($cacheItem);
 
         return new Response($html);
+    }
+
+    public function assignedStatus(): JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user instanceof UserInterface) {
+            return new JsonResponse([], Response::HTTP_FORBIDDEN);
+        }
+
+        $items = array_map(function ($document): array {
+            $contentId = (string) ($document['type_id'] ?? '');
+            $title = (string) ($document['title'] ?? '');
+
+            $statusColor = '#f2f2f2';
+            $statusIcon = '';
+
+            if (isset($document['workflow_color_string'])) {
+                $colors = (array) $document['workflow_color_string'];
+                $firstColor = reset($colors);
+                if ($firstColor) {
+                    $statusColor = (string) $firstColor;
+                }
+            }
+
+            if (isset($document['workflow_icon_string'])) {
+                $icons = (array) $document['workflow_icon_string'];
+                $firstIcon = reset($icons);
+                if ($firstIcon) {
+                    $statusIcon = (string) $firstIcon;
+                }
+            }
+
+            return [
+                'id' => $contentId,
+                'title' => $title,
+                'status_color' => $statusColor,
+                'status_icon' => $statusIcon,
+                'edit_url' => $contentId !== '' ? $this->generateUrl('integrated_content_content_edit', ['id' => $contentId]) : '#',
+            ];
+        }, $this->getAssignedContent());
+
+        $response = new JsonResponse([
+            'count' => \count($items),
+            'items' => $items,
+        ]);
+
+        $response->setPrivate();
+        $response->headers->addCacheControlDirective('no-store', true);
+        $response->headers->addCacheControlDirective('max-age', 0);
+
+        return $response;
+    }
+
+    public function queueStatus(Request $request): JsonResponse
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return new JsonResponse([], Response::HTTP_FORBIDDEN);
+        }
+
+        $queueStatus = $this->getQueueStatus($request);
+
+        $response = new JsonResponse([
+            'queuecount' => $queueStatus['queuecount'],
+            'queuepercentage' => $queueStatus['queuepercentage'],
+        ]);
+
+        $response->setPrivate();
+        $response->headers->addCacheControlDirective('no-store', true);
+        $response->headers->addCacheControlDirective('max-age', 0);
+
+        return $response;
+    }
+
+    private function getQueueStatus(Request $request): array
+    {
+        $queuecount = (int) $this->queueProvider->count();
+        $queuepercentage = 100;
+        $session = $request->getSession();
+
+        if ($queuecount > 0) {
+            $queuemaxcount = max($queuecount, (int) $session->get('queuemaxcount', 0));
+            $session->set('queuemaxcount', $queuemaxcount);
+            $queuepercentage = (int) round(($queuemaxcount - $queuecount) / $queuemaxcount * 100);
+        } else {
+            $session->remove('queuemaxcount');
+        }
+
+        return [
+            'queuecount' => $queuecount,
+            'queuepercentage' => $queuepercentage,
+        ];
+    }
+
+    private function getAssignedContent(): array
+    {
+        $user = $this->getUser();
+        if (!$user instanceof UserInterface) {
+            return [];
+        }
+
+        $query = $this->getSolarium()->createSelect();
+
+        $query
+            ->createFilterQuery('pub_not_active')
+            ->setQuery('-pub_active:true');
+
+        $query
+            ->createFilterQuery('workflow_assigned_id')
+            ->setQuery('facet_workflow_assigned_id:'.$user->getId());
+
+        $result = $this->getSolarium()->select($query);
+
+        return $result->getDocuments();
     }
 
     public function usedBy(Content $content, Request $request): Response
