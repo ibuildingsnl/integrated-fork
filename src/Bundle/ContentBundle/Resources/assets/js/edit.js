@@ -433,61 +433,69 @@ function updatePublicationCount() {
 }
 
 function setPublicationDateTimes(){
-    let prevDate = '';
-    let prevTime = '';
+    if (document.body.dataset.boundSetPublicationDateTimes !== 'true') {
+        document.addEventListener('click', function(e) {
+            const dateTextButton = e.target.closest('#integrated_content_publishTime .startDate .date-text');
+            if (!dateTextButton) {
+                return;
+            }
 
-    let mainStartDate = document.querySelector('#integrated_content_publishTime .startDate');
+            const dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
+            const timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
+            const publishTimeRoot = document.querySelector('#integrated_content_publishTime');
+            if (!dateInput || !timeInput || !publishTimeRoot) {
+                return;
+            }
 
-    if (mainStartDate) {
-        const dateTextButton = mainStartDate.querySelector('.date-text');
-        const okDateButton = mainStartDate.querySelector('.ok-date');
-        if (!dateTextButton || !okDateButton) {
-            return;
-        }
+            publishTimeRoot.dataset.prevDate = dateInput.value || '';
+            publishTimeRoot.dataset.prevTime = timeInput.value || '';
+        });
 
-        if (dateTextButton.dataset.boundSetPublicationDateTimesClick !== 'true') {
-            dateTextButton.addEventListener('click', function() {
-            let dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
-            let timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
-            prevDate = dateInput.value
-            prevTime = timeInput.value
+        document.addEventListener('click', function(e) {
+            const okDateButton = e.target.closest('#integrated_content_publishTime .startDate .ok-date');
+            if (!okDateButton) {
+                return;
+            }
 
-            });
-            dateTextButton.dataset.boundSetPublicationDateTimesClick = 'true';
-        }
+            const dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
+            const timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
+            const publishTimeRoot = document.querySelector('#integrated_content_publishTime');
+            if (!dateInput || !timeInput || !publishTimeRoot) {
+                return;
+            }
 
-        if (okDateButton.dataset.boundSetPublicationDateTimesOk !== 'true') {
-            okDateButton.addEventListener('click', function() {
-            let dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
-            let timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
-            let newDate = dateInput.value;
-            let newTime = timeInput.value;
+            const prevDate = publishTimeRoot.dataset.prevDate || '';
+            const prevTime = publishTimeRoot.dataset.prevTime || '';
+            const newDate = dateInput.value || '';
+            const newTime = timeInput.value || '';
+            if (!newDate || !newTime) {
+                return;
+            }
 
-            let prevFormattedDateTime = `${prevDate} ${prevTime}`;
-            let newFormattedDateTime = `${newDate.split('-').reverse().join('-')} ${newTime}`;
+            const prevFormattedDateTime = `${prevDate} ${prevTime}`;
+            const newFormattedDateTime = `${newDate.split('-').reverse().join('-')} ${newTime}`;
 
             document.querySelectorAll('.publication-settings').forEach(setting => {
-                let settingDateText = setting.querySelector('.date-text');
-                let settingDateInput = setting.querySelector('input[type="date"]');
-                let settingTimeInput = setting.querySelector('input[type="time"]');
-                let currentDateTime = `${settingDateInput.value} ${settingTimeInput.value}`;
+                const settingDateText = setting.querySelector('.date-text');
+                const settingDateInput = setting.querySelector('input[type="date"]');
+                const settingTimeInput = setting.querySelector('input[type="time"]');
+                if (!settingDateInput || !settingTimeInput || !settingDateText) {
+                    return;
+                }
 
-                if (settingDateText && currentDateTime === prevFormattedDateTime) {
+                const currentDateTime = `${settingDateInput.value} ${settingTimeInput.value}`;
+                if (currentDateTime === prevFormattedDateTime) {
                     settingDateText.textContent = newFormattedDateTime;
-
-                    if (settingDateInput && settingTimeInput) {
-                        settingDateInput.value = newDate;
-                        settingTimeInput.value = newTime;
-                    }
-
+                    settingDateInput.value = newDate;
+                    settingTimeInput.value = newTime;
                 }
             });
 
             updatePublicationsAndChannels();
             prepDateTimeFields();
         });
-            okDateButton.dataset.boundSetPublicationDateTimesOk = 'true';
-        }
+
+        document.body.dataset.boundSetPublicationDateTimes = 'true';
     }
 }
 

@@ -1,13 +1,15 @@
 let form_relations = {}; //this holds all the form relation objects with an id
 const mediagallery_link = '/admin/media/';
+let selected_relation = null;
 
-window.addEventListener('load', function() {
+function initializeMediaGallerySelection() {
+    form_relations = {};
     populateFormRelations();
     populateSelectedImages().then(() => {
         setupFormRelations();
-        addEventListeners();
     });
-});
+    addEventListeners();
+}
 
 function setupFormRelations() {
     Object.values(form_relations).forEach(form_relation => {
@@ -73,29 +75,47 @@ function getTypesUrl(types) {
 }
 
 function addEventListeners() {
-    const selectButtons = document.querySelectorAll('.select_multimedia_button');
-    const selectedImages = document.querySelectorAll('.selected_images');
+    if (document.body.dataset.boundMediaGallerySelectionHandlers === 'true') {
+        return;
+    }
 
-    selectButtons.forEach((selectButton) => {
-        selectButton.addEventListener('click', (event) => {
-            const { relationid } = event.target.dataset;
+    document.addEventListener('click', (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+        if (!target) {
+            return;
+        }
+
+        const selectButton = target.closest('.select_multimedia_button');
+        if (selectButton) {
+            const { relationid } = selectButton.dataset;
+            if (!relationid || !form_relations[relationid]) {
+                return;
+            }
+
             selected_relation = form_relations[relationid];
             showMediaGallery(selected_relation);
-        });
-    });
+            return;
+        }
 
-    selectedImages.forEach((selectedImage) => {
-        selectedImage.addEventListener('click', (event) => {
-            const imageItem = event.target.closest('li');
-            const removeButton = event.target.closest('.remove');
-
-            if (imageItem && !removeButton) {
-                const { relationid } = imageItem.closest('.selected_images').dataset;
-                selected_relation = form_relations[relationid];
-                showMediaGallery(selected_relation);
+        const imageItem = target.closest('.selected_images li');
+        const removeButton = target.closest('.remove');
+        if (imageItem && !removeButton) {
+            const selectedImagesContainer = imageItem.closest('.selected_images');
+            if (!selectedImagesContainer) {
+                return;
             }
-        });
+
+            const { relationid } = selectedImagesContainer.dataset;
+            if (!relationid || !form_relations[relationid]) {
+                return;
+            }
+
+            selected_relation = form_relations[relationid];
+            showMediaGallery(selected_relation);
+        }
     });
+
+    document.body.dataset.boundMediaGallerySelectionHandlers = 'true';
 }
 
 window.removeImage = function(event) {
@@ -215,27 +235,61 @@ function rebuildDOM() {
 }
 
 function closeMediaGallery() {
+    if (!selected_relation) {
+        return;
+    }
+
     reloadMediaLibrary();
 
-    document.querySelector(selected_relation.wrap_selector).classList.remove('show');
-    document.querySelector('#dropdown_overlay').classList.add('hide');
+    const wrap = document.querySelector(selected_relation.wrap_selector);
+    if (wrap) {
+        wrap.classList.remove('show');
+    }
+
+    const overlay = document.querySelector('#dropdown_overlay');
+    if (overlay) {
+        overlay.classList.add('hide');
+    }
+
     window.popupShown = false;
 }
 
 function reloadMediaLibrary() {
+    if (!selected_relation) {
+        return;
+    }
+
     const iframe = document.querySelector(selected_relation.iframe_selector);
-    iframe.src = iframe.src;
+    if (iframe) {
+        iframe.src = iframe.src;
+    }
 }
 
 function showMediaGallery(selected_relation) {
     window.popupShown = true;
 
     const iframe = document.querySelector(selected_relation.iframe_selector);
+    if (!iframe) {
+        return;
+    }
+
     const selectedIds = selected_relation.selected_images.map(item => item.id).filter(Boolean).join(',');
     const selectedIdsQuery = selectedIds.length ? `&selected_ids=${encodeURIComponent(selectedIds)}` : '';
     const link = `${mediagallery_link}${selected_relation.modus}?page=1&${selected_relation.types_url}${selectedIdsQuery}`;
     iframe.setAttribute('src', link);
 
-    document.querySelector(selected_relation.wrap_selector).classList.add('show');
-    document.querySelector('#dropdown_overlay').classList.remove('hide');
+    const wrap = document.querySelector(selected_relation.wrap_selector);
+    if (wrap) {
+        wrap.classList.add('show');
+    }
+
+    const overlay = document.querySelector('#dropdown_overlay');
+    if (overlay) {
+        overlay.classList.remove('hide');
+    }
 }
+
+window.addEventListener('load', initializeMediaGallerySelection);
+document.addEventListener('DOMContentLoaded', initializeMediaGallerySelection);
+document.addEventListener('turbo:load', initializeMediaGallerySelection);
+document.addEventListener('turbo:render', initializeMediaGallerySelection);

@@ -13688,50 +13688,59 @@ function updatePublicationCount() {
   }
 }
 function setPublicationDateTimes() {
-  var prevDate = '';
-  var prevTime = '';
-  var mainStartDate = document.querySelector('#integrated_content_publishTime .startDate');
-  if (mainStartDate) {
-    var dateTextButton = mainStartDate.querySelector('.date-text');
-    var okDateButton = mainStartDate.querySelector('.ok-date');
-    if (!dateTextButton || !okDateButton) {
-      return;
-    }
-    if (dateTextButton.dataset.boundSetPublicationDateTimesClick !== 'true') {
-      dateTextButton.addEventListener('click', function () {
-        var dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
-        var timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
-        prevDate = dateInput.value;
-        prevTime = timeInput.value;
+  if (document.body.dataset.boundSetPublicationDateTimes !== 'true') {
+    document.addEventListener('click', function (e) {
+      var dateTextButton = e.target.closest('#integrated_content_publishTime .startDate .date-text');
+      if (!dateTextButton) {
+        return;
+      }
+      var dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
+      var timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
+      var publishTimeRoot = document.querySelector('#integrated_content_publishTime');
+      if (!dateInput || !timeInput || !publishTimeRoot) {
+        return;
+      }
+      publishTimeRoot.dataset.prevDate = dateInput.value || '';
+      publishTimeRoot.dataset.prevTime = timeInput.value || '';
+    });
+    document.addEventListener('click', function (e) {
+      var okDateButton = e.target.closest('#integrated_content_publishTime .startDate .ok-date');
+      if (!okDateButton) {
+        return;
+      }
+      var dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
+      var timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
+      var publishTimeRoot = document.querySelector('#integrated_content_publishTime');
+      if (!dateInput || !timeInput || !publishTimeRoot) {
+        return;
+      }
+      var prevDate = publishTimeRoot.dataset.prevDate || '';
+      var prevTime = publishTimeRoot.dataset.prevTime || '';
+      var newDate = dateInput.value || '';
+      var newTime = timeInput.value || '';
+      if (!newDate || !newTime) {
+        return;
+      }
+      var prevFormattedDateTime = "".concat(prevDate, " ").concat(prevTime);
+      var newFormattedDateTime = "".concat(newDate.split('-').reverse().join('-'), " ").concat(newTime);
+      document.querySelectorAll('.publication-settings').forEach(function (setting) {
+        var settingDateText = setting.querySelector('.date-text');
+        var settingDateInput = setting.querySelector('input[type="date"]');
+        var settingTimeInput = setting.querySelector('input[type="time"]');
+        if (!settingDateInput || !settingTimeInput || !settingDateText) {
+          return;
+        }
+        var currentDateTime = "".concat(settingDateInput.value, " ").concat(settingTimeInput.value);
+        if (currentDateTime === prevFormattedDateTime) {
+          settingDateText.textContent = newFormattedDateTime;
+          settingDateInput.value = newDate;
+          settingTimeInput.value = newTime;
+        }
       });
-      dateTextButton.dataset.boundSetPublicationDateTimesClick = 'true';
-    }
-    if (okDateButton.dataset.boundSetPublicationDateTimesOk !== 'true') {
-      okDateButton.addEventListener('click', function () {
-        var dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
-        var timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
-        var newDate = dateInput.value;
-        var newTime = timeInput.value;
-        var prevFormattedDateTime = "".concat(prevDate, " ").concat(prevTime);
-        var newFormattedDateTime = "".concat(newDate.split('-').reverse().join('-'), " ").concat(newTime);
-        document.querySelectorAll('.publication-settings').forEach(function (setting) {
-          var settingDateText = setting.querySelector('.date-text');
-          var settingDateInput = setting.querySelector('input[type="date"]');
-          var settingTimeInput = setting.querySelector('input[type="time"]');
-          var currentDateTime = "".concat(settingDateInput.value, " ").concat(settingTimeInput.value);
-          if (settingDateText && currentDateTime === prevFormattedDateTime) {
-            settingDateText.textContent = newFormattedDateTime;
-            if (settingDateInput && settingTimeInput) {
-              settingDateInput.value = newDate;
-              settingTimeInput.value = newTime;
-            }
-          }
-        });
-        updatePublicationsAndChannels();
-        prepDateTimeFields();
-      });
-      okDateButton.dataset.boundSetPublicationDateTimesOk = 'true';
-    }
+      updatePublicationsAndChannels();
+      prepDateTimeFields();
+    });
+    document.body.dataset.boundSetPublicationDateTimes = 'true';
   }
 }
 function ensurePublicationExists(channelId) {

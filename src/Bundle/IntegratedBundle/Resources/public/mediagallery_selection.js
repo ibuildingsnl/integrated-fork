@@ -16,13 +16,15 @@ function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" 
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 var form_relations = {}; //this holds all the form relation objects with an id
 var mediagallery_link = '/admin/media/';
-window.addEventListener('load', function () {
+var selected_relation = null;
+function initializeMediaGallerySelection() {
+  form_relations = {};
   populateFormRelations();
   populateSelectedImages().then(function () {
     setupFormRelations();
-    addEventListeners();
   });
-});
+  addEventListeners();
+}
 function setupFormRelations() {
   Object.values(form_relations).forEach(function (form_relation) {
     selected_relation = form_relation;
@@ -75,26 +77,40 @@ function getTypesUrl(types) {
   }, '');
 }
 function addEventListeners() {
-  var selectButtons = document.querySelectorAll('.select_multimedia_button');
-  var selectedImages = document.querySelectorAll('.selected_images');
-  selectButtons.forEach(function (selectButton) {
-    selectButton.addEventListener('click', function (event) {
-      var relationid = event.target.dataset.relationid;
+  if (document.body.dataset.boundMediaGallerySelectionHandlers === 'true') {
+    return;
+  }
+  document.addEventListener('click', function (event) {
+    var target = event.target instanceof Element ? event.target : null;
+    if (!target) {
+      return;
+    }
+    var selectButton = target.closest('.select_multimedia_button');
+    if (selectButton) {
+      var relationid = selectButton.dataset.relationid;
+      if (!relationid || !form_relations[relationid]) {
+        return;
+      }
       selected_relation = form_relations[relationid];
       showMediaGallery(selected_relation);
-    });
-  });
-  selectedImages.forEach(function (selectedImage) {
-    selectedImage.addEventListener('click', function (event) {
-      var imageItem = event.target.closest('li');
-      var removeButton = event.target.closest('.remove');
-      if (imageItem && !removeButton) {
-        var relationid = imageItem.closest('.selected_images').dataset.relationid;
-        selected_relation = form_relations[relationid];
-        showMediaGallery(selected_relation);
+      return;
+    }
+    var imageItem = target.closest('.selected_images li');
+    var removeButton = target.closest('.remove');
+    if (imageItem && !removeButton) {
+      var selectedImagesContainer = imageItem.closest('.selected_images');
+      if (!selectedImagesContainer) {
+        return;
       }
-    });
+      var _relationid = selectedImagesContainer.dataset.relationid;
+      if (!_relationid || !form_relations[_relationid]) {
+        return;
+      }
+      selected_relation = form_relations[_relationid];
+      showMediaGallery(selected_relation);
+    }
   });
+  document.body.dataset.boundMediaGallerySelectionHandlers = 'true';
 }
 window.removeImage = function (event) {
   event.preventDefault();
@@ -197,26 +213,53 @@ function rebuildDOM() {
   addImageIDsToInputField();
 }
 function closeMediaGallery() {
+  if (!selected_relation) {
+    return;
+  }
   reloadMediaLibrary();
-  document.querySelector(selected_relation.wrap_selector).classList.remove('show');
-  document.querySelector('#dropdown_overlay').classList.add('hide');
+  var wrap = document.querySelector(selected_relation.wrap_selector);
+  if (wrap) {
+    wrap.classList.remove('show');
+  }
+  var overlay = document.querySelector('#dropdown_overlay');
+  if (overlay) {
+    overlay.classList.add('hide');
+  }
   window.popupShown = false;
 }
 function reloadMediaLibrary() {
+  if (!selected_relation) {
+    return;
+  }
   var iframe = document.querySelector(selected_relation.iframe_selector);
-  iframe.src = iframe.src;
+  if (iframe) {
+    iframe.src = iframe.src;
+  }
 }
 function showMediaGallery(selected_relation) {
   window.popupShown = true;
   var iframe = document.querySelector(selected_relation.iframe_selector);
+  if (!iframe) {
+    return;
+  }
   var selectedIds = selected_relation.selected_images.map(function (item) {
     return item.id;
   }).filter(Boolean).join(',');
   var selectedIdsQuery = selectedIds.length ? "&selected_ids=".concat(encodeURIComponent(selectedIds)) : '';
   var link = "".concat(mediagallery_link).concat(selected_relation.modus, "?page=1&").concat(selected_relation.types_url).concat(selectedIdsQuery);
   iframe.setAttribute('src', link);
-  document.querySelector(selected_relation.wrap_selector).classList.add('show');
-  document.querySelector('#dropdown_overlay').classList.remove('hide');
+  var wrap = document.querySelector(selected_relation.wrap_selector);
+  if (wrap) {
+    wrap.classList.add('show');
+  }
+  var overlay = document.querySelector('#dropdown_overlay');
+  if (overlay) {
+    overlay.classList.remove('hide');
+  }
 }
+window.addEventListener('load', initializeMediaGallerySelection);
+document.addEventListener('DOMContentLoaded', initializeMediaGallerySelection);
+document.addEventListener('turbo:load', initializeMediaGallerySelection);
+document.addEventListener('turbo:render', initializeMediaGallerySelection);
 /******/ })()
 ;
