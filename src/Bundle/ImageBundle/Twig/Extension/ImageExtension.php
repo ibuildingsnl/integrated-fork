@@ -125,11 +125,11 @@ class ImageExtension extends AbstractExtension
                 $image = $image->getIdentifier();
             }
 
-            if (\in_array($metadata->getExtension(), $this->mimicFormats)) {
-                return $this->imageMimicHandling->open($image);
-            }
+        if (\in_array($metadata->getExtension(), $this->mimicFormats)) {
+            return $this->safeOpenMimic($image);
+        }
         } elseif (filter_var($image, \FILTER_VALIDATE_URL)) {
-            return $this->imageMimicHandling->open($image);
+            return $this->safeOpenMimic($image);
         }
 
         // detect json format
@@ -138,24 +138,24 @@ class ImageExtension extends AbstractExtension
         }
 
         if (\in_array(pathinfo($image, \PATHINFO_EXTENSION), $this->mimicFormats)) {
-            return $this->imageMimicHandling->open($image);
+            return $this->safeOpenMimic($image);
         }
 
         $extension = pathinfo($image, \PATHINFO_EXTENSION);
         if (strtolower($extension) === 'pdf') {
-            return $this->imageHandling->open('bundles/integratedintegrated/images/fallbacks/pdf-fallback.jpg');
+            return $this->safeOpen('bundles/integratedintegrated/images/fallbacks/pdf-fallback.jpg');
         }
         if (file_exists($image)) {
             $mime = mime_content_type($image);
             if (str_starts_with($mime, 'video/')) {
-                return $this->imageHandling->open('bundles/integratedintegrated/images/fallbacks/video-fallback.jpg');
+                return $this->safeOpen('bundles/integratedintegrated/images/fallbacks/video-fallback.jpg');
             }
         }
         if (!file_exists($image) && (!str_contains($image, '@'))) {
-            return $this->imageHandling->open('bundles/integratedintegrated/images/fallbacks/fallback.jpg');
+            return $this->safeOpen('bundles/integratedintegrated/images/fallbacks/fallback.jpg');
         }
 
-        return $this->imageHandling->open($image);
+        return $this->safeOpen($image);
     }
 
     /**
@@ -199,5 +199,23 @@ class ImageExtension extends AbstractExtension
     public function getName()
     {
         return 'integrated_image_json';
+    }
+
+    private function safeOpen(string $image)
+    {
+        try {
+            return $this->imageHandling->open($image);
+        } catch (\Throwable $e) {
+            return $this->imageHandling->open('bundles/integratedintegrated/images/fallbacks/fallback.jpg');
+        }
+    }
+
+    private function safeOpenMimic(string $image)
+    {
+        try {
+            return $this->imageMimicHandling->open($image);
+        } catch (\Throwable $e) {
+            return $this->safeOpen('bundles/integratedintegrated/images/fallbacks/fallback.jpg');
+        }
     }
 }
