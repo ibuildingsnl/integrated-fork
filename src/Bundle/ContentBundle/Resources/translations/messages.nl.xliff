@@ -1394,6 +1394,26 @@
                 <source>Show technical request details</source>
                 <target>Toon technische verzoekdetails</target>
             </trans-unit>
+            <trans-unit id="353">
+                <source>Date range</source>
+                <target>Datumbereik</target>
+            </trans-unit>
+            <trans-unit id="354">
+                <source>From</source>
+                <target>Van</target>
+            </trans-unit>
+            <trans-unit id="355">
+                <source>Until</source>
+                <target>Tot en met</target>
+            </trans-unit>
+            <trans-unit id="356">
+                <source>Reset date</source>
+                <target>Datum resetten</target>
+            </trans-unit>
+            <trans-unit id="357">
+                <source>No items found for this date range</source>
+                <target>Geen items gevonden binnen dit datumbereik</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

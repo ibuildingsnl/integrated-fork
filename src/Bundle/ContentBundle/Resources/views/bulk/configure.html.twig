@@ -60,23 +60,42 @@
 {{ parent() }}
 
 <script>
-    $(document).ready(function () {
-        implementSelect2();
-
-        $('[data-action-toggle="1"] input:checkbox')
-            .click(toggle)
-            .each(toggle);
-
-        function toggle() {
-            var self = $(this);
-
-            if (self.is(':checked')) {
-                self.parents('[data-action-toggle="1"]').next().show();
-            } else {
-                self.parents('[data-action-toggle="1"]').next().hide();
+    (function () {
+        function syncToggle(checkbox) {
+            var toggleContainer = checkbox.closest('[data-action-toggle="1"]');
+            if (!toggleContainer) {
+                return;
             }
+
+            var details = toggleContainer.nextElementSibling;
+            if (!details) {
+                return;
+            }
+
+            details.style.display = checkbox.checked ? '' : 'none';
         }
-    });
+
+        function initBulkConfigure() {
+            if (window.jQuery && typeof window.implementSelect2 === 'function') {
+                window.implementSelect2();
+            }
+
+            var checkboxes = document.querySelectorAll('[data-action-toggle="1"] input[type="checkbox"]');
+            checkboxes.forEach(function (checkbox) {
+                if (checkbox.dataset.bulkToggleBound !== '1') {
+                    checkbox.addEventListener('change', function () {
+                        syncToggle(checkbox);
+                    });
+                    checkbox.dataset.bulkToggleBound = '1';
+                }
+
+                syncToggle(checkbox);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', initBulkConfigure);
+        document.addEventListener('turbo:load', initBulkConfigure);
+    })();
 
 </script>
 

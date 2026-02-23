@@ -50,9 +50,16 @@
 {{ parent() }}
 
 <script>
-    $(document).ready(function () {
-        implementSelect2();
-    });
+    (function () {
+        function initBulkConfirm() {
+            if (window.jQuery && typeof window.implementSelect2 === 'function') {
+                window.implementSelect2();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initBulkConfirm);
+        document.addEventListener('turbo:load', initBulkConfirm);
+    })();
 </script>
 
 <script src="{{ asset('bundles/integratedcontent/js/bulk_relation.js') }}" defer data-turbo-track="reload"></script>

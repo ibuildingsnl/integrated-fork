@@ -84,7 +84,7 @@ class ContentProvider
         };
 
         // Filter on ContentType
-        $contentType = $this->getArrayQueryParameter($request, 'contenttypes');
+        $contentType = $this->sanitizeListValues($this->getArrayQueryParameter($request, 'contenttypes'));
         if (!\count($contentType)) {
             $contentType = [];
             foreach ($contentTypeSelectOptions as $contentTypeSelectOption) {
@@ -98,7 +98,7 @@ class ContentProvider
         }
 
         // Filter on Category
-        $selectedCategory = $this->getArrayQueryParameter($request, 'MediaTaxonomy');
+        $selectedCategory = $this->sanitizeListValues($this->getArrayQueryParameter($request, 'MediaTaxonomy'));
         if ([] !== $selectedCategory) {
             $relation = $this->dm->getRepository(Relation::class)->find('media_taxonomy');
 
@@ -160,7 +160,7 @@ class ContentProvider
                 }
             }
         } else {
-            $contentType = $this->getArrayQueryParameter($request, 'contenttypes');
+            $contentType = $this->sanitizeListValues($this->getArrayQueryParameter($request, 'contenttypes'));
         }
 
         $helper = $query->getHelper();
@@ -170,8 +170,8 @@ class ContentProvider
 
         // If the request query contains a properties parameter we need to fetch all the targets of the relation in order
         // to filter on these targets.
-        $propertiesfilter = $this->getArrayQueryParameter($request, 'properties');
-        if (\is_array($propertiesfilter)) {
+        $propertiesfilter = $this->sanitizeListValues($this->getArrayQueryParameter($request, 'properties'));
+        if (\count($propertiesfilter)) {
             $query
                 ->createFilterQuery('properties')
                 ->addTag('properties')
@@ -182,9 +182,13 @@ class ContentProvider
         if ([] !== $relations) {
             foreach ($relations as $relationId => $value) {
                 $relation = $this->dm->getRepository(Relation::class)->find($relationId);
-                $relationfilter = $value;
+                if (!$relation) {
+                    continue;
+                }
 
-                if (\is_array($relationfilter)) {
+                $relationfilter = \is_array($value) ? $this->sanitizeListValues($value) : [];
+
+                if (\count($relationfilter)) {
                     $query
                         ->createFilterQuery($relationId)
                         ->addTag($relationId)
@@ -204,64 +208,54 @@ class ContentProvider
             $this->addWorkflowFilter($query);
         }
 
-        $activeBrands = $this->getArrayQueryParameter($request, 'brands');
-        if (\is_array($activeBrands)) {
-            if (\count($activeBrands)) {
-                $query
-                    ->createFilterQuery('brands')
-                    ->addTag('brands')
-                    ->setQuery('facet_brands: ((%1%))', [implode(') OR (', array_map($filter, $activeBrands))]);
-            }
+        $activeBrands = $this->sanitizeListValues($this->getArrayQueryParameter($request, 'brands'));
+        if (\count($activeBrands)) {
+            $query
+                ->createFilterQuery('brands')
+                ->addTag('brands')
+                ->setQuery('facet_brands: ((%1%))', [implode(') OR (', array_map($filter, $activeBrands))]);
         }
 
-        $activeChannels = $this->getArrayQueryParameter($request, 'channels');
-        if (\is_array($activeChannels)) {
-            if (\count($activeChannels)) {
-                $query
-                    ->createFilterQuery('channels')
-                    ->addTag('channels')
-                    ->setQuery('facet_channels: ((%1%))', [implode(') OR (', array_map($filter, $activeChannels))]);
-            }
+        $activeChannels = $this->sanitizeListValues($this->getArrayQueryParameter($request, 'channels'));
+        if (\count($activeChannels)) {
+            $query
+                ->createFilterQuery('channels')
+                ->addTag('channels')
+                ->setQuery('facet_channels: ((%1%))', [implode(') OR (', array_map($filter, $activeChannels))]);
         }
 
-        $activeStates = $this->getArrayQueryParameter($request, 'workflow_state');
-        if (\is_array($activeStates)) {
-            if (\count($activeStates)) {
-                $query
-                    ->createFilterQuery('workflow_state')
-                    ->addTag('workflow_state')
-                    ->setQuery('facet_workflow_state: ((%1%))', [implode(') OR (', array_map($filter, $activeStates))]);
-            }
+        $activeStates = $this->sanitizeListValues($this->getArrayQueryParameter($request, 'workflow_state'));
+        if (\count($activeStates)) {
+            $query
+                ->createFilterQuery('workflow_state')
+                ->addTag('workflow_state')
+                ->setQuery('facet_workflow_state: ((%1%))', [implode(') OR (', array_map($filter, $activeStates))]);
         }
 
-        $activeAssigned = $this->getArrayQueryParameter($request, 'workflow_assigned');
-        if (\is_array($activeAssigned)) {
-            if (\count($activeAssigned)) {
-                $query
-                    ->createFilterQuery('workflow_assigned')
-                    ->addTag('workflow_assigned')
-                    ->setQuery('facet_workflow_assigned: ((%1%))', [implode(') OR (', array_map($filter, $activeAssigned))]);
-            }
+        $activeAssigned = $this->sanitizeListValues($this->getArrayQueryParameter($request, 'workflow_assigned'));
+        if (\count($activeAssigned)) {
+            $query
+                ->createFilterQuery('workflow_assigned')
+                ->addTag('workflow_assigned')
+                ->setQuery('facet_workflow_assigned: ((%1%))', [implode(') OR (', array_map($filter, $activeAssigned))]);
         }
 
-        $activeAuthors = $this->getArrayQueryParameter($request, 'authors');
-        if (\is_array($activeAuthors)) {
-            if (\count($activeAuthors)) {
-                $query
-                    ->createFilterQuery('authors')
-                    ->addTag('authors')
-                    ->setQuery('facet_authors: ((%1%))', [implode(') OR (', array_map($filter, $activeAuthors))]);
-            }
+        $activeAuthors = $this->sanitizeListValues($this->getArrayQueryParameter($request, 'authors'));
+        if (\count($activeAuthors)) {
+            $query
+                ->createFilterQuery('authors')
+                ->addTag('authors')
+                ->setQuery('facet_authors: ((%1%))', [implode(') OR (', array_map($filter, $activeAuthors))]);
         }
 
-        $hasFields = $this->getArrayQueryParameter($request, 'hasFields');
-        if (\is_array($hasFields)) {
-            foreach ($hasFields as $field) {
-                $query
-                    ->createFilterQuery('hasField_'.$field)
-                    ->setQuery($field.':[* TO *]');
-            }
+        $hasFields = $this->sanitizeListValues($this->getArrayQueryParameter($request, 'hasFields'));
+        foreach ($hasFields as $field) {
+            $query
+                ->createFilterQuery('hasField_'.$field)
+                ->setQuery($field.':[* TO *]');
         }
+
+        $this->applyPublicationDateRangeFilter($query, $request);
 
         // sorting
         $sort_default = 'time';
@@ -389,7 +383,7 @@ class ContentProvider
         if (\is_array($contentType) && \count($contentType) === 1) {
             $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
         } else {
-            $availableContenttypes = $this->getArrayQueryParameter($request, 'available_contenttypes');
+            $availableContenttypes = $this->sanitizeListValues($this->getArrayQueryParameter($request, 'available_contenttypes'));
             if (\is_array($availableContenttypes) && \count($availableContenttypes)) {
                 $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $availableContenttypes))]);
             } elseif (\is_array($contentType) && \count($contentType)) {
@@ -411,5 +405,60 @@ class ContentProvider
         }
 
         return [$value];
+    }
+
+    private function sanitizeListValues(array $values): array
+    {
+        $sanitized = [];
+
+        foreach ($values as $value) {
+            if (\is_array($value) || null === $value) {
+                continue;
+            }
+
+            $value = trim((string) $value);
+
+            if ('' !== $value) {
+                $sanitized[] = $value;
+            }
+        }
+
+        return $sanitized;
+    }
+
+    private function applyPublicationDateRangeFilter(Query $query, Request $request): void
+    {
+        $from = $this->parseDateBoundary((string) $request->query->get('date_from', ''), false);
+        $to = $this->parseDateBoundary((string) $request->query->get('date_to', ''), true);
+
+        if (null === $from && null === $to) {
+            return;
+        }
+
+        if (null !== $from && null !== $to && $from > $to) {
+            [$from, $to] = [$to, $from];
+        }
+
+        $start = $from ? $from->format('Y-m-d\TH:i:s\Z') : '*';
+        $end = $to ? $to->format('Y-m-d\TH:i:s\Z') : '*';
+
+        $query
+            ->createFilterQuery('pub_time_range')
+            ->setQuery(sprintf('pub_time:[%s TO %s]', $start, $end));
+    }
+
+    private function parseDateBoundary(string $value, bool $endOfDay): ?\DateTimeImmutable
+    {
+        $value = trim($value);
+        if ('' === $value) {
+            return null;
+        }
+
+        $date = \DateTimeImmutable::createFromFormat('!Y-m-d', $value, new \DateTimeZone('UTC'));
+        if (!$date) {
+            return null;
+        }
+
+        return $endOfDay ? $date->setTime(23, 59, 59) : $date->setTime(0, 0, 0);
     }
 }
