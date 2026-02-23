@@ -17,6 +17,11 @@ namespace Integrated\Bundle\ContentHistoryBundle\Document\Embedded;
 class Request
 {
     /**
+     * @var string|null
+     */
+    protected $requestId;
+
+    /**
      * @var string
      */
     protected $ipAddress;
@@ -64,6 +69,26 @@ class Request
     public function setEndpoint($endpoint)
     {
         $this->endpoint = $endpoint;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getRequestId()
+    {
+        return $this->requestId;
+    }
+
+    /**
+     * @param string|null $requestId
+     *
+     * @return $this
+     */
+    public function setRequestId($requestId)
+    {
+        $this->requestId = $requestId;
 
         return $this;
     }
