@@ -2,21 +2,40 @@
 
 <script type="application/javascript">
 
-    (function($, url, id) {
+    (function(url, id) {
+        var schedule = function(delay) {
+            setTimeout(refresh, delay || 5000); // 5 sec
+        };
 
-        var execute = function() {
-            setTimeout(function() { refresh(); }, 5000); // 5 sec
+        var appendLockQuery = function(baseUrl) {
+            var separator = baseUrl.indexOf('?') === -1 ? '?' : '&';
+            return baseUrl + separator + 'lock=' + encodeURIComponent(id);
         };
 
         var refresh = function() {
-            $.get(url, {lock: id}).done(execute);
+            if (window.jQuery && typeof window.jQuery.get === 'function') {
+                window.jQuery.get(url, {lock: id}).always(function() {
+                    schedule();
+                });
+                return;
+            }
+
+            if (window.fetch) {
+                fetch(appendLockQuery(url), {
+                    credentials: 'same-origin',
+                    headers: {'X-Requested-With': 'XMLHttpRequest'}
+                }).finally(function() {
+                    schedule();
+                });
+                return;
+            }
+
+            schedule();
         };
 
-//        $.ready(function(){
-            execute();
-//        });
+        schedule();
 
-    })(jQuery, "{{ path('integrated_locking_api_refresh')|e('js') }}", "{{ lock.id|e('js') }}");
+    })("{{ path('integrated_locking_api_refresh')|e('js') }}", "{{ lock.id|e('js') }}");
 
 </script>
 
