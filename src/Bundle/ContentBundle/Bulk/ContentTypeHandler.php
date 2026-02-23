@@ -18,6 +18,7 @@ use Integrated\Common\Bulk\Action\HandlerInterface;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Queue\Queue;
 use Integrated\Common\Solr\Indexer\Job;
+use Psr\Log\LoggerInterface;
 
 /**
  * Handler to change the content type of a content item.
@@ -43,6 +44,7 @@ class ContentTypeHandler implements HandlerInterface
      * @var ContentType
      */
     private $contentType;
+    private LoggerInterface $logger;
 
     /**
      * Constructor.
@@ -55,12 +57,13 @@ class ContentTypeHandler implements HandlerInterface
      *                                                         content item is referenced
      * @param string                  $contentType             the new content type for
      */
-    public function __construct(DocumentManager $documentManager, Queue $solrQueue, SearchContentReferenced $searchContentReferenced, string $contentType)
+    public function __construct(DocumentManager $documentManager, Queue $solrQueue, SearchContentReferenced $searchContentReferenced, string $contentType, LoggerInterface $logger)
     {
         $this->documentManager = $documentManager;
         $this->solrQueue = $solrQueue;
         $this->searchContentReferenced = $searchContentReferenced;
         $this->contentType = $contentType;
+        $this->logger = $logger;
     }
 
     public function execute(ContentInterface $content)
@@ -101,11 +104,20 @@ class ContentTypeHandler implements HandlerInterface
 
     private function deleteFromSolr(ContentType $contentType, ContentInterface $contentItem)
     {
+        $documentId = trim((string) $contentItem->getId());
+        if ($documentId === '') {
+            $this->logger->warning('Skipping Solr queue DELETE job: missing content item id.', [
+                'targetContentType' => $contentType->getId(),
+                'class' => $contentType->getClass(),
+            ]);
+            return;
+        }
+
         $job = new Job('DELETE');
 
-        $job->setOption('document.id', $contentType->getId().'-'.$contentItem->getId());
+        $job->setOption('document.id', $contentType->getId().'-'.$documentId);
 
-        $job->setOption('document.data', json_encode(['id' => $contentItem->getId()]));
+        $job->setOption('document.data', json_encode(['id' => $documentId, '$id' => $documentId]));
         $job->setOption('document.class', $contentType->getClass());
         $job->setOption('document.format', 'json');
 

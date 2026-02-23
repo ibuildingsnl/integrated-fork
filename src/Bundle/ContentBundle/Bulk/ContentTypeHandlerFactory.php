@@ -15,6 +15,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Common\Bulk\Action\HandlerFactoryInterface;
 use Integrated\Common\Queue\Queue;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ContentTypeHandlerFactory implements HandlerFactoryInterface
@@ -38,15 +39,17 @@ class ContentTypeHandlerFactory implements HandlerFactoryInterface
      * @var SearchContentReferenced
      */
     private $searchContentReferenced;
+    private LoggerInterface $logger;
 
     /**
      * Constructor.
      */
-    public function __construct(DocumentManager $documentManager, Queue $solrQueue, SearchContentReferenced $searchContentReferenced)
+    public function __construct(DocumentManager $documentManager, Queue $solrQueue, SearchContentReferenced $searchContentReferenced, LoggerInterface $logger)
     {
         $this->documentManager = $documentManager;
         $this->solrQueue = $solrQueue;
         $this->searchContentReferenced = $searchContentReferenced;
+        $this->logger = $logger;
 
         $this->resolver = new OptionsResolver();
         $this->resolver
@@ -58,6 +61,6 @@ class ContentTypeHandlerFactory implements HandlerFactoryInterface
     {
         $options = $this->resolver->resolve($options);
 
-        return new ContentTypeHandler($this->documentManager, $this->solrQueue, $this->searchContentReferenced, $options['contentType']);
+        return new ContentTypeHandler($this->documentManager, $this->solrQueue, $this->searchContentReferenced, $options['contentType'], $this->logger);
     }
 }
