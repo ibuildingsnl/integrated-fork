@@ -34,15 +34,23 @@
         <requirement key="_format">html|iframe.html</requirement>
 	</route>
 
-    <route id="integrated_content_content_edit_modal_iframe" path="/{id}/modal-iframe.html"  methods="GET, PUT, POST">
-        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::edit</default>
-        <default key="_format">modal-iframe.html</default>
-        <requirement key="_format">html|modal-iframe.html</requirement>
-    </route>
+	    <route id="integrated_content_content_edit_modal_iframe" path="/{id}/modal-iframe.html"  methods="GET, PUT, POST">
+	        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::edit</default>
+	        <default key="_format">modal-iframe.html</default>
+	        <requirement key="_format">html|modal-iframe.html</requirement>
+	    </route>
 
-    <route id="integrated_content_content_edit" path="/{id}"  methods="GET">
-        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::edit</default>
-    </route>
+	    <route id="integrated_content_content_navdropdowns" path="/navdropdowns" methods="GET">
+	        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::navdropdowns</default>
+	    </route>
+
+	    <route id="integrated_content_content_channels_fragment" path="/channels-fragment" methods="GET">
+	        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ChannelController::getChannels</default>
+	    </route>
+
+	    <route id="integrated_content_content_edit" path="/{id}"  methods="GET">
+	        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::edit</default>
+	    </route>
 
 	<route id="integrated_content_content_edit_rest" path="/{id}" methods="PUT, POST">
 		<default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::edit</default>
@@ -58,10 +66,10 @@
 		<requirement key="_format">html|json</requirement>
     </route>
 
-    <route id="integrated_content_content_show" path="/{id}/show/{_format}" methods="GET">
+	<route id="integrated_content_content_show" path="/{id}/show/{_format}" methods="GET">
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::show</default>
 		<default key="_format">html</default>
 		<requirement key="_format">html|json</requirement>
     </route>
 
-</routes>
+	</routes>

@@ -16,12 +16,13 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
 
-        {% block style %}
+{% block style %}
+            <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/iconoir.css') }}">
             <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/app.css') }}">
 
             {{ integrated_stylesheets() }}
 
-        {% block head_javascript %}
+{% block head_javascript %}
             <script src="{{ asset('bundles/integratedintegrated/app.js') }}" defer data-turbo-track="reload"></script>
 
             {% block webpack_js %}{% endblock %}
@@ -86,7 +87,7 @@
 
                 <div class="flex wrap w-full">
                     {% block website_navigation_buttons %}
-                        {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ChannelController::getchannels')) }}
+                        <div data-lazy-fragment-url="{{ path('integrated_content_content_channels_fragment') }}"></div>
                     {% endblock website_navigation_buttons %}
                     {% block navbar_content_type %}
 
@@ -98,7 +99,7 @@
                         </div>
                     {% endblock navbar_content_type %}
                     {% include '@IntegratedContent/partials/block.search.html.twig' %}
-                    {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ContentController::navdropdowns')) }}
+                    <div data-lazy-fragment-url="{{ path('integrated_content_content_navdropdowns') }}"></div>
                 </div>
             </div>
         </nav>
@@ -196,6 +197,42 @@
                 }
             }, 50);
         };
+    })();
+</script>
+
+<script>
+    (function lazyLoadTopbarFragments() {
+        function loadFragments() {
+            var nodes = document.querySelectorAll('[data-lazy-fragment-url]');
+
+            nodes.forEach(function (node) {
+                var url = node.getAttribute('data-lazy-fragment-url');
+                if (!url || node.getAttribute('data-lazy-fragment-loaded') === '1') {
+                    return;
+                }
+
+                node.setAttribute('data-lazy-fragment-loaded', '1');
+
+                fetch(url, {
+                    credentials: 'same-origin',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                    .then(function (response) {
+                        return response.text();
+                    })
+                    .then(function (html) {
+                        node.outerHTML = html;
+                    })
+                    .catch(function () {
+                        node.removeAttribute('data-lazy-fragment-loaded');
+                    });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadFragments);
+        document.addEventListener('turbo:load', loadFragments);
     })();
 </script>
 

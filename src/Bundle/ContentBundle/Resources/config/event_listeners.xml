@@ -25,6 +25,10 @@
             <tag name="kernel.event_subscriber" />
         </service>
 
+        <service id="integrated_content.event_listener.fragment_cache_invalidation" class="Integrated\Bundle\ContentBundle\EventListener\FragmentCacheInvalidationSubscriber">
+            <tag name="kernel.event_subscriber" />
+        </service>
+
         <service id="integrated_content.event_listener.publication_removal" class="Integrated\Bundle\ContentBundle\EventListener\PublicationRemovalListener">
             <argument type="service" id="integrated_content.publication_repository" />
             <tag name="integrated_content.form.event_subscriber"/>

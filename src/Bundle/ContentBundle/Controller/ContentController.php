@@ -58,12 +58,15 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\UX\Turbo\TurboStreamResponse;
 
 class ContentController extends AbstractController
 {
+    private const NAVDROPDOWNS_CACHE_NAMESPACE = 'integrated_content_fragments_navdropdowns';
+
     /**
      * @var string
      */
@@ -874,6 +877,15 @@ class ContentController extends AbstractController
 
     public function navdropdowns(Request $request): Response
     {
+        $user = $this->getUser();
+        $userId = $user instanceof UserInterface ? (string) $user->getId() : 'anonymous';
+        $cache = new FilesystemAdapter(self::NAVDROPDOWNS_CACHE_NAMESPACE);
+        $cacheItem = $cache->getItem('navdropdowns_'.md5($userId.'|'.$request->getLocale()));
+
+        if ($cacheItem->isHit()) {
+            return new Response((string) $cacheItem->get());
+        }
+
         $session = $request->getSession();
 
         $queuecount = (int) 0; // $this->container->get('integrated_queue.dbal.provider')->count();
@@ -895,8 +907,6 @@ class ContentController extends AbstractController
 
         $assignedContent = [];
 
-        $user = $this->getUser();
-
         if ($user instanceof UserInterface) {
             $userId = $user->getId();
 
@@ -912,12 +922,18 @@ class ContentController extends AbstractController
             $assignedContent = $result->getDocuments();
         }
 
-        return $this->render('@IntegratedContent/content/navdropdowns.html.twig', [
+        $html = $this->renderView('@IntegratedContent/content/navdropdowns.html.twig', [
             'avatarurl' => $avatarurl,
             'queuecount' => $queuecount,
             'queuepercentage' => $queuepercentage,
             'assignedContent' => $assignedContent,
         ]);
+
+        $cacheItem->set($html);
+        $cacheItem->expiresAfter(86400);
+        $cache->save($cacheItem);
+
+        return new Response($html);
     }
 
     public function usedBy(Content $content, Request $request): Response
