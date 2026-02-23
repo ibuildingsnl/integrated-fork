@@ -200,6 +200,27 @@
                 max-height: 182px;
                 overflow-y: auto;
 
+                &.filters_list {
+                    overflow-y: scroll !important;
+                    scrollbar-gutter: stable;
+                    scrollbar-width: auto;
+                    scrollbar-color: transparent;
+                }
+
+                &.filters_list::-webkit-scrollbar {
+                    width: 8px;
+                }
+
+                &.filters_list::-webkit-scrollbar-track {
+                    background: transparent;
+                    border-radius: 8px;
+                }
+
+                &.filters_list::-webkit-scrollbar-thumb {
+                    background: #94a3b8;
+                    border-radius: 6px;
+                }
+
                 > li {
                     display: block;
                     margin: 0;
@@ -294,7 +315,6 @@
         justify-content: space-between;
         padding: 0.5rem 0.9rem;
         position: relative;
-        margin-bottom: 0.5rem;
 
         input {
             border: 1px solid #dee3e9;

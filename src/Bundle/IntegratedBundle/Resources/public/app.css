@@ -7666,7 +7666,7 @@ body.hide-options #wrapper-holder .editor-wrapper {
   color: black;
 }
 
-#bulk-actions #bulk_action {
+#bulk-actions #bulk_action, #bulk-actions #bulk_scope, #bulk-actions #bulk_group {
   padding: 3px 1rem;
 }
 
@@ -8030,6 +8030,23 @@ dd {
   max-height: 182px;
   overflow-y: auto;
 }
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.filters_list {
+  overflow-y: scroll !important;
+  scrollbar-gutter: stable;
+  scrollbar-width: auto;
+  scrollbar-color: transparent;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.filters_list::-webkit-scrollbar {
+  width: 8px;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.filters_list::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 8px;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.filters_list::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 6px;
+}
 .aside-item-wrapper .aside-item-list .aside-item-list-container ul > li {
   display: block;
   margin: 0;
@@ -8099,7 +8116,6 @@ dd {
   justify-content: space-between;
   padding: 0.5rem 0.9rem;
   position: relative;
-  margin-bottom: 0.5rem;
 }
 .aside-item-wrapper .aside-item-search input {
   border: 1px solid #dee3e9;
