@@ -22,6 +22,22 @@
                 <h1 class="heading">{% trans %}History for{% endtrans %} {{ content.title }}</h1>
             </div>
             <section class="section-white section-radius">
+                <form method="get" class="history-index-filters p-4">
+                    <div class="flex flex-wrap gap-2">
+                        <input class="form-control" type="text" name="q" value="{{ filters.q|default('') }}" placeholder="{% trans %}Search user/action{% endtrans %}">
+                        <select class="form-control" name="action">
+                            <option value="">{% trans %}All actions{% endtrans %}</option>
+                            <option value="insert" {% if filters.action == 'insert' %}selected{% endif %}>{% trans %}insert{% endtrans %}</option>
+                            <option value="update" {% if filters.action == 'update' %}selected{% endif %}>{% trans %}update{% endtrans %}</option>
+                            <option value="delete" {% if filters.action == 'delete' %}selected{% endif %}>{% trans %}delete{% endtrans %}</option>
+                        </select>
+                        <input class="form-control" type="text" name="user" value="{{ filters.user|default('') }}" placeholder="{% trans %}User{% endtrans %}">
+                        <input class="form-control" type="date" name="from" value="{{ filters.from|default('') }}">
+                        <input class="form-control" type="date" name="to" value="{{ filters.to|default('') }}">
+                        <button class="btn btn-primary" type="submit">{% trans %}Filter{% endtrans %}</button>
+                        <a class="btn btn-white" href="{{ path('integrated_content_history_index_iframe', {'id': content.id}) }}" data-turbo-frame="_top">{% trans %}Reset{% endtrans %}</a>
+                    </div>
+                </form>
                 <table class="table table-hover">
                     <thead>
                     <tr>

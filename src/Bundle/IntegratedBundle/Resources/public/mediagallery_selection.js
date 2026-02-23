@@ -25,6 +25,11 @@ function initializeMediaGallerySelection() {
   });
   addEventListeners();
 }
+function scheduleMediaGallerySelectionInit() {
+  initializeMediaGallerySelection();
+  window.requestAnimationFrame(initializeMediaGallerySelection);
+  window.setTimeout(initializeMediaGallerySelection, 120);
+}
 function setupFormRelations() {
   Object.values(form_relations).forEach(function (form_relation) {
     selected_relation = form_relation;
@@ -195,7 +200,15 @@ window.addEventListener('message', function (e) {
     return;
   }
   if (typeof e.data === 'string' && e.data.length > 0) {
-    var parsedResponse = JSON.parse(e.data);
+    var parsedResponse;
+    try {
+      parsedResponse = JSON.parse(e.data);
+    } catch (error) {
+      return;
+    }
+    if (!Array.isArray(parsedResponse)) {
+      return;
+    }
     var filteredResponse = filterImages(parsedResponse);
     var response_from_iframe = filteredResponse.length > 0 ? filteredResponse : parsedResponse;
     if (response_from_iframe.length > 0) {
@@ -257,9 +270,11 @@ function showMediaGallery(selected_relation) {
     overlay.classList.remove('hide');
   }
 }
-window.addEventListener('load', initializeMediaGallerySelection);
-document.addEventListener('DOMContentLoaded', initializeMediaGallerySelection);
-document.addEventListener('turbo:load', initializeMediaGallerySelection);
-document.addEventListener('turbo:render', initializeMediaGallerySelection);
+window.addEventListener('load', scheduleMediaGallerySelectionInit);
+document.addEventListener('DOMContentLoaded', scheduleMediaGallerySelectionInit);
+document.addEventListener('turbo:load', scheduleMediaGallerySelectionInit);
+document.addEventListener('turbo:render', scheduleMediaGallerySelectionInit);
+document.addEventListener('turbo:frame-load', scheduleMediaGallerySelectionInit);
+document.addEventListener('turbo:frame-render', scheduleMediaGallerySelectionInit);
 /******/ })()
 ;

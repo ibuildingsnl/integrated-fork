@@ -48,8 +48,8 @@ class Parser
         if (\count($data) === 2 && \array_key_exists(0, $data) && \array_key_exists(1, $data) && !\is_array($data[0]) && !\is_array($data[1])) {
             $table[] = [
                 'name' => $path,
-                'old' => $this->normalizeValueByPath($path, $data[0]),
-                'new' => $this->normalizeValueByPath($path, $data[1]),
+                'old' => $this->normalizeValueByPath($path, $data[0], false),
+                'new' => $this->normalizeValueByPath($path, $data[1], true),
             ];
 
             return;
@@ -61,7 +61,7 @@ class Parser
                 $table[] = [
                     'name' => $path.' > '.$key,
                     'old' => '',
-                    'new' => $this->normalizeValueByPath($path.' > '.$key, $subdata),
+                    'new' => $this->normalizeValueByPath($path.' > '.$key, $subdata, true),
                 ];
 
                 continue;
@@ -71,7 +71,7 @@ class Parser
         }
     }
 
-    private function normalizeValue($value)
+    private function normalizeValue($value, bool $preferNew = true)
     {
         if ($value instanceof \DateTimeInterface) {
             return $value->format('r');
@@ -100,12 +100,17 @@ class Parser
         if (\is_array($value)) {
             $value = $this->normalizeArrayKeys($value);
 
-            $formattedRelation = $this->formatRelationPayload($value);
+            $tupleFormatted = $this->formatRelationTupleValue($value);
+            if ($tupleFormatted !== null) {
+                return $tupleFormatted;
+            }
+
+            $formattedRelation = $this->formatRelationPayload($value, $preferNew);
             if ($formattedRelation !== null) {
                 return $formattedRelation;
             }
 
-            $formatted = $this->formatReferenceArray($value);
+            $formatted = $this->formatReferenceArray($value, $preferNew);
             if ($formatted !== null) {
                 return $formatted;
             }
@@ -121,16 +126,21 @@ class Parser
             }
 
             if ($this->isList($value)) {
+                $formattedRelationList = $this->formatRelationPayloadList($value, $preferNew);
+                if ($formattedRelationList !== null) {
+                    return $formattedRelationList;
+                }
+
                 $formattedItems = [];
                 foreach ($value as $item) {
                     $normalizedItem = \is_array($item) ? $this->normalizeArrayKeys($item) : [];
-                    $formattedItem = $this->formatRelationPayload($normalizedItem);
+                    $formattedItem = $this->formatRelationPayload($normalizedItem, $preferNew);
                     if ($formattedItem !== null) {
                         $formattedItems[] = $formattedItem;
                         continue;
                     }
 
-                    $formattedItem = $this->formatReferenceArray($normalizedItem);
+                    $formattedItem = $this->formatReferenceArray($normalizedItem, $preferNew);
                     if ($formattedItem !== null) {
                         $formattedItems[] = $formattedItem;
                         continue;
@@ -146,9 +156,107 @@ class Parser
         return $value;
     }
 
-    private function normalizeValueByPath(string $path, $value)
+    private function formatRelationTupleValue(array $value): ?array
     {
-        $normalized = $this->normalizeValue($value);
+        if (!$this->isRelationPayloadShape($value) && !$this->isRelationPayloadListShape($value)) {
+            return null;
+        }
+
+        if (!$this->containsTwoValueTuple($value)) {
+            return null;
+        }
+
+        $oldValue = $this->resolveTupleSide($value, false);
+        $newValue = $this->resolveTupleSide($value, true);
+
+        if (!\is_array($oldValue) || !\is_array($newValue)) {
+            return null;
+        }
+
+        if ($this->isRelationPayloadShape($oldValue) && $this->isRelationPayloadShape($newValue)) {
+            return [
+                (string) ($this->formatRelationPayload($oldValue, false) ?? ''),
+                (string) ($this->formatRelationPayload($newValue, true) ?? ''),
+            ];
+        }
+
+        if ($this->isRelationPayloadListShape($oldValue) && $this->isRelationPayloadListShape($newValue)) {
+            return [
+                (string) ($this->formatRelationPayloadList($oldValue, false) ?? ''),
+                (string) ($this->formatRelationPayloadList($newValue, true) ?? ''),
+            ];
+        }
+
+        return null;
+    }
+
+    private function isRelationPayloadShape(array $value): bool
+    {
+        return isset($value['relationId']) && isset($value['references']);
+    }
+
+    private function isRelationPayloadListShape(array $value): bool
+    {
+        if ($value === [] || !$this->isList($value)) {
+            return false;
+        }
+
+        foreach ($value as $item) {
+            if (!\is_array($item)) {
+                return false;
+            }
+
+            $item = $this->normalizeArrayKeys($item);
+            if (!$this->isRelationPayloadShape($item)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function containsTwoValueTuple($value): bool
+    {
+        if (!\is_array($value)) {
+            return false;
+        }
+
+        if (\count($value) === 2 && \array_key_exists(0, $value) && \array_key_exists(1, $value)
+            && !\is_array($value[0]) && !\is_array($value[1])) {
+            return true;
+        }
+
+        foreach ($value as $item) {
+            if ($this->containsTwoValueTuple($item)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function resolveTupleSide($value, bool $preferNew = true)
+    {
+        if (!\is_array($value)) {
+            return $value;
+        }
+
+        if (\count($value) === 2 && \array_key_exists(0, $value) && \array_key_exists(1, $value)
+            && !\is_array($value[0]) && !\is_array($value[1])) {
+            return $preferNew ? $value[1] : $value[0];
+        }
+
+        $resolved = [];
+        foreach ($value as $key => $item) {
+            $resolved[$key] = $this->resolveTupleSide($item, $preferNew);
+        }
+
+        return $resolved;
+    }
+
+    private function normalizeValueByPath(string $path, $value, bool $preferNew = true)
+    {
+        $normalized = $this->normalizeValue($value, $preferNew);
 
         if (\is_string($normalized) && $this->isRelationIdPath($path)) {
             return $this->humanizeRelationId($normalized);
@@ -205,21 +313,15 @@ class Parser
         return $normalized;
     }
 
-    private function formatReferenceArray(array $value): ?string
+    private function formatReferenceArray(array $value, bool $preferNew = true): ?string
     {
         $refId = $value['$id'] ?? $value['id'] ?? null;
         $refClass = $value['class'] ?? null;
         $refCollection = $value['$ref'] ?? null;
 
-        if (\is_array($refId)) {
-            $refId = $refId[1] ?? $refId[0] ?? null;
-        }
-        if (\is_array($refClass)) {
-            $refClass = $refClass[1] ?? $refClass[0] ?? null;
-        }
-        if (\is_array($refCollection)) {
-            $refCollection = $refCollection[1] ?? $refCollection[0] ?? null;
-        }
+        $refId = $this->pickPreferredScalar($refId, $preferNew);
+        $refClass = $this->pickPreferredScalar($refClass, $preferNew);
+        $refCollection = $this->pickPreferredScalar($refCollection, $preferNew);
 
         if (!$refId && !$refClass && !$refCollection) {
             return null;
@@ -290,13 +392,73 @@ class Parser
         return json_encode($value);
     }
 
-    private function formatRelationPayload(array $value): ?string
+    private function formatRelationPayloadList(array $items, bool $preferNew = true): ?string
+    {
+        if ($items === []) {
+            return null;
+        }
+
+        $relationGroups = [];
+
+        foreach ($items as $item) {
+            if (!\is_array($item)) {
+                return null;
+            }
+
+            $item = $this->normalizeArrayKeys($item);
+            if (!isset($item['relationId']) || !isset($item['references']) || !\is_array($item['references'])) {
+                return null;
+            }
+
+            $itemRelationId = $this->pickPreferredScalar($item['relationId'], $preferNew);
+            if ($itemRelationId === null || $itemRelationId === '') {
+                return null;
+            }
+
+            if (!isset($relationGroups[$itemRelationId])) {
+                $relationGroups[$itemRelationId] = [];
+            }
+
+            foreach ($item['references'] as $reference) {
+                if (!\is_array($reference)) {
+                    continue;
+                }
+
+                $reference = $this->normalizeArrayKeys($reference);
+                $formatted = $this->formatReferenceArray($reference, $preferNew);
+                if ($formatted !== null) {
+                    $relationGroups[$itemRelationId][] = $formatted;
+                }
+            }
+        }
+
+        if ($relationGroups === []) {
+            return null;
+        }
+
+        $parts = [];
+        foreach ($relationGroups as $relationId => $labels) {
+            $labels = array_values(array_unique($labels));
+            $relationLabel = $this->humanizeRelationId((string) $relationId);
+
+            if ($labels === []) {
+                $parts[] = sprintf('%s: none', $relationLabel);
+                continue;
+            }
+
+            $parts[] = sprintf('%s: %s', $relationLabel, implode(', ', $labels));
+        }
+
+        return implode(', ', $parts);
+    }
+
+    private function formatRelationPayload(array $value, bool $preferNew = true): ?string
     {
         if (!isset($value['relationId']) || !isset($value['references'])) {
             return null;
         }
 
-        $relationId = $this->pickPreferredScalar($value['relationId']);
+        $relationId = $this->pickPreferredScalar($value['relationId'], $preferNew);
         $relationLabel = $relationId ? $this->humanizeRelationId($relationId) : 'Relation';
         $references = $value['references'];
 
@@ -311,7 +473,7 @@ class Parser
             }
 
             $reference = $this->normalizeArrayKeys($reference);
-            $formatted = $this->formatReferenceArray($reference);
+            $formatted = $this->formatReferenceArray($reference, $preferNew);
             if ($formatted !== null) {
                 $labels[] = $formatted;
             }
@@ -324,7 +486,7 @@ class Parser
         return sprintf('%s: %s', $relationLabel, implode(', ', $labels));
     }
 
-    private function pickPreferredScalar($value): ?string
+    private function pickPreferredScalar($value, bool $preferNew = true): ?string
     {
         if (\is_scalar($value) && (string) $value !== '') {
             return (string) $value;
@@ -334,10 +496,17 @@ class Parser
             return null;
         }
 
-        // Prefer the "new" value when [old, new] tuple is present.
-        foreach (array_reverse($value, true) as $item) {
-            if (\is_scalar($item) && (string) $item !== '') {
-                return (string) $item;
+        if ($preferNew) {
+            foreach (array_reverse($value, true) as $item) {
+                if (\is_scalar($item) && (string) $item !== '') {
+                    return (string) $item;
+                }
+            }
+        } else {
+            foreach ($value as $item) {
+                if (\is_scalar($item) && (string) $item !== '') {
+                    return (string) $item;
+                }
             }
         }
 

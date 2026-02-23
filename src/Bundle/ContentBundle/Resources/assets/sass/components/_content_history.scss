@@ -73,6 +73,29 @@
   overflow-wrap: anywhere;
 }
 
+.history-view-options {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.history-index-filters .form-control {
+  min-width: 160px;
+}
+
+.history-diff-add {
+  background: #dcfce7;
+  border-radius: 4px;
+  padding: 1px 3px;
+}
+
+.history-diff-del {
+  background: #fee2e2;
+  border-radius: 4px;
+  padding: 1px 3px;
+  text-decoration: line-through;
+}
+
 .history-controls {
   background: linear-gradient(180deg, #f9fbff, #f8fafc);
   border: 1px solid #dbeafe;

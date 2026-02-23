@@ -11,8 +11,20 @@
         <span class="history-value-empty">—</span>
     {% elseif value.type == 'image' %}
         <div class="history-value-image">
-            <img src="{{ value.src }}" alt="{{ value.label|default('image') }}" loading="lazy">
-            <p class="history-value-caption">{{ value.label }}</p>
+            {% if value.href is defined and value.href %}
+                <a href="{{ value.href }}" target="_blank" rel="noopener noreferrer" data-turbo-frame="_top">
+                    <img src="{{ value.src }}" alt="{{ value.label|default('image') }}" loading="lazy">
+                </a>
+            {% else %}
+                <img src="{{ value.src }}" alt="{{ value.label|default('image') }}" loading="lazy">
+            {% endif %}
+            <p class="history-value-caption">
+                {% if value.href is defined and value.href %}
+                    <a href="{{ value.href }}" target="_blank" rel="noopener noreferrer" data-turbo-frame="_top">{{ value.label }}</a>
+                {% else %}
+                    {{ value.label }}
+                {% endif %}
+            </p>
         </div>
     {% elseif value.type == 'html' %}
         <div class="history-value-html">{{ value.html|raw }}</div>
@@ -22,8 +34,18 @@
                 <p>{{ paragraph }}</p>
             {% endfor %}
         </div>
+    {% elseif value.type == 'stack' %}
+        <div class="history-value-stack">
+            {% for item in value.items %}
+                <div class="history-value-stack-item">{{ _self.render_history_value(item) }}</div>
+            {% endfor %}
+        </div>
     {% else %}
-        <span>{{ value.text }}</span>
+        {% if value.href is defined and value.href %}
+            <a href="{{ value.href }}" target="_blank" rel="noopener noreferrer" data-turbo-frame="_top">{{ value.text }}</a>
+        {% else %}
+            <span>{{ value.text }}</span>
+        {% endif %}
     {% endif %}
 {% endmacro %}
 
@@ -51,6 +73,21 @@
                     <b>{% trans %}User{% endtrans %}
                         :</b> {{ contentHistory.user.name|default('Unknown'|trans) }} {% if contentHistory.user.id is defined %}(#{{ contentHistory.user.id }}){% endif %}
                 </p>
+                <div class="history-view-options mb-4">
+                    {% set toggleParams = app.request.query.all|merge({'id': contentHistory.id, 'technical': showTechnical ? 0 : 1}) %}
+                    <a class="btn btn-select" href="{{ path('integrated_content_history_show_iframe', toggleParams) }}">
+                        {% if showTechnical %}
+                            {% trans %}Hide technical changes{% endtrans %}
+                        {% else %}
+                            {% trans %}Show technical changes{% endtrans %}
+                        {% endif %}
+                    </a>
+                    {% if not showTechnical and hiddenRevisionRows > 0 %}
+                        <span class="history-meta-label ml-2">
+                            {% trans %}Hidden rows{% endtrans %}: {{ hiddenRevisionRows }}
+                        </span>
+                    {% endif %}
+                </div>
                 {% if is_granted('ROLE_ADMIN') %}
                     <details class="history-admin-details">
                         <summary>{% trans %}Show technical request details{% endtrans %}</summary>
@@ -87,7 +124,7 @@
                     {% for line in displayChangeSet %}
                         {% if changeSet is not null %}
                             <tr>
-                                <td>{{ line.name }}</td>
+                                <td>{{ line.displayName|default(line.name) }}</td>
                                 {% if showOld %}
                                     <td>
                                         {{ history.render_history_value(line.oldDisplay) }}

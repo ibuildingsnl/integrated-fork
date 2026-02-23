@@ -253,14 +253,25 @@ function initTinyMceFromDom() {
 }
 
 function initTinyMceFromFrame(event) {
-    if (event.target) {
-        initTinyMceEditors(event.target);
-    }
+    const root = event && event.target ? event.target : document;
+    initTinyMceEditors(root);
 }
 
-document.addEventListener('DOMContentLoaded', initTinyMceFromDom);
-document.addEventListener('turbo:load', initTinyMceFromDom);
-document.addEventListener('turbo:render', initTinyMceFromDom);
-document.addEventListener('turbo:frame-load', initTinyMceFromFrame);
-document.addEventListener('turbo:frame-render', initTinyMceFromFrame);
+function scheduleTinyMceInit(root = document) {
+    initTinyMceEditors(root);
+    window.requestAnimationFrame(() => initTinyMceEditors(root));
+    window.setTimeout(() => initTinyMceEditors(root), 120);
+}
+
+function scheduleTinyMceInitFromEvent(event) {
+    const root = event && event.target ? event.target : document;
+    scheduleTinyMceInit(root);
+}
+
+document.addEventListener('DOMContentLoaded', () => scheduleTinyMceInit(document));
+window.addEventListener('load', () => scheduleTinyMceInit(document));
+document.addEventListener('turbo:load', () => scheduleTinyMceInit(document));
+document.addEventListener('turbo:render', () => scheduleTinyMceInit(document));
+document.addEventListener('turbo:frame-load', scheduleTinyMceInitFromEvent);
+document.addEventListener('turbo:frame-render', scheduleTinyMceInitFromEvent);
 document.addEventListener('turbo:before-cache', destroyTinyMceEditors);

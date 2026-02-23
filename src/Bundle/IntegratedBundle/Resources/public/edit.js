@@ -13336,6 +13336,11 @@ function initializePage() {
     document.body.dataset.boundOkDateUpdate = 'true';
   }
 }
+function scheduleInitializePage() {
+  initializePage();
+  window.requestAnimationFrame(initializePage);
+  window.setTimeout(initializePage, 120);
+}
 function prepDateTimeFields() {
   var dateSelections = document.querySelectorAll('.tailwind-datetime');
   dateSelections.forEach(function (dateSelection) {
@@ -13770,9 +13775,12 @@ function ensurePublicationExists(channelId) {
     window.dispatchEvent(updatePublicationItems);
   }
 }
-document.addEventListener('DOMContentLoaded', initializePage);
-document.addEventListener('turbo:load', initializePage);
-document.addEventListener('turbo:render', initializePage);
+document.addEventListener('DOMContentLoaded', scheduleInitializePage);
+window.addEventListener('load', scheduleInitializePage);
+document.addEventListener('turbo:load', scheduleInitializePage);
+document.addEventListener('turbo:render', scheduleInitializePage);
+document.addEventListener('turbo:frame-load', scheduleInitializePage);
+document.addEventListener('turbo:frame-render', scheduleInitializePage);
 document.addEventListener("ensurePublicationEvent", function (e) {
   var channelId = e.detail.channelId; // Access channelId from the event detail
   ensurePublicationExists(channelId); // Call your function with channelId
@@ -16392,15 +16400,37 @@ function initTinyMceFromDom() {
   initTinyMceEditors(document);
 }
 function initTinyMceFromFrame(event) {
-  if (event.target) {
-    initTinyMceEditors(event.target);
-  }
+  var root = event && event.target ? event.target : document;
+  initTinyMceEditors(root);
 }
-document.addEventListener('DOMContentLoaded', initTinyMceFromDom);
-document.addEventListener('turbo:load', initTinyMceFromDom);
-document.addEventListener('turbo:render', initTinyMceFromDom);
-document.addEventListener('turbo:frame-load', initTinyMceFromFrame);
-document.addEventListener('turbo:frame-render', initTinyMceFromFrame);
+function scheduleTinyMceInit() {
+  var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+  initTinyMceEditors(root);
+  window.requestAnimationFrame(function () {
+    return initTinyMceEditors(root);
+  });
+  window.setTimeout(function () {
+    return initTinyMceEditors(root);
+  }, 120);
+}
+function scheduleTinyMceInitFromEvent(event) {
+  var root = event && event.target ? event.target : document;
+  scheduleTinyMceInit(root);
+}
+document.addEventListener('DOMContentLoaded', function () {
+  return scheduleTinyMceInit(document);
+});
+window.addEventListener('load', function () {
+  return scheduleTinyMceInit(document);
+});
+document.addEventListener('turbo:load', function () {
+  return scheduleTinyMceInit(document);
+});
+document.addEventListener('turbo:render', function () {
+  return scheduleTinyMceInit(document);
+});
+document.addEventListener('turbo:frame-load', scheduleTinyMceInitFromEvent);
+document.addEventListener('turbo:frame-render', scheduleTinyMceInitFromEvent);
 document.addEventListener('turbo:before-cache', destroyTinyMceEditors);
 
 /***/ },

@@ -23,6 +23,12 @@ function initializePage() {
     }
 }
 
+function scheduleInitializePage() {
+    initializePage();
+    window.requestAnimationFrame(initializePage);
+    window.setTimeout(initializePage, 120);
+}
+
 function prepDateTimeFields() {
     const dateSelections = document.querySelectorAll('.tailwind-datetime');
 
@@ -534,9 +540,12 @@ function ensurePublicationExists(channelId) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', initializePage);
-document.addEventListener('turbo:load', initializePage);
-document.addEventListener('turbo:render', initializePage);
+document.addEventListener('DOMContentLoaded', scheduleInitializePage);
+window.addEventListener('load', scheduleInitializePage);
+document.addEventListener('turbo:load', scheduleInitializePage);
+document.addEventListener('turbo:render', scheduleInitializePage);
+document.addEventListener('turbo:frame-load', scheduleInitializePage);
+document.addEventListener('turbo:frame-render', scheduleInitializePage);
 
 document.addEventListener("ensurePublicationEvent", function(e) {
     var channelId = e.detail.channelId; // Access channelId from the event detail

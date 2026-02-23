@@ -382,6 +382,15 @@ function initPublicationSettingsPage() {
     initPublicationTextareaEnterStop();
 }
 
-document.addEventListener('DOMContentLoaded', initPublicationSettingsPage);
-document.addEventListener('turbo:load', initPublicationSettingsPage);
-document.addEventListener('turbo:render', initPublicationSettingsPage);
+function schedulePublicationSettingsInit() {
+    initPublicationSettingsPage();
+    window.requestAnimationFrame(initPublicationSettingsPage);
+    window.setTimeout(initPublicationSettingsPage, 120);
+}
+
+document.addEventListener('DOMContentLoaded', schedulePublicationSettingsInit);
+window.addEventListener('load', schedulePublicationSettingsInit);
+document.addEventListener('turbo:load', schedulePublicationSettingsInit);
+document.addEventListener('turbo:render', schedulePublicationSettingsInit);
+document.addEventListener('turbo:frame-load', schedulePublicationSettingsInit);
+document.addEventListener('turbo:frame-render', schedulePublicationSettingsInit);

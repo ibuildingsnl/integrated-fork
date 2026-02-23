@@ -8,8 +8,20 @@
         <span class="history-value-empty">—</span>
     {% elseif value.type == 'image' %}
         <div class="history-value-image">
-            <img src="{{ value.src }}" alt="{{ value.label|default('image') }}" loading="lazy">
-            <p class="history-value-caption">{{ value.label }}</p>
+            {% if value.href is defined and value.href %}
+                <a href="{{ value.href }}" target="_blank" rel="noopener noreferrer">
+                    <img src="{{ value.src }}" alt="{{ value.label|default('image') }}" loading="lazy">
+                </a>
+            {% else %}
+                <img src="{{ value.src }}" alt="{{ value.label|default('image') }}" loading="lazy">
+            {% endif %}
+            <p class="history-value-caption">
+                {% if value.href is defined and value.href %}
+                    <a href="{{ value.href }}" target="_blank" rel="noopener noreferrer">{{ value.label }}</a>
+                {% else %}
+                    {{ value.label }}
+                {% endif %}
+            </p>
         </div>
     {% elseif value.type == 'html' %}
         <div class="history-value-html">{{ value.html|raw }}</div>
@@ -19,8 +31,18 @@
                 <p>{{ paragraph }}</p>
             {% endfor %}
         </div>
+    {% elseif value.type == 'stack' %}
+        <div class="history-value-stack">
+            {% for item in value.items %}
+                <div class="history-value-stack-item">{{ _self.render_history_value(item) }}</div>
+            {% endfor %}
+        </div>
     {% else %}
-        <span>{{ value.text }}</span>
+        {% if value.href is defined and value.href %}
+            <a href="{{ value.href }}" target="_blank" rel="noopener noreferrer">{{ value.text }}</a>
+        {% else %}
+            <span>{{ value.text }}</span>
+        {% endif %}
     {% endif %}
 {% endmacro %}
 
@@ -56,6 +78,21 @@
                         <span class="history-meta-label">{% trans %}User{% endtrans %}</span>
                         <span class="history-meta-value">{{ contentHistory.user.name|default('Unknown'|trans) }} {% if contentHistory.user.id is defined %}(#{{ contentHistory.user.id }}){% endif %}</span>
                     </div>
+                </div>
+                <div class="history-view-options mb-4">
+                    {% set toggleParams = app.request.query.all|merge({'id': contentHistory.id, 'technical': showTechnical ? 0 : 1}) %}
+                    <a class="btn btn-select" href="{{ path('integrated_content_history_show', toggleParams) }}">
+                        {% if showTechnical %}
+                            {% trans %}Hide technical changes{% endtrans %}
+                        {% else %}
+                            {% trans %}Show technical changes{% endtrans %}
+                        {% endif %}
+                    </a>
+                    {% if not showTechnical and (hiddenRevisionRows > 0 or hiddenCompareRows > 0) %}
+                        <span class="history-meta-label ml-2">
+                            {% trans %}Hidden rows{% endtrans %}: {{ hiddenRevisionRows + hiddenCompareRows }}
+                        </span>
+                    {% endif %}
                 </div>
                 {% if is_granted('ROLE_ADMIN') %}
                     <details class="history-admin-details">
@@ -110,7 +147,7 @@
                         <div class="history-compare-body">
                             {% for line in displayCompareChangeSet %}
                                 <div class="history-compare-row">
-                                    <div class="history-compare-cell history-compare-field">{{ line.name }}</div>
+                                    <div class="history-compare-cell history-compare-field">{{ line.displayName|default(line.name) }}</div>
                                     <div class="history-compare-cell history-compare-old">
                                         {{ history.render_history_value(line.oldDisplay) }}
                                     </div>
@@ -149,12 +186,12 @@
                         </thead>
                         <tbody>
                         {% for line in displayChangeSet %}
-                            {% if changeSet is not null %}
-                                <tr>
-                                    <td>{{ line.name }}</td>
-                                    {% if showOld %}
-                                        <td>{{ history.render_history_value(line.oldDisplay) }}</td>
-                                    {% endif %}
+                        {% if changeSet is not null %}
+                            <tr>
+                                <td>{{ line.displayName|default(line.name) }}</td>
+                                {% if showOld %}
+                                    <td>{{ history.render_history_value(line.oldDisplay) }}</td>
+                                {% endif %}
                                     {% if showNew %}
                                         <td>{{ history.render_history_value(line.newDisplay) }}</td>
                                     {% endif %}
