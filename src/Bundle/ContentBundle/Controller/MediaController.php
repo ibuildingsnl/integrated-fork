@@ -525,7 +525,15 @@ class MediaController extends AbstractController
             $className = $contentType->getClass();
 
             if (\in_array($className, $contentTypes)) {
-                $filter['options'][$contentType->getId()] = $contentType;
+                $name = $contentType->getName();
+                if (\is_array($name)) {
+                    $name = implode(' ', array_filter(array_map(static fn ($value): string => \is_scalar($value) ? (string) $value : '', $name)));
+                }
+
+                $filter['options'][$contentType->getId()] = [
+                    'id' => $contentType->getId(),
+                    'name' => \is_scalar($name) ? (string) $name : (string) $contentType->getId(),
+                ];
             }
         }
 

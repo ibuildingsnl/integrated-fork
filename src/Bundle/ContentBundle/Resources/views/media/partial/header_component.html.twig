@@ -11,9 +11,22 @@
                     <ul aria-labelledby="drop_1" role="menu" class="p-2 dropdown-menu" id="menu_1">
                         {% for type_key, type in contentTypeSelectOptions %}
                             {% if type %}
+                                {% set rawTypeId = type.getId is defined ? type.getId : '' %}
+                                {% set typeId = rawTypeId is iterable ? '' : rawTypeId %}
+                                {% set rawTypeName = type.getName is defined ? type.getName : '' %}
+                                {% set typeName = '' %}
+                                {% if rawTypeName is iterable %}
+                                    {% for value in rawTypeName %}
+                                        {% if typeName == '' and value is not iterable and value is not same as(null) %}
+                                            {% set typeName = value %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    {% set typeName = rawTypeName %}
+                                {% endif %}
                                 <li role="presentation">
-                                    <a data-id="{{ type.getId }}"
-                                       class="cursor-pointer button_toggle_upload_view_with_contenttype">{{ type.getName | title }}</a>
+                                    <a data-id="{{ typeId }}"
+                                       class="cursor-pointer button_toggle_upload_view_with_contenttype">{{ (typeName != '' ? typeName : typeId)|trans|title }}</a>
                                 </li>
                             {% endif %}
                         {% endfor %}
@@ -42,21 +55,31 @@
         {% if app.request.query.all('available_contenttypes')|length != 1 %}
             <ul class="mr-2">
                 <li class="dropdown close-outside" data-underlay="no">
+                    {% set currentContentTypeName = contentTypeFilterOptions.options[contentTypeFilterOptions.current].name|default(contentTypeFilterOptions.default) %}
+                    {% if currentContentTypeName is iterable %}
+                        {% set currentContentTypeName = contentTypeFilterOptions.default %}
+                    {% endif %}
                     <a data-toggle="dropdown" role="button" id="sorting-list"
-                       class="btn btn-select space-between"><span>{{ contentTypeFilterOptions.options[contentTypeFilterOptions.current].name|trans }}</span>
+                       class="btn btn-select space-between"><span>{{ currentContentTypeName|trans }}</span>
                         <i class="iconoir-nav-arrow-down"></i></a>
                     <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
                         {% for content_type_key, content_type in contentTypeFilterOptions.options %}
 
-                            <li {% if content_type.id == contentTypeFilterOptions.current %} class="active" {% endif %}
+                            {% set rawContentTypeId = content_type.id|default('') %}
+                            {% set contentTypeId = rawContentTypeId is iterable ? '' : rawContentTypeId %}
+                            {% set contentTypeName = content_type.name|default(contentTypeId) %}
+                            {% if contentTypeName is iterable %}
+                                {% set contentTypeName = contentTypeId %}
+                            {% endif %}
+                            <li {% if contentTypeId == contentTypeFilterOptions.current %} class="active" {% endif %}
                                 role="presentation">
                                 <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
-                                    merge({'contenttypes': [content_type.id] })|
+                                    merge({'contenttypes': [contentTypeId] })|
                                     merge({'page':1})
                                 ) }}"
                                    tabindex="-1"
-                                   role="menuitem">{{ content_type.name|trans|capitalize }}
+                                   role="menuitem">{{ contentTypeName|trans|capitalize }}
                                 </a>
                             </li>
 
@@ -69,21 +92,29 @@
 
         <ul class="mr-2">
             <li class="dropdown close-outside" data-underlay="no">
+                {% set currentDateLabel = dateFilterOptions.options[dateFilterOptions.current].label|default('All dates') %}
+                {% if currentDateLabel is iterable %}
+                    {% set currentDateLabel = 'All dates' %}
+                {% endif %}
                 <a data-toggle="dropdown" role="button" id="sorting-list"
-                   class="btn btn-select space-between"><span>{{ dateFilterOptions.options[dateFilterOptions.current].label|trans }}</span>
+                   class="btn btn-select space-between"><span>{{ currentDateLabel|trans }}</span>
                     <i class="iconoir-nav-arrow-down"></i></a>
                 <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
                     {% for year_month_key, year_month in dateFilterOptions.options %}
-                        {% if year_month.label != 'File' %}
-                            <li {% if year_month.name == dateFilterOptions.current %}class="active"
+                        {% set yearMonthLabel = year_month.label|default('') %}
+                        {% set yearMonthName = year_month.name|default('') %}
+                        {% if yearMonthLabel is iterable %}{% set yearMonthLabel = '' %}{% endif %}
+                        {% if yearMonthName is iterable %}{% set yearMonthName = '' %}{% endif %}
+                        {% if yearMonthLabel != 'File' %}
+                            <li {% if yearMonthName == dateFilterOptions.current %}class="active"
                                 {% endif %}role="presentation">
                                 <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
                                     merge({'year_month': year_month_key == dateFilterOptions.default ? null : year_month_key })|
                                     merge({'page':1})
                                 ) }}"
                                    tabindex="-1"
-                                   role="menuitem">{{ year_month.label|trans|capitalize }}
+                                   role="menuitem">{{ yearMonthLabel|trans|capitalize }}
                                 </a>
                             </li>
                         {% endif %}
@@ -108,8 +139,12 @@
 <div class="options flex flex-1">
     <form action="" class="media-search-form" method="get">
         <div class="form-group relative" style="width: 100%">
+            {% set queryValue = app.request.query.get('q') %}
+            {% if queryValue is iterable %}
+                {% set queryValue = '' %}
+            {% endif %}
             <input type="text" name="q" class="form-control"
-                   value="{{ app.request.query.get('q')|trim }}"
+                   value="{{ queryValue|default('')|trim }}"
                    placeholder="{% trans %}Search{% endtrans %}...">
             <button type="submit"><i class="iconoir-search"></i></button>
         </div>

@@ -1,12 +1,56 @@
 {% set thumbnail = integrated_image(media.file).cropResize(200, 200) %}
-{% set description = media.description|default('') %}
-{% set credits = media.credits|default('') %}
-{% set contentType = media.contentType is defined ? media.contentType : (media.contenttype is defined ? media.contenttype : '') %}
-{% set contentId = media.type_id is defined ? media.type_id : (media.typeId is defined ? media.typeId : (media.typeid is defined ? media.typeid : media.id)) %}
-{% set fileRaw = media.file is defined ? (media.file ~ '') : '' %}
+{% set rawTitle = media.title|default('') %}
+{% set title = '' %}
+{% if rawTitle is iterable %}
+    {% for value in rawTitle %}
+        {% if title == '' and value is not iterable and value is not same as(null) %}
+            {% set title = value %}
+        {% endif %}
+    {% endfor %}
+{% else %}
+    {% set title = rawTitle %}
+{% endif %}
+{% set rawDescription = media.description|default('') %}
+{% set description = '' %}
+{% if rawDescription is iterable %}
+    {% for value in rawDescription %}
+        {% if description == '' and value is not iterable and value is not same as(null) %}
+            {% set description = value %}
+        {% endif %}
+    {% endfor %}
+{% else %}
+    {% set description = rawDescription %}
+{% endif %}
+{% set rawCredits = media.credits|default('') %}
+{% set credits = '' %}
+{% if rawCredits is iterable %}
+    {% for value in rawCredits %}
+        {% if credits == '' and value is not iterable and value is not same as(null) %}
+            {% set credits = value %}
+        {% endif %}
+    {% endfor %}
+{% else %}
+    {% set credits = rawCredits %}
+{% endif %}
+{% set rawContentType = media.contentType is defined ? media.contentType : (media.contenttype is defined ? media.contenttype : '') %}
+{% set contentType = rawContentType is iterable ? '' : rawContentType %}
+{% set rawContentId = media.type_id is defined ? media.type_id : (media.typeId is defined ? media.typeId : (media.typeid is defined ? media.typeid : media.id)) %}
+{% set contentId = rawContentId is iterable ? '' : rawContentId %}
+{% set fileRaw = '' %}
+{% if media.file is defined and media.file is iterable %}
+    {% if media.file.pathName is defined %}
+        {% set fileRaw = media.file.pathName %}
+    {% elseif media.file.pathname is defined %}
+        {% set fileRaw = media.file.pathname %}
+    {% endif %}
+{% endif %}
 {% set filePath = fileRaw|split('"')|first|split(',')|first %}
 {% set filetypeCandidate = filePath|split('.')|last|lower %}
 {% set filetype = filetypeCandidate matches '/^[a-z0-9]{1,5}$/' ? filetypeCandidate : '' %}
+{% set mimeType = '' %}
+{% if media.file is defined and media.file is iterable and media.file.metadata is defined and media.file.metadata.mimeType is defined %}
+    {% set mimeType = media.file.metadata.mimeType %}
+{% endif %}
 
 <li class="media-item ui-widget-content ui-corner-tr grid {{ contentType }}{% if contentId in (selected_ids|default([])) %} selected{% endif %}"
     id="{{ contentId }}"
@@ -14,14 +58,14 @@
     data-id="{{ contentId }}"
     data-media_id="{{ loop is defined ? loop.index : contentId }}"
     data-thumbnail="{{ thumbnail }}"
-    data-file="{{ media.file }}"
-    data-title="{{ media.title }}"
-    data-mime="{{ media.file.getMetadata().mimeType|default('') }}"
+    data-file="{{ filePath }}"
+    data-title="{{ title }}"
+    data-mime="{{ mimeType }}"
     >
     <div class="media-preview">
         <div class="thumbnail">
             <div class="centered">
-                <img src="{{ thumbnail }}" alt="{{ media.title }}">
+                <img src="{{ thumbnail }}" alt="{{ title }}">
             </div>
         </div>
         {% if filetype and filetype not in not_shown_filetypes %}
@@ -34,7 +78,7 @@
         <div class="w-full md:w-1/2">
             <div class="detail-wrap title">
                 <span class="detail-label">{% trans %}Title{% endtrans %}:</span>
-                <h3>{{ media.title }}</h3>
+                <h3>{{ title }}</h3>
             </div>
             {% if description %}
                 <div class="detail-wrap description">

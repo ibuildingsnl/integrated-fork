@@ -1,5 +1,8 @@
 document.addEventListener("DOMContentLoaded", function() {
     const brandsDiv = document.querySelector('.brands .aside-item-list');
+    if (typeof pubSettings === 'undefined') {
+        return;
+    }
     const htmlContent = `
         <div class="aside-item-search">
             <i class="iconoir-search"></i>
@@ -12,6 +15,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const listSearchElements = document.querySelectorAll('.brand-search');
     listSearchElements.forEach(el => {
+        el.addEventListener('input', asideBrandSearch);
         el.addEventListener('change', asideBrandSearch);
         el.addEventListener('keyup', asideBrandSearch);
     });
@@ -22,14 +26,20 @@ function removeDiacritics(str) {
 }
 
 function asideBrandSearch(el) {
-    let input, filter, brands, div, a, i, txtValue;
+    let input, filter, brands;
     input = el.target;
     filter = removeDiacritics(input.value).toUpperCase();
     brands = el.target.parentNode.parentNode.querySelector('.aside-item-list-container .brands');
-    brandChoices = brands.querySelectorAll('.brand_channel_choice');
+    if (!brands) {
+        return;
+    }
+    const brandChoices = brands.querySelectorAll('.brand-container');
 
     for (const div of brandChoices) {
         const label = div.getElementsByTagName('label')[0];
+        if (!label) {
+            continue;
+        }
         const txtValue = label.textContent || label.innerText;
         div.style.display = removeDiacritics(txtValue).toUpperCase().includes(filter) ?
             '' :
@@ -39,6 +49,9 @@ function asideBrandSearch(el) {
 
 function toggleChannelList(input, toggle) {
     const brandContainer = input.closest('.brand-container');
+    if (!brandContainer) {
+        return;
+    }
 
     if (toggle === false) {
         if (!input.checked) {
@@ -56,13 +69,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     checkboxes.forEach(function(checkbox) {
         checkbox.addEventListener('change', function() {
+            const label = checkbox.closest('.checkbox-container');
             if (!checkbox.checked) {
-                const label = checkbox.closest('.checkbox-container');
                 if (label) {
                     label.style.backgroundColor = '';
                     label.style.color = '';
                 }
-                const checkmark = label.querySelector('.checkmark');
+                const checkmark = label ? label.querySelector('.checkmark') : null;
                 if (checkmark) {
                     checkmark.style.backgroundColor = '';
                     checkmark.style.borderColor = '';
@@ -74,6 +87,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.brands input.brand-choice').forEach(function(brandCheckbox) {
+        const brandContainer = brandCheckbox.closest('.brand-container');
+        const checkboxWrapper = brandCheckbox.closest('.checkbox');
+        if (!brandContainer || !checkboxWrapper) {
+            return;
+        }
 
         const showChannels = document.createElement('a');
         showChannels.href = '#';
@@ -82,11 +100,13 @@ document.addEventListener('DOMContentLoaded', function() {
         showChannels.className = 'publication-channel-toggle-button';
         showChannels.addEventListener('click', function(ev) {
             toggleChannelList(brandCheckbox, true);
+            showChannels.setAttribute('aria-expanded', brandContainer.classList.contains('show') ? 'true' : 'false');
             ev.preventDefault();
         });
 
-        brandCheckbox.closest('.checkbox').insertAdjacentElement('afterend', showChannels);
+        checkboxWrapper.insertAdjacentElement('afterend', showChannels);
         brandCheckbox.showChannels = showChannels;
+        showChannels.setAttribute('aria-expanded', 'false');
 
         brandCheckbox.addEventListener('change', () => {
             brandCheckbox
@@ -98,15 +118,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         if (brandCheckbox.checked) {
-            let brandChannelsToggle = brandCheckbox.closest('.brand-container').querySelector('.publication-channel-toggle-button')
+            let brandChannelsToggle = brandContainer.querySelector('.publication-channel-toggle-button');
             brandChannelsToggle.style.display = 'flex';
+            showChannels.setAttribute('aria-expanded', brandContainer.classList.contains('show') ? 'true' : 'false');
         }
 
         brandCheckbox.addEventListener('change', function() {
             if (brandCheckbox.updating) return;
             brandCheckbox.updating = true;
 
-            const channelsContainer = brandCheckbox.closest('.brand-container').querySelector('.channels');
+            const channelsContainer = brandContainer.querySelector('.channels');
+            if (!channelsContainer) {
+                toggleChannelList(brandCheckbox, brandCheckbox.checked);
+                setTimeout(() => brandCheckbox.updating = false, 0);
+                return;
+            }
             const defaultChannelCheckboxes = channelsContainer.querySelectorAll('.brand-channel-choice[data-channel-default="1"]');
             const allChannelCheckboxes = channelsContainer.querySelectorAll('.brand-channel-choice');
 
@@ -125,6 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             toggleChannelList(brandCheckbox, brandCheckbox.checked);
+            showChannels.setAttribute('aria-expanded', brandContainer.classList.contains('show') ? 'true' : 'false');
 
             setTimeout(() => brandCheckbox.updating = false, 0);
 

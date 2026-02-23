@@ -203,11 +203,16 @@ class IntegratedContentBlock extends AbstractType
                 // support for custom query in database, while waiting for a better solution
                 $sortOption = explode(' ', $value, 2);
 
-                return $sortOption[1];
+                return $sortOption[1] ?? 'asc';
             }
 
             if (\is_string($value) && \in_array($value, ['asc', 'desc'])) {
                 return $value;
+            }
+
+            if (!$this->sorting->hasByField($options['sort'])) {
+                // Custom sort fields are not part of the default sort option list.
+                return 'asc';
             }
 
             return $this->sorting->getByField($options['sort'])->order;

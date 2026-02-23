@@ -4,35 +4,37 @@
 {{ parent() }}
 
 <script>
-    jQuery(function($) {
-        window.send_cancel_to_parent = function() {
-            window.parent.postMessage({mceAction: 'close'}, {{ app.request.schemeAndHttpHost|json_encode|raw }});
+    (function () {
+        var targetOrigin = {{ app.request.schemeAndHttpHost|json_encode|raw }};
+
+        var closeDialog = function () {
+            window.parent.postMessage({mceAction: 'close'}, targetOrigin);
         };
 
-        $(document).keyup(function(e) {
+        window.send_cancel_to_parent = closeDialog;
+
+        document.addEventListener('keyup', function (e) {
             if (e.key === 'Escape') {
-                window.parent.postMessage({mceAction: 'close'}, {{ app.request.schemeAndHttpHost|json_encode|raw }});
+                closeDialog();
             }
         });
 
-        window.send_message_to_parent = function(e) {
-            var media = $('#gallery li.media-item.selected');
-
-            if (!media.length) {
+        window.send_message_to_parent = function () {
+            var media = document.querySelector('#gallery li.media-item.selected');
+            if (!media) {
                 return;
             }
 
             window.parent.postMessage({
                 mceAction: 'insertVideo',
                 video: {
-                    id: media.data('id'),
-                    poster: media.data('thumbnail'),
-                    uri: media.data('file'),
-                    mine: media.data('mime'),
-                },
-            }, {{ app.request.schemeAndHttpHost|json_encode|raw }});
+                    id: media.dataset.id,
+                    poster: media.dataset.thumbnail,
+                    uri: media.dataset.file,
+                    mine: media.dataset.mime
+                }
+            }, targetOrigin);
         };
-
-    });
+    })();
 </script>
 {% endblock %}
