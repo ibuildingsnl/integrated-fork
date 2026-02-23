@@ -21594,15 +21594,19 @@ function handleMediaEditClose(event) {
 function getAdditionalInfo(media_id) {
   return $('#' + media_id)[0];
 }
-window.send_cancel_to_parent = function () {
-  window.parent.postMessage('cancel', '*');
-};
-window.send_message_to_parent = function () {
-  var selection = bulkSelection.map(function (key) {
-    return getAdditionalInfo(key).dataset;
-  });
-  window.parent.postMessage(JSON.stringify(selection), '*');
-};
+if (typeof window.send_cancel_to_parent !== 'function') {
+  window.send_cancel_to_parent = function () {
+    window.parent.postMessage('cancel', '*');
+  };
+}
+if (typeof window.send_message_to_parent !== 'function') {
+  window.send_message_to_parent = function () {
+    var selection = bulkSelection.map(function (key) {
+      return getAdditionalInfo(key).dataset;
+    });
+    window.parent.postMessage(JSON.stringify(selection), '*');
+  };
+}
 window.onlyUnique = function (value, index, self) {
   return self.indexOf(value) === index;
 };

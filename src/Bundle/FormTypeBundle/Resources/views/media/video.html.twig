@@ -6,6 +6,7 @@
 <script>
     (function () {
         var targetOrigin = {{ app.request.schemeAndHttpHost|json_encode|raw }};
+        var resolveMediaUri = window.resolveMediaPickerUri || function () { return ''; };
 
         var closeDialog = function () {
             window.parent.postMessage({mceAction: 'close'}, targetOrigin);
@@ -30,7 +31,7 @@
                 video: {
                     id: media.dataset.id,
                     poster: media.dataset.thumbnail,
-                    uri: media.dataset.file,
+                    uri: resolveMediaUri(media),
                     mine: media.dataset.mime
                 }
             }, targetOrigin);

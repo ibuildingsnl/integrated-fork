@@ -16514,15 +16514,107 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _api_options__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../api/options */ "./src/Bundle/FormTypeBundle/Resources/assets/js/tinymce-integrated-browser/api/options.js");
 /* harmony import */ var _core_schema__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../core/schema */ "./src/Bundle/FormTypeBundle/Resources/assets/js/tinymce-integrated-browser/core/schema.js");
 /* harmony import */ var _core_templates__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../core/templates */ "./src/Bundle/FormTypeBundle/Resources/assets/js/tinymce-integrated-browser/core/templates.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 
 
 
+var toStringValue = function toStringValue(value) {
+  if (value === null || value === undefined) {
+    return '';
+  }
+  return String(value);
+};
+var normalizeLegacyMessage = function normalizeLegacyMessage(mode, data) {
+  if (!data) {
+    return null;
+  }
+  if (_typeof(data) === 'object' && !Array.isArray(data) && data.mceAction) {
+    return data;
+  }
+  if (data === 'cancel') {
+    return {
+      mceAction: 'close'
+    };
+  }
+  var payload = data;
+  if (typeof payload === 'string') {
+    try {
+      payload = JSON.parse(payload);
+    } catch (e) {
+      return null;
+    }
+  }
+  if (!Array.isArray(payload) || payload.length === 0) {
+    return null;
+  }
+  if (mode === 'image') {
+    var selected = payload[0];
+    return {
+      mceAction: 'insertImage',
+      image: {
+        id: toStringValue(selected.id),
+        uri: toStringValue(selected.file),
+        title: toStringValue(selected.title)
+      }
+    };
+  }
+  if (mode === 'video') {
+    var _selected = payload[0];
+    return {
+      mceAction: 'insertVideo',
+      video: {
+        id: toStringValue(_selected.id),
+        poster: toStringValue(_selected.thumbnail),
+        uri: toStringValue(_selected.file),
+        mine: toStringValue(_selected.mime)
+      }
+    };
+  }
+  return {
+    mceAction: 'insertGallery',
+    images: payload.map(function (selected) {
+      return {
+        id: toStringValue(selected.id),
+        uri: toStringValue(selected.file),
+        thumbnail: toStringValue(selected.thumbnail),
+        title: toStringValue(selected.title)
+      };
+    })
+  };
+};
+var bindBackdropClose = function bindBackdropClose(dialog) {
+  var attempts = 0;
+  var maxAttempts = 20;
+  var _attach = function attach() {
+    var backdrop = document.querySelector('.tox-dialog-wrap__backdrop');
+    if (backdrop) {
+      backdrop.addEventListener('click', function () {
+        return dialog.close();
+      }, {
+        once: true
+      });
+      return;
+    }
+    attempts += 1;
+    if (attempts < maxAttempts) {
+      window.setTimeout(_attach, 50);
+    }
+  };
+  _attach();
+};
 var imageHandler = function imageHandler(editor, dialog, data) {
   if (data.mceAction !== 'insertImage') {
     return;
   }
   if (!(0,_core_schema__WEBPACK_IMPORTED_MODULE_1__.validate)(data)) {
     throw 'Invalid "insertImage" message data received';
+  }
+  if (!data.image.uri) {
+    editor.notificationManager.open({
+      text: 'Selected image has no source URL',
+      type: 'error'
+    });
+    return;
   }
   editor.insertContent(_core_templates__WEBPACK_IMPORTED_MODULE_2__.image(data.image));
   dialog.close();
@@ -16534,6 +16626,13 @@ var videoHandler = function videoHandler(editor, dialog, data) {
   if (!(0,_core_schema__WEBPACK_IMPORTED_MODULE_1__.validate)(data)) {
     throw 'Invalid "insertVideo" message data received';
   }
+  if (!data.video.uri) {
+    editor.notificationManager.open({
+      text: 'Selected video has no source URL',
+      type: 'error'
+    });
+    return;
+  }
   editor.insertContent(_core_templates__WEBPACK_IMPORTED_MODULE_2__.video(data.video));
   dialog.close();
 };
@@ -16544,7 +16643,17 @@ var galleryHandler = function galleryHandler(editor, dialog, data) {
   if (!(0,_core_schema__WEBPACK_IMPORTED_MODULE_1__.validate)(data)) {
     throw 'Invalid "insertGallery" message data received';
   }
-  editor.insertContent(_core_templates__WEBPACK_IMPORTED_MODULE_2__.gallery(data.images));
+  var images = data.images.filter(function (image) {
+    return !!image.uri;
+  });
+  if (images.length === 0) {
+    editor.notificationManager.open({
+      text: 'Selected gallery items have no source URL',
+      type: 'error'
+    });
+    return;
+  }
+  editor.insertContent(_core_templates__WEBPACK_IMPORTED_MODULE_2__.gallery(images));
   function addRemoveButton(element, className) {
     var removeButton = element.querySelector(":scope > .remove");
     if (removeButton) {
@@ -16574,12 +16683,24 @@ var galleryHandler = function galleryHandler(editor, dialog, data) {
 };
 var Dialog = function Dialog(editor, mode) {
   var messageHandler = function messageHandler(dialog, data) {
-    if (mode === 'video') {
-      videoHandler(editor, dialog, data);
-    } else if (mode === 'image') {
-      imageHandler(editor, dialog, data);
-    } else {
-      galleryHandler(editor, dialog, data);
+    var message = normalizeLegacyMessage(mode, data);
+    if (!message) {
+      return;
+    }
+    if (message.mceAction === 'close') {
+      dialog.close();
+      return;
+    }
+    try {
+      if (mode === 'video') {
+        videoHandler(editor, dialog, message);
+      } else if (mode === 'image') {
+        imageHandler(editor, dialog, message);
+      } else {
+        galleryHandler(editor, dialog, message);
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
   var open = function open() {
@@ -16590,8 +16711,12 @@ var Dialog = function Dialog(editor, mode) {
       height: window.innerHeight - 120,
       onMessage: messageHandler
     });
-    document.querySelector('.tox-dialog').classList.add('media_library');
-    document.querySelector('.tox-dialog').focus();
+    var toxDialog = document.querySelector('.tox-dialog');
+    if (toxDialog) {
+      toxDialog.classList.add('media_library');
+      toxDialog.focus();
+    }
+    bindBackdropClose(dialog);
   };
   return {
     open: open

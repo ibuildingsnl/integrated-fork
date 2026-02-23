@@ -37,19 +37,45 @@
 {% set rawContentId = media.type_id is defined ? media.type_id : (media.typeId is defined ? media.typeId : (media.typeid is defined ? media.typeid : media.id)) %}
 {% set contentId = rawContentId is iterable ? '' : rawContentId %}
 {% set fileRaw = '' %}
-{% if media.file is defined and media.file is iterable %}
-    {% if media.file.pathName is defined %}
-        {% set fileRaw = media.file.pathName %}
-    {% elseif media.file.pathname is defined %}
-        {% set fileRaw = media.file.pathname %}
+{% if media.file is defined %}
+    {% if media.file is iterable %}
+        {% if media.file.pathName is defined %}
+            {% set fileRaw = media.file.pathName %}
+        {% elseif media.file.pathname is defined %}
+            {% set fileRaw = media.file.pathname %}
+        {% elseif media.file.path is defined %}
+            {% set fileRaw = media.file.path %}
+        {% elseif media.file.url is defined %}
+            {% set fileRaw = media.file.url %}
+        {% endif %}
+    {% elseif media.file is not same as(null) %}
+        {% set fileRaw = media.file %}
     {% endif %}
 {% endif %}
-{% set filePath = fileRaw|split('"')|first|split(',')|first %}
+{% set filePath = fileRaw|trim %}
+{% if filePath starts with('{') %}
+    {% if '"pathName":"' in filePath %}
+        {% set filePath = filePath|split('"pathName":"')|last|split('"')|first %}
+    {% elseif '"pathname":"' in filePath %}
+        {% set filePath = filePath|split('"pathname":"')|last|split('"')|first %}
+    {% elseif '"path":"' in filePath %}
+        {% set filePath = filePath|split('"path":"')|last|split('"')|first %}
+    {% elseif '"url":"' in filePath %}
+        {% set filePath = filePath|split('"url":"')|last|split('"')|first %}
+    {% else %}
+        {% set filePath = '' %}
+    {% endif %}
+{% endif %}
+{% set filePath = filePath|replace({'\\/': '/'}) %}
 {% set filetypeCandidate = filePath|split('.')|last|lower %}
 {% set filetype = filetypeCandidate matches '/^[a-z0-9]{1,5}$/' ? filetypeCandidate : '' %}
 {% set mimeType = '' %}
 {% if media.file is defined and media.file is iterable and media.file.metadata is defined and media.file.metadata.mimeType is defined %}
     {% set mimeType = media.file.metadata.mimeType %}
+{% elseif media.mimeType is defined %}
+    {% set mimeType = media.mimeType %}
+{% elseif media.mime is defined %}
+    {% set mimeType = media.mime %}
 {% endif %}
 
 <li class="media-item ui-widget-content ui-corner-tr grid {{ contentType }}{% if contentId in (selected_ids|default([])) %} selected{% endif %}"
