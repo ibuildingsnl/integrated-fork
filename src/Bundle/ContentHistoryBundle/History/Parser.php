@@ -48,8 +48,8 @@ class Parser
         if (\count($data) === 2 && \array_key_exists(0, $data) && \array_key_exists(1, $data) && !\is_array($data[0]) && !\is_array($data[1])) {
             $table[] = [
                 'name' => $path,
-                'old' => $this->normalizeValue($data[0]),
-                'new' => $this->normalizeValue($data[1]),
+                'old' => $this->normalizeValueByPath($path, $data[0]),
+                'new' => $this->normalizeValueByPath($path, $data[1]),
             ];
 
             return;
@@ -61,7 +61,7 @@ class Parser
                 $table[] = [
                     'name' => $path.' > '.$key,
                     'old' => '',
-                    'new' => $subdata,
+                    'new' => $this->normalizeValueByPath($path.' > '.$key, $subdata),
                 ];
 
                 continue;
@@ -100,6 +100,11 @@ class Parser
         if (\is_array($value)) {
             $value = $this->normalizeArrayKeys($value);
 
+            $formattedRelation = $this->formatRelationPayload($value);
+            if ($formattedRelation !== null) {
+                return $formattedRelation;
+            }
+
             $formatted = $this->formatReferenceArray($value);
             if ($formatted !== null) {
                 return $formatted;
@@ -118,7 +123,14 @@ class Parser
             if ($this->isList($value)) {
                 $formattedItems = [];
                 foreach ($value as $item) {
-                    $formattedItem = $this->formatReferenceArray(\is_array($item) ? $this->normalizeArrayKeys($item) : []);
+                    $normalizedItem = \is_array($item) ? $this->normalizeArrayKeys($item) : [];
+                    $formattedItem = $this->formatRelationPayload($normalizedItem);
+                    if ($formattedItem !== null) {
+                        $formattedItems[] = $formattedItem;
+                        continue;
+                    }
+
+                    $formattedItem = $this->formatReferenceArray($normalizedItem);
                     if ($formattedItem !== null) {
                         $formattedItems[] = $formattedItem;
                         continue;
@@ -132,6 +144,17 @@ class Parser
         }
 
         return $value;
+    }
+
+    private function normalizeValueByPath(string $path, $value)
+    {
+        $normalized = $this->normalizeValue($value);
+
+        if (\is_string($normalized) && $this->isRelationIdPath($path)) {
+            return $this->humanizeRelationId($normalized);
+        }
+
+        return $normalized;
     }
 
     private function tryUnserialize(string $value): mixed
@@ -265,5 +288,78 @@ class Parser
         }
 
         return json_encode($value);
+    }
+
+    private function formatRelationPayload(array $value): ?string
+    {
+        if (!isset($value['relationId']) || !isset($value['references'])) {
+            return null;
+        }
+
+        $relationId = $this->pickPreferredScalar($value['relationId']);
+        $relationLabel = $relationId ? $this->humanizeRelationId($relationId) : 'Relation';
+        $references = $value['references'];
+
+        if (!\is_array($references) || $references === []) {
+            return sprintf('%s: none', $relationLabel);
+        }
+
+        $labels = [];
+        foreach ($references as $reference) {
+            if (!\is_array($reference)) {
+                continue;
+            }
+
+            $reference = $this->normalizeArrayKeys($reference);
+            $formatted = $this->formatReferenceArray($reference);
+            if ($formatted !== null) {
+                $labels[] = $formatted;
+            }
+        }
+
+        if ($labels === []) {
+            return sprintf('%s: none', $relationLabel);
+        }
+
+        return sprintf('%s: %s', $relationLabel, implode(', ', $labels));
+    }
+
+    private function pickPreferredScalar($value): ?string
+    {
+        if (\is_scalar($value) && (string) $value !== '') {
+            return (string) $value;
+        }
+
+        if (!\is_array($value)) {
+            return null;
+        }
+
+        // Prefer the "new" value when [old, new] tuple is present.
+        foreach (array_reverse($value, true) as $item) {
+            if (\is_scalar($item) && (string) $item !== '') {
+                return (string) $item;
+            }
+        }
+
+        return null;
+    }
+
+    private function isRelationIdPath(string $path): bool
+    {
+        $path = strtolower(trim($path));
+
+        return $path === 'relationid' || str_ends_with($path, ' > relationid');
+    }
+
+    private function humanizeRelationId(string $relationId): string
+    {
+        $relationId = ltrim($relationId, '_');
+        if ($relationId === '') {
+            return '';
+        }
+
+        $relationId = str_replace(['-', '_'], ' ', $relationId);
+
+        return ucfirst(trim($relationId));
     }
 }

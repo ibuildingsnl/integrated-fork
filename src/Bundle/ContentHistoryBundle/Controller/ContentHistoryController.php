@@ -219,6 +219,13 @@ class ContentHistoryController extends AbstractController
 
     private function resolveReferenceValue(string $value): ?array
     {
+        $contextLabel = null;
+
+        if (preg_match('/^(?<label>[^:]+):\s*(?<class>[A-Za-z0-9_\\\\]+)\s+#(?<id>[A-Za-z0-9_]+)$/', $value, $prefixed)) {
+            $contextLabel = trim($prefixed['label']);
+            $value = sprintf('%s #%s', $prefixed['class'], $prefixed['id']);
+        }
+
         if (preg_match('/^(?<collection>[a-z_]+)\s+#(?<id>[A-Za-z0-9_]+)$/i', $value, $matches)) {
             $collection = strtolower($matches['collection']);
             $id = $matches['id'];
@@ -226,9 +233,14 @@ class ContentHistoryController extends AbstractController
             if ($collection === 'channel') {
                 $channel = $this->manager->find(Channel::class, $id);
                 if ($channel instanceof Channel) {
+                    $text = sprintf('%s (#%s)', $channel->getName(), $channel->getId());
+                    if ($contextLabel) {
+                        $text = sprintf('%s: %s', $contextLabel, $text);
+                    }
+
                     return [
                         'type' => 'reference',
-                        'text' => sprintf('%s (#%s)', $channel->getName(), $channel->getId()),
+                        'text' => $text,
                     ];
                 }
             }
@@ -253,6 +265,9 @@ class ContentHistoryController extends AbstractController
             $identifier = $document->getFile()?->getIdentifier();
             $title = trim((string) ($document->getTitle() ?? ''));
             $label = $title !== '' ? $title : sprintf('Image #%s', $id);
+            if ($contextLabel) {
+                $label = $contextLabel.($title !== '' ? ' - '.$title : '');
+            }
 
             if ($identifier) {
                 return [
@@ -266,31 +281,40 @@ class ContentHistoryController extends AbstractController
         }
 
         if ($document instanceof Channel) {
+            $text = sprintf('%s (#%s)', $document->getName(), $document->getId());
+            if ($contextLabel) {
+                $text = sprintf('%s: %s', $contextLabel, $text);
+            }
+
             return [
                 'type' => 'reference',
-                'text' => sprintf('%s (#%s)', $document->getName(), $document->getId()),
+                'text' => $text,
             ];
         }
 
         if (method_exists($document, 'getName')) {
             $name = trim((string) $document->getName());
             if ($name !== '') {
-                return ['type' => 'reference', 'text' => $name];
+                return ['type' => 'reference', 'text' => $contextLabel ? sprintf('%s: %s', $contextLabel, $name) : $name];
             }
         }
 
         if (method_exists($document, 'getTitle')) {
             $title = trim((string) $document->getTitle());
             if ($title !== '') {
-                return ['type' => 'reference', 'text' => $title];
+                return ['type' => 'reference', 'text' => $contextLabel ? sprintf('%s: %s', $contextLabel, $title) : $title];
             }
         }
 
         if (method_exists($document, 'getId')) {
-            return ['type' => 'reference', 'text' => sprintf('%s #%s', $this->shortClassName($class), $document->getId())];
+            $text = sprintf('%s #%s', $this->shortClassName($class), $document->getId());
+
+            return ['type' => 'reference', 'text' => $contextLabel ? sprintf('%s: %s', $contextLabel, $text) : $text];
         }
 
-        return ['type' => 'reference', 'text' => $this->shortClassName($class)];
+        $text = $this->shortClassName($class);
+
+        return ['type' => 'reference', 'text' => $contextLabel ? sprintf('%s: %s', $contextLabel, $text) : $text];
     }
 
     private function shortClassName(string $class): string
