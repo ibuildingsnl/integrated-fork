@@ -38,4 +38,9 @@ class TaxonomyController extends AbstractController
             'page' => $page,
         ]);
     }
+
+    public function showAction(ContentTypePage $page, Taxonomy $taxonomy): Response
+    {
+        return $this->show($page, $taxonomy);
+    }
 }

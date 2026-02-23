@@ -29,7 +29,7 @@ class JobPostingController extends AbstractController
         $this->themeManager = $themeManager;
     }
 
-    public function showA(ContentTypePage $page, JobPosting $jobPosting): Response
+    public function show(ContentTypePage $page, JobPosting $jobPosting): Response
     {
         $this->contentService->prepare($jobPosting);
 
@@ -37,5 +37,15 @@ class JobPostingController extends AbstractController
             'jobPosting' => $jobPosting,
             'page' => $page,
         ]);
+    }
+
+    public function showAction(ContentTypePage $page, JobPosting $jobPosting): Response
+    {
+        return $this->show($page, $jobPosting);
+    }
+
+    public function showA(ContentTypePage $page, JobPosting $jobPosting): Response
+    {
+        return $this->show($page, $jobPosting);
     }
 }

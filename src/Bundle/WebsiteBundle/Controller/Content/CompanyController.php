@@ -38,4 +38,9 @@ class CompanyController extends AbstractController
             'page' => $page,
         ]);
     }
+
+    public function showAction(ContentTypePage $page, Company $company): Response
+    {
+        return $this->show($page, $company);
+    }
 }

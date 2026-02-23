@@ -38,4 +38,9 @@ class NewsController extends AbstractController
             'page' => $page,
         ]);
     }
+
+    public function showAction(ContentTypePage $page, News $news): Response
+    {
+        return $this->show($page, $news);
+    }
 }
