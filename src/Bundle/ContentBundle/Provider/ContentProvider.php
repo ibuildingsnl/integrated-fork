@@ -84,7 +84,7 @@ class ContentProvider
         };
 
         // Filter on ContentType
-        $contentType = $request->query->all('contenttypes');
+        $contentType = $this->getArrayQueryParameter($request, 'contenttypes');
         if (!\count($contentType)) {
             $contentType = [];
             foreach ($contentTypeSelectOptions as $contentTypeSelectOption) {
@@ -98,7 +98,8 @@ class ContentProvider
         }
 
         // Filter on Category
-        if ($selectedCategory = $request->query->get('MediaTaxonomy')) {
+        $selectedCategory = $this->getArrayQueryParameter($request, 'MediaTaxonomy');
+        if ([] !== $selectedCategory) {
             $relation = $this->dm->getRepository(Relation::class)->find('media_taxonomy');
 
             // No Results;
@@ -147,8 +148,8 @@ class ContentProvider
 
         // If the request query contains a relation parameter we need to fetch all the targets of the relation in order
         // to filter on these targets.
-        $relations = $request->query->get('relation');
-        if (null !== $relations) {
+        $relations = $this->getArrayQueryParameter($request, 'relation');
+        if ([] !== $relations) {
             $contentType = [];
             /* @var Relation $relation */
             foreach ($relations as $key => $value) {
@@ -159,7 +160,7 @@ class ContentProvider
                 }
             }
         } else {
-            $contentType = $request->query->all('contenttypes');
+            $contentType = $this->getArrayQueryParameter($request, 'contenttypes');
         }
 
         $helper = $query->getHelper();
@@ -169,7 +170,7 @@ class ContentProvider
 
         // If the request query contains a properties parameter we need to fetch all the targets of the relation in order
         // to filter on these targets.
-        $propertiesfilter = $request->query->get('properties');
+        $propertiesfilter = $this->getArrayQueryParameter($request, 'properties');
         if (\is_array($propertiesfilter)) {
             $query
                 ->createFilterQuery('properties')
@@ -178,8 +179,8 @@ class ContentProvider
         }
 
         /* @var Relation $relation */
-        if ($request->query->get('relation')) {
-            foreach ($request->query->all('relation') as $relationId => $value) {
+        if ([] !== $relations) {
+            foreach ($relations as $relationId => $value) {
                 $relation = $this->dm->getRepository(Relation::class)->find($relationId);
                 $relationfilter = $value;
 
@@ -203,7 +204,7 @@ class ContentProvider
             $this->addWorkflowFilter($query);
         }
 
-        $activeBrands = $request->query->get('brands');
+        $activeBrands = $this->getArrayQueryParameter($request, 'brands');
         if (\is_array($activeBrands)) {
             if (\count($activeBrands)) {
                 $query
@@ -213,7 +214,7 @@ class ContentProvider
             }
         }
 
-        $activeChannels = $request->query->get('channels');
+        $activeChannels = $this->getArrayQueryParameter($request, 'channels');
         if (\is_array($activeChannels)) {
             if (\count($activeChannels)) {
                 $query
@@ -223,7 +224,7 @@ class ContentProvider
             }
         }
 
-        $activeStates = $request->query->get('workflow_state');
+        $activeStates = $this->getArrayQueryParameter($request, 'workflow_state');
         if (\is_array($activeStates)) {
             if (\count($activeStates)) {
                 $query
@@ -233,7 +234,7 @@ class ContentProvider
             }
         }
 
-        $activeAssigned = $request->query->get('workflow_assigned');
+        $activeAssigned = $this->getArrayQueryParameter($request, 'workflow_assigned');
         if (\is_array($activeAssigned)) {
             if (\count($activeAssigned)) {
                 $query
@@ -243,7 +244,7 @@ class ContentProvider
             }
         }
 
-        $activeAuthors = $request->query->get('authors');
+        $activeAuthors = $this->getArrayQueryParameter($request, 'authors');
         if (\is_array($activeAuthors)) {
             if (\count($activeAuthors)) {
                 $query
@@ -253,7 +254,7 @@ class ContentProvider
             }
         }
 
-        $hasFields = $request->query->get('hasFields');
+        $hasFields = $this->getArrayQueryParameter($request, 'hasFields');
         if (\is_array($hasFields)) {
             foreach ($hasFields as $field) {
                 $query
@@ -388,12 +389,27 @@ class ContentProvider
         if (\is_array($contentType) && \count($contentType) === 1) {
             $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
         } else {
-            $availableContenttypes = $request->query->all('available_contenttypes');
+            $availableContenttypes = $this->getArrayQueryParameter($request, 'available_contenttypes');
             if (\is_array($availableContenttypes) && \count($availableContenttypes)) {
                 $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $availableContenttypes))]);
             } elseif (\is_array($contentType) && \count($contentType)) {
                 $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
             }
         }
+    }
+
+    private function getArrayQueryParameter(Request $request, string $name): array
+    {
+        $value = $request->query->all()[$name] ?? null;
+
+        if (\is_array($value)) {
+            return $value;
+        }
+
+        if (null === $value || '' === $value) {
+            return [];
+        }
+
+        return [$value];
     }
 }
