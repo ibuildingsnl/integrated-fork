@@ -50,20 +50,18 @@ class CustomFieldsTypeTest extends TypeTestCase
     public static function getValidData(): array
     {
         return [
-            [
-                'data1' => [
-                    'customField1' => 'Data for customField1',
-                    'customField2' => 'Data for customField2',
-                    'customField3' => true,
-                    'customField4' => true,
-                ],
-                'data2' => [
-                    'customField1' => null,
-                    'customField2' => 'Data for customField2',
-                    'customField3' => false,
-                    'customField4' => false,
-                ],
-            ],
+            [[
+                'customField1' => 'Data for customField1',
+                'customField2' => 'Data for customField2',
+                'customField3' => true,
+                'customField4' => true,
+            ]],
+            [[
+                'customField1' => null,
+                'customField2' => 'Data for customField2',
+                'customField3' => false,
+                'customField4' => false,
+            ]],
         ];
     }
 

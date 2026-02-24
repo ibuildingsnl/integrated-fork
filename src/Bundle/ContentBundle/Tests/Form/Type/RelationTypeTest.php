@@ -46,26 +46,24 @@ class RelationTypeTest extends TypeTestCase
     public static function getValidTestData(): array
     {
         return [
-            [
-                'data1' => [
-                    'name' => 'Relation with no sources and targets',
-                    'type' => 'type',
-                    'sources' => [],
-                    'targets' => [],
-                    'multiple' => false,
-                    'required' => true,
+            [[
+                'name' => 'Relation with no sources and targets',
+                'type' => 'type',
+                'sources' => [],
+                'targets' => [],
+                'multiple' => false,
+                'required' => true,
+            ]],
+            [[
+                'name' => 'Relation with  sources and targets',
+                'type' => 'type',
+                'sources' => [
+                    new ContentType(),
                 ],
-                'data2' => [
-                    'name' => 'Relation with  sources and targets',
-                    'type' => 'type',
-                    'sources' => [
-                        new ContentType(),
-                    ],
-                    'targets' => [
-                        new ContentType(),
-                    ],
+                'targets' => [
+                    new ContentType(),
                 ],
-            ],
+            ]],
         ];
     }
 }

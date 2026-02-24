@@ -1047,6 +1047,11 @@ class ContentController extends AbstractController
         ]);
     }
 
+    public function mediaTypesAction(?string $filter = null): Response
+    {
+        return $this->mediaTypes($filter);
+    }
+
     public function mediaTypes(?string $filter = null): Response
     {
         $output = [];

@@ -60,4 +60,41 @@ class NewsController extends AbstractController
             'documents' => $documents,
         ]);
     }
+
+    public function list(int $page): Response
+    {
+        $channel = $this->context->getChannel();
+
+        if (!$channel) {
+            throw new NotFoundHttpException('No channel found');
+        }
+
+        if ($page !== min(max($page, 1), 50000)) {
+            throw new NotFoundHttpException();
+        }
+
+        $now = new \DateTime();
+
+        $queryBuilder = $this->manager->createQueryBuilder(News::class);
+        $documents = $queryBuilder
+            ->select('contentType', 'slug', 'publishTime', 'title', 'relations')
+            ->field('channels.$id')->equals($channel->getId())
+            ->field('disabled')->equals(false)
+            ->field('publishTime.startDate')->gte(new \DateTime('-2 days'))
+            ->field('publishTime.startDate')->lte($now)
+            ->field('publishTime.endDate')->gte($now)
+            ->addOr($queryBuilder->expr()->field('primaryChannel.$id')->equals($channel->getId()))
+            ->addOr($queryBuilder->expr()->field('primaryChannel')->exists(false))
+            ->sort('createdAt', 'desc')
+            ->skip((max($page, 1) - 1) * 1000)
+            ->limit(1000)
+            ->getQuery()
+            ->getIterator();
+
+        return $this->render('@IntegratedSitemap/news/index.xml.twig', [
+            'channel' => $channel,
+            'locale' => $this->getParameter('kernel.default_locale'),
+            'documents' => $documents,
+        ]);
+    }
 }
