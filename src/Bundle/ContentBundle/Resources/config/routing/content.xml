@@ -52,6 +52,10 @@
 	        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::assignedStatus</default>
 	    </route>
 
+	    <route id="integrated_content_content_locks_status" path="/locks-status" methods="POST">
+	        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::locksStatus</default>
+	    </route>
+
 	    <route id="integrated_content_content_channels_fragment" path="/channels-fragment" methods="GET">
 	        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ChannelController::getChannels</default>
 	    </route>

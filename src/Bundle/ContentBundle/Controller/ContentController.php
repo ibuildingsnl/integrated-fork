@@ -68,6 +68,7 @@ use Symfony\UX\Turbo\TurboStreamResponse;
 class ContentController extends AbstractController
 {
     private const NAVDROPDOWNS_CACHE_NAMESPACE = 'integrated_content_fragments_navdropdowns';
+    private const CONTENT_LOCK_TIMEOUT_SECONDS = 15;
 
     /**
      * @var string
@@ -387,7 +388,7 @@ class ContentController extends AbstractController
             throw new AccessDeniedException();
         }
 
-        $locking = $this->getLock($content, 15);
+        $locking = $this->getLock($content, self::CONTENT_LOCK_TIMEOUT_SECONDS);
         $locking['locked'] = (bool) $locking['lock'];
 
         if (true === $content instanceof File) {
@@ -617,7 +618,7 @@ class ContentController extends AbstractController
         }
         // get a lock on this content resource.
 
-        $locking = $this->getLock($content, 15);
+        $locking = $this->getLock($content, self::CONTENT_LOCK_TIMEOUT_SECONDS);
         $locking['locked'] = $locking['lock'] ? true : false;
 
         if ($locking['lock'] && $locking['owner']) {
@@ -758,8 +759,6 @@ class ContentController extends AbstractController
             ];
         }
 
-        $this->lockManager->clean();
-
         $object = Resource::fromObject($object);
         $owner = null;
 
@@ -768,11 +767,7 @@ class ContentController extends AbstractController
         }
 
         if ($owner) {
-            $request = new Locks\Request($object);
-            $request->setOwner($owner);
-            $request->setTimeout($timeout);
-
-            if ($lock = $this->lockManager->acquire($request)) {
+            if ($lock = $this->acquireLock($object, $owner, $timeout)) {
                 return [
                     'lock' => $lock,
                     'user' => $this->getUser(),
@@ -785,8 +780,29 @@ class ContentController extends AbstractController
             }
         } // can not acquire a lock if not logged in.
 
-        if ($lock = $this->lockManager->findByResource($object)) {
-            $lock = $lock[0];
+        $locksByResource = $this->lockManager->findByResource($object);
+        $lock = $this->resolveActiveLock($locksByResource);
+
+        // Expired rows can still block acquire due the unique index on resource.
+        // Clean only for this resource and retry acquiring for the current owner.
+        if (!$lock && $owner && $this->releaseExpiredLocks($locksByResource)) {
+            if ($lock = $this->acquireLock($object, $owner, $timeout)) {
+                return [
+                    'lock' => $lock,
+                    'user' => $this->getUser(),
+                    'owner' => true,
+                    'new' => true,
+                    'release' => function () use ($lock): void {
+                        $this->lockManager->release($lock);
+                    },
+                ];
+            }
+
+            $locksByResource = $this->lockManager->findByResource($object);
+            $lock = $this->resolveActiveLock($locksByResource);
+        }
+
+        if ($lock) {
 
             if ($owner && $owner->equals($lock->getRequest()->getOwner())) {
                 return [
@@ -844,7 +860,16 @@ class ContentController extends AbstractController
             return $results;
         }
 
-        foreach ($this->lockManager->findBy($filter) as $lock) {
+        $locks = $this->lockManager->findBy($filter);
+        if (!\is_iterable($locks)) {
+            return $results;
+        }
+
+        foreach ($locks as $lock) {
+            if ($this->isLockExpired($lock)) {
+                continue;
+            }
+
             // get the user the locks belongs to.
             $user = null;
 
@@ -854,29 +879,82 @@ class ContentController extends AbstractController
                 }
             }
 
-            $text = '';
-
-            if ($user) {
-                $text = $user->getUserIdentifier();
-
-                // we got a basic user name now try to get a better one
-
-                if (method_exists($user, 'getRelation')) {
-                    if ($relation = $user->getRelation()) {
-                        if (method_exists($relation, '__toString')) {
-                            $text = (string) $relation;
-                        }
-                    }
-                }
-            }
-
             $results[$lock->getRequest()->getResource()->getIdentifier()] = [
                 'lock' => $lock,
-                'user' => $text,
+                'user' => $this->resolveLockUserText($user),
             ];
         }
 
         return $results;
+    }
+
+    public function locksStatus(Request $request): JsonResponse
+    {
+        $resources = $request->request->all('resources');
+        if (!\is_array($resources) || [] === $resources) {
+            $payload = json_decode((string) $request->getContent(), true);
+            $resources = \is_array($payload['resources'] ?? null) ? $payload['resources'] : [];
+        }
+
+        $filter = new Filter();
+        $seen = [];
+
+        foreach ($resources as $resource) {
+            if (!\is_array($resource)) {
+                continue;
+            }
+
+            $type = trim((string) ($resource['type'] ?? ''));
+            $id = trim((string) ($resource['id'] ?? ''));
+
+            if ('' === $type || '' === $id) {
+                continue;
+            }
+
+            $key = $this->getLockResourceKey($type, $id);
+            if (isset($seen[$key])) {
+                continue;
+            }
+
+            $seen[$key] = true;
+            $filter->resources[] = new Resource($type, $id);
+        }
+
+        $locks = [];
+        if ($filter->resources) {
+            $matches = $this->lockManager->findBy($filter);
+            if (\is_iterable($matches)) {
+                foreach ($matches as $lock) {
+                    if ($this->isLockExpired($lock)) {
+                        continue;
+                    }
+
+                    $user = null;
+
+                    if ($owner = $lock->getRequest()->getOwner()) {
+                        if ($this->userManager->getClassName() === $owner->getType()) {
+                            $user = $this->userManager->findByUsername($owner->getIdentifier());
+                        }
+                    }
+
+                    $resource = $lock->getRequest()->getResource();
+                    $key = $this->getLockResourceKey($resource->getType(), $resource->getIdentifier());
+
+                    $locks[$key] = [
+                        'type' => $resource->getType(),
+                        'id' => $resource->getIdentifier(),
+                        'user' => $this->resolveLockUserText($user),
+                    ];
+                }
+            }
+        }
+
+        $response = new JsonResponse(['locks' => $locks]);
+        $response->setPrivate();
+        $response->headers->addCacheControlDirective('no-store', true);
+        $response->headers->addCacheControlDirective('max-age', 0);
+
+        return $response;
     }
 
     public function navdropdowns(Request $request): Response
@@ -1025,6 +1103,90 @@ class ContentController extends AbstractController
         $result = $this->getSolarium()->select($query);
 
         return $result->getDocuments();
+    }
+
+    private function resolveLockUserText(mixed $user): string
+    {
+        if (!$user) {
+            return '';
+        }
+
+        $text = method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : '';
+
+        if (method_exists($user, 'getRelation')) {
+            if ($relation = $user->getRelation()) {
+                if (method_exists($relation, '__toString')) {
+                    $text = (string) $relation;
+                }
+            }
+        }
+
+        return $text;
+    }
+
+    private function getLockResourceKey(string $type, string $id): string
+    {
+        return $type.'|'.$id;
+    }
+
+    private function acquireLock(Resource $resource, Resource $owner, ?int $timeout = null): mixed
+    {
+        $request = new Locks\Request($resource);
+        $request->setOwner($owner);
+        $request->setTimeout($timeout);
+
+        return $this->lockManager->acquire($request);
+    }
+
+    private function resolveActiveLock(mixed $locks): mixed
+    {
+        if (!\is_iterable($locks)) {
+            return null;
+        }
+
+        foreach ($locks as $lock) {
+            if ($this->isLockExpired($lock)) {
+                continue;
+            }
+
+            return $lock;
+        }
+
+        return null;
+    }
+
+    private function releaseExpiredLocks(mixed $locks): bool
+    {
+        if (!\is_iterable($locks)) {
+            return false;
+        }
+
+        $released = false;
+
+        foreach ($locks as $lock) {
+            if (!$this->isLockExpired($lock)) {
+                continue;
+            }
+
+            $this->lockManager->release($lock);
+            $released = true;
+        }
+
+        return $released;
+    }
+
+    private function isLockExpired(mixed $lock): bool
+    {
+        if (!\is_object($lock) || !method_exists($lock, 'getExpires')) {
+            return false;
+        }
+
+        $expires = $lock->getExpires();
+        if (!$expires instanceof \DateTimeInterface) {
+            return false;
+        }
+
+        return $expires->getTimestamp() <= time();
     }
 
     public function usedBy(Content $content, Request $request): Response
