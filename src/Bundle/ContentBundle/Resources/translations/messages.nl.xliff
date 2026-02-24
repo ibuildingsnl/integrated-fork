@@ -1414,6 +1414,46 @@
                 <source>No items found for this date range</source>
                 <target>Geen items gevonden binnen dit datumbereik</target>
             </trans-unit>
+            <trans-unit id="358">
+                <source>Workflow status</source>
+                <target>Workflow status</target>
+            </trans-unit>
+            <trans-unit id="359">
+                <source>Select status</source>
+                <target>Selecteer status</target>
+            </trans-unit>
+            <trans-unit id="360">
+                <source>Choose operation</source>
+                <target>Kies bewerking</target>
+            </trans-unit>
+            <trans-unit id="361">
+                <source>Selected operations</source>
+                <target>Geselecteerde bewerkingen</target>
+            </trans-unit>
+            <trans-unit id="362">
+                <source>No operations selected yet.</source>
+                <target>Nog geen bewerkingen geselecteerd.</target>
+            </trans-unit>
+            <trans-unit id="364">
+                <source>Add</source>
+                <target>Toevoegen</target>
+            </trans-unit>
+            <trans-unit id="365">
+                <source>Remove</source>
+                <target>Verwijderen</target>
+            </trans-unit>
+            <trans-unit id="366">
+                <source>Clear existing taxonomy selection before applying</source>
+                <target>Bestaande taxonomieselectie wissen voordat je toepast</target>
+            </trans-unit>
+            <trans-unit id="367">
+                <source>Publication window</source>
+                <target>Publicatieperiode</target>
+            </trans-unit>
+            <trans-unit id="368">
+                <source>Premium</source>
+                <target>Premium</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

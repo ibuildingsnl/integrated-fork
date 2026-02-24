@@ -261,6 +261,14 @@
             <tag name="form.type"/>
         </service>
 
+        <service id="integrated_bundle_content.form.type.bulk_action_workflow_state" class="Integrated\Bundle\ContentBundle\Form\Type\BulkActionWorkflowStateType">
+            <tag name="form.type"/>
+        </service>
+
+        <service id="integrated_bundle_content.form.type.bulk_action_workflow_assign" class="Integrated\Bundle\ContentBundle\Form\Type\BulkActionWorkflowAssignType">
+            <tag name="form.type"/>
+        </service>
+
         <service id="integrated_content.form.type.bulk_actions" class="Integrated\Bundle\ContentBundle\Form\Type\BulkActionsType">
             <argument type="service" id="integrated_content.bulk.form.provider"/>
 

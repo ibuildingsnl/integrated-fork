@@ -49,11 +49,10 @@
                     <div id="bulk-action-toolbar"
                          class="bulk-action-toolbar"
                          data-placeholder="{{ 'Choose operation'|trans }}"
-                         data-add-label="{{ 'Add'|trans }}"
                          data-selected-label="{{ 'Selected operations'|trans }}"
                          data-empty-label="{{ 'No operations selected yet.'|trans }}"
-                         data-group-add="{{ 'Add'|trans }}"
-                         data-group-remove="{{ 'Remove'|trans }}"
+                         data-group-add="{{ 'Add'|trans({}, 'messages') }}"
+                         data-group-remove="{{ 'Remove'|trans({}, 'messages') }}"
                          data-group-fields="{{ 'Fields'|trans }}"
                          data-group-channels="{{ 'Channels'|trans }}">
                     </div>
@@ -272,14 +271,12 @@
         function ensureToolbar(toolbarHost) {
             if (!toolbarHost.querySelector('[data-bulk-action-picker="1"]')) {
                 var placeholder = toolbarHost.getAttribute('data-placeholder') || 'Choose operation';
-                var addLabel = toolbarHost.getAttribute('data-add-label') || 'Add';
                 var selectedLabel = toolbarHost.getAttribute('data-selected-label') || 'Selected operations';
                 var emptyLabel = toolbarHost.getAttribute('data-empty-label') || 'No operations selected yet.';
 
                 toolbarHost.innerHTML = ''
                     + '<div class="bulk-action-picker" data-bulk-action-picker="1">'
                     + '<select class="form-control" data-bulk-action-select="1"></select>'
-                    + '<button type="button" class="btn btn-white no-icon" data-bulk-action-add="1">' + addLabel + '</button>'
                     + '</div>'
                     + '<div class="bulk-action-selection">'
                     + '<span class="bulk-action-selected-title">' + selectedLabel + '</span>'
@@ -293,12 +290,11 @@
             return {
                 placeholder: toolbarHost.getAttribute('data-bulk-action-placeholder') || 'Choose operation',
                 select: toolbarHost.querySelector('[data-bulk-action-select="1"]'),
-                addButton: toolbarHost.querySelector('[data-bulk-action-add="1"]'),
                 chips: toolbarHost.querySelector('[data-bulk-action-chips="1"]'),
                 empty: toolbarHost.querySelector('[data-bulk-action-empty="1"]'),
                 groupLabels: {
-                    add: toolbarHost.getAttribute('data-group-add') || 'Add',
-                    remove: toolbarHost.getAttribute('data-group-remove') || 'Remove',
+                    add: toolbarHost.getAttribute('data-group-add') || 'Toevoegen',
+                    remove: toolbarHost.getAttribute('data-group-remove') || 'Verwijderen',
                     fields: toolbarHost.getAttribute('data-group-fields') || 'Fields',
                     channels: toolbarHost.getAttribute('data-group-channels') || 'Channels'
                 },
@@ -462,7 +458,6 @@
                     toolbar.select.value = '';
                 }
 
-                toolbar.addButton.disabled = !toolbar.select.value;
                 toolbar.empty.style.display = selectedCount > 0 ? 'none' : '';
             }
 
@@ -478,20 +473,13 @@
             if (toolbar) {
                 if (toolbar.select.dataset.bulkActionSelectBound !== '1') {
                     toolbar.select.addEventListener('change', function () {
-                        toolbar.addButton.disabled = !toolbar.select.value;
-                    });
-                    toolbar.select.dataset.bulkActionSelectBound = '1';
-                }
-
-                if (toolbar.addButton.dataset.bulkActionAddBound !== '1') {
-                    toolbar.addButton.addEventListener('click', function () {
                         if (!toolbar.select.value) {
                             return;
                         }
 
                         activateActionById(toolbar.select.value);
                     });
-                    toolbar.addButton.dataset.bulkActionAddBound = '1';
+                    toolbar.select.dataset.bulkActionSelectBound = '1';
                 }
             }
 

@@ -15,7 +15,14 @@ use Integrated\Bundle\ContentBundle\Bulk\CanonicalHandlerFactory;
 use Integrated\Bundle\ContentBundle\Bulk\FeaturedHandlerFactory;
 use Integrated\Bundle\ContentBundle\Bulk\PremiumHandlerFactory;
 use Integrated\Bundle\ContentBundle\Bulk\PublishWindowHandlerFactory;
+use Integrated\Bundle\ContentBundle\Bulk\WorkflowAssignHandler;
+use Integrated\Bundle\ContentBundle\Bulk\WorkflowAssignHandlerFactory;
+use Integrated\Bundle\ContentBundle\Bulk\WorkflowStateHandler;
+use Integrated\Bundle\ContentBundle\Bulk\WorkflowStateHandlerFactory;
+use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Common\ContentType\ResolverInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\OptionsResolver\Exception\ExceptionInterface;
 
@@ -178,5 +185,43 @@ class BulkHandlerFactoriesTest extends TestCase
 
         $factory = new FeaturedHandlerFactory();
         $factory->createHandler(['featured' => 1]);
+    }
+
+    public function testWorkflowStateFactoryCreatesHandler(): void
+    {
+        $factory = new WorkflowStateHandlerFactory(
+            $this->createMock(EntityManagerInterface::class),
+            $this->createMock(ResolverInterface::class)
+        );
+
+        $handler = $factory->createHandler(['state' => 'state-1']);
+
+        self::assertInstanceOf(WorkflowStateHandler::class, $handler);
+    }
+
+    public function testWorkflowAssignFactoryCreatesHandler(): void
+    {
+        $factory = new WorkflowAssignHandlerFactory(
+            $this->createMock(EntityManagerInterface::class),
+            $this->createMock(ResolverInterface::class),
+            $this->createMock(UserManagerInterface::class)
+        );
+
+        $handler = $factory->createHandler(['assigned' => 'user-1']);
+
+        self::assertInstanceOf(WorkflowAssignHandler::class, $handler);
+    }
+
+    public function testWorkflowAssignFactoryAcceptsNullAssignment(): void
+    {
+        $factory = new WorkflowAssignHandlerFactory(
+            $this->createMock(EntityManagerInterface::class),
+            $this->createMock(ResolverInterface::class),
+            $this->createMock(UserManagerInterface::class)
+        );
+
+        $handler = $factory->createHandler(['assigned' => null]);
+
+        self::assertInstanceOf(WorkflowAssignHandler::class, $handler);
     }
 }

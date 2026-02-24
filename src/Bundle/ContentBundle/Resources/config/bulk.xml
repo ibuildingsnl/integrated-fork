@@ -78,6 +78,21 @@
             <tag name="integrated_content.bulk.handler" class="Integrated\Bundle\ContentBundle\Bulk\PublishWindowHandler" />
         </service>
 
+        <service id="integrated_content.bulk.action.workflow_state_handler_factory" class="Integrated\Bundle\ContentBundle\Bulk\WorkflowStateHandlerFactory" public="false">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="integrated_content.resolver" />
+
+            <tag name="integrated_content.bulk.handler" class="Integrated\Bundle\ContentBundle\Bulk\WorkflowStateHandler" />
+        </service>
+
+        <service id="integrated_content.bulk.action.workflow_assign_handler_factory" class="Integrated\Bundle\ContentBundle\Bulk\WorkflowAssignHandlerFactory" public="false">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="integrated_content.resolver" />
+            <argument type="service" id="Integrated\Bundle\UserBundle\Model\UserManagerInterface" />
+
+            <tag name="integrated_content.bulk.handler" class="Integrated\Bundle\ContentBundle\Bulk\WorkflowAssignHandler" />
+        </service>
+
         <service id="integrated_content.bulk.capability_resolver" class="Integrated\Bundle\ContentBundle\Bulk\BulkCapabilityResolver" />
 
         <service id="integrated_content.bulk.form.chain_provider_builder" class="Integrated\Common\Bulk\Form\ChainProviderBuilder" public="false" />
@@ -127,6 +142,21 @@
 
         <service id="integrated_content.bulk.form.publish_window_provider" class="Integrated\Bundle\ContentBundle\Bulk\PublishWindowFormProvider" public="false">
             <argument type="service" id="integrated_content.bulk.capability_resolver" />
+
+            <tag name="integrated_content.bulk.form.provider" />
+        </service>
+
+        <service id="integrated_content.bulk.form.workflow_state_provider" class="Integrated\Bundle\ContentBundle\Bulk\WorkflowStateFormProvider" public="false">
+            <argument type="service" id="integrated_content.bulk.capability_resolver" />
+            <argument type="service" id="integrated_content.resolver" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+
+            <tag name="integrated_content.bulk.form.provider" />
+        </service>
+
+        <service id="integrated_content.bulk.form.workflow_assign_provider" class="Integrated\Bundle\ContentBundle\Bulk\WorkflowAssignFormProvider" public="false">
+            <argument type="service" id="integrated_content.bulk.capability_resolver" />
+            <argument type="service" id="Integrated\Bundle\UserBundle\Doctrine\UserManager" />
 
             <tag name="integrated_content.bulk.form.provider" />
         </service>
