@@ -60,17 +60,65 @@ class ContentTypePageListener implements EventSubscriberInterface
 
         $form = $event->getForm();
 
-        if (\count($controller['actions']) > 1) {
+        $actionChoices = $this->getActionChoices($controller['actions']);
+
+        if (\count($actionChoices) > 1) {
             $form->add('controller_action', ChoiceType::class, [
-                'choices' => array_combine($controller['actions'], $controller['actions']),
+                'choices' => $actionChoices,
             ]);
         } else {
-            $contentTypePage->setControllerAction($controller['actions'][0]);
+            $contentTypePage->setControllerAction((string) reset($actionChoices));
         }
 
         $form->add('layout', LayoutChoiceType::class, [
             'theme' => $this->resolver->getTheme($contentTypePage->getChannel()),
-            'directory' => strtolower(\sprintf('/content/%s/%s', $match[1], $contentTypePage->getControllerAction())),
+            'directory' => strtolower(\sprintf('/content/%s/%s', $match[1], $this->normalizeAction($contentTypePage->getControllerAction()))),
         ]);
+    }
+
+    private function normalizeAction(?string $action): string
+    {
+        $action = trim((string) $action);
+
+        if ('' === $action) {
+            return '';
+        }
+
+        if ('__invoke' === $action) {
+            return $action;
+        }
+
+        return preg_replace('/Action$/', '', $action) ?: $action;
+    }
+
+    /**
+     * Build stable action choices while collapsing legacy duplicates like show/showAction.
+     *
+     * @param string[] $actions
+     *
+     * @return array<string, string>
+     */
+    private function getActionChoices(array $actions): array
+    {
+        $choices = [];
+
+        foreach ($actions as $action) {
+            if (!\is_string($action) || '' === trim($action)) {
+                continue;
+            }
+
+            $action = trim($action);
+            $normalized = $this->normalizeAction($action);
+
+            if ('' === $normalized) {
+                continue;
+            }
+
+            if (!isset($choices[$normalized]) || $action === $normalized) {
+                $choices[$normalized] = $action;
+            }
+        }
+
+        return $choices;
     }
 }
