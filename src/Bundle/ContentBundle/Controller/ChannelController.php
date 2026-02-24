@@ -100,7 +100,7 @@ class ChannelController extends AbstractController
 
             $this->addFlash('success', 'Item created');
 
-            $this->dispatcher->dispatch(new ChannelEvent($channel), Events::CHANNEL_CREATED);
+            $this->dispatcher->dispatch(new ChannelEvent($channel), ChannelEvents::CHANNEL_CREATED);
 
             return $this->redirectToRoute('integrated_content_channel_edit', ['id' => $channel->getId()]);
         }
@@ -128,7 +128,7 @@ class ChannelController extends AbstractController
 
             $this->addFlash('success', 'Item updated');
 
-            $this->dispatcher->dispatch(new ChannelEvent($channel), Events::CHANNEL_UPDATED);
+            $this->dispatcher->dispatch(new ChannelEvent($channel), ChannelEvents::CHANNEL_UPDATED);
 
             return $this->redirectToRoute('integrated_content_channel_edit', ['id' => $channel->getId()]);
         }
@@ -301,7 +301,7 @@ class ChannelController extends AbstractController
     /**
      * @param mixed $id The document id
      */
-    protected function createDeleteForm($id, bool $deleteAllowed): Form
+    protected function createDeleteForm($id, bool $deleteAllowed): FormInterface
     {
         $form = $this->createFormBuilder()
             ->setAction($this->generateUrl('integrated_content_channel_delete', ['id' => $id, '_format' => 'turbo-stream']))
