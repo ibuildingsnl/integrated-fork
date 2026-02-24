@@ -12,12 +12,26 @@
 namespace Integrated\Bundle\SitemapBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class RobotsController extends AbstractController
 {
-    public function index(): Response
+    private const CACHE_TTL = 3600;
+
+    public function index(Request $request): Response
     {
-        return $this->render('@IntegratedSitemap/robots/index.txt.twig');
+        $response = $this->render('@IntegratedSitemap/robots/index.txt.twig');
+        $generatedAt = new \DateTimeImmutable();
+
+        $response->setPublic();
+        $response->setMaxAge(self::CACHE_TTL);
+        $response->setSharedMaxAge(self::CACHE_TTL);
+        $response->headers->addCacheControlDirective('stale-while-revalidate', self::CACHE_TTL);
+        $response->setLastModified($generatedAt);
+        $response->setEtag(sha1((string) $response->getContent()));
+        $response->isNotModified($request);
+
+        return $response;
     }
 }
