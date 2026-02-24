@@ -11,7 +11,7 @@
         <service id="Integrated\Bundle\InstallerBundle\Command\IntegratedInstallCommand">
             <argument id="solarium.client" type="service"/>
             <argument type="service">
-                <service class="Integrated\Bundle\InstallerBundle\Test\BundleTest">
+                <service class="Integrated\Bundle\InstallerBundle\Test\BundleChecker">
                     <argument>%kernel.bundles%</argument>
                 </service>
             </argument>

@@ -4,6 +4,8 @@ namespace Integrated\Bundle\BrandBundle\Command;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BrandBundle\Document\Brand;
+use Integrated\Bundle\BrandBundle\Document\ChannelLink;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -42,32 +44,34 @@ class CleanupBrandChannelLinksCommand extends Command
         $report = [];
 
         foreach ($brands as $brand) {
+            $brandId = $this->resolveBrandId($brand);
             $changed = false;
             foreach ($brand->getChannelLinks()->toArray() as $link) {
                 if (!$link->channel) {
                     $report[] = sprintf(
                         'brand=%s (%s) link=%s type=%s channel=null',
-                        $brand->getId(),
+                        $brandId,
                         $brand->getName(),
-                        $link->getId(),
+                        $link->getId() ?? '(no-id)',
                         $link->getName()
                     );
-                    $brand->removeChannelLink($link);
+                    $this->removeChannelLink($brand, $link);
                     $linksRemoved++;
                     $changed = true;
                     continue;
                 }
-                if ($channelId && $link->channel->getId() === $channelId) {
+                $currentChannelId = $this->resolveChannelId($link->channel);
+                if ($channelId && $currentChannelId === $channelId) {
                     $report[] = sprintf(
                         'brand=%s (%s) link=%s type=%s channel=%s (%s)',
-                        $brand->getId(),
+                        $brandId,
                         $brand->getName(),
-                        $link->getId(),
+                        $link->getId() ?? '(no-id)',
                         $link->getName(),
-                        $link->channel->getId(),
+                        $currentChannelId,
                         $link->channel->getName()
                     );
-                    $brand->removeChannelLink($link);
+                    $this->removeChannelLink($brand, $link);
                     $linksRemoved++;
                     $changed = true;
                 }
@@ -98,5 +102,35 @@ class CleanupBrandChannelLinksCommand extends Command
         }
 
         return Command::SUCCESS;
+    }
+
+    private function resolveBrandId(Brand $brand): string
+    {
+        try {
+            return $brand->getId();
+        } catch (\TypeError) {
+            return '(no-id)';
+        }
+    }
+
+    private function resolveChannelId(ChannelInterface $channel): string
+    {
+        try {
+            return $channel->getId();
+        } catch (\TypeError) {
+            return '(no-id)';
+        }
+    }
+
+    private function removeChannelLink(Brand $brand, ChannelLink $link): void
+    {
+        // Unsaved links have no ID; remove by object identity to avoid deleting sibling null-ID links.
+        if ($link->getId() === null) {
+            $brand->getChannelLinks()->removeElement($link);
+
+            return;
+        }
+
+        $brand->removeChannelLink($link);
     }
 }
