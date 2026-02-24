@@ -2,40 +2,169 @@
 
 <script type="application/javascript">
 
-    (function(url, id) {
-        var schedule = function(delay) {
-            setTimeout(refresh, delay || 5000); // 5 sec
+    (function(refreshUrl, releaseUrl, id) {
+        var POLL_DELAY = 5000;
+        var TERMINAL_STATUSES = {'401': true, '403': true, '404': true, '409': true, '423': true};
+        var STORE_KEY = '__integratedLockPolling';
+        var pageStore = window[STORE_KEY] || (window[STORE_KEY] = {});
+
+        if (pageStore[id]) {
+            return;
+        }
+
+        var state = {
+            stopped: false,
+            timer: null,
+            attempt: 0
+        };
+        pageStore[id] = state;
+
+        var toBody = function() {
+            return 'lock=' + encodeURIComponent(id);
         };
 
-        var appendLockQuery = function(baseUrl) {
-            var separator = baseUrl.indexOf('?') === -1 ? '?' : '&';
-            return baseUrl + separator + 'lock=' + encodeURIComponent(id);
+        var backoffDelay = function() {
+            return Math.min(POLL_DELAY * Math.pow(2, state.attempt), 60000);
+        };
+
+        var schedule = function(delay) {
+            if (state.stopped) {
+                return;
+            }
+            state.timer = window.setTimeout(refresh, delay);
+        };
+
+        var stop = function() {
+            if (state.stopped) {
+                return;
+            }
+            state.stopped = true;
+            if (state.timer) {
+                window.clearTimeout(state.timer);
+                state.timer = null;
+            }
+            delete pageStore[id];
+            document.removeEventListener('turbo:before-cache', onBeforeCache);
+            window.removeEventListener('pagehide', onPageHide);
+            window.removeEventListener('beforeunload', onBeforeUnload);
+        };
+
+        var postWithFetch = function(url, keepalive) {
+            return fetch(url, {
+                method: 'POST',
+                credentials: 'same-origin',
+                keepalive: !!keepalive,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: toBody()
+            });
+        };
+
+        var postWithJQuery = function(url) {
+            return window.jQuery.ajax({
+                url: url,
+                method: 'POST',
+                data: {lock: id}
+            });
+        };
+
+        var release = function() {
+            if (window.fetch) {
+                if (navigator.sendBeacon) {
+                    try {
+                        var params = new URLSearchParams();
+                        params.append('lock', id);
+                        navigator.sendBeacon(releaseUrl, params);
+                        return;
+                    } catch (e) {
+                        // ignore and fallback to fetch
+                    }
+                }
+
+                postWithFetch(releaseUrl, true);
+                return;
+            }
+
+            if (window.jQuery && typeof window.jQuery.ajax === 'function') {
+                postWithJQuery(releaseUrl);
+            }
         };
 
         var refresh = function() {
-            if (window.jQuery && typeof window.jQuery.get === 'function') {
-                window.jQuery.get(url, {lock: id}).always(function() {
-                    schedule();
-                });
+            if (state.stopped) {
                 return;
             }
+
+            var done = function(status) {
+                var code = String(status || '');
+                if ('200' === code) {
+                    state.attempt = 0;
+                    schedule(POLL_DELAY);
+                    return;
+                }
+
+                if (TERMINAL_STATUSES[code]) {
+                    stop();
+                    return;
+                }
+
+                state.attempt += 1;
+                schedule(backoffDelay());
+            };
 
             if (window.fetch) {
-                fetch(appendLockQuery(url), {
-                    credentials: 'same-origin',
-                    headers: {'X-Requested-With': 'XMLHttpRequest'}
-                }).finally(function() {
-                    schedule();
-                });
+                postWithFetch(refreshUrl, false)
+                    .then(function(response) {
+                        done(response.status);
+                    })
+                    .catch(function() {
+                        done(0);
+                    });
+
                 return;
             }
 
-            schedule();
+            if (window.jQuery && typeof window.jQuery.ajax === 'function') {
+                postWithJQuery(refreshUrl)
+                    .done(function(_, __, xhr) {
+                        done(xhr.status);
+                    })
+                    .fail(function(xhr) {
+                        done(xhr && xhr.status);
+                    });
+
+                return;
+            }
+
+            done(0);
         };
 
-        schedule();
+        var onBeforeCache = function() {
+            release();
+            stop();
+        };
+        var onPageHide = function() {
+            release();
+            stop();
+        };
+        var onBeforeUnload = function() {
+            release();
+            stop();
+        };
 
-    })("{{ path('integrated_locking_api_refresh')|e('js') }}", "{{ lock.id|e('js') }}");
+        document.addEventListener('turbo:before-cache', onBeforeCache);
+        window.addEventListener('pagehide', onPageHide);
+        window.addEventListener('beforeunload', onBeforeUnload);
+
+        schedule(POLL_DELAY);
+
+    })(
+        "{{ path('integrated_locking_api_refresh')|e('js') }}",
+        "{{ path('integrated_locking_api_release')|e('js') }}",
+        "{{ lock.id|e('js') }}"
+    );
 
 </script>
 

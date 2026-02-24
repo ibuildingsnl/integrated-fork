@@ -4,8 +4,12 @@
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
-	<route id="integrated_locking_api_refresh" path="/_locking/api/refresh">
+	<route id="integrated_locking_api_refresh" path="/_locking/api/refresh" methods="POST">
 		<default key="_controller">Integrated\Bundle\LockingBundle\Controller\ApiController::refresh</default>
+	</route>
+
+	<route id="integrated_locking_api_release" path="/_locking/api/release" methods="POST">
+		<default key="_controller">Integrated\Bundle\LockingBundle\Controller\ApiController::release</default>
 	</route>
 
 </routes>

@@ -17,6 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class ApiController extends AbstractController
 {
@@ -29,61 +30,99 @@ class ApiController extends AbstractController
 
     public function refresh(Request $request): Response
     {
-        if (!$this->manager) {
-            $response = [
-                'code' => 403,
-                'message' => 'Locking is not enabled',
-            ];
-
-            return new JsonResponse($response, $response['code']);
+        if ($response = $this->requireManager()) {
+            return $response;
         }
 
-        if (!$owner = $this->getUser()) {
-            $response = [
-                'code' => 401,
-                'message' => 'Valid user is required',
-            ];
-
-            return new JsonResponse($response, $response['code']);
+        if (!$owner = $this->getOwner()) {
+            return $this->respond(401, 'Valid user is required');
         }
 
-        $owner = Resource::fromAccount($owner);
-
-        // get the lock and check if the lock is set by the current use else do nothing
-
-        if (!$lock = $request->query->get('lock')) {
-            $response = [
-                'code' => 400,
-                'message' => 'Missing lock identifier',
-            ];
-
-            return new JsonResponse($response, $response['code']);
+        if (!$lockId = $this->getLockId($request)) {
+            return $this->respond(400, 'Missing lock identifier');
         }
 
-        if (!$lock = $this->manager->find($lock)) {
-            $response = [
-                'code' => 404,
-                'message' => 'The lock could not be found',
-            ];
-
-            return new JsonResponse($response, $response['code']);
+        if (!$lock = $this->manager->find($lockId)) {
+            return $this->respond(404, 'The lock could not be found');
         }
 
-        $response = [
-            'code' => 200,
-            'message' => 'The lock could not be extended',
-            'lock' => null,
-        ];
-
-        if ($owner->equals($lock->getRequest()->getOwner())) {
-            // only the owner can extends the lock.
-
-            if ($lock = $this->manager->refresh($lock)) {
-                $response['message'] = 'The lock is extended';
-                $response['lock'] = $lock->getId();
-            }
+        $lockOwner = $lock->getRequest()->getOwner();
+        if (!$lockOwner || !$owner->equals($lockOwner)) {
+            return $this->respond(423, 'The lock belongs to another user', ['lock' => null]);
         }
 
-        return new JsonResponse($response, $response['code']);
+        if (!$lock = $this->manager->refresh($lock)) {
+            return $this->respond(500, 'The lock could not be extended', ['lock' => null]);
+        }
+
+        return $this->respond(200, 'The lock is extended', ['lock' => $lock->getId()]);
+    }
+
+    public function release(Request $request): Response
+    {
+        if ($response = $this->requireManager()) {
+            return $response;
+        }
+
+        if (!$owner = $this->getOwner()) {
+            return $this->respond(401, 'Valid user is required');
+        }
+
+        if (!$lockId = $this->getLockId($request)) {
+            return $this->respond(400, 'Missing lock identifier');
+        }
+
+        if (!$lock = $this->manager->find($lockId)) {
+            return $this->respond(404, 'The lock could not be found');
+        }
+
+        $lockOwner = $lock->getRequest()->getOwner();
+        if (!$lockOwner || !$owner->equals($lockOwner)) {
+            return $this->respond(423, 'The lock belongs to another user', ['lock' => null]);
+        }
+
+        $this->manager->release($lock);
+
+        return $this->respond(200, 'The lock is released', ['lock' => null]);
+    }
+
+    private function getLockId(Request $request): ?string
+    {
+        $lock = $request->request->get('lock', $request->query->get('lock'));
+        if (!\is_string($lock) || '' === trim($lock)) {
+            return null;
+        }
+
+        return $lock;
+    }
+
+    private function getOwner(): ?Resource
+    {
+        $user = $this->getUser();
+        if (!$user instanceof UserInterface) {
+            return null;
+        }
+
+        return Resource::fromAccount($user);
+    }
+
+    private function requireManager(): ?JsonResponse
+    {
+        if ($this->manager) {
+            return null;
+        }
+
+        return $this->respond(403, 'Locking is not enabled');
+    }
+
+    /**
+     * @param array<string,mixed> $extra
+     */
+    private function respond(int $code, string $message, array $extra = []): JsonResponse
+    {
+        return new JsonResponse(array_merge([
+            'code' => $code,
+            'message' => $message,
+        ], $extra), $code);
     }
 }
