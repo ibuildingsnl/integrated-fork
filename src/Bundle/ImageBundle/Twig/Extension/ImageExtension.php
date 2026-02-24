@@ -125,12 +125,14 @@ class ImageExtension extends AbstractExtension
                 $image = $image->getIdentifier();
             }
 
-        if (\in_array($metadata->getExtension(), $this->mimicFormats)) {
-            return $this->safeOpenMimic($image);
-        }
+            if (\in_array($metadata->getExtension(), $this->mimicFormats)) {
+                return $this->safeOpenMimic($image);
+            }
         } elseif (filter_var($image, \FILTER_VALIDATE_URL)) {
             return $this->safeOpenMimic($image);
         }
+
+        $image = $this->resolveLocalPath((string) $image);
 
         // detect json format
         if (str_starts_with($image, '{')) {
@@ -203,19 +205,57 @@ class ImageExtension extends AbstractExtension
 
     private function safeOpen(string $image)
     {
+        $image = $this->resolveLocalPath($image);
+
         try {
             return $this->imageHandling->open($image);
         } catch (\Throwable $e) {
-            return $this->imageHandling->open('bundles/integratedintegrated/images/fallbacks/fallback.jpg');
+            return $this->imageHandling->open($this->resolveLocalPath('bundles/integratedintegrated/images/fallbacks/fallback.jpg'));
         }
     }
 
     private function safeOpenMimic(string $image)
     {
+        $image = $this->resolveLocalPath($image);
+
         try {
             return $this->imageMimicHandling->open($image);
         } catch (\Throwable $e) {
             return $this->safeOpen('bundles/integratedintegrated/images/fallbacks/fallback.jpg');
         }
+    }
+
+    private function resolveLocalPath(string $path): string
+    {
+        if ('' === $path || filter_var($path, \FILTER_VALIDATE_URL)) {
+            return $path;
+        }
+
+        if (str_starts_with($path, '/storage/')) {
+            $path = '/files/'.substr($path, strlen('/storage/'));
+        } elseif (str_starts_with($path, 'storage/')) {
+            $path = 'files/'.substr($path, strlen('storage/'));
+        }
+
+        if (str_starts_with($path, '/')) {
+            $publicCandidate = 'public'.$path;
+            if (file_exists($publicCandidate)) {
+                return $publicCandidate;
+            }
+
+            $relativeCandidate = ltrim($path, '/');
+            if (file_exists($relativeCandidate)) {
+                return $relativeCandidate;
+            }
+
+            return $path;
+        }
+
+        $publicCandidate = 'public/'.$path;
+        if (file_exists($publicCandidate)) {
+            return $publicCandidate;
+        }
+
+        return $path;
     }
 }
