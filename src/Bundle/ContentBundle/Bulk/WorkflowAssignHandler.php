@@ -18,6 +18,7 @@ use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Entity\Workflow\State as WorkflowState;
 use Integrated\Common\Bulk\Action\HandlerInterface;
 use Integrated\Common\Content\ContentInterface;
+use Integrated\Common\Content\MetadataInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
@@ -65,33 +66,53 @@ class WorkflowAssignHandler implements HandlerInterface
 
         $repository = $this->entityManager->getRepository(WorkflowState::class);
         $state = $repository->findOneBy(['content' => $content]);
+        $flush = false;
 
         if (!$state instanceof WorkflowState) {
-            $defaultState = $workflow->getDefault();
-            if (!$defaultState instanceof Definition\State) {
+            $initialState = $this->resolveInitialState($workflow, $content);
+            if (!$initialState instanceof Definition\State) {
                 return;
             }
 
             $state = new WorkflowState();
             $state->setContent($content);
-            $state->setState($defaultState);
+            $state->setState($initialState);
 
             $this->entityManager->persist($state);
+            $flush = true;
         }
 
         $currentAssigned = $state->getAssigned();
         if ($currentAssigned instanceof UserInterface && $assigned instanceof UserInterface) {
             if ($currentAssigned->getId() === $assigned->getId()) {
+                $this->syncContentWithState($content, $workflow, $state->getState());
+
+                if ($flush) {
+                    $this->entityManager->flush();
+                    $this->invalidateNavdropdownCache();
+                }
+
                 return;
             }
         } elseif (null === $currentAssigned && null === $assigned) {
+            $this->syncContentWithState($content, $workflow, $state->getState());
+
+            if ($flush) {
+                $this->entityManager->flush();
+                $this->invalidateNavdropdownCache();
+            }
+
             return;
         }
 
         $state->setAssigned($assigned);
+        $this->syncContentWithState($content, $workflow, $state->getState());
+        $flush = true;
 
-        $this->entityManager->flush();
-        $this->invalidateNavdropdownCache();
+        if ($flush) {
+            $this->entityManager->flush();
+            $this->invalidateNavdropdownCache();
+        }
     }
 
     private function resolveAssignedUser(): ?UserInterface
@@ -146,6 +167,47 @@ class WorkflowAssignHandler implements HandlerInterface
         return $workflow instanceof Definition ? $workflow : null;
     }
 
+    private function resolveInitialState(Definition $workflow, ContentInterface $content): ?Definition\State
+    {
+        $default = $workflow->getDefault();
+        if ($default instanceof Definition\State && $this->isStateCompatibleWithContent($default, $content)) {
+            return $default;
+        }
+
+        foreach ($workflow->getStates() as $state) {
+            if ($state instanceof Definition\State && $this->isStateCompatibleWithContent($state, $content)) {
+                return $state;
+            }
+        }
+
+        return $default instanceof Definition\State ? $default : null;
+    }
+
+    private function isStateCompatibleWithContent(Definition\State $state, ContentInterface $content): bool
+    {
+        if (!method_exists($content, 'isDisabled')) {
+            return true;
+        }
+
+        return (bool) $content->isDisabled() !== $state->isPublishable();
+    }
+
+    private function syncContentWithState(ContentInterface $content, Definition $workflow, ?Definition\State $state): void
+    {
+        if (!$state instanceof Definition\State) {
+            return;
+        }
+
+        if ($content instanceof MetadataInterface) {
+            $content->getMetadata()->set('workflow', $workflow->getId());
+            $content->getMetadata()->set('workflow_state', $state->getId());
+        }
+
+        if (method_exists($content, 'setDisabled')) {
+            $content->setDisabled(!$state->isPublishable());
+        }
+    }
+
     private function invalidateNavdropdownCache(): void
     {
         if ($this->navdropdownCacheInvalidated) {
@@ -156,4 +218,3 @@ class WorkflowAssignHandler implements HandlerInterface
         $this->navdropdownCacheInvalidated = true;
     }
 }
-
