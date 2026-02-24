@@ -82,10 +82,41 @@ class GregwarImageExtension extends AbstractExtension
 
     private function safeOpen(string $path)
     {
+        $path = $this->resolveLocalPath($path);
+
         try {
             return $this->imageHandling->open($path);
         } catch (\Throwable $e) {
-            return $this->imageHandling->open('bundles/integratedintegrated/images/fallbacks/fallback.jpg');
+            return $this->imageHandling->open($this->resolveLocalPath('bundles/integratedintegrated/images/fallbacks/fallback.jpg'));
         }
+    }
+
+    private function resolveLocalPath(string $path): string
+    {
+        if ('' === $path || filter_var($path, \FILTER_VALIDATE_URL)) {
+            return $path;
+        }
+
+        if (str_starts_with($path, '/storage/')) {
+            $path = '/files/'.substr($path, strlen('/storage/'));
+        }
+
+        $root = rtrim($this->webDir, '/');
+
+        if (str_starts_with($path, '/')) {
+            $candidate = $root.$path;
+            if (file_exists($candidate)) {
+                return $candidate;
+            }
+
+            return $path;
+        }
+
+        $candidate = $root.'/'.$path;
+        if (file_exists($candidate)) {
+            return $candidate;
+        }
+
+        return $path;
     }
 }
