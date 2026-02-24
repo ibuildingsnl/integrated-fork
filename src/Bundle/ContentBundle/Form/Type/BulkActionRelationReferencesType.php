@@ -16,6 +16,8 @@ use Integrated\Bundle\ContentBundle\Form\DataTransformer\ReferencesToArrayTransf
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -45,7 +47,19 @@ class BulkActionRelationReferencesType extends AbstractType
         $resolver->setDefaults([
             'multiple' => true,
             'required' => false,
+            'relation_id' => '',
+            'relation_title' => '',
+            'relation_type' => '',
+            'taxonomy_categories' => [],
         ]);
+    }
+
+    public function buildView(FormView $view, FormInterface $form, array $options): void
+    {
+        $view->vars['relation_id'] = $options['relation_id'];
+        $view->vars['relation_title'] = $options['relation_title'];
+        $view->vars['relation_type'] = $options['relation_type'];
+        $view->vars['taxonomy_categories'] = $options['taxonomy_categories'];
     }
 
     public function getParent(): ?string

@@ -245,6 +245,22 @@
             <tag name="form.type"/>
         </service>
 
+        <service id="integrated_bundle_content.form.type.bulk_action_canonical" class="Integrated\Bundle\ContentBundle\Form\Type\BulkActionCanonicalType">
+            <tag name="form.type"/>
+        </service>
+
+        <service id="integrated_bundle_content.form.type.bulk_action_featured" class="Integrated\Bundle\ContentBundle\Form\Type\BulkActionFeaturedType">
+            <tag name="form.type"/>
+        </service>
+
+        <service id="integrated_bundle_content.form.type.bulk_action_premium" class="Integrated\Bundle\ContentBundle\Form\Type\BulkActionPremiumType">
+            <tag name="form.type"/>
+        </service>
+
+        <service id="integrated_bundle_content.form.type.bulk_action_publish_window" class="Integrated\Bundle\ContentBundle\Form\Type\BulkActionPublishWindowType">
+            <tag name="form.type"/>
+        </service>
+
         <service id="integrated_content.form.type.bulk_actions" class="Integrated\Bundle\ContentBundle\Form\Type\BulkActionsType">
             <argument type="service" id="integrated_content.bulk.form.provider"/>
 

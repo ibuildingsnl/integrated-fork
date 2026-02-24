@@ -46,13 +46,32 @@ class BrandFacetListener implements EventSubscriberInterface
         );
         $facet->setFacets($facets);
 
-        if ($options['brands'] ?? false) {
+        $brands = $this->sanitizeListValues($options['brands'] ?? []);
+        if (\count($brands)) {
             $query->createFilterQuery('brands')->addTag('brands')->setQuery('facet_brands: ((%1%))', [
                 implode(') OR (', array_map(
                     fn ($x) => $query->getHelper()->escapePhrase($x),
-                    $options['brands']
+                    $brands
                 )),
             ]);
         }
+    }
+
+    private function sanitizeListValues(array $values): array
+    {
+        $sanitized = [];
+
+        foreach ($values as $value) {
+            if (!\is_string($value)) {
+                continue;
+            }
+
+            $value = trim($value);
+            if ('' !== $value) {
+                $sanitized[] = $value;
+            }
+        }
+
+        return $sanitized;
     }
 }

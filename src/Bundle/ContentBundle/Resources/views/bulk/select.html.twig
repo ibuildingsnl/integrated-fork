@@ -27,10 +27,28 @@
 {% block content %}
 
 <div class="row">
-    {% block form_start %}
-        {{ form_start(form) }}
-    {% endblock %}
+    {% set bulkId = app.request.attributes.get('id') %}
+    {% set routeParams = bulkId ? {'id': bulkId} : {} %}
+    {% set query = app.request.query.all %}
+    {% set dateFrom = app.request.query.get('date_from')|default('') %}
+    {% set dateTo = app.request.query.get('date_to')|default('') %}
+    {% set dateLabel = 'All dates'|trans %}
+    {% if dateFrom or dateTo %}
+        {% set dateLabel = (dateFrom ?: '...') ~ ' - ' ~ (dateTo ?: '...') %}
+    {% endif %}
 
+    <form id="bulk-date-filter-form" method="get" action="{{ path('integrated_content_bulk_select', routeParams) }}">
+        {% for key, value in query %}
+            {% if key not in ['date_from', 'date_to', 'page'] %}
+                {{ helper.hidden_query_input(key, value) }}
+            {% endif %}
+        {% endfor %}
+        <input type="hidden" name="page" value="1">
+    </form>
+
+    {% block form_start %}
+        {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
+    {% endblock %}
     {% block toolbar %}
         <div id="toolbar" class="w-full flex justify-between">
             <div class="options">
@@ -43,16 +61,6 @@
             </div>
         </div>
     {% endblock toolbar %}
-
-    {% set bulkId = app.request.attributes.get('id') %}
-    {% set routeParams = bulkId ? {'id': bulkId} : {} %}
-    {% set query = app.request.query.all %}
-    {% set dateFrom = app.request.query.get('date_from')|default('') %}
-    {% set dateTo = app.request.query.get('date_to')|default('') %}
-    {% set dateLabel = 'All dates'|trans %}
-    {% if dateFrom or dateTo %}
-        {% set dateLabel = (dateFrom ?: '...') ~ ' - ' ~ (dateTo ?: '...') %}
-    {% endif %}
 
     <div class="index-wrapper-full">
         <div class="page-title">
@@ -71,22 +79,17 @@
                         </a>
                         <ul aria-labelledby="bulk-date-range" role="menu" class="dropdown-menu">
                             <li role="presentation" style="padding: 10px 12px; min-width: 320px;">
-                                <form method="get" action="{{ path('integrated_content_bulk_select', routeParams) }}">
-                                    {% for key, value in query %}
-                                        {% if key not in ['date_from', 'date_to', 'page'] %}
-                                            {{ helper.hidden_query_input(key, value) }}
-                                        {% endif %}
-                                    {% endfor %}
-                                    <div class="form-group" style="margin-bottom: 8px;">
-                                        <label for="bulk-date-from">{% trans %}From{% endtrans %}</label>
-                                        <input id="bulk-date-from" type="date" name="date_from" class="form-control" value="{{ dateFrom }}">
-                                    </div>
-                                    <div class="form-group" style="margin-bottom: 10px;">
-                                        <label for="bulk-date-to">{% trans %}Until{% endtrans %}</label>
-                                        <input id="bulk-date-to" type="date" name="date_to" class="form-control" value="{{ dateTo }}">
-                                    </div>
-                                    <button class="btn btn-green no-icon" type="submit">{% trans %}Apply{% endtrans %}</button>
-                                </form>
+                                <div class="form-group" style="margin-bottom: 8px;">
+                                    <label for="bulk-date-from">{% trans %}From{% endtrans %}</label>
+                                    <input id="bulk-date-from" type="date" name="date_from" class="form-control"
+                                           value="{{ dateFrom }}" form="bulk-date-filter-form">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 10px;">
+                                    <label for="bulk-date-to">{% trans %}Until{% endtrans %}</label>
+                                    <input id="bulk-date-to" type="date" name="date_to" class="form-control"
+                                           value="{{ dateTo }}" form="bulk-date-filter-form">
+                                </div>
+                                <button class="btn btn-green no-icon" type="submit" form="bulk-date-filter-form">{% trans %}Apply{% endtrans %}</button>
                             </li>
                         </ul>
                     </li>

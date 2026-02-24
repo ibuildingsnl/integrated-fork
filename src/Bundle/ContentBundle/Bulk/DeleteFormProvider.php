@@ -26,7 +26,7 @@ class DeleteFormProvider implements ConfigProviderInterface
             'delete',
             BulkActionDeleteType::class,
             [
-                'label' => 'Delete',
+                'label' => 'Content verwijderen',
             ],
             new DeleteFormActionMatcher(DeleteHandler::class)
         );

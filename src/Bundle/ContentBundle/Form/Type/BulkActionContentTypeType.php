@@ -26,7 +26,7 @@ class BulkActionContentTypeType extends AbstractType
             'contentType',
             ContentTypeChoice::class,
             [
-                'label' => $options['label'],
+                'label' => false,
                 'multiple' => false,
             ]
         );

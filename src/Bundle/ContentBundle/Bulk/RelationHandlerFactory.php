@@ -45,6 +45,8 @@ class RelationHandlerFactory implements HandlerFactoryInterface
             ->setRequired(['relation', 'references'])
             ->addAllowedTypes('relation', RelationInterface::class)
             ->addAllowedTypes('references', [\Traversable::class, 'array'])
+            ->setDefault('replaceExisting', false)
+            ->addAllowedTypes('replaceExisting', 'bool')
             ->setAllowedValues('references', function ($content) {
                 foreach ($content as $item) {
                     if (!$item instanceof ContentInterface) {
@@ -61,8 +63,15 @@ class RelationHandlerFactory implements HandlerFactoryInterface
         $options = $this->resolver->resolve($options);
         $class = $this->class;
 
-        if (!\count($options['references'])) {
+        $hasReferences = \count($options['references']) > 0;
+        $shouldExecuteReplaceWithoutReferences = $class === RelationAddHandler::class && $options['replaceExisting'];
+
+        if (!$hasReferences && !$shouldExecuteReplaceWithoutReferences) {
             $class = RelationNoopHandler::class;
+        }
+
+        if ($class === RelationAddHandler::class) {
+            return new $class($options['relation'], $options['references'], $options['replaceExisting']);
         }
 
         return new $class($options['relation'], $options['references']);

@@ -7443,7 +7443,7 @@ body.integrated_content_media_edit_image .content-wrapper, body.integrated_conte
 
 body.integrated_content_bulk_select .form-wrapper.compound .form-group > div, body.integrated_content_bulk_configure .form-wrapper.compound .form-group > div, body.integrated_content_bulk_confirm .form-wrapper.compound .form-group > div {
   width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 }
 
 @media only screen and (max-width: 640px) {
@@ -13951,5 +13951,4 @@ div:not(.channel-domains) > ul.integrated-collection > li:after {
     display: table;
     clear: both;
 }
-
 

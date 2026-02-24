@@ -34,6 +34,6 @@ class BulkActionConfirmType extends AbstractType
 
     public function getBlockPrefix(): string
     {
-        return 'integrated_content_bulk_comfirm';
+        return 'integrated_content_bulk_confirm';
     }
 }

@@ -428,8 +428,8 @@ class ContentProvider
 
     private function applyPublicationDateRangeFilter(Query $query, Request $request): void
     {
-        $from = $this->parseDateBoundary((string) $request->query->get('date_from', ''), false);
-        $to = $this->parseDateBoundary((string) $request->query->get('date_to', ''), true);
+        $from = $this->parseDate((string) $request->query->get('date_from', ''));
+        $to = $this->parseDate((string) $request->query->get('date_to', ''));
 
         if (null === $from && null === $to) {
             return;
@@ -439,15 +439,15 @@ class ContentProvider
             [$from, $to] = [$to, $from];
         }
 
-        $start = $from ? $from->format('Y-m-d\TH:i:s\Z') : '*';
-        $end = $to ? $to->format('Y-m-d\TH:i:s\Z') : '*';
+        $start = $from ? $from->setTime(0, 0, 0)->format('Y-m-d\TH:i:s\Z') : '*';
+        $end = $to ? $to->setTime(23, 59, 59)->format('Y-m-d\TH:i:s\Z') : '*';
 
         $query
             ->createFilterQuery('pub_time_range')
             ->setQuery(sprintf('pub_time:[%s TO %s]', $start, $end));
     }
 
-    private function parseDateBoundary(string $value, bool $endOfDay): ?\DateTimeImmutable
+    private function parseDate(string $value): ?\DateTimeImmutable
     {
         $value = trim($value);
         if ('' === $value) {
@@ -459,6 +459,6 @@ class ContentProvider
             return null;
         }
 
-        return $endOfDay ? $date->setTime(23, 59, 59) : $date->setTime(0, 0, 0);
+        return $date;
     }
 }

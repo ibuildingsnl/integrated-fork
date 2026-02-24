@@ -623,13 +623,14 @@
 
 {% block integrated_content_bulk_action_row %}
     {% apply spaceless %}
-        <div class="form-group w-full flex flex-wrap">
+        <div class="form-group w-full flex flex-wrap{% if not form.active.vars['data'] %} hidden{% endif %}">
 
-            <div class="w-full" data-action-toggle="1">
+            <div class="w-full hidden" data-action-toggle="1">
                 {{ form_row(form.active, {'no_form_group': true}) }}
             </div>
 
-            <div class="w-full"{% if not form.active.vars['data'] %} style=""{% endif %}>
+            <div class="w-full{% if not form.active.vars['data'] %} hidden{% endif %}">
+                <div class="bulk-action-title">{{ form.active.vars.label|trans({}, translation_domain) }}</div>
                 {{ form_widget(form.action) }}
             </div>
 
@@ -640,6 +641,11 @@
 {% block integrated_content_bulk_action_readonly_row %}
     {% apply spaceless %}
         <div class="form-group w-full flex flex-wrap">
+            {% if form.active is defined %}
+                <div class="w-full">
+                    <div class="bulk-action-title">{{ form.active.vars.label|trans({}, translation_domain) }}</div>
+                </div>
+            {% endif %}
             <div class="w-full sm:w-3/4">
                 {{ form_widget(form.action) }}
             </div>
@@ -649,8 +655,47 @@
 
 {% block integrated_content_bulk_action_relation_widget %}
     {% apply spaceless %}
-        {{ form_widget(form.references, {'attr': {'data-value': form.references.vars.value|json_encode}}) }}
+        {% set dataValue = form.references.vars.value|json_encode %}
+        {% if form.references.vars.relation_type|default('') == 'taxonomy_category' %}
+            {% set taxonomyValue = [] %}
+            {% set referencesData = form.vars.data.references|default(form.references.vars.data|default([])) %}
+            {% for reference in referencesData %}
+                {% set referenceId = reference.getId|default(reference.id|default(reference.taxonomyId|default(reference))) %}
+                {% if referenceId is not empty %}
+                    {% set taxonomyValue = taxonomyValue|merge([referenceId]) %}
+                {% endif %}
+            {% endfor %}
+            {% set dataValue = taxonomyValue|json_encode %}
+            <div class="aside-item-wrapper">
+                <div class="aside-item-list">
+                    <div class="aside-item-list-container relation">
+                        {% include '@IntegratedContent/bulk/partial/category_selection_component.html.twig' with {
+                            relation: form.references,
+                            dataValue: dataValue,
+                        } %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="relation">
+                {{ form_widget(form.references, {'attr': {'data-value': dataValue}}) }}
+            </div>
+        {% endif %}
+
+        {% if form.replaceExisting is defined %}
+            <div class="bulk-relation-options">
+                <span class="bulk-relation-options-label">{{ form.replaceExisting.vars.label|trans({}, translation_domain) }}</span>
+                <label class="checkbox-switcher">
+                    {{ form_widget(form.replaceExisting) }}
+                </label>
+                {{ form_errors(form.replaceExisting) }}
+            </div>
+        {% endif %}
     {% endapply %}
+{% endblock %}
+
+{% block integrated_content_bulk_action_relation_readonly_widget %}
+    {{ block('integrated_content_bulk_action_relation_widget') }}
 {% endblock %}
 
 {% block integrated_permissions_row %}

@@ -220,8 +220,26 @@ class Content extends AbstractType
         ]);
 
         $arrayNormalizer = function (Options $options, $value) {
+            if (\is_string($value)) {
+                $value = trim($value);
+                return '' !== $value ? [$value] : [];
+            }
+
             if (\is_array($value)) {
-                return array_filter(array_map('trim', $value));
+                $values = [];
+
+                foreach ($value as $item) {
+                    if (!\is_string($item)) {
+                        continue;
+                    }
+
+                    $item = trim($item);
+                    if ('' !== $item) {
+                        $values[] = $item;
+                    }
+                }
+
+                return $values;
             }
 
             return [];

@@ -38,14 +38,20 @@ class RelationAddHandler implements HandlerInterface
     private $references;
 
     /**
+     * @var bool
+     */
+    private $replaceExisting;
+
+    /**
      * Constructor.
      *
      * @param ContentInterface[] $references
      */
-    public function __construct(RelationInterface $relation, $references)
+    public function __construct(RelationInterface $relation, $references, bool $replaceExisting = false)
     {
         $this->relation = $relation;
         $this->references = $references;
+        $this->replaceExisting = $replaceExisting;
 
         foreach ($this->relation->getSources() as $source) {
             $this->relationTypes[$source->getId()] = $source->getId();
@@ -70,7 +76,15 @@ class RelationAddHandler implements HandlerInterface
         }
 
         if ($embedded instanceof Relation) {
+            if ($this->replaceExisting) {
+                $embedded->clearReferences();
+            }
+
             $embedded->addReferences($this->references);
+
+            if (!\count($embedded->getReferences())) {
+                $content->removeRelation($embedded);
+            }
         }
     }
 }

@@ -13902,7 +13902,10 @@ var init = function init() {
   }
 };
 function onSubmitButtonClick(e) {
-  var form = e.target.closest('form');
+  var form = e.target.closest('form') || e.target.form;
+  if (!form) {
+    return;
+  }
   var inputs = form.querySelectorAll('input, textarea');
   inputs.forEach(function (input) {
     if (input.required && input.value === '') {

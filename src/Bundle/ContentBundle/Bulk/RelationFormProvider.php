@@ -15,6 +15,7 @@ use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\Persistence\ManagerRegistry;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Form\Type\BulkActionRelationType;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Common\Bulk\Form\Config;
 use Integrated\Common\Bulk\Form\ConfigProviderInterface;
 
@@ -28,9 +29,15 @@ class RelationFormProvider implements ConfigProviderInterface
      */
     private $manager;
 
-    public function __construct(ManagerRegistry $manager)
+    /**
+     * @var TaxonomyOverview
+     */
+    private $taxonomyOverview;
+
+    public function __construct(ManagerRegistry $manager, TaxonomyOverview $taxonomyOverview)
     {
         $this->manager = $manager;
+        $this->taxonomyOverview = $taxonomyOverview;
     }
 
     public function getConfig(array $content)
@@ -43,17 +50,20 @@ class RelationFormProvider implements ConfigProviderInterface
 
         /** @var Builder $builder */
         $builder = $this->manager->getRepository(Relation::class)->createQueryBuilder('r');
-        $builder->field('r.sources.$id')->in($types);
+        $builder->field('sources.$id')->in($types);
 
         $config = [];
 
         foreach ($builder->getQuery()->getIterator() as $relation) {
+            $taxonomyCategories = $this->getTaxonomyCategories($relation);
+
             $config[] = new Config(
                 RelationAddHandler::class,
                 \sprintf('add_%s', $relation->getId()),
                 BulkActionRelationType::class,
                 [
                     'relation' => $relation,
+                    'taxonomy_categories' => $taxonomyCategories,
                     'relation_handler' => RelationAddHandler::class,
                     'label' => \sprintf('Add %s', $relation->getName()),
                 ],
@@ -66,6 +76,7 @@ class RelationFormProvider implements ConfigProviderInterface
                 BulkActionRelationType::class,
                 [
                     'relation' => $relation,
+                    'taxonomy_categories' => $taxonomyCategories,
                     'relation_handler' => RelationRemoveHandler::class,
                     'label' => \sprintf('Remove %s', $relation->getName()),
                 ],
@@ -74,5 +85,18 @@ class RelationFormProvider implements ConfigProviderInterface
         }
 
         return $config;
+    }
+
+    private function getTaxonomyCategories(Relation $relation): array
+    {
+        if ($relation->getType() !== 'taxonomy_category') {
+            return [];
+        }
+
+        foreach ($relation->getTargets() as $target) {
+            return $this->taxonomyOverview->overviewFor($target->getId());
+        }
+
+        return [];
     }
 }

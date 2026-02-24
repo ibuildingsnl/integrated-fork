@@ -37,6 +37,11 @@ class RelationAction implements BulkActionInterface
     private $references;
 
     /**
+     * @var bool
+     */
+    private $replaceExisting = false;
+
+    /**
      * RelationAction constructor.
      */
     public function __construct()
@@ -128,6 +133,18 @@ class RelationAction implements BulkActionInterface
         return $this;
     }
 
+    public function isReplaceExisting(): bool
+    {
+        return (bool) $this->replaceExisting;
+    }
+
+    public function setReplaceExisting(bool $replaceExisting)
+    {
+        $this->replaceExisting = $replaceExisting;
+
+        return $this;
+    }
+
     /**
      * @return array
      */
@@ -136,6 +153,7 @@ class RelationAction implements BulkActionInterface
         return [
             'relation' => $this->getRelation(),
             'references' => $this->getReferences(),
+            'replaceExisting' => $this->isReplaceExisting(),
         ];
     }
 }
