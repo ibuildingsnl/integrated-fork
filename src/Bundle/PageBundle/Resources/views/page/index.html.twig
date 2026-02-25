@@ -18,8 +18,9 @@
                         <span class="flex items-center"><b class="mr-2">{% trans %}Last changed{% endtrans %}:</b> "{{ lastPage.title }}" {% trans %}on{% endtrans %} "{{ lastPage.channel.name }}"</span>
                         <ul class="options-no-bg flex">
                             <li>
-                                <button type="button" class="btn btn-select btn-green mr-2"
-                                        onclick="window.location.href='{{ lastUrl }}';">{% trans %}Open page{% endtrans %}</button>
+                                <a href="{{ lastUrl }}" class="btn btn-select btn-green mr-2" target="_blank" rel="noopener noreferrer" data-turbo="false">
+                                    {% trans %}Open page{% endtrans %}
+                                </a>
                             </li>
                             <li class="dropdown close-outside" data-underlay="no">
                                 <a href="#" data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
@@ -27,7 +28,7 @@
                                     <i class="iconoir-nav-arrow-down"></i>
                                 </a>
                                 <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
-                                    <li><a href="{{ editUrl }}">{% trans %}Edit page{% endtrans %}</a></li>
+                                    <li><a href="{{ editUrl }}" target="_blank" rel="noopener noreferrer" data-turbo="false">{% trans %}Edit page{% endtrans %}</a></li>
                                     <li>
                                         <a href="{{ path('integrated_page_page_edit', {'id': lastPage.id}) }}">{% trans %}Edit page properties{% endtrans %}</a>
                                     </li>
@@ -50,6 +51,29 @@
                                 <span>{% trans %}Copy{% endtrans %} {% trans %}page{% endtrans %}</span>
                                 <i class="iconoir-copy"></i>
                             </a>
+                            {% if is_granted('ROLE_ADMIN') and noneFilterActive|default(false) %}
+                                <form method="post"
+                                      action="{{ path('integrated_page_page_delete_without_channel_bulk') }}"
+                                      style="display:inline-block"
+                                      onsubmit="return confirm('{% trans %}Are you sure you want to delete all pages without channel in the current filter?{% endtrans %}');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_without_channel_pages_bulk') }}">
+                                    <input type="hidden" name="page_filter[q]" value="{{ activeFilterData.q|default('') }}">
+                                    {% for value in activeFilterData.pagetype|default([]) %}
+                                        <input type="hidden" name="page_filter[pagetype][]" value="{{ value }}">
+                                    {% endfor %}
+                                    {% for value in activeFilterData.channel|default([]) %}
+                                        <input type="hidden" name="page_filter[channel][]" value="{{ value }}">
+                                    {% endfor %}
+                                    {% for value in activeFilterData.status|default([]) %}
+                                        <input type="hidden" name="page_filter[status][]" value="{{ value }}">
+                                    {% endfor %}
+                                    <input type="hidden" name="page_filter[_applied]" value="1">
+                                    <button type="submit" class="btn btn-create-new">
+                                        <span>{% trans %}Delete pages without channel{% endtrans %}</span>
+                                        <i class="iconoir-trash"></i>
+                                    </button>
+                                </form>
+                            {% endif %}
                         </li>
                     </ul>
                 </div>
@@ -85,10 +109,10 @@
                                 <strong>
                                     {% if page.type == 'page' and page.domain != "" %}
                                     {% if (page.domain == app.request.httphost) %}
-                                    <a href="{{ page.path }}" title="{% trans %}Open page{% endtrans %}">
+                                    <a href="{{ page.path }}" title="{% trans %}Open page{% endtrans %}" target="_blank" rel="noopener noreferrer" data-turbo="false">
                                         {% else %}
                                         <a href="//{{ page.domain }}{{ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': page.path}) }}"
-                                           title="{% trans %}Open page{% endtrans %}">
+                                           title="{% trans %}Open page{% endtrans %}" target="_blank" rel="noopener noreferrer" data-turbo="false">
                                             {% endif %}
                                             {% endif %}
                                             {{ page.path }}
@@ -103,7 +127,7 @@
                                         {% trans %}Edit page properties{% endtrans %}
                                     </a>
                                     {% if page.type == 'page' and page.disabled and previewLinks[page.id]|default('') %}
-                                        | <a href="{{ previewLinks[page.id] }}" target="_blank" rel="noopener noreferrer"
+                                        | <a href="{{ previewLinks[page.id] }}" target="_blank" rel="noopener noreferrer" data-turbo="false"
                                              title="{% trans %}Preview link (24h){% endtrans %}">
                                         {% trans %}Preview link (24h){% endtrans %}
                                     </a>
@@ -113,6 +137,17 @@
                                              class="color-red" title="{% trans %}Delete{% endtrans %}">
                                         {% trans %}Delete{% endtrans %}
                                     </a>
+                                    {% endif %}
+                                    {% if orphanChannelPageIds[page.id]|default(false) and is_granted('ROLE_ADMIN') %}
+                                        | <form method="post" action="{{ path('integrated_page_page_delete_without_channel', { 'id': page.id }) }}"
+                                                style="display:inline"
+                                                onsubmit="return confirm('{% trans %}Are you sure you want to delete this page without channel?{% endtrans %}');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_without_channel_page_' ~ page.id) }}">
+                                        <button type="submit" class="color-red border-0 bg-transparent p-0"
+                                                title="{% trans %}Delete without channel{% endtrans %}">
+                                            {% trans %}Delete without channel{% endtrans %}
+                                        </button>
+                                    </form>
                                     {% endif %}
                                 </div>
                             </td>
@@ -133,7 +168,7 @@
                                         <span class="label label-primary">{% trans %}Published{% endtrans %}</span>
                                     {% endif %}
                                 {% elseif page.type == 'content_type_page' %}
-                                    <span class="label label-primary">{% trans %}Published{% endtrans %}</span>
+                                    <span class="label label-info">{% trans %}System page{% endtrans %}</span>
                                 {% else %}
                                     <span class="text-muted">—</span>
                                 {% endif %}

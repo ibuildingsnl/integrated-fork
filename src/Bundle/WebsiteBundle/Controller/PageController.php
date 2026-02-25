@@ -39,7 +39,7 @@ class PageController extends AbstractController
     public function show(Request $request, Page $page): Response
     {
         $canPreviewDraft = $this->isGranted('ROLE_WEBSITE_MANAGER') || $this->isGranted('ROLE_ADMIN');
-        $hasValidPreviewLink = $this->hasValidDraftPreviewLink($request);
+        $hasValidPreviewLink = $this->hasValidDraftPreviewLink($request, $page);
 
         if ($page->isDisabled() && !$canPreviewDraft && !$hasValidPreviewLink) {
             throw new NotFoundHttpException();
@@ -57,18 +57,28 @@ class PageController extends AbstractController
             $response->setPrivate();
             $response->headers->addCacheControlDirective('no-store', true);
             $response->headers->addCacheControlDirective('max-age', 0);
+            $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
         }
 
         return $response;
     }
 
-    private function hasValidDraftPreviewLink(Request $request): bool
+    private function hasValidDraftPreviewLink(Request $request, Page $page): bool
     {
         $expires = $request->query->get(self::PREVIEW_EXPIRES_PARAM);
         if (!is_numeric($expires) || (int) $expires < time()) {
             return false;
         }
 
-        return $this->uriSigner->checkRequest($request);
+        if (!$this->uriSigner->checkRequest($request)) {
+            return false;
+        }
+
+        $pageDomain = trim((string) $page->getDomain());
+        if ($pageDomain === '') {
+            return true;
+        }
+
+        return 0 === strcasecmp($request->getHost(), $pageDomain);
     }
 }

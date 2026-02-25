@@ -4824,6 +4824,9 @@ video {
 .border{
   border-width: 1px;
 }
+.border-0{
+  border-width: 0px;
+}
 .border-b{
   border-bottom-width: 1px;
 }
@@ -4859,6 +4862,9 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
+.bg-transparent{
+  background-color: transparent;
+}
 .p-2{
   padding: 0.5rem;
 }
@@ -4867,6 +4873,9 @@ video {
 }
 .p-4{
   padding: 1rem;
+}
+.p-0{
+  padding: 0px;
 }
 .py-4{
   padding-top: 1rem;

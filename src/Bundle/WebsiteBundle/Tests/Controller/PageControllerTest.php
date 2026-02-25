@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Integrated\Bundle\WebsiteBundle\Tests\Controller;
 
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\Controller\PageController;
@@ -77,6 +78,7 @@ class PageControllerTest extends TestCase
         self::assertTrue($response->headers->hasCacheControlDirective('no-store'));
         self::assertSame(0, (int) $response->headers->getCacheControlDirective('max-age'));
         self::assertStringNotContainsString('integrated-draft-notice', $response->getContent());
+        self::assertSame('noindex, nofollow', $response->headers->get('X-Robots-Tag'));
     }
 
     public function testShowAllowsDisabledPageWithValidPreviewLinkWithoutAdminRole(): void
@@ -107,6 +109,29 @@ class PageControllerTest extends TestCase
         self::assertSame(Response::HTTP_OK, $response->getStatusCode());
         self::assertTrue($response->headers->hasCacheControlDirective('no-store'));
         self::assertStringNotContainsString('integrated-draft-notice', $response->getContent());
+        self::assertSame('noindex, nofollow', $response->headers->get('X-Robots-Tag'));
+    }
+
+    public function testShowRejectsDisabledPageWithValidSignatureOnWrongHost(): void
+    {
+        $page = new Page();
+        $page->setLayout('default.html.twig');
+        $page->setDisabled(true);
+        $page->setPath('/draft-page');
+        $channel = new Channel();
+        $channel->setPrimaryDomain('example.test');
+        $page->setChannel($channel);
+
+        $this->themeManager->expects($this->never())->method('locateTemplate');
+        $this->websiteToolbarListener->expects($this->never())->method('setToolbarMessage');
+
+        $controller = $this->createController([
+            'ROLE_WEBSITE_MANAGER' => false,
+            'ROLE_ADMIN' => false,
+        ]);
+
+        $this->expectException(NotFoundHttpException::class);
+        $controller->show($this->createSignedPreviewRequest('/draft-page', time() + 600, 'other.test'), $page);
     }
 
     public function testShowRejectsDisabledPageWithExpiredPreviewLinkWithoutAdminRole(): void
@@ -178,9 +203,9 @@ class PageControllerTest extends TestCase
         };
     }
 
-    private function createSignedPreviewRequest(string $path, int $expires): Request
+    private function createSignedPreviewRequest(string $path, int $expires, string $host = 'example.test'): Request
     {
-        $unsigned = sprintf('https://example.test%s?preview_expires=%d', $path, $expires);
+        $unsigned = sprintf('https://%s%s?preview_expires=%d', $host, $path, $expires);
         $signed = $this->uriSigner->sign($unsigned);
 
         return Request::create($signed);
