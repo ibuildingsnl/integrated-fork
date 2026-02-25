@@ -13,6 +13,7 @@
             <argument type="service" id="Integrated\Bundle\ContentHistoryBundle\History\Parser" />
             <argument type="service" id="knp_paginator" />
             <argument type="service" id="integrated_content.content_type.manager" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />

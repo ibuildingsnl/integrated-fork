@@ -3,9 +3,12 @@
 namespace Integrated\Bundle\ContentHistoryBundle\Tests\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentHistoryBundle\Controller\ContentHistoryController;
 use Integrated\Bundle\ContentHistoryBundle\History\Parser;
+use Integrated\Bundle\WorkflowBundle\Entity\Definition\State as WorkflowDefinitionState;
 use Knp\Component\Pager\PaginatorInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -79,6 +82,33 @@ class ContentHistoryControllerTest extends TestCase
 
         self::assertSame('reference', $result['type']);
         self::assertSame('Person #c6aef12638e33663848e6a7c5e92e0bb', $result['text']);
+    }
+
+    public function testFormatHistoryValueResolvesWorkflowStateUuidToNameForWorkflowField(): void
+    {
+        $state = new WorkflowDefinitionState();
+        $state->setName('Gepubliceerd');
+        $stateId = $state->getId();
+
+        $controller = $this->createController([
+            $stateId => $state,
+        ]);
+
+        $result = $this->invokePrivate($controller, 'formatHistoryValue', [$stateId, 'workflow > state']);
+
+        self::assertSame('text', $result['type']);
+        self::assertSame('Gepubliceerd', $result['text']);
+    }
+
+    public function testFormatHistoryValueKeepsUuidForNonWorkflowStateField(): void
+    {
+        $uuid = '41e98bed-5008-11e7-8199-089e013951df';
+        $controller = $this->createController();
+
+        $result = $this->invokePrivate($controller, 'formatHistoryValue', [$uuid, 'address > state']);
+
+        self::assertSame('text', $result['type']);
+        self::assertSame($uuid, $result['text']);
     }
 
     public function testNormalizeSnapshotForCompareAlignsRelationsByRelationId(): void
@@ -276,13 +306,27 @@ class ContentHistoryControllerTest extends TestCase
         self::assertSame('title', $result[1]['name']);
     }
 
-    private function createController(): ContentHistoryController
+    private function createController(array $workflowStates = []): ContentHistoryController
     {
+        $workflowRepository = $this->createMock(EntityRepository::class);
+        $workflowRepository
+            ->method('find')
+            ->willReturnCallback(static function ($id) use ($workflowStates) {
+                return $workflowStates[(string) $id] ?? null;
+            });
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager
+            ->method('getRepository')
+            ->with(WorkflowDefinitionState::class)
+            ->willReturn($workflowRepository);
+
         return new ContentHistoryController(
             $this->createMock(DocumentManager::class),
             new Parser(),
             $this->createMock(PaginatorInterface::class),
-            $this->createMock(ContentTypeManager::class)
+            $this->createMock(ContentTypeManager::class),
+            $entityManager
         );
     }
 

@@ -14,12 +14,14 @@ namespace Integrated\Bundle\ContentHistoryBundle\Controller;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Query\Builder as MongoQueryBuilder;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentHistoryBundle\Document\ContentHistory;
 use Integrated\Bundle\ContentHistoryBundle\History\Parser;
+use Integrated\Bundle\WorkflowBundle\Entity\Definition\State as WorkflowDefinitionState;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,15 +33,18 @@ class ContentHistoryController extends AbstractController
     private Parser $parser;
     private PaginatorInterface $paginator;
     private ContentTypeManager $contentTypeManager;
+    private ?EntityManagerInterface $entityManager;
     private array $formattedValueCache = [];
     private array $referenceDocumentCache = [];
+    private array $workflowStateNameCache = [];
 
-    public function __construct(DocumentManager $manager, Parser $parser, PaginatorInterface $paginator, ContentTypeManager $contentTypeManager)
+    public function __construct(DocumentManager $manager, Parser $parser, PaginatorInterface $paginator, ContentTypeManager $contentTypeManager, ?EntityManagerInterface $entityManager = null)
     {
         $this->manager = $manager;
         $this->parser = $parser;
         $this->paginator = $paginator;
         $this->contentTypeManager = $contentTypeManager;
+        $this->entityManager = $entityManager;
     }
 
     public function index(Content $content, Request $request): Response
@@ -181,9 +186,10 @@ class ContentHistoryController extends AbstractController
     private function enhanceChangeSetForDisplay(array $rows): array
     {
         return array_map(function (array $row): array {
+            $fieldName = (string) ($row['name'] ?? '');
             $row['displayName'] = $this->humanizeHistoryFieldName((string) ($row['name'] ?? ''));
-            $row['oldDisplay'] = $this->formatHistoryValue($row['old'] ?? '');
-            $row['newDisplay'] = $this->formatHistoryValue($row['new'] ?? '');
+            $row['oldDisplay'] = $this->formatHistoryValue($row['old'] ?? '', $fieldName);
+            $row['newDisplay'] = $this->formatHistoryValue($row['new'] ?? '', $fieldName);
             $row = $this->applyInlineDiffForTextRow($row);
 
             return $row;
@@ -352,9 +358,10 @@ class ContentHistoryController extends AbstractController
         return implode(' > ', $displaySegments);
     }
 
-    private function formatHistoryValue(mixed $value): array
+    private function formatHistoryValue(mixed $value, ?string $fieldPath = null): array
     {
-        $cacheKey = md5(is_scalar($value) || $value === null ? (string) $value : serialize($value));
+        $cacheInput = is_scalar($value) || $value === null ? (string) $value : serialize($value);
+        $cacheKey = md5(($fieldPath ?? '').'|'.$cacheInput);
         if (isset($this->formattedValueCache[$cacheKey])) {
             return $this->formattedValueCache[$cacheKey];
         }
@@ -378,6 +385,11 @@ class ContentHistoryController extends AbstractController
         $value = trim($value);
         if ($value === '') {
             return $this->formattedValueCache[$cacheKey] = ['type' => 'empty', 'text' => ''];
+        }
+
+        $workflowStateName = $this->resolveWorkflowStateName($value, $fieldPath);
+        if ($workflowStateName !== null) {
+            return $this->formattedValueCache[$cacheKey] = ['type' => 'text', 'text' => $workflowStateName];
         }
 
         $resolvedComposite = $this->resolveCompositeReferenceValue($value);
@@ -406,6 +418,52 @@ class ContentHistoryController extends AbstractController
         }
 
         return $this->formattedValueCache[$cacheKey] = ['type' => 'text', 'text' => $value];
+    }
+
+    private function resolveWorkflowStateName(string $value, ?string $fieldPath): ?string
+    {
+        if ($this->entityManager === null || !$this->isWorkflowStateField($fieldPath) || !$this->isUuid($value)) {
+            return null;
+        }
+
+        if (array_key_exists($value, $this->workflowStateNameCache)) {
+            return $this->workflowStateNameCache[$value];
+        }
+
+        $state = $this->entityManager->getRepository(WorkflowDefinitionState::class)->find($value);
+        if (!$state instanceof WorkflowDefinitionState) {
+            $this->workflowStateNameCache[$value] = null;
+
+            return null;
+        }
+
+        $name = trim($state->getName());
+        $this->workflowStateNameCache[$value] = $name !== '' ? $name : $value;
+
+        return $this->workflowStateNameCache[$value];
+    }
+
+    private function isWorkflowStateField(?string $fieldPath): bool
+    {
+        if (!is_string($fieldPath) || trim($fieldPath) === '') {
+            return false;
+        }
+
+        $normalizedPath = strtolower(trim($fieldPath));
+        if (str_contains($normalizedPath, 'workflow_state')) {
+            return true;
+        }
+
+        if (!str_contains($normalizedPath, 'workflow')) {
+            return false;
+        }
+
+        return preg_match('/(^| > )state($| > )/', $normalizedPath) === 1;
+    }
+
+    private function isUuid(string $value): bool
+    {
+        return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $value) === 1;
     }
 
     private function resolveCompositeReferenceValue(string $value): ?array

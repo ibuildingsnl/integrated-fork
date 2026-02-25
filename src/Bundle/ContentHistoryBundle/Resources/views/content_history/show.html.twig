@@ -54,8 +54,12 @@
                 <div class="options">
                 </div>
                 <div class="back">
+                    {% set backParams = {'id': content.id} %}
+                    {% if app.request.query.get('lock') %}
+                        {% set backParams = backParams|merge({'lock': app.request.query.get('lock')}) %}
+                    {% endif %}
                     <a class="no-icon btn btn-white icon-left"
-                       href="{{ path("integrated_content_history_index", {'id': contentHistory.contentId }) }}"><i
+                       href="{{ path("integrated_content_content_edit", backParams) }}"><i
                             class="iconoir iconoir-arrow-left"></i><span>{% trans %}Back{% endtrans %}</span></a>
                 </div>
             </div>

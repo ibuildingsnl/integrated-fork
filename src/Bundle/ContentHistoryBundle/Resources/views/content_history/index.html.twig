@@ -5,6 +5,9 @@
         {% block toolbar %}
             <div id="toolbar" class="w-full flex justify-between">
                 <div class="options">
+                    <div class="form-actions">
+                        <a class="no-icon btn btn-white" href="{{ path('integrated_content_history_index', {'id': content.id}) }}">{% trans %}Reset{% endtrans %}</a>
+                    </div>
                 </div>
                 <div class="back">
                     <a class="no-icon btn btn-white icon-left" href="{{ path("integrated_content_content_edit", {'id': content.id }) }}">
@@ -17,8 +20,9 @@
             <div class="page-title">
                 <h1 class="heading">{% trans %}History for{% endtrans %} {{ content.title }}</h1>
             </div>
-            <section class="section-white section-radius">
-                <form method="get" class="history-index-filters p-4">
+
+            <div class="section-white section-radius p-2 mb-4">
+                <form id="content-history-filter-form" method="get" class="history-index-filters">
                     <div class="flex flex-wrap gap-2">
                         <input class="form-control" type="text" name="q" value="{{ filters.q|default('') }}" placeholder="{% trans %}Search user/action{% endtrans %}">
                         <select class="form-control" name="action">
@@ -30,10 +34,12 @@
                         <input class="form-control" type="text" name="user" value="{{ filters.user|default('') }}" placeholder="{% trans %}User{% endtrans %}">
                         <input class="form-control" type="date" name="from" value="{{ filters.from|default('') }}">
                         <input class="form-control" type="date" name="to" value="{{ filters.to|default('') }}">
-                        <button class="btn btn-primary" type="submit">{% trans %}Filter{% endtrans %}</button>
-                        <a class="btn btn-white" href="{{ path('integrated_content_history_index', {'id': content.id}) }}">{% trans %}Reset{% endtrans %}</a>
+                        <button class="no-icon btn btn-green" type="submit" form="content-history-filter-form">{% trans %}Filter{% endtrans %}</button>
                     </div>
                 </form>
+            </div>
+
+            <section class="section-white section-radius">
                 <table class="table table-hover">
                     <thead>
                     <tr>
