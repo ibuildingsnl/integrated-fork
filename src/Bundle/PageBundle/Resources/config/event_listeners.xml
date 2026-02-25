@@ -33,6 +33,10 @@
         <service id="integrated_page.event_listener.grid_item" class="Integrated\Bundle\PageBundle\EventListener\GridItemSubscriber">
         </service>
 
+        <service id="integrated_page.event_listener.block_usage" class="Integrated\Bundle\PageBundle\EventListener\BlockUsageSubscriber">
+            <argument type="service" id="cache.app" />
+        </service>
+
     </services>
 
 </container>

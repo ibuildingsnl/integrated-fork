@@ -9,10 +9,17 @@
         <field field-name="layout" type="string" />
         <field field-name="createdAt" type="date" />
         <field field-name="updatedAt" type="date" />
+        <field field-name="blockIds" type="collection" />
 
         <embed-many field="grids" target-document="Integrated\Bundle\PageBundle\Document\Page\Grid\Grid" />
 
         <reference-one field="channel" target-document="Integrated\Bundle\ContentBundle\Document\Channel\Channel" />
+
+        <indexes>
+            <index>
+                <key name="blockIds" order="asc" />
+            </index>
+        </indexes>
 
         <discriminator-field name="class" />
 

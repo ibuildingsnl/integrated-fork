@@ -14,7 +14,10 @@ namespace Integrated\Bundle\PageBundle\Document\Page;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\PageBundle\Document\Page\Grid\Column;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Grid;
+use Integrated\Bundle\PageBundle\Document\Page\Grid\Item;
+use Integrated\Bundle\PageBundle\Document\Page\Grid\Row;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -48,6 +51,11 @@ abstract class AbstractPage
      * @var Collection<Grid>
      */
     protected $grids;
+
+    /**
+     * @var string[]
+     */
+    protected $blockIds = [];
 
     /**
      * @var \DateTime
@@ -133,6 +141,7 @@ abstract class AbstractPage
     public function setGrids(array $grids)
     {
         $this->grids = new ArrayCollection($grids);
+        $this->updateBlockIdsFromGrids();
 
         return $this;
     }
@@ -143,6 +152,7 @@ abstract class AbstractPage
     public function addGrid(Grid $grid)
     {
         $this->grids->add($grid);
+        $this->updateBlockIdsFromGrids();
 
         return $this;
     }
@@ -153,8 +163,86 @@ abstract class AbstractPage
     public function removeGrid(Grid $grid)
     {
         $this->grids->removeElement($grid);
+        $this->updateBlockIdsFromGrids();
 
         return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getBlockIds(): array
+    {
+        return $this->blockIds;
+    }
+
+    /**
+     * @param array<int, scalar> $blockIds
+     */
+    public function setBlockIds(array $blockIds): self
+    {
+        $indexed = [];
+        foreach ($blockIds as $blockId) {
+            if (!\is_scalar($blockId)) {
+                continue;
+            }
+
+            $value = trim((string) $blockId);
+            if ($value === '') {
+                continue;
+            }
+
+            $indexed[$value] = true;
+        }
+
+        $this->blockIds = array_keys($indexed);
+
+        return $this;
+    }
+
+    public function updateBlockIdsFromGrids(): self
+    {
+        $indexed = [];
+        foreach ($this->grids as $grid) {
+            if (!$grid instanceof Grid) {
+                continue;
+            }
+
+            $this->collectBlockIdsFromItems($grid->getItems(), $indexed);
+        }
+
+        $this->blockIds = array_keys($indexed);
+
+        return $this;
+    }
+
+    /**
+     * @param Item[] $items
+     * @param array<string, bool> $indexed
+     */
+    private function collectBlockIdsFromItems(array $items, array &$indexed): void
+    {
+        foreach ($items as $item) {
+            if (!$item instanceof Item) {
+                continue;
+            }
+
+            $block = $item->getBlock();
+            if ($block !== null && \is_string($block->getId()) && $block->getId() !== '') {
+                $indexed[$block->getId()] = true;
+            }
+
+            $row = $item->getRow();
+            if (!$row instanceof Row) {
+                continue;
+            }
+
+            foreach ($row->getColumns() as $column) {
+                if ($column instanceof Column) {
+                    $this->collectBlockIdsFromItems($column->getItems(), $indexed);
+                }
+            }
+        }
     }
 
     /**
