@@ -1454,6 +1454,22 @@
                 <source>Premium</source>
                 <target>Premium</target>
             </trans-unit>
+            <trans-unit id="369">
+                <source>You are not allowed to lock this document.</source>
+                <target>Je hebt geen rechten om dit document te vergrendelen.</target>
+            </trans-unit>
+            <trans-unit id="370">
+                <source>The lock request token is invalid. Please reload and try again.</source>
+                <target>Het vergrendelingsverzoek is ongeldig. Herlaad de pagina en probeer het opnieuw.</target>
+            </trans-unit>
+            <trans-unit id="371">
+                <source>The lock could not be acquired, please reload and try again.</source>
+                <target>De vergrendeling kon niet worden verkregen. Herlaad de pagina en probeer het opnieuw.</target>
+            </trans-unit>
+            <trans-unit id="372">
+                <source>This item is currently locked and cannot be edited until the lock is released.</source>
+                <target>Dit item is momenteel vergrendeld en kan pas worden bewerkt nadat de vergrendeling is vrijgegeven.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

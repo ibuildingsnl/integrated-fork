@@ -13,6 +13,321 @@
 
 {% block javascript %}
 {{ parent() }}
+<script>
+    (function initEditLockOnLoad() {
+        var LOCK_REFRESH_URL = "{{ path('integrated_locking_api_refresh')|e('js') }}";
+        var LOCK_RELEASE_URL = "{{ path('integrated_locking_api_release')|e('js') }}";
+        var LOCK_POLLING_KEY = '__integratedEditLockPolling';
+        var LOCK_CSRF_TOKEN = "{{ (content is defined ? csrf_token('integrated_content_lock_' ~ content.id) : '')|e('js') }}";
+        var LOCKED_ITEM_MESSAGE = "{{ 'This item is currently locked and cannot be edited until the lock is released.'|trans|e('js') }}";
+        var LOCK_ACQUIRE_FAILED_MESSAGE = "{{ 'The lock could not be acquired, please reload and try again.'|trans|e('js') }}";
+        var lockPollingStore = window[LOCK_POLLING_KEY] || (window[LOCK_POLLING_KEY] = {});
+
+        function postLockRequest(url, body, keepalive) {
+            return fetch(url, {
+                method: 'POST',
+                credentials: 'same-origin',
+                keepalive: !!keepalive,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                },
+                body: body,
+            });
+        }
+
+        function setSaveButtonDisabled(disabled) {
+            var saveButton = document.getElementById('integrated_content_actions_save');
+            if (!saveButton) {
+                return;
+            }
+
+            saveButton.disabled = !!disabled;
+            saveButton.classList.toggle('disabled', !!disabled);
+        }
+
+        function setLockOverlay(form, message) {
+            var wrapper = form.closest('.sidebar-edit-form');
+            if (!wrapper) {
+                wrapper = form;
+            }
+
+            var overlay = wrapper.querySelector('[data-content-lock-overlay]');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.className = 'content-lock-overlay';
+                overlay.setAttribute('data-content-lock-overlay', '1');
+
+                var overlayMessage = document.createElement('div');
+                overlayMessage.className = 'content-lock-overlay__message';
+                overlay.appendChild(overlayMessage);
+
+                wrapper.appendChild(overlay);
+            }
+
+            var messageNode = overlay.querySelector('.content-lock-overlay__message');
+            if (messageNode) {
+                messageNode.textContent = message || LOCKED_ITEM_MESSAGE;
+            }
+        }
+
+        function clearLockOverlay(form) {
+            var wrapper = form.closest('.sidebar-edit-form');
+            if (!wrapper) {
+                wrapper = form;
+            }
+
+            var overlay = wrapper.querySelector('[data-content-lock-overlay]');
+            if (overlay) {
+                overlay.remove();
+            }
+        }
+
+        function setFormActionLock(form, lockId) {
+            var action = form.getAttribute('action');
+            if (!action) {
+                return;
+            }
+
+            var actionUrl = new URL(action, window.location.origin);
+            actionUrl.searchParams.set('lock', String(lockId));
+            form.setAttribute('action', actionUrl.pathname + actionUrl.search + actionUrl.hash);
+        }
+
+        function replaceUrlLock(lockId) {
+            var locationUrl = new URL(window.location.href);
+            if (locationUrl.searchParams.get('lock') === String(lockId)) {
+                return;
+            }
+
+            locationUrl.searchParams.set('lock', String(lockId));
+            window.history.replaceState({}, '', locationUrl.toString());
+        }
+
+        function startLockPolling(lockId) {
+            if (!lockId || lockPollingStore[lockId]) {
+                return;
+            }
+
+            if (window.__integratedLockPolling && window.__integratedLockPolling[lockId]) {
+                return;
+            }
+
+            var state = {
+                stopped: false,
+                timer: null,
+            };
+            lockPollingStore[lockId] = state;
+
+            function toBody() {
+                var params = new URLSearchParams();
+                params.set('lock', String(lockId));
+
+                return params.toString();
+            }
+
+            function stop() {
+                if (state.stopped) {
+                    return;
+                }
+
+                state.stopped = true;
+
+                if (state.timer) {
+                    window.clearTimeout(state.timer);
+                    state.timer = null;
+                }
+
+                delete lockPollingStore[lockId];
+
+                document.removeEventListener('turbo:before-cache', onBeforeCache);
+                window.removeEventListener('pagehide', onPageHide);
+                window.removeEventListener('beforeunload', onBeforeUnload);
+            }
+
+            function schedule() {
+                if (state.stopped) {
+                    return;
+                }
+
+                state.timer = window.setTimeout(refresh, 5000);
+            }
+
+            function release() {
+                if (navigator.sendBeacon) {
+                    try {
+                        var params = new URLSearchParams();
+                        params.set('lock', String(lockId));
+                        navigator.sendBeacon(LOCK_RELEASE_URL, params);
+
+                        return;
+                    } catch (e) {
+                    }
+                }
+
+                postLockRequest(LOCK_RELEASE_URL, toBody(), true).catch(function () {
+                });
+            }
+
+            function refresh() {
+                if (state.stopped) {
+                    return;
+                }
+
+                postLockRequest(LOCK_REFRESH_URL, toBody(), false)
+                    .then(function (response) {
+                        if (response.status === 200) {
+                            schedule();
+                            return;
+                        }
+
+                        stop();
+                    })
+                    .catch(function () {
+                        stop();
+                    });
+            }
+
+            function onBeforeCache() {
+                release();
+                stop();
+            }
+
+            function onPageHide() {
+                release();
+                stop();
+            }
+
+            function onBeforeUnload() {
+                release();
+                stop();
+            }
+
+            document.addEventListener('turbo:before-cache', onBeforeCache);
+            window.addEventListener('pagehide', onPageHide);
+            window.addEventListener('beforeunload', onBeforeUnload);
+
+            refresh();
+        }
+
+        function applyAcquiredLock(form, lockId, lockStoreKey) {
+            if (lockStoreKey) {
+                try {
+                    window.sessionStorage.setItem(lockStoreKey, String(lockId));
+                } catch (e) {
+                }
+            }
+
+            form.setAttribute('data-lock-pending', '0');
+            form.setAttribute('data-lock-id', String(lockId));
+            form.setAttribute('data-content-locked', '0');
+            clearLockOverlay(form);
+            setFormActionLock(form, lockId);
+            replaceUrlLock(lockId);
+            setSaveButtonDisabled(false);
+            startLockPolling(lockId);
+        }
+
+        function initLockOnLoad() {
+            if (document.documentElement.hasAttribute('data-turbo-preview')) {
+                return;
+            }
+
+            var form = document.querySelector('form.content-form[data-lock-init-url]');
+            if (!form) {
+                return;
+            }
+
+            if (form.getAttribute('data-lock-pending') !== '1') {
+                var existingLockId = form.getAttribute('data-lock-id') || '';
+                if (!existingLockId) {
+                    return;
+                }
+
+                var urlLockId = '';
+                try {
+                    urlLockId = new URL(window.location.href).searchParams.get('lock') || '';
+                } catch (e) {
+                    urlLockId = '';
+                }
+
+                if (urlLockId === String(existingLockId)) {
+                    startLockPolling(existingLockId);
+                }
+
+                return;
+            }
+
+            if (form.getAttribute('data-lock-init-attempted') === '1') {
+                return;
+            }
+
+            form.setAttribute('data-lock-init-attempted', '1');
+            setSaveButtonDisabled(true);
+
+            var lockUrl = form.getAttribute('data-lock-init-url');
+            if (!lockUrl) {
+                setSaveButtonDisabled(false);
+                return;
+            }
+
+            var contentId = form.getAttribute('data-content-id') || '';
+            var lockStoreKey = contentId ? ('integrated-content-lock:' + contentId) : '';
+            var knownLock = '';
+
+            if (lockStoreKey) {
+                try {
+                    knownLock = window.sessionStorage.getItem(lockStoreKey) || '';
+                } catch (e) {
+                    knownLock = '';
+                }
+            }
+
+            var requestBody = new URLSearchParams();
+            if (LOCK_CSRF_TOKEN) {
+                requestBody.set('_token', LOCK_CSRF_TOKEN);
+            }
+            if (knownLock) {
+                requestBody.set('known_lock', knownLock);
+            }
+
+            postLockRequest(lockUrl, requestBody.toString(), false)
+                .then(function (response) {
+                    return response.json().catch(function () {
+                        return {};
+                    }).then(function (payload) {
+                        return {
+                            status: response.status,
+                            payload: payload,
+                        };
+                    });
+                })
+                .then(function (result) {
+                    var lockId = result && result.payload ? result.payload.lock : null;
+                    if (result.status === 200 && lockId) {
+                        applyAcquiredLock(form, lockId, lockStoreKey);
+                        return;
+                    }
+
+                    form.setAttribute('data-content-locked', '1');
+                    setLockOverlay(form, (result && result.payload && result.payload.message) || '');
+                    setSaveButtonDisabled(true);
+                })
+                .catch(function () {
+                    form.setAttribute('data-content-locked', '1');
+                    setLockOverlay(form, LOCK_ACQUIRE_FAILED_MESSAGE);
+                    setSaveButtonDisabled(true);
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', initLockOnLoad);
+        document.addEventListener('turbo:load', initLockOnLoad);
+        document.addEventListener('turbo:render', initLockOnLoad);
+        document.addEventListener('turbo:frame-load', initLockOnLoad);
+        document.addEventListener('turbo:frame-render', initLockOnLoad);
+    })();
+</script>
 {% if content is defined %}
     <script>
         usedByUrl = '{{ path('integrated_content_content_used_by', {'id': content.id, '_format': 'json'}) }}';

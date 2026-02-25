@@ -26,7 +26,7 @@ class BulkActionWorkflowStateType extends AbstractType
             'state',
             ChoiceType::class,
             [
-                'required' => true,
+                'required' => false,
                 'label' => false,
                 'choices' => $options['state_choices'],
                 'placeholder' => 'Select status',

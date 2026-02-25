@@ -7856,6 +7856,14 @@ document.addEventListener('turbo:before-cache', function () {
 $('.svg-img').each(function () {
   $(this).attr('src', $(this).attr('data-png-src'));
 });
+function destroySelect2Within(root) {
+  if (!$.fn || typeof $.fn.select2 !== 'function') {
+    return;
+  }
+  $(root).find('.basic-multiple.select2-hidden-accessible, select.select2.select2-hidden-accessible').each(function () {
+    $(this).select2('destroy');
+  });
+}
 function initCommonUi() {
   resetSubmitButtons(document);
   //Placeholders Fix
@@ -7886,9 +7894,7 @@ function initCommonUi() {
   function initVisibleSelect2() {
     $('.basic-multiple, select.select2').each(function () {
       var $el = $(this);
-      if ($el.is(':visible')) {
-        initSelect2ForElement($el);
-      }
+      initSelect2ForElement($el);
     });
   }
   initVisibleSelect2();
@@ -7901,7 +7907,19 @@ function initCommonUi() {
 }
 $(document).ready(initCommonUi);
 document.addEventListener('turbo:load', initCommonUi);
+document.addEventListener('turbo:render', initCommonUi);
+document.addEventListener('turbo:frame-load', initCommonUi);
+document.addEventListener('turbo:frame-render', initCommonUi);
+document.addEventListener('turbo:before-frame-render', function (event) {
+  var root = event && event.target ? event.target : null;
+  if (!root) {
+    return;
+  }
+  destroySelect2Within(root);
+  resetSubmitButtons(root);
+});
 document.addEventListener('turbo:before-cache', function () {
+  destroySelect2Within(document);
   resetSubmitButtons(document);
 });
 function resetSubmitButtons(root) {

@@ -1,7 +1,11 @@
-(() => {
-const primaryChannel = document.querySelector('select.primary-channel');
+function initPrimaryChannelSelection(event) {
+    const root = event && event.target ? event.target : document;
+    const primaryChannel = root.querySelector('select.primary-channel') || document.querySelector('select.primary-channel');
 
-if (primaryChannel) {
+    if (!primaryChannel) {
+        return;
+    }
+
     const inputElements = document.querySelectorAll('.brands input.brand-channel-choice[data-can-be-primary="yes"]');
     const showHideMakePrimary = function(input) {
         if (!input.makePrimary) {
@@ -24,24 +28,40 @@ if (primaryChannel) {
         if (!channelItem) {
             return;
         }
-        const makePrimary = document.createElement('a');
-        makePrimary.href = '#';
-        makePrimary.title = 'Make primary';
-        makePrimary.innerHTML = '<i class="iconoir-medal-1st"></i>';
-        makePrimary.className = 'make-primary';
-        channelItem.appendChild(makePrimary);
+
+        let makePrimary = channelItem.querySelector('.make-primary');
+        if (!makePrimary) {
+            makePrimary = document.createElement('a');
+            makePrimary.href = '#';
+            makePrimary.title = 'Make primary';
+            makePrimary.innerHTML = '<i class="iconoir-medal-1st"></i>';
+            makePrimary.className = 'make-primary';
+            channelItem.appendChild(makePrimary);
+        }
+
         input.makePrimary = makePrimary;
-        makePrimary.addEventListener('click', function(ev) {
-            primaryChannel.value = input.value;
-            clearPrimaryClass(); // Clear any previous primary-channel class
-            channelItem.classList.add('primary-channel'); // Add the class to the current primary channel's li
-            updatePrimarySelectors();
-            ev.preventDefault();
-        });
-        input.addEventListener('change', () => showHideMakePrimary(input));
+
+        if (makePrimary.dataset.boundMakePrimary !== 'true') {
+            makePrimary.addEventListener('click', function(ev) {
+                primaryChannel.value = input.value;
+                clearPrimaryClass();
+                channelItem.classList.add('primary-channel');
+                updatePrimarySelectors();
+                ev.preventDefault();
+            });
+            makePrimary.dataset.boundMakePrimary = 'true';
+        }
+
+        if (input.dataset.boundMakePrimaryChange !== 'true') {
+            input.addEventListener('change', () => showHideMakePrimary(input));
+            input.dataset.boundMakePrimaryChange = 'true';
+        }
     });
+
     updatePrimarySelectors();
-    if(primaryChannel.value) {
+    clearPrimaryClass();
+
+    if (primaryChannel.value) {
         const primaryInput = document.querySelector(
             'input.brand-channel-choice[data-can-be-primary="yes"][value="'+primaryChannel.value+'"]'
         );
@@ -66,4 +86,9 @@ if (primaryChannel) {
         }
     }
 }
-})();
+
+document.addEventListener('DOMContentLoaded', initPrimaryChannelSelection);
+document.addEventListener('turbo:load', initPrimaryChannelSelection);
+document.addEventListener('turbo:render', initPrimaryChannelSelection);
+document.addEventListener('turbo:frame-load', initPrimaryChannelSelection);
+document.addEventListener('turbo:frame-render', initPrimaryChannelSelection);

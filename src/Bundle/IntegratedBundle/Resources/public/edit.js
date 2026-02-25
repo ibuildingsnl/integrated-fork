@@ -13324,10 +13324,17 @@ function initializePage() {
     document.body.dataset.boundOkDateUpdate = 'true';
   }
 }
+function runInitializePageSafely() {
+  try {
+    initializePage();
+  } catch (error) {
+    console.error('Failed to initialize content editor interactions', error);
+  }
+}
 function scheduleInitializePage() {
-  initializePage();
-  window.requestAnimationFrame(initializePage);
-  window.setTimeout(initializePage, 120);
+  runInitializePageSafely();
+  window.requestAnimationFrame(runInitializePageSafely);
+  window.setTimeout(runInitializePageSafely, 120);
 }
 function prepDateTimeFields() {
   var dateSelections = document.querySelectorAll('.tailwind-datetime');
@@ -13479,11 +13486,16 @@ function updatePublicationsAndChannels() {
     if (pubStatus === 'success') return;
     var publicationSettingsContainer = document.querySelector('#integrated_content_publications');
     var publicationListContainer = document.querySelector('.aside-item-wrapper.publications .aside-item-list-container .publication-list');
+    if (!publicationSettingsContainer || !publicationListContainer) return;
     var publicationChannel = pubSettings.getAttribute('data-publication-channel');
     var checkbox = document.querySelector("#integrated_content_brands [data-channel-selector=\"".concat(publicationChannel, "\"]"));
     if (!checkbox) return;
     var brandChannel = checkbox.closest('.brand-channels');
-    var brandInput = brandChannel.closest('.brand-container').querySelector('input.brand-choice');
+    if (!brandChannel) return;
+    var brandContainer = brandChannel.closest('.brand-container');
+    if (!brandContainer) return;
+    var brandInput = brandContainer.querySelector('input.brand-choice');
+    if (!brandInput) return;
     if (!brandInput.checked) return;
     var checkedChannels = Array.from(brandChannel.querySelectorAll('.brand-channels [type="checkbox"]:checked')).map(function (el) {
       return el.getAttribute('data-channel-selector');
@@ -13492,10 +13504,14 @@ function updatePublicationsAndChannels() {
     var dateInput, timeInput;
     var fallbackDateInput = document.querySelector('#integrated_content_publishTime input[type="date"]');
     var fallbackTimeInput = document.querySelector('#integrated_content_publishTime input[type="time"]');
+    if (!fallbackDateInput || !fallbackTimeInput) return;
     var pubTimeInput, pubDateInput;
     if (pubSettings) {
-      pubDateInput = pubSettings.querySelector('input[type="date"]').value || fallbackDateInput.value;
-      pubTimeInput = pubSettings.querySelector('input[type="time"]').value || fallbackTimeInput.value;
+      var publicationDateInput = pubSettings.querySelector('input[type="date"]');
+      var publicationTimeInput = pubSettings.querySelector('input[type="time"]');
+      if (!publicationDateInput || !publicationTimeInput) return;
+      pubDateInput = publicationDateInput.value || fallbackDateInput.value;
+      pubTimeInput = publicationTimeInput.value || fallbackTimeInput.value;
     }
     updatePublication(pubDateInput, pubTimeInput, publicationChannel, publicationListContainer);
     var websiteChannel = checkedChannels.find(function (channel) {
@@ -13503,8 +13519,12 @@ function updatePublicationsAndChannels() {
     });
     if (websiteChannel) {
       var websiteElement = document.querySelector("[data-publication-channel=\"".concat(websiteChannel, "\"][data-channel-type=\"Website\"]"));
-      dateInput = websiteElement.querySelector('input[type="date"]').value || fallbackDateInput.value;
-      timeInput = websiteElement.querySelector('input[type="time"]').value || fallbackTimeInput.value;
+      if (!websiteElement) return;
+      var websiteDateInput = websiteElement.querySelector('input[type="date"]');
+      var websiteTimeInput = websiteElement.querySelector('input[type="time"]');
+      if (!websiteDateInput || !websiteTimeInput) return;
+      dateInput = websiteDateInput.value || fallbackDateInput.value;
+      timeInput = websiteTimeInput.value || fallbackTimeInput.value;
     } else {
       dateInput = fallbackDateInput.value;
       timeInput = fallbackTimeInput.value;
@@ -13516,9 +13536,14 @@ function updatePublicationsAndChannels() {
       if (!channelElement) return;
       var pubStatus = channelElement.getAttribute('data-publication-status');
       if (pubStatus === 'success') return;
-      var channelDateInput = channelElement.querySelector('input[type="date"]').value;
-      var channelTimeInput = channelElement.querySelector('input[type="time"]').value;
-      var channelCheckboxParent = document.querySelector("#integrated_content_brands [data-channel-selector=\"".concat(channel, "\"]")).closest('.checkbox-container');
+      var channelDateField = channelElement.querySelector('input[type="date"]');
+      var channelTimeField = channelElement.querySelector('input[type="time"]');
+      if (!channelDateField || !channelTimeField) return;
+      var channelDateInput = channelDateField.value;
+      var channelTimeInput = channelTimeField.value;
+      var channelCheckbox = document.querySelector("#integrated_content_brands [data-channel-selector=\"".concat(channel, "\"]"));
+      if (!channelCheckbox) return;
+      var channelCheckboxParent = channelCheckbox.closest('.checkbox-container');
       if (!(channelDateInput && channelTimeInput)) return;
       var channelDateTime = new Date("".concat(channelDateInput, "T").concat(channelTimeInput));
       var dateTextElement = channelElement.querySelector('.startDate .date-text');
@@ -13533,6 +13558,7 @@ function updatePublicationsAndChannels() {
   });
 }
 function updatePublication(pubDateInput, pubTimeInput, publicationChannel, publicationListContainer) {
+  if (!pubDateInput || !pubTimeInput || !publicationListContainer) return;
   var formattedDate = pubDateInput.split('-').reverse().join('-');
   var selectedDateTime = new Date("".concat(pubDateInput, "T").concat(pubTimeInput));
   var now = new Date();
@@ -13553,7 +13579,9 @@ function updatePublication(pubDateInput, pubTimeInput, publicationChannel, publi
   sortPublications(publicationListContainer);
 }
 function updateChannelStyles(channelCheckboxParent, isDateValid, channelElement, dateTextElement) {
+  if (!channelCheckboxParent) return;
   var checkmark = channelCheckboxParent.querySelector('.checkmark');
+  if (!checkmark) return;
   if (isDateValid) {
     channelCheckboxParent.style.backgroundColor = '';
     channelCheckboxParent.style.color = '';
@@ -13599,29 +13627,35 @@ function initBrandChannelChoiceHandlers() {
         var channelName = checkbox.getAttribute('data-channel-name');
         var channelIcon = checkbox.getAttribute('data-channel-type-icon');
         var channelSelector = checkbox.getAttribute('data-channel-selector');
-        var channelSettings = document.querySelector("[data-publication-channel=\"".concat(channelSelector, "\"]"));
-        var pubStatus = channelSettings.getAttribute('data-publication-status');
-        if (pubStatus === 'success') return;
         var publicationListContainer = document.querySelector('.aside-item-wrapper.publications .aside-item-list-container .publication-list');
-        var dateInput, timeInput;
-        var fallbackDateInput = document.querySelector('#integrated_content_publishTime input[type="date"]');
-        var fallbackTimeInput = document.querySelector('#integrated_content_publishTime input[type="time"]');
-        if (channelSettings) {
-          dateInput = channelSettings.querySelector('input[type="date"]').value || fallbackDateInput.value;
-          timeInput = channelSettings.querySelector('input[type="time"]').value || fallbackTimeInput.value;
-        } else {
-          dateInput = fallbackDateInput.value;
-          timeInput = fallbackTimeInput.value;
-        }
-        if (checkbox.checked) {
-          var publicationItem = createPublicationItem(channelName, channelIcon, dateInput, timeInput, channelSelector);
-          publicationListContainer.appendChild(publicationItem);
-        } else {
+        if (!publicationListContainer) return;
+        if (!checkbox.checked) {
           var itemToRemove = publicationListContainer.querySelector("[data-channel=\"".concat(channelSelector, "\"]"));
           if (itemToRemove) {
             publicationListContainer.removeChild(itemToRemove);
           }
+          updatePublicationCount();
+          updatePublicationsAndChannels();
+          sortPublications(publicationListContainer);
+          var removePublicationItemEvent = new CustomEvent('updatePublicationItems');
+          window.dispatchEvent(removePublicationItemEvent);
+          return;
         }
+        var channelSettings = document.querySelector("[data-publication-channel=\"".concat(channelSelector, "\"]"));
+        if (!channelSettings) return;
+        var pubStatus = channelSettings.getAttribute('data-publication-status');
+        if (pubStatus === 'success') return;
+        var dateInput, timeInput;
+        var fallbackDateInput = document.querySelector('#integrated_content_publishTime input[type="date"]');
+        var fallbackTimeInput = document.querySelector('#integrated_content_publishTime input[type="time"]');
+        if (!fallbackDateInput || !fallbackTimeInput) return;
+        var channelDateInput = channelSettings.querySelector('input[type="date"]');
+        var channelTimeInput = channelSettings.querySelector('input[type="time"]');
+        if (!channelDateInput || !channelTimeInput) return;
+        dateInput = channelDateInput.value || fallbackDateInput.value;
+        timeInput = channelTimeInput.value || fallbackTimeInput.value;
+        var publicationItem = createPublicationItem(channelName, channelIcon, dateInput, timeInput, channelSelector);
+        publicationListContainer.appendChild(publicationItem);
         updatePublicationCount();
         updatePublicationsAndChannels();
         sortPublications(publicationListContainer);
@@ -13738,8 +13772,10 @@ function setPublicationDateTimes() {
 }
 function ensurePublicationExists(channelId) {
   var publicationListContainer = document.querySelector('.aside-item-wrapper.publications .aside-item-list-container .publication-list');
+  if (!publicationListContainer) return;
   if (!publicationListContainer.querySelector("a[data-channel=\"".concat(channelId, "\"]"))) {
     var checkbox = document.querySelector("[data-channel-selector=\"".concat(channelId, "\"]"));
+    if (!checkbox) return;
     var channelName = checkbox.getAttribute('data-channel-name');
     var channelIcon = checkbox.getAttribute('data-channel-type-icon');
     var channelSelector = checkbox.getAttribute('data-channel-selector');
@@ -13747,9 +13783,13 @@ function ensurePublicationExists(channelId) {
     var dateInput, timeInput;
     var fallbackDateInput = document.querySelector('#integrated_content_publishTime input[type="date"]');
     var fallbackTimeInput = document.querySelector('#integrated_content_publishTime input[type="time"]');
+    if (!fallbackDateInput || !fallbackTimeInput) return;
     if (channelSettings) {
-      dateInput = channelSettings.querySelector('input[type="date"]').value || fallbackDateInput.value;
-      timeInput = channelSettings.querySelector('input[type="time"]').value || fallbackTimeInput.value;
+      var channelDateInput = channelSettings.querySelector('input[type="date"]');
+      var channelTimeInput = channelSettings.querySelector('input[type="time"]');
+      if (!channelDateInput || !channelTimeInput) return;
+      dateInput = channelDateInput.value || fallbackDateInput.value;
+      timeInput = channelTimeInput.value || fallbackTimeInput.value;
     } else {
       dateInput = fallbackDateInput.value;
       timeInput = fallbackTimeInput.value;
@@ -14567,6 +14607,14 @@ $('button[data-dismiss="modal"]').on('click', function () {
 $('.svg-img').each(function () {
   $(this).attr('src', $(this).attr('data-png-src'));
 });
+function destroySelect2Within(root) {
+  if (!$.fn || typeof $.fn.select2 !== 'function') {
+    return;
+  }
+  $(root).find('.basic-multiple.select2-hidden-accessible, select.select2.select2-hidden-accessible').each(function () {
+    $(this).select2('destroy');
+  });
+}
 function initCommonUi() {
   resetSubmitButtons(document);
   //Placeholders Fix
@@ -14597,9 +14645,7 @@ function initCommonUi() {
   function initVisibleSelect2() {
     $('.basic-multiple, select.select2').each(function () {
       var $el = $(this);
-      if ($el.is(':visible')) {
-        initSelect2ForElement($el);
-      }
+      initSelect2ForElement($el);
     });
   }
   initVisibleSelect2();
@@ -14612,7 +14658,19 @@ function initCommonUi() {
 }
 $(document).ready(initCommonUi);
 document.addEventListener('turbo:load', initCommonUi);
+document.addEventListener('turbo:render', initCommonUi);
+document.addEventListener('turbo:frame-load', initCommonUi);
+document.addEventListener('turbo:frame-render', initCommonUi);
+document.addEventListener('turbo:before-frame-render', function (event) {
+  var root = event && event.target ? event.target : null;
+  if (!root) {
+    return;
+  }
+  destroySelect2Within(root);
+  resetSubmitButtons(root);
+});
 document.addEventListener('turbo:before-cache', function () {
+  destroySelect2Within(document);
   resetSubmitButtons(document);
 });
 function resetSubmitButtons(root) {
@@ -16050,10 +16108,25 @@ function initTinyMceEditors() {
   var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
   $('.integrated_tinymce', root).each(function (key, elem) {
     var element = $(elem);
+    var existingEditor = elem.id ? tinymce__WEBPACK_IMPORTED_MODULE_0___default().get(elem.id) : null;
+    if (existingEditor) {
+      var targetElement = existingEditor.targetElm || null;
+      if (targetElement && targetElement !== elem) {
+        existingEditor.remove();
+        existingEditor = null;
+      } else if (targetElement && !targetElement.isConnected) {
+        existingEditor.remove();
+        existingEditor = null;
+      }
+    }
+    var hasEditorInstance = Boolean(existingEditor || elem.id && tinymce__WEBPACK_IMPORTED_MODULE_0___default().get(elem.id));
+    if (element.data('tinymce-initialized') && !hasEditorInstance) {
+      element.removeData('tinymce-initialized');
+    }
     if (element.data('tinymce-initialized')) {
       return;
     }
-    if (elem.id && tinymce__WEBPACK_IMPORTED_MODULE_0___default().get(elem.id)) {
+    if (hasEditorInstance) {
       element.data('tinymce-initialized', true);
       return;
     }
@@ -16250,6 +16323,34 @@ function destroyTinyMceEditors() {
   if (typeof (tinymce__WEBPACK_IMPORTED_MODULE_0___default()) !== 'undefined') {
     tinymce__WEBPACK_IMPORTED_MODULE_0___default().remove();
   }
+  $('.integrated_tinymce').each(function (key, elem) {
+    $(elem).removeData('tinymce-initialized');
+  });
+}
+function destroyTinyMceEditorsWithin() {
+  var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+  if (typeof (tinymce__WEBPACK_IMPORTED_MODULE_0___default()) === 'undefined') {
+    return;
+  }
+  $('.integrated_tinymce', root).each(function (key, elem) {
+    if (elem.id) {
+      var editor = tinymce__WEBPACK_IMPORTED_MODULE_0___default().get(elem.id);
+      if (editor) {
+        editor.remove();
+      }
+    }
+    $(elem).removeData('tinymce-initialized');
+  });
+  if (Array.isArray((tinymce__WEBPACK_IMPORTED_MODULE_0___default().editors))) {
+    tinymce__WEBPACK_IMPORTED_MODULE_0___default().editors.slice().forEach(function (editor) {
+      if (!editor || !editor.targetElm) {
+        return;
+      }
+      if (!editor.targetElm.isConnected) {
+        editor.remove();
+      }
+    });
+  }
 }
 function initTinyMceFromDom() {
   initTinyMceEditors(document);
@@ -16272,6 +16373,13 @@ function scheduleTinyMceInitFromEvent(event) {
   var root = event && event.target ? event.target : document;
   scheduleTinyMceInit(root);
 }
+function cleanupTinyMceBeforeFrameRender(event) {
+  var root = event && event.target ? event.target : null;
+  if (!root) {
+    return;
+  }
+  destroyTinyMceEditorsWithin(root);
+}
 document.addEventListener('DOMContentLoaded', function () {
   return scheduleTinyMceInit(document);
 });
@@ -16284,6 +16392,7 @@ document.addEventListener('turbo:load', function () {
 document.addEventListener('turbo:render', function () {
   return scheduleTinyMceInit(document);
 });
+document.addEventListener('turbo:before-frame-render', cleanupTinyMceBeforeFrameRender);
 document.addEventListener('turbo:frame-load', scheduleTinyMceInitFromEvent);
 document.addEventListener('turbo:frame-render', scheduleTinyMceInitFromEvent);
 document.addEventListener('turbo:before-cache', destroyTinyMceEditors);

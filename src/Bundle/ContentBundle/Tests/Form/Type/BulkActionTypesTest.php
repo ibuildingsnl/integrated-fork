@@ -127,6 +127,20 @@ class BulkActionTypesTest extends TypeTestCase
         self::assertSame('state-published', $form->getData()->getState());
     }
 
+    public function testWorkflowStateTypeIsNotRequiredAtHtmlLevel(): void
+    {
+        $form = $this->factory->create(BulkActionWorkflowStateType::class, null, [
+            'workflow_state_handler' => WorkflowStateHandler::class,
+            'state_choices' => [
+                'Draft' => 'state-draft',
+                'Published' => 'state-published',
+            ],
+            'label' => 'Workflow status',
+        ]);
+
+        self::assertFalse($form->get('state')->getConfig()->getOption('required'));
+    }
+
     public function testWorkflowAssignTypeMapsSubmittedDataToAction(): void
     {
         $form = $this->factory->create(BulkActionWorkflowAssignType::class, null, [

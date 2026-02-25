@@ -43,7 +43,7 @@
                 </th>
             </tr>
             </thead>
-            <tbody id="post-list" data-turbo-prefetch="false">
+            <tbody id="post-list">
             {% for content in pager %}
 
                 {% set document = integrated_document(content) %}
@@ -96,6 +96,7 @@
                             <a class="color-red"
                                href="{{ path('integrated_content_content_delete', {'id': content.type_id}) }}"
                                data-turbo-frame="_top"
+                               data-turbo-prefetch="false"
                                tabindex="-1" role="option">
                                 {% trans %}Delete{% endtrans %}
                             </a>
