@@ -17,6 +17,8 @@
 
         <service id="Integrated\Bundle\WebsiteBundle\Controller\PageController">
             <argument type="service" id="integrated_theme.templating.theme_manager" />
+            <argument type="service" id="integrated_website.website_toolbar" />
+            <argument type="service" id="uri_signer" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />

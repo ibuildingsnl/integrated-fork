@@ -29,24 +29,31 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\UriSigner;
 
 class PageController extends AbstractController
 {
+    private const PREVIEW_LINK_TTL_SECONDS = 86400;
+    private const PREVIEW_EXPIRES_PARAM = 'preview_expires';
+
     private DocumentManager $documentManager;
     private PaginatorInterface $paginator;
     private PageCopyService $pageCopyService;
     private RouteCache $routeCache;
+    private UriSigner $uriSigner;
 
     public function __construct(
         DocumentManager $documentManager,
         PaginatorInterface $paginator,
         PageCopyService $pageCopyService,
         RouteCache $routeCache,
+        UriSigner $uriSigner,
     ) {
         $this->documentManager = $documentManager;
         $this->paginator = $paginator;
         $this->pageCopyService = $pageCopyService;
         $this->routeCache = $routeCache;
+        $this->uriSigner = $uriSigner;
     }
 
     public function index(Request $request): Response
@@ -55,22 +62,36 @@ class PageController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
+        $requestFilterData = $request->query->all('page_filter');
+        if (\is_array($requestFilterData)) {
+            $request->query->set('page_filter', $this->normalizePageFilterData($requestFilterData));
+        }
+
         $filterForm = $this->createForm(
             PageFilterType::class,
-            $request->getSession()->get('page_filterform_data', []),
-            ['method' => 'GET']
+            $this->normalizePageFilterData($request->getSession()->get('page_filterform_data', [])),
+            [
+                'method' => 'GET',
+                'action' => $this->generateUrl('integrated_page_page_index'),
+            ]
         );
         $filterForm->handleRequest($request);
 
-        switch ($filterForm->get('pagetype')->getData()) {
-            case 'page':
-                $class = Page::class;
-                break;
-            case 'contenttype':
-                $class = ContentTypePage::class;
-                break;
-            default:
-                $class = AbstractPage::class;
+        $pageTypes = $filterForm->get('pagetype')->getData();
+        if (!\is_array($pageTypes)) {
+            $pageTypes = \is_string($pageTypes) && $pageTypes !== '' ? [$pageTypes] : [];
+        }
+        $pageTypes = \array_values(\array_unique(\array_filter(
+            $pageTypes,
+            static fn ($value): bool => \in_array($value, ['page', 'contenttype'], true)
+        )));
+
+        if ($pageTypes === ['page']) {
+            $class = Page::class;
+        } elseif ($pageTypes === ['contenttype']) {
+            $class = ContentTypePage::class;
+        } else {
+            $class = AbstractPage::class;
         }
 
         $builder = $this->documentManager->createQueryBuilder($class);
@@ -78,12 +99,44 @@ class PageController extends AbstractController
         $this->displayPathErrors($builder);
 
         if ($query = $filterForm->get('q')->getData()) {
-            $builder->addOr($builder->expr()->field('title')->equals(new Regex('/'.$query.'/i')));
-            $builder->addOr($builder->expr()->field('path')->equals(new Regex('/'.$query.'/i')));
+            $escapedQuery = preg_quote((string) $query, '/');
+            $builder->addOr($builder->expr()->field('title')->equals(new Regex($escapedQuery, 'i')));
+            $builder->addOr($builder->expr()->field('path')->equals(new Regex($escapedQuery, 'i')));
         }
 
-        if ($channel = $filterForm->get('channel')->getData()) {
-            $builder->field('channel.$id')->equals($channel);
+        $channels = $filterForm->get('channel')->getData();
+        if (\is_array($channels)) {
+            $channels = \array_values(\array_filter($channels, static fn ($channel): bool => \is_string($channel) && $channel !== ''));
+            if ($channels !== []) {
+                $builder->field('channel.$id')->in($channels);
+            }
+        } elseif (\is_string($channels) && $channels !== '') {
+            $builder->field('channel.$id')->equals($channels);
+        }
+
+        $statuses = $filterForm->get('status')->getData();
+        if (!\is_array($statuses)) {
+            $statuses = \is_string($statuses) && $statuses !== '' ? [$statuses] : [];
+        }
+        $statuses = \array_values(\array_unique(\array_filter(
+            $statuses,
+            static fn ($value): bool => \in_array($value, ['published', 'draft'], true)
+        )));
+
+        $filterPublished = \in_array('published', $statuses, true);
+        $filterDraft = \in_array('draft', $statuses, true);
+
+        if ($filterPublished && !$filterDraft) {
+            if ($class === Page::class) {
+                $builder->field('disabled')->equals(false);
+            } elseif ($class === AbstractPage::class) {
+                // ContentTypePage has no "disabled" field and is always published.
+                $builder->field('disabled')->notEqual(true);
+            }
+        } elseif ($filterDraft && !$filterPublished) {
+            if ($class === Page::class || $class === AbstractPage::class || $class === ContentTypePage::class) {
+                $builder->field('disabled')->equals(true);
+            }
         }
 
         $builder->sort('path', 1);
@@ -103,9 +156,38 @@ class PageController extends AbstractController
             'pages' => $pagination,
             'filterForm' => $filterForm,
             'lastPage' => $this->getLastEditPage($request->getSession()),
+            'previewLinks' => $this->buildPreviewLinks($pagination, $request),
         ]);
 
         return $response;
+    }
+
+    private function normalizePageFilterData(mixed $data): array
+    {
+        if (!\is_array($data)) {
+            return [];
+        }
+
+        foreach (['pagetype', 'status', 'channel'] as $field) {
+            $data[$field] = $this->normalizeMultiSelectFilterValue($data[$field] ?? null);
+        }
+
+        return $data;
+    }
+
+    private function normalizeMultiSelectFilterValue(mixed $value): array
+    {
+        if (\is_array($value)) {
+            $values = $value;
+        } elseif (\is_scalar($value) && (string) $value !== '') {
+            $values = [(string) $value];
+        } else {
+            $values = [];
+        }
+
+        $values = \array_values(\array_filter($values, static fn ($item): bool => \is_scalar($item) && (string) $item !== ''));
+
+        return \array_map(static fn ($item): string => (string) $item, $values);
     }
 
     public function new(Request $request): Response
@@ -317,5 +399,40 @@ class PageController extends AbstractController
         }
 
         return null;
+    }
+
+    private function buildPreviewLinks(iterable $pages, Request $request): array
+    {
+        $links = [];
+        $expires = time() + self::PREVIEW_LINK_TTL_SECONDS;
+
+        foreach ($pages as $page) {
+            if (!$page instanceof Page || !$page->isDisabled()) {
+                continue;
+            }
+
+            $id = (string) $page->getId();
+            if ($id === '') {
+                continue;
+            }
+
+            $url = $this->buildAbsolutePageUrl($page, $request, [
+                self::PREVIEW_EXPIRES_PARAM => $expires,
+            ]);
+
+            $links[$id] = $this->uriSigner->sign($url);
+        }
+
+        return $links;
+    }
+
+    private function buildAbsolutePageUrl(Page $page, Request $request, array $query = []): string
+    {
+        $host = (string) ($page->getDomain() ?: $request->getHost());
+        $scheme = $request->getScheme();
+        $path = (string) $page->getPath();
+        $queryString = http_build_query($query, '', '&', \PHP_QUERY_RFC3986);
+
+        return $scheme.'://'.$host.$path.($queryString !== '' ? '?'.$queryString : '');
     }
 }

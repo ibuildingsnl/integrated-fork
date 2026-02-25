@@ -98,6 +98,10 @@
                 <source>Create a new page on</source>
                 <target>Maak een nieuwe pagina aan voor</target>
             </trans-unit>
+            <trans-unit id="25">
+                <source>Preview link (24h)</source>
+                <target>Previewlink (24u)</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -14,9 +14,9 @@ namespace Integrated\Bundle\PageBundle\Form\Type;
 use Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PageFilterType extends AbstractType
 {
@@ -30,21 +30,39 @@ class PageFilterType extends AbstractType
         $builder->add('pagetype', ChoiceType::class, [
             'label' => 'Page type',
             'choices' => [
-                'Select a page type' => '',
                 'Static pages' => 'page',
                 'Content type pages' => 'contenttype',
             ],
+            'multiple' => true,
+            'expanded' => true,
             'required' => false,
         ]);
 
         $builder->add('channel', ChannelChoiceType::class, [
             'label' => 'Channel',
             'required' => false,
+            'multiple' => true,
+            'expanded' => true,
             'filter' => ['type.$id' => 'website'],
         ]);
 
-        $builder->add('submit', SubmitType::class, [
-            'label' => 'Filter',
+        $builder->add('status', ChoiceType::class, [
+            'label' => 'Status',
+            'choices' => [
+                'Published' => 'published',
+                'Draft' => 'draft',
+            ],
+            'multiple' => true,
+            'expanded' => true,
+            'required' => false,
+        ]);
+
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'csrf_protection' => false,
         ]);
     }
 }

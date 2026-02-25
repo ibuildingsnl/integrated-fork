@@ -74,6 +74,7 @@
                         <th>{% trans %}Title{% endtrans %}</th>
                         <th>{% trans %}Channel{% endtrans %}</th>
                         <th>{% trans %}Layout{% endtrans %}</th>
+                        <th>{% trans %}Status{% endtrans %}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -101,6 +102,12 @@
                                        title="{% trans %}Edit page properties{% endtrans %}">
                                         {% trans %}Edit page properties{% endtrans %}
                                     </a>
+                                    {% if page.type == 'page' and page.disabled and previewLinks[page.id]|default('') %}
+                                        | <a href="{{ previewLinks[page.id] }}" target="_blank" rel="noopener noreferrer"
+                                             title="{% trans %}Preview link (24h){% endtrans %}">
+                                        {% trans %}Preview link (24h){% endtrans %}
+                                    </a>
+                                    {% endif %}
                                     {% if not page.locked %}
                                         | <a href="{{ path('integrated_page_page_delete', { 'id': page.id }) }}"
                                              class="color-red" title="{% trans %}Delete{% endtrans %}">
@@ -118,12 +125,25 @@
                             <td>
                                 {{ page.layout|split('/')|last|replace({'.html.twig': ''}) }}
                             </td>
+                            <td>
+                                {% if page.type == 'page' %}
+                                    {% if page.disabled %}
+                                        <span class="label label-default">{% trans %}Draft{% endtrans %}</span>
+                                    {% else %}
+                                        <span class="label label-primary">{% trans %}Published{% endtrans %}</span>
+                                    {% endif %}
+                                {% elseif page.type == 'content_type_page' %}
+                                    <span class="label label-primary">{% trans %}Published{% endtrans %}</span>
+                                {% else %}
+                                    <span class="text-muted">—</span>
+                                {% endif %}
+                            </td>
                         </tr>
 
                     {% else %}
 
                         <tr>
-                            <td colspan="4">
+                            <td colspan="5">
                                 {% trans %}No pages added{% endtrans %}
                             </td>
                         </tr>
@@ -152,24 +172,24 @@
                         <div class="aside-item-holder">
                             <div class="input-group input-group-search">
                                 {{ form_widget(filterForm.q) }}
-                                <span class="input-group-btn">
-                                <button type="submit" class="">
-                                    <i class="iconoir-search"></i>
-                                </button>
-                            </span>
                             </div>
                         </div>
                     {% endif %}
                     {% if filterForm.pagetype is defined %}
                         <div
                             class="aside-item-holder{% if filterForm.pagetype.vars.choices|length == 0 %} hidden{% endif %}">
-                            {{ form_row(filterForm.pagetype, {'style':'sidebar','state':'show search'}) }}
+                            {{ form_row(filterForm.pagetype, {'style':'sidebar', 'state':'show'}) }}
                         </div>
                     {% endif %}
                     {% if filterForm.channel is defined %}
                         <div
                             class="aside-item-holder{% if filterForm.channel.vars.choices|length == 0 %} hidden{% endif %}">
-                            {{ form_row(filterForm.channel, {'style':'sidebar', 'icon':'network-reverse', 'state':'show search'}) }}
+                            {{ form_row(filterForm.channel, {'style':'sidebar', 'icon':'network-reverse', 'state':'show'}) }}
+                        </div>
+                    {% endif %}
+                    {% if filterForm.status is defined %}
+                        <div class="aside-item-holder">
+                            {{ form_row(filterForm.status, {'style':'sidebar', 'state':'show'}) }}
                         </div>
                     {% endif %}
                     <div class="aside-item-holder">
@@ -197,8 +217,36 @@
         }
 
         document.querySelectorAll('form[name="page_filter"]').forEach(function (form) {
+            var submitForm = function () {
+                form.submit();
+            };
+
             form.addEventListener('change', function () {
-                form.requestSubmit ? form.requestSubmit() : form.submit();
+                submitForm();
+            });
+
+            var searchInput = form.querySelector('input[name="page_filter[q]"]');
+            if (!searchInput) {
+                return;
+            }
+
+            var debounceTimer = null;
+
+            searchInput.addEventListener('input', function () {
+                window.clearTimeout(debounceTimer);
+                debounceTimer = window.setTimeout(function () {
+                    submitForm();
+                }, 350);
+            });
+
+            searchInput.addEventListener('keydown', function (event) {
+                if (event.key !== 'Enter') {
+                    return;
+                }
+
+                event.preventDefault();
+                window.clearTimeout(debounceTimer);
+                submitForm();
             });
         });
     });

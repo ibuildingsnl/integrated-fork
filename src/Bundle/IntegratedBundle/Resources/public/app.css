@@ -7406,8 +7406,10 @@ body {
   color: rgba(0, 0, 0, 0.5);
 }
 
-.section-white {
+.section-white, .editor-wrapped {
   background: #ffffff;
+  border: 1px solid #dbe4ec;
+  box-shadow: 0 2px 10px rgba(31, 52, 73, 0.05);
 }
 
 .section-gray {
@@ -7427,6 +7429,11 @@ body {
   border-radius: 1rem;
 }
 
+.options-toolbar {
+  border: 1px solid #dbe4ec;
+  box-shadow: 0 2px 10px rgba(31, 52, 73, 0.05);
+}
+
 body[class*=edit] .content-wrapper,
 body[class*=new] .content-wrapper,
 body[class*=show] .content-wrapper,
@@ -7441,7 +7448,12 @@ body.integrated_content_page_copy .content-wrapper,
 body.integrated_page_page_copy .content-wrapper,
 body.integrated_block_inline_text_block_create .content-wrapper,
 body.integrated_user_profile_index .content-wrapper,
+body.integrated_user_user_edit .content-wrapper,
 body.integrated_taxonomy_index .content-wrapper {
+  padding: 48px 0 0;
+}
+
+body[class*=integrated_import_template_wizard_] .content-wrapper {
   padding: 48px 0 0;
 }
 
@@ -12529,6 +12541,11 @@ pre#editor {
 
 .history-index-filters .form-control {
   min-width: 160px;
+}
+
+form#content-history-filter-form .form-control {
+  padding: 3px 1rem;
+  max-width: 200px;
 }
 
 .history-diff-add {

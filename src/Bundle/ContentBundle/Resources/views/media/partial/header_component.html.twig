@@ -45,7 +45,7 @@
         <span>{% trans %}Filter{% endtrans %}</span>
     </button>
 </div>
-<div class="options flex justify-between sm:mr-2">
+<div class="options options-toolbar flex justify-between sm:mr-2">
     <div class="left flex flex-wrap">
         <button class="button_enable_grid_view toggle_view grid active switcher mr-2"><i
                 class="iconoir-view-grid"></i></button>
@@ -136,7 +136,7 @@
 
     </div>
 </div>
-<div class="options flex flex-1">
+<div class="options options-toolbar flex flex-1">
     <form action="" class="media-search-form" method="get">
         <div class="form-group relative" style="width: 100%">
             {% set queryValue = app.request.query.get('q') %}

@@ -20,6 +20,7 @@
             <argument type="service" id="knp_paginator" />
             <argument type="service" id="Integrated\Bundle\PageBundle\Services\PageCopyService" />
             <argument type="service" id="integrated_page.services.route_cache" />
+            <argument type="service" id="uri_signer" />
         </service>
 
     </services>
