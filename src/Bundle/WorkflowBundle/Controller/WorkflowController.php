@@ -258,11 +258,31 @@ class WorkflowController extends AbstractController
             ],
         ];
 
+        $nextStates = [];
+        $currentStateId = (string) $state->getId();
+        $seenTransitions = [];
+        foreach ($state->getTransitions() as $transition) {
+            $transitionId = (string) $transition->getId();
+            if ('' === $transitionId || $transitionId === $currentStateId || isset($seenTransitions[$transitionId])) {
+                continue;
+            }
+
+            $seenTransitions[$transitionId] = true;
+            $nextStates[] = [
+                'id' => $transitionId,
+                'name' => $transition->getName(),
+            ];
+        }
+
         usort($users, function ($a, $b) {
             return $a['name'] > $b['name'];
         });
 
-        return new JsonResponse(['users' => $users, 'fields' => $fieldsCodes]);
+        return new JsonResponse([
+            'users' => $users,
+            'fields' => $fieldsCodes,
+            'next_states' => $nextStates,
+        ]);
     }
 
     private function createNewForm(): Form

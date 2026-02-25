@@ -68,7 +68,7 @@
                 <div class="history-meta">
                     <div class="history-meta-item">
                         <span class="history-meta-label">{% trans %}Date{% endtrans %}</span>
-                        <span class="history-meta-value">{{ contentHistory.date|format_date }}</span>
+                        <span class="history-meta-value">{{ contentHistory.date|format_datetime('medium', 'short') }}</span>
                     </div>
                     <div class="history-meta-item">
                         <span class="history-meta-label">{% trans %}Action{% endtrans %}</span>

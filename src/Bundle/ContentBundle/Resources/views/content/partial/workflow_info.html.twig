@@ -1,0 +1,18 @@
+{% set workflowStateId = '' %}
+{% set workflowStateName = '' %}
+{% if content is defined and content.extensions['integrated.extension.workflow']['state'] is defined %}
+    {% set workflowState = content.extensions['integrated.extension.workflow']['state'] %}
+    {% set workflowStateId = workflowState.id|default('') %}
+    {% set workflowStateName = workflowState.name|default('') %}
+{% endif %}
+
+<div
+    class="workflow-info"
+    id="content-workflow-section"
+    data-current-workflow-state-id="{{ workflowStateId }}"
+    data-current-workflow-state-name="{{ workflowStateName }}"
+>
+    {% if form.extension_workflow is defined %}
+        {{ form_row(form.extension_workflow, {style: 'inline', 'show_label': 'true'}) }}
+    {% endif %}
+</div>

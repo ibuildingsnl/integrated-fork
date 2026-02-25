@@ -174,14 +174,17 @@ class WorkflowStateListener implements EventSubscriberInterface
     protected function getChoices(State $state)
     {
         $choices = [];
+        $currentStateId = (string) $state->getId();
+        $seen = [];
 
         foreach ($state->getTransitions() as $transition) {
-            if ($state === $transition) {
-                // This should not happen as the transitions should not contain the current state
-                // it self but it is possible so check for it anyways
+            $transitionId = (string) $transition->getId();
 
+            if ('' === $transitionId || $transitionId === $currentStateId || isset($seen[$transitionId])) {
                 continue;
             }
+
+            $seen[$transitionId] = true;
             $choices[] = $transition;
         }
 

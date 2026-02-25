@@ -53,53 +53,8 @@
                                                 {{ form_row(form.publishTime, {style: 'inline'}) }}
                                             {% endif %}
                                         </div>
-                                        <div class="workflow-info">
-                                            {% if form.extension_workflow is defined %}
-                                                {{ form_row(form.extension_workflow, {style: 'inline', 'show_label': 'true'}) }}
-                                            {% endif %}
-                                        </div>
-                                        {% if content is defined and content.extensions['integrated.extension.workflow']['state'] is defined %}
-                                            {% set workflow = content.extensions['integrated.extension.workflow']['state'] %}
-                                        {% endif %}
-                                        <div class="status-options">
-                                            {% if workflow is defined and ('now'|date('U') > content.publishTime.startDate|date('U')) %}
-                                                <div class="status {{ workflow.name|lower }}"
-                                                     style="background-color:{{ workflow.color|alpha(15) }};color:{{ workflow.color }};">
-                                                    <i class="iconoir-{{ workflow.icon }}"></i> {{ workflow.name }}
-                                                </div>
-                                            {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate|date('U'))) %}
-                                                <div class="status planned">
-                                                    <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
-                                                </div>
-                                            {% else %}
-                                                {% if (content is defined and ((content.isPublished and content.getChannels|length > 0) or content.published == 'true')) %}
-                                                    <div class="status published">
-                                                        <i class="iconoir-check-circle"></i> {% trans %}Published{% endtrans %}
-                                                    </div>
-                                                {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate|date('U'))) %}
-                                                    <div class="status planned">
-                                                        <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
-                                                    </div>
-                                                {% else %}
-                                                    <div class="status draft">
-                                                        <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
-                                                    </div>
-                                                {% endif %}
-                                            {% endif %}
-                                            {% if content is defined %}
-                                                {% if locking is defined and locking.lock is defined and locking.lock is not null and locking.locked == false %}
-                                                    <a class="delete"
-                                                       href="{{ path('integrated_content_content_delete', {'id': content.id, 'lock': locking.lock.id}) }}">
-                                                        <i class="iconoir-trash"></i>
-                                                    </a>
-                                                {% else %}
-                                                    <a class="delete"
-                                                       href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
-                                                        <i class="iconoir-trash"></i>
-                                                    </a>
-                                                {% endif %}
-                                            {% endif %}
-                                        </div>
+                                        {{ include('@IntegratedContent/content/partial/workflow_info.html.twig') }}
+                                        {{ include('@IntegratedContent/content/partial/status_options.html.twig') }}
                                         <div class="mt-2">
                                             {% if form.disabled is defined %}
                                                 {{ form_row(form.disabled) }}
@@ -225,9 +180,11 @@
                             <div class="aside-item-wrapper" id="used-by"></div>
 
                             {% block content_history %}
-                                {% if showContentHistory %}
-                                    {{ render(controller('Integrated\\Bundle\\ContentHistoryBundle\\Controller\\ContentHistoryController::history', { 'content': content })) }}
-                                {% endif %}
+                                <div id="content-history-section">
+                                    {% if showContentHistory %}
+                                        {{ render(controller('Integrated\\Bundle\\ContentHistoryBundle\\Controller\\ContentHistoryController::history', { 'content': content })) }}
+                                    {% endif %}
+                                </div>
                             {% endblock %}
 
                             {% block content_meta %}
@@ -785,6 +742,277 @@
         document.addEventListener('turbo:render', initLockOnLoad);
         document.addEventListener('turbo:frame-load', initLockOnLoad);
         document.addEventListener('turbo:frame-render', initLockOnLoad);
+    })();
+
+    (function initWorkflowStateAfterTurboStream() {
+        function createOrFindWorkflowButton(parent, className, text) {
+            var button = parent.querySelector('.' + className);
+            if (!button) {
+                button = document.createElement('span');
+                button.className = className;
+                button.textContent = text;
+                parent.appendChild(button);
+            }
+
+            return button;
+        }
+
+        function setWorkflowDateTimeToNow(dateSelection) {
+            var now = new Date();
+            var dateInput = dateSelection.querySelector('input[type="date"]');
+            var timeInput = dateSelection.querySelector('input[type="time"]');
+
+            if (dateInput && timeInput) {
+                dateInput.value = now.toISOString().split('T')[0];
+                timeInput.value = now.toTimeString().split(' ')[0].substring(0, 5);
+            }
+        }
+
+        function clearWorkflowDateTimeFields(dateSelection) {
+            var dateInput = dateSelection.querySelector('input[type="date"]');
+            var timeInput = dateSelection.querySelector('input[type="time"]');
+
+            if (dateInput) {
+                dateInput.value = '';
+            }
+            if (timeInput) {
+                timeInput.value = '';
+            }
+        }
+
+        function updateWorkflowDateText(dateSelection, dateText) {
+            var dateInput = dateSelection.querySelector('input[type="date"]');
+            var timeInput = dateSelection.querySelector('input[type="time"]');
+
+            var dateValue = dateInput ? dateInput.value : '';
+            var timeValue = timeInput ? timeInput.value : '';
+            var displayText = '';
+
+            if (dateValue && timeValue) {
+                var dateParts = dateValue.split('-');
+                displayText = dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0] + ' ' + timeValue;
+            } else if (dateValue) {
+                var dateOnlyParts = dateValue.split('-');
+                displayText = dateOnlyParts[2] + '-' + dateOnlyParts[1] + '-' + dateOnlyParts[0];
+            } else if (timeValue) {
+                displayText = timeValue;
+            } else {
+                displayText = dateSelection.getAttribute('data-set-date-text') || 'Set Date/Time';
+            }
+
+            dateText.textContent = displayText;
+        }
+
+        function toggleWorkflowDateSelection(showSelection, dateSelection, dateText) {
+            if (showSelection) {
+                dateSelection.style.display = 'flex';
+                dateText.style.display = 'none';
+                return;
+            }
+
+            dateSelection.style.display = 'none';
+            dateText.style.display = 'flex';
+            updateWorkflowDateText(dateSelection, dateText);
+        }
+
+        function initializeWorkflowDateTime($workflowRoot) {
+            var dateSelections = $workflowRoot.find('.tailwind-datetime');
+
+            dateSelections.each(function(index, dateSelection) {
+                var parent = dateSelection.parentNode;
+                if (!parent) {
+                    return;
+                }
+
+                var dateText = parent.querySelector('.date-text');
+                if (!dateText) {
+                    dateText = document.createElement('div');
+                    dateText.className = 'date-text';
+                    dateText.style.display = 'block';
+                    dateText.textContent = dateSelection.getAttribute('data-set-date-text') || 'Set Date/Time';
+                    parent.insertBefore(dateText, dateSelection);
+                }
+
+                dateSelection.style.paddingTop = '.5rem';
+
+                var okButton = createOrFindWorkflowButton(dateSelection, 'ok-date', 'OK');
+                var setToNowButton = createOrFindWorkflowButton(dateSelection, 'set-now-date', 'Set to Now');
+                var clearButton = createOrFindWorkflowButton(dateSelection, 'clear-date', 'Clear');
+
+                dateText.onclick = function() {
+                    toggleWorkflowDateSelection(true, dateSelection, dateText);
+                };
+                okButton.onclick = function() {
+                    toggleWorkflowDateSelection(false, dateSelection, dateText);
+                };
+                setToNowButton.onclick = function() {
+                    setWorkflowDateTimeToNow(dateSelection);
+                    updateWorkflowDateText(dateSelection, dateText);
+                };
+                clearButton.onclick = function() {
+                    clearWorkflowDateTimeFields(dateSelection);
+                    updateWorkflowDateText(dateSelection, dateText);
+                };
+
+                toggleWorkflowDateSelection(false, dateSelection, dateText);
+            });
+        }
+
+        function initializeWorkflowSection() {
+            if (!window.jQuery || typeof window.jQuery !== 'function') {
+                return;
+            }
+
+            var $ = window.jQuery;
+            var $workflowRoot = $('#content-workflow-section .workflow');
+            if (!$workflowRoot.length) {
+                return;
+            }
+
+            var $nextStatus = $workflowRoot.find('.next-status-choice');
+            var $nextStatusSelect = $nextStatus.is('select') ? $nextStatus : $nextStatus.find('select');
+            var $assigned = $workflowRoot.find('.assigned-choice');
+            if (!$nextStatusSelect.length || !$assigned.length) {
+                return;
+            }
+
+            if (!$assigned.hasClass('select2-hidden-accessible')) {
+                $assigned.select2();
+            }
+
+            var workflowId = $workflowRoot.find('.workflow-hidden').val();
+            var contentType = $workflowRoot.find('.content-type-hidden').val();
+            var currentStateId = $workflowRoot.closest('#content-workflow-section').attr('data-current-workflow-state-id')
+                || $workflowRoot.find('.current-state').attr('data-value')
+                || '';
+            var currentStateName = $workflowRoot.closest('#content-workflow-section').attr('data-current-workflow-state-name') || '';
+            var stateChangeUrl = $workflowRoot.data('workflow-state-change');
+
+            if (!stateChangeUrl) {
+                return;
+            }
+
+            if (currentStateId) {
+                $workflowRoot.find('.current-state').attr('data-value', currentStateId);
+            }
+            if (currentStateName) {
+                $workflowRoot.find('.form-item.current .form-control-static').text(currentStateName);
+            }
+
+            var changeState = function() {
+                var status = $nextStatusSelect.val();
+                if (!status) {
+                    status = currentStateId;
+                }
+
+                var selectedNextState = $nextStatusSelect.val() || '';
+                $assigned.attr('disabled', 'disabled');
+
+                $.ajax({
+                    url: stateChangeUrl,
+                    data: {
+                        workflow: workflowId,
+                        state: status,
+                        contentType: contentType,
+                        _format: 'json',
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (Array.isArray(response.next_states) && selectedNextState === '') {
+                            var placeholderOption = $nextStatusSelect.find('option[value=""]').first();
+                            var placeholderText = placeholderOption.length ? placeholderOption.text() : 'Status niet veranderen';
+
+                            $nextStatusSelect.empty();
+                            $nextStatusSelect.append(new Option(placeholderText, '', selectedNextState === '', selectedNextState === ''));
+
+                            $.each(response.next_states, function(index, stateOption) {
+                                if (!stateOption || stateOption.id === undefined || stateOption.name === undefined) {
+                                    return;
+                                }
+
+                                var optionValue = String(stateOption.id);
+                                var isSelected = selectedNextState !== '' && optionValue === String(selectedNextState);
+                                $nextStatusSelect.append(new Option(stateOption.name, optionValue, isSelected, isSelected));
+                            });
+
+                            if (selectedNextState !== '' && !$nextStatusSelect.find('option[value="' + selectedNextState + '"]').length) {
+                                $nextStatusSelect.val('');
+                            }
+                        }
+
+                        var selected = $('option:selected', $assigned).val();
+                        var $firstOption = $('option:first', $assigned);
+
+                        $firstOption.siblings().remove();
+
+                        $.each(response.users || [], function(index, user) {
+                            var isSelected = String(user.id) === String(selected);
+                            var option = new Option(user.name, user.id, isSelected, isSelected);
+                            $assigned.append(option);
+                        });
+
+                        $assigned.removeAttr('disabled');
+
+                        $.each(response.fields || {}, function(field, values) {
+                            var $field = $workflowRoot.find('.form-item.' + field);
+                            if (!$field.length) {
+                                return;
+                            }
+
+                            var $inputs = $field.find('select, input, textarea');
+                            $inputs.removeAttr('required').removeAttr('disabled');
+                            $field.show();
+
+                            if (values.disabled) {
+                                $inputs.attr('disabled', 'disabled');
+                                $field.hide();
+                            } else if (values.required) {
+                                $inputs.attr('required', 'required');
+                            }
+
+                            if ($inputs.hasClass('select2-hidden-accessible')) {
+                                $inputs.trigger('change.select2');
+                            }
+                        });
+                    },
+                });
+            };
+
+            initializeWorkflowDateTime($workflowRoot);
+
+            // After saving a workflow transition, always recalculate from the current state.
+            $nextStatusSelect.val('');
+            if ($nextStatusSelect.hasClass('select2-hidden-accessible')) {
+                $nextStatusSelect.trigger('change.select2');
+            }
+
+            $nextStatusSelect.off('change.integratedWorkflowState').on('change.integratedWorkflowState', changeState);
+            changeState();
+        }
+
+        function scheduleWorkflowInit() {
+            window.requestAnimationFrame(initializeWorkflowSection);
+            window.setTimeout(initializeWorkflowSection, 50);
+        }
+
+        document.addEventListener('DOMContentLoaded', scheduleWorkflowInit);
+        document.addEventListener('turbo:load', scheduleWorkflowInit);
+        document.addEventListener('turbo:before-stream-render', function(event) {
+            var streamElement = event.target;
+            if (!(streamElement instanceof HTMLElement)) {
+                return;
+            }
+
+            if (streamElement.getAttribute('target') !== 'content-workflow-section') {
+                return;
+            }
+
+            var defaultRender = event.detail.render;
+            event.detail.render = function(stream) {
+                defaultRender(stream);
+                scheduleWorkflowInit();
+            };
+        });
     })();
 
     textarea = document.querySelector('.title_tinymce_input');

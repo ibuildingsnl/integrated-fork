@@ -424,7 +424,8 @@ class ContentController extends AbstractController
 
         if ($form->isSubmitted()) {
             // possible actions are cancel, back, reload, reload_changed and save
-            $submittedAction = (string) ($form->get('actions')->getData() ?? '');
+            $submittedActionData = $form->get('actions')->getData();
+            $submittedAction = \is_scalar($submittedActionData) ? (string) $submittedActionData : '';
             if ('' === $submittedAction) {
                 foreach (['cancel', 'back', 'reload', 'save', 'reload_changed'] as $candidate) {
                     if ($this->isSubmittedAction($request, $candidate)) {
@@ -543,7 +544,11 @@ class ContentController extends AbstractController
                 }
 
                 if ($this->isTurboStreamRequest($request) && !$request->query->getBoolean('frame')) {
-                    $content = $this->renderView('@IntegratedContent/content/flash.turbo_stream.html.twig');
+                    $content = $this->renderView('@IntegratedContent/content/edit.status_options.turbo_stream.html.twig', [
+                        'content' => $content,
+                        'locking' => $locking,
+                        'form' => $form->createView(),
+                    ]);
 
                     return new TurboStreamResponse($content);
                 }

@@ -23,7 +23,7 @@
                             <p>
                                 <small>
                                     <span class="label label-primary">{{ document.action|trans }}</span>
-                                    {{ document.date|format_date('medium') }}
+                                    {{ document.date|format_datetime('medium', 'short') }}
                                 </small>
                             </p>
                         </div>
@@ -39,4 +39,3 @@
         </div>
     </div>
 {% endif %}
-

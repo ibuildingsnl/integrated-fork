@@ -46,7 +46,7 @@
                     {% for document in paginator %}
                         <tr>
                             <td>
-                                <a href="{{ path('integrated_content_history_show', { 'id': document.id }) }}">{{ document.date|format_date('medium') }}</a>
+                                <a href="{{ path('integrated_content_history_show', { 'id': document.id }) }}">{{ document.date|format_datetime('medium', 'short') }}</a>
                             </td>
                             <td>{{ document.action|trans }}</td>
                             <td>{{ document.user.name|default('Unknown'|trans) }} {% if document.user.id is defined %}(#{{ document.user.id }}){% endif %}</td>
