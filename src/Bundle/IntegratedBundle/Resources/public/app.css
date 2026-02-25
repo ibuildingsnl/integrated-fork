@@ -12203,6 +12203,10 @@ pre#editor {
   }
 }
 
+.integrated_user_user_edit .checkbox {
+  border: 1px solid #DEE3E9;
+}
+
 .taxonomy-index .taxonomy-list-wrapper {
   width: calc(100% - 830px);
   padding: 2rem 2rem 100px;
