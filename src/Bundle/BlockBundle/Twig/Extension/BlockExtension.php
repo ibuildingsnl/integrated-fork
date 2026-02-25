@@ -208,7 +208,9 @@ class BlockExtension extends AbstractExtension
      */
     public function findPages(BlockInterface $block)
     {
-        return $this->blockUsageProvider->getPagesPerBlock($block->getId());
+        $pages = $this->blockUsageProvider->getPagesPerBlock($block->getId());
+
+        return \is_array($pages) ? $pages : [];
     }
 
     /**

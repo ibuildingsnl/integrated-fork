@@ -54,6 +54,12 @@
         }
     }
 
+    tr:last-child {
+        td {
+            border-bottom: 0;
+        }
+    }
+
     th {
         padding: 8px 10px;
         text-align: left;

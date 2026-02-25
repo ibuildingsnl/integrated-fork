@@ -851,12 +851,15 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(0 123 103 / var(--tw-bg-opacity, 1));
 }
+.bg-transparent {
+  background-color: transparent;
+}
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
-.bg-transparent {
-  background-color: transparent;
+.p-0 {
+  padding: 0px;
 }
 .p-2 {
   padding: 0.5rem;
@@ -866,9 +869,6 @@ video {
 }
 .p-4 {
   padding: 1rem;
-}
-.p-0 {
-  padding: 0px;
 }
 .py-4 {
   padding-top: 1rem;
@@ -1116,7 +1116,6 @@ select.form-control {
 .form-group .checkbox, .form-item .checkbox {
   background-color: white;
   border-radius: 8px;
-  border: 1px solid #dfe3e9;
   max-width: 750px;
 }
 .form-group .checkbox label, .form-item .checkbox label {
@@ -1559,7 +1558,7 @@ input#bulk-date-to {
   padding: 0.5rem 1rem;
   background-color: white;
   border-radius: 8px;
-  border: 1px solid #dfe3e9;
+  border: none !important;
   /* Hide the browser's default checkbox */
   /* Create a custom checkbox */
   /* On mouse-over, add a grey background color */
@@ -1639,9 +1638,20 @@ input#bulk-date-to {
 .form-item .control-label {
   display: flex;
   align-items: center;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.5);
 }
 .form-item:last-child {
   margin: 0;
+}
+
+label.control-label {
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .remove {

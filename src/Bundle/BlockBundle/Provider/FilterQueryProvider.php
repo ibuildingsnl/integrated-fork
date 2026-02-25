@@ -55,9 +55,15 @@ class FilterQueryProvider
             $qb->field('class')->notEqual(InlineTextBlock::class);
         }
 
-        if (isset($data['q'])) {
-            $qb->addOr($qb->expr()->field('title')->equals(new Regex($data['q'], 'i')));
-            $qb->addOr($qb->expr()->field('id')->equals(new Regex($data['q'], 'i')));
+        $query = '';
+        if (isset($data['q']) && \is_scalar($data['q'])) {
+            $query = trim((string) $data['q']);
+        }
+
+        if ($query !== '') {
+            $escapedQuery = preg_quote($query, '/');
+            $qb->addOr($qb->expr()->field('title')->equals(new Regex($escapedQuery, 'i')));
+            $qb->addOr($qb->expr()->field('id')->equals(new Regex($escapedQuery, 'i')));
         }
 
         $channels = isset($data['channels']) ? array_filter($data['channels']) : null;
