@@ -32,7 +32,9 @@ class ContentEditLockFlowTest extends TestCase
         $this->assertStringContainsString('$submittedAction = (string) ($form->get(\'actions\')->getData() ?? \'\');', $controller);
         $this->assertStringContainsString('foreach ([\'cancel\', \'back\', \'reload\', \'save\', \'reload_changed\'] as $candidate)', $controller);
         $this->assertStringContainsString('$parameters = array_merge($request->query->all(), [\'id\' => $content->getId()]);', $controller);
+        $this->assertStringContainsString('if (!($locking[\'locked\'] ?? false) && ($locking[\'lock\'] ?? null) && ($locking[\'owner\'] ?? false)) {', $controller);
         $this->assertStringContainsString('$parameters[\'lock\'] = $locking[\'lock\']->getId();', $controller);
+        $this->assertStringContainsString('unset($parameters[\'lock\']);', $controller);
         $this->assertStringContainsString("'data-content-locked' => (\$locking['locked'] && !(\$locking['pending'] ?? false)) ? '1' : '0'", $controller);
         $this->assertStringContainsString('$hasUsableLock = $locking[\'lock\'] && !($locking[\'locked\'] ?? false);', $controller);
         $this->assertStringContainsString('$reloadSubmitted = $request instanceof Request && $this->isSubmittedAction($request, \'reload\');', $controller);

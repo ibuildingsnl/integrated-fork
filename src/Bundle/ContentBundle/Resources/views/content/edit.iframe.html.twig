@@ -16,7 +16,6 @@
 <script>
     (function initEditLockOnLoad() {
         var LOCK_REFRESH_URL = "{{ path('integrated_locking_api_refresh')|e('js') }}";
-        var LOCK_RELEASE_URL = "{{ path('integrated_locking_api_release')|e('js') }}";
         var LOCK_POLLING_KEY = '__integratedEditLockPolling';
         var LOCK_CSRF_TOKEN = "{{ (content is defined ? csrf_token('integrated_content_lock_' ~ content.id) : '')|e('js') }}";
         var LOCKED_ITEM_MESSAGE = "{{ 'This item is currently locked and cannot be edited until the lock is released.'|trans|e('js') }}";
@@ -154,22 +153,6 @@
                 state.timer = window.setTimeout(refresh, 5000);
             }
 
-            function release() {
-                if (navigator.sendBeacon) {
-                    try {
-                        var params = new URLSearchParams();
-                        params.set('lock', String(lockId));
-                        navigator.sendBeacon(LOCK_RELEASE_URL, params);
-
-                        return;
-                    } catch (e) {
-                    }
-                }
-
-                postLockRequest(LOCK_RELEASE_URL, toBody(), true).catch(function () {
-                });
-            }
-
             function refresh() {
                 if (state.stopped) {
                     return;
@@ -190,17 +173,14 @@
             }
 
             function onBeforeCache() {
-                release();
                 stop();
             }
 
             function onPageHide() {
-                release();
                 stop();
             }
 
             function onBeforeUnload() {
-                release();
                 stop();
             }
 
@@ -247,16 +227,24 @@
 
                 var urlLockId = '';
                 try {
-                    urlLockId = new URL(window.location.href).searchParams.get('lock') || '';
+                    var currentUrl = new URL(window.location.href);
+                    urlLockId = currentUrl.searchParams.get('lock') || '';
                 } catch (e) {
                     urlLockId = '';
                 }
 
-                if (urlLockId === String(existingLockId)) {
+                if (
+                    form.getAttribute('data-content-locked') !== '1'
+                    && urlLockId === String(existingLockId)
+                ) {
                     startLockPolling(existingLockId);
+                    setFormActionLock(form, existingLockId);
+                    return;
                 }
 
-                return;
+                if (form.getAttribute('data-content-locked') !== '1') {
+                    return;
+                }
             }
 
             if (form.getAttribute('data-lock-init-attempted') === '1') {
@@ -279,6 +267,15 @@
             if (lockStoreKey) {
                 try {
                     knownLock = window.sessionStorage.getItem(lockStoreKey) || '';
+                } catch (e) {
+                    knownLock = '';
+                }
+            }
+
+            if (!knownLock) {
+                try {
+                    var knownLockUrl = new URL(window.location.href);
+                    knownLock = knownLockUrl.searchParams.get('lock') || '';
                 } catch (e) {
                     knownLock = '';
                 }

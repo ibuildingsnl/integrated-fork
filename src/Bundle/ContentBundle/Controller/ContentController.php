@@ -453,8 +453,10 @@ class ContentController extends AbstractController
 
             if ($submittedAction === 'reload') {
                 $parameters = array_merge($request->query->all(), ['id' => $content->getId()]);
-                if (($locking['lock'] ?? null) && ($locking['owner'] ?? false)) {
+                if (!($locking['locked'] ?? false) && ($locking['lock'] ?? null) && ($locking['owner'] ?? false)) {
                     $parameters['lock'] = $locking['lock']->getId();
+                } else {
+                    unset($parameters['lock']);
                 }
 
                 return $this->redirectToRoute($request->get('_route'), $parameters);
@@ -1488,6 +1490,9 @@ class ContentController extends AbstractController
 
         if ($request instanceof Request) {
             $parameters = array_merge($request->query->all(), $parameters);
+            if (!$hasUsableLock) {
+                unset($parameters['lock']);
+            }
         }
 
         $options = [
