@@ -39,14 +39,20 @@ class JSONController extends AbstractController
         $block = new ContentBlock();
         $block->setSearchSelection($searchSelection);
 
-        if ($itemsPerPage = $request->query->get('limit')) {
+        $itemsPerPage = $request->query->getInt('limit', 0);
+        if ($itemsPerPage > 0) {
             $itemsPerPage = ($itemsPerPage > 500) ? 500 : $itemsPerPage;
             $block->setItemsPerPage($itemsPerPage);
         }
 
         $documents = $this->solariumProvider->execute($block, $request);
 
-        $maxPages = round($documents->getTotalItemCount() / $itemsPerPage);
+        $itemsPerPage = method_exists($documents, 'getItemNumberPerPage') ? (int) $documents->getItemNumberPerPage() : $block->getItemsPerPage();
+        if ($itemsPerPage < 1) {
+            $itemsPerPage = 1;
+        }
+
+        $maxPages = (int) ceil($documents->getTotalItemCount() / $itemsPerPage);
 
         return $this->render($this->themeManager->locateTemplate('json/index.'.$request->getRequestFormat('json').'.twig'), [
             'documents' => $documents,

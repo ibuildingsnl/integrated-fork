@@ -130,16 +130,24 @@ class BlockUsageProvider
             ->getIterator();
 
         foreach ($pages as $page) {
-            if (!\array_key_exists('grids', $page)) {
+            if (!\is_array($page) || !\array_key_exists('grids', $page) || !\is_array($page['grids'])) {
                 continue;
             }
 
             $this->currentPage = array_intersect_key($page, array_flip(['_id', 'title', 'locked', 'channel']));
 
-            $this->currentChannel = \array_key_exists('channel', $page) ? $page['channel']['$id'] : null;
+            $this->currentChannel = null;
+            if (
+                \array_key_exists('channel', $page)
+                && \is_array($page['channel'])
+                && \array_key_exists('$id', $page['channel'])
+                && \is_scalar($page['channel']['$id'])
+            ) {
+                $this->currentChannel = (string) $page['channel']['$id'];
+            }
 
             foreach ($page['grids'] as $grid) {
-                if (!\array_key_exists('items', $grid)) {
+                if (!\is_array($grid) || !\array_key_exists('items', $grid) || !\is_array($grid['items'])) {
                     continue;
                 }
                 $this->filterItems($grid['items']);
@@ -155,17 +163,35 @@ class BlockUsageProvider
     protected function filterItems($items)
     {
         foreach ($items as $item) {
-            if (\array_key_exists('row', $item) && \array_key_exists('columns', $item['row'])) {
+            if (!\is_array($item)) {
+                continue;
+            }
+
+            if (
+                \array_key_exists('row', $item)
+                && \is_array($item['row'])
+                && \array_key_exists('columns', $item['row'])
+                && \is_array($item['row']['columns'])
+            ) {
                 foreach ($item['row']['columns'] as $column) {
-                    if (\array_key_exists('items', $column)) {
+                    if (\is_array($column) && \array_key_exists('items', $column) && \is_array($column['items'])) {
                         $this->filterItems($column['items']);
                     }
                 }
-            } elseif (\array_key_exists('block', $item)) {
-                $this->blockPages[$item['block']['$id']][$this->currentPage['_id']] = $this->currentPage;
+            } elseif (
+                \array_key_exists('block', $item)
+                && \is_array($item['block'])
+                && \array_key_exists('$id', $item['block'])
+                && \is_scalar($item['block']['$id'])
+                && \array_key_exists('_id', $this->currentPage)
+                && \is_scalar($this->currentPage['_id'])
+            ) {
+                $blockId = (string) $item['block']['$id'];
+                $pageId = (string) $this->currentPage['_id'];
+                $this->blockPages[$blockId][$pageId] = $this->currentPage;
 
                 if ($this->currentChannel) {
-                    $this->channelBlocks[$this->currentChannel][$item['block']['$id']] = $item['block']['$id'];
+                    $this->channelBlocks[$this->currentChannel][$blockId] = $blockId;
                 }
             }
         }

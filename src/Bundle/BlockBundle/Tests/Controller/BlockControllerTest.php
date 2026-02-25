@@ -10,6 +10,7 @@ use Doctrine\ODM\MongoDB\Query\Builder;
 use Integrated\Bundle\BlockBundle\Controller\BlockController;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
+use Integrated\Bundle\BlockBundle\Document\Block\TextBlock;
 use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
@@ -21,6 +22,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 final class BlockControllerTest extends TestCase
@@ -93,10 +95,35 @@ final class BlockControllerTest extends TestCase
         $controller->usedBy($content, new Request());
     }
 
-    private function createController(DocumentManager $documentManager, PaginatorInterface $paginator): TestableBlockController
+    public function testNewRejectsBlockClassesThatAreNotRegisteredInMetadataFactory(): void
+    {
+        $metadataFactory = $this->createMock(MetadataFactoryInterface::class);
+        $metadataFactory
+            ->expects(self::once())
+            ->method('getAllMetadata')
+            ->willReturn([]);
+
+        $controller = $this->createController(
+            $this->createMock(DocumentManager::class),
+            $this->createMock(PaginatorInterface::class),
+            $metadataFactory
+        );
+        $controller->setPermission('ROLE_WEBSITE_MANAGER', true);
+        $controller->setPermission('ROLE_ADMIN', false);
+
+        $this->expectException(NotFoundHttpException::class);
+
+        $controller->new(new Request(['class' => TextBlock::class]));
+    }
+
+    private function createController(
+        DocumentManager $documentManager,
+        PaginatorInterface $paginator,
+        ?MetadataFactoryInterface $metadataFactory = null
+    ): TestableBlockController
     {
         return new TestableBlockController(
-            $this->createStub(MetadataFactoryInterface::class),
+            $metadataFactory ?? $this->createStub(MetadataFactoryInterface::class),
             $documentManager,
             $paginator,
             $this->createStub(FilterQueryProvider::class),
