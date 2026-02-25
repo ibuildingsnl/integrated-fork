@@ -32,6 +32,21 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString("integrated_content_content_locks_status", $template);
     }
 
+    public function testIndexTemplatesDisableTurboPrefetchForLockableLinks(): void
+    {
+        $indexTemplate = file_get_contents(__DIR__ . '/../../Resources/views/content/index.html.twig');
+        $weekTemplate = file_get_contents(__DIR__ . '/../../Resources/views/content/index_week.html.twig');
+        $navDropdownTemplate = file_get_contents(__DIR__ . '/../../Resources/views/content/navdropdowns.html.twig');
+
+        $this->assertIsString($indexTemplate);
+        $this->assertIsString($weekTemplate);
+        $this->assertIsString($navDropdownTemplate);
+
+        $this->assertStringContainsString('data-turbo-prefetch="false"', $indexTemplate);
+        $this->assertStringContainsString('data-turbo-prefetch="false"', $weekTemplate);
+        $this->assertStringContainsString('data-turbo-prefetch="false"', $navDropdownTemplate);
+    }
+
     public function testRoutingContainsLiveLockStatusEndpoint(): void
     {
         $routing = file_get_contents(__DIR__ . '/../../Resources/config/routing/content.xml');

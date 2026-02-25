@@ -112,7 +112,7 @@
                 </div>
             {% endfor %}
         </div>
-        <div class="week columns">
+        <div class="week columns" data-turbo-prefetch="false">
             {% set dayN = 0 %}
             <div class="day column" draggable="true" data-date="{{ queryParams.start|date('Y/m/d') }}">
                 {% set prev_day = 0 %}

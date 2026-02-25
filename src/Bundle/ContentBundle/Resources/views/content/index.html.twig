@@ -43,7 +43,7 @@
                 </th>
             </tr>
             </thead>
-            <tbody id="post-list">
+            <tbody id="post-list" data-turbo-prefetch="false">
             {% for content in pager %}
 
                 {% set document = integrated_document(content) %}
