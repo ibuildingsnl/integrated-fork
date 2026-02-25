@@ -24,6 +24,7 @@ use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Content\Form\Event\BlockEvent;
 use Integrated\Common\Content\Form\Events;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
+use Integrated\Common\Security\Permissions;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -250,6 +251,14 @@ class BlockController extends AbstractController
      */
     public function usedBy(Content $content, Request $request)
     {
+        if (
+            !$this->isGranted('ROLE_WEBSITE_MANAGER')
+            && !$this->isGranted('ROLE_ADMIN')
+            && !$this->isGranted(Permissions::EDIT, $content)
+        ) {
+            throw $this->createAccessDeniedException();
+        }
+
         $query = $this->documentManager
             ->createQueryBuilder(Block::class)
             ->field('relations.references.$id')

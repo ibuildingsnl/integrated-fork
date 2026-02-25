@@ -77,13 +77,22 @@ class BlockRepository extends ServiceDocumentRepository
      */
     public function pagesByBlockQb(Block $block)
     {
+        $blockId = json_encode(
+            (string) $block->getId(),
+            JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+        );
+
+        if ($blockId === false) {
+            $blockId = '""';
+        }
+
         return $this->dm
             ->createQueryBuilder(Page::class)
             ->where('function() {
-                var block_id = "'.$block->getId().'";
+                var block_id = '.$blockId.';
 
                 var checkItem = function(item) {
-                        if ("block" in item && item.block.$id == block_id) {
+                        if ("block" in item && item.block.$id === block_id) {
                             return true;
                         }
 
