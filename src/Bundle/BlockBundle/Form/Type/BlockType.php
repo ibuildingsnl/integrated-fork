@@ -14,10 +14,9 @@ namespace Integrated\Bundle\BlockBundle\Form\Type;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
-use Integrated\Bundle\BlockBundle\Form\DataTransformer\BlockTransformer;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
@@ -34,18 +33,60 @@ class BlockType extends AbstractType
         $this->repository = $dm->getRepository(Block::class);
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        $builder->addModelTransformer(new BlockTransformer($this->repository));
+        $resolver->setDefaults([
+            'choices' => $this->getChoices(),
+            'choice_label' => static function (?Block $block): string {
+                if (!$block instanceof Block) {
+                    return '';
+                }
+
+                $title = trim((string) $block->getTitle());
+                $id = (string) $block->getId();
+
+                return '' !== $title ? sprintf('%s (%s)', $title, $id) : $id;
+            },
+            'choice_value' => static fn (?Block $block): ?string => $block?->getId(),
+            'required' => false,
+            'attr' => [
+                'class' => 'select2',
+            ],
+        ]);
     }
 
     public function getParent(): ?string
     {
-        return TextType::class;
+        return ChoiceType::class;
     }
 
     public function getBlockPrefix(): string
     {
         return 'integrated_block';
+    }
+
+    /**
+     * @return array<int, Block>
+     */
+    private function getChoices(): array
+    {
+        $result = $this->fetchChoices();
+
+        if ($result instanceof \Traversable) {
+            $result = iterator_to_array($result, false);
+        }
+
+        return array_values(array_filter($result, static fn ($block): bool => $block instanceof Block));
+    }
+
+    /**
+     * @return iterable<int, mixed>
+     */
+    protected function fetchChoices(): iterable
+    {
+        return $this->repository->createQueryBuilder()
+            ->sort('title', 'asc')
+            ->getQuery()
+            ->execute();
     }
 }
