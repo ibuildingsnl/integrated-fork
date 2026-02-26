@@ -26,6 +26,7 @@ use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
+use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Locks\Request as LockRequest;
 use Integrated\Common\Locks\Resource;
@@ -39,8 +40,14 @@ use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Forms;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Integrated\Common\ContentType\ResolverInterface;
@@ -273,6 +280,58 @@ class ContentLockControllerTest extends TestCase
         self::assertSame([$requestId, $id], $repositoryCalls);
     }
 
+    public function testCreateDeleteFormOmitsLockParameterWhenLockIsUnavailable(): void
+    {
+        $content = (new Article())->setId('content-id');
+        $controller = $this->createController(
+            $this->createDocumentManager(static fn (string $id): ?Content => null),
+            $this->createMock(Manager::class),
+            $this->createUserManager(),
+            $this->createUser('alice@example.test')
+        );
+
+        $form = $controller->createDeleteFormForTest($content, [
+            'lock' => null,
+            'user' => null,
+            'owner' => false,
+            'new' => false,
+            'pending' => false,
+            'locked' => false,
+            'release' => static function (): void {
+            },
+        ]);
+
+        self::assertStringContainsString('id=content-id', $form->getConfig()->getAction());
+        self::assertStringNotContainsString('lock=', $form->getConfig()->getAction());
+    }
+
+    public function testCreateDeleteFormKeepsLockParameterWhenLockIsUsable(): void
+    {
+        $content = (new Article())->setId('content-id');
+        $owner = $this->createUser('alice@example.test');
+        $lock = $this->createLock($content, $owner, 'lock-id');
+        $controller = $this->createController(
+            $this->createDocumentManager(static fn (string $id): ?Content => null),
+            $this->createMock(Manager::class),
+            $this->createUserManager(),
+            $owner
+        );
+
+        $form = $controller->createDeleteFormForTest($content, [
+            'lock' => $lock,
+            'user' => $owner,
+            'owner' => true,
+            'new' => false,
+            'pending' => false,
+            'locked' => false,
+            'release' => static function (): void {
+            },
+        ]);
+
+        self::assertStringContainsString('id=content-id', $form->getConfig()->getAction());
+        self::assertStringContainsString('lock=lock-id', $form->getConfig()->getAction());
+    }
+
     private function decodeResponse(Response $response): array
     {
         $decoded = json_decode((string) $response->getContent(), true);
@@ -408,5 +467,39 @@ class TestableContentController extends ContentController
     public function getTranslator(): TranslatorInterface
     {
         return $this->translator;
+    }
+
+    public function createDeleteFormForTest(ContentInterface $content, array $locking, bool $notDelete = false): FormInterface
+    {
+        return $this->createDeleteForm($content, $locking, $notDelete);
+    }
+
+    protected function createForm(string $type, mixed $data = null, array $options = []): FormInterface
+    {
+        $factory = Forms::createFormFactoryBuilder()
+            ->addTypeExtension(new SubmitButtonClassTypeExtension())
+            ->getFormFactory();
+
+        return $factory->create($type, $data, $options);
+    }
+
+    protected function generateUrl(string $route, array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string
+    {
+        $query = http_build_query($parameters);
+
+        return '/'.$route.('' !== $query ? '?'.$query : '');
+    }
+}
+
+class SubmitButtonClassTypeExtension extends AbstractTypeExtension
+{
+    public static function getExtendedTypes(): iterable
+    {
+        return [SubmitType::class];
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefined(['button_class']);
     }
 }

@@ -30,6 +30,8 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString('data-lock-resource-id="', $template);
         $this->assertStringContainsString('data-lock-slot', $template);
         $this->assertStringContainsString("integrated_content_content_locks_status", $template);
+        $this->assertStringContainsString("document.addEventListener('turbo:load', initLockPolling);", $template);
+        $this->assertStringContainsString("document.addEventListener('turbo:frame-load', function(event)", $template);
     }
 
     public function testIndexTemplatesKeepEditLinksPrefetchable(): void

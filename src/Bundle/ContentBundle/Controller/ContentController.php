@@ -425,15 +425,11 @@ class ContentController extends AbstractController
         if ($form->isSubmitted()) {
             // possible actions are cancel, back, reload, reload_changed and save
             $submittedActionData = $form->get('actions')->getData();
-            $submittedAction = \is_scalar($submittedActionData) ? (string) $submittedActionData : '';
-            if ('' === $submittedAction) {
-                foreach (['cancel', 'back', 'reload', 'save', 'reload_changed'] as $candidate) {
-                    if ($this->isSubmittedAction($request, $candidate)) {
-                        $submittedAction = $candidate;
-                        break;
-                    }
-                }
-            }
+            $submittedAction = $this->resolveSubmittedAction(
+                $submittedActionData,
+                $request,
+                ['cancel', 'back', 'reload', 'save', 'reload_changed']
+            );
 
             if ($submittedAction === 'cancel' || $submittedAction === 'back') {
                 if (!$locking['locked']) {
@@ -677,8 +673,13 @@ class ContentController extends AbstractController
 
         if ($form->isSubmitted()) {
             // possible actions are cancel, reload and delete
+            $submittedAction = $this->resolveSubmittedAction(
+                $form->get('actions')->getData(),
+                $request,
+                ['cancel', 'reload', 'delete']
+            );
 
-            if ($form->get('actions')->getData() == 'cancel') {
+            if ($submittedAction === 'cancel') {
                 if (!$locking['locked']) {
                     $locking['release']();
                 }
@@ -686,12 +687,17 @@ class ContentController extends AbstractController
                 return $this->redirectToRoute('integrated_content_content_index', ['remember' => 1]);
             }
 
-            if ($form->get('actions')->getData() == 'reload') {
-                return $this->redirectToRoute('integrated_content_content_delete', ['id' => $content->getId()]);
+            if ($submittedAction === 'reload') {
+                $parameters = ['id' => $content->getId()];
+                if (!($locking['locked'] ?? false) && ($locking['lock'] ?? null) && ($locking['owner'] ?? false)) {
+                    $parameters['lock'] = $locking['lock']->getId();
+                }
+
+                return $this->redirectToRoute('integrated_content_content_delete', $parameters);
             }
 
             // this is not rest compatible since a button click is required to save
-            if ($form->get('actions')->getData() == 'delete') {
+            if ($submittedAction === 'delete') {
                 if ($form->isValid()) {
                     // higher priority for content edited in Integrated
                     $queue = $this->queueSubscriber->getQueue();
@@ -1570,15 +1576,36 @@ class ContentController extends AbstractController
         return false;
     }
 
+    private function resolveSubmittedAction(mixed $submittedActionData, Request $request, array $candidates): string
+    {
+        if (\is_scalar($submittedActionData)) {
+            $submittedAction = (string) $submittedActionData;
+            if ('' !== $submittedAction && \in_array($submittedAction, $candidates, true)) {
+                return $submittedAction;
+            }
+        }
+
+        foreach ($candidates as $candidate) {
+            if ($this->isSubmittedAction($request, $candidate)) {
+                return $candidate;
+            }
+        }
+
+        return '';
+    }
+
     protected function createDeleteForm(ContentInterface $content, array $locking, bool $notDelete = false): FormInterface
     {
+        $hasUsableLock = ($locking['lock'] ?? null) && !($locking['locked'] ?? false);
+        $parameters = ['id' => $content->getId()];
+        if ($hasUsableLock) {
+            $parameters['lock'] = $locking['lock']->getId();
+        }
+
         $form = $this->createForm(DeleteFormType::class, null, [
             'action' => $this->generateUrl(
                 'integrated_content_content_delete',
-                $locking['locked'] ? ['id' => $content->getId()] : [
-                    'id' => $content->getId(),
-                    'lock' => $locking['lock']->getId(),
-                ]
+                $parameters
             ),
             'method' => 'DELETE',
         ]);
