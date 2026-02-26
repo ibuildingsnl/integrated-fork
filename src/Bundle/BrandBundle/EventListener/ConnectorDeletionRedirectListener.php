@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ConnectorDeletionRedirectListener implements EventSubscriberInterface
 {
-    public const SESSION_PATH = IntegratedChannelEvents::CONFIG_DELETE_RESPONSE.'.returnUri.%s';
+    public const SESSION_PATH = IntegratedChannelEvents::CONFIG_DELETE_RESPONSE.'.returnUri.%s.%s';
 
     public static function getSubscribedEvents(): array
     {
@@ -20,7 +20,11 @@ class ConnectorDeletionRedirectListener implements EventSubscriberInterface
 
     public function redirect(FilterResponseConfigEvent $event): void
     {
-        $key = \sprintf(self::SESSION_PATH, $event->getConfig()->getAdapter());
+        $key = \sprintf(
+            self::SESSION_PATH,
+            $event->getConfig()->getAdapter(),
+            $event->getConfig()->getId()
+        );
         $session = $event->getRequest()->getSession();
 
         if ($session->has($key)) {

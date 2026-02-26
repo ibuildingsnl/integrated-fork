@@ -35,6 +35,10 @@ class ConnectorController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
+        if (!$brand->hasChannelLink($link)) {
+            throw $this->createNotFoundException('Channel link not found for this brand.');
+        }
+
         $config = null;
         $new = true;
         foreach ($this->configs->findByChannel($link->channel) as $config) {
@@ -57,7 +61,11 @@ class ConnectorController extends AbstractController
             $config->setName("{$brand->getName()} {$link->getName()} connector");
         } else {
             $request->getSession()->set(
-                \sprintf(ConnectorDeletionRedirectListener::SESSION_PATH, $config->getAdapter()),
+                \sprintf(
+                    ConnectorDeletionRedirectListener::SESSION_PATH,
+                    $config->getAdapter(),
+                    $config->getId()
+                ),
                 $this->generateUrl('integrated_content_brand_edit', ['id' => $brand->getId()])
             );
         }

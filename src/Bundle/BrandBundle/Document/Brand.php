@@ -140,6 +140,24 @@ class Brand
         }
     }
 
+    public function hasChannelLink(ChannelLink $candidate): bool
+    {
+        foreach ($this->channelLinks as $link) {
+            if ($link === $candidate) {
+                return true;
+            }
+
+            $linkId = $link->getId();
+            $candidateId = $candidate->getId();
+
+            if ($linkId !== null && $candidateId !== null && $linkId === $candidateId) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function hasPublished(Content $content): bool
     {
         foreach ($this->channelLinks as $link) {

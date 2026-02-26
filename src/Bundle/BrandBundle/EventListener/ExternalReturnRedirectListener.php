@@ -26,6 +26,9 @@ class ExternalReturnRedirectListener implements EventSubscriberInterface
             return;
         }
 
-        $event->setResponse(new RedirectResponse($session->get('postReturnUri')));
+        $returnUri = $session->get('postReturnUri');
+        $session->remove('externalReturnId');
+        $session->remove('postReturnUri');
+        $event->setResponse(new RedirectResponse($returnUri));
     }
 }
