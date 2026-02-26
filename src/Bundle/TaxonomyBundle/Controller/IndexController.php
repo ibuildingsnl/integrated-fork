@@ -39,17 +39,27 @@ final class IndexController extends AbstractController
     {
         $contentType = $this->typeResolver->getType($type);
         $content = $contentType->create();
+        $currentId = trim((string) ($request->query->all()['current'] ?? ''));
+
+        if ('' !== $currentId) {
+            $current = $this->taxonomies->byId($currentId);
+            if ($current instanceof Taxonomy && $current->getContentType() === $contentType->getId()) {
+                if (!$this->isGranted(Permissions::EDIT, $current)) {
+                    throw new AccessDeniedException();
+                }
+
+                $content = $current;
+            }
+        }
 
         if (!$this->isGranted(Permissions::CREATE, $content)) {
             throw new AccessDeniedException();
         }
 
-        $session = $request->getSession();
-
-        if (!$request->query->get('remember')) {
-            $session->set('content_redirect_route', [
-                'route' => $request->get('_route'),
-                'params' => $request->get('_route_params') + $request->query->all(),
+        if ($request->hasSession() && !$request->query->getBoolean('remember')) {
+            $request->getSession()->set('content_redirect_route', [
+                'route' => (string) $request->attributes->get('_route'),
+                'params' => $request->attributes->get('_route_params', []) + $request->query->all(),
             ]);
         }
 
@@ -62,14 +72,13 @@ final class IndexController extends AbstractController
             'content_type' => $contentType,
         ]);
 
-        $form->add('actions', ActionsType::class, ['buttons' => ['create']]);
+        $isPersisted = '' !== trim((string) $content->getId());
+        $form->add('actions', ActionsType::class, ['buttons' => [$isPersisted ? 'save' : 'create']]);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-            if (!$form->isValid() || !$content instanceof Taxonomy) {
-                return $this->redirectToRoute('integrated_content_content_index');
-            }
+        if ($form->isSubmitted() && $form->isValid() && $content instanceof Taxonomy) {
+            $wasPersisted = '' !== trim((string) $content->getId());
 
             if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
                 $this->dispatcher->dispatch(new ValidationEvent(
@@ -83,12 +92,15 @@ final class IndexController extends AbstractController
 
             $this->flusher->flush();
 
-            $this->addFlash('success', 'Taxonomy item created');
+            $this->addFlash('success', $wasPersisted ? 'Taxonomy item saved' : 'Taxonomy item created');
 
-            return $this->redirectToRoute('integrated_taxonomy_index', ['type' => $contentType->getId()] + $request->query->all());
+            $params = ['type' => $contentType->getId()] + $request->query->all();
+            $params['current'] = (string) $content->getId();
+
+            return $this->redirectToRoute('integrated_taxonomy_index', $params);
         }
 
-        $filter = $request->get('filter', 'root');
+        $filter = $this->resolveFilter($request);
         $page = $request->query->getInt('page', 1);
         $limit = 50;
         $totalItems = $this->indexer->countFor(
@@ -100,6 +112,7 @@ final class IndexController extends AbstractController
             'form' => $form,
             'filter_options' => $this->indexer->childrenOf($contentType->getId(), 'root'),
             'filter' => $filter,
+            'content' => $content,
             'content_type' => $contentType,
             'index' => $this->paginator->paginate(
                 new CallbackPagination(
@@ -113,5 +126,17 @@ final class IndexController extends AbstractController
                 $limit,
             ),
         ]);
+    }
+
+    private function resolveFilter(Request $request): string
+    {
+        $filter = $request->query->all()['filter'] ?? 'root';
+        if (!\is_scalar($filter)) {
+            return 'root';
+        }
+
+        $value = trim((string) $filter);
+
+        return '' !== $value ? $value : 'root';
     }
 }

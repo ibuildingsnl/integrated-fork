@@ -11,7 +11,7 @@ use Integrated\Common\Content\Form\Event\ValidationEvent;
 use Integrated\Common\Content\Form\Events;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-final class TaxonomyParentRelationListener implements EventSubscriberInterface
+class TaxonomyParentRelationListener implements EventSubscriberInterface
 {
     public function __construct(
         private readonly TaxonomyRepositoryInterface $taxonomies,
@@ -34,45 +34,163 @@ final class TaxonomyParentRelationListener implements EventSubscriberInterface
             return;
         }
 
-        if (null === $taxonomy->getParentID()) {
-            $parentDocument = $this->documentManger
-                ->getRepository(Content::class)
-                ->createQueryBuilder()
-                ->select()
-                ->field('class')
-                ->equals(Taxonomy::class)
-                ->field('relations.references.$id')
-                ->equals($taxonomy->getId())
-                ->getQuery()
-                ->execute();
-
-            /** @var Content $parent */
-            foreach ($parentDocument as $parent) {
-                $relation = $parent->getRelation('__children');
-                if ($relation instanceof Relation) {
-                    $relation->removeReference($taxonomy);
-                }
+        $keepParent = null;
+        if (null !== $taxonomy->getParentID()) {
+            $parent = $this->taxonomies->byId($taxonomy->getParentID());
+            if ($parent instanceof Taxonomy) {
+                $keepParent = $parent;
             }
+        }
+
+        $this->detachFromCurrentParents($taxonomy, $keepParent?->getId());
+        $this->syncParentOnTaxonomy($taxonomy, $keepParent);
+        if ($keepParent instanceof Taxonomy) {
+            $this->syncChildOnParent($keepParent, $taxonomy);
+        }
+    }
+
+    private function detachFromCurrentParents(Taxonomy $taxonomy, ?string $keepParentId): void
+    {
+        $taxonomyId = trim((string) $taxonomy->getId());
+        if ('' === $taxonomyId) {
+            return;
+        }
+
+        foreach ($this->parentsReferencingTaxonomy($taxonomy) as $parent) {
+            if (!$parent instanceof Taxonomy) {
+                continue;
+            }
+
+            if (null !== $keepParentId && (string) $parent->getId() === $keepParentId) {
+                continue;
+            }
+
+            $this->removeChildFromParent($parent, $taxonomyId);
+        }
+
+        $this->removeNonMatchingParentReferences($taxonomy, $keepParentId);
+    }
+
+    protected function parentsReferencingTaxonomy(Taxonomy $taxonomy): iterable
+    {
+        $repository = $this->documentManger->getRepository(Content::class);
+        $queryBuilder = $repository->createQueryBuilder();
+        $queryBuilder
+            ->select()
+            ->field('class')
+            ->equals(Taxonomy::class)
+            ->field('relations.relationId')
+            ->equals('__children')
+            ->field('relations.references.$id')
+            ->equals($taxonomy->getId());
+
+        return $queryBuilder->getQuery()->execute();
+    }
+
+    private function removeChildFromParent(Taxonomy $parent, string $taxonomyId): void
+    {
+        $childrenRelation = $parent->getRelation('__children');
+        if (!$childrenRelation instanceof Relation) {
+            return;
+        }
+
+        $remaining = [];
+        foreach ($childrenRelation->getReferences() as $reference) {
+            if ($reference instanceof Taxonomy && (string) $reference->getId() === $taxonomyId) {
+                continue;
+            }
+
+            $remaining[] = $reference;
+        }
+
+        $childrenRelation->setReferences($remaining);
+    }
+
+    private function removeNonMatchingParentReferences(Taxonomy $taxonomy, ?string $keepParentId): void
+    {
+        $parentRelation = $taxonomy->getRelation('__parent');
+        if (!$parentRelation instanceof Relation) {
+            return;
+        }
+
+        if (null === $keepParentId) {
+            $parentRelation->clearReferences();
 
             return;
         }
 
-        $parent = $this->taxonomies->byId($taxonomy->getParentID());
+        $remaining = [];
+        $alreadyKept = false;
+        foreach ($parentRelation->getReferences() as $reference) {
+            if (!$reference instanceof Taxonomy || (string) $reference->getId() !== $keepParentId) {
+                continue;
+            }
 
-        if ($parent) {
-            $taxonomy->addRelation(
-                (new Relation())
-                    ->setRelationId('__parent')
-                    ->setRelationType('embedded')
-                    ->addReference($parent)
-            );
+            if ($alreadyKept) {
+                continue;
+            }
 
-            $parent->addRelation(
-                (new Relation())
-                    ->setRelationId('__children')
-                    ->setRelationType('embedded')
-                    ->addReference($taxonomy)
-            );
+            $remaining[] = $reference;
+            $alreadyKept = true;
         }
+
+        $parentRelation->setReferences($remaining);
+    }
+
+    private function syncParentOnTaxonomy(Taxonomy $taxonomy, ?Taxonomy $parent): void
+    {
+        if (!$parent instanceof Taxonomy) {
+            return;
+        }
+
+        $parentRelation = $taxonomy->getRelation('__parent');
+        if (!$parentRelation instanceof Relation) {
+            $parentRelation = (new Relation())
+                ->setRelationId('__parent')
+                ->setRelationType('embedded');
+            $taxonomy->addRelation($parentRelation);
+        }
+
+        $parentRelation->setReferences([$parent]);
+    }
+
+    private function syncChildOnParent(Taxonomy $parent, Taxonomy $taxonomy): void
+    {
+        $childrenRelation = $parent->getRelation('__children');
+        if (!$childrenRelation instanceof Relation) {
+            $childrenRelation = (new Relation())
+                ->setRelationId('__children')
+                ->setRelationType('embedded');
+            $parent->addRelation($childrenRelation);
+        }
+
+        $taxonomyId = trim((string) $taxonomy->getId());
+        if ('' === $taxonomyId) {
+            $childrenRelation->addReference($taxonomy);
+
+            return;
+        }
+
+        $references = [];
+        $seen = [];
+        foreach ($childrenRelation->getReferences() as $reference) {
+            if (!$reference instanceof Taxonomy) {
+                continue;
+            }
+
+            $id = trim((string) $reference->getId());
+            if ('' === $id || isset($seen[$id])) {
+                continue;
+            }
+
+            $seen[$id] = true;
+            $references[] = $reference;
+        }
+
+        if (!isset($seen[$taxonomyId])) {
+            $references[] = $taxonomy;
+        }
+
+        $childrenRelation->setReferences($references);
     }
 }

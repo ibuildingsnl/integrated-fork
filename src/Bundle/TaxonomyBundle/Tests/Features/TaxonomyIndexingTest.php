@@ -152,6 +152,22 @@ final class TaxonomyIndexingTest extends TestCase
         self::assertEquals(0, $list[1]->getCount());
     }
 
+    public function testBatchUsageLookupIsUsedForOverview(): void
+    {
+        $this->setUsages(['foo' => 1, 'bar' => 2, 'baz' => 3]);
+        $this->add(
+            $this->taxonomy('foo', 'Foo'),
+            $this->taxonomy('bar', 'Bar'),
+            $this->taxonomy('baz', 'Baz'),
+        );
+
+        $this->indexer->overviewFor('taxonomy');
+
+        self::assertInstanceOf(MemoryTaxonomyRepository::class, $this->taxonomies);
+        self::assertSame(1, $this->taxonomies->getUsageBatchLookupCalls());
+        self::assertSame(0, $this->taxonomies->getUsageLookupCalls());
+    }
+
     public function testIndexingMultipleChildrenWithRankedGrandchildrenAndUsageCounts()
     {
         $this->setUsages([
@@ -254,6 +270,21 @@ final class TaxonomyIndexingTest extends TestCase
 
         self::assertCount(2, $list);
         self::assertEquals('4', $list[0]->getTitle());
+    }
+
+    public function testFilteringPreventsInfiniteRecursionInParentCycle(): void
+    {
+        $this->add(
+            $this->taxonomy('a', 'A', 'a', null, 'b'),
+            $this->taxonomy('b', 'B', 'b', null, 'a'),
+        );
+
+        $list = $this->indexer->overviewFor('taxonomy', TaxonomyOptions::filter('a'));
+
+        self::assertCount(2, $list);
+        self::assertSame('A', $list[0]->getTitle());
+        self::assertSame('B', $list[1]->getTitle());
+        self::assertSame(2, $this->indexer->countFor('taxonomy', 'a'));
     }
 
     private function add(Taxonomy ...$taxonomies): void

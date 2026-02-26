@@ -91,4 +91,38 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
             ->getQuery()
             ->execute();
     }
+
+    public function countUsagesFor(array $taxonomyIds): array
+    {
+        $ids = array_values(array_filter(array_map(static function (mixed $id): string {
+            return trim((string) $id);
+        }, $taxonomyIds), static function (string $id): bool {
+            return '' !== $id;
+        }));
+
+        if ([] === $ids) {
+            return [];
+        }
+
+        $counts = array_fill_keys($ids, 0);
+        $rows = $this->manager->getDocumentCollection(Content::class)->aggregate([
+            ['$match' => ['relations.references.$id' => ['$in' => $ids]]],
+            ['$unwind' => '$relations'],
+            ['$unwind' => '$relations.references'],
+            ['$match' => ['relations.references.$id' => ['$in' => $ids]]],
+            ['$group' => ['_id' => ['taxonomy' => '$relations.references.$id', 'content' => '$_id']]],
+            ['$group' => ['_id' => '$_id.taxonomy', 'count' => ['$sum' => 1]]],
+        ])->toArray();
+
+        foreach ($rows as $row) {
+            $id = trim((string) ($row['_id'] ?? ''));
+            if ('' === $id) {
+                continue;
+            }
+
+            $counts[$id] = (int) ($row['count'] ?? 0);
+        }
+
+        return $counts;
+    }
 }

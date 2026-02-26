@@ -36,11 +36,15 @@ final class TaxonomyIndexer implements TaxonomyOverview
             return [];
         }
 
+        $byParent = $this->listByParent($contentType);
+        $usageCounts = $this->taxonomies->countUsagesFor($this->collectTaxonomyIds($byParent, $root, $filtered));
+
         return $this->slice($options ?: new TaxonomyOptions(), ...$this->toSortedIndex(
-            $this->listByParent($contentType),
+            $byParent,
             $root,
             $filtered ? 1 : 0,
-            $filtered ? [$this->toIndexed($taxonomy)] : []
+            $filtered ? [$this->toIndexed($taxonomy, 0, $usageCounts)] : [],
+            $usageCounts,
         ));
     }
 
@@ -65,17 +69,38 @@ final class TaxonomyIndexer implements TaxonomyOverview
      */
     private function countByParent(array $byParent, ?string $key): int
     {
-        if (null === $key || !isset($byParent[$key])) {
+        $visited = [];
+
+        $countByParent = function (?string $current) use (&$countByParent, $byParent, &$visited): int {
+            if (null === $current || !isset($byParent[$current])) {
+                return 0;
+            }
+
+            $visitedKey = 'node:'.$current;
+            if (isset($visited[$visitedKey])) {
+                return 0;
+            }
+            $visited[$visitedKey] = true;
+
+            $count = 0;
+            foreach ($byParent[$current] as $taxonomy) {
+                $taxonomyId = trim((string) $taxonomy->getId());
+                if ('' === $taxonomyId || isset($visited['node:'.$taxonomyId])) {
+                    continue;
+                }
+
+                $count++;
+                $count += $countByParent($taxonomyId);
+            }
+
+            return $count;
+        };
+
+        if (null === $key) {
             return 0;
         }
 
-        $count = 0;
-        foreach ($byParent[$key] as $taxonomy) {
-            $count++;
-            $count += $this->countByParent($byParent, $taxonomy->getId());
-        }
-
-        return $count;
+        return $countByParent($key);
     }
 
     private function slice(TaxonomyOptions $options, IndexedItem ...$items): array
@@ -104,32 +129,96 @@ final class TaxonomyIndexer implements TaxonomyOverview
     }
 
     /**
-     * @param Taxonomy[][]  $byParent
-     * @param IndexedItem[] $sorted
-     *
+     * @param array<string, int> $usageCounts
      * @return IndexedItem[]
      */
-    private function toSortedIndex(array $byParent, ?string $key = 'root', int $depth = 0, array $sorted = []): array
+    private function toSortedIndex(array $byParent, ?string $key, int $depth, array $sorted, array $usageCounts): array
     {
-        if (null === $key || !isset($byParent[$key])) {
-            return $sorted;
-        }
-        usort(
-            $byParent[$key],
-            fn (Taxonomy $a, Taxonomy $b) => $a->getRank() !== $b->getRank() ?
-                $a->getRank() <=> $b->getRank() :
-                $a->getTitle() <=> $b->getTitle()
-        );
-        foreach ($byParent[$key] as $taxonomy) {
-            $sorted[] = $this->toIndexed($taxonomy, $depth);
-            $sorted = $this->toSortedIndex($byParent, $taxonomy->getId(), $depth + 1, $sorted);
-        }
+        $visited = [];
+
+        $walk = function (?string $current, int $currentDepth, bool $virtualRoot = false) use (&$walk, &$sorted, &$visited, $byParent, $usageCounts): void {
+            if (null === $current || !isset($byParent[$current])) {
+                return;
+            }
+
+            $visitedKey = $virtualRoot ? '__root__' : 'node:'.$current;
+            if (isset($visited[$visitedKey])) {
+                return;
+            }
+            $visited[$visitedKey] = true;
+
+            $children = $byParent[$current];
+            usort(
+                $children,
+                fn (Taxonomy $a, Taxonomy $b) => $a->getRank() !== $b->getRank() ?
+                    $a->getRank() <=> $b->getRank() :
+                    $a->getTitle() <=> $b->getTitle()
+            );
+
+            foreach ($children as $taxonomy) {
+                $taxonomyId = (string) $taxonomy->getId();
+                if ('' === $taxonomyId || isset($visited['node:'.$taxonomyId])) {
+                    continue;
+                }
+
+                $sorted[] = $this->toIndexed($taxonomy, $currentDepth, $usageCounts);
+                $walk($taxonomyId, $currentDepth + 1, false);
+            }
+        };
+
+        $walk($key, $depth, 'root' === $key);
 
         return $sorted;
     }
 
-    private function toIndexed(Taxonomy $taxonomy, int $depth = 0): IndexedItem
+    /**
+     * @param Taxonomy[][]       $byParent
+     * @return string[]
+     */
+    private function collectTaxonomyIds(array $byParent, string $root, bool $filtered): array
     {
-        return IndexedItem::basedOn($taxonomy, $this->taxonomies->countUsages($taxonomy), $depth);
+        $ids = [];
+        $visited = [];
+
+        if ($filtered && 'root' !== $root) {
+            $ids[$root] = true;
+        }
+
+        $walk = function (?string $current, bool $virtualRoot = false) use (&$walk, $byParent, &$ids, &$visited): void {
+            if (null === $current || !isset($byParent[$current])) {
+                return;
+            }
+
+            $visitedKey = $virtualRoot ? '__root__' : 'node:'.$current;
+            if (isset($visited[$visitedKey])) {
+                return;
+            }
+            $visited[$visitedKey] = true;
+
+            foreach ($byParent[$current] as $taxonomy) {
+                $id = trim((string) $taxonomy->getId());
+                if ('' === $id) {
+                    continue;
+                }
+
+                $ids[$id] = true;
+                $walk($id);
+            }
+        };
+
+        $walk($root, 'root' === $root);
+
+        return array_keys($ids);
+    }
+
+    /**
+     * @param array<string, int> $usageCounts
+     */
+    private function toIndexed(Taxonomy $taxonomy, int $depth = 0, array $usageCounts = []): IndexedItem
+    {
+        $id = (string) $taxonomy->getId();
+        $count = $usageCounts[$id] ?? $this->taxonomies->countUsages($taxonomy);
+
+        return IndexedItem::basedOn($taxonomy, $count, $depth);
     }
 }

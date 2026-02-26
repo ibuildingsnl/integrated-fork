@@ -31,6 +31,9 @@ final class TaxonomyChannelInheritanceListener implements EventSubscriberInterfa
         }
 
         $parent = $this->taxonomies->byId($taxonomy->getParentID());
+        if (!$parent instanceof Taxonomy) {
+            return;
+        }
 
         $taxonomy->setChannels($parent->getChannels());
     }

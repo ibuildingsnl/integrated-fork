@@ -12,6 +12,8 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
     private array $taxonomies = [];
     /** @var int[] */
     private array $usages = [];
+    private int $usageLookupCalls = 0;
+    private int $usageBatchLookupCalls = 0;
 
     public function __construct(
         private readonly ?AuthorizationCheckerInterface $authorization = null,
@@ -67,11 +69,40 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
 
     public function countUsages(Taxonomy $taxonomy): int
     {
+        $this->usageLookupCalls++;
+
         return $this->usages[$taxonomy->getId()] ?? 0;
+    }
+
+    public function countUsagesFor(array $taxonomyIds): array
+    {
+        $this->usageBatchLookupCalls++;
+        $counts = [];
+
+        foreach ($taxonomyIds as $taxonomyId) {
+            $id = trim((string) $taxonomyId);
+            if ('' === $id) {
+                continue;
+            }
+
+            $counts[$id] = $this->usages[$id] ?? 0;
+        }
+
+        return $counts;
     }
 
     public function setUsageCount(string $taxonomyId, int $usages): void
     {
         $this->usages[$taxonomyId] = $usages;
+    }
+
+    public function getUsageLookupCalls(): int
+    {
+        return $this->usageLookupCalls;
+    }
+
+    public function getUsageBatchLookupCalls(): int
+    {
+        return $this->usageBatchLookupCalls;
     }
 }

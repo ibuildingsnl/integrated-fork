@@ -134,6 +134,22 @@ final class TaxonomyListTest extends TestCase
         self::assertEquals('Yolo', $list[4]->getTitle());
     }
 
+    public function testListUsesBatchUsageLookup(): void
+    {
+        $this->setUsages(['foo' => 3, 'bar' => 2, 'baz' => 1]);
+        $this->add(
+            $this->taxonomy('foo', 'Foo'),
+            $this->taxonomy('bar', 'Bar'),
+            $this->taxonomy('baz', 'Baz'),
+        );
+
+        $this->list->overviewFor('tag', TaxonomyOptions::page(1, 10));
+
+        self::assertInstanceOf(MemoryTaxonomyRepository::class, $this->taxonomies);
+        self::assertSame(1, $this->taxonomies->getUsageBatchLookupCalls());
+        self::assertSame(0, $this->taxonomies->getUsageLookupCalls());
+    }
+
     private function add(Taxonomy ...$taxonomies): void
     {
         foreach ($taxonomies as $taxonomy) {
