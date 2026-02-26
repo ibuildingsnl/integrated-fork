@@ -3295,10 +3295,10 @@ human-signals@^2.1.0:
   resolved "https://registry.npmjs.org/human-signals/-/human-signals-2.1.0.tgz"
   integrity sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==
 
-iconoir@^7.0.3:
-  version "7.7.0"
-  resolved "https://registry.npmjs.org/iconoir/-/iconoir-7.7.0.tgz"
-  integrity sha512-OsWErkUrvFW+EQAUkSw1JgVXGCIynVgCGUtrI7PzGcVmhfryFCbWHZceoGRtI2BMfp28J6HxethR86V58sJfnw==
+iconoir@^7.11.0:
+  version "7.11.0"
+  resolved "https://registry.yarnpkg.com/iconoir/-/iconoir-7.11.0.tgz#798c1913f29d5941274d2bd46c38188b63295800"
+  integrity sha512-F9T/E08aJBaQ+VOBjn+ChWKn3hFwsaK5VZ024OFMxdDaxKjLGDpU/OsU7MO9wXM+mDs4ZImypdXIn0fFZAXKmA==
 
 iconv-lite@0.4.24:
   version "0.4.24"
