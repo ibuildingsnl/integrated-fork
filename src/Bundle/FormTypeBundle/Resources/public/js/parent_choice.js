@@ -1,38 +1,63 @@
-window.IntegratedJQReady(function ($) {
-    initContentChoice($);
-});
+(function () {
+    function onReady(callback) {
+        if (typeof window.IntegratedJQReady === 'function') {
+            window.IntegratedJQReady(callback);
 
-function initContentChoice($) {
-    if (!$.fn || !$.fn.select2) {
-        return;
+            return;
+        }
+
+        if (window.jQuery) {
+            window.jQuery(function () {
+                callback(window.jQuery);
+            });
+        }
     }
-    $('select.integrated_content_choice').select2({
-        ajax: {
-            data: function (param) {
-                return {
-                    limit:  100,
-                    sort: 'title_sort',
-                    q: typeof param.term !== 'undefined' ? param.term + '*' : ''
-                };
-            },
-            processResults: function (data) {
-                var items = [];
 
-                if ('items' in data) {
-                    for (var k in data.items) {
-                        var item = data.items[k];
-                        if (!item.text) {
-                            item.text = item.title;
-                            if (item.path) {
-                                item.text = item.path + ' > ' + item.text;
+    function initIntegratedParentChoice($) {
+        if (!$ || !$.fn || !$.fn.select2) {
+            return;
+        }
+
+        $('select.integrated_content_parent_choice').each(function () {
+            var $element = $(this);
+
+            if ($element.data('select2')) {
+                return;
+            }
+
+            $element.select2({
+                ajax: {
+                    url: $element.data('ajax-url'),
+                    dataType: 'json',
+                    data: function (param) {
+                        return {
+                            limit: 100,
+                            sort: 'title_sort',
+                            q: param && typeof param.term !== 'undefined' ? param.term + '*' : '',
+                        };
+                    },
+                    processResults: function (data) {
+                        var items = [];
+
+                        if ('items' in data) {
+                            for (var k in data.items) {
+                                var item = data.items[k];
+                                if (!item.text) {
+                                    item.text = item.title;
+                                    if (item.path) {
+                                        item.text = item.path + ' > ' + item.text;
+                                    }
+                                }
+                                items.push(item);
                             }
                         }
-                        items.push(item);
-                    }
-                }
 
-                return { results: items };
-            }
-        }
-    });
-}
+                        return {results: items};
+                    },
+                },
+            });
+        });
+    }
+
+    onReady(initIntegratedParentChoice);
+})();
