@@ -29,7 +29,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 class ConfigController extends AbstractController
 {
@@ -180,7 +179,13 @@ class ConfigController extends AbstractController
 
     public function externalReturn(Request $request): Response
     {
-        $session = new Session();
+        if (!$request->hasSession()) {
+            $this->addFlash('danger', 'Config not found in session');
+
+            return $this->index($request);
+        }
+
+        $session = $request->getSession();
 
         if (!$id = $session->get('externalReturnId')) {
             $this->addFlash('danger', 'Config not found in session');
@@ -188,7 +193,9 @@ class ConfigController extends AbstractController
             return $this->index($request);
         }
 
-        return $this->edit($request, $id);
+        $session->remove('externalReturnId');
+
+        return $this->edit($request, (string) $id);
     }
 
     public function delete(Request $request, string $id): Response

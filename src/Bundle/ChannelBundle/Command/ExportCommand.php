@@ -87,6 +87,7 @@ class ExportCommand extends Command
     {
         $wait = (int) $input->getOption('wait');
         $wait *= 1000; // convert from milli to micro
+        $failed = false;
 
         while (true) {
             $process = new Process(
@@ -101,6 +102,7 @@ class ExportCommand extends Command
             });
 
             if (!$process->isSuccessful()) {
+                $failed = true;
                 break; // terminate when there is a error
             }
 
@@ -113,6 +115,6 @@ class ExportCommand extends Command
             usleep($wait);
         }
 
-        return self::SUCCESS;
+        return $failed ? self::FAILURE : self::SUCCESS;
     }
 }
