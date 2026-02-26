@@ -122,6 +122,8 @@ const init = () => {
         const filterElements = document.querySelectorAll('.aside-item-list');
         filterElements.forEach(openSelectedOptions);
     }
+
+    syncContentWrapperToolbarState();
 };
 
 function onSubmitButtonClick(e) {
@@ -179,6 +181,27 @@ function onEditorSectionClick(event) {
     if (editorHeader) {
         toggleOptionsElement(editorHeader);
     }
+}
+
+function syncContentWrapperToolbarState() {
+    const pageBody = document.body;
+    if (!pageBody) {
+        return;
+    }
+
+    const contentWrapper = document.querySelector('#wrapper-holder > .content-wrapper');
+    if (!contentWrapper) {
+        pageBody.classList.remove('has-content-toolbar');
+
+        return;
+    }
+
+    const toolbars = contentWrapper.querySelectorAll('#toolbar');
+    const hasSupportedToolbar = Array.from(toolbars).some((toolbar) => {
+        return !toolbar.closest('.style-guide-preview-surface');
+    });
+
+    pageBody.classList.toggle('has-content-toolbar', hasSupportedToolbar);
 }
 
 function showElement(el) {
@@ -561,6 +584,34 @@ function initDismissibleAlerts() {
     }, 10000);
 }
 
+function clearBoundInitializationFlags() {
+    const selectors = [
+        '[data-bound-focus]',
+        '[data-bound-toggle-dropdown]',
+        '[data-bound-toggle-data-target]',
+        '[data-bound-toggle-sidebar]',
+        '[data-bound-toggle-options]',
+        '[data-bound-list-search]',
+        '[data-bound-submit-click]',
+        '[data-bound-aside-holder]',
+        '[data-bound-editor-section]',
+        '[data-bound-facet-persistence-change]',
+    ];
+
+    document.querySelectorAll(selectors.join(',')).forEach((element) => {
+        element.removeAttribute('data-bound-focus');
+        element.removeAttribute('data-bound-toggle-dropdown');
+        element.removeAttribute('data-bound-toggle-data-target');
+        element.removeAttribute('data-bound-toggle-sidebar');
+        element.removeAttribute('data-bound-toggle-options');
+        element.removeAttribute('data-bound-list-search');
+        element.removeAttribute('data-bound-submit-click');
+        element.removeAttribute('data-bound-aside-holder');
+        element.removeAttribute('data-bound-editor-section');
+        element.removeAttribute('data-bound-facet-persistence-change');
+    });
+}
+
 // Initialization
 
 document.addEventListener('DOMContentLoaded', initDismissibleAlerts);
@@ -615,6 +666,8 @@ document.addEventListener('turbo:render', () => {
     }
 });
 document.addEventListener('turbo:before-cache', () => {
+    clearBoundInitializationFlags();
+
     const flashContainer = document.getElementById('flash-messages');
     if (flashContainer) {
         flashContainer.innerHTML = '';

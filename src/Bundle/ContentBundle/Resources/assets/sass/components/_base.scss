@@ -131,7 +131,7 @@ body {
             .editor:not(.editor-wrapped) {
                 .form-item, .editor-item-wrapper {
                     margin-bottom: 2rem;
-                    border-radius: 15px;
+                    //border-radius: 15px;
                     border: 0;
                     @include media(max-sm) {
                         margin-bottom: 1rem;
@@ -140,8 +140,8 @@ body {
 
                 .form-item {
                     input {
-                        border-radius: 15px;
-                        padding: 1rem 2rem;
+                        //border-radius: 15px;
+                        //padding: 1rem 2rem;
                     }
                 }
             }
@@ -222,28 +222,7 @@ body {
 }
 
 
-body[class*="edit"],
-body[class*="new"],
-body[class*="show"],
-body[class*="delete"],
-body[class*="update"],
-body.integrated_content_bulk_select,
-body.integrated_content_bulk_configure,
-body.integrated_content_bulk_confirm,
-body.integrated_content_user_profile_index,
-body.integrated_content_history_index,
-body.integrated_content_page_copy,
-body.integrated_page_page_copy,
-body.integrated_block_inline_text_block_create,
-body.integrated_user_profile_index,
-body.integrated_user_user_edit,
-body.integrated_taxonomy_index {
-    .content-wrapper {
-        padding: 48px 0 0;
-    }
-}
-
-body[class*="integrated_import_template_wizard_"] {
+body.has-content-toolbar {
     .content-wrapper {
         padding: 48px 0 0;
     }
@@ -437,6 +416,7 @@ body.hide-options {
             font-size: 13px;
             display: flex;
             cursor: pointer;
+            text-transform: none;
 
             label {
                 font-weight: 400;

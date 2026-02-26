@@ -3,7 +3,7 @@
     border: 1px solid;
     border-radius: 8px;
     font-size: 13px;
-    padding: 1rem;
+    padding: 3px 1rem;
     width: 100%;
     box-shadow: none;
     border-color: $border-color;
@@ -82,7 +82,7 @@ select.form-control {
 
         label {
             margin-bottom: 0;
-            padding: 1rem;
+            padding: 3px 1rem;
         }
     }
 }
@@ -366,6 +366,8 @@ input#bulk-date-to {
     -ms-user-select: none;
     user-select: none;
     font-weight: 300;
+    max-width: 750px;
+    padding-left: 8px;
     /* Hide the browser's default checkbox */
     input {
         position: absolute;
@@ -547,6 +549,7 @@ input#bulk-date-to {
     background-color: white;
     border-radius: 8px;
     border: none !important;
+    max-width:750px;
     /* Hide the browser's default checkbox */
     input {
         position: absolute;

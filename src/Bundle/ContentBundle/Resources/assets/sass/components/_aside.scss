@@ -221,6 +221,19 @@
                     border-radius: 6px;
                 }
 
+                &.filters_list_full {
+                    height: 100%;
+                    max-height: 100%;
+                    overflow-wrap: break-word;
+
+                    > li {
+                        display: list-item;
+                        list-style-type: decimal;
+                        list-style-position: outside;
+                        margin-left: 1.2rem;
+                    }
+                }
+
                 > li {
                     display: block;
                     margin: 0;
@@ -776,7 +789,7 @@ ul {
     #toolbar {
         .options {
             .form-actions {
-                margin-right: 10px;
+                //margin-right: 10px;
             }
         }
 

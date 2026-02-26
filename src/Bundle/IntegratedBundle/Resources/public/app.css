@@ -5451,7 +5451,7 @@ button * {
   border: 1px solid;
   border-radius: 8px;
   font-size: 13px;
-  padding: 1rem;
+  padding: 3px 1rem;
   width: 100%;
   box-shadow: none;
   border-color: #DEE3E9;
@@ -5564,7 +5564,7 @@ select.form-control {
 }
 .form-group .checkbox label, .form-item .checkbox label {
   margin-bottom: 0;
-  padding: 1rem;
+  padding: 3px 1rem;
 }
 
 .aside-item-list .form-group .checkbox label {
@@ -5850,6 +5850,8 @@ input#bulk-date-to {
   -moz-user-select: none;
   user-select: none;
   font-weight: 300;
+  max-width: 750px;
+  padding-left: 8px;
   /* Hide the browser's default checkbox */
   /* Create a custom checkbox */
   /* On mouse-over, add a grey background color */
@@ -6003,6 +6005,7 @@ input#bulk-date-to {
   background-color: white;
   border-radius: 8px;
   border: none !important;
+  max-width: 750px;
   /* Hide the browser's default checkbox */
   /* Create a custom checkbox */
   /* On mouse-over, add a grey background color */
@@ -7382,17 +7385,12 @@ body {
 }
 .content-wrapper .edit-form .editor-wrapper .editor:not(.editor-wrapped) .form-item, .content-wrapper .edit-form .editor-wrapper .editor:not(.editor-wrapped) .editor-item-wrapper {
   margin-bottom: 2rem;
-  border-radius: 15px;
   border: 0;
 }
 @media only screen and (max-width: 640px) {
   .content-wrapper .edit-form .editor-wrapper .editor:not(.editor-wrapped) .form-item, .content-wrapper .edit-form .editor-wrapper .editor:not(.editor-wrapped) .editor-item-wrapper {
     margin-bottom: 1rem;
   }
-}
-.content-wrapper .edit-form .editor-wrapper .editor:not(.editor-wrapped) .form-item input {
-  border-radius: 15px;
-  padding: 1rem 2rem;
 }
 .content-wrapper .edit-form .editor-wrapper .editor div.form-group {
   border-top: 1px solid #dee3e9;
@@ -7453,26 +7451,7 @@ body {
   box-shadow: 0 2px 10px rgba(31, 52, 73, 0.05);
 }
 
-body[class*=edit] .content-wrapper,
-body[class*=new] .content-wrapper,
-body[class*=show] .content-wrapper,
-body[class*=delete] .content-wrapper,
-body[class*=update] .content-wrapper,
-body.integrated_content_bulk_select .content-wrapper,
-body.integrated_content_bulk_configure .content-wrapper,
-body.integrated_content_bulk_confirm .content-wrapper,
-body.integrated_content_user_profile_index .content-wrapper,
-body.integrated_content_history_index .content-wrapper,
-body.integrated_content_page_copy .content-wrapper,
-body.integrated_page_page_copy .content-wrapper,
-body.integrated_block_inline_text_block_create .content-wrapper,
-body.integrated_user_profile_index .content-wrapper,
-body.integrated_user_user_edit .content-wrapper,
-body.integrated_taxonomy_index .content-wrapper {
-  padding: 48px 0 0;
-}
-
-body[class*=integrated_import_template_wizard_] .content-wrapper {
+body.has-content-toolbar .content-wrapper {
   padding: 48px 0 0;
 }
 
@@ -7639,6 +7618,7 @@ body.hide-options #wrapper-holder .editor-wrapper {
   font-size: 13px;
   display: flex;
   cursor: pointer;
+  text-transform: none;
 }
 .editor-item-wrapper .editor-item-header h3.editor-item-title label {
   font-weight: 400;
@@ -8060,6 +8040,17 @@ dd {
 .aside-item-wrapper .aside-item-list .aside-item-list-container ul.filters_list::-webkit-scrollbar-thumb {
   background: #94a3b8;
   border-radius: 6px;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.filters_list_full {
+  height: 100%;
+  max-height: 100%;
+  overflow-wrap: break-word;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.filters_list_full > li {
+  display: list-item;
+  list-style-type: decimal;
+  list-style-position: outside;
+  margin-left: 1.2rem;
 }
 .aside-item-wrapper .aside-item-list .aside-item-list-container ul > li {
   display: block;
@@ -8528,9 +8519,6 @@ ul.jFiler-items-grid .jFiler-item .icon-jfi-trash:before {
   width: 100%;
 }
 
-.media-library #toolbar .options .form-actions {
-  margin-right: 10px;
-}
 .media-library #toolbar .back {
   margin-left: 10px;
 }
@@ -11286,6 +11274,7 @@ body.tox-fullscreen .content-wrapper {
   display: flex;
   align-items: center;
   margin-right: 10px;
+  gap: 10px;
 }
 @media only screen and (max-width: 1280px) {
   #toolbar .options .form-actions, #toolbar .options .form-actions-extra {

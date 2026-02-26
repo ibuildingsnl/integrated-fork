@@ -256,7 +256,11 @@
                 form.submit();
             };
 
-            form.addEventListener('change', function () {
+            form.addEventListener('change', function (event) {
+                if (!event.isTrusted) {
+                    return;
+                }
+
                 submitForm();
             });
 

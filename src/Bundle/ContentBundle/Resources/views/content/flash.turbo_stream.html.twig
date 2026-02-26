@@ -1,4 +1,4 @@
-<turbo-stream action="replace" target="flash-messages">
+<turbo-stream action="append" target="flash-messages">
     <template>
         {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning', 'error']) %}
             {% for message in messages %}

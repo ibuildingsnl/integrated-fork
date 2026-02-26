@@ -1007,7 +1007,7 @@ video {
   border: 1px solid;
   border-radius: 8px;
   font-size: 13px;
-  padding: 1rem;
+  padding: 3px 1rem;
   width: 100%;
   box-shadow: none;
   border-color: #DEE3E9;
@@ -1120,7 +1120,7 @@ select.form-control {
 }
 .form-group .checkbox label, .form-item .checkbox label {
   margin-bottom: 0;
-  padding: 1rem;
+  padding: 3px 1rem;
 }
 
 .aside-item-list .form-group .checkbox label {
@@ -1406,6 +1406,8 @@ input#bulk-date-to {
   -moz-user-select: none;
   user-select: none;
   font-weight: 300;
+  max-width: 750px;
+  padding-left: 8px;
   /* Hide the browser's default checkbox */
   /* Create a custom checkbox */
   /* On mouse-over, add a grey background color */
@@ -1559,6 +1561,7 @@ input#bulk-date-to {
   background-color: white;
   border-radius: 8px;
   border: none !important;
+  max-width: 750px;
   /* Hide the browser's default checkbox */
   /* Create a custom checkbox */
   /* On mouse-over, add a grey background color */

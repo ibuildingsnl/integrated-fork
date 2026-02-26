@@ -13940,6 +13940,7 @@ var init = function init() {
     var filterElements = document.querySelectorAll('.aside-item-list');
     filterElements.forEach(openSelectedOptions);
   }
+  syncContentWrapperToolbarState();
 };
 function onSubmitButtonClick(e) {
   var form = e.target.closest('form') || e.target.form;
@@ -13986,6 +13987,22 @@ function onEditorSectionClick(event) {
   if (editorHeader) {
     toggleOptionsElement(editorHeader);
   }
+}
+function syncContentWrapperToolbarState() {
+  var pageBody = document.body;
+  if (!pageBody) {
+    return;
+  }
+  var contentWrapper = document.querySelector('#wrapper-holder > .content-wrapper');
+  if (!contentWrapper) {
+    pageBody.classList.remove('has-content-toolbar');
+    return;
+  }
+  var toolbars = contentWrapper.querySelectorAll('#toolbar');
+  var hasSupportedToolbar = Array.from(toolbars).some(function (toolbar) {
+    return !toolbar.closest('.style-guide-preview-surface');
+  });
+  pageBody.classList.toggle('has-content-toolbar', hasSupportedToolbar);
 }
 function showElement(el) {
   el.style.height = '0';
@@ -14305,6 +14322,21 @@ function initDismissibleAlerts() {
     });
   }, 10000);
 }
+function clearBoundInitializationFlags() {
+  var selectors = ['[data-bound-focus]', '[data-bound-toggle-dropdown]', '[data-bound-toggle-data-target]', '[data-bound-toggle-sidebar]', '[data-bound-toggle-options]', '[data-bound-list-search]', '[data-bound-submit-click]', '[data-bound-aside-holder]', '[data-bound-editor-section]', '[data-bound-facet-persistence-change]'];
+  document.querySelectorAll(selectors.join(',')).forEach(function (element) {
+    element.removeAttribute('data-bound-focus');
+    element.removeAttribute('data-bound-toggle-dropdown');
+    element.removeAttribute('data-bound-toggle-data-target');
+    element.removeAttribute('data-bound-toggle-sidebar');
+    element.removeAttribute('data-bound-toggle-options');
+    element.removeAttribute('data-bound-list-search');
+    element.removeAttribute('data-bound-submit-click');
+    element.removeAttribute('data-bound-aside-holder');
+    element.removeAttribute('data-bound-editor-section');
+    element.removeAttribute('data-bound-facet-persistence-change');
+  });
+}
 
 // Initialization
 
@@ -14357,6 +14389,7 @@ document.addEventListener('turbo:render', function () {
   }
 });
 document.addEventListener('turbo:before-cache', function () {
+  clearBoundInitializationFlags();
   var flashContainer = document.getElementById('flash-messages');
   if (flashContainer) {
     flashContainer.innerHTML = '';
