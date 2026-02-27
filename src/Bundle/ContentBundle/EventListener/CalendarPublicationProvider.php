@@ -48,6 +48,7 @@ class CalendarPublicationProvider implements EventSubscriberInterface
         $calendarEnd = $event->options['end'];
 
         $publications = $this->publicationRepository->forDateRange($calendarStart, $calendarEnd);
+        $brands = $this->brands->all();
 
         $now = new \DateTime();
 
@@ -70,17 +71,21 @@ class CalendarPublicationProvider implements EventSubscriberInterface
             $eligibleForDisplay = false;
 
             if ($publication->getChannel() instanceof ChannelInterface) {
-                foreach ($this->brands->all() as $brand) {
-                    if ($brand->hasChannel($publication->getChannel())) {
-                        if (\array_key_exists('brands', $event->options) && \in_array(
-                            $brand->getId(),
-                            $event->options['brands']
-                        )) {
-                            $eligibleForDisplay = true;
-                        }
-                        $currentBrand = $brand;
-                        $brandProfile = $brand->getProfile();
+                foreach ($brands as $brand) {
+                    if (!$brand->hasChannel($publication->getChannel())) {
+                        continue;
                     }
+
+                    if (\array_key_exists('brands', $event->options) && \in_array(
+                        $brand->getId(),
+                        $event->options['brands'],
+                        true
+                    )) {
+                        $eligibleForDisplay = true;
+                    }
+
+                    $currentBrand = $brand;
+                    $brandProfile = $brand->getProfile();
                 }
             }
 

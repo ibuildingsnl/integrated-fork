@@ -13500,7 +13500,7 @@ function updatePublicationsAndChannels() {
     var checkedChannels = Array.from(brandChannel.querySelectorAll('.brand-channels [type="checkbox"]:checked')).map(function (el) {
       return el.getAttribute('data-channel-selector');
     });
-    if (!checkedChannels.length > 0) return;
+    if (checkedChannels.length === 0) return;
     var dateInput, timeInput;
     var fallbackDateInput = document.querySelector('#integrated_content_publishTime input[type="date"]');
     var fallbackTimeInput = document.querySelector('#integrated_content_publishTime input[type="time"]');

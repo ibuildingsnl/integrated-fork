@@ -142,18 +142,84 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
         });
     }
 
-    private function isPublicationChanged($previousPublication, $data): bool
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function isPublicationChanged(Publication $previousPublication, array $data): bool
     {
-        $existingSettings = $previousPublication->getSettings();
-        $newSettings = $data['settings'] ?? null;
+        $existingSettings = $this->normalizeSettings($previousPublication->getSettings());
+        $newSettings = $this->normalizeSettings((array) ($data['settings'] ?? []));
 
         $existingTime = $previousPublication->getTime();
         $newTime = $data['time'] ?? null;
 
-        $timeChanged = $existingTime != $newTime;
+        $timeChanged = !$this->isSamePublishTime($existingTime, $newTime instanceof PublishTimeInterface ? $newTime : null);
 
-        $settingsChanged = json_encode($existingSettings) != json_encode($newSettings);
+        $settingsChanged = $existingSettings !== $newSettings;
 
         return $timeChanged || $settingsChanged;
+    }
+
+    private function isSamePublishTime(?PublishTimeInterface $a, ?PublishTimeInterface $b): bool
+    {
+        if ($a === null || $b === null) {
+            return $a === $b;
+        }
+
+        return $this->isSameDateTime($a->getStartDate(), $b->getStartDate())
+            && $this->isSameDateTime($a->getEndDate(), $b->getEndDate());
+    }
+
+    private function isSameDateTime(?\DateTimeInterface $a, ?\DateTimeInterface $b): bool
+    {
+        if ($a === null || $b === null) {
+            return $a === $b;
+        }
+
+        return $a->getTimestamp() === $b->getTimestamp();
+    }
+
+    /**
+     * @param array<int|string, mixed> $settings
+     *
+     * @return array<int|string, mixed>
+     */
+    private function normalizeSettings(array $settings): array
+    {
+        $normalized = [];
+        foreach ($settings as $key => $value) {
+            $normalized[$key] = $this->normalizeSettingValue($value);
+        }
+
+        if ($this->isAssociativeArray($normalized)) {
+            ksort($normalized);
+        }
+
+        return $normalized;
+    }
+
+    private function normalizeSettingValue(mixed $value): mixed
+    {
+        if ($value instanceof \DateTimeInterface) {
+            return $value->format(\DateTimeInterface::ATOM);
+        }
+
+        if (\is_array($value)) {
+            return $this->normalizeSettings($value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * @param array<int|string, mixed> $values
+     */
+    private function isAssociativeArray(array $values): bool
+    {
+        if ([] === $values) {
+            return false;
+        }
+
+        return array_keys($values) !== range(0, \count($values) - 1);
     }
 }

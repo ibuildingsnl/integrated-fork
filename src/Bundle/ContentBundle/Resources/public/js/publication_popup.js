@@ -43,6 +43,10 @@ if (
             const cancel = channelTypeContainer.querySelector('a.cancel');
             let imageInfos = [];
 
+            if (!apply || !cancel || !channels || !channelTypeForm) {
+                return;
+            }
+
             channelTypeContainer.classList.add('show');
 
             apply.onclick = function (ev) {
@@ -94,6 +98,10 @@ if (
                     }
                     //Check the selected Channel under Brands
                     const input = document.querySelector('input[data-channel-selector="'+container.dataset.publicationChannel+'"]');
+                    if (!input) {
+                        return;
+                    }
+
                     input.checked = true;
                     var event = new Event('change', { 'bubbles': true, 'cancelable': true });
                     input.dispatchEvent(event);
@@ -136,7 +144,12 @@ if (
 
             document.querySelectorAll('input[data-channel-type="'+action+'"]').forEach(function (input) {
                     let channel = input.getAttribute('data-channel-selector');
-                    let pubStatus = document.querySelector('[data-publication-channel="'+channel+'"]').getAttribute('data-publication-status');
+                    const publicationSettings = document.querySelector('[data-publication-channel="'+channel+'"]');
+                    if (!publicationSettings) {
+                        return;
+                    }
+
+                    let pubStatus = publicationSettings.getAttribute('data-publication-status');
 
                     if (pubStatus === 'success') return;
 
