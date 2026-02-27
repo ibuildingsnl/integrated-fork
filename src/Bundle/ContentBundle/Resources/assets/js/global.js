@@ -10,6 +10,7 @@ window.iframeWindow = '';
 window.popupShown = false;
 const CONTENT_NAVIGATOR_OPEN_FACETS_KEY = 'contentNavigator.openFacets.v1';
 const CONTENT_NAVIGATOR_ASIDE_SCROLL_KEY = 'contentNavigator.asideScrollTop.v1';
+const FLASH_MESSAGES_PERSIST_KEY = 'integrated.flashMessages.persist.v1';
 const listSearchDebounceTimers = new WeakMap();
 
 $(document).mouseup(function(e) {
@@ -612,8 +613,100 @@ function clearBoundInitializationFlags() {
     });
 }
 
+function flashMessageSignature(node) {
+    if (!(node instanceof HTMLElement)) {
+        return '';
+    }
+
+    const className = node.className || '';
+    const text = node.textContent ? node.textContent.replace(/\s+/g, ' ').trim() : '';
+
+    return `${className}::${text}`;
+}
+
+function stashFlashMessagesForNextVisit() {
+    if (typeof window.sessionStorage === 'undefined') {
+        return;
+    }
+
+    const flashContainer = document.getElementById('flash-messages');
+    if (!(flashContainer instanceof HTMLElement)) {
+        window.sessionStorage.removeItem(FLASH_MESSAGES_PERSIST_KEY);
+
+        return;
+    }
+
+    const alerts = Array.from(flashContainer.children).filter((child) => {
+        return child instanceof HTMLElement && child.classList.contains('alert');
+    });
+    const payload = alerts.map((alert) => alert.outerHTML);
+
+    if (payload.length === 0) {
+        window.sessionStorage.removeItem(FLASH_MESSAGES_PERSIST_KEY);
+
+        return;
+    }
+
+    window.sessionStorage.setItem(FLASH_MESSAGES_PERSIST_KEY, JSON.stringify(payload));
+}
+
+function restoreFlashMessagesFromPreviousVisit() {
+    if (typeof window.sessionStorage === 'undefined') {
+        return;
+    }
+
+    const flashContainer = document.getElementById('flash-messages');
+    if (!(flashContainer instanceof HTMLElement)) {
+        window.sessionStorage.removeItem(FLASH_MESSAGES_PERSIST_KEY);
+
+        return;
+    }
+
+    const rawPayload = window.sessionStorage.getItem(FLASH_MESSAGES_PERSIST_KEY);
+    window.sessionStorage.removeItem(FLASH_MESSAGES_PERSIST_KEY);
+    if (!rawPayload) {
+        return;
+    }
+
+    let payload = null;
+    try {
+        payload = JSON.parse(rawPayload);
+    } catch (error) {
+        return;
+    }
+
+    if (!Array.isArray(payload)) {
+        return;
+    }
+
+    payload.forEach((html) => {
+        if (typeof html !== 'string' || html.trim() === '') {
+            return;
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = html;
+
+        const alert = wrapper.firstElementChild;
+        if (!(alert instanceof HTMLElement) || !alert.classList.contains('alert')) {
+            return;
+        }
+
+        const signature = flashMessageSignature(alert);
+        const exists = Array.from(flashContainer.children).some((child) => {
+            return flashMessageSignature(child) === signature;
+        });
+        if (exists) {
+            return;
+        }
+
+        flashContainer.insertBefore(alert, flashContainer.firstChild);
+    });
+}
+
 // Initialization
 
+document.addEventListener('DOMContentLoaded', restoreFlashMessagesFromPreviousVisit);
 document.addEventListener('DOMContentLoaded', initDismissibleAlerts);
 document.addEventListener('DOMContentLoaded', hideButtonIfNoOptions);
 document.addEventListener('DOMContentLoaded', init);
@@ -621,6 +714,7 @@ document.addEventListener('DOMContentLoaded', restorePersistedFacetState);
 document.addEventListener('DOMContentLoaded', restoreAsideScrollPosition);
 document.addEventListener('DOMContentLoaded', announceContentNavigatorResults);
 document.addEventListener('DOMContentLoaded', bindFacetPersistenceOnFilterChange);
+document.addEventListener('turbo:load', restoreFlashMessagesFromPreviousVisit);
 document.addEventListener('turbo:load', initDismissibleAlerts);
 document.addEventListener('turbo:load', hideButtonIfNoOptions);
 document.addEventListener('turbo:load', init);
@@ -667,6 +761,7 @@ document.addEventListener('turbo:render', () => {
 });
 document.addEventListener('turbo:before-cache', () => {
     clearBoundInitializationFlags();
+    stashFlashMessagesForNextVisit();
 
     const flashContainer = document.getElementById('flash-messages');
     if (flashContainer) {

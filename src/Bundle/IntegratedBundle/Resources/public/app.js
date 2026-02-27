@@ -7329,6 +7329,7 @@ window.iframeWindow = '';
 window.popupShown = false;
 var CONTENT_NAVIGATOR_OPEN_FACETS_KEY = 'contentNavigator.openFacets.v1';
 var CONTENT_NAVIGATOR_ASIDE_SCROLL_KEY = 'contentNavigator.asideScrollTop.v1';
+var FLASH_MESSAGES_PERSIST_KEY = 'integrated.flashMessages.persist.v1';
 var listSearchDebounceTimers = new WeakMap();
 $(document).mouseup(function (e) {
   if (e.button !== 0) {
@@ -7818,9 +7819,82 @@ function clearBoundInitializationFlags() {
     element.removeAttribute('data-bound-facet-persistence-change');
   });
 }
+function flashMessageSignature(node) {
+  if (!(node instanceof HTMLElement)) {
+    return '';
+  }
+  var className = node.className || '';
+  var text = node.textContent ? node.textContent.replace(/\s+/g, ' ').trim() : '';
+  return "".concat(className, "::").concat(text);
+}
+function stashFlashMessagesForNextVisit() {
+  if (typeof window.sessionStorage === 'undefined') {
+    return;
+  }
+  var flashContainer = document.getElementById('flash-messages');
+  if (!(flashContainer instanceof HTMLElement)) {
+    window.sessionStorage.removeItem(FLASH_MESSAGES_PERSIST_KEY);
+    return;
+  }
+  var alerts = Array.from(flashContainer.children).filter(function (child) {
+    return child instanceof HTMLElement && child.classList.contains('alert');
+  });
+  var payload = alerts.map(function (alert) {
+    return alert.outerHTML;
+  });
+  if (payload.length === 0) {
+    window.sessionStorage.removeItem(FLASH_MESSAGES_PERSIST_KEY);
+    return;
+  }
+  window.sessionStorage.setItem(FLASH_MESSAGES_PERSIST_KEY, JSON.stringify(payload));
+}
+function restoreFlashMessagesFromPreviousVisit() {
+  if (typeof window.sessionStorage === 'undefined') {
+    return;
+  }
+  var flashContainer = document.getElementById('flash-messages');
+  if (!(flashContainer instanceof HTMLElement)) {
+    window.sessionStorage.removeItem(FLASH_MESSAGES_PERSIST_KEY);
+    return;
+  }
+  var rawPayload = window.sessionStorage.getItem(FLASH_MESSAGES_PERSIST_KEY);
+  window.sessionStorage.removeItem(FLASH_MESSAGES_PERSIST_KEY);
+  if (!rawPayload) {
+    return;
+  }
+  var payload = null;
+  try {
+    payload = JSON.parse(rawPayload);
+  } catch (error) {
+    return;
+  }
+  if (!Array.isArray(payload)) {
+    return;
+  }
+  payload.forEach(function (html) {
+    if (typeof html !== 'string' || html.trim() === '') {
+      return;
+    }
+    var wrapper = document.createElement('div');
+    wrapper.innerHTML = html;
+    var alert = wrapper.firstElementChild;
+    if (!(alert instanceof HTMLElement) || !alert.classList.contains('alert')) {
+      return;
+    }
+    var signature = flashMessageSignature(alert);
+    var exists = Array.from(flashContainer.children).some(function (child) {
+      return flashMessageSignature(child) === signature;
+    });
+    if (exists) {
+      return;
+    }
+    flashContainer.insertBefore(alert, flashContainer.firstChild);
+  });
+}
 
 // Initialization
 
+document.addEventListener('DOMContentLoaded', restoreFlashMessagesFromPreviousVisit);
 document.addEventListener('DOMContentLoaded', initDismissibleAlerts);
 document.addEventListener('DOMContentLoaded', hideButtonIfNoOptions);
 document.addEventListener('DOMContentLoaded', init);
@@ -7828,6 +7902,7 @@ document.addEventListener('DOMContentLoaded', restorePersistedFacetState);
 document.addEventListener('DOMContentLoaded', restoreAsideScrollPosition);
 document.addEventListener('DOMContentLoaded', announceContentNavigatorResults);
 document.addEventListener('DOMContentLoaded', bindFacetPersistenceOnFilterChange);
+document.addEventListener('turbo:load', restoreFlashMessagesFromPreviousVisit);
 document.addEventListener('turbo:load', initDismissibleAlerts);
 document.addEventListener('turbo:load', hideButtonIfNoOptions);
 document.addEventListener('turbo:load', init);
@@ -7871,6 +7946,7 @@ document.addEventListener('turbo:render', function () {
 });
 document.addEventListener('turbo:before-cache', function () {
   clearBoundInitializationFlags();
+  stashFlashMessagesForNextVisit();
   var flashContainer = document.getElementById('flash-messages');
   if (flashContainer) {
     flashContainer.innerHTML = '';

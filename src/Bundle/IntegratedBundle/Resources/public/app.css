@@ -8551,9 +8551,9 @@ ul.jFiler-items-grid .jFiler-item .icon-jfi-trash:before {
 .input-group-search .input-group-btn button {
   border-radius: 0 8px 8px 0;
   display: flex;
-  height: 52px;
+  height: 32px;
   justify-content: center;
-  width: 52px;
+  width: 32px;
   align-items: center;
   font-size: 15px;
 }
@@ -11402,10 +11402,13 @@ body.tox-fullscreen .content-wrapper {
 }
 
 #flash-messages {
+  align-items: stretch;
   bottom: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
   pointer-events: none;
   position: fixed;
   right: 1rem;
@@ -11418,24 +11421,19 @@ body.tox-fullscreen .content-wrapper {
 }
 
 #flash-messages .alert {
-  bottom: auto;
   margin: 0;
   min-width: 0;
   pointer-events: auto;
   position: relative;
-  right: auto;
   width: 100%;
 }
 
 .alert {
-  bottom: 2rem;
   box-shadow: 0 0 15px 5px rgba(0, 0, 0, 0.1);
-  min-width: 25vw;
+  min-width: 0;
   padding: 1rem 3rem 1rem 1rem;
-  right: 1rem;
-  z-index: 1050;
   border-radius: 4px;
-  position: absolute;
+  position: relative;
 }
 
 @media (max-width: 768px) {

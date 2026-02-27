@@ -8,7 +8,7 @@
                     {% set label = 'danger' %}
                 {% endif %}
                 <div class="alert alert-{{ label }} alert-dismissible">
-                    <button type="button" class="close" data-dismiss="alert"><i class="iconoir-xmark"></i>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close notification"><i class="iconoir-xmark"></i>
                     </button>
                     {{ message|trans }}
                 </div>
