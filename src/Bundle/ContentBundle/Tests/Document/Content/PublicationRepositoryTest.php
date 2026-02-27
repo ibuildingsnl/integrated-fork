@@ -59,10 +59,52 @@ class PublicationRepositoryTest extends TestCase
         $repository
             ->expects(self::once())
             ->method('findBy')
-            ->with(['content' => $content])
+            ->with(['content.$id' => 'content-id'])
             ->willReturn($expected);
 
         self::assertSame($expected, $repository->forContent($content));
+    }
+
+    public function testForContentOnChannelQueriesByReferenceIdentifiers(): void
+    {
+        $content = new Article();
+        $content->setId('content-id');
+        $channel = $this->createChannel('vismagazine');
+        $expected = [$this->createMock(Publication::class)];
+
+        $repository = $this->getMockBuilder(PublicationRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['findBy'])
+            ->getMock();
+
+        $repository
+            ->expects(self::once())
+            ->method('findBy')
+            ->with([
+                'content.$id' => 'content-id',
+                'channel.$id' => 'vismagazine',
+            ])
+            ->willReturn($expected);
+
+        self::assertSame($expected, $repository->forContentOnChannel($content, $channel));
+    }
+
+    public function testForContentOnChannelReturnsEmptyWhenChannelIdentifierIsMissing(): void
+    {
+        $content = new Article();
+        $content->setId('content-id');
+        $channel = $this->createChannel(null);
+
+        $repository = $this->getMockBuilder(PublicationRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['findBy'])
+            ->getMock();
+
+        $repository
+            ->expects(self::never())
+            ->method('findBy');
+
+        self::assertSame([], $repository->forContentOnChannel($content, $channel));
     }
 
     public function testForContentByChannelPrefersEditablePublicationOverSuccessfulHistory(): void

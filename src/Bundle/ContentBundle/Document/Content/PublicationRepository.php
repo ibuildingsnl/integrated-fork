@@ -14,7 +14,10 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
             return [];
         }
 
-        return $this->findBy(['content' => $content]);
+        /** @var list<Publication> $publications */
+        $publications = $this->findBy(['content.$id' => $contentId]);
+
+        return $publications;
     }
 
     public function forDateRange(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate): iterable
@@ -70,7 +73,18 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
             return [];
         }
 
-        return $this->findBy(['content' => $content, 'channel' => $channel]);
+        $channelId = $channel->getId();
+        if (!\is_string($channelId) || '' === $channelId) {
+            return [];
+        }
+
+        /** @var list<Publication> $publications */
+        $publications = $this->findBy([
+            'content.$id' => $contentId,
+            'channel.$id' => $channelId,
+        ]);
+
+        return $publications;
     }
 
     public function getAvailable(Content $content, ChannelInterface $channel): iterable
