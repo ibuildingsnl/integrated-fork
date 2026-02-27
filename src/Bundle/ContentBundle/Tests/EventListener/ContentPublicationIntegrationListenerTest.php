@@ -9,7 +9,13 @@ use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Bundle\ContentBundle\EventListener\ContentPublicationIntegrationListener;
 use Integrated\Common\Content\Channel\ChannelInterface;
+use Integrated\Common\Content\Form\Event\BuilderEvent;
+use Integrated\Common\ContentType\ContentTypeInterface;
+use Integrated\Common\Form\Mapping\MetadataInterface;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormInterface;
 
 class ContentPublicationIntegrationListenerTest extends TestCase
 {
@@ -89,6 +95,81 @@ class ContentPublicationIntegrationListenerTest extends TestCase
         self::assertFalse($changed);
     }
 
+    public function testBuildFormDoesNotQueryPublicationRepositoryForUnsavedContent(): void
+    {
+        $repository = $this->createMock(PublicationRepositoryInterface::class);
+        $repository
+            ->expects(self::never())
+            ->method('forContentByChannel');
+        $repository
+            ->expects(self::never())
+            ->method('forContent');
+        $repository
+            ->expects(self::never())
+            ->method('forContentOnChannel');
+
+        $listener = new ContentPublicationIntegrationListener(
+            $repository,
+            $this->createMock(DocumentManager::class),
+        );
+
+        $content = new Article();
+        $channel = $this->createChannel('vismagazine');
+
+        $channelsBuilder = $this->createMock(FormBuilderInterface::class);
+        $channelsBuilder
+            ->method('getOption')
+            ->with('choices')
+            ->willReturn([$channel]);
+
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder
+            ->method('getData')
+            ->willReturn($content);
+        $builder
+            ->method('has')
+            ->with('channels')
+            ->willReturn(true);
+        $builder
+            ->method('get')
+            ->with('channels')
+            ->willReturn($channelsBuilder);
+        $builder
+            ->method('add')
+            ->willReturnSelf();
+
+        $postSubmitListener = null;
+        $builder
+            ->method('addEventListener')
+            ->willReturnCallback(function (string $eventName, callable $listener) use (&$postSubmitListener, $builder): FormBuilderInterface {
+                $postSubmitListener = $listener;
+
+                return $builder;
+            });
+
+        $event = new BuilderEvent(
+            $this->createMock(ContentTypeInterface::class),
+            $this->createMock(MetadataInterface::class),
+            $builder,
+            [],
+        );
+
+        $listener->buildForm($event);
+
+        self::assertIsCallable($postSubmitListener);
+
+        $form = $this->createMock(FormInterface::class);
+        $publicationsForm = $this->createMock(FormInterface::class);
+        $form
+            ->method('get')
+            ->with('publications')
+            ->willReturn($publicationsForm);
+
+        $postSubmitListener(new FormEvent($form, $content));
+
+        self::addToAssertionCount(1);
+    }
+
     /**
      * @param array{time?: mixed, settings?: mixed} $data
      */
@@ -110,4 +191,3 @@ class ContentPublicationIntegrationListenerTest extends TestCase
         return $channel;
     }
 }
-

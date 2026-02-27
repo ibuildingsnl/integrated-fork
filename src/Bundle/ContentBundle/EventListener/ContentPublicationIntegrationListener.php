@@ -38,13 +38,16 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
             return;
         }
 
+        $contentId = $content->getId();
+        $hasPersistedIdentifier = \is_string($contentId) && '' !== $contentId;
+
         $form->add('publications', PublicationsType::class, [
             'channels' => $form->get('channels')->getOption('choices'),
             'mapped' => false,
             'attr' => [
                 'class' => 'publication-settings-container',
             ],
-            'data' => $this->publications->forContentByChannel($content),
+            'data' => $hasPersistedIdentifier ? $this->publications->forContentByChannel($content) : [],
         ]);
 
         $form->add('global_publications', GlobalPublicationsType::class, [
@@ -62,7 +65,9 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                 return;
             }
 
-            $existingPublications = $this->publications->forContent($content);
+            $contentId = $content->getId();
+            $hasPersistedIdentifier = \is_string($contentId) && '' !== $contentId;
+            $existingPublications = $hasPersistedIdentifier ? $this->publications->forContent($content) : [];
 
             $form = $event->getForm()->get('publications');
             foreach ($content->getChannels() as $channel) {
@@ -91,7 +96,7 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                     $data['images'] = $imagesProcessed;
                 }
 
-                $existingChannelPublications = $this->publications->forContentOnChannel($content, $channel);
+                $existingChannelPublications = $hasPersistedIdentifier ? $this->publications->forContentOnChannel($content, $channel) : [];
 
                 if (!$existingChannelPublications) {
                     $this->publications->add(new Publication($content, $channel, $time, \is_array($data) ? $data : []));
