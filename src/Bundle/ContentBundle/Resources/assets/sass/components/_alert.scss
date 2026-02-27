@@ -1,5 +1,31 @@
 @use 'sass:color';
 
+#flash-messages {
+    bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    pointer-events: none;
+    position: fixed;
+    right: 1rem;
+    width: min(32rem, calc(100vw - 2rem));
+    z-index: 1050;
+}
+
+#flash-messages:empty {
+    display: none;
+}
+
+#flash-messages .alert {
+    bottom: auto;
+    margin: 0;
+    min-width: 0;
+    pointer-events: auto;
+    position: relative;
+    right: auto;
+    width: 100%;
+}
+
 .alert {
     bottom: 2rem;
     box-shadow: 0 0 15px 5px rgba(0,0,0,0.1);
@@ -9,6 +35,14 @@
     z-index: 1050;
     border-radius: 4px;
     position: absolute;
+}
+
+@media (max-width: 768px) {
+    #flash-messages {
+        left: 1rem;
+        right: 1rem;
+        width: auto;
+    }
 }
 
 .alert-inline {
