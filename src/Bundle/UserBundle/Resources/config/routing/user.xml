@@ -24,7 +24,7 @@
 		<default key="_controller">Integrated\Bundle\UserBundle\Controller\UserController::delete</default>
 	</route>
 
-	<route id="integrated_user_user_enable" path="/{id}/enable">
+	<route id="integrated_user_user_enable" path="/{id}/enable" methods="POST">
 		<default key="_controller">Integrated\Bundle\UserBundle\Controller\UserController::enable</default>
 	</route>
 

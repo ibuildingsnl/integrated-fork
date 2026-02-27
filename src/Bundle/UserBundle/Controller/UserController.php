@@ -300,6 +300,17 @@ class UserController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
+        if (!$request->isMethod('POST')) {
+            throw $this->createNotFoundException();
+        }
+
+        $token = (string) $request->request->get('enable_token', '');
+        if (!$this->isCsrfTokenValid('user_enable', $token)) {
+            $this->addFlash('danger', 'Invalid request token.');
+
+            return $this->redirectToRoute('integrated_user_user_index');
+        }
+
         $user = $this->manager->find($request->get('id'));
         if (!$user) {
             return $this->redirectToRoute('integrated_user_user_index');
