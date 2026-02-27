@@ -168,6 +168,9 @@ class WorkflowController extends AbstractController
             $workflowId = $request->get('workflow');
             $repository = $this->entityManager->getRepository(Definition::class);
             $workflow = $repository->find($workflowId);
+            if (!$workflow instanceof Definition) {
+                return new JsonResponse(['users' => [], 'fields' => []]);
+            }
             $state = $workflow->getDefault();
 
             $isDefaultState = true;
@@ -223,8 +226,12 @@ class WorkflowController extends AbstractController
         $queryBuilder->where('us.admin = 1');
 
         if ($permissionObject && (!$isDefaultState || !$currentUserCanWrite)) {
-            $queryBuilder->join('u.groups', 'ug');
-            $queryBuilder->where('ug.id IN (:groups)')->setParameter('groups', $groups);
+            if (!$groups) {
+                $queryBuilder->andWhere('1 = 0');
+            } else {
+                $queryBuilder->join('u.groups', 'ug');
+                $queryBuilder->andWhere('ug.id IN (:groups)')->setParameter('groups', $groups);
+            }
         }
 
         $users = [];

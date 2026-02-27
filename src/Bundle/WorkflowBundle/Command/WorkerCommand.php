@@ -111,8 +111,6 @@ The <info>%command.name%</info> .
             ['php', 'bin/console', $command, '-e', $input->getOption('env'), ...$arguments],
             $this->workingDirectory
         );
-        $process->run();
-
         $process->run(function ($type, $buffer) use ($output): void {
             if (Process::ERR === $type) {
                 $output->write($buffer);
