@@ -1204,7 +1204,8 @@ class ContentController extends AbstractController
      */
     private function getPublications(Content $content): array
     {
-        if (!$content->getId()) {
+        $contentId = $content->getId();
+        if (!\is_string($contentId) || '' === $contentId) {
             return [];
         }
 

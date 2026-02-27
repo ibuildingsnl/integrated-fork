@@ -11,6 +11,60 @@ use PHPUnit\Framework\TestCase;
 
 class PublicationRepositoryTest extends TestCase
 {
+    public function testForContentReturnsEmptyWhenIdentifierIsMissing(): void
+    {
+        $content = new Article();
+        $repository = $this->getMockBuilder(PublicationRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['findBy'])
+            ->getMock();
+
+        $repository
+            ->expects(self::never())
+            ->method('findBy');
+
+        self::assertSame([], $repository->forContent($content));
+    }
+
+    public function testForContentReturnsEmptyWhenIdentifierIsNotString(): void
+    {
+        $content = $this->createMock(Article::class);
+        $content
+            ->method('getId')
+            ->willReturn(123);
+
+        $repository = $this->getMockBuilder(PublicationRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['findBy'])
+            ->getMock();
+
+        $repository
+            ->expects(self::never())
+            ->method('findBy');
+
+        self::assertSame([], $repository->forContent($content));
+    }
+
+    public function testForContentQueriesRepositoryWhenIdentifierIsValid(): void
+    {
+        $content = new Article();
+        $content->setId('content-id');
+        $expected = [$this->createMock(Publication::class)];
+
+        $repository = $this->getMockBuilder(PublicationRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['findBy'])
+            ->getMock();
+
+        $repository
+            ->expects(self::once())
+            ->method('findBy')
+            ->with(['content' => $content])
+            ->willReturn($expected);
+
+        self::assertSame($expected, $repository->forContent($content));
+    }
+
     public function testForContentByChannelPrefersEditablePublicationOverSuccessfulHistory(): void
     {
         $content = new Article();
@@ -100,4 +154,3 @@ class PublicationRepositoryTest extends TestCase
         return $channel;
     }
 }
-

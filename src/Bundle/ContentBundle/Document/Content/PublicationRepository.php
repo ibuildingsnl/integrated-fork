@@ -9,7 +9,8 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
 {
     public function forContent(Content $content): array
     {
-        if (!$content->getId()) {
+        $contentId = $content->getId();
+        if (!\is_string($contentId) || '' === $contentId) {
             return [];
         }
 
@@ -64,7 +65,8 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
 
     public function forContentOnChannel(Content $content, ChannelInterface $channel): array
     {
-        if (!$content->getId()) {
+        $contentId = $content->getId();
+        if (!\is_string($contentId) || '' === $contentId) {
             return [];
         }
 
