@@ -1,5 +1,13 @@
 <script>
     !function () {
+        var markEditorReady = function(moduleName) {
+            if (
+                window.IntegratedEditorLoader &&
+                typeof window.IntegratedEditorLoader.markReady === 'function'
+            ) {
+                window.IntegratedEditorLoader.markReady(moduleName);
+            }
+        };
 
         function init() {
             document.querySelectorAll('body').forEach(item =>
@@ -20,6 +28,8 @@
                     hideModal();
                 })
             );
+
+            markEditorReady('tools');
         }
 
         if (document.readyState != 'loading'){

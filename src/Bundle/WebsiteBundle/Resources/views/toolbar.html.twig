@@ -1,4 +1,71 @@
+{% set isEditorMode = app.request.query.get('integrated_website_edit') and layoutEditable %}
 {% include integrated_active_theme('objects/toolbar-css.html.twig') %}
+{% if isEditorMode %}
+    <div id="integrated-editor-loader" aria-live="polite" aria-busy="true">
+        <div class="integrated-editor-loader-inner">
+            <span class="integrated-inline-spinner"></span>
+            <span class="integrated-editor-loader-label">{% trans %}Loading editor...{% endtrans %}</span>
+        </div>
+    </div>
+
+    <script>
+        !function() {
+            var requiredModules = ['tools', 'grid', 'menu', 'page'];
+            var readyModules = {};
+            var completed = false;
+            var timeoutId = null;
+
+            var hideLoader = function() {
+                var loader = document.getElementById('integrated-editor-loader');
+                if (!loader) {
+                    return;
+                }
+
+                loader.classList.add('is-hidden');
+                window.setTimeout(function() {
+                    if (loader.parentNode) {
+                        loader.parentNode.removeChild(loader);
+                    }
+                }, 250);
+            };
+
+            var complete = function() {
+                if (completed) {
+                    return;
+                }
+
+                completed = true;
+                if (timeoutId !== null) {
+                    window.clearTimeout(timeoutId);
+                }
+
+                hideLoader();
+            };
+
+            var checkCompleted = function() {
+                for (var i = 0; i < requiredModules.length; i++) {
+                    if (!readyModules[requiredModules[i]]) {
+                        return;
+                    }
+                }
+
+                complete();
+            };
+
+            window.IntegratedEditorLoader = window.IntegratedEditorLoader || {};
+            window.IntegratedEditorLoader.markReady = function(moduleName) {
+                if (!moduleName) {
+                    return;
+                }
+
+                readyModules[moduleName] = true;
+                checkCompleted();
+            };
+
+            timeoutId = window.setTimeout(complete, 10000);
+        }();
+    </script>
+{% endif %}
 {% include integrated_active_theme('objects/toolbar-sortable-js.html.twig') %}
 {% include integrated_active_theme('objects/toolbar-tools-js.html.twig') %}
 {% include integrated_active_theme('objects/toolbar-grid-js.html.twig') %}
