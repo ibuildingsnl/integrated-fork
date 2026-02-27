@@ -19,6 +19,11 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString('aria-live="polite"', $template);
         $this->assertStringContainsString('role="button"', $template);
         $this->assertStringContainsString('aria-expanded=', $template);
+        $this->assertStringContainsString(
+            "path('integrated_content_search_selection_delete', {'id': selection.id}) }}\"",
+            $template
+        );
+        $this->assertStringContainsString('data-turbo-frame="_top"', $template);
     }
 
     public function testIndexTemplateContainsLiveLockMarkers(): void
@@ -77,5 +82,20 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString('$this->isPrefetchRequest($request)', $controller);
         $this->assertStringContainsString('$this->createUnlockedLocking()', $controller);
         $this->assertStringContainsString('$this->getLock($content, self::CONTENT_LOCK_TIMEOUT_SECONDS)', $controller);
+    }
+
+    public function testControllerShowsSaveOnlyForEditableExistingSearchSelections(): void
+    {
+        $controller = file_get_contents(__DIR__.'/../../Controller/ContentController.php');
+
+        $this->assertIsString($controller);
+        $this->assertStringContainsString(
+            "'buttons' => \$newSelection || !\$editableSelection ? ['create'] : ['save']",
+            $controller
+        );
+        $this->assertStringNotContainsString(
+            "'buttons' => \$newSelection || !\$editableSelection ? ['create'] : ['save', 'create']",
+            $controller
+        );
     }
 }

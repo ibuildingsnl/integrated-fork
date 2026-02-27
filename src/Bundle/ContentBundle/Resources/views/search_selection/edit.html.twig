@@ -22,3 +22,8 @@
         {% endblock %}
     </div>
 {% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    {% include '@IntegratedContent/search_selection/_sorting_script.html.twig' %}
+{% endblock %}

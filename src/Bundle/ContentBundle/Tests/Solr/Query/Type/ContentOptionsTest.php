@@ -53,6 +53,36 @@ class ContentOptionsTest extends TestCase
         self::assertSame('desc', $options['order']);
     }
 
+    public function testCustomSortAndOrderAreAccepted(): void
+    {
+        $resolver = new OptionsResolver();
+        $this->createType()->configureOptions($resolver);
+
+        $options = $resolver->resolve([
+            'q' => '',
+            'sort' => 'custom:publication_start_vismagazine_index_date',
+            'order' => 'asc',
+        ]);
+
+        self::assertSame('publication_start_vismagazine_index_date', $options['sort']);
+        self::assertSame('asc', $options['order']);
+    }
+
+    public function testRelevanceSortForcesDescendingOrder(): void
+    {
+        $resolver = new OptionsResolver();
+        $this->createType()->configureOptions($resolver);
+
+        $options = $resolver->resolve([
+            'q' => 'Banket duurder',
+            'sort' => 'score',
+            'order' => 'asc',
+        ]);
+
+        self::assertSame('score', $options['sort']);
+        self::assertSame('desc', $options['order']);
+    }
+
     private function createType(): Content
     {
         $sortOptions = new SortOptions([

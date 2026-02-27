@@ -168,6 +168,11 @@ class Content extends AbstractType
         $resolver->setNormalizer('order', function (Options $options, $value) {
             $value = strtolower(trim($value));
 
+            if ($options['sort'] === $this->sorting->get('rel')->field) {
+                // Relevance sorting should always rank highest score first.
+                return 'desc';
+            }
+
             if (str_starts_with($value, 'custom:')) {
                 // Support "custom:<field> <order>" value style.
                 $sortOption = explode(' ', $value, 2);

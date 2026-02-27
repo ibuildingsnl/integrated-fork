@@ -22,6 +22,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IntegratedContentBlock extends AbstractType
 {
+    private const RECENCY_BOOST_FUNCTION = 'if(exists(pub_time),product(0.35,recip(ms(NOW,pub_time),3.16e-11,1,1)),0)';
+
     public function __construct(
         private readonly DocumentManager $manager,
         private readonly SortOptions $sorting,
@@ -82,6 +84,10 @@ class IntegratedContentBlock extends AbstractType
 
         foreach ($options['params'] as $key => $value) {
             $query->addParam($key, $value);
+        }
+
+        if ($this->shouldApplyRecencyBoost($options)) {
+            $this->appendBoostFunction($query, self::RECENCY_BOOST_FUNCTION);
         }
 
         if (\count($options['relation_search_selection'])) {
@@ -252,6 +258,11 @@ class IntegratedContentBlock extends AbstractType
         $resolver->setNormalizer('order', function (Options $options, $value) {
             $value = strtolower(trim($value));
 
+            if ($options['sort'] === $this->sorting->get('rel')->field) {
+                // Relevance sorting should always rank highest score first.
+                return 'desc';
+            }
+
             if (str_starts_with($value, 'custom:')) {
                 // support for custom query in database, while waiting for a better solution
                 $sortOption = explode(' ', $value, 2);
@@ -298,5 +309,39 @@ class IntegratedContentBlock extends AbstractType
         }
 
         return $sanitized;
+    }
+
+    private function shouldApplyRecencyBoost(array $options): bool
+    {
+        return '' !== trim((string) ($options['q'] ?? ''))
+            && ($options['sort'] ?? null) === $this->sorting->get('rel')->field;
+    }
+
+    private function appendBoostFunction(Query $query, string $boostFunction): void
+    {
+        $boosts = [];
+        $existingBoost = $query->getParams()['bf'] ?? null;
+
+        if (\is_string($existingBoost)) {
+            $existingBoost = trim($existingBoost);
+            if ('' !== $existingBoost) {
+                $boosts[] = $existingBoost;
+            }
+        } elseif (\is_array($existingBoost)) {
+            foreach ($existingBoost as $value) {
+                if (!\is_scalar($value)) {
+                    continue;
+                }
+
+                $value = trim((string) $value);
+                if ('' !== $value) {
+                    $boosts[] = $value;
+                }
+            }
+        }
+
+        $boosts[] = $boostFunction;
+
+        $query->addParam('bf', implode(' ', array_unique($boosts)));
     }
 }

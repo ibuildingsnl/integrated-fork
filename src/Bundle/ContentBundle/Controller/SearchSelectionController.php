@@ -69,6 +69,7 @@ class SearchSelectionController extends AbstractController
                 return $this->redirectToRoute('integrated_content_search_selection_index');
             }
             if ($form->isValid()) {
+                $searchSelection->setFilters($this->applySearchSelectionSortingSettings($form, $searchSelection->getFilters()));
                 $this->documentManager->persist($searchSelection);
                 $this->documentManager->flush();
 
@@ -98,6 +99,7 @@ class SearchSelectionController extends AbstractController
             if ($request->query->get('searchSelection') === $searchSelection->getId()) {
                 $searchSelection->setFilters($request->query->all());
             }
+            $searchSelection->setFilters($this->applySearchSelectionSortingSettings($form, $searchSelection->getFilters()));
 
             $this->documentManager->flush();
 
@@ -233,5 +235,36 @@ class SearchSelectionController extends AbstractController
         }
 
         return $user;
+    }
+
+    /**
+     * @param array<string, mixed> $filters
+     *
+     * @return array<string, mixed>
+     */
+    private function applySearchSelectionSortingSettings(FormInterface $form, array $filters): array
+    {
+        $sort = trim((string) $form->get('sort')->getData());
+        $order = strtolower(trim((string) $form->get('order')->getData()));
+        $customSort = trim((string) $form->get('customSort')->getData());
+        $customSortEnabled = '__custom__' === $sort;
+
+        $customSort = preg_replace('/[^a-zA-Z0-9_]/', '', $customSort) ?? '';
+
+        if ($customSortEnabled && '' !== $customSort) {
+            $filters['sort'] = 'custom:'.$customSort;
+        } elseif ('' !== $sort && !$customSortEnabled) {
+            $filters['sort'] = $sort;
+        } else {
+            unset($filters['sort']);
+        }
+
+        if (\in_array($order, ['asc', 'desc'], true)) {
+            $filters['order'] = $order;
+        } else {
+            unset($filters['order']);
+        }
+
+        return $filters;
     }
 }

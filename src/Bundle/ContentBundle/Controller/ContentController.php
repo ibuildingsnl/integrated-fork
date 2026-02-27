@@ -141,7 +141,7 @@ class ContentController extends AbstractController
 
         $searchSelectionForm = $this->createForm(SearchSelectionType::class, $selection);
         $searchSelectionForm->add('actions', ActionsType::class, [
-            'buttons' => $newSelection || !$editableSelection ? ['create'] : ['save', 'create'],
+            'buttons' => $newSelection || !$editableSelection ? ['create'] : ['save'],
         ]);
         $searchSelectionForm->handleRequest($request);
         if ($searchSelectionForm->isSubmitted() && $searchSelectionForm->isValid()) {
@@ -157,7 +157,7 @@ class ContentController extends AbstractController
             } elseif (!$editableSelection) {
                 throw new AccessDeniedException();
             }
-            $selection->setFilters($options);
+            $selection->setFilters($this->applySearchSelectionSortingSettings($searchSelectionForm, $options));
             $this->documentManager->persist($selection);
             $this->documentManager->flush();
 
@@ -1471,6 +1471,38 @@ class ContentController extends AbstractController
     public function mediaTypesAction(?string $filter = null): Response
     {
         return $this->mediaTypes($filter);
+    }
+
+    /**
+     * @param array<string, mixed> $filters
+     *
+     * @return array<string, mixed>
+     */
+    private function applySearchSelectionSortingSettings(FormInterface $searchSelectionForm, array $filters): array
+    {
+        $sort = trim((string) $searchSelectionForm->get('sort')->getData());
+        $order = strtolower(trim((string) $searchSelectionForm->get('order')->getData()));
+        $customSort = trim((string) $searchSelectionForm->get('customSort')->getData());
+        $customSortEnabled = '__custom__' === $sort;
+
+        // Keep custom sort simple and explicit to avoid unsafe query fragments.
+        $customSort = preg_replace('/[^a-zA-Z0-9_]/', '', $customSort) ?? '';
+
+        if ($customSortEnabled && '' !== $customSort) {
+            $filters['sort'] = 'custom:'.$customSort;
+        } elseif ('' !== $sort && !$customSortEnabled) {
+            $filters['sort'] = $sort;
+        } else {
+            unset($filters['sort']);
+        }
+
+        if (\in_array($order, ['asc', 'desc'], true)) {
+            $filters['order'] = $order;
+        } else {
+            unset($filters['order']);
+        }
+
+        return $filters;
     }
 
     public function mediaTypes(?string $filter = null): Response
