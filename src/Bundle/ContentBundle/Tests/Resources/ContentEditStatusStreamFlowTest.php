@@ -40,5 +40,6 @@ class ContentEditStatusStreamFlowTest extends TestCase
         $this->assertStringContainsString('@IntegratedContent/content/partial/status_options.html.twig', $template);
         $this->assertStringContainsString('target="content-history-section"', $template);
         $this->assertStringContainsString('ContentHistoryController::history', $template);
+        $this->assertStringNotContainsString('target="content-publications-section"', $template);
     }
 }

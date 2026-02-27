@@ -542,7 +542,6 @@ class ContentController extends AbstractController
                         'content' => $content,
                         'locking' => $locking,
                         'form' => $form->createView(),
-                        'publications' => $this->getPublications($content),
                     ]);
 
                     return new Response($content, Response::HTTP_OK, ['Content-Type' => 'text/vnd.turbo-stream.html; charset=UTF-8']);

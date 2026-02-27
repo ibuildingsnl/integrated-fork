@@ -16,12 +16,6 @@
     </template>
 </turbo-stream>
 
-<turbo-stream action="replace" target="content-publications-section">
-    <template>
-        {{ include('@IntegratedContent/content/partial/publications.html.twig') }}
-    </template>
-</turbo-stream>
-
 <turbo-stream action="replace" target="content-history-section">
     <template>
         {{ render(controller('Integrated\\Bundle\\ContentHistoryBundle\\Controller\\ContentHistoryController::history', { 'content': content })) }}
