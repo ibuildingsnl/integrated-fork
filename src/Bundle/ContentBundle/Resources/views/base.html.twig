@@ -122,27 +122,27 @@
                 </div>
             {% endblock sidebar_menu %}
             <div class="content-wrapper">
-                <div id="flash-messages" data-turbo-temporary>
-                    {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning', 'error']) %}
-                        {% for message in messages %}
-                            {% if label == 'alert' %}
-                                {% set label = 'warning' %}
-                            {% elseif label == 'error' %}
-                                {% set label = 'danger' %}
-                            {% endif %}
-                            <div class="alert alert-{{ label }} alert-dismissible">
-                                <button type="button" class="close" data-dismiss="alert"><i class="iconoir-xmark"></i>
-                                </button>
-                                {{ message|trans }}
-                            </div>
-                        {% endfor %}
-                    {% endfor %}
-                </div>
-
                 {% block content %}{% endblock content %}
             </div>
         </div>
     {% endblock body %}
+
+    <div id="flash-messages" data-turbo-temporary>
+        {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning', 'error']) %}
+            {% for message in messages %}
+                {% if label == 'alert' %}
+                    {% set label = 'warning' %}
+                {% elseif label == 'error' %}
+                    {% set label = 'danger' %}
+                {% endif %}
+                <div class="alert alert-{{ label }} alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert"><i class="iconoir-xmark"></i>
+                    </button>
+                    {{ message|trans }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
 </div>
 {% block edit_modal %}
 {% endblock edit_modal %}
