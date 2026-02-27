@@ -14,6 +14,7 @@ namespace Integrated\Bundle\ImageBundle\Twig\Extension;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage;
 use Integrated\Bundle\ImageBundle\Converter\WebFormatConverter;
 use Integrated\Bundle\ImageBundle\Factory\StorageModelFactory;
+use Integrated\Bundle\ImageBundle\Image\ImageHandler;
 use Integrated\Bundle\ImageBundle\Service\ImageHandling;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Twig\Extension\AbstractExtension;
@@ -71,7 +72,7 @@ class ImageExtension extends AbstractExtension
     }
 
     /**
-     * @return \Integrated\Bundle\ImageBundle\Image\ImageHandler
+     * @return ImageHandler
      */
     public function imageJson($image)
     {
@@ -95,7 +96,7 @@ class ImageExtension extends AbstractExtension
     }
 
     /**
-     * @return \Integrated\Bundle\ImageBundle\Image\ImageHandler
+     * @return ImageHandler
      */
     public function webImage($image)
     {
@@ -112,7 +113,7 @@ class ImageExtension extends AbstractExtension
     }
 
     /**
-     * @return \Integrated\Bundle\ImageBundle\Image\ImageHandler
+     * @return ImageHandler
      */
     public function image($image)
     {
@@ -203,7 +204,7 @@ class ImageExtension extends AbstractExtension
         return 'integrated_image_json';
     }
 
-    private function safeOpen(string $image)
+    private function safeOpen(string $image): ImageHandler
     {
         $image = $this->resolveLocalPath($image);
 
@@ -214,7 +215,7 @@ class ImageExtension extends AbstractExtension
         }
     }
 
-    private function safeOpenMimic(string $image)
+    private function safeOpenMimic(string $image): ImageHandler
     {
         $image = $this->resolveLocalPath($image);
 
@@ -232,9 +233,9 @@ class ImageExtension extends AbstractExtension
         }
 
         if (str_starts_with($path, '/storage/')) {
-            $path = '/files/'.substr($path, strlen('/storage/'));
+            $path = '/files/'.substr($path, \strlen('/storage/'));
         } elseif (str_starts_with($path, 'storage/')) {
-            $path = 'files/'.substr($path, strlen('storage/'));
+            $path = 'files/'.substr($path, \strlen('storage/'));
         }
 
         if (str_starts_with($path, '/')) {

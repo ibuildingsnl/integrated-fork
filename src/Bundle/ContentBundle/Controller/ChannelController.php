@@ -12,30 +12,29 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Bundle\ContentBundle\Document\Content\Publication;
-use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Integrated\Bundle\ContentBundle\Event\ContentDeletedEvent;
 use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
-use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\Publication;
+use Integrated\Bundle\ContentBundle\Event\ContentDeletedEvent;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\ChannelType;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
+use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\Channel\Event\ChannelEvent;
 use Integrated\Common\Channel\Events as ChannelEvents;
 use Integrated\Common\Content\Form\Events as ContentEvents;
 use Integrated\Common\Security\Resolver\PermissionResolver;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\UX\Turbo\TurboStreamResponse;
 
 class ChannelController extends AbstractController
 {
@@ -173,7 +172,9 @@ class ChannelController extends AbstractController
                             'referenced' => $referenced,
                         ]);
 
-                        return new TurboStreamResponse($content);
+                        return new Response($content, Response::HTTP_OK, [
+                            'Content-Type' => 'text/vnd.turbo-stream.html; charset=UTF-8',
+                        ]);
                     }
 
                     return $this->render('@IntegratedContent/channel/delete.html.twig', [
@@ -185,7 +186,7 @@ class ChannelController extends AbstractController
 
                 foreach ($referencedDocuments as $document) {
                     if ($document instanceof Content) {
-                        $channels = $document->getChannels() ?? [];
+                        $channels = $document->getChannels();
                         $onlyThisChannel = \count($channels) <= 1;
                         if (!$onlyThisChannel) {
                             $document->removeChannel($channel);
@@ -301,7 +302,8 @@ class ChannelController extends AbstractController
     /**
      * @param mixed $id The document id
      */
-    protected function createDeleteForm($id, bool $deleteAllowed): FormInterface
+    /** @return FormInterface<mixed> */
+    protected function createDeleteForm(string $id, bool $deleteAllowed): FormInterface
     {
         $form = $this->createFormBuilder()
             ->setAction($this->generateUrl('integrated_content_channel_delete', ['id' => $id, '_format' => 'turbo-stream']))
@@ -374,5 +376,4 @@ class ChannelController extends AbstractController
 
         return $allowed;
     }
-
 }

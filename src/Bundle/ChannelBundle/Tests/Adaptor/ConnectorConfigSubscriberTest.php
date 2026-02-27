@@ -11,6 +11,7 @@ use Integrated\Bundle\ChannelBundle\Model\OauthConfigInterface;
 use Integrated\Bundle\ChannelBundle\Services\ChannelTokenService;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
@@ -106,8 +107,9 @@ class ConnectorConfigSubscriberTest extends TestCase
 
         $subscriber->onRequest($event);
 
-        self::assertNotNull($event->getResponse());
-        self::assertSame('/admin/channel/config/42', $event->getResponse()->getTargetUrl());
+        $response = $event->getResponse();
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertSame('/admin/channel/config/42', $response->getTargetUrl());
         self::assertFalse($session->has('externalReturnId'));
     }
 
@@ -119,4 +121,3 @@ class ConnectorConfigSubscriberTest extends TestCase
         return $channelTokenService;
     }
 }
-

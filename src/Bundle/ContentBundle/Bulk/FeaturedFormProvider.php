@@ -11,9 +11,9 @@
 
 namespace Integrated\Bundle\ContentBundle\Bulk;
 
+use Integrated\Bundle\ContentBundle\Form\Type\BulkActionFeaturedType;
 use Integrated\Common\Bulk\Form\Config;
 use Integrated\Common\Bulk\Form\ConfigProviderInterface;
-use Integrated\Bundle\ContentBundle\Form\Type\BulkActionFeaturedType;
 
 class FeaturedFormProvider implements ConfigProviderInterface
 {

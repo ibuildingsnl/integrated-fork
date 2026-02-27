@@ -15,8 +15,8 @@ use Integrated\Bundle\ContentBundle\Bulk\RelationAddHandler;
 use Integrated\Bundle\ContentBundle\Document\Bulk\Action\RelationAction;
 use Integrated\Common\Content\Relation\RelationInterface;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -97,8 +97,8 @@ class BulkActionRelationType extends AbstractType
             || $relationId === 'tag';
 
         if (
-            $supportsReplaceExisting &&
-            $options['relation_handler'] === RelationAddHandler::class
+            $supportsReplaceExisting
+            && $options['relation_handler'] === RelationAddHandler::class
         ) {
             $builder->add(
                 'replaceExisting',
@@ -111,6 +111,11 @@ class BulkActionRelationType extends AbstractType
         }
     }
 
+    /**
+     * @param array<mixed> $taxonomyCategories
+     *
+     * @return array<string, string>
+     */
     private function buildTaxonomyChoices(array $taxonomyCategories): array
     {
         $choices = [];
@@ -130,8 +135,10 @@ class BulkActionRelationType extends AbstractType
 
     /**
      * @param mixed $submittedReferences
+     *
+     * @return array<string, string>
      */
-    private function buildSubmittedChoices($submittedReferences): array
+    private function buildSubmittedChoices(mixed $submittedReferences): array
     {
         if (!\is_array($submittedReferences)) {
             $submittedReferences = [$submittedReferences];
@@ -151,10 +158,7 @@ class BulkActionRelationType extends AbstractType
         return $choices;
     }
 
-    /**
-     * @param mixed $taxonomyCategory
-     */
-    private function resolveTaxonomyId($taxonomyCategory): ?string
+    private function resolveTaxonomyId(mixed $taxonomyCategory): ?string
     {
         if (\is_array($taxonomyCategory) && isset($taxonomyCategory['taxonomyId'])) {
             return (string) $taxonomyCategory['taxonomyId'];

@@ -69,14 +69,19 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
 
     public function countUsages(Taxonomy $taxonomy): int
     {
-        $this->usageLookupCalls++;
+        ++$this->usageLookupCalls;
 
         return $this->usages[$taxonomy->getId()] ?? 0;
     }
 
+    /**
+     * @param array<string> $taxonomyIds
+     *
+     * @return array<string, int>
+     */
     public function countUsagesFor(array $taxonomyIds): array
     {
-        $this->usageBatchLookupCalls++;
+        ++$this->usageBatchLookupCalls;
         $counts = [];
 
         foreach ($taxonomyIds as $taxonomyId) {

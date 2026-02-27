@@ -174,7 +174,7 @@ class Manager implements ManagerInterface
 
     public function findAll()
     {
-        return $this->findBy([]);
+        return $this->findBy([]) ?? [];
     }
 
     public function findByResource(ResourceInterface $resource)
@@ -182,7 +182,7 @@ class Manager implements ManagerInterface
         $filter = new Filter();
         $filter->resources[] = $resource;
 
-        return $this->findBy($filter);
+        return $this->findBy($filter) ?? [];
     }
 
     public function findByOwner(ResourceInterface $resource)
@@ -190,7 +190,7 @@ class Manager implements ManagerInterface
         $filter = new Filter();
         $filter->owners[] = $resource;
 
-        return $this->findBy($filter);
+        return $this->findBy($filter) ?? [];
     }
 
     public function findBy($filters)

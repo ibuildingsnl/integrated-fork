@@ -14,7 +14,10 @@ class BulkUserActionService
     public const ACTION_CHANGE_SCOPE = 'change_scope';
     public const ACTION_RESET_2FA = 'reset_2fa';
 
-    public function apply(array $users, string $action, ?GroupInterface $group = null, ?ScopeInterface $scope = null): int
+    /**
+     * @param iterable<mixed> $users
+     */
+    public function apply(iterable $users, string $action, ?GroupInterface $group = null, ?ScopeInterface $scope = null): int
     {
         $updated = 0;
 
@@ -26,32 +29,32 @@ class BulkUserActionService
             switch ($action) {
                 case self::ACTION_ENABLE_LOGIN:
                     $user->setEnabled(true);
-                    $updated++;
+                    ++$updated;
                     break;
 
                 case self::ACTION_DISABLE_LOGIN:
                     $user->setEnabled(false);
-                    $updated++;
+                    ++$updated;
                     break;
 
                 case self::ACTION_ASSIGN_GROUP:
                     if ($group) {
                         $user->addGroup($group);
-                        $updated++;
+                        ++$updated;
                     }
                     break;
 
                 case self::ACTION_CHANGE_SCOPE:
                     if ($scope) {
                         $user->setScope($scope);
-                        $updated++;
+                        ++$updated;
                     }
                     break;
 
                 case self::ACTION_RESET_2FA:
                     $user->setGoogleAuthenticatorSecret(null);
                     $user->setGoogleAuthenticatorEnabled(false);
-                    $updated++;
+                    ++$updated;
                     break;
             }
         }
@@ -59,4 +62,3 @@ class BulkUserActionService
         return $updated;
     }
 }
-

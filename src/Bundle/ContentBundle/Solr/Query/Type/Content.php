@@ -222,6 +222,7 @@ class Content extends AbstractType
         $arrayNormalizer = function (Options $options, $value) {
             if (\is_string($value)) {
                 $value = trim($value);
+
                 return '' !== $value ? [$value] : [];
             }
 

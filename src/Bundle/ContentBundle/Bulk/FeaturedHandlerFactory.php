@@ -29,6 +29,9 @@ class FeaturedHandlerFactory implements HandlerFactoryInterface
             ->addAllowedTypes('featured', 'bool');
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function createHandler(array $options)
     {
         $options = $this->resolver->resolve($options);
@@ -36,4 +39,3 @@ class FeaturedHandlerFactory implements HandlerFactoryInterface
         return new FeaturedHandler($options['featured']);
     }
 }
-

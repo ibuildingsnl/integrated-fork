@@ -77,9 +77,9 @@ class ConfigController extends AbstractController
         $data->setAdapter($adapter->getManifest()->getName());
 
         $event = new GetResponseConfigEvent($data, $request);
-
-        if ($this->dispatcher->dispatch($event, IntegratedChannelEvents::CONFIG_CREATE_REQUEST)->getResponse()) {
-            return $event->getResponse();
+        $requestResponse = $this->dispatcher->dispatch($event, IntegratedChannelEvents::CONFIG_CREATE_REQUEST)->getResponse();
+        if ($requestResponse instanceof Response) {
+            return $requestResponse;
         }
 
         $form = $this->createNewForm($data, $adapter);
@@ -138,9 +138,9 @@ class ConfigController extends AbstractController
         }
 
         $event = new GetResponseConfigEvent($data, $request);
-
-        if ($this->dispatcher->dispatch($event, IntegratedChannelEvents::CONFIG_EDIT_REQUEST)->getResponse()) {
-            return $event->getResponse();
+        $requestResponse = $this->dispatcher->dispatch($event, IntegratedChannelEvents::CONFIG_EDIT_REQUEST)->getResponse();
+        if ($requestResponse instanceof Response) {
+            return $requestResponse;
         }
 
         $form = $this->createEditForm($data, $adapter);
@@ -216,9 +216,9 @@ class ConfigController extends AbstractController
         }
 
         $event = new GetResponseConfigEvent($data, $request);
-
-        if ($this->dispatcher->dispatch($event, IntegratedChannelEvents::CONFIG_DELETE_REQUEST)->getResponse()) {
-            return $event->getResponse();
+        $requestResponse = $this->dispatcher->dispatch($event, IntegratedChannelEvents::CONFIG_DELETE_REQUEST)->getResponse();
+        if ($requestResponse instanceof Response) {
+            return $requestResponse;
         }
 
         $form = $this->createDeleteForm($data);

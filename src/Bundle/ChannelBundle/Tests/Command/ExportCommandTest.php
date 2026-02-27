@@ -30,4 +30,3 @@ class ExportCommandTest extends TestCase
         self::assertSame(Command::FAILURE, $exitCode);
     }
 }
-

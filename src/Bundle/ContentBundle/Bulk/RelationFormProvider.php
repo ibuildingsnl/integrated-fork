@@ -87,6 +87,7 @@ class RelationFormProvider implements ConfigProviderInterface
         return $config;
     }
 
+    /** @return array<mixed> */
     private function getTaxonomyCategories(Relation $relation): array
     {
         if ($relation->getType() !== 'taxonomy_category') {

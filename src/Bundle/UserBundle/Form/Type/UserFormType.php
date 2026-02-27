@@ -11,25 +11,25 @@
 
 namespace Integrated\Bundle\UserBundle\Form\Type;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Doctrine\ORM\EntityRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\UserBundle\Form\DataMapper\UserMapper;
 use Integrated\Bundle\UserBundle\Form\EventListener\UserProfileExtensionListener;
 use Integrated\Bundle\UserBundle\Form\EventListener\UserProfileOptionalListener;
 use Integrated\Bundle\UserBundle\Form\EventListener\UserProfilePasswordListener;
-use Integrated\Bundle\UserBundle\Model\UserInterface as IntegratedUserInterface;
 use Integrated\Bundle\UserBundle\Model\Scope;
+use Integrated\Bundle\UserBundle\Model\UserInterface as IntegratedUserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\Extension\Validator\Constraints\FormValidator;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -185,16 +185,14 @@ class UserFormType extends AbstractType
                 return;
             }
 
-            if (method_exists($user, 'getEmail') && method_exists($user, 'setEmail') && method_exists($user, 'getUsername')) {
-                $email = trim((string) $user->getEmail());
-                $username = trim((string) $user->getUsername());
-                if ($email === '' && filter_var($username, FILTER_VALIDATE_EMAIL)) {
-                    $user->setEmail($username);
-                }
+            $email = trim((string) $user->getEmail());
+            $username = trim((string) $user->getUserIdentifier());
+            if ($email === '' && filter_var($username, \FILTER_VALIDATE_EMAIL)) {
+                $user->setEmail($username);
             }
 
             $relation = $user->getRelation();
-            if (!$relation || !method_exists($relation, 'getId')) {
+            if (!\is_object($relation) || !method_exists($relation, 'getId')) {
                 return;
             }
 
@@ -289,6 +287,9 @@ class UserFormType extends AbstractType
         return $currentData;
     }
 
+    /**
+     * @param iterable<mixed> $existingUsers
+     */
     public static function hasRelationConflict(string $relationId, string $currentUserId, iterable $existingUsers): bool
     {
         if ($relationId === '') {

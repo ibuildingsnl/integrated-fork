@@ -25,6 +25,7 @@ use Integrated\Bundle\UserBundle\Service\BulkUserActionService;
 use Knp\Component\Pager\PaginatorInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -45,9 +46,8 @@ class UserController extends AbstractController
         LoggerInterface $logger,
         GroupManagerInterface $groupManager,
         ScopeManagerInterface $scopeManager,
-        BulkUserActionService $bulkUserActionService
-    )
-    {
+        BulkUserActionService $bulkUserActionService,
+    ) {
         $this->manager = $manager;
         $this->provider = $provider;
         $this->paginator = $paginator;
@@ -64,9 +64,6 @@ class UserController extends AbstractController
         }
 
         $data = $request->query->all('integrated_user_filter');
-        if (!\is_array($data)) {
-            $data = [];
-        }
 
         $users = $this->provider->getUsers($data);
 
@@ -112,7 +109,7 @@ class UserController extends AbstractController
         $action = (string) $request->request->get('bulk_action', '');
         $selectedValues = $request->request->all('user_ids');
         $selectedIds = array_values(array_filter(array_map(
-            static fn ($id): string => is_scalar($id) ? (string) $id : '',
+            static fn ($id): string => \is_scalar($id) ? (string) $id : '',
             $selectedValues
         ), static fn (string $id): bool => $id !== ''));
         if ($action === '' || $selectedIds === []) {
@@ -171,7 +168,7 @@ class UserController extends AbstractController
             'updated_count' => $updated,
         ]);
 
-        $this->addFlash('success', sprintf('Bulk action applied to %d user(s).', $updated));
+        $this->addFlash('success', \sprintf('Bulk action applied to %d user(s).', $updated));
 
         return $this->redirectToRoute('integrated_user_user_index');
     }
@@ -187,7 +184,8 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->getClickedButton()?->getName() === 'cancel') {
+            $clickedButton = $form->getClickedButton();
+            if (\is_object($clickedButton) && method_exists($clickedButton, 'getName') && $clickedButton->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_user_user_index');
             }
 
@@ -341,12 +339,13 @@ class UserController extends AbstractController
             return $this->redirectToRoute('integrated_user_user_index');
         }
 
-        /** @var Form $form */
+        /** @var FormInterface<mixed> $form */
         $form = $this->createDeleteAccountForm($user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->getClickedButton()?->getName() === 'cancel') {
+            $clickedButton = $form instanceof Form ? $form->getClickedButton() : null;
+            if (\is_object($clickedButton) && method_exists($clickedButton, 'getName') && $clickedButton->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_user_user_index');
             }
 
@@ -414,7 +413,8 @@ class UserController extends AbstractController
         return $form;
     }
 
-    protected function createDeleteAccountForm(UserInterface $user): Form
+    /** @return FormInterface<mixed> */
+    protected function createDeleteAccountForm(UserInterface $user): FormInterface
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();

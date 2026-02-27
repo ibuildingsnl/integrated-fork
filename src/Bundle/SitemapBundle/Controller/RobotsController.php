@@ -27,7 +27,7 @@ class RobotsController extends AbstractController
         $response->setPublic();
         $response->setMaxAge(self::CACHE_TTL);
         $response->setSharedMaxAge(self::CACHE_TTL);
-        $response->headers->addCacheControlDirective('stale-while-revalidate', self::CACHE_TTL);
+        $response->headers->addCacheControlDirective('stale-while-revalidate', (string) self::CACHE_TTL);
         $response->setLastModified($generatedAt);
         $response->setEtag(sha1((string) $response->getContent()));
         $response->isNotModified($request);

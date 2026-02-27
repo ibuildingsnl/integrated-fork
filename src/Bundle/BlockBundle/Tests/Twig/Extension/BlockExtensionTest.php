@@ -41,4 +41,3 @@ class BlockExtensionTest extends TestCase
         self::assertSame([], $extension->findPages($block));
     }
 }
-

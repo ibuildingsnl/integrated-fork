@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Bulk;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Integrated\Bundle\ContentBundle\Bulk\CanonicalHandlerFactory;
 use Integrated\Bundle\ContentBundle\Bulk\FeaturedHandlerFactory;
 use Integrated\Bundle\ContentBundle\Bulk\PremiumHandlerFactory;
@@ -19,10 +20,9 @@ use Integrated\Bundle\ContentBundle\Bulk\WorkflowAssignHandler;
 use Integrated\Bundle\ContentBundle\Bulk\WorkflowAssignHandlerFactory;
 use Integrated\Bundle\ContentBundle\Bulk\WorkflowStateHandler;
 use Integrated\Bundle\ContentBundle\Bulk\WorkflowStateHandlerFactory;
-use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\ContentType\ResolverInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\OptionsResolver\Exception\ExceptionInterface;
 
@@ -36,7 +36,7 @@ class BulkHandlerFactoriesTest extends TestCase
             'sourceUrl' => 'https://example.org/source',
         ]);
 
-        $content = new class() extends Content {
+        $content = new class extends Content {
             private ?string $source = null;
             private ?string $sourceUrl = null;
 
@@ -84,7 +84,7 @@ class BulkHandlerFactoriesTest extends TestCase
             'sourceUrl' => null,
         ]);
 
-        $content = new class() extends Content {
+        $content = new class extends Content {
             private ?string $source = 'initial-source';
             private ?string $sourceUrl = 'initial';
 
@@ -129,7 +129,7 @@ class BulkHandlerFactoriesTest extends TestCase
         $factory = new FeaturedHandlerFactory();
         $handler = $factory->createHandler(['featured' => true]);
 
-        $content = new class() extends Content {
+        $content = new class extends Content {
             public function __toString(): string
             {
                 return '';
@@ -145,7 +145,7 @@ class BulkHandlerFactoriesTest extends TestCase
         $factory = new PremiumHandlerFactory();
         $handler = $factory->createHandler(['premium' => true]);
 
-        $content = new class() extends Content {
+        $content = new class extends Content {
             public function __toString(): string
             {
                 return '';
@@ -167,7 +167,7 @@ class BulkHandlerFactoriesTest extends TestCase
             'endDate' => $end,
         ]);
 
-        $content = new class() extends Content {
+        $content = new class extends Content {
             public function __toString(): string
             {
                 return '';

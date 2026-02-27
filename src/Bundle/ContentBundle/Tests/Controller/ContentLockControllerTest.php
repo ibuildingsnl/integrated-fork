@@ -18,7 +18,6 @@ use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
-use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepository;
 use Integrated\Bundle\ContentBundle\Provider\MediaProvider;
 use Integrated\Bundle\ContentBundle\Services\CalendarOptions;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
@@ -27,11 +26,12 @@ use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Content\ContentInterface;
+use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
-use Integrated\Common\Locks\Request as LockRequest;
-use Integrated\Common\Locks\Resource;
 use Integrated\Common\Locks\Provider\DBAL\Lock as DbalLock;
 use Integrated\Common\Locks\Provider\DBAL\Manager;
+use Integrated\Common\Locks\Request as LockRequest;
+use Integrated\Common\Locks\Resource;
 use Integrated\Common\Queue\Provider\DBAL\QueueProvider;
 use Integrated\Common\Security\Permissions;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
@@ -46,11 +46,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Lock\LockFactory;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Integrated\Common\ContentType\ResolverInterface;
 
 class ContentLockControllerTest extends TestCase
 {
@@ -332,6 +331,7 @@ class ContentLockControllerTest extends TestCase
         self::assertStringContainsString('lock=lock-id', $form->getConfig()->getAction());
     }
 
+    /** @return array<string, mixed> */
     private function decodeResponse(Response $response): array
     {
         $decoded = json_decode((string) $response->getContent(), true);
@@ -363,7 +363,7 @@ class ContentLockControllerTest extends TestCase
         DocumentManager $documentManager,
         Manager $lockManager,
         UserManagerInterface $userManager,
-        ?User $currentUser = null
+        ?User $currentUser = null,
     ): TestableContentController {
         $controller = new TestableContentController(
             $this->createStub(ResolverInterface::class),
@@ -383,7 +383,6 @@ class ContentLockControllerTest extends TestCase
             $documentManager,
             $this->createStub(CalendarOptions::class),
             $this->createStub(QueueProvider::class),
-            $this->createStub(PublicationRepository::class),
         );
 
         $translator = $this->createStub(TranslatorInterface::class);
@@ -421,6 +420,7 @@ class ContentLockControllerTest extends TestCase
 class TestableContentController extends ContentController
 {
     private bool $csrfValid = true;
+    /** @var array<string, bool> */
     private array $permissions = [];
     private ?User $currentUser = null;
     private TranslatorInterface $translator;
@@ -469,6 +469,11 @@ class TestableContentController extends ContentController
         return $this->translator;
     }
 
+    /**
+     * @param array<string, mixed> $locking
+     *
+     * @return FormInterface<mixed>
+     */
     public function createDeleteFormForTest(ContentInterface $content, array $locking, bool $notDelete = false): FormInterface
     {
         return $this->createDeleteForm($content, $locking, $notDelete);
@@ -483,6 +488,9 @@ class TestableContentController extends ContentController
         return $factory->create($type, $data, $options);
     }
 
+    /**
+     * @param array<string, mixed> $parameters
+     */
     protected function generateUrl(string $route, array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string
     {
         $query = http_build_query($parameters);

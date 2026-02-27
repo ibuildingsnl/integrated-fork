@@ -47,4 +47,3 @@ class SitemapRoutingTest extends TestCase
         return new UrlMatcher($routes, new RequestContext('/'));
     }
 }
-

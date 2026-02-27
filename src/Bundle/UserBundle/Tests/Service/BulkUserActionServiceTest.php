@@ -65,4 +65,3 @@ class BulkUserActionServiceTest extends TestCase
         self::assertFalse($user->isGoogleAuthenticatorEnabled());
     }
 }
-

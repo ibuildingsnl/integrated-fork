@@ -6,7 +6,6 @@ use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Security\ChannelVoter;
 use Integrated\Bundle\ContentBundle\Security\ContentChannelVoter;
-use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyLister;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOptions;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
@@ -26,7 +25,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 final class TaxonomyListTest extends TestCase
 {
     private TaxonomyOverview $list;
-    private TaxonomyRepositoryInterface $taxonomies;
+    private MemoryTaxonomyRepository $taxonomies;
     private TokenStorageInterface $tokenStorage;
     private array $users;
     private array $channels;
@@ -145,7 +144,6 @@ final class TaxonomyListTest extends TestCase
 
         $this->list->overviewFor('tag', TaxonomyOptions::page(1, 10));
 
-        self::assertInstanceOf(MemoryTaxonomyRepository::class, $this->taxonomies);
         self::assertSame(1, $this->taxonomies->getUsageBatchLookupCalls());
         self::assertSame(0, $this->taxonomies->getUsageLookupCalls());
     }
@@ -159,9 +157,6 @@ final class TaxonomyListTest extends TestCase
 
     private function setUsages(array $usageCounts): void
     {
-        if (!$this->taxonomies instanceof MemoryTaxonomyRepository) {
-            return;
-        }
         foreach ($usageCounts as $id => $count) {
             $this->taxonomies->setUsageCount($id, $count);
         }

@@ -143,7 +143,7 @@ class WorkflowAssignHandlerTest extends TestCase
 
     private function createContent(bool $disabled): Content
     {
-        $content = new class() extends Content {
+        $content = new class extends Content {
             public function __toString(): string
             {
                 return '';

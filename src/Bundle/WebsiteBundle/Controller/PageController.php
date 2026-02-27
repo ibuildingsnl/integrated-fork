@@ -56,7 +56,7 @@ class PageController extends AbstractController
         if ($page->isDisabled()) {
             $response->setPrivate();
             $response->headers->addCacheControlDirective('no-store', true);
-            $response->headers->addCacheControlDirective('max-age', 0);
+            $response->headers->addCacheControlDirective('max-age', '0');
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
         }
 

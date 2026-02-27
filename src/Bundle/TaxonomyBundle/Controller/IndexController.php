@@ -39,7 +39,8 @@ final class IndexController extends AbstractController
     {
         $contentType = $this->typeResolver->getType($type);
         $content = $contentType->create();
-        $currentId = trim((string) ($request->query->all()['current'] ?? ''));
+        $current = $request->query->get('current');
+        $currentId = \is_scalar($current) ? trim((string) $current) : '';
 
         if ('' !== $currentId) {
             $current = $this->taxonomies->byId($currentId);

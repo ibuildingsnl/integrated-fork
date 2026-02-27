@@ -30,8 +30,9 @@ class ApiController extends AbstractController
 
     public function refresh(Request $request): Response
     {
-        if ($response = $this->requireManager()) {
-            return $response;
+        $manager = $this->manager;
+        if (!$manager instanceof ManagerInterface) {
+            return $this->respond(403, 'Locking is not enabled');
         }
 
         if (!$owner = $this->getOwner()) {
@@ -42,7 +43,8 @@ class ApiController extends AbstractController
             return $this->respond(400, 'Missing lock identifier');
         }
 
-        if (!$lock = $this->manager->find($lockId)) {
+        $lock = $manager->find($lockId);
+        if ($lock === null) {
             return $this->respond(404, 'The lock could not be found');
         }
 
@@ -51,7 +53,8 @@ class ApiController extends AbstractController
             return $this->respond(423, 'The lock belongs to another user', ['lock' => null]);
         }
 
-        if (!$lock = $this->manager->refresh($lock)) {
+        $lock = $manager->refresh($lock);
+        if ($lock === null) {
             return $this->respond(500, 'The lock could not be extended', ['lock' => null]);
         }
 
@@ -60,8 +63,9 @@ class ApiController extends AbstractController
 
     public function release(Request $request): Response
     {
-        if ($response = $this->requireManager()) {
-            return $response;
+        $manager = $this->manager;
+        if (!$manager instanceof ManagerInterface) {
+            return $this->respond(403, 'Locking is not enabled');
         }
 
         if (!$owner = $this->getOwner()) {
@@ -72,7 +76,8 @@ class ApiController extends AbstractController
             return $this->respond(400, 'Missing lock identifier');
         }
 
-        if (!$lock = $this->manager->find($lockId)) {
+        $lock = $manager->find($lockId);
+        if ($lock === null) {
             return $this->respond(404, 'The lock could not be found');
         }
 
@@ -81,7 +86,7 @@ class ApiController extends AbstractController
             return $this->respond(423, 'The lock belongs to another user', ['lock' => null]);
         }
 
-        $this->manager->release($lock);
+        $manager->release($lock);
 
         return $this->respond(200, 'The lock is released', ['lock' => null]);
     }
@@ -104,15 +109,6 @@ class ApiController extends AbstractController
         }
 
         return Resource::fromAccount($user);
-    }
-
-    private function requireManager(): ?JsonResponse
-    {
-        if ($this->manager) {
-            return null;
-        }
-
-        return $this->respond(403, 'Locking is not enabled');
     }
 
     /**

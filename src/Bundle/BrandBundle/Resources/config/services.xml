@@ -63,7 +63,6 @@
             <argument type="service" id="integrated_brand.brand.repository" />
             <argument type="service" id="integrated_channel.repository.channel" />
             <argument type="service" id="integrated_asset.manager.javascript_manager" />
-            <argument type="service" id="integrated_asset.manager.stylesheet_manager" />
             <tag name="integrated_content.form.event_subscriber"/>
         </service>
 

@@ -92,7 +92,7 @@ class BlockRepository extends ServiceDocumentRepository
     {
         $blockId = json_encode(
             (string) $block->getId(),
-            JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+            \JSON_HEX_TAG | \JSON_HEX_AMP | \JSON_HEX_APOS | \JSON_HEX_QUOT
         );
 
         if ($blockId === false) {
@@ -229,7 +229,7 @@ class BlockRepository extends ServiceDocumentRepository
             ->getQuery()
             ->execute();
 
-        $this->hasPagesWithoutBlockIds = (int) $count > 0;
+        $this->hasPagesWithoutBlockIds = is_numeric($count) && (int) $count > 0;
 
         return $this->hasPagesWithoutBlockIds;
     }

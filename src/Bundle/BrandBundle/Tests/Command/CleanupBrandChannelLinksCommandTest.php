@@ -2,8 +2,8 @@
 
 namespace Integrated\Bundle\BrandBundle\Tests\Command;
 
-use Integrated\Bundle\BrandBundle\Command\CleanupBrandChannelLinksCommand;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\BrandBundle\Command\CleanupBrandChannelLinksCommand;
 use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\BrandProfile;
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;

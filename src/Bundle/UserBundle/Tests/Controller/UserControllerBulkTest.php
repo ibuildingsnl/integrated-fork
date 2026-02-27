@@ -178,6 +178,7 @@ final class TestUserController extends UserController
     public bool $csrfValid = true;
     public bool $granted = true;
     public ?User $currentUser = null;
+    /** @var array<int, array{type: string, message: mixed}> */
     public array $flashes = [];
 
     protected function isGranted(mixed $attribute, mixed $subject = null): bool
@@ -195,6 +196,9 @@ final class TestUserController extends UserController
         $this->flashes[] = ['type' => $type, 'message' => $message];
     }
 
+    /**
+     * @param array<string, mixed> $parameters
+     */
     protected function redirectToRoute(string $route, array $parameters = [], int $status = 302): RedirectResponse
     {
         return new RedirectResponse('/'.$route, $status);

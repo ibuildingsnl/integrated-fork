@@ -110,6 +110,7 @@ class ContentTypeHandler implements HandlerInterface
                 'targetContentType' => $contentType->getId(),
                 'class' => $contentType->getClass(),
             ]);
+
             return;
         }
 

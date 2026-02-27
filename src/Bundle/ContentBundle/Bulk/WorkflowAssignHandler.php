@@ -35,16 +35,14 @@ class WorkflowAssignHandler implements HandlerInterface
     private bool $assignedInvalid = false;
     private ?UserInterface $assignedUser = null;
 
-    /**
-     * @var Definition[]
-     */
+    /** @var array<string, Definition|null> */
     private array $workflowCache = [];
 
     public function __construct(
         EntityManagerInterface $entityManager,
         ResolverInterface $resolver,
         UserManagerInterface $userManager,
-        ?string $assignedId
+        ?string $assignedId,
     ) {
         $this->entityManager = $entityManager;
         $this->resolver = $resolver;
@@ -52,7 +50,7 @@ class WorkflowAssignHandler implements HandlerInterface
         $this->assignedId = $assignedId;
     }
 
-    public function execute(ContentInterface $content)
+    public function execute(ContentInterface $content): void
     {
         $workflow = $this->resolveWorkflow($content);
         if (!$workflow instanceof Definition) {
@@ -107,12 +105,8 @@ class WorkflowAssignHandler implements HandlerInterface
 
         $state->setAssigned($assigned);
         $this->syncContentWithState($content, $workflow, $state->getState());
-        $flush = true;
-
-        if ($flush) {
-            $this->entityManager->flush();
-            $this->invalidateNavdropdownCache();
-        }
+        $this->entityManager->flush();
+        $this->invalidateNavdropdownCache();
     }
 
     private function resolveAssignedUser(): ?UserInterface
@@ -158,7 +152,7 @@ class WorkflowAssignHandler implements HandlerInterface
             return null;
         }
 
-        if (!array_key_exists($workflowId, $this->workflowCache)) {
+        if (!\array_key_exists($workflowId, $this->workflowCache)) {
             $this->workflowCache[$workflowId] = $this->entityManager->getRepository(Definition::class)->find($workflowId);
         }
 
@@ -170,17 +164,17 @@ class WorkflowAssignHandler implements HandlerInterface
     private function resolveInitialState(Definition $workflow, ContentInterface $content): ?Definition\State
     {
         $default = $workflow->getDefault();
-        if ($default instanceof Definition\State && $this->isStateCompatibleWithContent($default, $content)) {
+        if ($default !== null && $this->isStateCompatibleWithContent($default, $content)) {
             return $default;
         }
 
         foreach ($workflow->getStates() as $state) {
-            if ($state instanceof Definition\State && $this->isStateCompatibleWithContent($state, $content)) {
+            if ($this->isStateCompatibleWithContent($state, $content)) {
                 return $state;
             }
         }
 
-        return $default instanceof Definition\State ? $default : null;
+        return $default;
     }
 
     private function isStateCompatibleWithContent(Definition\State $state, ContentInterface $content): bool

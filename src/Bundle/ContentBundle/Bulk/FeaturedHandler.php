@@ -27,9 +27,12 @@ class FeaturedHandler implements HandlerInterface
         $this->featured = $featured;
     }
 
+    /**
+     * @return void
+     */
     public function execute(ContentInterface $content)
     {
-        if (!$content instanceof Content || !\method_exists($content, 'setFeatured')) {
+        if (!$content instanceof Content) {
             return;
         }
 

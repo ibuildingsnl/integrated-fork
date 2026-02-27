@@ -92,6 +92,11 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
             ->execute();
     }
 
+    /**
+     * @param array<string> $taxonomyIds
+     *
+     * @return array<string, int>
+     */
     public function countUsagesFor(array $taxonomyIds): array
     {
         $ids = array_values(array_filter(array_map(static function (mixed $id): string {

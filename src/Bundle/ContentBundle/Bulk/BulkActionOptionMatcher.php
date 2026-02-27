@@ -26,7 +26,7 @@ class BulkActionOptionMatcher implements ActionMatcherInterface
      */
     private $option;
 
-    public function __construct($handler, $option)
+    public function __construct(mixed $handler, mixed $option)
     {
         $this->handler = (string) $handler;
         $this->option = (string) $option;
@@ -41,4 +41,3 @@ class BulkActionOptionMatcher implements ActionMatcherInterface
         return \array_key_exists($this->option, $action->getOptions());
     }
 }
-

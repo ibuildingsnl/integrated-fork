@@ -13,10 +13,9 @@ namespace Integrated\Bundle\ContentHistoryBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Query\Builder as MongoQueryBuilder;
-use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentHistoryBundle\Document\ContentHistory;
@@ -34,8 +33,11 @@ class ContentHistoryController extends AbstractController
     private PaginatorInterface $paginator;
     private ContentTypeManager $contentTypeManager;
     private ?EntityManagerInterface $entityManager;
+    /** @var array<string, array<string, mixed>> */
     private array $formattedValueCache = [];
+    /** @var array<string, object|null> */
     private array $referenceDocumentCache = [];
+    /** @var array<string, string|null> */
     private array $workflowStateNameCache = [];
 
     public function __construct(DocumentManager $manager, Parser $parser, PaginatorInterface $paginator, ContentTypeManager $contentTypeManager, ?EntityManagerInterface $entityManager = null)
@@ -51,12 +53,16 @@ class ContentHistoryController extends AbstractController
     {
         $contentType = $this->contentTypeManager->getType($content->getContentType());
         $filters = $this->extractHistoryFilters($request);
-        $builder = $this->buildHistoryQuery($content->getId(), $filters);
+        $contentId = $content->getId();
+        if (!\is_string($contentId) || $contentId === '') {
+            throw $this->createNotFoundException('Content id is missing');
+        }
+        $builder = $this->buildHistoryQuery($contentId, $filters);
 
         $paginator = $this->paginator->paginate(
             $builder,
-            $request->query->get('page', 1),
-            $request->query->get('limit', 20)
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 20)
         );
 
         return $this->render('@IntegratedContentHistory/content_history/index.html.twig', [
@@ -71,12 +77,16 @@ class ContentHistoryController extends AbstractController
     {
         $contentType = $this->contentTypeManager->getType($content->getContentType());
         $filters = $this->extractHistoryFilters($request);
-        $builder = $this->buildHistoryQuery($content->getId(), $filters);
+        $contentId = $content->getId();
+        if (!\is_string($contentId) || $contentId === '') {
+            throw $this->createNotFoundException('Content id is missing');
+        }
+        $builder = $this->buildHistoryQuery($contentId, $filters);
 
         $paginator = $this->paginator->paginate(
             $builder,
-            $request->query->get('page', 1),
-            $request->query->get('limit', 20)
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 20)
         );
 
         return $this->render('@IntegratedContentHistory/content_history/index.iframe.html.twig', [
@@ -122,14 +132,14 @@ class ContentHistoryController extends AbstractController
             ];
         }
 
-        $toIndex = (int) $request->query->get('to', \max(\count($versions) - 1, 0));
-        $fromIndex = (int) $request->query->get('from', \max($toIndex - 1, 0));
-        $maxIndex = \max(\count($versions) - 1, 0);
-        $toIndex = \max(0, \min($toIndex, $maxIndex));
+        $toIndex = $request->query->getInt('to', max(\count($versions) - 1, 0));
+        $fromIndex = $request->query->getInt('from', max($toIndex - 1, 0));
+        $maxIndex = max(\count($versions) - 1, 0);
+        $toIndex = max(0, min($toIndex, $maxIndex));
         if ($maxIndex > 0) {
-            $toIndex = \max(1, $toIndex);
+            $toIndex = max(1, $toIndex);
         }
-        $fromIndex = \max(0, \min($fromIndex, $maxIndex));
+        $fromIndex = max(0, min($fromIndex, $maxIndex));
         if ($toIndex > 0 && $fromIndex >= $toIndex) {
             $fromIndex = $toIndex - 1;
         }
@@ -183,6 +193,11 @@ class ContentHistoryController extends AbstractController
         ]);
     }
 
+    /**
+     * @param array<int, array<string, mixed>> $rows
+     *
+     * @return array<int, array<string, mixed>>
+     */
     private function enhanceChangeSetForDisplay(array $rows): array
     {
         return array_map(function (array $row): array {
@@ -196,6 +211,11 @@ class ContentHistoryController extends AbstractController
         }, $rows);
     }
 
+    /**
+     * @param array<int, array<string, mixed>> $rows
+     *
+     * @return array{0: array<int, array<string, mixed>>, 1: int}
+     */
     private function filterReadableRows(array $rows, bool $showTechnical): array
     {
         if ($showTechnical) {
@@ -217,6 +237,11 @@ class ContentHistoryController extends AbstractController
         return [$filtered, $hidden];
     }
 
+    /**
+     * @param array<int, array<string, mixed>> $rows
+     *
+     * @return array<int, array<string, mixed>>
+     */
     private function removeConflictingFeaturedImageRows(array $rows): array
     {
         $dedicatedIndex = null;
@@ -265,7 +290,7 @@ class ContentHistoryController extends AbstractController
             return true;
         }
 
-        if (is_string($value)) {
+        if (\is_string($value)) {
             $normalized = strtolower(trim($value));
 
             return $normalized === '' || $normalized === '—' || $normalized === 'none';
@@ -274,6 +299,7 @@ class ContentHistoryController extends AbstractController
         return false;
     }
 
+    /** @param array<string, mixed> $row */
     private function isNoOpRow(array $row): bool
     {
         $old = trim((string) ($row['old'] ?? ''));
@@ -358,9 +384,10 @@ class ContentHistoryController extends AbstractController
         return implode(' > ', $displaySegments);
     }
 
+    /** @return array<string, mixed> */
     private function formatHistoryValue(mixed $value, ?string $fieldPath = null): array
     {
-        $cacheInput = is_scalar($value) || $value === null ? (string) $value : serialize($value);
+        $cacheInput = \is_scalar($value) || $value === null ? (string) $value : serialize($value);
         $cacheKey = md5(($fieldPath ?? '').'|'.$cacheInput);
         if (isset($this->formattedValueCache[$cacheKey])) {
             return $this->formattedValueCache[$cacheKey];
@@ -370,7 +397,7 @@ class ContentHistoryController extends AbstractController
             return $this->formattedValueCache[$cacheKey] = ['type' => 'empty', 'text' => ''];
         }
 
-        if (is_bool($value)) {
+        if (\is_bool($value)) {
             return $this->formattedValueCache[$cacheKey] = ['type' => 'text', 'text' => $value ? 'true' : 'false'];
         }
 
@@ -378,7 +405,7 @@ class ContentHistoryController extends AbstractController
             return $this->formattedValueCache[$cacheKey] = ['type' => 'text', 'text' => (string) $value];
         }
 
-        if (!is_string($value)) {
+        if (!\is_string($value)) {
             return $this->formattedValueCache[$cacheKey] = ['type' => 'text', 'text' => (string) $value];
         }
 
@@ -410,7 +437,7 @@ class ContentHistoryController extends AbstractController
         }
 
         $paragraphs = preg_split('/\R{2,}/', $value) ?: [];
-        if (count($paragraphs) > 1) {
+        if (\count($paragraphs) > 1) {
             return $this->formattedValueCache[$cacheKey] = [
                 'type' => 'paragraphs',
                 'paragraphs' => array_values(array_filter(array_map('trim', $paragraphs), static fn (string $line): bool => $line !== '')),
@@ -426,7 +453,7 @@ class ContentHistoryController extends AbstractController
             return null;
         }
 
-        if (array_key_exists($value, $this->workflowStateNameCache)) {
+        if (\array_key_exists($value, $this->workflowStateNameCache)) {
             return $this->workflowStateNameCache[$value];
         }
 
@@ -445,7 +472,7 @@ class ContentHistoryController extends AbstractController
 
     private function isWorkflowStateField(?string $fieldPath): bool
     {
-        if (!is_string($fieldPath) || trim($fieldPath) === '') {
+        if (!\is_string($fieldPath) || trim($fieldPath) === '') {
             return false;
         }
 
@@ -466,6 +493,7 @@ class ContentHistoryController extends AbstractController
         return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $value) === 1;
     }
 
+    /** @return array<string, mixed>|null */
     private function resolveCompositeReferenceValue(string $value): ?array
     {
         if (!str_contains($value, ',')) {
@@ -498,13 +526,14 @@ class ContentHistoryController extends AbstractController
         return ['type' => 'stack', 'items' => $items];
     }
 
+    /** @return array<string, mixed>|null */
     private function resolveReferenceValue(string $value): ?array
     {
         $contextLabel = null;
 
         if (preg_match('/^(?<label>[^:]+):\s*(?<class>[A-Za-z0-9_\\\\]+)\s+#(?<id>[A-Za-z0-9_]+)$/', $value, $prefixed)) {
             $contextLabel = trim($prefixed['label']);
-            $value = sprintf('%s #%s', $prefixed['class'], $prefixed['id']);
+            $value = \sprintf('%s #%s', $prefixed['class'], $prefixed['id']);
         }
 
         if (preg_match('/^(?<collection>[a-z_]+)\s+#(?<id>[A-Za-z0-9_]+)$/i', $value, $matches)) {
@@ -514,9 +543,9 @@ class ContentHistoryController extends AbstractController
             if ($collection === 'channel') {
                 $channel = $this->manager->find(Channel::class, $id);
                 if ($channel instanceof Channel) {
-                    $text = sprintf('%s (#%s)', $channel->getName(), $channel->getId());
+                    $text = \sprintf('%s (#%s)', $channel->getName(), $channel->getId());
                     if ($contextLabel) {
-                        $text = sprintf('%s: %s', $contextLabel, $text);
+                        $text = \sprintf('%s: %s', $contextLabel, $text);
                     }
 
                     return [
@@ -541,25 +570,26 @@ class ContentHistoryController extends AbstractController
         $contextLabel = $this->sanitizeContextLabel($contextLabel, $class, null);
 
         $cacheId = $class.'#'.$id;
-        if (array_key_exists($cacheId, $this->referenceDocumentCache)) {
+        if (\array_key_exists($cacheId, $this->referenceDocumentCache)) {
             $document = $this->referenceDocumentCache[$cacheId];
         } else {
             $document = $this->manager->find($class, $id);
-            $this->referenceDocumentCache[$cacheId] = $document ?: null;
+            $document = \is_object($document) ? $document : null;
+            $this->referenceDocumentCache[$cacheId] = $document;
         }
 
         $contextLabel = $this->sanitizeContextLabel($contextLabel, $class, $document);
 
         if (!$document) {
-            $text = sprintf('%s #%s', $this->shortClassName($class), $id);
+            $text = \sprintf('%s #%s', $this->shortClassName($class), $id);
 
-            return ['type' => 'reference', 'text' => $contextLabel ? sprintf('%s: %s', $contextLabel, $text) : $text];
+            return ['type' => 'reference', 'text' => $contextLabel ? \sprintf('%s: %s', $contextLabel, $text) : $text];
         }
 
         if ($document instanceof Image) {
-            $identifier = $document->getFile()?->getIdentifier();
-            $title = trim((string) ($document->getTitle() ?? ''));
-            $label = $title !== '' ? $title : sprintf('Image #%s', $id);
+            $identifier = $document->getFile()->getIdentifier();
+            $title = trim((string) $document->getTitle());
+            $label = $title !== '' ? $title : \sprintf('Image #%s', $id);
             if ($contextLabel) {
                 $label = $contextLabel.($title !== '' ? ' - '.$title : '');
             }
@@ -581,9 +611,9 @@ class ContentHistoryController extends AbstractController
         }
 
         if ($document instanceof Channel) {
-            $text = sprintf('%s (#%s)', $document->getName(), $document->getId());
+            $text = \sprintf('%s (#%s)', $document->getName(), $document->getId());
             if ($contextLabel) {
-                $text = sprintf('%s: %s', $contextLabel, $text);
+                $text = \sprintf('%s: %s', $contextLabel, $text);
             }
 
             return [
@@ -596,10 +626,14 @@ class ContentHistoryController extends AbstractController
         if (method_exists($document, 'getName')) {
             $name = trim((string) $document->getName());
             if ($name !== '') {
+                $href = method_exists($document, 'getId')
+                    ? $this->generateUrl('integrated_content_content_edit', ['id' => (string) $document->getId()])
+                    : null;
+
                 return [
                     'type' => 'reference',
-                    'text' => $contextLabel ? sprintf('%s: %s', $contextLabel, $name) : $name,
-                    'href' => method_exists($document, 'getId') ? $this->generateUrl('integrated_content_content_edit', ['id' => $document->getId()]) : null,
+                    'text' => $contextLabel ? \sprintf('%s: %s', $contextLabel, $name) : $name,
+                    'href' => $href,
                 ];
             }
         }
@@ -607,23 +641,27 @@ class ContentHistoryController extends AbstractController
         if (method_exists($document, 'getTitle')) {
             $title = trim((string) $document->getTitle());
             if ($title !== '') {
+                $href = method_exists($document, 'getId')
+                    ? $this->generateUrl('integrated_content_content_edit', ['id' => (string) $document->getId()])
+                    : null;
+
                 return [
                     'type' => 'reference',
-                    'text' => $contextLabel ? sprintf('%s: %s', $contextLabel, $title) : $title,
-                    'href' => method_exists($document, 'getId') ? $this->generateUrl('integrated_content_content_edit', ['id' => $document->getId()]) : null,
+                    'text' => $contextLabel ? \sprintf('%s: %s', $contextLabel, $title) : $title,
+                    'href' => $href,
                 ];
             }
         }
 
         if (method_exists($document, 'getId')) {
-            $text = sprintf('%s #%s', $this->shortClassName($class), $document->getId());
+            $text = \sprintf('%s #%s', $this->shortClassName($class), $document->getId());
 
-            return ['type' => 'reference', 'text' => $contextLabel ? sprintf('%s: %s', $contextLabel, $text) : $text];
+            return ['type' => 'reference', 'text' => $contextLabel ? \sprintf('%s: %s', $contextLabel, $text) : $text];
         }
 
         $text = $this->shortClassName($class);
 
-        return ['type' => 'reference', 'text' => $contextLabel ? sprintf('%s: %s', $contextLabel, $text) : $text];
+        return ['type' => 'reference', 'text' => $contextLabel ? \sprintf('%s: %s', $contextLabel, $text) : $text];
     }
 
     private function sanitizeContextLabel(?string $contextLabel, string $class, ?object $document): ?string
@@ -654,6 +692,11 @@ class ContentHistoryController extends AbstractController
         return (string) end($parts);
     }
 
+    /**
+     * @param array<string, mixed> $row
+     *
+     * @return array<string, mixed>
+     */
     private function applyInlineDiffForTextRow(array $row): array
     {
         $name = strtolower((string) ($row['name'] ?? ''));
@@ -671,8 +714,8 @@ class ContentHistoryController extends AbstractController
 
         $oldHtml = [];
         foreach ($oldTokens as $token) {
-            $safe = htmlspecialchars($token, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-            if (!array_key_exists($token, $newLookup)) {
+            $safe = htmlspecialchars($token, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
+            if (!\array_key_exists($token, $newLookup)) {
                 $oldHtml[] = '<span class="history-diff-del">'.$safe.'</span>';
             } else {
                 $oldHtml[] = $safe;
@@ -681,8 +724,8 @@ class ContentHistoryController extends AbstractController
 
         $newHtml = [];
         foreach ($newTokens as $token) {
-            $safe = htmlspecialchars($token, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-            if (!array_key_exists($token, $oldLookup)) {
+            $safe = htmlspecialchars($token, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
+            if (!\array_key_exists($token, $oldLookup)) {
                 $newHtml[] = '<span class="history-diff-add">'.$safe.'</span>';
             } else {
                 $newHtml[] = $safe;
@@ -714,9 +757,12 @@ class ContentHistoryController extends AbstractController
             return false;
         }
 
-        return (strlen($old) > 40 || strlen($new) > 40);
+        return \strlen($old) > 40 || \strlen($new) > 40;
     }
 
+    /**
+     * @return array{q: string, action: string, user: string, from: string, to: string}
+     */
     private function extractHistoryFilters(Request $request): array
     {
         return [
@@ -728,16 +774,21 @@ class ContentHistoryController extends AbstractController
         ];
     }
 
+    /**
+     * @param array<string, mixed> $snapshot
+     *
+     * @return array<string, mixed>
+     */
     private function normalizeSnapshotForCompare(array $snapshot): array
     {
         $normalized = $this->normalizeCompareValue($snapshot);
 
-        return is_array($normalized) ? $normalized : [];
+        return \is_array($normalized) ? $normalized : [];
     }
 
     private function normalizeCompareValue(mixed $value, ?string $parentKey = null): mixed
     {
-        if (!is_array($value)) {
+        if (!\is_array($value)) {
             return $value;
         }
 
@@ -761,7 +812,7 @@ class ContentHistoryController extends AbstractController
 
         $normalized = [];
         foreach ($value as $key => $item) {
-            $normalized[$key] = $this->normalizeCompareValue($item, is_string($key) ? $key : null);
+            $normalized[$key] = $this->normalizeCompareValue($item, \is_string($key) ? $key : null);
         }
 
         ksort($normalized);
@@ -769,51 +820,56 @@ class ContentHistoryController extends AbstractController
         return $normalized;
     }
 
+    /**
+     * @param array<int|string, mixed> $relations
+     *
+     * @return array<string, mixed>
+     */
     private function normalizeRelationsListForCompare(array $relations): array
     {
         $normalized = [];
 
         foreach ($relations as $index => $relation) {
-            if (!is_array($relation)) {
+            if (!\is_array($relation)) {
                 $normalized['__index_'.$index] = $this->normalizeCompareValue($relation);
                 continue;
             }
 
             $relationId = $relation['relationId'] ?? null;
-            if (is_array($relationId)) {
+            if (\is_array($relationId)) {
                 $relationId = end($relationId) ?: reset($relationId);
             }
 
             $key = '';
-            if (is_scalar($relationId) && (string) $relationId !== '') {
+            if (\is_scalar($relationId) && (string) $relationId !== '') {
                 $key = (string) $relationId;
             } else {
                 $relationType = $relation['relationType'] ?? null;
-                if (is_array($relationType)) {
+                if (\is_array($relationType)) {
                     $relationType = end($relationType) ?: reset($relationType);
                 }
 
                 $references = $relation['references'] ?? [];
                 $referenceKeys = [];
-                if (is_array($references)) {
+                if (\is_array($references)) {
                     foreach ($references as $reference) {
-                        if (!is_array($reference)) {
+                        if (!\is_array($reference)) {
                             continue;
                         }
 
                         $refId = $reference['$id'] ?? $reference['_$id'] ?? null;
-                        if (is_array($refId)) {
+                        if (\is_array($refId)) {
                             $refId = end($refId) ?: reset($refId);
                         }
 
                         $refClass = $reference['class'] ?? null;
-                        if (is_array($refClass)) {
+                        if (\is_array($refClass)) {
                             $refClass = end($refClass) ?: reset($refClass);
                         }
 
-                        if (is_scalar($refClass) && (string) $refClass !== '' && is_scalar($refId) && (string) $refId !== '') {
+                        if (\is_scalar($refClass) && (string) $refClass !== '' && \is_scalar($refId) && (string) $refId !== '') {
                             $referenceKeys[] = (string) $refClass.'#'.(string) $refId;
-                        } elseif (is_scalar($refId) && (string) $refId !== '') {
+                        } elseif (\is_scalar($refId) && (string) $refId !== '') {
                             $referenceKeys[] = '#'.(string) $refId;
                         }
                     }
@@ -821,7 +877,7 @@ class ContentHistoryController extends AbstractController
 
                 sort($referenceKeys);
                 $signature = implode('|', $referenceKeys);
-                if (is_scalar($relationType) && (string) $relationType !== '') {
+                if (\is_scalar($relationType) && (string) $relationType !== '') {
                     $key = '__relationType:'.(string) $relationType.($signature !== '' ? ':'.$signature : '');
                 } elseif ($signature !== '') {
                     $key = '__references:'.$signature;
@@ -839,31 +895,36 @@ class ContentHistoryController extends AbstractController
         return $normalized;
     }
 
+    /**
+     * @param array<int|string, mixed> $references
+     *
+     * @return array<string, mixed>
+     */
     private function normalizeReferencesListForCompare(array $references): array
     {
         $normalized = [];
 
         foreach ($references as $index => $reference) {
-            if (!is_array($reference)) {
+            if (!\is_array($reference)) {
                 $normalized['__index_'.$index] = $this->normalizeCompareValue($reference);
                 continue;
             }
 
             $refId = $reference['$id'] ?? $reference['_$id'] ?? null;
-            if (is_array($refId)) {
+            if (\is_array($refId)) {
                 $refId = end($refId) ?: reset($refId);
             }
 
             $refClass = $reference['class'] ?? null;
-            if (is_array($refClass)) {
+            if (\is_array($refClass)) {
                 $refClass = end($refClass) ?: reset($refClass);
             }
 
             $key = '';
-            if (is_scalar($refClass) && (string) $refClass !== '') {
+            if (\is_scalar($refClass) && (string) $refClass !== '') {
                 $key .= (string) $refClass;
             }
-            if (is_scalar($refId) && (string) $refId !== '') {
+            if (\is_scalar($refId) && (string) $refId !== '') {
                 $key .= '#'.(string) $refId;
             }
             if ($key === '') {
@@ -878,6 +939,11 @@ class ContentHistoryController extends AbstractController
         return $normalized;
     }
 
+    /**
+     * @param array<int|string, mixed> $channels
+     *
+     * @return array<string, mixed>
+     */
     private function normalizeChannelsListForCompare(array $channels): array
     {
         $normalized = [];
@@ -885,24 +951,24 @@ class ContentHistoryController extends AbstractController
         foreach ($channels as $index => $channel) {
             $key = null;
 
-            if (is_array($channel)) {
+            if (\is_array($channel)) {
                 $channelId = $channel['$id'] ?? $channel['_$id'] ?? null;
-                if (is_array($channelId)) {
+                if (\is_array($channelId)) {
                     $channelId = end($channelId) ?: reset($channelId);
                 }
 
                 $channelClass = $channel['class'] ?? null;
-                if (is_array($channelClass)) {
+                if (\is_array($channelClass)) {
                     $channelClass = end($channelClass) ?: reset($channelClass);
                 }
 
-                if (is_scalar($channelId) && (string) $channelId !== '') {
+                if (\is_scalar($channelId) && (string) $channelId !== '') {
                     $key = strtolower((string) $channelId);
-                    if (is_scalar($channelClass) && (string) $channelClass !== '') {
+                    if (\is_scalar($channelClass) && (string) $channelClass !== '') {
                         $key = strtolower((string) $channelClass.'#'.(string) $channelId);
                     }
                 }
-            } elseif (is_scalar($channel)) {
+            } elseif (\is_scalar($channel)) {
                 $channelString = trim((string) $channel);
                 if (preg_match('/(?:reference|channel)\s+#([A-Za-z0-9_]+)/i', $channelString, $matches)) {
                     $key = strtolower($matches[1]);
@@ -911,7 +977,7 @@ class ContentHistoryController extends AbstractController
                 }
             }
 
-            if (!is_string($key) || $key === '') {
+            if (!\is_string($key)) {
                 $key = '__index_'.$index;
             }
 
@@ -923,15 +989,19 @@ class ContentHistoryController extends AbstractController
         return $normalized;
     }
 
+    /** @param array<int|string, mixed> $value */
     private function isList(array $value): bool
     {
         if ($value === []) {
             return false;
         }
 
-        return array_keys($value) === range(0, count($value) - 1);
+        return array_keys($value) === range(0, \count($value) - 1);
     }
 
+    /**
+     * @param array{q: string, action: string, user: string, from: string, to: string} $filters
+     */
     private function buildHistoryQuery(string $contentId, array $filters): MongoQueryBuilder
     {
         $builder = $this->manager->getRepository(ContentHistory::class)->createQueryBuilder();
@@ -973,7 +1043,7 @@ class ContentHistoryController extends AbstractController
         return $builder;
     }
 
-    private function buildCaseInsensitiveRegex(string $query)
+    private function buildCaseInsensitiveRegex(string $query): object
     {
         $pattern = preg_quote($query, '/');
 
@@ -984,6 +1054,12 @@ class ContentHistoryController extends AbstractController
         return new \MongoRegex('/'.$pattern.'/i');
     }
 
+    /**
+     * @param array<int|string, mixed> $base
+     * @param array<int|string, mixed> $diff
+     *
+     * @return array<int|string, mixed>
+     */
     private function applyDiff(array $base, array $diff): array
     {
         foreach ($diff as $key => $value) {
@@ -1003,18 +1079,22 @@ class ContentHistoryController extends AbstractController
         return $base;
     }
 
+    /** @param array<int|string, mixed> $value */
     private function isHistoryDiffPair(array $value): bool
     {
         return array_keys($value) === [0, 1];
     }
 
+    /**
+     * @param array<int|string, mixed> $value
+     */
     private function isHistoryDiffPairForField(int|string $key, array $value): bool
     {
         if (!$this->isHistoryDiffPair($value)) {
             return false;
         }
 
-        if (!is_string($key)) {
+        if (!\is_string($key)) {
             return false;
         }
 
@@ -1024,7 +1104,7 @@ class ContentHistoryController extends AbstractController
         }
 
         // Scalar/bool/null changes are safe as [old, new].
-        return !is_array($value[0]) || !is_array($value[1]);
+        return !\is_array($value[0]) || !\is_array($value[1]);
     }
 
     public function history(Content $content, int $limit = 3): Response

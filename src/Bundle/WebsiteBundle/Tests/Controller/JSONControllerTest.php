@@ -97,9 +97,13 @@ final class JSONControllerTest extends TestCase
 
 final class TestableJSONController extends JSONController
 {
+    /** @var array<string, mixed> */
     public array $lastParameters = [];
 
-    public function render(string $view, array $parameters = [], Response $response = null): Response
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    public function render(string $view, array $parameters = [], ?Response $response = null): Response
     {
         $this->lastParameters = $parameters;
 
@@ -111,7 +115,7 @@ final class FakePaginationResult
 {
     public function __construct(
         private int $totalItemCount,
-        private int $itemNumberPerPage
+        private int $itemNumberPerPage,
     ) {
     }
 

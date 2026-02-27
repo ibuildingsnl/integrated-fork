@@ -58,4 +58,3 @@ class TestableChannelLinkController extends ChannelLinkController
         return true;
     }
 }
-

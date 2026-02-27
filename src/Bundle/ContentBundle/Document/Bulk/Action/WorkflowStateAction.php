@@ -35,7 +35,7 @@ class WorkflowStateAction implements BulkActionInterface
         return $this->handler;
     }
 
-    public function setHandler($handler)
+    public function setHandler(string $handler): self
     {
         $this->handler = $handler;
 
@@ -47,18 +47,18 @@ class WorkflowStateAction implements BulkActionInterface
         return $this->state;
     }
 
-    public function setState(?string $state)
+    public function setState(?string $state): self
     {
         $this->state = $state;
 
         return $this;
     }
 
-    public function getOptions()
+    /** @return array{state: string|null} */
+    public function getOptions(): array
     {
         return [
             'state' => $this->getState(),
         ];
     }
 }
-

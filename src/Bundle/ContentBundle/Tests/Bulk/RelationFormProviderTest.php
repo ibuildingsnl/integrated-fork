@@ -16,8 +16,8 @@ use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Bulk\RelationAddHandler;
 use Integrated\Bundle\ContentBundle\Bulk\RelationFormProvider;
 use Integrated\Bundle\ContentBundle\Bulk\RelationRemoveHandler;
-use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
+use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Common\Content\ContentInterface;
 use PHPUnit\Framework\TestCase;
@@ -32,10 +32,15 @@ class RelationFormProviderTest extends TestCase
 
         $builder = new class([$relation]) {
             public string $fieldName = '';
+            /** @var array<string, string> */
             public array $inValues = [];
 
+            /** @var list<Relation> */
             private array $relations;
 
+            /**
+             * @param list<Relation> $relations
+             */
             public function __construct(array $relations)
             {
                 $this->relations = $relations;
@@ -48,6 +53,9 @@ class RelationFormProviderTest extends TestCase
                 return $this;
             }
 
+            /**
+             * @param array<string, string> $values
+             */
             public function in(array $values): self
             {
                 $this->inValues = $values;
@@ -58,13 +66,18 @@ class RelationFormProviderTest extends TestCase
             public function getQuery(): object
             {
                 return new class($this->relations) {
+                    /** @var list<Relation> */
                     private array $relations;
 
+                    /**
+                     * @param list<Relation> $relations
+                     */
                     public function __construct(array $relations)
                     {
                         $this->relations = $relations;
                     }
 
+                    /** @return \Traversable<int, Relation> */
                     public function getIterator(): \Traversable
                     {
                         return new \ArrayIterator($this->relations);
@@ -152,10 +165,15 @@ class RelationFormProviderTest extends TestCase
 
         $builder = new class([$relation]) {
             public string $fieldName = '';
+            /** @var array<string, string> */
             public array $inValues = [];
 
+            /** @var list<Relation> */
             private array $relations;
 
+            /**
+             * @param list<Relation> $relations
+             */
             public function __construct(array $relations)
             {
                 $this->relations = $relations;
@@ -168,6 +186,9 @@ class RelationFormProviderTest extends TestCase
                 return $this;
             }
 
+            /**
+             * @param array<string, string> $values
+             */
             public function in(array $values): self
             {
                 $this->inValues = $values;
@@ -178,13 +199,18 @@ class RelationFormProviderTest extends TestCase
             public function getQuery(): object
             {
                 return new class($this->relations) {
+                    /** @var list<Relation> */
                     private array $relations;
 
+                    /**
+                     * @param list<Relation> $relations
+                     */
                     public function __construct(array $relations)
                     {
                         $this->relations = $relations;
                     }
 
+                    /** @return \Traversable<int, Relation> */
                     public function getIterator(): \Traversable
                     {
                         return new \ArrayIterator($this->relations);

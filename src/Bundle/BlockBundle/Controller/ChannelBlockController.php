@@ -23,6 +23,7 @@ class ChannelBlockController extends AbstractController
 {
     private DocumentManager $manager;
     private MetadataFactoryInterface $metadataFactory;
+    /** @var array<string, bool>|null */
     private ?array $allowedBlockClasses = null;
 
     public function __construct(DocumentManager $documentManager, MetadataFactoryInterface $metadataFactory)
@@ -60,10 +61,6 @@ class ChannelBlockController extends AbstractController
             throw $this->createNotFoundException(\sprintf('Invalid block "%s"', $class));
         }
 
-        if (!$block instanceof Block) {
-            throw $this->createNotFoundException(\sprintf('Invalid block "%s"', $class));
-        }
-
         $block->setTitle($name);
         $block->setLayout('default.html.twig');
 
@@ -78,14 +75,14 @@ class ChannelBlockController extends AbstractController
         $class = ltrim($class, '\\');
         $classKey = strtolower($class);
 
-        if (\is_array($this->allowedBlockClasses)) {
+        if ($this->allowedBlockClasses !== null) {
             return isset($this->allowedBlockClasses[$classKey]);
         }
 
         $this->allowedBlockClasses = [];
         foreach ($this->metadataFactory->getAllMetadata() as $metadata) {
-            $metadataClass = $metadata->getClass();
-            if (\is_string($metadataClass) && $metadataClass !== '') {
+            $metadataClass = trim((string) $metadata->getClass());
+            if ($metadataClass !== '') {
                 $this->allowedBlockClasses[strtolower(ltrim($metadataClass, '\\'))] = true;
             }
         }

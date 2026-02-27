@@ -33,12 +33,11 @@ class ContentEditLockFlowTest extends TestCase
         $this->assertStringContainsString('$submittedAction = $this->resolveSubmittedAction(', $controller);
         $this->assertStringContainsString('private function resolveSubmittedAction(mixed $submittedActionData, Request $request, array $candidates): string', $controller);
         $this->assertStringContainsString('$parameters = array_merge($request->query->all(), [\'id\' => $content->getId()]);', $controller);
-        $this->assertStringContainsString('if (!($locking[\'locked\'] ?? false) && ($locking[\'lock\'] ?? null) && ($locking[\'owner\'] ?? false)) {', $controller);
+        $this->assertStringContainsString('if (!$locking[\'locked\'] && $locking[\'lock\'] && $locking[\'owner\']) {', $controller);
         $this->assertStringContainsString('$parameters[\'lock\'] = $locking[\'lock\']->getId();', $controller);
         $this->assertStringContainsString('unset($parameters[\'lock\']);', $controller);
-        $this->assertStringContainsString('$hasUsableLock = ($locking[\'lock\'] ?? null) && !($locking[\'locked\'] ?? false);', $controller);
-        $this->assertStringContainsString("'data-content-locked' => (\$locking['locked'] && !(\$locking['pending'] ?? false)) ? '1' : '0'", $controller);
-        $this->assertStringContainsString('$hasUsableLock = $locking[\'lock\'] && !($locking[\'locked\'] ?? false);', $controller);
+        $this->assertStringContainsString('$hasUsableLock = $locking[\'lock\'] && !$locking[\'locked\'];', $controller);
+        $this->assertStringContainsString("'data-content-locked' => (\$locking['locked'] && !\$locking['pending']) ? '1' : '0'", $controller);
         $this->assertStringContainsString('$reloadSubmitted = $request instanceof Request && $this->isSubmittedAction($request, \'reload\');', $controller);
         $this->assertStringContainsString('return $form->add(\'actions\', ActionsType::class, [\'buttons\' => [\'reload\', \'save\', \'cancel\']]);', $controller);
         $this->assertStringContainsString('private function isSubmittedAction(Request $request, string $action): bool', $controller);

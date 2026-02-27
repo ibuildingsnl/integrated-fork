@@ -25,7 +25,7 @@ interface ManagerInterface
      *
      * @param int|null $timeout null
      *
-     * @return LockInterface
+     * @return LockInterface|null
      */
     public function acquire(RequestInterface $request, $timeout = 0);
 
@@ -41,7 +41,7 @@ interface ManagerInterface
      *
      * @param LockInterface|string $lock lock object or a string with the lock id
      *
-     * @return LockInterface
+     * @return LockInterface|null
      */
     public function refresh($lock);
 
@@ -50,7 +50,7 @@ interface ManagerInterface
      *
      * @param LockInterface|string $lock lock object or a string with the lock id
      *
-     * @return LockInterface
+     * @return LockInterface|null
      */
     public function find($lock);
 
@@ -83,7 +83,7 @@ interface ManagerInterface
      *
      * @param Filter|Filter[] $filters
      *
-     * @return LockInterface[]
+     * @return LockInterface[]|null
      */
     public function findBy($filters);
 

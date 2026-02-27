@@ -52,7 +52,7 @@ class MenuController extends AbstractController
         // In edit mode we still need a root menu object so the UI can render an add-item placeholder.
         if (!$menu && !empty($options['editMode'])) {
             $name = 'menu';
-            if (isset($data['data']) && is_array($data['data']) && !empty($data['data']['name'])) {
+            if (isset($data['data']) && \is_array($data['data']) && !empty($data['data']['name'])) {
                 $name = (string) $data['data']['name'];
             }
 
@@ -98,6 +98,11 @@ class MenuController extends AbstractController
         return new JsonResponse();
     }
 
+    /**
+     * @param array<string, mixed> $item
+     *
+     * @return array<string, mixed>|null
+     */
     private function sanitizeMenuArray(array $item, bool $isRoot = false): ?array
     {
         $children = [];

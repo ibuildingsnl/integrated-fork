@@ -89,7 +89,7 @@ final class TaxonomyIndexer implements TaxonomyOverview
                     continue;
                 }
 
-                $count++;
+                ++$count;
                 $count += $countByParent($taxonomyId);
             }
 
@@ -129,7 +129,10 @@ final class TaxonomyIndexer implements TaxonomyOverview
     }
 
     /**
-     * @param array<string, int> $usageCounts
+     * @param array<string, Taxonomy[]> $byParent
+     * @param array<string, int>        $usageCounts
+     * @param IndexedItem[]             $sorted
+     *
      * @return IndexedItem[]
      */
     private function toSortedIndex(array $byParent, ?string $key, int $depth, array $sorted, array $usageCounts): array
@@ -172,7 +175,8 @@ final class TaxonomyIndexer implements TaxonomyOverview
     }
 
     /**
-     * @param Taxonomy[][]       $byParent
+     * @param Taxonomy[][] $byParent
+     *
      * @return string[]
      */
     private function collectTaxonomyIds(array $byParent, string $root, bool $filtered): array

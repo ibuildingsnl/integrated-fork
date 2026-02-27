@@ -16,11 +16,9 @@ use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
-use Integrated\Bundle\ContentBundle\Controller\MediaController;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
-use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepository;
 use Integrated\Bundle\ContentBundle\Event\ContentDeletedEvent;
 use Integrated\Bundle\ContentBundle\Event\ContentDistributedEvent;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
@@ -44,26 +42,26 @@ use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Locks;
 use Integrated\Common\Locks\Filter;
+use Integrated\Common\Locks\LockInterface;
 use Integrated\Common\Locks\Provider\DBAL\Manager;
 use Integrated\Common\Locks\Resource;
-use Integrated\Common\Security\Permissions;
+use Integrated\Common\Locks\ResourceInterface;
 use Integrated\Common\Queue\Provider\DBAL\QueueProvider;
+use Integrated\Common\Security\Permissions;
 use Integrated\Common\Solr\Configurable;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
 use Integrated\Common\Solr\Search\QueryFactoryInterface;
 use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\UX\Turbo\TurboStreamResponse;
 
 class ContentController extends AbstractController
 {
@@ -93,7 +91,6 @@ class ContentController extends AbstractController
         private readonly DocumentManager $documentManager,
         private readonly CalendarOptions $calendarOptions,
         private readonly QueueProvider $queueProvider,
-        private readonly PublicationRepository $publicationRepository,
     ) {
     }
 
@@ -391,7 +388,7 @@ class ContentController extends AbstractController
             : ($hasRequestedLock
                 ? $this->getLock($content, self::CONTENT_LOCK_TIMEOUT_SECONDS)
                 : $this->getExistingLock($content));
-        $locking['locked'] = (bool) ($locking['pending'] ?? false) || (bool) ($locking['lock'] ?? null);
+        $locking['locked'] = $locking['pending'] || (bool) $locking['lock'];
 
         if (true === $content instanceof File) {
             $locking['locked'] = false;
@@ -450,7 +447,7 @@ class ContentController extends AbstractController
 
             if ($submittedAction === 'reload') {
                 $parameters = array_merge($request->query->all(), ['id' => $content->getId()]);
-                if (!($locking['locked'] ?? false) && ($locking['lock'] ?? null) && ($locking['owner'] ?? false)) {
+                if (!$locking['locked'] && $locking['lock'] && $locking['owner']) {
                     $parameters['lock'] = $locking['lock']->getId();
                 } else {
                     unset($parameters['lock']);
@@ -518,7 +515,7 @@ class ContentController extends AbstractController
                 }
 
                 if ($this->isTurboStreamRequest($request) && $request->query->getBoolean('frame')) {
-                    $isMedia = $content instanceof File || $content instanceof Image;
+                    $isMedia = \in_array($contentType->getClass(), [File::class, Image::class], true);
 
                     $content = $this->renderView('@IntegratedContent/content/edit.iframe.turbo_stream.html.twig', [
                         'editable' => $this->isGranted(Permissions::EDIT, $content),
@@ -536,7 +533,7 @@ class ContentController extends AbstractController
                         'saved' => $saved,
                     ]);
 
-                    return new TurboStreamResponse($content);
+                    return new Response($content, Response::HTTP_OK, ['Content-Type' => 'text/vnd.turbo-stream.html; charset=UTF-8']);
                 }
 
                 if ($this->isTurboStreamRequest($request) && !$request->query->getBoolean('frame')) {
@@ -546,7 +543,7 @@ class ContentController extends AbstractController
                         'form' => $form->createView(),
                     ]);
 
-                    return new TurboStreamResponse($content);
+                    return new Response($content, Response::HTTP_OK, ['Content-Type' => 'text/vnd.turbo-stream.html; charset=UTF-8']);
                 }
 
                 return $this->redirectToRoute($request->get('_route'), ['id' => $content->getId()]);
@@ -555,7 +552,7 @@ class ContentController extends AbstractController
             // not lost and there is a new change to get a lock on the content.
         }
 
-        if ($locking['locked'] && !($locking['pending'] ?? false)) {
+        if ($locking['locked'] && !$locking['pending']) {
             // the document is locked so display display a error message explaining that
             // the user can not edit this page will the lock is there.
 
@@ -615,7 +612,12 @@ class ContentController extends AbstractController
         return str_contains($accept, 'text/vnd.turbo-stream.html');
     }
 
-    private function getFormRelations(Form $form): array
+    /**
+     * @param FormInterface<mixed> $form
+     *
+     * @return array<string, array<string, object>>
+     */
+    private function getFormRelations(FormInterface $form): array
     {
         $relations = [];
 
@@ -689,7 +691,7 @@ class ContentController extends AbstractController
 
             if ($submittedAction === 'reload') {
                 $parameters = ['id' => $content->getId()];
-                if (!($locking['locked'] ?? false) && ($locking['lock'] ?? null) && ($locking['owner'] ?? false)) {
+                if (!$locking['locked'] && $locking['lock'] && $locking['owner']) {
                     $parameters['lock'] = $locking['lock']->getId();
                 }
 
@@ -784,10 +786,13 @@ class ContentController extends AbstractController
      * - user: this is the user the lock belongs to or null if the lock does
      *         not have a owner.
      */
+    /**
+     * @return array{lock: LockInterface|null, user: mixed, owner: bool, new: bool, pending: bool, release: \Closure}
+     */
     private function getLock(object $object, ?int $timeout = null): array
     {
         $locking = $this->getExistingLock($object);
-        if (($locking['lock'] ?? null) || !($locking['pending'] ?? false)) {
+        if ($locking['lock'] || !$locking['pending']) {
             return $locking;
         }
 
@@ -799,25 +804,21 @@ class ContentController extends AbstractController
         $owner = Resource::fromAccount($user);
         $resource = Resource::fromObject($object);
 
-        if ($lock = $this->acquireLock($resource, $owner, $timeout)) {
-            return [
-                'lock' => $lock,
-                'user' => $user,
-                'owner' => true,
-                'new' => true,
-                'pending' => false,
-                'release' => function () use ($lock): void {
-                    $this->lockManager->release($lock);
-                },
-            ];
+        $lock = $this->acquireLock($resource, $owner, $timeout);
+        if (!$lock instanceof LockInterface) {
+            return $this->createPendingLocking();
         }
 
-        $locking = $this->getExistingLock($object);
-        if ($locking['lock'] ?? null) {
-            return $locking;
-        }
-
-        return $this->createUnlockedLocking();
+        return [
+            'lock' => $lock,
+            'user' => $user,
+            'owner' => true,
+            'new' => true,
+            'pending' => false,
+            'release' => function () use ($lock): void {
+                $this->lockManager->release($lock);
+            },
+        ];
     }
 
     private function getLocks(\Traversable $iterator): array
@@ -825,20 +826,27 @@ class ContentController extends AbstractController
         $results = [];
 
         $filter = new Filter();
+        /** @var ResourceInterface[] $resources */
+        $resources = \is_array($filter->resources) ? $filter->resources : [$filter->resources];
 
         foreach ($iterator as $data) {
-            $filter->resources[] = new Resource($data['type_class'], $data['type_id']);
+            if (!\is_array($data)) {
+                continue;
+            }
+            $type = isset($data['type_class']) ? (string) $data['type_class'] : '';
+            $id = isset($data['type_id']) ? (string) $data['type_id'] : '';
+            if ($type === '' || $id === '') {
+                continue;
+            }
+            $resources[] = new Resource($type, $id);
         }
+        $filter->resources = $resources;
 
         if (!$filter->resources) {
             return $results;
         }
 
-        $locks = $this->lockManager->findBy($filter);
-        if (!\is_iterable($locks)) {
-            return $results;
-        }
-
+        $locks = $this->lockManager->findBy($filter) ?? [];
         foreach ($locks as $lock) {
             if ($this->isLockExpired($lock)) {
                 continue;
@@ -849,7 +857,10 @@ class ContentController extends AbstractController
 
             if ($owner = $lock->getRequest()->getOwner()) {
                 if ($this->userManager->getClassName() === $owner->getType()) {
-                    $user = $this->userManager->findByUsername($owner->getIdentifier());
+                    $identifier = $owner->getIdentifier();
+                    if (\is_string($identifier) && $identifier !== '') {
+                        $user = $this->userManager->findByUsername($identifier);
+                    }
                 }
             }
 
@@ -865,12 +876,14 @@ class ContentController extends AbstractController
     public function locksStatus(Request $request): JsonResponse
     {
         $resources = $request->request->all('resources');
-        if (!\is_array($resources) || [] === $resources) {
+        if ([] === $resources) {
             $payload = json_decode((string) $request->getContent(), true);
             $resources = \is_array($payload['resources'] ?? null) ? $payload['resources'] : [];
         }
 
         $filter = new Filter();
+        /** @var ResourceInterface[] $filterResources */
+        $filterResources = \is_array($filter->resources) ? $filter->resources : [$filter->resources];
         $seen = [];
 
         foreach ($resources as $resource) {
@@ -891,42 +904,48 @@ class ContentController extends AbstractController
             }
 
             $seen[$key] = true;
-            $filter->resources[] = new Resource($type, $id);
+            $filterResources[] = new Resource($type, $id);
         }
+        $filter->resources = $filterResources;
 
         $locks = [];
         if ($filter->resources) {
-            $matches = $this->lockManager->findBy($filter);
-            if (\is_iterable($matches)) {
-                foreach ($matches as $lock) {
-                    if ($this->isLockExpired($lock)) {
-                        continue;
-                    }
+            $matches = $this->lockManager->findBy($filter) ?? [];
+            foreach ($matches as $lock) {
+                if ($this->isLockExpired($lock)) {
+                    continue;
+                }
 
-                    $user = null;
+                $user = null;
 
-                    if ($owner = $lock->getRequest()->getOwner()) {
-                        if ($this->userManager->getClassName() === $owner->getType()) {
-                            $user = $this->userManager->findByUsername($owner->getIdentifier());
+                if ($owner = $lock->getRequest()->getOwner()) {
+                    if ($this->userManager->getClassName() === $owner->getType()) {
+                        $identifier = $owner->getIdentifier();
+                        if (\is_string($identifier) && $identifier !== '') {
+                            $user = $this->userManager->findByUsername($identifier);
                         }
                     }
-
-                    $resource = $lock->getRequest()->getResource();
-                    $key = $this->getLockResourceKey($resource->getType(), $resource->getIdentifier());
-
-                    $locks[$key] = [
-                        'type' => $resource->getType(),
-                        'id' => $resource->getIdentifier(),
-                        'user' => $this->resolveLockUserText($user),
-                    ];
                 }
+
+                $resource = $lock->getRequest()->getResource();
+                $resourceId = (string) ($resource->getIdentifier() ?? '');
+                if ($resourceId === '') {
+                    continue;
+                }
+                $key = $this->getLockResourceKey($resource->getType(), $resourceId);
+
+                $locks[$key] = [
+                    'type' => $resource->getType(),
+                    'id' => $resourceId,
+                    'user' => $this->resolveLockUserText($user),
+                ];
             }
         }
 
         $response = new JsonResponse(['locks' => $locks]);
         $response->setPrivate();
         $response->headers->addCacheControlDirective('no-store', true);
-        $response->headers->addCacheControlDirective('max-age', 0);
+        $response->headers->addCacheControlDirective('max-age', '0');
 
         return $response;
     }
@@ -989,7 +1008,7 @@ class ContentController extends AbstractController
         if ($locking['lock']) {
             $user = $this->resolveLockUserText($locking['user'] ?? null);
             $message = $user
-                ? sprintf(
+                ? \sprintf(
                     $translator->trans('The document is currently locked by %s, the document can not be edited until this lock is released.'),
                     $user
                 )
@@ -1052,7 +1071,7 @@ class ContentController extends AbstractController
             return new JsonResponse([], Response::HTTP_FORBIDDEN);
         }
 
-        $items = array_map(function ($document): array {
+        $items = array_map(function (array $document): array {
             $contentId = (string) ($document['type_id'] ?? '');
             $title = (string) ($document['title'] ?? '');
 
@@ -1091,7 +1110,7 @@ class ContentController extends AbstractController
 
         $response->setPrivate();
         $response->headers->addCacheControlDirective('no-store', true);
-        $response->headers->addCacheControlDirective('max-age', 0);
+        $response->headers->addCacheControlDirective('max-age', '0');
 
         return $response;
     }
@@ -1111,11 +1130,12 @@ class ContentController extends AbstractController
 
         $response->setPrivate();
         $response->headers->addCacheControlDirective('no-store', true);
-        $response->headers->addCacheControlDirective('max-age', 0);
+        $response->headers->addCacheControlDirective('max-age', '0');
 
         return $response;
     }
 
+    /** @return array{queuecount: int, queuepercentage: int} */
     private function getQueueStatus(Request $request): array
     {
         $queuecount = (int) $this->queueProvider->count();
@@ -1136,6 +1156,7 @@ class ContentController extends AbstractController
         ];
     }
 
+    /** @return array<int, array<string, mixed>> */
     private function getAssignedContent(): array
     {
         $user = $this->getUser();
@@ -1155,24 +1176,22 @@ class ContentController extends AbstractController
 
         $result = $this->getSolarium()->select($query);
 
-        return $result->getDocuments();
+        $documents = [];
+        foreach ($result->getDocuments() as $document) {
+            $fields = $document->getFields();
+            $documents[] = $fields;
+        }
+
+        return $documents;
     }
 
     private function resolveLockUserText(mixed $user): string
     {
-        if (!$user) {
+        if (!\is_object($user)) {
             return '';
         }
 
-        $text = method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : '';
-
-        if (method_exists($user, 'getRelation')) {
-            if ($relation = $user->getRelation()) {
-                if (method_exists($relation, '__toString')) {
-                    $text = (string) $relation;
-                }
-            }
-        }
+        $text = method_exists($user, 'getUserIdentifier') ? (string) $user->getUserIdentifier() : '';
 
         return $text;
     }
@@ -1207,6 +1226,9 @@ class ContentController extends AbstractController
         return 'prefetch' === $purpose;
     }
 
+    /**
+     * @return array{lock: null, user: null, owner: false, new: false, pending: false, release: \Closure}
+     */
     private function createUnlockedLocking(): array
     {
         return [
@@ -1220,6 +1242,9 @@ class ContentController extends AbstractController
         ];
     }
 
+    /**
+     * @return array{lock: null, user: null, owner: false, new: false, pending: true, release: \Closure}
+     */
     private function createPendingLocking(): array
     {
         $locking = $this->createUnlockedLocking();
@@ -1228,6 +1253,9 @@ class ContentController extends AbstractController
         return $locking;
     }
 
+    /**
+     * @return array{lock: LockInterface|null, user: mixed, owner: bool, new: bool, pending: bool, release: \Closure}
+     */
     private function getExistingLock(object $object): array
     {
         if (!$this->isGranted(Permissions::EDIT, $object)) {
@@ -1254,8 +1282,7 @@ class ContentController extends AbstractController
         }
 
         if ($ownerLock) {
-            $keepLockId = method_exists($ownerLock, 'getId') ? (string) $ownerLock->getId() : null;
-            $this->releaseDuplicateOwnerLocks($locksByResource, $owner, $keepLockId);
+            $this->releaseDuplicateOwnerLocks($locksByResource, $owner, (string) $ownerLock->getId());
         }
 
         if ($lock) {
@@ -1276,7 +1303,10 @@ class ContentController extends AbstractController
 
             if ($lockOwner = $lock->getRequest()->getOwner()) {
                 if ($this->userManager->getClassName() === $lockOwner->getType()) {
-                    $user = $this->userManager->findByUsername($lockOwner->getIdentifier());
+                    $identifier = $lockOwner->getIdentifier();
+                    if (\is_string($identifier) && $identifier !== '') {
+                        $user = $this->userManager->findByUsername($identifier);
+                    }
                 }
             }
 
@@ -1300,7 +1330,7 @@ class ContentController extends AbstractController
         return $type.'|'.$id;
     }
 
-    private function acquireLock(Resource $resource, Resource $owner, ?int $timeout = null): mixed
+    private function acquireLock(ResourceInterface $resource, ResourceInterface $owner, ?int $timeout = null): ?LockInterface
     {
         $request = new Locks\Request($resource);
         $request->setOwner($owner);
@@ -1309,9 +1339,12 @@ class ContentController extends AbstractController
         return $this->lockManager->acquire($request);
     }
 
-    private function resolveOwnerLock(mixed $locks, ?Resource $owner): mixed
+    /**
+     * @param iterable<mixed> $locks
+     */
+    private function resolveOwnerLock(iterable $locks, ?ResourceInterface $owner): ?LockInterface
     {
-        if (!$owner || !\is_iterable($locks)) {
+        if (!$owner) {
             return null;
         }
 
@@ -1320,15 +1353,7 @@ class ContentController extends AbstractController
                 continue;
             }
 
-            if (!\is_object($lock) || !method_exists($lock, 'getRequest')) {
-                continue;
-            }
-
             $request = $lock->getRequest();
-            if (!\is_object($request) || !method_exists($request, 'getOwner')) {
-                continue;
-            }
-
             $lockOwner = $request->getOwner();
             if ($lockOwner && $owner->equals($lockOwner)) {
                 return $lock;
@@ -1338,9 +1363,12 @@ class ContentController extends AbstractController
         return null;
     }
 
-    private function releaseDuplicateOwnerLocks(mixed $locks, ?Resource $owner, ?string $keepLockId = null): void
+    /**
+     * @param iterable<mixed> $locks
+     */
+    private function releaseDuplicateOwnerLocks(iterable $locks, ?ResourceInterface $owner, ?string $keepLockId = null): void
     {
-        if (!$owner || !\is_iterable($locks)) {
+        if (!$owner) {
             return;
         }
 
@@ -1349,15 +1377,7 @@ class ContentController extends AbstractController
                 continue;
             }
 
-            if (!\is_object($lock) || !method_exists($lock, 'getRequest') || !method_exists($lock, 'getId')) {
-                continue;
-            }
-
             $request = $lock->getRequest();
-            if (!\is_object($request) || !method_exists($request, 'getOwner')) {
-                continue;
-            }
-
             $lockOwner = $request->getOwner();
             if (!$lockOwner || !$owner->equals($lockOwner)) {
                 continue;
@@ -1372,12 +1392,9 @@ class ContentController extends AbstractController
         }
     }
 
-    private function resolveActiveLock(mixed $locks): mixed
+    /** @param iterable<mixed> $locks */
+    private function resolveActiveLock(iterable $locks): ?LockInterface
     {
-        if (!\is_iterable($locks)) {
-            return null;
-        }
-
         foreach ($locks as $lock) {
             if ($this->isLockExpired($lock)) {
                 continue;
@@ -1389,12 +1406,9 @@ class ContentController extends AbstractController
         return null;
     }
 
-    private function releaseExpiredLocks(mixed $locks): bool
+    /** @param iterable<mixed> $locks */
+    private function releaseExpiredLocks(iterable $locks): bool
     {
-        if (!\is_iterable($locks)) {
-            return false;
-        }
-
         $released = false;
 
         foreach ($locks as $lock) {
@@ -1409,16 +1423,9 @@ class ContentController extends AbstractController
         return $released;
     }
 
-    private function isLockExpired(mixed $lock): bool
+    private function isLockExpired(LockInterface $lock): bool
     {
-        if (!\is_object($lock) || !method_exists($lock, 'getExpires')) {
-            return false;
-        }
-
         $expires = $lock->getExpires();
-        if (!$expires instanceof \DateTimeInterface) {
-            return false;
-        }
 
         return $expires->getTimestamp() <= time();
     }
@@ -1493,7 +1500,7 @@ class ContentController extends AbstractController
         array $locking,
         ?Request $request = null,
     ): FormInterface {
-        $hasUsableLock = $locking['lock'] && !($locking['locked'] ?? false);
+        $hasUsableLock = $locking['lock'] && !$locking['locked'];
         $parameters = ($hasUsableLock ? [
             'id' => $content->getId(),
             'lock' => $locking['lock']->getId(),
@@ -1516,14 +1523,14 @@ class ContentController extends AbstractController
                 'data-content-id' => $content->getId(),
                 'data-content-type' => $contentType->getId(),
                 'data-lock-id' => $locking['lock'] ? $locking['lock']->getId() : '',
-                'data-lock-pending' => ($locking['pending'] ?? false) ? '1' : '0',
-                'data-content-locked' => ($locking['locked'] && !($locking['pending'] ?? false)) ? '1' : '0',
+                'data-lock-pending' => $locking['pending'] ? '1' : '0',
+                'data-content-locked' => ($locking['locked'] && !$locking['pending']) ? '1' : '0',
                 'data-lock-init-url' => $this->generateUrl('integrated_content_content_lock', ['id' => $content->getId()]),
             ],
             'content_type' => $contentType,
         ];
 
-        $pendingLock = (bool) ($locking['pending'] ?? false);
+        $pendingLock = $locking['pending'];
         $reloadSubmitted = $request instanceof Request && $this->isSubmittedAction($request, 'reload');
 
         if ($locking['locked'] && !$pendingLock) {
@@ -1576,6 +1583,9 @@ class ContentController extends AbstractController
         return false;
     }
 
+    /**
+     * @param array<int, string> $candidates
+     */
     private function resolveSubmittedAction(mixed $submittedActionData, Request $request, array $candidates): string
     {
         if (\is_scalar($submittedActionData)) {
@@ -1596,7 +1606,7 @@ class ContentController extends AbstractController
 
     protected function createDeleteForm(ContentInterface $content, array $locking, bool $notDelete = false): FormInterface
     {
-        $hasUsableLock = ($locking['lock'] ?? null) && !($locking['locked'] ?? false);
+        $hasUsableLock = $locking['lock'] && !$locking['locked'];
         $parameters = ['id' => $content->getId()];
         if ($hasUsableLock) {
             $parameters['lock'] = $locking['lock']->getId();

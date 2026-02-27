@@ -18,7 +18,8 @@ final class TaxonomyControllerHardeningTest extends TestCase
         $this->assertStringContainsString('$filter = $request->query->all()[\'filter\'] ?? \'root\';', $controller);
         $this->assertStringContainsString('if (!\\is_scalar($filter)) {', $controller);
         $this->assertStringContainsString('return \'root\';', $controller);
-        $this->assertStringContainsString('$currentId = trim((string) ($request->query->all()[\'current\'] ?? \'\'));', $controller);
+        $this->assertStringContainsString('$current = $request->query->get(\'current\');', $controller);
+        $this->assertStringContainsString('$currentId = \is_scalar($current) ? trim((string) $current) : \'\';', $controller);
         $this->assertStringContainsString('$form->add(\'actions\', ActionsType::class, [\'buttons\' => [$isPersisted ? \'save\' : \'create\']]);', $controller);
         $this->assertStringContainsString('$params[\'current\'] = (string) $content->getId();', $controller);
         $this->assertStringContainsString("'content' => \$content,", $controller);

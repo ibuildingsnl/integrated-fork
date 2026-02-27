@@ -49,8 +49,45 @@ class UserFormTypeTest extends TestCase
 
 class TestUser implements UserInterface
 {
+    private string $email = '';
+    private ScopeInterface $scope;
+
     public function __construct(private readonly string $id)
     {
+        $this->scope = new class implements ScopeInterface {
+            private string $id = 'scope';
+            private string $name = 'scope';
+            private bool $admin = false;
+
+            public function getId()
+            {
+                return $this->id;
+            }
+
+            public function setName($name)
+            {
+                $this->name = (string) $name;
+
+                return $this;
+            }
+
+            public function getName()
+            {
+                return $this->name;
+            }
+
+            public function isAdmin()
+            {
+                return $this->admin;
+            }
+
+            public function setAdmin($admin)
+            {
+                $this->admin = (bool) $admin;
+
+                return $this;
+            }
+        };
     }
 
     public function getId()
@@ -58,25 +95,26 @@ class TestUser implements UserInterface
         return $this->id;
     }
 
-    public function setUsername($username)
+    public function setUsername($username): void
     {
     }
 
-    public function setPassword($password)
+    public function setPassword($password): void
     {
     }
 
-    public function setSalt($salt)
+    public function setSalt($salt): void
     {
     }
 
-    public function setEmail($email)
+    public function setEmail($email): void
     {
+        $this->email = (string) $email;
     }
 
-    public function getEmail()
+    public function getEmail(): string
     {
-        return null;
+        return $this->email;
     }
 
     public function isEnabled(): bool
@@ -88,17 +126,18 @@ class TestUser implements UserInterface
     {
     }
 
-    public function addRole(RoleInterface $role)
+    public function addRole(RoleInterface $role): void
     {
     }
 
-    public function setScope(ScopeInterface $scope)
+    public function setScope(ScopeInterface $scope): void
     {
+        $this->scope = $scope;
     }
 
-    public function getScope()
+    public function getScope(): ScopeInterface
     {
-        return null;
+        return $this->scope;
     }
 
     public function setGoogleAuthenticatorEnabled(bool $googleAuthenticatorEnabled): void
@@ -123,7 +162,7 @@ class TestUser implements UserInterface
     {
     }
 
-    public function getUsername()
+    public function getUsername(): string
     {
         return $this->getUserIdentifier();
     }
@@ -143,11 +182,11 @@ class TestUser implements UserInterface
         return $user->getUserIdentifier() === $this->getUserIdentifier();
     }
 
-    public function addGroup(GroupInterface $group)
+    public function addGroup(GroupInterface $group): void
     {
     }
 
-    public function removeGroup(GroupInterface $group)
+    public function removeGroup(GroupInterface $group): void
     {
     }
 
@@ -161,16 +200,16 @@ class TestUser implements UserInterface
         return [];
     }
 
-    public function setGroups($groups)
+    public function setGroups($groups): void
     {
     }
 
-    public function serialize()
+    public function serialize(): string
     {
         return '';
     }
 
-    public function unserialize($serialized)
+    public function unserialize($serialized): void
     {
     }
 
@@ -179,6 +218,9 @@ class TestUser implements UserInterface
         return [];
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function __unserialize(array $data): void
     {
     }
@@ -198,4 +240,3 @@ class TestUser implements UserInterface
         return 'test@example.com';
     }
 }
-

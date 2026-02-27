@@ -138,7 +138,7 @@ class RelationAction implements BulkActionInterface
         return (bool) $this->replaceExisting;
     }
 
-    public function setReplaceExisting(bool $replaceExisting)
+    public function setReplaceExisting(bool $replaceExisting): self
     {
         $this->replaceExisting = $replaceExisting;
 

@@ -8,25 +8,25 @@ class BundleChecker
 {
     public const BUNDLES_DIRECTORY = '/../../';
 
-    /**
-     * @var array
-     */
-    private $bundles;
+    /** @var array<string, mixed> */
+    private array $bundles;
 
     /**
      * Migrations constructor.
      */
+    /** @param array<string, mixed> $bundles */
     public function __construct(array $bundles)
     {
         $this->bundles = $bundles;
     }
 
-    /**
-     * @return array
-     */
-    public function execute()
+    /** @return list<string> */
+    public function execute(): array
     {
         $directory = realpath(__DIR__.self::BUNDLES_DIRECTORY);
+        if (!\is_string($directory)) {
+            return ['Unable to locate bundle directory'];
+        }
 
         $finder = new Finder();
 

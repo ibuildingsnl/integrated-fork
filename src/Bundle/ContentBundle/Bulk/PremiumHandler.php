@@ -27,9 +27,12 @@ class PremiumHandler implements HandlerInterface
         $this->premium = $premium;
     }
 
+    /**
+     * @return void
+     */
     public function execute(ContentInterface $content)
     {
-        if (!$content instanceof Content || !\method_exists($content, 'setPremium')) {
+        if (!$content instanceof Content) {
             return;
         }
 

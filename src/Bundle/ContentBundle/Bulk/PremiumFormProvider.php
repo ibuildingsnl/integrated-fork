@@ -11,9 +11,9 @@
 
 namespace Integrated\Bundle\ContentBundle\Bulk;
 
+use Integrated\Bundle\ContentBundle\Form\Type\BulkActionPremiumType;
 use Integrated\Common\Bulk\Form\Config;
 use Integrated\Common\Bulk\Form\ConfigProviderInterface;
-use Integrated\Bundle\ContentBundle\Form\Type\BulkActionPremiumType;
 
 class PremiumFormProvider implements ConfigProviderInterface
 {

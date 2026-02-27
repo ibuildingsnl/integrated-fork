@@ -4,7 +4,6 @@ namespace Integrated\Bundle\TaxonomyBundle\Tests\Features;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
-use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOptions;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
@@ -20,7 +19,7 @@ use Symfony\Component\Security\Core\Authorization\Strategy\AffirmativeStrategy;
 final class TaxonomyIndexingTest extends TestCase
 {
     private TaxonomyOverview $indexer;
-    private TaxonomyRepositoryInterface $taxonomies;
+    private MemoryTaxonomyRepository $taxonomies;
 
     protected function setUp(): void
     {
@@ -163,7 +162,6 @@ final class TaxonomyIndexingTest extends TestCase
 
         $this->indexer->overviewFor('taxonomy');
 
-        self::assertInstanceOf(MemoryTaxonomyRepository::class, $this->taxonomies);
         self::assertSame(1, $this->taxonomies->getUsageBatchLookupCalls());
         self::assertSame(0, $this->taxonomies->getUsageLookupCalls());
     }
@@ -296,9 +294,6 @@ final class TaxonomyIndexingTest extends TestCase
 
     private function setUsages(array $usageCounts): void
     {
-        if (!$this->taxonomies instanceof MemoryTaxonomyRepository) {
-            return;
-        }
         foreach ($usageCounts as $id => $count) {
             $this->taxonomies->setUsageCount($id, $count);
         }

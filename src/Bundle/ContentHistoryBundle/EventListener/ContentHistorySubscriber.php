@@ -26,25 +26,20 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 #[AsDocumentListener(event: Events::onFlush)]
 class ContentHistorySubscriber
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-    /**
-     * @var string
-     */
-    protected $className;
+    protected EventDispatcherInterface $eventDispatcher;
+    /** @var class-string<ContentHistory> */
+    protected string $className;
 
     /**
-     * @param string $className
+     * @param class-string<ContentHistory> $className
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, $className)
+    public function __construct(EventDispatcherInterface $eventDispatcher, string $className)
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->className = $className;
     }
 
-    public function onFlush(OnFlushEventArgs $args)
+    public function onFlush(OnFlushEventArgs $args): void
     {
         $dm = $args->getDocumentManager();
         $uow = $dm->getUnitOfWork();
@@ -55,18 +50,20 @@ class ContentHistorySubscriber
     }
 
     /**
-     * @param string $action
+     * @param array<int, object> $documents
      */
-    protected function dispatch(DocumentManager $dm, array $documents, $action)
+    protected function dispatch(DocumentManager $dm, array $documents, string $action): void
     {
-        $classMetadata = $dm->getClassMetadata($this->className);
+        /** @var class-string<ContentHistory> $historyClass */
+        $historyClass = $this->className;
+        $classMetadata = $dm->getClassMetadata($historyClass);
 
         foreach ($documents as $document) {
             if (!$document instanceof ContentInterface) {
                 continue;
             }
 
-            $history = new $this->className($document, $action);
+            $history = new $historyClass($document, $action);
             $originalData = $this->getOriginalData($dm, $document, $action);
 
             $this->eventDispatcher->dispatch(new ContentHistoryEvent($history, $document, $originalData), $action);
@@ -83,11 +80,9 @@ class ContentHistorySubscriber
     }
 
     /**
-     * @param string $action
-     *
-     * @return array
+     * @return array<string, mixed>
      */
-    protected function getOriginalData(DocumentManager $dm, ContentInterface $document, $action)
+    protected function getOriginalData(DocumentManager $dm, ContentInterface $document, string $action): array
     {
         if ($action == ContentHistoryEvent::INSERT) {
             return [];
@@ -104,7 +99,9 @@ class ContentHistorySubscriber
             return false;
         }
 
-        $last = $dm->getRepository($this->className)->findOneBy(
+        /** @var class-string<ContentHistory> $historyClass */
+        $historyClass = $this->className;
+        $last = $dm->getRepository($historyClass)->findOneBy(
             ['contentId' => $history->getContentId(), 'action' => ContentHistoryEvent::UPDATE],
             ['date' => 'desc']
         );
@@ -135,11 +132,11 @@ class ContentHistorySubscriber
         $lastUser = $last->getUser();
         $currentUser = $history->getUser();
         if ($lastUser !== null && $currentUser !== null) {
-            if ($lastUser->getId() !== null && $currentUser->getId() !== null && $lastUser->getId() !== $currentUser->getId()) {
+            if ($lastUser->getId() !== $currentUser->getId()) {
                 return false;
             }
 
-            if ($lastUser->getName() !== null && $currentUser->getName() !== null && $lastUser->getName() !== $currentUser->getName()) {
+            if ($lastUser->getName() !== $currentUser->getName()) {
                 return false;
             }
         }
@@ -166,13 +163,21 @@ class ContentHistorySubscriber
         $merged = $this->mergeChangeSets($last->getChangeSet(), $current->getChangeSet());
         $last->setChangeSet($merged);
 
-        $classMetadata = $dm->getClassMetadata($this->className);
+        /** @var class-string<ContentHistory> $historyClass */
+        $historyClass = $this->className;
+        $classMetadata = $dm->getClassMetadata($historyClass);
         $dm->persist($last);
         $dm->getUnitOfWork()->recomputeSingleDocumentChangeSet($classMetadata, $last);
 
         return true;
     }
 
+    /**
+     * @param array<string|int, mixed> $base
+     * @param array<string|int, mixed> $delta
+     *
+     * @return array<string|int, mixed>
+     */
     private function mergeChangeSets(array $base, array $delta): array
     {
         $merged = $base;
@@ -217,8 +222,9 @@ class ContentHistorySubscriber
         return $merged;
     }
 
+    /** @param array<string|int, mixed> $value */
     private function isDiffPair(array $value): bool
     {
-        return \array_keys($value) === [0, 1];
+        return array_keys($value) === [0, 1];
     }
 }

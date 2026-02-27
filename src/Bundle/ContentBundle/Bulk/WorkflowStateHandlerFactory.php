@@ -32,6 +32,9 @@ class WorkflowStateHandlerFactory implements HandlerFactoryInterface
             ->setAllowedTypes('state', 'string');
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function createHandler(array $options)
     {
         $options = $this->optionsResolver->resolve($options);
@@ -43,4 +46,3 @@ class WorkflowStateHandlerFactory implements HandlerFactoryInterface
         );
     }
 }
-

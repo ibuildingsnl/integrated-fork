@@ -51,4 +51,3 @@ class WorkflowExtensionOptionsTest extends TestCase
         return new WorkflowExtension($this->createMock(Security::class));
     }
 }
-

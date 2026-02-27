@@ -24,14 +24,28 @@ use Twig\TwigFunction;
 class IntegrationTest extends IntegrationTestCase
 {
     #[DataProvider('provideLegacyTests')]
-    public function testLegacyIntegration($file, $message, $condition, $templates, $exception, $outputs, $deprecation = ''): void
-    {
+    public function testLegacyIntegration(
+        mixed $file,
+        mixed $message,
+        mixed $condition,
+        mixed $templates,
+        mixed $exception,
+        mixed $outputs,
+        mixed $deprecation = '',
+    ): void {
         $this->testIntegration($file, $message, $condition, $templates, $exception, $outputs, $deprecation);
     }
 
     #[DataProvider('provideIntegrationTests')]
-    public function testIntegration($file, $message, $condition, $templates, $exception, $outputs, $deprecation = ''): void
-    {
+    public function testIntegration(
+        mixed $file,
+        mixed $message,
+        mixed $condition,
+        mixed $templates,
+        mixed $exception,
+        mixed $outputs,
+        mixed $deprecation = '',
+    ): void {
         $templates += [
             '@IntegratedAsset/asset/javascripts.html.twig' => file_get_contents(
                 __DIR__.'/../../Resources/views/asset/javascripts.html.twig'
@@ -44,21 +58,24 @@ class IntegrationTest extends IntegrationTestCase
         $this->doIntegrationTest($file, $message, $condition, $templates, $exception, $outputs, $deprecation);
     }
 
+    /** @return iterable<int, array<int, mixed>> */
     public static function provideIntegrationTests(): iterable
     {
-        $instance = new static('testIntegration');
+        $instance = new self('testIntegration');
 
         return $instance->getTests('testIntegration');
     }
 
+    /** @return iterable<int, array<int, mixed>> */
     public static function provideLegacyTests(): iterable
     {
-        $instance = new static('testLegacyIntegration');
+        $instance = new self('testLegacyIntegration');
 
         return $instance->getTests('testLegacyIntegration', true);
     }
 
-    public function getExtensions()
+    /** @return array<int, object> */
+    public function getExtensions(): array
     {
         return [
             new StylesheetExtension(new AssetManager()),
@@ -66,10 +83,11 @@ class IntegrationTest extends IntegrationTestCase
         ];
     }
 
-    protected function getTwigFunctions()
+    /** @return array<int, TwigFunction> */
+    protected function getTwigFunctions(): array
     {
         return [
-            new TwigFunction('asset', function ($path) {
+            new TwigFunction('asset', function (string $path): string {
                 return '/'.$path;
             }, ['is_safe' => ['html']]),
         ];
@@ -80,7 +98,7 @@ class IntegrationTest extends IntegrationTestCase
         return __DIR__.'/Fixtures/';
     }
 
-    protected function getFixturesDir()
+    protected function getFixturesDir(): string
     {
         return static::getFixturesDirectory();
     }

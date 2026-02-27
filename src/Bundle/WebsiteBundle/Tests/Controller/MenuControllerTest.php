@@ -35,11 +35,24 @@ class MenuControllerTest extends TestCase
     public function testSaveStripsPlaceholderItemsBeforePersistence(): void
     {
         $captured = [];
-        $menu = new class() {
+        $menu = new class {
             public ?object $channel = null;
-            public function getName(): string { return 'main'; }
-            public function getChildren(): array { return []; }
-            public function setChannel(object $channel): void { $this->channel = $channel; }
+
+            public function getName(): string
+            {
+                return 'main';
+            }
+
+            /** @return array<int, mixed> */
+            public function getChildren(): array
+            {
+                return [];
+            }
+
+            public function setChannel(object $channel): void
+            {
+                $this->channel = $channel;
+            }
         };
         $channel = new \stdClass();
 
@@ -87,11 +100,24 @@ class MenuControllerTest extends TestCase
     public function testSaveKeepsHeadingItemWithoutUrl(): void
     {
         $captured = [];
-        $menu = new class() {
+        $menu = new class {
             public ?object $channel = null;
-            public function getName(): string { return 'main'; }
-            public function getChildren(): array { return []; }
-            public function setChannel(object $channel): void { $this->channel = $channel; }
+
+            public function getName(): string
+            {
+                return 'main';
+            }
+
+            /** @return array<int, mixed> */
+            public function getChildren(): array
+            {
+                return [];
+            }
+
+            public function setChannel(object $channel): void
+            {
+                $this->channel = $channel;
+            }
         };
         $channel = new \stdClass();
 
@@ -132,6 +158,7 @@ class MenuControllerTest extends TestCase
         self::assertSame($channel, $menu->channel);
     }
 
+    /** @param array<string, mixed> $payload */
     private function createSaveRequest(array $payload): Request
     {
         return Request::create('/menu/save', 'POST', [], [], [], [], (string) json_encode($payload));

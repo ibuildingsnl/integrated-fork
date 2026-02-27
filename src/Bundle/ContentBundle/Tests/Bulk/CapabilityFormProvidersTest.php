@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Bulk;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 use Integrated\Bundle\ContentBundle\Bulk\BulkCapabilityResolver;
 use Integrated\Bundle\ContentBundle\Bulk\CanonicalFormProvider;
 use Integrated\Bundle\ContentBundle\Bulk\CanonicalHandler;
@@ -41,19 +44,17 @@ use Integrated\Bundle\UserBundle\Doctrine\UserManager;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Common\Bulk\Form\Config;
 use Integrated\Common\ContentType\ResolverInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class CapabilityFormProvidersTest extends TestCase
 {
-    private BulkCapabilityResolver|MockObject $resolver;
-    private ResolverInterface|MockObject $contentTypeResolver;
-    private EntityManagerInterface|MockObject $entityManager;
-    private EntityRepository|MockObject $definitionRepository;
-    private UserManager|MockObject $userManager;
+    private BulkCapabilityResolver&MockObject $resolver;
+    private ResolverInterface&MockObject $contentTypeResolver;
+    private EntityManagerInterface&MockObject $entityManager;
+    /** @var EntityRepository<Definition>&MockObject */
+    private EntityRepository&MockObject $definitionRepository;
+    private UserManager&MockObject $userManager;
 
     protected function setUp(): void
     {
@@ -170,7 +171,7 @@ class CapabilityFormProvidersTest extends TestCase
         $contentTypeId = 'news';
         $workflowId = 'workflow-a';
 
-        $content = new class() extends Content {
+        $content = new class extends Content {
             public function __toString(): string
             {
                 return '';

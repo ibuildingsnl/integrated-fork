@@ -10,7 +10,7 @@ class ContentNavigatorTemplateTest extends TestCase
 {
     public function testTemplateContainsTurboFrameAccessibilityMarkers(): void
     {
-        $template = file_get_contents(__DIR__ . '/../../Resources/views/content/base.html.twig');
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content/base.html.twig');
 
         $this->assertIsString($template);
         $this->assertStringContainsString('id="content-navigator"', $template);
@@ -23,22 +23,22 @@ class ContentNavigatorTemplateTest extends TestCase
 
     public function testIndexTemplateContainsLiveLockMarkers(): void
     {
-        $template = file_get_contents(__DIR__ . '/../../Resources/views/content/index.html.twig');
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content/index.html.twig');
 
         $this->assertIsString($template);
         $this->assertStringContainsString('data-lock-resource-type="', $template);
         $this->assertStringContainsString('data-lock-resource-id="', $template);
         $this->assertStringContainsString('data-lock-slot', $template);
-        $this->assertStringContainsString("integrated_content_content_locks_status", $template);
+        $this->assertStringContainsString('integrated_content_content_locks_status', $template);
         $this->assertStringContainsString("document.addEventListener('turbo:load', initLockPolling);", $template);
         $this->assertStringContainsString("document.addEventListener('turbo:frame-load', function(event)", $template);
     }
 
     public function testIndexTemplatesKeepEditLinksPrefetchable(): void
     {
-        $indexTemplate = file_get_contents(__DIR__ . '/../../Resources/views/content/index.html.twig');
-        $weekTemplate = file_get_contents(__DIR__ . '/../../Resources/views/content/index_week.html.twig');
-        $navDropdownTemplate = file_get_contents(__DIR__ . '/../../Resources/views/content/navdropdowns.html.twig');
+        $indexTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/index.html.twig');
+        $weekTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/index_week.html.twig');
+        $navDropdownTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/navdropdowns.html.twig');
 
         $this->assertIsString($indexTemplate);
         $this->assertIsString($weekTemplate);
@@ -60,7 +60,7 @@ class ContentNavigatorTemplateTest extends TestCase
 
     public function testRoutingContainsLiveLockStatusEndpoint(): void
     {
-        $routing = file_get_contents(__DIR__ . '/../../Resources/config/routing/content.xml');
+        $routing = file_get_contents(__DIR__.'/../../Resources/config/routing/content.xml');
 
         $this->assertIsString($routing);
         $this->assertStringContainsString('id="integrated_content_content_locks_status"', $routing);
@@ -69,7 +69,7 @@ class ContentNavigatorTemplateTest extends TestCase
 
     public function testControllerSkipsLockAcquisitionForPrefetchRequests(): void
     {
-        $controller = file_get_contents(__DIR__ . '/../../Controller/ContentController.php');
+        $controller = file_get_contents(__DIR__.'/../../Controller/ContentController.php');
 
         $this->assertIsString($controller);
         $this->assertStringContainsString('X-Sec-Purpose', $controller);

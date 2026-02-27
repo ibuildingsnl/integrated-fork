@@ -47,7 +47,7 @@ class JSONController extends AbstractController
 
         $documents = $this->solariumProvider->execute($block, $request);
 
-        $itemsPerPage = method_exists($documents, 'getItemNumberPerPage') ? (int) $documents->getItemNumberPerPage() : $block->getItemsPerPage();
+        $itemsPerPage = (int) $documents->getItemNumberPerPage();
         if ($itemsPerPage < 1) {
             $itemsPerPage = 1;
         }

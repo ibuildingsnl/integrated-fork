@@ -36,9 +36,7 @@ class Definition
      */
     protected $states;
 
-    /**
-     * @var State
-     */
+    /** @var State|null */
     protected $default;
 
     public function __construct()
@@ -140,9 +138,7 @@ class Definition
         return $this;
     }
 
-    /**
-     * @return State
-     */
+    /** @return State|null */
     public function getDefault()
     {
         return $this->default;

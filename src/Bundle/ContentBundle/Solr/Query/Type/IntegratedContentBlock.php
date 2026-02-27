@@ -130,7 +130,7 @@ class IntegratedContentBlock extends AbstractType
             $result = [];
 
             foreach ($value as $item) {
-                if (!\is_scalar($item) || null === $item) {
+                if (!\is_scalar($item)) {
                     continue;
                 }
 
@@ -277,6 +277,11 @@ class IntegratedContentBlock extends AbstractType
         return Content::class;
     }
 
+    /**
+     * @param array<mixed> $values
+     *
+     * @return list<string>
+     */
     private function sanitizeListValues(array $values): array
     {
         $sanitized = [];

@@ -18,14 +18,10 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class GetResponseConfigEvent extends ConfigEvent
 {
-    /**
-     * @var Response
-     */
+    /** @var Response|null */
     private $response;
 
-    /**
-     * @return Response
-     */
+    /** @return Response|null */
     public function getResponse()
     {
         return $this->response;

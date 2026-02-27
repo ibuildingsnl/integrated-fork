@@ -14,7 +14,7 @@ class SitemapTemplateTest extends TestCase
 
         self::assertIsString($template);
         self::assertStringContainsString('{% if pagesCount > 0 %}', $template);
-        self::assertStringContainsString("{% for page in 1..pagesCount %}", $template);
+        self::assertStringContainsString('{% for page in 1..pagesCount %}', $template);
         self::assertStringContainsString("path('integrated_sitemap_list_pages'", $template);
     }
 
@@ -28,4 +28,3 @@ class SitemapTemplateTest extends TestCase
         self::assertStringContainsString('integrated_url(document)', $template);
     }
 }
-

@@ -325,6 +325,10 @@ body.hide-options {
             height: 34px;
         }
 
+        a.btn {
+            height: 34px;
+        }
+
         @include media(max-md) {
             height: auto;
             padding: 1rem 1rem 0 1rem;

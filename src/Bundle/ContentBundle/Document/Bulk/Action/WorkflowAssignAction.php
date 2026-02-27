@@ -35,7 +35,7 @@ class WorkflowAssignAction implements BulkActionInterface
         return $this->handler;
     }
 
-    public function setHandler($handler)
+    public function setHandler(string $handler): self
     {
         $this->handler = $handler;
 
@@ -47,18 +47,18 @@ class WorkflowAssignAction implements BulkActionInterface
         return $this->assigned;
     }
 
-    public function setAssigned(?string $assigned)
+    public function setAssigned(?string $assigned): self
     {
         $this->assigned = $assigned;
 
         return $this;
     }
 
-    public function getOptions()
+    /** @return array{assigned: string|null} */
+    public function getOptions(): array
     {
         return [
             'assigned' => $this->getAssigned(),
         ];
     }
 }
-

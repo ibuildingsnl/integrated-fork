@@ -12,15 +12,10 @@
 namespace Integrated\Bundle\ContentBundle\Routing;
 
 use Integrated\Bundle\ContentBundle\JsonLD\UrlGenerator as JsonLdUrlGenerator;
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Backward-compatible adapter used by legacy routing.services.xml wiring.
  */
 class UrlGenerator extends JsonLdUrlGenerator
 {
-    public function __construct(private readonly ?RouterInterface $router = null)
-    {
-    }
 }
-

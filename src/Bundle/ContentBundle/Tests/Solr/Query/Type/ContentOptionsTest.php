@@ -63,4 +63,3 @@ class ContentOptionsTest extends TestCase
         return new Content($sortOptions, $this->createMock(DocumentManager::class));
     }
 }
-

@@ -35,7 +35,7 @@ class FeaturedAction implements BulkActionInterface
         return $this->handler;
     }
 
-    public function setHandler($handler)
+    public function setHandler(string $handler): self
     {
         $this->handler = $handler;
 
@@ -54,11 +54,11 @@ class FeaturedAction implements BulkActionInterface
         return $this;
     }
 
-    public function getOptions()
+    /** @return array{featured: bool} */
+    public function getOptions(): array
     {
         return [
             'featured' => $this->isFeatured(),
         ];
     }
 }
-

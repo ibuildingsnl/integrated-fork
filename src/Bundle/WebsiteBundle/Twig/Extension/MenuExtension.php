@@ -87,7 +87,6 @@ class MenuExtension extends AbstractExtension
             'template' => $template,
             'editMode' => false,
         ]);
-
     }
 
     public function getFunctions()
@@ -193,7 +192,7 @@ class MenuExtension extends AbstractExtension
         }
 
         if ($showAddButton) {
-            $uuid = sprintf(
+            $uuid = \sprintf(
                 'tmp-%s-%d',
                 bin2hex(random_bytes(8)),
                 random_int(1000, 9999)

@@ -12,7 +12,6 @@ use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ChannelBundle\Form\Type\ConfigFormType;
 use Integrated\Bundle\ChannelBundle\IntegratedChannelEvents;
 use Integrated\Bundle\ChannelBundle\Model\Config;
-use Integrated\Bundle\ChannelBundle\Model\ConfigInterface;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -41,8 +40,9 @@ class ConnectorController extends AbstractController
 
         $config = null;
         $new = true;
-        foreach ($this->configs->findByChannel($link->channel) as $config) {
-            if ($config->getAdapter() === $link->type->connector) {
+        foreach ($this->configs->findByChannel($link->channel) as $existingConfig) {
+            if ($existingConfig instanceof Config && $existingConfig->getAdapter() === $link->type->connector) {
+                $config = $existingConfig;
                 $new = false;
                 break;
             }
@@ -54,7 +54,7 @@ class ConnectorController extends AbstractController
             $this->addFlash('error', $message);
             throw $this->createNotFoundException($message, $exception);
         }
-        if ($new || !$config instanceof ConfigInterface) {
+        if ($new || !$config instanceof Config) {
             $config = new Config();
             $config->setAdapter($adapter->getManifest()->getName());
             $config->setChannels([$link->channel]);
@@ -71,9 +71,9 @@ class ConnectorController extends AbstractController
         }
 
         $event = new GetResponseConfigEvent($config, $request);
-
-        if ($this->dispatcher->dispatch($event, IntegratedChannelEvents::CONFIG_CREATE_REQUEST)?->getResponse()) {
-            return $event->getResponse();
+        $requestResponse = $this->dispatcher->dispatch($event, IntegratedChannelEvents::CONFIG_CREATE_REQUEST)?->getResponse();
+        if ($requestResponse instanceof Response) {
+            return $requestResponse;
         }
 
         $form = $this->createForm(ConfigFormType::class, $config, [

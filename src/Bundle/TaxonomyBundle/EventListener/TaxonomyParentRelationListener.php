@@ -57,10 +57,6 @@ class TaxonomyParentRelationListener implements EventSubscriberInterface
         }
 
         foreach ($this->parentsReferencingTaxonomy($taxonomy) as $parent) {
-            if (!$parent instanceof Taxonomy) {
-                continue;
-            }
-
             if (null !== $keepParentId && (string) $parent->getId() === $keepParentId) {
                 continue;
             }
@@ -71,6 +67,7 @@ class TaxonomyParentRelationListener implements EventSubscriberInterface
         $this->removeNonMatchingParentReferences($taxonomy, $keepParentId);
     }
 
+    /** @return iterable<int, Taxonomy> */
     protected function parentsReferencingTaxonomy(Taxonomy $taxonomy): iterable
     {
         $repository = $this->documentManger->getRepository(Content::class);
@@ -84,7 +81,9 @@ class TaxonomyParentRelationListener implements EventSubscriberInterface
             ->field('relations.references.$id')
             ->equals($taxonomy->getId());
 
-        return $queryBuilder->getQuery()->execute();
+        $result = $queryBuilder->getQuery()->execute();
+
+        return is_iterable($result) ? $result : [];
     }
 
     private function removeChildFromParent(Taxonomy $parent, string $taxonomyId): void

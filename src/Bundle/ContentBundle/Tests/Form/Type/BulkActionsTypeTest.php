@@ -53,7 +53,7 @@ class BulkActionsTypeTest extends TypeTestCase
                     'sample',
                     TextType::class,
                     [],
-                    new class() implements ActionMatcherInterface {
+                    new class implements ActionMatcherInterface {
                         public function match(BulkActionInterface $action)
                         {
                             return false;
@@ -71,4 +71,3 @@ class BulkActionsTypeTest extends TypeTestCase
         self::assertTrue($form->get(bin2hex('handler').'_sample')->getConfig()->getOption('disabled'));
     }
 }
-

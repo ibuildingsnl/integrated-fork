@@ -82,6 +82,7 @@ final class TaxonomyParentRelationListenerTest extends TestCase
         self::assertSame(['child'], $this->relationReferenceIds($parent, '__children'));
     }
 
+    /** @return list<string> */
     private function relationReferenceIds(Taxonomy $taxonomy, string $relationId): array
     {
         $relation = $taxonomy->getRelation($relationId);
@@ -125,6 +126,7 @@ final class TestTaxonomyParentRelationListener extends TaxonomyParentRelationLis
         $this->parentsReferencing = $parents;
     }
 
+    /** @return iterable<int, Taxonomy> */
     protected function parentsReferencingTaxonomy(Taxonomy $taxonomy): iterable
     {
         return $this->parentsReferencing;

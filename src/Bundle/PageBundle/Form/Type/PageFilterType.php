@@ -70,7 +70,6 @@ class PageFilterType extends AbstractType
             'mapped' => false,
             'data' => '1',
         ]);
-
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -85,6 +84,6 @@ class PageFilterType extends AbstractType
 
     private function formatRawCountLabel(string $label, int $count): string
     {
-        return sprintf('%s %d', $label, $count);
+        return \sprintf('%s %d', $label, $count);
     }
 }

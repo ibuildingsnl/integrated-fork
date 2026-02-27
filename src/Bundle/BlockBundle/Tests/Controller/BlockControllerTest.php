@@ -15,9 +15,8 @@ use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Security\Permissions;
-use Knp\Component\Pager\PaginatorInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
-use PHPUnit\Framework\MockObject\MockObject;
+use Knp\Component\Pager\PaginatorInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -119,9 +118,8 @@ final class BlockControllerTest extends TestCase
     private function createController(
         DocumentManager $documentManager,
         PaginatorInterface $paginator,
-        ?MetadataFactoryInterface $metadataFactory = null
-    ): TestableBlockController
-    {
+        ?MetadataFactoryInterface $metadataFactory = null,
+    ): TestableBlockController {
         return new TestableBlockController(
             $metadataFactory ?? $this->createStub(MetadataFactoryInterface::class),
             $documentManager,
@@ -136,7 +134,9 @@ final class BlockControllerTest extends TestCase
 final class TestableBlockController extends BlockController
 {
     public string $lastView = '';
+    /** @var array<string, mixed> */
     public array $lastParameters = [];
+    /** @var array<string, bool> */
     private array $permissions = [];
 
     public function setPermission(string $attribute, bool $granted): void
@@ -153,7 +153,10 @@ final class TestableBlockController extends BlockController
         return true;
     }
 
-    public function render(string $view, array $parameters = [], Response $response = null): Response
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    public function render(string $view, array $parameters = [], ?Response $response = null): Response
     {
         $this->lastView = $view;
         $this->lastParameters = $parameters;

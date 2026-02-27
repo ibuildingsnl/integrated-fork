@@ -35,7 +35,7 @@ class PremiumAction implements BulkActionInterface
         return $this->handler;
     }
 
-    public function setHandler($handler)
+    public function setHandler(string $handler): self
     {
         $this->handler = $handler;
 
@@ -54,11 +54,11 @@ class PremiumAction implements BulkActionInterface
         return $this;
     }
 
-    public function getOptions()
+    /** @return array{premium: bool} */
+    public function getOptions(): array
     {
         return [
             'premium' => $this->isPremium(),
         ];
     }
 }
-

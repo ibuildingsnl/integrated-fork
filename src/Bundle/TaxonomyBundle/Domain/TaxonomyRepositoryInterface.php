@@ -23,6 +23,10 @@ interface TaxonomyRepositoryInterface
 
     public function countUsages(Taxonomy $taxonomy): int;
 
-    /** @param string[] $taxonomyIds @return array<string, int> */
+    /**
+     * @param array<string> $taxonomyIds
+     *
+     * @return array<string, int>
+     */
     public function countUsagesFor(array $taxonomyIds): array;
 }

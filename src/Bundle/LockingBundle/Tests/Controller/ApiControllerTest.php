@@ -68,7 +68,7 @@ class ApiControllerTest extends TestCase
             ->willReturn($this->createLock('lock-1', $ownerResource));
 
         $response = $controller->refresh($this->createRequest('lock-1'));
-        $payload = json_decode((string) $response->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $payload = json_decode((string) $response->getContent(), true, 512, \JSON_THROW_ON_ERROR);
 
         self::assertSame(Response::HTTP_OK, $response->getStatusCode());
         self::assertSame('lock-1', $payload['lock']);
@@ -125,9 +125,16 @@ final class TestApiController extends ApiController
 
 final class TestUser implements UserInterface
 {
+    /** @var non-empty-string */
+    private readonly string $identifier;
+
+    /**
+     * @param non-empty-string $identifier
+     */
     public function __construct(
-        private readonly string $identifier,
+        string $identifier,
     ) {
+        $this->identifier = $identifier;
     }
 
     public function getRoles(): array

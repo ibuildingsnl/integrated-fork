@@ -11,13 +11,13 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
-use Integrated\Bundle\ContentBundle\Bulk\PremiumHandler;
 use Integrated\Bundle\ContentBundle\Document\Bulk\Action\PremiumAction;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/** @extends AbstractType<PremiumAction> */
 class BulkActionPremiumType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

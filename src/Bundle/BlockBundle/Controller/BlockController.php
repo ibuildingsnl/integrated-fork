@@ -20,7 +20,6 @@ use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
 use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\UserBundle\Model\User;
-use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Content\Form\Event\BlockEvent;
 use Integrated\Common\Content\Form\Events;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
@@ -34,6 +33,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class BlockController extends AbstractController
 {
+    /** @var array<string, bool>|null */
     private ?array $allowedBlockClasses = null;
 
     public function __construct(
@@ -108,10 +108,6 @@ class BlockController extends AbstractController
         try {
             $block = new $class();
         } catch (\Throwable) {
-            throw $this->createNotFoundException(\sprintf('Invalid block "%s"', $class));
-        }
-
-        if (!$block instanceof BlockInterface) {
             throw $this->createNotFoundException(\sprintf('Invalid block "%s"', $class));
         }
 
@@ -297,14 +293,14 @@ class BlockController extends AbstractController
     {
         $classKey = strtolower(ltrim($class, '\\'));
 
-        if (\is_array($this->allowedBlockClasses)) {
+        if ($this->allowedBlockClasses !== null) {
             return isset($this->allowedBlockClasses[$classKey]);
         }
 
         $this->allowedBlockClasses = [];
         foreach ($this->metadataFactory->getAllMetadata() as $metadata) {
-            $metadataClass = $metadata->getClass();
-            if (\is_string($metadataClass) && $metadataClass !== '') {
+            $metadataClass = trim((string) $metadata->getClass());
+            if ($metadataClass !== '') {
                 $this->allowedBlockClasses[strtolower(ltrim($metadataClass, '\\'))] = true;
             }
         }

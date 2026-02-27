@@ -45,7 +45,6 @@ class TestableConfigController extends ConfigController
 
     public function edit(Request $request, string $id): Response
     {
-        return new Response('edit:' . $id);
+        return new Response('edit:'.$id);
     }
 }
-

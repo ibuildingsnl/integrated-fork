@@ -40,7 +40,7 @@ class PublishWindowAction implements BulkActionInterface
         return $this->handler;
     }
 
-    public function setHandler($handler)
+    public function setHandler(string $handler): self
     {
         $this->handler = $handler;
 
@@ -52,7 +52,7 @@ class PublishWindowAction implements BulkActionInterface
         return $this->startDate;
     }
 
-    public function setStartDate(\DateTimeInterface $startDate = null)
+    public function setStartDate(?\DateTimeInterface $startDate = null): self
     {
         $this->startDate = $startDate;
 
@@ -64,14 +64,15 @@ class PublishWindowAction implements BulkActionInterface
         return $this->endDate;
     }
 
-    public function setEndDate(\DateTimeInterface $endDate = null)
+    public function setEndDate(?\DateTimeInterface $endDate = null): self
     {
         $this->endDate = $endDate;
 
         return $this;
     }
 
-    public function getOptions()
+    /** @return array{startDate: \DateTimeInterface|null, endDate: \DateTimeInterface|null} */
+    public function getOptions(): array
     {
         return [
             'startDate' => $this->getStartDate(),
@@ -79,4 +80,3 @@ class PublishWindowAction implements BulkActionInterface
         ];
     }
 }
-

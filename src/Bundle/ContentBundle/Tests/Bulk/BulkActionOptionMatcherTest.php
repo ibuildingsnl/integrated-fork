@@ -41,13 +41,19 @@ class BulkActionOptionMatcherTest extends TestCase
         self::assertFalse($matcher->match($action));
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     private function createAction(string $handler, array $options): BulkActionInterface
     {
         return new class($handler, $options) implements BulkActionInterface {
             private string $handler;
-
+            /** @var array<string, mixed> */
             private array $options;
 
+            /**
+             * @param array<string, mixed> $options
+             */
             public function __construct(string $handler, array $options)
             {
                 $this->handler = $handler;
@@ -59,11 +65,11 @@ class BulkActionOptionMatcherTest extends TestCase
                 return $this->handler;
             }
 
-            public function getOptions()
+            /** @return array<string, mixed> */
+            public function getOptions(): array
             {
                 return $this->options;
             }
         };
     }
 }
-

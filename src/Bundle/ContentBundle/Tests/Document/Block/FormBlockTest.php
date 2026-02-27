@@ -37,4 +37,3 @@ class FormBlockTest extends TestCase
         self::assertNull($block->getLinkRelation());
     }
 }
-
