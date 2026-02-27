@@ -17,6 +17,7 @@ use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
+use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,6 +29,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class SearchSelectionController extends AbstractController
 {
+    use PaginationQueryTrait;
+
     private RequestStack $requestStack;
     private DocumentManager $documentManager;
     private PaginatorInterface $paginator;
@@ -47,7 +50,7 @@ class SearchSelectionController extends AbstractController
 
     public function index(Request $request): Response
     {
-        $paginator = $this->paginator->paginate($this->getQueryBuilder(), $request->query->get('page', 1), 25);
+        $paginator = $this->paginator->paginate($this->getQueryBuilder(), $this->getPositiveIntQueryParameter($request, 'page', 1), 25);
 
         return $this->render('@IntegratedContent/search_selection/index.html.twig', [
             'searchSelections' => $paginator,

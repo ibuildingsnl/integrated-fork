@@ -23,6 +23,7 @@ use Integrated\Bundle\PageBundle\Form\Type\PageFilterType;
 use Integrated\Bundle\PageBundle\Form\Type\PageType;
 use Integrated\Bundle\PageBundle\Services\PageCopyService;
 use Integrated\Bundle\PageBundle\Services\RouteCache;
+use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
 use Knp\Component\Pager\PaginatorInterface;
 use MongoDB\BSON\Regex;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,6 +35,8 @@ use Symfony\Component\HttpFoundation\UriSigner;
 
 class PageController extends AbstractController
 {
+    use PaginationQueryTrait;
+
     private const PREVIEW_LINK_TTL_SECONDS = 86400;
     private const PREVIEW_EXPIRES_PARAM = 'preview_expires';
     private const CHANNEL_NONE_VALUE = '__none__';
@@ -109,7 +112,7 @@ class PageController extends AbstractController
 
         $pagination = $this->paginator->paginate(
             $builder,
-            $request->query->get('page', 1),
+            $this->getPositiveIntQueryParameter($request, 'page', 1),
             25
         );
 

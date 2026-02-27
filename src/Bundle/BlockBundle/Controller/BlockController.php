@@ -19,6 +19,7 @@ use Integrated\Bundle\BlockBundle\Form\Type\BlockFilterType;
 use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
 use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Content\Form\Event\BlockEvent;
 use Integrated\Common\Content\Form\Events;
@@ -33,6 +34,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class BlockController extends AbstractController
 {
+    use PaginationQueryTrait;
+
     /** @var array<string, bool>|null */
     private ?array $allowedBlockClasses = null;
 
@@ -62,8 +65,8 @@ class BlockController extends AbstractController
 
         $pagination = $this->paginator->paginate(
             $this->provider->getBlocksByChannelQueryBuilder($data, $user),
-            $request->query->get('page', 1),
-            $request->query->get('limit', 20),
+            $this->getPositiveIntQueryParameter($request, 'page', 1),
+            $this->getPositiveIntQueryParameter($request, 'limit', 20),
             ['defaultSortFieldName' => 'title', 'defaultSortDirection' => 'asc', 'query_type' => 'block_overview']
         );
 
@@ -279,8 +282,8 @@ class BlockController extends AbstractController
 
         $pagination = $this->paginator->paginate(
             $query,
-            $request->query->get('page', 1),
-            $request->query->get('limit', 15)
+            $this->getPositiveIntQueryParameter($request, 'page', 1),
+            $this->getPositiveIntQueryParameter($request, 'limit', 15)
         );
 
         return $this->render('@IntegratedBlock/block/used_by.'.$request->getRequestFormat().'.twig', [

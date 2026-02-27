@@ -55,7 +55,11 @@ final class BlockControllerTest extends TestCase
         $paginator
             ->expects(self::once())
             ->method('paginate')
-            ->with($query, '2', '5')
+            ->with(
+                $query,
+                self::callback(fn (mixed $page): bool => \is_int($page) && 2 === $page),
+                self::callback(fn (mixed $limit): bool => \is_int($limit) && 5 === $limit)
+            )
             ->willReturn($pagination);
 
         $controller = $this->createController($documentManager, $paginator);
@@ -71,6 +75,56 @@ final class BlockControllerTest extends TestCase
         self::assertSame(Response::HTTP_OK, $response->getStatusCode());
         self::assertSame('@IntegratedBlock/block/used_by.json.twig', $controller->lastView);
         self::assertSame($content, $controller->lastParameters['content']);
+        self::assertSame($pagination, $controller->lastParameters['pagination']);
+    }
+
+    public function testUsedByFallsBackToDefaultsForArrayPaginationQueryValues(): void
+    {
+        $content = (new Article())->setId('content-id');
+        $query = $this->createMock(IterableResult::class);
+        $pagination = $this->createMock(PaginationInterface::class);
+        $queryBuilder = $this->createMock(Builder::class);
+        $queryBuilder
+            ->method('field')
+            ->with('relations.references.$id')
+            ->willReturnSelf();
+        $queryBuilder
+            ->method('equals')
+            ->with('content-id')
+            ->willReturnSelf();
+        $queryBuilder
+            ->method('getQuery')
+            ->willReturn($query);
+
+        $documentManager = $this->createMock(DocumentManager::class);
+        $documentManager
+            ->expects(self::once())
+            ->method('createQueryBuilder')
+            ->with(Block::class)
+            ->willReturn($queryBuilder);
+
+        $paginator = $this->createMock(PaginatorInterface::class);
+        $paginator
+            ->expects(self::once())
+            ->method('paginate')
+            ->with(
+                $query,
+                self::callback(fn (mixed $page): bool => \is_int($page) && 1 === $page),
+                self::callback(fn (mixed $limit): bool => \is_int($limit) && 15 === $limit)
+            )
+            ->willReturn($pagination);
+
+        $controller = $this->createController($documentManager, $paginator);
+        $controller->setPermission('ROLE_WEBSITE_MANAGER', false);
+        $controller->setPermission('ROLE_ADMIN', false);
+        $controller->setPermission(Permissions::EDIT, true);
+
+        $request = new Request(['page' => ['2'], 'limit' => ['5']]);
+        $request->setRequestFormat('json');
+
+        $response = $controller->usedBy($content, $request);
+
+        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
         self::assertSame($pagination, $controller->lastParameters['pagination']);
     }
 

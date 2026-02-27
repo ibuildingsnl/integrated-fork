@@ -13,6 +13,7 @@ namespace Integrated\Bundle\UserBundle\Controller;
 
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\UserBundle\Form\Type\UserFilterType;
 use Integrated\Bundle\UserBundle\Form\Type\UserFormType;
@@ -31,6 +32,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends AbstractController
 {
+    use PaginationQueryTrait;
+
     private UserManagerInterface $manager;
     private FilterQueryProvider $provider;
     private PaginatorInterface $paginator;
@@ -74,7 +77,7 @@ class UserController extends AbstractController
 
         $pagination = $this->paginator->paginate(
             $users,
-            $request->query->get('page', 1),
+            $this->getPositiveIntQueryParameter($request, 'page', 1),
             15
         );
 

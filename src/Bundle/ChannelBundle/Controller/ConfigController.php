@@ -20,6 +20,7 @@ use Integrated\Bundle\ChannelBundle\Form\Type\ConfigFormType;
 use Integrated\Bundle\ChannelBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\ChannelBundle\IntegratedChannelEvents;
 use Integrated\Bundle\ChannelBundle\Model\Config;
+use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\AdapterInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigManagerInterface;
@@ -32,6 +33,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ConfigController extends AbstractController
 {
+    use PaginationQueryTrait;
+
     private ConfigManagerInterface $manager;
     private RegistryInterface $registry;
     private PaginatorInterface $paginator;
@@ -57,7 +60,7 @@ class ConfigController extends AbstractController
 
         return $this->render('@IntegratedChannel/config/index.html.twig', [
             'adapters' => $this->registry->getAdapters(),
-            'pager' => $this->paginator->paginate($this->manager->findAll(), $request->query->get('page', 1)),
+            'pager' => $this->paginator->paginate($this->manager->findAll(), $this->getPositiveIntQueryParameter($request, 'page', 1)),
         ]);
     }
 

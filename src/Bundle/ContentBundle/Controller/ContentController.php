@@ -31,6 +31,7 @@ use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
@@ -66,6 +67,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ContentController extends AbstractController
 {
+    use PaginationQueryTrait;
+
     private const NAVDROPDOWNS_CACHE_NAMESPACE = 'integrated_content_fragments_navdropdowns';
     private const CONTENT_LOCK_TIMEOUT_SECONDS = 15;
 
@@ -215,8 +218,8 @@ class ContentController extends AbstractController
 
         $paginator = $this->getPaginator()->paginate(
             [$client, $query->getQuery()],
-            $request->query->get('page', 1),
-            $request->query->get('limit', 25),
+            $this->getPositiveIntQueryParameter($request, 'page', 1),
+            $this->getPositiveIntQueryParameter($request, 'limit', 25),
             [PaginatorInterface::SORT_FIELD_PARAMETER_NAME => null]
         );
 
@@ -1458,8 +1461,8 @@ class ContentController extends AbstractController
 
         $pagination = $this->getPaginator()->paginate(
             $query,
-            $request->query->get('page', 1),
-            $request->query->get('limit', 15)
+            $this->getPositiveIntQueryParameter($request, 'page', 1),
+            $this->getPositiveIntQueryParameter($request, 'limit', 15)
         );
 
         return $this->render('@IntegratedContent/content/used_by.'.$request->getRequestFormat().'.twig', [
