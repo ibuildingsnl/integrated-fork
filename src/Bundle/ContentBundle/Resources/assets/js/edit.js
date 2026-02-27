@@ -217,7 +217,7 @@ function updatePublicationsAndChannels() {
 
         let checkedChannels = Array.from(brandChannel.querySelectorAll('.brand-channels [type="checkbox"]:checked')).map(el => el.getAttribute('data-channel-selector'));
 
-        if (!checkedChannels.length > 0) return;
+        if (checkedChannels.length === 0) return;
 
         let dateInput, timeInput;
         let fallbackDateInput = document.querySelector('#integrated_content_publishTime input[type="date"]');

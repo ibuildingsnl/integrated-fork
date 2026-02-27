@@ -28,10 +28,38 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
 
     public function forContentByChannel(Content $content): array
     {
-        return array_combine(
-            array_map(fn (Publication $p) => $p->getChannel()->getId(), $this->forContent($content)),
-            $this->forContent($content),
-        );
+        $publications = $this->forContent($content);
+
+        usort($publications, function (Publication $a, Publication $b): int {
+            $aIsSuccessful = $a->getStatus() === Publication::STATUS_SUCCESS;
+            $bIsSuccessful = $b->getStatus() === Publication::STATUS_SUCCESS;
+
+            // Prefer editable publications (failed/pending) over successful history.
+            if ($aIsSuccessful !== $bIsSuccessful) {
+                return $aIsSuccessful <=> $bIsSuccessful;
+            }
+
+            return $this->publicationTimestamp($b) <=> $this->publicationTimestamp($a);
+        });
+
+        $byChannel = [];
+        foreach ($publications as $publication) {
+            $channelId = $publication->getChannel()->getId();
+            if (!\is_string($channelId) || $channelId === '') {
+                continue;
+            }
+
+            if (!\array_key_exists($channelId, $byChannel)) {
+                $byChannel[$channelId] = $publication;
+            }
+        }
+
+        return $byChannel;
+    }
+
+    private function publicationTimestamp(Publication $publication): int
+    {
+        return $publication->getTime()->getStartDate()?->getTimestamp() ?? 0;
     }
 
     public function forContentOnChannel(Content $content, ChannelInterface $channel): array

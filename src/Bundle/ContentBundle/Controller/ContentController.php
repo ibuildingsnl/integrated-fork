@@ -1204,6 +1204,10 @@ class ContentController extends AbstractController
      */
     private function getPublications(Content $content): array
     {
+        if (!$content->getId()) {
+            return [];
+        }
+
         /** @var list<Publication> $publications */
         $publications = $this->documentManager->getRepository(Publication::class)->findBy(['content' => $content]);
 
