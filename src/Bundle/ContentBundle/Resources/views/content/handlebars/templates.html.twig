@@ -111,7 +111,7 @@
 <script id="add-template" type="text/xhandlebars-template">
     {{#if relations}}
         {{#equals relations.length 1}}
-        <a data-title="Add {{relations.0.name}}" class="btn btn-default add-relation" style="font-size: 13px;" href="{{relations.0.href}}" target="_blank" data-modal="add-modal">
+        <a data-title="Add {{relations.0.name}}" class="btn btn-default add-relation" style="font-size: 13px;" data-href="{{relations.0.href}}" data-modal="add-modal">
             Add
         </a>
         {{else}}
@@ -122,7 +122,7 @@
             <ul class="dropdown-menu" role="menu">
                 {{#each relations}}
                 <li>
-                    <a data-title="Add {{this.name}}" href="{{this.href}}" target="_blank" data-modal="add-modal">
+                    <a data-title="Add {{this.name}}" data-href="{{this.href}}" data-modal="add-modal">
                         {{this.name}}
                     </a>
                 </li>

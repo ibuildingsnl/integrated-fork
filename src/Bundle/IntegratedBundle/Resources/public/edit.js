@@ -14599,6 +14599,10 @@ $('.relations').on('click', '[data-modal]', function (e) {
   var iFrame = modal.find('iframe');
   var parent = modal.parent()[0];
   var modalEl = modal[0];
+  var href = $(this).data('href') || $(this).attr('href');
+  if (!href) {
+    return;
+  }
   modal.find('.modal-title').text($(this).data('title'));
   modal.detach();
   $('body').append(modal);
@@ -14612,19 +14616,21 @@ $('.relations').on('click', '[data-modal]', function (e) {
       attributes: true
     });
   }
-  iFrame.css('display', 'block').attr('src', $(this).data('href')).on('load', function () {
+  modal.addClass('close-outside show relation-modal-loading');
+  $('#dropdown_overlay').removeClass('hide');
+  iFrame.hide().off('load.relation').on('load.relation', function () {
+    modal.removeClass('relation-modal-loading');
     iFrame.show();
     window.popupShown = true;
-    modal.addClass('close-outside show');
-    $('#dropdown_overlay').removeClass('hide');
     iFrame.contents().find('*[data-dismiss="modal"]').click(function (ev) {
       return ev.preventDefault();
     });
-    iFrame.unbind('load');
+    iFrame.off('load.relation');
   });
+  iFrame.attr('src', href);
 });
 $('button[data-dismiss="modal"]').on('click', function () {
-  $(this).closest('#relation-add-modal').removeClass('show');
+  $(this).closest('#relation-add-modal').removeClass('show relation-modal-loading');
   $('#dropdown_overlay').addClass('hide');
 });
 

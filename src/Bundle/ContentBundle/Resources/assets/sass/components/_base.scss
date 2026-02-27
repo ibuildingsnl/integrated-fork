@@ -189,6 +189,7 @@ body {
                     font-size: .8rem;
                     text-transform: uppercase;
                     color: rgba(0, 0, 0, .5);
+                    text-transform: none;
                 }
             }
         }
@@ -427,6 +428,7 @@ body.hide-options {
                 font-size: 13px;
                 color: #1b3149;
                 cursor: pointer;
+                text-transform: none;
             }
 
             i {
