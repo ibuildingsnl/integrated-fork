@@ -133,11 +133,7 @@ class BulkActionRelationType extends AbstractType
         return $choices;
     }
 
-    /**
-     * @param mixed $submittedReferences
-     *
-     * @return array<string, string>
-     */
+    /** @return array<string, string> */
     private function buildSubmittedChoices(mixed $submittedReferences): array
     {
         if (!\is_array($submittedReferences)) {

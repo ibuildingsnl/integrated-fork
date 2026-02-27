@@ -1,0 +1,68 @@
+<div id="content-publications-section">
+    <div class="aside-item-wrapper publications">
+        <div class="aside-item-header">
+            <h3 class="aside-item-title">
+                <i class="iconoir-share-android"></i>
+                <span class="aside-item-icon">{% trans %}Publications{% endtrans %}
+                    <span class="pub-count">({{ publications|default([])|length }})</span>
+                </span>
+            </h3>
+            <i class="iconoir-nav-arrow-up"></i>
+        </div>
+        <div class="aside-item-list">
+            <div class="aside-item-list-container">
+                <div class="publication-list">
+                    {% if publications is defined and publications is not empty %}
+                        {% for publication in publications %}
+                            {% set pubChannel = publication.getChannel %}
+                            {% if pubChannel.getType is defined and pubChannel.getType is not null %}
+                                {% set brandName = pubChannel|integrated_brand_profile.name|default('Unknown') %}
+                                {% set pubIcon = pubChannel.getType.getIcon %}
+                                {% set pubState = 'published' %}
+                                {% if ('now'|date('U') < publication.getTime.getStartDate|date('U')) %}
+                                    {% set pubState = 'planned' %}
+                                {% endif %}
+                                {% if publication.getStatus() == 'failed' %}
+                                    {% set pubState = 'failed' %}
+                                {% elseif publication.getStatus() == 'success' %}
+                                    {% set pubState = 'published no-edit' %}
+                                {% endif %}
+                                <a class="publication-item {{ pubState }}"
+                                   data-id="{{ publication.getId }}"
+                                   {% if publication.getStatus() != 'success' %}data-channel="{{ publication.getChannel.getId }}"{% endif %}
+                                   {% if publication.getStatus() == 'success' %}data-publication-status="success"{% endif %}>
+                                    <div class="publication-wrap">
+                                        <div class="publication-item-heading">
+                                            <div class="heading-left">
+                                                <i class="icon iconoir-{{ pubIcon }}"
+                                                   title="{{ pubChannel.getType.getName }}"></i>
+                                                <span class="publish-time">{{ publication.getTime.getStartDate|default(content.publishTime.startDate)|date('d-m-Y H:i') }}</span>
+                                            </div>
+                                            <div class="heading-right">
+                                                {% if publication.getStatus() == 'success' %}
+                                                    <i class="icon iconoir-check" title="Published to Channel"></i>
+                                                {% else %}
+                                                    <i class="icon iconoir-xmark" title="remove"
+                                                       data-channel="{{ publication.getChannel.getId }}"></i>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="publication-item-content">
+                                            <b>{{ brandName }} {{ pubChannel.getType.getName }}</b><br>
+                                        </div>
+                                        {% if publication.getStatus() == 'failed' %}
+                                            <div class="publication-error">
+                                                {{ publication.getResponse()|default('') }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <p class="publication-info">{% trans %}Removing a published Social Media publication will not remove it from the respected platform. Removing a planned (purple) publication will stop it from publishing to that Social Media Channel{% endtrans %}</p>
+            </div>
+        </div>
+    </div>
+</div>

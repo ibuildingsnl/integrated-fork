@@ -16,6 +16,7 @@ use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
+use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
@@ -541,6 +542,7 @@ class ContentController extends AbstractController
                         'content' => $content,
                         'locking' => $locking,
                         'form' => $form->createView(),
+                        'publications' => $this->getPublications($content),
                     ]);
 
                     return new Response($content, Response::HTTP_OK, ['Content-Type' => 'text/vnd.turbo-stream.html; charset=UTF-8']);
@@ -600,6 +602,7 @@ class ContentController extends AbstractController
             'formRelations' => $this->getFormRelations($form),
             'content' => $content,
             'locking' => $locking,
+            'publications' => $this->getPublications($content),
             'showContentHistory' => true,
             'references' => json_encode($this->getReferences($content)),
         ]);
@@ -1194,6 +1197,17 @@ class ContentController extends AbstractController
         $text = method_exists($user, 'getUserIdentifier') ? (string) $user->getUserIdentifier() : '';
 
         return $text;
+    }
+
+    /**
+     * @return list<Publication>
+     */
+    private function getPublications(Content $content): array
+    {
+        /** @var list<Publication> $publications */
+        $publications = $this->documentManager->getRepository(Publication::class)->findBy(['content' => $content]);
+
+        return $publications;
     }
 
     private function findContentByIdentifier(string $id): ?Content
