@@ -149,7 +149,7 @@ The <info>%command.name%</info> command starts a indexer run.
             });
 
             if (!$process->isSuccessful()) {
-                break; // terminate when there is a error
+                return self::FAILURE; // terminate when there is a error
             }
 
             if (!$input->getOption('daemon')) {
