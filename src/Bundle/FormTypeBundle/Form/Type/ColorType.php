@@ -34,6 +34,7 @@ class ColorType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $this->manager->add('bundles/integratedintegrated/pickr.css');
         $builder->addViewTransformer(new ColorTransformer());
     }
 

@@ -12338,20 +12338,20 @@ pre#editor {
   }
 }
 
-.input-group.coloris {
+.input-group.pickr-field {
   width: 100%;
 }
 
-.input-group.coloris input[type=text] {
+.input-group.pickr-field input[type=text] {
   width: 100%;
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 .pcr-app {
-  z-index: 1100;
+  z-index: 10010;
 }
 
-.aside-item-wrapper .input-group.coloris input[type=text] {
+.aside-item-wrapper .input-group.pickr-field input[type=text] {
   min-height: 33px;
 }
 
