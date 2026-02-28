@@ -136,8 +136,8 @@
                     {% set editLink = path('integrated_content_content_edit', {id: content.type_id}) %}
                 {% endif %}
                 {% set type = contentTypes|filter(t => t.id == content.type_name)|first %}
-
-                {% set document = integrated_document(content) %}
+                {% set brandNames = content.facet_brands|default([]) %}
+                {% set visibleBrandNames = brandNames|slice(0, 3) %}
 
                 {% if content.pub_active and ('now'|date('U') > content.pub_time |date('U')) %}
                     {% set calendarState = 'published' %}
@@ -147,62 +147,40 @@
                     {% set calendarState = 'concept' %}
                 {% endif %}
 
-                {% if document.channels is defined and document.channels is not null %}
-                {% set groupedChannels = {} %}
+                <a class="calendar-item {{ calendarState }}" href="{{ editLink }}" target="_blank" data-turbo-frame="_top"
+                   data-id="{{ content.type_id }}" data-type="{{ type }}" data-brands="{{ brandNames|join(', ')|default('') }}"
+                   data-premium="{% if content.premium|default(false) %}true{% else %}false{% endif %}"
+                   data-title="Edit {{ type }}" data-time="{{ date(content.pub_time)|date('Hi') }}">
+                    <div class="calendar-wrap" style="--color: {{ type.options.color|default('gray') }}">
+                        <div class="calendar-item-heading">
+                            <div class="heading-left">
+                                <i class="icon iconoir-{{ type.options.icon|default('empty-page') }}" title="{{ type }}"></i>
+                                <span class="publish-time">{{ date(content.pub_time)|date('H:i') }}</span>
 
-                {% for channel in document.channels %}
-                    {% set brandName = channel|integrated_brand_profile.name|default('Unknown') %}
-
-                    {% if brandName not in groupedChannels %}
-                        {% set groupedChannels = groupedChannels|merge({(brandName): []}) %}
-                    {% endif %}
-
-                    {% set groupedChannels = groupedChannels|merge({(brandName): groupedChannels[brandName]|merge([channel])}) %}
-                {% endfor %}
-                    <a class="calendar-item {{ calendarState }}" href="{{ editLink }}" target="_blank" data-turbo-frame="_top"
-                       data-id="{{ content.type_id }}" data-type="{{ type }}" data-brands="{{ groupedChannels|keys|join(', ')|default('') }}"
-                       data-premium="{% if document.premium %}true{% endif %}"
-                       data-title="Edit {{ type }}" data-time="{{ date(content.pub_time)|date('Hi') }}">
-                        <div class="calendar-wrap" style="--color: {{ type.options.color|default('gray') }}">
-                            <div class="calendar-item-heading">
-                                <div class="heading-left">
-                                    <i class="icon iconoir-{{ type.options.icon|default('empty-page') }}" title="{{ type }}"></i>
-                                    <span class="publish-time">{{ date(content.pub_time)|date('H:i') }}</span>
-
-                                    <div
-                                        class="favicon-wrapper {% if groupedChannels|length > 3 %}hover-popout{% endif %}">
-                                        {% if groupedChannels|length > 3 %}
-                                            <span class="channel-popout" style="--color:#01ae93">3+</span>
-                                        {% endif %}
-                                        <div
-                                            class="channel-favicons {% if groupedChannels|length > 3 %}popout{% endif %}">
-                                            {% for brandName, channels in groupedChannels %}
-                                                {% for channel in channels %}
-                                                    {% if channel|integrated_brand_profile.favicon.file is defined %}
-                                                        <div class="channel-favicon" style="background-image:url('{{ image(channel|integrated_brand_profile.favicon.file).cropResize(36, 36) }}')"
-                                                             title="{{ channel|integrated_brand_profile.name|default('') }}">
-                                                        </div>
-                                                    {% else %}
-                                                        <div class="channel-favicon font-bold"
-                                                             title="{{ channel|integrated_brand_profile.name|default('') }}" style="background-color: {{ channel|integrated_brand_profile.color|default('gray') }}">
-                                                            {{ channel|integrated_brand_profile.name|default('')|first }}
-                                                        </div>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            {% endfor %}
-                                        </div>
+                                <div class="favicon-wrapper {% if brandNames|length > 3 %}hover-popout{% endif %}">
+                                    {% if brandNames|length > 3 %}
+                                        <span class="channel-popout" style="--color:#01ae93">3+</span>
+                                    {% endif %}
+                                    <div class="channel-favicons {% if brandNames|length > 3 %}popout{% endif %}">
+                                        {% for brandName in visibleBrandNames %}
+                                            <div class="channel-favicon font-bold"
+                                                 title="{{ brandName }}"
+                                                 style="background-color: {{ type.options.color|default('gray') }}">
+                                                {{ brandName|first|upper }}
+                                            </div>
+                                        {% endfor %}
                                     </div>
                                 </div>
-                                <div class="heading-right">
-
-                                </div>
                             </div>
-                            <div class="calendar-item-content">
-                                {{ content.title|default('untitled') }}
+                            <div class="heading-right">
+
                             </div>
                         </div>
-                    </a>
-                {% endif %}
+                        <div class="calendar-item-content">
+                            {{ content.title|default('untitled') }}
+                        </div>
+                    </div>
+                </a>
                 {% endfor %}
                 {% if prev_day < 6 %}
                 {% for i in range(prev_day + 1, 6) %}
