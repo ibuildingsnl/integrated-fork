@@ -518,6 +518,7 @@ body.hide-options {
         border-top: 1px solid $border-color;
         background-color: white;
         position: relative;
+        width:100%;
 
         &.show {
             .aside-item-header {
@@ -771,9 +772,9 @@ ul {
         button {
             border-radius: 0 8px 8px 0;
             display: flex;
-            height: 52px;
+            height: 32px;
             justify-content: center;
-            width: 52px;
+            width: 32px;
             align-items: center;
             font-size: 15px;
         }

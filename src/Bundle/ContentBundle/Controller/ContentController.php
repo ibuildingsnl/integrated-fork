@@ -57,7 +57,9 @@ use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -706,40 +708,55 @@ class ContentController extends AbstractController
             // this is not rest compatible since a button click is required to save
             if ($submittedAction === 'delete') {
                 if ($form->isValid()) {
-                    // higher priority for content edited in Integrated
-                    $queue = $this->queueSubscriber->getQueue();
-                    $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
+                    $removeReferences = $form->has('removeReferences') && (bool) $form->get('removeReferences')->getData();
 
-                    if ($this->dispatcher->hasListeners(Events::CONTENT_DELETED)) {
-                        $this->dispatcher->dispatch(
-                            new ContentDeletedEvent($content),
-                            Events::CONTENT_DELETED
-                        );
+                    if (\count($referenced) > 0 && !$removeReferences) {
+                        $form->addError(new FormError('This item is still in use. Enable "Remove references before deletion" to unlink it.'));
+                    } else {
+                        if ($removeReferences) {
+                            $this->removeContentReferences($content);
+                            $referenced = $this->contentReferenced->getReferenced($content);
+                        }
+
+                        if (\count($referenced) > 0) {
+                            $form->addError(new FormError('This item is still in use and cannot be deleted automatically. Remove remaining references manually.'));
+                        } else {
+                            // higher priority for content edited in Integrated
+                            $queue = $this->queueSubscriber->getQueue();
+                            $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
+
+                            if ($this->dispatcher->hasListeners(Events::CONTENT_DELETED)) {
+                                $this->dispatcher->dispatch(
+                                    new ContentDeletedEvent($content),
+                                    Events::CONTENT_DELETED
+                                );
+                            }
+
+                            $this->documentManager->remove($content);
+                            $this->documentManager->flush();
+
+                            // Set flash message
+                            $this->addFlash(
+                                'success',
+                                $this->getTranslator()->trans(
+                                    'The document %name% has been deleted',
+                                    ['%name%' => $type->getName()]
+                                )
+                            );
+
+                            if ($this->indexer instanceof Configurable) {
+                                $this->indexer->setOption('queue.size', 2);
+                            }
+
+                            $this->indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
+
+                            if (!$locking['locked']) {
+                                $locking['release']();
+                            }
+
+                            return $this->redirectToRoute('integrated_content_content_index', ['remember' => 1]);
+                        }
                     }
-
-                    $this->documentManager->remove($content);
-                    $this->documentManager->flush();
-
-                    // Set flash message
-                    $this->addFlash(
-                        'success',
-                        $this->getTranslator()->trans(
-                            'The document %name% has been deleted',
-                            ['%name%' => $type->getName()]
-                        )
-                    );
-
-                    if ($this->indexer instanceof Configurable) {
-                        $this->indexer->setOption('queue.size', 2);
-                    }
-
-                    $this->indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
-
-                    if (!$locking['locked']) {
-                        $locking['release']();
-                    }
-
-                    return $this->redirectToRoute('integrated_content_content_index', ['remember' => 1]);
                 }
             }
         }
@@ -1673,12 +1690,43 @@ class ContentController extends AbstractController
             'method' => 'DELETE',
         ]);
 
+        if ($notDelete && !$locking['locked']) {
+            $form->add('removeReferences', CheckboxType::class, [
+                'mapped' => false,
+                'required' => false,
+                'label' => 'Remove references before deletion',
+                'help' => 'Unlink this content from related items before deleting it.',
+                'attr' => [
+                    'align_with_widget' => true,
+                ],
+            ]);
+        }
+
         // load a different set of buttons based on the locking state
-        if ($locking['locked'] || $notDelete) {
+        if ($locking['locked']) {
             return $form->add('actions', ActionsType::class, ['buttons' => ['reload', 'cancel']]);
         }
 
         return $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
+    }
+
+    private function removeContentReferences(Content $content): void
+    {
+        $contentId = $content->getId();
+
+        $this->documentManager->createQueryBuilder(Content::class)
+            ->updateMany()
+            ->field('relations.references.$id')->equals($contentId)
+            ->field('relations.$.references')->pull(['$id' => $contentId])
+            ->getQuery()
+            ->execute();
+
+        $this->documentManager->createQueryBuilder(Content::class)
+            ->updateMany()
+            ->field('featuredImage.$id')->equals($contentId)
+            ->field('featuredImage')->unsetField()
+            ->getQuery()
+            ->execute();
     }
 
     protected function getReferences(ContentInterface $content): array

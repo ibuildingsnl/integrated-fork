@@ -331,6 +331,57 @@ class ContentLockControllerTest extends TestCase
         self::assertStringContainsString('lock=lock-id', $form->getConfig()->getAction());
     }
 
+    public function testCreateDeleteFormWithReferencesAddsRemoveReferencesToggleAndDeleteAction(): void
+    {
+        $content = (new Article())->setId('content-id');
+        $controller = $this->createController(
+            $this->createDocumentManager(static fn (string $id): ?Content => null),
+            $this->createMock(Manager::class),
+            $this->createUserManager(),
+            $this->createUser('alice@example.test')
+        );
+
+        $form = $controller->createDeleteFormForTest($content, [
+            'lock' => null,
+            'user' => null,
+            'owner' => false,
+            'new' => false,
+            'pending' => false,
+            'locked' => false,
+            'release' => static function (): void {
+            },
+        ], true);
+
+        self::assertTrue($form->has('removeReferences'));
+        self::assertTrue($form->get('actions')->has('delete'));
+        self::assertTrue($form->get('actions')->has('cancel'));
+        self::assertFalse($form->get('actions')->has('reload'));
+    }
+
+    public function testCreateDeleteFormWithoutReferencesDoesNotExposeRemoveReferencesToggle(): void
+    {
+        $content = (new Article())->setId('content-id');
+        $controller = $this->createController(
+            $this->createDocumentManager(static fn (string $id): ?Content => null),
+            $this->createMock(Manager::class),
+            $this->createUserManager(),
+            $this->createUser('alice@example.test')
+        );
+
+        $form = $controller->createDeleteFormForTest($content, [
+            'lock' => null,
+            'user' => null,
+            'owner' => false,
+            'new' => false,
+            'pending' => false,
+            'locked' => false,
+            'release' => static function (): void {
+            },
+        ], false);
+
+        self::assertFalse($form->has('removeReferences'));
+    }
+
     /** @return array<string, mixed> */
     private function decodeResponse(Response $response): array
     {

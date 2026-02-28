@@ -131,11 +131,14 @@ body {
             .editor:not(.editor-wrapped) {
                 .form-item, .editor-item-wrapper {
                     margin-bottom: 2rem;
-                    //border-radius: 15px;
-                    border: 0;
+                    border-radius: 15px;
                     @include media(max-sm) {
                         margin-bottom: 1rem;
                     }
+                }
+                .editor-item-wrapper {
+                    border: 1px solid #dbe4ec;
+                    box-shadow: 0 2px 10px rgba(31, 52, 73, 0.05);
                 }
 
                 .form-item {

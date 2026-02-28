@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Form\Type\ContentType\FieldsType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\ColorType;
 use Integrated\Common\Form\Mapping\MetadataInterface;
@@ -74,6 +75,16 @@ class ContentTypeFormType extends AbstractType
             'required' => false,
             'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show', 'icon' => 'link'],
         ]);
+
+        if ($metadata->isTypeOf(Taxonomy::class)) {
+            $builder->add('options_enforce_parent', CheckboxSwitcherType::class, [
+                'label' => 'Enforce parent',
+                'property_path' => 'options[enforce_parent]',
+                'required' => false,
+                'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show', 'icon' => 'tree'],
+            ]);
+        }
+
         foreach ($metadata->getOptions() as $option) {
             $ype = $builder->create(
                 'options_'.$option->getName(),
