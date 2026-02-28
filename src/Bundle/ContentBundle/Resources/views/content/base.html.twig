@@ -30,7 +30,7 @@
                                     <i class="iconoir-list"></i>
                                 </a>
                                 <a class="button_calendar_view toggle_view calendar switcher btn btn-select {% if pageClass == 'calendar' %}active{% endif %}"
-                                   href="{{ path('integrated_content_content_index', queryParams|merge({view: 'week', page: 1, limit: 10000})) }}">
+                                   href="{{ path('integrated_content_content_index', queryParams|merge({view: 'week', page: 1, limit: 100})) }}">
                                     <span>{% trans %}Calendar{% endtrans %}</span>
                                     <i class="iconoir-calendar"></i>
                                 </a>

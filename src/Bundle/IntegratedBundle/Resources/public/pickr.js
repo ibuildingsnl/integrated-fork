@@ -13,10 +13,10 @@
 
 /***/ },
 
-/***/ "./node_modules/@simonwep/pickr/dist/themes/classic.min.css"
-/*!******************************************************************!*\
-  !*** ./node_modules/@simonwep/pickr/dist/themes/classic.min.css ***!
-  \******************************************************************/
+/***/ "./node_modules/@simonwep/pickr/dist/themes/nano.min.css"
+/*!***************************************************************!*\
+  !*** ./node_modules/@simonwep/pickr/dist/themes/nano.min.css ***!
+  \***************************************************************/
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -110,7 +110,7 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _simonwep_pickr__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @simonwep/pickr */ "./node_modules/@simonwep/pickr/dist/pickr.min.js");
 /* harmony import */ var _simonwep_pickr__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_simonwep_pickr__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _simonwep_pickr_dist_themes_classic_min_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @simonwep/pickr/dist/themes/classic.min.css */ "./node_modules/@simonwep/pickr/dist/themes/classic.min.css");
+/* harmony import */ var _simonwep_pickr_dist_themes_nano_min_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @simonwep/pickr/dist/themes/nano.min.css */ "./node_modules/@simonwep/pickr/dist/themes/nano.min.css");
 
 
 function applyInputColorPreview(input, color) {
@@ -207,7 +207,7 @@ function initializePickr() {
     }
     var pickr = _simonwep_pickr__WEBPACK_IMPORTED_MODULE_0___default().create({
       el: input,
-      theme: 'classic',
+      theme: 'nano',
       useAsButton: true,
       "default": input.value || '#335767',
       defaultRepresentation: 'HEXA',

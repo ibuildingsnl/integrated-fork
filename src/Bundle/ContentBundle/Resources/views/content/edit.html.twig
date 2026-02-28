@@ -935,14 +935,25 @@
                 return;
             }
 
-            if (streamElement.getAttribute('target') !== 'content-workflow-section') {
+            var streamTarget = streamElement.getAttribute('target');
+            if (streamTarget !== 'content-workflow-section' && streamTarget !== 'content-publications-section') {
                 return;
             }
 
             var defaultRender = event.detail.render;
             event.detail.render = function(stream) {
                 defaultRender(stream);
-                scheduleWorkflowInit();
+                if (streamTarget === 'content-workflow-section') {
+                    scheduleWorkflowInit();
+                }
+
+                if (streamTarget === 'content-publications-section') {
+                    if (typeof window.schedulePublicationSettingsInit === 'function') {
+                        window.schedulePublicationSettingsInit();
+                    } else {
+                        window.dispatchEvent(new CustomEvent('updatePublicationItems'));
+                    }
+                }
             };
         });
     })();
@@ -1006,7 +1017,7 @@
 {% endif %}
 {% if editable %}
     <script>
-        var formInvalid = {{ form.vars.valid ? '0' : '1' }};
+        var formInvalid = {{ (form.vars.submitted|default(false) and not form.vars.valid) ? '1' : '0' }};
     </script>
 {% endif %}
 

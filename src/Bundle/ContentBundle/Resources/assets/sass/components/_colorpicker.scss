@@ -11,6 +11,17 @@
     z-index: 10010;
 }
 
+.pcr-app[data-theme='nano'] {
+    width: 250px;
+    max-width: 95vw;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.pcr-app .pcr-interaction input {
+    border-radius: 4px !important;
+}
+
 .aside-item-wrapper .input-group.pickr-field input[type='text'] {
     min-height: 33px;
 }

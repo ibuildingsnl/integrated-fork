@@ -1,5 +1,5 @@
 import Pickr from '@simonwep/pickr';
-import '@simonwep/pickr/dist/themes/classic.min.css';
+import '@simonwep/pickr/dist/themes/nano.min.css';
 
 function applyInputColorPreview(input, color) {
     if (!color) {
@@ -108,7 +108,7 @@ function initializePickr(root = document) {
 
         const pickr = Pickr.create({
             el: input,
-            theme: 'classic',
+            theme: 'nano',
             useAsButton: true,
             default: input.value || '#335767',
             defaultRepresentation: 'HEXA',

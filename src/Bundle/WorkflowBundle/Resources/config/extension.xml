@@ -21,6 +21,7 @@
             <argument type="service" id="router.default" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
             <argument>%integrated_workflow_email%</argument>
+            <argument type="service" id="request_stack" />
         </service>
 
         <service id="integrated_workflow.extension" class="Integrated\Bundle\WorkflowBundle\Extension\WorkflowExtension">

@@ -71,4 +71,22 @@ class ContentEditLockFlowTest extends TestCase
         $this->assertStringContainsString("csrf_token('integrated_content_lock_' ~ content.id)", $template);
         $this->assertStringContainsString("requestBody.set('_token', LOCK_CSRF_TOKEN);", $template);
     }
+
+    public function testEditTemplatesOnlyFlagFormInvalidAfterSubmittedInvalidPost(): void
+    {
+        $editTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/edit.html.twig');
+        $iframeTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/edit.iframe.html.twig');
+
+        $this->assertIsString($editTemplate);
+        $this->assertIsString($iframeTemplate);
+
+        $this->assertStringContainsString(
+            "var formInvalid = {{ (form.vars.submitted|default(false) and not form.vars.valid) ? '1' : '0' }};",
+            $editTemplate
+        );
+        $this->assertStringContainsString(
+            "var formInvalid = {{ (form.vars.submitted|default(false) and not form.vars.valid) ? '1' : '0' }};",
+            $iframeTemplate
+        );
+    }
 }

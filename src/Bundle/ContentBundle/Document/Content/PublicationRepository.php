@@ -7,6 +7,8 @@ use Integrated\Common\Content\Channel\ChannelInterface;
 
 class PublicationRepository extends DocumentRepository implements PublicationRepositoryInterface
 {
+    private const MAX_DATE_RANGE_RESULTS = 200;
+
     public function forContent(Content $content): array
     {
         $contentId = $content->getId();
@@ -26,6 +28,8 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
             ->setRewindable(false)
             ->field('time.startDate')->gte($startDate)
             ->field('time.startDate')->lte($endDate)
+            ->sort('time.startDate', 'asc')
+            ->limit(self::MAX_DATE_RANGE_RESULTS)
             ->getQuery()
             ->getIterator();
     }

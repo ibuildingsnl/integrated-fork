@@ -14,6 +14,7 @@ use Integrated\Common\Content\PublishTimeInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 
 class ContentPublicationIntegrationListener implements EventSubscriberInterface
 {
@@ -68,8 +69,17 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
             $contentId = $content->getId();
             $hasPersistedIdentifier = \is_string($contentId) && '' !== $contentId;
             $existingPublications = $hasPersistedIdentifier ? $this->publications->forContent($content) : [];
+            $submittedForm = $event->getForm();
 
-            $form = $event->getForm()->get('publications');
+            if ($hasPersistedIdentifier && !$this->isPublishableAfterSubmit($submittedForm, $content)) {
+                foreach ($existingPublications as $publicationToRemove) {
+                    $this->publications->remove($publicationToRemove);
+                }
+
+                return;
+            }
+
+            $form = $submittedForm->get('publications');
             foreach ($content->getChannels() as $channel) {
                 $data = $form->get($channel->getId())->get('settings')->getData();
                 $time = $content->getPublishTime();
@@ -145,6 +155,29 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                 }
             }
         });
+    }
+
+    private function isPublishableAfterSubmit(FormInterface $form, Content $content): bool
+    {
+        if (!$form->has('extension_workflow')) {
+            return $content->isPublished(false);
+        }
+
+        $workflowForm = $form->get('extension_workflow');
+        if ($workflowForm->has('state')) {
+            $workflowState = $workflowForm->get('state')->getData();
+
+            if (\is_object($workflowState) && method_exists($workflowState, 'isPublishable')) {
+                return (bool) $workflowState->isPublishable();
+            }
+        }
+
+        $workflowData = $workflowForm->getData();
+        if (\is_array($workflowData) && isset($workflowData['state']) && \is_object($workflowData['state']) && method_exists($workflowData['state'], 'isPublishable')) {
+            return (bool) $workflowData['state']->isPublishable();
+        }
+
+        return $content->isPublished(false);
     }
 
     /**

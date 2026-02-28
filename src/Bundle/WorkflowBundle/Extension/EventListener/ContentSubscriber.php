@@ -37,8 +37,10 @@ use Integrated\Common\Workflow\Events as WorkflowEvents;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Acl\Util\ClassUtils;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ContentSubscriber implements ContentSubscriberInterface
@@ -59,6 +61,7 @@ class ContentSubscriber implements ContentSubscriberInterface
         private readonly RouterInterface $router,
         private readonly ThemeManager $themeManager,
         private readonly string $fromEmail,
+        private readonly RequestStack $requestStack,
     ) {
     }
 
@@ -82,21 +85,50 @@ class ContentSubscriber implements ContentSubscriberInterface
             return;
         }
 
+        if (!$this->shouldResolveReadState()) {
+            $event->setData(null);
+
+            return;
+        }
+
         // check if there is a workflow state for this item else just set
         // everything to empty.
 
         $data = null;
 
-        if ($state = $this->getState($content)) {
+        if ($state = $this->getStateData($content)) {
             $data = [
                 'comment' => '',
-                'state' => $state->getState(),
-                'assigned' => $state->getAssignedType() == 'user' ? $state->getAssignedId() : null,
-                'deadline' => $state->getDeadline(),
+                'state' => $state['state'],
+                'assigned' => $state['assigned'],
+                'deadline' => $state['deadline'],
             ];
         }
 
         $event->setData($data);
+    }
+
+    private function shouldResolveReadState(): bool
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if (null === $request) {
+            return false;
+        }
+
+        $route = $request->attributes->get('_route');
+        if (!\is_string($route) || '' === $route) {
+            return false;
+        }
+
+        if (str_starts_with($route, 'integrated_content_content_edit')) {
+            return true;
+        }
+
+        return \in_array($route, [
+            'integrated_content_content_new',
+            'integrated_content_content_delete',
+            'integrated_content_content_show',
+        ], true);
     }
 
     public function preUpdate(ContentEvent $event)
@@ -299,6 +331,73 @@ class ContentSubscriber implements ContentSubscriberInterface
         }
 
         return null;
+    }
+
+    /**
+     * Lightweight read path to avoid hydrating thousands of Workflow\State ORM entities.
+     *
+     * @return array{state: Definition\State, assigned: string|null, deadline: \DateTimeInterface|null}|null
+     */
+    protected function getStateData(ContentInterface $content): ?array
+    {
+        if (!method_exists($content, 'getId')) {
+            return null;
+        }
+
+        $contentId = $content->getId();
+        if (!\is_scalar($contentId) || '' === (string) $contentId) {
+            return null;
+        }
+
+        $cacheKey = ClassUtils::getRealClass($content).'#'.(string) $contentId;
+        static $cache = [];
+
+        if (\array_key_exists($cacheKey, $cache)) {
+            return $cache[$cacheKey];
+        }
+
+        $row = $this->entityManager->getConnection()->fetchAssociative(
+            'SELECT state_id, assigned_id, assigned_class, deadline FROM workflow_states WHERE content_id = :content_id AND content_class = :content_class LIMIT 1',
+            [
+                'content_id' => (string) $contentId,
+                'content_class' => ClassUtils::getRealClass($content),
+            ]
+        );
+
+        if (!\is_array($row) || !isset($row['state_id']) || null === $row['state_id']) {
+            return $cache[$cacheKey] = null;
+        }
+
+        $stateId = (string) $row['state_id'];
+        if ('' === $stateId) {
+            return $cache[$cacheKey] = null;
+        }
+
+        $state = $this->entityManager->getRepository(Definition\State::class)->find($stateId);
+        if (!$state instanceof Definition\State) {
+            return $cache[$cacheKey] = null;
+        }
+
+        $assigned = null;
+        $assignedClass = isset($row['assigned_class']) && \is_string($row['assigned_class']) ? $row['assigned_class'] : null;
+        if ($assignedClass && \is_a($assignedClass, User::class, true)) {
+            $assigned = isset($row['assigned_id']) && null !== $row['assigned_id'] ? (string) $row['assigned_id'] : null;
+        }
+
+        $deadline = null;
+        if (isset($row['deadline']) && \is_string($row['deadline']) && '' !== $row['deadline']) {
+            try {
+                $deadline = new \DateTimeImmutable($row['deadline']);
+            } catch (\Throwable $e) {
+                $deadline = null;
+            }
+        }
+
+        return $cache[$cacheKey] = [
+            'state' => $state,
+            'assigned' => $assigned,
+            'deadline' => $deadline,
+        ];
     }
 
     protected function getUser(): ?UserInterface

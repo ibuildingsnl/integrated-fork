@@ -72,7 +72,10 @@ class ContentController extends AbstractController
     use PaginationQueryTrait;
 
     private const NAVDROPDOWNS_CACHE_NAMESPACE = 'integrated_content_fragments_navdropdowns';
+    private const ASSIGNED_STATUS_CACHE_NAMESPACE = 'integrated_content_assigned_status';
     private const CONTENT_LOCK_TIMEOUT_SECONDS = 15;
+    private const ASSIGNED_STATUS_CACHE_TTL_SECONDS = 10;
+    private const ASSIGNED_STATUS_LIMIT = 25;
 
     /**
      * @var string
@@ -180,7 +183,6 @@ class ContentController extends AbstractController
         $view = '';
         if (!empty($options['view']) && $options['view'] != 'list') {
             $request->query->set('page', 1);
-            $request->query->set('limit', 1000);
             $options = $this->calendarOptions->prepare($options);
             $view = $options['_view'] ?? '';
             unset($options['_view']);
@@ -218,11 +220,20 @@ class ContentController extends AbstractController
 
         $query = $this->queryFactory->createQuery(IntegratedContent::class, $options);
 
+        $page = $this->getPositiveIntQueryParameter($request, 'page', 1);
+        $limit = $this->getPositiveIntQueryParameter($request, 'limit', 25);
+
+        $paginationOptions = [PaginatorInterface::SORT_FIELD_PARAMETER_NAME => null];
+        if ('' !== $view) {
+            $limit = max(1, min(100, $limit));
+            $paginationOptions['maxItems'] = max(1, min(100, (int) ($options['limit'] ?? 100)));
+        }
+
         $paginator = $this->getPaginator()->paginate(
             [$client, $query->getQuery()],
-            $this->getPositiveIntQueryParameter($request, 'page', 1),
-            $this->getPositiveIntQueryParameter($request, 'limit', 25),
-            [PaginatorInterface::SORT_FIELD_PARAMETER_NAME => null]
+            $page,
+            $limit,
+            $paginationOptions
         );
 
         /** @var SearchSelectionRepository $repo */
@@ -234,7 +245,8 @@ class ContentController extends AbstractController
                 'params' => $query->getOptions(),
                 'pager' => $paginator,
                 'facets' => $paginator->getCustomParameter('result')?->getFacetSet()?->getFacets(),
-                'locks' => $this->getLocks($paginator),
+                // Calendar views do not render lock badges and lock polling there.
+                'locks' => '' === $view ? $this->getLocks($paginator) : [],
                 'relations' => $relations,
                 'selection' => $selection,
                 'isSelectionEditable' => $editableSelection,
@@ -547,6 +559,7 @@ class ContentController extends AbstractController
                         'content' => $content,
                         'locking' => $locking,
                         'form' => $form->createView(),
+                        'publications' => $this->getPublications($content),
                     ]);
 
                     return new Response($content, Response::HTTP_OK, ['Content-Type' => 'text/vnd.turbo-stream.html; charset=UTF-8']);
@@ -1093,42 +1106,53 @@ class ContentController extends AbstractController
             return new JsonResponse([], Response::HTTP_FORBIDDEN);
         }
 
-        $items = array_map(function (array $document): array {
-            $contentId = (string) ($document['type_id'] ?? '');
-            $title = (string) ($document['title'] ?? '');
+        $cache = new FilesystemAdapter(self::ASSIGNED_STATUS_CACHE_NAMESPACE);
+        $cacheItem = $cache->getItem('assigned_status_'.md5((string) $user->getId()));
 
-            $statusColor = '#f2f2f2';
-            $statusIcon = '';
+        $payload = $cacheItem->isHit() ? $cacheItem->get() : null;
+        if (!\is_array($payload) || !isset($payload['count'], $payload['items'])) {
+            $items = array_map(function (array $document): array {
+                $contentId = (string) ($document['type_id'] ?? '');
+                $title = (string) ($document['title'] ?? '');
 
-            if (isset($document['workflow_color_string'])) {
-                $colors = (array) $document['workflow_color_string'];
-                $firstColor = reset($colors);
-                if ($firstColor) {
-                    $statusColor = (string) $firstColor;
+                $statusColor = '#f2f2f2';
+                $statusIcon = '';
+
+                if (isset($document['workflow_color_string'])) {
+                    $colors = (array) $document['workflow_color_string'];
+                    $firstColor = reset($colors);
+                    if ($firstColor) {
+                        $statusColor = (string) $firstColor;
+                    }
                 }
-            }
 
-            if (isset($document['workflow_icon_string'])) {
-                $icons = (array) $document['workflow_icon_string'];
-                $firstIcon = reset($icons);
-                if ($firstIcon) {
-                    $statusIcon = (string) $firstIcon;
+                if (isset($document['workflow_icon_string'])) {
+                    $icons = (array) $document['workflow_icon_string'];
+                    $firstIcon = reset($icons);
+                    if ($firstIcon) {
+                        $statusIcon = (string) $firstIcon;
+                    }
                 }
-            }
 
-            return [
-                'id' => $contentId,
-                'title' => $title,
-                'status_color' => $statusColor,
-                'status_icon' => $statusIcon,
-                'edit_url' => $contentId !== '' ? $this->generateUrl('integrated_content_content_edit', ['id' => $contentId]) : '#',
+                return [
+                    'id' => $contentId,
+                    'title' => $title,
+                    'status_color' => $statusColor,
+                    'status_icon' => $statusIcon,
+                    'edit_url' => $contentId !== '' ? $this->generateUrl('integrated_content_content_edit', ['id' => $contentId]) : '#',
+                ];
+            }, $this->getAssignedContent());
+
+            $payload = [
+                'count' => \count($items),
+                'items' => $items,
             ];
-        }, $this->getAssignedContent());
+            $cacheItem->set($payload);
+            $cacheItem->expiresAfter(self::ASSIGNED_STATUS_CACHE_TTL_SECONDS);
+            $cache->save($cacheItem);
+        }
 
-        $response = new JsonResponse([
-            'count' => \count($items),
-            'items' => $items,
-        ]);
+        $response = new JsonResponse($payload);
 
         $response->setPrivate();
         $response->headers->addCacheControlDirective('no-store', true);
@@ -1187,6 +1211,14 @@ class ContentController extends AbstractController
         }
 
         $query = $this->getSolarium()->createSelect();
+        $query->setRows(self::ASSIGNED_STATUS_LIMIT);
+        $query->setFields([
+            'type_id',
+            'title',
+            'workflow_color_string',
+            'workflow_icon_string',
+        ]);
+        $query->setSorts(['pub_time' => 'desc']);
 
         $query
             ->createFilterQuery('pub_not_active')
