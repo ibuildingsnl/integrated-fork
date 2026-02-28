@@ -1695,9 +1695,9 @@ class ContentController extends AbstractController
                 'mapped' => false,
                 'required' => false,
                 'label' => 'Remove references before deletion',
-                'help' => 'Unlink this content from related items before deleting it.',
                 'attr' => [
                     'align_with_widget' => true,
+                    'help_text' => 'Unlink this content from related items before deleting it.',
                 ],
             ]);
         }
@@ -1712,14 +1712,49 @@ class ContentController extends AbstractController
 
     private function removeContentReferences(Content $content): void
     {
-        $contentId = $content->getId();
+        $contentId = trim((string) $content->getId());
+        if ('' === $contentId) {
+            return;
+        }
 
-        $this->documentManager->createQueryBuilder(Content::class)
-            ->updateMany()
-            ->field('relations.references.$id')->equals($contentId)
-            ->field('relations.$.references')->pull(['$id' => $contentId])
-            ->getQuery()
-            ->execute();
+        $dirty = false;
+        foreach (
+            $this->documentManager->createQueryBuilder(Content::class)
+                ->field('relations.references.$id')->equals($contentId)
+                ->getQuery()
+                ->execute() as $document
+        ) {
+            if (!$document instanceof Content) {
+                continue;
+            }
+
+            $documentDirty = false;
+            foreach ($document->getRelations() as $relation) {
+                if (!$relation instanceof \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation) {
+                    continue;
+                }
+
+                $references = $relation->getReferences();
+                $filtered = array_values(array_filter($references, static function ($reference) use ($contentId): bool {
+                    return !$reference instanceof ContentInterface
+                        || trim((string) $reference->getId()) !== $contentId;
+                }));
+
+                if (\count($filtered) !== \count($references)) {
+                    $relation->setReferences($filtered);
+                    $documentDirty = true;
+                }
+            }
+
+            if ($documentDirty) {
+                $this->documentManager->persist($document);
+                $dirty = true;
+            }
+        }
+
+        if ($dirty) {
+            $this->documentManager->flush();
+        }
 
         $this->documentManager->createQueryBuilder(Content::class)
             ->updateMany()

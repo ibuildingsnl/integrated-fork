@@ -422,7 +422,7 @@
         {% endif %}
 
         {% set class = '' %}
-        {% if align_with_widget is defined or attr.align_with_widget is defined %}
+        {% if style != 'sidebar' and (align_with_widget is defined or attr.align_with_widget is defined) %}
             {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
             {% set label_col = label_col|default(tailwind_get_label_col()) %}
             {% set class = 'w-full ' ~ widget_col %}
@@ -436,7 +436,7 @@
                 {% endif %}
             </label>
             <div class="w-full widget {{ widget_col }}">
-        {% elseif no_form_group is not defined or no_form_group == false %}
+        {% elseif style != 'sidebar' and (no_form_group is not defined or no_form_group == false) %}
             <div class="form-group w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %}">
         {% endif %}
 
@@ -493,10 +493,10 @@
 
             {{ block('form_help') }}
 
-            {% if align_with_widget is defined or attr.align_with_widget is defined %}
+            {% if style != 'sidebar' and (align_with_widget is defined or attr.align_with_widget is defined) %}
                 </div>
                 </div>
-            {% elseif no_form_group is not defined or no_form_group == false %}
+            {% elseif style != 'sidebar' and (no_form_group is not defined or no_form_group == false) %}
                 </div>
             {% endif %}
         {% endif %}

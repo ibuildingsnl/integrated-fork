@@ -18,5 +18,7 @@ class ContentDeleteReferenceCleanupFlowTest extends TestCase
         $this->assertStringContainsString('if (\count($referenced) > 0 && !$removeReferences) {', $controller);
         $this->assertStringContainsString('$this->removeContentReferences($content);', $controller);
         $this->assertStringContainsString('private function removeContentReferences(Content $content): void', $controller);
+        $this->assertStringContainsString("'help_text' => 'Unlink this content from related items before deleting it.'", $controller);
+        $this->assertStringNotContainsString("->field('relations.$.references')->pull", $controller);
     }
 }

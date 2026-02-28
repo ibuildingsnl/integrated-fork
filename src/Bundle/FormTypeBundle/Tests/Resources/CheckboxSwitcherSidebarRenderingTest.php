@@ -18,5 +18,6 @@ final class CheckboxSwitcherSidebarRenderingTest extends TestCase
         $this->assertStringContainsString('class="aside-item-wrapper {{ form.vars.name }}', $template);
         $this->assertStringContainsString('<div class="aside-item-header">', $template);
         $this->assertStringContainsString('<div class="checkbox-switcher">{{ checkboxdata|raw }}</div>', $template);
+        $this->assertStringContainsString("{% if style != 'sidebar' and (align_with_widget is defined or attr.align_with_widget is defined) %}", $template);
     }
 }
