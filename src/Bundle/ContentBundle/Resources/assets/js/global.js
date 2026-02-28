@@ -11,6 +11,7 @@ window.popupShown = false;
 const CONTENT_NAVIGATOR_OPEN_FACETS_KEY = 'contentNavigator.openFacets.v1';
 const CONTENT_NAVIGATOR_ASIDE_SCROLL_KEY = 'contentNavigator.asideScrollTop.v1';
 const FLASH_MESSAGES_PERSIST_KEY = 'integrated.flashMessages.persist.v1';
+const SIDEBAR_MENU_SCROLL_KEY = 'integrated.sidebarMenu.scrollTop.v1';
 const listSearchDebounceTimers = new WeakMap();
 
 $(document).mouseup(function(e) {
@@ -455,6 +456,36 @@ function restoreAsideScrollPosition(root = document) {
     }
 }
 
+function restoreSidebarMenuScrollPosition(root = document) {
+    const rootNode = (root && typeof root.querySelector === 'function')
+        ? root
+        : ((root && root.target && typeof root.target.querySelector === 'function') ? root.target : document);
+
+    const sidebarMenu = rootNode.querySelector('.sidebar-menu');
+    if (!sidebarMenu) {
+        return;
+    }
+
+    const stored = sessionStorage.getItem(SIDEBAR_MENU_SCROLL_KEY);
+    const scrollTop = Number.parseInt(stored || '0', 10);
+    if (!Number.isNaN(scrollTop) && scrollTop > 0) {
+        sidebarMenu.scrollTop = scrollTop;
+    }
+}
+
+function persistSidebarMenuScrollPosition(root = document) {
+    const rootNode = (root && typeof root.querySelector === 'function')
+        ? root
+        : ((root && root.target && typeof root.target.querySelector === 'function') ? root.target : document);
+
+    const sidebarMenu = rootNode.querySelector('.sidebar-menu');
+    if (!sidebarMenu) {
+        return;
+    }
+
+    sessionStorage.setItem(SIDEBAR_MENU_SCROLL_KEY, String(sidebarMenu.scrollTop));
+}
+
 function announceContentNavigatorResults(root = document) {
     const rootNode = (root && typeof root.querySelector === 'function')
         ? root
@@ -712,6 +743,7 @@ document.addEventListener('DOMContentLoaded', hideButtonIfNoOptions);
 document.addEventListener('DOMContentLoaded', init);
 document.addEventListener('DOMContentLoaded', restorePersistedFacetState);
 document.addEventListener('DOMContentLoaded', restoreAsideScrollPosition);
+document.addEventListener('DOMContentLoaded', restoreSidebarMenuScrollPosition);
 document.addEventListener('DOMContentLoaded', announceContentNavigatorResults);
 document.addEventListener('DOMContentLoaded', bindFacetPersistenceOnFilterChange);
 document.addEventListener('turbo:load', restoreFlashMessagesFromPreviousVisit);
@@ -720,12 +752,14 @@ document.addEventListener('turbo:load', hideButtonIfNoOptions);
 document.addEventListener('turbo:load', init);
 document.addEventListener('turbo:load', restorePersistedFacetState);
 document.addEventListener('turbo:load', restoreAsideScrollPosition);
+document.addEventListener('turbo:load', restoreSidebarMenuScrollPosition);
 document.addEventListener('turbo:load', announceContentNavigatorResults);
 document.addEventListener('turbo:load', bindFacetPersistenceOnFilterChange);
 document.addEventListener('turbo:render', hideButtonIfNoOptions);
 document.addEventListener('turbo:render', init);
 document.addEventListener('turbo:render', restorePersistedFacetState);
 document.addEventListener('turbo:render', restoreAsideScrollPosition);
+document.addEventListener('turbo:render', restoreSidebarMenuScrollPosition);
 document.addEventListener('turbo:render', announceContentNavigatorResults);
 document.addEventListener('turbo:render', bindFacetPersistenceOnFilterChange);
 document.addEventListener('turbo:before-frame-render', (event) => {
@@ -749,6 +783,7 @@ document.addEventListener('turbo:before-frame-render', (event) => {
 });
 document.addEventListener('turbo:submit-start', resetPopupState);
 document.addEventListener('turbo:before-render', resetPopupState);
+document.addEventListener('turbo:before-render', persistSidebarMenuScrollPosition);
 document.addEventListener('turbo:load', () => {
     if (window.registerIntegratedHandlebarsHelpers) {
         window.registerIntegratedHandlebarsHelpers();
@@ -760,6 +795,7 @@ document.addEventListener('turbo:render', () => {
     }
 });
 document.addEventListener('turbo:before-cache', () => {
+    persistSidebarMenuScrollPosition();
     clearBoundInitializationFlags();
     stashFlashMessagesForNextVisit();
 
@@ -768,3 +804,5 @@ document.addEventListener('turbo:before-cache', () => {
         flashContainer.innerHTML = '';
     }
 });
+
+window.addEventListener('beforeunload', persistSidebarMenuScrollPosition);

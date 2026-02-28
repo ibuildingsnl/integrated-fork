@@ -88,7 +88,7 @@ class RelationType extends AbstractType
                 null,
                 [
                     'attr' => [
-                        'help_text' => '<span>You can use any <a href="https://iconoir.com/" target="_blank">Iconoir</a> icon</span>',
+                        'help_text' => '<span>Browse the <a href="/admin/icons" target="_blank">icon library</a>.</span>',
                         'location' => 'sidebar',
                         'style' => 'sidebar',
                         'state' => 'show',

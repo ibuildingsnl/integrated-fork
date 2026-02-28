@@ -13849,6 +13849,7 @@ window.popupShown = false;
 var CONTENT_NAVIGATOR_OPEN_FACETS_KEY = 'contentNavigator.openFacets.v1';
 var CONTENT_NAVIGATOR_ASIDE_SCROLL_KEY = 'contentNavigator.asideScrollTop.v1';
 var FLASH_MESSAGES_PERSIST_KEY = 'integrated.flashMessages.persist.v1';
+var SIDEBAR_MENU_SCROLL_KEY = 'integrated.sidebarMenu.scrollTop.v1';
 var listSearchDebounceTimers = new WeakMap();
 $(document).mouseup(function (e) {
   if (e.button !== 0) {
@@ -14216,6 +14217,28 @@ function restoreAsideScrollPosition() {
     asideHolder.scrollTop = scrollTop;
   }
 }
+function restoreSidebarMenuScrollPosition() {
+  var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+  var rootNode = root && typeof root.querySelector === 'function' ? root : root && root.target && typeof root.target.querySelector === 'function' ? root.target : document;
+  var sidebarMenu = rootNode.querySelector('.sidebar-menu');
+  if (!sidebarMenu) {
+    return;
+  }
+  var stored = sessionStorage.getItem(SIDEBAR_MENU_SCROLL_KEY);
+  var scrollTop = Number.parseInt(stored || '0', 10);
+  if (!Number.isNaN(scrollTop) && scrollTop > 0) {
+    sidebarMenu.scrollTop = scrollTop;
+  }
+}
+function persistSidebarMenuScrollPosition() {
+  var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+  var rootNode = root && typeof root.querySelector === 'function' ? root : root && root.target && typeof root.target.querySelector === 'function' ? root.target : document;
+  var sidebarMenu = rootNode.querySelector('.sidebar-menu');
+  if (!sidebarMenu) {
+    return;
+  }
+  sessionStorage.setItem(SIDEBAR_MENU_SCROLL_KEY, String(sidebarMenu.scrollTop));
+}
 function announceContentNavigatorResults() {
   var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
   var rootNode = root && typeof root.querySelector === 'function' ? root : root && root.target && typeof root.target.querySelector === 'function' ? root.target : document;
@@ -14419,6 +14442,7 @@ document.addEventListener('DOMContentLoaded', hideButtonIfNoOptions);
 document.addEventListener('DOMContentLoaded', init);
 document.addEventListener('DOMContentLoaded', restorePersistedFacetState);
 document.addEventListener('DOMContentLoaded', restoreAsideScrollPosition);
+document.addEventListener('DOMContentLoaded', restoreSidebarMenuScrollPosition);
 document.addEventListener('DOMContentLoaded', announceContentNavigatorResults);
 document.addEventListener('DOMContentLoaded', bindFacetPersistenceOnFilterChange);
 document.addEventListener('turbo:load', restoreFlashMessagesFromPreviousVisit);
@@ -14427,12 +14451,14 @@ document.addEventListener('turbo:load', hideButtonIfNoOptions);
 document.addEventListener('turbo:load', init);
 document.addEventListener('turbo:load', restorePersistedFacetState);
 document.addEventListener('turbo:load', restoreAsideScrollPosition);
+document.addEventListener('turbo:load', restoreSidebarMenuScrollPosition);
 document.addEventListener('turbo:load', announceContentNavigatorResults);
 document.addEventListener('turbo:load', bindFacetPersistenceOnFilterChange);
 document.addEventListener('turbo:render', hideButtonIfNoOptions);
 document.addEventListener('turbo:render', init);
 document.addEventListener('turbo:render', restorePersistedFacetState);
 document.addEventListener('turbo:render', restoreAsideScrollPosition);
+document.addEventListener('turbo:render', restoreSidebarMenuScrollPosition);
 document.addEventListener('turbo:render', announceContentNavigatorResults);
 document.addEventListener('turbo:render', bindFacetPersistenceOnFilterChange);
 document.addEventListener('turbo:before-frame-render', function (event) {
@@ -14453,6 +14479,7 @@ document.addEventListener('turbo:before-frame-render', function (event) {
 });
 document.addEventListener('turbo:submit-start', resetPopupState);
 document.addEventListener('turbo:before-render', resetPopupState);
+document.addEventListener('turbo:before-render', persistSidebarMenuScrollPosition);
 document.addEventListener('turbo:load', function () {
   if (window.registerIntegratedHandlebarsHelpers) {
     window.registerIntegratedHandlebarsHelpers();
@@ -14464,6 +14491,7 @@ document.addEventListener('turbo:render', function () {
   }
 });
 document.addEventListener('turbo:before-cache', function () {
+  persistSidebarMenuScrollPosition();
   clearBoundInitializationFlags();
   stashFlashMessagesForNextVisit();
   var flashContainer = document.getElementById('flash-messages');
@@ -14471,6 +14499,7 @@ document.addEventListener('turbo:before-cache', function () {
     flashContainer.innerHTML = '';
   }
 });
+window.addEventListener('beforeunload', persistSidebarMenuScrollPosition);
 
 /***/ },
 

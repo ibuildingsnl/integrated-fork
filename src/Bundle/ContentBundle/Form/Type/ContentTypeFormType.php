@@ -139,6 +139,7 @@ class ContentTypeFormType extends AbstractType
         // @todo icon(oir) type?
         $builder->add('options_icon', TextType::class, [
             'attr' => [
+                'help_text' => '<span>Browse the <a href="/admin/icons" target="_blank">icon library</a>.</span>',
                 'location' => 'sidebar',
                 'style' => 'sidebar',
                 'icon' => 'iconoir',

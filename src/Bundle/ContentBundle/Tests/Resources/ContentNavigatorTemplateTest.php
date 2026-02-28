@@ -131,4 +131,25 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString("key not in ['q', 'page']", $template);
         $this->assertStringContainsString('hidden_query_field', $template);
     }
+
+    public function testSidebarMenuDefaultsToContentOpenState(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/menu/menu.html.twig');
+
+        $this->assertIsString($template);
+        $this->assertStringContainsString("item.name is same as('Content')", $template);
+        $this->assertStringContainsString("state = shouldOpen ? 'sidebar-sub-menu show' : 'sidebar-sub-menu'", $template);
+    }
+
+    public function testGlobalScriptPersistsSidebarMenuScrollPosition(): void
+    {
+        $script = file_get_contents(__DIR__.'/../../Resources/assets/js/global.js');
+
+        $this->assertIsString($script);
+        $this->assertStringContainsString("const SIDEBAR_MENU_SCROLL_KEY = 'integrated.sidebarMenu.scrollTop.v1';", $script);
+        $this->assertStringContainsString('function restoreSidebarMenuScrollPosition', $script);
+        $this->assertStringContainsString('function persistSidebarMenuScrollPosition', $script);
+        $this->assertStringContainsString("document.addEventListener('turbo:before-render', persistSidebarMenuScrollPosition);", $script);
+        $this->assertStringContainsString("window.addEventListener('beforeunload', persistSidebarMenuScrollPosition);", $script);
+    }
 }
