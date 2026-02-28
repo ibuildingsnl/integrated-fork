@@ -14743,6 +14743,7 @@ function initCommonUi() {
   $(".search-form .form-control").on('blur.commonUi', function () {
     $(this).closest('.nav-form-inner').removeClass('full-width');
   });
+  bindSearchFormQuerySync();
   function initSelect2ForElement($el) {
     if ($el.hasClass('select2-hidden-accessible')) {
       return;
@@ -14769,6 +14770,36 @@ function initCommonUi() {
   });
   $('button[type="submit"]').off('click.commonUi').on('click.commonUi', function () {
     // Let Turbo handle submission; button state is managed via turbo events.
+  });
+}
+function syncSearchFormWithCurrentQuery(form) {
+  if (!form || !window.URLSearchParams) {
+    return;
+  }
+  var $form = $(form);
+  $form.find('input[type="hidden"]').remove();
+  var params = new URLSearchParams(window.location.search || '');
+  params.forEach(function (value, key) {
+    if (key === 'q' || key === 'page') {
+      return;
+    }
+    $('<input>', {
+      type: 'hidden',
+      name: key,
+      value: value
+    }).appendTo($form);
+  });
+}
+function bindSearchFormQuerySync() {
+  var forms = $('form.search-form');
+  if (!forms.length) {
+    return;
+  }
+  forms.each(function () {
+    syncSearchFormWithCurrentQuery(this);
+  });
+  forms.off('submit.searchQuerySync').on('submit.searchQuerySync', function () {
+    syncSearchFormWithCurrentQuery(this);
   });
 }
 $(document).ready(initCommonUi);
@@ -14841,7 +14872,7 @@ function initTypeahead() {
     limit: Infinity,
     display: display,
     templates: {
-      suggestion: Handlebars.compile('{{#if type.suggestion }}' + '<div class="tt-suggestion-term"><div class="tt-suggestion-head">{{data}}</div></div>' + '{{/if}}' + '{{#if type.media_gallery }}' + '<div class="tt-suggestion-term">' + '<a href="{{data.url}}">Show result in media gallery: {{data.query}}</a>' + '</div>' + '{{/if}}' + '{{#if type.result }}' + '<div class="tt-suggestion-result">' + '{{#if data.open_in_media_gallery }}' + '<div class="media-preview">\\n' + '<img src="{{data.image_string}}">\\n' + '</div>' + '<div class="tt-result-wrapper"><div><a href="{{data.media_gallery_url}}">{{data.title}}</a></div>' + '{{else}}' + '<div class="tt-result-wrapper"><div><a href="{{data.url}}">{{data.title}}</a></div>' + '{{/if}}' + '<ul>' + '<li>{{data.type}}</li>' + '<li>{{data.published}}</li>' + '</ul>' + '</div></div>' + '{{/if}}')
+      suggestion: Handlebars.compile('{{#if type.suggestion }}' + '<div class="tt-suggestion-term"><div class="tt-suggestion-head">{{data}}</div></div>' + '{{/if}}' + '{{#if type.media_gallery }}' + '<div class="tt-suggestion-term">' + '<a href="{{data.url}}">Show result in media gallery: {{data.query}}</a>' + '</div>' + '{{/if}}' + '{{#if type.result }}' + '<div class="tt-suggestion-result">' + '{{#if data.open_in_media_gallery }}' + '<div class="media-preview">' + '<img src="{{data.image_string}}">' + '</div>' + '<div class="tt-result-wrapper"><div><a href="{{data.media_gallery_url}}">{{data.title}}</a></div>' + '{{else}}' + '<div class="tt-result-wrapper"><div><a href="{{data.url}}">{{data.title}}</a></div>' + '{{/if}}' + '<ul>' + '<li>{{data.type}}</li>' + '<li>{{data.published}}</li>' + '</ul>' + '</div></div>' + '{{/if}}')
     }
   });
   elm.data('typeahead-initialized', true);
@@ -14859,7 +14890,10 @@ function initTypeahead() {
     if (suggestion.type.result) {
       window.location.href = suggestion.data.url;
     } else {
-      elm.parents('form').submit();
+      var form = $(this).closest('form');
+      if (form.length) {
+        form.trigger('submit');
+      }
     }
   });
   function transform(response) {

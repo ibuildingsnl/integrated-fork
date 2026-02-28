@@ -121,4 +121,14 @@ class ContentNavigatorTemplateTest extends TestCase
             $controller
         );
     }
+
+    public function testTopbarSearchFormPreservesActiveFilterQueryParams(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/partials/block.search.html.twig');
+
+        $this->assertIsString($template);
+        $this->assertStringContainsString('app.request.query.all', $template);
+        $this->assertStringContainsString("key not in ['q', 'page']", $template);
+        $this->assertStringContainsString('hidden_query_field', $template);
+    }
 }
