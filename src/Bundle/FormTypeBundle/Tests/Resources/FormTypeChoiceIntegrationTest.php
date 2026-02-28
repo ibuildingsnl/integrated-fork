@@ -27,6 +27,8 @@ class FormTypeChoiceIntegrationTest extends TestCase
         $this->assertStringContainsString('function initIntegratedParentChoice($)', $script);
         $this->assertStringContainsString('select.integrated_content_parent_choice', $script);
         $this->assertStringContainsString("url: \$element.data('ajax-url')", $script);
+        $this->assertStringContainsString('function isTopLevelParent(item)', $script);
+        $this->assertStringContainsString('items.sort(function (left, right)', $script);
         $this->assertStringNotContainsString('function initContentChoice(', $script);
     }
 

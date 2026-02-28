@@ -21,7 +21,9 @@ final class TaxonomyControllerHardeningTest extends TestCase
         $this->assertStringContainsString('$current = $request->query->get(\'current\');', $controller);
         $this->assertStringContainsString('$currentId = \is_scalar($current) ? trim((string) $current) : \'\';', $controller);
         $this->assertStringContainsString('$form->add(\'actions\', ActionsType::class, [\'buttons\' => [$isPersisted ? \'save\' : \'create\']]);', $controller);
+        $this->assertStringContainsString('if ($wasPersisted) {', $controller);
         $this->assertStringContainsString('$params[\'current\'] = (string) $content->getId();', $controller);
+        $this->assertStringContainsString('unset($params[\'current\']);', $controller);
         $this->assertStringContainsString("'content' => \$content,", $controller);
         $this->assertStringContainsString('if ($form->isSubmitted() && $form->isValid() && $content instanceof Taxonomy) {', $controller);
         $this->assertStringNotContainsString('return $this->redirectToRoute(\'integrated_content_content_index\');', $controller);

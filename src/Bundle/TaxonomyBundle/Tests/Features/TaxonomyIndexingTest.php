@@ -80,6 +80,22 @@ final class TaxonomyIndexingTest extends TestCase
         self::assertEquals('Last', $list[3]->getTitle());
     }
 
+    public function testSortingItemsByTitleCaseInsensitiveWhenRankMatches(): void
+    {
+        $this->add(
+            $this->taxonomy('parent', 'AutomationNL', 'automationnl'),
+            $this->taxonomy('beurzen', 'Beurzen en evenementen', 'beurzen-en-evenementen', null, 'parent'),
+            $this->taxonomy('aaaaa', 'aaaaa', 'aaaaa', null, 'parent'),
+        );
+
+        $list = $this->indexer->overviewFor('taxonomy');
+
+        self::assertCount(3, $list);
+        self::assertSame('AutomationNL', $list[0]->getTitle());
+        self::assertSame('aaaaa', $list[1]->getTitle());
+        self::assertSame('Beurzen en evenementen', $list[2]->getTitle());
+    }
+
     public function testAddingDepthToAnItemWithParent()
     {
         $this->add(

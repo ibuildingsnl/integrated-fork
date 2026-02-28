@@ -151,12 +151,7 @@ final class TaxonomyIndexer implements TaxonomyOverview
             $visited[$visitedKey] = true;
 
             $children = $byParent[$current];
-            usort(
-                $children,
-                fn (Taxonomy $a, Taxonomy $b) => $a->getRank() !== $b->getRank() ?
-                    $a->getRank() <=> $b->getRank() :
-                    $a->getTitle() <=> $b->getTitle()
-            );
+            usort($children, fn (Taxonomy $a, Taxonomy $b) => $this->compareTaxonomy($a, $b));
 
             foreach ($children as $taxonomy) {
                 $taxonomyId = (string) $taxonomy->getId();
@@ -224,5 +219,20 @@ final class TaxonomyIndexer implements TaxonomyOverview
         $count = $usageCounts[$id] ?? $this->taxonomies->countUsages($taxonomy);
 
         return IndexedItem::basedOn($taxonomy, $count, $depth);
+    }
+
+    private function compareTaxonomy(Taxonomy $a, Taxonomy $b): int
+    {
+        $rank = $a->getRank() <=> $b->getRank();
+        if (0 !== $rank) {
+            return $rank;
+        }
+
+        $title = strcasecmp((string) $a->getTitle(), (string) $b->getTitle());
+        if (0 !== $title) {
+            return $title;
+        }
+
+        return strcmp((string) $a->getId(), (string) $b->getId());
     }
 }

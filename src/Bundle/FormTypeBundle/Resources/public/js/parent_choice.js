@@ -18,6 +18,34 @@
             return;
         }
 
+        function isTopLevelParent(item) {
+            if (!item || typeof item !== 'object') {
+                return false;
+            }
+
+            if (typeof item.path !== 'string') {
+                return true;
+            }
+
+            return item.path.trim() === '';
+        }
+
+        function normalizeTitle(item) {
+            if (!item || typeof item !== 'object') {
+                return '';
+            }
+
+            if (typeof item.title === 'string') {
+                return item.title.toLowerCase();
+            }
+
+            if (typeof item.text === 'string') {
+                return item.text.toLowerCase();
+            }
+
+            return '';
+        }
+
         $('select.integrated_content_parent_choice').each(function () {
             var $element = $(this);
 
@@ -50,6 +78,28 @@
                                 }
                                 items.push(item);
                             }
+
+                            items.sort(function (left, right) {
+                                var leftTopLevel = isTopLevelParent(left);
+                                var rightTopLevel = isTopLevelParent(right);
+
+                                if (leftTopLevel !== rightTopLevel) {
+                                    return leftTopLevel ? -1 : 1;
+                                }
+
+                                var leftTitle = normalizeTitle(left);
+                                var rightTitle = normalizeTitle(right);
+
+                                if (leftTitle < rightTitle) {
+                                    return -1;
+                                }
+
+                                if (leftTitle > rightTitle) {
+                                    return 1;
+                                }
+
+                                return 0;
+                            });
                         }
 
                         return {results: items};

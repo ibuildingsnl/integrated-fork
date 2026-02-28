@@ -96,7 +96,11 @@ final class IndexController extends AbstractController
             $this->addFlash('success', $wasPersisted ? 'Taxonomy item saved' : 'Taxonomy item created');
 
             $params = ['type' => $contentType->getId()] + $request->query->all();
-            $params['current'] = (string) $content->getId();
+            if ($wasPersisted) {
+                $params['current'] = (string) $content->getId();
+            } else {
+                unset($params['current']);
+            }
 
             return $this->redirectToRoute('integrated_taxonomy_index', $params);
         }
