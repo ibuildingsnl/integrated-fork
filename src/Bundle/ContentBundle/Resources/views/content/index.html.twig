@@ -45,8 +45,16 @@
             </thead>
             <tbody id="post-list">
             {% for content in pager %}
-
-                {% set document = integrated_document(content) %}
+                {% set brandNames = content.facet_brands|default([]) %}
+                {% set document = null %}
+                {% if brandNames is empty %}
+                    {% set document = integrated_document(content) %}
+                {% endif %}
+                {% set visibleBrandNames = brandNames|slice(0, 3) %}
+                {% set channelCount = brandNames|length %}
+                {% if channelCount == 0 and document is not null and document.channels is defined and document.channels is not null %}
+                    {% set channelCount = document.channels|length %}
+                {% endif %}
 
                 {% set class_name = content.type_class|split('\\')|last %}
                 <tr
@@ -104,41 +112,42 @@
                     </td>
 
                     <td class="channels">
-                        {% if document.channels is defined and document.channels is not null %}
-                            {% set groupedChannels = {} %}
-
-                            {% for channel in document.channels %}
-                                {% set brandName = channel|integrated_brand_profile.name|default('Unknown') %}
-
-                                {% if brandName not in groupedChannels %}
-                                    {% set groupedChannels = groupedChannels|merge({(brandName): []}) %}
-                                {% endif %}
-
-                                {% set groupedChannels = groupedChannels|merge({(brandName): groupedChannels[brandName]|merge([channel])}) %}
-                            {% endfor %}
-
-                            <div class="favicon-wrapper {% if groupedChannels|length > 3 %}hover-popout{% endif %}">
-                                {% if groupedChannels|length > 3 %}
-                                    <span class="channel-popout" style="--color:#01ae93">3+</span>
-                                {% endif %}
-                                <div class="channel-favicons {% if groupedChannels|length > 3 %}popout{% endif %}">
-                                    {% for brandName, channels in groupedChannels %}
-                                        {% for channel in channels %}
-                                            {% if channel|integrated_brand_profile.favicon.file is defined %}
-                                                <div class="channel-favicon"
-                                                     style="background-image:url('{{ image(channel|integrated_brand_profile.favicon.file).cropResize(36, 36) }}')"
-                                                     title="{{ channel.name }}">
-                                                </div>
-                                            {% else %}
-                                                <div class="channel-favicon font-bold" title="{{ channel.name }}" style="background-color: {{ channel|integrated_brand.color|default('gray') }}">
-                                                    {{ channel.name|first }}
-                                                </div>
-                                            {% endif %}
-                                        {% endfor %}
+                        <div class="favicon-wrapper {% if channelCount > 3 %}hover-popout{% endif %}">
+                            {% if channelCount > 3 %}
+                                <span class="channel-popout" style="--color:#01ae93">3+</span>
+                            {% endif %}
+                            <div class="channel-favicons {% if channelCount > 3 %}popout{% endif %}">
+                                {% if brandNames is not empty %}
+                                    {% for brandName in visibleBrandNames %}
+                                        <div class="channel-favicon font-bold"
+                                             title="{{ brandName }}"
+                                             style="background-color: {{ type.options.color|default('gray') }}">
+                                            {{ brandName|first|upper }}
+                                        </div>
                                     {% endfor %}
-                                </div>
+                                {% elseif document.channels is defined and document.channels is not null %}
+                                    {% for channel in document.channels %}
+                                        {% if channel|integrated_brand_profile.favicon.file is defined %}
+                                            <div class="channel-favicon"
+                                                 style="background-image:url('{{ image(channel|integrated_brand_profile.favicon.file).cropResize(36, 36) }}')"
+                                                 title="{{ channel.name }}">
+                                            </div>
+                                        {% else %}
+                                            <div class="channel-favicon font-bold"
+                                                 title="{{ channel.name }}"
+                                                 style="background-color: {{ channel|integrated_brand.color|default('gray') }}">
+                                                {{ channel.name|first|upper }}
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="channel-favicon font-bold"
+                                         style="background-color: {{ type.options.color|default('gray') }}">
+                                        ?
+                                    </div>
+                                {% endif %}
                             </div>
-                        {% endif %}
+                        </div>
                     </td>
                     <td class="content-type">
                         <div class="flex font-bold" style="color: {{ type.options.color|default('gray') }}">

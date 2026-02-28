@@ -26,6 +26,15 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString('data-turbo-frame="_top"', $template);
     }
 
+    public function testCalendarSwitcherUsesBoundedCalendarLimit(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content/base.html.twig');
+
+        $this->assertIsString($template);
+        $this->assertStringContainsString("queryParams|merge({view: 'week', page: 1, limit: 100})", $template);
+        $this->assertStringNotContainsString("queryParams|merge({view: 'week', page: 1, limit: 10000})", $template);
+    }
+
     public function testIndexTemplateContainsLiveLockMarkers(): void
     {
         $template = file_get_contents(__DIR__.'/../../Resources/views/content/index.html.twig');
@@ -61,6 +70,20 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringNotContainsString('class="list list-large list-border js-assigned-list" data-turbo-prefetch="false"', $navDropdownTemplate);
         $this->assertStringContainsString("path('integrated_content_content_edit', {id: doc.type_id}) }}\" data-turbo-frame=\"_top\"", $navDropdownTemplate);
         $this->assertStringNotContainsString("path('integrated_content_content_edit', {id: doc.type_id}) }}\" data-turbo-frame=\"_top\" data-turbo-prefetch=\"false\"", $navDropdownTemplate);
+    }
+
+    public function testIndexTemplatesKeepChannelFallbackForMissingFacetBrands(): void
+    {
+        $indexTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/index.html.twig');
+        $weekTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/index_week.html.twig');
+
+        $this->assertIsString($indexTemplate);
+        $this->assertIsString($weekTemplate);
+
+        $this->assertStringContainsString('{% set document = integrated_document(content) %}', $indexTemplate);
+        $this->assertStringContainsString('{% elseif document.channels is defined and document.channels is not null %}', $indexTemplate);
+        $this->assertStringContainsString('{% set document = integrated_document(content) %}', $weekTemplate);
+        $this->assertStringContainsString('{% if brandNames is empty and document.channels is defined and document.channels is not null %}', $weekTemplate);
     }
 
     public function testRoutingContainsLiveLockStatusEndpoint(): void
