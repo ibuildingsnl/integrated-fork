@@ -168,7 +168,7 @@
                                                         </div>
                                                     {% endif %}
                                                 {% endif %}
-                                                {% if content is defined %}
+                                                {% if content is defined and content.id is not empty %}
                                                     {% if locking is defined and locking.lock is defined and locking.locked == false %}
                                                         <a class="delete"
                                                            href="{{ path('integrated_content_content_delete', {'id': content.id, 'lock': locking.lock.getId}) }}">

@@ -26,4 +26,12 @@ final class TaxonomyControllerHardeningTest extends TestCase
         $this->assertStringContainsString('if ($form->isSubmitted() && $form->isValid() && $content instanceof Taxonomy) {', $controller);
         $this->assertStringNotContainsString('return $this->redirectToRoute(\'integrated_content_content_index\');', $controller);
     }
+
+    public function testIndexTemplateOnlyBuildsDeleteRouteForPersistedContent(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/index/index.html.twig');
+
+        $this->assertIsString($template);
+        $this->assertStringContainsString('{% if content is defined and content.id is not empty %}', $template);
+    }
 }

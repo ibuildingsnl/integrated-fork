@@ -7,10 +7,48 @@ use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Bundle\UserBundle\Model\RoleInterface;
 use Integrated\Bundle\UserBundle\Model\ScopeInterface;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
+use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
+use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 
 class UserFormTypeTest extends TestCase
 {
+    public function testBuildFormConfiguresRelationAsSelect2(): void
+    {
+        $manager = $this->createMock(UserManagerInterface::class);
+        $hasherFactory = $this->createMock(PasswordHasherFactoryInterface::class);
+        $type = new UserFormType($manager, $hasherFactory);
+
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->method('addEventSubscriber')->willReturnSelf();
+        $builder->method('addEventListener')->willReturnSelf();
+
+        $relationOptions = null;
+        $builder
+            ->method('add')
+            ->willReturnCallback(function ($child, $type = null, array $options = []) use ($builder, &$relationOptions) {
+                if ('relation' === $child) {
+                    $relationOptions = $options;
+                }
+
+                return $builder;
+            });
+
+        $type->buildForm($builder, ['optional' => false]);
+
+        self::assertIsArray($relationOptions);
+        self::assertSame('select2', $relationOptions['attr']['class'] ?? null);
+
+        $person = new Person();
+        $person->setFirstName('Jane');
+        $person->setLastName('Doe');
+        $person->setContentType('Author');
+
+        self::assertSame('Jane Doe (Author)', ($relationOptions['choice_label'])($person));
+    }
+
     public function testResolveOptionalExistingUserReturnsExistingUserWhenProvided(): void
     {
         $existingUser = new TestUser('7');

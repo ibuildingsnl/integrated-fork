@@ -124,7 +124,17 @@ class UserFormType extends AbstractType
                 'class' => Person::class,
                 'required' => false,
                 'placeholder' => 'No author linked',
-                'choice_label' => static fn (Person $person): string => trim((string) $person) ?: (string) $person->getId(),
+                'attr' => ['class' => 'select2'],
+                'choice_label' => static function (Person $person): string {
+                    $label = trim((string) $person) ?: (string) $person->getId();
+                    $contentType = trim((string) $person->getContentType());
+
+                    if ('' === $contentType) {
+                        return $label;
+                    }
+
+                    return \sprintf('%s (%s)', $label, $contentType);
+                },
                 'query_builder' => static function (DocumentRepository $repository) {
                     return $repository->createQueryBuilder()
                         ->field('disabled')->equals(false)
