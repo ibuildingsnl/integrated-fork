@@ -117,6 +117,8 @@
                        class="integrated-website-toolbar-button integrated-website-toolbar-button-secondary btn btn-white">
                         {% trans %}Cancel{% endtrans %}
                     </a>
+
+                    <span class="integrated-website-save-status" data-role="integrated-website-save-status" aria-live="polite"></span>
                 {% else %}
                     {% if content is defined and content is not null %}
                         <a href="{{ path('integrated_content_content_edit', {'id': content.id}) }}"

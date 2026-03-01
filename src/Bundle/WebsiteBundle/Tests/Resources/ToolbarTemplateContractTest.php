@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Integrated\Bundle\WebsiteBundle\Tests\Resources;
+
+use PHPUnit\Framework\TestCase;
+
+final class ToolbarTemplateContractTest extends TestCase
+{
+    public function testEditorToolbarContainsSaveStatusElement(): void
+    {
+        $path = __DIR__.'/../../Resources/views/toolbar.html.twig';
+        $content = (string) file_get_contents($path);
+
+        self::assertStringContainsString('data-role="integrated-website-save-status"', $content);
+        self::assertStringContainsString('integrated-website-save-status', $content);
+    }
+}
+

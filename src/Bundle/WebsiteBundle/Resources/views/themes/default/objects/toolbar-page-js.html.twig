@@ -3,6 +3,10 @@
 
         var success = 0;
         var target = null;
+        var pendingSaveRequests = 0;
+        var hasSaveError = false;
+        var saveStatusElement = null;
+        var saveButtonElement = null;
         var markEditorReady = function(moduleName) {
             if (
                 window.IntegratedEditorLoader &&
@@ -16,12 +20,24 @@
          * Init after page load
          */
         function init() {
+            saveStatusElement = document.querySelector('[data-role="integrated-website-save-status"]');
+
             document.querySelectorAll('[data-action="integrated-website-page-save"]').forEach(item =>
                 item.addEventListener('click', function (e) {
                     e.preventDefault();
 
+                    if (pendingSaveRequests > 0) {
+                        return;
+                    }
+
                     success = 0;
                     target = this.dataset.target;
+                    saveButtonElement = this;
+                    pendingSaveRequests = 2;
+                    hasSaveError = false;
+
+                    setSaveButtonBusy(true);
+                    setSaveStatus('saving', '{% trans %}Saving changes...{% endtrans %}');
 
                     saveMenus();
                     savePageBuilder(this.dataset.id);
@@ -53,9 +69,25 @@
                     'menu': menus
                 })
             })
-                .then(response => response.json())
-                .then(handleSuccess)
+                .then(function(response) {
+                    return response.json().then(function(data) {
+                        return {
+                            'status': response.status,
+                            'data': data
+                        };
+                    });
+                })
+                .then(handleMenuResponse)
                 .catch(handleError);
+        };
+
+        var handleMenuResponse = function(result) {
+            if (!result || result.status >= 400 || (result.data && result.data.success === false)) {
+                handleError(result);
+                return;
+            }
+
+            handleSuccess();
         };
 
         var getComponentChildren = function ($element) {
@@ -162,6 +194,11 @@
         };
 
         var showValidationErrors = function (errors) {
+            setSaveButtonBusy(false);
+            pendingSaveRequests = 0;
+            hasSaveError = true;
+            setSaveStatus('error', '{% trans %}Fix validation errors to continue{% endtrans %}');
+
             var html = '<ul style="margin:0;padding-left:20px">';
             errors.forEach(function(error) {
                 html += '<li><strong>' + (error.path || '/') + '</strong>: ' + (error.message || 'Validation error') + '</li>';
@@ -177,15 +214,63 @@
         };
 
         var handleSuccess = function () {
-            if (2 === ++success && target) {
-                window.location.replace(target);
+            if (hasSaveError) {
+                return;
+            }
+
+            success++;
+            pendingSaveRequests = Math.max(0, pendingSaveRequests - 1);
+
+            if (pendingSaveRequests > 0) {
+                return;
+            }
+
+            setSaveStatus('saved', '{% trans %}All changes saved{% endtrans %}');
+            setSaveButtonBusy(false);
+
+            if (2 === success && target) {
+                window.setTimeout(function() {
+                    window.location.replace(target);
+                }, 120);
             }
         };
 
         var handleError = function (result) {
+            if (hasSaveError) {
+                return;
+            }
+
+            hasSaveError = true;
+            pendingSaveRequests = 0;
+            setSaveButtonBusy(false);
+            setSaveStatus('error', '{% trans %}Save failed{% endtrans %}');
+
             // @todo error handling (INTEGRATED-420)
             alert('An error has occurred saving the page!');
-        }
+        };
+
+        var setSaveStatus = function(state, label) {
+            if (!saveStatusElement) {
+                return;
+            }
+
+            if (state && state !== 'idle') {
+                saveStatusElement.dataset.state = state;
+            } else {
+                delete saveStatusElement.dataset.state;
+            }
+
+            saveStatusElement.textContent = label || '';
+        };
+
+        var setSaveButtonBusy = function(isBusy) {
+            if (!saveButtonElement) {
+                return;
+            }
+
+            saveButtonElement.classList.toggle('is-saving', !!isBusy);
+            saveButtonElement.setAttribute('aria-busy', isBusy ? 'true' : 'false');
+        };
 
     }();
 
