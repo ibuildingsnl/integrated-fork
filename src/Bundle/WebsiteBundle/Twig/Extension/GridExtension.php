@@ -14,6 +14,7 @@ namespace Integrated\Bundle\WebsiteBundle\Twig\Extension;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Grid;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
+use Integrated\Bundle\WebsiteBundle\PageBuilder\V2\Rendering\PageBuilderRenderer;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Twig\Environment;
@@ -35,9 +36,12 @@ class GridExtension extends AbstractExtension
      */
     protected $request;
 
-    public function __construct(RequestStack $requestStack, ThemeManager $themeManager)
+    private PageBuilderRenderer $pageBuilderRenderer;
+
+    public function __construct(RequestStack $requestStack, ThemeManager $themeManager, PageBuilderRenderer $pageBuilderRenderer)
     {
         $this->request = $requestStack->getMainRequest();
+        $this->pageBuilderRenderer = $pageBuilderRenderer;
 
         $this->resolver = new OptionsResolver();
         $this->resolver->setDefaults([
@@ -69,6 +73,10 @@ class GridExtension extends AbstractExtension
         $page = isset($context['page']) ? $context['page'] : null;
 
         if ($page instanceof AbstractPage) {
+            if ($page->getLayoutVersion() === 2) {
+                return $this->pageBuilderRenderer->render($environment, $page, (string) $id);
+            }
+
             $grid = $page->getGrid($id);
 
             if (!$grid instanceof Grid) {

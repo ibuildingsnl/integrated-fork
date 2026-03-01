@@ -11,6 +11,7 @@
         <service id="integrated_website.twig.grid_extension" class="Integrated\Bundle\WebsiteBundle\Twig\Extension\GridExtension">
             <argument type="service" id="request_stack" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
+            <argument type="service" id="Integrated\Bundle\WebsiteBundle\PageBuilder\V2\Rendering\PageBuilderRenderer" />
             <tag name="twig.extension" />
         </service>
 
