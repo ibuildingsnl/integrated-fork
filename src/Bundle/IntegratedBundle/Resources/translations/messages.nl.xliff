@@ -1,0 +1,799 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" datatype="plaintext" original="file.ext">
+    <body>
+      <trans-unit id="1">
+        <source>'s</source>
+        <target>'s</target>
+      </trans-unit>
+      <trans-unit id="2">
+        <source>(%d)</source>
+        <target>(%d)</target>
+      </trans-unit>
+      <trans-unit id="3">
+        <source>2Factor Auth</source>
+        <target>2Factor Auth</target>
+      </trans-unit>
+      <trans-unit id="4">
+        <source>Activate account</source>
+        <target>Account activeren</target>
+      </trans-unit>
+      <trans-unit id="5">
+        <source>Activated</source>
+        <target>Activated</target>
+      </trans-unit>
+      <trans-unit id="6">
+        <source>Add %type% channel to %brand%</source>
+        <target>Add %type% channel to %brand%</target>
+      </trans-unit>
+      <trans-unit id="7">
+        <source>Add a Comment</source>
+        <target>Add a Comment</target>
+      </trans-unit>
+      <trans-unit id="8">
+        <source>Add New</source>
+        <target>Add New</target>
+      </trans-unit>
+      <trans-unit id="9">
+        <source>Add text block</source>
+        <target>Tekstblok toevoegen</target>
+      </trans-unit>
+      <trans-unit id="10">
+        <source>All actions</source>
+        <target>Alle acties</target>
+      </trans-unit>
+      <trans-unit id="11">
+        <source>Assigned to me</source>
+        <target>Aan mij toegewezen</target>
+      </trans-unit>
+      <trans-unit id="12">
+        <source>Assigned user</source>
+        <target>Toegewezen gebruiker</target>
+      </trans-unit>
+      <trans-unit id="13">
+        <source>Authentication code</source>
+        <target>Authenticatiecode</target>
+      </trans-unit>
+      <trans-unit id="14">
+        <source>Authenticator app</source>
+        <target>Authenticator-app</target>
+      </trans-unit>
+      <trans-unit id="15">
+        <source>Back to Overview</source>
+        <target>Back to Overview</target>
+      </trans-unit>
+      <trans-unit id="16">
+        <source>block</source>
+        <target>blok</target>
+      </trans-unit>
+      <trans-unit id="17">
+        <source>Block "%title%" (id: %id%) contains an error</source>
+        <target>Block "%title%" (id: %id%) contains an error</target>
+      </trans-unit>
+      <trans-unit id="18">
+        <source>Block "%title%" (id: %id%) is empty</source>
+        <target>Block "%title%" (id: %id%) is empty</target>
+      </trans-unit>
+      <trans-unit id="19">
+        <source>brand</source>
+        <target>brand</target>
+      </trans-unit>
+      <trans-unit id="20">
+        <source>channel</source>
+        <target>kanaal</target>
+      </trans-unit>
+      <trans-unit id="21">
+        <source>Click the button below to activate your account.</source>
+        <target>Click the button below to activate your account.</target>
+      </trans-unit>
+      <trans-unit id="22">
+        <source>Compare versions</source>
+        <target>Compare versions</target>
+      </trans-unit>
+      <trans-unit id="23">
+        <source>configuration</source>
+        <target>configuration</target>
+      </trans-unit>
+      <trans-unit id="24">
+        <source>connector</source>
+        <target>connector</target>
+      </trans-unit>
+      <trans-unit id="25">
+        <source>Connector</source>
+        <target>Connector</target>
+      </trans-unit>
+      <trans-unit id="26">
+        <source>Content navigator - week</source>
+        <target>Content navigator - week</target>
+      </trans-unit>
+      <trans-unit id="27">
+        <source>content type</source>
+        <target>content type</target>
+      </trans-unit>
+      <trans-unit id="28">
+        <source>content type page</source>
+        <target>content type page</target>
+      </trans-unit>
+      <trans-unit id="29">
+        <source>Content Types</source>
+        <target>Contenttypes</target>
+      </trans-unit>
+      <trans-unit id="30">
+        <source>Count</source>
+        <target>Count</target>
+      </trans-unit>
+      <trans-unit id="31">
+        <source>Credits</source>
+        <target>Credits</target>
+      </trans-unit>
+      <trans-unit id="32">
+        <source>Custom Types</source>
+        <target>Custom Types</target>
+      </trans-unit>
+      <trans-unit id="33">
+        <source>Date</source>
+        <target>Datum</target>
+      </trans-unit>
+      <trans-unit id="34">
+        <source>Deactivate</source>
+        <target>Deactiveren</target>
+      </trans-unit>
+      <trans-unit id="35">
+        <source>Deactivate User</source>
+        <target>Deactivate User</target>
+      </trans-unit>
+      <trans-unit id="36">
+        <source>delete</source>
+        <target>verwijderen</target>
+      </trans-unit>
+      <trans-unit id="37">
+        <source>Delete 2FA</source>
+        <target>Delete 2FA</target>
+      </trans-unit>
+      <trans-unit id="38">
+        <source>Delete block</source>
+        <target>Blok verwijderen</target>
+      </trans-unit>
+      <trans-unit id="39">
+        <source>Delete brand</source>
+        <target>Delete brand</target>
+      </trans-unit>
+      <trans-unit id="40">
+        <source>Delete channel</source>
+        <target>Kanaal verwijderen</target>
+      </trans-unit>
+      <trans-unit id="41">
+        <source>Delete connector</source>
+        <target>Connector verwijderen</target>
+      </trans-unit>
+      <trans-unit id="42">
+        <source>Delete group</source>
+        <target>Groep verwijderen</target>
+      </trans-unit>
+      <trans-unit id="43">
+        <source>Delete IP list</source>
+        <target>IP-lijst verwijderen</target>
+      </trans-unit>
+      <trans-unit id="44">
+        <source>Delete page</source>
+        <target>Pagina verwijderen</target>
+      </trans-unit>
+      <trans-unit id="45">
+        <source>Delete search selection</source>
+        <target>Zoekselectie verwijderen</target>
+      </trans-unit>
+      <trans-unit id="46">
+        <source>Delete user scope</source>
+        <target>Delete user scope</target>
+      </trans-unit>
+      <trans-unit id="47">
+        <source>Delete Workflow</source>
+        <target>Workflow verwijderen</target>
+      </trans-unit>
+      <trans-unit id="48">
+        <source>Document type</source>
+        <target>Documenttype</target>
+      </trans-unit>
+      <trans-unit id="49">
+        <source>Download</source>
+        <target>Download</target>
+      </trans-unit>
+      <trans-unit id="50">
+        <source>Drag block</source>
+        <target>Blok slepen</target>
+      </trans-unit>
+      <trans-unit id="51">
+        <source>Drag row</source>
+        <target>Rij slepen</target>
+      </trans-unit>
+      <trans-unit id="52">
+        <source>Edit %brand%'s %type% Channel</source>
+        <target>Edit %brand%'s %type% Channel</target>
+      </trans-unit>
+      <trans-unit id="53">
+        <source>Edit channel</source>
+        <target>Kanaal bewerken</target>
+      </trans-unit>
+      <trans-unit id="54">
+        <source>Edit connector</source>
+        <target>Connector bewerken</target>
+      </trans-unit>
+      <trans-unit id="55">
+        <source>Edit content type page</source>
+        <target>Edit content type page</target>
+      </trans-unit>
+      <trans-unit id="56">
+        <source>Edited</source>
+        <target>Edited</target>
+      </trans-unit>
+      <trans-unit id="57">
+        <source>Edit group</source>
+        <target>Edit group</target>
+      </trans-unit>
+      <trans-unit id="58">
+        <source>Edit IP list</source>
+        <target>Edit IP list</target>
+      </trans-unit>
+      <trans-unit id="59">
+        <source>Edit Scraper</source>
+        <target>Scraper bewerken</target>
+      </trans-unit>
+      <trans-unit id="60">
+        <source>Edit scraper</source>
+        <target>Scraper bewerken</target>
+      </trans-unit>
+      <trans-unit id="61">
+        <source>Edit search selection</source>
+        <target>Edit search selection</target>
+      </trans-unit>
+      <trans-unit id="62">
+        <source>Edit user scope</source>
+        <target>Edit user scope</target>
+      </trans-unit>
+      <trans-unit id="63">
+        <source>Edit workflow</source>
+        <target>Workflow bewerken</target>
+      </trans-unit>
+      <trans-unit id="64">
+        <source>Effective roles</source>
+        <target>Effective roles</target>
+      </trans-unit>
+      <trans-unit id="65">
+        <source>Enabled by default for %name% brand</source>
+        <target>Enabled by default for %name% brand</target>
+      </trans-unit>
+      <trans-unit id="66">
+        <source>Endpoint</source>
+        <target>Endpoint</target>
+      </trans-unit>
+      <trans-unit id="67">
+        <source>File Types</source>
+        <target>File Types</target>
+      </trans-unit>
+      <trans-unit id="68">
+        <source>Fill in your data to log into your account</source>
+        <target>Fill in your data to log into your account</target>
+      </trans-unit>
+      <trans-unit id="69">
+        <source>Fill in your data to receive a reset link</source>
+        <target>Fill in your data to receive a reset link</target>
+      </trans-unit>
+      <trans-unit id="70">
+        <source>Filter</source>
+        <target>Filter</target>
+      </trans-unit>
+      <trans-unit id="71">
+        <source>Filters</source>
+        <target>Filters</target>
+      </trans-unit>
+      <trans-unit id="72">
+        <source>from</source>
+        <target>from</target>
+      </trans-unit>
+      <trans-unit id="73">
+        <source>Gekoppelde gebruiker/account</source>
+        <target>Gekoppelde gebruiker/account</target>
+      </trans-unit>
+      <trans-unit id="74">
+        <source>here</source>
+        <target>here</target>
+      </trans-unit>
+      <trans-unit id="75">
+        <source>Hidden rows</source>
+        <target>Verborgen rijen</target>
+      </trans-unit>
+      <trans-unit id="76">
+        <source>Hide technical changes</source>
+        <target>Technische wijzigingen verbergen</target>
+      </trans-unit>
+      <trans-unit id="77">
+        <source>History for</source>
+        <target>Historie voor</target>
+      </trans-unit>
+      <trans-unit id="78">
+        <source>Icon library</source>
+        <target>Iconenbibliotheek</target>
+      </trans-unit>
+      <trans-unit id="79">
+        <source>Id</source>
+        <target>ID</target>
+      </trans-unit>
+      <trans-unit id="80">
+        <source>ID</source>
+        <target>ID</target>
+      </trans-unit>
+      <trans-unit id="81">
+        <source>Index</source>
+        <target>Index</target>
+      </trans-unit>
+      <trans-unit id="82">
+        <source>Info</source>
+        <target>Info</target>
+      </trans-unit>
+      <trans-unit id="83">
+        <source>insert</source>
+        <target>invoegen</target>
+      </trans-unit>
+      <trans-unit id="84">
+        <source>Integrated - Password reset</source>
+        <target>Integrated - Password reset</target>
+      </trans-unit>
+      <trans-unit id="85">
+        <source>IP</source>
+        <target>IP</target>
+      </trans-unit>
+      <trans-unit id="86">
+        <source>Ip</source>
+        <target>Ip</target>
+      </trans-unit>
+      <trans-unit id="87">
+        <source>IP address</source>
+        <target>IP-adres</target>
+      </trans-unit>
+      <trans-unit id="88">
+        <source>IP list</source>
+        <target>IP-lijst</target>
+      </trans-unit>
+      <trans-unit id="89">
+        <source>Kanaal</source>
+        <target>Kanaal</target>
+      </trans-unit>
+      <trans-unit id="90">
+        <source>Koppeling beheren</source>
+        <target>Koppeling beheren</target>
+      </trans-unit>
+      <trans-unit id="91">
+        <source>Layout</source>
+        <target>Layout</target>
+      </trans-unit>
+      <trans-unit id="92">
+        <source>Linked author</source>
+        <target>Gekoppelde auteur</target>
+      </trans-unit>
+      <trans-unit id="93">
+        <source>Link title</source>
+        <target>Link title</target>
+      </trans-unit>
+      <trans-unit id="94">
+        <source>Loading</source>
+        <target>Loading</target>
+      </trans-unit>
+      <trans-unit id="95">
+        <source>Loading editor...</source>
+        <target>Editor laden...</target>
+      </trans-unit>
+      <trans-unit id="96">
+        <source>make primary</source>
+        <target>make primary</target>
+      </trans-unit>
+      <trans-unit id="97">
+        <source>Manage %brand%'s %type% Connector</source>
+        <target>Manage %brand%'s %type% Connector</target>
+      </trans-unit>
+      <trans-unit id="98">
+        <source>Manage connector</source>
+        <target>Manage connector</target>
+      </trans-unit>
+      <trans-unit id="99">
+        <source>New channel</source>
+        <target>New channel</target>
+      </trans-unit>
+      <trans-unit id="100">
+        <source>New connector</source>
+        <target>Nieuwe connector</target>
+      </trans-unit>
+      <trans-unit id="101">
+        <source>New content type</source>
+        <target>New content type</target>
+      </trans-unit>
+      <trans-unit id="102">
+        <source>New group</source>
+        <target>Nieuwe groep</target>
+      </trans-unit>
+      <trans-unit id="103">
+        <source>New IP list</source>
+        <target>New IP list</target>
+      </trans-unit>
+      <trans-unit id="104">
+        <source>New Scraper</source>
+        <target>New Scraper</target>
+      </trans-unit>
+      <trans-unit id="105">
+        <source>New scraper</source>
+        <target>New scraper</target>
+      </trans-unit>
+      <trans-unit id="106">
+        <source>New search selection</source>
+        <target>Nieuwe zoekselectie</target>
+      </trans-unit>
+      <trans-unit id="107">
+        <source>New user scope</source>
+        <target>New user scope</target>
+      </trans-unit>
+      <trans-unit id="108">
+        <source>No blocks added</source>
+        <target>Geen blokken toegevoegd</target>
+      </trans-unit>
+      <trans-unit id="109">
+        <source>No blocks found</source>
+        <target>Geen blokken gevonden</target>
+      </trans-unit>
+      <trans-unit id="110">
+        <source>No blocks found with this search query</source>
+        <target>Geen blokken gevonden voor deze zoekopdracht</target>
+      </trans-unit>
+      <trans-unit id="111">
+        <source>No changes between these versions</source>
+        <target>No changes between these versions</target>
+      </trans-unit>
+      <trans-unit id="112">
+        <source>No channels added</source>
+        <target>Geen kanalen toegevoegd</target>
+      </trans-unit>
+      <trans-unit id="113">
+        <source>No pages added</source>
+        <target>Geen pagina's toegevoegd</target>
+      </trans-unit>
+      <trans-unit id="114">
+        <source>No results</source>
+        <target>No results</target>
+      </trans-unit>
+      <trans-unit id="115">
+        <source>No results with this selection.</source>
+        <target>No results with this selection.</target>
+      </trans-unit>
+      <trans-unit id="116">
+        <source>No sources added</source>
+        <target>No sources added</target>
+      </trans-unit>
+      <trans-unit id="117">
+        <source>No targets added</source>
+        <target>No targets added</target>
+      </trans-unit>
+      <trans-unit id="118">
+        <source>Note: this action does not delete the channel itself, just its connection to %brand%.</source>
+        <target>Note: this action does not delete the channel itself, just its connection to %brand%.</target>
+      </trans-unit>
+      <trans-unit id="119">
+        <source>No users found for the current filters.</source>
+        <target>No users found for the current filters.</target>
+      </trans-unit>
+      <trans-unit id="120">
+        <source>of about</source>
+        <target>of about</target>
+      </trans-unit>
+      <trans-unit id="121">
+        <source>Only Images are allowed to be uploaded.</source>
+        <target>Only Images are allowed to be uploaded.</target>
+      </trans-unit>
+      <trans-unit id="122">
+        <source>or click to browse</source>
+        <target>or click to browse</target>
+      </trans-unit>
+      <trans-unit id="123">
+        <source>pages</source>
+        <target>pages</target>
+      </trans-unit>
+      <trans-unit id="124">
+        <source>Preview</source>
+        <target>Preview</target>
+      </trans-unit>
+      <trans-unit id="125">
+        <source>Primary Domain</source>
+        <target>Primary Domain</target>
+      </trans-unit>
+      <trans-unit id="126">
+        <source>profile</source>
+        <target>profile</target>
+      </trans-unit>
+      <trans-unit id="127">
+        <source>Register</source>
+        <target>Register</target>
+      </trans-unit>
+      <trans-unit id="128">
+        <source>Registration</source>
+        <target>Registration</target>
+      </trans-unit>
+      <trans-unit id="129">
+        <source>Remove %type% from %brand%</source>
+        <target>Remove %type% from %brand%</target>
+      </trans-unit>
+      <trans-unit id="130">
+        <source>Reply</source>
+        <target>Reply</target>
+      </trans-unit>
+      <trans-unit id="131">
+        <source>Reset</source>
+        <target>Resetten</target>
+      </trans-unit>
+      <trans-unit id="132">
+        <source>results</source>
+        <target>results</target>
+      </trans-unit>
+      <trans-unit id="133">
+        <source>Scan the QR code with your authenticator app (for example Authy, Google Authenticator, Microsoft Authenticator or 1Password).</source>
+        <target>Scan the QR code with your authenticator app (for example Authy, Google Authenticator, Microsoft Authenticator or 1Password).</target>
+      </trans-unit>
+      <trans-unit id="134">
+        <source>Scope</source>
+        <target>Scope</target>
+      </trans-unit>
+      <trans-unit id="135">
+        <source>scope</source>
+        <target>scope</target>
+      </trans-unit>
+      <trans-unit id="136">
+        <source>scraper</source>
+        <target>scraper</target>
+      </trans-unit>
+      <trans-unit id="137">
+        <source>Scrapers</source>
+        <target>Scrapers</target>
+      </trans-unit>
+      <trans-unit id="138">
+        <source>Scroll to see more</source>
+        <target>Scroll to see more</target>
+      </trans-unit>
+      <trans-unit id="139">
+        <source>Search and copy the icon name to use in icon fields.</source>
+        <target>Search and copy the icon name to use in icon fields.</target>
+      </trans-unit>
+      <trans-unit id="140">
+        <source>Search icons</source>
+        <target>Search icons</target>
+      </trans-unit>
+      <trans-unit id="141">
+        <source>search selection</source>
+        <target>zoekselectie</target>
+      </trans-unit>
+      <trans-unit id="142">
+        <source>Search user/action</source>
+        <target>Zoek gebruiker/actie</target>
+      </trans-unit>
+      <trans-unit id="143">
+        <source>Select an image</source>
+        <target>Select an image</target>
+      </trans-unit>
+      <trans-unit id="144">
+        <source>Select content type</source>
+        <target>Select content type</target>
+      </trans-unit>
+      <trans-unit id="145">
+        <source>Select document type</source>
+        <target>Select document type</target>
+      </trans-unit>
+      <trans-unit id="146">
+        <source>Selected results:</source>
+        <target>Selected results:</target>
+      </trans-unit>
+      <trans-unit id="147">
+        <source>Setup status</source>
+        <target>Setup status</target>
+      </trans-unit>
+      <trans-unit id="148">
+        <source>Show Channel</source>
+        <target>Show Channel</target>
+      </trans-unit>
+      <trans-unit id="149">
+        <source>Show history</source>
+        <target>Show history</target>
+      </trans-unit>
+      <trans-unit id="150">
+        <source>Show more</source>
+        <target>Show more</target>
+      </trans-unit>
+      <trans-unit id="151">
+        <source>Show raw change set for this revision</source>
+        <target>Show raw change set for this revision</target>
+      </trans-unit>
+      <trans-unit id="152">
+        <source>Show technical changes</source>
+        <target>Technische wijzigingen tonen</target>
+      </trans-unit>
+      <trans-unit id="153">
+        <source>Status</source>
+        <target>Status</target>
+      </trans-unit>
+      <trans-unit id="154">
+        <source>Submit</source>
+        <target>Submit</target>
+      </trans-unit>
+      <trans-unit id="155">
+        <source>Taxonomy index</source>
+        <target>Taxonomy index</target>
+      </trans-unit>
+      <trans-unit id="156">
+        <source>Taxonomy Types</source>
+        <target>Taxonomy Types</target>
+      </trans-unit>
+      <trans-unit id="157">
+        <source>Template</source>
+        <target>Template</target>
+      </trans-unit>
+      <trans-unit id="158">
+        <source>The bulk action is limited to change %limit% content items at once. Only the first %limit% content items have been included.</source>
+        <target>The bulk action is limited to change %limit% content items at once. Only the first %limit% content items have been included.</target>
+      </trans-unit>
+      <trans-unit id="159">
+        <source>this</source>
+        <target>this</target>
+      </trans-unit>
+      <trans-unit id="160">
+        <source>This block is not used on any pages yet.</source>
+        <target>This block is not used on any pages yet.</target>
+      </trans-unit>
+      <trans-unit id="161">
+        <source>This channel has related pages. Select "Delete related pages" to remove them before deleting the channel.</source>
+        <target>This channel has related pages. Select "Delete related pages" to remove them before deleting the channel.</target>
+      </trans-unit>
+      <trans-unit id="162">
+        <source>This item is locked</source>
+        <target>This item is locked</target>
+      </trans-unit>
+      <trans-unit id="163">
+        <source>This item is locked by</source>
+        <target>This item is locked by</target>
+      </trans-unit>
+      <trans-unit id="164">
+        <source>This item is still on use by:</source>
+        <target>This item is still on use by:</target>
+      </trans-unit>
+      <trans-unit id="165">
+        <source>Tip</source>
+        <target>Tip</target>
+      </trans-unit>
+      <trans-unit id="166">
+        <source>To</source>
+        <target>To</target>
+      </trans-unit>
+      <trans-unit id="167">
+        <source>Tools</source>
+        <target>Tools</target>
+      </trans-unit>
+      <trans-unit id="168">
+        <source>Type an icon name (e.g. settings, nav-arrow, mail)</source>
+        <target>Type an icon name (e.g. settings, nav-arrow, mail)</target>
+      </trans-unit>
+      <trans-unit id="169">
+        <source>Unable to load block preview</source>
+        <target>Unable to load block preview</target>
+      </trans-unit>
+      <trans-unit id="170">
+        <source>Unknown</source>
+        <target>Onbekend</target>
+      </trans-unit>
+      <trans-unit id="171">
+        <source>update</source>
+        <target>bijwerken</target>
+      </trans-unit>
+      <trans-unit id="172">
+        <source>URL</source>
+        <target>URL</target>
+      </trans-unit>
+      <trans-unit id="173">
+        <source>Use an existing channel</source>
+        <target>Use an existing channel</target>
+      </trans-unit>
+      <trans-unit id="174">
+        <source>user</source>
+        <target>gebruiker</target>
+      </trans-unit>
+      <trans-unit id="175">
+        <source>user scope</source>
+        <target>gebruikersscope</target>
+      </trans-unit>
+      <trans-unit id="176">
+        <source>user Scope</source>
+        <target>user Scope</target>
+      </trans-unit>
+      <trans-unit id="177">
+        <source>User scopes</source>
+        <target>User scopes</target>
+      </trans-unit>
+      <trans-unit id="178">
+        <source>Verbindingsdetails</source>
+        <target>Verbindingsdetails</target>
+      </trans-unit>
+      <trans-unit id="179">
+        <source>Verbindingsstatus</source>
+        <target>Verbindingsstatus</target>
+      </trans-unit>
+      <trans-unit id="180">
+        <source>Verloopt op</source>
+        <target>Verloopt op</target>
+      </trans-unit>
+      <trans-unit id="181">
+        <source>Visuals</source>
+        <target>Visuals</target>
+      </trans-unit>
+      <trans-unit id="182">
+        <source>Websites</source>
+        <target>Websites</target>
+      </trans-unit>
+      <trans-unit id="183">
+        <source>workflow</source>
+        <target>workflow</target>
+      </trans-unit>
+      <trans-unit id="184">
+        <source>Workflows</source>
+        <target>Workflows</target>
+      </trans-unit>
+      <trans-unit id="185">
+        <source>You are about to deactivate the user "%name%", click the button below to confirm.</source>
+        <target>You are about to deactivate the user "%name%", click the button below to confirm.</target>
+      </trans-unit>
+      <trans-unit id="186">
+        <source>You are about to delete "%name%", click the delete button to confirm the action.</source>
+        <target>U staat op het punt "%name%" te verwijderen, klik op de verwijderknop om de actie te bevestigen.</target>
+      </trans-unit>
+      <trans-unit id="187">
+        <source>You are about to delete "%name%" on %channel%, click the delete button to confirm the action.</source>
+        <target>You are about to delete "%name%" on %channel%, click the delete button to confirm the action.</target>
+      </trans-unit>
+      <trans-unit id="188">
+        <source>You are about to delete the brand "%name%", click the delete button to confirm the action.</source>
+        <target>You are about to delete the brand "%name%", click the delete button to confirm the action.</target>
+      </trans-unit>
+      <trans-unit id="189">
+        <source>You are about to delete the channel "%name%", click the delete button to confirm the action.</source>
+        <target>You are about to delete the channel "%name%", click the delete button to confirm the action.</target>
+      </trans-unit>
+      <trans-unit id="190">
+        <source>You are about to delete the configuration "%name%", click the delete button to confirm the action.</source>
+        <target>You are about to delete the configuration "%name%", click the delete button to confirm the action.</target>
+      </trans-unit>
+      <trans-unit id="191">
+        <source>You are about to delete the group "%name%", click the delete button to confirm the action.</source>
+        <target>You are about to delete the group "%name%", click the delete button to confirm the action.</target>
+      </trans-unit>
+      <trans-unit id="192">
+        <source>You are about to delete the ip "%ip%" from the block list, click the delete button below to confirm the action.</source>
+        <target>You are about to delete the ip "%ip%" from the block list, click the delete button below to confirm the action.</target>
+      </trans-unit>
+      <trans-unit id="193">
+        <source>You are about to delete the scope "%name%", click the delete button to confirm the action.</source>
+        <target>You are about to delete the scope "%name%", click the delete button to confirm the action.</target>
+      </trans-unit>
+      <trans-unit id="194">
+        <source>You are about to delete the workflow "%name%", click the delete button to confirm the action.</source>
+        <target>You are about to delete the workflow "%name%", click the delete button to confirm the action.</target>
+      </trans-unit>
+      <trans-unit id="195">
+        <source>You are about to remove the %link% from the "%name%" brand. Click the delete button to confirm the action.</source>
+        <target>You are about to remove the %link% from the "%name%" brand. Click the delete button to confirm the action.</target>
+      </trans-unit>
+      <trans-unit id="196">
+        <source>You can directly link this user to an existing author via the Author field.</source>
+        <target>You can directly link this user to an existing author via the Author field.</target>
+      </trans-unit>
+      <trans-unit id="197">
+        <source>You can only upload one</source>
+        <target>You can only upload one</target>
+      </trans-unit>
+      <trans-unit id="198">
+        <source>Your account has been activated.</source>
+        <target>Your account has been activated.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
