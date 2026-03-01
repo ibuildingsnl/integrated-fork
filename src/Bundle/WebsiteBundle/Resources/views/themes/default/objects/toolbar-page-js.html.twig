@@ -19,9 +19,12 @@
         var isEditorDirty = false;
         var editorSnapshotAtLastSave = null;
         var bypassUnsavedNavigationGuard = false;
+        var previewFrameElement = null;
+        var previewContainerElement = null;
         var unsavedNavigationMessage = '{% trans %}You have unsaved changes. Leave this page?{% endtrans %}';
         var restoreDraftPromptMessage = '{% trans %}A local draft was found. Do you want to restore it?{% endtrans %}';
         var restoredDraftStatusMessage = '{% trans %}Draft restored - save to apply{% endtrans %}';
+        var viewportStorageKey = 'integrated-editor-viewport:v1:' + window.location.host;
         var markEditorReady = function(moduleName) {
             if (
                 window.IntegratedEditorLoader &&
@@ -87,6 +90,7 @@
                 })
             );
 
+            initViewportPreview();
             setSaveActionsEnabled(false);
             markEditorReady('page');
         }
@@ -121,6 +125,136 @@
             }
 
             return 'integrated-editor-draft:v' + draftStorageVersion + ':' + activePageId;
+        };
+
+        var getViewportButtons = function() {
+            return Array.from(document.querySelectorAll('[data-action="integrated-editor-viewport-set"]'));
+        };
+
+        var normalizeViewport = function(mode) {
+            if (mode === 'tablet' || mode === 'mobile') {
+                return mode;
+            }
+
+            return 'desktop';
+        };
+
+        var getViewportPreviewUrl = function(mode) {
+            var normalized = normalizeViewport(mode);
+            try {
+                var url = new URL(window.location.href, window.location.origin);
+                url.searchParams.set('integrated_website_edit', '0');
+                url.searchParams.set('integrated_editor_preview', normalized);
+
+                return url.toString();
+            } catch (e) {
+                var separator = window.location.href.indexOf('?') === -1 ? '?' : '&';
+                return window.location.href + separator + 'integrated_website_edit=0&integrated_editor_preview=' + encodeURIComponent(normalized);
+            }
+        };
+
+        var ensureViewportPreview = function() {
+            if (previewContainerElement && previewFrameElement) {
+                return;
+            }
+
+            previewContainerElement = document.createElement('div');
+            previewContainerElement.className = 'integrated-editor-device-preview';
+            previewContainerElement.setAttribute('data-role', 'integrated-editor-device-preview');
+
+            var frameWrap = document.createElement('div');
+            frameWrap.className = 'integrated-editor-device-preview-frame-wrap';
+
+            previewFrameElement = document.createElement('iframe');
+            previewFrameElement.className = 'integrated-editor-device-preview-frame';
+            previewFrameElement.setAttribute('data-role', 'integrated-editor-device-preview-frame');
+            previewFrameElement.setAttribute('loading', 'lazy');
+            previewFrameElement.setAttribute('title', '{% trans %}Responsive preview{% endtrans %}');
+
+            frameWrap.appendChild(previewFrameElement);
+            previewContainerElement.appendChild(frameWrap);
+            document.body.appendChild(previewContainerElement);
+        };
+
+        var setViewportPreviewMode = function(mode) {
+            var normalized = normalizeViewport(mode);
+            document.body.classList.remove(
+                'integrated-editor-preview-active',
+                'integrated-editor-preview-tablet',
+                'integrated-editor-preview-mobile'
+            );
+
+            if (normalized === 'desktop') {
+                return;
+            }
+
+            ensureViewportPreview();
+
+            document.body.classList.add('integrated-editor-preview-active');
+            document.body.classList.add('integrated-editor-preview-' + normalized);
+
+            var previewUrl = getViewportPreviewUrl(normalized);
+            if (previewFrameElement.dataset.src !== previewUrl) {
+                previewFrameElement.dataset.src = previewUrl;
+                previewFrameElement.src = previewUrl;
+            }
+        };
+
+        var refreshViewportPreview = function() {
+            var mode = normalizeViewport(document.body.dataset.integratedEditorViewport || 'desktop');
+            if (mode === 'desktop') {
+                return;
+            }
+
+            ensureViewportPreview();
+            var previewUrl = getViewportPreviewUrl(mode);
+            previewFrameElement.dataset.src = previewUrl;
+            previewFrameElement.src = previewUrl + (previewUrl.indexOf('?') > -1 ? '&' : '?') + 'ts=' + Date.now();
+        };
+
+        var applyEditorViewport = function(mode, persist) {
+            var normalized = normalizeViewport(mode);
+            document.body.dataset.integratedEditorViewport = normalized;
+            setViewportPreviewMode(normalized);
+
+            getViewportButtons().forEach(function(button) {
+                var isActive = button.dataset.viewport === normalized;
+                button.classList.toggle('is-active', isActive);
+                button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            });
+
+            if (persist === false) {
+                return;
+            }
+
+            try {
+                window.localStorage.setItem(viewportStorageKey, normalized);
+            } catch (e) {
+                // ignore storage errors
+            }
+        };
+
+        var initViewportPreview = function() {
+            var buttons = getViewportButtons();
+            if (!buttons.length) {
+                return;
+            }
+
+            buttons.forEach(function(button) {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    applyEditorViewport(button.dataset.viewport || 'desktop');
+                });
+            });
+
+            var storedViewport = 'desktop';
+            try {
+                storedViewport = normalizeViewport(window.localStorage.getItem(viewportStorageKey) || 'desktop');
+            } catch (e) {
+                storedViewport = 'desktop';
+            }
+
+            applyEditorViewport(storedViewport, false);
         };
 
         var saveMenus = function () {
@@ -766,7 +900,10 @@
                     bypassUnsavedNavigationGuard = true;
                     window.location.replace(target);
                 }, 120);
+                return;
             }
+
+            refreshViewportPreview();
         };
 
         var handleError = function (result, token) {

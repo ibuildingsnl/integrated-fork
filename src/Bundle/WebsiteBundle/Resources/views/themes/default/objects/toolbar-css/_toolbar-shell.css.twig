@@ -404,7 +404,8 @@
 
     .integrated-editor-commandbar .integrated-editor-save-secondary.btn.btn-white,
     .integrated-editor-commandbar .integrated-editor-close.btn.btn-white,
-    .integrated-editor-commandbar .integrated-editor-commandbar-group-history .btn.btn-white {
+    .integrated-editor-commandbar .integrated-editor-commandbar-group-history .btn.btn-white,
+    .integrated-editor-commandbar .integrated-editor-commandbar-group-viewport .btn.btn-white {
         background: rgba(222, 227, 233, 0.12);
         border-color: rgba(222, 227, 233, 0.28);
         color: #edf3fa;
@@ -415,10 +416,34 @@
     .integrated-editor-commandbar .integrated-editor-close.btn.btn-white:focus,
     .integrated-editor-commandbar .integrated-editor-close.btn.btn-white:hover,
     .integrated-editor-commandbar .integrated-editor-commandbar-group-history .btn.btn-white:focus,
-    .integrated-editor-commandbar .integrated-editor-commandbar-group-history .btn.btn-white:hover {
+    .integrated-editor-commandbar .integrated-editor-commandbar-group-history .btn.btn-white:hover,
+    .integrated-editor-commandbar .integrated-editor-commandbar-group-viewport .btn.btn-white:focus,
+    .integrated-editor-commandbar .integrated-editor-commandbar-group-viewport .btn.btn-white:hover {
         background: #dee3e9;
         border-color: #dee3e9;
         color: #355161;
+    }
+
+    .integrated-editor-commandbar-group-viewport .integrated-website-toolbar-button.btn {
+        min-width: 34px;
+        width: 34px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    .integrated-editor-commandbar-group-viewport .integrated-website-toolbar-button.btn i {
+        pointer-events: none;
+    }
+
+    .integrated-editor-commandbar-group-viewport .integrated-website-toolbar-button.btn i:before {
+        width: 18px;
+        height: 18px;
+    }
+
+    .integrated-editor-commandbar-group-viewport .integrated-website-toolbar-button.btn.is-active {
+        background: #0f2738;
+        border-color: rgba(144, 240, 192, 0.55);
+        color: #90f0c0;
     }
 
     .integrated-website-save-status {

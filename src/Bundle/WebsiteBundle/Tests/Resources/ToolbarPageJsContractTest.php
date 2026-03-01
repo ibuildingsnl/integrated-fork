@@ -40,6 +40,13 @@ final class ToolbarPageJsContractTest extends TestCase
         self::assertStringContainsString('integrated-editor-draft:v', $content);
         self::assertStringContainsString('window.localStorage.setItem', $content);
         self::assertStringContainsString('window.localStorage.getItem', $content);
+        self::assertStringContainsString('initViewportPreview', $content);
+        self::assertStringContainsString('applyEditorViewport', $content);
+        self::assertStringContainsString('setViewportPreviewMode', $content);
+        self::assertStringContainsString('integrated-editor-device-preview-frame', $content);
+        self::assertStringContainsString('integrated-editor-viewport:v1:', $content);
+        self::assertStringContainsString("data-action=\"integrated-editor-viewport-set\"", $content);
+        self::assertStringContainsString("button.dataset.viewport", $content);
         self::assertStringContainsString('maybeRestoreDraft()', $content);
         self::assertStringContainsString('restoreDraftSnapshot(draft).then', $content);
         self::assertStringContainsString("document.addEventListener('integrated-editor-content-change'", $content);

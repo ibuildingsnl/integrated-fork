@@ -7,20 +7,38 @@ namespace Integrated\Bundle\WebsiteBundle\Controller;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\PageBundle\PageBuilder\V2\Validation\LayoutPayloadValidator;
+use Integrated\Common\Content\Channel\ChannelContextInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 class PageBuilderController extends AbstractController
 {
+    private const SECTION_PRESETS_OPTION = 'pagebuilder_section_presets';
+    private const SECTION_PRESETS_LIMIT = 60;
+    private const SECTION_PRESET_HTML_MAX_BYTES = 500000;
+    private const SECTION_PRESETS_TOTAL_HTML_MAX_BYTES = 5000000;
+
     private DocumentManager $documentManager;
     private LayoutPayloadValidator $validator;
+    private ChannelContextInterface $channelContext;
+    private ChannelManagerInterface $channelManager;
 
-    public function __construct(DocumentManager $documentManager, LayoutPayloadValidator $validator)
+    public function __construct(
+        DocumentManager $documentManager,
+        LayoutPayloadValidator $validator,
+        ChannelContextInterface $channelContext,
+        ChannelManagerInterface $channelManager,
+    )
     {
         $this->documentManager = $documentManager;
         $this->validator = $validator;
+        $this->channelContext = $channelContext;
+        $this->channelManager = $channelManager;
     }
 
     public function save(Request $request): Response
@@ -89,5 +107,207 @@ class PageBuilderController extends AbstractController
             'success' => true,
             'revision' => $nextRevision,
         ]);
+    }
+
+    public function listSectionPresets(): Response
+    {
+        if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $channel = $this->channelContext->getChannel();
+        if (!$channel instanceof ChannelInterface) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'No active channel found',
+            ], 404);
+        }
+
+        return new JsonResponse([
+            'success' => true,
+            'presets' => $this->normalizeSectionPresets((array) $channel->getOption(self::SECTION_PRESETS_OPTION)),
+        ]);
+    }
+
+    public function saveSectionPreset(Request $request): Response
+    {
+        if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $channel = $this->channelContext->getChannel();
+        if (!$channel instanceof ChannelInterface) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'No active channel found',
+            ], 404);
+        }
+
+        $data = (array) json_decode((string) $request->getContent(), true);
+        $name = trim((string) ($data['name'] ?? ''));
+        $html = trim((string) ($data['html'] ?? ''));
+        $presetId = trim((string) ($data['id'] ?? ''));
+
+        if ($name === '' || $html === '') {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Preset name and html are required',
+            ], 400);
+        }
+
+        if (\strlen($name) > 120) {
+            $name = \substr($name, 0, 120);
+        }
+
+        if (\strlen($html) > self::SECTION_PRESET_HTML_MAX_BYTES) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Preset html exceeds maximum size',
+            ], 413);
+        }
+
+        $presets = $this->normalizeSectionPresets((array) $channel->getOption(self::SECTION_PRESETS_OPTION));
+        $now = (new \DateTimeImmutable())->format(\DATE_ATOM);
+        $matchedIndex = -1;
+
+        if ($presetId !== '') {
+            foreach ($presets as $index => $preset) {
+                if (($preset['id'] ?? '') === $presetId) {
+                    $matchedIndex = $index;
+                    break;
+                }
+            }
+        }
+
+        if ($presetId === '') {
+            $presetId = \bin2hex(\random_bytes(8));
+        }
+
+        $record = [
+            'id' => $presetId,
+            'name' => $name,
+            'html' => $html,
+            'updatedAt' => $now,
+        ];
+
+        if ($matchedIndex >= 0) {
+            $presets[$matchedIndex] = $record;
+        } else {
+            array_unshift($presets, $record);
+        }
+
+        $presets = array_values(array_slice($presets, 0, self::SECTION_PRESETS_LIMIT));
+
+        // Keep channel options bounded; the channel document has a hard BSON limit.
+        $boundedPresets = [];
+        $totalHtmlBytes = 0;
+        foreach ($presets as $preset) {
+            $presetHtml = (string) ($preset['html'] ?? '');
+            $presetHtmlBytes = \strlen($presetHtml);
+
+            if ($totalHtmlBytes + $presetHtmlBytes > self::SECTION_PRESETS_TOTAL_HTML_MAX_BYTES) {
+                continue;
+            }
+
+            $boundedPresets[] = $preset;
+            $totalHtmlBytes += $presetHtmlBytes;
+        }
+        $presets = $boundedPresets;
+
+        $channel->setOption(self::SECTION_PRESETS_OPTION, $presets);
+
+        try {
+            $this->channelManager->persist($channel, true);
+        } catch (Throwable $exception) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Unable to persist section preset',
+                'details' => $exception->getMessage(),
+            ], 500);
+        }
+
+        return new JsonResponse([
+            'success' => true,
+            'preset' => $record,
+            'count' => \count($presets),
+        ]);
+    }
+
+    public function deleteSectionPreset(string $id): Response
+    {
+        if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $channel = $this->channelContext->getChannel();
+        if (!$channel instanceof ChannelInterface) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'No active channel found',
+            ], 404);
+        }
+
+        $presetId = trim($id);
+        if ($presetId === '') {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Preset id is required',
+            ], 400);
+        }
+
+        $presets = $this->normalizeSectionPresets((array) $channel->getOption(self::SECTION_PRESETS_OPTION));
+        $presets = array_values(array_filter($presets, static function(array $preset) use ($presetId): bool {
+            return ($preset['id'] ?? '') !== $presetId;
+        }));
+
+        $channel->setOption(self::SECTION_PRESETS_OPTION, $presets);
+
+        try {
+            $this->channelManager->persist($channel, true);
+        } catch (Throwable $exception) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Unable to delete section preset',
+                'details' => $exception->getMessage(),
+            ], 500);
+        }
+
+        return new JsonResponse([
+            'success' => true,
+            'count' => \count($presets),
+        ]);
+    }
+
+    /**
+     * @param array<int|string, mixed> $presets
+     *
+     * @return array<int, array{id:string,name:string,html:string,updatedAt:string}>
+     */
+    private function normalizeSectionPresets(array $presets): array
+    {
+        $normalized = [];
+        foreach ($presets as $preset) {
+            if (!\is_array($preset)) {
+                continue;
+            }
+
+            $id = trim((string) ($preset['id'] ?? ''));
+            $name = trim((string) ($preset['name'] ?? ''));
+            $html = trim((string) ($preset['html'] ?? ''));
+            $updatedAt = trim((string) ($preset['updatedAt'] ?? ''));
+
+            if ($id === '' || $name === '' || $html === '') {
+                continue;
+            }
+
+            $normalized[] = [
+                'id' => $id,
+                'name' => $name,
+                'html' => $html,
+                'updatedAt' => $updatedAt,
+            ];
+        }
+
+        return $normalized;
     }
 }

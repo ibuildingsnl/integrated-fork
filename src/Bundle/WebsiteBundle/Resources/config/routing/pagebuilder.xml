@@ -9,5 +9,19 @@
         <default key="_format">json</default>
     </route>
 
-</routes>
+    <route id="integrated_website_pagebuilder_section_presets_list" path="/section-presets" methods="GET">
+        <default key="_controller">Integrated\Bundle\WebsiteBundle\Controller\PageBuilderController::listSectionPresets</default>
+        <default key="_format">json</default>
+    </route>
 
+    <route id="integrated_website_pagebuilder_section_presets_save" path="/section-presets" methods="POST">
+        <default key="_controller">Integrated\Bundle\WebsiteBundle\Controller\PageBuilderController::saveSectionPreset</default>
+        <default key="_format">json</default>
+    </route>
+
+    <route id="integrated_website_pagebuilder_section_presets_delete" path="/section-presets/{id}" methods="DELETE">
+        <default key="_controller">Integrated\Bundle\WebsiteBundle\Controller\PageBuilderController::deleteSectionPreset</default>
+        <default key="_format">json</default>
+    </route>
+
+</routes>

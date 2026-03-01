@@ -34,6 +34,10 @@ final class ToolbarCssContractTest extends TestCase
         self::assertStringContainsString('body.integrated-sortable-active', $partialsContent);
         self::assertStringContainsString('.integrated-grid-drop-target', $partialsContent);
         self::assertStringContainsString('.integrated-menu-drop-before', $partialsContent);
+        self::assertStringContainsString('.integrated-editor-commandbar-group-viewport', $partialsContent);
+        self::assertStringContainsString('body.integrated-editor-preview-tablet', $partialsContent);
+        self::assertStringContainsString('body.integrated-editor-preview-mobile', $partialsContent);
+        self::assertStringContainsString('.integrated-editor-device-preview', $partialsContent);
         self::assertStringContainsString('.integrated-website-save-status[data-state="dirty"]', $partialsContent);
         self::assertStringContainsString('.integrated-website-toolbar-button.is-disabled', $partialsContent);
         self::assertStringContainsString('.integrated-website-toolbar a:focus-visible', $partialsContent);

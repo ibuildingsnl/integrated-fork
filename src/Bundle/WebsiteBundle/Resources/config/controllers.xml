@@ -35,6 +35,8 @@
         <service id="Integrated\Bundle\WebsiteBundle\Controller\PageBuilderController">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="Integrated\Bundle\PageBundle\PageBuilder\V2\Validation\LayoutPayloadValidator" />
+            <argument type="service" id="integrated_content.channel.context" />
+            <argument type="service" id="integrated_content.channel.manager" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />

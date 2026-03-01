@@ -1,4 +1,6 @@
 {% set isEditorMode = app.request.query.get('integrated_website_edit') and layoutEditable %}
+{% set isEditorPreview = app.request.query.get('integrated_editor_preview') %}
+{% if not isEditorPreview %}
 {% include integrated_active_theme('objects/toolbar-css.html.twig') %}
 {% if isEditorMode %}
     <div id="integrated-editor-loader" aria-live="polite" aria-busy="true">
@@ -114,6 +116,34 @@
                            aria-label="{% trans %}Redo{% endtrans %}">
                             <i class="iconoir-redo"></i>
                             <span>{% trans %}Redo{% endtrans %}</span>
+                        </a>
+                    </div>
+
+                    <div class="integrated-editor-commandbar-group integrated-editor-commandbar-group-viewport"
+                         data-role="integrated-editor-viewport-controls">
+                        <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white"
+                           data-action="integrated-editor-viewport-set"
+                           data-viewport="desktop"
+                           aria-pressed="true"
+                           title="{% trans %}Preview desktop{% endtrans %}"
+                           aria-label="{% trans %}Preview desktop{% endtrans %}">
+                            <i class="iconoir-computer" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white"
+                           data-action="integrated-editor-viewport-set"
+                           data-viewport="tablet"
+                           aria-pressed="false"
+                           title="{% trans %}Preview tablet{% endtrans %}"
+                           aria-label="{% trans %}Preview tablet{% endtrans %}">
+                            <i class="iconoir-laptop" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white"
+                           data-action="integrated-editor-viewport-set"
+                           data-viewport="mobile"
+                           aria-pressed="false"
+                           title="{% trans %}Preview mobile{% endtrans %}"
+                           aria-label="{% trans %}Preview mobile{% endtrans %}">
+                            <i class="iconoir-smartphone-device" aria-hidden="true"></i>
                         </a>
                     </div>
 
@@ -376,3 +406,4 @@
 <div id="dropdown_overlay" class="hide"></div>
 
 <div class="integrated-website-body-margin-top"></div>
+{% endif %}

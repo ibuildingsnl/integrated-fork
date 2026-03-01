@@ -22,6 +22,16 @@ final class ToolbarTemplateContractTest extends TestCase
         self::assertStringContainsString('data-close-editor-on-success="0"', $content);
         self::assertStringContainsString('data-close-editor-on-success="1"', $content);
         self::assertStringContainsString('data-revision="{{ pageRevision }}"', $content);
+        self::assertStringContainsString("isEditorPreview = app.request.query.get('integrated_editor_preview')", $content);
+        self::assertStringContainsString('{% if not isEditorPreview %}', $content);
+        self::assertStringContainsString('data-role="integrated-editor-viewport-controls"', $content);
+        self::assertStringContainsString('data-action="integrated-editor-viewport-set"', $content);
+        self::assertStringContainsString('data-viewport="desktop"', $content);
+        self::assertStringContainsString('data-viewport="tablet"', $content);
+        self::assertStringContainsString('data-viewport="mobile"', $content);
+        self::assertStringContainsString('iconoir-computer', $content);
+        self::assertStringContainsString('iconoir-laptop', $content);
+        self::assertStringContainsString('iconoir-smartphone-device', $content);
         self::assertStringContainsString('title="{% trans %}Undo (Ctrl/Cmd+Z){% endtrans %}"', $content);
         self::assertStringContainsString('title="{% trans %}Redo (Ctrl/Cmd+Shift+Z){% endtrans %}"', $content);
         self::assertStringContainsString('role="status" aria-live="polite" aria-atomic="true"', $content);

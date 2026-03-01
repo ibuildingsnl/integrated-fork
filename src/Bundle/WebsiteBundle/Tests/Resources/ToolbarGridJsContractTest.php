@@ -21,6 +21,11 @@ final class ToolbarGridJsContractTest extends TestCase
         self::assertStringContainsString('updateHistoryActionState', $content);
         self::assertStringContainsString("setHistoryActionEnabled('integrated-website-history-undo'", $content);
         self::assertStringContainsString("setHistoryActionEnabled('integrated-website-history-redo'", $content);
+        self::assertStringContainsString('integrated_website_pagebuilder_section_presets_list', $content);
+        self::assertStringContainsString('integrated_website_pagebuilder_section_presets_save', $content);
+        self::assertStringContainsString('integrated_website_pagebuilder_section_presets_delete', $content);
+        self::assertStringContainsString('integrated-website-section-preset-add', $content);
+        self::assertStringContainsString('integrated-website-section-preset-save', $content);
         self::assertStringContainsString("button.setAttribute('aria-disabled', isEnabled ? 'false' : 'true');", $content);
         self::assertStringContainsString("document.addEventListener('block-deleted'", $content);
         self::assertStringContainsString('$blockTarget = null;', $content);
