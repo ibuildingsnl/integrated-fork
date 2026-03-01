@@ -17,6 +17,7 @@ final class ToolbarTemplateContractTest extends TestCase
         self::assertStringContainsString('integrated-website-save-status', $content);
         self::assertStringContainsString('data-role="integrated-editor-commandbar"', $content);
         self::assertStringContainsString('integrated-view-commandbar', $content);
+        self::assertStringContainsString('class="integrated-toolbar-websites" role="list"', $content);
         self::assertStringContainsString('integrated-toolbar-account-shell', $content);
         self::assertStringContainsString('data-close-editor-on-success="0"', $content);
         self::assertStringContainsString('data-close-editor-on-success="1"', $content);

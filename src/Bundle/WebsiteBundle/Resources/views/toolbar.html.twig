@@ -81,9 +81,11 @@
 
         <div class="integrated-website-toolbar-tools">
             <div class="integrated-website-toolbar-left integrated-toolbar-workspace">
-                {% block website_navigation_buttons %}
-                    {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ChannelController::getChannels')) }}
-                {% endblock website_navigation_buttons %}
+                <ul class="integrated-toolbar-websites" role="list">
+                    {% block website_navigation_buttons %}
+                        {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ChannelController::getChannels')) }}
+                    {% endblock website_navigation_buttons %}
+                </ul>
                 <div class="new-contenttype close-outside dropdown top-bar">
                     <a href="#" class="btn btn-green icon-right"
                        data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}</span><i class="iconoir-plus"></i></a>
