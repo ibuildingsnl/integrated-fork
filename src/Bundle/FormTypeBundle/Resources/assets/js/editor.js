@@ -205,23 +205,321 @@ function initTinyMceEditors(root = document) {
             });
         },
         setup: function (editor) {
+            function isStandaloneEditableImage(image) {
+                if (!image || image.tagName !== 'IMG' || !image.hasAttribute('data-integrated-id')) {
+                    return false;
+                }
 
-            function addRemoveButton(element, className) {
-                const removeButton = editor.contentDocument.createElement('span');
-                removeButton.classList.add(className, 'remove');
-                removeButton.innerHTML = '<svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.75827 17.2426L12.0009 12M17.2435 6.75736L12.0009 12M12.0009 12L6.75827 6.75736M12.0009 12L17.2435 17.2426" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                if (typeof image.closest === 'function' && image.closest('.article-swiper')) {
+                    return false;
+                }
 
-                element.appendChild(removeButton);
+                return true;
             }
 
-            function initRemoveButtons() {
-                const removeButtons = editor.contentDocument.querySelectorAll('.remove');
+            function isImageOnlyHost(host, image) {
+                if (!host || !image) {
+                    return false;
+                }
 
-                removeButtons.forEach(function(removeButton) {
-                    removeButton.addEventListener('click', function() {
-                        const element = this.parentNode;
-                        element.parentNode.removeChild(element);
+                let imageCount = 0;
+                const children = host.childNodes || [];
+                for (let i = 0; i < children.length; i += 1) {
+                    const child = children[i];
+
+                    if (child.nodeType === Node.TEXT_NODE) {
+                        if (String(child.textContent || '').trim() !== '') {
+                            return false;
+                        }
+
+                        continue;
+                    }
+
+                    if (child.nodeType !== Node.ELEMENT_NODE) {
+                        continue;
+                    }
+
+                    if (child === image) {
+                        imageCount += 1;
+                        continue;
+                    }
+
+                    if (child.classList && child.classList.contains('integrated-image-edit')) {
+                        continue;
+                    }
+
+                    if (child.tagName === 'BR') {
+                        continue;
+                    }
+
+                    return false;
+                }
+
+                return imageCount === 1;
+            }
+
+            function rememberArticleSwiper(node) {
+                if (!node || typeof node.closest !== 'function') {
+                    return;
+                }
+
+                const swiper = node.closest('.article-swiper');
+                if (swiper && swiper.isConnected) {
+                    editor.__integratedLastArticleSwiper = swiper;
+                }
+            }
+
+            function rememberEditableImage(node) {
+                if (!node) {
+                    return;
+                }
+
+                let image = null;
+                if (isStandaloneEditableImage(node)) {
+                    image = node;
+                } else if (typeof node.querySelector === 'function') {
+                    const candidates = node.querySelectorAll('img[data-integrated-id]');
+                    for (let i = 0; i < candidates.length; i += 1) {
+                        if (isStandaloneEditableImage(candidates[i])) {
+                            image = candidates[i];
+                            break;
+                        }
+                    }
+                }
+
+                if (image && image.isConnected) {
+                    editor.__integratedLastEditableImage = image;
+                }
+            }
+
+            function ensureImageEditButton(image) {
+                if (!isStandaloneEditableImage(image) || !image.parentElement) {
+                    return;
+                }
+
+                const host = image.parentElement;
+                host.classList.add('integrated-image-edit-host');
+                if (isImageOnlyHost(host, image)) {
+                    host.classList.add('integrated-image-edit-host-inline');
+                } else {
+                    host.classList.remove('integrated-image-edit-host-inline');
+                }
+
+                let button = host.querySelector(':scope > .integrated-image-edit');
+                if (!button) {
+                    button = editor.contentDocument.createElement('span');
+                    button.classList.add('integrated-image-edit');
+                    button.innerHTML = '<svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.3638 5.65165L18.3483 9.63617M3 21H7.40614L19.0454 9.36073C20.3182 8.08792 20.3182 6.02476 19.0454 4.75195C17.7726 3.47914 15.7094 3.47914 14.4366 4.75195L3 16.1886V21Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                    host.appendChild(button);
+                }
+
+                button.setAttribute('data-mce-bogus', 'all');
+                button.setAttribute('contenteditable', 'false');
+                button.setAttribute('tabindex', '0');
+                button.setAttribute('role', 'button');
+                button.setAttribute('aria-label', 'Edit image');
+                button.setAttribute('title', 'Edit image');
+
+                if (button.dataset.integratedImageEditBound === '1') {
+                    return;
+                }
+
+                const suppressMouseDown = function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                };
+
+                const openImageEditor = function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    editor.__integratedLastEditableImage = image;
+                    editor.selection.select(image);
+                    editor.execCommand('integratedEditImageDialog');
+                };
+
+                const handleKeyDown = function(event) {
+                    if (event.key !== 'Enter' && event.key !== ' ') {
+                        return;
+                    }
+
+                    openImageEditor(event);
+                };
+
+                button.addEventListener('mousedown', suppressMouseDown);
+                button.addEventListener('click', openImageEditor);
+                button.addEventListener('keydown', handleKeyDown);
+                button.dataset.integratedImageEditBound = '1';
+            }
+
+            function ensureRemoveButton(element, className, onRemove) {
+                let button = element.querySelector(':scope > .remove');
+                if (!button) {
+                    button = editor.contentDocument.createElement('span');
+                    button.classList.add(className, 'remove');
+                    button.innerHTML = '<svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.75827 17.2426L12.0009 12M17.2435 6.75736L12.0009 12M12.0009 12L6.75827 6.75736M12.0009 12L17.2435 17.2426" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                    element.appendChild(button);
+                }
+
+                button.setAttribute('data-mce-bogus', 'all');
+                button.setAttribute('contenteditable', 'false');
+                button.setAttribute('tabindex', '0');
+                button.setAttribute('role', 'button');
+                button.setAttribute('aria-label', className === 'swiper-append' ? 'Remove slider' : 'Remove slide');
+
+                if (button.dataset.integratedRemoveBound === '1') {
+                    return;
+                }
+
+                const suppressMouseDown = function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                };
+
+                const handleClick = function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    onRemove();
+                };
+
+                const handleKeyDown = function(event) {
+                    if (event.key !== 'Enter' && event.key !== ' ') {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    event.stopPropagation();
+                    onRemove();
+                };
+
+                button.addEventListener('mousedown', suppressMouseDown);
+                button.addEventListener('click', handleClick);
+                button.addEventListener('keydown', handleKeyDown);
+                button.dataset.integratedRemoveBound = '1';
+            }
+
+            function ensureEditButton(swiper) {
+                let button = swiper.querySelector(':scope > .integrated-swiper-edit');
+                if (!button) {
+                    button = editor.contentDocument.createElement('span');
+                    button.classList.add('swiper-append', 'edit', 'integrated-swiper-edit');
+                    button.innerHTML = '<svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.3638 5.65165L18.3483 9.63617M3 21H7.40614L19.0454 9.36073C20.3182 8.08792 20.3182 6.02476 19.0454 4.75195C17.7726 3.47914 15.7094 3.47914 14.4366 4.75195L3 16.1886V21Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                    swiper.appendChild(button);
+                }
+
+                button.setAttribute('data-mce-bogus', 'all');
+                button.setAttribute('contenteditable', 'false');
+                button.setAttribute('tabindex', '0');
+                button.setAttribute('role', 'button');
+                button.setAttribute('aria-label', 'Edit gallery');
+                button.setAttribute('title', 'Edit gallery');
+
+                if (button.dataset.integratedEditBound === '1') {
+                    return;
+                }
+
+                const suppressMouseDown = function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                };
+
+                const openGalleryEditor = function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    editor.__integratedLastArticleSwiper = swiper;
+                    editor.selection.select(swiper);
+                    editor.execCommand('integratedEditGalleryDialog');
+                };
+
+                const handleKeyDown = function(event) {
+                    if (event.key !== 'Enter' && event.key !== ' ') {
+                        return;
+                    }
+
+                    openGalleryEditor(event);
+                };
+
+                button.addEventListener('mousedown', suppressMouseDown);
+                button.addEventListener('click', openGalleryEditor);
+                button.addEventListener('keydown', handleKeyDown);
+                button.dataset.integratedEditBound = '1';
+            }
+
+            function normalizeArticleSwiper(swiper) {
+                const wrapper = swiper.querySelector(':scope > .swiper-wrapper');
+                if (!wrapper) {
+                    swiper.remove();
+                    return;
+                }
+
+                wrapper.querySelectorAll(':scope > .swiper-slide').forEach(function(slide) {
+                    slide.querySelectorAll(':scope > .remove').forEach(function(button) {
+                        button.remove();
                     });
+
+                    slide.querySelectorAll(':scope > br[data-mce-bogus]').forEach(function(node) {
+                        node.remove();
+                    });
+
+                    const image = slide.querySelector('img.template-image-gallery[src], img[data-integrated-id], img[src]');
+                    if (!image) {
+                        slide.remove();
+                        return;
+                    }
+
+                    ensureRemoveButton(slide, 'slider-append', function() {
+                        slide.remove();
+
+                        if (!wrapper.querySelector(':scope > .swiper-slide')) {
+                            swiper.remove();
+                        }
+                    });
+                });
+
+                if (!wrapper.querySelector(':scope > .swiper-slide')) {
+                    swiper.remove();
+                    return;
+                }
+
+                ensureRemoveButton(swiper, 'swiper-append', function() {
+                    swiper.remove();
+                });
+                ensureEditButton(swiper);
+
+                ['.swiper-button-next', '.swiper-button-prev'].forEach(function(selector) {
+                    const navigation = swiper.querySelector(':scope > ' + selector);
+                    if (!navigation) {
+                        return;
+                    }
+
+                    navigation.setAttribute('contenteditable', 'false');
+                    navigation.querySelectorAll('br[data-mce-bogus]').forEach(function(node) {
+                        node.remove();
+                    });
+                });
+            }
+
+            function normalizeAllArticleSwipers() {
+                editor.contentDocument.querySelectorAll('.article-swiper').forEach(function(swiper) {
+                    normalizeArticleSwiper(swiper);
+                });
+            }
+
+            function normalizeAllEditableImages() {
+                const hosts = editor.contentDocument.querySelectorAll('.integrated-image-edit-host');
+                hosts.forEach(function(host) {
+                    const image = host.querySelector(':scope > img[data-integrated-id]');
+                    if (!isStandaloneEditableImage(image)) {
+                        const staleButton = host.querySelector(':scope > .integrated-image-edit');
+                        if (staleButton) {
+                            staleButton.remove();
+                        }
+
+                        host.classList.remove('integrated-image-edit-host', 'integrated-image-edit-host-inline');
+                    }
+                });
+
+                editor.contentDocument.querySelectorAll('img[data-integrated-id]').forEach(function(image) {
+                    ensureImageEditButton(image);
                 });
             }
 
@@ -229,23 +527,34 @@ function initTinyMceEditors(root = document) {
 
                 let event = new CustomEvent('tinyMCEInitialized', { detail: { editor } });
                 window.dispatchEvent(event);
-
-                const swiperSlides = editor.contentDocument.querySelectorAll('.swiper-slide');
-                const articleSwiper = editor.contentDocument.querySelectorAll('.article-swiper');
-
-                articleSwiper.forEach(function(swiper) {
-                    addRemoveButton(swiper, 'swiper-append');
-                });
-
-                swiperSlides.forEach(function(slide) {
-                    addRemoveButton(slide, 'slider-append');
-                });
-
-                initRemoveButtons();
+                normalizeAllArticleSwipers();
+                normalizeAllEditableImages();
+                const currentNode = editor.selection && editor.selection.getNode ? editor.selection.getNode() : null;
+                rememberArticleSwiper(currentNode);
+                rememberEditableImage(currentNode);
             });
 
             editor.on('change', function() {
-                initRemoveButtons();
+                normalizeAllArticleSwipers();
+                normalizeAllEditableImages();
+            });
+
+            editor.on('click', function(event) {
+                const target = event && event.target ? event.target : null;
+                rememberArticleSwiper(target);
+                rememberEditableImage(target);
+            });
+
+            editor.on('NodeChange', function(event) {
+                const element = event && event.element ? event.element : null;
+                rememberArticleSwiper(element);
+                rememberEditableImage(element);
+            });
+
+            editor.on('keyup', function() {
+                const currentNode = editor.selection && editor.selection.getNode ? editor.selection.getNode() : null;
+                rememberArticleSwiper(currentNode);
+                rememberEditableImage(currentNode);
             });
         }
     });

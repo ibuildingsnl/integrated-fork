@@ -16534,19 +16534,264 @@ function initTinyMceEditors() {
         });
       },
       setup: function setup(editor) {
-        function addRemoveButton(element, className) {
-          var removeButton = editor.contentDocument.createElement('span');
-          removeButton.classList.add(className, 'remove');
-          removeButton.innerHTML = '<svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.75827 17.2426L12.0009 12M17.2435 6.75736L12.0009 12M12.0009 12L6.75827 6.75736M12.0009 12L17.2435 17.2426" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-          element.appendChild(removeButton);
+        function isStandaloneEditableImage(image) {
+          if (!image || image.tagName !== 'IMG' || !image.hasAttribute('data-integrated-id')) {
+            return false;
+          }
+          if (typeof image.closest === 'function' && image.closest('.article-swiper')) {
+            return false;
+          }
+          return true;
         }
-        function initRemoveButtons() {
-          var removeButtons = editor.contentDocument.querySelectorAll('.remove');
-          removeButtons.forEach(function (removeButton) {
-            removeButton.addEventListener('click', function () {
-              var element = this.parentNode;
-              element.parentNode.removeChild(element);
+        function isImageOnlyHost(host, image) {
+          if (!host || !image) {
+            return false;
+          }
+          var imageCount = 0;
+          var children = host.childNodes || [];
+          for (var i = 0; i < children.length; i += 1) {
+            var child = children[i];
+            if (child.nodeType === Node.TEXT_NODE) {
+              if (String(child.textContent || '').trim() !== '') {
+                return false;
+              }
+              continue;
+            }
+            if (child.nodeType !== Node.ELEMENT_NODE) {
+              continue;
+            }
+            if (child === image) {
+              imageCount += 1;
+              continue;
+            }
+            if (child.classList && child.classList.contains('integrated-image-edit')) {
+              continue;
+            }
+            if (child.tagName === 'BR') {
+              continue;
+            }
+            return false;
+          }
+          return imageCount === 1;
+        }
+        function rememberArticleSwiper(node) {
+          if (!node || typeof node.closest !== 'function') {
+            return;
+          }
+          var swiper = node.closest('.article-swiper');
+          if (swiper && swiper.isConnected) {
+            editor.__integratedLastArticleSwiper = swiper;
+          }
+        }
+        function rememberEditableImage(node) {
+          if (!node) {
+            return;
+          }
+          var image = null;
+          if (isStandaloneEditableImage(node)) {
+            image = node;
+          } else if (typeof node.querySelector === 'function') {
+            var candidates = node.querySelectorAll('img[data-integrated-id]');
+            for (var i = 0; i < candidates.length; i += 1) {
+              if (isStandaloneEditableImage(candidates[i])) {
+                image = candidates[i];
+                break;
+              }
+            }
+          }
+          if (image && image.isConnected) {
+            editor.__integratedLastEditableImage = image;
+          }
+        }
+        function ensureImageEditButton(image) {
+          if (!isStandaloneEditableImage(image) || !image.parentElement) {
+            return;
+          }
+          var host = image.parentElement;
+          host.classList.add('integrated-image-edit-host');
+          if (isImageOnlyHost(host, image)) {
+            host.classList.add('integrated-image-edit-host-inline');
+          } else {
+            host.classList.remove('integrated-image-edit-host-inline');
+          }
+          var button = host.querySelector(':scope > .integrated-image-edit');
+          if (!button) {
+            button = editor.contentDocument.createElement('span');
+            button.classList.add('integrated-image-edit');
+            button.innerHTML = '<svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.3638 5.65165L18.3483 9.63617M3 21H7.40614L19.0454 9.36073C20.3182 8.08792 20.3182 6.02476 19.0454 4.75195C17.7726 3.47914 15.7094 3.47914 14.4366 4.75195L3 16.1886V21Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+            host.appendChild(button);
+          }
+          button.setAttribute('data-mce-bogus', 'all');
+          button.setAttribute('contenteditable', 'false');
+          button.setAttribute('tabindex', '0');
+          button.setAttribute('role', 'button');
+          button.setAttribute('aria-label', 'Edit image');
+          button.setAttribute('title', 'Edit image');
+          if (button.dataset.integratedImageEditBound === '1') {
+            return;
+          }
+          var suppressMouseDown = function suppressMouseDown(event) {
+            event.preventDefault();
+            event.stopPropagation();
+          };
+          var openImageEditor = function openImageEditor(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            editor.__integratedLastEditableImage = image;
+            editor.selection.select(image);
+            editor.execCommand('integratedEditImageDialog');
+          };
+          var handleKeyDown = function handleKeyDown(event) {
+            if (event.key !== 'Enter' && event.key !== ' ') {
+              return;
+            }
+            openImageEditor(event);
+          };
+          button.addEventListener('mousedown', suppressMouseDown);
+          button.addEventListener('click', openImageEditor);
+          button.addEventListener('keydown', handleKeyDown);
+          button.dataset.integratedImageEditBound = '1';
+        }
+        function ensureRemoveButton(element, className, onRemove) {
+          var button = element.querySelector(':scope > .remove');
+          if (!button) {
+            button = editor.contentDocument.createElement('span');
+            button.classList.add(className, 'remove');
+            button.innerHTML = '<svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.75827 17.2426L12.0009 12M17.2435 6.75736L12.0009 12M12.0009 12L6.75827 6.75736M12.0009 12L17.2435 17.2426" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+            element.appendChild(button);
+          }
+          button.setAttribute('data-mce-bogus', 'all');
+          button.setAttribute('contenteditable', 'false');
+          button.setAttribute('tabindex', '0');
+          button.setAttribute('role', 'button');
+          button.setAttribute('aria-label', className === 'swiper-append' ? 'Remove slider' : 'Remove slide');
+          if (button.dataset.integratedRemoveBound === '1') {
+            return;
+          }
+          var suppressMouseDown = function suppressMouseDown(event) {
+            event.preventDefault();
+            event.stopPropagation();
+          };
+          var handleClick = function handleClick(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            onRemove();
+          };
+          var handleKeyDown = function handleKeyDown(event) {
+            if (event.key !== 'Enter' && event.key !== ' ') {
+              return;
+            }
+            event.preventDefault();
+            event.stopPropagation();
+            onRemove();
+          };
+          button.addEventListener('mousedown', suppressMouseDown);
+          button.addEventListener('click', handleClick);
+          button.addEventListener('keydown', handleKeyDown);
+          button.dataset.integratedRemoveBound = '1';
+        }
+        function ensureEditButton(swiper) {
+          var button = swiper.querySelector(':scope > .integrated-swiper-edit');
+          if (!button) {
+            button = editor.contentDocument.createElement('span');
+            button.classList.add('swiper-append', 'edit', 'integrated-swiper-edit');
+            button.innerHTML = '<svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.3638 5.65165L18.3483 9.63617M3 21H7.40614L19.0454 9.36073C20.3182 8.08792 20.3182 6.02476 19.0454 4.75195C17.7726 3.47914 15.7094 3.47914 14.4366 4.75195L3 16.1886V21Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+            swiper.appendChild(button);
+          }
+          button.setAttribute('data-mce-bogus', 'all');
+          button.setAttribute('contenteditable', 'false');
+          button.setAttribute('tabindex', '0');
+          button.setAttribute('role', 'button');
+          button.setAttribute('aria-label', 'Edit gallery');
+          button.setAttribute('title', 'Edit gallery');
+          if (button.dataset.integratedEditBound === '1') {
+            return;
+          }
+          var suppressMouseDown = function suppressMouseDown(event) {
+            event.preventDefault();
+            event.stopPropagation();
+          };
+          var openGalleryEditor = function openGalleryEditor(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            editor.__integratedLastArticleSwiper = swiper;
+            editor.selection.select(swiper);
+            editor.execCommand('integratedEditGalleryDialog');
+          };
+          var handleKeyDown = function handleKeyDown(event) {
+            if (event.key !== 'Enter' && event.key !== ' ') {
+              return;
+            }
+            openGalleryEditor(event);
+          };
+          button.addEventListener('mousedown', suppressMouseDown);
+          button.addEventListener('click', openGalleryEditor);
+          button.addEventListener('keydown', handleKeyDown);
+          button.dataset.integratedEditBound = '1';
+        }
+        function normalizeArticleSwiper(swiper) {
+          var wrapper = swiper.querySelector(':scope > .swiper-wrapper');
+          if (!wrapper) {
+            swiper.remove();
+            return;
+          }
+          wrapper.querySelectorAll(':scope > .swiper-slide').forEach(function (slide) {
+            slide.querySelectorAll(':scope > .remove').forEach(function (button) {
+              button.remove();
             });
+            slide.querySelectorAll(':scope > br[data-mce-bogus]').forEach(function (node) {
+              node.remove();
+            });
+            var image = slide.querySelector('img.template-image-gallery[src], img[data-integrated-id], img[src]');
+            if (!image) {
+              slide.remove();
+              return;
+            }
+            ensureRemoveButton(slide, 'slider-append', function () {
+              slide.remove();
+              if (!wrapper.querySelector(':scope > .swiper-slide')) {
+                swiper.remove();
+              }
+            });
+          });
+          if (!wrapper.querySelector(':scope > .swiper-slide')) {
+            swiper.remove();
+            return;
+          }
+          ensureRemoveButton(swiper, 'swiper-append', function () {
+            swiper.remove();
+          });
+          ensureEditButton(swiper);
+          ['.swiper-button-next', '.swiper-button-prev'].forEach(function (selector) {
+            var navigation = swiper.querySelector(':scope > ' + selector);
+            if (!navigation) {
+              return;
+            }
+            navigation.setAttribute('contenteditable', 'false');
+            navigation.querySelectorAll('br[data-mce-bogus]').forEach(function (node) {
+              node.remove();
+            });
+          });
+        }
+        function normalizeAllArticleSwipers() {
+          editor.contentDocument.querySelectorAll('.article-swiper').forEach(function (swiper) {
+            normalizeArticleSwiper(swiper);
+          });
+        }
+        function normalizeAllEditableImages() {
+          var hosts = editor.contentDocument.querySelectorAll('.integrated-image-edit-host');
+          hosts.forEach(function (host) {
+            var image = host.querySelector(':scope > img[data-integrated-id]');
+            if (!isStandaloneEditableImage(image)) {
+              var staleButton = host.querySelector(':scope > .integrated-image-edit');
+              if (staleButton) {
+                staleButton.remove();
+              }
+              host.classList.remove('integrated-image-edit-host', 'integrated-image-edit-host-inline');
+            }
+          });
+          editor.contentDocument.querySelectorAll('img[data-integrated-id]').forEach(function (image) {
+            ensureImageEditButton(image);
           });
         }
         editor.on('init', function () {
@@ -16556,18 +16801,30 @@ function initTinyMceEditors() {
             }
           });
           window.dispatchEvent(event);
-          var swiperSlides = editor.contentDocument.querySelectorAll('.swiper-slide');
-          var articleSwiper = editor.contentDocument.querySelectorAll('.article-swiper');
-          articleSwiper.forEach(function (swiper) {
-            addRemoveButton(swiper, 'swiper-append');
-          });
-          swiperSlides.forEach(function (slide) {
-            addRemoveButton(slide, 'slider-append');
-          });
-          initRemoveButtons();
+          normalizeAllArticleSwipers();
+          normalizeAllEditableImages();
+          var currentNode = editor.selection && editor.selection.getNode ? editor.selection.getNode() : null;
+          rememberArticleSwiper(currentNode);
+          rememberEditableImage(currentNode);
         });
         editor.on('change', function () {
-          initRemoveButtons();
+          normalizeAllArticleSwipers();
+          normalizeAllEditableImages();
+        });
+        editor.on('click', function (event) {
+          var target = event && event.target ? event.target : null;
+          rememberArticleSwiper(target);
+          rememberEditableImage(target);
+        });
+        editor.on('NodeChange', function (event) {
+          var element = event && event.element ? event.element : null;
+          rememberArticleSwiper(element);
+          rememberEditableImage(element);
+        });
+        editor.on('keyup', function () {
+          var currentNode = editor.selection && editor.selection.getNode ? editor.selection.getNode() : null;
+          rememberArticleSwiper(currentNode);
+          rememberEditableImage(currentNode);
         });
       }
     });
@@ -16837,35 +17094,51 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dialog__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dialog */ "./src/Bundle/FormTypeBundle/Resources/assets/js/tinymce-integrated-browser/ui/dialog.js");
 
 var register = function register(editor) {
+  var openImageDialog = (0,_dialog__WEBPACK_IMPORTED_MODULE_0__.Dialog)(editor, 'image', {
+    editExisting: false
+  }).open;
+  var openImageEditDialog = (0,_dialog__WEBPACK_IMPORTED_MODULE_0__.Dialog)(editor, 'image', {
+    editExisting: true
+  }).open;
+  var openVideoDialog = (0,_dialog__WEBPACK_IMPORTED_MODULE_0__.Dialog)(editor, 'video').open;
+  var openGalleryDialog = (0,_dialog__WEBPACK_IMPORTED_MODULE_0__.Dialog)(editor, 'gallery', {
+    editExisting: false
+  }).open;
+  var openGalleryEditDialog = (0,_dialog__WEBPACK_IMPORTED_MODULE_0__.Dialog)(editor, 'gallery', {
+    editExisting: true
+  }).open;
+  editor.addCommand('integratedEditImageDialog', openImageEditDialog);
+  editor.addCommand('integratedOpenGalleryDialog', openGalleryDialog);
+  editor.addCommand('integratedEditGalleryDialog', openGalleryEditDialog);
   editor.ui.registry.addButton('integratedimage', {
     icon: 'image',
     tooltip: 'Add image',
-    onAction: (0,_dialog__WEBPACK_IMPORTED_MODULE_0__.Dialog)(editor, 'image').open
+    onAction: openImageDialog
   });
   editor.ui.registry.addButton('integratedvideo', {
     icon: 'embed',
     tooltip: 'Add video',
-    onAction: (0,_dialog__WEBPACK_IMPORTED_MODULE_0__.Dialog)(editor, 'video').open
+    onAction: openVideoDialog
   });
   editor.ui.registry.addButton('integratedgallery', {
     icon: 'gallery',
     tooltip: 'Add gallery',
-    onAction: (0,_dialog__WEBPACK_IMPORTED_MODULE_0__.Dialog)(editor, 'gallery').open
+    onAction: openGalleryDialog
   });
   editor.ui.registry.addMenuItem('integratedimage', {
     text: 'Add image',
     icon: 'image',
-    onAction: (0,_dialog__WEBPACK_IMPORTED_MODULE_0__.Dialog)(editor, 'image').open
+    onAction: openImageDialog
   });
   editor.ui.registry.addMenuItem('integratedvideo', {
     text: 'Add video',
     icon: 'embed',
-    onAction: (0,_dialog__WEBPACK_IMPORTED_MODULE_0__.Dialog)(editor, 'video').open
+    onAction: openVideoDialog
   });
   editor.ui.registry.addMenuItem('integratedgallery', {
     icon: 'gallery',
     tooltip: 'Add gallery',
-    onAction: (0,_dialog__WEBPACK_IMPORTED_MODULE_0__.Dialog)(editor, 'gallery').open
+    onAction: openGalleryDialog
   });
 };
 
@@ -16974,7 +17247,114 @@ var bindBackdropClose = function bindBackdropClose(dialog) {
   };
   _attach();
 };
+var getSelectionArticleSwiper = function getSelectionArticleSwiper(editor) {
+  if (!editor.selection || typeof editor.selection.getNode !== 'function') {
+    return null;
+  }
+  var node = editor.selection.getNode();
+  if (!node) {
+    return null;
+  }
+  if (node.classList && node.classList.contains('article-swiper')) {
+    return node;
+  }
+  if (typeof node.closest === 'function') {
+    return node.closest('.article-swiper');
+  }
+  return null;
+};
+var findEditableImage = function findEditableImage(node) {
+  var isStandaloneEditableImage = function isStandaloneEditableImage(image) {
+    if (!image || !image.hasAttribute('data-integrated-id')) {
+      return false;
+    }
+    if (typeof image.closest === 'function' && image.closest('.article-swiper')) {
+      return false;
+    }
+    return true;
+  };
+  if (!node) {
+    return null;
+  }
+  if (node.tagName === 'IMG' && isStandaloneEditableImage(node)) {
+    return node;
+  }
+  if (typeof node.querySelector === 'function') {
+    var candidateImages = node.querySelectorAll('img[data-integrated-id]');
+    for (var i = 0; i < candidateImages.length; i += 1) {
+      if (isStandaloneEditableImage(candidateImages[i])) {
+        return candidateImages[i];
+      }
+    }
+  }
+  return null;
+};
+var getSelectionImage = function getSelectionImage(editor) {
+  if (!editor.selection || typeof editor.selection.getNode !== 'function') {
+    return null;
+  }
+  return findEditableImage(editor.selection.getNode());
+};
+var getStoredImage = function getStoredImage(editor) {
+  var target = editor && editor.__integratedLastEditableImage ? editor.__integratedLastEditableImage : null;
+  if (target && target.isConnected) {
+    return target;
+  }
+  return null;
+};
+var resolveImageTarget = function resolveImageTarget(editor) {
+  var candidate = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+  if (candidate && candidate.isConnected) {
+    return candidate;
+  }
+  return getSelectionImage(editor) || getStoredImage(editor);
+};
+var getStoredArticleSwiper = function getStoredArticleSwiper(editor) {
+  var target = editor && editor.__integratedLastArticleSwiper ? editor.__integratedLastArticleSwiper : null;
+  if (target && target.isConnected) {
+    return target;
+  }
+  return null;
+};
+var getSingleArticleSwiper = function getSingleArticleSwiper(editor) {
+  if (!editor || !editor.contentDocument) {
+    return null;
+  }
+  var swipers = editor.contentDocument.querySelectorAll('.article-swiper');
+  return swipers.length === 1 ? swipers[0] : null;
+};
+var resolveGalleryTarget = function resolveGalleryTarget(editor) {
+  var candidate = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+  if (candidate && candidate.isConnected) {
+    return candidate;
+  }
+  return getSelectionArticleSwiper(editor) || getStoredArticleSwiper(editor) || getSingleArticleSwiper(editor);
+};
+var buildDialogUrl = function buildDialogUrl(editor, mode) {
+  var galleryTarget = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+  var imageTarget = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+  var baseUrl = _api_options__WEBPACK_IMPORTED_MODULE_0__.getDialogUrl(editor, mode);
+  var selectedIds = [];
+  if (mode === 'gallery' && galleryTarget) {
+    selectedIds = Array.from(galleryTarget.querySelectorAll('img[data-integrated-id]')).map(function (image) {
+      return String(image.getAttribute('data-integrated-id') || '').trim();
+    }).filter(function (id) {
+      return id !== '';
+    });
+  } else if (mode === 'image' && imageTarget) {
+    var imageId = String(imageTarget.getAttribute('data-integrated-id') || '').trim();
+    selectedIds = imageId ? [imageId] : [];
+  }
+  if (selectedIds.length === 0) {
+    return baseUrl;
+  }
+  var targetUrl = new URL(baseUrl, window.location.origin);
+  targetUrl.searchParams.set('selected_ids', selectedIds.join(','));
+  return targetUrl.pathname + targetUrl.search + targetUrl.hash;
+};
 var imageHandler = function imageHandler(editor, dialog, data) {
+  var selectionImageTarget = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+  var allowEditExisting = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
   if (data.mceAction !== 'insertImage') {
     return;
   }
@@ -16988,7 +17368,21 @@ var imageHandler = function imageHandler(editor, dialog, data) {
     });
     return;
   }
-  editor.insertContent(_core_templates__WEBPACK_IMPORTED_MODULE_2__.image(data.image));
+  var targetImage = selectionImageTarget && selectionImageTarget.isConnected ? selectionImageTarget : allowEditExisting ? resolveImageTarget(editor) : null;
+  if (targetImage) {
+    targetImage.setAttribute('src', data.image.uri);
+    targetImage.setAttribute('title', data.image.title || '');
+    targetImage.setAttribute('alt', data.image.title || '');
+    if (data.image.id) {
+      targetImage.setAttribute('data-integrated-id', data.image.id);
+    } else {
+      targetImage.removeAttribute('data-integrated-id');
+    }
+    editor.selection.select(targetImage);
+    editor.__integratedLastEditableImage = targetImage;
+  } else {
+    editor.insertContent(_core_templates__WEBPACK_IMPORTED_MODULE_2__.image(data.image));
+  }
   dialog.close();
 };
 var videoHandler = function videoHandler(editor, dialog, data) {
@@ -17009,6 +17403,8 @@ var videoHandler = function videoHandler(editor, dialog, data) {
   dialog.close();
 };
 var galleryHandler = function galleryHandler(editor, dialog, data) {
+  var selectionGalleryTarget = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+  var allowEditExisting = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
   if (data.mceAction !== 'insertGallery') {
     return;
   }
@@ -17025,41 +17421,151 @@ var galleryHandler = function galleryHandler(editor, dialog, data) {
     });
     return;
   }
-  editor.insertContent(_core_templates__WEBPACK_IMPORTED_MODULE_2__.gallery(images));
-  function addRemoveButton(element, className) {
-    var removeButton = element.querySelector(":scope > .remove");
-    if (removeButton) {
-      // If a "remove" button already exists, do nothing
+  var selectedSwiper = selectionGalleryTarget && selectionGalleryTarget.isConnected ? selectionGalleryTarget : allowEditExisting ? resolveGalleryTarget(editor) : null;
+  function ensureRemoveButton(element, className, onRemove) {
+    var button = element.querySelector(':scope > .remove');
+    if (!button) {
+      button = editor.contentDocument.createElement('span');
+      button.classList.add(className, 'remove');
+      button.innerHTML = '<svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.75827 17.2426L12.0009 12M17.2435 6.75736L12.0009 12M12.0009 12L6.75827 6.75736M12.0009 12L17.2435 17.2426" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      element.appendChild(button);
+    }
+    button.setAttribute('data-mce-bogus', 'all');
+    button.setAttribute('contenteditable', 'false');
+    button.setAttribute('tabindex', '0');
+    button.setAttribute('role', 'button');
+    button.setAttribute('aria-label', className === 'swiper-append' ? 'Remove slider' : 'Remove slide');
+    if (button.dataset.integratedRemoveBound === '1') {
       return;
     }
-    var newRemoveButton = editor.contentDocument.createElement('span');
-    newRemoveButton.classList.add(className, 'remove');
-    newRemoveButton.innerHTML = '<svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.75827 17.2426L12.0009 12M17.2435 6.75736L12.0009 12M12.0009 12L6.75827 6.75736M12.0009 12L17.2435 17.2426" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    newRemoveButton.addEventListener('click', function () {
-      element.parentNode.removeChild(element);
-    });
-    element.appendChild(newRemoveButton);
+    var suppressMouseDown = function suppressMouseDown(event) {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+    var handleClick = function handleClick(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      onRemove();
+    };
+    var handleKeyDown = function handleKeyDown(event) {
+      if (event.key !== 'Enter' && event.key !== ' ') {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      onRemove();
+    };
+    button.addEventListener('mousedown', suppressMouseDown);
+    button.addEventListener('click', handleClick);
+    button.addEventListener('keydown', handleKeyDown);
+    button.dataset.integratedRemoveBound = '1';
   }
-  function addRemoveButtons() {
-    var swiperSlides = editor.contentDocument.querySelectorAll('.swiper-slide');
-    var articleSwiper = editor.contentDocument.querySelectorAll('.article-swiper');
-    articleSwiper.forEach(function (swiper) {
-      addRemoveButton(swiper, 'swiper-append');
+  function normalizeArticleSwiper(swiper) {
+    var wrapper = swiper.querySelector(':scope > .swiper-wrapper');
+    if (!wrapper) {
+      swiper.remove();
+      return;
+    }
+    wrapper.querySelectorAll(':scope > .swiper-slide').forEach(function (slide) {
+      slide.querySelectorAll(':scope > .remove').forEach(function (button) {
+        button.remove();
+      });
+      slide.querySelectorAll(':scope > br[data-mce-bogus]').forEach(function (node) {
+        node.remove();
+      });
+      var image = slide.querySelector('img.template-image-gallery[src], img[data-integrated-id], img[src]');
+      if (!image) {
+        slide.remove();
+        return;
+      }
+      ensureRemoveButton(slide, 'slider-append', function () {
+        slide.remove();
+        if (!wrapper.querySelector(':scope > .swiper-slide')) {
+          swiper.remove();
+        }
+      });
     });
-    swiperSlides.forEach(function (slide) {
-      addRemoveButton(slide, 'slider-append');
+    if (!wrapper.querySelector(':scope > .swiper-slide')) {
+      swiper.remove();
+      return;
+    }
+    ensureRemoveButton(swiper, 'swiper-append', function () {
+      swiper.remove();
+    });
+    ['.swiper-button-next', '.swiper-button-prev'].forEach(function (selector) {
+      var navigation = swiper.querySelector(':scope > ' + selector);
+      if (!navigation) {
+        return;
+      }
+      navigation.setAttribute('contenteditable', 'false');
+      navigation.querySelectorAll('br[data-mce-bogus]').forEach(function (node) {
+        node.remove();
+      });
     });
   }
-  addRemoveButtons();
+  if (selectedSwiper) {
+    var wrapper = selectedSwiper.querySelector(':scope > .swiper-wrapper');
+    if (!wrapper) {
+      wrapper = editor.contentDocument.createElement('div');
+      wrapper.classList.add('swiper-wrapper');
+      selectedSwiper.appendChild(wrapper);
+    }
+    wrapper.innerHTML = '';
+    images.forEach(function (image) {
+      var slide = editor.contentDocument.createElement('div');
+      slide.classList.add('swiper-slide');
+      var slideImage = editor.contentDocument.createElement('img');
+      slideImage.classList.add('img-responsive', 'template-image-gallery');
+      slideImage.setAttribute('src', image.thumbnail || image.uri);
+      slideImage.setAttribute('title', image.title || '');
+      slideImage.setAttribute('alt', image.title || '');
+      if (image.id) {
+        slideImage.setAttribute('data-integrated-id', image.id);
+      }
+      slide.appendChild(slideImage);
+      wrapper.appendChild(slide);
+    });
+    if (!selectedSwiper.querySelector(':scope > .swiper-button-next')) {
+      var nextButton = editor.contentDocument.createElement('div');
+      nextButton.classList.add('swiper-button-next');
+      nextButton.setAttribute('contenteditable', 'false');
+      selectedSwiper.appendChild(nextButton);
+    }
+    if (!selectedSwiper.querySelector(':scope > .swiper-button-prev')) {
+      var prevButton = editor.contentDocument.createElement('div');
+      prevButton.classList.add('swiper-button-prev');
+      prevButton.setAttribute('contenteditable', 'false');
+      selectedSwiper.appendChild(prevButton);
+    }
+    normalizeArticleSwiper(selectedSwiper);
+  } else {
+    var caretMarkerId = 'integrated-gallery-caret-' + String(Date.now());
+    editor.insertContent(_core_templates__WEBPACK_IMPORTED_MODULE_2__.gallery(images) + '<p><br></p><p id="' + caretMarkerId + '"><br data-mce-bogus="1"></p>');
+    var insertedCaretMarker = editor.contentDocument.getElementById(caretMarkerId);
+    if (insertedCaretMarker) {
+      editor.selection.setCursorLocation(insertedCaretMarker, 0);
+      insertedCaretMarker.removeAttribute('id');
+    }
+  }
+  editor.contentDocument.querySelectorAll('.article-swiper').forEach(function (swiper) {
+    normalizeArticleSwiper(swiper);
+  });
   dialog.close();
 };
 var Dialog = function Dialog(editor, mode) {
+  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  var editExistingImage = mode === 'image' && config.editExisting !== false;
+  var editExistingGallery = mode === 'gallery' && config.editExisting === true;
+  var pendingImageTarget = null;
+  var pendingGalleryTarget = null;
   var messageHandler = function messageHandler(dialog, data) {
     var message = normalizeLegacyMessage(mode, data);
     if (!message) {
       return;
     }
     if (message.mceAction === 'close') {
+      pendingImageTarget = null;
+      pendingGalleryTarget = null;
       dialog.close();
       return;
     }
@@ -17067,18 +17573,39 @@ var Dialog = function Dialog(editor, mode) {
       if (mode === 'video') {
         videoHandler(editor, dialog, message);
       } else if (mode === 'image') {
-        imageHandler(editor, dialog, message);
+        imageHandler(editor, dialog, message, pendingImageTarget, editExistingImage);
       } else {
-        galleryHandler(editor, dialog, message);
+        galleryHandler(editor, dialog, message, pendingGalleryTarget, editExistingGallery);
       }
     } catch (e) {
       console.error(e);
+    } finally {
+      if (mode === 'image') {
+        pendingImageTarget = null;
+      }
+      if (mode === 'gallery') {
+        pendingGalleryTarget = null;
+      }
     }
   };
   var open = function open() {
+    if (mode === 'image') {
+      pendingImageTarget = editExistingImage ? resolveImageTarget(editor) : null;
+    } else {
+      pendingImageTarget = null;
+    }
+    if (mode === 'gallery') {
+      pendingGalleryTarget = editExistingGallery ? resolveGalleryTarget(editor) : null;
+    } else {
+      pendingGalleryTarget = null;
+    }
+    var isEditingImage = mode === 'image' && !!pendingImageTarget;
+    var isEditingGallery = mode === 'gallery' && editExistingGallery && !!pendingGalleryTarget;
+    var title = mode === 'image' ? isEditingImage ? 'Edit image' : 'Browse images' : isEditingGallery ? 'Edit gallery' : 'Browse ' + mode;
+    var url = buildDialogUrl(editor, mode, isEditingGallery ? pendingGalleryTarget : null, isEditingImage ? pendingImageTarget : null);
     var dialog = editor.windowManager.openUrl({
-      title: mode === 'image' ? 'Browse images' : 'Browse ' + mode,
-      url: _api_options__WEBPACK_IMPORTED_MODULE_0__.getDialogUrl(editor, mode),
+      title: title,
+      url: url,
       width: window.innerWidth - 60,
       height: window.innerHeight - 120,
       onMessage: messageHandler
@@ -17276,7 +17803,7 @@ module.exports = (Handlebars["default"] || Handlebars).template({"1":function(co
 
   return "<div class=\"swiper article-swiper\">\n    <div class=\"swiper-wrapper\">\n"
     + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),depth0,{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":3,"column":8},"end":{"line":12,"column":17}}})) != null ? stack1 : "")
-    + "    </div>\n    <div class=\"swiper-button-next\"></div>\n    <div class=\"swiper-button-prev\"></div>\n</div>\n\n";
+    + "    </div>\n    <div class=\"swiper-button-next\" contenteditable=\"false\"></div>\n    <div class=\"swiper-button-prev\" contenteditable=\"false\"></div>\n</div>\n";
 },"useData":true});
 
 /***/ },
