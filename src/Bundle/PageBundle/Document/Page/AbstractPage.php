@@ -47,6 +47,26 @@ abstract class AbstractPage
     protected $layout;
 
     /**
+     * @var int
+     */
+    protected $layoutVersion = 1;
+
+    /**
+     * @var array
+     */
+    protected $layoutPayload = [];
+
+    /**
+     * @var array
+     */
+    protected $layoutMeta = [];
+
+    /**
+     * @var array
+     */
+    protected $legacy = [];
+
+    /**
      * @var Collection<Grid>
      */
     protected $grids;
@@ -122,6 +142,80 @@ abstract class AbstractPage
     public function setLayout($layout)
     {
         $this->layout = $layout;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLayoutVersion()
+    {
+        return (int) $this->layoutVersion;
+    }
+
+    /**
+     * @param int $layoutVersion
+     *
+     * @return $this
+     */
+    public function setLayoutVersion($layoutVersion)
+    {
+        $this->layoutVersion = (int) $layoutVersion;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLayoutPayload()
+    {
+        return $this->layoutPayload;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setLayoutPayload(array $layoutPayload = [])
+    {
+        $this->layoutPayload = $layoutPayload;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLayoutMeta()
+    {
+        return $this->layoutMeta;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setLayoutMeta(array $layoutMeta = [])
+    {
+        $this->layoutMeta = $layoutMeta;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLegacy()
+    {
+        return $this->legacy;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setLegacy(array $legacy = [])
+    {
+        $this->legacy = $legacy;
 
         return $this;
     }
