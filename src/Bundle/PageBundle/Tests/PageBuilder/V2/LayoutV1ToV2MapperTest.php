@@ -17,6 +17,7 @@ final class LayoutV1ToV2MapperTest extends TestCase
         self::assertSame(2, $mapped['layoutVersion']);
         self::assertSame('container', $mapped['payload']['root']['type']);
         self::assertArrayHasKey('grids', $mapped['legacy']);
+        self::assertSame('container', $mapped['payload']['root']['children'][0]['type']);
+        self::assertSame('main', $mapped['payload']['root']['children'][0]['props']['id']);
     }
 }
-

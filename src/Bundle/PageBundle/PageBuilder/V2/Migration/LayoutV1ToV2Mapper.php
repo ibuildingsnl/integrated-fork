@@ -22,7 +22,7 @@ final class LayoutV1ToV2Mapper
             }
 
             $children[] = [
-                'type' => 'grid',
+                'type' => 'container',
                 'props' => [
                     'id' => (string) ($grid['id'] ?? ''),
                 ],
@@ -48,4 +48,3 @@ final class LayoutV1ToV2Mapper
         ];
     }
 }
-
