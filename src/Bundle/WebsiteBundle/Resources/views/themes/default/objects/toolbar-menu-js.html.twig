@@ -7,12 +7,16 @@
         var workspaceOriginalParent = null;
         var workspaceOriginalNextSibling = null;
         var workspaceVisualMirrorList = null;
+        var sortableActiveClass = 'integrated-sortable-active';
         var notifyEditorContentChange = function(source) {
             document.dispatchEvent(new CustomEvent('integrated-editor-content-change', {
                 detail: {
                     source: source || 'menu',
                 }
             }));
+        };
+        var setSortableActive = function(isActive) {
+            document.body.classList.toggle(sortableActiveClass, !!isActive);
         };
         var markEditorReady = function(moduleName) {
             if (
@@ -550,6 +554,9 @@
                     filter: '.integrated-menu-node-action',
                     ghostClass: 'integrated-website-item-ghost',
                     dragClass: 'integrated-website-item-dragging',
+                    onStart: function() {
+                        setSortableActive(true);
+                    },
                     onMove: function(evt) {
                         if (evt.originalEvent && typeof evt.originalEvent.clientX === 'number') {
                             dragPointerX = evt.originalEvent.clientX;
@@ -589,6 +596,7 @@
                         clearDropTargets(root);
                         dragPointerX = null;
                         normalizeHasChildrenClasses(root);
+                        setSortableActive(false);
                         notifyEditorContentChange('menu');
                     }
                 });

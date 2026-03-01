@@ -26,6 +26,13 @@ final class ToolbarGridJsContractTest extends TestCase
         self::assertStringContainsString('parsedWrapperClasses', $content);
         self::assertStringContainsString('$block.innerHTML = \'<div class="\' + parsedWrapperClasses.join(\' \') + \'">\' + data.html + \'</div>\';', $content);
         self::assertStringContainsString("document.dispatchEvent(new CustomEvent('integrated-editor-content-change'", $content);
+        self::assertStringContainsString("sortableActiveClass = 'integrated-sortable-active'", $content);
+        self::assertStringContainsString('setSortableActive(true);', $content);
+        self::assertStringContainsString('setSortableActive(false);', $content);
         self::assertStringContainsString('refreshBlock(item, true, false)', $content);
+        self::assertStringContainsString('window.Integrated = Object.assign', $content);
+        self::assertStringContainsString('Grid: {', $content);
+        self::assertStringContainsString('serializeState: function()', $content);
+        self::assertStringContainsString('restoreState: function(serializedState)', $content);
     }
 }

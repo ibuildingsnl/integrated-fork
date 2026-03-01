@@ -12,3 +12,7 @@ rm -Rf vendor
 php8.3 composer.phar update -n --ansi --prefer-lowest
 php8.3 vendor/bin/phpunit
 php8.3 vendor/bin/phpstan analyse --no-progress --configuration=phpstan.lowest.neon
+
+if [ -n "${PLAYWRIGHT_BASE_URL:-}" ] && command -v npx >/dev/null 2>&1; then
+  TOOLBAR_E2E_BASE_URL="$PLAYWRIGHT_BASE_URL" npx --yes @playwright/test@1.52.0 test tests/e2e/toolbar.spec.ts --config=playwright.config.ts
+fi

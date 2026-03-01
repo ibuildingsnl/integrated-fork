@@ -21,9 +21,13 @@ final class ToolbarTemplateContractTest extends TestCase
         self::assertStringContainsString('integrated-toolbar-account-shell', $content);
         self::assertStringContainsString('data-close-editor-on-success="0"', $content);
         self::assertStringContainsString('data-close-editor-on-success="1"', $content);
+        self::assertStringContainsString('data-revision="{{ pageRevision }}"', $content);
+        self::assertStringContainsString('role="status" aria-live="polite" aria-atomic="true"', $content);
+        self::assertStringContainsString('aria-label="{% trans %}Close editor{% endtrans %}"', $content);
         self::assertStringContainsString('{% trans %}Save and close{% endtrans %}', $content);
         self::assertStringContainsString('collapseToolbarDropdowns', $content);
         self::assertStringContainsString("el.setAttribute('aria-expanded', 'false');", $content);
+        self::assertStringContainsString("el.setAttribute('aria-haspopup', 'true');", $content);
         self::assertStringContainsString("document.dispatchEvent(new CustomEvent('integrated-editor-ready'));", $content);
 
         $editorCommandbarPos = strpos($content, 'class="integrated-editor-commandbar"');

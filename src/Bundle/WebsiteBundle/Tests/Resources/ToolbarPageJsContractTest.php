@@ -15,6 +15,8 @@ final class ToolbarPageJsContractTest extends TestCase
 
         self::assertStringContainsString("integrated_website_pagebuilder_save", $content);
         self::assertStringContainsString("'layoutVersion': 2", $content);
+        self::assertStringContainsString("'expectedRevision': currentPageRevision", $content);
+        self::assertStringContainsString("'force': forceSave === true", $content);
         self::assertStringContainsString("'payload':", $content);
         self::assertStringContainsString("'type': 'container'", $content);
         self::assertStringContainsString("'type': 'block_ref'", $content);
@@ -27,6 +29,19 @@ final class ToolbarPageJsContractTest extends TestCase
         self::assertStringContainsString("setSaveStatus('saved'", $content);
         self::assertStringContainsString("setSaveStatus('dirty'", $content);
         self::assertStringContainsString("setSaveStatus('error'", $content);
+        self::assertStringContainsString('setSaveActionsEnabled(false);', $content);
+        self::assertStringContainsString('setSaveActionsEnabled(isEditorDirty && pendingSaveRequests === 0);', $content);
+        self::assertStringContainsString("button.classList.toggle('is-disabled', !isEnabled);", $content);
+        self::assertStringContainsString("button.setAttribute('tabindex', isEnabled ? '0' : '-1');", $content);
+        self::assertStringContainsString('result.status === 409', $content);
+        self::assertStringContainsString('handleConflict(result, token);', $content);
+        self::assertStringContainsString('beginSaveCycle(true);', $content);
+        self::assertStringContainsString('setPageRevision(parseInt(result.data.currentRevision, 10));', $content);
+        self::assertStringContainsString('integrated-editor-draft:v', $content);
+        self::assertStringContainsString('window.localStorage.setItem', $content);
+        self::assertStringContainsString('window.localStorage.getItem', $content);
+        self::assertStringContainsString('maybeRestoreDraft()', $content);
+        self::assertStringContainsString('restoreDraftSnapshot(draft).then', $content);
         self::assertStringContainsString("document.addEventListener('integrated-editor-content-change'", $content);
         self::assertStringContainsString("window.addEventListener('beforeunload'", $content);
         self::assertStringContainsString("window.confirm(unsavedNavigationMessage)", $content);

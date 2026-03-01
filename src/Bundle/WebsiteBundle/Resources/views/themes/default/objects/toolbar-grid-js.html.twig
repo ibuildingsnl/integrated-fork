@@ -43,12 +43,16 @@
         var historyLimit = 40;
         var rememberStateTimer = null;
         var rememberStateDelay = 60;
+        var sortableActiveClass = 'integrated-sortable-active';
         var notifyEditorContentChange = function(source) {
             document.dispatchEvent(new CustomEvent('integrated-editor-content-change', {
                 detail: {
                     source: source || 'grid',
                 }
             }));
+        };
+        var setSortableActive = function(isActive) {
+            document.body.classList.toggle(sortableActiveClass, !!isActive);
         };
         var markEditorReady = function(moduleName) {
             if (
@@ -1398,7 +1402,11 @@
                 ghostClass: 'integrated-website-item-ghost',
                 filter: '.integrated-block-button:not(.integrated-drag-handle)',
                 dragClass: 'integrated-website-item-dragging',
+                onStart: function() {
+                    setSortableActive(true);
+                },
                 onEnd: function() {
+                    setSortableActive(false);
                     rememberState();
                 },
             });
@@ -1519,6 +1527,22 @@
                     refreshBlockData(form);
                 }
             }, 220);
+        });
+
+        window.Integrated = Object.assign({}, window.Integrated || {}, {
+            Grid: {
+                serializeState: function() {
+                    return serializeGridState();
+                },
+                restoreState: function(serializedState) {
+                    if (typeof serializedState !== 'string') {
+                        return;
+                    }
+
+                    restoreGridState(serializedState);
+                    rememberStateNow();
+                }
+            }
         });
     }(window.Routing);
 

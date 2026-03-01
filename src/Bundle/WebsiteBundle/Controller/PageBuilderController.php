@@ -39,6 +39,24 @@ class PageBuilderController extends AbstractController
         $payload = isset($data['payload']) && \is_array($data['payload']) ? $data['payload'] : [];
         $meta = isset($data['meta']) && \is_array($data['meta']) ? $data['meta'] : [];
         $theme = isset($data['theme']) ? (string) $data['theme'] : 'default';
+        $expectedRevision = array_key_exists('expectedRevision', $data) ? (int) $data['expectedRevision'] : null;
+        $force = !empty($data['force']);
+
+        $page = $this->documentManager->getRepository(AbstractPage::class)->find($pageId);
+        if (!$page instanceof AbstractPage) {
+            return new JsonResponse(['success' => false, 'error' => 'Page not found'], 404);
+        }
+
+        $currentLayoutMeta = $page->getLayoutMeta();
+        $currentRevision = isset($currentLayoutMeta['revision']) ? (int) $currentLayoutMeta['revision'] : 0;
+        if ($expectedRevision !== null && $expectedRevision !== $currentRevision && $force !== true) {
+            return new JsonResponse([
+                'success' => false,
+                'conflict' => true,
+                'error' => 'Page has changed on the server',
+                'currentRevision' => $currentRevision,
+            ], 409);
+        }
 
         $errors = $this->validator->validate($payload, $theme);
         if (\count($errors) > 0) {
@@ -46,11 +64,6 @@ class PageBuilderController extends AbstractController
                 'success' => false,
                 'errors' => array_map(static fn ($error) => $error->toArray(), $errors),
             ], 422);
-        }
-
-        $page = $this->documentManager->getRepository(AbstractPage::class)->find($pageId);
-        if (!$page instanceof AbstractPage) {
-            return new JsonResponse(['success' => false, 'error' => 'Page not found'], 404);
         }
 
         $legacy = $page->getLegacy();
@@ -66,11 +79,15 @@ class PageBuilderController extends AbstractController
 
         $page->setLayoutVersion(2);
         $page->setLayoutPayload($payload);
-        $page->setLayoutMeta($meta);
+        $nextRevision = $currentRevision + 1;
+        $page->setLayoutMeta(array_merge($currentLayoutMeta, $meta, ['revision' => $nextRevision]));
         $page->setLegacy($legacy);
 
         $this->documentManager->flush();
 
-        return new JsonResponse(['success' => true]);
+        return new JsonResponse([
+            'success' => true,
+            'revision' => $nextRevision,
+        ]);
     }
 }

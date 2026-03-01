@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Integrated\Bundle\WebsiteBundle\Tests\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\Persistence\ObjectRepository;
+use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\PageBundle\PageBuilder\V2\Validation\LayoutPayloadValidator;
 use Integrated\Bundle\WebsiteBundle\Controller\PageBuilderController;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -27,6 +29,9 @@ final class PageBuilderControllerTest extends TestCase
 
     public function testRejectsInvalidPayloadWith422(): void
     {
+        $page = $this->createMock(AbstractPage::class);
+        $page->method('getLayoutMeta')->willReturn([]);
+        $this->mockPageRepositoryFind($page);
         $this->documentManager->expects($this->never())->method('flush');
 
         $controller = $this->createController();
@@ -50,6 +55,86 @@ final class PageBuilderControllerTest extends TestCase
         self::assertSame('required', $decoded['errors'][0]['code']);
     }
 
+    public function testRejectsConflictingRevisionWith409(): void
+    {
+        $page = $this->createMock(AbstractPage::class);
+        $page->method('getLayoutMeta')->willReturn(['revision' => 3]);
+        $this->mockPageRepositoryFind($page);
+        $this->documentManager->expects($this->never())->method('flush');
+
+        $controller = $this->createController();
+        $response = $controller->save(Request::create(
+            '/pagebuilder/save',
+            'POST',
+            [],
+            [],
+            [],
+            [],
+            (string) json_encode([
+                'page' => 'page-id',
+                'expectedRevision' => 2,
+                'payload' => [
+                    'root' => [
+                        'type' => 'container',
+                        'children' => [],
+                    ],
+                ],
+            ])
+        ));
+
+        self::assertSame(409, $response->getStatusCode());
+        $decoded = json_decode((string) $response->getContent(), true);
+        self::assertSame(false, $decoded['success']);
+        self::assertSame(true, $decoded['conflict']);
+        self::assertSame(3, $decoded['currentRevision']);
+    }
+
+    public function testSuccessfulSaveIncrementsRevisionAndReturnsIt(): void
+    {
+        $page = $this->createMock(AbstractPage::class);
+        $page->method('getLayoutMeta')->willReturn(['revision' => 4]);
+        $page->method('getLegacy')->willReturn([]);
+        $page->method('getGrids')->willReturn([]);
+        $page->expects($this->once())->method('setLayoutVersion')->with(2)->willReturnSelf();
+        $page->expects($this->once())->method('setLayoutPayload')->willReturnSelf();
+        $page->expects($this->once())->method('setLayoutMeta')->with($this->callback(function (array $meta): bool {
+            return isset($meta['revision']) && $meta['revision'] === 5;
+        }))->willReturnSelf();
+        $page->expects($this->once())->method('setLegacy')->willReturnSelf();
+        $this->mockPageRepositoryFind($page);
+
+        $this->documentManager->expects($this->once())->method('flush');
+
+        $controller = $this->createController();
+        $response = $controller->save(Request::create(
+            '/pagebuilder/save',
+            'POST',
+            [],
+            [],
+            [],
+            [],
+            (string) json_encode([
+                'page' => 'page-id',
+                'expectedRevision' => 4,
+                'layoutVersion' => 2,
+                'payload' => [
+                    'root' => [
+                        'type' => 'container',
+                        'children' => [],
+                    ],
+                ],
+                'meta' => [
+                    'source' => 'website-editor',
+                ],
+            ])
+        ));
+
+        self::assertSame(200, $response->getStatusCode());
+        $decoded = json_decode((string) $response->getContent(), true);
+        self::assertSame(true, $decoded['success']);
+        self::assertSame(5, $decoded['revision']);
+    }
+
     private function createController(): PageBuilderController
     {
         return new class($this->documentManager, $this->validator) extends PageBuilderController {
@@ -58,5 +143,18 @@ final class PageBuilderControllerTest extends TestCase
                 return true;
             }
         };
+    }
+
+    private function mockPageRepositoryFind(?AbstractPage $page): void
+    {
+        $repository = $this->createMock(ObjectRepository::class);
+        $repository->expects($this->once())
+            ->method('find')
+            ->with('page-id')
+            ->willReturn($page);
+
+        $this->documentManager->method('getRepository')
+            ->with(AbstractPage::class)
+            ->willReturn($repository);
     }
 }

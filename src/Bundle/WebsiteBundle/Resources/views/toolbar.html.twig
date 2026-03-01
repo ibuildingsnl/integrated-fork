@@ -77,7 +77,7 @@
 
 <div class="integrated-website-toolbar {% if isEditorMode %}integrated-website-toolbar-editor{% else %}integrated-website-toolbar-view{% endif %}">
     <div class="toolbar-wrapper">
-        <a class="integrated-logo" href="{{ path('integrated_content_content_index') }}">
+        <a class="integrated-logo" href="{{ path('integrated_content_content_index') }}" aria-label="{% trans %}Go to content overview{% endtrans %}">
         </a>
 
         <div class="integrated-website-toolbar-tools">
@@ -97,16 +97,19 @@
 
             {% if app.request.query.get('integrated_website_edit') and layoutEditable %}
                 {% set editorExitTarget = path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 0})) %}
+                {% set pageRevision = page.layoutMeta.revision|default(0) %}
                 <div class="integrated-editor-commandbar" data-role="integrated-editor-commandbar">
                     <div class="integrated-editor-commandbar-group integrated-editor-commandbar-group-history">
                         <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white icon-left"
-                           data-action="integrated-website-history-undo">
+                           data-action="integrated-website-history-undo"
+                           aria-label="{% trans %}Undo{% endtrans %}">
                             <i class="iconoir-undo"></i>
                             <span>{% trans %}Undo{% endtrans %}</span>
                         </a>
 
                         <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white icon-left"
-                           data-action="integrated-website-history-redo">
+                           data-action="integrated-website-history-redo"
+                           aria-label="{% trans %}Redo{% endtrans %}">
                             <i class="iconoir-redo"></i>
                             <span>{% trans %}Redo{% endtrans %}</span>
                         </a>
@@ -116,26 +119,31 @@
                         <a href="javascript:;" class="integrated-website-toolbar-button integrated-editor-save-primary btn btn-green"
                            data-action="integrated-website-page-save"
                            {% if page.id|default %}data-id="{{ page.id }}" {% endif %}
+                           data-revision="{{ pageRevision }}"
                            data-close-editor-on-success="0"
-                           data-target="{{ editorExitTarget }}">
+                           data-target="{{ editorExitTarget }}"
+                           aria-label="{% trans %}Save page{% endtrans %}">
                             {% trans %}Save page{% endtrans %}
                         </a>
 
                         <a href="javascript:;" class="integrated-website-toolbar-button integrated-editor-save-secondary btn btn-white"
                            data-action="integrated-website-page-save"
                            {% if page.id|default %}data-id="{{ page.id }}" {% endif %}
+                           data-revision="{{ pageRevision }}"
                            data-close-editor-on-success="1"
-                           data-target="{{ editorExitTarget }}">
+                           data-target="{{ editorExitTarget }}"
+                           aria-label="{% trans %}Save and close{% endtrans %}">
                             {% trans %}Save and close{% endtrans %}
                         </a>
 
                         <a href="{{ editorExitTarget }}"
-                           class="integrated-website-toolbar-button integrated-editor-close btn btn-white">
+                           class="integrated-website-toolbar-button integrated-editor-close btn btn-white"
+                           aria-label="{% trans %}Close editor{% endtrans %}">
                             {% trans %}Close{% endtrans %}
                         </a>
                     </div>
 
-                    <span class="integrated-website-save-status" data-role="integrated-website-save-status" aria-live="polite"></span>
+                    <span class="integrated-website-save-status" data-role="integrated-website-save-status" role="status" aria-live="polite" aria-atomic="true"></span>
                 </div>
             {% endif %}
 
@@ -291,6 +299,7 @@
 
     document.querySelectorAll('a[data-toggle="dropdown"]').forEach(function(el) {
         el.setAttribute('aria-expanded', 'false');
+        el.setAttribute('aria-haspopup', 'true');
         el.setAttribute('role', 'button');
         el.addEventListener('click', toggleDropdown, false);
     });

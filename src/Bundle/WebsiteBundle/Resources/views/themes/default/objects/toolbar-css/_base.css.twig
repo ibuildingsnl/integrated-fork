@@ -162,6 +162,8 @@
     .integrated-drag-handle {
         cursor: grab;
         background-color: #335767;
+        -webkit-user-select: none;
+        user-select: none;
     }
 
     .integrated-drag-handle:active {
@@ -1348,6 +1350,12 @@
         background: rgba(0, 174, 147, 0.08);
     }
 
+    body.integrated-sortable-active,
+    body.integrated-sortable-active * {
+        -webkit-user-select: none !important;
+        user-select: none !important;
+    }
+
     .integrated-website-menu-placeholder {
         margin: 0 -5px;
         background: none;
@@ -1386,4 +1394,3 @@
     .integrated-website-sortable:hover {
         border-color: #06ae93;
     }
-
