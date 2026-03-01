@@ -210,6 +210,14 @@
                 <source>Redo</source>
                 <target>Opnieuw</target>
             </trans-unit>
+            <trans-unit id="53">
+                <source>Save page</source>
+                <target>Pagina opslaan</target>
+            </trans-unit>
+            <trans-unit id="54">
+                <source>Save and close</source>
+                <target>Opslaan en sluiten</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
