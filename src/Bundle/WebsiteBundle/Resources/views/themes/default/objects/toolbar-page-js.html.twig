@@ -3,6 +3,7 @@
 
         var success = 0;
         var target = null;
+        var closeEditorAfterSave = false;
         var pendingSaveRequests = 0;
         var hasSaveError = false;
         var saveStatusElement = null;
@@ -32,6 +33,7 @@
 
                     success = 0;
                     target = this.dataset.target;
+                    closeEditorAfterSave = this.dataset.closeEditorOnSuccess === '1';
                     saveButtonElement = this;
                     pendingSaveRequests = 2;
                     hasSaveError = false;
@@ -274,7 +276,7 @@
             setSaveStatus('saved', '{% trans %}All changes saved{% endtrans %}');
             setSaveButtonBusy(false);
 
-            if (2 === success && target) {
+            if (2 === success && closeEditorAfterSave && target) {
                 window.setTimeout(function() {
                     window.location.replace(target);
                 }, 120);

@@ -20,6 +20,8 @@ final class ToolbarPageJsContractTest extends TestCase
         self::assertStringContainsString("'type': 'block_ref'", $content);
         self::assertStringContainsString('getBlockCssClass', $content);
         self::assertStringContainsString('blockProps.cssClass = blockCssClass', $content);
+        self::assertStringContainsString("closeEditorAfterSave = this.dataset.closeEditorOnSuccess === '1';", $content);
+        self::assertStringContainsString('closeEditorAfterSave && target', $content);
         self::assertStringContainsString('pendingSaveRequests = 2', $content);
         self::assertStringContainsString("setSaveStatus('saving'", $content);
         self::assertStringContainsString("setSaveStatus('saved'", $content);

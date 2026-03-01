@@ -15,6 +15,8 @@ final class ToolbarTemplateContractTest extends TestCase
 
         self::assertStringContainsString('data-role="integrated-website-save-status"', $content);
         self::assertStringContainsString('integrated-website-save-status', $content);
+        self::assertStringContainsString('data-close-editor-on-success="0"', $content);
+        self::assertStringContainsString('data-close-editor-on-success="1"', $content);
+        self::assertStringContainsString('{% trans %}Save and close{% endtrans %}', $content);
     }
 }
-
