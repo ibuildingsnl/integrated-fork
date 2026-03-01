@@ -52,6 +52,18 @@
             <argument type="service" id="integrated_page.services.route_cache"/>
         </service>
 
+        <service id="Integrated\Bundle\PageBundle\PageBuilder\V2\Migration\LayoutV1ToV2Mapper" />
+
+        <service id="Integrated\Bundle\PageBundle\PageBuilder\V2\Migration\MigrationJournal" />
+
+        <service id="Integrated\Bundle\PageBundle\PageBuilder\V2\Migration\SnapshotStore" />
+
+        <service id="Integrated\Bundle\PageBundle\Command\PageBuilderV2MigrateCommand" />
+
+        <service id="Integrated\Bundle\PageBundle\Command\PageBuilderV2VerifyCommand" />
+
+        <service id="Integrated\Bundle\PageBundle\Command\PageBuilderV2RollbackCommand" />
+
     </services>
 
 </container>
