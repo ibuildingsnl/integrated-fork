@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "integrated://pagebuilder/v2/components/container.schema.json",
+  "title": "Container Component",
+  "type": "object",
+  "required": [
+    "type",
+    "children"
+  ],
+  "properties": {
+    "type": {
+      "const": "container"
+    },
+    "children": {
+      "type": "array"
+    }
+  },
+  "additionalProperties": true
+}
+
