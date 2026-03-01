@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Integrated\Bundle\WebsiteBundle\Tests\Twig\Extension;
 
 use Integrated\Bundle\PageBundle\Document\Page\Page;
+use Integrated\Bundle\PageBundle\Document\Page\Grid\Grid;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\PageBuilder\V2\Rendering\PageBuilderRenderer;
 use Integrated\Bundle\WebsiteBundle\Twig\Extension\GridExtension;
@@ -27,7 +28,7 @@ final class GridExtensionV2Test extends TestCase
         $this->themeManager = $this->createMock(ThemeManager::class);
         $this->renderer = $this->createMock(PageBuilderRenderer::class);
         $this->twig = new Environment(new ArrayLoader([
-            'unused-grid-template.html.twig' => '',
+            'unused-grid-template.html.twig' => '{{ grid.id }}',
         ]));
 
         $this->themeManager
@@ -43,7 +44,18 @@ final class GridExtensionV2Test extends TestCase
         $page->setLayoutPayload([
             'root' => [
                 'type' => 'container',
-                'children' => [],
+                'children' => [
+                    [
+                        'type' => 'container',
+                        'props' => ['id' => 'main'],
+                        'children' => [
+                            [
+                                'type' => 'block_ref',
+                                'props' => ['blockId' => 'block-a'],
+                            ],
+                        ],
+                    ],
+                ],
             ],
         ]);
 
@@ -58,5 +70,32 @@ final class GridExtensionV2Test extends TestCase
 
         self::assertSame('<section>v2</section>', $result);
     }
-}
 
+    public function testRenderGridFallsBackToLegacyWhenV2PayloadHasNoBlockReferences(): void
+    {
+        $page = new Page();
+        $page->setLayoutVersion(2);
+        $page->setLayoutPayload([
+            'root' => [
+                'type' => 'container',
+                'children' => [
+                    [
+                        'type' => 'container',
+                        'props' => ['id' => 'main'],
+                        'children' => [],
+                    ],
+                ],
+            ],
+        ]);
+        $page->addGrid(new Grid('main'));
+
+        $this->renderer
+            ->expects($this->never())
+            ->method('render');
+
+        $extension = new GridExtension(new RequestStack(), $this->themeManager, $this->renderer);
+        $result = $extension->renderGrid($this->twig, ['page' => $page], 'main');
+
+        self::assertSame('main', trim($result));
+    }
+}
