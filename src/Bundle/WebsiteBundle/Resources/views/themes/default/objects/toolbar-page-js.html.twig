@@ -24,7 +24,7 @@
                     target = this.dataset.target;
 
                     saveMenus();
-                    saveGrids(this.dataset.id);
+                    savePageBuilder(this.dataset.id);
                 })
             );
 
@@ -58,24 +58,31 @@
                 .catch(handleError);
         };
 
-        var getGridItems = function ($element) {
+        var getComponentChildren = function ($element) {
             let items = [];
 
             $element.forEach(child => {
                 if ('block' === child.dataset.blockType) {
                     items.push({
-                        'block': child.dataset.id
+                        'type': 'block_ref',
+                        'props': {
+                            'blockId': child.dataset.id
+                        },
+                        'children': []
                     });
                 } else if ('row' === child.dataset.blockType) {
                     items.push({
-                        'row': {
-                            'columns': getGridItems(child.querySelectorAll(':scope > .integrated-website-col'))
-                        }
+                        'type': 'row',
+                        'props': {},
+                        'children': getComponentChildren(child.querySelectorAll(':scope > .integrated-website-col'))
                     });
                 } else if ('column' === child.dataset.blockType) {
                     items.push({
-                        'size': child.dataset.size,
-                        'items': getGridItems(child.querySelectorAll(':scope > .integrated-website-sortable'))
+                        'type': 'column',
+                        'props': {
+                            'size': parseInt(child.dataset.size || '12', 10)
+                        },
+                        'children': getComponentChildren(child.querySelectorAll(':scope > .integrated-website-sortable'))
                     });
                 }
             });
@@ -83,29 +90,86 @@
             return items;
         };
 
-        var saveGrids = function (pageId) {
+        var buildV2Payload = function () {
             var grids = [];
 
             document.querySelectorAll('.integrated-website-grid').forEach(item => {
                 grids.push({
-                    'id': item.dataset.id,
-                    'items': getGridItems(item.querySelectorAll(':scope > .integrated-website-sortable'))
+                    'type': 'grid',
+                    'props': {
+                        'id': item.dataset.id || ''
+                    },
+                    'children': getComponentChildren(item.querySelectorAll(':scope > .integrated-website-sortable'))
                 });
             });
 
-            fetch('{{ path('integrated_website_grid_save') }}', {
+            return {
+                'root': {
+                    'type': 'container',
+                    'children': grids
+                }
+            };
+        };
+
+        var savePageBuilder = function (pageId) {
+            fetch('{{ path('integrated_website_pagebuilder_save') }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    'grids': grids,
-                    'page': pageId
+                    'page': pageId,
+                    'layoutVersion': 2,
+                    'payload': buildV2Payload(),
+                    'meta': {
+                        'source': 'website-editor'
+                    }
                 })
             })
-                .then(response => response.json())
-                .then(handleSuccess)
+                .then(function(response) {
+                    return response.json().then(function(data) {
+                        return {
+                            'status': response.status,
+                            'data': data
+                        };
+                    });
+                })
+                .then(handlePageBuilderResponse)
                 .catch(handleError);
+        };
+
+        var handlePageBuilderResponse = function (result) {
+            if (!result || result.status >= 400 || (result.data && result.data.success === false)) {
+                var errors = [];
+                if (result && result.data && Array.isArray(result.data.errors)) {
+                    errors = result.data.errors;
+                }
+
+                if (errors.length > 0) {
+                    showValidationErrors(errors);
+                } else {
+                    handleError(result);
+                }
+
+                return;
+            }
+
+            handleSuccess();
+        };
+
+        var showValidationErrors = function (errors) {
+            var html = '<ul style="margin:0;padding-left:20px">';
+            errors.forEach(function(error) {
+                html += '<li><strong>' + (error.path || '/') + '</strong>: ' + (error.message || 'Validation error') + '</li>';
+            });
+            html += '</ul>';
+
+            if (typeof Integrated !== 'undefined' && typeof Integrated.showModal === 'function') {
+                Integrated.showModal('{% trans %}Unable to save page{% endtrans %}', html);
+                return;
+            }
+
+            alert('{% trans %}Unable to save page due to validation errors{% endtrans %}');
         };
 
         var handleSuccess = function () {
@@ -116,7 +180,7 @@
 
         var handleError = function (result) {
             // @todo error handling (INTEGRATED-420)
-            alert('An error has occurred saving the grid(s)!');
+            alert('An error has occurred saving the page!');
         }
 
     }();
