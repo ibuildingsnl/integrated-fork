@@ -21,13 +21,18 @@ final class ThemeAdapterRegistry
 
     public function getAdapter(string $theme): ?PageBuilderThemeAdapterInterface
     {
+        $fallback = null;
+
         foreach ($this->adapters as $adapter) {
+            if ($fallback === null) {
+                $fallback = $adapter;
+            }
+
             if ($adapter->supportsTheme($theme)) {
                 return $adapter;
             }
         }
 
-        return null;
+        return $fallback;
     }
 }
-
