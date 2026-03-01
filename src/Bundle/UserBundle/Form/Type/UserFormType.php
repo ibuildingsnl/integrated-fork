@@ -70,6 +70,7 @@ class UserFormType extends AbstractType
                 'mapped' => false,
                 'required' => false,
                 'placeholder' => 'Link existing user',
+                'attr' => ['class' => 'select2'],
                 'include_user_id' => null,
             ]);
 
@@ -189,6 +190,7 @@ class UserFormType extends AbstractType
                 'mapped' => false,
                 'required' => false,
                 'placeholder' => 'Link existing user',
+                'attr' => ['class' => 'select2'],
                 'include_user_id' => null,
             ];
 

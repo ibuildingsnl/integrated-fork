@@ -49,6 +49,33 @@ class UserFormTypeTest extends TestCase
         self::assertSame('Jane Doe (Author)', ($relationOptions['choice_label'])($person));
     }
 
+    public function testBuildFormConfiguresExistingUserAsSelect2WhenOptional(): void
+    {
+        $manager = $this->createMock(UserManagerInterface::class);
+        $hasherFactory = $this->createMock(PasswordHasherFactoryInterface::class);
+        $type = new UserFormType($manager, $hasherFactory);
+
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->method('addEventSubscriber')->willReturnSelf();
+        $builder->method('addEventListener')->willReturnSelf();
+
+        $existingUserOptions = null;
+        $builder
+            ->method('add')
+            ->willReturnCallback(function ($child, $type = null, array $options = []) use ($builder, &$existingUserOptions) {
+                if ('existing_user' === $child) {
+                    $existingUserOptions = $options;
+                }
+
+                return $builder;
+            });
+
+        $type->buildForm($builder, ['optional' => true]);
+
+        self::assertIsArray($existingUserOptions);
+        self::assertSame('select2', $existingUserOptions['attr']['class'] ?? null);
+    }
+
     public function testResolveOptionalExistingUserReturnsExistingUserWhenProvided(): void
     {
         $existingUser = new TestUser('7');
