@@ -98,4 +98,38 @@ final class GridExtensionV2Test extends TestCase
 
         self::assertSame('main', trim($result));
     }
+
+    public function testRenderGridFallsBackToLegacyWhenRendererReturnsEmptyOutput(): void
+    {
+        $page = new Page();
+        $page->setLayoutVersion(2);
+        $page->setLayoutPayload([
+            'root' => [
+                'type' => 'container',
+                'children' => [
+                    [
+                        'type' => 'container',
+                        'props' => ['id' => 'main'],
+                        'children' => [
+                            [
+                                'type' => 'block_ref',
+                                'props' => ['blockId' => 'block-a'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+        $page->addGrid(new Grid('main'));
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->willReturn('');
+
+        $extension = new GridExtension(new RequestStack(), $this->themeManager, $this->renderer);
+        $result = $extension->renderGrid($this->twig, ['page' => $page], 'main');
+
+        self::assertSame('main', trim($result));
+    }
 }

@@ -76,7 +76,10 @@ class GridExtension extends AbstractExtension
         if ($page instanceof AbstractPage) {
             if ($page->getLayoutVersion() === 2) {
                 if ($this->hasRenderableV2Payload($page->getLayoutPayload(), $gridId)) {
-                    return $this->pageBuilderRenderer->render($environment, $page, $gridId);
+                    $rendered = $this->pageBuilderRenderer->render($environment, $page, $gridId);
+                    if (trim($rendered) !== '') {
+                        return $rendered;
+                    }
                 }
             }
 
