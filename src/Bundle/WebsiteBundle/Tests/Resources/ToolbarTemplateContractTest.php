@@ -16,8 +16,18 @@ final class ToolbarTemplateContractTest extends TestCase
         self::assertStringContainsString('data-role="integrated-website-save-status"', $content);
         self::assertStringContainsString('integrated-website-save-status', $content);
         self::assertStringContainsString('data-role="integrated-editor-commandbar"', $content);
+        self::assertStringContainsString('integrated-view-commandbar', $content);
+        self::assertStringContainsString('integrated-toolbar-account-shell', $content);
         self::assertStringContainsString('data-close-editor-on-success="0"', $content);
         self::assertStringContainsString('data-close-editor-on-success="1"', $content);
         self::assertStringContainsString('{% trans %}Save and close{% endtrans %}', $content);
+        self::assertStringContainsString('collapseToolbarDropdowns', $content);
+        self::assertStringContainsString("el.setAttribute('aria-expanded', 'false');", $content);
+
+        $editorCommandbarPos = strpos($content, 'class="integrated-editor-commandbar"');
+        $toolbarRightPos = strpos($content, 'class="integrated-website-toolbar-right"');
+        self::assertIsInt($editorCommandbarPos);
+        self::assertIsInt($toolbarRightPos);
+        self::assertLessThan($toolbarRightPos, $editorCommandbarPos);
     }
 }
