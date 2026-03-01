@@ -30,9 +30,194 @@
             {% else %}
                 <strong>{{ label|trans({}, translation_domain)|raw }}</strong>
             {% endif %}
-            {{ block('form_rows') }}
+
+            {% set isSocialConnectorConfig = form.connection_status is defined or form.api_status is defined or form.apiStatus is defined %}
+            {% if not isSocialConnectorConfig %}
+                {{ block('form_rows') }}
+            {% else %}
+                {% set renderedFields = [] %}
+                {% set connectionStatusValue = form.connection_status is defined ? form.connection_status.vars.value|default('-') : '-' %}
+                {% set setupStatusValue = form.api_status is defined ? form.api_status.vars.value|default('-') : (form.apiStatus is defined ? form.apiStatus.vars.value|default('-') : '-') %}
+                {% set linkedChannelValue = form.linked_channel_id is defined ? form.linked_channel_id.vars.value|default('-') : '-' %}
+                {% set linkedIdentityValue = '-' %}
+                {% if form.user is defined and form.user.vars.value|default('') not in ['', 'No user linked'] %}
+                    {% set linkedIdentityValue = form.user.vars.value %}
+                {% elseif form.ig_account is defined and form.ig_account.vars.value|default('') not in ['', 'Geen account gevonden'] %}
+                    {% set linkedIdentityValue = form.ig_account.vars.value %}
+                {% elseif form.chosenPage is defined and form.chosenPage.vars.value|default('') is not empty %}
+                    {% set linkedIdentityValue = form.chosenPage.vars.value %}
+                {% elseif form.page is defined and form.page.vars.value|default('') is not empty %}
+                    {% set linkedIdentityValue = form.page.vars.value %}
+                {% endif %}
+                {% set expiresAtValue = form.access_token_expires_at is defined ? form.access_token_expires_at.vars.value|default('-') : '-' %}
+                {% if expiresAtValue in ['', '-'] and form.page_token_expires_at is defined %}
+                    {% set expiresAtValue = form.page_token_expires_at.vars.value|default('-') %}
+                {% endif %}
+                {% set normalizedStatus = connectionStatusValue|lower %}
+                {% set statusClass = 'status-inactive' %}
+                {% if 'connected' in normalizedStatus or 'ok' in normalizedStatus %}
+                    {% set statusClass = 'status-active' %}
+                {% elseif 'issue' in normalizedStatus or 'error' in normalizedStatus or 'fail' in normalizedStatus %}
+                    {% set statusClass = 'status-failed' %}
+                {% endif %}
+
+                <div class="connector-config-layout">
+                    <div class="connector-config-layout__summary">
+                        <section class="section-white section-radius connector-config-overview">
+                            <div class="connector-config-overview-grid">
+                                <article class="connector-config-overview-card">
+                                    <small>{% trans %}Verbindingsstatus{% endtrans %}</small>
+                                    <span class="status-badge {{ statusClass }}">{{ connectionStatusValue|default('-') }}</span>
+                                </article>
+                                <article class="connector-config-overview-card">
+                                    <small>{% trans %}Gekoppelde gebruiker/account{% endtrans %}</small>
+                                    <strong>{{ linkedIdentityValue|default('-') }}</strong>
+                                </article>
+                                <article class="connector-config-overview-card">
+                                    <small>{% trans %}Verloopt op{% endtrans %}</small>
+                                    <strong>{{ expiresAtValue|default('-') }}</strong>
+                                </article>
+                                <article class="connector-config-overview-card">
+                                    <small>{% trans %}Kanaal{% endtrans %}</small>
+                                    <strong>{{ linkedChannelValue|default('-') }}</strong>
+                                </article>
+                            </div>
+                            <div class="connector-config-overview-message">
+                                <small>{% trans %}Setup status{% endtrans %}</small>
+                                <span>{{ setupStatusValue|default('-') }}</span>
+                            </div>
+                        </section>
+                    </div>
+
+                    <div class="connector-config-layout__main">
+                        <section class="section-white section-radius connector-config-section">
+                            <h3 class="heading">{% trans %}Koppeling beheren{% endtrans %}</h3>
+
+                            {% for fieldName in ['page', 'chosenPage'] %}
+                                {% if attribute(form, fieldName) is defined %}
+                                    {{ form_row(attribute(form, fieldName)) }}
+                                    {% set renderedFields = renderedFields|merge([fieldName]) %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% for fieldName in ['reset'] %}
+                                {% if attribute(form, fieldName) is defined %}
+                                    <div class="connector-config-action">
+                                        {{ form_row(attribute(form, fieldName)) }}
+                                    </div>
+                                    {% set renderedFields = renderedFields|merge([fieldName]) %}
+                                {% endif %}
+                            {% endfor %}
+                        </section>
+
+                        <section class="section-white section-radius connector-config-section connector-config-section--details">
+                            <h3 class="heading">{% trans %}Verbindingsdetails{% endtrans %}</h3>
+
+                            {% for fieldName in ['connection_status', 'linked_channel_id', 'user', 'ig_account', 'access_token_status', 'access_token_expires_at', 'page_token_status', 'page_token_expires_at'] %}
+                                {% if attribute(form, fieldName) is defined %}
+                                    {{ form_row(attribute(form, fieldName)) }}
+                                    {% set renderedFields = renderedFields|merge([fieldName]) %}
+                                {% endif %}
+                            {% endfor %}
+                        </section>
+                    </div>
+                </div>
+
+                {% set renderedFields = renderedFields|merge(['api_status', 'apiStatus']) %}
+
+                {% for child in form %}
+                    {% if child.vars.name not in renderedFields %}
+                        {% if child.vars.block_prefixes is defined and 'hidden' in child.vars.block_prefixes %}
+                            {{ form_widget(child) }}
+                        {% else %}
+                            {{ form_row(child) }}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
         </div>
 
+        <style>
+            .connector-config-layout {
+                width: 100%;
+                margin-top: 12px;
+                display: grid;
+                grid-template-columns: minmax(260px, 320px) 1fr;
+                gap: 12px;
+                align-items: start;
+            }
+            .connector-config-layout__summary .connector-config-overview,
+            .connector-config-layout__main .connector-config-section {
+                margin-top: 0;
+            }
+            .connector-config-layout__main {
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            .connector-config-overview {
+                padding: 16px;
+            }
+            .connector-config-overview-grid {
+                display: grid;
+                gap: 10px;
+                grid-template-columns: 1fr;
+                margin-bottom: 8px;
+            }
+            .connector-config-overview-card {
+                border: 1px solid #e4e9f1;
+                border-radius: 10px;
+                padding: 10px 12px;
+                background: #fff;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+            .connector-config-overview-card small,
+            .connector-config-overview-message small {
+                color: #6a7280;
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: 0.02em;
+            }
+            .connector-config-overview-message {
+                border-top: 1px dashed #e4e9f1;
+                padding-top: 10px;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+            .connector-config-section {
+                padding: 16px;
+            }
+            .connector-config-section h3.heading {
+                margin-bottom: 12px;
+            }
+            .connector-config-section .form-item {
+                margin-bottom: 10px;
+            }
+            .connector-config-section .control-label,
+            .connector-config-section .widget {
+                width: 100%;
+                max-width: none;
+                display: block;
+            }
+            .connector-config-action .form-item {
+                margin-bottom: 0;
+            }
+            .connector-config-section--details .form-item {
+                margin-bottom: 8px;
+            }
+            .connector-config-section--details input[readonly] {
+                background: #f8fafc;
+            }
+            @media (max-width: 1024px) {
+                .connector-config-layout {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
 
     {% endapply %}
 {% endblock %}

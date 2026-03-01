@@ -105,7 +105,7 @@ class ConfigController extends AbstractController
             if (!$response = $event->getResponse()) {
                 $this->addFlash('success', \sprintf('The config %s is saved', $data->getName()));
 
-                $response = $this->redirectToRoute('integrated_channel_config_index');
+                $response = $this->redirectToRoute('integrated_channel_config_edit', ['id' => $data->getId()]);
             }
 
             return $this->dispatcher->dispatch(

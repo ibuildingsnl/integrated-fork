@@ -1,7 +1,7 @@
 {% extends '@IntegratedChannel/base.html.twig' %}
 {% block title %}{% trans %}New connector{% endtrans %}{% endblock title %}
 {% block content %}
-<div class="flex flex-wrap edit-form">
+<div class="flex flex-wrap edit-form edit-form--channel-config">
     {% block form_start %}
         {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
     {% endblock %}
@@ -80,4 +80,21 @@
     {{ parent() }}
 
     <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/edit.css') }}">
+    <style>
+        .edit-form--channel-config .editor .form-item {
+            display: block;
+        }
+
+        .edit-form--channel-config .editor .form-item .control-label,
+        .edit-form--channel-config .editor .form-item .widget {
+            width: 100% !important;
+            max-width: none !important;
+            flex: 0 0 100% !important;
+            display: block !important;
+        }
+
+        .edit-form--channel-config .editor .form-item .widget {
+            margin-top: 6px;
+        }
+    </style>
 {% endblock %}
