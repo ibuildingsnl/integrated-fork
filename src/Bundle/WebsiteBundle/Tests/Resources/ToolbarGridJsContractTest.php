@@ -20,5 +20,6 @@ final class ToolbarGridJsContractTest extends TestCase
         self::assertStringContainsString('flushRememberState', $content);
         self::assertStringContainsString("document.addEventListener('block-deleted'", $content);
         self::assertStringContainsString('$blockTarget = null;', $content);
+        self::assertStringContainsString('return $blockButtons.parentNode;', $content);
     }
 }
