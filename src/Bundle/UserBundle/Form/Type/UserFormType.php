@@ -174,7 +174,7 @@ class UserFormType extends AbstractType
 
         $builder->addEventSubscriber(new UserProfilePasswordListener($this->hasherFactory));
         $builder->addEventSubscriber(new UserProfileExtensionListener('integrated.extension.user'));
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($options): void {
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($options): void {
             $form = $event->getForm();
 
             if (!($options['optional'] ?? false) || !$form->has('existing_user')) {
