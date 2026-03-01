@@ -42,6 +42,8 @@ class ChannelLinkController extends AbstractController
 
         $channel = new Channel();
         $channel->setType($channelType);
+        $defaultChannelName = sprintf('%s %s', $brand->getName(), $channelType->getName());
+        $channel->setName($defaultChannelName);
 
         $link = new ChannelLink($channelType, $channel, false);
 
@@ -49,6 +51,8 @@ class ChannelLinkController extends AbstractController
             'method' => 'POST',
             'brand_name' => $brand->getName(),
             'allow_choose' => true,
+            'channel_name_locked' => true,
+            'channel_default_name' => $defaultChannelName,
         ]);
         $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 

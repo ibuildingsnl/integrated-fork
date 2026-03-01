@@ -40,6 +40,7 @@ class ChannelLinkType extends AbstractType
             'data_class' => Channel::class,
             'label' => $this->translator->trans('Channel'),
             'can_change_type' => false,
+            'lock_name' => (bool) $options['channel_name_locked'],
         ]);
         if ($options['allow_choose']) {
             $builder->add('choose_channel', CheckboxType::class, [
@@ -56,11 +57,22 @@ class ChannelLinkType extends AbstractType
                 'return_object' => true,
                 'label' => $this->translator->trans('Channel'),
             ]);
-            $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
+            $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($options): void {
                 $form = $event->getForm();
                 $link = $event->getData();
                 if ($form->get('choose_channel')?->getData() && $link instanceof ChannelLink) {
                     $link->channel = $form->get('channel_choice')->getData();
+                    return;
+                }
+
+                if (
+                    $link instanceof ChannelLink
+                    && $link->channel instanceof Channel
+                    && (bool) $options['channel_name_locked']
+                    && \is_string($options['channel_default_name'])
+                    && trim($options['channel_default_name']) !== ''
+                ) {
+                    $link->channel->setName($options['channel_default_name']);
                 }
             });
         }
@@ -70,5 +82,7 @@ class ChannelLinkType extends AbstractType
     {
         $resolver->setDefault('brand_name', $this->translator->trans('this'));
         $resolver->setDefault('allow_choose', false);
+        $resolver->setDefault('channel_name_locked', false);
+        $resolver->setDefault('channel_default_name', null);
     }
 }
