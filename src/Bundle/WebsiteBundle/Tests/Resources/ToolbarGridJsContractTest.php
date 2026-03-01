@@ -18,6 +18,7 @@ final class ToolbarGridJsContractTest extends TestCase
         self::assertStringContainsString('delayOnTouchOnly: true', $content);
         self::assertStringContainsString('rememberStateNow', $content);
         self::assertStringContainsString('flushRememberState', $content);
+        self::assertStringContainsString("document.addEventListener('block-deleted'", $content);
+        self::assertStringContainsString('$blockTarget = null;', $content);
     }
 }
-

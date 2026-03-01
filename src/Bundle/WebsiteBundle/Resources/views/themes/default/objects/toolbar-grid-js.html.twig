@@ -77,7 +77,7 @@
          */
         var addBlock = function(blockId, $before) {
             if (!$before || !$before.parentNode) {
-                return;
+                return null;
             }
 
             var element = document.createElement('div');
@@ -89,6 +89,8 @@
             $before.insertAdjacentElement('beforebegin', element);
 
             refreshBlock(element);
+
+            return element;
         };
 
         var ensureRootColumnButtons = function($grid) {
@@ -1310,10 +1312,16 @@
         document.addEventListener('block-added', function(e) {
             closeBlockSelectorPanel();
 
+            var insertedBlock = null;
             if ($blockTarget) {
                 //new block inserted
-                addBlock(e.detail, $blockTarget);
-            } else {
+                insertedBlock = addBlock(e.detail, $blockTarget);
+            }
+
+            $blockTarget = null;
+            $lastBlockAddTrigger = null;
+
+            if (!insertedBlock) {
                 //update block
 
                 document.querySelectorAll('[data-id="' + e.detail + '"]').forEach(item => {
@@ -1324,6 +1332,22 @@
 
         document.addEventListener('block-canceled', function() {
             closeBlockSelectorPanel();
+            $blockTarget = null;
+            $lastBlockAddTrigger = null;
+        }, false);
+
+        document.addEventListener('block-deleted', function(e) {
+            closeBlockSelectorPanel();
+
+            document.querySelectorAll('[data-id="' + e.detail + '"]').forEach(function(item) {
+                if (item.parentNode) {
+                    item.parentNode.removeChild(item);
+                }
+            });
+
+            $blockTarget = null;
+            $lastBlockAddTrigger = null;
+            rememberState();
         }, false);
 
         /**

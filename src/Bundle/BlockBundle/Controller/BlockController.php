@@ -227,16 +227,27 @@ class BlockController extends AbstractController
             }
         }
 
-        $form = $this->createDeleteForm($block->getId());
+        $isIframe = 'iframe.html' === $request->getRequestFormat() || 'iframe.html' === (string) $request->query->get('_format');
+        $form = $this->createDeleteForm($block->getId(), $isIframe ? 'iframe.html' : null);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
             if ($form->get('actions')->getData() == 'cancel') {
+                if ($isIframe) {
+                    return $this->render('@IntegratedBlock/block/canceled.iframe.html.twig');
+                }
+
                 return $this->redirectToRoute('integrated_block_block_index');
             }
             if ($form->isValid()) {
                 $this->documentManager->remove($block);
                 $this->documentManager->flush();
+
+                if ($isIframe) {
+                    return $this->render('@IntegratedBlock/block/deleted.iframe.html.twig', [
+                        'id' => $block->getId(),
+                    ]);
+                }
 
                 $this->addFlash('success', 'Block deleted');
 
@@ -250,11 +261,16 @@ class BlockController extends AbstractController
         ]);
     }
 
-    private function createDeleteForm($id): FormInterface
+    private function createDeleteForm($id, ?string $format = null): FormInterface
     {
         $builder = $this->createFormBuilder();
 
-        $builder->setAction($this->generateUrl('integrated_block_block_delete', ['id' => $id]));
+        $routeParameters = ['id' => $id];
+        if ($format !== null && $format !== '') {
+            $routeParameters['_format'] = $format;
+        }
+
+        $builder->setAction($this->generateUrl('integrated_block_block_delete', $routeParameters));
         $builder->setMethod(Request::METHOD_DELETE);
         $builder->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 

@@ -52,8 +52,12 @@
                                             <div class="status published">
                                                 <i class="iconoir-check-circle"></i> {% trans %}Published{% endtrans %}
                                             </div>
+                                            {% set deleteParams = {'id': block.id} %}
+                                            {% if app.request.requestFormat == 'iframe.html' %}
+                                                {% set deleteParams = deleteParams|merge({'_format': 'iframe.html'}) %}
+                                            {% endif %}
                                             <a class="delete"
-                                               href="{{ path('integrated_block_block_delete', {'id': block.id}) }}">
+                                               href="{{ path('integrated_block_block_delete', deleteParams) }}">
                                                 <i class="iconoir-trash"></i>
                                             </a>
                                         {% else %}
