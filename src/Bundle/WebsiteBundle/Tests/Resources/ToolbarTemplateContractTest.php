@@ -22,6 +22,8 @@ final class ToolbarTemplateContractTest extends TestCase
         self::assertStringContainsString('data-close-editor-on-success="0"', $content);
         self::assertStringContainsString('data-close-editor-on-success="1"', $content);
         self::assertStringContainsString('data-revision="{{ pageRevision }}"', $content);
+        self::assertStringContainsString('title="{% trans %}Undo (Ctrl/Cmd+Z){% endtrans %}"', $content);
+        self::assertStringContainsString('title="{% trans %}Redo (Ctrl/Cmd+Shift+Z){% endtrans %}"', $content);
         self::assertStringContainsString('role="status" aria-live="polite" aria-atomic="true"', $content);
         self::assertStringContainsString('aria-label="{% trans %}Close editor{% endtrans %}"', $content);
         self::assertStringContainsString('{% trans %}Save and close{% endtrans %}', $content);

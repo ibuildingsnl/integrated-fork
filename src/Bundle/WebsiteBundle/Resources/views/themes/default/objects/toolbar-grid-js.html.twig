@@ -556,6 +556,7 @@
         var rememberStateNow = function() {
             var state = serializeGridState();
             if (historyPast.length && historyPast[historyPast.length - 1] === state) {
+                updateHistoryActionState();
                 return;
             }
 
@@ -566,6 +567,7 @@
 
             historyFuture = [];
             notifyEditorContentChange('grid');
+            updateHistoryActionState();
         };
 
         var rememberState = function() {
@@ -589,9 +591,23 @@
             rememberStateNow();
         };
 
+        var setHistoryActionEnabled = function(action, isEnabled) {
+            document.querySelectorAll('[data-action="' + action + '"]').forEach(function(button) {
+                button.classList.toggle('is-disabled', !isEnabled);
+                button.setAttribute('aria-disabled', isEnabled ? 'false' : 'true');
+                button.setAttribute('tabindex', isEnabled ? '0' : '-1');
+            });
+        };
+
+        var updateHistoryActionState = function() {
+            setHistoryActionEnabled('integrated-website-history-undo', historyPast.length > 1);
+            setHistoryActionEnabled('integrated-website-history-redo', historyFuture.length > 0);
+        };
+
         var undoState = function() {
             flushRememberState();
             if (historyPast.length < 2) {
+                updateHistoryActionState();
                 return;
             }
 
@@ -599,11 +615,13 @@
             historyFuture.push(current);
             restoreGridState(historyPast[historyPast.length - 1]);
             notifyEditorContentChange('grid');
+            updateHistoryActionState();
         };
 
         var redoState = function() {
             flushRememberState();
             if (!historyFuture.length) {
+                updateHistoryActionState();
                 return;
             }
 
@@ -611,6 +629,7 @@
             historyPast.push(state);
             restoreGridState(state);
             notifyEditorContentChange('grid');
+            updateHistoryActionState();
         };
 
         var showLoader = function() {
@@ -1280,20 +1299,6 @@
             redoState();
         });
 
-        document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z') {
-                e.preventDefault();
-                undoState();
-                return;
-            }
-
-            if (((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'z') || ((e.ctrlKey || e.metaKey) &&
-                e.key.toLowerCase() === 'y')) {
-                e.preventDefault();
-                redoState();
-            }
-        });
-
         /**
          * Handle new channel block button
          */
@@ -1388,6 +1393,37 @@
                 return;
             }
 
+            var clearDropTargets = function() {
+                var $grid = resolveGridContext($element);
+                if (!$grid || typeof $grid.querySelectorAll !== 'function') {
+                    return;
+                }
+
+                $grid.querySelectorAll('.integrated-grid-drop-target, .integrated-grid-drop-before, .integrated-grid-drop-after').forEach(function(node) {
+                    node.classList.remove('integrated-grid-drop-target');
+                    node.classList.remove('integrated-grid-drop-before');
+                    node.classList.remove('integrated-grid-drop-after');
+                });
+            };
+
+            var applyDropTarget = function(evt) {
+                clearDropTargets();
+
+                if (!evt) {
+                    return;
+                }
+
+                var target = evt.to;
+                if (target && target.classList) {
+                    target.classList.add('integrated-grid-drop-target');
+                }
+
+                var related = evt.related;
+                if (related && related.classList && related.classList.contains('integrated-website-sortable')) {
+                    related.classList.add(evt.willInsertAfter ? 'integrated-grid-drop-after' : 'integrated-grid-drop-before');
+                }
+            };
+
             $element.__integratedSortableInstance = new Sortable($element, {
                 group: 'integrated-grid',
                 sort: true,
@@ -1404,8 +1440,14 @@
                 dragClass: 'integrated-website-item-dragging',
                 onStart: function() {
                     setSortableActive(true);
+                    clearDropTargets();
+                },
+                onMove: function(evt) {
+                    applyDropTarget(evt);
+                    return true;
                 },
                 onEnd: function() {
+                    clearDropTargets();
                     setSortableActive(false);
                     rememberState();
                 },

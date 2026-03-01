@@ -44,6 +44,15 @@ final class ToolbarPageJsContractTest extends TestCase
         self::assertStringContainsString('restoreDraftSnapshot(draft).then', $content);
         self::assertStringContainsString("document.addEventListener('integrated-editor-content-change'", $content);
         self::assertStringContainsString("window.addEventListener('beforeunload'", $content);
+        self::assertStringContainsString('isEditableShortcutTarget', $content);
+        self::assertStringContainsString('handleKeyboardShortcuts', $content);
+        self::assertStringContainsString("var key = (e.key || '').toLowerCase();", $content);
+        self::assertStringContainsString("key === 's'", $content);
+        self::assertStringContainsString("triggerEditorAction('integrated-website-page-save'", $content);
+        self::assertStringContainsString("triggerEditorAction('integrated-website-history-undo'", $content);
+        self::assertStringContainsString("triggerEditorAction('integrated-website-history-redo'", $content);
+        self::assertStringContainsString("document.addEventListener('keydown', function(e) {", $content);
+        self::assertStringContainsString('handleKeyboardShortcuts(e);', $content);
         self::assertStringContainsString("window.confirm(unsavedNavigationMessage)", $content);
         self::assertStringContainsString('{% trans %}Unsaved changes{% endtrans %}', $content);
     }

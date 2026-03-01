@@ -32,6 +32,8 @@ final class ToolbarCssContractTest extends TestCase
         self::assertStringContainsString('height: var(--integrated-toolbar-height);', $partialsContent);
         self::assertStringContainsString('.integrated-toolbar-websites {', $partialsContent);
         self::assertStringContainsString('body.integrated-sortable-active', $partialsContent);
+        self::assertStringContainsString('.integrated-grid-drop-target', $partialsContent);
+        self::assertStringContainsString('.integrated-menu-drop-before', $partialsContent);
         self::assertStringContainsString('.integrated-website-save-status[data-state="dirty"]', $partialsContent);
         self::assertStringContainsString('.integrated-website-toolbar-button.is-disabled', $partialsContent);
         self::assertStringContainsString('.integrated-website-toolbar a:focus-visible', $partialsContent);

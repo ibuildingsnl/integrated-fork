@@ -57,6 +57,10 @@
                 handleNavigationGuardClick(e);
             }, true);
 
+            document.addEventListener('keydown', function(e) {
+                handleKeyboardShortcuts(e);
+            });
+
             window.addEventListener('beforeunload', function(e) {
                 if (!shouldWarnBeforeNavigation()) {
                     return;
@@ -482,6 +486,95 @@
             }
 
             return true;
+        };
+
+        var isEditableShortcutTarget = function(target) {
+            if (!target) {
+                return false;
+            }
+
+            var node = target.nodeType === 1 ? target : target.parentElement;
+            if (!node) {
+                return false;
+            }
+
+            if (node.closest('input, textarea, select')) {
+                return true;
+            }
+
+            var editableNode = node.closest('[contenteditable]');
+            if (!editableNode) {
+                return false;
+            }
+
+            var editableAttr = editableNode.getAttribute('contenteditable');
+            return editableAttr !== 'false';
+        };
+
+        var triggerEditorAction = function(action, matcher) {
+            var buttons = Array.from(document.querySelectorAll('[data-action="' + action + '"]'));
+            if (typeof matcher === 'function') {
+                buttons = buttons.filter(matcher);
+            }
+
+            if (!buttons.length) {
+                return false;
+            }
+
+            var button = buttons[0];
+            if (!button || button.getAttribute('aria-disabled') === 'true' || button.classList.contains('is-disabled')) {
+                return false;
+            }
+
+            button.dispatchEvent(new MouseEvent('click', {
+                bubbles: true,
+                cancelable: true,
+                view: window
+            }));
+
+            return true;
+        };
+
+        var handleKeyboardShortcuts = function(e) {
+            if (e.defaultPrevented || !(e.ctrlKey || e.metaKey) || e.altKey) {
+                return;
+            }
+
+            if (isEditableShortcutTarget(e.target)) {
+                return;
+            }
+
+            var key = (e.key || '').toLowerCase();
+            if (key === 's') {
+                e.preventDefault();
+                if (e.shiftKey) {
+                    triggerEditorAction('integrated-website-page-save', function(button) {
+                        return button.dataset.closeEditorOnSuccess === '1';
+                    });
+                    return;
+                }
+
+                triggerEditorAction('integrated-website-page-save', function(button) {
+                    return button.dataset.closeEditorOnSuccess !== '1';
+                });
+                return;
+            }
+
+            if (key === 'z') {
+                e.preventDefault();
+                if (e.shiftKey) {
+                    triggerEditorAction('integrated-website-history-redo');
+                    return;
+                }
+
+                triggerEditorAction('integrated-website-history-undo');
+                return;
+            }
+
+            if (key === 'y') {
+                e.preventDefault();
+                triggerEditorAction('integrated-website-history-redo');
+            }
         };
 
         var handleNavigationGuardClick = function(e) {

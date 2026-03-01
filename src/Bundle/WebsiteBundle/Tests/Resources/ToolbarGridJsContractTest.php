@@ -18,6 +18,10 @@ final class ToolbarGridJsContractTest extends TestCase
         self::assertStringContainsString('delayOnTouchOnly: true', $content);
         self::assertStringContainsString('rememberStateNow', $content);
         self::assertStringContainsString('flushRememberState', $content);
+        self::assertStringContainsString('updateHistoryActionState', $content);
+        self::assertStringContainsString("setHistoryActionEnabled('integrated-website-history-undo'", $content);
+        self::assertStringContainsString("setHistoryActionEnabled('integrated-website-history-redo'", $content);
+        self::assertStringContainsString("button.setAttribute('aria-disabled', isEnabled ? 'false' : 'true');", $content);
         self::assertStringContainsString("document.addEventListener('block-deleted'", $content);
         self::assertStringContainsString('$blockTarget = null;', $content);
         self::assertStringContainsString('return $blockButtons.parentNode;', $content);
@@ -29,6 +33,10 @@ final class ToolbarGridJsContractTest extends TestCase
         self::assertStringContainsString("sortableActiveClass = 'integrated-sortable-active'", $content);
         self::assertStringContainsString('setSortableActive(true);', $content);
         self::assertStringContainsString('setSortableActive(false);', $content);
+        self::assertStringContainsString('integrated-grid-drop-target', $content);
+        self::assertStringContainsString('integrated-grid-drop-before', $content);
+        self::assertStringContainsString('integrated-grid-drop-after', $content);
+        self::assertStringContainsString('applyDropTarget(evt);', $content);
         self::assertStringContainsString('refreshBlock(item, true, false)', $content);
         self::assertStringContainsString('window.Integrated = Object.assign', $content);
         self::assertStringContainsString('Grid: {', $content);

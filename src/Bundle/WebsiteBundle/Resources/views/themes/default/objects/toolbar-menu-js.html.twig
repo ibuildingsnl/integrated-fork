@@ -535,6 +535,11 @@
                 scope.querySelectorAll('.integrated-menu-drop-target').forEach(function(list) {
                     list.classList.remove('integrated-menu-drop-target');
                 });
+
+                scope.querySelectorAll('.integrated-menu-drop-before, .integrated-menu-drop-after').forEach(function(node) {
+                    node.classList.remove('integrated-menu-drop-before');
+                    node.classList.remove('integrated-menu-drop-after');
+                });
             };
 
             sortableLists = collectSortableLists(root);
@@ -556,6 +561,7 @@
                     dragClass: 'integrated-website-item-dragging',
                     onStart: function() {
                         setSortableActive(true);
+                        root.classList.add('integrated-menu-dragging');
                     },
                     onMove: function(evt) {
                         if (evt.originalEvent && typeof evt.originalEvent.clientX === 'number') {
@@ -587,6 +593,11 @@
                             }
                         }
 
+                        var related = evt.related;
+                        if (related && related.classList && related.dataset.action === 'integrated-website-menu-item-edit') {
+                            related.classList.add(evt.willInsertAfter ? 'integrated-menu-drop-after' : 'integrated-menu-drop-before');
+                        }
+
                         return true;
                     },
                     onEnd: function(evt) {
@@ -596,6 +607,7 @@
                         clearDropTargets(root);
                         dragPointerX = null;
                         normalizeHasChildrenClasses(root);
+                        root.classList.remove('integrated-menu-dragging');
                         setSortableActive(false);
                         notifyEditorContentChange('menu');
                     }
