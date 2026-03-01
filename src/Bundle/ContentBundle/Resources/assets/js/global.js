@@ -12,6 +12,7 @@ const CONTENT_NAVIGATOR_OPEN_FACETS_KEY = 'contentNavigator.openFacets.v1';
 const CONTENT_NAVIGATOR_ASIDE_SCROLL_KEY = 'contentNavigator.asideScrollTop.v1';
 const FLASH_MESSAGES_PERSIST_KEY = 'integrated.flashMessages.persist.v1';
 const SIDEBAR_MENU_SCROLL_KEY = 'integrated.sidebarMenu.scrollTop.v1';
+const SIDEBAR_MENU_OPEN_ITEMS_KEY = 'integrated.sidebarMenu.openItems.v1';
 const listSearchDebounceTimers = new WeakMap();
 
 $(document).mouseup(function(e) {
@@ -334,10 +335,12 @@ function toggleOptionsElement(el) {
 function toggleSidebarElement(event) {
     popupShown = true;
     event.preventDefault();
-    const menu = event.currentTarget.parentNode.querySelector(
-        '.sub-menu-children');
+    const wrapper = event.currentTarget.parentNode;
+    const menu = wrapper.querySelector('.sub-menu-children');
     if (menu) {
+        const willOpen = !(wrapper.classList.contains('show') || menu.classList.contains('show'));
         toggleElement(menu);
+        persistSidebarMenuState(wrapper, willOpen);
     }
 }
 
@@ -484,6 +487,78 @@ function persistSidebarMenuScrollPosition(root = document) {
     }
 
     sessionStorage.setItem(SIDEBAR_MENU_SCROLL_KEY, String(sidebarMenu.scrollTop));
+}
+
+function getPersistedOpenSidebarMenuItems() {
+    let persisted = [];
+
+    try {
+        persisted = JSON.parse(sessionStorage.getItem(SIDEBAR_MENU_OPEN_ITEMS_KEY) || '[]');
+    } catch (error) {
+        persisted = [];
+    }
+
+    return new Set(Array.isArray(persisted) ? persisted : []);
+}
+
+function savePersistedOpenSidebarMenuItems(items) {
+    sessionStorage.setItem(SIDEBAR_MENU_OPEN_ITEMS_KEY, JSON.stringify(Array.from(items)));
+}
+
+function getSidebarMenuPersistenceKey(wrapper) {
+    if (!wrapper) {
+        return '';
+    }
+
+    const title = wrapper.querySelector('.menu-label .title');
+    return title ? title.textContent.trim() : '';
+}
+
+function persistSidebarMenuState(wrapper, isOpen) {
+    const key = getSidebarMenuPersistenceKey(wrapper);
+    if (!key) {
+        return;
+    }
+
+    const items = getPersistedOpenSidebarMenuItems();
+    if (isOpen) {
+        items.add(key);
+    } else {
+        items.delete(key);
+    }
+    savePersistedOpenSidebarMenuItems(items);
+}
+
+function applyPersistedSidebarMenuState(root = document) {
+    const items = getPersistedOpenSidebarMenuItems();
+    if (items.size === 0) {
+        return;
+    }
+
+    root.querySelectorAll('.sidebar-menu-wrapper .sidebar-sub-menu').forEach((wrapper) => {
+        const key = getSidebarMenuPersistenceKey(wrapper);
+        if (!key || !items.has(key) || wrapper.classList.contains('show')) {
+            return;
+        }
+
+        const list = wrapper.querySelector('.sub-menu-children');
+        if (!list) {
+            return;
+        }
+
+        wrapper.classList.add('show');
+        list.classList.add('show');
+        list.style.display = 'block';
+        list.style.height = '';
+    });
+}
+
+function restorePersistedSidebarMenuState(root = document) {
+    const rootNode = (root && typeof root.querySelector === 'function')
+        ? root
+        : ((root && root.target && typeof root.target.querySelector === 'function') ? root.target : document);
+
+    applyPersistedSidebarMenuState(rootNode);
 }
 
 function announceContentNavigatorResults(root = document) {
@@ -744,6 +819,7 @@ document.addEventListener('DOMContentLoaded', init);
 document.addEventListener('DOMContentLoaded', restorePersistedFacetState);
 document.addEventListener('DOMContentLoaded', restoreAsideScrollPosition);
 document.addEventListener('DOMContentLoaded', restoreSidebarMenuScrollPosition);
+document.addEventListener('DOMContentLoaded', restorePersistedSidebarMenuState);
 document.addEventListener('DOMContentLoaded', announceContentNavigatorResults);
 document.addEventListener('DOMContentLoaded', bindFacetPersistenceOnFilterChange);
 document.addEventListener('turbo:load', restoreFlashMessagesFromPreviousVisit);
@@ -753,6 +829,7 @@ document.addEventListener('turbo:load', init);
 document.addEventListener('turbo:load', restorePersistedFacetState);
 document.addEventListener('turbo:load', restoreAsideScrollPosition);
 document.addEventListener('turbo:load', restoreSidebarMenuScrollPosition);
+document.addEventListener('turbo:load', restorePersistedSidebarMenuState);
 document.addEventListener('turbo:load', announceContentNavigatorResults);
 document.addEventListener('turbo:load', bindFacetPersistenceOnFilterChange);
 document.addEventListener('turbo:render', hideButtonIfNoOptions);
@@ -760,6 +837,7 @@ document.addEventListener('turbo:render', init);
 document.addEventListener('turbo:render', restorePersistedFacetState);
 document.addEventListener('turbo:render', restoreAsideScrollPosition);
 document.addEventListener('turbo:render', restoreSidebarMenuScrollPosition);
+document.addEventListener('turbo:render', restorePersistedSidebarMenuState);
 document.addEventListener('turbo:render', announceContentNavigatorResults);
 document.addEventListener('turbo:render', bindFacetPersistenceOnFilterChange);
 document.addEventListener('turbo:before-frame-render', (event) => {

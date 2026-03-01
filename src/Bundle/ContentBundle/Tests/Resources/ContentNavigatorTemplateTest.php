@@ -147,9 +147,13 @@ class ContentNavigatorTemplateTest extends TestCase
 
         $this->assertIsString($script);
         $this->assertStringContainsString("const SIDEBAR_MENU_SCROLL_KEY = 'integrated.sidebarMenu.scrollTop.v1';", $script);
+        $this->assertStringContainsString("const SIDEBAR_MENU_OPEN_ITEMS_KEY = 'integrated.sidebarMenu.openItems.v1';", $script);
         $this->assertStringContainsString('function restoreSidebarMenuScrollPosition', $script);
         $this->assertStringContainsString('function persistSidebarMenuScrollPosition', $script);
+        $this->assertStringContainsString('function restorePersistedSidebarMenuState', $script);
+        $this->assertStringContainsString('persistSidebarMenuState(wrapper, willOpen);', $script);
         $this->assertStringContainsString("document.addEventListener('turbo:before-render', persistSidebarMenuScrollPosition);", $script);
+        $this->assertStringContainsString("document.addEventListener('turbo:load', restorePersistedSidebarMenuState);", $script);
         $this->assertStringContainsString("window.addEventListener('beforeunload', persistSidebarMenuScrollPosition);", $script);
     }
 }

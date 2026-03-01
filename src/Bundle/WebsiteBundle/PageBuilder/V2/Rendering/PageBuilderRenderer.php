@@ -35,6 +35,11 @@ class PageBuilderRenderer
             return '';
         }
 
+        $targetNode = $this->findNodeByGridId($root, $gridId);
+        if (\is_array($targetNode)) {
+            return $this->renderNode($environment, $targetNode, $adapter, $gridId);
+        }
+
         return $this->renderNode($environment, $root, $adapter, $gridId);
     }
 
@@ -67,5 +72,29 @@ class PageBuilderRenderer
             'gridId' => $gridId,
         ]);
     }
-}
 
+    /**
+     * @param array<string, mixed> $node
+     *
+     * @return array<string, mixed>|null
+     */
+    private function findNodeByGridId(array $node, string $gridId): ?array
+    {
+        if (trim((string) ($node['props']['id'] ?? '')) === $gridId) {
+            return $node;
+        }
+
+        foreach ((array) ($node['children'] ?? []) as $child) {
+            if (!\is_array($child)) {
+                continue;
+            }
+
+            $candidate = $this->findNodeByGridId($child, $gridId);
+            if (\is_array($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return null;
+    }
+}
