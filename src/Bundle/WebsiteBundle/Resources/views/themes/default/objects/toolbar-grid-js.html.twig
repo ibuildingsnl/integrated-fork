@@ -41,6 +41,8 @@
         var historyPast = [];
         var historyFuture = [];
         var historyLimit = 40;
+        var rememberStateTimer = null;
+        var rememberStateDelay = 60;
         var markEditorReady = function(moduleName) {
             if (
                 window.IntegratedEditorLoader &&
@@ -454,7 +456,7 @@
             });
         };
 
-        var rememberState = function() {
+        var rememberStateNow = function() {
             var state = serializeGridState();
             if (historyPast.length && historyPast[historyPast.length - 1] === state) {
                 return;
@@ -468,7 +470,29 @@
             historyFuture = [];
         };
 
+        var rememberState = function() {
+            if (rememberStateTimer !== null) {
+                return;
+            }
+
+            rememberStateTimer = window.setTimeout(function() {
+                rememberStateTimer = null;
+                rememberStateNow();
+            }, rememberStateDelay);
+        };
+
+        var flushRememberState = function() {
+            if (rememberStateTimer === null) {
+                return;
+            }
+
+            window.clearTimeout(rememberStateTimer);
+            rememberStateTimer = null;
+            rememberStateNow();
+        };
+
         var undoState = function() {
+            flushRememberState();
             if (historyPast.length < 2) {
                 return;
             }
@@ -479,6 +503,7 @@
         };
 
         var redoState = function() {
+            flushRememberState();
             if (!historyFuture.length) {
                 return;
             }
@@ -694,7 +719,7 @@
                 initSortable(item),
             );
 
-            rememberState();
+            rememberStateNow();
             markEditorReady('grid');
         }
 
@@ -1255,11 +1280,19 @@
          * @param $element
          */
         var initSortable = function($element) {
-            new Sortable($element, {
+            if ($element.__integratedSortableInstance) {
+                return;
+            }
+
+            $element.__integratedSortableInstance = new Sortable($element, {
                 group: 'integrated-grid',
                 sort: true,
                 forceFallback: true,
+                fallbackOnBody: true,
+                delayOnTouchOnly: true,
+                delay: 120,
                 scrollSpeed: 80,
+                animation: 120,
                 draggable: '.integrated-website-sortable',
                 handle: '.integrated-drag-handle',
                 ghostClass: 'integrated-website-item-ghost',
