@@ -1,0 +1,14 @@
+{% set blockId = component.props.blockId|default('') %}
+{% set edit = app.request.attributes.get('integrated_block_edit') %}
+{% if blockId %}
+    {% if edit %}
+        <div class="integrated-website-sortable" data-block-type="block" data-id="{{ blockId }}">
+            <div class="integrated-block">
+                {{ integrated_block(blockId) }}
+            </div>
+        </div>
+    {% else %}
+        {{ integrated_block(blockId) }}
+    {% endif %}
+{% endif %}
+

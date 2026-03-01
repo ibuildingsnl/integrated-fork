@@ -22,6 +22,7 @@ final class ThemeAdapterRegistry
     public function getAdapter(string $theme): ?PageBuilderThemeAdapterInterface
     {
         $fallback = null;
+        $default = null;
 
         foreach ($this->adapters as $adapter) {
             if ($fallback === null) {
@@ -31,8 +32,12 @@ final class ThemeAdapterRegistry
             if ($adapter->supportsTheme($theme)) {
                 return $adapter;
             }
+
+            if ($default === null && $adapter->supportsTheme('default')) {
+                $default = $adapter;
+            }
         }
 
-        return $fallback;
+        return $default ?? $fallback;
     }
 }

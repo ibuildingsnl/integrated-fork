@@ -46,6 +46,10 @@
             <tag name="kernel.event_subscriber"/>
         </service>
 
+        <service id="Integrated\Bundle\WebsiteBundle\PageBuilder\V2\ThemeAdapter\DefaultThemeAdapter">
+            <tag name="integrated_website.pagebuilder.theme_adapter" />
+        </service>
+
         <service id="Integrated\Bundle\WebsiteBundle\PageBuilder\V2\ThemeAdapter\ThemeAdapterRegistry">
             <argument type="tagged_iterator" tag="integrated_website.pagebuilder.theme_adapter" />
         </service>

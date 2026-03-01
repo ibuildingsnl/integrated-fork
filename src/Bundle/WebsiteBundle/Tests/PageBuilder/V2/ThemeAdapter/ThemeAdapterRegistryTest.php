@@ -71,5 +71,35 @@ final class ThemeAdapterRegistryTest extends TestCase
 
         self::assertSame($first, $registry->getAdapter('unknown-theme'));
     }
-}
 
+    public function testPrefersDefaultAdapterOverFirstFallbackWhenThemeIsUnknown(): void
+    {
+        $first = new class implements PageBuilderThemeAdapterInterface {
+            public function supportsTheme(string $theme): bool
+            {
+                return false;
+            }
+
+            public function resolveTemplateForComponent(string $componentType): ?string
+            {
+                return 'first';
+            }
+        };
+
+        $default = new class implements PageBuilderThemeAdapterInterface {
+            public function supportsTheme(string $theme): bool
+            {
+                return $theme === 'default';
+            }
+
+            public function resolveTemplateForComponent(string $componentType): ?string
+            {
+                return 'default';
+            }
+        };
+
+        $registry = new ThemeAdapterRegistry([$first, $default]);
+
+        self::assertSame($default, $registry->getAdapter('unknown-theme'));
+    }
+}
