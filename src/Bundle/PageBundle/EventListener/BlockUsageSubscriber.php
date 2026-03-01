@@ -35,7 +35,11 @@ class BlockUsageSubscriber
     {
         $document = $args->getDocument();
         if ($document instanceof AbstractPage) {
-            $document->updateBlockIdsFromGrids();
+            if ($document->getLayoutVersion() === 2) {
+                $document->updateBlockIdsFromLayoutPayload();
+            } else {
+                $document->updateBlockIdsFromGrids();
+            }
         }
     }
 
@@ -46,7 +50,11 @@ class BlockUsageSubscriber
             return;
         }
 
-        $document->updateBlockIdsFromGrids();
+        if ($document->getLayoutVersion() === 2) {
+            $document->updateBlockIdsFromLayoutPayload();
+        } else {
+            $document->updateBlockIdsFromGrids();
+        }
         $dm = $args->getDocumentManager();
         $dm->getUnitOfWork()->recomputeSingleDocumentChangeSet($dm->getClassMetadata($document::class), $document);
     }

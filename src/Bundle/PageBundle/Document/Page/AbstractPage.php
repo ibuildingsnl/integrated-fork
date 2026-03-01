@@ -301,6 +301,19 @@ abstract class AbstractPage
         return $this;
     }
 
+    public function updateBlockIdsFromLayoutPayload(): self
+    {
+        $indexed = [];
+        $root = $this->layoutPayload['root'] ?? null;
+        if (\is_array($root)) {
+            $this->collectBlockIdsFromLayoutNode($root, $indexed);
+        }
+
+        $this->blockIds = array_keys($indexed);
+
+        return $this;
+    }
+
     /**
      * @param Item[]              $items
      * @param array<string, bool> $indexed
@@ -323,6 +336,26 @@ abstract class AbstractPage
 
             foreach ($row->getColumns() as $column) {
                 $this->collectBlockIdsFromItems($column->getItems(), $indexed);
+            }
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $node
+     * @param array<string, bool>  $indexed
+     */
+    private function collectBlockIdsFromLayoutNode(array $node, array &$indexed): void
+    {
+        if (($node['type'] ?? null) === 'block_ref') {
+            $blockId = trim((string) ($node['props']['blockId'] ?? ''));
+            if ($blockId !== '') {
+                $indexed[$blockId] = true;
+            }
+        }
+
+        foreach ((array) ($node['children'] ?? []) as $child) {
+            if (\is_array($child)) {
+                $this->collectBlockIdsFromLayoutNode($child, $indexed);
             }
         }
     }
