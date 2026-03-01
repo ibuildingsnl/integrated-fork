@@ -16,6 +16,7 @@ final class ToolbarPageJsContractTest extends TestCase
         self::assertStringContainsString("integrated_website_pagebuilder_save", $content);
         self::assertStringContainsString("'layoutVersion': 2", $content);
         self::assertStringContainsString("'payload':", $content);
+        self::assertStringContainsString("'type': 'container'", $content);
+        self::assertStringContainsString("'type': 'block_ref'", $content);
     }
 }
-

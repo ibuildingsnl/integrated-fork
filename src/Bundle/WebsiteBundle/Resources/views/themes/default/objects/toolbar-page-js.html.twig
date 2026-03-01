@@ -72,14 +72,17 @@
                     });
                 } else if ('row' === child.dataset.blockType) {
                     items.push({
-                        'type': 'row',
-                        'props': {},
+                        'type': 'container',
+                        'props': {
+                            'role': 'row'
+                        },
                         'children': getComponentChildren(child.querySelectorAll(':scope > .integrated-website-col'))
                     });
                 } else if ('column' === child.dataset.blockType) {
                     items.push({
-                        'type': 'column',
+                        'type': 'container',
                         'props': {
+                            'role': 'column',
                             'size': parseInt(child.dataset.size || '12', 10)
                         },
                         'children': getComponentChildren(child.querySelectorAll(':scope > .integrated-website-sortable'))
@@ -95,9 +98,10 @@
 
             document.querySelectorAll('.integrated-website-grid').forEach(item => {
                 grids.push({
-                    'type': 'grid',
+                    'type': 'container',
                     'props': {
-                        'id': item.dataset.id || ''
+                        'id': item.dataset.id || '',
+                        'role': 'grid'
                     },
                     'children': getComponentChildren(item.querySelectorAll(':scope > .integrated-website-sortable'))
                 });
