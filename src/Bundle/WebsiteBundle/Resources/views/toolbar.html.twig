@@ -95,40 +95,46 @@
 
                 {% if app.request.query.get('integrated_website_edit') and layoutEditable %}
                     {% set editorExitTarget = path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 0})) %}
-                    <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white icon-left"
-                       data-action="integrated-website-history-undo">
-                        <i class="iconoir-undo"></i>
-                        <span>{% trans %}Undo{% endtrans %}</span>
-                    </a>
+                    <div class="integrated-editor-commandbar" data-role="integrated-editor-commandbar">
+                        <div class="integrated-editor-commandbar-group integrated-editor-commandbar-group-history">
+                            <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white icon-left"
+                               data-action="integrated-website-history-undo">
+                                <i class="iconoir-undo"></i>
+                                <span>{% trans %}Undo{% endtrans %}</span>
+                            </a>
 
-                    <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white icon-left"
-                       data-action="integrated-website-history-redo">
-                        <i class="iconoir-redo"></i>
-                        <span>{% trans %}Redo{% endtrans %}</span>
-                    </a>
+                            <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white icon-left"
+                               data-action="integrated-website-history-redo">
+                                <i class="iconoir-redo"></i>
+                                <span>{% trans %}Redo{% endtrans %}</span>
+                            </a>
+                        </div>
 
-                    <a href="javascript:;" class="integrated-website-toolbar-button btn btn-green"
-                       data-action="integrated-website-page-save"
-                       {% if page.id|default %}data-id="{{ page.id }}" {% endif %}
-                       data-close-editor-on-success="0"
-                       data-target="{{ editorExitTarget }}">
-                        {% trans %}Save page{% endtrans %}
-                    </a>
+                        <div class="integrated-editor-commandbar-group integrated-editor-commandbar-group-save">
+                            <a href="javascript:;" class="integrated-website-toolbar-button integrated-editor-save-primary btn btn-green"
+                               data-action="integrated-website-page-save"
+                               {% if page.id|default %}data-id="{{ page.id }}" {% endif %}
+                               data-close-editor-on-success="0"
+                               data-target="{{ editorExitTarget }}">
+                                {% trans %}Save page{% endtrans %}
+                            </a>
 
-                    <a href="javascript:;" class="integrated-website-toolbar-button integrated-website-toolbar-button-secondary btn btn-white"
-                       data-action="integrated-website-page-save"
-                       {% if page.id|default %}data-id="{{ page.id }}" {% endif %}
-                       data-close-editor-on-success="1"
-                       data-target="{{ editorExitTarget }}">
-                        {% trans %}Save and close{% endtrans %}
-                    </a>
+                            <a href="javascript:;" class="integrated-website-toolbar-button integrated-editor-save-secondary btn btn-white"
+                               data-action="integrated-website-page-save"
+                               {% if page.id|default %}data-id="{{ page.id }}" {% endif %}
+                               data-close-editor-on-success="1"
+                               data-target="{{ editorExitTarget }}">
+                                {% trans %}Save and close{% endtrans %}
+                            </a>
 
-                    <a href="{{ editorExitTarget }}"
-                       class="integrated-website-toolbar-button integrated-website-toolbar-button-secondary btn btn-white">
-                        {% trans %}Close{% endtrans %}
-                    </a>
+                            <a href="{{ editorExitTarget }}"
+                               class="integrated-website-toolbar-button integrated-editor-close btn btn-white">
+                                {% trans %}Close{% endtrans %}
+                            </a>
+                        </div>
 
-                    <span class="integrated-website-save-status" data-role="integrated-website-save-status" aria-live="polite"></span>
+                        <span class="integrated-website-save-status" data-role="integrated-website-save-status" aria-live="polite"></span>
+                    </div>
                 {% else %}
                     {% if content is defined and content is not null %}
                         <a href="{{ path('integrated_content_content_edit', {'id': content.id}) }}"

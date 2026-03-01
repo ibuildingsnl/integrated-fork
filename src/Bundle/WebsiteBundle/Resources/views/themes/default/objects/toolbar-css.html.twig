@@ -1672,6 +1672,74 @@
     .integrated-website-toolbar-right {
         display: flex;
         align-items: center;
+        gap: 10px;
+    }
+
+    .integrated-editor-commandbar {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-right: 2px;
+        padding: 2px 8px;
+        border-radius: 10px;
+        border: 1px solid rgba(222, 227, 233, 0.22);
+        background: rgba(20, 42, 58, 0.65);
+    }
+
+    .integrated-editor-commandbar-group {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+        padding-right: 8px;
+        border-right: 1px solid rgba(222, 227, 233, 0.22);
+    }
+
+    .integrated-editor-commandbar-group:last-of-type {
+        border-right: 0;
+        padding-right: 0;
+    }
+
+    .integrated-editor-commandbar .integrated-website-toolbar-button.btn {
+        height: 26px;
+        line-height: 26px;
+        border-radius: 7px;
+        border-width: 1px;
+        font-size: 12px;
+        padding: 0 10px;
+    }
+
+    .integrated-editor-commandbar .integrated-editor-save-primary.btn.btn-green {
+        background: #00ae93;
+        border-color: #00ae93;
+        color: #fff;
+    }
+
+    .integrated-editor-commandbar .integrated-editor-save-primary.btn.btn-green:focus,
+    .integrated-editor-commandbar .integrated-editor-save-primary.btn.btn-green:hover {
+        background: #018a74;
+        border-color: #018a74;
+        color: #fff;
+    }
+
+    .integrated-editor-commandbar .integrated-editor-save-secondary.btn.btn-white,
+    .integrated-editor-commandbar .integrated-editor-close.btn.btn-white,
+    .integrated-editor-commandbar .integrated-editor-commandbar-group-history .btn.btn-white {
+        background: rgba(222, 227, 233, 0.12);
+        border-color: rgba(222, 227, 233, 0.28);
+        color: #edf3fa;
+    }
+
+    .integrated-editor-commandbar .integrated-editor-save-secondary.btn.btn-white:focus,
+    .integrated-editor-commandbar .integrated-editor-save-secondary.btn.btn-white:hover,
+    .integrated-editor-commandbar .integrated-editor-close.btn.btn-white:focus,
+    .integrated-editor-commandbar .integrated-editor-close.btn.btn-white:hover,
+    .integrated-editor-commandbar .integrated-editor-commandbar-group-history .btn.btn-white:focus,
+    .integrated-editor-commandbar .integrated-editor-commandbar-group-history .btn.btn-white:hover {
+        background: #dee3e9;
+        border-color: #dee3e9;
+        color: #355161;
     }
 
     .integrated-website-save-status {
@@ -1685,6 +1753,20 @@
         color: #DEE3E9;
         border-left: 1px solid rgba(222, 227, 233, 0.35);
         height: 22px;
+    }
+
+    .integrated-editor-commandbar .integrated-website-save-status {
+        min-width: 115px;
+        margin-left: 0;
+        padding: 0 10px;
+        font-size: 11px;
+        border-left: 0;
+        border-radius: 999px;
+        border: 1px solid rgba(222, 227, 233, 0.25);
+        background: rgba(12, 27, 40, 0.55);
+        color: #d7e6f6;
+        height: 24px;
+        justify-content: center;
     }
 
     .integrated-website-save-status[data-state="saving"] {
@@ -2578,6 +2660,27 @@
             min-width: 90px;
             margin-left: 6px;
             font-size: 11px;
+        }
+
+        .integrated-editor-commandbar {
+            padding: 2px 6px;
+            gap: 6px;
+        }
+
+        .integrated-editor-commandbar-group {
+            gap: 4px;
+            padding-right: 6px;
+        }
+
+        .integrated-editor-commandbar .integrated-website-toolbar-button.btn {
+            padding: 0 8px;
+            font-size: 11px;
+        }
+
+        .integrated-editor-commandbar .integrated-website-save-status {
+            min-width: 92px;
+            padding: 0 8px;
+            margin-left: 0;
         }
 
         .integrated-website-toolbar .btn {
