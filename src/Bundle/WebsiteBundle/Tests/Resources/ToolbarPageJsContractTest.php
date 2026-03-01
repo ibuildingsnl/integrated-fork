@@ -18,6 +18,8 @@ final class ToolbarPageJsContractTest extends TestCase
         self::assertStringContainsString("'payload':", $content);
         self::assertStringContainsString("'type': 'container'", $content);
         self::assertStringContainsString("'type': 'block_ref'", $content);
+        self::assertStringContainsString('getBlockCssClass', $content);
+        self::assertStringContainsString('blockProps.cssClass = blockCssClass', $content);
         self::assertStringContainsString('pendingSaveRequests = 2', $content);
         self::assertStringContainsString("setSaveStatus('saving'", $content);
         self::assertStringContainsString("setSaveStatus('saved'", $content);

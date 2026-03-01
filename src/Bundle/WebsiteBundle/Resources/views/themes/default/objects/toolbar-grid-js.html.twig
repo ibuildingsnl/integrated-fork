@@ -51,6 +51,61 @@
                 window.IntegratedEditorLoader.markReady(moduleName);
             }
         };
+        var resolveGridContext = function($context) {
+            if ($context && typeof $context.closest === 'function') {
+                var $grid = $context.closest('.integrated-website-grid');
+                if ($grid) {
+                    return $grid;
+                }
+            }
+
+            if ($context && $context.classList && $context.classList.contains('integrated-website-grid')) {
+                return $context;
+            }
+
+            return document.querySelector('.integrated-website-grid');
+        };
+        var hasClassPrefix = function($node, prefix) {
+            if (!$node || !$node.classList || !prefix) {
+                return false;
+            }
+
+            for (var i = 0; i < $node.classList.length; i++) {
+                if ($node.classList[i].indexOf(prefix) === 0) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+        var isTailwindLayout = function($context) {
+            if (typeof framework !== 'undefined') {
+                return framework === 'tailwind';
+            }
+
+            var $grid = resolveGridContext($context);
+            if ($grid && $grid.dataset && typeof $grid.dataset.gridFramework === 'string' && $grid.dataset.gridFramework.trim() !== '') {
+                return $grid.dataset.gridFramework === 'tailwind';
+            }
+
+            var sampleNodes = [];
+            if ($grid && typeof $grid.querySelectorAll === 'function') {
+                sampleNodes = Array.from($grid.querySelectorAll('[data-block-type="row"], [data-block-type="column"]')).slice(0, 24);
+            }
+
+            for (var i = 0; i < sampleNodes.length; i++) {
+                var $node = sampleNodes[i];
+                if ($node.classList && ($node.classList.contains('flex-wrap') || hasClassPrefix($node, 'md:w-'))) {
+                    return true;
+                }
+
+                if (hasClassPrefix($node, 'col-sm-')) {
+                    return false;
+                }
+            }
+
+            return false;
+        };
 
         /**
          * @param Element $element
@@ -66,9 +121,9 @@
 
             $element.appendChild(createColumnButtons());
 
-            $element.querySelectorAll('[data-block-type="block"]').forEach(item => {
-                item.prepend(createBlockButtons());
-            });
+            $element.querySelectorAll('[data-block-type="block"]').forEach(item =>
+                refreshBlock(item)
+            );
         };
 
         /**
@@ -179,15 +234,37 @@
                     return response.json();
                 }).
                 then(data => {
-                    $block.innerHTML = data.html;
+                    var existingWrapper = $block.querySelector(':scope > .integrated-block');
+                    var wrapperClasses = existingWrapper ? existingWrapper.className : 'integrated-block';
+                    var parsedWrapperClasses = wrapperClasses
+                        .split(/\s+/)
+                        .map(className => className.trim())
+                        .filter(className => className !== '');
 
-                    $block.className = '';
+                    if (!parsedWrapperClasses.includes('integrated-block')) {
+                        parsedWrapperClasses.unshift('integrated-block');
+                    }
+
+                    if (isTailwindLayout($block) && !parsedWrapperClasses.includes('w-full')) {
+                        parsedWrapperClasses.push('w-full');
+                    }
 
                     if (data.cssClass) {
-                        $block.classList.add('integrated-website-sortable', ...data.cssClass.split(" "));
-                    } else {
-                        $block.classList.add('integrated-website-sortable');
+                        data.cssClass
+                            .split(/\s+/)
+                            .map(className => className.trim())
+                            .filter(className => className !== '')
+                            .forEach(className => {
+                                if (!parsedWrapperClasses.includes(className)) {
+                                    parsedWrapperClasses.push(className);
+                                }
+                            });
                     }
+
+                    $block.innerHTML = '<div class="' + parsedWrapperClasses.join(' ') + '">' + data.html + '</div>';
+
+                    $block.className = '';
+                    $block.classList.add('integrated-website-sortable');
 
                     if (buttons) {
                         $block.prepend(createBlockButtons(), $block.firstChild);
@@ -204,13 +281,13 @@
         /**
          * @return element
          */
-        var createRow = function() {
+        var createRow = function($context) {
             var element = document.createElement('div');
 
             element.dataset.blockType = 'row';
             element.classList.add('row');
             element.classList.add('integrated-website-sortable');
-            if (typeof framework !== 'undefined' && framework === 'tailwind') {
+            if (isTailwindLayout($context)) {
                 element.classList.add('flex');
                 element.classList.add('flex-wrap');
             }
@@ -221,21 +298,26 @@
         /**
          * @param size
          */
-        var createColumn = function(size) {
+        var createColumn = function(size, $context) {
             var element = document.createElement('div');
-            var colClass = 'w-full';
+            var normalizedSize = parseInt(size, 10);
+            if (!Number.isInteger(normalizedSize) || normalizedSize < 1) {
+                normalizedSize = COLUMN_GRID_UNITS;
+            }
+            var useTailwindLayout = isTailwindLayout($context);
 
             element.dataset.blockType = 'column';
-            element.dataset.size = size;
+            element.dataset.size = normalizedSize;
             element.classList.add('integrated-website-col');
             element.classList.add('integrated-website-droppable');
 
-            if (typeof framework !== 'undefined' && (size !== 12 && framework === 'tailwind')) {
-                var colClass = ['w-full', 'md:w-' + size + '/12'];
-                element.classList.add(...colClass);
+            if (useTailwindLayout) {
+                element.classList.add('w-full');
+                if (normalizedSize !== COLUMN_GRID_UNITS) {
+                    element.classList.add('md:w-' + normalizedSize + '/12');
+                }
             } else {
-                var colClass = 'col-sm-' + size;
-                element.classList.add(colClass);
+                element.classList.add('col-sm-' + normalizedSize);
             }
 
             element.appendChild(createColumnButtons());
@@ -1119,21 +1201,25 @@
                     return;
                 }
 
-                var $row = createRow();
-                sizes.forEach(size => $row.append(createColumn(size)));
+                var $row = createRow($columnLayoutInsertBefore);
+                sizes.forEach(size => $row.append(createColumn(size, $row)));
                 $row.append(createRowButtons());
                 $columnLayoutInsertBefore.insertAdjacentElement('beforebegin', $row);
             }
 
             if (mode === 'config' && $columnLayoutTarget) {
                 var $oldColumns = $columnLayoutTarget.querySelectorAll(':scope > [data-block-type="column"]');
+                var useTailwindLayout = isTailwindLayout($columnLayoutTarget);
 
                 for (var i = 0; i < sizes.length; i++) {
                     var size = sizes[i];
-                    var colClass = ' w-full';
+                    var colClass = '';
 
-                    if (typeof framework !== 'undefined' && (size !== 12 && framework === 'tailwind')) {
-                        colClass = ' w-full md:w-' + size + '/12';
+                    if (useTailwindLayout) {
+                        colClass = ' w-full';
+                        if (size !== COLUMN_GRID_UNITS) {
+                            colClass += ' md:w-' + size + '/12';
+                        }
                     } else {
                         colClass = ' col-sm-' + size;
                     }
@@ -1142,7 +1228,7 @@
                         $oldColumns[i].setAttribute('class', 'integrated-website-col integrated-website-droppable' + colClass);
                         $oldColumns[i].dataset.size = size;
                     } else {
-                        $columnLayoutTarget.appendChild(createColumn(size));
+                        $columnLayoutTarget.appendChild(createColumn(size, $columnLayoutTarget));
                     }
                 }
 

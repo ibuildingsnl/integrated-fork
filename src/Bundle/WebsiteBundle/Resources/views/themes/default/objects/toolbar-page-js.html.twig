@@ -90,16 +90,62 @@
             handleSuccess();
         };
 
+        var parseClassNames = function (value) {
+            if (typeof value !== 'string' || value.trim() === '') {
+                return [];
+            }
+
+            return value
+                .split(/\s+/)
+                .map(function (className) {
+                    return className.trim();
+                })
+                .filter(function (className) {
+                    return className !== '';
+                });
+        };
+
+        var getBlockCssClass = function ($blockNode) {
+            if (!$blockNode) {
+                return '';
+            }
+
+            var classes = [];
+            var $wrapper = $blockNode.querySelector(':scope > .integrated-block');
+
+            if ($wrapper) {
+                classes = parseClassNames($wrapper.className).filter(function (className) {
+                    return className !== 'integrated-block' && className !== 'w-full';
+                });
+            } else {
+                classes = parseClassNames($blockNode.className).filter(function (className) {
+                    if (className === 'integrated-website-sortable' || className === 'integrated-block-hover' || className === 'dragged') {
+                        return false;
+                    }
+
+                    return className.indexOf('sortable-') !== 0;
+                });
+            }
+
+            return Array.from(new Set(classes)).join(' ');
+        };
+
         var getComponentChildren = function ($element) {
             let items = [];
 
             $element.forEach(child => {
                 if ('block' === child.dataset.blockType) {
+                    var blockProps = {
+                        'blockId': child.dataset.id
+                    };
+                    var blockCssClass = getBlockCssClass(child);
+                    if (blockCssClass !== '') {
+                        blockProps.cssClass = blockCssClass;
+                    }
+
                     items.push({
                         'type': 'block_ref',
-                        'props': {
-                            'blockId': child.dataset.id
-                        },
+                        'props': blockProps,
                         'children': []
                     });
                 } else if ('row' === child.dataset.blockType) {

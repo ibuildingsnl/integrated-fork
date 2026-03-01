@@ -21,5 +21,10 @@ final class ToolbarGridJsContractTest extends TestCase
         self::assertStringContainsString("document.addEventListener('block-deleted'", $content);
         self::assertStringContainsString('$blockTarget = null;', $content);
         self::assertStringContainsString('return $blockButtons.parentNode;', $content);
+        self::assertStringContainsString('isTailwindLayout', $content);
+        self::assertStringContainsString('$grid.dataset.gridFramework', $content);
+        self::assertStringContainsString('parsedWrapperClasses', $content);
+        self::assertStringContainsString('$block.innerHTML = \'<div class="\' + parsedWrapperClasses.join(\' \') + \'">\' + data.html + \'</div>\';', $content);
+        self::assertStringContainsString('refreshBlock(item)', $content);
     }
 }

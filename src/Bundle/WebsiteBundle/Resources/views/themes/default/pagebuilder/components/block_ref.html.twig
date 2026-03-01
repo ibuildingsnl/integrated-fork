@@ -1,14 +1,20 @@
 {% set blockId = component.props.blockId|default('') %}
+{% set blockCssClass = component.props.cssClass|default('')|trim %}
+{% set blockClass = 'integrated-block' %}
+{% if blockCssClass is not empty %}
+    {% set blockClass = blockClass ~ ' ' ~ blockCssClass %}
+{% endif %}
 {% set edit = app.request.attributes.get('integrated_block_edit') %}
 {% if blockId %}
     {% if edit %}
         <div class="integrated-website-sortable" data-block-type="block" data-id="{{ blockId }}">
-            <div class="integrated-block">
+            <div class="{{ blockClass }}">
                 {{ integrated_block(blockId) }}
             </div>
         </div>
     {% else %}
-        {{ integrated_block(blockId) }}
+        <div class="{{ blockClass }}">
+            {{ integrated_block(blockId) }}
+        </div>
     {% endif %}
 {% endif %}
-

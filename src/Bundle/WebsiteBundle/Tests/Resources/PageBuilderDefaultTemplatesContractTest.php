@@ -16,6 +16,7 @@ final class PageBuilderDefaultTemplatesContractTest extends TestCase
         self::assertIsString($content);
         self::assertStringContainsString("app.request.attributes.get('integrated_block_edit')", $content);
         self::assertStringContainsString('integrated-website-grid integrated-website-droppable', $content);
+        self::assertStringContainsString('data-grid-framework="bootstrap"', $content);
         self::assertStringContainsString('data-block-type="row"', $content);
         self::assertStringContainsString('integrated-website-col integrated-website-droppable', $content);
         self::assertStringContainsString('data-block-type="column"', $content);
@@ -30,6 +31,7 @@ final class PageBuilderDefaultTemplatesContractTest extends TestCase
         self::assertStringContainsString('integrated-website-sortable', $content);
         self::assertStringContainsString('data-block-type="block"', $content);
         self::assertStringContainsString('data-id="{{ blockId }}"', $content);
+        self::assertStringContainsString("component.props.cssClass|default('')|trim", $content);
+        self::assertStringContainsString('<div class="{{ blockClass }}">', $content);
     }
 }
-
