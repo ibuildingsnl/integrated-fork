@@ -25,6 +25,11 @@ final class ToolbarPageJsContractTest extends TestCase
         self::assertStringContainsString('pendingSaveRequests = 2', $content);
         self::assertStringContainsString("setSaveStatus('saving'", $content);
         self::assertStringContainsString("setSaveStatus('saved'", $content);
+        self::assertStringContainsString("setSaveStatus('dirty'", $content);
         self::assertStringContainsString("setSaveStatus('error'", $content);
+        self::assertStringContainsString("document.addEventListener('integrated-editor-content-change'", $content);
+        self::assertStringContainsString("window.addEventListener('beforeunload'", $content);
+        self::assertStringContainsString("window.confirm(unsavedNavigationMessage)", $content);
+        self::assertStringContainsString('{% trans %}Unsaved changes{% endtrans %}', $content);
     }
 }

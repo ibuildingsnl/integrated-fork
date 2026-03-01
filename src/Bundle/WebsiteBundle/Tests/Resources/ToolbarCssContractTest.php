@@ -31,5 +31,6 @@ final class ToolbarCssContractTest extends TestCase
         self::assertStringContainsString('top: var(--integrated-toolbar-top-offset);', $partialsContent);
         self::assertStringContainsString('height: var(--integrated-toolbar-height);', $partialsContent);
         self::assertStringContainsString('.integrated-toolbar-websites {', $partialsContent);
+        self::assertStringContainsString('.integrated-website-save-status[data-state="dirty"]', $partialsContent);
     }
 }

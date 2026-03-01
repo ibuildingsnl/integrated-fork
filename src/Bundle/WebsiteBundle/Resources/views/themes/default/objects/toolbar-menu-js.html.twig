@@ -7,6 +7,13 @@
         var workspaceOriginalParent = null;
         var workspaceOriginalNextSibling = null;
         var workspaceVisualMirrorList = null;
+        var notifyEditorContentChange = function(source) {
+            document.dispatchEvent(new CustomEvent('integrated-editor-content-change', {
+                detail: {
+                    source: source || 'menu',
+                }
+            }));
+        };
         var markEditorReady = function(moduleName) {
             if (
                 window.IntegratedEditorLoader &&
@@ -582,6 +589,7 @@
                         clearDropTargets(root);
                         dragPointerX = null;
                         normalizeHasChildrenClasses(root);
+                        notifyEditorContentChange('menu');
                     }
                 });
 
@@ -1302,6 +1310,7 @@
 
                 new Item(saveNode).update(payload);
                 delete saveNode.dataset.integratedDraft;
+                notifyEditorContentChange('menu');
                 return true;
             }
             return false;
@@ -1322,6 +1331,7 @@
                 }
 
                 new Item(removeNode).remove();
+                notifyEditorContentChange('menu');
                 return true;
             }
             return false;

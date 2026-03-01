@@ -43,6 +43,13 @@
         var historyLimit = 40;
         var rememberStateTimer = null;
         var rememberStateDelay = 60;
+        var notifyEditorContentChange = function(source) {
+            document.dispatchEvent(new CustomEvent('integrated-editor-content-change', {
+                detail: {
+                    source: source || 'grid',
+                }
+            }));
+        };
         var markEditorReady = function(moduleName) {
             if (
                 window.IntegratedEditorLoader &&
@@ -122,7 +129,7 @@
             $element.appendChild(createColumnButtons());
 
             $element.querySelectorAll('[data-block-type="block"]').forEach(item =>
-                refreshBlock(item)
+                refreshBlock(item, true, false)
             );
         };
 
@@ -223,7 +230,7 @@
         /**
          * @param element $block
          */
-        var refreshBlock = function($block, buttons = true) {
+        var refreshBlock = function($block, buttons = true, trackState = true) {
             fetch(
                 '{{ path('integrated_block_block_show', {'id': 'block-id'}) }}'.replace('block-id', encodeURIComponent($block.dataset.id))).
                 then(response => {
@@ -270,7 +277,9 @@
                         $block.prepend(createBlockButtons(), $block.firstChild);
                     }
 
-                    rememberState();
+                    if (trackState) {
+                        rememberState();
+                    }
                 }).
                 catch(function() {
                     $block.innerHTML = '<div class="integrated-menu-empty-action" style="padding:8px 12px">{% trans %}Unable to load block preview{% endtrans %}</div>';
@@ -552,6 +561,7 @@
             }
 
             historyFuture = [];
+            notifyEditorContentChange('grid');
         };
 
         var rememberState = function() {
@@ -584,6 +594,7 @@
             var current = historyPast.pop();
             historyFuture.push(current);
             restoreGridState(historyPast[historyPast.length - 1]);
+            notifyEditorContentChange('grid');
         };
 
         var redoState = function() {
@@ -595,6 +606,7 @@
             var state = historyFuture.pop();
             historyPast.push(state);
             restoreGridState(state);
+            notifyEditorContentChange('grid');
         };
 
         var showLoader = function() {
@@ -1411,7 +1423,7 @@
                 //update block
 
                 document.querySelectorAll('[data-id="' + e.detail + '"]').forEach(item => {
-                    refreshBlock(item, true);
+                    refreshBlock(item, true, false);
                 });
             }
         }, false);

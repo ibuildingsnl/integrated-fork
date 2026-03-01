@@ -24,6 +24,7 @@ final class ToolbarTemplateContractTest extends TestCase
         self::assertStringContainsString('{% trans %}Save and close{% endtrans %}', $content);
         self::assertStringContainsString('collapseToolbarDropdowns', $content);
         self::assertStringContainsString("el.setAttribute('aria-expanded', 'false');", $content);
+        self::assertStringContainsString("document.dispatchEvent(new CustomEvent('integrated-editor-ready'));", $content);
 
         $editorCommandbarPos = strpos($content, 'class="integrated-editor-commandbar"');
         $toolbarRightPos = strpos($content, 'class="integrated-website-toolbar-right"');

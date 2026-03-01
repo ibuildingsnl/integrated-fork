@@ -25,6 +25,7 @@ final class ToolbarGridJsContractTest extends TestCase
         self::assertStringContainsString('$grid.dataset.gridFramework', $content);
         self::assertStringContainsString('parsedWrapperClasses', $content);
         self::assertStringContainsString('$block.innerHTML = \'<div class="\' + parsedWrapperClasses.join(\' \') + \'">\' + data.html + \'</div>\';', $content);
-        self::assertStringContainsString('refreshBlock(item)', $content);
+        self::assertStringContainsString("document.dispatchEvent(new CustomEvent('integrated-editor-content-change'", $content);
+        self::assertStringContainsString('refreshBlock(item, true, false)', $content);
     }
 }

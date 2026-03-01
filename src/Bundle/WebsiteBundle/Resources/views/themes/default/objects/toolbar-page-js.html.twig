@@ -8,6 +8,10 @@
         var hasSaveError = false;
         var saveStatusElement = null;
         var saveButtonElement = null;
+        var isEditorDirty = false;
+        var editorSnapshotAtLastSave = null;
+        var bypassUnsavedNavigationGuard = false;
+        var unsavedNavigationMessage = '{% trans %}You have unsaved changes. Leave this page?{% endtrans %}';
         var markEditorReady = function(moduleName) {
             if (
                 window.IntegratedEditorLoader &&
@@ -23,6 +27,28 @@
         function init() {
             saveStatusElement = document.querySelector('[data-role="integrated-website-save-status"]');
 
+            document.addEventListener('integrated-editor-ready', function() {
+                markCurrentSnapshotAsSaved();
+            });
+
+            document.addEventListener('integrated-editor-content-change', function() {
+                syncDirtyState();
+            });
+
+            document.addEventListener('click', function(e) {
+                handleNavigationGuardClick(e);
+            }, true);
+
+            window.addEventListener('beforeunload', function(e) {
+                if (!shouldWarnBeforeNavigation()) {
+                    return;
+                }
+
+                e.preventDefault();
+                e.returnValue = unsavedNavigationMessage;
+                return unsavedNavigationMessage;
+            });
+
             document.querySelectorAll('[data-action="integrated-website-page-save"]').forEach(item =>
                 item.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -37,6 +63,7 @@
                     saveButtonElement = this;
                     pendingSaveRequests = 2;
                     hasSaveError = false;
+                    bypassUnsavedNavigationGuard = false;
 
                     setSaveButtonBusy(true);
                     setSaveStatus('saving', '{% trans %}Saving changes...{% endtrans %}');
@@ -55,20 +82,32 @@
             document.addEventListener('DOMContentLoaded', init);
         }
 
-        var saveMenus = function () {
+        var collectMenusPayload = function() {
             var menus = [];
 
-            document.querySelectorAll('.integrated-website-menu').forEach(item =>
-                menus.push(Integrated.Menu.create(item).getData())
-            );
+            if (
+                typeof Integrated === 'undefined' ||
+                !Integrated.Menu ||
+                typeof Integrated.Menu.create !== 'function'
+            ) {
+                return menus;
+            }
 
+            document.querySelectorAll('.integrated-website-menu').forEach(function(item) {
+                menus.push(Integrated.Menu.create(item).getData());
+            });
+
+            return menus;
+        };
+
+        var saveMenus = function () {
             fetch('{{ path('integrated_website_menu_save') }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    'menu': menus
+                    'menu': collectMenusPayload()
                 })
             })
                 .then(function(response) {
@@ -195,6 +234,109 @@
             };
         };
 
+        var buildEditorSnapshot = function() {
+            return JSON.stringify({
+                'payload': buildV2Payload(),
+                'menu': collectMenusPayload(),
+            });
+        };
+
+        var setDirtyState = function(isDirty, options) {
+            options = options || {};
+            isEditorDirty = !!isDirty;
+
+            if (isEditorDirty) {
+                if (pendingSaveRequests === 0 && !hasSaveError) {
+                    setSaveStatus('dirty', '{% trans %}Unsaved changes{% endtrans %}');
+                }
+
+                return;
+            }
+
+            if (options.keepStatus) {
+                return;
+            }
+
+            if (!saveStatusElement) {
+                return;
+            }
+
+            if (saveStatusElement.dataset.state === 'dirty') {
+                setSaveStatus('saved', '{% trans %}All changes saved{% endtrans %}');
+            }
+        };
+
+        var markCurrentSnapshotAsSaved = function() {
+            editorSnapshotAtLastSave = buildEditorSnapshot();
+            setDirtyState(false, { keepStatus: true });
+        };
+
+        var syncDirtyState = function() {
+            if (editorSnapshotAtLastSave === null) {
+                return;
+            }
+
+            setDirtyState(buildEditorSnapshot() !== editorSnapshotAtLastSave);
+        };
+
+        var shouldWarnBeforeNavigation = function() {
+            return isEditorDirty && !bypassUnsavedNavigationGuard && pendingSaveRequests === 0;
+        };
+
+        var isGuardedNavigationLink = function(link) {
+            if (!link) {
+                return false;
+            }
+
+            if (link.getAttribute('data-action') === 'integrated-website-page-save') {
+                return false;
+            }
+
+            if (link.getAttribute('target') && link.getAttribute('target') !== '_self') {
+                return false;
+            }
+
+            var href = (link.getAttribute('href') || '').trim();
+            if (href === '' || href === '#' || href.charAt(0) === '#') {
+                return false;
+            }
+
+            if (href.toLowerCase().indexOf('javascript:') === 0) {
+                return false;
+            }
+
+            return true;
+        };
+
+        var handleNavigationGuardClick = function(e) {
+            if (
+                e.defaultPrevented ||
+                e.button !== 0 ||
+                e.metaKey ||
+                e.ctrlKey ||
+                e.shiftKey ||
+                e.altKey
+            ) {
+                return;
+            }
+
+            var link = e.target.closest('a[href]');
+            if (!isGuardedNavigationLink(link) || !shouldWarnBeforeNavigation()) {
+                return;
+            }
+
+            if (!window.confirm(unsavedNavigationMessage)) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
+
+            bypassUnsavedNavigationGuard = true;
+            window.setTimeout(function() {
+                bypassUnsavedNavigationGuard = false;
+            }, 1200);
+        };
+
         var savePageBuilder = function (pageId) {
             fetch('{{ path('integrated_website_pagebuilder_save') }}', {
                 method: 'POST',
@@ -274,10 +416,12 @@
             }
 
             setSaveStatus('saved', '{% trans %}All changes saved{% endtrans %}');
+            markCurrentSnapshotAsSaved();
             setSaveButtonBusy(false);
 
             if (2 === success && closeEditorAfterSave && target) {
                 window.setTimeout(function() {
+                    bypassUnsavedNavigationGuard = true;
                     window.location.replace(target);
                 }, 120);
             }
