@@ -43,6 +43,10 @@
             <argument type="service" id="router.default" />
         </service>
 
+        <service id="Integrated\Bundle\PageBundle\PageBuilder\V2\Validation\LayoutPayloadValidator">
+            <argument type="string">%kernel.project_dir%/vendor/integrated/integrated/src/Bundle/PageBundle/Resources/schema/pagebuilder/v2</argument>
+        </service>
+
         <service id="Integrated\Bundle\PageBundle\Services\PageCopyService">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_page.services.route_cache"/>

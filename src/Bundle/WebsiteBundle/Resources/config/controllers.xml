@@ -32,6 +32,14 @@
             <tag name="container.service_subscriber" />
         </service>
 
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\PageBuilderController">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="Integrated\Bundle\PageBundle\PageBuilder\V2\Validation\LayoutPayloadValidator" />
+
+            <tag name="controller.service_arguments" />
+            <tag name="container.service_subscriber" />
+        </service>
+
         <service id="Integrated\Bundle\WebsiteBundle\Controller\MenuController">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_menu.provider.integrated_menu_provider" />
