@@ -8,13 +8,16 @@
 </head>
 <body class="text-sm">
 <div id="app" data-x-selection="">
-    <article-search-component translations="{{ translations }}" channels="{{ channels }}" content-types="{{ contentTypes }}"/>
+    <article-search-component
+        translations="{{ translations|json_encode|e('html_attr') }}"
+        channels="{{ channels|json_encode|e('html_attr') }}"
+        content-types="{{ contentTypes|json_encode|e('html_attr') }}"
+    />
 </div>
 <script src="{{ asset('bundles/integratedintegrated/article-search.js') }}" defer data-turbo-track="reload"></script>
 <script>
     window.addEventListener('message', (event) => {
         let data = event.data;
-
         document.getElementById("app").setAttribute('data-x-selection', data.selectionText);
     });
 </script>

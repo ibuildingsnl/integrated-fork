@@ -46,7 +46,7 @@ const onBlur = (e) => {
     }
 };
 
-const selectSuggestion = (key) => {
+const selectSuggestion = (key, url = '') => {
     if (props.suggestions.findIndex((v) => v.id === key) !== -1) {
         if (props.multiple) {
             if (selections.value.includes(key)) {
@@ -64,6 +64,10 @@ const selectSuggestion = (key) => {
         }
 
         selections.value = [key];
+
+        if (typeof url === 'string' && url.length > 0) {
+            emit('update:modelValue', url);
+        }
     } else {
         if (props.multiple) {
             selections.value = selections.value.filter((v) => v.id !== key);
@@ -97,7 +101,7 @@ const sendSearch = debounce(() => {
             :class="{'absolute bottom-0 left-0 translate-y-full': !props.permanent, 'permanent': props.permanent}"
         >
             <SuggestionTextInputSuggestion
-                @select="() => selectSuggestion(id)"
+                @select="() => selectSuggestion(id, url)"
                 @focusout="onBlur"
                 v-for="{id, title, subtitle, text, url} in props.suggestions"
                 :key="id"
