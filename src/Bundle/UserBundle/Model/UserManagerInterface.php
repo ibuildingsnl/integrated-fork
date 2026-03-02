@@ -106,4 +106,13 @@ interface UserManagerInterface extends ManagerInterface
      * @return UserInterface|null
      */
     public function findEnabledByUsernameAndScope($username, ?ScopeInterface $scope = null);
+
+    /**
+     * Finds the enabled user by username or email and scope.
+     *
+     * @param string $identifier
+     *
+     * @return UserInterface|null
+     */
+    public function findEnabledByUsernameOrEmailAndScope($identifier, ?ScopeInterface $scope = null);
 }

@@ -54,14 +54,14 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
         return $this->manager;
     }
 
-    public function loadUserByIdentifier($username): UserInterface
+    public function loadUserByIdentifier($identifier): UserInterface
     {
         /** @var User $user */
-        $user = $this->manager->findEnabledByUsernameAndScope($username);
+        $user = $this->manager->findEnabledByUsernameOrEmailAndScope($identifier);
 
         if (!$user) {
-            $exception = new UserNotFoundException(\sprintf('No user with the username "%s" exists', $username));
-            $exception->setUserIdentifier($username);
+            $exception = new UserNotFoundException(\sprintf('No user with the identifier "%s" exists', $identifier));
+            $exception->setUserIdentifier($identifier);
 
             throw $exception;
         }
