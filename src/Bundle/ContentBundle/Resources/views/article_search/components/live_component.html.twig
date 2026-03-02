@@ -1,0 +1,117 @@
+{% set results = this.results %}
+{% set searchTermUrl = this.searchTermUrl %}
+
+<div {{ attributes }} data-article-search-root="">
+    <div class="flex flex-row">
+        <aside>
+            <div class="aside-item-container">
+                <div class="aside-item-header">
+                    <h3 class="aside-item-title">{{ this.translations.channels|default('Channels') }}</h3>
+                </div>
+                <div class="aside-item-list">
+                    {% for channel in this.channels %}
+                        <label class="form-group checkbox-container">
+                            <input
+                                type="radio"
+                                name="article_search_channel"
+                                value="{{ channel.key }}"
+                                data-model="channelId"
+                                {% if this.channelId == channel.key %}checked{% endif %}
+                            />
+                            {{ channel.label }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="aside-item-container">
+                <div class="aside-item-header">
+                    <h3 class="aside-item-title">{{ this.translations.content_types|default('Content types') }}</h3>
+                </div>
+                <div class="aside-item-list">
+                    {% for contentType in this.contentTypes %}
+                        <label class="form-group checkbox-container">
+                            <input
+                                type="checkbox"
+                                value="{{ contentType.key }}"
+                                data-model="contentTypeIds"
+                                {% if contentType.key in this.contentTypeIds %}checked{% endif %}
+                            />
+                            {{ contentType.label }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex flex-col justify-between">
+            <div>
+                <input
+                    type="text"
+                    data-model="debounce(300)|linkText"
+                    data-article-search-link-text=""
+                    value="{{ this.linkText }}"
+                    placeholder="{{ this.translations.link_text|default('Link text') }}"
+                />
+                <input
+                    type="text"
+                    data-model="debounce(300)|linkTitle"
+                    data-article-search-link-title=""
+                    value="{{ this.linkTitle }}"
+                    placeholder="{{ this.translations.link_title|default('Link title') }}"
+                />
+                <input
+                    type="text"
+                    data-model="debounce(300)|searchTerm"
+                    data-article-search-term=""
+                    value="{{ this.searchTerm }}"
+                    placeholder="{{ this.translations.url_or_searchterm|default('URL or search term') }}"
+                />
+
+                <div class="results permanent">
+                    {% if this.searchTerm is empty %}
+                        <div class="suggestion p-2">{{ this.translations.require_searchterm|default('Enter a search term to begin searching') }}</div>
+                    {% elseif this.channelId is empty and not searchTermUrl %}
+                        <div class="suggestion p-2">{{ this.translations.select_channel|default('Select a channel') }}</div>
+                    {% elseif searchTermUrl %}
+                        <div class="suggestion p-2">{{ this.translations.ready|default('Good to go!') }}</div>
+                    {% elseif results is empty %}
+                        <div class="suggestion p-2">{{ this.translations.no_results|default('No results') }}</div>
+                    {% else %}
+                        {% for result in results %}
+                            <label class="suggestion block p-2" data-article-search-result="" data-url="{{ result.url|e('html_attr') }}">
+                                <input
+                                    type="radio"
+                                    name="article_search_result"
+                                    value="{{ result.id }}"
+                                    data-model="selectedId"
+                                    data-article-search-selection=""
+                                    {% if this.selectedId == result.id %}checked{% endif %}
+                                />
+                                <strong>{{ result.title }}</strong><br />
+                                <small>{{ result.subtitle }}</small><br />
+                                <span>{{ result.text }}</span>
+                            </label>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="form-group mt-2">
+                    <label>
+                        <input type="checkbox" data-model="openInNewTab" data-article-search-new-tab="" {% if this.openInNewTab %}checked{% endif %} />
+                        {{ this.translations.new_tab|default('Open in new tab') }}
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex flex-row space-x-2 self-end">
+                <button type="button" class="btn btn-default" data-article-search-cancel="">
+                    {{ this.translations.cancel|default('Cancel') }}
+                </button>
+                <button type="button" class="btn btn-primary" data-article-search-apply="" data-existing="{{ this.existing ? '1' : '0' }}">
+                    {{ this.translations.apply|default('Apply') }}
+                </button>
+            </div>
+        </main>
+    </div>
+</div>
