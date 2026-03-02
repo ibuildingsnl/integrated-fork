@@ -23,6 +23,7 @@
         <service id="Integrated\Bundle\BrandBundle\Controller\BrandController">
             <argument type="service" id="integrated_brand.brand.repository" />
             <argument type="service" id="integrated_channel.channel_type.registry" />
+            <argument type="service" id="integrated_channel.adapter.registry" />
             <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
             <argument type="service" id="integrated_content.services.flusher"/>
         </service>
@@ -32,6 +33,7 @@
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="integrated_content.services.flusher"/>
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="integrated_channel.adapter.registry" />
         </service>
 
         <service id="Integrated\Bundle\BrandBundle\Controller\ConnectorController">

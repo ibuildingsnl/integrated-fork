@@ -108,7 +108,7 @@
                                         >
                                             {% trans %}Edit{% endtrans %}
                                         </a> |
-                                        {% if link.type.connector %}
+                                        {% if link.type.connector and link.type.connector in availableConnectors|default([]) %}
                                             <a
                                                 href="{{ path('integrated_content_brand_manage_connector', {'id': brand.id, 'link': link.id}) }}"
                                                 title="{% trans with {'%brand%': brand.name, '%type%': link.name} %}Manage %brand%'s %type% Connector{% endtrans %}"
