@@ -100,14 +100,24 @@
                                 {% endif %}
                             {% endfor %}
 
-                            {% for fieldName in ['reset'] %}
-                                {% if attribute(form, fieldName) is defined %}
-                                    <div class="connector-config-action">
-                                        {{ form_row(attribute(form, fieldName)) }}
-                                    </div>
-                                    {% set renderedFields = renderedFields|merge([fieldName]) %}
-                                {% endif %}
-                            {% endfor %}
+                    {% for fieldName in ['reset'] %}
+                        {% if attribute(form, fieldName) is defined %}
+                            {% set resetField = attribute(form, fieldName) %}
+                            <div class="connector-config-action">
+                                {% set resetClass = (resetField.vars.attr.class|default('') ~ ' btn btn-red no-icon')|trim %}
+                                <button
+                                    type="submit"
+                                    id="{{ resetField.vars.id }}"
+                                    name="{{ resetField.vars.full_name }}"
+                                    class="{{ resetClass }}"
+                                    data-bound-submit-click="true"
+                                >
+                                    Reset
+                                </button>
+                            </div>
+                            {% set renderedFields = renderedFields|merge([fieldName]) %}
+                        {% endif %}
+                    {% endfor %}
                         </section>
 
                         <section class="section-white section-radius connector-config-section connector-config-section--details">
