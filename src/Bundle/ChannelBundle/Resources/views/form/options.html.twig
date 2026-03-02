@@ -100,30 +100,30 @@
                                 {% endif %}
                             {% endfor %}
 
-                    {% for fieldName in ['reset'] %}
-                        {% if attribute(form, fieldName) is defined %}
-                            {% set resetField = attribute(form, fieldName) %}
-                            <div class="connector-config-action">
-                                {% set resetClass = (resetField.vars.attr.class|default('') ~ ' btn btn-red no-icon')|trim %}
-                                <button
-                                    type="submit"
-                                    id="{{ resetField.vars.id }}"
-                                    name="{{ resetField.vars.full_name }}"
-                                    class="{{ resetClass }}"
-                                    data-bound-submit-click="true"
-                                >
-                                    Reset
-                                </button>
+                            <div class="connector-config-actions">
+                                {% for fieldName in ['test_connection', 'reset'] %}
+                                    {% if attribute(form, fieldName) is defined %}
+                                        {% set actionField = attribute(form, fieldName) %}
+                                        {% set actionClass = (actionField.vars.attr.class|default('') ~ (fieldName == 'reset' ? ' btn btn-red no-icon' : ' btn btn-white no-icon'))|trim %}
+                                        <button
+                                            type="submit"
+                                            id="{{ actionField.vars.id }}"
+                                            name="{{ actionField.vars.full_name }}"
+                                            class="{{ actionClass }}"
+                                            data-bound-submit-click="true"
+                                        >
+                                            {{ actionField.vars.label|default(fieldName|humanize)|trans({}, actionField.vars.translation_domain|default(translation_domain)) }}
+                                        </button>
+                                        {% set renderedFields = renderedFields|merge([fieldName]) %}
+                                    {% endif %}
+                                {% endfor %}
                             </div>
-                            {% set renderedFields = renderedFields|merge([fieldName]) %}
-                        {% endif %}
-                    {% endfor %}
                         </section>
 
                         <section class="section-white section-radius connector-config-section connector-config-section--details">
                             <h3 class="heading">{% trans %}Verbindingsdetails{% endtrans %}</h3>
 
-                            {% for fieldName in ['connection_status', 'linked_channel_id', 'user', 'ig_account', 'access_token_status', 'access_token_expires_at', 'page_token_status', 'page_token_expires_at'] %}
+                            {% for fieldName in ['connection_status', 'linked_channel_id', 'user', 'ig_account', 'access_token_status', 'access_token_expires_at', 'page_token_status', 'page_token_expires_at', 'health_status', 'last_connection_test_at', 'rate_limit_status', 'chosen_page_status', 'last_successful_publication_at', 'last_failed_publication_at', 'last_failed_publication_error'] %}
                                 {% if attribute(form, fieldName) is defined %}
                                     {{ form_row(attribute(form, fieldName)) }}
                                     {% set renderedFields = renderedFields|merge([fieldName]) %}
@@ -213,8 +213,13 @@
                 max-width: none;
                 display: block;
             }
-            .connector-config-action .form-item {
-                margin-bottom: 0;
+            .connector-config-actions {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .connector-config-actions .btn {
+                min-width: 170px;
             }
             .connector-config-section--details .form-item {
                 margin-bottom: 8px;
