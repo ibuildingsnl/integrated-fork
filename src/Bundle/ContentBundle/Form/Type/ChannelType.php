@@ -42,6 +42,11 @@ class ChannelType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $channel = $builder->getData();
+        $channelType = \is_object($channel) && method_exists($channel, 'getType') ? $channel->getType() : null;
+        $isWebsiteChannel = \is_object($channelType) && method_exists($channelType, 'getId') && $channelType->getId() === 'website';
+        $showWebsiteFields = (bool) $options['can_change_type'] || $isWebsiteChannel;
+
         $builder->add('type', ChoiceType::class, [
             'choices' => $this->channelTypes->allTypes(),
             'choice_label' => 'name',
@@ -81,30 +86,32 @@ class ChannelType extends AbstractType
             ]
         );
 
-        $builder->add('domains', TailwindCollectionType::class, [
-            'priority' => 500,
-            'label' => 'Domains (example.com)',
-            'allow_add' => true,
-            'allow_delete' => true,
-            'add_button_text' => 'Add domain',
-            'delete_button_text' => 'Delete domain',
-            'attr' => [
-                'class' => 'channel-domains',
-                'show_headings' => 'false',
-                'location' => 'editor',
-                'style' => 'editor',
-                'state' => 'show',
-                'data-exclusive-to' => 'website',
-            ],
-        ]);
+        if ($showWebsiteFields) {
+            $builder->add('domains', TailwindCollectionType::class, [
+                'priority' => 500,
+                'label' => 'Domains (example.com)',
+                'allow_add' => true,
+                'allow_delete' => true,
+                'add_button_text' => 'Add domain',
+                'delete_button_text' => 'Delete domain',
+                'attr' => [
+                    'class' => 'channel-domains',
+                    'show_headings' => 'false',
+                    'location' => 'editor',
+                    'style' => 'editor',
+                    'state' => 'show',
+                    'data-exclusive-to' => 'website',
+                ],
+            ]);
 
-        $builder->add('primaryDomain', HiddenType::class, [
-            'priority' => 500,
-            'attr' => [
-                'class' => 'primary-domain-input',
-                'data-exclusive-to' => 'website',
-            ],
-        ]);
+            $builder->add('primaryDomain', HiddenType::class, [
+                'priority' => 500,
+                'attr' => [
+                    'class' => 'primary-domain-input',
+                    'data-exclusive-to' => 'website',
+                ],
+            ]);
+        }
 
         $builder->add(
             $builder->create('permissions', FormType::class, [
@@ -123,52 +130,54 @@ class ChannelType extends AbstractType
             )
         );
 
-        $builder->add(
-            $builder->create('channel_options', FormType::class, [
-                'inherit_data' => true,
-                'attr' => [
-                    'location' => 'sidebar',
-                    'style' => 'sidebar',
-                    'state' => 'show',
-                    'icon' => 'tools',
-                    'data-exclusive-to' => 'website',
-                ],
-            ])->add(
-                'primaryDomainRedirect',
-                CheckboxSwitcherType::class,
-                [
-                    'label' => 'Redirect to primary domain',
-                    'required' => false,
+        if ($showWebsiteFields) {
+            $builder->add(
+                $builder->create('channel_options', FormType::class, [
+                    'inherit_data' => true,
                     'attr' => [
-                        'align_with_widget' => true,
+                        'location' => 'sidebar',
+                        'style' => 'sidebar',
+                        'state' => 'show',
+                        'icon' => 'tools',
                         'data-exclusive-to' => 'website',
                     ],
-                ]
-            )->add(
-                'ipProtected',
-                CheckboxSwitcherType::class,
-                [
-                    'label' => 'Protect by IP address or logged in user',
-                    'required' => false,
-                    'attr' => [
-                        'align_with_widget' => true,
-                        'data-exclusive-to' => 'website',
-                    ],
-                ]
-            )->add(
-                'language',
-                LanguageType::class,
-                [
-                    'label' => 'Website language',
-                    'required' => false,
-                    'choice_self_translation' => true,
-                    'attr' => [
-                        'align_with_widget' => true,
-                        'data-exclusive-to' => 'website',
-                    ],
-                ]
-            )
-        );
+                ])->add(
+                    'primaryDomainRedirect',
+                    CheckboxSwitcherType::class,
+                    [
+                        'label' => 'Redirect to primary domain',
+                        'required' => false,
+                        'attr' => [
+                            'align_with_widget' => true,
+                            'data-exclusive-to' => 'website',
+                        ],
+                    ]
+                )->add(
+                    'ipProtected',
+                    CheckboxSwitcherType::class,
+                    [
+                        'label' => 'Protect by IP address or logged in user',
+                        'required' => false,
+                        'attr' => [
+                            'align_with_widget' => true,
+                            'data-exclusive-to' => 'website',
+                        ],
+                    ]
+                )->add(
+                    'language',
+                    LanguageType::class,
+                    [
+                        'label' => 'Website language',
+                        'required' => false,
+                        'choice_self_translation' => true,
+                        'attr' => [
+                            'align_with_widget' => true,
+                            'data-exclusive-to' => 'website',
+                        ],
+                    ]
+                )
+            );
+        }
 
         // validate domain names
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
