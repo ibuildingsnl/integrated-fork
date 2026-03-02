@@ -800,6 +800,15 @@ function initDismissibleAlerts() {
 
     setTimeout(function() {
         dismissibleAlerts.forEach(function(alert) {
+            if (!(alert instanceof HTMLElement)) {
+                return;
+            }
+
+            var role = String(alert.getAttribute('role') || '').toLowerCase();
+            if (role === 'alert' || alert.classList.contains('alert-danger') || alert.getAttribute('data-persist') === '1') {
+                return;
+            }
+
             alert.remove();
         });
     }, 10000);

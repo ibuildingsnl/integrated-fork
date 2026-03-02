@@ -206,6 +206,76 @@
     })();
 </script>
 
+<script>
+    (function defineIntegratedFlashBridge() {
+        if (window.IntegratedFlashBridge) {
+            return;
+        }
+
+        function resolveFlashContainer() {
+            return document.getElementById('flash-messages');
+        }
+
+        function isTemplateNode(node) {
+            return !!node && node.nodeType === 1 && node.tagName === 'TEMPLATE';
+        }
+
+        function hasRenderableContent(fragment) {
+            if (!fragment) {
+                return false;
+            }
+
+            var children = fragment.childNodes || [];
+            for (var i = 0; i < children.length; i += 1) {
+                var child = children[i];
+                if (child && (child.nodeType === 1 || (child.nodeType === 3 && String(child.textContent || '').trim() !== ''))) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        function extractTemplate(scope) {
+            if (!scope || typeof scope.querySelector !== 'function') {
+                return null;
+            }
+
+            return scope.querySelector('template[data-integrated-flash-messages]');
+        }
+
+        function renderFromScope(scope) {
+            var template = extractTemplate(scope);
+            if (!isTemplateNode(template) || !template.content) {
+                return;
+            }
+
+            var flashContainer = resolveFlashContainer();
+            if (!flashContainer) {
+                return;
+            }
+
+            var fragment = template.content.cloneNode(true);
+            if (!hasRenderableContent(fragment)) {
+                return;
+            }
+
+            flashContainer.innerHTML = '';
+            flashContainer.appendChild(fragment);
+            template.remove();
+        }
+
+        window.IntegratedFlashBridge = {
+            renderFromScope: renderFromScope
+        };
+
+        document.addEventListener('turbo:frame-load', function (event) {
+            var frame = event && event.target ? event.target : null;
+            renderFromScope(frame);
+        });
+    })();
+</script>
+
 {{ integrated_javascripts() }}
 
 {% block locking %}
