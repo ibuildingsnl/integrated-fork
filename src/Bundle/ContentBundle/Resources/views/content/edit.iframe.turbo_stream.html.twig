@@ -1,3 +1,5 @@
+{{ include('@IntegratedContent/content/flash.turbo_stream.html.twig') }}
+
 {% if is_media and saved %}
 <turbo-stream action="replace" target="{{ content.id }}">
     <template>
