@@ -1,4 +1,3 @@
-{% set thumbnail = integrated_image(media.file).cropResize(200, 200) %}
 {% set rawTitle = media.title|default('') %}
 {% set title = '' %}
 {% if rawTitle is iterable %}
@@ -67,6 +66,7 @@
     {% endif %}
 {% endif %}
 {% set filePath = filePath|replace({'\\/': '/'}) %}
+{% set thumbnail = filePath ? integrated_image(filePath).cropResize(200, 200) : 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==' %}
 {% set filetypeCandidate = filePath|split('.')|last|lower %}
 {% set filetype = filetypeCandidate matches '/^[a-z0-9]{1,5}$/' ? filetypeCandidate : '' %}
 {% set mimeType = '' %}
