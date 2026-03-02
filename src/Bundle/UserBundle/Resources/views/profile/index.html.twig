@@ -3,7 +3,7 @@
     {% block content %}
         <div class="flex flex-wrap edit-form">
             {% block form_start %}
-                {{ form_start(form) }}
+                {{ form_start(form, {'attr': {'id': 'integrated_user_profile_form'}}) }}
             {% endblock %}
             {% block toolbar %}
                 {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
@@ -56,3 +56,8 @@
             </div>
         </div>
     {% endblock %}
+
+    {% block javascript %}
+        {{ parent() }}
+        {% include '@IntegratedUser/partial/password_toggle_script.html.twig' with {'integrated_password_toggle_form_selector': '#integrated_user_profile_form'} %}
+    {% endblock javascript %}

@@ -79,3 +79,8 @@
             {% endblock %}
         </div>
     {% endblock %}
+
+    {% block javascript %}
+        {{ parent() }}
+        {% include '@IntegratedUser/partial/password_toggle_script.html.twig' with {'integrated_password_toggle_form_selector': 'form[name="integrated_user_user_form"]'} %}
+    {% endblock javascript %}
