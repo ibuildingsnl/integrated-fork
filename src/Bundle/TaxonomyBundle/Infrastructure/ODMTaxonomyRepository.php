@@ -37,11 +37,11 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
             ->getQuery()
             ->execute();
 
-        if (is_array($result)) {
+        if (\is_array($result)) {
             $items = $result;
         } elseif ($result instanceof \Traversable) {
             $items = iterator_to_array($result, false);
-        } elseif (is_object($result) && method_exists($result, 'toArray')) {
+        } elseif (\is_object($result) && method_exists($result, 'toArray')) {
             /** @var array<int, mixed> $items */
             $items = $result->toArray();
         } else {

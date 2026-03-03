@@ -108,10 +108,31 @@
 {% block javascript %}
 {{ parent() }}
 <script type="text/javascript">
-    $(function () {
-        $('form[name="integrated_user_filter"]').on('change', function () {
-            $(this).trigger('submit');
-        });
-    });
+    (function () {
+        function bindUserFilterAutoSubmit() {
+            var form = document.querySelector('form[name="integrated_user_filter"]');
+            if (!form || form.dataset.autoSubmitBound === '1') {
+                return;
+            }
+
+            form.dataset.autoSubmitBound = '1';
+            form.addEventListener('change', function () {
+                if (typeof form.requestSubmit === 'function') {
+                    form.requestSubmit();
+                    return;
+                }
+
+                form.submit();
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', bindUserFilterAutoSubmit);
+        } else {
+            bindUserFilterAutoSubmit();
+        }
+
+        document.addEventListener('turbo:load', bindUserFilterAutoSubmit);
+    })();
 </script>
 {% endblock %}
