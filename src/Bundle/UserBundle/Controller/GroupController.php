@@ -20,6 +20,7 @@ use Integrated\Bundle\UserBundle\Model\GroupManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -69,6 +70,14 @@ class GroupController extends AbstractController
 
             if ($form->isValid()) {
                 $user = $form->getData();
+                if (!$this->canManageAdminPrivileges() && $this->groupHasAdminRole($user)) {
+                    $errorTarget = $form->has('roles') ? $form->get('roles') : $form;
+                    $errorTarget->addError(new FormError('You are not allowed to assign the administrator role.'));
+
+                    return $this->render('@IntegratedUser/group/new.html.twig', [
+                        'form' => $form,
+                    ]);
+                }
 
                 $this->manager->persist($user);
                 $this->addFlash('success', \sprintf('The group %s is created', $user->getName()));
@@ -93,6 +102,9 @@ class GroupController extends AbstractController
         if (!$group) {
             throw $this->createNotFoundException();
         }
+        if (!$this->canManageAdminPrivileges() && $this->groupHasAdminRole($group)) {
+            throw $this->createAccessDeniedException();
+        }
 
         $form = $this->createEditForm($group);
         $form->handleRequest($request);
@@ -103,6 +115,16 @@ class GroupController extends AbstractController
             }
 
             if ($form->isValid()) {
+                if (!$this->canManageAdminPrivileges() && $this->groupHasAdminRole($group)) {
+                    $errorTarget = $form->has('roles') ? $form->get('roles') : $form;
+                    $errorTarget->addError(new FormError('You are not allowed to assign the administrator role.'));
+
+                    return $this->render('@IntegratedUser/group/edit.html.twig', [
+                        'group' => $group,
+                        'form' => $form,
+                    ]);
+                }
+
                 $this->manager->persist($group);
                 $this->addFlash('success', \sprintf('The changes to the group %s are saved', $group->getName()));
 
@@ -126,6 +148,9 @@ class GroupController extends AbstractController
 
         if (!$group) {
             return $this->redirectToRoute('integrated_user_group_index'); // group is already gone
+        }
+        if (!$this->canManageAdminPrivileges() && $this->groupHasAdminRole($group)) {
+            throw $this->createAccessDeniedException();
         }
 
         $form = $this->createDeleteForm($group);
@@ -182,5 +207,17 @@ class GroupController extends AbstractController
         $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 
         return $form;
+    }
+
+    private function canManageAdminPrivileges(): bool
+    {
+        return $this->isGranted('ROLE_ADMIN');
+    }
+
+    private function groupHasAdminRole(GroupInterface $group): bool
+    {
+        $roles = $group->getRoles();
+
+        return \is_array($roles) && \in_array('ROLE_ADMIN', $roles, true);
     }
 }

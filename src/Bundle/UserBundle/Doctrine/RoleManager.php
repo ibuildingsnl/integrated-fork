@@ -152,7 +152,7 @@ class RoleManager implements RoleManagerInterface
         $roles = $this->roles;
 
         foreach ($this->findAll() as $role) {
-            if (\array_key_exists($role->getLabel(), $roles)) {
+            if (\array_key_exists($role->getRole(), $roles)) {
                 continue;
             }
             $roles[$role->getRole()] = (string) $role->getLabel();

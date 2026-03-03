@@ -17,6 +17,7 @@ use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\UserBundle\Form\Type\UserFilterType;
 use Integrated\Bundle\UserBundle\Form\Type\UserFormType;
+use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Bundle\UserBundle\Model\GroupManagerInterface;
 use Integrated\Bundle\UserBundle\Model\ScopeManagerInterface;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
@@ -26,6 +27,7 @@ use Integrated\Bundle\UserBundle\Service\BulkUserActionService;
 use Knp\Component\Pager\PaginatorInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -84,7 +86,7 @@ class UserController extends AbstractController
         return $this->render('@IntegratedUser/user/index.html.twig', [
             'users' => $pagination,
             'facetFilter' => $facetFilter,
-            'allGroups' => $this->groupManager->findAll(),
+            'allGroups' => $this->filterAssignableGroups($this->groupManager->findAll()),
             'allScopes' => $this->scopeManager->findAll(),
             'bulkActions' => [
                 BulkUserActionService::ACTION_ENABLE_LOGIN => 'Enable login',
@@ -146,6 +148,11 @@ class UserController extends AbstractController
 
                 return $this->redirectToRoute('integrated_user_user_index');
             }
+            if (!$this->canManageAdminPrivileges() && $this->groupHasAdminRole($group)) {
+                $this->addFlash('danger', 'You are not allowed to assign administrator groups.');
+
+                return $this->redirectToRoute('integrated_user_user_index');
+            }
         }
 
         if ($action === BulkUserActionService::ACTION_CHANGE_SCOPE) {
@@ -194,6 +201,14 @@ class UserController extends AbstractController
 
             if ($form->isValid()) {
                 $user = $form->getData();
+                if (!$this->canManageAdminPrivileges() && $this->userHasAdminGroup($user)) {
+                    $errorTarget = $form->has('groups') ? $form->get('groups') : $form;
+                    $errorTarget->addError(new FormError('You are not allowed to assign administrator groups.'));
+
+                    return $this->render('@IntegratedUser/user/new.html.twig', [
+                        'form' => $form,
+                    ]);
+                }
 
                 $this->manager->persist($user);
                 $this->logger->info('User created', [
@@ -234,6 +249,16 @@ class UserController extends AbstractController
             }
 
             if ($form->isValid()) {
+                if (!$this->canManageAdminPrivileges() && $this->userHasAdminGroup($user)) {
+                    $errorTarget = $form->has('groups') ? $form->get('groups') : $form;
+                    $errorTarget->addError(new FormError('You are not allowed to assign administrator groups.'));
+
+                    return $this->render('@IntegratedUser/user/edit.html.twig', [
+                        'user' => $user,
+                        'form' => $form,
+                    ]);
+                }
+
                 $this->manager->persist($user);
                 $this->logger->info('User updated', [
                     'actor' => $this->getUser()?->getUserIdentifier(),
@@ -441,5 +466,41 @@ class UserController extends AbstractController
         $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 
         return $form;
+    }
+
+    private function canManageAdminPrivileges(): bool
+    {
+        return $this->isGranted('ROLE_ADMIN');
+    }
+
+    private function userHasAdminGroup(UserInterface $user): bool
+    {
+        foreach ($user->getGroups() as $group) {
+            if ($this->groupHasAdminRole($group)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function groupHasAdminRole(mixed $group): bool
+    {
+        if (!$group instanceof GroupInterface && (!\is_object($group) || !method_exists($group, 'getRoles'))) {
+            return false;
+        }
+
+        $roles = $group->getRoles();
+
+        return \is_array($roles) && \in_array('ROLE_ADMIN', $roles, true);
+    }
+
+    private function filterAssignableGroups(array $groups): array
+    {
+        if ($this->canManageAdminPrivileges()) {
+            return $groups;
+        }
+
+        return array_values(array_filter($groups, fn ($group): bool => !$this->groupHasAdminRole($group)));
     }
 }

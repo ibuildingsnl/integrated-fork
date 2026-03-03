@@ -52,11 +52,13 @@
 
         <service id="integrated_user.form.group.choice.type" class="Integrated\Bundle\UserBundle\Form\Type\GroupType">
             <argument type="service" id="integrated_user.group.manager"/>
+            <argument type="service" id="security.authorization_checker"/>
             <tag name="form.type"/>
         </service>
 
         <service id="integrated_user.form.role.choice.type" class="Integrated\Bundle\UserBundle\Form\Type\RoleType">
             <argument type="service" id="integrated_user.role.manager"/>
+            <argument type="service" id="security.authorization_checker"/>
             <tag name="form.type"/>
         </service>
 

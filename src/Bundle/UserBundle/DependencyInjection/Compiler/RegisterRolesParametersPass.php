@@ -65,7 +65,7 @@ class RegisterRolesParametersPass implements CompilerPassInterface
                     $label = $child->nodeValue;
                 }
 
-                if (strpos($name, 'ROLE_') == 0) {
+                if (strpos($name, 'ROLE_') === 0) {
                     $parameters[strtoupper($name)] = $label = $label ?: $name;
                 }
             }
