@@ -92,18 +92,161 @@
         };
 
         var searchSelections = [
-            {id: '', title: '{% trans %}Choose a search selection{% endtrans %}'},
+            {id: '', title: '{% trans %}Choose a search selection{% endtrans %}', channels: []},
             {% set searchSelections = getSearchSelections() %}
             {% for searchSelection in searchSelections %}
-            {id: '{{ searchSelection.id }}', title: '{{ searchSelection.title|e('js') }}'}{{ loop.last ? '' : ',' }}
+            {id: '{{ searchSelection.id }}', title: '{{ searchSelection.title|e('js') }}', channels: {{ ((searchSelection.filters.pub_channels|default([]))|merge(searchSelection.filters.channels|default([])))|json_encode|raw }}}{{ loop.last ? '' : ',' }}
             {% endfor %}
         ];
 
-        var renderSearchSelectionOptions = function(selectedId) {
-            return searchSelections.map(function(option) {
-                var selected = String(option.id) === String(selectedId || '') ? ' selected="selected"' : '';
-                return '<option value="' + escapeHtml(option.id) + '"' + selected + '>' + escapeHtml(option.title) + '</option>';
+        var normalizeToArray = function(value) {
+            if (Array.isArray(value)) {
+                return value;
+            }
+
+            if (value === null || typeof value === 'undefined') {
+                return [];
+            }
+
+            return [value];
+        };
+
+        var normalizeWebsiteKey = function(value) {
+            var normalized = String(value || '').trim().toLowerCase();
+            normalized = normalized.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/+$/, '');
+
+            return normalized;
+        };
+
+        var extractSelectionChannels = function(selection) {
+            var channels = normalizeToArray(selection && selection.channels);
+            var mapped = channels.map(function(channel) {
+                return normalizeWebsiteKey(channel);
+            }).filter(function(channel) {
+                return channel !== '';
+            });
+
+            return Array.from(new Set(mapped));
+        };
+
+        var classifySelection = function(selection, activeWebsiteKey) {
+            var channels = extractSelectionChannels(selection);
+
+            if (!channels.length) {
+                return 'shared';
+            }
+
+            if (!activeWebsiteKey) {
+                return 'other';
+            }
+
+            return channels.indexOf(activeWebsiteKey) !== -1 ? 'current' : 'other';
+        };
+
+        var collectWebsiteKeys = function() {
+            var keys = [];
+
+            searchSelections.forEach(function(selection) {
+                extractSelectionChannels(selection).forEach(function(channel) {
+                    keys.push(channel);
+                });
+            });
+
+            return Array.from(new Set(keys)).sort();
+        };
+
+        var detectCurrentWebsiteKey = function(availableKeys) {
+            var host = normalizeWebsiteKey(window.location && window.location.hostname ? window.location.hostname : '');
+            if (host && availableKeys.indexOf(host) !== -1) {
+                return host;
+            }
+
+            return '';
+        };
+
+        var renderSearchSelectionWebsiteOptions = function(selectedMode) {
+            var mode = String(selectedMode || 'current');
+            var allWebsiteKeys = collectWebsiteKeys();
+            var options = [
+                {value: 'current', label: '{% trans %}Current website{% endtrans %}'},
+                {value: 'all', label: '{% trans %}All websites{% endtrans %}'}
+            ];
+
+            allWebsiteKeys.forEach(function(key) {
+                options.push({value: key, label: key});
+            });
+
+            return options.map(function(option) {
+                var selected = String(option.value) === mode ? ' selected="selected"' : '';
+                return '<option value="' + escapeHtml(option.value) + '"' + selected + '>' + escapeHtml(option.label) + '</option>';
             }).join('');
+        };
+
+        var renderSearchSelectionOptions = function(selectedId, websiteMode) {
+            var mode = String(websiteMode || 'current');
+            var allWebsiteKeys = collectWebsiteKeys();
+            var currentWebsiteKey = detectCurrentWebsiteKey(allWebsiteKeys);
+            var activeWebsiteKey = mode === 'current' ? currentWebsiteKey : (mode === 'all' ? '' : normalizeWebsiteKey(mode));
+
+            var groups = {
+                current: [],
+                shared: [],
+                other: []
+            };
+
+            searchSelections.slice(1).forEach(function(option) {
+                var group = classifySelection(option, activeWebsiteKey);
+                groups[group].push(option);
+            });
+
+            var hasGroupedContext = activeWebsiteKey !== '';
+            var html = '';
+            var selectedExists = false;
+            var selectedIdValue = String(selectedId || '');
+
+            var renderOption = function(option) {
+                var selected = String(option.id) === selectedIdValue ? ' selected="selected"' : '';
+                if (selected) {
+                    selectedExists = true;
+                }
+
+                return '<option value="' + escapeHtml(option.id) + '"' + selected + '>' + escapeHtml(option.title) + '</option>';
+            };
+
+            html += renderOption(searchSelections[0]);
+
+            if (hasGroupedContext) {
+                if (groups.current.length) {
+                    html += '<optgroup label="{% trans %}For this website{% endtrans %}">';
+                    groups.current.sort(function(a, b) { return a.title.localeCompare(b.title); }).forEach(function(option) { html += renderOption(option); });
+                    html += '</optgroup>';
+                }
+
+                if (groups.shared.length) {
+                    html += '<optgroup label="{% trans %}Shared{% endtrans %}">';
+                    groups.shared.sort(function(a, b) { return a.title.localeCompare(b.title); }).forEach(function(option) { html += renderOption(option); });
+                    html += '</optgroup>';
+                }
+
+                if (groups.other.length) {
+                    html += '<optgroup label="{% trans %}Other websites{% endtrans %}">';
+                    groups.other.sort(function(a, b) { return a.title.localeCompare(b.title); }).forEach(function(option) { html += renderOption(option); });
+                    html += '</optgroup>';
+                }
+            } else {
+                searchSelections.slice(1)
+                    .slice()
+                    .sort(function(a, b) { return a.title.localeCompare(b.title); })
+                    .forEach(function(option) {
+                        html += renderOption(option);
+                    });
+            }
+
+            if (selectedIdValue && !selectedExists) {
+                html += '<option value="' + escapeHtml(selectedIdValue) + '" selected="selected">(' + escapeHtml('{% trans %}Currently selected{% endtrans %}') + ' #' + escapeHtml(selectedIdValue) + ')</option>';
+            }
+
+            return html;
         };
 
         var hideAddPlaceholders = function(root) {
@@ -702,6 +845,7 @@
             var searchFieldClass = typeLink === '1' ? '' : ' style="display:none"';
             var uriFieldClass = typeLink === '0' ? '' : ' style="display:none"';
             var targetBlankFieldClass = typeLink === '2' ? ' style="display:none"' : '';
+            var websiteMode = node.dataset.integratedSearchWebsiteMode || 'current';
 
             var html = '' +
                 '<div class="integrated-menu-node-shell">' +
@@ -723,7 +867,8 @@
                         '<label>{% trans %}Name{% endtrans %}<input type="text" class="integrated-menu-setting-name integrated-form-control" value="' + escapeHtml(data.name || '') + '" /></label>' +
                         '<label>{% trans %}Link type{% endtrans %}<select class="integrated-menu-setting-type integrated-form-control"><option value="0"' + (typeLink === '0' ? ' selected="selected"' : '') + '>{% trans %}URL{% endtrans %}</option><option value="1"' + (typeLink === '1' ? ' selected="selected"' : '') + '>{% trans %}Search selection{% endtrans %}</option><option value="2"' + (typeLink === '2' ? ' selected="selected"' : '') + '>{% trans %}Heading{% endtrans %}</option></select></label>' +
                         '<label class="integrated-menu-setting-uri-wrap"' + uriFieldClass + '>{% trans %}URL{% endtrans %}<input type="text" class="integrated-menu-setting-uri integrated-form-control" value="' + escapeHtml(data.uri || '') + '" /></label>' +
-                        '<label class="integrated-menu-setting-search-wrap"' + searchFieldClass + '>{% trans %}Search selection{% endtrans %}<select class="integrated-menu-setting-search integrated-form-control">' + renderSearchSelectionOptions(data.searchSelection || '') + '</select></label>' +
+                        '<label id="integrated-search-selection-website-label" class="integrated-menu-setting-search-website-wrap"' + searchFieldClass + '>{% trans %}Website{% endtrans %}<select id="integrated-search-selection-website-control" class="integrated-menu-setting-search-website integrated-form-control">' + renderSearchSelectionWebsiteOptions(websiteMode) + '</select></label>' +
+                        '<label class="integrated-menu-setting-search-wrap"' + searchFieldClass + '>{% trans %}Search selection{% endtrans %}<select class="integrated-menu-setting-search integrated-form-control">' + renderSearchSelectionOptions(data.searchSelection || '', websiteMode) + '</select></label>' +
                         '<label class="integrated-menu-setting-maxitems-wrap"' + searchFieldClass + '>{% trans %}Number of items{% endtrans %}<input type="number" min="1" class="integrated-menu-setting-maxitems integrated-form-control" value="' + escapeHtml((typeof data.maxItems === 'undefined' || data.maxItems === null) ? '' : data.maxItems) + '" /></label>' +
                         '<label class="integrated-menu-setting-targetblank"' + targetBlankFieldClass + '><input type="checkbox" class="integrated-menu-setting-targetblank-input"' + (data.targetBlank ? ' checked="checked"' : '') + ' /> {% trans %}Open in new tab{% endtrans %}</label>' +
                     '</div>' +
@@ -1355,7 +1500,35 @@
             handleRowSettingsToggleClick(e);
         };
 
+        var updateSearchSelectionOptions = function(typeNode) {
+            if (!typeNode) {
+                return;
+            }
+
+            var websiteSelect = typeNode.querySelector('.integrated-menu-setting-search-website');
+            var searchSelect = typeNode.querySelector('.integrated-menu-setting-search');
+            if (!websiteSelect || !searchSelect) {
+                return;
+            }
+
+            var selectedSearch = String(searchSelect.value || '');
+            var websiteMode = String(websiteSelect.value || 'current');
+            searchSelect.innerHTML = renderSearchSelectionOptions(selectedSearch, websiteMode);
+            if (selectedSearch) {
+                searchSelect.value = selectedSearch;
+            }
+
+            typeNode.dataset.integratedSearchWebsiteMode = websiteMode;
+        };
+
         var handleTypeChange = function(e) {
+            var websiteChange = e.target.closest('.integrated-menu-setting-search-website');
+            if (websiteChange) {
+                var websiteNode = websiteChange.closest('.integrated-website-menu-item[data-action="integrated-website-menu-item-edit"]');
+                updateSearchSelectionOptions(websiteNode);
+                return;
+            }
+
             var typeChange = e.target.closest('.integrated-menu-setting-type');
             if (!typeChange) {
                 return;
@@ -1370,16 +1543,22 @@
             var showSearch = selectedType === '1';
             var showUri = selectedType === '0';
             var showTargetBlank = selectedType !== '2';
+            var websiteWrap = typeNode.querySelector('.integrated-menu-setting-search-website-wrap');
             var searchWrap = typeNode.querySelector('.integrated-menu-setting-search-wrap');
             var maxWrap = typeNode.querySelector('.integrated-menu-setting-maxitems-wrap');
             var uriWrap = typeNode.querySelector('.integrated-menu-setting-uri-wrap');
             var targetBlankWrap = typeNode.querySelector('.integrated-menu-setting-targetblank');
             var targetBlankInput = typeNode.querySelector('.integrated-menu-setting-targetblank-input');
+            if (websiteWrap) { websiteWrap.style.display = showSearch ? '' : 'none'; }
             if (searchWrap) { searchWrap.style.display = showSearch ? '' : 'none'; }
             if (maxWrap) { maxWrap.style.display = showSearch ? '' : 'none'; }
             if (uriWrap) { uriWrap.style.display = showUri ? '' : 'none'; }
             if (targetBlankWrap) { targetBlankWrap.style.display = showTargetBlank ? '' : 'none'; }
             if (targetBlankInput && !showTargetBlank) { targetBlankInput.checked = false; }
+
+            if (showSearch) {
+                updateSearchSelectionOptions(typeNode);
+            }
         };
 
         var handleKeyDown = function(e) {
