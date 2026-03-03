@@ -191,6 +191,23 @@ class PersonTest extends TestCase
         $this->assertEquals($lastName, (string) $this->person->setLastName($lastName));
     }
 
+    public function testSettersAllowNullValues()
+    {
+        $this->person
+            ->setFirstName(null)
+            ->setLastName(null)
+            ->setPrefix(null)
+            ->setNickname(null)
+            ->setGender(null);
+
+        $this->assertNull($this->person->getFirstName());
+        $this->assertNull($this->person->getLastName());
+        $this->assertNull($this->person->getPrefix());
+        $this->assertNull($this->person->getNickname());
+        $this->assertNull($this->person->getGender());
+        $this->assertSame('', (string) $this->person);
+    }
+
     protected function getContent()
     {
         return $this->person;
