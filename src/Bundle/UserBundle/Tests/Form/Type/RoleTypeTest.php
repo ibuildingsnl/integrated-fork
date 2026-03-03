@@ -10,6 +10,23 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class RoleTypeTest extends TestCase
 {
+    public function testRoleAdminIsHiddenWhenAuthorizationCheckerIsMissing(): void
+    {
+        $manager = $this->createMock(RoleManager::class);
+        $manager->method('getRolesFromSources')->willReturn([
+            'ROLE_ADMIN' => 'Administrator',
+            'ROLE_USER_MANAGER' => 'User manager',
+        ]);
+
+        $type = new RoleType($manager);
+        $resolver = new OptionsResolver();
+        $type->configureOptions($resolver);
+        $options = $resolver->resolve();
+
+        self::assertSame('ROLE_USER_MANAGER', $options['choices']['User manager']);
+        self::assertArrayNotHasKey('Administrator', $options['choices']);
+    }
+
     public function testRoleAdminIsHiddenForNonAdminUsers(): void
     {
         $manager = $this->createMock(RoleManager::class);
@@ -48,4 +65,3 @@ class RoleTypeTest extends TestCase
         self::assertSame('ROLE_ADMIN', $options['choices']['Administrator']);
     }
 }
-

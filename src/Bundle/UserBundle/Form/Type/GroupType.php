@@ -27,9 +27,12 @@ class GroupType extends AbstractType
      * @var GroupManagerInterface
      */
     private $manager;
-    private AuthorizationCheckerInterface $authorizationChecker;
+    private ?AuthorizationCheckerInterface $authorizationChecker;
 
-    public function __construct(GroupManagerInterface $manager, AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(
+        GroupManagerInterface $manager,
+        ?AuthorizationCheckerInterface $authorizationChecker = null
+    )
     {
         $this->manager = $manager;
         $this->authorizationChecker = $authorizationChecker;
@@ -40,7 +43,7 @@ class GroupType extends AbstractType
         $resolver->setDefault('class', $this->manager->getClassName());
         $resolver->setDefault('choice_label', 'name');
         $resolver->setDefault('choice_filter', function (Options $options) {
-            if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            if ($this->authorizationChecker && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
                 return null;
             }
 

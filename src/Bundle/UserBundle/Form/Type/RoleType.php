@@ -26,12 +26,12 @@ class RoleType extends AbstractType
      * @var RoleManager
      */
     private $manager;
-    private AuthorizationCheckerInterface $authorizationChecker;
+    private ?AuthorizationCheckerInterface $authorizationChecker;
 
     /**
      * RoleType constructor.
      */
-    public function __construct(RoleManager $manager, AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(RoleManager $manager, ?AuthorizationCheckerInterface $authorizationChecker = null)
     {
         $this->manager = $manager;
         $this->authorizationChecker = $authorizationChecker;
@@ -40,7 +40,7 @@ class RoleType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $roles = $this->manager->getRolesFromSources();
-        if (!$this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+        if (!$this->authorizationChecker || !$this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             unset($roles['ROLE_ADMIN']);
         }
 
