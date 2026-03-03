@@ -5,7 +5,6 @@ namespace Integrated\Bundle\ContentBundle\Twig\Component;
 use Integrated\Bundle\ContentBundle\Services\ArticleSearchServiceInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
-use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsLiveComponent(
     'integrated_content_article_search',
@@ -13,7 +12,15 @@ use Symfony\UX\LiveComponent\DefaultActionTrait;
 )]
 class ArticleSearchLiveComponent
 {
-    use DefaultActionTrait;
+    /**
+     * Default LiveComponent action.
+     *
+     * Kept explicit for compatibility with Symfony UX LiveComponent versions
+     * where DefaultActionTrait is unavailable.
+     */
+    public function __invoke(): void
+    {
+    }
 
     /** @var array<int, array{key: string, label: string}> */
     #[LiveProp]
