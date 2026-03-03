@@ -21287,6 +21287,36 @@ function bindBulkActions() {
 }
 function bindUploadActions() {
   var doc = $(document);
+  var hasFilesInDragEvent = function hasFilesInDragEvent(event) {
+    var dragEvent = event && (event.originalEvent || event);
+    var dataTransfer = dragEvent && dragEvent.dataTransfer;
+    if (!dataTransfer) {
+      return false;
+    }
+    if (dataTransfer.types && Array.from(dataTransfer.types).includes('Files')) {
+      return true;
+    }
+    if (dataTransfer.items && dataTransfer.items.length > 0) {
+      return Array.from(dataTransfer.items).some(function (item) {
+        return item.kind === 'file';
+      });
+    }
+    return false;
+  };
+  var showUploadViewOnFileDrag = function showUploadViewOnFileDrag(event) {
+    if (!hasFilesInDragEvent(event)) {
+      return;
+    }
+    var uploadContainer = document.querySelector('#upload_container');
+    if (!uploadContainer) {
+      return;
+    }
+    if (!uploadContainer.classList.contains('show')) {
+      uploadContainer.dataset.customContenttype = '';
+      toggle_upload_view();
+    }
+    event.preventDefault();
+  };
   doc.off('click' + MEDIA_GALLERY_NS, '.uppy-close').on('click' + MEDIA_GALLERY_NS, '.uppy-close', function () {
     closeUppyWithRefresh();
   });
@@ -21303,6 +21333,17 @@ function bindUploadActions() {
       uploadContainer.dataset.customContenttype = event.target.dataset.id;
     }
     toggle_upload_view(event.target.dataset.id);
+  });
+  doc.off('dragenter' + MEDIA_GALLERY_NS, '.media-library').on('dragenter' + MEDIA_GALLERY_NS, '.media-library', showUploadViewOnFileDrag);
+  doc.off('dragover' + MEDIA_GALLERY_NS, '.media-library').on('dragover' + MEDIA_GALLERY_NS, '.media-library', function (event) {
+    if (hasFilesInDragEvent(event)) {
+      event.preventDefault();
+    }
+  });
+  doc.off('drop' + MEDIA_GALLERY_NS, '.media-library').on('drop' + MEDIA_GALLERY_NS, '.media-library', function (event) {
+    if (hasFilesInDragEvent(event)) {
+      event.preventDefault();
+    }
   });
 }
 function bindSearchActions() {
