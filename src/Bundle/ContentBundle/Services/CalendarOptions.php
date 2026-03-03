@@ -56,11 +56,11 @@ class CalendarOptions
 
     private function normalizeCalendarLimit(mixed $value): int
     {
-        if (is_int($value)) {
+        if (\is_int($value)) {
             return max(1, min(self::MAX_LIMIT, $value));
         }
 
-        if (is_string($value) && ctype_digit($value)) {
+        if (\is_string($value) && ctype_digit($value)) {
             return max(1, min(self::MAX_LIMIT, (int) $value));
         }
 

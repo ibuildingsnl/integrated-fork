@@ -13,7 +13,7 @@ class UnlockArticleScriptTest extends TestCase
         $script = file_get_contents(__DIR__.'/../../Resources/assets/js/unlock_article.js');
 
         $this->assertIsString($script);
-        $this->assertStringContainsString("if (!event || !event.originalEvent) {", $script);
+        $this->assertStringContainsString('if (!event || !event.originalEvent) {', $script);
         $this->assertStringContainsString("form.on('change', function (event) {", $script);
     }
 
@@ -26,4 +26,3 @@ class UnlockArticleScriptTest extends TestCase
         $this->assertStringContainsString("form.data('changed', true);", $script);
     }
 }
-

@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -33,14 +33,14 @@ class IconController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $icons = $this->getIconNames();
-        $regular = \array_values(
-            \array_filter(
+        $regular = array_values(
+            array_filter(
                 $icons,
                 static fn (string $icon): bool => !str_ends_with($icon, '-solid')
             )
         );
-        $solid = \array_values(
-            \array_filter(
+        $solid = array_values(
+            array_filter(
                 $icons,
                 static fn (string $icon): bool => str_ends_with($icon, '-solid')
             )
@@ -93,7 +93,7 @@ class IconController extends AbstractController
             return self::$iconNames;
         }
 
-        $cacheKey = 'icon_names_'.\md5(
+        $cacheKey = 'icon_names_'.md5(
             (string) $this->getIconCssLastModifiedTimestamp().'|'.(string) (@filesize(self::ICON_CSS_PATH) ?: 0)
         );
 
@@ -112,7 +112,7 @@ class IconController extends AbstractController
     private function getCache(): FilesystemAdapter
     {
         if (self::$cache === null) {
-            self::$cache = new FilesystemAdapter('integrated_content_icon_library', 0, \sys_get_temp_dir());
+            self::$cache = new FilesystemAdapter('integrated_content_icon_library', 0, sys_get_temp_dir());
         }
 
         return self::$cache;
@@ -122,7 +122,7 @@ class IconController extends AbstractController
     {
         $mtime = @filemtime(self::ICON_CSS_PATH);
         if ($mtime === false || $mtime <= 0) {
-            return \time();
+            return time();
         }
 
         return (int) $mtime;
@@ -138,9 +138,9 @@ class IconController extends AbstractController
             return [];
         }
 
-        \preg_match_all('/\\.iconoir-([a-z0-9-]+)::before/i', $contents, $matches);
-        $icons = \array_values(\array_unique($matches[1] ?? []));
-        \sort($icons, \SORT_NATURAL);
+        preg_match_all('/\\.iconoir-([a-z0-9-]+)::before/i', $contents, $matches);
+        $icons = array_values(array_unique($matches[1] ?? []));
+        sort($icons, \SORT_NATURAL);
 
         return $icons;
     }
@@ -161,7 +161,7 @@ class IconController extends AbstractController
         ];
 
         foreach ($icons as $icon) {
-            $firstCharacter = \strtoupper($icon[0] ?? '');
+            $firstCharacter = strtoupper($icon[0] ?? '');
 
             if ($firstCharacter >= 'A' && $firstCharacter <= 'F') {
                 $segments['A - F'][] = $icon;
@@ -183,7 +183,7 @@ class IconController extends AbstractController
             $segments['0 - 9'][] = $icon;
         }
 
-        return \array_filter(
+        return array_filter(
             $segments,
             static fn (array $segmentIcons): bool => \count($segmentIcons) > 0
         );

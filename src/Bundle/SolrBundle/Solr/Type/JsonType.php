@@ -26,7 +26,7 @@ class JsonType extends FieldMapperType
 
             if (\is_array($config)) {
                 foreach ($this->readValues($data, $config) as $values) {
-                    if (!\is_iterable($values)) {
+                    if (!is_iterable($values)) {
                         $values = [$values];
                     }
 

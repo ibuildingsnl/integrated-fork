@@ -60,8 +60,8 @@ class ArticleSearchLiveComponent
     /**
      * @param array<int, array{key: string, label: string}> $channels
      * @param array<int, array{key: string, label: string}> $contentTypes
-     * @param array<string, string> $translations
-     * @param array<string, mixed> $searchData
+     * @param array<string, string>                         $translations
+     * @param array<string, mixed>                          $searchData
      */
     public function mount(array $channels, array $contentTypes, array $translations, array $searchData = []): void
     {
@@ -96,7 +96,7 @@ class ArticleSearchLiveComponent
             return true;
         }
 
-        return (bool) filter_var($this->searchTerm, FILTER_VALIDATE_URL);
+        return (bool) filter_var($this->searchTerm, \FILTER_VALIDATE_URL);
     }
 
     /**

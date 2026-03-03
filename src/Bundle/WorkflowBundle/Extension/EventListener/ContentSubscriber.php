@@ -380,7 +380,7 @@ class ContentSubscriber implements ContentSubscriberInterface
 
         $assigned = null;
         $assignedClass = isset($row['assigned_class']) && \is_string($row['assigned_class']) ? $row['assigned_class'] : null;
-        if ($assignedClass && \is_a($assignedClass, User::class, true)) {
+        if ($assignedClass && is_a($assignedClass, User::class, true)) {
             $assigned = isset($row['assigned_id']) && null !== $row['assigned_id'] ? (string) $row['assigned_id'] : null;
         }
 
