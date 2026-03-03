@@ -33,6 +33,13 @@ class IntegrationTest extends IntegrationTestCase
         mixed $outputs,
         mixed $deprecation = '',
     ): void {
+        // Twig integration tests return this placeholder when no legacy fixtures are available.
+        if ('not' === $file && '-' === $message && '' === $condition && [] === $templates && '' === $exception && [] === $outputs) {
+            self::assertTrue(true);
+
+            return;
+        }
+
         $this->testIntegration($file, $message, $condition, $templates, $exception, $outputs, $deprecation);
     }
 

@@ -20,6 +20,7 @@ use Integrated\Common\Solr\Indexer\CommandFactoryInterface;
 use Integrated\Common\Solr\Indexer\Event\IndexerEvent;
 use Integrated\Common\Solr\Indexer\Indexer;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
+use Integrated\Common\Solr\Indexer\Job;
 use Integrated\Common\Solr\Indexer\JobInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Solarium\Core\Client\Client;
@@ -324,8 +325,6 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
 
     public function testExecuteFactoryError()
     {
-        self::markTestSkipped('Todo: rewrite test case to be less mock-dependent');
-
         $instance = $this->getInstance();
 
         $payload1 = $this->getJob();
@@ -540,11 +539,11 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return JobInterface|MockObject
+     * @return JobInterface
      */
     protected function getJob()
     {
-        return $this->createMock(JobInterface::class);
+        return new Job();
     }
 
     /**

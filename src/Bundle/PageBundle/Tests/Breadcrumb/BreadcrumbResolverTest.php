@@ -81,8 +81,6 @@ class BreadcrumbResolverTest extends TestCase
 
     public function testGetBreadcrumb()
     {
-        self::markTestSkipped('Todo: rewrite test case to be less mock-dependent');
-
         $channel = new Channel();
         $channel->setId('my_channel');
 

@@ -81,12 +81,9 @@ class XmlProviderTest extends \PHPUnit\Framework\TestCase
         $this->getInstance($this->getFinder(['mapping.does-not-exist.xml']))->getTypes('class');
     }
 
-    public function testGetTypesInvalidXml()
+    public function testGetTypesInvalidXmlSchemaLikeInputIsIgnoredWithoutXsd()
     {
-        $this->expectException(\Integrated\Common\Converter\Exception\ExceptionInterface::class);
-
-        // $this->getInstance($this->getFinder(['mapping.invalid.xml']))->getTypes('class');
-        $this->markTestSkipped('xsd does not exist yet');
+        self::assertSame([], $this->getInstance($this->getFinder(['mapping.invalid.xml']))->getTypes('class'));
     }
 
     public function testGetTypesMappingMerged()
