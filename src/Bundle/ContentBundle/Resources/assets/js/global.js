@@ -11,10 +11,45 @@ window.popupShown = false;
 const CONTENT_NAVIGATOR_OPEN_FACETS_KEY = 'contentNavigator.openFacets.v1';
 const CONTENT_NAVIGATOR_ASIDE_SCROLL_KEY = 'contentNavigator.asideScrollTop.v1';
 const FLASH_MESSAGES_PERSIST_KEY = 'integrated.flashMessages.persist.v1';
-const SIDEBAR_MENU_SCROLL_KEY = 'integrated.sidebarMenu.scrollTop.v1';
-const SIDEBAR_MENU_OPEN_ITEMS_KEY = 'integrated.sidebarMenu.openItems.v1';
+const SIDEBAR_MENU_SCROLL_KEY = 'integrated.sidebarMenu.scrollTop.v2';
+const SIDEBAR_MENU_OPEN_ITEMS_KEY = 'integrated.sidebarMenu.openItems.v2';
 const OPTIONS_SIDEBAR_HIDDEN_KEY = 'integrated.optionsSidebar.hidden.v1';
 const listSearchDebounceTimers = new WeakMap();
+
+function normalizeSidebarHref(href) {
+    if (!href) {
+        return '';
+    }
+
+    try {
+        const url = new URL(href, window.location.origin);
+        return `${url.pathname}${url.search}`.trim();
+    } catch (error) {
+        return String(href).trim();
+    }
+}
+
+function buildSidebarMenuPersistenceKey(wrapper, index) {
+    const title = wrapper.querySelector('.menu-label .title');
+    const titleKey = title ? title.textContent.trim() : '';
+    const firstLink = wrapper.querySelector('.sub-menu-children a[href]');
+    const hrefKey = normalizeSidebarHref(firstLink ? firstLink.getAttribute('href') : '');
+    const base = hrefKey || titleKey || 'menu-item';
+
+    return `${index}:${base}`;
+}
+
+function ensureSidebarMenuPersistenceKeys(root = document) {
+    const rootNode = (root && typeof root.querySelector === 'function')
+        ? root
+        : ((root && root.target && typeof root.target.querySelector === 'function') ? root.target : document);
+
+    rootNode.querySelectorAll('.sidebar-menu-wrapper .sidebar-sub-menu').forEach((wrapper, index) => {
+        if (!wrapper.dataset.sidebarMenuKey) {
+            wrapper.dataset.sidebarMenuKey = buildSidebarMenuPersistenceKey(wrapper, index);
+        }
+    });
+}
 
 $(document).mouseup(function(e) {
     if(e.button !== 0) {
@@ -627,8 +662,13 @@ function getSidebarMenuPersistenceKey(wrapper) {
         return '';
     }
 
-    const title = wrapper.querySelector('.menu-label .title');
-    return title ? title.textContent.trim() : '';
+    if (!wrapper.dataset.sidebarMenuKey) {
+        const wrappers = document.querySelectorAll('.sidebar-menu-wrapper .sidebar-sub-menu');
+        const index = Array.from(wrappers).indexOf(wrapper);
+        wrapper.dataset.sidebarMenuKey = buildSidebarMenuPersistenceKey(wrapper, index >= 0 ? index : 0);
+    }
+
+    return wrapper.dataset.sidebarMenuKey || '';
 }
 
 function persistSidebarMenuState(wrapper, isOpen) {
@@ -652,6 +692,8 @@ function applyPersistedSidebarMenuState(root = document) {
         return;
     }
 
+    ensureSidebarMenuPersistenceKeys(root);
+
     root.querySelectorAll('.sidebar-menu-wrapper .sidebar-sub-menu').forEach((wrapper) => {
         const key = getSidebarMenuPersistenceKey(wrapper);
         const list = wrapper.querySelector('.sub-menu-children');
@@ -672,7 +714,41 @@ function restorePersistedSidebarMenuState(root = document) {
         ? root
         : ((root && root.target && typeof root.target.querySelector === 'function') ? root.target : document);
 
+    ensureSidebarMenuPersistenceKeys(rootNode);
+    const persistedItems = getPersistedOpenSidebarMenuItems();
+    if (persistedItems === null) {
+        applyDefaultSidebarMenuState(rootNode);
+        return;
+    }
+
     applyPersistedSidebarMenuState(rootNode);
+}
+
+function applyDefaultSidebarMenuState(root = document) {
+    const wrappers = Array.from(root.querySelectorAll('.sidebar-menu-wrapper .sidebar-sub-menu'));
+    if (wrappers.length === 0) {
+        return;
+    }
+
+    const hasOpenWrapper = wrappers.some((wrapper) => wrapper.classList.contains('show'));
+    if (hasOpenWrapper) {
+        return;
+    }
+
+    const contentWrapper = wrappers.find((wrapper) => wrapper.dataset.sidebarDefault === 'content');
+    if (!contentWrapper) {
+        return;
+    }
+
+    const list = contentWrapper.querySelector('.sub-menu-children');
+    if (!list) {
+        return;
+    }
+
+    contentWrapper.classList.add('show');
+    list.classList.add('show');
+    list.style.display = 'block';
+    list.style.height = '';
 }
 
 function announceContentNavigatorResults(root = document) {
