@@ -31,9 +31,8 @@ class GroupType extends AbstractType
 
     public function __construct(
         GroupManagerInterface $manager,
-        ?AuthorizationCheckerInterface $authorizationChecker = null
-    )
-    {
+        ?AuthorizationCheckerInterface $authorizationChecker = null,
+    ) {
         $this->manager = $manager;
         $this->authorizationChecker = $authorizationChecker;
     }

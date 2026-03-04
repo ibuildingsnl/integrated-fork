@@ -249,8 +249,6 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @param mixed $paginator
-     *
      * @return array<int, GroupInterface>
      */
     private function extractGroupItemsFromPaginator($paginator): array
@@ -325,7 +323,7 @@ class GroupController extends AbstractController
             $this->entityManager->getClassMetadata($userClass)->getTableName()
         );
         $rows = $this->entityManager->getConnection()->executeQuery(
-            sprintf(
+            \sprintf(
                 'SELECT u.id AS user_id, u.username
                  FROM security_user_groups ug
                  INNER JOIN %s u ON u.id = ug.user_id
@@ -398,8 +396,6 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @param mixed $rawUserIds
-     *
      * @return list<int>
      */
     private function normalizeSelectedUserIds($rawUserIds): array

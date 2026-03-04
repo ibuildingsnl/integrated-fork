@@ -9,7 +9,7 @@ class RegisterRolesParametersPassTest extends TestCase
 {
     public function testAddParametersOnlyRegistersRolePrefixedEntries(): void
     {
-        $baseDir = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.'integrated_roles_'.uniqid('', true);
+        $baseDir = rtrim(sys_get_temp_dir(), \DIRECTORY_SEPARATOR).\DIRECTORY_SEPARATOR.'integrated_roles_'.uniqid('', true);
         $rolesDir = $baseDir.'/Resources/config/roles';
         mkdir($rolesDir, 0777, true);
 

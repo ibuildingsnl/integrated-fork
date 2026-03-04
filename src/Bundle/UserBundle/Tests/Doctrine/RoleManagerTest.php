@@ -38,4 +38,3 @@ class RoleManagerTest extends TestCase
         self::assertSame('Configured label', $roles['ROLE_ADMIN'] ?? null);
     }
 }
-
