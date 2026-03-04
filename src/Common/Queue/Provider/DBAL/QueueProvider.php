@@ -174,6 +174,20 @@ class QueueProvider implements QueueProviderInterface
 
     protected function release($id, $delay = 0)
     {
-        // @todo still needs to be implemented but at the moment records are not locked in the first place.
+        $timestamp = time();
+
+        $this->connection->executeStatement(
+            \sprintf(
+                'UPDATE %s
+                SET attempts = attempts + 1, time_updated = :updated, time_execute = :execute
+                WHERE id = :id',
+                $this->quoteIdentifierCompat($this->options['queue_table_name'])
+            ),
+            [
+                'updated' => $timestamp,
+                'execute' => $timestamp + max(0, (int) $delay),
+                'id' => (string) $id,
+            ]
+        );
     }
 }
