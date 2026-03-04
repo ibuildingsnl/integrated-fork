@@ -1526,7 +1526,7 @@ class ContentController extends AbstractController
     }
 
     /**
-     * @param FormInterface<mixed>   $searchSelectionForm
+     * @param FormInterface<mixed> $searchSelectionForm
      * @param array<string, mixed> $filters
      *
      * @return array<string, mixed>
@@ -1756,7 +1756,7 @@ class ContentController extends AbstractController
             ->getQuery()
             ->execute();
 
-        if (!\is_iterable($documents)) {
+        if (!is_iterable($documents)) {
             $documents = [];
         }
 

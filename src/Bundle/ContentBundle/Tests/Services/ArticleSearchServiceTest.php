@@ -162,8 +162,8 @@ class ArticleSearchServiceTest extends TestCase
     }
 
     /**
-     * @param array<int, string> $allowedContentTypes
-     * @param DocumentRepository<Channel> $channelRepository
+     * @param array<int, string>              $allowedContentTypes
+     * @param DocumentRepository<Channel>     $channelRepository
      * @param DocumentRepository<ContentType> $contentTypeRepository
      */
     private function createService(
