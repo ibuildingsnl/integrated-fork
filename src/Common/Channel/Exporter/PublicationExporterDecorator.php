@@ -39,7 +39,6 @@ class PublicationExporterDecorator implements ExporterInterface
         }
 
         $now = new \DateTimeImmutable('now');
-        $publicationDate = $content->getPublishTime()->getStartDate();
 
         $old = true;
         foreach ($this->repository->getAvailable($content, $channel) as $publication) {
@@ -50,7 +49,7 @@ class PublicationExporterDecorator implements ExporterInterface
                 $state = ConnectorExporterInterface::STATE_DELETE;
             }
 
-            foreach ($this->getExporters($channel, $publicationDate) as $exporter) {
+            foreach ($this->getExporters($channel) as $exporter) {
                 if ($response = $exporter->export($content, $state, $channel, $settings)) {
                     $this->save($content, $response);
                 } else {
@@ -71,14 +70,15 @@ class PublicationExporterDecorator implements ExporterInterface
     /**
      * @return ConnectorExporterInterface[]
      */
-    protected function getExporters(ChannelInterface $channel, ?\DateTimeInterface $publicationDate): array
+    protected function getExporters(ChannelInterface $channel): array
     {
         if (!\array_key_exists($channel->getId(), $this->cache)) {
             $exporters = [];
+            $now = new \DateTimeImmutable('now');
 
             foreach ($this->resolver->getConfigs($channel) as $config) {
                 $publicationStartDate = $config->getPublicationStartDate();
-                if ($publicationStartDate && $publicationDate && $publicationStartDate > $publicationDate) {
+                if ($publicationStartDate && $publicationStartDate > $now) {
                     continue;
                 }
 

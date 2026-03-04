@@ -364,14 +364,14 @@
 .forms-settings-group-nav {
     display: grid;
     gap: .35rem;
-    margin: 0;
+    margin: 0 0 1rem;
     padding: 0;
     list-style: none;
 }
 
 .settings-group-item,
 .forms-settings-group-item {
-    display: flex;
+    display: inline-flex;
     gap: .6rem;
     align-items: center;
     width: 100%;
@@ -395,6 +395,12 @@
         border-color: #dbe2ef;
         background: #fff;
         font-weight: 700;
+    }
+
+    &.is-disabled {
+        opacity: .5;
+        pointer-events: none;
+        cursor: not-allowed;
     }
 }
 
