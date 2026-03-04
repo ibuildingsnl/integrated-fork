@@ -100,12 +100,12 @@ class CalendarPublicationProvider implements EventSubscriberInterface
             $brandProfile = $brandContext['profile'];
             $content = $publication->getContent();
 
-            $title = $content->__toString();
-            if (!\is_string($title) || '' === trim($title)) {
-                $title = $content->getId();
+            $title = trim($content->__toString());
+            if ('' === $title) {
+                $title = (string) $content->getId();
             }
 
-            if (!\is_string($title) || '' === $title) {
+            if ('' === $title) {
                 continue;
             }
 
@@ -150,33 +150,35 @@ class CalendarPublicationProvider implements EventSubscriberInterface
                                                ->jpeg();
             }
 
-            if ($brandProfile instanceof BrandProfile && $currentBrand instanceof Brand) {
-                $data = [
-                    'id' => $content->getId(),
-                    'title' => $title,
-                    'premium' => $content->isPremium(),
-                    'type' => $type->getId(),
-                    'typename' => $type->getName(),
-                    'settings' => $publicationSettings,
-                    'images' => $urls,
-                    'icon' => $type->getIcon() ?: 'empty-page',
-                    'published' => $status,
-                    'date' => $dateTime->format('Y/m/d'),
-                    'time' => $dateTime->format('Hi'),
-                    'display_time' => $dateTime->format('H:i'),
-                    'brand_name' => $currentBrand->getName(),
-                    'brand_favicon' => $brandProfile->getFavicon()?->getFile()->getPathname(),
-                    'brand_color' => $brandProfile->getColor(),
-                    'response' => $publication->getResponse(),
-                ];
-                $scheduledPublications[] = $data;
-            }
+            $data = [
+                'id' => $content->getId(),
+                'title' => $title,
+                'premium' => $content->isPremium(),
+                'type' => $type->getId(),
+                'typename' => $type->getName(),
+                'settings' => $publicationSettings,
+                'images' => $urls,
+                'icon' => $type->getIcon() ?: 'empty-page',
+                'published' => $status,
+                'date' => $dateTime->format('Y/m/d'),
+                'time' => $dateTime->format('Hi'),
+                'display_time' => $dateTime->format('H:i'),
+                'brand_name' => $currentBrand->getName(),
+                'brand_favicon' => $brandProfile->getFavicon()?->getFile()->getPathname(),
+                'brand_color' => $brandProfile->getColor(),
+                'response' => $publication->getResponse(),
+            ];
+            $scheduledPublications[] = $data;
         }
         $this->js->add('window.publicationSchedule = '.json_encode($scheduledPublications), true);
         $this->js->add('bundles/integratedcontent/js/publication_calendar.js');
     }
 
-    /** @return array<string, true>|null */
+    /**
+     * @param array<string, mixed> $options
+     *
+     * @return array<string, true>|null
+     */
     private function getSelectedBrandIds(array $options): ?array
     {
         if (!\array_key_exists('brands', $options) || !\is_array($options['brands']) || [] === $options['brands']) {

@@ -241,6 +241,7 @@ class SearchSelectionController extends AbstractController
     }
 
     /**
+     * @param FormInterface<mixed> $form
      * @param array<string, mixed> $filters
      *
      * @return array<string, mixed>

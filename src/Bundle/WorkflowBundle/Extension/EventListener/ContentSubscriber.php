@@ -340,10 +340,6 @@ class ContentSubscriber implements ContentSubscriberInterface
      */
     protected function getStateData(ContentInterface $content): ?array
     {
-        if (!method_exists($content, 'getId')) {
-            return null;
-        }
-
         $contentId = $content->getId();
         if (!\is_scalar($contentId) || '' === (string) $contentId) {
             return null;
@@ -364,7 +360,7 @@ class ContentSubscriber implements ContentSubscriberInterface
             ]
         );
 
-        if (!\is_array($row) || !isset($row['state_id']) || null === $row['state_id']) {
+        if (!\is_array($row) || !isset($row['state_id'])) {
             return $cache[$cacheKey] = null;
         }
 
@@ -381,7 +377,7 @@ class ContentSubscriber implements ContentSubscriberInterface
         $assigned = null;
         $assignedClass = isset($row['assigned_class']) && \is_string($row['assigned_class']) ? $row['assigned_class'] : null;
         if ($assignedClass && is_a($assignedClass, User::class, true)) {
-            $assigned = isset($row['assigned_id']) && null !== $row['assigned_id'] ? (string) $row['assigned_id'] : null;
+            $assigned = isset($row['assigned_id']) ? (string) $row['assigned_id'] : null;
         }
 
         $deadline = null;

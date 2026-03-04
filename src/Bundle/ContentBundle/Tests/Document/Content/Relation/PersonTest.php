@@ -191,7 +191,7 @@ class PersonTest extends TestCase
         $this->assertEquals($lastName, (string) $this->person->setLastName($lastName));
     }
 
-    public function testSettersAllowNullValues()
+    public function testSettersAllowNullValues(): void
     {
         $this->person
             ->setFirstName(null)

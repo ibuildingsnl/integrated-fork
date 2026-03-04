@@ -311,6 +311,9 @@ class IntegratedContentBlock extends AbstractType
         return $sanitized;
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     private function shouldApplyRecencyBoost(array $options): bool
     {
         return '' !== trim((string) ($options['q'] ?? ''))

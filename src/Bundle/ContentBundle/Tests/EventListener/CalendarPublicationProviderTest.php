@@ -164,7 +164,6 @@ class CalendarPublicationProviderTest extends TestCase
 
         self::assertIsString($capturedInlineScript);
         $json = substr($capturedInlineScript, \strlen('window.publicationSchedule = '));
-        self::assertIsString($json);
         $scheduledPublications = json_decode($json, true, 512, \JSON_THROW_ON_ERROR);
         self::assertCount(2, $scheduledPublications);
     }

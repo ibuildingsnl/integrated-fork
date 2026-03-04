@@ -157,6 +157,9 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
         });
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     private function isPublishableAfterSubmit(FormInterface $form, Content $content): bool
     {
         if (!$form->has('extension_workflow')) {

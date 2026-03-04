@@ -275,11 +275,9 @@ class ContentTypeController extends AbstractController
      */
     private function getRelatedContent(ContentTypeInterface $contentType): array
     {
-        $relatedContent = $this->documentManager->getRepository($contentType->getClass())->findBy(
+        return $this->documentManager->getRepository($contentType->getClass())->findBy(
             ['contentType' => $contentType->getId()]
         );
-
-        return \is_array($relatedContent) ? $relatedContent : [];
     }
 
     /**
