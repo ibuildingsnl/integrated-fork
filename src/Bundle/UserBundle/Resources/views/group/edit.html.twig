@@ -17,9 +17,248 @@
                 <section class="editor editor-wrapped">
                     {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
                 </section>
+                <section class="section-white section-radius mt-4 p-4">
+                    <h3 class="heading mb-2">{% trans %}Users{% endtrans %}</h3>
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="m-0 text-light">{% trans %}Manage users in this group{% endtrans %}</p>
+                        <button type="button" class="btn btn-white icon-left" id="group-users-open-modal">
+                            <i class="iconoir-plus"></i>
+                            <span>{% trans %}Users toevoegen{% endtrans %}</span>
+                        </button>
+                    </div>
+                    <div>
+                        <ul id="group-users-current-list" class="m-0 p-0" style="list-style: none;">
+                            {% for user in availableUsers|default([]) %}
+                                {% if user.id in selectedGroupUserIds|default([]) %}
+                                    <li class="group-user-row flex justify-between items-center p-2 section-radius" data-user-id="{{ user.id }}">
+                                        <div>
+                                            <a href="{{ path('integrated_user_user_edit', {'id': user.id}) }}">{{ user.username }}</a>
+                                            {% if not user.enabled %}
+                                                <span class="text-light">({% trans %}Disabled{% endtrans %})</span>
+                                            {% endif %}
+                                        </div>
+                                        <button type="button" class="btn btn-white btn-xs" data-action="remove-group-user" data-user-id="{{ user.id }}">
+                                            {% trans %}Remove{% endtrans %}
+                                        </button>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            <li id="group-users-empty-state" class="text-light {% if selectedGroupUserIds|default([])|length > 0 %}hidden{% endif %}">
+                                {% trans %}No users in this group{% endtrans %}
+                            </li>
+                        </ul>
+                        <div id="group-users-hidden-inputs">
+                            {% for user in availableUsers|default([]) %}
+                                {% if user.id in selectedGroupUserIds|default([]) %}
+                                    <input type="hidden" name="group_user_ids[]" value="{{ user.id }}" data-user-id="{{ user.id }}">
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
             </div>
             {% block form_end %}
                 {{ form_end(form) }}
             {% endblock %}
         </div>
+
+        <div id="group-users-modal-backdrop" class="group-users-modal-backdrop hidden" aria-hidden="true"></div>
+        <div class="modal add-modal close-outside" id="group-users-add-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display:none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-action="close-group-users-modal"><span aria-hidden="true"><i class="iconoir-xmark"></i></span><span class="sr-only">{% trans %}Close{% endtrans %}</span></button>
+                        <h4 class="modal-title">{% trans %}Users toevoegen{% endtrans %}</h4>
+                    </div>
+                    <div class="modal-body p-4">
+                        <label class="control-label">{% trans %}Select users{% endtrans %}</label>
+                        <select id="group-users-add-select" class="form-control select2" multiple data-placeholder="{% trans %}Select users{% endtrans %}" style="width:100%;">
+                            {% for user in availableUsers|default([]) %}
+                                <option value="{{ user.id }}"
+                                        data-enabled="{{ user.enabled ? '1' : '0' }}"
+                                        data-username="{{ user.username }}"
+                                        data-edit-url="{{ path('integrated_user_user_edit', {'id': user.id}) }}">
+                                    {{ user.username }}{% if not user.enabled %} ({% trans %}Disabled{% endtrans %}){% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-action="close-group-users-modal">{% trans %}Cancel{% endtrans %}</button>
+                        <button type="button" class="btn btn-green" id="group-users-add-selected">{% trans %}Toevoegen{% endtrans %}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            (function bindGroupUserManagement() {
+                var openButton = document.getElementById('group-users-open-modal');
+                var modal = document.getElementById('group-users-add-modal');
+                var backdrop = document.getElementById('group-users-modal-backdrop');
+                var addButton = document.getElementById('group-users-add-selected');
+                var addSelect = document.getElementById('group-users-add-select');
+                var list = document.getElementById('group-users-current-list');
+                var hiddenInputs = document.getElementById('group-users-hidden-inputs');
+                var emptyState = document.getElementById('group-users-empty-state');
+                if (!openButton || !modal || !backdrop || !addButton || !addSelect || !list || !hiddenInputs || !emptyState) {
+                    return;
+                }
+
+                if (window.jQuery && window.jQuery.fn && typeof window.jQuery.fn.select2 === 'function') {
+                    window.jQuery(addSelect).select2({
+                        width: '100%',
+                        dropdownAutoWidth: true
+                    });
+                }
+
+                function updateEmptyState() {
+                    emptyState.classList.toggle('hidden', hiddenInputs.querySelectorAll('input[data-user-id]').length > 0);
+                }
+
+                function openModal() {
+                    modal.style.display = 'block';
+                    modal.classList.add('show');
+                    backdrop.classList.remove('hidden');
+                }
+
+                function closeModal() {
+                    modal.classList.remove('show');
+                    modal.style.display = 'none';
+                    backdrop.classList.add('hidden');
+                    if (window.jQuery && window.jQuery.fn && typeof window.jQuery.fn.select2 === 'function') {
+                        window.jQuery(addSelect).val(null).trigger('change');
+                    } else {
+                        Array.prototype.forEach.call(addSelect.options, function (option) {
+                            option.selected = false;
+                        });
+                    }
+                }
+
+                function hasUser(userId) {
+                    return hiddenInputs.querySelector('input[data-user-id="' + userId + '"]') !== null;
+                }
+
+                function addUser(userId, userLabel, userEnabled, editUrl) {
+                    if (hasUser(userId)) {
+                        return;
+                    }
+
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'group_user_ids[]';
+                    input.value = userId;
+                    input.setAttribute('data-user-id', userId);
+                    hiddenInputs.appendChild(input);
+
+                    var item = document.createElement('li');
+                    item.className = 'group-user-row flex justify-between items-center p-2 section-radius';
+                    item.setAttribute('data-user-id', userId);
+
+                    var info = document.createElement('div');
+                    if (editUrl) {
+                        var link = document.createElement('a');
+                        link.href = editUrl;
+                        link.textContent = userLabel;
+                        info.appendChild(link);
+                    } else {
+                        info.textContent = userLabel;
+                    }
+                    if (!userEnabled) {
+                        var disabledLabel = document.createElement('span');
+                        disabledLabel.className = 'text-light';
+                        disabledLabel.textContent = ' ({{ "Disabled"|trans }})';
+                        info.appendChild(disabledLabel);
+                    }
+
+                    var removeButton = document.createElement('button');
+                    removeButton.type = 'button';
+                    removeButton.className = 'btn btn-white btn-xs';
+                    removeButton.setAttribute('data-action', 'remove-group-user');
+                    removeButton.setAttribute('data-user-id', userId);
+                    removeButton.textContent = '{{ "Remove"|trans }}';
+
+                    item.appendChild(info);
+                    item.appendChild(removeButton);
+                    list.insertBefore(item, emptyState);
+                }
+
+                openButton.addEventListener('click', openModal);
+                backdrop.addEventListener('click', closeModal);
+
+                modal.addEventListener('click', function (event) {
+                    if (event.target === modal || event.target.closest('[data-action="close-group-users-modal"]')) {
+                        closeModal();
+                    }
+                });
+
+                addButton.addEventListener('click', function () {
+                    var selectedOptions = Array.prototype.filter.call(addSelect.options, function (option) {
+                        return option.selected;
+                    });
+
+                    selectedOptions.forEach(function (option) {
+                        addUser(
+                            String(option.value),
+                            String(option.getAttribute('data-username') || option.textContent || ''),
+                            String(option.getAttribute('data-enabled') || '1') === '1',
+                            String(option.getAttribute('data-edit-url') || '')
+                        );
+                    });
+
+                    updateEmptyState();
+                    closeModal();
+                });
+
+                list.addEventListener('click', function (event) {
+                    var trigger = event.target.closest('[data-action="remove-group-user"]');
+                    if (!trigger) {
+                        return;
+                    }
+
+                    var userId = String(trigger.getAttribute('data-user-id') || '');
+                    var row = list.querySelector('li[data-user-id="' + userId + '"]');
+                    var input = hiddenInputs.querySelector('input[data-user-id="' + userId + '"]');
+
+                    if (row) {
+                        row.remove();
+                    }
+                    if (input) {
+                        input.remove();
+                    }
+
+                    updateEmptyState();
+                });
+
+                updateEmptyState();
+            })();
+        </script>
+    {% endblock %}
+
+    {% block style %}
+        {{ parent() }}
+        <style>
+            .group-user-row {
+                transition: background-color .12s ease;
+            }
+
+            .group-user-row:hover {
+                background-color: #eef4f7;
+            }
+
+            .group-users-modal-backdrop {
+                position: fixed;
+                inset: 0;
+                background: rgba(24, 32, 42, 0.45);
+                z-index: 1040;
+            }
+
+            .group-users-modal-backdrop.hidden {
+                display: none;
+            }
+
+            #group-users-add-modal {
+                z-index: 1050;
+            }
+        </style>
     {% endblock %}

@@ -70,7 +70,9 @@
 
         <service id="Integrated\Bundle\UserBundle\Controller\GroupController">
             <argument type="service" id="integrated_user.group.manager"/>
+            <argument type="service" id="integrated_user.user.manager" />
             <argument type="service" id="knp_paginator" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
