@@ -485,6 +485,7 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
             ->method('add')
             ->with($this->equalTo(null), $this->identicalTo($command1));
 
+        /** @var Query&MockObject $query2 */
         $query2 = $this->getQuery();
         $query2->expects($this->once())
             ->method('add')
