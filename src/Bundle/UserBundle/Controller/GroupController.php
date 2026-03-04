@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\UserBundle\Controller;
 
 use Doctrine\DBAL\ArrayParameterType;
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
@@ -60,9 +59,7 @@ class GroupController extends AbstractController
         $groups = $this->extractGroupItemsFromPaginator($paginator);
         $groupIds = [];
         foreach ($groups as $group) {
-            if ($group instanceof GroupInterface) {
-                $groupIds[] = (int) $group->getId();
-            }
+            $groupIds[] = (int) $group->getId();
         }
 
         return $this->render('@IntegratedUser/group/index.html.twig', [
@@ -245,13 +242,13 @@ class GroupController extends AbstractController
     {
         $roles = $group->getRoles();
 
-        return \is_array($roles) && \in_array('ROLE_ADMIN', $roles, true);
+        return \in_array('ROLE_ADMIN', $roles, true);
     }
 
     /**
      * @return array<int, GroupInterface>
      */
-    private function extractGroupItemsFromPaginator($paginator): array
+    private function extractGroupItemsFromPaginator(mixed $paginator): array
     {
         if (\is_object($paginator) && method_exists($paginator, 'getItems')) {
             $items = $paginator->getItems();
@@ -287,14 +284,13 @@ class GroupController extends AbstractController
             $countsByGroupId[$groupId] = 0;
         }
 
-        $parameterType = class_exists(ArrayParameterType::class) ? ArrayParameterType::INTEGER : Connection::PARAM_INT_ARRAY;
         $rows = $this->entityManager->getConnection()->executeQuery(
             'SELECT ug.group_id, COUNT(ug.user_id) AS user_count
              FROM security_user_groups ug
              WHERE ug.group_id IN (:groupIds)
              GROUP BY ug.group_id',
             ['groupIds' => $groupIds],
-            ['groupIds' => $parameterType]
+            ['groupIds' => ArrayParameterType::INTEGER]
         )->fetchAllAssociative();
 
         foreach ($rows as $row) {
@@ -319,6 +315,10 @@ class GroupController extends AbstractController
         }
 
         $userClass = $this->userManager->getClassName();
+        if (!class_exists($userClass)) {
+            return [];
+        }
+        /** @var class-string<object> $userClass */
         $tableName = $this->entityManager->getConnection()->quoteIdentifier(
             $this->entityManager->getClassMetadata($userClass)->getTableName()
         );
@@ -356,6 +356,10 @@ class GroupController extends AbstractController
     private function resolveAssignableUsers(): array
     {
         $userClass = $this->userManager->getClassName();
+        if (!class_exists($userClass)) {
+            return [];
+        }
+        /** @var class-string<object> $userClass */
         $users = $this->entityManager->getRepository($userClass)->createQueryBuilder('User')
             ->select('User')
             ->orderBy('User.username', 'ASC')
@@ -370,7 +374,7 @@ class GroupController extends AbstractController
 
             $rows[] = [
                 'id' => (int) $user->getId(),
-                'username' => (string) $user->getUsername(),
+                'username' => (string) $user->getUserIdentifier(),
                 'enabled' => $user->isEnabled(),
             ];
         }
@@ -386,7 +390,7 @@ class GroupController extends AbstractController
         $users = $this->resolveUsersByGroupId($groupId);
         $userIds = [];
         foreach ($users as $user) {
-            $userId = (int) ($user['id'] ?? 0);
+            $userId = (int) $user['id'];
             if ($userId > 0) {
                 $userIds[] = $userId;
             }
@@ -398,7 +402,7 @@ class GroupController extends AbstractController
     /**
      * @return list<int>
      */
-    private function normalizeSelectedUserIds($rawUserIds): array
+    private function normalizeSelectedUserIds(mixed $rawUserIds): array
     {
         if (!\is_array($rawUserIds)) {
             return [];
@@ -474,6 +478,10 @@ class GroupController extends AbstractController
         }
 
         $userClass = $this->userManager->getClassName();
+        if (!class_exists($userClass)) {
+            return [];
+        }
+        /** @var class-string<object> $userClass */
         $users = $this->entityManager->getRepository($userClass)->createQueryBuilder('User')
             ->select('User')
             ->where('User.id IN (:userIds)')

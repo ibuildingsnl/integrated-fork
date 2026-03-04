@@ -495,6 +495,11 @@ class UserController extends AbstractController
         return \is_array($roles) && \in_array('ROLE_ADMIN', $roles, true);
     }
 
+    /**
+     * @param array<int, mixed> $groups
+     *
+     * @return array<int, mixed>
+     */
     private function filterAssignableGroups(array $groups): array
     {
         if ($this->canManageAdminPrivileges()) {

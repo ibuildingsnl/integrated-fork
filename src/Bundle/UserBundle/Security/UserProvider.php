@@ -54,7 +54,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
         return $this->manager;
     }
 
-    public function loadUserByIdentifier($identifier): UserInterface
+    public function loadUserByIdentifier(string $identifier): UserInterface
     {
         /** @var User $user */
         $user = $this->manager->findEnabledByUsernameOrEmailAndScope($identifier);

@@ -25,7 +25,7 @@ class UserScopeProvider extends UserProvider
         parent::__construct($manager);
     }
 
-    public function loadUserByIdentifier($identifier): UserInterface
+    public function loadUserByIdentifier(string $identifier): UserInterface
     {
         if (!$user = $this->manager->findEnabledByUsernameOrEmailAndScope($identifier, $this->context->getScope())) {
             $exception = new UserNotFoundException(\sprintf('No user with the identifier "%s" exists', $identifier));

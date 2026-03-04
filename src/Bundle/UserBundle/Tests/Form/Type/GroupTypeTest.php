@@ -59,13 +59,22 @@ class GroupTypeTest extends TestCase
         self::assertNull($options['choice_filter']);
     }
 
+    /**
+     * @param array<int, string> $roles
+     */
     private function createGroupWithRoles(array $roles): object
     {
         return new class($roles) {
+            /**
+             * @param array<int, string> $roles
+             */
             public function __construct(private readonly array $roles)
             {
             }
 
+            /**
+             * @return array<int, string>
+             */
             public function getRoles(): array
             {
                 return $this->roles;
