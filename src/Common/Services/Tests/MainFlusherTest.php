@@ -40,22 +40,34 @@ class MainFlusherTest extends \PHPUnit\Framework\TestCase
 
     public function testFlushSetsHighPriorityAndCommitsOnce(): void
     {
-        $indexer = new class() extends Configurable implements IndexerInterface {
+        $indexer = new class extends Configurable implements IndexerInterface {
             public int $executeCalls = 0;
 
+            /**
+             * @return void
+             */
             protected function configureOptions(OptionsResolver $resolver)
             {
                 $resolver->setDefined(['queue.size']);
             }
 
+            /**
+             * @return void
+             */
             public function setClient(Client $client)
             {
             }
 
+            /**
+             * @return void
+             */
             public function setQueue(QueueInterface $queue)
             {
             }
 
+            /**
+             * @return void
+             */
             public function execute(?Client $client = null)
             {
                 ++$this->executeCalls;
