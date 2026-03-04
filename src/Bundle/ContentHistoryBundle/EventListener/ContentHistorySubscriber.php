@@ -50,7 +50,7 @@ class ContentHistorySubscriber
     }
 
     /**
-     * @param array<int, object> $documents
+     * @param array<int|string, object> $documents
      */
     protected function dispatch(DocumentManager $dm, array $documents, string $action): void
     {
