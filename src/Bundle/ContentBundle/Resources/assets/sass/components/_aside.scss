@@ -360,6 +360,44 @@
     }
 }
 
+.settings-group-nav,
+.forms-settings-group-nav {
+    display: grid;
+    gap: .35rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.settings-group-item,
+.forms-settings-group-item {
+    display: flex;
+    gap: .6rem;
+    align-items: center;
+    width: 100%;
+    text-decoration: none;
+    color: inherit;
+    padding: .65rem .75rem;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-weight: 500;
+    line-height: 1.25;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+        color: inherit;
+        text-decoration: none;
+        background: #f8fbff;
+    }
+
+    &.active {
+        border-color: #dbe2ef;
+        background: #fff;
+        font-weight: 700;
+    }
+}
+
 .aside-header {
     padding: .5rem 1.5rem;
     font-weight: 400;
