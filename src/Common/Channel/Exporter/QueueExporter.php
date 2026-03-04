@@ -46,7 +46,6 @@ class QueueExporter implements ExporterInterface, QueueExporterInterface
 
     /**
      * Execute a queued exporter run.
-     * TODO: This removes a queuemessage even though it fails. Shouldn't we keep it in the queue for a retry?
      */
     public function exportMessages(int $limit = 1000): int
     {
@@ -55,15 +54,15 @@ class QueueExporter implements ExporterInterface, QueueExporterInterface
             try {
                 $this->process($message)->delete();
             } catch (\Throwable $e) {
-                if ($message->getAttempts() < $this->maxAttempts) {
-                    // In case of e.g. network error, retry processing in a couple of seconds
-                    $this->queue->push(
-                        $message->getPayload(),
-                        ($this->retryDelay)($message->getAttempts(), $message),
-                        $message->getPriority(),
-                        $message->getAttempts() + 1,
-                    );
+                $attempt = $message->getAttempts();
+
+                if ($attempt < $this->maxAttempts) {
+                    // In case of e.g. network error, retry processing after a small backoff.
+                    $message->release(($this->retryDelay)($attempt, $message));
+
+                    continue;
                 }
+
                 $message->delete();
                 throw $e;
             }
