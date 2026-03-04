@@ -99,7 +99,7 @@ class Manager implements ManagerInterface
         try {
             $this->connection->delete($this->options['lock_table_name'], ['id' => $lock]);
         } catch (\Exception $e) {
-            // could not be removed ...
+            throw new \RuntimeException('Failed to release lock '.$lock, 0, $e);
         }
     }
 
@@ -248,7 +248,7 @@ class Manager implements ManagerInterface
                 $results[] = Lock::factory($data);
             }
         } catch (\Exception $e) {
-            return null; // probably should raise a error
+            throw new \RuntimeException('Failed to find locks by filter', 0, $e);
         }
 
         return $results;
