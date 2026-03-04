@@ -41,6 +41,11 @@
                 <th class="state">
                     <span>{% trans %}Status{% endtrans %}</span>
                 </th>
+                {% for extensionColumn in navigatorExtensionColumns|default([]) %}
+                    <th class="extension extension-{{ extensionColumn.key|e('html_attr') }}">
+                        <span>{{ extensionColumn.label|trans }}</span>
+                    </th>
+                {% endfor %}
             </tr>
             </thead>
             <tbody id="post-list">
@@ -188,6 +193,12 @@
                             </div>
                         {% endif %}
                     </td>
+                    {% set extensionRowValues = navigatorExtensionValues[(content.type_id ~ '')]|default({}) %}
+                    {% for extensionColumn in navigatorExtensionColumns|default([]) %}
+                        <td class="extension extension-{{ extensionColumn.key|e('html_attr') }}">
+                            {{ extensionRowValues[extensionColumn.key]|default(extensionColumn.emptyValue|default('—')) }}
+                        </td>
+                    {% endfor %}
                 </tr>
             {% else %}
                 <tr>

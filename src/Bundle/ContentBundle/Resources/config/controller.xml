@@ -42,6 +42,8 @@
             <argument type="service" id="Integrated\Bundle\ContentBundle\Services\CalendarOptions" />
             <argument type="service" id="integrated_queue.dbal.provider" />
             <argument type="service" id="integrated_content.publication_repository" />
+            <argument type="service" id="Integrated\Bundle\ContentBundle\Extension\ContentNavigatorColumnRegistry" />
+            <argument type="service" id="Integrated\Bundle\ContentBundle\Extension\ContentSidebarPanelRegistry" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />

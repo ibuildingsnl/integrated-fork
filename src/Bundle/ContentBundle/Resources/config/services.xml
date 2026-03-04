@@ -8,6 +8,14 @@
 
         <defaults autowire="true" autoconfigure="true"/>
 
+        <service id="Integrated\Bundle\ContentBundle\Extension\ContentNavigatorColumnRegistry">
+            <argument type="tagged_iterator" tag="integrated_content.navigator_column_provider" />
+        </service>
+
+        <service id="Integrated\Bundle\ContentBundle\Extension\ContentSidebarPanelRegistry">
+            <argument type="tagged_iterator" tag="integrated_content.sidebar_panel_provider" />
+        </service>
+
         <service id="integrated_content.services.search.content.referenced" class="Integrated\Bundle\ContentBundle\Services\SearchContentReferenced" public="true">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
         </service>

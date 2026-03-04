@@ -122,6 +122,42 @@ class ContentNavigatorTemplateTest extends TestCase
         );
     }
 
+    public function testIndexTemplateContainsNavigatorExtensionColumnHooks(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content/index.html.twig');
+
+        $this->assertIsString($template);
+        $this->assertStringContainsString('navigatorExtensionColumns', $template);
+        $this->assertStringContainsString('navigatorExtensionValues', $template);
+    }
+
+    public function testEditTemplateContainsSidebarExtensionPanelHooks(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content/edit.html.twig');
+
+        $this->assertIsString($template);
+        $this->assertStringContainsString('sidebarExtensionPanels', $template);
+    }
+
+    public function testControllerContainsNavigatorExtensionRegistryHooks(): void
+    {
+        $controller = file_get_contents(__DIR__.'/../../Controller/ContentController.php');
+
+        $this->assertIsString($controller);
+        $this->assertStringContainsString('navigatorColumnRegistry', $controller);
+        $this->assertStringContainsString('navigatorExtensionColumns', $controller);
+        $this->assertStringContainsString('navigatorExtensionValues', $controller);
+    }
+
+    public function testControllerContainsSidebarPanelRegistryHooks(): void
+    {
+        $controller = file_get_contents(__DIR__.'/../../Controller/ContentController.php');
+
+        $this->assertIsString($controller);
+        $this->assertStringContainsString('sidebarPanelRegistry', $controller);
+        $this->assertStringContainsString('sidebarExtensionPanels', $controller);
+    }
+
     public function testTopbarSearchFormPreservesActiveFilterQueryParams(): void
     {
         $template = file_get_contents(__DIR__.'/../../Resources/views/partials/block.search.html.twig');

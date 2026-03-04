@@ -125,6 +125,27 @@
                                 {% endfor %}
                             {% endblock %}
 
+                            {% block content_extension_panels %}
+                                {% for panel in sidebarExtensionPanels|default([]) %}
+                                    <div class="aside-item-wrapper extension-panel extension-panel-{{ panel.id|e('html_attr') }}">
+                                        <div class="aside-item-header">
+                                            <h3 class="aside-item-title">
+                                                <i class="iconoir-stats-up-square"></i>
+                                                <span class="aside-item-icon">{{ panel.title|trans }}</span>
+                                            </h3>
+                                            <i class="iconoir-nav-arrow-up"></i>
+                                        </div>
+                                        <div class="aside-item-list">
+                                            <div class="aside-item-list-container">
+                                                {% if panel.template is not empty %}
+                                                    {% include panel.template with panel.context only %}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endblock %}
+
                             {% block content_relations %}
                                 {% if form.offsetGet('relations').count() %}
                                     <input type="hidden" id="default_references" value="{{ references }}">

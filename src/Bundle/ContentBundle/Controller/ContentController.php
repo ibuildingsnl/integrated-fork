@@ -17,9 +17,12 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
+use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
+use Integrated\Bundle\ContentBundle\Extension\ContentNavigatorColumnRegistry;
+use Integrated\Bundle\ContentBundle\Extension\ContentSidebarPanelRegistry;
 use Integrated\Bundle\ContentBundle\Event\ContentDeletedEvent;
 use Integrated\Bundle\ContentBundle\Event\ContentDistributedEvent;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
@@ -100,6 +103,9 @@ class ContentController extends AbstractController
         private readonly DocumentManager $documentManager,
         private readonly CalendarOptions $calendarOptions,
         private readonly QueueProvider $queueProvider,
+        private readonly PublicationRepositoryInterface $publicationRepository,
+        private readonly ContentNavigatorColumnRegistry $navigatorColumnRegistry,
+        private readonly ContentSidebarPanelRegistry $sidebarPanelRegistry,
     ) {
     }
 
@@ -239,6 +245,19 @@ class ContentController extends AbstractController
         /** @var SearchSelectionRepository $repo */
         $repo = $this->documentManager->getRepository(SearchSelection::class);
 
+        $navigatorRows = [];
+        $navigatorItems = $paginator->getItems();
+        if (\is_iterable($navigatorItems)) {
+            foreach ($navigatorItems as $navigatorItem) {
+                if (\is_array($navigatorItem)) {
+                    $navigatorRows[] = $navigatorItem;
+                }
+            }
+        }
+
+        $navigatorExtensionColumns = $this->navigatorColumnRegistry->getColumns();
+        $navigatorExtensionValues = $this->navigatorColumnRegistry->getRowValues($navigatorRows, $request);
+
         return $this->render(
             '@IntegratedContent/content/index'.$view.'.'.$request->getRequestFormat().'.twig',
             [
@@ -255,6 +274,8 @@ class ContentController extends AbstractController
                 'contentTypes' => $this->contentTypeManager->getAll(),
                 'route' => $request->attributes->get('_route'),
                 'queryParams' => array_merge($request->query->all(), $options),
+                'navigatorExtensionColumns' => $navigatorExtensionColumns,
+                'navigatorExtensionValues' => $navigatorExtensionValues,
             ]
         );
     }
@@ -436,6 +457,7 @@ class ContentController extends AbstractController
 
         $form = $this->createEditForm($contentType, $content, $locking, $request);
         $form->handleRequest($request);
+        $sidebarExtensionPanels = $this->sidebarPanelRegistry->getPanels($content, $request);
 
         if ($form->isSubmitted()) {
             // possible actions are cancel, back, reload, reload_changed and save
@@ -549,6 +571,7 @@ class ContentController extends AbstractController
                         'selected_ids' => [],
                         'is_media' => $isMedia,
                         'saved' => $saved,
+                        'sidebarExtensionPanels' => $sidebarExtensionPanels,
                     ]);
 
                     return new Response($content, Response::HTTP_OK, ['Content-Type' => 'text/vnd.turbo-stream.html; charset=UTF-8']);
@@ -622,6 +645,7 @@ class ContentController extends AbstractController
             'publications' => $this->getPublications($content),
             'showContentHistory' => true,
             'references' => json_encode($this->getReferences($content)),
+            'sidebarExtensionPanels' => $sidebarExtensionPanels,
         ]);
     }
 
@@ -1255,15 +1279,7 @@ class ContentController extends AbstractController
      */
     private function getPublications(Content $content): array
     {
-        $contentId = $content->getId();
-        if (!\is_string($contentId) || '' === $contentId) {
-            return [];
-        }
-
-        /** @var list<Publication> $publications */
-        $publications = $this->documentManager->getRepository(Publication::class)->findBy(['content.$id' => $contentId]);
-
-        return $publications;
+        return $this->publicationRepository->forContent($content);
     }
 
     private function findContentByIdentifier(string $id): ?Content
