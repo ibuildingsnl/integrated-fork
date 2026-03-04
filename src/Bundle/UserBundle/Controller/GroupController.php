@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\UserBundle\Controller;
 
-use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
@@ -57,14 +56,10 @@ class GroupController extends AbstractController
             15
         );
         $groups = $this->extractGroupItemsFromPaginator($paginator);
-        $groupIds = [];
-        foreach ($groups as $group) {
-            $groupIds[] = (int) $group->getId();
-        }
 
         return $this->render('@IntegratedUser/group/index.html.twig', [
             'groups' => $paginator,
-            'userCountsByGroupId' => $this->resolveUserCountsByGroupIds($groupIds),
+            'userCountsByGroupId' => $this->resolveUserCountsByGroups($groups),
         ]);
     }
 
@@ -121,7 +116,7 @@ class GroupController extends AbstractController
         }
 
         $availableUsers = $this->resolveAssignableUsers();
-        $selectedGroupUserIds = $this->resolveUserIdsByGroupId((int) $group->getId());
+        $selectedGroupUserIds = $this->resolveUserIdsByGroup($group);
 
         $form = $this->createEditForm($group);
         $form->handleRequest($request);
@@ -246,7 +241,7 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @return array<int, GroupInterface>
+     * @return list<GroupInterface>
      */
     private function extractGroupItemsFromPaginator(mixed $paginator): array
     {
@@ -268,139 +263,147 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @param list<int> $groupIds
+     * @param list<GroupInterface> $groups
      *
-     * @return array<int, int>
+     * @return array<string, int>
      */
-    private function resolveUserCountsByGroupIds(array $groupIds): array
+    private function resolveUserCountsByGroups(array $groups): array
     {
-        $groupIds = array_values(array_unique(array_filter(array_map(static fn (int $id): int => $id, $groupIds), static fn (int $id): bool => $id > 0)));
-        if ($groupIds === []) {
-            return [];
-        }
-
         $countsByGroupId = [];
-        foreach ($groupIds as $groupId) {
-            $countsByGroupId[$groupId] = 0;
-        }
+        $trackedGroups = [];
 
-        $rows = $this->entityManager->getConnection()->executeQuery(
-            'SELECT ug.group_id, COUNT(ug.user_id) AS user_count
-             FROM security_user_groups ug
-             WHERE ug.group_id IN (:groupIds)
-             GROUP BY ug.group_id',
-            ['groupIds' => $groupIds],
-            ['groupIds' => ArrayParameterType::INTEGER]
-        )->fetchAllAssociative();
-
-        foreach ($rows as $row) {
-            $groupId = (int) ($row['group_id'] ?? 0);
-            if (!isset($countsByGroupId[$groupId])) {
+        foreach ($groups as $group) {
+            $groupId = $this->normalizeIdentifier($group->getId());
+            if ('' === $groupId) {
                 continue;
             }
 
-            $countsByGroupId[$groupId] = (int) ($row['user_count'] ?? 0);
+            $countsByGroupId[$groupId] = 0;
+            $trackedGroups[$groupId] = $group;
+        }
+
+        if ([] === $trackedGroups) {
+            return [];
+        }
+
+        foreach ($this->resolveUsersForGroups(array_values($trackedGroups)) as $user) {
+            foreach ($user->getGroups() as $group) {
+                $groupId = $this->normalizeIdentifier($group->getId());
+                if ('' === $groupId || !isset($countsByGroupId[$groupId])) {
+                    continue;
+                }
+
+                ++$countsByGroupId[$groupId];
+            }
         }
 
         return $countsByGroupId;
     }
 
     /**
-     * @return list<array{id:int,username:string}>
+     * @param list<GroupInterface> $groups
+     *
+     * @return list<UserInterface>
      */
-    private function resolveUsersByGroupId(int $groupId): array
+    private function resolveUsersForGroups(array $groups): array
     {
-        if ($groupId <= 0) {
+        if ([] === $groups) {
             return [];
         }
 
-        $userClass = $this->userManager->getClassName();
-        if (!class_exists($userClass)) {
+        $queryContext = $this->resolveUserGroupAssociationContext();
+        if (null === $queryContext) {
             return [];
         }
-        /** @var class-string<object> $userClass */
-        $tableName = $this->entityManager->getConnection()->quoteIdentifier(
-            $this->entityManager->getClassMetadata($userClass)->getTableName()
-        );
-        $rows = $this->entityManager->getConnection()->executeQuery(
-            \sprintf(
-                'SELECT u.id AS user_id, u.username
-                 FROM security_user_groups ug
-                 INNER JOIN %s u ON u.id = ug.user_id
-                 WHERE ug.group_id = :groupId
-                 ORDER BY u.username ASC',
-                $tableName
-            ),
-            ['groupId' => $groupId]
-        )->fetchAllAssociative();
 
-        $users = [];
-        foreach ($rows as $row) {
-            $userId = (int) ($row['user_id'] ?? 0);
-            if ($userId <= 0) {
-                continue;
-            }
-
-            $users[] = [
-                'id' => $userId,
-                'username' => (string) ($row['username'] ?? ''),
-            ];
-        }
-
-        return $users;
-    }
-
-    /**
-     * @return list<array{id:int,username:string,enabled:bool}>
-     */
-    private function resolveAssignableUsers(): array
-    {
-        $userClass = $this->userManager->getClassName();
-        if (!class_exists($userClass)) {
-            return [];
-        }
-        /** @var class-string<object> $userClass */
-        $users = $this->entityManager->getRepository($userClass)->createQueryBuilder('User')
+        $users = $this->entityManager->getRepository($queryContext['class'])->createQueryBuilder('User')
             ->select('User')
-            ->orderBy('User.username', 'ASC')
+            ->innerJoin('User.'.$queryContext['groupAssociationField'], 'UserGroup')
+            ->where('UserGroup IN (:groups)')
+            ->setParameter('groups', $groups)
             ->getQuery()
             ->getResult();
 
+        $uniqueUsers = [];
+        foreach ($users as $user) {
+            if (!$user instanceof UserInterface) {
+                continue;
+            }
+
+            $userId = $this->normalizeIdentifier($user->getId());
+            if ('' === $userId) {
+                continue;
+            }
+
+            $uniqueUsers[$userId] = $user;
+        }
+
+        return array_values($uniqueUsers);
+    }
+
+    /**
+     * @return list<array{id:string,username:string,enabled:bool}>
+     */
+    private function resolveAssignableUsers(): array
+    {
+        $queryContext = $this->resolveUserGroupAssociationContext();
+        if (null === $queryContext) {
+            return [];
+        }
+
+        $users = $this->entityManager->getRepository($queryContext['class'])->createQueryBuilder('User')
+            ->select('User')
+            ->getQuery()
+            ->getResult();
+
+        /** @var list<array{id:string,username:string,enabled:bool}> $rows */
         $rows = [];
         foreach ($users as $user) {
             if (!$user instanceof UserInterface) {
                 continue;
             }
 
+            $userId = $this->normalizeIdentifier($user->getId());
+            if ('' === $userId) {
+                continue;
+            }
+
             $rows[] = [
-                'id' => (int) $user->getId(),
+                'id' => $userId,
                 'username' => (string) $user->getUserIdentifier(),
                 'enabled' => $user->isEnabled(),
             ];
         }
 
+        usort($rows, static fn (array $left, array $right): int => strcasecmp($left['username'], $right['username']));
+
         return $rows;
     }
 
     /**
-     * @return list<int>
+     * @return list<string>
      */
-    private function resolveUserIdsByGroupId(int $groupId): array
+    private function resolveUserIdsByGroup(GroupInterface $group): array
     {
-        $users = $this->resolveUsersByGroupId($groupId);
         $userIds = [];
-        foreach ($users as $user) {
-            $userId = (int) $user['id'];
-            if ($userId > 0) {
-                $userIds[] = $userId;
+        foreach ($this->resolveUsersForGroups([$group]) as $user) {
+            if (!$user->hasGroup($group)) {
+                continue;
             }
+
+            $userId = $this->normalizeIdentifier($user->getId());
+            if ('' === $userId) {
+                continue;
+            }
+
+            $userIds[$userId] = $userId;
         }
 
-        return $userIds;
+        return array_values($userIds);
     }
 
     /**
-     * @return list<int>
+     * @return list<string>
      */
     private function normalizeSelectedUserIds(mixed $rawUserIds): array
     {
@@ -410,26 +413,23 @@ class GroupController extends AbstractController
 
         $normalized = [];
         foreach ($rawUserIds as $rawUserId) {
-            $userId = (int) $rawUserId;
-            if ($userId > 0) {
-                $normalized[$userId] = $userId;
+            $userId = $this->normalizeIdentifier($rawUserId);
+            if ('' === $userId) {
+                continue;
             }
+
+            $normalized[$userId] = $userId;
         }
 
         return array_values($normalized);
     }
 
     /**
-     * @param list<int> $selectedUserIds
+     * @param list<string> $selectedUserIds
      */
     private function syncGroupUsers(GroupInterface $group, array $selectedUserIds): void
     {
-        $groupId = (int) $group->getId();
-        if ($groupId <= 0) {
-            return;
-        }
-
-        $currentUserIds = $this->resolveUserIdsByGroupId($groupId);
+        $currentUserIds = $this->resolveUserIdsByGroup($group);
         $selectedUserIds = $this->normalizeSelectedUserIds($selectedUserIds);
 
         $userIdsToAdd = array_values(array_diff($selectedUserIds, $currentUserIds));
@@ -441,7 +441,12 @@ class GroupController extends AbstractController
         $allAffectedUserIds = array_values(array_unique(array_merge($userIdsToAdd, $userIdsToRemove)));
         $usersById = [];
         foreach ($this->resolveUsersByIds($allAffectedUserIds) as $user) {
-            $usersById[(int) $user->getId()] = $user;
+            $userId = $this->normalizeIdentifier($user->getId());
+            if ('' === $userId) {
+                continue;
+            }
+
+            $usersById[$userId] = $user;
         }
 
         foreach ($userIdsToAdd as $userId) {
@@ -466,7 +471,7 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @param list<int> $userIds
+     * @param list<string> $userIds
      *
      * @return list<UserInterface>
      */
@@ -477,18 +482,58 @@ class GroupController extends AbstractController
             return [];
         }
 
+        $users = [];
+        foreach ($userIds as $userId) {
+            $user = $this->userManager->find($userId);
+            if (!$user instanceof UserInterface) {
+                continue;
+            }
+
+            $users[] = $user;
+        }
+
+        return $users;
+    }
+
+    /**
+     * @return array{class: class-string<object>, groupAssociationField: string}|null
+     */
+    private function resolveUserGroupAssociationContext(): ?array
+    {
         $userClass = $this->userManager->getClassName();
         if (!class_exists($userClass)) {
-            return [];
+            return null;
         }
         /** @var class-string<object> $userClass */
-        $users = $this->entityManager->getRepository($userClass)->createQueryBuilder('User')
-            ->select('User')
-            ->where('User.id IN (:userIds)')
-            ->setParameter('userIds', $userIds)
-            ->getQuery()
-            ->getResult();
+        $groupClass = $this->manager->getClassName();
+        if (!class_exists($groupClass)) {
+            return null;
+        }
 
-        return array_values(array_filter($users, static fn ($user): bool => $user instanceof UserInterface));
+        $metadata = $this->entityManager->getClassMetadata($userClass);
+        foreach ($metadata->getAssociationNames() as $associationField) {
+            if (!$metadata->isCollectionValuedAssociation($associationField)) {
+                continue;
+            }
+            if (!is_a($metadata->getAssociationTargetClass($associationField), $groupClass, true)) {
+                continue;
+            }
+
+            return [
+                'class' => $userClass,
+                'groupAssociationField' => $associationField,
+            ];
+        }
+
+        return null;
+    }
+
+    private function normalizeIdentifier(mixed $identifier): string
+    {
+        if (!\is_scalar($identifier)) {
+            return '';
+        }
+
+        return trim((string) $identifier);
     }
 }
