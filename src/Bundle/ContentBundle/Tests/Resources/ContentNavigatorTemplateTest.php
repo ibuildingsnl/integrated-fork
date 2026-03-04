@@ -146,7 +146,7 @@ class ContentNavigatorTemplateTest extends TestCase
         $script = file_get_contents(__DIR__.'/../../Resources/assets/js/global.js');
 
         $this->assertIsString($script);
-        $this->assertStringContainsString("const SIDEBAR_MENU_SCROLL_KEY = 'integrated.sidebarMenu.scrollTop.v1';", $script);
+        $this->assertStringContainsString("const SIDEBAR_MENU_SCROLL_KEY = 'integrated.sidebarMenu.scrollTop.v2';", $script);
         $this->assertStringContainsString('function restoreSidebarMenuScrollPosition', $script);
         $this->assertStringContainsString('function persistSidebarMenuScrollPosition', $script);
         $this->assertStringContainsString("document.addEventListener('turbo:before-render', persistSidebarMenuScrollPosition);", $script);

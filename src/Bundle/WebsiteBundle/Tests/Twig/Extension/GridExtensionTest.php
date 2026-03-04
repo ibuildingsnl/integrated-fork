@@ -87,4 +87,3 @@ class GridExtensionTest extends TestCase
         self::assertSame('ok', $result);
     }
 }
-
