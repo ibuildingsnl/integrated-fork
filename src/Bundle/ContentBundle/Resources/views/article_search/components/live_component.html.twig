@@ -1,26 +1,40 @@
 {% set results = this.results %}
 {% set searchTermUrl = this.searchTermUrl %}
+{% set linkTextInvalid = this.linkText is empty %}
+{% set linkTitleInvalid = this.linkTitle is empty %}
+{% set searchTermInvalid = this.searchTerm is empty %}
+{% set hasSelection = this.selectedId is not empty %}
+{% set applyEnabled = (searchTermUrl or hasSelection) and (not linkTextInvalid) and (not linkTitleInvalid) %}
 
 <div {{ attributes }} data-article-search-root="">
     <div class="flex flex-row">
-        <aside>
+        <aside class="aside-item-wrapper">
             <div class="aside-item-container">
                 <div class="aside-item-header">
                     <h3 class="aside-item-title">{{ this.translations.channels|default('Channels') }}</h3>
                 </div>
-                <div class="aside-item-list">
-                    {% for channel in this.channels %}
-                        <label class="form-group checkbox-container">
-                            <input
-                                type="radio"
-                                name="article_search_channel"
-                                value="{{ channel.key }}"
-                                data-model="channelId"
-                                {% if this.channelId == channel.key %}checked{% endif %}
-                            />
-                            {{ channel.label }}
-                        </label>
-                    {% endfor %}
+                <div class="aside-item-list form-group w-full flex flex-wrap overflow-y-auto" style="max-height: calc(-35px + 50vh);">
+                    <div class="aside-item-list-container w-full">
+                        <ul class="filters_list">
+                        {% for channel in this.channels %}
+                            <li>
+                                <label class="radiobutton-container" for="{{ channel.key|e('html_attr') }}">
+                                    <input
+                                        type="radio"
+                                        id="{{ channel.key|e('html_attr') }}"
+                                        name="channel"
+                                        value="{{ channel.key }}"
+                                        data-model="channelId"
+                                        {% if this.channelId == channel.key %}checked{% endif %}
+                                    />
+                                    <span class="radiobutton"></span>
+                                    <div class="background"></div>
+                                    {{ channel.label }}
+                                </label>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
                 </div>
             </div>
 
@@ -28,87 +42,159 @@
                 <div class="aside-item-header">
                     <h3 class="aside-item-title">{{ this.translations.content_types|default('Content types') }}</h3>
                 </div>
-                <div class="aside-item-list">
-                    {% for contentType in this.contentTypes %}
-                        <label class="form-group checkbox-container">
-                            <input
-                                type="checkbox"
-                                value="{{ contentType.key }}"
-                                data-model="contentTypeIds"
-                                {% if contentType.key in this.contentTypeIds %}checked{% endif %}
-                            />
-                            {{ contentType.label }}
-                        </label>
-                    {% endfor %}
+                <div class="aside-item-list form-group w-full flex flex-wrap overflow-y-auto" style="max-height: calc(-35px + 50vh);">
+                    <div class="aside-item-list-container w-full">
+                        <ul class="filters_list">
+                            {% for contentType in this.contentTypes %}
+                                <li class="checkbox">
+                                    <label for="{{ contentType.key|e('html_attr') }}" class="checkbox-container">
+                                        <input
+                                            id="{{ contentType.key|e('html_attr') }}"
+                                            type="checkbox"
+                                            value="{{ contentType.key }}"
+                                            data-model="contentTypeIds"
+                                            {% if contentType.key in this.contentTypeIds %}checked{% endif %}
+                                        />
+                                        <span class="checkmark"></span>
+                                        <div class="background"></div>
+                                        {{ contentType.label }}
+                                    </label>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
             </div>
         </aside>
 
         <main class="flex flex-col justify-between">
-            <div>
-                <input
-                    type="text"
-                    data-model="debounce(300)|linkText"
-                    data-article-search-link-text=""
-                    value="{{ this.linkText }}"
-                    placeholder="{{ this.translations.link_text|default('Link text') }}"
-                />
-                <input
-                    type="text"
-                    data-model="debounce(300)|linkTitle"
-                    data-article-search-link-title=""
-                    value="{{ this.linkTitle }}"
-                    placeholder="{{ this.translations.link_title|default('Link title') }}"
-                />
-                <input
-                    type="text"
-                    data-model="debounce(300)|searchTerm"
-                    data-article-search-term=""
-                    value="{{ this.searchTerm }}"
-                    placeholder="{{ this.translations.url_or_searchterm|default('URL or search term') }}"
-                />
+            <div class="">
+                <div class="form-field">
+                    <input
+                        type="text"
+                        data-model="debounce(300)|linkText"
+                        data-article-search-link-text=""
+                        value="{{ this.linkText }}"
+                        placeholder="{{ this.translations.link_text|default('Link text') }}"
+                        class="{% if linkTextInvalid %}!border-red-400{% endif %}"
+                        title="{% if linkTextInvalid %}{{ this.translations.require_link_text|default('Please fill in the link text') }}{% endif %}"
+                    />
+                </div>
+                <div class="form-field">
+                    <input
+                        type="text"
+                        data-model="debounce(300)|linkTitle"
+                        data-article-search-link-title=""
+                        value="{{ this.linkTitle }}"
+                        placeholder="{{ this.translations.link_title|default('Link title') }}"
+                        class="{% if linkTitleInvalid %}!border-red-400{% endif %}"
+                        title="{% if linkTitleInvalid %}{{ this.translations.require_link_title|default('Please fill in the link title') }}{% endif %}"
+                    />
+                </div>
+                <div class="relative">
+                    <div class="form-field">
+                        <input
+                            type="text"
+                            data-model="debounce(300)|searchTerm"
+                            data-article-search-term=""
+                            value="{{ this.searchTerm }}"
+                            placeholder="{{ this.translations.url_or_searchterm|default('URL or search term') }}"
+                            class="{% if searchTermInvalid %}!border-red-400{% endif %}"
+                            title="{% if searchTermInvalid %}{{ this.translations.require_searchterm|default('Enter a search term to begin searching') }}{% endif %}"
+                        />
+                    </div>
 
-                <div class="results permanent">
-                    {% if this.searchTerm is empty %}
-                        <div class="suggestion p-2">{{ this.translations.require_searchterm|default('Enter a search term to begin searching') }}</div>
-                    {% elseif this.channelId is empty and not searchTermUrl %}
-                        <div class="suggestion p-2">{{ this.translations.select_channel|default('Select a channel') }}</div>
-                    {% elseif searchTermUrl %}
-                        <div class="suggestion p-2">{{ this.translations.ready|default('Good to go!') }}</div>
-                    {% elseif results is empty %}
-                        <div class="suggestion p-2">{{ this.translations.no_results|default('No results') }}</div>
-                    {% else %}
-                        {% for result in results %}
-                            <label class="suggestion block p-2" data-article-search-result="" data-url="{{ result.url|e('html_attr') }}">
-                                <input
-                                    type="radio"
-                                    name="article_search_result"
-                                    value="{{ result.id }}"
-                                    data-model="selectedId"
-                                    data-article-search-selection=""
-                                    {% if this.selectedId == result.id %}checked{% endif %}
-                                />
-                                <strong>{{ result.title }}</strong><br />
-                                <small>{{ result.subtitle }}</small><br />
-                                <span>{{ result.text }}</span>
-                            </label>
-                        {% endfor %}
-                    {% endif %}
+                    <div class="flex flex-col justify-stretch w-full bg-white rounded-lg results overflow-y-auto permanent">
+                        {% if this.searchTerm is empty or (this.channelId is empty and not searchTermUrl) or searchTermUrl or results is empty %}
+                            <div
+                                data-loading="model(searchTerm)|model(channelId)|model(contentTypeIds)|delay(200)|show"
+                                class="grow flex flex-row justify-center items-center"
+                            >
+                                <div class="py-4 text-lg text-zinc-400 select-none flex flex-col items-center space-y-2">
+                                    <svg class="animate-spin w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                        <circle cx="12" cy="12" r="10" stroke-opacity=".25" stroke-width="2"></circle>
+                                        <path d="M22 12a10 10 0 0 0-10-10" stroke-width="2"></path>
+                                    </svg>
+                                    <p>{{ this.translations.searching|default('Searching...') }}</p>
+                                </div>
+                            </div>
+                            <div
+                                data-loading="model(searchTerm)|model(channelId)|model(contentTypeIds)|hide"
+                                class="grow flex flex-row justify-center items-center"
+                            >
+                                <div class="py-4 text-lg text-zinc-400 select-none flex flex-col items-center space-y-2">
+                                    {% if this.searchTerm is empty %}
+                                        <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor" class="w-10 h-10"><path d="M20.0429 21H3.95705C2.41902 21 1.45658 19.3364 2.22324 18.0031L10.2662 4.01533C11.0352 2.67792 12.9648 2.67791 13.7338 4.01532L21.7768 18.0031C22.5434 19.3364 21.581 21 20.0429 21Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12 9V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12 17.01L12.01 16.9989" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                        <p>{{ this.translations.require_searchterm|default('Enter a search term to begin searching') }}</p>
+                                    {% elseif this.channelId is empty and not searchTermUrl %}
+                                        <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor" class="w-10 h-10"><path d="M20.0429 21H3.95705C2.41902 21 1.45658 19.3364 2.22324 18.0031L10.2662 4.01533C11.0352 2.67792 12.9648 2.67791 13.7338 4.01532L21.7768 18.0031C22.5434 19.3364 21.581 21 20.0429 21Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12 9V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12 17.01L12.01 16.9989" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                        <p>{{ this.translations.select_channel|default('Select a channel') }}</p>
+                                    {% elseif not searchTermUrl and results is empty %}
+                                        <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor" class="w-10 h-10"><path d="M20.0429 21H3.95705C2.41902 21 1.45658 19.3364 2.22324 18.0031L10.2662 4.01533C11.0352 2.67792 12.9648 2.67791 13.7338 4.01532L21.7768 18.0031C22.5434 19.3364 21.581 21 20.0429 21Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12 9V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12 17.01L12.01 16.9989" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                        <p>{{ this.translations.no_results|default('No results') }}</p>
+                                    {% elseif linkTextInvalid %}
+                                        <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor" class="w-10 h-10"><path d="M20.0429 21H3.95705C2.41902 21 1.45658 19.3364 2.22324 18.0031L10.2662 4.01533C11.0352 2.67792 12.9648 2.67791 13.7338 4.01532L21.7768 18.0031C22.5434 19.3364 21.581 21 20.0429 21Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12 9V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12 17.01L12.01 16.9989" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                        <p>{{ this.translations.require_link_text|default('Please fill in the link text') }}</p>
+                                    {% elseif linkTitleInvalid %}
+                                        <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor" class="w-10 h-10"><path d="M20.0429 21H3.95705C2.41902 21 1.45658 19.3364 2.22324 18.0031L10.2662 4.01533C11.0352 2.67792 12.9648 2.67791 13.7338 4.01532L21.7768 18.0031C22.5434 19.3364 21.581 21 20.0429 21Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12 9V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12 17.01L12.01 16.9989" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                        <p>{{ this.translations.require_link_title|default('Please fill in the link title') }}</p>
+                                    {% else %}
+                                        <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor" class="w-10 h-10"><path d="M5 13L9 17L19 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                        <p>{{ this.translations.ready|default('Good to go!') }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% else %}
+                            {% for result in results %}
+                                <label
+                                    class="suggestion p-2 space-x-2 flex flex-row justify-stretch items-start outline-0 cursor-pointer {% if this.selectedId == result.id %}selected{% endif %}"
+                                    data-article-search-result=""
+                                    data-url="{{ result.url|e('html_attr') }}"
+                                    title="{{ result.url|e('html_attr') }}"
+                                >
+                                    <input
+                                        type="radio"
+                                        name="article_search_result"
+                                        value="{{ result.id }}"
+                                        data-model="selectedId"
+                                        data-article-search-selection=""
+                                        class="hidden"
+                                        {% if this.selectedId == result.id %}checked{% endif %}
+                                    />
+                                    <div class="grow">
+                                        <div class="flex flex-row justify-between">
+                                            <h4 class="font-semibold line-clamp-1">{{ result.title }}</h4>
+                                            <h6 class="text-zinc-400 shrink-0">{{ result.subtitle }}</h6>
+                                        </div>
+                                        <p class="line-clamp-2">{{ result.text }}</p>
+                                    </div>
+                                </label>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
                 </div>
 
                 <div class="form-group mt-2">
-                    <label>
-                        <input type="checkbox" data-model="openInNewTab" data-article-search-new-tab="" {% if this.openInNewTab %}checked{% endif %} />
+                    <label for="new-tab" class="checkbox-container">
+                        <input id="new-tab" type="checkbox" data-model="openInNewTab" data-article-search-new-tab="" {% if this.openInNewTab %}checked{% endif %} />
+                        <span class="checkmark"></span>
+                        <div class="background"></div>
                         {{ this.translations.new_tab|default('Open in new tab') }}
                     </label>
                 </div>
             </div>
 
             <div class="flex flex-row space-x-2 self-end">
-                <button type="button" class="btn btn-default" data-article-search-cancel="">
+                <button type="button" class="no-icon btn btn-white" data-article-search-cancel="">
                     {{ this.translations.cancel|default('Cancel') }}
                 </button>
-                <button type="button" class="btn btn-primary" data-article-search-apply="" data-existing="{{ this.existing ? '1' : '0' }}">
+                <button
+                    type="button"
+                    class="btn btn-green"
+                    data-article-search-apply=""
+                    data-existing="{{ this.existing ? '1' : '0' }}"
+                    {% if not applyEnabled %}disabled{% endif %}
+                >
                     {{ this.translations.apply|default('Apply') }}
                 </button>
             </div>
