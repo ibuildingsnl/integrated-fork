@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <defaults autowire="true" autoconfigure="true" />
+
+        <service id="integrated_api.endpoint.registry" class="Integrated\Bundle\ApiBundle\Registry\EndpointRegistry" public="true" />
+        <service id="Integrated\Bundle\ApiBundle\Registry\EndpointRegistry" alias="integrated_api.endpoint.registry" public="false" />
+
+        <service id="integrated_api.routing.route_provider_registry" class="Integrated\Bundle\ApiBundle\Routing\RouteProviderRegistry" public="true" />
+        <service id="Integrated\Bundle\ApiBundle\Routing\RouteProviderRegistry" alias="integrated_api.routing.route_provider_registry" public="false" />
+
+        <service id="Integrated\Bundle\ApiBundle\JsonApi\DocumentResponseFactory" />
+        <service id="Integrated\Bundle\ApiBundle\JsonApi\ErrorResponseFactory" />
+        <service id="Integrated\Bundle\ApiBundle\Security\ScopeAuthorizationChecker" />
+        <service id="Integrated\Bundle\ApiBundle\Schema\SchemaBuilder" />
+
+        <service id="Integrated\Bundle\ApiBundle\EventListener\JsonApiNegotiationListener">
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <service id="Integrated\Bundle\ApiBundle\EventListener\JsonApiExceptionListener">
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <service id="integrated_api.routing.loader" class="Integrated\Bundle\ApiBundle\Routing\ApiRouteLoader">
+            <argument type="service" id="integrated_api.routing.route_provider_registry" />
+            <tag name="routing.loader" />
+        </service>
+
+        <service id="integrated_api.security.token_introspector.null" class="Integrated\Bundle\ApiBundle\Security\NullAccessTokenIntrospector" />
+
+        <service id="Integrated\Bundle\ApiBundle\Security\AccessTokenIntrospectorInterface" alias="integrated_api.security.token_introspector.null" public="false" />
+
+        <service id="integrated_api.security.bearer_token_authenticator" class="Integrated\Bundle\ApiBundle\Security\BearerTokenAuthenticator" public="false" />
+
+        <service id="integrated_api.routing.provider.core_public" class="Integrated\Bundle\ApiBundle\Routing\CorePublicRouteProvider">
+            <tag name="integrated_api.route_provider" contract="public" version="v1" />
+        </service>
+
+        <service id="integrated_api.routing.provider.core_admin" class="Integrated\Bundle\ApiBundle\Routing\CoreAdminRouteProvider">
+            <tag name="integrated_api.route_provider" contract="admin" version="v1" />
+        </service>
+
+        <service id="integrated_api.endpoint.contents.list" class="Integrated\Bundle\ApiBundle\Endpoint\ContentListEndpoint">
+            <argument type="service" id="integrated_content.content_repository" />
+            <tag name="integrated_api.endpoint" contract="public" version="v1" resource="contents" operation="list" />
+            <tag name="integrated_api.endpoint" contract="admin" version="v1" resource="contents" operation="list" scopes="content.read" />
+        </service>
+
+        <service id="integrated_api.endpoint.contents.get" class="Integrated\Bundle\ApiBundle\Endpoint\ContentGetEndpoint">
+            <argument type="service" id="integrated_content.content_repository" />
+            <tag name="integrated_api.endpoint" contract="public" version="v1" resource="contents" operation="get" />
+            <tag name="integrated_api.endpoint" contract="admin" version="v1" resource="contents" operation="get" scopes="content.read" />
+        </service>
+
+        <service id="integrated_api.endpoint.search_selections.list" class="Integrated\Bundle\ApiBundle\Endpoint\SearchSelectionListEndpoint">
+            <argument type="service" id="integrated_content.search_selection_repository" />
+            <tag name="integrated_api.endpoint" contract="public" version="v1" resource="search-selections" operation="list" />
+            <tag name="integrated_api.endpoint" contract="admin" version="v1" resource="search-selections" operation="list" scopes="content.read" />
+        </service>
+
+        <service id="integrated_api.endpoint.search_selections.get" class="Integrated\Bundle\ApiBundle\Endpoint\SearchSelectionGetEndpoint">
+            <argument type="service" id="integrated_content.search_selection_repository" />
+            <tag name="integrated_api.endpoint" contract="public" version="v1" resource="search-selections" operation="get" />
+            <tag name="integrated_api.endpoint" contract="admin" version="v1" resource="search-selections" operation="get" scopes="content.read" />
+        </service>
+    </services>
+
+</container>
