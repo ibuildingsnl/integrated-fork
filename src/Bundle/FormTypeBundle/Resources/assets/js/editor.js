@@ -397,6 +397,121 @@ function initTinyMceEditors(root = document) {
                 button.dataset.integratedRemoveBound = '1';
             }
 
+            function getAdjacentSlide(slide, direction) {
+                let candidate = direction < 0 ? slide.previousElementSibling : slide.nextElementSibling;
+
+                while (candidate && (!candidate.classList || !candidate.classList.contains('swiper-slide'))) {
+                    candidate = direction < 0 ? candidate.previousElementSibling : candidate.nextElementSibling;
+                }
+
+                return candidate;
+            }
+
+            function moveSlide(slide, direction) {
+                const wrapper = slide ? slide.parentElement : null;
+                if (!wrapper || !wrapper.classList || !wrapper.classList.contains('swiper-wrapper')) {
+                    return false;
+                }
+
+                if (direction < 0) {
+                    const previousSlide = getAdjacentSlide(slide, -1);
+                    if (!previousSlide) {
+                        return false;
+                    }
+
+                    wrapper.insertBefore(slide, previousSlide);
+                    return true;
+                }
+
+                const nextSlide = getAdjacentSlide(slide, 1);
+                if (!nextSlide) {
+                    return false;
+                }
+
+                wrapper.insertBefore(nextSlide, slide);
+                return true;
+            }
+
+            function updateSlideMoveButtons(wrapper) {
+                const slides = Array.from(wrapper.querySelectorAll(':scope > .swiper-slide'));
+                const lastIndex = slides.length - 1;
+
+                slides.forEach(function(slide, index) {
+                    const previousButton = slide.querySelector(':scope > .slider-append.move-prev');
+                    const nextButton = slide.querySelector(':scope > .slider-append.move-next');
+
+                    if (previousButton) {
+                        const disabled = index === 0;
+                        previousButton.classList.toggle('is-disabled', disabled);
+                        previousButton.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+                    }
+
+                    if (nextButton) {
+                        const disabled = index === lastIndex;
+                        nextButton.classList.toggle('is-disabled', disabled);
+                        nextButton.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+                    }
+                });
+            }
+
+            function ensureSlideMoveButton(slide, direction) {
+                const directionClass = direction < 0 ? 'move-prev' : 'move-next';
+                const buttonTitle = direction < 0 ? 'Move slide left' : 'Move slide right';
+                const boundKey = direction < 0 ? 'integratedMovePrevBound' : 'integratedMoveNextBound';
+                let button = slide.querySelector(':scope > .slider-append.' + directionClass);
+                if (!button) {
+                    button = editor.contentDocument.createElement('span');
+                    button.classList.add('slider-append', 'move', directionClass);
+                    button.innerHTML = direction < 0
+                        ? '<svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 6L8 12L14 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+                        : '<svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L16 12L10 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                    slide.appendChild(button);
+                }
+
+                button.setAttribute('data-mce-bogus', 'all');
+                button.setAttribute('contenteditable', 'false');
+                button.setAttribute('tabindex', '0');
+                button.setAttribute('role', 'button');
+                button.setAttribute('aria-label', buttonTitle);
+                button.setAttribute('title', buttonTitle);
+
+                if (button.dataset[boundKey] === '1') {
+                    return;
+                }
+
+                const suppressMouseDown = function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                };
+
+                const onMove = function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    if (button.getAttribute('aria-disabled') === 'true') {
+                        return;
+                    }
+
+                    if (moveSlide(slide, direction)) {
+                        updateSlideMoveButtons(slide.parentElement);
+                        button.focus();
+                    }
+                };
+
+                const handleKeyDown = function(event) {
+                    if (event.key !== 'Enter' && event.key !== ' ') {
+                        return;
+                    }
+
+                    onMove(event);
+                };
+
+                button.addEventListener('mousedown', suppressMouseDown);
+                button.addEventListener('click', onMove);
+                button.addEventListener('keydown', handleKeyDown);
+                button.dataset[boundKey] = '1';
+            }
+
             function ensureEditButton(swiper) {
                 let button = swiper.querySelector(':scope > .integrated-swiper-edit');
                 if (!button) {
@@ -473,6 +588,8 @@ function initTinyMceEditors(root = document) {
                             swiper.remove();
                         }
                     });
+                    ensureSlideMoveButton(slide, -1);
+                    ensureSlideMoveButton(slide, 1);
                 });
 
                 if (!wrapper.querySelector(':scope > .swiper-slide')) {
@@ -480,6 +597,7 @@ function initTinyMceEditors(root = document) {
                     return;
                 }
 
+                updateSlideMoveButtons(wrapper);
                 ensureRemoveButton(swiper, 'swiper-append', function() {
                     swiper.remove();
                 });

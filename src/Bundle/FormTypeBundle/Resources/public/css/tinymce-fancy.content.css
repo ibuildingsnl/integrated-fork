@@ -195,12 +195,57 @@ span.img-caption {
     right: 0.5rem;
 }
 
+.swiper.article-swiper > .swiper-wrapper > .swiper-slide > .slider-append.move {
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e2;
+    background: #fff;
+    color: #3f4b5e;
+    cursor: pointer;
+    display: none;
+    position: absolute;
+    top: 0.5rem;
+    z-index: 5;
+    transition: background-color .14s ease, color .14s ease, border-color .14s ease, opacity .14s ease;
+}
+
+.swiper.article-swiper > .swiper-wrapper > .swiper-slide > .slider-append.move svg {
+    width: 14px;
+    height: 14px;
+}
+
+.swiper.article-swiper > .swiper-wrapper > .swiper-slide > .slider-append.move.move-next {
+    right: 2.25rem;
+}
+
+.swiper.article-swiper > .swiper-wrapper > .swiper-slide > .slider-append.move.move-prev {
+    right: 4rem;
+}
+
+.swiper.article-swiper > .swiper-wrapper > .swiper-slide > .slider-append.move:hover,
+.swiper.article-swiper > .swiper-wrapper > .swiper-slide > .slider-append.move:focus {
+    background: #f2f6fc;
+    border-color: #aab9ce;
+    color: #273549;
+    outline: none;
+}
+
+.swiper.article-swiper > .swiper-wrapper > .swiper-slide > .slider-append.move.is-disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
 .swiper.article-swiper:hover > .swiper-append.remove,
 .swiper.article-swiper:hover > .swiper-append.edit,
 .swiper.article-swiper:focus-within > .swiper-append.remove,
 .swiper.article-swiper:focus-within > .swiper-append.edit,
 .swiper.article-swiper > .swiper-wrapper > .swiper-slide:hover > .slider-append.remove,
-.swiper.article-swiper > .swiper-wrapper > .swiper-slide:focus-within > .slider-append.remove {
+.swiper.article-swiper > .swiper-wrapper > .swiper-slide:focus-within > .slider-append.remove,
+.swiper.article-swiper > .swiper-wrapper > .swiper-slide:hover > .slider-append.move,
+.swiper.article-swiper > .swiper-wrapper > .swiper-slide:focus-within > .slider-append.move {
     display: inline-flex;
 }
 
