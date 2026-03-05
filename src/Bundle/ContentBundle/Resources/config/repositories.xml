@@ -30,6 +30,11 @@
             <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
             <argument>Integrated\Bundle\ContentBundle\Document\Content\Publication</argument>
         </service>
+
+        <service id="integrated_content.content_edit_draft_repository" class="Doctrine\Persistence\ObjectRepository">
+            <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
+            <argument>Integrated\Bundle\ContentBundle\Document\Content\ContentEditDraft</argument>
+        </service>
     </services>
 
 </container>

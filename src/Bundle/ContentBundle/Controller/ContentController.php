@@ -14,6 +14,7 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\ContentEditDraft;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
@@ -503,6 +504,8 @@ class ContentController extends AbstractController
                         );
                     }
 
+                    $this->clearCurrentUserDraft($content);
+
                     // Set flash message
                     $this->addFlash(
                         'success',
@@ -811,6 +814,112 @@ class ContentController extends AbstractController
             'locking' => $locking,
             'referenced' => $referenced,
         ]);
+    }
+
+    public function getDraft(Request $request, string $id): JsonResponse
+    {
+        $content = $this->findContentByIdentifier($id);
+        if (!$content) {
+            return new JsonResponse(['message' => 'Content not found.'], Response::HTTP_NOT_FOUND);
+        }
+
+        if (!$this->isGranted(Permissions::EDIT, $content)) {
+            throw new AccessDeniedException();
+        }
+
+        $userId = $this->getCurrentUserIdentifier();
+        if ('' === $userId) {
+            return new JsonResponse(['exists' => false]);
+        }
+
+        /** @var ContentEditDraft|null $draft */
+        $draft = $this->documentManager->getRepository(ContentEditDraft::class)->findOneBy([
+            'contentId' => $content->getId(),
+            'userId' => $userId,
+        ]);
+
+        if (!$draft) {
+            return new JsonResponse(['exists' => false]);
+        }
+
+        return new JsonResponse([
+            'exists' => true,
+            'payload' => $draft->getPayload(),
+            'updatedAt' => $draft->getUpdatedAt()->format(\DateTimeInterface::ATOM),
+        ]);
+    }
+
+    public function saveDraft(Request $request, string $id): JsonResponse
+    {
+        $content = $this->findContentByIdentifier($id);
+        if (!$content) {
+            return new JsonResponse(['message' => 'Content not found.'], Response::HTTP_NOT_FOUND);
+        }
+
+        if (!$this->isGranted(Permissions::EDIT, $content)) {
+            throw new AccessDeniedException();
+        }
+
+        $userId = $this->getCurrentUserIdentifier();
+        if ('' === $userId) {
+            return new JsonResponse(['message' => 'No authenticated user found.'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $payload = $this->extractDraftPayload($request);
+        if (null === $payload) {
+            return new JsonResponse(['message' => 'Invalid draft payload.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        /** @var ContentEditDraft|null $draft */
+        $draft = $this->documentManager->getRepository(ContentEditDraft::class)->findOneBy([
+            'contentId' => $content->getId(),
+            'userId' => $userId,
+        ]);
+
+        if (!$draft) {
+            $draft = new ContentEditDraft((string) $content->getId(), $userId);
+            $this->documentManager->persist($draft);
+        }
+
+        $draft->setPayload($payload);
+        $this->documentManager->flush();
+
+        return new JsonResponse([
+            'saved' => true,
+            'updatedAt' => $draft->getUpdatedAt()->format(\DateTimeInterface::ATOM),
+        ]);
+    }
+
+    public function deleteDraft(Request $request, string $id): JsonResponse
+    {
+        $content = $this->findContentByIdentifier($id);
+        if (!$content) {
+            return new JsonResponse(['message' => 'Content not found.'], Response::HTTP_NOT_FOUND);
+        }
+
+        if (!$this->isGranted(Permissions::EDIT, $content)) {
+            throw new AccessDeniedException();
+        }
+
+        $userId = $this->getCurrentUserIdentifier();
+        if ('' === $userId) {
+            return new JsonResponse(['removed' => false]);
+        }
+
+        /** @var ContentEditDraft|null $draft */
+        $draft = $this->documentManager->getRepository(ContentEditDraft::class)->findOneBy([
+            'contentId' => $content->getId(),
+            'userId' => $userId,
+        ]);
+
+        if (!$draft) {
+            return new JsonResponse(['removed' => false]);
+        }
+
+        $this->documentManager->remove($draft);
+        $this->documentManager->flush();
+
+        return new JsonResponse(['removed' => true]);
     }
 
     /**
@@ -1629,6 +1738,9 @@ class ContentController extends AbstractController
                 'data-lock-pending' => $locking['pending'] ? '1' : '0',
                 'data-content-locked' => ($locking['locked'] && !$locking['pending']) ? '1' : '0',
                 'data-lock-init-url' => $this->generateUrl('integrated_content_content_lock', ['id' => $content->getId()]),
+                'data-draft-get-url' => $this->generateUrl('integrated_content_content_draft_get', ['id' => $content->getId()]),
+                'data-draft-save-url' => $this->generateUrl('integrated_content_content_draft_save', ['id' => $content->getId()]),
+                'data-draft-delete-url' => $this->generateUrl('integrated_content_content_draft_delete', ['id' => $content->getId()]),
             ],
             'content_type' => $contentType,
         ];
@@ -1823,5 +1935,72 @@ class ContentController extends AbstractController
         }
 
         return $references;
+    }
+
+    private function clearCurrentUserDraft(Content $content): void
+    {
+        $userId = $this->getCurrentUserIdentifier();
+        if ('' === $userId) {
+            return;
+        }
+
+        /** @var ContentEditDraft|null $draft */
+        $draft = $this->documentManager->getRepository(ContentEditDraft::class)->findOneBy([
+            'contentId' => $content->getId(),
+            'userId' => $userId,
+        ]);
+
+        if (!$draft) {
+            return;
+        }
+
+        $this->documentManager->remove($draft);
+        $this->documentManager->flush();
+    }
+
+    /**
+     * @return array<string, array<int, string>>|null
+     */
+    private function extractDraftPayload(Request $request): ?array
+    {
+        $content = trim((string) $request->getContent());
+        if ('' === $content) {
+            return null;
+        }
+
+        $decoded = json_decode($content, true);
+        if (!\is_array($decoded) || !\array_key_exists('payload', $decoded) || !\is_array($decoded['payload'])) {
+            return null;
+        }
+
+        $payload = [];
+        foreach ($decoded['payload'] as $field => $values) {
+            if (!\is_string($field) || '' === $field || !\is_array($values)) {
+                continue;
+            }
+
+            $normalizedValues = [];
+            foreach ($values as $value) {
+                if (\is_scalar($value)) {
+                    $normalizedValues[] = (string) $value;
+                }
+            }
+
+            $payload[$field] = $normalizedValues;
+        }
+
+        return $payload;
+    }
+
+    private function getCurrentUserIdentifier(): string
+    {
+        $user = $this->getUser();
+        if (!$user instanceof UserInterface) {
+            return '';
+        }
+
+        $id = $user->getId();
+
+        return \is_scalar($id) ? (string) $id : '';
     }
 }
