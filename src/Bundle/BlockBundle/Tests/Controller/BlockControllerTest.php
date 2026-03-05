@@ -20,8 +20,6 @@ use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use MongoDB\Collection;
 use PHPUnit\Framework\TestCase;
-use ReflectionMethod;
-use ReflectionNamedType;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -190,8 +188,8 @@ final class BlockControllerTest extends TestCase
 
     private function createBuilderQueryResult(): object
     {
-        $returnType = (new ReflectionMethod(Builder::class, 'getQuery'))->getReturnType();
-        self::assertInstanceOf(ReflectionNamedType::class, $returnType);
+        $returnType = (new \ReflectionMethod(Builder::class, 'getQuery'))->getReturnType();
+        self::assertInstanceOf(\ReflectionNamedType::class, $returnType);
 
         $type = $returnType->getName();
 

@@ -18,8 +18,6 @@ use Integrated\Bundle\WorkflowBundle\Entity\Workflow\State as WorkflowState;
 use Integrated\Bundle\WorkflowBundle\Service\StateManager;
 use MongoDB\Collection;
 use PHPUnit\Framework\TestCase;
-use ReflectionMethod;
-use ReflectionNamedType;
 
 class StateManagerTest extends TestCase
 {
@@ -107,8 +105,8 @@ class StateManagerTest extends TestCase
      */
     private function createBuilderQueryResult(array $items): object
     {
-        $returnType = (new ReflectionMethod(Builder::class, 'getQuery'))->getReturnType();
-        self::assertInstanceOf(ReflectionNamedType::class, $returnType);
+        $returnType = (new \ReflectionMethod(Builder::class, 'getQuery'))->getReturnType();
+        self::assertInstanceOf(\ReflectionNamedType::class, $returnType);
 
         $type = $returnType->getName();
 
