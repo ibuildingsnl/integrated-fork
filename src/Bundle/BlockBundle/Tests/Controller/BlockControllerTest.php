@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Integrated\Bundle\BlockBundle\Tests\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Iterator\IterableResult;
+use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ODM\MongoDB\Query\Builder;
+use Doctrine\ODM\MongoDB\Query\Query;
 use Integrated\Bundle\BlockBundle\Controller\BlockController;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
@@ -17,7 +18,10 @@ use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Security\Permissions;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use MongoDB\Collection;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
+use ReflectionNamedType;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +33,7 @@ final class BlockControllerTest extends TestCase
     public function testUsedByAllowsNonAdminUserWithEditPermission(): void
     {
         $content = (new Article())->setId('content-id');
-        $query = $this->createMock(IterableResult::class);
+        $query = $this->createBuilderQueryResult();
         $pagination = $this->createMock(PaginationInterface::class);
         $queryBuilder = $this->createMock(Builder::class);
         $queryBuilder
@@ -81,7 +85,7 @@ final class BlockControllerTest extends TestCase
     public function testUsedByFallsBackToDefaultsForArrayPaginationQueryValues(): void
     {
         $content = (new Article())->setId('content-id');
-        $query = $this->createMock(IterableResult::class);
+        $query = $this->createBuilderQueryResult();
         $pagination = $this->createMock(PaginationInterface::class);
         $queryBuilder = $this->createMock(Builder::class);
         $queryBuilder
@@ -182,6 +186,31 @@ final class BlockControllerTest extends TestCase
             $this->createStub(EventDispatcherInterface::class),
             $this->createStub(BlockRepository::class)
         );
+    }
+
+    private function createBuilderQueryResult(): object
+    {
+        $returnType = (new ReflectionMethod(Builder::class, 'getQuery'))->getReturnType();
+        self::assertInstanceOf(ReflectionNamedType::class, $returnType);
+
+        $type = $returnType->getName();
+
+        try {
+            return $this->createMock($type);
+        } catch (\Throwable $exception) {
+            if ($type !== Query::class) {
+                throw $exception;
+            }
+
+            return new Query(
+                $this->createMock(DocumentManager::class),
+                $this->createMock(ClassMetadata::class),
+                $this->createMock(Collection::class),
+                ['type' => Query::TYPE_FIND, 'query' => []],
+                [],
+                false
+            );
+        }
     }
 }
 
