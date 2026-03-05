@@ -42,11 +42,17 @@ class Router implements RouterInterface, RequestMatcherInterface, WarmableInterf
         return $this->context;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function match(string $pathinfo): array
     {
         return $this->getMatcher()->match($pathinfo);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function matchRequest(Request $request): array
     {
         $matcher = $this->getMatcher();
@@ -58,6 +64,9 @@ class Router implements RouterInterface, RequestMatcherInterface, WarmableInterf
         return $matcher->match($request->getPathInfo());
     }
 
+    /**
+     * @param array<string, mixed> $parameters
+     */
     public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
     {
         return $this->getGenerator()->generate($name, $parameters, $referenceType);
