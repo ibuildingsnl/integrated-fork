@@ -4,9 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://symfony.com/schema/routing https://symfony.com/schema/routing/routing-1.0.xsd">
 
-    <route id="integrated_integrated_index" path="/" controller="Symfony\Bundle\FrameworkBundle\Controller\RedirectController">
-        <default key="route">integrated_content_content_index</default>
-        <default key="permanent">true</default>
+    <route id="integrated_integrated_index" path="/" controller="Integrated\Bundle\IntegratedBundle\Controller\AdminEntrypointController::index">
     </route>
 
     <import resource="@IntegratedBlockBundle/Resources/config/routing.xml" type="xml" />
