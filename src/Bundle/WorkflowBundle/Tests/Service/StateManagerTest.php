@@ -3,6 +3,7 @@
 namespace Integrated\Bundle\WorkflowBundle\Tests\Service;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Iterator\IterableResult;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\Query\Query;
@@ -108,18 +109,14 @@ class StateManagerTest extends TestCase
         $returnType = (new \ReflectionMethod(Builder::class, 'getQuery'))->getReturnType();
         self::assertInstanceOf(\ReflectionNamedType::class, $returnType);
 
-        $type = $returnType->getName();
-
-        try {
-            $query = $this->createMock($type);
+        if ($returnType->getName() === IterableResult::class) {
+            $query = $this->createMock(IterableResult::class);
             $query->expects(self::once())->method('execute')->willReturn($items);
 
             return $query;
-        } catch (\Throwable $exception) {
-            if ($type !== Query::class) {
-                throw $exception;
-            }
+        }
 
+        if ($returnType->getName() === Query::class) {
             $collection = $this->createMock(Collection::class);
             $collection
                 ->expects(self::once())
@@ -136,5 +133,7 @@ class StateManagerTest extends TestCase
                 false
             );
         }
+
+        self::fail(\sprintf('Unsupported Builder::getQuery() return type: %s', $returnType->getName()));
     }
 }

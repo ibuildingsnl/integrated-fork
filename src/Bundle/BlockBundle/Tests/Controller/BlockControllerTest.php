@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Integrated\Bundle\BlockBundle\Tests\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Iterator\IterableResult;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\Query\Query;
@@ -191,15 +192,11 @@ final class BlockControllerTest extends TestCase
         $returnType = (new \ReflectionMethod(Builder::class, 'getQuery'))->getReturnType();
         self::assertInstanceOf(\ReflectionNamedType::class, $returnType);
 
-        $type = $returnType->getName();
+        if ($returnType->getName() === IterableResult::class) {
+            return $this->createMock(IterableResult::class);
+        }
 
-        try {
-            return $this->createMock($type);
-        } catch (\Throwable $exception) {
-            if ($type !== Query::class) {
-                throw $exception;
-            }
-
+        if ($returnType->getName() === Query::class) {
             return new Query(
                 $this->createMock(DocumentManager::class),
                 $this->createMock(ClassMetadata::class),
@@ -209,6 +206,8 @@ final class BlockControllerTest extends TestCase
                 false
             );
         }
+
+        self::fail(\sprintf('Unsupported Builder::getQuery() return type: %s', $returnType->getName()));
     }
 }
 
