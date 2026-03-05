@@ -1,6 +1,5 @@
 let Encore = require('@symfony/webpack-encore');
 const PathResolver = require('path');
-const webpack = require('webpack');
 
 webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/public')
     .setPublicPath('/bundles/integratedintegrated')
@@ -65,8 +64,8 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
         './src/Bundle/WorkflowBundle/Resources/assets/js/select2_init.js',
     ])
     .addEntry('article-search', [
-        './src/Bundle/ContentBundle/Resources/assets/js/vue_init.js',
-        './src/Bundle/ContentBundle/Resources/assets/js/article_search.js',
+        './src/Bundle/ContentBundle/Resources/assets/js/article_search_live_bootstrap.js',
+        './src/Bundle/ContentBundle/Resources/assets/js/article_search_live.js',
         './src/Bundle/ContentBundle/Resources/assets/sass/components/vue/vue.scss'
     ])
     .copyFiles({
@@ -87,17 +86,6 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
     })
     .cleanupOutputBeforeBuild()
     .autoProvidejQuery()
-    .enableVueLoader(() => {}, {
-        runtimeCompilerBuild: false,
-        version: 3
-    })
-    .addPlugin(
-        new webpack.DefinePlugin({
-            __VUE_OPTIONS_API__: false,
-            __VUE_PROD_DEVTOOLS__: false,
-            __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
-        })
-    )
     .enablePostCssLoader((options) => {
         options.postcssOptions = {
             path: './postcss.config.js',
@@ -115,7 +103,6 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
 webpackConfig.resolve.alias = {
     typeahead: PathResolver.resolve(__dirname, 'node_modules/typeahead.js/dist/typeahead.bundle.js'),
     jquery: PathResolver.resolve(__dirname, 'node_modules/jquery/dist/jquery.js'),
-    'vue': 'vue/dist/vue.esm-bundler.js',
 };
 
 webpackConfig.resolve.fallback = {'fs': false};

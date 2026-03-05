@@ -67,12 +67,26 @@
                     </div>
 
                     <div class="aside-item-holder{% if facetFilter.type.vars.choices|length == 0 %} hidden{% endif %}">
-                        {{ form_row(facetFilter.type, {'style':'sidebar', 'state': 'show'}) }}
+                        {{ form_row(facetFilter.type, {
+                            'style': 'sidebar',
+                            'state': 'show',
+                            'attr': {
+                                'data-block-filter-search': '1',
+                                'data-block-filter-search-placeholder': ('Search in'|trans ~ ' ' ~ facetFilter.type.vars.label|trans)|trim
+                            }
+                        }) }}
                     </div>
 
                     <div
                         class="aside-item-holder{% if facetFilter.channels.vars.choices|length == 0 %} hidden{% endif %}">
-                        {{ form_row(facetFilter.channels, {'style':'sidebar', 'state': 'show'}) }}
+                        {{ form_row(facetFilter.channels, {
+                            'style': 'sidebar',
+                            'state': 'show',
+                            'attr': {
+                                'data-block-filter-search': '1',
+                                'data-block-filter-search-placeholder': ('Search in'|trans ~ ' ' ~ facetFilter.channels.vars.label|trans)|trim
+                            }
+                        }) }}
                     </div>
 
                     <div class="aside-item-holder">
@@ -108,6 +122,79 @@
                     form.requestSubmit ? form.requestSubmit() : form.submit();
                 });
                 form.dataset.boundFilterAutoSubmit = 'true';
+            });
+        }
+
+        function normalizeBlockFilterSearchValue(value) {
+            return String(value || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toUpperCase();
+        }
+
+        function getBlockFilterOptionItems(container) {
+            var items = [];
+            container.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(function (input) {
+                var item = input.closest('li, .checkbox, .radio, .form-check, .choice');
+                if (!item) {
+                    item = input.closest('label') || input.parentElement;
+                }
+                if (item && items.indexOf(item) === -1 && !item.closest('.aside-item-search')) {
+                    items.push(item);
+                }
+            });
+
+            return items;
+        }
+
+        function filterBlockFilterOptions(wrapper, query) {
+            var container = wrapper.querySelector('.aside-item-list-container');
+            if (!container) {
+                return;
+            }
+
+            var normalizedQuery = normalizeBlockFilterSearchValue(query);
+            getBlockFilterOptionItems(container).forEach(function (item) {
+                var text = normalizeBlockFilterSearchValue(item.textContent || '');
+                item.style.display = text.indexOf(normalizedQuery) !== -1 ? '' : 'none';
+            });
+        }
+
+        function initBlockFilterSidebarSearch() {
+            document.querySelectorAll('.aside-item-wrapper[data-block-filter-search="1"]').forEach(function (wrapper) {
+                if (wrapper.dataset.boundBlockFilterSearch === 'true') {
+                    return;
+                }
+
+                var container = wrapper.querySelector('.aside-item-list-container');
+                if (!container) {
+                    return;
+                }
+
+                var searchWrapper = document.createElement('div');
+                searchWrapper.className = 'aside-item-search';
+                searchWrapper.setAttribute('data-block-filter-search-input', '1');
+
+                var icon = document.createElement('i');
+                icon.className = 'iconoir-search';
+
+                var input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'list-search';
+                input.placeholder = wrapper.dataset.blockFilterSearchPlaceholder || '';
+                input.setAttribute('data-bound-list-search', 'true');
+
+                input.addEventListener('input', function () {
+                    filterBlockFilterOptions(wrapper, input.value);
+                });
+                input.addEventListener('change', function () {
+                    filterBlockFilterOptions(wrapper, input.value);
+                });
+
+                searchWrapper.appendChild(icon);
+                searchWrapper.appendChild(input);
+                container.insertBefore(searchWrapper, container.firstChild);
+                wrapper.dataset.boundBlockFilterSearch = 'true';
             });
         }
 
@@ -188,6 +275,7 @@
 
         function init() {
             bindFilterFormAutoSubmit();
+            initBlockFilterSidebarSearch();
             initUsagePopovers();
         }
 

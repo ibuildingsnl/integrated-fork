@@ -8,6 +8,8 @@
 
         <defaults autowire="true" autoconfigure="true"/>
 
+        <prototype namespace="Integrated\Bundle\ContentBundle\Twig\Component\" resource="../../Twig/Component" />
+
         <service id="integrated_content.twig.json_pagination_extension" class="Integrated\Bundle\ContentBundle\Twig\JsonPaginationExtension">
             <argument type="service" id="router" />
             <tag name="twig.extension" />
