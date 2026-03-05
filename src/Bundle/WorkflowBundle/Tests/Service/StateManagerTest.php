@@ -3,7 +3,6 @@
 namespace Integrated\Bundle\WorkflowBundle\Tests\Service;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Iterator\IterableResult;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\Query\Query;
@@ -109,8 +108,8 @@ class StateManagerTest extends TestCase
         $returnType = (new \ReflectionMethod(Builder::class, 'getQuery'))->getReturnType();
         self::assertInstanceOf(\ReflectionNamedType::class, $returnType);
 
-        if ($returnType->getName() === IterableResult::class) {
-            $query = $this->createMock(IterableResult::class);
+        if ($returnType->getName() === 'Doctrine\ODM\MongoDB\Iterator\IterableResult') {
+            $query = $this->createMock('Doctrine\ODM\MongoDB\Iterator\IterableResult');
             $query->expects(self::once())->method('execute')->willReturn($items);
 
             return $query;
@@ -120,15 +119,15 @@ class StateManagerTest extends TestCase
             $collection = $this->createMock(Collection::class);
             $collection
                 ->expects(self::once())
-                ->method('find')
-                ->with([], self::isType('array'))
-                ->willReturn(new \ArrayIterator($items));
+                ->method('distinct')
+                ->with('_id', [], self::isType('array'))
+                ->willReturn($items);
 
             return new Query(
                 $this->createMock(DocumentManager::class),
                 $this->createMock(ClassMetadata::class),
                 $collection,
-                ['type' => Query::TYPE_FIND, 'query' => []],
+                ['type' => Query::TYPE_DISTINCT, 'distinct' => '_id', 'query' => []],
                 [],
                 false
             );

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Integrated\Bundle\BlockBundle\Tests\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Iterator\IterableResult;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\Query\Query;
@@ -192,8 +191,8 @@ final class BlockControllerTest extends TestCase
         $returnType = (new \ReflectionMethod(Builder::class, 'getQuery'))->getReturnType();
         self::assertInstanceOf(\ReflectionNamedType::class, $returnType);
 
-        if ($returnType->getName() === IterableResult::class) {
-            return $this->createMock(IterableResult::class);
+        if ($returnType->getName() === 'Doctrine\ODM\MongoDB\Iterator\IterableResult') {
+            return $this->createMock('Doctrine\ODM\MongoDB\Iterator\IterableResult');
         }
 
         if ($returnType->getName() === Query::class) {

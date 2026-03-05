@@ -107,14 +107,25 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
         }
 
         $counts = array_fill_keys($ids, 0);
-        $rows = $this->manager->getDocumentCollection(Content::class)->aggregate([
+        $rowsResult = $this->manager->getDocumentCollection(Content::class)->aggregate([
             ['$match' => ['relations.references.$id' => ['$in' => $ids]]],
             ['$unwind' => '$relations'],
             ['$unwind' => '$relations.references'],
             ['$match' => ['relations.references.$id' => ['$in' => $ids]]],
             ['$group' => ['_id' => ['taxonomy' => '$relations.references.$id', 'content' => '$_id']]],
             ['$group' => ['_id' => '$_id.taxonomy', 'count' => ['$sum' => 1]]],
-        ])->toArray();
+        ]);
+
+        if (\is_array($rowsResult)) {
+            $rows = $rowsResult;
+        } elseif ($rowsResult instanceof \Traversable) {
+            $rows = iterator_to_array($rowsResult, false);
+        } elseif (\is_object($rowsResult) && method_exists($rowsResult, 'toArray')) {
+            /** @var array<int, mixed> $rows */
+            $rows = $rowsResult->toArray();
+        } else {
+            $rows = [];
+        }
 
         foreach ($rows as $row) {
             $id = trim((string) ($row['_id'] ?? ''));
