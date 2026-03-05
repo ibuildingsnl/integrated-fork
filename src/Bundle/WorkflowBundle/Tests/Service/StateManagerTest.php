@@ -109,6 +109,7 @@ class StateManagerTest extends TestCase
         self::assertInstanceOf(\ReflectionNamedType::class, $returnType);
 
         if ($returnType->getName() === 'Doctrine\ODM\MongoDB\Iterator\IterableResult') {
+            /** @var \PHPUnit\Framework\MockObject\MockObject $query */
             $query = $this->createMock('Doctrine\ODM\MongoDB\Iterator\IterableResult');
             $query->expects(self::once())->method('execute')->willReturn($items);
 
