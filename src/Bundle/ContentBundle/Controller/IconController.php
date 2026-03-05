@@ -138,7 +138,7 @@ class IconController extends AbstractController
             return [];
         }
 
-        preg_match_all('/\\.iconoir-([a-z0-9-]+)::before/i', $contents, $matches);
+        preg_match_all('/\\.iconoir-([a-z0-9-]+):{1,2}before/i', $contents, $matches);
         $icons = array_values(array_unique($matches[1]));
         sort($icons, \SORT_NATURAL);
 
