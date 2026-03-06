@@ -1,3 +1,4 @@
+{% autoescape false %}
 {% apply spaceless %}
     {% set items = [] %}
 
@@ -16,3 +17,4 @@
     } %}
 {% endapply %}
 {{ data|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+{% endautoescape %}

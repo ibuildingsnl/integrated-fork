@@ -65,6 +65,58 @@ class ProfileController extends AbstractController
         ]);
     }
 
+    public function deactivateTwoFactor(Request $request): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user instanceof UserInterface) {
+            throw new \LogicException(\sprintf('$user is not and instance of %s', UserInterface::class));
+        }
+
+        $token = (string) $request->request->get('_token', '');
+        if (!$this->isCsrfTokenValid('profile_2fa_deactivate', $token)) {
+            $this->addFlash('danger', 'Invalid request token.');
+
+            return $this->redirectToRoute('integrated_user_profile_index');
+        }
+
+        if (!$user->isGoogleAuthenticatorEnabled()) {
+            $this->addFlash('info', 'Two-factor authentication is already disabled.');
+
+            return $this->redirectToRoute('integrated_user_profile_index');
+        }
+
+        $user->setGoogleAuthenticatorSecret(null);
+        $this->userManager->persist($user);
+
+        $this->addFlash('success', 'Two-factor authentication has been deactivated for your account.');
+
+        return $this->redirectToRoute('integrated_user_profile_index');
+    }
+
+    public function resetTwoFactor(Request $request): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user instanceof UserInterface) {
+            throw new \LogicException(\sprintf('$user is not and instance of %s', UserInterface::class));
+        }
+
+        $token = (string) $request->request->get('_token', '');
+        if (!$this->isCsrfTokenValid('profile_2fa_reset', $token)) {
+            $this->addFlash('danger', 'Invalid request token.');
+
+            return $this->redirectToRoute('integrated_user_profile_index');
+        }
+
+        $user->setGoogleAuthenticatorSecret(null);
+        $this->userManager->persist($user);
+
+        $this->addFlash('success', 'Two-factor authentication has been reset. Please activate it again.');
+
+        return $this->redirectToRoute('integrated_user_two_factor_authenticator_activate');
+    }
+
     protected function createProfileForm(UserInterface $user): Form
     {
         $form = $this->createForm(ProfileFormType::class, $user, [

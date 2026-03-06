@@ -1,13 +1,21 @@
 let form_relations = {}; //this holds all the form relation objects with an id
 const mediagallery_link = '/admin/media/';
+let selected_relation = null;
 
-window.addEventListener('load', function() {
+function initializeMediaGallerySelection() {
+    form_relations = {};
     populateFormRelations();
     populateSelectedImages().then(() => {
         setupFormRelations();
-        addEventListeners();
     });
-});
+    addEventListeners();
+}
+
+function scheduleMediaGallerySelectionInit() {
+    initializeMediaGallerySelection();
+    window.requestAnimationFrame(initializeMediaGallerySelection);
+    window.setTimeout(initializeMediaGallerySelection, 120);
+}
 
 function setupFormRelations() {
     Object.values(form_relations).forEach(form_relation => {
@@ -32,16 +40,21 @@ function populateSelectedImages() {
 function populateFormRelations() {
     document.querySelectorAll('.mediagallery_selector').forEach((item) => {
         const id = item.getAttribute('id');
-        const inputIdentifier = item.parentNode.classList.contains('relation') ?
-            `integrated_content[relations][${id}]` :
-            item.querySelector('.selected_images').getAttribute('data-fieldName');
+        const isRelationField = item.parentNode.classList.contains('relation');
+        const multipleValue = (item.querySelector('.select_multimedia_button').dataset.multiple || '').toLowerCase();
+        const isMultiple = multipleValue === 'true'
+            || multipleValue === '1'
+            || (multipleValue === '' && isRelationField);
+        const inputSelector = isRelationField
+            ? `input[name="integrated_content[relations][${id}]"]`
+            : `#${id} .mediagallery_selector_input`;
 
         form_relations[id] = {
-            modus: item.querySelector('.select_multimedia_button').dataset.multiple ? 'select_multiple' : 'select_one',
+            modus: isMultiple ? 'select_multiple' : 'select_one',
             selected_images: [],
             relationid: id,
             types: JSON.parse(item.querySelector('.select_multimedia_button').dataset.types),
-            input_selector: `input[name="${inputIdentifier}"]`,
+            input_selector: inputSelector,
             selected_images_selector: `#${id} .selected_images`,
             wrap_selector: `.${id}.wrap`,
             iframe_selector: `.${id}.iframe`,
@@ -68,29 +81,47 @@ function getTypesUrl(types) {
 }
 
 function addEventListeners() {
-    const selectButtons = document.querySelectorAll('.select_multimedia_button');
-    const selectedImages = document.querySelectorAll('.selected_images');
+    if (document.body.dataset.boundMediaGallerySelectionHandlers === 'true') {
+        return;
+    }
 
-    selectButtons.forEach((selectButton) => {
-        selectButton.addEventListener('click', (event) => {
-            const { relationid } = event.target.dataset;
+    document.addEventListener('click', (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+        if (!target) {
+            return;
+        }
+
+        const selectButton = target.closest('.select_multimedia_button');
+        if (selectButton) {
+            const { relationid } = selectButton.dataset;
+            if (!relationid || !form_relations[relationid]) {
+                return;
+            }
+
             selected_relation = form_relations[relationid];
             showMediaGallery(selected_relation);
-        });
-    });
+            return;
+        }
 
-    selectedImages.forEach((selectedImage) => {
-        selectedImage.addEventListener('click', (event) => {
-            const imageItem = event.target.closest('li');
-            const removeButton = event.target.closest('.remove');
-
-            if (imageItem && !removeButton) {
-                const { relationid } = imageItem.closest('.selected_images').dataset;
-                selected_relation = form_relations[relationid];
-                showMediaGallery(selected_relation);
+        const imageItem = target.closest('.selected_images li');
+        const removeButton = target.closest('.remove');
+        if (imageItem && !removeButton) {
+            const selectedImagesContainer = imageItem.closest('.selected_images');
+            if (!selectedImagesContainer) {
+                return;
             }
-        });
+
+            const { relationid } = selectedImagesContainer.dataset;
+            if (!relationid || !form_relations[relationid]) {
+                return;
+            }
+
+            selected_relation = form_relations[relationid];
+            showMediaGallery(selected_relation);
+        }
     });
+
+    document.body.dataset.boundMediaGallerySelectionHandlers = 'true';
 }
 
 window.removeImage = function(event) {
@@ -123,12 +154,42 @@ function placeClone(clone) {
 }
 
 function filterImages(selection) {
-    const allowed_types = selected_relation.types.map(item => item.type);
-    return selection.filter(item => allowed_types.includes(item.content_type));
+    const allowed_types = selected_relation.types
+        .map(item => String(item.type || '').toLowerCase())
+        .filter(Boolean);
+
+    if (allowed_types.length === 0) {
+        return selection;
+    }
+
+    return selection.filter(item => {
+        const contentType = String(
+            item.content_type ||
+            item.contentType ||
+            item.contenttype ||
+            item.type ||
+            ''
+        ).toLowerCase();
+
+        // Keep items without type metadata instead of silently dropping valid selections.
+        if (!contentType) {
+            return true;
+        }
+
+        return allowed_types.includes(contentType);
+    });
 }
 
 function addImageIDsToInputField() {
-    document.querySelector(selected_relation.input_selector).value = selected_relation.selected_images.map(item => item.id).join(',');
+    const input = document.querySelector(selected_relation.input_selector);
+    if (!input) {
+        return;
+    }
+
+    const selectedIds = selected_relation.selected_images.map(item => item.id).filter(Boolean);
+    input.value = selected_relation.modus === 'select_one'
+        ? (selectedIds[selectedIds.length - 1] || '')
+        : selectedIds.join(',');
 }
 
 function emptyShownImagesInDOM() {
@@ -137,7 +198,8 @@ function emptyShownImagesInDOM() {
 
 function selectImagesToShow(response_from_iframe) {
     if (selected_relation.modus == 'select_one') {
-        selected_relation.selected_images = response_from_iframe;
+        const selected = response_from_iframe.filter(item => item && item.id);
+        selected_relation.selected_images = selected.length > 0 ? [selected[selected.length - 1]] : [];
     } else {
         //concat AND filter for unique values:
         selected_relation.selected_images = [
@@ -159,7 +221,17 @@ window.addEventListener('message', function(e) {
         return;
     }
     if (typeof e.data === 'string' && e.data.length > 0) {
-        const response_from_iframe = filterImages(JSON.parse(e.data));
+        let parsedResponse;
+        try {
+            parsedResponse = JSON.parse(e.data);
+        } catch (error) {
+            return;
+        }
+        if (!Array.isArray(parsedResponse)) {
+            return;
+        }
+        const filteredResponse = filterImages(parsedResponse);
+        const response_from_iframe = filteredResponse.length > 0 ? filteredResponse : parsedResponse;
         if (response_from_iframe.length > 0) {
             selectImagesToShow(response_from_iframe);
             rebuildDOM();
@@ -177,30 +249,63 @@ function rebuildDOM() {
 }
 
 function closeMediaGallery() {
+    if (!selected_relation) {
+        return;
+    }
+
     reloadMediaLibrary();
 
-    document.querySelector(selected_relation.wrap_selector).classList.remove('show');
-    document.querySelector('#dropdown_overlay').classList.add('hide');
+    const wrap = document.querySelector(selected_relation.wrap_selector);
+    if (wrap) {
+        wrap.classList.remove('show');
+    }
+
+    const overlay = document.querySelector('#dropdown_overlay');
+    if (overlay) {
+        overlay.classList.add('hide');
+    }
+
     window.popupShown = false;
 }
 
 function reloadMediaLibrary() {
+    if (!selected_relation) {
+        return;
+    }
+
     const iframe = document.querySelector(selected_relation.iframe_selector);
-    iframe.src = iframe.src;
+    if (iframe) {
+        iframe.src = iframe.src;
+    }
 }
 
 function showMediaGallery(selected_relation) {
     window.popupShown = true;
 
     const iframe = document.querySelector(selected_relation.iframe_selector);
-    const currentSrc = iframe.getAttribute('src');
-
-    // Check if the 'src' attribute is not set or empty
-    if (!currentSrc) {
-        const link = `${mediagallery_link}${selected_relation.modus}?page=1&${selected_relation.types_url}`;
-        iframe.setAttribute('src', link);
+    if (!iframe) {
+        return;
     }
 
-    document.querySelector(selected_relation.wrap_selector).classList.add('show');
-    document.querySelector('#dropdown_overlay').classList.remove('hide');
+    const selectedIds = selected_relation.selected_images.map(item => item.id).filter(Boolean).join(',');
+    const selectedIdsQuery = selectedIds.length ? `&selected_ids=${encodeURIComponent(selectedIds)}` : '';
+    const link = `${mediagallery_link}${selected_relation.modus}?page=1&${selected_relation.types_url}${selectedIdsQuery}`;
+    iframe.setAttribute('src', link);
+
+    const wrap = document.querySelector(selected_relation.wrap_selector);
+    if (wrap) {
+        wrap.classList.add('show');
+    }
+
+    const overlay = document.querySelector('#dropdown_overlay');
+    if (overlay) {
+        overlay.classList.remove('hide');
+    }
 }
+
+window.addEventListener('load', scheduleMediaGallerySelectionInit);
+document.addEventListener('DOMContentLoaded', scheduleMediaGallerySelectionInit);
+document.addEventListener('turbo:load', scheduleMediaGallerySelectionInit);
+document.addEventListener('turbo:render', scheduleMediaGallerySelectionInit);
+document.addEventListener('turbo:frame-load', scheduleMediaGallerySelectionInit);
+document.addEventListener('turbo:frame-render', scheduleMediaGallerySelectionInit);

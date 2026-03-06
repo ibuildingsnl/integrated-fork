@@ -1,4 +1,5 @@
 if (typeof publicationSchedule === 'object') {
+    const FILTER_STATE_KEY = 'contentCalendar.filterStates.v1';
     const brandColors = {
         'facebook': '#1877f2',
         'linkedin': '#0077b5',
@@ -7,9 +8,31 @@ if (typeof publicationSchedule === 'object') {
         'woodwing': '#f15429',
     };
 
+    function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, (char) => {
+            const entities = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;',
+            };
+
+            return entities[char] || char;
+        });
+    }
+
+    function sanitizeIcon(value) {
+        return String(value ?? '').replace(/[^a-z0-9-]/gi, '');
+    }
+
     for (const publication of publicationSchedule) {
         const column = document.querySelector(
             '.day.column[data-date="' + publication.date + '"]');
+        if (!column) {
+            continue;
+        }
+
         const existingItem = column.querySelector(
             '.calendar-item[data-id="' + publication.id + '"]');
 
@@ -53,8 +76,8 @@ if (typeof publicationSchedule === 'object') {
             if (publication.published === 'failed') {
                 const errorEntry = document.createElement('div');
                 errorEntry.className = 'calendar-error';
-                errorEntry.innerHTML = '<b>' + publication.name + ' ' +
-                    publication.brand_name + '</b>:<br>' + publication.response;
+                errorEntry.innerHTML = '<b>' + escapeHtml(publication.name) + ' ' +
+                    escapeHtml(publication.brand_name) + '</b>:<br>' + escapeHtml(publication.response);
                 const calContent = existingItem.querySelector('.calendar-wrap');
                 calContent.appendChild(errorEntry);
             }
@@ -72,7 +95,7 @@ if (typeof publicationSchedule === 'object') {
         const publicationEntry = document.createElement('a');
         column.insertBefore(publicationEntry, before);
         publicationEntry.className = 'quick-edit-link calendar-item ' + publication.published + ' ' + publication.typename;
-        publicationEntry.href = '/admin/content/' + publication.id;
+        publicationEntry.href = '/admin/content/' + encodeURIComponent(publication.id);
         publicationEntry.dataset.parentId = publication.id;
         publicationEntry.dataset.time = publication.time;
         publicationEntry.dataset.type = publication.typename;
@@ -85,17 +108,22 @@ if (typeof publicationSchedule === 'object') {
     }
 
     function generatePublicationHTML(publication, colorVariable) {
+        const safeIcon = sanitizeIcon(publication.icon);
+        const safeDisplayTime = escapeHtml(publication.display_time);
+        const safeBrandName = escapeHtml(publication.brand_name);
+        const safePublicationTitle = escapeHtml(publication.title);
+        const safeErrorResponse = escapeHtml(publication.response);
 
         const errorMessage = publication.published === 'failed'
-            ? `<div class="calendar-error hidden">${publication.response}</div>`
+            ? `<div class="calendar-error hidden">${safeErrorResponse}</div>`
             : '';
 
         let postContent = '<div class="post-content hidden">';
         Object.entries(publication.settings).forEach(([key, value]) => {
             if (value && value.length > 0) {
                 postContent += `
-                <b>${key.charAt(0).toUpperCase() + key.slice(1)}</b>
-                <p>${value}</p>
+                <b>${escapeHtml(key.charAt(0).toUpperCase() + key.slice(1))}</b>
+                <p>${escapeHtml(value)}</p>
             `;
             }
         });
@@ -106,7 +134,7 @@ if (typeof publicationSchedule === 'object') {
         }
 
         const postImages = publication.images.length > 0
-            ? `<div class="post-images hidden">${publication.images.map(src => `<img src="${src}" alt="">`).join('')}</div>`
+            ? `<div class="post-images hidden">${publication.images.map(src => `<img src="${escapeHtml(src)}" alt="">`).join('')}</div>`
             : '';
 
         const showDetailsButton = (postContent || postImages || errorMessage)
@@ -116,17 +144,17 @@ if (typeof publicationSchedule === 'object') {
         return `<div class="calendar-wrap" style="--color: ${colorVariable}">
                     <div class="calendar-item-heading">
                         <div class="heading-left">
-                            <i class="icon iconoir-${publication.icon}" title="${publication.icon}"></i>
-                            <span class="publish-time">${publication.display_time}</span>
+                            <i class="icon iconoir-${safeIcon}" title="${safeIcon}"></i>
+                            <span class="publish-time">${safeDisplayTime}</span>
                             <div class="favicon-wrapper">
                                 <div class="channel-favicons">
-                                    <div class="channel-favicon" style="background-image:url(${publication.brand_favicon})" title="${publication.brand_name}"></div>
+                                    <div class="channel-favicon" style="background-image:url(${escapeHtml(publication.brand_favicon)})" title="${safeBrandName}"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="calendar-item-content">
-                        ${publication.title}
+                        ${safePublicationTitle}
                         ${showDetailsButton}
                     </div>
                     ${postContent}
@@ -154,9 +182,10 @@ if (typeof publicationSchedule === 'object') {
     }
 
     document.addEventListener('click', function(event) {
-        if (event.target.classList.contains('show-details-btn')) {
+        const detailsButton = event.target.closest('.show-details-btn');
+        if (detailsButton) {
             event.preventDefault();
-            const calendarItem = event.target.closest('.calendar-item');
+            const calendarItem = detailsButton.closest('.calendar-item');
             const elementsToToggle = calendarItem.querySelectorAll('.calendar-error, .post-content, .post-images');
             elementsToToggle.forEach(element => {
                 element.classList.toggle('hidden');
@@ -170,7 +199,16 @@ if (typeof publicationSchedule === 'object') {
         premium: false,
     };
 
-    document.addEventListener('DOMContentLoaded', function() {
+    function initCalendarFilterOptions() {
+        const contentTypesMenu = document.getElementById('content-types-menu');
+        const brandsMenu = document.getElementById('brands-menu');
+        if (!contentTypesMenu || !brandsMenu) {
+            return;
+        }
+
+        contentTypesMenu.innerHTML = '';
+        brandsMenu.innerHTML = '';
+
         const contentTypes = new Set();
         const brands = new Set();
 
@@ -191,32 +229,58 @@ if (typeof publicationSchedule === 'object') {
 
         const contentTypeFragment = document.createDocumentFragment();
         contentTypes.forEach(type => appendFilterOption(contentTypeFragment, 'contentType', type));
-        document.getElementById('content-types-menu').appendChild(contentTypeFragment);
+        contentTypesMenu.appendChild(contentTypeFragment);
 
         const brandFragment = document.createDocumentFragment();
         brands.forEach(brand => appendFilterOption(brandFragment, 'brand', brand));
-        document.getElementById('brands-menu').appendChild(brandFragment);
-    });
+        brandsMenu.appendChild(brandFragment);
+    }
 
     function appendFilterOption(fragment, filterName, value) {
         const li = document.createElement('li');
         li.className = 'checkbox';
-        li.innerHTML = `
-        <label class="checkbox-container">
-            <input type="checkbox" name="${filterName}" value="${value}">
-            <span class="checkmark"></span>
-            <div class="facet-wrapper">
-                <span class="facet-title">${value}</span>
-                <span class="facet-count"></span>
-            </div>
-        </label>
-    `;
+        const label = document.createElement('label');
+        label.className = 'checkbox-container';
+
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.name = filterName;
+        input.value = value;
+
+        const checkmark = document.createElement('span');
+        checkmark.className = 'checkmark';
+
+        const facetWrapper = document.createElement('div');
+        facetWrapper.className = 'facet-wrapper';
+
+        const facetTitle = document.createElement('span');
+        facetTitle.className = 'facet-title';
+        facetTitle.textContent = value;
+
+        const facetCount = document.createElement('span');
+        facetCount.className = 'facet-count';
+
+        facetWrapper.appendChild(facetTitle);
+        facetWrapper.appendChild(facetCount);
+        label.appendChild(input);
+        label.appendChild(checkmark);
+        label.appendChild(facetWrapper);
+        li.appendChild(label);
         fragment.appendChild(li);
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    function initCalendarFilters() {
+        if (!document.querySelector('.calendar-view.calendar-week')) {
+            return;
+        }
+
+        initCalendarFilterOptions();
+
         const hasPremiumContent = Array.from(document.querySelectorAll('.calendar-item')).some(item => item.getAttribute('data-premium') === 'true');
         const premiumCheckboxContainer = document.querySelector('.premium-checkbox');
+        if (!premiumCheckboxContainer) {
+            return;
+        }
 
         if (!hasPremiumContent) {
             premiumCheckboxContainer.style.display = 'none';
@@ -228,30 +292,45 @@ if (typeof publicationSchedule === 'object') {
         loadFilterStates();
         applyFilters();
         countAndUpdateFacetCounts();
-    });
+    }
 
     function attachFilterEventListeners() {
         document.querySelectorAll('.content-navigator-menu input[name="contentType"]').
             forEach(input => {
+                if (input.dataset.boundCalendarFilter) {
+                    return;
+                }
                 input.addEventListener('change', () => {
                     updateFilterStates();
                     countAndUpdateFacetCounts(false);
                 });
+                input.dataset.boundCalendarFilter = 'true';
             });
 
         document.querySelectorAll('.content-navigator-menu input[name="brand"]').
             forEach(input => {
+                if (input.dataset.boundCalendarFilter) {
+                    return;
+                }
                 input.addEventListener('change', () => {
                     updateFilterStates();
                     countAndUpdateFacetCounts(false);
                 });
+                input.dataset.boundCalendarFilter = 'true';
             });
 
         const premiumCheckbox = document.getElementById('premium-checkbox');
+        if (!premiumCheckbox) {
+            return;
+        }
+        if (premiumCheckbox.dataset.boundCalendarFilter) {
+            return;
+        }
         premiumCheckbox.addEventListener('change', () => {
             filterStates.premium = premiumCheckbox.checked;
             saveAndApplyFilters();
         });
+        premiumCheckbox.dataset.boundCalendarFilter = 'true';
     }
 
     function updateFilterStates() {
@@ -266,7 +345,7 @@ if (typeof publicationSchedule === 'object') {
     }
 
     function saveFilterStates() {
-        localStorage.setItem('filterStates', JSON.stringify({
+        localStorage.setItem(FILTER_STATE_KEY, JSON.stringify({
             contentType: Array.from(filterStates.contentType),
             brand: Array.from(filterStates.brand),
             premium: filterStates.premium,
@@ -274,7 +353,12 @@ if (typeof publicationSchedule === 'object') {
     }
 
     function loadFilterStates() {
-        const savedStates = JSON.parse(localStorage.getItem('filterStates'));
+        let savedStates = null;
+        try {
+            savedStates = JSON.parse(localStorage.getItem(FILTER_STATE_KEY));
+        } catch (error) {
+            savedStates = null;
+        }
         if (savedStates) {
             filterStates.contentType = new Set(savedStates.contentType || []);
             filterStates.brand = new Set(savedStates.brand || []);
@@ -360,4 +444,8 @@ if (typeof publicationSchedule === 'object') {
             }
         });
     }
+
+    document.addEventListener('DOMContentLoaded', initCalendarFilters);
+    document.addEventListener('turbo:load', initCalendarFilters);
+    document.addEventListener('turbo:render', initCalendarFilters);
 }

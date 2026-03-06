@@ -14,6 +14,7 @@ namespace Integrated\Bundle\UserBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -21,6 +22,14 @@ class ProfileFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $builder->add('email', Type\EmailType::class, [
+            'required' => false,
+            'constraints' => [
+                new Email(),
+            ],
+            'attr' => ['autocomplete' => 'off'],
+        ]);
+
         $builder->add('password', Type\RepeatedType::class, [
             'type' => Type\PasswordType::class,
             'mapped' => false,

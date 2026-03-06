@@ -95,8 +95,8 @@
                 <target>De wachtwoorden moeten hetzelfde zijn</target>
             </trans-unit>
             <trans-unit id="24">
-                <source>Authentication code</source>
-                <target>Authenticatiecode</target>
+                <source>2FA</source>
+                <target>2FA</target>
             </trans-unit>
             <trans-unit id="25">
                 <source>Activate</source>
@@ -133,6 +133,154 @@
             <trans-unit id="34">
                 <source>Click the button below to reset your password.</source>
                 <target>Klik op de knop hieronder om je wachtwoord te wijzigen.</target>
+            </trans-unit>
+            <trans-unit id="35">
+                <source>Two-factor authentication</source>
+                <target>Tweefactorauthenticatie</target>
+            </trans-unit>
+            <trans-unit id="36">
+                <source>Two-factor authentication is active for your account.</source>
+                <target>Tweefactorauthenticatie is actief voor je account.</target>
+            </trans-unit>
+            <trans-unit id="37">
+                <source>Two-factor authentication is not active yet. Activate it to better protect your account.</source>
+                <target>Tweefactorauthenticatie is nog niet actief. Activeer dit om je account beter te beschermen.</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>Activate 2FA</source>
+                <target>2FA activeren</target>
+            </trans-unit>
+            <trans-unit id="39">
+                <source>User info</source>
+                <target>Gebruikersinfo</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>No effective roles found</source>
+                <target>Geen effectieve rollen gevonden</target>
+            </trans-unit>
+            <trans-unit id="41">
+                <source>No author linked</source>
+                <target>Geen auteur gekoppeld</target>
+            </trans-unit>
+            <trans-unit id="42">
+                <source>Can't scan the QR code? Enter this setup key manually in your authenticator app:</source>
+                <target>Kun je de QR-code niet scannen? Voer deze instelsleutel handmatig in je authenticator-app in:</target>
+            </trans-unit>
+            <trans-unit id="43">
+                <source>Deactivate 2FA</source>
+                <target>2FA deactiveren</target>
+            </trans-unit>
+            <trans-unit id="44">
+                <source>Reset 2FA</source>
+                <target>2FA opnieuw instellen</target>
+            </trans-unit>
+            <trans-unit id="45">
+                <source>Are you sure you want to deactivate 2FA for your account?</source>
+                <target>Weet je zeker dat je 2FA voor je account wilt deactiveren?</target>
+            </trans-unit>
+            <trans-unit id="46">
+                <source>Invalid request token.</source>
+                <target>Ongeldig verzoektoken.</target>
+            </trans-unit>
+            <trans-unit id="47">
+                <source>Two-factor authentication is already disabled.</source>
+                <target>Tweefactorauthenticatie is al uitgeschakeld.</target>
+            </trans-unit>
+            <trans-unit id="48">
+                <source>Two-factor authentication has been deactivated for your account.</source>
+                <target>Tweefactorauthenticatie is gedeactiveerd voor je account.</target>
+            </trans-unit>
+            <trans-unit id="49">
+                <source>Are you sure you want to reset 2FA for your account?</source>
+                <target>Weet je zeker dat je 2FA voor je account opnieuw wilt instellen?</target>
+            </trans-unit>
+            <trans-unit id="50">
+                <source>Two-factor authentication has been reset. Please activate it again.</source>
+                <target>Tweefactorauthenticatie is opnieuw ingesteld. Activeer het opnieuw.</target>
+            </trans-unit>
+            <trans-unit id="51">
+                <source>Enter your 6-digit verification code to continue</source>
+                <target>Vul je 6-cijferige verificatiecode in om door te gaan</target>
+            </trans-unit>
+            <trans-unit id="52">
+                <source>Enable account</source>
+                <target>Account activeren</target>
+            </trans-unit>
+            <trans-unit id="53">
+                <source>Delete account</source>
+                <target>Account verwijderen</target>
+            </trans-unit>
+            <trans-unit id="54">
+                <source>You are about to permanently delete the account "%name%". This action cannot be undone.</source>
+                <target>Je staat op het punt account "%name%" permanent te verwijderen. Deze actie kan niet ongedaan worden gemaakt.</target>
+            </trans-unit>
+            <trans-unit id="55">
+                <source>You cannot delete your own account.</source>
+                <target>Je kunt je eigen account niet verwijderen.</target>
+            </trans-unit>
+            <trans-unit id="56">
+                <source>The account %s has been permanently deleted</source>
+                <target>Het account %s is permanent verwijderd</target>
+            </trans-unit>
+            <trans-unit id="57">
+                <source>The user %s is enabled</source>
+                <target>De gebruiker %s is geactiveerd</target>
+            </trans-unit>
+            <trans-unit id="58">
+                <source>The user %s is already enabled</source>
+                <target>De gebruiker %s is al geactiveerd</target>
+            </trans-unit>
+            <trans-unit id="59">
+                <source>Disable login</source>
+                <target>Gebruiker mag niet inloggen</target>
+            </trans-unit>
+            <trans-unit id="60">
+                <source>Assign group</source>
+                <target>Groep toewijzen</target>
+            </trans-unit>
+            <trans-unit id="61">
+                <source>Change scope</source>
+                <target>Scope wijzigen</target>
+            </trans-unit>
+            <trans-unit id="62">
+                <source>Bulk action</source>
+                <target>Bulkactie</target>
+            </trans-unit>
+            <trans-unit id="63">
+                <source>Action</source>
+                <target>Actie</target>
+            </trans-unit>
+            <trans-unit id="64">
+                <source>Apply</source>
+                <target>Toepassen</target>
+            </trans-unit>
+            <trans-unit id="65">
+                <source>selected</source>
+                <target>geselecteerd</target>
+            </trans-unit>
+            <trans-unit id="66">
+                <source>Select group</source>
+                <target>Selecteer groep</target>
+            </trans-unit>
+            <trans-unit id="67">
+                <source>Select scope</source>
+                <target>Selecteer scope</target>
+            </trans-unit>
+            <trans-unit id="68">
+                <source>New user</source>
+                <target>Nieuwe gebruiker</target>
+            </trans-unit>
+            <trans-unit id="69">
+                <source>Author linked</source>
+                <target>Auteur gekoppeld</target>
+            </trans-unit>
+            <trans-unit id="70">
+                <source>Linked to author</source>
+                <target>Gekoppeld aan auteur</target>
+            </trans-unit>
+            <trans-unit id="71">
+                <source>Not linked</source>
+                <target>Niet gekoppeld</target>
             </trans-unit>
         </body>
     </file>

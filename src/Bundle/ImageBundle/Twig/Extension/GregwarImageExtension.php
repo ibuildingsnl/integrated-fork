@@ -51,7 +51,7 @@ class GregwarImageExtension extends AbstractExtension
     {
         $directory = $this->webDir.'/';
 
-        return $this->imageHandling->open($directory.$path);
+        return $this->safeOpen($directory.$path);
     }
 
     /**
@@ -61,7 +61,7 @@ class GregwarImageExtension extends AbstractExtension
      */
     public function image($path)
     {
-        return $this->imageHandling->open($path);
+        return $this->safeOpen($path);
     }
 
     /**
@@ -78,5 +78,14 @@ class GregwarImageExtension extends AbstractExtension
     public function getName()
     {
         return 'image';
+    }
+
+    private function safeOpen(string $path)
+    {
+        try {
+            return $this->imageHandling->open($path);
+        } catch (\Throwable $e) {
+            return $this->imageHandling->open('bundles/integratedintegrated/images/fallbacks/fallback.jpg');
+        }
     }
 }

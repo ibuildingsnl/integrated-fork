@@ -59,6 +59,10 @@
             <argument type="service" id="integrated_user.user.manager" />
             <argument type="service" id="integrated_user.provider.filter_query" />
             <argument type="service" id="knp_paginator" />
+            <argument type="service" id="monolog.logger" />
+            <argument type="service" id="integrated_user.group.manager" />
+            <argument type="service" id="integrated_user.scope.manager" />
+            <argument type="service" id="Integrated\Bundle\UserBundle\Service\BulkUserActionService" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />

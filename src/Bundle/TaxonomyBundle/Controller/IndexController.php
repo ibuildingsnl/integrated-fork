@@ -90,6 +90,11 @@ final class IndexController extends AbstractController
 
         $filter = $request->get('filter', 'root');
         $page = $request->query->getInt('page', 1);
+        $limit = 50;
+        $totalItems = $this->indexer->countFor(
+            $contentType->getId(),
+            $filter,
+        );
 
         return $this->render('@IntegratedTaxonomy/index/index.html.twig', [
             'form' => $form,
@@ -98,14 +103,14 @@ final class IndexController extends AbstractController
             'content_type' => $contentType,
             'index' => $this->paginator->paginate(
                 new CallbackPagination(
-                    fn () => $this->taxonomies->count($contentType->getId()),
+                    fn () => $totalItems,
                     fn ($offset, $limit) => $this->indexer->overviewFor(
                         $contentType->getId(),
                         new TaxonomyOptions($filter, $offset, $limit),
                     ),
                 ),
                 $page,
-                50,
+                $limit,
             ),
         ]);
     }

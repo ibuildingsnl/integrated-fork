@@ -32,6 +32,15 @@
          * @type object|null
          */
         var $blockTarget = null;
+        var $lastBlockAddTrigger = null;
+        var blockSelectorPanel = null;
+        var blockSelectorOpenClass = 'integrated-block-selector-open';
+        var $columnLayoutTarget = null;
+        var $columnLayoutInsertBefore = null;
+        var COLUMN_GRID_UNITS = 12;
+        var historyPast = [];
+        var historyFuture = [];
+        var historyLimit = 40;
 
         /**
          * @param Element $element
@@ -57,6 +66,10 @@
          * @param element  $before
          */
         var addBlock = function(blockId, $before) {
+            if (!$before || !$before.parentNode) {
+                return;
+            }
+
             var element = document.createElement('div');
 
             element.dataset.id = blockId;
@@ -68,13 +81,91 @@
             refreshBlock(element);
         };
 
+        var ensureRootColumnButtons = function($grid) {
+            if (!$grid) {
+                return null;
+            }
+
+            var $buttons = null;
+            for (var i = 0; i < $grid.children.length; i++) {
+                var child = $grid.children[i];
+                if (child.classList && child.classList.contains('integrated-column-buttons')) {
+                    $buttons = child;
+                    break;
+                }
+            }
+            if ($buttons) {
+                return $buttons;
+            }
+
+            $buttons = createColumnButtons();
+            $grid.appendChild($buttons);
+
+            return $buttons;
+        };
+
+        var resolveBlockInsertTarget = function($trigger) {
+            if (!$trigger) {
+                return null;
+            }
+
+            var $blockButtons = $trigger.closest('.integrated-block-buttons');
+            if ($blockButtons) {
+                return $blockButtons;
+            }
+
+            var $column = $trigger.closest('[data-block-type="column"]');
+            if ($column) {
+                var $columnButtons = null;
+                for (var i = 0; i < $column.children.length; i++) {
+                    var child = $column.children[i];
+                    if (child.classList && child.classList.contains('integrated-column-buttons')) {
+                        $columnButtons = child;
+                        break;
+                    }
+                }
+                if ($columnButtons) {
+                    return $columnButtons;
+                }
+
+                $columnButtons = createColumnButtons();
+                $column.appendChild($columnButtons);
+
+                return $columnButtons;
+            }
+
+            var $grid = $trigger.closest('.integrated-website-grid');
+            if ($grid) {
+                return ensureRootColumnButtons($grid);
+            }
+
+            if ($trigger.parentNode) {
+                return $trigger.parentNode;
+            }
+
+            return null;
+        };
+
+        var createElementFromHTML = function(html) {
+            var wrapper = document.createElement('div');
+            wrapper.innerHTML = html.trim();
+            return wrapper.firstChild;
+        };
+
+
         /**
          * @param element $block
          */
         var refreshBlock = function($block, buttons = true) {
             fetch(
-                '{{ path('integrated_block_block_show', {'id': 'block-id'}) }}'.replace('block-id', $block.dataset.id)).
-                then(response => response.json()).
+                '{{ path('integrated_block_block_show', {'id': 'block-id'}) }}'.replace('block-id', encodeURIComponent($block.dataset.id))).
+                then(response => {
+                    if (!response.ok) {
+                        throw new Error('Unable to load block preview');
+                    }
+
+                    return response.json();
+                }).
                 then(data => {
                     $block.innerHTML = data.html;
 
@@ -89,6 +180,11 @@
                     if (buttons) {
                         $block.prepend(createBlockButtons(), $block.firstChild);
                     }
+
+                    rememberState();
+                }).
+                catch(function() {
+                    $block.innerHTML = '<div class="integrated-menu-empty-action" style="padding:8px 12px">{% trans %}Unable to load block preview{% endtrans %}</div>';
                 });
 
         };
@@ -137,6 +233,130 @@
             return element;
         };
 
+        var normalizeColumnSizes = function(sizes) {
+            var normalized = sizes
+                .map(size => parseInt(size, 10))
+                .filter(size => Number.isInteger(size) && size > 0);
+
+            if (!normalized.length) {
+                return [COLUMN_GRID_UNITS];
+            }
+
+            var sum = normalized.reduce((total, size) => total + size, 0);
+
+            if (sum !== COLUMN_GRID_UNITS) {
+                return null;
+            }
+
+            return normalized;
+        };
+
+        var getRowColumnSizes = function($row) {
+            return Array.from($row.querySelectorAll(':scope > [data-block-type="column"]'))
+                .map(column => parseInt(column.dataset.size, 10))
+                .filter(size => Number.isInteger(size) && size > 0);
+        };
+
+        var buildEvenSizes = function(count) {
+            var parsedCount = parseInt(count, 10);
+            if (!Number.isInteger(parsedCount) || parsedCount < 1 || parsedCount > COLUMN_GRID_UNITS) {
+                return [COLUMN_GRID_UNITS];
+            }
+
+            var base = Math.floor(COLUMN_GRID_UNITS / parsedCount);
+            var remainder = COLUMN_GRID_UNITS % parsedCount;
+            var sizes = [];
+
+            for (var i = 0; i < parsedCount; i++) {
+                sizes.push(base + (i < remainder ? 1 : 0));
+            }
+
+            return sizes;
+        };
+
+        var renderColumnInputs = function(sizes) {
+            return sizes.map((size, index) => '' +
+                '<label class="integrated-column-layout-field">' +
+                '  <span>{% trans %}Column{% endtrans %} ' + (index + 1) + '</span>' +
+                '  <input type="number" min="1" max="' + COLUMN_GRID_UNITS + '" value="' + size + '" data-role="column-size" class="integrated-form-control">' +
+                '</label>').join('');
+        };
+
+        var renderPresetVisual = function(layout) {
+            var widths = layout.split('-').map(part => parseInt(part, 10)).filter(width => Number.isInteger(width) && width > 0);
+
+            return widths.map(width => '' +
+                '<span class="integrated-column-layout-preset-segment" style="width:' + ((width / COLUMN_GRID_UNITS) * 100) + '%"></span>'
+            ).join('');
+        };
+
+        var renderPresetButton = function(layout, label, selectedLayout) {
+            return '' +
+                '<button type="button" class="integrated-column-layout-preset' + (layout === selectedLayout ? ' is-selected' : '') + '" data-role="layout-preset" data-layout="' + layout + '">' +
+                '  <span class="integrated-column-layout-preset-visual">' + renderPresetVisual(layout) + '</span>' +
+                '  <span class="integrated-column-layout-preset-label">' + label + '</span>' +
+                '</button>';
+        };
+
+        var renderColumnLayoutModal = function(mode, sizes) {
+            var normalizedSizes = sizes && sizes.length ? sizes : [COLUMN_GRID_UNITS];
+            var selectedLayout = normalizedSizes.join('-');
+            var title = mode === 'add' ? '{% trans %}Add columns{% endtrans %}' : '{% trans %}Configure columns{% endtrans %}';
+
+            return '' +
+                '<div class="integrated-column-layout-modal">' +
+                '  <h3 class="integrated-column-layout-title">{% trans %}Select your structure{% endtrans %}</h3>' +
+                '  <p class="integrated-column-layout-help">{% trans %}Choose a layout preset. You can fine-tune widths manually below. Total must be 12.{% endtrans %}</p>' +
+                '  <div class="integrated-column-layout-presets">' +
+                renderPresetButton('12', '1/1', selectedLayout) +
+                renderPresetButton('6-6', '1/2 + 1/2', selectedLayout) +
+                renderPresetButton('4-4-4', '1/3 + 1/3 + 1/3', selectedLayout) +
+                renderPresetButton('3-3-3-3', '1/4 + 1/4 + 1/4 + 1/4', selectedLayout) +
+                renderPresetButton('8-4', '2/3 + 1/3', selectedLayout) +
+                renderPresetButton('4-8', '1/3 + 2/3', selectedLayout) +
+                renderPresetButton('3-6-3', '1/4 + 1/2 + 1/4', selectedLayout) +
+                '  </div>' +
+                '  <form id="integrated-column-layout-form" class="integrated-column-layout-form" data-mode="' + mode + '">' +
+                '    <div class="integrated-column-layout-manual">' +
+                '      <label class="integrated-column-layout-count">' +
+                '        <span>{% trans %}Number of columns{% endtrans %}</span>' +
+                '        <input type="number" min="1" max="' + COLUMN_GRID_UNITS + '" value="' + normalizedSizes.length + '" data-role="column-count" class="integrated-form-control">' +
+                '      </label>' +
+                '    </div>' +
+                '    <div id="integrated-column-layout-fields" class="integrated-column-layout-fields">' + renderColumnInputs(normalizedSizes) + '</div>' +
+                '    <p class="integrated-column-layout-total">{% trans %}Total{% endtrans %}: <strong data-role="column-total">' + normalizedSizes.reduce((sum, value) => sum + value, 0) + '</strong>/12</p>' +
+                '    <div class="integrated-column-layout-actions">' +
+                '      <button type="submit" class="btn btn-green"><span>' + title + '</span></button>' +
+                '      <button type="button" class="btn btn-white" data-action="integrated-column-layout-cancel"><span>{% trans %}Cancel{% endtrans %}</span></button>' +
+                '    </div>' +
+                '  </form>' +
+                '</div>';
+        };
+
+        var readColumnSizesFromForm = function($form) {
+            return Array.from($form.querySelectorAll('[data-role="column-size"]'))
+                .map(input => parseInt(input.value, 10))
+                .filter(size => Number.isInteger(size) && size > 0);
+        };
+
+        var syncColumnLayoutTotal = function($form) {
+            var total = readColumnSizesFromForm($form).reduce((sum, size) => sum + size, 0);
+            var $total = $form.querySelector('[data-role="column-total"]');
+            if ($total) {
+                $total.textContent = total;
+            }
+        };
+
+        var openColumnLayoutModal = function(mode, sizes, $targetRow, $insertBefore) {
+            $columnLayoutTarget = $targetRow || null;
+            $columnLayoutInsertBefore = $insertBefore || null;
+            openBlockSelectorPanel(renderColumnLayoutModal(mode, sizes), {
+                eyebrow: '{% trans %}Layout builder{% endtrans %}',
+                title: mode === 'add' ? '{% trans %}Add columns{% endtrans %}' : '{% trans %}Configure columns{% endtrans %}',
+                context: '{% trans %}Choose a structure and fine-tune widths{% endtrans %}',
+            });
+        };
+
         /**
          * @return Element
          */
@@ -144,6 +364,9 @@
             var element = document.createElement('div');
             element.classList.add('integrated-row-buttons');
             element.innerHTML = '' +
+                '<span class="integrated-block-button integrated-drag-handle" title="{% trans %}Drag row{% endtrans %}">' +
+                '  <i class="iconoir-drag-hand-gesture"></i>' +
+                '</span>' +
                 '<a href="javascript:;" class="integrated-block-button integrated-website-block-column-add" data-action="integrated-website-block-add" title="{% trans %}Add block{% endtrans %}">' +
                 '  <i class="iconoir-plus"></i>' +
                 '</a>' +
@@ -184,6 +407,9 @@
             var element = document.createElement('div');
             element.classList.add('integrated-block-buttons');
             element.innerHTML =
+                '<span class="integrated-block-button integrated-drag-handle" title="{% trans %}Drag block{% endtrans %}">' +
+                '  <i class="iconoir-drag-hand-gesture"></i>' +
+                '</span>' +
                 '<a href="javascript:;" class="integrated-block-button" data-action="integrated-website-block-add" title="{% trans %}Add{% endtrans %}">' +
                 '  <i class="iconoir-plus"></i>' +
                 '</a>' +
@@ -199,30 +425,100 @@
             return element;
         };
 
-        var showLoader = function() {
-            let element = document.createElement('div');
+        var getGridRoots = function() {
+            return Array.from(document.querySelectorAll('.integrated-website-grid'));
+        };
 
-            element.innerHTML = '<div id="integrated-loader"><div id="integrated-loader-spinner"></div></div>';
-            document.querySelector('body').insertAdjacentElement('afterend', element);
+        var serializeGridState = function() {
+            return JSON.stringify(getGridRoots().map(item => item.innerHTML));
+        };
+
+        var restoreGridState = function(serializedState) {
+            var state = JSON.parse(serializedState);
+            var roots = getGridRoots();
+
+            roots.forEach((root, index) => {
+                root.innerHTML = state[index] || '';
+            });
+
+            document.querySelectorAll('.integrated-website-droppable').forEach(item => {
+                initSortable(item);
+            });
+        };
+
+        var rememberState = function() {
+            var state = serializeGridState();
+            if (historyPast.length && historyPast[historyPast.length - 1] === state) {
+                return;
+            }
+
+            historyPast.push(state);
+            if (historyPast.length > historyLimit) {
+                historyPast.shift();
+            }
+
+            historyFuture = [];
+        };
+
+        var undoState = function() {
+            if (historyPast.length < 2) {
+                return;
+            }
+
+            var current = historyPast.pop();
+            historyFuture.push(current);
+            restoreGridState(historyPast[historyPast.length - 1]);
+        };
+
+        var redoState = function() {
+            if (!historyFuture.length) {
+                return;
+            }
+
+            var state = historyFuture.pop();
+            historyPast.push(state);
+            restoreGridState(state);
+        };
+
+        var showLoader = function() {
+            if (document.querySelector('#integrated-loader')) {
+                return;
+            }
+
+            let element = document.createElement('div');
+            element.id = 'integrated-loader';
+            element.innerHTML = '<div id="integrated-loader-spinner"></div>';
+            document.body.appendChild(element);
         };
 
         var hideLoader = function() {
             let element = document.querySelector('#integrated-loader');
-
-            element.parentNode.removeChild(element);
+            if (element && element.parentNode) {
+                element.parentNode.removeChild(element);
+            }
         };
 
         var addBlockModalTemplateHTML = function(data) {
+            data = data || {};
+            data.loading = !!data.loading;
+            data.filters = data.filters || {};
+            data.filters.type = Array.isArray(data.filters.type) ? data.filters.type : [];
+            data.filters.channels = Array.isArray(data.filters.channels) ? data.filters.channels : [];
+            data.blocks = Array.isArray(data.blocks) ? data.blocks : [];
+            data.pagination = data.pagination || {};
+            data.pagination.pageCount = Number.isInteger(data.pagination.pageCount) ? data.pagination.pageCount : 0;
+            data.pagination.pages = data.pagination.pages || {};
+            data.type = data.type || '';
+            data.q = data.q || '';
+            data.channel = data.channel || '';
+
             var output = `<div class="integrated-block-filters">
-                   <div id="add_block_filters" class="integrated-control-row">
-                       <form id="add_block_filters_form" action="{{ path('integrated_block_block_index', { '_format': 'json', 'limit': 10}) }}">
-                        <div class="options">
-                           <ul class="">
-                               <li class="dropdown">
-                                   <a class="integrated-button integrated-button-dropdown btn btn-select" data-integrated-dropdown="integrated-createblock-dropdown" role="button"><span>{% trans %}Create block{% endtrans %}</span>
-                                       <i class="iconoir-plus"></i>\n
-                                   </a>\n
-                                   <ul class="integrated-website-toolbar-dropdown integrated-block-filter" id="integrated-createblock-dropdown">\n
+                   <div class="integrated-block-workspace-actions">
+                       <ul>
+                           <li class="dropdown">
+                               <a href="#" data-toggle="dropdown" class="integrated-button integrated-button-dropdown btn btn-green" role="button"><i class="iconoir-plus"></i><span>{% trans %}Create block{% endtrans %}</span>\n
+                               </a>\n
+                               <ul class="integrated-website-toolbar-dropdown integrated-block-filter" id="integrated-createblock-dropdown">\n
                                             {% for metadata in integrated_find_block_types() %}
                                                 {% if 'InlineTextBlock' not in metadata.class %}
                                                                <li role="presentation">\n
@@ -230,8 +526,14 @@
                                                                    </li>\n
                                                 {% endif %}
                                             {% endfor %}
-                                        </ul>\n
-                               </li>\n
+                               </ul>\n
+                           </li>\n
+                       </ul>\n
+                   </div>\n
+                   <div id="add_block_filters" class="integrated-control-row">
+                       <form id="add_block_filters_form" action="{{ path('integrated_block_block_index', { '_format': 'json', 'limit': 10}) }}">
+                        <div class="options integrated-block-filter-row">
+                           <ul class="">
                                <li class="">\n
                                    <select class="integrated-form-control integrated-block-filter btn btn-select" name="integrated_block_filter[type][]" id="integrated_block_filter_type">\n
                                        <option value="">{% trans %}Filter type{% endtrans %}</option>\n
@@ -255,21 +557,25 @@
                     ''}>${channel.label}</option>`).join('')}
                                         </select>\n
                                     </li>\n
-                               </li>\n
                            </ul>\n
                         </div>\n
                         </form>\n
                         </div>\n
                         <div id="add_block_results">\n
-                           ${data.blocks.map(
-                block => `<div class="integrated-card" data-action="integrated-website-block-choose" data-id="${block.id}">
-                                    <p><b>${block.title}</b></p>
-                                    <p>${block.type}</p>
+                           ${data.loading
+                ? `<div class="integrated-block-results-loading"><span class="integrated-inline-spinner"></span><span>{% trans %}Loading blocks...{% endtrans %}</span></div>`
+                : data.blocks.map(
+                block => `<div class="integrated-card integrated-block-result-card" data-action="integrated-website-block-choose" data-id="${block.id}">
+                                    <p class="integrated-block-result-title"><b>${block.title}</b></p>
+                                    <p class="integrated-block-result-meta">
+                                        <span class="integrated-block-result-type">${block.type}</span>
+                                        <span class="integrated-block-result-id">#${block.id}</span>
+                                    </p>
                                 </div>`).join('')}
                         </div>\n
                         <div>`;
 
-            if (data.blocks.length == 0) {
+            if (!data.loading && data.blocks.length == 0) {
                 output = output + '{% trans %}No blocks found with this search query{% endtrans %}\n';
             }
 
@@ -310,6 +616,60 @@
             return output;
         };
 
+        var closeBlockSelectorPanel = function() {
+            if (blockSelectorPanel && blockSelectorPanel.parentNode) {
+                blockSelectorPanel.parentNode.removeChild(blockSelectorPanel);
+            }
+
+            blockSelectorPanel = null;
+            document.body.classList.remove(blockSelectorOpenClass);
+        };
+
+        var openBlockSelectorPanel = function(contentHtml, options) {
+            options = options || {};
+            closeBlockSelectorPanel();
+
+            var eyebrow = options.eyebrow || '{% trans %}Block builder{% endtrans %}';
+            var title = options.title || '{% trans %}Add block{% endtrans %}';
+            var context = typeof options.context === 'string' ? options.context :
+                '{% trans %}Choose an existing block or create a new one{% endtrans %}';
+            var panelClass = options.panelClass ? ' ' + options.panelClass : '';
+            var contextHtml = context ? '<p class="integrated-block-selector-context">' + context + '</p>' : '';
+
+            blockSelectorPanel = createElementFromHTML(
+                '<div class="integrated-block-selector">' +
+                    '<div class="integrated-block-selector-overlay" data-action="integrated-block-selector-close"></div>' +
+                    '<aside class="integrated-block-selector-panel' + panelClass + '" aria-live="polite">' +
+                        '<div class="integrated-block-selector-header">' +
+                            '<div>' +
+                                '<div class="integrated-block-selector-eyebrow">' + eyebrow + '</div>' +
+                                '<h3 class="integrated-block-selector-title">' + title + '</h3>' +
+                                contextHtml +
+                            '</div>' +
+                            '<button type="button" class="integrated-block-selector-close" data-action="integrated-block-selector-close" aria-label="{% trans %}Close{% endtrans %}"><i class="iconoir-xmark"></i></button>' +
+                        '</div>' +
+                        '<div class="integrated-block-selector-body">' + contentHtml + '</div>' +
+                    '</aside>' +
+                '</div>'
+            );
+
+            document.body.appendChild(blockSelectorPanel);
+            document.body.classList.add(blockSelectorOpenClass);
+        };
+
+        var updateBlockSelectorPanelContent = function(contentHtml) {
+            if (!blockSelectorPanel) {
+                return;
+            }
+
+            var body = blockSelectorPanel.querySelector('.integrated-block-selector-body');
+            if (!body) {
+                return;
+            }
+
+            body.innerHTML = contentHtml;
+        };
+
         /**
          * Init grid buttons on page load
          */
@@ -325,6 +685,8 @@
             document.querySelectorAll('.integrated-website-droppable').forEach(item =>
                 initSortable(item),
             );
+
+            rememberState();
         }
 
         if (document.readyState != 'loading') {
@@ -406,12 +768,35 @@
 
             e.preventDefault();
 
-            showLoader();
-
-            $blockTarget = element.parentNode;
-            if (element.classList.contains('integrated-website-block-column-add')) {
-                $blockTarget = $blockTarget.parentNode;
+            $lastBlockAddTrigger = element;
+            try {
+                $blockTarget = resolveBlockInsertTarget(element);
+            } catch (err) {
+                $blockTarget = null;
             }
+
+            if (!$blockTarget) {
+                $blockTarget = element.parentNode;
+                if (element.classList.contains('integrated-website-block-column-add') && $blockTarget) {
+                    $blockTarget = $blockTarget.parentNode;
+                }
+            }
+
+            openBlockSelectorPanel(addBlockModalTemplateHTML({
+                loading: true,
+                blocks: [],
+                filters: {
+                    type: [],
+                    channels: [],
+                },
+                pagination: {
+                    pageCount: 0,
+                    pages: {},
+                },
+                type: '',
+                q: '',
+                channel: '',
+            }));
 
             fetch('{{ path('integrated_block_block_index', { '_format': 'json', 'limit': 10}) }}').
                 then(response => response.json()).
@@ -421,9 +806,14 @@
                     data.q = '';
                     data.channel = '';
 
-                    Integrated.showModal('{% trans %}Add block{% endtrans %}', addBlockModalTemplateHTML(data));
-
-                    hideLoader();
+                    updateBlockSelectorPanelContent(addBlockModalTemplateHTML(data));
+                }).
+                catch(() => {
+                    updateBlockSelectorPanelContent(
+                        '<div class="integrated-block-filters">' +
+                            '<div class="integrated-menu-empty-action" style="padding:16px">{% trans %}Unable to load blocks. Please try again.{% endtrans %}</div>' +
+                        '</div>'
+                    );
                 });
         });
 
@@ -445,7 +835,7 @@
             var blockId = editElement.dataset.id;
             var url = '{{ path('integrated_block_block_edit', {'id': 'block-id', '_format':'iframe.html'}) }}'.replace(
                 'block-id', blockId);
-            createIframe(url, 'Edit block');
+            createBlockEditor(url, '{% trans %}Edit block{% endtrans %}');
         });
 
         /**
@@ -462,6 +852,7 @@
             if (confirm('Are you sure?')) {
                 removeElement = element.parentNode.parentNode;
                 removeElement.parentNode.removeChild(removeElement);
+                rememberState();
             }
         });
 
@@ -479,6 +870,7 @@
             if (confirm('Are you sure?')) {
                 removeElement = element.parentNode.parentNode;
                 removeElement.parentNode.removeChild(removeElement);
+                rememberState();
             }
         });
 
@@ -491,9 +883,17 @@
                 return;
             }
 
+            if (!$blockTarget) {
+                $blockTarget = resolveBlockInsertTarget($lastBlockAddTrigger);
+            }
+
+            if (!$blockTarget) {
+                return;
+            }
+
             addBlock(element.dataset.id, $blockTarget);
 
-            Integrated.hideModal();
+            closeBlockSelectorPanel();
         });
 
         /**
@@ -507,8 +907,58 @@
 
             e.preventDefault();
 
-            Integrated.hideModal();
-            createIframe(e.target.getAttribute('href'), 'Add block');
+            closeBlockSelectorPanel();
+            createBlockEditor(element.getAttribute('href'), '{% trans %}Add block{% endtrans %}');
+        });
+
+        document.body.addEventListener('click', function(e) {
+            element = e.target.closest('[data-action="integrated-block-selector-close"]');
+            if (!element) {
+                return;
+            }
+
+            e.preventDefault();
+            closeBlockSelectorPanel();
+        });
+
+        document.body.addEventListener('click', function(e) {
+            if (!blockSelectorPanel) {
+                return;
+            }
+
+            element = e.target.closest('.integrated-block-selector [data-toggle="dropdown"]');
+            if (!element) {
+                var clickedInsideDropdown = e.target.closest(
+                    '.integrated-block-selector .integrated-block-workspace-actions .dropdown');
+                if (!clickedInsideDropdown) {
+                    blockSelectorPanel.querySelectorAll('.integrated-block-workspace-actions .dropdown.open').forEach(function(
+                        node) {
+                        node.classList.remove('open');
+                    });
+                }
+                return;
+            }
+
+            e.preventDefault();
+
+            var dropdown = element.closest('.dropdown');
+            if (!dropdown) {
+                return;
+            }
+
+            var shouldOpen = !dropdown.classList.contains('open');
+            blockSelectorPanel.querySelectorAll('.integrated-block-workspace-actions .dropdown.open').forEach(function(node) {
+                node.classList.remove('open');
+            });
+            dropdown.classList.toggle('open', shouldOpen);
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key !== 'Escape' || !blockSelectorPanel) {
+                return;
+            }
+
+            closeBlockSelectorPanel();
         });
 
         /**
@@ -521,43 +971,7 @@
             }
 
             e.preventDefault();
-
-            var total = parseInt(prompt('How many columns do you want?'));
-
-            if (total > 12) {
-                alert('A maxiumum of 12 columns is supported');
-                return;
-            }
-
-            if (total > 0) {
-                var $row = createRow();
-                var doneSize = 0;
-
-                for (var i = 0; i < total; i++) {
-                    var size = parseInt(
-                        prompt('Size of column ' + (i + 1) + '? (' + (12 - doneSize) + ' or 12 available)'));
-
-                    if (size < 1) {
-                        alert('Size must be at least one');
-
-                        return;
-                    }
-
-                    if (size > (12 - doneSize)) {
-                        alert('Size must be at most ' + (12 - doneSize));
-
-                        return;
-                    }
-
-                    doneSize = doneSize + size;
-
-                    $row.append(createColumn(size));
-                }
-
-                $row.append(createRowButtons());
-
-                element.parentNode.insertAdjacentElement('beforebegin', $row);
-            }
+            openColumnLayoutModal('add', [COLUMN_GRID_UNITS], null, element.parentNode);
         });
 
         /**
@@ -572,43 +986,115 @@
             e.preventDefault();
 
             var $row = element.parentNode.parentNode;
-            var $oldColumns = $row.querySelectorAll(':scope > [data-block-type="column"]');
-            //TODO: Decide how to define the framework we use for css, Maybe define it in a config, output it in body class so we can pick it up in JS?.
+            var sizes = getRowColumnSizes($row);
+            openColumnLayoutModal('config', sizes, $row, null);
+        });
 
-            var total = parseInt(prompt('How many columns do you want?', $oldColumns.length));
-
-            if (total > 12) {
-                alert('A maxiumum of 12 columns is supported');
+        document.body.addEventListener('click', function(e) {
+            element = e.target.closest('[data-role="layout-preset"]');
+            if (!element) {
                 return;
             }
 
-            if (total > 0) {
-                var doneSize = 0;
-                for (var i = 0; i < total; i++) {
-                    var oldSize = '';
+            e.preventDefault();
 
-                    if ($oldColumns[i]) {
-                        oldSize = $oldColumns[i].dataset.size;
-                    }
+            var $form = document.querySelector('#integrated-column-layout-form');
+            if (!$form) {
+                return;
+            }
 
-                    var size = parseInt(
-                        prompt('Size of column ' + (i + 1) + '? (' + (12 - doneSize) + ' or 12 available)', oldSize));
+            var sizes = element.dataset.layout.split('-').map(size => parseInt(size, 10));
+            $form.querySelector('[data-role="column-count"]').value = sizes.length;
+            $form.querySelector('#integrated-column-layout-fields').innerHTML = renderColumnInputs(sizes);
+            syncColumnLayoutTotal($form);
 
-                    if (size < 1) {
-                        alert('Size must be at least one');
+            $form.closest('.integrated-column-layout-modal')
+                .querySelectorAll('[data-role="layout-preset"]')
+                .forEach(function($preset) {
+                    $preset.classList.toggle('is-selected', $preset === element);
+                });
+        });
 
-                        return;
-                    }
+        document.body.addEventListener('change', function(e) {
+            var $count = e.target.closest('[data-role="column-count"]');
+            if (!$count) {
+                return;
+            }
 
-                    if (size > (12 - doneSize)) {
-                        alert('Size must be at most ' + (12 - doneSize));
+            var $form = $count.closest('#integrated-column-layout-form');
+            if (!$form) {
+                return;
+            }
 
-                        return;
-                    }
+            var sizes = buildEvenSizes($count.value);
+            $form.querySelector('#integrated-column-layout-fields').innerHTML = renderColumnInputs(sizes);
+            syncColumnLayoutTotal($form);
 
-                    doneSize = doneSize + size;
+            $form.closest('.integrated-column-layout-modal')
+                .querySelectorAll('[data-role="layout-preset"]')
+                .forEach(function($preset) {
+                    $preset.classList.remove('is-selected');
+                });
+        });
 
-                    let colClass = ' w-full';
+        document.body.addEventListener('input', function(e) {
+            var $size = e.target.closest('[data-role="column-size"]');
+            if (!$size) {
+                return;
+            }
+
+            var $form = $size.closest('#integrated-column-layout-form');
+            if ($form) {
+                syncColumnLayoutTotal($form);
+            }
+        });
+
+        document.body.addEventListener('click', function(e) {
+            element = e.target.closest('[data-action="integrated-column-layout-cancel"]');
+            if (!element) {
+                return;
+            }
+
+            e.preventDefault();
+            closeBlockSelectorPanel();
+            $columnLayoutTarget = null;
+            $columnLayoutInsertBefore = null;
+        });
+
+        document.body.addEventListener('submit', function(e) {
+            if (e.target.id !== 'integrated-column-layout-form') {
+                return;
+            }
+
+            e.preventDefault();
+
+            var $form = e.target;
+            var mode = $form.dataset.mode;
+            var sizes = normalizeColumnSizes(readColumnSizesFromForm($form));
+
+            if (!sizes) {
+                alert('{% trans %}Column sizes must add up to 12{% endtrans %}');
+                return;
+            }
+
+            if (mode === 'add') {
+                if (!$columnLayoutInsertBefore) {
+                    closeBlockSelectorPanel();
+                    return;
+                }
+
+                var $row = createRow();
+                sizes.forEach(size => $row.append(createColumn(size)));
+                $row.append(createRowButtons());
+                $columnLayoutInsertBefore.insertAdjacentElement('beforebegin', $row);
+            }
+
+            if (mode === 'config' && $columnLayoutTarget) {
+                var $oldColumns = $columnLayoutTarget.querySelectorAll(':scope > [data-block-type="column"]');
+
+                for (var i = 0; i < sizes.length; i++) {
+                    var size = sizes[i];
+                    var colClass = ' w-full';
 
                     if (typeof framework !== 'undefined' && (size !== 12 && framework === 'tailwind')) {
                         colClass = ' w-full md:w-' + size + '/12';
@@ -617,25 +1103,56 @@
                     }
 
                     if ($oldColumns[i]) {
-                        $oldColumns[i].setAttribute('class',
-                            'integrated-website-col integrated-website-droppable' + colClass);
+                        $oldColumns[i].setAttribute('class', 'integrated-website-col integrated-website-droppable' + colClass);
                         $oldColumns[i].dataset.size = size;
                     } else {
-                        $row.appendChild(createColumn(size));
+                        $columnLayoutTarget.appendChild(createColumn(size));
                     }
                 }
 
-                //if there were more columns, remove the last columns
                 while (typeof $oldColumns[i] !== 'undefined') {
                     $oldColumns[i].parentNode.removeChild($oldColumns[i]);
+                    i++;
                 }
-
-                $row.insertBefore($row.firstChild);
             }
 
-            if (total === 0) {
-                //no count, so remove entire row
-                $row.parentNode.removeChild($row);
+            closeBlockSelectorPanel();
+            $columnLayoutTarget = null;
+            $columnLayoutInsertBefore = null;
+            rememberState();
+        });
+
+        document.body.addEventListener('click', function(e) {
+            element = e.target.closest('[data-action="integrated-website-history-undo"]');
+            if (!element) {
+                return;
+            }
+
+            e.preventDefault();
+            undoState();
+        });
+
+        document.body.addEventListener('click', function(e) {
+            element = e.target.closest('[data-action="integrated-website-history-redo"]');
+            if (!element) {
+                return;
+            }
+
+            e.preventDefault();
+            redoState();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z') {
+                e.preventDefault();
+                undoState();
+                return;
+            }
+
+            if (((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'z') || ((e.ctrlKey || e.metaKey) &&
+                e.key.toLowerCase() === 'y')) {
+                e.preventDefault();
+                redoState();
             }
         });
 
@@ -674,7 +1191,7 @@
 
                 var url = '{{ path('integrated_block_block_edit', {'id': 'block-id', '_format':'iframe.html'}) }}'.replace(
                     'block-id', id);
-                createIframe(url, 'Edit block');
+                createBlockEditor(url, '{% trans %}Edit block{% endtrans %}');
             });
 
         });
@@ -690,8 +1207,6 @@
 
             e.preventDefault();
 
-            showLoader();
-
             $blockTarget = element.parentNode;
             if (element.classList.contains('integrated-website-block-column-add')) {
                 $blockTarget = $blockTarget.parentNode;
@@ -699,43 +1214,32 @@
 
             var pageId = document.querySelector('[data-action="integrated-website-page-save"]').dataset.id;
 
-            createIframe(
-                '{{ path('integrated_block_inline_text_block_new', {'id': 'page-id'}) }}'.replace('page-id', pageId),
+            createBlockEditor(
+                '{{ path('integrated_block_inline_text_block_new', {'id': 'page-id', '_format':'iframe.html'}) }}'.replace('page-id', pageId),
                 '{% trans %}New block{% endtrans %}');
-
-            hideLoader();
         });
 
         /**
-         * @param url
-         * @param title
+         * @param {string} url
+         * @param {string} title
          */
-        var createIframe = function(url, title) {
-            showLoader();
+        var createBlockEditor = function(url, title) {
+            var frameUrl = url.replace('/turbo.html', '/iframe.html');
 
-            let element = document.createElement('iframe');
-            element.classList.add('integrated-iframe');
-            element.setAttribute('src', url);
-            element.style.height = (window.innerHeight - 160) + 'px';
+            openBlockSelectorPanel(
+                '<div class="integrated-block-results-loading"><span class="integrated-inline-spinner"></span><span>{% trans %}Loading blocks...{% endtrans %}</span></div>',
+                {
+                eyebrow: '{% trans %}Block builder{% endtrans %}',
+                title: title,
+                context: '',
+                panelClass: 'integrated-block-selector-panel-iframe',
+            });
 
-            Integrated.showModal(title, element.outerHTML);
-
-            //handle cancel button in iframe
-            iframe = document.querySelector('.integrated-iframe');
-
-            iframe.onload = function() {
-                cancelButton = iframe.contentWindow.document.querySelector('#block_edit_actions_cancel');
-                if (!cancelButton) {
-                    return;
-                }
-
-                cancelButton.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    Integrated.hideModal();
-                });
-            };
-
-            hideLoader();
+            var frame = document.createElement('iframe');
+            frame.className = 'integrated-iframe';
+            frame.setAttribute('src', frameUrl);
+            frame.setAttribute('frameborder', '0');
+            updateBlockSelectorPanelContent(frame.outerHTML);
         };
 
         /**
@@ -748,17 +1252,21 @@
                 forceFallback: true,
                 scrollSpeed: 80,
                 draggable: '.integrated-website-sortable',
+                handle: '.integrated-drag-handle',
                 ghostClass: 'integrated-website-item-ghost',
-                filter: '.integrated-block-buttons',
+                filter: '.integrated-block-button:not(.integrated-drag-handle)',
                 dragClass: 'integrated-website-item-dragging',
+                onEnd: function() {
+                    rememberState();
+                },
             });
         };
 
         /**
-         * Handle block edit in iframe
+         * Handle block add/edit save callbacks.
          */
         document.addEventListener('block-added', function(e) {
-            Integrated.hideModal();
+            closeBlockSelectorPanel();
 
             if ($blockTarget) {
                 //new block inserted
@@ -770,6 +1278,10 @@
                     refreshBlock(item, true);
                 });
             }
+        }, false);
+
+        document.addEventListener('block-canceled', function() {
+            closeBlockSelectorPanel();
         }, false);
 
         /**
@@ -812,7 +1324,7 @@
         });
 
         function refreshBlockData(form) {
-            document.querySelector('#add_block_results').innerHTML = 'Loading blocks...';
+            document.querySelector('#add_block_results').innerHTML = '{% trans %}Loading blocks...{% endtrans %}';
 
             fetch(form.action, {
                 method: 'post',
@@ -829,6 +1341,21 @@
                 document.querySelector('#add_block_results').parentElement.outerHTML = addBlockModalTemplateHTML(data);
             });
         }
+
+        var blockFilterDebounce;
+        document.addEventListener('input', function(e) {
+            if (e.target.id !== 'integrated_block_filter_q') {
+                return;
+            }
+
+            window.clearTimeout(blockFilterDebounce);
+            blockFilterDebounce = window.setTimeout(function() {
+                var form = document.querySelector('#add_block_filters_form');
+                if (form) {
+                    refreshBlockData(form);
+                }
+            }, 220);
+        });
     }(window.Routing);
 
     var Integrated = Integrated || {};

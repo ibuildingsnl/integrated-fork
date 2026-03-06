@@ -1,12 +1,16 @@
+(() => {
 const formActions = document.querySelector('.form-actions-extra');
-
-const popup = document.querySelector('.publishActions')
-
+const popup = document.querySelector('.publishActions');
 const publishActions = Array.from(document.querySelectorAll('.global-publication-settings'))
 .map((e) => e.dataset.channelType)
 .filter((v, i, a) => a.indexOf(v) === i);
 
-if (publishActions.length > 0 && document.body.classList.contains('integrated_content_content_edit')) {
+if (
+    formActions &&
+    popup &&
+    publishActions.length > 0 &&
+    document.body.classList.contains('integrated_content_content_edit')
+) {
     // add top-bar menu item
     const publish = document.createElement('div');
     publish.className = 'publish';
@@ -176,6 +180,7 @@ if (publishActions.length > 0 && document.body.classList.contains('integrated_co
         }
     });
 }
+})();
 
 function triggerSelect2() {
     $('select.select2').each(function() {

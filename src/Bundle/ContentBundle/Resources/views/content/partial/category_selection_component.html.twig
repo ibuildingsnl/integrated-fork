@@ -3,9 +3,10 @@
     <div class="category_wrapper close-outside">
         <div class="hidden"></div>
 
+        {% set categories = taxonomyCategories[relation.vars.attr['data-relation']]|default([]) %}
         <div class="categories_tabs flex flex-wrap">
             {% set showAllTab = false %}
-            {% for category in taxonomyCategories[relation.vars.attr['data-relation']] %}
+            {% for category in categories %}
                 {% if category.depth == 0 and category.linkToChannel|length == 0 %}
                         {% set showAllTab = true %}
                 {% endif %}
@@ -20,7 +21,7 @@
                 </div>
             {% endif %}
 
-            {% for category in taxonomyCategories[relation.vars.attr['data-relation']] %}
+            {% for category in categories %}
                 {% if category.depth == 0 and category.linkToChannel|length > 0  %}
                     {% set linkedChannel = category.linkToChannel %}
                     <div class="category_tab"
@@ -40,7 +41,7 @@
         </div>
 
         <ul id="" class="categories_checkboxes categories_checkboxes_basic">
-            {% for category in taxonomyCategories[relation.vars.attr['data-relation']] %}
+            {% for category in categories %}
                 {% set className = '' %}
                 {% if category.depth == 0 and category.linkToChannel|length > 0 %}
                     {% set pill_title = category.title %}

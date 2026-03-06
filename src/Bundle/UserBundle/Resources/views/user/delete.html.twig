@@ -1,5 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
-{% block title %}{% trans %}Delete User{% endtrans %} {% endblock title %}
+{% block title %}{% trans %}Deactivate User{% endtrans %} {% endblock title %}
 
 {% block content %}
     <div class="flex flex-wrap edit-form">
@@ -12,11 +12,11 @@
         <div class="aside-options"></div>
         <div class="editor-wrapper">
             <div class="page-title">
-                <h1 class="heading">{% trans %}Delete{% endtrans %} {% trans %}user{% endtrans %}</h1>
+                <h1 class="heading">{% trans %}Deactivate{% endtrans %} {% trans %}user{% endtrans %}</h1>
             </div>
             <section class="editor editor-wrapped">
                 <p>
-                    {% trans with {'%name%':  user.username} %}You are about to delete the user "%name%", click the delete button below to confirm the action.{% endtrans %}
+                    {% trans with {'%name%':  user.username} %}You are about to deactivate the user "%name%", click the button below to confirm.{% endtrans %}
                 </p>
                 {{ form_rest(form, {'style':'horizontal'})}}
             </section>

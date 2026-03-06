@@ -35,6 +35,17 @@ class QueueProvider implements QueueProviderInterface
      */
     protected $platform;
 
+    private function quoteIdentifierCompat(string $identifier): string
+    {
+        return implode(
+            '.',
+            array_map(
+                fn (string $part): string => $this->platform->quoteSingleIdentifier($part),
+                explode('.', $identifier)
+            )
+        );
+    }
+
     public function __construct(Connection $connection, array $options)
     {
         $this->connection = $connection;
@@ -81,7 +92,7 @@ class QueueProvider implements QueueProviderInterface
 
         $query = \sprintf(
             $query,
-            $this->platform->quoteIdentifier($this->options['queue_table_name']),
+            $this->quoteIdentifierCompat($this->options['queue_table_name']),
             $where
         );
 
@@ -114,7 +125,7 @@ class QueueProvider implements QueueProviderInterface
         $query = 'SELECT COUNT(id) AS count FROM %s';
         $query = \sprintf(
             $query,
-            $this->platform->quoteIdentifier($this->options['queue_table_name'])
+            $this->quoteIdentifierCompat($this->options['queue_table_name'])
         );
 
         $where = [];

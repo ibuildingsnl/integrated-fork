@@ -47,6 +47,20 @@ class FilterQueryProvider
                 ->setParameter('q', '%'.$data['q'].'%');
         }
 
+        if (isset($data['has_relation']) && \is_array($data['has_relation'])) {
+            $selected = array_values(array_filter($data['has_relation'], static fn ($value) => $value === '0' || $value === '1'));
+
+            if (\count($selected) === 1) {
+                if ($selected[0] === '1') {
+                    $queryBuilder
+                        ->andWhere('User.relation IS NOT NULL')
+                        ->andWhere("User.relation <> ''");
+                } else {
+                    $queryBuilder->andWhere("(User.relation IS NULL OR User.relation = '')");
+                }
+            }
+        }
+
         return $queryBuilder->getQuery();
     }
 

@@ -27,6 +27,13 @@ final class TaxonomyViewer implements TaxonomyOverview
             $this->lister->overviewFor($contentType, $options);
     }
 
+    public function countFor(string $contentType, string $filter = 'root'): int
+    {
+        return $this->hasParents($contentType) ?
+            $this->indexer->countFor($contentType, $filter) :
+            $this->lister->countFor($contentType, $filter);
+    }
+
     private function hasParents(string $contentType): bool
     {
         return $this->types->getType($contentType)->hasField('parent_id');

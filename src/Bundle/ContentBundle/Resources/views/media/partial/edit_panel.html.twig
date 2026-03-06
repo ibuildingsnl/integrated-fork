@@ -2,8 +2,8 @@
     <div class="aside-item-wrapper" id="editimagewrapper" data-editImagePath="{{ path('integrated_content_media_edit_image', {'id': 'REPLACE'}) }}" data-editImageIframePath='{{ path('integrated_content_media_edit_image_iframe', {'id': 'REPLACE'}) }}'>
         <button class="close-media-edit-form">
             <i class="iconoir-xmark"></i></button>
-        <iframe id="editpaneliframe" src=""></iframe>
+        <turbo-frame id="media-edit-panel" data-media-id="" data-file=""></turbo-frame>
     </div>
 </div>
 
-<script src="{{ asset('bundles/integratedintegrated/edit_panel.js') }}"></script>
+<script src="{{ asset('bundles/integratedintegrated/edit_panel.js') }}" defer data-turbo-track="reload"></script>

@@ -3,7 +3,51 @@
 {% block title %}{% trans %}Show history{% endtrans %}{% endblock title %}
 {% block crumbs %}{% endblock %}
 
+{% macro render_history_value(value) %}
+    {% if value.type == 'empty' %}
+        <span class="history-value-empty">—</span>
+    {% elseif value.type == 'image' %}
+        <div class="history-value-image">
+            {% if value.href is defined and value.href %}
+                <a href="{{ value.href }}" target="_blank" rel="noopener noreferrer">
+                    <img src="{{ value.src }}" alt="{{ value.label|default('image') }}" loading="lazy">
+                </a>
+            {% else %}
+                <img src="{{ value.src }}" alt="{{ value.label|default('image') }}" loading="lazy">
+            {% endif %}
+            <p class="history-value-caption">
+                {% if value.href is defined and value.href %}
+                    <a href="{{ value.href }}" target="_blank" rel="noopener noreferrer">{{ value.label }}</a>
+                {% else %}
+                    {{ value.label }}
+                {% endif %}
+            </p>
+        </div>
+    {% elseif value.type == 'html' %}
+        <div class="history-value-html">{{ value.html|raw }}</div>
+    {% elseif value.type == 'paragraphs' %}
+        <div class="history-value-paragraphs">
+            {% for paragraph in value.paragraphs %}
+                <p>{{ paragraph }}</p>
+            {% endfor %}
+        </div>
+    {% elseif value.type == 'stack' %}
+        <div class="history-value-stack">
+            {% for item in value.items %}
+                <div class="history-value-stack-item">{{ _self.render_history_value(item) }}</div>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% if value.href is defined and value.href %}
+            <a href="{{ value.href }}" target="_blank" rel="noopener noreferrer">{{ value.text }}</a>
+        {% else %}
+            <span>{{ value.text }}</span>
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
 {% block content %}
+    {% import _self as history %}
     <div class="row flex flex-wrap">
         {% block toolbar %}
             <div id="toolbar" class="w-full flex justify-between">
@@ -21,55 +65,161 @@
                 <h1 class="heading">{% trans %}History{% endtrans %}</h1>
             </div>
             <section class="section-white section-padding section-radius">
-                <p>
-                    <b>{% trans %}Date{% endtrans %}:</b> {{ contentHistory.date|format_date }}<br/>
-                    <b>{% trans %}Action{% endtrans %}:</b> {{ contentHistory.action|trans }}<br/>
-                    <b>{% trans %}User{% endtrans %}
-                        :</b> {{ contentHistory.user.name|default('Unknown'|trans) }} {% if contentHistory.user.id is defined %}(#{{ contentHistory.user.id }}){% endif %}
-                    <br/>
-                    <b>{% trans %}Endpoint{% endtrans %}:</b> {{ contentHistory.request.endpoint }}<br/>
-                    <b>{% trans %}IP address{% endtrans %}:</b> {{ contentHistory.request.ipAddress }}
-                </p>
+                <div class="history-meta">
+                    <div class="history-meta-item">
+                        <span class="history-meta-label">{% trans %}Date{% endtrans %}</span>
+                        <span class="history-meta-value">{{ contentHistory.date|format_date }}</span>
+                    </div>
+                    <div class="history-meta-item">
+                        <span class="history-meta-label">{% trans %}Action{% endtrans %}</span>
+                        <span class="history-meta-value history-badge">{{ contentHistory.action|trans }}</span>
+                    </div>
+                    <div class="history-meta-item">
+                        <span class="history-meta-label">{% trans %}User{% endtrans %}</span>
+                        <span class="history-meta-value">{{ contentHistory.user.name|default('Unknown'|trans) }} {% if contentHistory.user.id is defined %}(#{{ contentHistory.user.id }}){% endif %}</span>
+                    </div>
+                </div>
+                <div class="history-view-options mb-4">
+                    {% set toggleParams = app.request.query.all|merge({'id': contentHistory.id, 'technical': showTechnical ? 0 : 1}) %}
+                    <a class="btn btn-select" href="{{ path('integrated_content_history_show', toggleParams) }}">
+                        {% if showTechnical %}
+                            {% trans %}Hide technical changes{% endtrans %}
+                        {% else %}
+                            {% trans %}Show technical changes{% endtrans %}
+                        {% endif %}
+                    </a>
+                    {% if not showTechnical and (hiddenRevisionRows > 0 or hiddenCompareRows > 0) %}
+                        <span class="history-meta-label ml-2">
+                            {% trans %}Hidden rows{% endtrans %}: {{ hiddenRevisionRows + hiddenCompareRows }}
+                        </span>
+                    {% endif %}
+                </div>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <details class="history-admin-details">
+                        <summary>{% trans %}Show technical request details{% endtrans %}</summary>
+                        <div class="history-admin-grid">
+                            <div>
+                                <span class="history-meta-label">{% trans %}Endpoint{% endtrans %}</span>
+                                <div class="history-meta-value history-code">{{ contentHistory.request.endpoint|default('—') }}</div>
+                            </div>
+                            <div>
+                                <span class="history-meta-label">{% trans %}IP address{% endtrans %}</span>
+                                <div class="history-meta-value">{{ contentHistory.request.ipAddress|default('—') }}</div>
+                            </div>
+                        </div>
+                    </details>
+                {% endif %}
+
+                {% if versions|length > 1 %}
+                    <div class="history-controls mt-4 mb-6">
+                        <h3 class="heading">{% trans %}Compare versions{% endtrans %}</h3>
+                        <p class="text-muted history-compare-meta">
+                            {% trans %}From{% endtrans %}:
+                            <b>#{{ fromIndex + 1 }}</b>
+                            ({{ versions[fromIndex].date }} · {{ versions[fromIndex].action|trans }})
+                            -
+                            {% trans %}To{% endtrans %}:
+                            <b>#{{ toIndex + 1 }}</b>
+                            ({{ versions[toIndex].date }} · {{ versions[toIndex].action|trans }})
+                        </p>
+
+                        <input
+                            id="history-compare-slider"
+                            type="range"
+                            min="1"
+                            max="{{ versions|length - 1 }}"
+                            value="{{ toIndex }}"
+                            step="1"
+                            class="w-full"
+                        />
+                        <div class="flex justify-between text-muted text-sm mt-1">
+                            <span>#1</span>
+                            <span>#{{ versions|length }}</span>
+                        </div>
+                    </div>
+
+                    <div class="history-compare">
+                        <div class="history-compare-header">
+                            <div class="history-compare-cell">{% trans %}Field{% endtrans %}</div>
+                            <div class="history-compare-cell">{% trans %}Old value{% endtrans %}</div>
+                            <div class="history-compare-cell">{% trans %}New value{% endtrans %}</div>
+                        </div>
+                        <div class="history-compare-body">
+                            {% for line in displayCompareChangeSet %}
+                                <div class="history-compare-row">
+                                    <div class="history-compare-cell history-compare-field">{{ line.displayName|default(line.name) }}</div>
+                                    <div class="history-compare-cell history-compare-old">
+                                        {{ history.render_history_value(line.oldDisplay) }}
+                                    </div>
+                                    <div class="history-compare-cell history-compare-new">
+                                        {{ history.render_history_value(line.newDisplay) }}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="history-compare-row">
+                                    <div class="history-compare-cell history-compare-empty">
+                                        {% trans %}No changes between these versions{% endtrans %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <hr/>
+                {% endif %}
 
                 {% set showOld = contentHistory.action in ['delete', 'update'] %}
                 {% set showNew = contentHistory.action in ['insert', 'update'] %}
 
-                <br/>
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>{% trans %}Field{% endtrans %}</th>
-                        {% if showOld %}
-                            <th>{% trans %}Old value{% endtrans %}</th>
-                        {% endif %}
-                        {% if showNew %}
-                            <th>{% trans %}New value{% endtrans %}</th>
-                        {% endif %}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for line in changeSet %}
+                <details class="history-raw">
+                    <summary>{% trans %}Show raw change set for this revision{% endtrans %}</summary>
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>{% trans %}Field{% endtrans %}</th>
+                            {% if showOld %}
+                                <th>{% trans %}Old value{% endtrans %}</th>
+                            {% endif %}
+                            {% if showNew %}
+                                <th>{% trans %}New value{% endtrans %}</th>
+                            {% endif %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for line in displayChangeSet %}
                         {% if changeSet is not null %}
-                            {% set isUpdate = contentHistory.action == 'update' %}
-
                             <tr>
-                                <td>{{ line.name }}</td>
+                                <td>{{ line.displayName|default(line.name) }}</td>
                                 {% if showOld %}
-                                    <td>
-                                        {{ line.old }}
-                                    </td>
+                                    <td>{{ history.render_history_value(line.oldDisplay) }}</td>
                                 {% endif %}
-                                {% if showNew %}
-                                    <td>
-                                        {{ line.new }}
-                                    </td>
-                                {% endif %}
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
-                    </tbody>
-                </table>
+                                    {% if showNew %}
+                                        <td>{{ history.render_history_value(line.newDisplay) }}</td>
+                                    {% endif %}
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </details>
             </section>
         </div>
     </div>
+
+    {% if versions|length > 1 %}
+        <script>
+            (function() {
+                var slider = document.getElementById('history-compare-slider');
+                if (!slider) return;
+                slider.addEventListener('change', function () {
+                    var toIndex = parseInt(slider.value, 10);
+                    var fromIndex = Math.max(toIndex - 1, 0);
+                    var url = new URL(window.location.href);
+                    url.searchParams.set('to', toIndex);
+                    url.searchParams.set('from', fromIndex);
+                    window.location.href = url.toString();
+                });
+            })();
+        </script>
+    {% endif %}
+
 {% endblock %}

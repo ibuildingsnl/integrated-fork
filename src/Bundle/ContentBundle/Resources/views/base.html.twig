@@ -16,10 +16,16 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
 
-    {% block style %}
-        <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/app.css') }}">
+        {% block style %}
+            <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/app.css') }}">
 
-        {{ integrated_stylesheets() }}
+            {{ integrated_stylesheets() }}
+
+        {% block head_javascript %}
+            <script src="{{ asset('bundles/integratedintegrated/app.js') }}" defer data-turbo-track="reload"></script>
+
+            {% block webpack_js %}{% endblock %}
+        {% endblock %}
 
         <script>
             var loadedScripts = [],
@@ -42,7 +48,7 @@
                 }
 
                 if (script.readyState) {  //IE
-                    script.onreadystatechange = function() {
+                    script.onreadystatechange = function () {
                         if (script.readyState == 'loaded' ||
                             script.readyState == 'complete') {
                             script.onreadystatechange = null;
@@ -50,7 +56,7 @@
                         }
                     };
                 } else {  //Others
-                    script.onload = function() {
+                    script.onload = function () {
                         for (var key in callbacks) {
                             callbacks[key]();
                         }
@@ -62,85 +68,136 @@
 </head>
 <body style="overflow: hidden;"
       class="{{ app.request.attributes.get('_route') }} auto-hide">
-{% block form_theme %}
-    {% if form is defined %}
-        {% form_theme form with '@IntegratedContent/form/form_div_layout.html.twig' %}
-    {% endif %}
-{% endblock %}
+<div id="app">
+    {% block form_theme %}
+        {% if form is defined %}
+            {% form_theme form with '@IntegratedContent/form/form_div_layout.html.twig' %}
+        {% endif %}
+    {% endblock %}
 
-{% block header %}
-    <nav class="navbar">
-        <div class="flex items-center justify-between w-full xl:px-4 h-full">
-            <button class="mobile-menu-toggle toggle-button toggle-data-target" type="button"
-                    data-target="sidebar-menu">
-                <i class="iconoir-menu"></i>
-            </button>
-            {% include '@IntegratedContent/partials/block.logo.html.twig' %}
+    {% block header %}
+        <nav class="navbar">
+            <div class="flex items-center justify-between w-full xl:px-4 h-full">
+                <button class="mobile-menu-toggle toggle-button toggle-data-target" type="button"
+                        data-target="sidebar-menu">
+                    <i class="iconoir-menu"></i>
+                </button>
+                {% include '@IntegratedContent/partials/block.logo.html.twig' %}
 
-            <div class="flex wrap w-full">
-                {% block website_navigation_buttons %}
-                    {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ChannelController::getChannels')) }}
-                {% endblock website_navigation_buttons %}
-                {% block navbar_content_type %}
+                <div class="flex wrap w-full">
+                    {% block website_navigation_buttons %}
+                        {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ChannelController::getchannels')) }}
+                    {% endblock website_navigation_buttons %}
+                    {% block navbar_content_type %}
 
-                    <div class="new-contenttype dropdown close-outside top-bar">
-                        <a class="btn btn-green"
-                           data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}</span><i
-                                class="iconoir-plus"></i></a>
-                        {{ knp_menu_render('content_type', {'template': '@IntegratedContent/menu/content_type.html.twig'}) }}
-                    </div>
-                {% endblock navbar_content_type %}
-                {% include '@IntegratedContent/partials/block.search.html.twig' %}
-                {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ContentController::navdropdowns')) }}
+                        <div class="new-contenttype dropdown close-outside top-bar">
+                            <a class="btn btn-green"
+                               data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}</span><i
+                                    class="iconoir-plus"></i></a>
+                            {{ knp_menu_render('content_type', {'template': '@IntegratedContent/menu/content_type.html.twig'}) }}
+                        </div>
+                    {% endblock navbar_content_type %}
+                    {% include '@IntegratedContent/partials/block.search.html.twig' %}
+                    {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ContentController::navdropdowns')) }}
+                </div>
+            </div>
+        </nav>
+    {% endblock %}
+
+    {% block body %}
+        <div id="wrapper-holder">
+            {% block dropdown_overlay %}
+                <div id="dropdown_overlay" class="modal_overlay hide" style=""></div>
+            {% endblock dropdown_overlay %}
+            {% block sidebar_menu %}
+                <div class="sidebar-menu close-outside">
+                    {% include '@IntegratedContent/partials/block.navigation.html.twig' %}
+                </div>
+            {% endblock sidebar_menu %}
+            <div class="content-wrapper">
+                <div id="flash-messages" data-turbo-temporary>
+                    {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning', 'error']) %}
+                        {% for message in messages %}
+                            {% if label == 'alert' %}
+                                {% set label = 'warning' %}
+                            {% elseif label == 'error' %}
+                                {% set label = 'danger' %}
+                            {% endif %}
+                            <div class="alert alert-{{ label }} alert-dismissible">
+                                <button type="button" class="close" data-dismiss="alert"><i class="iconoir-xmark"></i>
+                                </button>
+                                {{ message|trans }}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+
+                {% block content %}{% endblock content %}
             </div>
         </div>
-    </nav>
-{% endblock %}
-
-{% block body %}
-    <div id="wrapper-holder">
-        {% block dropdown_overlay %}
-            <div id="dropdown_overlay" class="modal_overlay hide" style=""></div>
-        {% endblock dropdown_overlay %}
-        {% block sidebar_menu %}
-            <div class="sidebar-menu close-outside">
-                {% include '@IntegratedContent/partials/block.navigation.html.twig' %}
-            </div>
-        {% endblock sidebar_menu %}
-        <div class="content-wrapper">
-            {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning', 'error']) %}
-                {% for message in messages %}
-                    {% if label == 'alert' %}
-                        {% set label = 'warning' %}
-                    {% elseif label == 'error' %}
-                        {% set label = 'danger' %}
-                    {% endif %}
-                    <div class="alert alert-{{ label }} alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert"><i class="iconoir-xmark"></i>
-                        </button>
-                        {{ message|trans }}
-                    </div>
-                {% endfor %}
-            {% endfor %}
-
-            {% block content %}{% endblock content %}
-        </div>
-    </div>
-{% endblock body %}
-
+    {% endblock body %}
+</div>
 {% block edit_modal %}
 {% endblock edit_modal %}
 
 {% block javascript %}
-{% block webpack_js %}
-    <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
-{% endblock %}
-
 {% if app.request.locale %}
 <script>
-    moment.locale('{{ app.request.locale }}');
+    (function setMomentLocale(locale) {
+        var attempts = 0;
+        var maxAttempts = 20;
+
+        function applyLocale() {
+            if (window.moment && typeof window.moment.locale === 'function') {
+                window.moment.locale(locale);
+                return;
+            }
+
+            attempts += 1;
+            if (attempts < maxAttempts) {
+                window.setTimeout(applyLocale, 100);
+            }
+        }
+
+        applyLocale();
+    })('{{ app.request.locale }}');
 </script>
 {% endif %}
+
+<script>
+    (function defineIntegratedJQReady() {
+        if (window.IntegratedJQReady) {
+            return;
+        }
+
+        window.IntegratedJQReady = function (callback) {
+            function runWhenReady() {
+                if (!window.jQuery || typeof callback !== 'function') {
+                    return false;
+                }
+
+                window.jQuery(function () {
+                    callback(window.jQuery);
+                });
+
+                return true;
+            }
+
+            if (runWhenReady()) {
+                return;
+            }
+
+            var attempts = 0;
+            var maxAttempts = 100;
+            var interval = window.setInterval(function () {
+                attempts += 1;
+                if (runWhenReady() || attempts >= maxAttempts) {
+                    window.clearInterval(interval);
+                }
+            }, 50);
+        };
+    })();
+</script>
 
 {{ integrated_javascripts() }}
 

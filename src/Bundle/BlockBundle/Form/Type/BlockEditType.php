@@ -54,6 +54,22 @@ class BlockEditType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
+            $data = $event->getData();
+            $block = $event->getForm()->getData();
+
+            if (!\is_array($data) || !$block instanceof Block) {
+                return;
+            }
+
+            // The id field is rendered disabled in edit forms and is therefore not posted.
+            // Keep the existing id so the mapper does not try to write null.
+            if ((!isset($data['id']) || $data['id'] === '') && $block->getId()) {
+                $data['id'] = $block->getId();
+                $event->setData($data);
+            }
+        });
+
         $layouts = $this->layoutLocator->getLayouts($options['type']);
 
         if (\count($layouts) === 1) {

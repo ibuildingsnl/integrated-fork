@@ -24,20 +24,30 @@ class PublicationsExtension implements TypeExtensionInterface
         }
 
         foreach ($this->publications->forContent($data) as $publication) {
-            $time = clone $publication->getTime()->getStartDate(); // don't change to original value
+            $timeRange = $publication->getTime();
+            $channel = $publication->getChannel();
+            if (!$timeRange || !$channel) {
+                continue;
+            }
 
-            if (method_exists($time, 'setTimezone')) {
+            $channelId = $channel->getId();
+
+            $startDate = $timeRange->getStartDate();
+            if ($startDate instanceof \DateTimeInterface) {
+                $time = clone $startDate; // don't change original value
+
                 $container->add(
-                    'publication_start_'.$publication->getChannel()->getId().'_index_date',
+                    'publication_start_'.$channelId.'_index_date',
                     $time->setTimezone($this->timezone)->format('Y-m-d\TG:i:s\Z'),
                 );
             }
 
-            $time = clone $publication->getTime()->getEndDate();
+            $endDate = $timeRange->getEndDate();
+            if ($endDate instanceof \DateTimeInterface) {
+                $time = clone $endDate;
 
-            if (method_exists($time, 'setTimezone')) {
                 $container->add(
-                    'publication_end_'.$publication->getChannel()->getId().'_index_date',
+                    'publication_end_'.$channelId.'_index_date',
                     $time->setTimezone($this->timezone)->format('Y-m-d\TG:i:s\Z'),
                 );
             }

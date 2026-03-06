@@ -7,15 +7,26 @@ import './unlock_article';
 import './taxonomy_category';
 
 function initializePage() {
+    bindPreventEnterOnContentForm();
+    initBrandChannelChoiceHandlers();
     prepDateTimeFields();
     setupCharacterCounters();
     updatePublicationsAndChannels();
     setPublicationDateTimes();
 
-    document.addEventListener('click', function(e) {
-        if (!e.target.classList.contains('ok-date')) return;
-        updatePublicationsAndChannels();
-    });
+    if (document.body.dataset.boundOkDateUpdate !== 'true') {
+        document.addEventListener('click', function(e) {
+            if (!e.target.classList.contains('ok-date')) return;
+            updatePublicationsAndChannels();
+        });
+        document.body.dataset.boundOkDateUpdate = 'true';
+    }
+}
+
+function scheduleInitializePage() {
+    initializePage();
+    window.requestAnimationFrame(initializePage);
+    window.setTimeout(initializePage, 120);
 }
 
 function prepDateTimeFields() {
@@ -103,13 +114,15 @@ function toggleDateSelection(showSelection, dateSelection, dateText) {
     }
 }
 
-$('form[name="integrated_content"]').on('keyup keypress', function(e) {
-    var keyCode = e.keyCode || e.which;
-    if (keyCode === 13) {
-        e.preventDefault();
-        return false;
-    }
-});
+function bindPreventEnterOnContentForm() {
+    $('form[name="integrated_content"]').off('keyup.preventEnter keypress.preventEnter').on('keyup.preventEnter keypress.preventEnter', function(e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13) {
+            e.preventDefault();
+            return false;
+        }
+    });
+}
 
 function updateDateText(dateSelection, dateText) {
     const dateInput = dateSelection.querySelector('input[type="date"]');
@@ -161,7 +174,10 @@ function setupCharacterCounters() {
         };
 
         updateCounter(); // Initial update
-        textarea.addEventListener('input', updateCounter);
+        if (textarea.dataset.boundCharCounterInput !== 'true') {
+            textarea.addEventListener('input', updateCounter);
+            textarea.dataset.boundCharCounterInput = 'true';
+        }
     });
 }
 
@@ -317,8 +333,9 @@ function updatePublicationStyles(publicationToUpdate, isDateValid) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+function initBrandChannelChoiceHandlers() {
     document.querySelectorAll('.brand-channel-choice').forEach(checkbox => {
+        if (checkbox.dataset.boundBrandChannelChoice !== 'true') {
         checkbox.addEventListener('change', function() {
             let channelName = checkbox.getAttribute('data-channel-name');
             let channelIcon = checkbox.getAttribute('data-channel-type-icon');
@@ -360,8 +377,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
             window.dispatchEvent(updatePublicationItems);
         });
+            checkbox.dataset.boundBrandChannelChoice = 'true';
+        }
     });
-});
+}
 
 function createPublicationItem(channelName, channelIcon, date, time, dataChannel) {
     const formattedDate = date.split('-').reverse().join('-');
@@ -420,49 +439,69 @@ function updatePublicationCount() {
 }
 
 function setPublicationDateTimes(){
-    let prevDate = '';
-    let prevTime = '';
+    if (document.body.dataset.boundSetPublicationDateTimes !== 'true') {
+        document.addEventListener('click', function(e) {
+            const dateTextButton = e.target.closest('#integrated_content_publishTime .startDate .date-text');
+            if (!dateTextButton) {
+                return;
+            }
 
-    let mainStartDate = document.querySelector('#integrated_content_publishTime .startDate');
+            const dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
+            const timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
+            const publishTimeRoot = document.querySelector('#integrated_content_publishTime');
+            if (!dateInput || !timeInput || !publishTimeRoot) {
+                return;
+            }
 
-    if (mainStartDate) {
-        mainStartDate.querySelector('.date-text').addEventListener('click', function() {
-            let dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
-            let timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
-            prevDate = dateInput.value
-            prevTime = timeInput.value
+            publishTimeRoot.dataset.prevDate = dateInput.value || '';
+            publishTimeRoot.dataset.prevTime = timeInput.value || '';
+        });
 
-        })
+        document.addEventListener('click', function(e) {
+            const okDateButton = e.target.closest('#integrated_content_publishTime .startDate .ok-date');
+            if (!okDateButton) {
+                return;
+            }
 
-        mainStartDate.querySelector('.ok-date').addEventListener('click', function() {
-            let dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
-            let timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
-            let newDate = dateInput.value;
-            let newTime = timeInput.value;
+            const dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
+            const timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
+            const publishTimeRoot = document.querySelector('#integrated_content_publishTime');
+            if (!dateInput || !timeInput || !publishTimeRoot) {
+                return;
+            }
 
-            let prevFormattedDateTime = `${prevDate} ${prevTime}`;
-            let newFormattedDateTime = `${newDate.split('-').reverse().join('-')} ${newTime}`;
+            const prevDate = publishTimeRoot.dataset.prevDate || '';
+            const prevTime = publishTimeRoot.dataset.prevTime || '';
+            const newDate = dateInput.value || '';
+            const newTime = timeInput.value || '';
+            if (!newDate || !newTime) {
+                return;
+            }
+
+            const prevFormattedDateTime = `${prevDate} ${prevTime}`;
+            const newFormattedDateTime = `${newDate.split('-').reverse().join('-')} ${newTime}`;
 
             document.querySelectorAll('.publication-settings').forEach(setting => {
-                let settingDateText = setting.querySelector('.date-text');
-                let settingDateInput = setting.querySelector('input[type="date"]');
-                let settingTimeInput = setting.querySelector('input[type="time"]');
-                let currentDateTime = `${settingDateInput.value} ${settingTimeInput.value}`;
+                const settingDateText = setting.querySelector('.date-text');
+                const settingDateInput = setting.querySelector('input[type="date"]');
+                const settingTimeInput = setting.querySelector('input[type="time"]');
+                if (!settingDateInput || !settingTimeInput || !settingDateText) {
+                    return;
+                }
 
-                if (settingDateText && currentDateTime === prevFormattedDateTime) {
+                const currentDateTime = `${settingDateInput.value} ${settingTimeInput.value}`;
+                if (currentDateTime === prevFormattedDateTime) {
                     settingDateText.textContent = newFormattedDateTime;
-
-                    if (settingDateInput && settingTimeInput) {
-                        settingDateInput.value = newDate;
-                        settingTimeInput.value = newTime;
-                    }
-
+                    settingDateInput.value = newDate;
+                    settingTimeInput.value = newTime;
                 }
             });
 
             updatePublicationsAndChannels();
             prepDateTimeFields();
         });
+
+        document.body.dataset.boundSetPublicationDateTimes = 'true';
     }
 }
 
@@ -501,7 +540,12 @@ function ensurePublicationExists(channelId) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', initializePage);
+document.addEventListener('DOMContentLoaded', scheduleInitializePage);
+window.addEventListener('load', scheduleInitializePage);
+document.addEventListener('turbo:load', scheduleInitializePage);
+document.addEventListener('turbo:render', scheduleInitializePage);
+document.addEventListener('turbo:frame-load', scheduleInitializePage);
+document.addEventListener('turbo:frame-render', scheduleInitializePage);
 
 document.addEventListener("ensurePublicationEvent", function(e) {
     var channelId = e.detail.channelId; // Access channelId from the event detail

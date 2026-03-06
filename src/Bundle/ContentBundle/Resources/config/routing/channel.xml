@@ -16,7 +16,11 @@
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ChannelController::edit</default>
     </route>
 
-    <route id="integrated_content_channel_delete" path="/{id}/delete">
+    <route id="integrated_content_channel_update" path="/{id}" methods="PUT">
+        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ChannelController::update</default>
+    </route>
+
+    <route id="integrated_content_channel_delete" path="/{id}/delete" methods="GET,POST,DELETE">
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ChannelController::delete</default>
     </route>
 

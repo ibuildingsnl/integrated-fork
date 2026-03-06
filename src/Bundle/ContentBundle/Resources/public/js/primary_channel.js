@@ -1,4 +1,4 @@
-$(function() {
+window.IntegratedJQReady(function ($) {
     var $primaryChannel = $('.primary-channel'),
         $channelInputs = $('.channel-options input'),
         $primarySelector = $('<a href="#">').addClass('primary-channel-selector')

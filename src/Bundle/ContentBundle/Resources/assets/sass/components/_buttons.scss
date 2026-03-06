@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 button * {
     pointer-events: none;
 }
@@ -174,7 +176,7 @@ button * {
 
         &:hover, &:focus {
             color: $color-white;
-            background: darken($color-silver-chalive, 10%);
+            background: color.adjust($color-silver-chalive, $lightness: -10%);
         }
     }
 
@@ -184,7 +186,7 @@ button * {
 
         &:hover, &:focus {
             color: $color-silver-chalive;
-            background: darken($color-gallery, 10%);
+            background: color.adjust($color-gallery, $lightness: -10%);
         }
     }
 
@@ -195,7 +197,7 @@ button * {
 
         &:hover, &:focus {
             color: $color-white;
-            background: darken(#005d93, 10%);
+            background: color.adjust(#005d93, $lightness: -10%);
         }
     }
 
@@ -230,7 +232,7 @@ button * {
         color: #b31818;
         &:hover, &:focus {
             color: #b31818;
-            background: darken(#FFFFFF, 20%);
+            background: color.adjust(#FFFFFF, $lightness: -20%);
         }
     }
     &.btn-orange {
@@ -239,8 +241,8 @@ button * {
         color:white;
         &:hover, &:focus {
             color: white;
-            background-color: darken($orange, 20%);
-            border-color: darken($orange, 20%);
+            background-color: color.adjust($orange, $lightness: -20%);
+            border-color: color.adjust($orange, $lightness: -20%);
         }
     }
     &.btn-green {
@@ -249,8 +251,8 @@ button * {
         color:white;
         &:hover, &:focus {
             color: white;
-            background-color: darken($green, 20%);
-            border-color: darken($green, 20%);
+            background-color: color.adjust($green, $lightness: -20%);
+            border-color: color.adjust($green, $lightness: -20%);
         }
     }
     &.btn-white {
@@ -268,7 +270,7 @@ button * {
         color: white;
         &:hover, &:focus {
             color: white;
-            background-color: darken($navbar-green, 20%);
+            background-color: color.adjust($navbar-green, $lightness: -20%);
         }
     }
     &.btn-action {
@@ -278,7 +280,7 @@ button * {
         height: 34px;
         &:hover, &:focus {
             color: #0D4E4D;
-            background-color: darken(#E5F6F4, 20%);
+            background-color: color.adjust(#E5F6F4, $lightness: -20%);
         }
     }
     &.btn-red {
@@ -287,8 +289,8 @@ button * {
             color: white;
             &:hover, &:focus {
                 color: white;
-                background: darken(#c6422f, 20%);
-                border-color: darken(#c6422f, 20%);
+                background: color.adjust(#c6422f, $lightness: -20%);
+                border-color: color.adjust(#c6422f, $lightness: -20%);
             }
     }
     &.btn-light-red {
@@ -297,8 +299,8 @@ button * {
         color: #4e150d;
         &:hover, &:focus {
             color: #4e150d;
-            background: darken(#f6e9e5, 20%);
-            border-color: darken(#f6e9e5, 20%);
+            background: color.adjust(#f6e9e5, $lightness: -20%);
+            border-color: color.adjust(#f6e9e5, $lightness: -20%);
         }
     }
 }

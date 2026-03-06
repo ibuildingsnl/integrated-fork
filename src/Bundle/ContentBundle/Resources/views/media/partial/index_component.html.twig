@@ -82,10 +82,33 @@
                         </div>
                     {% endif %}
                     <ul class="flex flex-wrap gallery ui-helper-reset ui-helper-clearfix" id="gallery">
-                        {% for media in paginator.items %}
-                            {% set media = integrated_document(media) %}
-                            {% if media %}
+                        {% set selected_ids = [] %}
+                        {% set rendered_ids = [] %}
+                        {% for media in selectedMedia|default([]) %}
+                            {% set media_content_id = media.type_id is defined ? media.type_id : (media.typeId is defined ? media.typeId : (media.typeid is defined ? media.typeid : media.id)) %}
+                            {% if media_content_id and media_content_id not in selected_ids %}
+                                {% set selected_ids = selected_ids|merge([media_content_id]) %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% for media in selectedMedia|default([]) %}
+                            {% set media_content_id = media.type_id is defined ? media.type_id : (media.typeId is defined ? media.typeId : (media.typeid is defined ? media.typeid : media.id)) %}
+                            {% if media_content_id and media_content_id not in rendered_ids %}
                                 {% include '@IntegratedContent/media/partial/media_thumbnail_component.html.twig' %}
+                                {% set rendered_ids = rendered_ids|merge([media_content_id]) %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% set per_page = paginator.getItemNumberPerPage() %}
+                        {% set remaining = per_page - (selected_ids|length) %}
+                        {% if remaining < 0 %}{% set remaining = 0 %}{% endif %}
+                        {% set shown = 0 %}
+                        {% for media in paginator.items %}
+                            {% set media_content_id = media.type_id is defined ? media.type_id : (media.typeId is defined ? media.typeId : (media.typeid is defined ? media.typeid : media.id)) %}
+                            {% if media_content_id and media_content_id not in rendered_ids and shown < remaining %}
+                                {% include '@IntegratedContent/media/partial/media_thumbnail_component.html.twig' %}
+                                {% set rendered_ids = rendered_ids|merge([media_content_id]) %}
+                                {% set shown = shown + 1 %}
                             {% endif %}
                         {% endfor %}
                     </ul>

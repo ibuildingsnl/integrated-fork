@@ -1,3 +1,4 @@
+(() => {
 const primaryChannel = document.querySelector('select.primary-channel');
 
 if (primaryChannel) {
@@ -53,3 +54,4 @@ if (primaryChannel) {
         }
     }
 }
+})();

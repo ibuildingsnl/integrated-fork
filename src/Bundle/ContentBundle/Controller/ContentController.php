@@ -16,7 +16,7 @@ use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
-use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
+use Integrated\Bundle\ContentBundle\Controller\MediaController;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
@@ -60,6 +60,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\UX\Turbo\TurboStreamResponse;
 
 class ContentController extends AbstractController
 {
@@ -85,7 +86,6 @@ class ContentController extends AbstractController
         private readonly EventDispatcherInterface $dispatcher,
         private readonly DocumentManager $documentManager,
         private readonly CalendarOptions $calendarOptions,
-        private readonly PublicationRepositoryInterface $publicationRepository,
     ) {
     }
 
@@ -322,9 +322,8 @@ class ContentController extends AbstractController
 
                 return $this->redirectToRoute(
                     'integrated_content_content_edit',
-                    ['remember' => 1, 'id' => $content->getId()]
+                    ['id' => $content->getId()]
                 );
-                // TODO: Remember is broken, needs fixin.
             }
         }
 
@@ -362,16 +361,24 @@ class ContentController extends AbstractController
     /**
      * Update a existing document.
      */
-    public function edit(Request $request, Content $content): Response
+    public function edit(Request $request, string $id): Response
     {
+        /** @var Content|null $content */
+        $content = $this->documentManager->getRepository(Content::class)->find($id);
+        if (!$content && preg_match('/^[a-z0-9_]+-([a-f0-9]{24}|[a-f0-9]{32})$/i', $id, $matches)) {
+            $content = $this->documentManager->getRepository(Content::class)->find($matches[1]);
+        }
+
+        if (!$content) {
+            throw $this->createNotFoundException('Content not found.');
+        }
+
         /** @var ContentTypeInterface $contentType */
         $contentType = $this->contentTypeManager->getType($content->getContentType());
 
         if (!$this->isGranted(Permissions::VIEW, $content)) {
             throw new AccessDeniedException();
         }
-
-        $publications = $this->publicationRepository->forContent($content);
 
         $locking = $this->getLock($content, 15);
         $locking['locked'] = (bool) $locking['lock'];
@@ -380,9 +387,8 @@ class ContentController extends AbstractController
             $locking['locked'] = false;
         } else {
             if ($locking['lock'] && $locking['owner']) {
-                if ($request->query->has('lock') && $locking['lock']->getId() == $request->query->get('lock')) {
-                    $locking['locked'] = false;
-                }
+                // If you own the lock, allow editing even if the lock id isn't in the URL.
+                $locking['locked'] = false;
 
                 if ($locking['new']) {
                     if ($request->isMethod('get')) {
@@ -393,8 +399,6 @@ class ContentController extends AbstractController
 
                         return $this->redirectToRoute($request->get('_route'), $parameters);
                     }
-
-                    $locking['locked'] = false;
                 }
             }
         }
@@ -428,6 +432,8 @@ class ContentController extends AbstractController
 
             // this is not rest compatible since a button click is required to save
             if ($form->get('actions')->getData() == 'save') {
+                $saved = false;
+
                 if (!$locking['locked'] && $form->isValid()) {
                     if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
                         $this->dispatcher->dispatch(
@@ -475,9 +481,39 @@ class ContentController extends AbstractController
                         $lock->release();
                     }
 
-                    if (!$locking['locked']) {
+                    if (!$locking['locked'] && !$this->isTurboStreamRequest($request)) {
                         $locking['release']();
                     }
+
+                    $saved = true;
+                }
+
+                if ($this->isTurboStreamRequest($request) && $request->query->getBoolean('frame')) {
+                    $isMedia = $content instanceof File || $content instanceof Image;
+
+                    $content = $this->renderView('@IntegratedContent/content/edit.iframe.turbo_stream.html.twig', [
+                        'editable' => $this->isGranted(Permissions::EDIT, $content),
+                        'taxonomyCategories' => $this->getTaxonomyCategories($content),
+                        'type' => $contentType,
+                        'form' => $form->createView(),
+                        'formRelations' => $this->getFormRelations($form),
+                        'content' => $content,
+                        'locking' => $locking,
+                        'showContentHistory' => true,
+                        'references' => json_encode($this->getReferences($content)),
+                        'not_shown_filetypes' => array_map('strtolower', MediaController::NOT_SHOWN_FILETYPES),
+                        'selected_ids' => [],
+                        'is_media' => $isMedia,
+                        'saved' => $saved,
+                    ]);
+
+                    return new TurboStreamResponse($content);
+                }
+
+                if ($this->isTurboStreamRequest($request) && !$request->query->getBoolean('frame')) {
+                    $content = $this->renderView('@IntegratedContent/content/flash.turbo_stream.html.twig');
+
+                    return new TurboStreamResponse($content);
                 }
 
                 return $this->redirectToRoute($request->get('_route'), ['id' => $content->getId()]);
@@ -516,7 +552,9 @@ class ContentController extends AbstractController
             $this->addFlash('danger', $text);
         }
 
-        if ($request->get('_route') == 'integrated_content_content_edit_iframe') {
+        if ($request->query->getBoolean('frame')) {
+            $renderTo = '@IntegratedContent/content/edit.iframe.html.twig';
+        } elseif ($request->get('_route') == 'integrated_content_content_edit_iframe') {
             $renderTo = '@IntegratedContent/content/edit.iframe.html.twig';
         } elseif ($request->get('_route') == 'integrated_content_content_edit_modal_iframe') {
             $renderTo = '@IntegratedContent/content/edit.modal.iframe.html.twig';
@@ -532,10 +570,16 @@ class ContentController extends AbstractController
             'formRelations' => $this->getFormRelations($form),
             'content' => $content,
             'locking' => $locking,
-            'publications' => $publications,
             'showContentHistory' => true,
             'references' => json_encode($this->getReferences($content)),
         ]);
+    }
+
+    private function isTurboStreamRequest(Request $request): bool
+    {
+        $accept = (string) $request->headers->get('Accept');
+
+        return str_contains($accept, 'text/vnd.turbo-stream.html');
     }
 
     private function getFormRelations(Form $form): array
@@ -609,6 +653,7 @@ class ContentController extends AbstractController
             // this is not rest compatible since a button click is required to save
             if ($form->get('actions')->getData() == 'delete') {
                 if ($form->isValid()) {
+                    // higher priority for content edited in Integrated
                     $queue = $this->queueSubscriber->getQueue();
                     $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
 

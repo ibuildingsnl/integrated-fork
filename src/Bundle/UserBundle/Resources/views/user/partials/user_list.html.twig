@@ -1,7 +1,37 @@
 <section class="section-white section-radius">
+    <form method="post" action="{{ path('integrated_user_user_bulk') }}">
+    <input type="hidden" name="_token" value="{{ csrf_token('user_bulk_action') }}">
+    <div id="bulk-actions" class="p-3 flex flex-wrap items-center gap-2 border-b border-light">
+        <select name="bulk_action" id="bulk_action" class="form-control" style="width: 220px;">
+            <option value="">{% trans %}Bulk action{% endtrans %}</option>
+            {% for actionValue, actionLabel in bulkActions %}
+                <option value="{{ actionValue }}">{{ actionLabel|trans }}</option>
+            {% endfor %}
+        </select>
+        <div id="bulk-group-container" class="hidden">
+            <select name="bulk_group" id="bulk_group" class="form-control" disabled>
+                <option value="">{% trans %}Select group{% endtrans %}</option>
+                {% for group in allGroups %}
+                    <option value="{{ group.id }}">{{ group.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div id="bulk-scope-container" class="hidden">
+            <select name="bulk_scope" id="bulk_scope" class="form-control" disabled>
+                <option value="">{% trans %}Select scope{% endtrans %}</option>
+                {% for scope in allScopes %}
+                    <option value="{{ scope.id }}">{{ scope.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-orange">{% trans %}Apply{% endtrans %}</button>
+        <span id="bulk-selection-count" class="text-sm">0 {% trans %}selected{% endtrans %}</span>
+    </div>
+
     <table class="table table-hover">
 
         <colgroup>
+            <col style="width: 3em"/>
             <col style="width: 3em"/>
             <col/>
             <col/>
@@ -10,10 +40,13 @@
 
         <thead>
         <tr>
-            <th>{{ knp_pagination_sortable(users, '#', 'id') }}</th>
-            <th>{{ knp_pagination_sortable(users, 'Username'|trans, 'username') }}</th>
-            <th>{{ knp_pagination_sortable(users, 'Scope'|trans, 'scope.name') }}</th>
-            <th>{{ knp_pagination_sortable(users, 'Date created'|trans, 'createdAt') }}</th>
+            <th>
+                <input type="checkbox" id="bulk_select_all">
+            </th>
+            <th>#</th>
+            <th>{% trans %}Username{% endtrans %}</th>
+            <th>{% trans %}Scope{% endtrans %}</th>
+            <th>{% trans %}Date created{% endtrans %}</th>
             <th>{% trans %}Relation{% endtrans %}</th>
         </tr>
         </thead>
@@ -22,6 +55,9 @@
 
         {% for user in users %}
             <tr class="has-options">
+                <td>
+                    <input type="checkbox" name="user_ids[]" value="{{ user.id }}" class="bulk-user-checkbox">
+                </td>
                 <td>
                     {{ user.id }}
                 </td>
@@ -43,11 +79,17 @@
                     <a href="{{ path('integrated_user_user_edit', {'id': user.id}) }}"
                        title="{% trans %}Edit{% endtrans %}">{% trans %}Edit{% endtrans %}</a> |
                     <a href="{{ path('integrated_user_user_delete', {'id': user.id}) }}"
-                       class="color-red" title="{% trans %}Delete{% endtrans %}">{% trans %}Delete{% endtrans %}</a>
+                       class="color-red" title="{% trans %}Deactivate{% endtrans %}">{% trans %}Deactivate{% endtrans %}</a>
+                    {% if user.enabled == false %}
+                        | <a href="{{ path('integrated_user_user_enable', {'id': user.id}) }}"
+                             title="{% trans %}Enable account{% endtrans %}">{% trans %}Enable account{% endtrans %}</a>
+                    {% endif %}
                     {% if user.googleAuthenticatorEnabled %}
                          | <a href="{{ path('integrated_user_user_delete_authenticator', {'id': user.id}) }}"
                            class="color-red" title="{% trans %}Delete{% endtrans %} {% trans %}two factor authenticator{% endtrans %}">{% trans %}Delete{% endtrans %} {% trans %}two factor authenticator{% endtrans %}</a>
                     {% endif %}
+                    | <a href="{{ path('integrated_user_user_delete_account', {'id': user.id}) }}"
+                         class="color-red" title="{% trans %}Delete account{% endtrans %}">{% trans %}Delete account{% endtrans %}</a>
                 </div>
                     </td>
 
@@ -59,12 +101,86 @@
                 </td>
             </tr>
 
+        {% else %}
+            <tr>
+                <td colspan="6">
+                    <div class="alert alert-info m-0">
+                        {% trans %}No users found for the current filters.{% endtrans %}
+                    </div>
+                </td>
+            </tr>
         {% endfor %}
 
         </tbody>
 
     </table>
+    </form>
 
     {{ knp_pagination_render(users, '@KnpPaginator/Pagination/sliding.html.twig') }}
 
 </section>
+
+<script>
+    (function bindBulkUserSelectionAndActionFields() {
+        var actionSelect = document.getElementById('bulk_action');
+        var groupContainer = document.getElementById('bulk-group-container');
+        var scopeContainer = document.getElementById('bulk-scope-container');
+        var groupSelect = document.getElementById('bulk_group');
+        var scopeSelect = document.getElementById('bulk_scope');
+        var selectAll = document.getElementById('bulk_select_all');
+        var selectionCount = document.getElementById('bulk-selection-count');
+
+        if (!selectAll || !actionSelect || selectAll.dataset.boundBulkSelect === 'true') {
+            return;
+        }
+
+        function updateActionFields() {
+            var action = actionSelect.value;
+            var showGroup = action === 'assign_group';
+            var showScope = action === 'change_scope';
+
+            groupContainer.classList.toggle('hidden', !showGroup);
+            groupSelect.disabled = !showGroup;
+            if (!showGroup) {
+                groupSelect.value = '';
+            }
+
+            scopeContainer.classList.toggle('hidden', !showScope);
+            scopeSelect.disabled = !showScope;
+            if (!showScope) {
+                scopeSelect.value = '';
+            }
+        }
+
+        function updateSelectedCount() {
+            if (!selectionCount) {
+                return;
+            }
+
+            var selected = document.querySelectorAll('.bulk-user-checkbox:checked').length;
+            selectionCount.textContent = selected + ' {% trans %}selected{% endtrans %}';
+        }
+
+        selectAll.addEventListener('change', function () {
+            document.querySelectorAll('.bulk-user-checkbox').forEach(function (checkbox) {
+                checkbox.checked = selectAll.checked;
+            });
+            updateSelectedCount();
+        });
+
+        document.querySelectorAll('.bulk-user-checkbox').forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                var all = document.querySelectorAll('.bulk-user-checkbox');
+                var checked = document.querySelectorAll('.bulk-user-checkbox:checked');
+                selectAll.checked = all.length > 0 && all.length === checked.length;
+                updateSelectedCount();
+            });
+        });
+
+        actionSelect.addEventListener('change', updateActionFields);
+        updateActionFields();
+        updateSelectedCount();
+
+        selectAll.dataset.boundBulkSelect = 'true';
+    })();
+</script>

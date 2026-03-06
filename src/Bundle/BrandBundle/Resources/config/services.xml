@@ -116,5 +116,10 @@
             <argument type="service" id=".inner"/>
         </service>
 
+        <service id="Integrated\Bundle\BrandBundle\Command\CleanupBrandChannelLinksCommand">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <tag name="console.command" command="integrated:brand:cleanup-channel-links" />
+        </service>
+
     </services>
 </container>

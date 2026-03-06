@@ -344,7 +344,7 @@
     display: -webkit-box;
     display: -moz-box;
     display: -ms-flexbox; // IE 10
-    display: box;
+    display: flex;
 }
 
 // CSS3 Flexible Box Model and property defaults
@@ -359,7 +359,6 @@
         // 2009
         display: -webkit-box;
         display: -moz-box;
-        display: box;
 
         // 2012
         display: -webkit-flex;
@@ -369,7 +368,6 @@
     } @else if $value == "inline-flex" {
         display: -webkit-inline-box;
         display: -moz-inline-box;
-        display: inline-box;
 
         display: -webkit-inline-flex;
         display: -moz-inline-flex;

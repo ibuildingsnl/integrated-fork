@@ -16,10 +16,14 @@ use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\UserBundle\Form\Type\UserFilterType;
 use Integrated\Bundle\UserBundle\Form\Type\UserFormType;
+use Integrated\Bundle\UserBundle\Model\GroupManagerInterface;
+use Integrated\Bundle\UserBundle\Model\ScopeManagerInterface;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Bundle\UserBundle\Provider\FilterQueryProvider;
+use Integrated\Bundle\UserBundle\Service\BulkUserActionService;
 use Knp\Component\Pager\PaginatorInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,12 +33,28 @@ class UserController extends AbstractController
     private UserManagerInterface $manager;
     private FilterQueryProvider $provider;
     private PaginatorInterface $paginator;
+    private LoggerInterface $logger;
+    private GroupManagerInterface $groupManager;
+    private ScopeManagerInterface $scopeManager;
+    private BulkUserActionService $bulkUserActionService;
 
-    public function __construct(UserManagerInterface $manager, FilterQueryProvider $provider, PaginatorInterface $paginator)
+    public function __construct(
+        UserManagerInterface $manager,
+        FilterQueryProvider $provider,
+        PaginatorInterface $paginator,
+        LoggerInterface $logger,
+        GroupManagerInterface $groupManager,
+        ScopeManagerInterface $scopeManager,
+        BulkUserActionService $bulkUserActionService
+    )
     {
         $this->manager = $manager;
         $this->provider = $provider;
         $this->paginator = $paginator;
+        $this->logger = $logger;
+        $this->groupManager = $groupManager;
+        $this->scopeManager = $scopeManager;
+        $this->bulkUserActionService = $bulkUserActionService;
     }
 
     public function index(Request $request): Response
@@ -61,7 +81,96 @@ class UserController extends AbstractController
         return $this->render('@IntegratedUser/user/index.html.twig', [
             'users' => $pagination,
             'facetFilter' => $facetFilter,
+            'allGroups' => $this->groupManager->findAll(),
+            'allScopes' => $this->scopeManager->findAll(),
+            'bulkActions' => [
+                BulkUserActionService::ACTION_ENABLE_LOGIN => 'Enable login',
+                BulkUserActionService::ACTION_DISABLE_LOGIN => 'Disable login',
+                BulkUserActionService::ACTION_ASSIGN_GROUP => 'Assign group',
+                BulkUserActionService::ACTION_CHANGE_SCOPE => 'Change scope',
+                BulkUserActionService::ACTION_RESET_2FA => 'Reset 2FA',
+            ],
         ]);
+    }
+
+    public function bulk(Request $request): Response
+    {
+        if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $token = (string) $request->request->get('_token', '');
+        if (!$this->isCsrfTokenValid('user_bulk_action', $token)) {
+            $this->addFlash('danger', 'Invalid bulk action token.');
+
+            return $this->redirectToRoute('integrated_user_user_index');
+        }
+
+        $action = (string) $request->request->get('bulk_action', '');
+        $selectedValues = $request->request->all('user_ids');
+        $selectedIds = array_values(array_filter(array_map(
+            static fn ($id): string => is_scalar($id) ? (string) $id : '',
+            $selectedValues
+        ), static fn (string $id): bool => $id !== ''));
+        if ($action === '' || $selectedIds === []) {
+            $this->addFlash('warning', 'Select at least one user and a bulk action.');
+
+            return $this->redirectToRoute('integrated_user_user_index');
+        }
+
+        $users = [];
+        foreach ($selectedIds as $id) {
+            $user = $this->manager->find($id);
+            if ($user instanceof UserInterface) {
+                $users[] = $user;
+            }
+        }
+
+        if ($users === []) {
+            $this->addFlash('warning', 'No valid users selected.');
+
+            return $this->redirectToRoute('integrated_user_user_index');
+        }
+
+        $group = null;
+        $scope = null;
+
+        if ($action === BulkUserActionService::ACTION_ASSIGN_GROUP) {
+            $groupId = $request->request->get('bulk_group');
+            $group = $groupId ? $this->groupManager->find($groupId) : null;
+            if ($group === null) {
+                $this->addFlash('warning', 'Select a group for this bulk action.');
+
+                return $this->redirectToRoute('integrated_user_user_index');
+            }
+        }
+
+        if ($action === BulkUserActionService::ACTION_CHANGE_SCOPE) {
+            $scopeId = $request->request->get('bulk_scope');
+            $scope = $scopeId ? $this->scopeManager->find($scopeId) : null;
+            if ($scope === null) {
+                $this->addFlash('warning', 'Select a scope for this bulk action.');
+
+                return $this->redirectToRoute('integrated_user_user_index');
+            }
+        }
+
+        $updated = $this->bulkUserActionService->apply($users, $action, $group, $scope);
+
+        foreach ($users as $user) {
+            $this->manager->persist($user);
+        }
+
+        $this->logger->info('Bulk user action executed', [
+            'actor' => $this->getUser()?->getUserIdentifier(),
+            'action' => $action,
+            'selected_ids' => $selectedIds,
+            'updated_count' => $updated,
+        ]);
+
+        $this->addFlash('success', sprintf('Bulk action applied to %d user(s).', $updated));
+
+        return $this->redirectToRoute('integrated_user_user_index');
     }
 
     public function new(Request $request): Response
@@ -83,6 +192,11 @@ class UserController extends AbstractController
                 $user = $form->getData();
 
                 $this->manager->persist($user);
+                $this->logger->info('User created', [
+                    'actor' => $this->getUser()?->getUserIdentifier(),
+                    'target_user_id' => $user->getId(),
+                    'target_username' => $user->getUserIdentifier(),
+                ]);
                 $this->addFlash('success', \sprintf('The user %s is created', $user->getUsername()));
 
                 return $this->redirectToRoute('integrated_user_user_index');
@@ -117,6 +231,11 @@ class UserController extends AbstractController
 
             if ($form->isValid()) {
                 $this->manager->persist($user);
+                $this->logger->info('User updated', [
+                    'actor' => $this->getUser()?->getUserIdentifier(),
+                    'target_user_id' => $user->getId(),
+                    'target_username' => $user->getUserIdentifier(),
+                ]);
                 $this->addFlash('success', \sprintf('The changes to the user %s are saved', $user->getUserIdentifier()));
 
                 return $this->redirectToRoute('integrated_user_user_index');
@@ -151,14 +270,97 @@ class UserController extends AbstractController
             }
 
             if ($form->isValid()) {
-                $this->manager->remove($user);
-                $this->addFlash('success', \sprintf('The user %s is removed', $user->getUserIdentifier()));
+                if ($user->isEnabled()) {
+                    $user->setEnabled(false);
+                    $this->manager->persist($user);
+                    $this->logger->info('User deactivated', [
+                        'actor' => $this->getUser()?->getUserIdentifier(),
+                        'target_user_id' => $user->getId(),
+                        'target_username' => $user->getUserIdentifier(),
+                    ]);
+                    $this->addFlash('success', \sprintf('The user %s is deactivated', $user->getUserIdentifier()));
+                } else {
+                    $this->addFlash('info', \sprintf('The user %s was already deactivated', $user->getUserIdentifier()));
+                }
 
                 return $this->redirectToRoute('integrated_user_user_index');
             }
         }
 
         return $this->render('@IntegratedUser/user/delete.html.twig', [
+            'user' => $user,
+            'form' => $form,
+        ]);
+    }
+
+    public function enable(Request $request): Response
+    {
+        if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $user = $this->manager->find($request->get('id'));
+        if (!$user) {
+            return $this->redirectToRoute('integrated_user_user_index');
+        }
+
+        if (!$user->isEnabled()) {
+            $user->setEnabled(true);
+            $this->manager->persist($user);
+            $this->logger->info('User enabled', [
+                'actor' => $this->getUser()?->getUserIdentifier(),
+                'target_user_id' => $user->getId(),
+                'target_username' => $user->getUserIdentifier(),
+            ]);
+            $this->addFlash('success', \sprintf('The user %s is enabled', $user->getUserIdentifier()));
+        } else {
+            $this->addFlash('info', \sprintf('The user %s is already enabled', $user->getUserIdentifier()));
+        }
+
+        return $this->redirectToRoute('integrated_user_user_index');
+    }
+
+    public function deleteAccount(Request $request): Response
+    {
+        if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $user = $this->manager->find($request->get('id'));
+        if (!$user) {
+            return $this->redirectToRoute('integrated_user_user_index');
+        }
+
+        $currentUser = $this->getUser();
+        if ($currentUser instanceof UserInterface && $currentUser->getId() === $user->getId()) {
+            $this->addFlash('danger', 'You cannot delete your own account.');
+
+            return $this->redirectToRoute('integrated_user_user_index');
+        }
+
+        /** @var Form $form */
+        $form = $this->createDeleteAccountForm($user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            if ($form->getClickedButton()?->getName() === 'cancel') {
+                return $this->redirectToRoute('integrated_user_user_index');
+            }
+
+            if ($form->isValid()) {
+                $this->manager->remove($user);
+                $this->logger->info('User permanently deleted', [
+                    'actor' => $this->getUser()?->getUserIdentifier(),
+                    'target_user_id' => $user->getId(),
+                    'target_username' => $user->getUserIdentifier(),
+                ]);
+                $this->addFlash('success', \sprintf('The account %s has been permanently deleted', $user->getUserIdentifier()));
+
+                return $this->redirectToRoute('integrated_user_user_index');
+            }
+        }
+
+        return $this->render('@IntegratedUser/user/delete_account.html.twig', [
             'user' => $user,
             'form' => $form,
         ]);
@@ -202,6 +404,21 @@ class UserController extends AbstractController
 
         $form = $this->createForm(DeleteFormType::class, $user, [
             'action' => $this->generateUrl('integrated_user_user_delete', ['id' => $user->getId()]),
+        ]);
+
+        $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
+
+        return $form;
+    }
+
+    protected function createDeleteAccountForm(UserInterface $user): Form
+    {
+        if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $form = $this->createForm(DeleteFormType::class, $user, [
+            'action' => $this->generateUrl('integrated_user_user_delete_account', ['id' => $user->getId()]),
         ]);
 
         $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);

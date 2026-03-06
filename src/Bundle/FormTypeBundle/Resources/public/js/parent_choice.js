@@ -1,8 +1,11 @@
-$(function() {
-    initContentChoice();
+window.IntegratedJQReady(function ($) {
+    initContentChoice($);
 });
 
-function initContentChoice() {
+function initContentChoice($) {
+    if (!$.fn || !$.fn.select2) {
+        return;
+    }
     $('select.integrated_content_choice').select2({
         ajax: {
             data: function (param) {

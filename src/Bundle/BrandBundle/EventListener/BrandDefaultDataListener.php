@@ -49,7 +49,7 @@ class BrandDefaultDataListener implements EventSubscriberInterface
                 continue;
             }
 
-            $condition = fn (ChannelLink $link) => \in_array($link->channel, $defaultChannels) || $link->default;
+            $condition = fn (ChannelLink $link) => $link->channel && (\in_array($link->channel, $defaultChannels) || $link->default);
             $publish = true;
 
             if ($brand->hasPublished($content)) {

@@ -8,7 +8,7 @@
         <id strategy="auto" />
         <embed-one field="type" target-document="Integrated\Bundle\ContentBundle\Document\Channel\ChannelType" />
         <reference-one field="channel" target-document="Integrated\Bundle\ContentBundle\Document\Channel\Channel" />
-        <field field-name="default" type="boolean" />
+        <field field-name="default" type="bool" />
 
     </document>
 </doctrine-mongo-mapping>

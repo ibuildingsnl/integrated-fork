@@ -1,1 +1,39 @@
-document.addEventListener("DOMContentLoaded",(function(e){window.document.addEventListener("editImageClick",(function(e){var d=document.querySelector("iframe").dataset.media_id;"media_gallery"==selected_modus?window.location.href=t.replace("REPLACE",d):window.location.href=a.replace("REPLACE",d)}),!1);var t=document.querySelector("#editimagewrapper").dataset.editimagepath,a=document.querySelector("#editimagewrapper").dataset.editimageiframepath}));
+/******/ (() => { // webpackBootstrap
+/*!********************************************************************!*\
+  !*** ./src/Bundle/ContentBundle/Resources/assets/js/edit_panel.js ***!
+  \********************************************************************/
+function initEditPanel() {
+  var wrapper = document.querySelector('#editimagewrapper');
+  var panel = document.querySelector('#media-edit-panel');
+  if (!wrapper || !panel) {
+    return;
+  }
+  if (window.document.body.dataset.boundEditImageClick === 'true') {
+    return;
+  }
+  window.document.addEventListener('editImageClick', handleEvent, false);
+  window.document.body.dataset.boundEditImageClick = 'true';
+  function handleEvent() {
+    var mediaId = panel.dataset.mediaId;
+    var editImagePath = wrapper.dataset.editimagepath;
+    var editImageIframePath = wrapper.dataset.editimageiframepath;
+    if (!mediaId || !editImagePath || !editImageIframePath) {
+      return;
+    }
+
+    // If selected modus == media gallery, we should go to the page with a redirect,
+    // If selected_modus is something else (select_multiple, select_one) then this is loaded via an iframe
+    // And then we load the same page without sidebar and header
+    var selectedModus = typeof selected_modus !== 'undefined' && selected_modus && selected_modus !== 'undefined' ? selected_modus : 'media_gallery';
+    if (selectedModus == 'media_gallery') {
+      window.location.href = editImagePath.replace('REPLACE', mediaId);
+    } else {
+      window.location.href = editImageIframePath.replace('REPLACE', mediaId);
+    }
+  }
+}
+document.addEventListener('DOMContentLoaded', initEditPanel);
+document.addEventListener('turbo:load', initEditPanel);
+document.addEventListener('turbo:render', initEditPanel);
+/******/ })()
+;

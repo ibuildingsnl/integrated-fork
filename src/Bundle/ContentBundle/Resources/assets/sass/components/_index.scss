@@ -1,3 +1,43 @@
+turbo-frame#content-navigator {
+    display: block;
+    position: relative;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2px solid #d9e3ea;
+        border-top-color: #01ae93;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .15s ease-in-out;
+        animation: content-navigator-spin .7s linear infinite;
+        z-index: 10;
+    }
+
+    &[busy] {
+        .index-wrapper,
+        .aside-filters {
+            opacity: .62;
+            transition: opacity .15s ease-in-out;
+        }
+
+        &::after {
+            opacity: 1;
+        }
+    }
+}
+
+@keyframes content-navigator-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 div.heading-switcher {
     display: flex;
     align-items: center;

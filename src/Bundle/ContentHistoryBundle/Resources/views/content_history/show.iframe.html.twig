@@ -5,7 +5,52 @@
 {% endblock header %}
 {% block sidebar_menu %}
 {% endblock sidebar_menu %}
+
+{% macro render_history_value(value) %}
+    {% if value.type == 'empty' %}
+        <span class="history-value-empty">—</span>
+    {% elseif value.type == 'image' %}
+        <div class="history-value-image">
+            {% if value.href is defined and value.href %}
+                <a href="{{ value.href }}" target="_blank" rel="noopener noreferrer" data-turbo-frame="_top">
+                    <img src="{{ value.src }}" alt="{{ value.label|default('image') }}" loading="lazy">
+                </a>
+            {% else %}
+                <img src="{{ value.src }}" alt="{{ value.label|default('image') }}" loading="lazy">
+            {% endif %}
+            <p class="history-value-caption">
+                {% if value.href is defined and value.href %}
+                    <a href="{{ value.href }}" target="_blank" rel="noopener noreferrer" data-turbo-frame="_top">{{ value.label }}</a>
+                {% else %}
+                    {{ value.label }}
+                {% endif %}
+            </p>
+        </div>
+    {% elseif value.type == 'html' %}
+        <div class="history-value-html">{{ value.html|raw }}</div>
+    {% elseif value.type == 'paragraphs' %}
+        <div class="history-value-paragraphs">
+            {% for paragraph in value.paragraphs %}
+                <p>{{ paragraph }}</p>
+            {% endfor %}
+        </div>
+    {% elseif value.type == 'stack' %}
+        <div class="history-value-stack">
+            {% for item in value.items %}
+                <div class="history-value-stack-item">{{ _self.render_history_value(item) }}</div>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% if value.href is defined and value.href %}
+            <a href="{{ value.href }}" target="_blank" rel="noopener noreferrer" data-turbo-frame="_top">{{ value.text }}</a>
+        {% else %}
+            <span>{{ value.text }}</span>
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
 {% block content %}
+    {% import _self as history %}
     <div class="row flex flex-wrap">
         {% block toolbar %}
             <div id="toolbar" class="w-full flex justify-between">
@@ -27,10 +72,37 @@
                     <b>{% trans %}Action{% endtrans %}:</b> {{ contentHistory.action|trans }}<br/>
                     <b>{% trans %}User{% endtrans %}
                         :</b> {{ contentHistory.user.name|default('Unknown'|trans) }} {% if contentHistory.user.id is defined %}(#{{ contentHistory.user.id }}){% endif %}
-                    <br/>
-                    <b>{% trans %}Endpoint{% endtrans %}:</b> {{ contentHistory.request.endpoint }}<br/>
-                    <b>{% trans %}IP address{% endtrans %}:</b> {{ contentHistory.request.ipAddress }}
                 </p>
+                <div class="history-view-options mb-4">
+                    {% set toggleParams = app.request.query.all|merge({'id': contentHistory.id, 'technical': showTechnical ? 0 : 1}) %}
+                    <a class="btn btn-select" href="{{ path('integrated_content_history_show_iframe', toggleParams) }}">
+                        {% if showTechnical %}
+                            {% trans %}Hide technical changes{% endtrans %}
+                        {% else %}
+                            {% trans %}Show technical changes{% endtrans %}
+                        {% endif %}
+                    </a>
+                    {% if not showTechnical and hiddenRevisionRows > 0 %}
+                        <span class="history-meta-label ml-2">
+                            {% trans %}Hidden rows{% endtrans %}: {{ hiddenRevisionRows }}
+                        </span>
+                    {% endif %}
+                </div>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <details class="history-admin-details">
+                        <summary>{% trans %}Show technical request details{% endtrans %}</summary>
+                        <div class="history-admin-grid">
+                            <div>
+                                <span class="history-meta-label">{% trans %}Endpoint{% endtrans %}</span>
+                                <div class="history-meta-value history-code">{{ contentHistory.request.endpoint|default('—') }}</div>
+                            </div>
+                            <div>
+                                <span class="history-meta-label">{% trans %}IP address{% endtrans %}</span>
+                                <div class="history-meta-value">{{ contentHistory.request.ipAddress|default('—') }}</div>
+                            </div>
+                        </div>
+                    </details>
+                {% endif %}
 
                 {% set showOld = contentHistory.action in ['delete', 'update'] %}
                 {% set showNew = contentHistory.action in ['insert', 'update'] %}
@@ -49,20 +121,18 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for line in changeSet %}
+                    {% for line in displayChangeSet %}
                         {% if changeSet is not null %}
-                            {% set isUpdate = contentHistory.action == 'update' %}
-
                             <tr>
-                                <td>{{ line.name }}</td>
+                                <td>{{ line.displayName|default(line.name) }}</td>
                                 {% if showOld %}
                                     <td>
-                                        {{ line.old }}
+                                        {{ history.render_history_value(line.oldDisplay) }}
                                     </td>
                                 {% endif %}
                                 {% if showNew %}
                                     <td>
-                                        {{ line.new }}
+                                        {{ history.render_history_value(line.newDisplay) }}
                                     </td>
                                 {% endif %}
                             </tr>

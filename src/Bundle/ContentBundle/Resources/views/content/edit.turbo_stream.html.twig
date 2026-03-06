@@ -1,0 +1,9 @@
+{% if form is defined %}
+    {% form_theme form with '@IntegratedContent/form/form_div_layout.html.twig' %}
+{% endif %}
+
+<turbo-stream action="replace" target="content-edit-page">
+    <template>
+        {{ block('content', '@IntegratedContent/content/edit.html.twig') }}
+    </template>
+</turbo-stream>

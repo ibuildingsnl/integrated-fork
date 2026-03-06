@@ -1,0 +1,17 @@
+{% if is_media and saved %}
+<turbo-stream action="replace" target="{{ content.id }}">
+    <template>
+        {% include '@IntegratedContent/media/partial/media_thumbnail_component.html.twig' with {
+            media: content,
+            not_shown_filetypes: not_shown_filetypes,
+            selected_ids: selected_ids,
+        } %}
+    </template>
+</turbo-stream>
+{% endif %}
+
+<turbo-stream action="replace" target="media-edit-panel">
+    <template>
+        {{ include('@IntegratedContent/content/partial/edit_frame.html.twig') }}
+    </template>
+</turbo-stream>

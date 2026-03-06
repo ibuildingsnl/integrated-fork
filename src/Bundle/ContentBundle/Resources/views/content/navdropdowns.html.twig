@@ -15,7 +15,7 @@
                                 </li>
                                 {% for doc in assignedContent %}
                                     <li class="assigned-item">
-                                        <a href="{{ path('integrated_content_content_edit', {id: doc.type_id}) }}">
+                                        <a href="{{ path('integrated_content_content_edit', {id: doc.type_id}) }}" data-turbo-frame="_top">
                                             {% if doc.workflow_color_string is defined %}
                                                 {% set status_color = doc.workflow_color_string|first %}
                                             {% else %}
@@ -83,10 +83,15 @@
                         <div class="megamenu-content">
                             <ul class="user-menu w-full">
                                 <li class="user-info">
+                                    {% set relation = app.user.getRelation|default(null) %}
+                                    {% set fullName = relation ? ((relation.getFirstname|default('') ~ ' ' ~ relation.getLastname|default(''))|trim) : '' %}
                                     <p>
-                                        {% if app.user.getRelation.getEmail is defined %}
+                                        <b>
+                                            {{ fullName ?: app.user.username|default('') }}
+                                        </b>
+                                        {% if relation and relation.getEmail|default('') %}
                                             <br>
-                                            <small>{{ app.user.getRelation.getEmail|default('') }}</small>
+                                            <small>{{ relation.getEmail|default('') }}</small>
                                         {% endif %}
                                     </p>
                                 </li>

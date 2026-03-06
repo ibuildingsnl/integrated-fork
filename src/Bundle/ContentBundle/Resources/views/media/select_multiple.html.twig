@@ -14,23 +14,38 @@
     } %}
 {% endblock %}
 
-{% block webpack_js %}
+{% block head_javascript %}
+    {{ parent() }}
+
     <script>
         const path = '{{ path('integrated_content_media_manage_relations') }}'
         const bulkdelete_path = '{{ path('integrated_content_media_bulkdelete') }}'
         const selected_modus = '{{ selected_modus|default('media_gallery') }}'
     </script>
 
-    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
-    <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
+    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}" defer data-turbo-track="reload"></script>
+{% endblock %}
+
+{% block webpack_js %}
     <script>
-        $(document).keyup(function(e) {
-            if (e.key === 'Escape') {
-                let closeOutside = parent.$('.close-outside.show');
-                closeOutside.removeClass('show');
-                parent.$('#dropdown_overlay').addClass('hide');
-                window.popupShown = false;
+        document.addEventListener('keyup', function (e) {
+            if (e.key !== 'Escape') {
+                return;
             }
+
+            const parentDocument = window.parent && window.parent.document ? window.parent.document : null;
+            if (parentDocument) {
+                parentDocument
+                    .querySelectorAll('.close-outside.show')
+                    .forEach((element) => element.classList.remove('show'));
+
+                const dropdownOverlay = parentDocument.querySelector('#dropdown_overlay');
+                if (dropdownOverlay) {
+                    dropdownOverlay.classList.add('hide');
+                }
+            }
+
+            window.popupShown = false;
         });
     </script>
 {% endblock %}

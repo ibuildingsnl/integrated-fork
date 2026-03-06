@@ -48,10 +48,12 @@
          data-file_url="{{ file_url|default("") }}">
     </div>
 
-    <script src="{{ asset('bundles/integratedintegrated/edit_uppy.js') }}"></script>
+    <script src="{{ asset('bundles/integratedintegrated/edit_uppy.js') }}" defer data-turbo-track="reload"></script>
 {% endblock %}
 
-{% block webpack_js %}
+{% block head_javascript %}
+    {{ parent() }}
+
     <script>
         const path = '{{ path('integrated_content_media_manage_relations') }}'
         const previous_url = '{{ previous_url }}'
@@ -64,6 +66,8 @@
         }
     </script>
 
-    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
-    <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
+    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}" defer data-turbo-track="reload"></script>
+{% endblock %}
+
+{% block webpack_js %}
 {% endblock %}

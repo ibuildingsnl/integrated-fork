@@ -106,10 +106,15 @@ class BlockController extends AbstractController
                 'type' => $block->getType(),
             ]
         );
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
             if ($form->get('actions')->getData() == 'cancel') {
+                if ('iframe.html' === $request->getRequestFormat()) {
+                    return $this->render('@IntegratedBlock/block/canceled.iframe.html.twig');
+                }
+
                 return $this->redirectToRoute('integrated_block_block_index');
             }
             if ($form->isValid()) {
@@ -149,10 +154,15 @@ class BlockController extends AbstractController
                 'type' => $block->getType(),
             ]
         );
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
             if ($form->get('actions')->getData() == 'cancel') {
+                if ('iframe.html' === $request->getRequestFormat()) {
+                    return $this->render('@IntegratedBlock/block/canceled.iframe.html.twig');
+                }
+
                 return $this->redirectToRoute('integrated_block_block_index');
             }
 

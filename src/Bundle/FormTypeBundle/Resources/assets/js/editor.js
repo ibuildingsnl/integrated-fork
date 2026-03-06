@@ -36,8 +36,19 @@ function isValidURL(str) {
     return (a.host && a.host != window.location.host);
 }
 
-$('.integrated_tinymce').each(function(key, elem){
-    const element = $(elem);
+function initTinyMceEditors(root = document) {
+    $('.integrated_tinymce', root).each(function(key, elem){
+        const element = $(elem);
+
+        if (element.data('tinymce-initialized')) {
+            return;
+        }
+
+        if (elem.id && tinymce.get(elem.id)) {
+            element.data('tinymce-initialized', true);
+            return;
+        }
+
 
     let style_formats = [
         {title: 'Paragraph', format: 'p'},
@@ -51,7 +62,7 @@ $('.integrated_tinymce').each(function(key, elem){
         {title: 'Subscript', icon: 'subscript', inline: 'sub'},
     ];
 
-    let custom_styles = element.data('format_styles');
+    let custom_styles = element.data('format_styles') || [];
 
     custom_styles = custom_styles.map(style => {
         const newStyle = {...style};
@@ -76,7 +87,7 @@ $('.integrated_tinymce').each(function(key, elem){
              "advlist autolink link lists charmap anchor pagebreak " +
              "searchreplace wordcount visualchars fullscreen nonbreaking " +
              "table directionality wordcount autoresize code " +
-             "integratedbrowser"
+             "integratedbrowser articlelinksearch"
         ,
         add_unload_trigger: false,
         schema: "html5",
@@ -84,8 +95,9 @@ $('.integrated_tinymce').each(function(key, elem){
         branding: false,
         toolbar:
             "styles | bold italic underline subscript superscript | bullist numlist | alignleft aligncenter alignright alignjustify | " +
-            "link anchor table charmap | integratedimage integratedgallery integratedvideo image media | print | " +
-            "pastetext searchreplace | code fullscreen",
+            "integratedArticleLinkSearch anchor table charmap | integratedimage integratedgallery integratedvideo image media | print | " +
+            "pastetext searchreplace | code fullscreen ",
+        contextmenu: 'integratedArticleLinkSearch',
         formats: {
             alignleft: {selector : 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes : 'align-left'},
             aligncenter: {selector : 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes : 'align-center'},
@@ -219,7 +231,10 @@ $('.integrated_tinymce').each(function(key, elem){
             });
         }
     });
-});
+
+        element.data('tinymce-initialized', true);
+    });
+}
 
 $(window).keyup(function(e) {
     if (e.key === "Escape") {
@@ -227,4 +242,36 @@ $(window).keyup(function(e) {
     }
 });
 
+function destroyTinyMceEditors() {
+    if (typeof tinymce !== 'undefined') {
+        tinymce.remove();
+    }
+}
 
+function initTinyMceFromDom() {
+    initTinyMceEditors(document);
+}
+
+function initTinyMceFromFrame(event) {
+    const root = event && event.target ? event.target : document;
+    initTinyMceEditors(root);
+}
+
+function scheduleTinyMceInit(root = document) {
+    initTinyMceEditors(root);
+    window.requestAnimationFrame(() => initTinyMceEditors(root));
+    window.setTimeout(() => initTinyMceEditors(root), 120);
+}
+
+function scheduleTinyMceInitFromEvent(event) {
+    const root = event && event.target ? event.target : document;
+    scheduleTinyMceInit(root);
+}
+
+document.addEventListener('DOMContentLoaded', () => scheduleTinyMceInit(document));
+window.addEventListener('load', () => scheduleTinyMceInit(document));
+document.addEventListener('turbo:load', () => scheduleTinyMceInit(document));
+document.addEventListener('turbo:render', () => scheduleTinyMceInit(document));
+document.addEventListener('turbo:frame-load', scheduleTinyMceInitFromEvent);
+document.addEventListener('turbo:frame-render', scheduleTinyMceInitFromEvent);
+document.addEventListener('turbo:before-cache', destroyTinyMceEditors);

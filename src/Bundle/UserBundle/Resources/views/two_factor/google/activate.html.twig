@@ -15,15 +15,21 @@
 {% block content %}
     <div class="row">
         <div class="index-wrapper-full">
-            <h1 class="main-title font-regular">{% trans %}Activate{% endtrans %} <small>{% trans %}Google Authenticator{% endtrans %}</small></h1>
+            <h1 class="main-title font-regular">{% trans %}Activate{% endtrans %} <small>{% trans %}Authenticator app{% endtrans %}</small></h1>
 
             <section class="section-white section-padding section-radius">
                 <div class="row">
                     <div class="col-lg-6 col-lg-offset-3">
                         <div class="text-center">
-                            <p>{% trans %}Scan the QR code with the Google Authenticator.{% endtrans %}</p>
+                            <p>{% trans %}Scan the QR code with your authenticator app (for example Authy, Google Authenticator, Microsoft Authenticator or 1Password).{% endtrans %}</p>
 
-                            <img src="{{ qr_code_data_uri(integrated_user_authenticator_qr_code(user)) }}" alt="Google Authenticator QR code" class="img-thumbnail" />
+                            <img src="{{ qr_code_data_uri(integrated_user_authenticator_qr_code(user)) }}" alt="Authenticator app QR code" class="img-thumbnail" />
+
+                            {% if user.googleAuthenticatorSecret %}
+                                <hr>
+                                <p>{% trans %}Can't scan the QR code? Enter this setup key manually in your authenticator app:{% endtrans %}</p>
+                                <p><strong>{{ user.googleAuthenticatorSecret }}</strong></p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

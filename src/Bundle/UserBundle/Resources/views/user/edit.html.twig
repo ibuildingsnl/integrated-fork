@@ -8,7 +8,62 @@
             {% block toolbar %}
                 {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
             {% endblock toolbar %}
-            <div class="aside-options"></div>
+            <div class="aside-options">
+                <aside>
+                    <div class="aside-holder">
+                        <div class="aside-header">
+                            <button class="toggle-filters toggle-options-sidebar" data-target="aside-options" type="button">
+                                <i class="iconoir-xmark"></i>
+                            </button>
+                            <span>{% trans %}User info{% endtrans %}</span>
+                        </div>
+
+                        <div class="aside-item-wrapper show">
+                            <div class="aside-item-header">
+                                <h3 class="aside-item-title">
+                                    <i class="iconoir-info-circle"></i>
+                                    <span class="aside-item-icon">{% trans %}Effective roles{% endtrans %}</span>
+                                </h3>
+                                <i class="iconoir-nav-arrow-up"></i>
+                            </div>
+                            <div class="aside-item-list">
+                                <div class="aside-item-list-container">
+                                    {% if user.roles|length > 0 %}
+                                        <ul class="filters_list">
+                                            {% for role in user.roles %}
+                                                <li>{{ role }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <p class="text-light">{% trans %}No effective roles found{% endtrans %}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="aside-item-wrapper show">
+                            <div class="aside-item-header">
+                                <h3 class="aside-item-title">
+                                    <i class="iconoir-user"></i>
+                                    <span class="aside-item-icon">{% trans %}Linked author{% endtrans %}</span>
+                                </h3>
+                                <i class="iconoir-nav-arrow-up"></i>
+                            </div>
+                            <div class="aside-item-list">
+                                <div class="aside-item-list-container">
+                                    {% if user.relation is defined and user.relation %}
+                                        <a href="{{ path('integrated_content_content_edit', {id: user.relation.id}) }}">
+                                            {{ user.relation.name|default('') }} {{ user.relation.firstname|default('') }} {{ user.relation.lastname|default('') }}
+                                        </a>
+                                    {% else %}
+                                        <p class="text-light">{% trans %}No author linked{% endtrans %}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
             <div class="editor-wrapper">
                 <div class="page-title">
                     <h1 class="heading">{% trans %}Edit{% endtrans %} {% trans %}user{% endtrans %}</h1>

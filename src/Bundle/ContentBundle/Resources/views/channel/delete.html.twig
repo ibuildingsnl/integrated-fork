@@ -2,9 +2,9 @@
 {% block title %}{% trans %}Delete channel{% endtrans %}{% endblock title %}
 
 {% block content %}
-    <div class="flex flex-wrap edit-form">
+    <div id="channel-delete-page" class="flex flex-wrap edit-form">
         {% block form_start %}
-            {{ form_start(form) }}
+            {{ form_start(form, { attr: { 'data-turbo': 'false' } }) }}
         {% endblock %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
@@ -20,6 +20,9 @@
                 </p>
                 {{ form_rest(form, {'style':'horizontal'})}}
                 {% if referenced %}
+                    <div class="alert alert-warning">
+                        {% trans %}This channel has related pages. Select "Delete related pages" to remove them before deleting the channel.{% endtrans %}
+                    </div>
                     {% include '@IntegratedContent/referencedAlert.html.twig' with {'referenced':referenced} only %}
                 {% endif %}
             </section>

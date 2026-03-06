@@ -8,392 +8,394 @@
 {% endblock title %}
 
 {% block content %}
-    {% block filters %}
-        <div class="filters_row"></div>
-    {% endblock %}
-
-    <div class="flex flex-wrap content-edit-form">
-        {% block form_start %}
-            {{ form_start(form) }}
+    <div id="content-edit-page">
+        {% block filters %}
+            <div class="filters_row"></div>
         {% endblock %}
-        {% block toolbar %}
-            {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
-        {% endblock toolbar %}
-        <div class="aside-options">
-            <aside>
-                <div class="aside-holder">
-                    {% block sidebar %}
-                        <div class="aside-header">
-                            <button class="toggle-filters toggle-options-sidebar" data-target="aside-options"
-                                    type="button">
-                                <i class="iconoir-xmark"></i></button>
-                            <span>{% trans %}Options{% endtrans %}</span>
-                        </div>
-                        <div class="aside-item-wrapper show">
-                            <div class="aside-item-header">
-                                <h3 class="aside-item-title">
-                                    <i class="iconoir-info-circle"></i>
-                                    <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
-                                </h3>
-                                <i class="iconoir-nav-arrow-up"></i>
+
+        <div class="flex flex-wrap content-edit-form">
+            {% block form_start %}
+                {{ form_start(form, { attr: { 'data-turbo-stream': 'true' } }) }}
+            {% endblock %}
+            {% block toolbar %}
+                {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+            {% endblock toolbar %}
+            <div class="aside-options">
+                <aside>
+                    <div class="aside-holder">
+                        {% block sidebar %}
+                            <div class="aside-header">
+                                <button class="toggle-filters toggle-options-sidebar" data-target="aside-options"
+                                        type="button">
+                                    <i class="iconoir-xmark"></i></button>
+                                <span>{% trans %}Options{% endtrans %}</span>
                             </div>
-                            <div class="aside-item-list">
-                                <div class="aside-item-list-container">
-                                    <div class="status-info">
-                                        {% if form.publishTime is defined %}
-                                            {{ form_row(form.publishTime, {style: 'inline'}) }}
+                            <div class="aside-item-wrapper show">
+                                <div class="aside-item-header">
+                                    <h3 class="aside-item-title">
+                                        <i class="iconoir-info-circle"></i>
+                                        <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
+                                    </h3>
+                                    <i class="iconoir-nav-arrow-up"></i>
+                                </div>
+                                <div class="aside-item-list">
+                                    <div class="aside-item-list-container">
+                                        <div class="status-info">
+                                            {% if form.publishTime is defined %}
+                                                {{ form_row(form.publishTime, {style: 'inline'}) }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="workflow-info">
+                                            {% if form.extension_workflow is defined %}
+                                                {{ form_row(form.extension_workflow, {style: 'inline', 'show_label': 'true'}) }}
+                                            {% endif %}
+                                        </div>
+                                        {% if content is defined and content.extensions['integrated.extension.workflow']['state'] is defined %}
+                                            {% set workflow = content.extensions['integrated.extension.workflow']['state'] %}
                                         {% endif %}
-                                    </div>
-                                    <div class="workflow-info">
-                                        {% if form.extension_workflow is defined %}
-                                            {{ form_row(form.extension_workflow, {style: 'inline', 'show_label': 'true'}) }}
-                                        {% endif %}
-                                    </div>
-                                    {% if content is defined and content.extensions['integrated.extension.workflow']['state'] is defined %}
-                                        {% set workflow = content.extensions['integrated.extension.workflow']['state'] %}
-                                    {% endif %}
-                                    <div class="status-options">
-                                        {% if workflow is defined and ('now'|date('U') > content.publishTime.startDate|date('U')) %}
-                                            <div class="status {{ workflow.name|lower }}"
-                                                 style="background-color:{{ workflow.color|alpha(15) }};color:{{ workflow.color }};">
-                                                <i class="iconoir-{{ workflow.icon }}"></i> {{ workflow.name }}
-                                            </div>
-                                        {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate|date('U'))) %}
-                                            <div class="status planned">
-                                                <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
-                                            </div>
-                                        {% else %}
-                                            {% if (content is defined and ((content.isPublished and content.getChannels|length > 0) or content.published == 'true')) %}
-                                                <div class="status published">
-                                                    <i class="iconoir-check-circle"></i> {% trans %}Published{% endtrans %}
+                                        <div class="status-options">
+                                            {% if workflow is defined and ('now'|date('U') > content.publishTime.startDate|date('U')) %}
+                                                <div class="status {{ workflow.name|lower }}"
+                                                     style="background-color:{{ workflow.color|alpha(15) }};color:{{ workflow.color }};">
+                                                    <i class="iconoir-{{ workflow.icon }}"></i> {{ workflow.name }}
                                                 </div>
                                             {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate|date('U'))) %}
                                                 <div class="status planned">
                                                     <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
                                                 </div>
                                             {% else %}
-                                                <div class="status draft">
-                                                    <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
-                                                </div>
+                                                {% if (content is defined and ((content.isPublished and content.getChannels|length > 0) or content.published == 'true')) %}
+                                                    <div class="status published">
+                                                        <i class="iconoir-check-circle"></i> {% trans %}Published{% endtrans %}
+                                                    </div>
+                                                {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate|date('U'))) %}
+                                                    <div class="status planned">
+                                                        <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
+                                                    </div>
+                                                {% else %}
+                                                    <div class="status draft">
+                                                        <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
+                                                    </div>
+                                                {% endif %}
                                             {% endif %}
-                                        {% endif %}
-                                        {% if content is defined %}
-                                            {% if locking is defined and locking.lock is defined and locking.lock is not null and locking.locked == false %}
-                                                <a class="delete"
-                                                   href="{{ path('integrated_content_content_delete', {'id': content.id, 'lock': locking.lock.id}) }}">
-                                                    <i class="iconoir-trash"></i>
-                                                </a>
-                                            {% else %}
-                                                <a class="delete"
-                                                   href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
-                                                    <i class="iconoir-trash"></i>
-                                                </a>
-                                            {% endif %}
-                                        {% endif %}
-                                    </div>
-                                    <div class="mt-2">
-                                        {% if form.disabled is defined %}
-                                            {{ form_row(form.disabled) }}
-                                        {% endif %}
-                                        {% if form.orderable is defined %}
-                                            {{ form_row(form.orderable) }}
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div class="aside-item-wrapper publications">
-                            <div class="aside-item-header">
-                                <h3 class="aside-item-title">
-                                    <i class="iconoir-share-android"></i>
-                                    <span class="aside-item-icon">{% trans %}Publications{% endtrans %}
-                                            <span class="pub-count">({{ publications|default('')|length }})</span>
-                                        </span>
-                                </h3>
-                                <i class="iconoir-nav-arrow-up"></i>
-                            </div>
-                            <div class="aside-item-list">
-                                <div class="aside-item-list-container">
-                                    <div class="publication-list">
-                                        {% if publications is defined and publications is not empty and (content.published == 'true' or ('now'|date('U') < content.publishTime.startDate|date('U'))) %}
-                                            {% for publication in publications %}
-                                                {% set pubChannel = publication.getChannel %}
-                                                {% if pubChannel.getType is defined and pubChannel.getType is not null %}
-                                                    {% set brandName = pubChannel|integrated_brand_profile.name|default('Unknown') %}
-                                                    {% set pubIcon = pubChannel.getType.getIcon %}
-                                                    {% set pubState = 'published' %}
-                                                    {% if ('now'|date('U') < publication.getTime.getStartDate|date('U')) %}
-                                                        {% set pubState = 'planned' %}
-                                                    {% endif %}
-                                                    {% if publication.getStatus() == 'failed' %}
-                                                        {% set pubState = 'failed' %}
-                                                    {% elseif publication.getStatus == 'succes' %}
-                                                        {% set pubState = 'published no-edit' %}
-                                                    {% endif %}
-                                                    <a class="publication-item {{ pubState }}"
-                                                       data-id="{{ publication.getId }}"
-                                                       {% if publication.getStatus != 'success' %}data-channel="{{ publication.getChannel.getId }}"{% endif %}
-                                                        {% if publication.getStatus == 'success' %}data-publication-status="success"{% endif %}>
-                                                        <div class="publication-wrap">
-                                                            <div class="publication-item-heading">
-                                                                <div class="heading-left">
-                                                                    <i class="icon iconoir-{{ pubIcon }}"
-                                                                       title="{{ pubChannel.getType.getName }}"></i>
-                                                                    <span
-                                                                        class="publish-time">{{ publication.getTime.getStartDate|default(content.publishTime.startDate)|date('d-m-Y H:i') }}</span>
-                                                                </div>
-                                                                <div class="heading-right">
-                                                                    {% if publication.getStatus() == 'success' %}
-                                                                        <i class="icon iconoir-check"
-                                                                           title="Published to Channel"></i>
-                                                                    {% else %}
-                                                                        <i class="icon iconoir-xmark" title="remove"
-                                                                           data-channel="{{ publication.getChannel.getId }}"></i>
-                                                                    {% endif %}
-                                                                </div>
-                                                            </div>
-                                                            <div class="publication-item-content">
-                                                                <b>{{ brandName }} {{ pubChannel.getType.getName }}</b><br>
-                                                            </div>
-                                                            {% if publication.getStatus() == 'failed' %}
-                                                                <div class="publication-error">
-                                                                    {{ publication.getResponse()|default('') }}
-                                                                </div>
-                                                            {% endif %}
-                                                        </div>
+                                            {% if content is defined %}
+                                                {% if locking is defined and locking.lock is defined and locking.lock is not null and locking.locked == false %}
+                                                    <a class="delete"
+                                                       href="{{ path('integrated_content_content_delete', {'id': content.id, 'lock': locking.lock.id}) }}">
+                                                        <i class="iconoir-trash"></i>
+                                                    </a>
+                                                {% else %}
+                                                    <a class="delete"
+                                                       href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
+                                                        <i class="iconoir-trash"></i>
                                                     </a>
                                                 {% endif %}
-                                            {% endfor %}
-                                        {% endif %}
-                                    </div>
-                                    <p class="publication-info">{% trans %}Removing a published Social Media publication will not remove it from the respected platform. Removing a planned (purple) publication will stop it from publishing to that Social Media Channel{% endtrans %}</p>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        {% block content_options %}
-                            {% set options = false %}
-                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
-                                {% set options = true %}
-                            {% endfor %}
-                            {% if form.children.customFields is defined %}
-                                {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
-                                    {% set options = true %}
-                                {% endfor %}
-                            {% endif %}
-                            {% if options == true %}
-                                <div class="aside-item-wrapper">
-                                    <div class="aside-item-header">
-                                        <h3 class="aside-item-title">
-                                            <i class="iconoir-settings"></i>
-                                            <span
-                                                class="aside-item-icon">{% trans %}Content Options{% endtrans %}</span>
-                                        </h3>
-                                        <i class="iconoir-nav-arrow-up"></i>
-                                    </div>
-                                    <div class="aside-item-list">
-                                        <div class="aside-item-list-container">
-                                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
-                                                {{ form_row(child) }}
-                                            {% endfor %}
-                                            {% block custom_sidebar_fields %}
-                                                {% if form.children.customFields is defined %}
-                                                    {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
-                                                        {{ form_row(field) }}
-                                                    {% endfor %}
-                                                {% endif %}
-                                            {% endblock %}
+                                            {% endif %}
                                         </div>
-                                    </div>
-                                </div>
-                            {% endif %}
-                        {% endblock %}
-
-
-                        <div class="aside-item-wrapper" id="used-by"></div>
-
-                        {% block content_history %}
-                            {% if showContentHistory %}
-                                {{ render(controller('Integrated\\Bundle\\ContentHistoryBundle\\Controller\\ContentHistoryController::history', { 'content': content })) }}
-                            {% endif %}
-                        {% endblock %}
-
-                        {% block content_meta %}
-                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR')) %}
-                                {{ form_row(child) }}
-                            {% endfor %}
-                        {% endblock %}
-
-                        {% block content_relations %}
-                            {% if form.offsetGet('relations').count() %}
-                                <input type="hidden" id="default_references" value="{{ references }}">
-                                {% for relation in form.relations %}
-                                    {% if relation.vars.attr['data-location'] == 'sidebar' %}
-
-                                        <div class="aside-item-wrapper relations">
-                                            <div class="aside-item-header">
-                                                <h3 class="aside-item-title">
-                                                    <i class="iconoir-{{ relation.vars.attr['data-icon'] }}"></i>
-                                                    <label
-                                                        class="aside-item-icon"
-                                                        for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
-                                                </h3>
-                                                <i class="iconoir-nav-arrow-up"></i>
-                                            </div>
-                                            <div class="aside-item-list">
-
-                                                <div class="aside-item-list-container relation">
-                                                    {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
-                                                        {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
-                                                            relation: relation,
-                                                            form_relations: formRelations|default(null),
-                                                        } %}
-
-                                                    {% elseif relation.vars.attr['data-relationtype'] == 'taxonomy_category' %}
-                                                        {% include '@IntegratedContent/content/partial/category_selection_component.html.twig' %}
-
-                                                    {% else %}
-                                                        <select
-                                                            multiple
-                                                            id="{{ relation.vars.name }}"
-                                                            data-multiple="{{ relation.vars.attr['data-multiple'] }}"
-                                                            data-types="{{ relation.vars.attr['data-types'] }}"
-                                                            data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
-                                                            data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
-                                                            class="relation-items form-control"
-                                                            style="display: none; width: 89%">
-                                                        </select>
-                                                        <span class="input-group-addon" data-add="1"></span>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                {% endfor %}
-                            {% endif %}
-                        {% endblock %}
-                    {% endblock %}
-                </div>
-            </aside>
-        </div>
-        <div class="editor-wrapper">
-            <div class="editor-overlay"></div>
-            <section class="editor">
-                {% block content_form %}
-                    {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR')) %}
-                        {{ form_row(child) }}
-                    {% endfor %}
-
-                    {% if form.children.customFields is defined %}
-                        {% for field in form.children.customFields %}
-                            {% if not field.rendered %}
-                                {{ form_row(field, {'style':'editor', 'state':'show'}) }}
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-
-                    {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
-                {% endblock %}
-
-                {% block content_relations_editor %}
-                    {% if form.offsetGet('relations').count() %}
-                        <input type="hidden" id="default_references" value="{{ references }}">
-                        {% for relation in form.relations %}
-                            {% if relation.vars.attr['data-location'] != 'sidebar' %}
-                                <div class="editor-item-wrapper relations">
-                                    <div class="editor-item-header">
-                                        <h3 class="editor-item-title">
-                                            <label
-                                                class="editor-item-icon"
-                                                for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
-                                        </h3>
-                                        <i class="iconoir-nav-arrow-up"></i>
-                                    </div>
-                                    <div class="editor-item-list">
-                                        <div class="editor-item-list-container relation">
-
-
-                                            {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
-                                                {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
-                                                    relation: relation,
-                                                    form_relations: formRelations|default(null),
-                                                } %}
-                                            {% elseif relation.vars.attr['data-relationtype'] == 'taxonomy_category' %}
-                                                {% include '@IntegratedContent/content/partial/category_selection_component.html.twig' %}
-                                            {% else %}
-                                                <select
-                                                    multiple
-                                                    id="{{ relation.vars.name }}"
-                                                    data-multiple="{{ relation.vars.attr['data-multiple'] }}"
-                                                    data-types="{{ relation.vars.attr['data-types'] }}"
-                                                    data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
-                                                    data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
-                                                    class="relation-items form-control"
-                                                    style="display: none; width: 89%">
-                                                </select>
-                                                <span class="input-group-addon" data-add="1"></span>
+                                        <div class="mt-2">
+                                            {% if form.disabled is defined %}
+                                                {{ form_row(form.disabled) }}
+                                            {% endif %}
+                                            {% if form.orderable is defined %}
+                                                {{ form_row(form.orderable) }}
                                             {% endif %}
                                         </div>
                                     </div>
                                 </div>
-                            {% endif %}
+                            </div>
+
+
+                            <div class="aside-item-wrapper publications">
+                                <div class="aside-item-header">
+                                    <h3 class="aside-item-title">
+                                        <i class="iconoir-share-android"></i>
+                                        <span class="aside-item-icon">{% trans %}Publications{% endtrans %}
+                                                <span class="pub-count">({{ publications|default('')|length }})</span>
+                                            </span>
+                                    </h3>
+                                    <i class="iconoir-nav-arrow-up"></i>
+                                </div>
+                                <div class="aside-item-list">
+                                    <div class="aside-item-list-container">
+                                        <div class="publication-list">
+                                            {% if publications is defined and publications is not empty and (content.published == 'true' or ('now'|date('U') < content.publishTime.startDate|date('U'))) %}
+                                                {% for publication in publications %}
+                                                    {% set pubChannel = publication.getChannel %}
+                                                    {% if pubChannel.getType is defined and pubChannel.getType is not null %}
+                                                        {% set brandName = pubChannel|integrated_brand_profile.name|default('Unknown') %}
+                                                        {% set pubIcon = pubChannel.getType.getIcon %}
+                                                        {% set pubState = 'published' %}
+                                                        {% if ('now'|date('U') < publication.getTime.getStartDate|date('U')) %}
+                                                            {% set pubState = 'planned' %}
+                                                        {% endif %}
+                                                        {% if publication.getStatus() == 'failed' %}
+                                                            {% set pubState = 'failed' %}
+                                                        {% elseif publication.getStatus == 'succes' %}
+                                                            {% set pubState = 'published no-edit' %}
+                                                        {% endif %}
+                                                        <a class="publication-item {{ pubState }}"
+                                                           data-id="{{ publication.getId }}"
+                                                           {% if publication.getStatus != 'success' %}data-channel="{{ publication.getChannel.getId }}"{% endif %}
+                                                            {% if publication.getStatus == 'success' %}data-publication-status="success"{% endif %}>
+                                                            <div class="publication-wrap">
+                                                                <div class="publication-item-heading">
+                                                                    <div class="heading-left">
+                                                                        <i class="icon iconoir-{{ pubIcon }}"
+                                                                           title="{{ pubChannel.getType.getName }}"></i>
+                                                                        <span
+                                                                            class="publish-time">{{ publication.getTime.getStartDate|default(content.publishTime.startDate)|date('d-m-Y H:i') }}</span>
+                                                                    </div>
+                                                                    <div class="heading-right">
+                                                                        {% if publication.getStatus() == 'success' %}
+                                                                            <i class="icon iconoir-check"
+                                                                               title="Published to Channel"></i>
+                                                                        {% else %}
+                                                                            <i class="icon iconoir-xmark" title="remove"
+                                                                               data-channel="{{ publication.getChannel.getId }}"></i>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="publication-item-content">
+                                                                    <b>{{ brandName }} {{ pubChannel.getType.getName }}</b><br>
+                                                                </div>
+                                                                {% if publication.getStatus() == 'failed' %}
+                                                                    <div class="publication-error">
+                                                                        {{ publication.getResponse()|default('') }}
+                                                                    </div>
+                                                                {% endif %}
+                                                            </div>
+                                                        </a>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                        </div>
+                                        <p class="publication-info">{% trans %}Removing a published Social Media publication will not remove it from the respected platform. Removing a planned (purple) publication will stop it from publishing to that Social Media Channel{% endtrans %}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            {% block content_options %}
+                                {% set options = false %}
+                                {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                    {% set options = true %}
+                                {% endfor %}
+                                {% if form.children.customFields is defined %}
+                                    {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                        {% set options = true %}
+                                    {% endfor %}
+                                {% endif %}
+                                {% if options == true %}
+                                    <div class="aside-item-wrapper">
+                                        <div class="aside-item-header">
+                                            <h3 class="aside-item-title">
+                                                <i class="iconoir-settings"></i>
+                                                <span
+                                                    class="aside-item-icon">{% trans %}Content Options{% endtrans %}</span>
+                                            </h3>
+                                            <i class="iconoir-nav-arrow-up"></i>
+                                        </div>
+                                        <div class="aside-item-list">
+                                            <div class="aside-item-list-container">
+                                                {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                                    {{ form_row(child) }}
+                                                {% endfor %}
+                                                {% block custom_sidebar_fields %}
+                                                    {% if form.children.customFields is defined %}
+                                                        {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                                            {{ form_row(field) }}
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                {% endblock %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endblock %}
+
+
+                            <div class="aside-item-wrapper" id="used-by"></div>
+
+                            {% block content_history %}
+                                {% if showContentHistory %}
+                                    {{ render(controller('Integrated\\Bundle\\ContentHistoryBundle\\Controller\\ContentHistoryController::history', { 'content': content })) }}
+                                {% endif %}
+                            {% endblock %}
+
+                            {% block content_meta %}
+                                {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR')) %}
+                                    {{ form_row(child) }}
+                                {% endfor %}
+                            {% endblock %}
+
+                            {% block content_relations %}
+                                {% if form.offsetGet('relations').count() %}
+                                    <input type="hidden" id="default_references" value="{{ references }}">
+                                    {% for relation in form.relations %}
+                                        {% if relation.vars.attr['data-location'] == 'sidebar' %}
+
+                                            <div class="aside-item-wrapper relations">
+                                                <div class="aside-item-header">
+                                                    <h3 class="aside-item-title">
+                                                        <i class="iconoir-{{ relation.vars.attr['data-icon'] }}"></i>
+                                                        <label
+                                                            class="aside-item-icon"
+                                                            for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
+                                                    </h3>
+                                                    <i class="iconoir-nav-arrow-up"></i>
+                                                </div>
+                                                <div class="aside-item-list">
+
+                                                    <div class="aside-item-list-container relation">
+                                                        {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
+                                                            {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
+                                                                relation: relation,
+                                                                form_relations: formRelations|default(null),
+                                                            } %}
+
+                                                        {% elseif relation.vars.attr['data-relationtype'] == 'taxonomy_category' %}
+                                                            {% include '@IntegratedContent/content/partial/category_selection_component.html.twig' %}
+
+                                                        {% else %}
+                                                            <select
+                                                                multiple
+                                                                id="{{ relation.vars.name }}"
+                                                                data-multiple="{{ relation.vars.attr['data-multiple'] }}"
+                                                                data-types="{{ relation.vars.attr['data-types'] }}"
+                                                                data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
+                                                                data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
+                                                                class="relation-items form-control"
+                                                                style="display: none; width: 89%">
+                                                            </select>
+                                                            <span class="input-group-addon" data-add="1"></span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endblock %}
+                        {% endblock %}
+                    </div>
+                </aside>
+            </div>
+            <div class="editor-wrapper">
+                <div class="editor-overlay"></div>
+                <section class="editor">
+                    {% block content_form %}
+                        {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR')) %}
+                            {{ form_row(child) }}
                         {% endfor %}
 
-                    {% endif %}
-                {% endblock content_relations_editor %}
-            </section>
+                        {% if form.children.customFields is defined %}
+                            {% for field in form.children.customFields %}
+                                {% if not field.rendered %}
+                                    {{ form_row(field, {'style':'editor', 'state':'show'}) }}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+
+                        {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
+                    {% endblock %}
+
+                    {% block content_relations_editor %}
+                        {% if form.offsetGet('relations').count() %}
+                            <input type="hidden" id="default_references" value="{{ references }}">
+                            {% for relation in form.relations %}
+                                {% if relation.vars.attr['data-location'] != 'sidebar' %}
+                                    <div class="editor-item-wrapper relations">
+                                        <div class="editor-item-header">
+                                            <h3 class="editor-item-title">
+                                                <label
+                                                    class="editor-item-icon"
+                                                    for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
+                                            </h3>
+                                            <i class="iconoir-nav-arrow-up"></i>
+                                        </div>
+                                        <div class="editor-item-list">
+                                            <div class="editor-item-list-container relation">
+
+
+                                                {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
+                                                    {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
+                                                        relation: relation,
+                                                        form_relations: formRelations|default(null),
+                                                    } %}
+                                                {% elseif relation.vars.attr['data-relationtype'] == 'taxonomy_category' %}
+                                                    {% include '@IntegratedContent/content/partial/category_selection_component.html.twig' %}
+                                                {% else %}
+                                                    <select
+                                                        multiple
+                                                        id="{{ relation.vars.name }}"
+                                                        data-multiple="{{ relation.vars.attr['data-multiple'] }}"
+                                                        data-types="{{ relation.vars.attr['data-types'] }}"
+                                                        data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
+                                                        data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
+                                                        class="relation-items form-control"
+                                                        style="display: none; width: 89%">
+                                                    </select>
+                                                    <span class="input-group-addon" data-add="1"></span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+
+                        {% endif %}
+                    {% endblock content_relations_editor %}
+                </section>
+            </div>
+
+
+            {% block form_end %}
+                {{ form_end(form) }}
+            {% endblock %}
         </div>
 
-
-        {% block form_end %}
-            {{ form_end(form) }}
-        {% endblock %}
-    </div>
-
-    {% autoescape 'js' %}
-        {% verbatim %}
-            <script id="add-template" type="text/xhandlebars-template">
-                {{#if relations}}
-                {{#equals relations.length 1}}
-                    <button data-title="Add {{relations.0.name}}" class="add-relation" data-href="{{relations.0.href}}" data-modal="add-modal">
-                        Add {{relations.0.name}}
-                        <span class="sr-only">{% endverbatim %}{% trans %}Add New{% endtrans %}{% verbatim %}:</span>
-                    </button>
-                {{else}}
-                <div class="add-relation">
-                    <button type="button" class=" inline-block w-0 h-0 ml-1 align border-b-0 border-t-1 border-r-1 border-l-1 font-size-13" data-toggle="dropdown" aria-expanded="false">
-                        <i class="iconoir-plus"></i>
-                        <span class="sr-only">{% endverbatim %}{% trans %}Add New{% endtrans %}{% verbatim %}:</span>
-                    </button>
-                    <ul class=" dropdown-menu" role="menu">
-                        {{#each relations}}
-                        <li>
-                            <a class="cursor-pointer" data-title="Add {{this.name}}" data-href="{{this.href}}" target="_blank" data-modal="add-modal">
-                                {{this.name}}
-                            </a>
-                        </li>
-                        {{/each}}
-                    </ul>
-                 </div>
-                {{/equals}}
-                {{/if}}
-                <div class="modal add-modal" id="relation-add-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"><i class="iconoir-xmark"></i></span><span class="sr-only">{% endverbatim %}{% trans %}Close{% endtrans %}{% verbatim %}</span></button>
-                                <h4 class="modal-title">{% endverbatim %}{% trans %}Add{% endtrans %}{% verbatim %}</h4>
+        {% autoescape 'js' %}
+            {% verbatim %}
+                <script id="add-template" type="text/xhandlebars-template">
+                    {{#if relations}}
+                    {{#equals relations.length 1}}
+                        <button data-title="Add {{relations.0.name}}" class="add-relation" data-href="{{relations.0.href}}" data-modal="add-modal">
+                            Add {{relations.0.name}}
+                            <span class="sr-only">{% endverbatim %}{% trans %}Add New{% endtrans %}{% verbatim %}:</span>
+                        </button>
+                    {{else}}
+                    <div class="add-relation">
+                        <button type="button" class=" inline-block w-0 h-0 ml-1 align border-b-0 border-t-1 border-r-1 border-l-1 font-size-13" data-toggle="dropdown" aria-expanded="false">
+                            <i class="iconoir-plus"></i>
+                            <span class="sr-only">{% endverbatim %}{% trans %}Add New{% endtrans %}{% verbatim %}:</span>
+                        </button>
+                        <ul class=" dropdown-menu" role="menu">
+                            {{#each relations}}
+                            <li>
+                                <a class="cursor-pointer" data-title="Add {{this.name}}" data-href="{{this.href}}" target="_blank" data-modal="add-modal">
+                                    {{this.name}}
+                                </a>
+                            </li>
+                            {{/each}}
+                        </ul>
+                     </div>
+                    {{/equals}}
+                    {{/if}}
+                    <div class="modal add-modal" id="relation-add-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"><i class="iconoir-xmark"></i></span><span class="sr-only">{% endverbatim %}{% trans %}Close{% endtrans %}{% verbatim %}</span></button>
+                                    <h4 class="modal-title">{% endverbatim %}{% trans %}Add{% endtrans %}{% verbatim %}</h4>
+                                </div>
+                                <iframe width="100%" height="400">{% endverbatim %}{% trans %}Loading{% endtrans %}{% verbatim %}</iframe>
                             </div>
-                            <iframe width="100%" height="400">{% endverbatim %}{% trans %}Loading{% endtrans %}{% verbatim %}</iframe>
                         </div>
                     </div>
-                </div>
-            </script>
-        {% endverbatim %}
-    {% endautoescape %}
+                </script>
+            {% endverbatim %}
+        {% endautoescape %}
+    </div>
 
 {% endblock %}
 
@@ -448,22 +450,31 @@
         window.addEventListener('tinyMCEInitialized', observeResize);
 
         function observeResize() {
+            const observedTitle = document.querySelector('.title_tinymce_input');
+            if (!observedTitle) {
+                return;
+            }
+
             const resize_ob = new ResizeObserver(function(entries) {
-                // since we are observing only a single element, so we access the first element in entries array
+                if (!entries.length || !entries[0].contentRect) {
+                    return;
+                }
+
                 const rect = entries[0].contentRect;
-
-                // current width & height
-                const width = rect.width;
                 const height = rect.height;
+                const editor = document.querySelector('div.tox-edit-area');
+                const wrapper = document.querySelector('div.tox-sidebar-wrap');
 
-                editor = document.querySelector('div.tox-edit-area');
-                wrapper = document.querySelector('div.tox-sidebar-wrap');
+                if (!editor || !wrapper) {
+                    return;
+                }
+
                 editor.style.top = (height) + 'px';
                 wrapper.style.paddingBottom = (height) + 'px';
             });
 
             // start observing for resize
-            resize_ob.observe(document.querySelector('.title_tinymce_input'));
+            resize_ob.observe(observedTitle);
         }
     }
 </script>

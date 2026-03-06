@@ -10,6 +10,206 @@
                 <source>The page could not be found.</source>
                 <target>De pagina kon niet worden gevonden.</target>
             </trans-unit>
+            <trans-unit id="3">
+                <source>Select your structure</source>
+                <target>Selecteer je structuur</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>Choose a layout preset. You can fine-tune widths manually below. Total must be 12.</source>
+                <target>Kies een layoutvoorinstelling. Je kunt de breedtes hieronder handmatig aanpassen. Het totaal moet 12 zijn.</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>Add columns</source>
+                <target>Kolommen toevoegen</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>Configure columns</source>
+                <target>Kolommen configureren</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>Number of columns</source>
+                <target>Aantal kolommen</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>Column</source>
+                <target>Kolom</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>Total</source>
+                <target>Totaal</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>Cancel</source>
+                <target>Annuleren</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>Column sizes must add up to 12</source>
+                <target>Kolombreedtes moeten samen 12 zijn</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>Heading</source>
+                <target>Kop</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>Heading item</source>
+                <target>Kopitem</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>Block builder</source>
+                <target>Blokbouwer</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>Choose an existing block or create a new one</source>
+                <target>Kies een bestaand blok of maak een nieuw blok</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>Layout builder</source>
+                <target>Layoutbouwer</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>Choose a structure and fine-tune widths</source>
+                <target>Kies een structuur en stel de breedtes nauwkeurig in</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>Loading blocks...</source>
+                <target>Blokken laden...</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>Unable to load blocks. Please try again.</source>
+                <target>Kan blokken niet laden. Probeer het opnieuw.</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>Add block</source>
+                <target>Blok toevoegen</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>Create block</source>
+                <target>Blok maken</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>Filter channel</source>
+                <target>Kanaal filteren</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>Filter type</source>
+                <target>Type filteren</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>Edit block</source>
+                <target>Blok bewerken</target>
+            </trans-unit>
+            <trans-unit id="25">
+                <source>Menu builder</source>
+                <target>Menubouwer</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>Menu items</source>
+                <target>Menu-items</target>
+            </trans-unit>
+            <trans-unit id="27">
+                <source>Add menu item</source>
+                <target>Menu-item toevoegen</target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>Add first menu item</source>
+                <target>Voeg eerste menu-item toe</target>
+            </trans-unit>
+            <trans-unit id="29">
+                <source>Drag to reorder, drag between levels for subitems</source>
+                <target>Sleep om te herschikken, sleep tussen niveaus voor subitems</target>
+            </trans-unit>
+            <trans-unit id="30">
+                <source>Name</source>
+                <target>Naam</target>
+            </trans-unit>
+            <trans-unit id="31">
+                <source>Link type</source>
+                <target>Linktype</target>
+            </trans-unit>
+            <trans-unit id="32">
+                <source>Search selection</source>
+                <target>Zoekselectie</target>
+            </trans-unit>
+            <trans-unit id="33">
+                <source>Choose a search selection</source>
+                <target>Kies een zoekselectie</target>
+            </trans-unit>
+            <trans-unit id="34">
+                <source>No search selection selected</source>
+                <target>Geen zoekselectie gekozen</target>
+            </trans-unit>
+            <trans-unit id="35">
+                <source>Number of items</source>
+                <target>Aantal items</target>
+            </trans-unit>
+            <trans-unit id="36">
+                <source>Open in new tab</source>
+                <target>Open in nieuw tabblad</target>
+            </trans-unit>
+            <trans-unit id="37">
+                <source>Save</source>
+                <target>Opslaan</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>Remove</source>
+                <target>Verwijderen</target>
+            </trans-unit>
+            <trans-unit id="39">
+                <source>New menu item</source>
+                <target>Nieuw menu-item</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>Name is required</source>
+                <target>Naam is verplicht</target>
+            </trans-unit>
+            <trans-unit id="41">
+                <source>Search selection is required</source>
+                <target>Zoekselectie is verplicht</target>
+            </trans-unit>
+            <trans-unit id="42">
+                <source>No URL configured</source>
+                <target>Geen URL ingesteld</target>
+            </trans-unit>
+            <trans-unit id="43">
+                <source>Untitled</source>
+                <target>Zonder titel</target>
+            </trans-unit>
+            <trans-unit id="44">
+                <source>Drag menu item</source>
+                <target>Versleep menu-item</target>
+            </trans-unit>
+            <trans-unit id="45">
+                <source>Toggle submenu</source>
+                <target>Submenu in-/uitklappen</target>
+            </trans-unit>
+            <trans-unit id="46">
+                <source>Toggle settings</source>
+                <target>Instellingen in-/uitklappen</target>
+            </trans-unit>
+            <trans-unit id="47">
+                <source>Are you sure you want to remove this menu item?</source>
+                <target>Weet je zeker dat je dit menu-item wilt verwijderen?</target>
+            </trans-unit>
+            <trans-unit id="48">
+                <source>URL is required</source>
+                <target>URL is verplicht</target>
+            </trans-unit>
+            <trans-unit id="49">
+                <source>Close</source>
+                <target>Sluiten</target>
+            </trans-unit>
+            <trans-unit id="50">
+                <source>items</source>
+                <target>items</target>
+            </trans-unit>
+            <trans-unit id="51">
+                <source>Undo</source>
+                <target>Ongedaan maken</target>
+            </trans-unit>
+            <trans-unit id="52">
+                <source>Redo</source>
+                <target>Opnieuw</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

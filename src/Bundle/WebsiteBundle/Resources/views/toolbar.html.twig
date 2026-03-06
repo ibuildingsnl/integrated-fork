@@ -27,6 +27,18 @@
                 {% set params = app.request.attributes.get('_route_params')|merge(app.request.query.all) %}
 
                 {% if app.request.query.get('integrated_website_edit') and layoutEditable %}
+                    <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white icon-left"
+                       data-action="integrated-website-history-undo">
+                        <i class="iconoir-undo"></i>
+                        <span>{% trans %}Undo{% endtrans %}</span>
+                    </a>
+
+                    <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white icon-left"
+                       data-action="integrated-website-history-redo">
+                        <i class="iconoir-redo"></i>
+                        <span>{% trans %}Redo{% endtrans %}</span>
+                    </a>
+
                     <a href="javascript:;" class="integrated-website-toolbar-button btn btn-green"
                        data-action="integrated-website-page-save"
                        {% if page.id|default %}data-id="{{ page.id }}" {% endif %}

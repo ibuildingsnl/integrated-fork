@@ -1,0 +1,122 @@
+{% if form is defined %}
+    {% form_theme form with '@IntegratedContent/form/form_div_layout.html.twig' %}
+{% endif %}
+
+<turbo-frame id="media-edit-panel"
+             data-media-id="{{ content is defined ? content.id : '' }}"
+             data-file="{{ content is defined and content.file is defined ? content.file : '' }}">
+    {% block filters %}
+        <div class="filters_row"></div>
+    {% endblock %}
+    <div id="dropdown_overlay" class="hide"></div>
+    {% if form is defined and form.vars.valid is defined and not form.vars.valid %}
+        <div class="alert alert-danger">
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
+    <div class="flex flex-wrap sidebar-edit-form">
+        <div class="aside-edit">
+            {% block form_start %}
+                {% set turbo_stream = app.request.query.get('turbo_stream') %}
+                {% set form_class = (form.vars.attr.class|default('')) ~ ' form-inline' %}
+                {% if turbo_stream %}
+                    {{ form_start(form, { 'style': 'inline', attr: { 'data-turbo-stream': 'true', 'class': form_class|trim }}) }}
+                {% else %}
+                    {{ form_start(form, { 'style': 'inline', attr: { 'class': form_class|trim }}) }}
+                {% endif %}
+                {% if form._token is defined %}
+                    {{ form_widget(form._token) }}
+                {% endif %}
+            {% endblock %}
+
+            {% block toolbar %}
+                {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+            {% endblock toolbar %}
+
+            <aside>
+                <div class="aside-holder">
+                    {% block sidebar %}
+                        {% if type is defined and
+                            ('Image' in type.class or 'Video' in type.class or 'File' in type.class)
+                            and form.actions.delete is not defined %}
+                            {% if form.vars.value.id is defined and form.vars.value.id is not empty %}
+                                {% set image = integrated_document(form.vars.value.id).file %}
+                                {% set thumbnail = integrated_image(image).scaleResize(300) %}
+                                <div class="thumbnail-holder" style="background-image:url('{{ thumbnail }}');">
+                                    {% if form.vars.data.contentType == 'image'  %}
+                                        <button id="go_to_editor" type="button" class="no-icon btn btn-white">Edit image</button>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+
+                        <div class="form-item w-full flex flex-wrap title text show">
+                            <label class="control-label w-full required">URL</label>
+                            <div class="w-full  widget">
+                                <input type="text" disabled class="form-control" value="{{ app.request.schemeAndHttpHost ~ integrated_document(form.vars.value.id).file.getPathname() }}">
+                            </div>
+                        </div>
+
+                        {% block content_editor %}
+                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR')) %}
+                                {% if child.vars.name is not same as('brands') %}
+                                    {{ form_row(child, { 'style': 'inline', 'label_col': 'w-full', 'widget_col': 'w-full' }) }}
+                                {% endif %}
+                            {% endfor %}
+                        {% endblock %}
+
+                        {% block content_meta %}
+                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR')) %}
+                                {% if child.vars.name is not same as('brands') %}
+                                    {{ form_row(child, { 'style': 'inline', 'label_col': 'w-full', 'widget_col': 'w-full' }) }}
+                                {% endif %}
+                            {% endfor %}
+                        {% endblock %}
+
+                        {% block content_relations %}
+                            {% if form.offsetGet('relations').count() %}
+                                <input type="hidden" id="default_references" value="{{ references }}">
+                                {% for relation in form.relations %}
+                                    <div class="form-item ">
+                                        <label class="control-label w-full"
+                                               for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
+                                        <div class="w-full widget">
+                                            {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
+                                                {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
+                                                    relation: relation,
+                                                    form_relations: formRelations|default(null),
+                                                } %}
+                                            {% else %}
+                                                <select
+                                                    multiple
+                                                    id="{{ relation.vars.name }}"
+                                                    data-multiple="{{ relation.vars.attr['data-multiple'] }}"
+                                                    data-types="{{ relation.vars.attr['data-types'] }}"
+                                                    data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
+                                                    data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
+                                                    class="relation-items form-control"
+                                                    style="display: none; width: 89%">
+                                                </select>
+                                                <span class="input-group-addon" data-add="1"></span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endblock %}
+
+                        <div class="aside-item-wrapper" id="used-by"></div>
+                    {% endblock %}
+                </div>
+            </aside>
+        </div>
+        {% block form_end %}
+            {{ form_end(form, { render_rest: false }) }}
+        {% endblock %}
+    </div>
+    <style>
+        #media-edit-panel button[type=submit] {
+            display: none;
+        }
+    </style>
+</turbo-frame>

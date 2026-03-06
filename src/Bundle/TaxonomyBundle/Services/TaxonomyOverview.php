@@ -11,4 +11,6 @@ interface TaxonomyOverview
 
     /** @return IndexedItem[] */
     public function overviewFor(string $contentType, ?TaxonomyOptions $options = null): array;
+
+    public function countFor(string $contentType, string $filter = 'root'): int;
 }
