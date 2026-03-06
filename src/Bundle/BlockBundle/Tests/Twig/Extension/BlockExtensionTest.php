@@ -40,4 +40,54 @@ class BlockExtensionTest extends TestCase
 
         self::assertSame([], $extension->findPages($block));
     }
+
+    public function testGetBlockCssClassReturnsResolvedCssClassForId(): void
+    {
+        $resolvedBlock = $this->createMock(BlockInterface::class);
+        $resolvedBlock
+            ->expects(self::once())
+            ->method('getCssClass')
+            ->willReturn('custom-class');
+
+        $blockManager = $this->createMock(BlockManager::class);
+        $blockManager
+            ->expects(self::once())
+            ->method('getBlock')
+            ->with('block-id')
+            ->willReturn($resolvedBlock);
+
+        $extension = new BlockExtension(
+            $blockManager,
+            $this->createMock(ThemeManager::class),
+            $this->createMock(BlockUsageProvider::class),
+            $this->createMock(MetadataFactoryInterface::class),
+            $this->createMock(ChannelContextInterface::class),
+            $this->createMock(LoggerInterface::class),
+            'test'
+        );
+
+        self::assertSame('custom-class', $extension->getBlockCssClass('block-id'));
+    }
+
+    public function testGetBlockCssClassReturnsEmptyStringWhenLookupThrows(): void
+    {
+        $blockManager = $this->createMock(BlockManager::class);
+        $blockManager
+            ->expects(self::once())
+            ->method('getBlock')
+            ->with('block-id')
+            ->willThrowException(new \Error('Class does not exist'));
+
+        $extension = new BlockExtension(
+            $blockManager,
+            $this->createMock(ThemeManager::class),
+            $this->createMock(BlockUsageProvider::class),
+            $this->createMock(MetadataFactoryInterface::class),
+            $this->createMock(ChannelContextInterface::class),
+            $this->createMock(LoggerInterface::class),
+            'test'
+        );
+
+        self::assertSame('', $extension->getBlockCssClass('block-id'));
+    }
 }

@@ -99,6 +99,7 @@ class BlockExtension extends AbstractExtension
                 $this->renderChannelBlock(...),
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
+            new TwigFunction('integrated_block_css_class', $this->getBlockCssClass(...)),
             new TwigFunction('integrated_find_channels', $this->findChannels(...)),
             new TwigFunction('integrated_find_pages', $this->findPages(...)),
             new TwigFunction('integrated_find_block_types', $this->findBlockTypes(...)),
@@ -182,6 +183,32 @@ class BlockExtension extends AbstractExtension
             'name' => $name,
             'class' => $class,
         ]);
+    }
+
+    /**
+     * @param BlockInterface|string|null $block
+     */
+    public function getBlockCssClass($block): string
+    {
+        try {
+            if ($block instanceof BlockInterface) {
+                return (string) $block->getCssClass();
+            }
+
+            if (!\is_string($block) || $block === '') {
+                return '';
+            }
+
+            $resolved = $this->blockManager->getBlock($block);
+
+            if (!$resolved instanceof BlockInterface) {
+                return '';
+            }
+
+            return (string) $resolved->getCssClass();
+        } catch (\Throwable) {
+            return '';
+        }
     }
 
     /**
