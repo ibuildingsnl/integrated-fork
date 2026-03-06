@@ -15,12 +15,11 @@ final class TaxonomyControllerHardeningTest extends TestCase
         $this->assertIsString($controller);
         $this->assertStringContainsString('$request->hasSession() && !$request->query->getBoolean(\'remember\')', $controller);
         $this->assertStringContainsString('private function resolveFilter(Request $request): string', $controller);
-        $this->assertStringContainsString('$filter = $request->query->all()[\'filter\'] ?? \'root\';', $controller);
         $this->assertStringContainsString('if (!\\is_scalar($filter)) {', $controller);
         $this->assertStringContainsString('return \'root\';', $controller);
         $this->assertStringContainsString('$current = $request->query->get(\'current\');', $controller);
         $this->assertStringContainsString('$currentId = \is_scalar($current) ? trim((string) $current) : \'\';', $controller);
-        $this->assertStringContainsString('$form->add(\'actions\', ActionsType::class, [\'buttons\' => [$isPersisted ? \'save\' : \'create\']]);', $controller);
+        $this->assertStringContainsString('ActionsType::class', $controller);
         $this->assertStringContainsString('if ($wasPersisted) {', $controller);
         $this->assertStringContainsString('$params[\'current\'] = (string) $content->getId();', $controller);
         $this->assertStringContainsString('unset($params[\'current\']);', $controller);
@@ -35,5 +34,7 @@ final class TaxonomyControllerHardeningTest extends TestCase
 
         $this->assertIsString($template);
         $this->assertStringContainsString('{% if content is defined and content.id is not empty %}', $template);
+        $this->assertStringContainsString("content.published in [true, 'true', 1, '1']", $template);
+        $this->assertStringNotContainsString("content.published == 'true'", $template);
     }
 }

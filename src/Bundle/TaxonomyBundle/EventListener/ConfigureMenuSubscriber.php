@@ -29,7 +29,7 @@ final class ConfigureMenuSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onMenuConfigure(ConfigureMenuEvent $event)
+    public function onMenuConfigure(ConfigureMenuEvent $event): void
     {
         $menu = $event->getMenu();
         if ($menu->getName() !== self::MENU) {
@@ -47,9 +47,7 @@ final class ConfigureMenuSubscriber implements EventSubscriberInterface
                 $menuAdmin = $menu->addChild(self::MENU_TAXONOMIES)->setExtra('icon', 'iconoir-label');
             }
             $menuAdmin->addChild($taxonomyType->getName(), [
-                'route' => $taxonomyType->hasField('parent_id')
-                    ? 'integrated_taxonomy_index'
-                    : 'integrated_taxonomy_index',
+                'route' => 'integrated_taxonomy_index',
                 'routeParameters' => ['type' => $taxonomyType->getId()],
             ]);
         }

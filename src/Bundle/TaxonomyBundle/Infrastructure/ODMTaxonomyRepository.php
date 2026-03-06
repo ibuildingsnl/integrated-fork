@@ -7,18 +7,13 @@ use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
-use Integrated\Common\Solr\Search\QueryFactoryInterface;
-use Solarium\Core\Client\ClientInterface;
 
 final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
 {
     public function __construct(
         private readonly DocumentManager $manager,
         private readonly ObjectRepository $doctrineRepo,
-        QueryFactoryInterface $queryFactory,
-        ClientInterface $solrClient,
     ) {
-        unset($queryFactory, $solrClient);
     }
 
     public function all(): array

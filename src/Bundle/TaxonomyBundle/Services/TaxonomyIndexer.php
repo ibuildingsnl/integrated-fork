@@ -21,7 +21,10 @@ final class TaxonomyIndexer implements TaxonomyOverview
     /** @return string[] */
     public function childrenOf(string $contentType, string $parentId): array
     {
-        return array_map(fn (Taxonomy $t) => $t->getTitle(), $this->listByParent($contentType)[$parentId] ?? []);
+        $children = $this->listByParent($contentType)[$parentId] ?? [];
+        uasort($children, fn (Taxonomy $a, Taxonomy $b) => $this->compareTaxonomy($a, $b));
+
+        return array_map(fn (Taxonomy $t) => $t->getTitle(), $children);
     }
 
     /** @return IndexedItem[] */
