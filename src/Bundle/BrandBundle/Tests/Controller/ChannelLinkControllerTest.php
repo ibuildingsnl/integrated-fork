@@ -8,6 +8,7 @@ use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
 use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
+use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Services\Flusher;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -23,6 +24,7 @@ class ChannelLinkControllerTest extends TestCase
             $this->createMock(EventDispatcherInterface::class),
             $this->createMock(Flusher::class),
             $this->createMock(DocumentManager::class),
+            $this->createMock(RegistryInterface::class),
         );
 
         $brand = new Brand();
@@ -40,6 +42,7 @@ class ChannelLinkControllerTest extends TestCase
             $this->createMock(EventDispatcherInterface::class),
             $this->createMock(Flusher::class),
             $this->createMock(DocumentManager::class),
+            $this->createMock(RegistryInterface::class),
         );
 
         $brand = new Brand();

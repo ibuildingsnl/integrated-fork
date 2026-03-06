@@ -341,7 +341,7 @@
             {% if show_label is not same as ('false') %}
                 <label class="control-label {{ label_col }}">
                     {% if label is defined and label|length > 1 %}
-                        {{ translation_domain is same as (false) ? label|raw : label|trans({}, translation_domain)|raw -}}
+                        {{ translation_domain is same as (false) ? label|raw : label|trans(label_translation_parameters|default({}), translation_domain)|raw -}}
                     {% else %}
                         {{ name|humanize }}
                     {% endif %}
@@ -369,7 +369,7 @@
                 <label
                     class="checkbox-container" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
                 {{ block('checkbox_widget') }}
-                {{ translation_domain is same as (false) ? label|raw : label|trans({}, translation_domain)|raw -}}
+                {{ translation_domain is same as (false) ? label|raw : label|trans(label_translation_parameters|default({}), translation_domain)|raw -}}
                 </label>
             {% else %}
                 {{ block('checkbox_widget') }}
@@ -430,7 +430,7 @@
             {% set label_col = label_col|default(tailwind_get_label_col()) %}
             <label class="control-label {{ label_col }}">
                 {% if label is defined and label|length > 1 %}
-                    {{ translation_domain is same as (false) ? label|raw : label|trans({}, translation_domain)|raw -}}
+                    {{ translation_domain is same as (false) ? label|raw : label|trans(label_translation_parameters|default({}), translation_domain)|raw -}}
                 {% else %}
                     {{ name|humanize }}
                 {% endif %}
@@ -543,7 +543,7 @@
                 <label
                     class="radiobutton-container"{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
                 {{ block('radio_widget') }}
-                {{ translation_domain is same as (false) ? label|raw : label|trans({}, translation_domain)|raw -}}
+                {{ translation_domain is same as (false) ? label|raw : label|trans(label_translation_parameters|default({}), translation_domain)|raw -}}
                 </label>
             {% else %}
                 {{ block('radio_widget') }}
@@ -734,7 +734,7 @@
             {% set attr = attr|merge({ 'class': (attr.class|default('') ~ 'no-icon btn btn-'~button_class|default('default'))|trim }) %}
         {% endif %}
         {% if translation_domain is not same as (false) %}
-            {% set label = label|trans({}, translation_domain) %}
+            {% set label = label|trans(label_translation_parameters|default({}), translation_domain) %}
         {% endif %}
         {% if as_link is defined and as_link == true %}
             <a {{ block('button_attributes') }}>{% if attr.icon is defined and attr.icon != '' %}{{ icon(attr.icon) }}{% endif -%}{{ label }}</a>
@@ -808,7 +808,7 @@
                 {% set label = name|humanize %}
             {% endif %}
             {% if translation_domain is not same as (false) %}
-                {% set label = label|trans({}, translation_domain) %}
+                {% set label = label|trans(label_translation_parameters|default({}), translation_domain) %}
             {% endif %}
             <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label|raw }}</label>
         {% endif %}

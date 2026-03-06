@@ -11,9 +11,11 @@
 
 namespace Integrated\Bundle\UserBundle\Form\Type;
 
+use Doctrine\ORM\EntityRepository;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -37,6 +39,25 @@ class ProfileType extends AbstractType
 
         $resolver->setDefault('choice_value', 'id');
         $resolver->setDefault('choice_label', 'username');
+        $resolver->setDefault('include_user_id', null);
+        $resolver->setAllowedTypes('include_user_id', ['null', 'int', 'string']);
+        $resolver->setDefault('query_builder', static function (Options $options) {
+            return static function (EntityRepository $repository) use ($options) {
+                $queryBuilder = $repository
+                    ->createQueryBuilder('User')
+                    ->orderBy('User.username', 'ASC');
+
+                $includeUserId = $options['include_user_id'];
+
+                if (null === $includeUserId || '' === trim((string) $includeUserId)) {
+                    return $queryBuilder->where('User.enabled = true');
+                }
+
+                return $queryBuilder
+                    ->where('User.enabled = true OR User.id = :includeUserId')
+                    ->setParameter('includeUserId', (int) $includeUserId);
+            };
+        });
     }
 
     public function getParent(): ?string

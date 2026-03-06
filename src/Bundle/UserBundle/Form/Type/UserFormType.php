@@ -70,6 +70,8 @@ class UserFormType extends AbstractType
                 'mapped' => false,
                 'required' => false,
                 'placeholder' => 'Link existing user',
+                'attr' => ['class' => 'select2'],
+                'include_user_id' => null,
             ]);
 
             $builder->add(
@@ -174,7 +176,33 @@ class UserFormType extends AbstractType
 
         $builder->addEventSubscriber(new UserProfilePasswordListener($this->hasherFactory));
         $builder->addEventSubscriber(new UserProfileExtensionListener('integrated.extension.user'));
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($options): void {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options): void {
+            if (!($options['optional'] ?? false)) {
+                return;
+            }
+
+            $form = $event->getForm();
+            if (!$form->has('existing_user')) {
+                return;
+            }
+
+            $fieldOptions = [
+                'mapped' => false,
+                'required' => false,
+                'placeholder' => 'Link existing user',
+                'attr' => ['class' => 'select2'],
+                'include_user_id' => null,
+            ];
+
+            $data = $event->getData();
+            if ($data instanceof IntegratedUserInterface) {
+                $fieldOptions['include_user_id'] = (string) $data->getId();
+                $fieldOptions['data'] = $data;
+            }
+
+            $form->add('existing_user', ProfileType::class, $fieldOptions);
+        });
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($options): void {
             $form = $event->getForm();
 
             if (!($options['optional'] ?? false) || !$form->has('existing_user')) {

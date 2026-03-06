@@ -13,6 +13,7 @@ const CONTENT_NAVIGATOR_ASIDE_SCROLL_KEY = 'contentNavigator.asideScrollTop.v1';
 const FLASH_MESSAGES_PERSIST_KEY = 'integrated.flashMessages.persist.v1';
 const SIDEBAR_MENU_SCROLL_KEY = 'integrated.sidebarMenu.scrollTop.v1';
 const SIDEBAR_MENU_OPEN_ITEMS_KEY = 'integrated.sidebarMenu.openItems.v1';
+const OPTIONS_SIDEBAR_HIDDEN_KEY = 'integrated.optionsSidebar.hidden.v1';
 const listSearchDebounceTimers = new WeakMap();
 
 $(document).mouseup(function(e) {
@@ -266,11 +267,118 @@ function toggleOptionsSidebar() {
             !optionsMenu.classList.contains('show')) ||
         document.body.classList.contains('hide-options');
 
+    applyOptionsSidebarState(optionsMenu, shouldShow);
+    persistOptionsSidebarState(shouldShow);
+}
+
+function applyOptionsSidebarState(optionsMenu, shouldShow) {
+    if (!optionsMenu) {
+        return;
+    }
+
     document.body.classList.toggle('show-options', shouldShow);
     optionsMenu.classList.toggle('show', shouldShow);
 
     document.body.classList.toggle('hide-options', !shouldShow);
     optionsMenu.classList.toggle('hide', !shouldShow);
+}
+
+function persistOptionsSidebarState(isVisible) {
+    if (typeof window.sessionStorage === 'undefined') {
+        return;
+    }
+
+    window.sessionStorage.setItem(OPTIONS_SIDEBAR_HIDDEN_KEY, isVisible ? '0' : '1');
+}
+
+function persistCurrentOptionsSidebarState() {
+    const optionsMenu = document.querySelector('.aside-options');
+    if (!optionsMenu) {
+        return;
+    }
+
+    const bodyHidden = document.body.classList.contains('hide-options');
+    const classHidden = optionsMenu.classList.contains('hide');
+    const computedStyle = window.getComputedStyle(optionsMenu);
+    const computedHidden = computedStyle.display === 'none' ||
+        computedStyle.visibility === 'hidden';
+    const isVisible = !(bodyHidden || classHidden || computedHidden);
+
+    persistOptionsSidebarState(isVisible);
+}
+
+function getPersistedOptionsSidebarHiddenState() {
+    if (typeof window.sessionStorage === 'undefined') {
+        return null;
+    }
+
+    const stored = window.sessionStorage.getItem(OPTIONS_SIDEBAR_HIDDEN_KEY);
+    if (stored !== '0' && stored !== '1') {
+        return null;
+    }
+
+    return stored === '1';
+}
+
+function restorePersistedOptionsSidebarState(root = document) {
+    const rootNode = (root && typeof root.querySelector === 'function')
+        ? root
+        : ((root && root.target && typeof root.target.querySelector === 'function') ? root.target : document);
+
+    const optionsMenu = rootNode.querySelector('.aside-options') ||
+        document.querySelector('.aside-options');
+    if (!optionsMenu) {
+        return;
+    }
+
+    const isHidden = getPersistedOptionsSidebarHiddenState();
+    if (isHidden === null) {
+        return;
+    }
+
+    applyOptionsSidebarState(optionsMenu, !isHidden);
+}
+
+function scheduleRestorePersistedOptionsSidebarState(root = document) {
+    restorePersistedOptionsSidebarState(root);
+
+    requestAnimationFrame(() => {
+        restorePersistedOptionsSidebarState(root);
+    });
+
+    window.setTimeout(() => {
+        restorePersistedOptionsSidebarState(root);
+    }, 50);
+}
+
+function bindOptionsSidebarStateTracking() {
+    if (document.body && document.body.dataset.boundOptionsSidebarStateTracking) {
+        return;
+    }
+
+    document.addEventListener('click', (event) => {
+        const toggleButton = event.target.closest('.toggle-options-sidebar');
+        if (!toggleButton) {
+            return;
+        }
+
+        window.setTimeout(() => {
+            persistCurrentOptionsSidebarState();
+        }, 0);
+    }, true);
+
+    const observer = new MutationObserver(() => {
+        persistCurrentOptionsSidebarState();
+    });
+    observer.observe(document.body, {
+        attributes: true,
+        subtree: true,
+        attributeFilter: ['class', 'style'],
+    });
+
+    if (document.body) {
+        document.body.dataset.boundOptionsSidebarStateTracking = 'true';
+    }
 }
 
 function toggleDataTarget(el) {
@@ -490,10 +598,19 @@ function persistSidebarMenuScrollPosition(root = document) {
 }
 
 function getPersistedOpenSidebarMenuItems() {
+    if (typeof window.sessionStorage === 'undefined') {
+        return null;
+    }
+
+    const raw = sessionStorage.getItem(SIDEBAR_MENU_OPEN_ITEMS_KEY);
+    if (raw === null) {
+        return null;
+    }
+
     let persisted = [];
 
     try {
-        persisted = JSON.parse(sessionStorage.getItem(SIDEBAR_MENU_OPEN_ITEMS_KEY) || '[]');
+        persisted = JSON.parse(raw);
     } catch (error) {
         persisted = [];
     }
@@ -520,7 +637,7 @@ function persistSidebarMenuState(wrapper, isOpen) {
         return;
     }
 
-    const items = getPersistedOpenSidebarMenuItems();
+    const items = getPersistedOpenSidebarMenuItems() || new Set();
     if (isOpen) {
         items.add(key);
     } else {
@@ -531,24 +648,21 @@ function persistSidebarMenuState(wrapper, isOpen) {
 
 function applyPersistedSidebarMenuState(root = document) {
     const items = getPersistedOpenSidebarMenuItems();
-    if (items.size === 0) {
+    if (items === null) {
         return;
     }
 
     root.querySelectorAll('.sidebar-menu-wrapper .sidebar-sub-menu').forEach((wrapper) => {
         const key = getSidebarMenuPersistenceKey(wrapper);
-        if (!key || !items.has(key) || wrapper.classList.contains('show')) {
-            return;
-        }
-
         const list = wrapper.querySelector('.sub-menu-children');
-        if (!list) {
+        if (!key || !list) {
             return;
         }
 
-        wrapper.classList.add('show');
-        list.classList.add('show');
-        list.style.display = 'block';
+        const shouldOpen = items.has(key);
+        wrapper.classList.toggle('show', shouldOpen);
+        list.classList.toggle('show', shouldOpen);
+        list.style.display = shouldOpen ? 'block' : '';
         list.style.height = '';
     });
 }
@@ -686,6 +800,15 @@ function initDismissibleAlerts() {
 
     setTimeout(function() {
         dismissibleAlerts.forEach(function(alert) {
+            if (!(alert instanceof HTMLElement)) {
+                return;
+            }
+
+            var role = String(alert.getAttribute('role') || '').toLowerCase();
+            if (role === 'alert' || alert.classList.contains('alert-danger') || alert.getAttribute('data-persist') === '1') {
+                return;
+            }
+
             alert.remove();
         });
     }, 10000);
@@ -820,8 +943,10 @@ document.addEventListener('DOMContentLoaded', restorePersistedFacetState);
 document.addEventListener('DOMContentLoaded', restoreAsideScrollPosition);
 document.addEventListener('DOMContentLoaded', restoreSidebarMenuScrollPosition);
 document.addEventListener('DOMContentLoaded', restorePersistedSidebarMenuState);
+document.addEventListener('DOMContentLoaded', scheduleRestorePersistedOptionsSidebarState);
 document.addEventListener('DOMContentLoaded', announceContentNavigatorResults);
 document.addEventListener('DOMContentLoaded', bindFacetPersistenceOnFilterChange);
+document.addEventListener('DOMContentLoaded', bindOptionsSidebarStateTracking);
 document.addEventListener('turbo:load', restoreFlashMessagesFromPreviousVisit);
 document.addEventListener('turbo:load', initDismissibleAlerts);
 document.addEventListener('turbo:load', hideButtonIfNoOptions);
@@ -830,18 +955,25 @@ document.addEventListener('turbo:load', restorePersistedFacetState);
 document.addEventListener('turbo:load', restoreAsideScrollPosition);
 document.addEventListener('turbo:load', restoreSidebarMenuScrollPosition);
 document.addEventListener('turbo:load', restorePersistedSidebarMenuState);
+document.addEventListener('turbo:load', scheduleRestorePersistedOptionsSidebarState);
 document.addEventListener('turbo:load', announceContentNavigatorResults);
 document.addEventListener('turbo:load', bindFacetPersistenceOnFilterChange);
+document.addEventListener('turbo:load', bindOptionsSidebarStateTracking);
 document.addEventListener('turbo:render', hideButtonIfNoOptions);
 document.addEventListener('turbo:render', init);
 document.addEventListener('turbo:render', restorePersistedFacetState);
 document.addEventListener('turbo:render', restoreAsideScrollPosition);
 document.addEventListener('turbo:render', restoreSidebarMenuScrollPosition);
 document.addEventListener('turbo:render', restorePersistedSidebarMenuState);
+document.addEventListener('turbo:render', scheduleRestorePersistedOptionsSidebarState);
 document.addEventListener('turbo:render', announceContentNavigatorResults);
 document.addEventListener('turbo:render', bindFacetPersistenceOnFilterChange);
+document.addEventListener('turbo:render', bindOptionsSidebarStateTracking);
+document.addEventListener('turbo:frame-load', scheduleRestorePersistedOptionsSidebarState);
 document.addEventListener('turbo:before-frame-render', (event) => {
     if (!event.target || event.target.id !== 'content-navigator') {
+        scheduleRestorePersistedOptionsSidebarState(event.target || document);
+
         return;
     }
 
@@ -861,6 +993,7 @@ document.addEventListener('turbo:before-frame-render', (event) => {
 });
 document.addEventListener('turbo:submit-start', resetPopupState);
 document.addEventListener('turbo:before-render', resetPopupState);
+document.addEventListener('turbo:before-render', persistCurrentOptionsSidebarState);
 document.addEventListener('turbo:before-render', persistSidebarMenuScrollPosition);
 document.addEventListener('turbo:load', () => {
     if (window.registerIntegratedHandlebarsHelpers) {
@@ -873,6 +1006,7 @@ document.addEventListener('turbo:render', () => {
     }
 });
 document.addEventListener('turbo:before-cache', () => {
+    persistCurrentOptionsSidebarState();
     persistSidebarMenuScrollPosition();
     clearBoundInitializationFlags();
     stashFlashMessagesForNextVisit();
@@ -884,3 +1018,4 @@ document.addEventListener('turbo:before-cache', () => {
 });
 
 window.addEventListener('beforeunload', persistSidebarMenuScrollPosition);
+window.addEventListener('beforeunload', persistCurrentOptionsSidebarState);

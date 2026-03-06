@@ -3,14 +3,14 @@
 {% block title %}{% trans %}Manage connector{% endtrans %}{% endblock title %}
 
 {% block content %}
-    <div class="flex flex-wrap edit-form">
+    <div class="flex flex-wrap edit-form edit-form--channel-config">
         {% block form_start %}
-            {{ form_start(form) }}
+            {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
         {% endblock %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
         {% endblock toolbar %}
-        <div class="aside-options" style="margin-top: 48px;">
+        <div class="aside-options" >
             <aside>
                 <div class="aside-holder">
                     {% block sidebar %}
@@ -87,7 +87,7 @@
                 </div>
             </aside>
         </div>
-        <div class="editor-wrapper" style="margin-top: 48px;">
+        <div class="editor-wrapper" >
             <div class="page-title">
                 <h1 class="heading">{% trans %}Manage{% endtrans %} {{ brand.name }}{% trans %}'s{% endtrans %} {{ link.name }} {% trans %}connector{% endtrans %}</h1>
             </div>
@@ -117,4 +117,21 @@
     {{ parent() }}
 
     <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/edit.css') }}">
+    <style>
+        .edit-form--channel-config .editor .form-item {
+            display: block;
+        }
+
+        .edit-form--channel-config .editor .form-item .control-label,
+        .edit-form--channel-config .editor .form-item .widget {
+            width: 100% !important;
+            max-width: none !important;
+            flex: 0 0 100% !important;
+            display: block !important;
+        }
+
+        .edit-form--channel-config .editor .form-item .widget {
+            margin-top: 6px;
+        }
+    </style>
 {% endblock %}

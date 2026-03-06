@@ -13,6 +13,8 @@ namespace Integrated\Bundle\ContentBundle\Tests\EventListener;
 
 use Integrated\Bundle\ContentBundle\EventListener\ConfigureMenuSubscriber;
 use Integrated\Bundle\MenuBundle\Event\ConfigureMenuEvent;
+use Knp\Menu\MenuFactory;
+use Knp\Menu\MenuItem;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -263,6 +265,51 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
             ]);
 
         $this->subscriber->onMenuConfigureSettings($this->event);
+    }
+
+    public function testOnMenuConfigureOrderSortsSidebarMenuInDeterministicLogicalOrder(): void
+    {
+        $factory = new MenuFactory();
+        $menu = new MenuItem(ConfigureMenuSubscriber::MENU, $factory);
+
+        $settings = $menu->addChild('Settings');
+        $settings->addChild('Users');
+        $settings->addChild('Scraper');
+        $settings->addChild('Content types');
+
+        $website = $menu->addChild('Website');
+        $website->addChild('Blocks');
+        $website->addChild('Pages');
+
+        $content = $menu->addChild('Content');
+        $content->addChild('Search selections');
+        $content->addChild('Media Library');
+        $content->addChild('Content navigator');
+        $content->addChild('ZZ Custom Selection');
+
+        $menu->addChild('Taxonomy');
+        $menu->addChild('Alpha');
+
+        $event = new ConfigureMenuEvent($factory, $menu);
+
+        $this->subscriber->onMenuConfigureOrder($event);
+
+        $this->assertSame(
+            ['Content', 'Taxonomy', 'Alpha', 'Website', 'Settings'],
+            array_keys($menu->getChildren())
+        );
+        $this->assertSame(
+            ['Content navigator', 'Media Library', 'Search selections', 'ZZ Custom Selection'],
+            array_keys($content->getChildren())
+        );
+        $this->assertSame(
+            ['Pages', 'Blocks'],
+            array_keys($website->getChildren())
+        );
+        $this->assertSame(
+            ['Content types', 'Users', 'Scraper'],
+            array_keys($settings->getChildren())
+        );
     }
 
     /**

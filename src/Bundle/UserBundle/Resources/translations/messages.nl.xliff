@@ -28,7 +28,7 @@
             </trans-unit>
             <trans-unit id="7">
                 <source>Bad credentials</source>
-                <target>De combinatie van gebruikersnaam en wachtwoord is niet correct</target>
+                <target>Inloggen mislukt. Controleer je gebruikersnaam of e-mailadres en wachtwoord. Lukt het nog steeds niet, controleer dan of inloggen voor je account is geactiveerd.</target>
             </trans-unit>
             <trans-unit id="8">
                 <source>Password will only be changed if a new password is entered</source>
@@ -281,6 +281,26 @@
             <trans-unit id="71">
                 <source>Not linked</source>
                 <target>Niet gekoppeld</target>
+            </trans-unit>
+            <trans-unit id="72">
+                <source>Login help: use your username or e-mail address, and verify that login is enabled and your account has admin scope access.</source>
+                <target>Inloghulp: gebruik je gebruikersnaam of e-mailadres en controleer of inloggen is geactiveerd en je account toegang heeft tot een beheerscope.</target>
+            </trans-unit>
+            <trans-unit id="73">
+                <source>Bad credentials.</source>
+                <target>Inloggen mislukt. Controleer je gebruikersnaam of e-mailadres en wachtwoord. Lukt het nog steeds niet, controleer dan of inloggen voor je account is geactiveerd.</target>
+            </trans-unit>
+            <trans-unit id="74">
+                <source>The presented password is invalid.</source>
+                <target>Het ingevoerde wachtwoord is onjuist.</target>
+            </trans-unit>
+            <trans-unit id="75">
+                <source>Show password</source>
+                <target>Toon wachtwoord</target>
+            </trans-unit>
+            <trans-unit id="76">
+                <source>Hide password</source>
+                <target>Verberg wachtwoord</target>
             </trans-unit>
         </body>
     </file>

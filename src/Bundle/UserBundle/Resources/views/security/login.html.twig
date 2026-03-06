@@ -23,17 +23,25 @@
                     </div>
 
                     <div class="modal-body">
-                        {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning']) %}
+                        {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning', 'error']) %}
                             {% for message in messages %}
                                 {% if label == 'alert' %}
                                     {% set label = 'warning' %}
+                                {% elseif label == 'error' %}
+                                    {% set label = 'danger' %}
                                 {% endif %}
                                 <div class="alert alert-{{ label }} alert-dismissible">
-                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close notification">&times;</button>
                                     {{ message|trans }}
                                 </div>
                             {% endfor %}
                         {% endfor %}
+
+                        {% if form.vars.errors|length > 0 %}
+                            <div class="alert alert-info">
+                                {{ 'Login help: use your username or e-mail address, and verify that login is enabled and your account has admin scope access.'|trans }}
+                            </div>
+                        {% endif %}
 
                         {{ form_widget(form) }}
                     </div>
@@ -49,3 +57,8 @@
 
     <div class="modal-backdrop"></div>
 {% endblock body %}
+
+{% block javascript %}
+    {{ parent() }}
+    {% include('@IntegratedUser/partial/password_toggle_script.html.twig') %}
+{% endblock javascript %}

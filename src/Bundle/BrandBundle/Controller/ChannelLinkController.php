@@ -12,11 +12,13 @@ use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\ChannelType as ChannelFormType;
 use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
+use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Event\ChannelEvent;
 use Integrated\Common\Channel\Events;
 use Integrated\Common\Services\Flusher;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,6 +30,7 @@ class ChannelLinkController extends AbstractController
         private readonly EventDispatcherInterface $dispatcher,
         private readonly Flusher $flusher,
         private readonly DocumentManager $dm,
+        private readonly RegistryInterface $adapterRegistry,
     ) {
     }
 
@@ -102,6 +105,19 @@ class ChannelLinkController extends AbstractController
             'method' => 'PUT',
             'can_change_type' => false,
         ]);
+        $form->add('linkDefault', CheckboxType::class, [
+            'required' => false,
+            'mapped' => false,
+            'data' => $link->default,
+            'label' => 'Enabled by default for %name% brand',
+            'label_translation_parameters' => ['%name%' => $brand->getName()],
+            'attr' => [
+                'align_with_widget' => true,
+                'label_col' => 'w-full',
+                'location' => 'editor',
+                'style' => 'inline',
+            ],
+        ]);
         $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         $form->handleRequest($request);
@@ -111,6 +127,8 @@ class ChannelLinkController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $link->default = (bool) $form->get('linkDefault')->getData();
+
             $this->flusher->flush(); // flush here too, because it doesn't get a uuid on create
             if ($link->channel instanceof Channel) {
                 $this->dispatcher->dispatch(new ChannelEvent($link->channel), Events::CHANNEL_UPDATED);
@@ -127,6 +145,7 @@ class ChannelLinkController extends AbstractController
             'channel' => $link->channel,
             'link' => $link,
             'brand' => $brand,
+            'availableConnectors' => $this->getAvailableConnectors(),
             'form' => $form,
         ]);
     }
@@ -176,5 +195,19 @@ class ChannelLinkController extends AbstractController
         if (!$brand->hasChannelLink($link)) {
             throw $this->createNotFoundException('Channel link not found for this brand.');
         }
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getAvailableConnectors(): array
+    {
+        $available = [];
+
+        foreach ($this->adapterRegistry->getAdapters() as $adapter) {
+            $available[] = $adapter->getManifest()->getName();
+        }
+
+        return array_values(array_unique($available));
     }
 }
