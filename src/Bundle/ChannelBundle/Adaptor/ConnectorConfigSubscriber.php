@@ -11,7 +11,6 @@ use Integrated\Bundle\ChannelBundle\Model\OauthConfigInterface;
 use Integrated\Bundle\ChannelBundle\Services\ChannelTokenService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class ConnectorConfigSubscriber implements EventSubscriberInterface
@@ -44,20 +43,24 @@ final class ConnectorConfigSubscriber implements EventSubscriberInterface
 
         $options = $config->getOptions();
 
-        $channelId = $config->getChannels()[0];
+        $channelId = $config->getChannels()[0] ?? null;
+        if (!\is_string($channelId) || $channelId === '') {
+            return;
+        }
         $channelToken = $this->channelTokenService->getChannelTokenFor($channelId);
 
         if ($channelToken) {
             return;
         }
 
-        $session = new Session();
-        $session->set('externalReturnId', $config->getId());
-
         $url = $this->config->prepareAuthLink($event, $options);
 
         if (null === $url) {
             return;
+        }
+
+        if ($event->getRequest()->hasSession()) {
+            $event->getRequest()->getSession()->set('externalReturnId', $config->getId());
         }
 
         $config->setOptions(clone $config->getOptions());
@@ -76,6 +79,9 @@ final class ConnectorConfigSubscriber implements EventSubscriberInterface
         if ($this->config->handleCallback($event, $config->getOptions())) {
             $config->setOptions(clone $config->getOptions());
             $this->em->flush();
+            if ($event->getRequest()->hasSession()) {
+                $event->getRequest()->getSession()->remove('externalReturnId');
+            }
 
             $event->setResponse(new RedirectResponse(
                 $this->urlGenerator->generate(

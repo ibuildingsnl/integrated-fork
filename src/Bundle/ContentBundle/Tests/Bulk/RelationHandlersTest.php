@@ -38,7 +38,7 @@ class RelationHandlersTest extends TestCase
         $handler->execute($content);
 
         $updated = $content->getRelation('dossier');
-        self::assertNotFalse($updated);
+        self::assertInstanceOf(EmbeddedRelation::class, $updated);
         self::assertCount(1, $updated->getReferences());
         self::assertSame('new-reference', $updated->getReferences()[0]->getId());
     }
@@ -89,9 +89,11 @@ class RelationHandlersTest extends TestCase
 
     private function createContent(string $contentType, string $id): Content
     {
-        return (new ContentStub())
-            ->setContentType($contentType)
-            ->setId($id);
+        $content = new ContentStub();
+        $content->setContentType($contentType);
+        $content->setId($id);
+
+        return $content;
     }
 }
 
@@ -102,4 +104,3 @@ class ContentStub extends Content
         return $this->getId() ?? '';
     }
 }
-

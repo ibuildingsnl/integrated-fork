@@ -12,12 +12,18 @@
 namespace Integrated\Bundle\UserBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
 class DeleteFormType extends AbstractType
 {
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefault('method', 'DELETE');
+    }
+
     public function getBlockPrefix(): string
     {
         return 'integrated_user_delete';

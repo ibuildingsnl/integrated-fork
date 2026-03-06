@@ -41,6 +41,14 @@
         var historyPast = [];
         var historyFuture = [];
         var historyLimit = 40;
+        var markEditorReady = function(moduleName) {
+            if (
+                window.IntegratedEditorLoader &&
+                typeof window.IntegratedEditorLoader.markReady === 'function'
+            ) {
+                window.IntegratedEditorLoader.markReady(moduleName);
+            }
+        };
 
         /**
          * @param Element $element
@@ -687,6 +695,7 @@
             );
 
             rememberState();
+            markEditorReady('grid');
         }
 
         if (document.readyState != 'loading') {

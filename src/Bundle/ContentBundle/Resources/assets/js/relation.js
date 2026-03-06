@@ -75,10 +75,16 @@ const becomesHiddenObserver = new MutationObserver((entries, watcher) => {
 
 $('.relations').on('click', '[data-modal]', function (e) {
     e.preventDefault();
+
     const modal = $(this).closest('.add-relation').length ? $(this).closest('.add-relation').next('#relation-add-modal') : $(this).next('#relation-add-modal');
     const iFrame = modal.find('iframe');
     const parent = modal.parent()[0];
     const modalEl = modal[0];
+    const href = $(this).data('href') || $(this).attr('href');
+
+    if (!href) {
+        return;
+    }
 
     modal.find('.modal-title').text($(this).data('title'));
 
@@ -95,21 +101,24 @@ $('.relations').on('click', '[data-modal]', function (e) {
         becomesHiddenObserver.observe(modalEl, {attributes: true});
     }
 
-    iFrame.css('display', 'block').attr('src', $(this).data('href')).on('load', function () {
+    modal.addClass('close-outside show relation-modal-loading');
+    $('#dropdown_overlay').removeClass('hide');
+
+    iFrame.hide().off('load.relation').on('load.relation', function () {
+        modal.removeClass('relation-modal-loading');
         iFrame.show();
 
         window.popupShown = true;
 
-        modal.addClass('close-outside show');
-        $('#dropdown_overlay').removeClass('hide');
-
         iFrame.contents().find('*[data-dismiss="modal"]').click((ev) => ev.preventDefault());
 
-        iFrame.unbind('load');
+        iFrame.off('load.relation');
     });
+
+    iFrame.attr('src', href);
 });
 
 $('button[data-dismiss="modal"]').on('click', function () {
-    $(this).closest('#relation-add-modal').removeClass('show');
+    $(this).closest('#relation-add-modal').removeClass('show relation-modal-loading');
     $('#dropdown_overlay').addClass('hide');
 });

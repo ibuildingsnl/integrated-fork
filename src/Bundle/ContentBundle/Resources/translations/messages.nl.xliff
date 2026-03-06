@@ -1470,6 +1470,26 @@
                 <source>This item is currently locked and cannot be edited until the lock is released.</source>
                 <target>Dit item is momenteel vergrendeld en kan pas worden bewerkt nadat de vergrendeling is vrijgegeven.</target>
             </trans-unit>
+            <trans-unit id="373">
+                <source>Sort order</source>
+                <target>Sorteervolgorde</target>
+            </trans-unit>
+            <trans-unit id="374">
+                <source>Custom</source>
+                <target>Aangepast</target>
+            </trans-unit>
+            <trans-unit id="375">
+                <source>Custom sorting</source>
+                <target>Aangepaste sortering</target>
+            </trans-unit>
+            <trans-unit id="376">
+                <source>How custom sorting works: 1) Select "Custom" in "Sort by". 2) Enter only the Solr field name (no "custom:" prefix), for example publication_start_vismagazine_index_date. 3) Choose ascending or descending in "Sort order". The value is stored as custom:&lt;field&gt;.</source>
+                <target>Hoe aangepaste sortering werkt: 1) Kies "Aangepast" bij "Sorteren op". 2) Vul alleen de Solr-veldnaam in (zonder "custom:" prefix), bijvoorbeeld publication_start_vismagazine_index_date. 3) Kies oplopend of aflopend bij "Sorteervolgorde". De waarde wordt opgeslagen als custom:&lt;veld&gt;.</target>
+            </trans-unit>
+            <trans-unit id="377">
+                <source>Select a standard sorting field for this search selection. Choose "Custom" if you want to sort by a specific Solr field name.</source>
+                <target>Selecteer een standaard sorteerveld voor deze zoekselectie. Kies "Aangepast" als je wilt sorteren op een specifieke Solr-veldnaam.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

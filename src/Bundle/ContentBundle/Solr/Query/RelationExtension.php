@@ -95,6 +95,11 @@ class RelationExtension extends AbstractTypeExtension
         ];
     }
 
+    /**
+     * @param array<mixed> $values
+     *
+     * @return list<string>
+     */
     private function sanitizeListValues(array $values): array
     {
         $sanitized = [];

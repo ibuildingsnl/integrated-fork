@@ -26,9 +26,7 @@ class FormConfigEvent extends ConfigEvent
      */
     private $form;
 
-    /**
-     * @var Response
-     */
+    /** @var Response|null */
     private $response;
 
     public function __construct(Config $config, Request $request, FormInterface $form)
@@ -46,9 +44,7 @@ class FormConfigEvent extends ConfigEvent
         return $this->form;
     }
 
-    /**
-     * @return Response
-     */
+    /** @return Response|null */
     public function getResponse()
     {
         return $this->response;

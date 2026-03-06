@@ -34,14 +34,10 @@ class State
      */
     private $state;
 
-    /**
-     * @var string
-     */
+    /** @var string|null */
     private $content_id;
 
-    /**
-     * @var string
-     */
+    /** @var string|null */
     private $content_class;
 
     /**
@@ -49,19 +45,13 @@ class State
      */
     private $content_instance;
 
-    /**
-     * @var string
-     */
+    /** @var string|null */
     private $assigned_id;
 
-    /**
-     * @var string
-     */
+    /** @var string|null */
     private $assigned_class;
 
-    /**
-     * @var string
-     */
+    /** @var string|null */
     private $assigned_type;
 
     /**
@@ -69,9 +59,7 @@ class State
      */
     private $assigned_instance;
 
-    /**
-     * @var \DateTime
-     */
+    /** @var \DateTime|null */
     private $deadline;
 
     /**
@@ -110,9 +98,7 @@ class State
         return $this;
     }
 
-    /**
-     * @return ContentInterface
-     */
+    /** @return ContentInterface|null */
     public function getContent()
     {
         return $this->content_instance;
@@ -138,32 +124,26 @@ class State
         return $this;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string|null */
     public function getContentId()
     {
         return $this->content_id;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string|null */
     public function getContentClass()
     {
         return $this->content_class;
     }
 
-    /**
-     * @return GroupInterface|UserInterface
-     */
+    /** @return GroupInterface|UserInterface|null */
     public function getAssigned()
     {
         return $this->assigned_instance;
     }
 
     /**
-     * @param GroupInterface|UserInterface $assigned
+     * @param GroupInterface|UserInterface|null $assigned
      *
      * @return $this
      */
@@ -184,33 +164,25 @@ class State
         return $this;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string|null */
     public function getAssignedId()
     {
         return $this->assigned_id;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string|null */
     public function getAssignedClass()
     {
         return $this->assigned_class;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string|null */
     public function getAssignedType()
     {
         return $this->assigned_type;
     }
 
-    /**
-     * @return \DateTime
-     */
+    /** @return \DateTime|null */
     public function getDeadline()
     {
         return $this->deadline;

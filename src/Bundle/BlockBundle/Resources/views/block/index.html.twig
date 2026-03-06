@@ -92,20 +92,107 @@
 {{ parent() }}
 
 <script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', function () {
-        if (window.jQuery && typeof window.jQuery.fn.popover === 'function') {
-            window.jQuery('[data-toggle="popover"]').popover();
-        } else if (window.bootstrap && typeof window.bootstrap.Popover === 'function') {
-            document.querySelectorAll('[data-toggle="popover"]').forEach(function (element) {
-                new window.bootstrap.Popover(element);
+    (function initBlockIndexInteractions() {
+        if (window.__integratedBlockIndexInteractionsBound) {
+            return;
+        }
+        window.__integratedBlockIndexInteractionsBound = true;
+
+        function bindFilterFormAutoSubmit() {
+            document.querySelectorAll('form[name="integrated_block_filter"]').forEach(function (form) {
+                if (form.dataset.boundFilterAutoSubmit === 'true') {
+                    return;
+                }
+
+                form.addEventListener('change', function () {
+                    form.requestSubmit ? form.requestSubmit() : form.submit();
+                });
+                form.dataset.boundFilterAutoSubmit = 'true';
             });
         }
 
-        document.querySelectorAll('form[name="integrated_block_filter"]').forEach(function (form) {
-            form.addEventListener('change', function () {
-                form.requestSubmit ? form.requestSubmit() : form.submit();
-            });
-        });
-    });
+        function closeOtherJqueryPopovers($triggers, currentElement) {
+            $triggers.not(currentElement).popover('hide');
+        }
+
+        function initUsagePopovers() {
+            var selector = '[data-toggle="popover"]';
+
+            if (window.jQuery && typeof window.jQuery.fn.popover === 'function') {
+                var $triggers = window.jQuery(selector);
+                if ($triggers.length === 0) {
+                    return;
+                }
+
+                $triggers.popover();
+                $triggers.off('show.bs.popover.integrated').on('show.bs.popover.integrated', function () {
+                    closeOtherJqueryPopovers($triggers, this);
+                });
+
+                window.jQuery(document)
+                    .off('click.integratedBlockUsagePopover')
+                    .on('click.integratedBlockUsagePopover', function (event) {
+                        var $target = window.jQuery(event.target);
+                        if ($target.closest(selector).length === 0 && $target.closest('.popover').length === 0) {
+                            $triggers.popover('hide');
+                        }
+                    });
+
+                return;
+            }
+
+            if (window.bootstrap && typeof window.bootstrap.Popover === 'function') {
+                var triggers = Array.from(document.querySelectorAll(selector));
+                if (triggers.length === 0) {
+                    return;
+                }
+
+                triggers.forEach(function (trigger) {
+                    if (trigger.dataset.boundPopover === 'true') {
+                        return;
+                    }
+
+                    new window.bootstrap.Popover(trigger);
+                    trigger.addEventListener('show.bs.popover', function () {
+                        triggers.forEach(function (other) {
+                            if (other === trigger) {
+                                return;
+                            }
+
+                            var instance = window.bootstrap.Popover.getInstance(other);
+                            if (instance) {
+                                instance.hide();
+                            }
+                        });
+                    });
+                    trigger.dataset.boundPopover = 'true';
+                });
+
+                if (!document.body.dataset.boundBlockUsagePopoverOutsideClick) {
+                    document.addEventListener('click', function (event) {
+                        if (event.target.closest(selector) || event.target.closest('.popover')) {
+                            return;
+                        }
+
+                        triggers.forEach(function (trigger) {
+                            var instance = window.bootstrap.Popover.getInstance(trigger);
+                            if (instance) {
+                                instance.hide();
+                            }
+                        });
+                    });
+                    document.body.dataset.boundBlockUsagePopoverOutsideClick = 'true';
+                }
+            }
+        }
+
+        function init() {
+            bindFilterFormAutoSubmit();
+            initUsagePopovers();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('turbo:load', init);
+    })();
 </script>
 {% endblock %}

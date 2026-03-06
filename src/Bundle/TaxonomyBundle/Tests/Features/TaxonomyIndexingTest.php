@@ -4,7 +4,6 @@ namespace Integrated\Bundle\TaxonomyBundle\Tests\Features;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
-use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOptions;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
@@ -20,7 +19,7 @@ use Symfony\Component\Security\Core\Authorization\Strategy\AffirmativeStrategy;
 final class TaxonomyIndexingTest extends TestCase
 {
     private TaxonomyOverview $indexer;
-    private TaxonomyRepositoryInterface $taxonomies;
+    private MemoryTaxonomyRepository $taxonomies;
 
     protected function setUp(): void
     {
@@ -79,6 +78,22 @@ final class TaxonomyIndexingTest extends TestCase
         self::assertEquals('A', $list[1]->getTitle());
         self::assertEquals('B', $list[2]->getTitle());
         self::assertEquals('Last', $list[3]->getTitle());
+    }
+
+    public function testSortingItemsByTitleCaseInsensitiveWhenRankMatches(): void
+    {
+        $this->add(
+            $this->taxonomy('parent', 'AutomationNL', 'automationnl'),
+            $this->taxonomy('beurzen', 'Beurzen en evenementen', 'beurzen-en-evenementen', null, 'parent'),
+            $this->taxonomy('aaaaa', 'aaaaa', 'aaaaa', null, 'parent'),
+        );
+
+        $list = $this->indexer->overviewFor('taxonomy');
+
+        self::assertCount(3, $list);
+        self::assertSame('AutomationNL', $list[0]->getTitle());
+        self::assertSame('aaaaa', $list[1]->getTitle());
+        self::assertSame('Beurzen en evenementen', $list[2]->getTitle());
     }
 
     public function testAddingDepthToAnItemWithParent()
@@ -150,6 +165,21 @@ final class TaxonomyIndexingTest extends TestCase
 
         self::assertEquals(1001, $list[0]->getCount());
         self::assertEquals(0, $list[1]->getCount());
+    }
+
+    public function testBatchUsageLookupIsUsedForOverview(): void
+    {
+        $this->setUsages(['foo' => 1, 'bar' => 2, 'baz' => 3]);
+        $this->add(
+            $this->taxonomy('foo', 'Foo'),
+            $this->taxonomy('bar', 'Bar'),
+            $this->taxonomy('baz', 'Baz'),
+        );
+
+        $this->indexer->overviewFor('taxonomy');
+
+        self::assertSame(1, $this->taxonomies->getUsageBatchLookupCalls());
+        self::assertSame(0, $this->taxonomies->getUsageLookupCalls());
     }
 
     public function testIndexingMultipleChildrenWithRankedGrandchildrenAndUsageCounts()
@@ -256,6 +286,21 @@ final class TaxonomyIndexingTest extends TestCase
         self::assertEquals('4', $list[0]->getTitle());
     }
 
+    public function testFilteringPreventsInfiniteRecursionInParentCycle(): void
+    {
+        $this->add(
+            $this->taxonomy('a', 'A', 'a', null, 'b'),
+            $this->taxonomy('b', 'B', 'b', null, 'a'),
+        );
+
+        $list = $this->indexer->overviewFor('taxonomy', TaxonomyOptions::filter('a'));
+
+        self::assertCount(2, $list);
+        self::assertSame('A', $list[0]->getTitle());
+        self::assertSame('B', $list[1]->getTitle());
+        self::assertSame(2, $this->indexer->countFor('taxonomy', 'a'));
+    }
+
     private function add(Taxonomy ...$taxonomies): void
     {
         foreach ($taxonomies as $taxonomy) {
@@ -265,9 +310,6 @@ final class TaxonomyIndexingTest extends TestCase
 
     private function setUsages(array $usageCounts): void
     {
-        if (!$this->taxonomies instanceof MemoryTaxonomyRepository) {
-            return;
-        }
         foreach ($usageCounts as $id => $count) {
             $this->taxonomies->setUsageCount($id, $count);
         }

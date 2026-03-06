@@ -23,9 +23,9 @@ use PHPUnit\Framework\TestCase;
 
 class BulkCapabilityResolverTest extends TestCase
 {
-    private DocumentManager|MockObject $documentManager;
-
-    private ObjectRepository|MockObject $repository;
+    private DocumentManager&MockObject $documentManager;
+    /** @var ObjectRepository<ContentType>&MockObject */
+    private ObjectRepository&MockObject $repository;
 
     protected function setUp(): void
     {
@@ -113,6 +113,9 @@ class BulkCapabilityResolverTest extends TestCase
         self::assertTrue($resolver->supports([$first, $second], 'workflow'));
     }
 
+    /**
+     * @param array<string, ContentType> $map
+     */
     private function createResolverWithMap(array $map): BulkCapabilityResolver
     {
         $this->documentManager->expects($this->any())
@@ -129,6 +132,10 @@ class BulkCapabilityResolverTest extends TestCase
         return new BulkCapabilityResolver($this->documentManager);
     }
 
+    /**
+     * @param list<string>         $fields
+     * @param array<string, mixed> $options
+     */
     private function createContentType(string $id, array $fields, array $options = []): ContentType
     {
         $contentType = new ContentType();
@@ -151,7 +158,7 @@ class BulkCapabilityResolverTest extends TestCase
 
     private function createContent(string $contentType): ContentInterface
     {
-        $content = new class() extends Content {
+        $content = new class extends Content {
             public function __toString(): string
             {
                 return '';
@@ -164,10 +171,7 @@ class BulkCapabilityResolverTest extends TestCase
 
     private function createCanonicalContent(string $contentType): ContentInterface
     {
-        $content = new class() extends Content {
-            private ?string $source = null;
-            private ?string $sourceUrl = null;
-
+        $content = new class extends Content {
             public function __toString(): string
             {
                 return '';
@@ -175,15 +179,11 @@ class BulkCapabilityResolverTest extends TestCase
 
             public function setSource(?string $source): static
             {
-                $this->source = $source;
-
                 return $this;
             }
 
             public function setSourceUrl(?string $sourceUrl): static
             {
-                $this->sourceUrl = $sourceUrl;
-
                 return $this;
             }
         };

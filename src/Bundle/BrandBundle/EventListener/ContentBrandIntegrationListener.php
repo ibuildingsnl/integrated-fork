@@ -19,7 +19,6 @@ class ContentBrandIntegrationListener implements EventSubscriberInterface
         private readonly BrandRepository $brands,
         private readonly ChannelRepository $channels,
         private readonly AssetManager $js,
-        private readonly AssetManager $css,
     ) {
     }
 

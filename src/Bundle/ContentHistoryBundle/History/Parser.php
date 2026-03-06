@@ -15,21 +15,28 @@ use Integrated\Bundle\ContentHistoryBundle\Document\ContentHistory;
 
 class Parser
 {
+    /** @return list<array{name: string, old: mixed, new: mixed}> */
     public function getReadableChangeset(ContentHistory $history): array
     {
         return $this->getReadableChangesetFromArray($history->getChangeSet());
     }
 
+    /**
+     * @param array<string|int, mixed> $changeSet
+     *
+     * @return list<array{name: string, old: mixed, new: mixed}>
+     */
     public function getReadableChangesetFromArray(array $changeSet): array
     {
         $table = [];
 
         foreach ($changeSet as $key => $data) {
+            $name = (string) $key;
             $data = $this->normalizeValue($data);
 
             if (!\is_array($data)) {
                 $table[] = [
-                    'name' => $key,
+                    'name' => $name,
                     'old' => '',
                     'new' => $data,
                 ];
@@ -37,13 +44,17 @@ class Parser
                 continue;
             }
 
-            $this->walkArray($table, $key, $data);
+            $this->walkArray($table, $name, $data);
         }
 
         return $table;
     }
 
-    private function walkArray(array &$table, string $path, array $data)
+    /**
+     * @param list<array{name: string, old: mixed, new: mixed}> $table
+     * @param array<string|int, mixed>                          $data
+     */
+    private function walkArray(array &$table, string $path, array $data): void
     {
         if (\count($data) === 2 && \array_key_exists(0, $data) && \array_key_exists(1, $data) && !\is_array($data[0]) && !\is_array($data[1])) {
             $table[] = [
@@ -56,22 +67,24 @@ class Parser
         }
 
         foreach ($data as $key => $subdata) {
+            $name = (string) $key;
+            $nextPath = $path.' > '.$name;
             $subdata = $this->normalizeValue($subdata);
             if (!\is_array($subdata)) {
                 $table[] = [
-                    'name' => $path.' > '.$key,
+                    'name' => $nextPath,
                     'old' => '',
-                    'new' => $this->normalizeValueByPath($path.' > '.$key, $subdata, true),
+                    'new' => $this->normalizeValueByPath($nextPath, $subdata, true),
                 ];
 
                 continue;
             }
 
-            $this->walkArray($table, $path.' > '.$key, $subdata);
+            $this->walkArray($table, $nextPath, $subdata);
         }
     }
 
-    private function normalizeValue($value, bool $preferNew = true)
+    private function normalizeValue(mixed $value, bool $preferNew = true): mixed
     {
         if ($value instanceof \DateTimeInterface) {
             return $value->format('r');
@@ -156,6 +169,11 @@ class Parser
         return $value;
     }
 
+    /**
+     * @param array<string|int, mixed> $value
+     *
+     * @return array{0: string, 1: string}|null
+     */
     private function formatRelationTupleValue(array $value): ?array
     {
         if (!$this->isRelationPayloadShape($value) && !$this->isRelationPayloadListShape($value)) {
@@ -190,11 +208,13 @@ class Parser
         return null;
     }
 
+    /** @param array<string|int, mixed> $value */
     private function isRelationPayloadShape(array $value): bool
     {
         return isset($value['relationId']) && isset($value['references']);
     }
 
+    /** @param array<string|int, mixed> $value */
     private function isRelationPayloadListShape(array $value): bool
     {
         if ($value === [] || !$this->isList($value)) {
@@ -215,7 +235,7 @@ class Parser
         return true;
     }
 
-    private function containsTwoValueTuple($value): bool
+    private function containsTwoValueTuple(mixed $value): bool
     {
         if (!\is_array($value)) {
             return false;
@@ -235,7 +255,7 @@ class Parser
         return false;
     }
 
-    private function resolveTupleSide($value, bool $preferNew = true)
+    private function resolveTupleSide(mixed $value, bool $preferNew = true): mixed
     {
         if (!\is_array($value)) {
             return $value;
@@ -254,7 +274,7 @@ class Parser
         return $resolved;
     }
 
-    private function normalizeValueByPath(string $path, $value, bool $preferNew = true)
+    private function normalizeValueByPath(string $path, mixed $value, bool $preferNew = true): mixed
     {
         $normalized = $this->normalizeValue($value, $preferNew);
 
@@ -292,13 +312,18 @@ class Parser
         }
 
         $decoded = json_decode($value, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
+        if (json_last_error() !== \JSON_ERROR_NONE) {
             return null;
         }
 
         return $decoded;
     }
 
+    /**
+     * @param array<string|int, mixed> $value
+     *
+     * @return array<string|int, mixed>
+     */
     private function normalizeArrayKeys(array $value): array
     {
         $normalized = [];
@@ -313,6 +338,7 @@ class Parser
         return $normalized;
     }
 
+    /** @param array<string|int, mixed> $value */
     private function formatReferenceArray(array $value, bool $preferNew = true): ?string
     {
         $refId = $value['$id'] ?? $value['id'] ?? null;
@@ -337,12 +363,13 @@ class Parser
         }
 
         if ($refId) {
-            $parts[] = '#' . $refId;
+            $parts[] = '#'.$refId;
         }
 
         return implode(' ', $parts);
     }
 
+    /** @param array<string|int, mixed> $value */
     private function isMillisArray(array $value): bool
     {
         if (!isset($value['milliseconds'])) {
@@ -352,6 +379,7 @@ class Parser
         return is_numeric($value['milliseconds']);
     }
 
+    /** @param array<string|int, mixed> $value */
     private function formatMillisArray(array $value): string
     {
         $millis = (int) $value['milliseconds'];
@@ -359,12 +387,14 @@ class Parser
 
         try {
             $dt = (new \DateTimeImmutable())->setTimestamp($seconds);
+
             return $dt->format('r');
         } catch (\Exception $e) {
             return (string) $millis;
         }
     }
 
+    /** @param array<string|int, mixed> $value */
     private function isList(array $value): bool
     {
         if ($value === []) {
@@ -372,10 +402,11 @@ class Parser
         }
 
         $keys = array_keys($value);
-        return $keys === range(0, count($value) - 1);
+
+        return $keys === range(0, \count($value) - 1);
     }
 
-    private function stringifyScalar($value): string
+    private function stringifyScalar(mixed $value): string
     {
         if (\is_bool($value)) {
             return $value ? 'true' : 'false';
@@ -389,9 +420,14 @@ class Parser
             return (string) $value;
         }
 
-        return json_encode($value);
+        $encoded = json_encode($value);
+
+        return $encoded === false ? '' : $encoded;
     }
 
+    /**
+     * @param array<string|int, mixed> $items
+     */
     private function formatRelationPayloadList(array $items, bool $preferNew = true): ?string
     {
         if ($items === []) {
@@ -442,16 +478,17 @@ class Parser
             $relationLabel = $this->humanizeRelationId((string) $relationId);
 
             if ($labels === []) {
-                $parts[] = sprintf('%s: none', $relationLabel);
+                $parts[] = \sprintf('%s: none', $relationLabel);
                 continue;
             }
 
-            $parts[] = sprintf('%s: %s', $relationLabel, implode(', ', $labels));
+            $parts[] = \sprintf('%s: %s', $relationLabel, implode(', ', $labels));
         }
 
         return implode(', ', $parts);
     }
 
+    /** @param array<string|int, mixed> $value */
     private function formatRelationPayload(array $value, bool $preferNew = true): ?string
     {
         if (!isset($value['relationId']) || !isset($value['references'])) {
@@ -463,7 +500,7 @@ class Parser
         $references = $value['references'];
 
         if (!\is_array($references) || $references === []) {
-            return sprintf('%s: none', $relationLabel);
+            return \sprintf('%s: none', $relationLabel);
         }
 
         $labels = [];
@@ -480,13 +517,13 @@ class Parser
         }
 
         if ($labels === []) {
-            return sprintf('%s: none', $relationLabel);
+            return \sprintf('%s: none', $relationLabel);
         }
 
-        return sprintf('%s: %s', $relationLabel, implode(', ', $labels));
+        return \sprintf('%s: %s', $relationLabel, implode(', ', $labels));
     }
 
-    private function pickPreferredScalar($value, bool $preferNew = true): ?string
+    private function pickPreferredScalar(mixed $value, bool $preferNew = true): ?string
     {
         if (\is_scalar($value) && (string) $value !== '') {
             return (string) $value;

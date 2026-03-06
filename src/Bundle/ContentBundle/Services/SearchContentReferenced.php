@@ -27,10 +27,7 @@ class SearchContentReferenced
      */
     public const IGNORE_CLASSES = ['Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction'];
 
-    /**
-     * @var DocumentManager
-     */
-    private $dm;
+    private DocumentManager $dm;
 
     /**
      * SearchContentReferenced constructor.
@@ -41,43 +38,48 @@ class SearchContentReferenced
     }
 
     /**
-     * @return array
+     * @return array<string, array<string, mixed>>
      *
      * @throws \Exception
      */
-    public function getReferenced($document)
+    public function getReferenced(mixed $document): array
     {
         return $this->prepareReferenced($this->findReferencedDocuments($document));
     }
 
     /**
-     * @param mixed $document
-     *
-     * @return array
+     * @return array<int, object>
      *
      * @throws \Exception
      */
-    public function getReferencedDocuments($document)
+    public function getReferencedDocuments(mixed $document): array
     {
         return $this->findReferencedDocuments($document);
     }
 
     /**
-     * @param mixed $document
+     * @return array{className: class-string, metadata: ClassMetadata<object>, idField: string, idValue: mixed}
      *
-     * @return array
-     *
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
      * @throws \Exception
      */
-    public function getDeletedInfo($document, DocumentManager $documentManager)
+    public function getDeletedInfo(mixed $document, DocumentManager $documentManager): array
     {
+        if (!\is_object($document)) {
+            throw new \InvalidArgumentException('Expected an object document');
+        }
+
+        $className = $document::class;
         $deleted = [
-            'className' => \get_class($document),
-            'metadata' => $documentManager->getClassMetadata(\get_class($document)),
+            'className' => $className,
+            'metadata' => $documentManager->getClassMetadata($className),
         ];
 
-        $deleted['idField'] = current($deleted['metadata']->getIdentifier());
+        $idField = current($deleted['metadata']->getIdentifier());
+        if ($idField === false) {
+            throw new \Exception('Unable to resolve identifier field for deleted object');
+        }
+
+        $deleted['idField'] = $idField;
         $deleted['idValue'] = $deleted['metadata']->getFieldValue($document, $deleted['idField']);
 
         if (MongoType::hasType($deleted['metadata']->getTypeOfField($deleted['idField']))) {
@@ -91,13 +93,11 @@ class SearchContentReferenced
     }
 
     /**
-     * @param mixed $document
-     *
-     * @return array
+     * @return array<int, object>
      *
      * @throws \Exception
      */
-    private function findReferencedDocuments($document): array
+    private function findReferencedDocuments(mixed $document): array
     {
         $metadataFactory = $this->dm->getMetadataFactory();
         $deleted = $this->getDeletedInfo($document, $this->dm);
@@ -119,7 +119,7 @@ class SearchContentReferenced
             foreach ($associations as $assocFieldName) {
                 $assocClassName = $classMetadata->getAssociationTargetClass($assocFieldName);
 
-                if (!$assocClassName) {
+                if (!\is_string($assocClassName)) {
                     continue; // Skip empty class
                 }
 
@@ -164,28 +164,35 @@ class SearchContentReferenced
             }
         }
 
-        return array_filter($referenced, function ($item) {
+        return array_values(array_filter($referenced, function ($item): bool {
             return !($item instanceof Publication);
-        });
+        }));
     }
 
     /**
-     * @return array
+     * @param array<int, object> $referenced
+     *
+     * @return array<string, array<string, mixed>>
      */
-    private function prepareReferenced($referenced)
+    private function prepareReferenced(array $referenced): array
     {
         $output = [];
         foreach ($referenced as $item) {
-            $key = $item::class.'-'.$item->getId();
+            if (!\is_callable([$item, 'getId'])) {
+                continue;
+            }
+
+            $id = (string) \call_user_func([$item, 'getId']);
+            $key = $item::class.'-'.$id;
             if ($item instanceof Content) {
                 $output[$key] = [
                     'action' => 'integrated_content_content_edit',
-                    'id' => $item->getId(),
+                    'id' => $id,
                     'name' => method_exists($item, 'getTitle') ? $item->getTitle() : $item::class,
                 ];
             } else {
                 $output[$key] = [
-                    'id' => $item->getId(),
+                    'id' => $id,
                     'name' => $item::class,
                 ];
             }

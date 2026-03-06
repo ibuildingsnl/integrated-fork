@@ -6,6 +6,7 @@ use Integrated\Bundle\BrandBundle\EventListener\ExternalReturnRedirectListener;
 use Integrated\Bundle\ChannelBundle\Event\GetResponseConfigEvent;
 use Integrated\Bundle\ChannelBundle\Model\Config;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
@@ -26,10 +27,10 @@ class ExternalReturnRedirectListenerTest extends TestCase
         $event = new GetResponseConfigEvent($config, $request);
         $listener->handleExternalReturn($event);
 
-        self::assertNotNull($event->getResponse());
-        self::assertSame('/admin/brand/abc/edit', $event->getResponse()->getTargetUrl());
+        $response = $event->getResponse();
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertSame('/admin/brand/abc/edit', $response->getTargetUrl());
         self::assertFalse($session->has('externalReturnId'));
         self::assertFalse($session->has('postReturnUri'));
     }
 }
-

@@ -42,4 +42,3 @@ class TestableConnectorController extends ConnectorController
         return true;
     }
 }
-

@@ -30,14 +30,14 @@ class ContentEditLockFlowTest extends TestCase
         $this->assertStringContainsString('$this->isCsrfTokenValid(\'integrated_content_lock_\'', $controller);
         $this->assertStringContainsString('The lock request token is invalid. Please reload and try again.', $controller);
         $this->assertStringContainsString('$submittedActionData = $form->get(\'actions\')->getData();', $controller);
-        $this->assertStringContainsString('$submittedAction = \is_scalar($submittedActionData) ? (string) $submittedActionData : \'\';', $controller);
-        $this->assertStringContainsString('foreach ([\'cancel\', \'back\', \'reload\', \'save\', \'reload_changed\'] as $candidate)', $controller);
+        $this->assertStringContainsString('$submittedAction = $this->resolveSubmittedAction(', $controller);
+        $this->assertStringContainsString('private function resolveSubmittedAction(mixed $submittedActionData, Request $request, array $candidates): string', $controller);
         $this->assertStringContainsString('$parameters = array_merge($request->query->all(), [\'id\' => $content->getId()]);', $controller);
-        $this->assertStringContainsString('if (!($locking[\'locked\'] ?? false) && ($locking[\'lock\'] ?? null) && ($locking[\'owner\'] ?? false)) {', $controller);
+        $this->assertStringContainsString('if (!$locking[\'locked\'] && $locking[\'lock\'] && $locking[\'owner\']) {', $controller);
         $this->assertStringContainsString('$parameters[\'lock\'] = $locking[\'lock\']->getId();', $controller);
         $this->assertStringContainsString('unset($parameters[\'lock\']);', $controller);
-        $this->assertStringContainsString("'data-content-locked' => (\$locking['locked'] && !(\$locking['pending'] ?? false)) ? '1' : '0'", $controller);
-        $this->assertStringContainsString('$hasUsableLock = $locking[\'lock\'] && !($locking[\'locked\'] ?? false);', $controller);
+        $this->assertStringContainsString('$hasUsableLock = $locking[\'lock\'] && !$locking[\'locked\'];', $controller);
+        $this->assertStringContainsString("'data-content-locked' => (\$locking['locked'] && !\$locking['pending']) ? '1' : '0'", $controller);
         $this->assertStringContainsString('$reloadSubmitted = $request instanceof Request && $this->isSubmittedAction($request, \'reload\');', $controller);
         $this->assertStringContainsString('return $form->add(\'actions\', ActionsType::class, [\'buttons\' => [\'reload\', \'save\', \'cancel\']]);', $controller);
         $this->assertStringContainsString('private function isSubmittedAction(Request $request, string $action): bool', $controller);
@@ -70,5 +70,23 @@ class ContentEditLockFlowTest extends TestCase
         $this->assertIsString($template);
         $this->assertStringContainsString("csrf_token('integrated_content_lock_' ~ content.id)", $template);
         $this->assertStringContainsString("requestBody.set('_token', LOCK_CSRF_TOKEN);", $template);
+    }
+
+    public function testEditTemplatesOnlyFlagFormInvalidAfterSubmittedInvalidPost(): void
+    {
+        $editTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/edit.html.twig');
+        $iframeTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/edit.iframe.html.twig');
+
+        $this->assertIsString($editTemplate);
+        $this->assertIsString($iframeTemplate);
+
+        $this->assertStringContainsString(
+            "var formInvalid = {{ (form.vars.submitted|default(false) and not form.vars.valid) ? '1' : '0' }};",
+            $editTemplate
+        );
+        $this->assertStringContainsString(
+            "var formInvalid = {{ (form.vars.submitted|default(false) and not form.vars.valid) ? '1' : '0' }};",
+            $iframeTemplate
+        );
     }
 }

@@ -19,6 +19,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/** @extends AbstractType<CanonicalAction> */
 class BulkActionCanonicalType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

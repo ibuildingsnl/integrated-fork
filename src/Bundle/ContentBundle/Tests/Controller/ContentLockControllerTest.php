@@ -18,7 +18,6 @@ use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
-use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepository;
 use Integrated\Bundle\ContentBundle\Provider\MediaProvider;
 use Integrated\Bundle\ContentBundle\Services\CalendarOptions;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
@@ -26,11 +25,13 @@ use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
+use Integrated\Common\Content\ContentInterface;
+use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
-use Integrated\Common\Locks\Request as LockRequest;
-use Integrated\Common\Locks\Resource;
 use Integrated\Common\Locks\Provider\DBAL\Lock as DbalLock;
 use Integrated\Common\Locks\Provider\DBAL\Manager;
+use Integrated\Common\Locks\Request as LockRequest;
+use Integrated\Common\Locks\Resource;
 use Integrated\Common\Queue\Provider\DBAL\QueueProvider;
 use Integrated\Common\Security\Permissions;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
@@ -39,11 +40,16 @@ use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Forms;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Integrated\Common\ContentType\ResolverInterface;
 
 class ContentLockControllerTest extends TestCase
 {
@@ -273,6 +279,110 @@ class ContentLockControllerTest extends TestCase
         self::assertSame([$requestId, $id], $repositoryCalls);
     }
 
+    public function testCreateDeleteFormOmitsLockParameterWhenLockIsUnavailable(): void
+    {
+        $content = (new Article())->setId('content-id');
+        $controller = $this->createController(
+            $this->createDocumentManager(static fn (string $id): ?Content => null),
+            $this->createMock(Manager::class),
+            $this->createUserManager(),
+            $this->createUser('alice@example.test')
+        );
+
+        $form = $controller->createDeleteFormForTest($content, [
+            'lock' => null,
+            'user' => null,
+            'owner' => false,
+            'new' => false,
+            'pending' => false,
+            'locked' => false,
+            'release' => static function (): void {
+            },
+        ]);
+
+        self::assertStringContainsString('id=content-id', $form->getConfig()->getAction());
+        self::assertStringNotContainsString('lock=', $form->getConfig()->getAction());
+    }
+
+    public function testCreateDeleteFormKeepsLockParameterWhenLockIsUsable(): void
+    {
+        $content = (new Article())->setId('content-id');
+        $owner = $this->createUser('alice@example.test');
+        $lock = $this->createLock($content, $owner, 'lock-id');
+        $controller = $this->createController(
+            $this->createDocumentManager(static fn (string $id): ?Content => null),
+            $this->createMock(Manager::class),
+            $this->createUserManager(),
+            $owner
+        );
+
+        $form = $controller->createDeleteFormForTest($content, [
+            'lock' => $lock,
+            'user' => $owner,
+            'owner' => true,
+            'new' => false,
+            'pending' => false,
+            'locked' => false,
+            'release' => static function (): void {
+            },
+        ]);
+
+        self::assertStringContainsString('id=content-id', $form->getConfig()->getAction());
+        self::assertStringContainsString('lock=lock-id', $form->getConfig()->getAction());
+    }
+
+    public function testCreateDeleteFormWithReferencesAddsRemoveReferencesToggleAndDeleteAction(): void
+    {
+        $content = (new Article())->setId('content-id');
+        $controller = $this->createController(
+            $this->createDocumentManager(static fn (string $id): ?Content => null),
+            $this->createMock(Manager::class),
+            $this->createUserManager(),
+            $this->createUser('alice@example.test')
+        );
+
+        $form = $controller->createDeleteFormForTest($content, [
+            'lock' => null,
+            'user' => null,
+            'owner' => false,
+            'new' => false,
+            'pending' => false,
+            'locked' => false,
+            'release' => static function (): void {
+            },
+        ], true);
+
+        self::assertTrue($form->has('removeReferences'));
+        self::assertTrue($form->get('actions')->has('delete'));
+        self::assertTrue($form->get('actions')->has('cancel'));
+        self::assertFalse($form->get('actions')->has('reload'));
+    }
+
+    public function testCreateDeleteFormWithoutReferencesDoesNotExposeRemoveReferencesToggle(): void
+    {
+        $content = (new Article())->setId('content-id');
+        $controller = $this->createController(
+            $this->createDocumentManager(static fn (string $id): ?Content => null),
+            $this->createMock(Manager::class),
+            $this->createUserManager(),
+            $this->createUser('alice@example.test')
+        );
+
+        $form = $controller->createDeleteFormForTest($content, [
+            'lock' => null,
+            'user' => null,
+            'owner' => false,
+            'new' => false,
+            'pending' => false,
+            'locked' => false,
+            'release' => static function (): void {
+            },
+        ], false);
+
+        self::assertFalse($form->has('removeReferences'));
+    }
+
+    /** @return array<string, mixed> */
     private function decodeResponse(Response $response): array
     {
         $decoded = json_decode((string) $response->getContent(), true);
@@ -304,7 +414,7 @@ class ContentLockControllerTest extends TestCase
         DocumentManager $documentManager,
         Manager $lockManager,
         UserManagerInterface $userManager,
-        ?User $currentUser = null
+        ?User $currentUser = null,
     ): TestableContentController {
         $controller = new TestableContentController(
             $this->createStub(ResolverInterface::class),
@@ -324,7 +434,6 @@ class ContentLockControllerTest extends TestCase
             $documentManager,
             $this->createStub(CalendarOptions::class),
             $this->createStub(QueueProvider::class),
-            $this->createStub(PublicationRepository::class),
         );
 
         $translator = $this->createStub(TranslatorInterface::class);
@@ -362,6 +471,7 @@ class ContentLockControllerTest extends TestCase
 class TestableContentController extends ContentController
 {
     private bool $csrfValid = true;
+    /** @var array<string, bool> */
     private array $permissions = [];
     private ?User $currentUser = null;
     private TranslatorInterface $translator;
@@ -408,5 +518,47 @@ class TestableContentController extends ContentController
     public function getTranslator(): TranslatorInterface
     {
         return $this->translator;
+    }
+
+    /**
+     * @param array<string, mixed> $locking
+     *
+     * @return FormInterface<mixed>
+     */
+    public function createDeleteFormForTest(ContentInterface $content, array $locking, bool $notDelete = false): FormInterface
+    {
+        return $this->createDeleteForm($content, $locking, $notDelete);
+    }
+
+    protected function createForm(string $type, mixed $data = null, array $options = []): FormInterface
+    {
+        $factory = Forms::createFormFactoryBuilder()
+            ->addTypeExtension(new SubmitButtonClassTypeExtension())
+            ->getFormFactory();
+
+        return $factory->create($type, $data, $options);
+    }
+
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    protected function generateUrl(string $route, array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string
+    {
+        $query = http_build_query($parameters);
+
+        return '/'.$route.('' !== $query ? '?'.$query : '');
+    }
+}
+
+class SubmitButtonClassTypeExtension extends AbstractTypeExtension
+{
+    public static function getExtendedTypes(): iterable
+    {
+        return [SubmitType::class];
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefined(['button_class']);
     }
 }

@@ -39,11 +39,8 @@
 
         {%- set attributes = item.attributes %}
         {% if item.level == 1 %}
-            {% if 'current_ancestor' in classes %}
-                {% set state = 'sidebar-sub-menu show' %}
-            {% else %}
-                {% set state = 'sidebar-sub-menu show' %}
-            {% endif %}
+            {% set shouldOpen = options.currentClass in classes or options.ancestorClass in classes or item.name is same as('Content') %}
+            {% set state = shouldOpen ? 'sidebar-sub-menu show' : 'sidebar-sub-menu' %}
             {%- set classes = classes|merge({'class': state}) %}
         {% endif %}
         {%- if classes is not empty %}

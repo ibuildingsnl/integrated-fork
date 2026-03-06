@@ -124,6 +124,11 @@ class ArrayComparer
         return $value;
     }
 
+    /**
+     * @param array<string|int, mixed> $relations
+     *
+     * @return array<string, mixed>
+     */
     private static function normalizeRelationsList(array $relations): array
     {
         $normalized = [];
@@ -148,6 +153,11 @@ class ArrayComparer
         return $normalized;
     }
 
+    /**
+     * @param array<string|int, mixed> $references
+     *
+     * @return array<string, mixed>
+     */
     private static function normalizeReferencesList(array $references): array
     {
         $normalized = [];

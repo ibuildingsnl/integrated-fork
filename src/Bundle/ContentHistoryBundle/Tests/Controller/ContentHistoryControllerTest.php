@@ -306,6 +306,9 @@ class ContentHistoryControllerTest extends TestCase
         self::assertSame('title', $result[1]['name']);
     }
 
+    /**
+     * @param array<string, WorkflowDefinitionState> $workflowStates
+     */
     private function createController(array $workflowStates = []): ContentHistoryController
     {
         $workflowRepository = $this->createMock(EntityRepository::class);
@@ -330,6 +333,9 @@ class ContentHistoryControllerTest extends TestCase
         );
     }
 
+    /**
+     * @param list<mixed> $args
+     */
     private function invokePrivate(object $instance, string $method, array $args = []): mixed
     {
         $reflection = new \ReflectionClass($instance);

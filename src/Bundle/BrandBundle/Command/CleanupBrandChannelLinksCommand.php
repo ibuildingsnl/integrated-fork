@@ -18,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class CleanupBrandChannelLinksCommand extends Command
 {
-    protected static $defaultName = 'integrated:brand:cleanup-channel-links';
+    protected static ?string $defaultName = 'integrated:brand:cleanup-channel-links';
 
     public function __construct(private DocumentManager $documentManager)
     {
@@ -48,7 +48,7 @@ class CleanupBrandChannelLinksCommand extends Command
             $changed = false;
             foreach ($brand->getChannelLinks()->toArray() as $link) {
                 if (!$link->channel) {
-                    $report[] = sprintf(
+                    $report[] = \sprintf(
                         'brand=%s (%s) link=%s type=%s channel=null',
                         $brandId,
                         $brand->getName(),
@@ -56,13 +56,13 @@ class CleanupBrandChannelLinksCommand extends Command
                         $link->getName()
                     );
                     $this->removeChannelLink($brand, $link);
-                    $linksRemoved++;
+                    ++$linksRemoved;
                     $changed = true;
                     continue;
                 }
                 $currentChannelId = $this->resolveChannelId($link->channel);
                 if ($channelId && $currentChannelId === $channelId) {
-                    $report[] = sprintf(
+                    $report[] = \sprintf(
                         'brand=%s (%s) link=%s type=%s channel=%s (%s)',
                         $brandId,
                         $brand->getName(),
@@ -72,12 +72,12 @@ class CleanupBrandChannelLinksCommand extends Command
                         $link->channel->getName()
                     );
                     $this->removeChannelLink($brand, $link);
-                    $linksRemoved++;
+                    ++$linksRemoved;
                     $changed = true;
                 }
             }
             if ($changed) {
-                $brandsTouched++;
+                ++$brandsTouched;
                 if (!$dryRun) {
                     $this->documentManager->persist($brand);
                 }
@@ -91,14 +91,14 @@ class CleanupBrandChannelLinksCommand extends Command
         if ($report) {
             $output->writeln('Links:');
             foreach ($report as $line) {
-                $output->writeln(' - ' . $line);
+                $output->writeln(' - '.$line);
             }
         }
 
         if ($dryRun) {
-            $output->writeln(sprintf('Dry run: would remove %d link(s) from %d brand(s).', $linksRemoved, $brandsTouched));
+            $output->writeln(\sprintf('Dry run: would remove %d link(s) from %d brand(s).', $linksRemoved, $brandsTouched));
         } else {
-            $output->writeln(sprintf('Removed %d link(s) from %d brand(s).', $linksRemoved, $brandsTouched));
+            $output->writeln(\sprintf('Removed %d link(s) from %d brand(s).', $linksRemoved, $brandsTouched));
         }
 
         return Command::SUCCESS;
@@ -116,7 +116,9 @@ class CleanupBrandChannelLinksCommand extends Command
     private function resolveChannelId(ChannelInterface $channel): string
     {
         try {
-            return $channel->getId();
+            $id = trim((string) $channel->getId());
+
+            return '' !== $id ? $id : '(no-id)';
         } catch (\TypeError) {
             return '(no-id)';
         }

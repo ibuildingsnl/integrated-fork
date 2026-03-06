@@ -15,7 +15,7 @@ class PageLoaderTest extends TestCase
 {
     /** @var DocumentManager&MockObject */
     private DocumentManager $documentManager;
-    /** @var DocumentRepository&MockObject */
+    /** @var DocumentRepository<Page>&MockObject */
     private DocumentRepository $repository;
 
     protected function setUp(): void
@@ -62,4 +62,3 @@ class PageLoaderTest extends TestCase
         $property->setValue($page, $id);
     }
 }
-

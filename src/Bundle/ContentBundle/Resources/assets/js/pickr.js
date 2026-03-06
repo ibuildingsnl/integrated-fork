@@ -1,5 +1,5 @@
 import Pickr from '@simonwep/pickr';
-import '@simonwep/pickr/dist/themes/classic.min.css';
+import '@simonwep/pickr/dist/themes/nano.min.css';
 
 function applyInputColorPreview(input, color) {
     if (!color) {
@@ -70,12 +70,37 @@ function syncPickrFromInputValue(input, pickr) {
     }
 }
 
+function positionPickrApp(pickr, input) {
+    let app = null;
+    try {
+        const root = pickr.getRoot ? pickr.getRoot() : null;
+        app = root && root.app ? root.app : null;
+    } catch (error) {
+        app = null;
+    }
+
+    if (!app || typeof window.getComputedStyle !== 'function') {
+        return;
+    }
+
+    const margin = 8;
+    const inputRect = input.getBoundingClientRect();
+    const appRect = app.getBoundingClientRect();
+    const maxTop = Math.max(margin, window.innerHeight - appRect.height - margin);
+    const maxLeft = Math.max(margin, window.innerWidth - appRect.width - margin);
+    const top = Math.max(margin, Math.min(inputRect.bottom + margin, maxTop));
+    const left = Math.max(margin, Math.min(inputRect.left, maxLeft));
+
+    app.style.top = `${top}px`;
+    app.style.left = `${left}px`;
+}
+
 function initializePickr(root = document) {
     if (!root || typeof root.querySelectorAll !== 'function') {
         return;
     }
 
-    const inputs = root.querySelectorAll('.coloris input');
+    const inputs = root.querySelectorAll('.input-group.pickr-field > input[data-pickr]');
     inputs.forEach((input) => {
         if (input.dataset.pickrInitialized === 'true') {
             return;
@@ -83,7 +108,7 @@ function initializePickr(root = document) {
 
         const pickr = Pickr.create({
             el: input,
-            theme: 'classic',
+            theme: 'nano',
             useAsButton: true,
             default: input.value || '#335767',
             defaultRepresentation: 'HEXA',
@@ -102,6 +127,9 @@ function initializePickr(root = document) {
             },
         });
 
+        // Avoid generic `[role="button"]` handlers hijacking this input.
+        input.removeAttribute('role');
+
         pickr.on('change', (color) => {
             if (!color) {
                 return;
@@ -109,6 +137,10 @@ function initializePickr(root = document) {
 
             updateColorInput(input, color);
             emitColorInputEvents(input);
+        });
+
+        pickr.on('show', () => {
+            positionPickrApp(pickr, input);
         });
 
         pickr.on('save', (color, instance) => {
@@ -137,6 +169,16 @@ function initializePickr(root = document) {
 
         input.addEventListener('blur', () => {
             syncPickrFromInputValue(input, pickr);
+        });
+
+        input.addEventListener('click', (event) => {
+            event.stopPropagation();
+            window.setTimeout(() => {
+                pickr.show();
+                window.requestAnimationFrame(() => {
+                    positionPickrApp(pickr, input);
+                });
+            }, 0);
         });
 
         syncPickrFromInputValue(input, pickr);

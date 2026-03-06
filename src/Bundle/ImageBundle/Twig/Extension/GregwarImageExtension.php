@@ -80,7 +80,7 @@ class GregwarImageExtension extends AbstractExtension
         return 'image';
     }
 
-    private function safeOpen(string $path)
+    private function safeOpen(string $path): object
     {
         $path = $this->resolveLocalPath($path);
 
@@ -98,7 +98,7 @@ class GregwarImageExtension extends AbstractExtension
         }
 
         if (str_starts_with($path, '/storage/')) {
-            $path = '/files/'.substr($path, strlen('/storage/'));
+            $path = '/files/'.substr($path, \strlen('/storage/'));
         }
 
         $root = rtrim($this->webDir, '/');

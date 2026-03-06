@@ -17,10 +17,11 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Entity\Workflow\State;
-use Integrated\Common\Content\MetadataInterface;
 
 class StateManager
 {
+    private const FLUSH_BATCH_SIZE = 100;
+
     /**
      * @var EntityManager
      */
@@ -68,6 +69,10 @@ class StateManager
             ->getQuery()
             ->execute();
 
+        $entityDirty = false;
+        $documentDirty = false;
+        $batchCount = 0;
+
         foreach ($contentIds as $item) {
             $content = $this->documentManager->getRepository(Content::class)->find($item['_id']);
             if (!$content instanceof Content) {
@@ -87,27 +92,37 @@ class StateManager
                 $state->setState($initialState);
 
                 $this->entityManager->persist($state);
-                $this->entityManager->flush();
+                $entityDirty = true;
             }
 
-            $this->syncContentWithState($content, $workflow, $state->getState());
+            if ($this->syncContentWithState($content, $workflow, $state->getState())) {
+                $documentDirty = true;
+            }
+
+            ++$batchCount;
+            if ($batchCount >= self::FLUSH_BATCH_SIZE) {
+                $this->flushPending($entityDirty, $documentDirty);
+                $batchCount = 0;
+            }
         }
+
+        $this->flushPending($entityDirty, $documentDirty);
     }
 
     private function resolveInitialState(Definition $workflow, Content $content): ?Definition\State
     {
         $defaultState = $workflow->getDefault();
-        if ($defaultState instanceof Definition\State && $this->isStateCompatibleWithContent($defaultState, $content)) {
+        if ($defaultState !== null && $this->isStateCompatibleWithContent($defaultState, $content)) {
             return $defaultState;
         }
 
         foreach ($workflow->getStates() as $state) {
-            if ($state instanceof Definition\State && $this->isStateCompatibleWithContent($state, $content)) {
+            if ($this->isStateCompatibleWithContent($state, $content)) {
                 return $state;
             }
         }
 
-        return $defaultState instanceof Definition\State ? $defaultState : null;
+        return $defaultState;
     }
 
     private function isStateCompatibleWithContent(Definition\State $state, Content $content): bool
@@ -115,24 +130,22 @@ class StateManager
         return (bool) $content->isDisabled() !== $state->isPublishable();
     }
 
-    private function syncContentWithState(Content $content, Definition $workflow, ?Definition\State $state): void
+    private function syncContentWithState(Content $content, Definition $workflow, ?Definition\State $state): bool
     {
         if (!$state instanceof Definition\State) {
-            return;
+            return false;
         }
 
         $changed = false;
 
-        if ($content instanceof MetadataInterface) {
-            if ($content->getMetadata()->get('workflow') !== $workflow->getId()) {
-                $content->getMetadata()->set('workflow', $workflow->getId());
-                $changed = true;
-            }
+        if ($content->getMetadata()->get('workflow') !== $workflow->getId()) {
+            $content->getMetadata()->set('workflow', $workflow->getId());
+            $changed = true;
+        }
 
-            if ($content->getMetadata()->get('workflow_state') !== $state->getId()) {
-                $content->getMetadata()->set('workflow_state', $state->getId());
-                $changed = true;
-            }
+        if ($content->getMetadata()->get('workflow_state') !== $state->getId()) {
+            $content->getMetadata()->set('workflow_state', $state->getId());
+            $changed = true;
         }
 
         $disabled = !$state->isPublishable();
@@ -143,7 +156,21 @@ class StateManager
 
         if ($changed) {
             $this->documentManager->persist($content);
+        }
+
+        return $changed;
+    }
+
+    private function flushPending(bool &$entityDirty, bool &$documentDirty): void
+    {
+        if ($entityDirty) {
+            $this->entityManager->flush();
+            $entityDirty = false;
+        }
+
+        if ($documentDirty) {
             $this->documentManager->flush();
+            $documentDirty = false;
         }
     }
 }

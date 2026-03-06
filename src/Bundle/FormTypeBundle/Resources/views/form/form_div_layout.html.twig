@@ -46,12 +46,10 @@
 
 {% block integrated_color_widget %}
     {% apply spaceless %}
-        {% integrated_stylesheets mode='append' 'bundles/integratedintegrated/pickr.css' %}
-        {% endintegrated_stylesheets %}
         {% integrated_javascripts mode='append' 'bundles/integratedintegrated/pickr.js' %}
         {% endintegrated_javascripts %}
-        <div class="input-group coloris">
-            <input {{ block('widget_attributes') }} class="form-control" type="text" value="{{ value }}" data-coloris>
+        <div class="input-group pickr-field">
+            <input {{ block('widget_attributes') }} class="form-control" type="text" value="{{ value }}" data-pickr>
             <span class="input-group-addon"><i></i></span>
         </div>
     {% endapply %}
@@ -413,7 +411,7 @@
     {% set attr = attr|merge({
         'data-ajax-url' : path(route, params|merge({'current': data})|merge({'contentType': form.vars.form.parent.vars.value.contentType})),
         'data-allow-clear' : (allow_clear ? 'true' : 'false'),
-        'class' : (attr.class|default('') ~ ' form-control integrated_content_choice')|trim,
+        'class' : (attr.class|default('') ~ ' form-control integrated_content_choice integrated_content_parent_choice')|trim,
     }) %}
     {% set currentData = integrated_document(data) %}
     {% set parentPath = integrated_content_path(currentData)|join(' > ') %}

@@ -11,13 +11,13 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
-use Integrated\Bundle\ContentBundle\Bulk\FeaturedHandler;
 use Integrated\Bundle\ContentBundle\Document\Bulk\Action\FeaturedAction;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/** @extends AbstractType<FeaturedAction> */
 class BulkActionFeaturedType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

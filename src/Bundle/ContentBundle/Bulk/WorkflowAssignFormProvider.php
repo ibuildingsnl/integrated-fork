@@ -75,4 +75,3 @@ class WorkflowAssignFormProvider implements ConfigProviderInterface
         return $choices;
     }
 }
-

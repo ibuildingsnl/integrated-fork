@@ -59,7 +59,7 @@ class ConfigRepository extends EntityRepository implements ConfigManagerInterfac
     public function findByAdaptor($criteria)
     {
         return $this->findBy([
-            'adaptor' => $criteria,
+            'adapter' => $criteria,
         ]);
     }
 

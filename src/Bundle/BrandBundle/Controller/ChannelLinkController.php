@@ -15,9 +15,9 @@ use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
 use Integrated\Common\Channel\Event\ChannelEvent;
 use Integrated\Common\Channel\Events;
 use Integrated\Common\Services\Flusher;
-use Symfony\Component\Form\FormError;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -42,6 +42,8 @@ class ChannelLinkController extends AbstractController
 
         $channel = new Channel();
         $channel->setType($channelType);
+        $defaultChannelName = sprintf('%s %s', $brand->getName(), $channelType->getName());
+        $channel->setName($defaultChannelName);
 
         $link = new ChannelLink($channelType, $channel, false);
 
@@ -49,6 +51,8 @@ class ChannelLinkController extends AbstractController
             'method' => 'POST',
             'brand_name' => $brand->getName(),
             'allow_choose' => true,
+            'channel_name_locked' => true,
+            'channel_default_name' => $defaultChannelName,
         ]);
         $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 

@@ -130,6 +130,9 @@ class ContentHistorySubscriberTest extends TestCase
         );
     }
 
+    /**
+     * @param array<string, mixed> $changeSet
+     */
     private function createHistory(array $changeSet, int $timestamp, ?string $requestId = null): ContentHistory
     {
         $content = $this->createMock(ContentInterface::class);
@@ -157,6 +160,9 @@ class ContentHistorySubscriberTest extends TestCase
         return $history;
     }
 
+    /**
+     * @param list<mixed> $args
+     */
     private function invokePrivate(object $instance, string $method, array $args = []): mixed
     {
         $reflection = new \ReflectionClass($instance);

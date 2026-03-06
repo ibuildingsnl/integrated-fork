@@ -17,6 +17,7 @@ use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
+use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,6 +29,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class SearchSelectionController extends AbstractController
 {
+    use PaginationQueryTrait;
+
     private RequestStack $requestStack;
     private DocumentManager $documentManager;
     private PaginatorInterface $paginator;
@@ -47,7 +50,7 @@ class SearchSelectionController extends AbstractController
 
     public function index(Request $request): Response
     {
-        $paginator = $this->paginator->paginate($this->getQueryBuilder(), $request->query->get('page', 1), 25);
+        $paginator = $this->paginator->paginate($this->getQueryBuilder(), $this->getPositiveIntQueryParameter($request, 'page', 1), 25);
 
         return $this->render('@IntegratedContent/search_selection/index.html.twig', [
             'searchSelections' => $paginator,
@@ -69,6 +72,7 @@ class SearchSelectionController extends AbstractController
                 return $this->redirectToRoute('integrated_content_search_selection_index');
             }
             if ($form->isValid()) {
+                $searchSelection->setFilters($this->applySearchSelectionSortingSettings($form, $searchSelection->getFilters()));
                 $this->documentManager->persist($searchSelection);
                 $this->documentManager->flush();
 
@@ -98,6 +102,7 @@ class SearchSelectionController extends AbstractController
             if ($request->query->get('searchSelection') === $searchSelection->getId()) {
                 $searchSelection->setFilters($request->query->all());
             }
+            $searchSelection->setFilters($this->applySearchSelectionSortingSettings($form, $searchSelection->getFilters()));
 
             $this->documentManager->flush();
 
@@ -233,5 +238,36 @@ class SearchSelectionController extends AbstractController
         }
 
         return $user;
+    }
+
+    /**
+     * @param array<string, mixed> $filters
+     *
+     * @return array<string, mixed>
+     */
+    private function applySearchSelectionSortingSettings(FormInterface $form, array $filters): array
+    {
+        $sort = trim((string) $form->get('sort')->getData());
+        $order = strtolower(trim((string) $form->get('order')->getData()));
+        $customSort = trim((string) $form->get('customSort')->getData());
+        $customSortEnabled = '__custom__' === $sort;
+
+        $customSort = preg_replace('/[^a-zA-Z0-9_]/', '', $customSort) ?? '';
+
+        if ($customSortEnabled && '' !== $customSort) {
+            $filters['sort'] = 'custom:'.$customSort;
+        } elseif ('' !== $sort && !$customSortEnabled) {
+            $filters['sort'] = $sort;
+        } else {
+            unset($filters['sort']);
+        }
+
+        if (\in_array($order, ['asc', 'desc'], true)) {
+            $filters['order'] = $order;
+        } else {
+            unset($filters['order']);
+        }
+
+        return $filters;
     }
 }

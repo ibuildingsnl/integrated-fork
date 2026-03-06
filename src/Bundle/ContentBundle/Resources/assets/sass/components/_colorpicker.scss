@@ -1,16 +1,27 @@
-.input-group.coloris {
+.input-group.pickr-field {
     width: 100%;
 }
 
-.input-group.coloris input[type='text'] {
+.input-group.pickr-field input[type='text'] {
     width: 100%;
     transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 .pcr-app {
-    z-index: 1100;
+    z-index: 10010;
 }
 
-.aside-item-wrapper .input-group.coloris input[type='text'] {
+.pcr-app[data-theme='nano'] {
+    width: 250px;
+    max-width: 95vw;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.pcr-app .pcr-interaction input {
+    border-radius: 4px !important;
+}
+
+.aside-item-wrapper .input-group.pickr-field input[type='text'] {
     min-height: 33px;
 }

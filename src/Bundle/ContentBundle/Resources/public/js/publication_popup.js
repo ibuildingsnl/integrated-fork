@@ -36,16 +36,20 @@ if (
         a.dataset.channelType = action;
         a.innerText = 'Publish to ' + action;
         a.addEventListener('click', function () {
-
             const channelTypeContainer = popup.querySelector(`.global-publication-settings[data-channel-type="${action}"]`).parentNode;
             const channelTypeForm = channelTypeContainer.querySelector('.global-publication-settings');
             const channels = channelTypeContainer.querySelector('.integrated_channel_choice select.select2');
+            const apply = channelTypeContainer.querySelector('a.apply');
+            const cancel = channelTypeContainer.querySelector('a.cancel');
+            let imageInfos = [];
+
+            if (!apply || !cancel || !channels || !channelTypeForm) {
+                return;
+            }
 
             channelTypeContainer.classList.add('show');
 
-            apply = channelTypeContainer.querySelector('a.apply');
-
-            apply.addEventListener('click', function (ev) {
+            apply.onclick = function (ev) {
                 ev.preventDefault();
                 // Apply choices
                 const pubInputSelector = 'input,select,textarea';
@@ -57,7 +61,7 @@ if (
                 const sourceImageContainer = channelTypeForm.querySelector('.mediagallery_selector .selected_images');
 
                 if (sourceImageContainer) {
-                    const imageInfos = Array.from(sourceImageContainer.children).map(li => ({
+                    imageInfos = Array.from(sourceImageContainer.children).map(li => ({
                         src: li.querySelector('img').src,
                         id: li.id
                     }));
@@ -94,6 +98,10 @@ if (
                     }
                     //Check the selected Channel under Brands
                     const input = document.querySelector('input[data-channel-selector="'+container.dataset.publicationChannel+'"]');
+                    if (!input) {
+                        return;
+                    }
+
                     input.checked = true;
                     var event = new Event('change', { 'bubbles': true, 'cancelable': true });
                     input.dispatchEvent(event);
@@ -119,12 +127,10 @@ if (
                 var applyPublishSettingsEvent = new CustomEvent('applyPublishSettingsEvent');
 
                 window.dispatchEvent(applyPublishSettingsEvent);
-            });
+            };
 
             //Add cancel Button
-            const cancel = channelTypeContainer.querySelector('a.cancel');
-
-            cancel.addEventListener('click', function (ev) {
+            cancel.onclick = function (ev) {
                 ev.preventDefault();
                 popup.classList.remove('show');
                 channelTypeContainer.classList.remove('show');
@@ -132,13 +138,18 @@ if (
                 while (channels.options.length > 0) {
                     channels.remove(0);
                 }
-            });
+            };
 
             triggerSelect2();
 
             document.querySelectorAll('input[data-channel-type="'+action+'"]').forEach(function (input) {
                     let channel = input.getAttribute('data-channel-selector');
-                    let pubStatus = document.querySelector('[data-publication-channel="'+channel+'"]').getAttribute('data-publication-status');
+                    const publicationSettings = document.querySelector('[data-publication-channel="'+channel+'"]');
+                    if (!publicationSettings) {
+                        return;
+                    }
+
+                    let pubStatus = publicationSettings.getAttribute('data-publication-status');
 
                     if (pubStatus === 'success') return;
 

@@ -34,6 +34,9 @@ class PublishWindowHandler implements HandlerInterface
         $this->endDate = $endDate;
     }
 
+    /**
+     * @return void
+     */
     public function execute(ContentInterface $content)
     {
         if (!$content instanceof Content) {
@@ -41,8 +44,7 @@ class PublishWindowHandler implements HandlerInterface
         }
 
         $publishTime = $content->getPublishTime();
-
-        if (null === $publishTime) {
+        if (!$publishTime instanceof PublishTime) {
             $publishTime = new PublishTime();
             $content->setPublishTime($publishTime);
         }

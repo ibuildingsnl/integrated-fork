@@ -15,11 +15,12 @@ use Integrated\Bundle\ContentBundle\Document\Bulk\Action\PublishWindowAction;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\Callback;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Callback;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
+/** @extends AbstractType<PublishWindowAction> */
 class BulkActionPublishWindowType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -83,7 +84,7 @@ class BulkActionPublishWindowType extends AbstractType
                     }
                 }),
             ])
-            ;
+        ;
     }
 
     public function getBlockPrefix(): string

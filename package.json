@@ -32,7 +32,7 @@
         "buffer": "^6.0.3",
         "components-jqueryui": "~1.12",
         "handlebars": "^4.7.7",
-        "iconoir": "^7.0.3",
+        "iconoir": "^7.11.0",
         "jquery": "^3.7.1",
         "jquery-datetimepicker": "~2.5.1",
         "jquery-placeholder": "~2.1",

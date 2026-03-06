@@ -15,6 +15,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManager;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
+use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\UserBundle\Form\Type\ScopeFormType;
 use Integrated\Bundle\UserBundle\Model\Scope;
@@ -29,6 +30,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ScopeController extends AbstractController
 {
+    use PaginationQueryTrait;
+
     private DocumentManager $documentManager;
     private EntityManager $entityManager;
     private PaginatorInterface $paginator;
@@ -50,7 +53,7 @@ class ScopeController extends AbstractController
 
         $paginator = $this->paginator->paginate(
             $this->scopeManager->findAll(),
-            $request->query->get('page', 1),
+            $this->getPositiveIntQueryParameter($request, 'page', 1),
             15
         );
 

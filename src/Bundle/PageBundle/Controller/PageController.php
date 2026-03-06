@@ -23,6 +23,7 @@ use Integrated\Bundle\PageBundle\Form\Type\PageFilterType;
 use Integrated\Bundle\PageBundle\Form\Type\PageType;
 use Integrated\Bundle\PageBundle\Services\PageCopyService;
 use Integrated\Bundle\PageBundle\Services\RouteCache;
+use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
 use Knp\Component\Pager\PaginatorInterface;
 use MongoDB\BSON\Regex;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,6 +35,8 @@ use Symfony\Component\HttpFoundation\UriSigner;
 
 class PageController extends AbstractController
 {
+    use PaginationQueryTrait;
+
     private const PREVIEW_LINK_TTL_SECONDS = 86400;
     private const PREVIEW_EXPIRES_PARAM = 'preview_expires';
     private const CHANNEL_NONE_VALUE = '__none__';
@@ -43,6 +46,7 @@ class PageController extends AbstractController
     private PageCopyService $pageCopyService;
     private RouteCache $routeCache;
     private UriSigner $uriSigner;
+    /** @var array<int, string>|null */
     private ?array $allExistingWebsiteChannelIds = null;
 
     public function __construct(
@@ -66,13 +70,12 @@ class PageController extends AbstractController
         }
 
         $sessionFilterData = $this->normalizePageFilterData($request->getSession()->get('page_filterform_data', []));
-        $requestFilterData = $request->query->all('page_filter');
-        if (\is_array($requestFilterData)) {
-            $requestFilterData = $this->normalizePageFilterData($requestFilterData);
+        $requestFilterData = $this->normalizePageFilterData($request->query->all('page_filter'));
+        if ($requestFilterData !== []) {
             $request->query->set('page_filter', $requestFilterData);
         }
 
-        $activeFilterData = \is_array($requestFilterData) ? $requestFilterData : $sessionFilterData;
+        $activeFilterData = $requestFilterData !== [] ? $requestFilterData : $sessionFilterData;
         $filterCounts = $this->getPageFilterCounts($activeFilterData);
 
         $filterForm = $this->createForm(
@@ -109,7 +112,7 @@ class PageController extends AbstractController
 
         $pagination = $this->paginator->paginate(
             $builder,
-            $request->query->get('page', 1),
+            $this->getPositiveIntQueryParameter($request, 'page', 1),
             25
         );
 
@@ -126,6 +129,9 @@ class PageController extends AbstractController
         return $response;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function normalizePageFilterData(mixed $data): array
     {
         if (!\is_array($data)) {
@@ -139,6 +145,9 @@ class PageController extends AbstractController
         return $data;
     }
 
+    /**
+     * @return array<int, string>
+     */
     private function normalizeMultiSelectFilterValue(mixed $value): array
     {
         if (\is_array($value)) {
@@ -149,9 +158,9 @@ class PageController extends AbstractController
             $values = [];
         }
 
-        $values = \array_values(\array_filter($values, static fn ($item): bool => \is_scalar($item) && (string) $item !== ''));
+        $values = array_values(array_filter($values, static fn ($item): bool => \is_scalar($item) && (string) $item !== ''));
 
-        return \array_map(static fn ($item): string => (string) $item, $values);
+        return array_map(static fn ($item): string => (string) $item, $values);
     }
 
     /**
@@ -159,7 +168,7 @@ class PageController extends AbstractController
      */
     private function sanitizePageTypes(mixed $pageTypes): array
     {
-        return \array_values(\array_unique(\array_filter(
+        return array_values(array_unique(array_filter(
             $this->normalizeMultiSelectFilterValue($pageTypes),
             static fn (string $value): bool => \in_array($value, ['page', 'contenttype'], true)
         )));
@@ -170,7 +179,7 @@ class PageController extends AbstractController
      */
     private function sanitizeStatuses(mixed $statuses): array
     {
-        return \array_values(\array_unique(\array_filter(
+        return array_values(array_unique(array_filter(
             $this->normalizeMultiSelectFilterValue($statuses),
             static fn (string $value): bool => \in_array($value, ['published', 'draft'], true)
         )));
@@ -181,7 +190,7 @@ class PageController extends AbstractController
      */
     private function sanitizeChannels(mixed $channels): array
     {
-        return \array_values(\array_unique($this->normalizeMultiSelectFilterValue($channels)));
+        return array_values(array_unique($this->normalizeMultiSelectFilterValue($channels)));
     }
 
     private function applySearchFilter(Builder $builder, string $query): void
@@ -208,7 +217,7 @@ class PageController extends AbstractController
         }
 
         $includeNone = \in_array(self::CHANNEL_NONE_VALUE, $channels, true);
-        $selectedChannelIds = \array_values(\array_filter($channels, static fn (string $channel): bool => $channel !== self::CHANNEL_NONE_VALUE));
+        $selectedChannelIds = array_values(array_filter($channels, static fn (string $channel): bool => $channel !== self::CHANNEL_NONE_VALUE));
 
         if (!$includeNone) {
             $builder->field('channel.$id')->in($selectedChannelIds);
@@ -501,7 +510,12 @@ class PageController extends AbstractController
         $this->applyStatusFilter($builder, $this->sanitizeStatuses($filterData['status'] ?? []), $class);
 
         $deletedCount = 0;
-        foreach ($builder->getQuery()->execute() as $page) {
+        $matches = $builder->getQuery()->execute();
+        if (!is_iterable($matches)) {
+            $matches = [];
+        }
+
+        foreach ($matches as $page) {
             if (!$page instanceof AbstractPage) {
                 continue;
             }
@@ -517,7 +531,7 @@ class PageController extends AbstractController
         if ($deletedCount > 0) {
             $this->documentManager->flush();
             $this->routeCache->clear();
-            $this->addFlash('success', sprintf('%d pages without channel deleted', $deletedCount));
+            $this->addFlash('success', \sprintf('%d pages without channel deleted', $deletedCount));
         } else {
             $this->addFlash('warning', 'No pages without channel found for current filter.');
         }
@@ -577,7 +591,12 @@ class PageController extends AbstractController
     private function displayPathErrors(Builder $builder): void
     {
         $paths = [];
-        foreach ($builder->getQuery()->execute() as $item) {
+        $matches = $builder->getQuery()->execute();
+        if (!is_iterable($matches)) {
+            $matches = [];
+        }
+
+        foreach ($matches as $item) {
             if (!$item instanceof ContentTypePage) {
                 continue;
             }
@@ -612,6 +631,11 @@ class PageController extends AbstractController
         return null;
     }
 
+    /**
+     * @param iterable<mixed> $pages
+     *
+     * @return array<string, string>
+     */
     private function buildPreviewLinks(iterable $pages, Request $request): array
     {
         $links = [];
@@ -637,6 +661,9 @@ class PageController extends AbstractController
         return $links;
     }
 
+    /**
+     * @param array<string, scalar> $query
+     */
     private function buildAbsolutePageUrl(Page $page, Request $request, array $query = []): string
     {
         $host = (string) ($page->getDomain() ?: $request->getHost());
@@ -650,10 +677,6 @@ class PageController extends AbstractController
     private function isPageWithoutResolvableChannel(AbstractPage $page): bool
     {
         $channel = $page->getChannel();
-        if (null === $channel) {
-            return true;
-        }
-
         $channelId = $this->resolveChannelId($channel);
         if (null === $channelId) {
             return true;
@@ -663,6 +686,8 @@ class PageController extends AbstractController
     }
 
     /**
+     * @param iterable<mixed> $pages
+     *
      * @return array<string, bool>
      */
     private function getOrphanChannelPageIds(iterable $pages): array
@@ -680,14 +705,7 @@ class PageController extends AbstractController
                 continue;
             }
 
-            $channel = $page->getChannel();
-            if (null === $channel) {
-                $orphanPageIds[$pageId] = true;
-
-                continue;
-            }
-
-            $channelId = $this->resolveChannelId($channel);
+            $channelId = $this->resolveChannelId($page->getChannel());
             if (null === $channelId) {
                 $orphanPageIds[$pageId] = true;
 
@@ -708,6 +726,15 @@ class PageController extends AbstractController
         return $orphanPageIds;
     }
 
+    /**
+     * @param array<string, mixed> $filterData
+     *
+     * @return array{
+     *     page_type_counts: array{page: int, contenttype: int},
+     *     status_counts: array{published: int, draft: int},
+     *     channel_choices: array<string, string>
+     * }
+     */
     private function getPageFilterCounts(array $filterData): array
     {
         $query = (string) ($filterData['q'] ?? '');
@@ -726,8 +753,8 @@ class PageController extends AbstractController
         $this->applyStatusFilter($contentTypeBuilder, $statuses, ContentTypePage::class);
 
         $pageTypeCounts = [
-            'page' => (int) $pageBuilder->count()->getQuery()->execute(),
-            'contenttype' => (int) $contentTypeBuilder->count()->getQuery()->execute(),
+            'page' => $this->normalizeCountValue($pageBuilder->count()->getQuery()->execute()),
+            'contenttype' => $this->normalizeCountValue($contentTypeBuilder->count()->getQuery()->execute()),
         ];
 
         $publishedBuilder = $this->documentManager->createQueryBuilder(AbstractPage::class);
@@ -743,8 +770,8 @@ class PageController extends AbstractController
         $this->applyStatusFilter($draftBuilder, ['draft'], AbstractPage::class);
 
         $statusCounts = [
-            'published' => (int) $publishedBuilder->count()->getQuery()->execute(),
-            'draft' => (int) $draftBuilder->count()->getQuery()->execute(),
+            'published' => $this->normalizeCountValue($publishedBuilder->count()->getQuery()->execute()),
+            'draft' => $this->normalizeCountValue($draftBuilder->count()->getQuery()->execute()),
         ];
 
         $channelChoices = [];
@@ -755,7 +782,7 @@ class PageController extends AbstractController
         $this->applyPageTypeFilter($noneBuilder, $pageTypes, AbstractPage::class);
         $this->applyStatusFilter($noneBuilder, $statuses, AbstractPage::class);
         $this->applyChannelFilter($noneBuilder, [self::CHANNEL_NONE_VALUE]);
-        $noneCount = (int) $noneBuilder->count()->getQuery()->execute();
+        $noneCount = $this->normalizeCountValue($noneBuilder->count()->getQuery()->execute());
         if (
             $noneCount > 0
             || \in_array(self::CHANNEL_NONE_VALUE, $selectedChannels, true)
@@ -764,10 +791,6 @@ class PageController extends AbstractController
         }
 
         foreach ($channels as $channel) {
-            if (!$channel instanceof Channel) {
-                continue;
-            }
-
             $channelId = $this->resolveChannelId($channel);
             if (null === $channelId) {
                 continue;
@@ -784,7 +807,7 @@ class PageController extends AbstractController
                 $label = $channelId;
             }
 
-            $channelChoices[$this->formatFacetLabel($label, (int) $channelBuilder->count()->getQuery()->execute())] = $channelId;
+            $channelChoices[$this->formatFacetLabel($label, $this->normalizeCountValue($channelBuilder->count()->getQuery()->execute()))] = $channelId;
         }
 
         return [
@@ -814,7 +837,7 @@ class PageController extends AbstractController
             $channelIds[] = $channelId;
         }
 
-        $this->allExistingWebsiteChannelIds = \array_values(\array_unique($channelIds));
+        $this->allExistingWebsiteChannelIds = array_values(array_unique($channelIds));
 
         return $this->allExistingWebsiteChannelIds;
     }
@@ -826,7 +849,7 @@ class PageController extends AbstractController
 
     private function formatFacetLabel(string $label, int $count): string
     {
-        return sprintf('%s %d', $label, $count);
+        return \sprintf('%s %d', $label, $count);
     }
 
     private function resolveChannelId(mixed $channel): ?string
@@ -846,5 +869,18 @@ class PageController extends AbstractController
         }
 
         return $channelId;
+    }
+
+    private function normalizeCountValue(mixed $value): int
+    {
+        if (\is_int($value)) {
+            return $value;
+        }
+
+        if (is_numeric($value)) {
+            return (int) $value;
+        }
+
+        return 0;
     }
 }

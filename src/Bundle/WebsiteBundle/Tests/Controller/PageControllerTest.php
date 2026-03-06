@@ -77,7 +77,7 @@ class PageControllerTest extends TestCase
         self::assertTrue((bool) $response->headers->getCacheControlDirective('private'));
         self::assertTrue($response->headers->hasCacheControlDirective('no-store'));
         self::assertSame(0, (int) $response->headers->getCacheControlDirective('max-age'));
-        self::assertStringNotContainsString('integrated-draft-notice', $response->getContent());
+        self::assertStringNotContainsString('integrated-draft-notice', (string) $response->getContent());
         self::assertSame('noindex, nofollow', $response->headers->get('X-Robots-Tag'));
     }
 
@@ -108,7 +108,7 @@ class PageControllerTest extends TestCase
 
         self::assertSame(Response::HTTP_OK, $response->getStatusCode());
         self::assertTrue($response->headers->hasCacheControlDirective('no-store'));
-        self::assertStringNotContainsString('integrated-draft-notice', $response->getContent());
+        self::assertStringNotContainsString('integrated-draft-notice', (string) $response->getContent());
         self::assertSame('noindex, nofollow', $response->headers->get('X-Robots-Tag'));
     }
 
@@ -176,9 +176,12 @@ class PageControllerTest extends TestCase
 
         self::assertSame(Response::HTTP_OK, $response->getStatusCode());
         self::assertFalse($response->headers->hasCacheControlDirective('no-store'));
-        self::assertStringNotContainsString('integrated-draft-notice', $response->getContent());
+        self::assertStringNotContainsString('integrated-draft-notice', (string) $response->getContent());
     }
 
+    /**
+     * @param array<string, bool> $grants
+     */
     private function createController(array $grants): PageController
     {
         $themeManager = $this->themeManager;
@@ -186,6 +189,9 @@ class PageControllerTest extends TestCase
         $uriSigner = $this->uriSigner;
 
         return new class($themeManager, $websiteToolbarListener, $uriSigner, $grants) extends PageController {
+            /**
+             * @param array<string, bool> $grants
+             */
             public function __construct(ThemeManager $themeManager, WebsiteToolbarListener $websiteToolbarListener, UriSigner $uriSigner, private readonly array $grants)
             {
                 parent::__construct($themeManager, $websiteToolbarListener, $uriSigner);
@@ -196,6 +202,9 @@ class PageControllerTest extends TestCase
                 return (bool) ($this->grants[(string) $attribute] ?? false);
             }
 
+            /**
+             * @param array<string, mixed> $parameters
+             */
             protected function render(string $view, array $parameters = [], ?Response $response = null): Response
             {
                 return $response ?? new Response('<html><body>ok</body></html>');
@@ -205,7 +214,7 @@ class PageControllerTest extends TestCase
 
     private function createSignedPreviewRequest(string $path, int $expires, string $host = 'example.test'): Request
     {
-        $unsigned = sprintf('https://%s%s?preview_expires=%d', $host, $path, $expires);
+        $unsigned = \sprintf('https://%s%s?preview_expires=%d', $host, $path, $expires);
         $signed = $this->uriSigner->sign($unsigned);
 
         return Request::create($signed);

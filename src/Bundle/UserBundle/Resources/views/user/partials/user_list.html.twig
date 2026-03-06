@@ -1,6 +1,7 @@
 <section class="section-white section-radius">
     <form method="post" action="{{ path('integrated_user_user_bulk') }}">
     <input type="hidden" name="_token" value="{{ csrf_token('user_bulk_action') }}">
+    <input type="hidden" name="enable_token" value="{{ csrf_token('user_enable') }}">
     <div id="bulk-actions" class="p-3 flex flex-wrap items-center gap-2 border-b border-light">
         <select name="bulk_action" id="bulk_action" class="form-control" style="width: 220px;">
             <option value="">{% trans %}Bulk action{% endtrans %}</option>
@@ -81,8 +82,11 @@
                     <a href="{{ path('integrated_user_user_delete', {'id': user.id}) }}"
                        class="color-red" title="{% trans %}Deactivate{% endtrans %}">{% trans %}Deactivate{% endtrans %}</a>
                     {% if user.enabled == false %}
-                        | <a href="{{ path('integrated_user_user_enable', {'id': user.id}) }}"
-                             title="{% trans %}Enable account{% endtrans %}">{% trans %}Enable account{% endtrans %}</a>
+                        | <button type="submit"
+                                  formaction="{{ path('integrated_user_user_enable', {'id': user.id}) }}"
+                                  formmethod="post"
+                                  style="background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;"
+                                  title="{% trans %}Enable account{% endtrans %}">{% trans %}Enable account{% endtrans %}</button>
                     {% endif %}
                     {% if user.googleAuthenticatorEnabled %}
                          | <a href="{{ path('integrated_user_user_delete_authenticator', {'id': user.id}) }}"

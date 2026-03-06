@@ -17,6 +17,7 @@ use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
 use Integrated\Bundle\UserBundle\Model\Group;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
@@ -33,6 +34,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class WorkflowController extends AbstractController
 {
+    use PaginationQueryTrait;
+
     private EntityManager $entityManager;
     private DocumentManager $documentManager;
     private PaginatorInterface $paginator;
@@ -52,7 +55,7 @@ class WorkflowController extends AbstractController
 
         $pager = $this->paginator->paginate(
             $this->entityManager->getRepository('Integrated\Bundle\WorkflowBundle\Entity\Definition')->createQueryBuilder('item'),
-            $request->query->get('page', 1),
+            $this->getPositiveIntQueryParameter($request, 'page', 1),
             15
         );
 
@@ -168,6 +171,9 @@ class WorkflowController extends AbstractController
             $workflowId = $request->get('workflow');
             $repository = $this->entityManager->getRepository(Definition::class);
             $workflow = $repository->find($workflowId);
+            if (!$workflow instanceof Definition) {
+                return new JsonResponse(['users' => [], 'fields' => []]);
+            }
             $state = $workflow->getDefault();
 
             $isDefaultState = true;
@@ -223,8 +229,12 @@ class WorkflowController extends AbstractController
         $queryBuilder->where('us.admin = 1');
 
         if ($permissionObject && (!$isDefaultState || !$currentUserCanWrite)) {
-            $queryBuilder->join('u.groups', 'ug');
-            $queryBuilder->where('ug.id IN (:groups)')->setParameter('groups', $groups);
+            if (!$groups) {
+                $queryBuilder->andWhere('1 = 0');
+            } else {
+                $queryBuilder->join('u.groups', 'ug');
+                $queryBuilder->andWhere('ug.id IN (:groups)')->setParameter('groups', $groups);
+            }
         }
 
         $users = [];

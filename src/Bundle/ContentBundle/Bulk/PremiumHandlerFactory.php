@@ -29,6 +29,9 @@ class PremiumHandlerFactory implements HandlerFactoryInterface
             ->addAllowedTypes('premium', 'bool');
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function createHandler(array $options)
     {
         $options = $this->resolver->resolve($options);
@@ -36,4 +39,3 @@ class PremiumHandlerFactory implements HandlerFactoryInterface
         return new PremiumHandler($options['premium']);
     }
 }
-

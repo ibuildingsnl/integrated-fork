@@ -22,7 +22,7 @@ class ArgumentProcess
     /**
      * @const string
      */
-    public const FORMAT = '/^(\d):(\d)$/';
+    public const FORMAT = '/^(\d+):(\d+)$/';
 
     /**
      * @var string
@@ -52,7 +52,7 @@ class ArgumentProcess
     {
         if (!$this->isParentProcess()) {
             if (preg_match(self::FORMAT, $this->argument, $matches)) {
-                return $matches[1];
+                return (int) $matches[1];
             }
 
             throw FormatException::noRegexMatch();
@@ -70,7 +70,7 @@ class ArgumentProcess
     {
         if (!$this->isParentProcess()) {
             if (preg_match(self::FORMAT, $this->argument, $matches)) {
-                return $matches[2];
+                return (int) $matches[2];
             }
 
             throw FormatException::noRegexMatch();

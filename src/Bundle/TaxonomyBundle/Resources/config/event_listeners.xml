@@ -29,6 +29,10 @@
             <tag name="integrated_content.form.event_subscriber"/>
         </service>
 
+        <service id="integrated_taxonomy.event_listener.parent_required" class="\Integrated\Bundle\TaxonomyBundle\EventListener\TaxonomyParentRequiredSubscriber">
+            <tag name="integrated_content.form.event_subscriber"/>
+        </service>
+
     </services>
 
 </container>

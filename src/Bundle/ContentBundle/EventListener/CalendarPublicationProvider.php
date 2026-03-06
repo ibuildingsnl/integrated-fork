@@ -20,6 +20,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class CalendarPublicationProvider implements EventSubscriberInterface
 {
+    private const DEFAULT_SCHEDULE_LIMIT = 50;
+    private const MAX_SCHEDULE_LIMIT = 50;
+    private const MAX_SCAN_LIMIT = 200;
+    private const SCAN_MULTIPLIER = 4;
+
     private readonly DocumentRepository $documentRepository;
 
     public function __construct(
@@ -48,49 +53,63 @@ class CalendarPublicationProvider implements EventSubscriberInterface
         $calendarEnd = $event->options['end'];
 
         $publications = $this->publicationRepository->forDateRange($calendarStart, $calendarEnd);
+        $brands = $this->brands->all();
+        $selectedBrandIds = $this->getSelectedBrandIds($event->options);
+        $brandContextByChannel = [];
 
         $now = new \DateTime();
+        $scheduleLimit = $this->normalizeScheduleLimit($event->options['limit'] ?? null);
+        $scanLimit = $this->getScanLimit($scheduleLimit);
 
         $scheduledPublications = [];
+        $scannedPublications = 0;
 
         foreach ($publications as $publication) {
+            $scannedPublications++;
+            if ($scannedPublications > $scanLimit) {
+                break;
+            }
+
+            if (\count($scheduledPublications) >= $scheduleLimit) {
+                break;
+            }
+
             $currentBrand = null;
             $brandProfile = null;
             $channel = $publication->getChannel();
+            $channelId = $channel->getId();
 
             if (!$type = $channel->getType()) {
                 continue;
             }
 
-            if ($publication->getContent()->__toString() === null) {
+            if (!\is_string($channelId) || '' === $channelId) {
+                continue;
+            }
+
+            if (!\array_key_exists($channelId, $brandContextByChannel)) {
+                $brandContextByChannel[$channelId] = $this->resolveBrandContext($channel, $brands, $selectedBrandIds);
+            }
+
+            $brandContext = $brandContextByChannel[$channelId];
+            if (!\is_array($brandContext)) {
+                continue;
+            }
+
+            $currentBrand = $brandContext['brand'];
+            $brandProfile = $brandContext['profile'];
+            $content = $publication->getContent();
+
+            $title = $content->__toString();
+            if (!\is_string($title) || '' === trim($title)) {
+                $title = $content->getId();
+            }
+
+            if (!\is_string($title) || '' === $title) {
                 continue;
             }
 
             $dateTime = $publication->getTime()->getStartDate();
-            $eligibleForDisplay = false;
-
-            if ($publication->getChannel() instanceof ChannelInterface) {
-                foreach ($this->brands->all() as $brand) {
-                    if ($brand->hasChannel($publication->getChannel())) {
-                        if (\array_key_exists('brands', $event->options) && \in_array(
-                            $brand->getId(),
-                            $event->options['brands']
-                        )) {
-                            $eligibleForDisplay = true;
-                        }
-                        $currentBrand = $brand;
-                        $brandProfile = $brand->getProfile();
-                    }
-                }
-            }
-
-            if (!\array_key_exists('brands', $event->options)) {
-                $eligibleForDisplay = true;
-            }
-
-            if (!$eligibleForDisplay) {
-                continue;
-            }
 
             $status = $now > $publication->getTime()->getStartDate() ? 'published' : 'planned';
             if ($publication->getStatus() === 'failed') {
@@ -117,8 +136,8 @@ class CalendarPublicationProvider implements EventSubscriberInterface
                     ->toArray();
 
                 unset($publicationSettings['images']);
-            } elseif ($publication->getContent() instanceof Article || $publication->getContent() instanceof Taxonomy) {
-                $images[] = $publication->getContent()->getFeaturedImage();
+            } elseif ($content instanceof Article || $content instanceof Taxonomy) {
+                $images[] = $content->getFeaturedImage();
             }
 
             foreach ($images as $image) {
@@ -133,9 +152,9 @@ class CalendarPublicationProvider implements EventSubscriberInterface
 
             if ($brandProfile instanceof BrandProfile && $currentBrand instanceof Brand) {
                 $data = [
-                    'id' => $publication->getContent()->getId(),
-                    'title' => (string) $publication->getContent(),
-                    'premium' => $publication->getContent()->isPremium(),
+                    'id' => $content->getId(),
+                    'title' => $title,
+                    'premium' => $content->isPremium(),
                     'type' => $type->getId(),
                     'typename' => $type->getName(),
                     'settings' => $publicationSettings,
@@ -153,7 +172,77 @@ class CalendarPublicationProvider implements EventSubscriberInterface
                 $scheduledPublications[] = $data;
             }
         }
-        $this->js->add('const publicationSchedule = '.json_encode($scheduledPublications), true);
+        $this->js->add('window.publicationSchedule = '.json_encode($scheduledPublications), true);
         $this->js->add('bundles/integratedcontent/js/publication_calendar.js');
+    }
+
+    /** @return array<string, true>|null */
+    private function getSelectedBrandIds(array $options): ?array
+    {
+        if (!\array_key_exists('brands', $options) || !\is_array($options['brands']) || [] === $options['brands']) {
+            return null;
+        }
+
+        $result = [];
+        foreach ($options['brands'] as $brandId) {
+            if (\is_string($brandId) && '' !== $brandId) {
+                $result[$brandId] = true;
+            }
+        }
+
+        return [] === $result ? null : $result;
+    }
+
+    /**
+     * @param Brand[]                $brands
+     * @param array<string, true>|null $selectedBrandIds
+     *
+     * @return array{brand: Brand, profile: BrandProfile}|null
+     */
+    private function resolveBrandContext(ChannelInterface $channel, array $brands, ?array $selectedBrandIds): ?array
+    {
+        foreach ($brands as $brand) {
+            if ($selectedBrandIds && !isset($selectedBrandIds[$brand->getId()])) {
+                continue;
+            }
+
+            if (!$brand->hasChannel($channel)) {
+                continue;
+            }
+
+            $brandProfile = $brand->getProfile();
+            if (!$brandProfile instanceof BrandProfile) {
+                continue;
+            }
+
+            return [
+                'brand' => $brand,
+                'profile' => $brandProfile,
+            ];
+        }
+
+        return null;
+    }
+
+    private function normalizeScheduleLimit(mixed $value): int
+    {
+        if (\is_int($value)) {
+            return max(1, min(self::MAX_SCHEDULE_LIMIT, $value));
+        }
+
+        if (\is_string($value) && ctype_digit($value)) {
+            return max(1, min(self::MAX_SCHEDULE_LIMIT, (int) $value));
+        }
+
+        if (\is_numeric($value)) {
+            return max(1, min(self::MAX_SCHEDULE_LIMIT, (int) $value));
+        }
+
+        return self::DEFAULT_SCHEDULE_LIMIT;
+    }
+
+    private function getScanLimit(int $scheduleLimit): int
+    {
+        return max(1, min(self::MAX_SCAN_LIMIT, $scheduleLimit * self::SCAN_MULTIPLIER));
     }
 }

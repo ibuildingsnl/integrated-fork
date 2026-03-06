@@ -1,0 +1,198 @@
+<?php
+
+namespace Integrated\Bundle\ContentBundle\Tests\Document\Content;
+
+use Integrated\Bundle\ContentBundle\Document\Content\Article;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
+use Integrated\Bundle\ContentBundle\Document\Content\Publication;
+use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepository;
+use Integrated\Common\Content\Channel\ChannelInterface;
+use PHPUnit\Framework\TestCase;
+
+class PublicationRepositoryTest extends TestCase
+{
+    public function testForContentReturnsEmptyWhenIdentifierIsMissing(): void
+    {
+        $content = new Article();
+        $repository = $this->getMockBuilder(PublicationRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['findBy'])
+            ->getMock();
+
+        $repository
+            ->expects(self::never())
+            ->method('findBy');
+
+        self::assertSame([], $repository->forContent($content));
+    }
+
+    public function testForContentReturnsEmptyWhenIdentifierIsNotString(): void
+    {
+        $content = $this->createMock(Article::class);
+        $content
+            ->method('getId')
+            ->willReturn(123);
+
+        $repository = $this->getMockBuilder(PublicationRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['findBy'])
+            ->getMock();
+
+        $repository
+            ->expects(self::never())
+            ->method('findBy');
+
+        self::assertSame([], $repository->forContent($content));
+    }
+
+    public function testForContentQueriesRepositoryWhenIdentifierIsValid(): void
+    {
+        $content = new Article();
+        $content->setId('content-id');
+        $expected = [$this->createMock(Publication::class)];
+
+        $repository = $this->getMockBuilder(PublicationRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['findBy'])
+            ->getMock();
+
+        $repository
+            ->expects(self::once())
+            ->method('findBy')
+            ->with(['content.$id' => 'content-id'])
+            ->willReturn($expected);
+
+        self::assertSame($expected, $repository->forContent($content));
+    }
+
+    public function testForContentOnChannelQueriesByReferenceIdentifiers(): void
+    {
+        $content = new Article();
+        $content->setId('content-id');
+        $channel = $this->createChannel('vismagazine');
+        $expected = [$this->createMock(Publication::class)];
+
+        $repository = $this->getMockBuilder(PublicationRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['findBy'])
+            ->getMock();
+
+        $repository
+            ->expects(self::once())
+            ->method('findBy')
+            ->with([
+                'content.$id' => 'content-id',
+                'channel.$id' => 'vismagazine',
+            ])
+            ->willReturn($expected);
+
+        self::assertSame($expected, $repository->forContentOnChannel($content, $channel));
+    }
+
+    public function testForContentOnChannelReturnsEmptyWhenChannelIdentifierIsMissing(): void
+    {
+        $content = new Article();
+        $content->setId('content-id');
+        $channel = $this->createChannel(null);
+
+        $repository = $this->getMockBuilder(PublicationRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['findBy'])
+            ->getMock();
+
+        $repository
+            ->expects(self::never())
+            ->method('findBy');
+
+        self::assertSame([], $repository->forContentOnChannel($content, $channel));
+    }
+
+    public function testForContentByChannelPrefersEditablePublicationOverSuccessfulHistory(): void
+    {
+        $content = new Article();
+        $channel = $this->createChannel('vismagazine');
+
+        $success = $this->createPublication($content, $channel, Publication::STATUS_SUCCESS, '2026-02-27 12:00:00');
+        $failed = $this->createPublication($content, $channel, Publication::STATUS_FAILED, '2026-02-20 12:00:00');
+
+        $repository = $this->createRepository([$success, $failed]);
+
+        $result = $repository->forContentByChannel($content);
+
+        self::assertArrayHasKey('vismagazine', $result);
+        self::assertSame($failed, $result['vismagazine']);
+    }
+
+    public function testForContentByChannelPrefersMostRecentPublicationWhenStatusIsEqual(): void
+    {
+        $content = new Article();
+        $channel = $this->createChannel('vismagazine');
+
+        $olderFailed = $this->createPublication($content, $channel, Publication::STATUS_FAILED, '2026-02-20 10:00:00');
+        $newerFailed = $this->createPublication($content, $channel, Publication::STATUS_FAILED, '2026-02-27 10:00:00');
+
+        $repository = $this->createRepository([$olderFailed, $newerFailed]);
+
+        $result = $repository->forContentByChannel($content);
+
+        self::assertArrayHasKey('vismagazine', $result);
+        self::assertSame($newerFailed, $result['vismagazine']);
+    }
+
+    public function testForContentByChannelSkipsPublicationWithoutChannelId(): void
+    {
+        $content = new Article();
+        $validChannel = $this->createChannel('vismagazine');
+        $missingChannelId = $this->createChannel(null);
+
+        $validPublication = $this->createPublication($content, $validChannel, Publication::STATUS_FAILED, '2026-02-27 10:00:00');
+        $invalidPublication = $this->createPublication($content, $missingChannelId, Publication::STATUS_FAILED, '2026-02-27 09:00:00');
+
+        $repository = $this->createRepository([$invalidPublication, $validPublication]);
+
+        $result = $repository->forContentByChannel($content);
+
+        self::assertCount(1, $result);
+        self::assertArrayHasKey('vismagazine', $result);
+    }
+
+    /**
+     * @param list<Publication> $publications
+     */
+    private function createRepository(array $publications): PublicationRepository
+    {
+        $repository = $this->getMockBuilder(PublicationRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['forContent'])
+            ->getMock();
+
+        $repository
+            ->method('forContent')
+            ->willReturn($publications);
+
+        return $repository;
+    }
+
+    private function createPublication(Article $content, ChannelInterface $channel, string $status, string $startAt): Publication
+    {
+        $publication = new Publication(
+            $content,
+            $channel,
+            (new PublishTime())->setStartDate(new \DateTimeImmutable($startAt)),
+            [],
+        );
+        $publication->setStatus($status);
+
+        return $publication;
+    }
+
+    private function createChannel(?string $id): ChannelInterface
+    {
+        $channel = $this->createMock(ChannelInterface::class);
+        $channel
+            ->method('getId')
+            ->willReturn($id);
+
+        return $channel;
+    }
+}

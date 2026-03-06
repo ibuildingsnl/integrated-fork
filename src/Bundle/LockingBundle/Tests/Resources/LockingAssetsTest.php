@@ -30,4 +30,3 @@ class LockingAssetsTest extends TestCase
         self::assertStringContainsString("window.addEventListener('pagehide'", $template);
     }
 }
-

@@ -30,7 +30,7 @@
                                     <i class="iconoir-list"></i>
                                 </a>
                                 <a class="button_calendar_view toggle_view calendar switcher btn btn-select {% if pageClass == 'calendar' %}active{% endif %}"
-                                   href="{{ path('integrated_content_content_index', queryParams|merge({view: 'week', page: 1, limit: 10000})) }}">
+                                   href="{{ path('integrated_content_content_index', queryParams|merge({view: 'week', page: 1, limit: 100})) }}">
                                     <span>{% trans %}Calendar{% endtrans %}</span>
                                     <i class="iconoir-calendar"></i>
                                 </a>
@@ -118,6 +118,7 @@
                             <div class="toolbar">
                                 {% if selection.id and isSelectionEditable %}
                                     <a href="{{ path('integrated_content_search_selection_delete', {'id': selection.id}) }}"
+                                       data-turbo-frame="_top"
                                        class="btn btn-red" title="{% trans %}Delete{% endtrans %}">
                                         <i class="iconoir-trash"></i>
                                     </a>
@@ -303,6 +304,7 @@
 
 {% block javascript %}
 {{ parent() }}
+{% include '@IntegratedContent/search_selection/_sorting_script.html.twig' %}
 <script>
 const columns = document.querySelectorAll('.day.column');
 

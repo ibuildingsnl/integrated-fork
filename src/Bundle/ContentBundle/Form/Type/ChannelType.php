@@ -56,6 +56,7 @@ class ChannelType extends AbstractType
         $builder->add('name', TextType::class, [
             'priority' => 990,
             'constraints' => new Length(['max' => 100]),
+            'disabled' => (bool) $options['lock_name'],
             'attr' => [
                 'location' => 'editor',
                 'style' => 'inline',
@@ -206,5 +207,6 @@ class ChannelType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('can_change_type', true);
+        $resolver->setDefault('lock_name', false);
     }
 }

@@ -14,6 +14,7 @@ use Integrated\Common\Content\PublishTimeInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 
 class ContentPublicationIntegrationListener implements EventSubscriberInterface
 {
@@ -38,13 +39,16 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
             return;
         }
 
+        $contentId = $content->getId();
+        $hasPersistedIdentifier = \is_string($contentId) && '' !== $contentId;
+
         $form->add('publications', PublicationsType::class, [
             'channels' => $form->get('channels')->getOption('choices'),
             'mapped' => false,
             'attr' => [
                 'class' => 'publication-settings-container',
             ],
-            'data' => $this->publications->forContentByChannel($content),
+            'data' => $hasPersistedIdentifier ? $this->publications->forContentByChannel($content) : [],
         ]);
 
         $form->add('global_publications', GlobalPublicationsType::class, [
@@ -62,9 +66,20 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                 return;
             }
 
-            $existingPublications = $this->publications->forContent($content);
+            $contentId = $content->getId();
+            $hasPersistedIdentifier = \is_string($contentId) && '' !== $contentId;
+            $existingPublications = $hasPersistedIdentifier ? $this->publications->forContent($content) : [];
+            $submittedForm = $event->getForm();
 
-            $form = $event->getForm()->get('publications');
+            if ($hasPersistedIdentifier && !$this->isPublishableAfterSubmit($submittedForm, $content)) {
+                foreach ($existingPublications as $publicationToRemove) {
+                    $this->publications->remove($publicationToRemove);
+                }
+
+                return;
+            }
+
+            $form = $submittedForm->get('publications');
             foreach ($content->getChannels() as $channel) {
                 $data = $form->get($channel->getId())->get('settings')->getData();
                 $time = $content->getPublishTime();
@@ -91,7 +106,7 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                     $data['images'] = $imagesProcessed;
                 }
 
-                $existingChannelPublications = $this->publications->forContentOnChannel($content, $channel);
+                $existingChannelPublications = $hasPersistedIdentifier ? $this->publications->forContentOnChannel($content, $channel) : [];
 
                 if (!$existingChannelPublications) {
                     $this->publications->add(new Publication($content, $channel, $time, \is_array($data) ? $data : []));
@@ -142,18 +157,107 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
         });
     }
 
-    private function isPublicationChanged($previousPublication, $data): bool
+    private function isPublishableAfterSubmit(FormInterface $form, Content $content): bool
     {
-        $existingSettings = $previousPublication->getSettings();
-        $newSettings = $data['settings'] ?? null;
+        if (!$form->has('extension_workflow')) {
+            return $content->isPublished(false);
+        }
+
+        $workflowForm = $form->get('extension_workflow');
+        if ($workflowForm->has('state')) {
+            $workflowState = $workflowForm->get('state')->getData();
+
+            if (\is_object($workflowState) && method_exists($workflowState, 'isPublishable')) {
+                return (bool) $workflowState->isPublishable();
+            }
+        }
+
+        $workflowData = $workflowForm->getData();
+        if (\is_array($workflowData) && isset($workflowData['state']) && \is_object($workflowData['state']) && method_exists($workflowData['state'], 'isPublishable')) {
+            return (bool) $workflowData['state']->isPublishable();
+        }
+
+        return $content->isPublished(false);
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function isPublicationChanged(Publication $previousPublication, array $data): bool
+    {
+        $existingSettings = $this->normalizeSettings($previousPublication->getSettings());
+        $newSettings = $this->normalizeSettings((array) ($data['settings'] ?? []));
 
         $existingTime = $previousPublication->getTime();
         $newTime = $data['time'] ?? null;
 
-        $timeChanged = $existingTime != $newTime;
+        $timeChanged = !$this->isSamePublishTime($existingTime, $newTime instanceof PublishTimeInterface ? $newTime : null);
 
-        $settingsChanged = json_encode($existingSettings) != json_encode($newSettings);
+        $settingsChanged = $existingSettings !== $newSettings;
 
         return $timeChanged || $settingsChanged;
+    }
+
+    private function isSamePublishTime(?PublishTimeInterface $a, ?PublishTimeInterface $b): bool
+    {
+        if ($a === null || $b === null) {
+            return $a === $b;
+        }
+
+        return $this->isSameDateTime($a->getStartDate(), $b->getStartDate())
+            && $this->isSameDateTime($a->getEndDate(), $b->getEndDate());
+    }
+
+    private function isSameDateTime(?\DateTimeInterface $a, ?\DateTimeInterface $b): bool
+    {
+        if ($a === null || $b === null) {
+            return $a === $b;
+        }
+
+        return $a->getTimestamp() === $b->getTimestamp();
+    }
+
+    /**
+     * @param array<int|string, mixed> $settings
+     *
+     * @return array<int|string, mixed>
+     */
+    private function normalizeSettings(array $settings): array
+    {
+        $normalized = [];
+        foreach ($settings as $key => $value) {
+            $normalized[$key] = $this->normalizeSettingValue($value);
+        }
+
+        if ($this->isAssociativeArray($normalized)) {
+            ksort($normalized);
+        }
+
+        return $normalized;
+    }
+
+    private function normalizeSettingValue(mixed $value): mixed
+    {
+        if ($value instanceof \DateTimeInterface) {
+            return $value->format(\DateTimeInterface::ATOM);
+        }
+
+        if (\is_array($value)) {
+            return $this->normalizeSettings($value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * @param array<int|string, mixed> $values
+     */
+    private function isAssociativeArray(array $values): bool
+    {
+        if ([] === $values) {
+            return false;
+        }
+
+        return array_keys($values) !== range(0, \count($values) - 1);
     }
 }

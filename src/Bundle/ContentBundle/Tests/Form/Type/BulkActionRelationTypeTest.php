@@ -45,7 +45,7 @@ class BulkActionRelationTypeTest extends TypeTestCase
             ->setName('Dossier')
             ->setType('taxonomy_category');
 
-        $categoryWithGetter = new class() {
+        $categoryWithGetter = new class {
             public function getTaxonomyId(): string
             {
                 return 'cat-2';

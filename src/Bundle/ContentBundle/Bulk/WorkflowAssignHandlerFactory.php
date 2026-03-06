@@ -27,7 +27,7 @@ class WorkflowAssignHandlerFactory implements HandlerFactoryInterface
     public function __construct(
         EntityManagerInterface $entityManager,
         ResolverInterface $resolver,
-        UserManagerInterface $userManager
+        UserManagerInterface $userManager,
     ) {
         $this->entityManager = $entityManager;
         $this->resolver = $resolver;
@@ -38,6 +38,9 @@ class WorkflowAssignHandlerFactory implements HandlerFactoryInterface
             ->setAllowedTypes('assigned', ['string', 'null']);
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function createHandler(array $options)
     {
         $options = $this->optionsResolver->resolve($options);
@@ -50,4 +53,3 @@ class WorkflowAssignHandlerFactory implements HandlerFactoryInterface
         );
     }
 }
-

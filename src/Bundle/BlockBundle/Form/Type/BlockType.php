@@ -45,7 +45,7 @@ class BlockType extends AbstractType
                 $title = trim((string) $block->getTitle());
                 $id = (string) $block->getId();
 
-                return '' !== $title ? sprintf('%s (%s)', $title, $id) : $id;
+                return '' !== $title ? \sprintf('%s (%s)', $title, $id) : $id;
             },
             'choice_value' => static fn (?Block $block): ?string => $block?->getId(),
             'required' => false,
@@ -84,9 +84,15 @@ class BlockType extends AbstractType
      */
     protected function fetchChoices(): iterable
     {
-        return $this->repository->createQueryBuilder()
+        $result = $this->repository->createQueryBuilder()
             ->sort('title', 'asc')
             ->getQuery()
             ->execute();
+
+        if (\is_array($result) || $result instanceof \Traversable) {
+            return $result;
+        }
+
+        return [];
     }
 }

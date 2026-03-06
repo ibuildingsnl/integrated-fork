@@ -47,7 +47,7 @@ class BlockUsageProvider
 
     public function __construct(
         DocumentManager $manager,
-        private ?CacheInterface $cache = null
+        private ?CacheInterface $cache = null,
     ) {
         $this->manager = $manager;
     }
@@ -130,10 +130,16 @@ class BlockUsageProvider
             $data = $this->buildUsageMaps();
         }
 
-        $this->blockPages = \is_array($data['blockPages'] ?? null) ? $data['blockPages'] : [];
-        $this->channelBlocks = \is_array($data['channelBlocks'] ?? null) ? $data['channelBlocks'] : [];
+        $this->blockPages = $data['blockPages'];
+        $this->channelBlocks = $data['channelBlocks'];
     }
 
+    /**
+     * @return array{
+     *     blockPages: array<string, array<string, array<string, mixed>>>,
+     *     channelBlocks: array<string, array<string, string>>
+     * }
+     */
     private function buildUsageMaps(): array
     {
         $blockPages = [];
@@ -173,10 +179,8 @@ class BlockUsageProvider
         ];
     }
 
-    /**
-     * @return string|null
-     */
-    private function extractChannelId(array $page)
+    /** @param array<string, mixed> $page */
+    private function extractChannelId(array $page): ?string
     {
         if (
             \array_key_exists('channel', $page)
@@ -191,6 +195,11 @@ class BlockUsageProvider
     }
 
     /**
+     * @return string[]
+     */
+    /**
+     * @param array<string, mixed> $page
+     *
      * @return string[]
      */
     private function extractBlockIds(array $page): array
@@ -234,7 +243,7 @@ class BlockUsageProvider
     /**
      * Recursive iteration items to register block ids.
      *
-     * @param array $items
+     * @param array<int, mixed>   $items
      * @param array<string, bool> $indexedBlockIds
      */
     private function extractBlockIdsFromItems(array $items, array &$indexedBlockIds): void

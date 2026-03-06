@@ -14,7 +14,6 @@ namespace Integrated\Bundle\PageBundle\Document\Page;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Bundle\PageBundle\Document\Page\Grid\Column;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Grid;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Item;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Row;
@@ -183,10 +182,6 @@ abstract class AbstractPage
     {
         $indexed = [];
         foreach ($blockIds as $blockId) {
-            if (!\is_scalar($blockId)) {
-                continue;
-            }
-
             $value = trim((string) $blockId);
             if ($value === '') {
                 continue;
@@ -204,10 +199,6 @@ abstract class AbstractPage
     {
         $indexed = [];
         foreach ($this->grids as $grid) {
-            if (!$grid instanceof Grid) {
-                continue;
-            }
-
             $this->collectBlockIdsFromItems($grid->getItems(), $indexed);
         }
 
@@ -217,19 +208,18 @@ abstract class AbstractPage
     }
 
     /**
-     * @param Item[] $items
+     * @param Item[]              $items
      * @param array<string, bool> $indexed
      */
     private function collectBlockIdsFromItems(array $items, array &$indexed): void
     {
         foreach ($items as $item) {
-            if (!$item instanceof Item) {
-                continue;
-            }
-
             $block = $item->getBlock();
-            if ($block !== null && \is_string($block->getId()) && $block->getId() !== '') {
-                $indexed[$block->getId()] = true;
+            if ($block !== null) {
+                $blockId = $block->getId();
+                if ($blockId !== '') {
+                    $indexed[$blockId] = true;
+                }
             }
 
             $row = $item->getRow();
@@ -238,9 +228,7 @@ abstract class AbstractPage
             }
 
             foreach ($row->getColumns() as $column) {
-                if ($column instanceof Column) {
-                    $this->collectBlockIdsFromItems($column->getItems(), $indexed);
-                }
+                $this->collectBlockIdsFromItems($column->getItems(), $indexed);
             }
         }
     }
@@ -261,7 +249,7 @@ abstract class AbstractPage
     public function getGrid($id)
     {
         foreach ($this->grids as $grid) {
-            if ($grid instanceof Grid && $grid->getId() == $id) {
+            if ($grid->getId() == $id) {
                 return $grid;
             }
         }

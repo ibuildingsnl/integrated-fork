@@ -17,14 +17,10 @@ use Integrated\Common\Content\ContentInterface;
 
 class CanonicalHandler implements HandlerInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string|null */
     private $source;
 
-    /**
-     * @var string
-     */
+    /** @var string|null */
     private $sourceUrl;
 
     public function __construct(?string $source = null, ?string $sourceUrl = null)
@@ -33,17 +29,17 @@ class CanonicalHandler implements HandlerInterface
         $this->sourceUrl = $sourceUrl;
     }
 
-    public function execute(ContentInterface $content)
+    public function execute(ContentInterface $content): void
     {
         if (!$content instanceof Content) {
             return;
         }
 
-        if (\method_exists($content, 'setSource')) {
+        if (method_exists($content, 'setSource')) {
             $content->setSource($this->source);
         }
 
-        if (\method_exists($content, 'setSourceUrl')) {
+        if (method_exists($content, 'setSourceUrl')) {
             $content->setSourceUrl($this->sourceUrl);
         }
     }

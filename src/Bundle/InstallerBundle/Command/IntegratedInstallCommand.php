@@ -54,6 +54,7 @@ class IntegratedInstallCommand extends Command
     {
         $steps = $input->getOption('step');
         $io = new SymfonyStyle($input, $output);
+        $success = true;
 
         if (\in_array('tests', $steps) || empty($steps)) {
             $io->section('Test environment');
@@ -66,6 +67,7 @@ class IntegratedInstallCommand extends Command
                 foreach ($bundleErrors as $bundleError) {
                     $io->error($bundleError);
                 }
+                $success = false;
             } else {
                 $io->success('Bundle test successful');
             }
@@ -74,26 +76,26 @@ class IntegratedInstallCommand extends Command
         if (\in_array('cache', $steps) || empty($steps)) {
             $io->section('Clear cache');
 
-            $this->executeCommand('cache:clear', $output);
+            $success = $this->executeCommand('cache:clear', $output) && $success;
         }
 
         if (\in_array('assets', $steps) || empty($steps)) {
             $io->section('Install assets');
 
-            $this->executeCommand('assets:install', $output);
+            $success = $this->executeCommand('assets:install', $output) && $success;
         }
 
         if (\in_array('migrations', $steps) || empty($steps)) {
             $io->section('Execute migrations');
 
-            $this->executeCommand('integrated:install:database:migrate --no-interaction', $output);
-            $this->executeCommand('integrated:install:mongodb:migrate', $output);
+            $success = $this->executeCommand('integrated:install:database:migrate --no-interaction', $output) && $success;
+            $success = $this->executeCommand('integrated:install:mongodb:migrate', $output) && $success;
         }
 
-        return self::SUCCESS;
+        return $success ? self::SUCCESS : self::FAILURE;
     }
 
-    private function executeCommand($command, OutputInterface $output): void
+    private function executeCommand($command, OutputInterface $output): bool
     {
         $command = implode(' ', [$this->php, 'bin/console', $command, '-e', $this->kernel->getEnvironment()]);
 
@@ -111,7 +113,11 @@ class IntegratedInstallCommand extends Command
 
         if (!$process->isSuccessful()) {
             $output->writeln(\sprintf('Command %s failed', $command));
+
+            return false;
         }
+
+        return true;
     }
 
     private function findExecutable(): void

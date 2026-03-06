@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\UserBundle\Controller;
 
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
+use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\UserBundle\Form\Type\GroupFormType;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
@@ -24,6 +25,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class GroupController extends AbstractController
 {
+    use PaginationQueryTrait;
+
     private GroupManagerInterface $manager;
     private PaginatorInterface $paginator;
 
@@ -41,7 +44,7 @@ class GroupController extends AbstractController
 
         $paginator = $this->paginator->paginate(
             $this->manager->findAll(),
-            $request->query->get('page', 1),
+            $this->getPositiveIntQueryParameter($request, 'page', 1),
             15
         );
 

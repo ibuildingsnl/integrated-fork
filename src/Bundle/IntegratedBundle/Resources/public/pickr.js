@@ -13,10 +13,10 @@
 
 /***/ },
 
-/***/ "./node_modules/@simonwep/pickr/dist/themes/classic.min.css"
-/*!******************************************************************!*\
-  !*** ./node_modules/@simonwep/pickr/dist/themes/classic.min.css ***!
-  \******************************************************************/
+/***/ "./node_modules/@simonwep/pickr/dist/themes/nano.min.css"
+/*!***************************************************************!*\
+  !*** ./node_modules/@simonwep/pickr/dist/themes/nano.min.css ***!
+  \***************************************************************/
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -110,7 +110,7 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _simonwep_pickr__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @simonwep/pickr */ "./node_modules/@simonwep/pickr/dist/pickr.min.js");
 /* harmony import */ var _simonwep_pickr__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_simonwep_pickr__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _simonwep_pickr_dist_themes_classic_min_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @simonwep/pickr/dist/themes/classic.min.css */ "./node_modules/@simonwep/pickr/dist/themes/classic.min.css");
+/* harmony import */ var _simonwep_pickr_dist_themes_nano_min_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @simonwep/pickr/dist/themes/nano.min.css */ "./node_modules/@simonwep/pickr/dist/themes/nano.min.css");
 
 
 function applyInputColorPreview(input, color) {
@@ -174,19 +174,40 @@ function syncPickrFromInputValue(input, pickr) {
     return null;
   }
 }
+function positionPickrApp(pickr, input) {
+  var app = null;
+  try {
+    var root = pickr.getRoot ? pickr.getRoot() : null;
+    app = root && root.app ? root.app : null;
+  } catch (error) {
+    app = null;
+  }
+  if (!app || typeof window.getComputedStyle !== 'function') {
+    return;
+  }
+  var margin = 8;
+  var inputRect = input.getBoundingClientRect();
+  var appRect = app.getBoundingClientRect();
+  var maxTop = Math.max(margin, window.innerHeight - appRect.height - margin);
+  var maxLeft = Math.max(margin, window.innerWidth - appRect.width - margin);
+  var top = Math.max(margin, Math.min(inputRect.bottom + margin, maxTop));
+  var left = Math.max(margin, Math.min(inputRect.left, maxLeft));
+  app.style.top = "".concat(top, "px");
+  app.style.left = "".concat(left, "px");
+}
 function initializePickr() {
   var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
   if (!root || typeof root.querySelectorAll !== 'function') {
     return;
   }
-  var inputs = root.querySelectorAll('.coloris input');
+  var inputs = root.querySelectorAll('.input-group.pickr-field > input[data-pickr]');
   inputs.forEach(function (input) {
     if (input.dataset.pickrInitialized === 'true') {
       return;
     }
     var pickr = _simonwep_pickr__WEBPACK_IMPORTED_MODULE_0___default().create({
       el: input,
-      theme: 'classic',
+      theme: 'nano',
       useAsButton: true,
       "default": input.value || '#335767',
       defaultRepresentation: 'HEXA',
@@ -204,12 +225,18 @@ function initializePickr() {
         }
       }
     });
+
+    // Avoid generic `[role="button"]` handlers hijacking this input.
+    input.removeAttribute('role');
     pickr.on('change', function (color) {
       if (!color) {
         return;
       }
       updateColorInput(input, color);
       emitColorInputEvents(input);
+    });
+    pickr.on('show', function () {
+      positionPickrApp(pickr, input);
     });
     pickr.on('save', function (color, instance) {
       var selectedColor = color || instance.getColor();
@@ -232,6 +259,15 @@ function initializePickr() {
     });
     input.addEventListener('blur', function () {
       syncPickrFromInputValue(input, pickr);
+    });
+    input.addEventListener('click', function (event) {
+      event.stopPropagation();
+      window.setTimeout(function () {
+        pickr.show();
+        window.requestAnimationFrame(function () {
+          positionPickrApp(pickr, input);
+        });
+      }, 0);
     });
     syncPickrFromInputValue(input, pickr);
     input.dataset.pickrInitialized = 'true';

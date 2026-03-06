@@ -7,13 +7,19 @@ use Integrated\Common\Content\Channel\ChannelInterface;
 
 class PublicationRepository extends DocumentRepository implements PublicationRepositoryInterface
 {
+    private const MAX_DATE_RANGE_RESULTS = 200;
+
     public function forContent(Content $content): array
     {
-        if (!$content->getId()) {
+        $contentId = $content->getId();
+        if (!\is_string($contentId) || '' === $contentId) {
             return [];
         }
 
-        return $this->findBy(['content' => $content]);
+        /** @var list<Publication> $publications */
+        $publications = $this->findBy(['content.$id' => $contentId]);
+
+        return $publications;
     }
 
     public function forDateRange(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate): iterable
@@ -22,25 +28,67 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
             ->setRewindable(false)
             ->field('time.startDate')->gte($startDate)
             ->field('time.startDate')->lte($endDate)
+            ->sort('time.startDate', 'asc')
+            ->limit(self::MAX_DATE_RANGE_RESULTS)
             ->getQuery()
             ->getIterator();
     }
 
     public function forContentByChannel(Content $content): array
     {
-        return array_combine(
-            array_map(fn (Publication $p) => $p->getChannel()->getId(), $this->forContent($content)),
-            $this->forContent($content),
-        );
+        $publications = $this->forContent($content);
+
+        usort($publications, function (Publication $a, Publication $b): int {
+            $aIsSuccessful = $a->getStatus() === Publication::STATUS_SUCCESS;
+            $bIsSuccessful = $b->getStatus() === Publication::STATUS_SUCCESS;
+
+            // Prefer editable publications (failed/pending) over successful history.
+            if ($aIsSuccessful !== $bIsSuccessful) {
+                return $aIsSuccessful <=> $bIsSuccessful;
+            }
+
+            return $this->publicationTimestamp($b) <=> $this->publicationTimestamp($a);
+        });
+
+        $byChannel = [];
+        foreach ($publications as $publication) {
+            $channelId = $publication->getChannel()->getId();
+            if (!\is_string($channelId) || $channelId === '') {
+                continue;
+            }
+
+            if (!\array_key_exists($channelId, $byChannel)) {
+                $byChannel[$channelId] = $publication;
+            }
+        }
+
+        return $byChannel;
+    }
+
+    private function publicationTimestamp(Publication $publication): int
+    {
+        return $publication->getTime()->getStartDate()?->getTimestamp() ?? 0;
     }
 
     public function forContentOnChannel(Content $content, ChannelInterface $channel): array
     {
-        if (!$content->getId()) {
+        $contentId = $content->getId();
+        if (!\is_string($contentId) || '' === $contentId) {
             return [];
         }
 
-        return $this->findBy(['content' => $content, 'channel' => $channel]);
+        $channelId = $channel->getId();
+        if (!\is_string($channelId) || '' === $channelId) {
+            return [];
+        }
+
+        /** @var list<Publication> $publications */
+        $publications = $this->findBy([
+            'content.$id' => $contentId,
+            'channel.$id' => $channelId,
+        ]);
+
+        return $publications;
     }
 
     public function getAvailable(Content $content, ChannelInterface $channel): iterable

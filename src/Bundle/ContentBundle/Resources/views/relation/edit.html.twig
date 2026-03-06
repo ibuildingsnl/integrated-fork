@@ -51,19 +51,38 @@
 {{ parent() }}
 
 <script type="text/javascript">
-document.addEventListener('DOMContentLoaded', function () {
-    if (window.jQuery && typeof window.jQuery.fn.select2 === 'function') {
-        window.jQuery('#integrated_relation_sources').select2();
-        window.jQuery('#integrated_relation_targets').select2();
+(function initRelationEditPage() {
+    function initializeRelationEditEnhancements() {
+        if (window.jQuery && typeof window.jQuery.fn.select2 === 'function') {
+            ['#integrated_relation_sources', '#integrated_relation_targets'].forEach(function (selector) {
+                var $field = window.jQuery(selector);
+                if ($field.length > 0 && !$field.hasClass('select2-hidden-accessible')) {
+                    $field.select2();
+                }
+            });
+        }
+
+        if (window.jQuery && typeof window.jQuery.fn.popover === 'function') {
+            window.jQuery('[data-toggle="popover"]').popover();
+        } else if (window.bootstrap && typeof window.bootstrap.Popover === 'function') {
+            document.querySelectorAll('[data-toggle="popover"]').forEach(function (element) {
+                new window.bootstrap.Popover(element);
+            });
+        }
     }
 
-    if (window.jQuery && typeof window.jQuery.fn.popover === 'function') {
-        window.jQuery('[data-toggle="popover"]').popover();
-    } else if (window.bootstrap && typeof window.bootstrap.Popover === 'function') {
-        document.querySelectorAll('[data-toggle="popover"]').forEach(function (element) {
-            new window.bootstrap.Popover(element);
-        });
+    if (window.__integratedRelationEditInitBound !== true) {
+        document.addEventListener('DOMContentLoaded', initializeRelationEditEnhancements);
+        document.addEventListener('turbo:load', initializeRelationEditEnhancements);
+        document.addEventListener('turbo:render', initializeRelationEditEnhancements);
+        document.addEventListener('turbo:frame-load', initializeRelationEditEnhancements);
+        document.addEventListener('turbo:frame-render', initializeRelationEditEnhancements);
+        window.__integratedRelationEditInitBound = true;
     }
-});
+
+    if (document.readyState !== 'loading') {
+        initializeRelationEditEnhancements();
+    }
+})();
 </script>
 {% endblock javascript %}

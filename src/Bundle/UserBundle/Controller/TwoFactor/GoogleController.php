@@ -52,7 +52,7 @@ class GoogleController extends AbstractController
         $context = $this->resolver->resolve($request);
 
         if (!$context) {
-            $this->createAccessDeniedException();
+            throw $this->createAccessDeniedException();
         }
 
         $user = $context->getUser();
@@ -77,7 +77,7 @@ class GoogleController extends AbstractController
         $context = $this->resolver->resolve($request);
 
         if (!$context) {
-            $this->createAccessDeniedException();
+            throw $this->createAccessDeniedException();
         }
 
         $user = $this->getUser();

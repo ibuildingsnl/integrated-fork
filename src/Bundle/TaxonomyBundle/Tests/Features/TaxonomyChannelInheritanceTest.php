@@ -94,6 +94,15 @@ final class TaxonomyChannelInheritanceTest extends TestCase
         self::assertEquals([], $rootTaxonomy->getChannels());
     }
 
+    public function testDoingNothingWhenParentTaxonomyDoesNotExist(): void
+    {
+        $child = $this->taxonomy('orphan', 'missing-parent', 'elves');
+
+        $this->listener->afterValidation($this->event($child));
+
+        self::assertEquals([$this->channels['elves']], $child->getChannels());
+    }
+
     private function taxonomy(
         string $id,
         ?string $parent = null,

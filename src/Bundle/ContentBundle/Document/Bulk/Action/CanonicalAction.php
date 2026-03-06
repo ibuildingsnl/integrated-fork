@@ -40,7 +40,7 @@ class CanonicalAction implements BulkActionInterface
         return $this->handler;
     }
 
-    public function setHandler($handler)
+    public function setHandler(string $handler): self
     {
         $this->handler = $handler;
 
@@ -71,7 +71,8 @@ class CanonicalAction implements BulkActionInterface
         return $this;
     }
 
-    public function getOptions()
+    /** @return array{source: string|null, sourceUrl: string|null} */
+    public function getOptions(): array
     {
         return [
             'source' => $this->getSource(),

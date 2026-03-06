@@ -32,6 +32,9 @@ class CanonicalHandlerFactory implements HandlerFactoryInterface
             ->addAllowedTypes('sourceUrl', ['null', 'string']);
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function createHandler(array $options)
     {
         $options = $this->resolver->resolve($options);

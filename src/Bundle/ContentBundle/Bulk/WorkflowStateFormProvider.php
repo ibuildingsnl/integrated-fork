@@ -32,7 +32,7 @@ class WorkflowStateFormProvider implements ConfigProviderInterface
     public function __construct(
         BulkCapabilityResolver $capabilityResolver,
         ResolverInterface $resolver,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
     ) {
         $this->capabilityResolver = $capabilityResolver;
         $this->resolver = $resolver;
@@ -66,19 +66,15 @@ class WorkflowStateFormProvider implements ConfigProviderInterface
     }
 
     /**
-     * @param ContentInterface[] $content
+     * @param array<ContentInterface> $content
      *
-     * @return string[]
+     * @return array<string, string>
      */
     private function getSharedStateChoices(array $content): array
     {
         $shared = null;
 
         foreach ($content as $item) {
-            if (!$item instanceof ContentInterface) {
-                return [];
-            }
-
             $contentType = (string) $item->getContentType();
             if ('' === $contentType || !$this->resolver->hasType($contentType)) {
                 return [];
@@ -97,10 +93,6 @@ class WorkflowStateFormProvider implements ConfigProviderInterface
 
             $choices = [];
             foreach ($workflow->getStates() as $state) {
-                if (!$state instanceof Definition\State) {
-                    continue;
-                }
-
                 $choices[$state->getId()] = $state->getName();
             }
 

@@ -27,7 +27,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 class BlockUsageSubscriber
 {
     public function __construct(
-        private ?CacheInterface $cache = null
+        private ?CacheInterface $cache = null,
     ) {
     }
 

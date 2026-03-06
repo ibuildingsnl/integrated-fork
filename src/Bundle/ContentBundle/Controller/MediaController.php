@@ -29,6 +29,7 @@ use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
 use Integrated\Common\Security\PermissionInterface;
 use Integrated\Common\Solr\Search\QueryFactoryInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -52,6 +53,8 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class MediaController extends AbstractController
 {
+    use PaginationQueryTrait;
+
     public const PAGINATOR_LIMIT = 40;
     public const DATE_FILTER_ON = '+1MONTH';
     public const NOT_SHOWN_FILETYPES = ['jpg', 'jpeg', 'png', 'tif', 'webp', 'mp4', 'mov', 'avi', 'flv', 'mkv', 'wmv'];
@@ -151,8 +154,8 @@ class MediaController extends AbstractController
 
         $paginator = $this->getPaginator()->paginate(
             [$client, $query->getQuery()],
-            $request->query->get('page', 1),
-            $request->query->get('limit', 40),
+            $this->getPositiveIntQueryParameter($request, 'page', 1),
+            $this->getPositiveIntQueryParameter($request, 'limit', 40),
             [PaginatorInterface::SORT_FIELD_PARAMETER_NAME => null]
         );
 
@@ -525,14 +528,11 @@ class MediaController extends AbstractController
             $className = $contentType->getClass();
 
             if (\in_array($className, $contentTypes)) {
-                $name = $contentType->getName();
-                if (\is_array($name)) {
-                    $name = implode(' ', array_filter(array_map(static fn ($value): string => \is_scalar($value) ? (string) $value : '', $name)));
-                }
+                $name = trim((string) $contentType->getName());
 
                 $filter['options'][$contentType->getId()] = [
                     'id' => $contentType->getId(),
-                    'name' => \is_scalar($name) ? (string) $name : (string) $contentType->getId(),
+                    'name' => $name !== '' ? $name : (string) $contentType->getId(),
                 ];
             }
         }

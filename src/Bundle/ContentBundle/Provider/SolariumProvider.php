@@ -281,10 +281,12 @@ class SolariumProvider
         return $count;
     }
 
+    /** @return list<string> */
     private function sanitizeArrayValues(mixed $value): array
     {
         if (\is_string($value)) {
             $value = trim($value);
+
             return '' !== $value ? [$value] : [];
         }
 

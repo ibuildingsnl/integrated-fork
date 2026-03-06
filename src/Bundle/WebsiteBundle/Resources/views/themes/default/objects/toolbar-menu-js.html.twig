@@ -7,6 +7,14 @@
         var workspaceOriginalParent = null;
         var workspaceOriginalNextSibling = null;
         var workspaceVisualMirrorList = null;
+        var markEditorReady = function(moduleName) {
+            if (
+                window.IntegratedEditorLoader &&
+                typeof window.IntegratedEditorLoader.markReady === 'function'
+            ) {
+                window.IntegratedEditorLoader.markReady(moduleName);
+            }
+        };
 
         var parseMenuDatasetJson = function(value) {
             if (!value) {
@@ -242,7 +250,7 @@
                 payload = JSON.stringify(payload || {});
             }
 
-            fetch('{{ path('integrated_website_menu_render') }}', {
+            return fetch('{{ path('integrated_website_menu_render') }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1134,6 +1142,8 @@
         };
 
         var init = function() {
+            var loadPromises = [];
+
             document.querySelectorAll('.integrated-website-menu').forEach(function(item) {
                 var menu = new Menu(item);
                 var script = item.querySelector('script[type="text/json"]');
@@ -1146,9 +1156,22 @@
                     return;
                 }
 
-                menu.load(script.innerHTML);
+                loadPromises.push(menu.load(script.innerHTML));
                 script.parentNode.removeChild(script);
             });
+
+            if (!loadPromises.length) {
+                markEditorReady('menu');
+                return;
+            }
+
+            Promise.all(loadPromises)
+                .then(function() {
+                    markEditorReady('menu');
+                })
+                .catch(function() {
+                    markEditorReady('menu');
+                });
         };
 
         if (document.readyState !== 'loading') {

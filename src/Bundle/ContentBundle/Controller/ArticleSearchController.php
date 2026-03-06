@@ -18,43 +18,48 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ArticleSearchController extends AbstractController
 {
+    /** @var DocumentRepository<ContentType> */
     private DocumentRepository $contentTypeRepository;
 
     public function __construct(
         private readonly DocumentManager $documentManager,
         private readonly QueryFactoryInterface $queryFactory,
         private readonly ClientInterface $solrClient,
+        /** @var array<int, string> */
         private readonly array $allowedContentTypes,
     ) {
         $this->contentTypeRepository = $this->documentManager->getRepository(ContentType::class);
     }
 
-    public function index()
+    public function index(): Response
     {
-        $channels = array_filter($this->getAllowedChannels($this->getUser()), function ($channel) {
+        $user = $this->getUser();
+        $allowedChannels = $user instanceof UserInterface ? $this->getAllowedChannels($user) : [];
+
+        $channels = array_filter($allowedChannels, static function (Channel $channel): bool {
             return $channel->getPrimaryDomain() !== null && $channel->getPrimaryDomain() !== '';
         });
 
-        $channels = array_map(function ($channel) {
+        $channels = array_map(static function (Channel $channel): array {
             return [
                 'key' => $channel->getId(),
-                'label' => str_replace(' Website', '', $channel->getName()),
+                'label' => str_replace(' Website', '', (string) $channel->getName()),
             ];
         }, $channels);
 
         $contentTypes = $this->contentTypeRepository->findAll();
-        $contentTypes = array_map(function ($contentType) {
+        $contentTypes = array_map(static function (ContentType $contentType): array {
             return [
                 'key' => $contentType->getId(),
-                'label' => $contentType->getName(),
+                'label' => (string) $contentType->getName(),
             ];
-        }, array_filter($contentTypes, function ($contentType) {
-            return \in_array($contentType->getClass(), $this->allowedContentTypes);
+        }, array_filter($contentTypes, function (ContentType $contentType): bool {
+            return \in_array((string) $contentType->getClass(), $this->allowedContentTypes, true);
         }));
 
         return $this->render('@IntegratedContent/article_search/article_search.html.twig', [
-            'channels' => json_encode(array_values($channels)),
-            'contentTypes' => json_encode(array_values($contentTypes)),
+            'channels' => json_encode(array_values($channels)) ?: '[]',
+            'contentTypes' => json_encode(array_values($contentTypes)) ?: '[]',
             'translations' => json_encode([
                 'apply' => $this->getTranslator()->trans('Apply'),
                 'cancel' => $this->getTranslator()->trans('Cancel'),
@@ -70,34 +75,41 @@ class ArticleSearchController extends AbstractController
                 'link_title' => $this->getTranslator()->trans('Link title'),
                 'url_or_searchterm' => $this->getTranslator()->trans('URL or search term'),
                 'ready' => $this->getTranslator()->trans('Good to go!'),
-            ]),
+            ]) ?: '{}',
         ]);
     }
 
-    public function searchContentByChannel(Request $request, ?string $channelId = null)
+    public function searchContentByChannel(Request $request, ?string $channelId = null): Response
     {
-        $contentTypeIds = $request->get('contentTypeIds', '');
+        $contentTypeIds = (string) $request->get('contentTypeIds', '');
 
         if ($channelId === null) {
             return new Response(
-                json_encode(['msg' => 'No channel id specified']),
+                json_encode(['msg' => 'No channel id specified']) ?: '{}',
                 Response::HTTP_BAD_REQUEST,
                 ['Content-Type' => 'application/json']
             );
         }
 
-        $q = $request->get('term');
+        $q = (string) $request->get('term', '');
 
         if (empty($q)) {
             return new Response(
-                json_encode(['msg' => 'No search term specified']),
+                json_encode(['msg' => 'No search term specified']) ?: '{}',
                 Response::HTTP_BAD_REQUEST,
                 ['Content-Type' => 'application/json']
             );
         }
 
-        /** @var Channel $channel */
+        /** @var Channel|null $channel */
         $channel = $this->documentManager->getRepository(Channel::class)->find($channelId);
+        if (!$channel instanceof Channel) {
+            return new Response(
+                json_encode(['msg' => 'Channel not found']) ?: '{}',
+                Response::HTTP_NOT_FOUND,
+                ['Content-Type' => 'application/json']
+            );
+        }
 
         $criteria = [
             'contenttypes' => explode(',', $contentTypeIds),
@@ -118,29 +130,29 @@ class ArticleSearchController extends AbstractController
 
         /** @var Document[] $items */
         $items = $this->solrClient->select($query)->getDocuments();
-        $contentIds = [];
 
         $ret = array_map(
             /**
              * @throws \Exception
              */
-            function ($contentItem) use ($channel, &$contentIds) {
-                $contentIds[] = $contentItem->type_id;
-                $content = \is_array($contentItem->content) ? implode('', $contentItem->content) : $contentItem->content;
-                $content = substr(strip_tags($content), 0, 255);
+            function (Document $contentItem) use ($channel): array {
+                $content = $contentItem['content'] ?? '';
+                $content = \is_array($content) ? implode('', $content) : (string) $content;
+                $content = substr(strip_tags($content), 0, 255) ?: '';
 
-                if ($contentItem->file) {
-                    $fileData = json_decode($contentItem->file, true); // Decode to an associative array
-                    $url = $fileData['pathname'] ?? null; // Access the 'pathname' key
+                $file = $contentItem['file'] ?? null;
+                if (\is_string($file) && $file !== '') {
+                    $fileData = json_decode($file, true); // Decode to an associative array
+                    $url = \is_array($fileData) ? ($fileData['pathname'] ?? null) : null;
                 } else {
-                    $url = $contentItem['url_'.$channel->getId()];
+                    $url = $contentItem['url_'.$channel->getId()] ?? null;
                 }
 
                 return [
-                    'id' => $contentItem->type_id,
-                    'title' => $contentItem->title,
-                    'subtitle' => ucfirst($contentItem->type_name).' | '.
-                    (new \DateTimeImmutable($contentItem->pub_time))->format('d-m-Y'),
+                    'id' => (string) ($contentItem['type_id'] ?? ''),
+                    'title' => (string) ($contentItem['title'] ?? ''),
+                    'subtitle' => ucfirst((string) ($contentItem['type_name'] ?? '')).' | '.
+                    (new \DateTimeImmutable((string) ($contentItem['pub_time'] ?? 'now')))->format('d-m-Y'),
                     'text' => $content,
                     'url' => $url,
                 ];
@@ -148,21 +160,21 @@ class ArticleSearchController extends AbstractController
             $items
         );
 
-        $ret = array_map(function ($contentItem) use ($channel) {
+        $ret = array_map(function (array $contentItem) use ($channel): array {
             return array_merge($contentItem, [
-                'url' => 'https://'.$channel->getPrimaryDomain().$contentItem['url'],
+                'url' => 'https://'.$channel->getPrimaryDomain().(string) ($contentItem['url'] ?? ''),
             ]);
         }, $ret);
 
         if (\count($ret) > 0) {
-            return new Response(json_encode($ret), headers: ['Content-Type' => 'application/json']);
+            return new Response(json_encode($ret) ?: '[]', headers: ['Content-Type' => 'application/json']);
         } else {
             return new Response(
                 json_encode([
-                                'term' => $q,
-                                'channelId' => $channelId,
-                                'contentTypeId' => $contentTypeIds,
-                            ]),
+                    'term' => $q,
+                    'channelId' => $channelId,
+                    'contentTypeId' => $contentTypeIds,
+                ]) ?: '{}',
                 status: Response::HTTP_NOT_FOUND,
                 headers: ['Content-Type' => 'application/json']
             );
@@ -174,11 +186,16 @@ class ArticleSearchController extends AbstractController
      */
     private function getAllowedChannels(UserInterface $user): array
     {
-        $channels = $this->documentManager->getRepository(Channel::class)->findBy([], ['name' => 1]);
+        /** @var Channel[] $channels */
+        $channels = $this->documentManager->getRepository(Channel::class)->findBy([], ['name' => 'asc']);
         $allowed = [];
 
         foreach ($channels as $channel) {
-            $permissions = PermissionResolver::getPermissions($user, $channel->getPermissions());
+            $channelPermissions = $channel->getPermissions();
+            $permissions = PermissionResolver::getPermissions(
+                $user,
+                \is_array($channelPermissions) ? array_values($channelPermissions) : iterator_to_array($channelPermissions)
+            );
 
             if ($permissions['read'] === true || $permissions['write'] === true) {
                 $allowed[] = $channel;

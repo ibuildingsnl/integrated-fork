@@ -1,6 +1,29 @@
+{% macro hidden_query_field(name, value) %}
+    {% import _self as search_form %}
+
+    {% if value is iterable %}
+        {% for childKey, childValue in value %}
+            {{ search_form.hidden_query_field(name ~ '[' ~ childKey ~ ']', childValue) }}
+        {% endfor %}
+    {% else %}
+        <input
+            type="hidden"
+            name="{{ name }}"
+            value="{{ value is same as(true) ? '1' : (value is same as(false) ? '0' : value) }}"
+        >
+    {% endif %}
+{% endmacro %}
+
+{% import _self as search_form %}
+
 <div class="nav-form-holder">
     <div class="nav-form-inner">
         <form action="{{ path('integrated_content_content_index') }}" class="navbar-form navbar-left search-form" method="get">
+            {% for key, value in app.request.query.all %}
+                {% if key not in ['q', 'page'] %}
+                    {{ search_form.hidden_query_field(key, value) }}
+                {% endif %}
+            {% endfor %}
             <div class="form-group relative">
                 <input type="text" name="q" class="form-control" value="{{ app.request.query.get('q')|trim }}" placeholder="{% trans %}Search here{% endtrans %}...">
                 <button type="submit"><i class="iconoir-search"></i></button>

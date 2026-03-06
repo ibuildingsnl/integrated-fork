@@ -25,14 +25,10 @@ class Item
      */
     protected $order = 0;
 
-    /**
-     * @var Block
-     */
+    /** @var Block|null */
     protected $block;
 
-    /**
-     * @var Row
-     */
+    /** @var Row|null */
     protected $row;
 
     /**
@@ -60,9 +56,7 @@ class Item
         return $this;
     }
 
-    /**
-     * @return Block
-     */
+    /** @return Block|null */
     public function getBlock()
     {
         return $this->block;
@@ -82,9 +76,7 @@ class Item
         return $this;
     }
 
-    /**
-     * @return Row
-     */
+    /** @return Row|null */
     public function getRow()
     {
         return $this->row;

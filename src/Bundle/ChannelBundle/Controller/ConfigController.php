@@ -20,6 +20,7 @@ use Integrated\Bundle\ChannelBundle\Form\Type\ConfigFormType;
 use Integrated\Bundle\ChannelBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\ChannelBundle\IntegratedChannelEvents;
 use Integrated\Bundle\ChannelBundle\Model\Config;
+use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\AdapterInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigManagerInterface;
@@ -29,10 +30,11 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 class ConfigController extends AbstractController
 {
+    use PaginationQueryTrait;
+
     private ConfigManagerInterface $manager;
     private RegistryInterface $registry;
     private PaginatorInterface $paginator;
@@ -58,7 +60,7 @@ class ConfigController extends AbstractController
 
         return $this->render('@IntegratedChannel/config/index.html.twig', [
             'adapters' => $this->registry->getAdapters(),
-            'pager' => $this->paginator->paginate($this->manager->findAll(), $request->query->get('page', 1)),
+            'pager' => $this->paginator->paginate($this->manager->findAll(), $this->getPositiveIntQueryParameter($request, 'page', 1)),
         ]);
     }
 
@@ -78,9 +80,9 @@ class ConfigController extends AbstractController
         $data->setAdapter($adapter->getManifest()->getName());
 
         $event = new GetResponseConfigEvent($data, $request);
-
-        if ($this->dispatcher->dispatch($event, IntegratedChannelEvents::CONFIG_CREATE_REQUEST)->getResponse()) {
-            return $event->getResponse();
+        $requestResponse = $this->dispatcher->dispatch($event, IntegratedChannelEvents::CONFIG_CREATE_REQUEST)->getResponse();
+        if ($requestResponse instanceof Response) {
+            return $requestResponse;
         }
 
         $form = $this->createNewForm($data, $adapter);
@@ -139,9 +141,9 @@ class ConfigController extends AbstractController
         }
 
         $event = new GetResponseConfigEvent($data, $request);
-
-        if ($this->dispatcher->dispatch($event, IntegratedChannelEvents::CONFIG_EDIT_REQUEST)->getResponse()) {
-            return $event->getResponse();
+        $requestResponse = $this->dispatcher->dispatch($event, IntegratedChannelEvents::CONFIG_EDIT_REQUEST)->getResponse();
+        if ($requestResponse instanceof Response) {
+            return $requestResponse;
         }
 
         $form = $this->createEditForm($data, $adapter);
@@ -180,7 +182,13 @@ class ConfigController extends AbstractController
 
     public function externalReturn(Request $request): Response
     {
-        $session = new Session();
+        if (!$request->hasSession()) {
+            $this->addFlash('danger', 'Config not found in session');
+
+            return $this->index($request);
+        }
+
+        $session = $request->getSession();
 
         if (!$id = $session->get('externalReturnId')) {
             $this->addFlash('danger', 'Config not found in session');
@@ -188,7 +196,9 @@ class ConfigController extends AbstractController
             return $this->index($request);
         }
 
-        return $this->edit($request, $id);
+        $session->remove('externalReturnId');
+
+        return $this->edit($request, (string) $id);
     }
 
     public function delete(Request $request, string $id): Response
@@ -209,9 +219,9 @@ class ConfigController extends AbstractController
         }
 
         $event = new GetResponseConfigEvent($data, $request);
-
-        if ($this->dispatcher->dispatch($event, IntegratedChannelEvents::CONFIG_DELETE_REQUEST)->getResponse()) {
-            return $event->getResponse();
+        $requestResponse = $this->dispatcher->dispatch($event, IntegratedChannelEvents::CONFIG_DELETE_REQUEST)->getResponse();
+        if ($requestResponse instanceof Response) {
+            return $requestResponse;
         }
 
         $form = $this->createDeleteForm($data);

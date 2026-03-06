@@ -31,9 +31,7 @@ class WorkflowStateHandler implements HandlerInterface
     private bool $targetStateResolved = false;
     private bool $navdropdownCacheInvalidated = false;
 
-    /**
-     * @var Definition[]
-     */
+    /** @var array<string, Definition|null> */
     private array $workflowCache = [];
 
     public function __construct(EntityManagerInterface $entityManager, ResolverInterface $resolver, string $stateId)
@@ -43,7 +41,7 @@ class WorkflowStateHandler implements HandlerInterface
         $this->stateId = $stateId;
     }
 
-    public function execute(ContentInterface $content)
+    public function execute(ContentInterface $content): void
     {
         $targetState = $this->resolveTargetState();
         $workflow = $this->resolveWorkflow($content);
@@ -66,7 +64,7 @@ class WorkflowStateHandler implements HandlerInterface
             $this->entityManager->persist($state);
         }
 
-        if ($state->getState() && $state->getState()->getId() === $targetState->getId()) {
+        if ($state->getState()->getId() === $targetState->getId()) {
             return;
         }
 
@@ -120,7 +118,7 @@ class WorkflowStateHandler implements HandlerInterface
             return null;
         }
 
-        if (!array_key_exists($workflowId, $this->workflowCache)) {
+        if (!\array_key_exists($workflowId, $this->workflowCache)) {
             $this->workflowCache[$workflowId] = $this->entityManager->getRepository(Definition::class)->find($workflowId);
         }
 
@@ -139,4 +137,3 @@ class WorkflowStateHandler implements HandlerInterface
         $this->navdropdownCacheInvalidated = true;
     }
 }
-

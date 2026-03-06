@@ -189,9 +189,10 @@ class ContentProvider
                 $relationfilter = \is_array($value) ? $this->sanitizeListValues($value) : [];
 
                 if (\count($relationfilter)) {
+                    $relationTag = (string) $relationId;
                     $query
-                        ->createFilterQuery($relationId)
-                        ->addTag($relationId)
+                        ->createFilterQuery($relationTag)
+                        ->addTag($relationTag)
                         ->setQuery('facet_'.$relation->getId().': ((%1%))', [implode(') OR (', array_map($filter, $relationfilter))]);
                 }
             }
@@ -380,18 +381,20 @@ class ContentProvider
     // $available_contenttypes is what the user can choose from
     private function setContentTypes(?array $contentType, FilterQuery $contentTypesQuery, \Closure $filter, Request $request): void
     {
-        if (\is_array($contentType) && \count($contentType) === 1) {
-            $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
+        $selectedContentTypes = $this->sanitizeListValues($contentType ?? []);
+        if (\count($selectedContentTypes) === 1) {
+            $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $selectedContentTypes))]);
         } else {
             $availableContenttypes = $this->sanitizeListValues($this->getArrayQueryParameter($request, 'available_contenttypes'));
-            if (\is_array($availableContenttypes) && \count($availableContenttypes)) {
+            if (\count($availableContenttypes)) {
                 $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $availableContenttypes))]);
-            } elseif (\is_array($contentType) && \count($contentType)) {
-                $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
+            } elseif (\count($selectedContentTypes)) {
+                $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $selectedContentTypes))]);
             }
         }
     }
 
+    /** @return array<mixed> */
     private function getArrayQueryParameter(Request $request, string $name): array
     {
         $value = $request->query->all()[$name] ?? null;
@@ -407,6 +410,11 @@ class ContentProvider
         return [$value];
     }
 
+    /**
+     * @param array<mixed> $values
+     *
+     * @return list<string>
+     */
     private function sanitizeListValues(array $values): array
     {
         $sanitized = [];
@@ -444,7 +452,7 @@ class ContentProvider
 
         $query
             ->createFilterQuery('pub_time_range')
-            ->setQuery(sprintf('pub_time:[%s TO %s]', $start, $end));
+            ->setQuery(\sprintf('pub_time:[%s TO %s]', $start, $end));
     }
 
     private function parseDate(string $value): ?\DateTimeImmutable

@@ -26,15 +26,11 @@ class PublicationsExtension implements TypeExtensionInterface
         foreach ($this->publications->forContent($data) as $publication) {
             $timeRange = $publication->getTime();
             $channel = $publication->getChannel();
-            if (!$timeRange || !$channel) {
-                continue;
-            }
-
-            $channelId = $channel->getId();
+            $channelId = (string) $channel->getId();
 
             $startDate = $timeRange->getStartDate();
             if ($startDate instanceof \DateTimeInterface) {
-                $time = clone $startDate; // don't change original value
+                $time = \DateTimeImmutable::createFromInterface($startDate)->setTimezone($this->timezone);
 
                 $container->add(
                     'publication_start_'.$channelId.'_index_date',
@@ -44,7 +40,7 @@ class PublicationsExtension implements TypeExtensionInterface
 
             $endDate = $timeRange->getEndDate();
             if ($endDate instanceof \DateTimeInterface) {
-                $time = clone $endDate;
+                $time = \DateTimeImmutable::createFromInterface($endDate)->setTimezone($this->timezone);
 
                 $container->add(
                     'publication_end_'.$channelId.'_index_date',

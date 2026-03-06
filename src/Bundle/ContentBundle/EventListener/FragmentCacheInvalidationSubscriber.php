@@ -52,4 +52,3 @@ class FragmentCacheInvalidationSubscriber implements EventSubscriberInterface
         (new FilesystemAdapter($namespace))->clear();
     }
 }
-

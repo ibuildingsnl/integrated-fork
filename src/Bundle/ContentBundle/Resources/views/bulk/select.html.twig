@@ -166,13 +166,56 @@
     {{ parent() }}
 
     <script>
-        $(document).ready(function () {
-            $('#{{ form.vars['full_name'] }}_selection_all').click(function () {
-                $(':checkbox').prop('checked', $(this).prop('checked'));
-            });
+        (function initBulkSelectionToggler() {
+            function bind() {
+                var form = document.querySelector('form[name="{{ form.vars['full_name'] }}"]');
+                if (!form || form.dataset.boundBulkSelectionToggle === 'true') {
+                    return;
+                }
 
-            $('#{{ form.vars['full_name'] }}_selection_all').prop('checked', $('form[name="{{ form.vars['full_name'] }}"] tbody :checkbox:checked').length == $('form[name="{{ form.vars['full_name'] }}"] tbody :checkbox').length);
-        });
+                form.dataset.boundBulkSelectionToggle = 'true';
+
+                var toggle = form.querySelector('#{{ form.vars['full_name'] }}_selection_all');
+                if (!toggle) {
+                    return;
+                }
+
+                var checkboxes = Array.prototype.slice.call(
+                    form.querySelectorAll('tbody input[type="checkbox"]')
+                );
+
+                function syncToggleState() {
+                    var checked = checkboxes.filter(function (checkbox) {
+                        return checkbox.checked;
+                    }).length;
+
+                    toggle.checked = checkboxes.length > 0 && checked === checkboxes.length;
+                    toggle.indeterminate = checked > 0 && checked < checkboxes.length;
+                }
+
+                toggle.addEventListener('change', function () {
+                    checkboxes.forEach(function (checkbox) {
+                        checkbox.checked = toggle.checked;
+                    });
+
+                    syncToggleState();
+                });
+
+                checkboxes.forEach(function (checkbox) {
+                    checkbox.addEventListener('change', syncToggleState);
+                });
+
+                syncToggleState();
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', bind, { once: true });
+            } else {
+                bind();
+            }
+
+            document.addEventListener('turbo:load', bind);
+        })();
     </script>
 
 {% endblock javascript %}

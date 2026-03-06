@@ -12,10 +12,12 @@
 namespace Integrated\Bundle\SitemapBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Query\Builder;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Services\ContentTypeInformation;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,8 +55,9 @@ class DefaultController extends AbstractController
     {
         $channel = $this->getChannelOr404();
         $now = new \DateTimeImmutable();
-        $sections = $this->buildTypeSections($channel->getId(), $now);
-        $pagesCount = $this->getPagesSectionCount($channel->getId());
+        $channelId = (string) $channel->getId();
+        $sections = $this->buildTypeSections($channelId, $now);
+        $pagesCount = $this->getPagesSectionCount($channelId);
         if (!$sections && !$pagesCount) {
             throw new NotFoundHttpException();
         }
@@ -73,8 +76,9 @@ class DefaultController extends AbstractController
         $page = $this->getValidatedPage($page);
         $channel = $this->getChannelOr404();
         $now = new \DateTimeImmutable();
+        $channelId = (string) $channel->getId();
 
-        $documents = $this->createPublishedQueryBuilder($channel->getId(), $now)
+        $documents = $this->createPublishedQueryBuilder($channelId, $now)
             ->select('contentType', 'slug', 'createdAt', 'class')
             ->sort('_id')
             ->skip(($page - 1) * self::PAGE_SIZE)
@@ -93,10 +97,11 @@ class DefaultController extends AbstractController
     {
         $page = $this->getValidatedPage($page);
         $channel = $this->getChannelOr404();
-        $this->assertAllowedContentType($type, $channel->getId());
+        $channelId = (string) $channel->getId();
+        $this->assertAllowedContentType($type, $channelId);
         $now = new \DateTimeImmutable();
 
-        $documents = $this->createPublishedQueryBuilder($channel->getId(), $now)
+        $documents = $this->createPublishedQueryBuilder($channelId, $now)
             ->field('contentType')->equals($type)
             ->select('contentType', 'slug', 'createdAt', 'updatedAt', 'publishTime')
             ->sort('_id')
@@ -117,9 +122,10 @@ class DefaultController extends AbstractController
         $page = $this->getValidatedPage($page);
         $channel = $this->getChannelOr404();
         $now = new \DateTimeImmutable();
+        $channelId = (string) $channel->getId();
 
         $documents = $this->manager->createQueryBuilder(Page::class)
-            ->field('channel.$id')->equals($channel->getId())
+            ->field('channel.$id')->equals($channelId)
             ->field('disabled')->equals(false)
             ->field('path')->exists(true)
             ->field('path')->notEqual('')
@@ -137,7 +143,7 @@ class DefaultController extends AbstractController
         return $this->withCacheHeaders($request, $response, $now);
     }
 
-    private function getChannelOr404()
+    private function getChannelOr404(): ChannelInterface
     {
         $channel = $this->context->getChannel();
         if (!$channel) {
@@ -156,7 +162,7 @@ class DefaultController extends AbstractController
         return $page;
     }
 
-    private function createPublishedQueryBuilder(string $channelId, \DateTimeInterface $now)
+    private function createPublishedQueryBuilder(string $channelId, \DateTimeInterface $now): Builder
     {
         $queryBuilder = $this->manager->createQueryBuilder(Content::class);
 
@@ -173,6 +179,9 @@ class DefaultController extends AbstractController
             ->addOr($queryBuilder->expr()->field('primaryChannel')->exists(false));
     }
 
+    /**
+     * @return list<array{type: string, count: int}>
+     */
     private function buildTypeSections(string $channelId, \DateTimeInterface $now): array
     {
         $sections = [];
@@ -183,13 +192,14 @@ class DefaultController extends AbstractController
                 ->getQuery()
                 ->execute();
 
-            if (!$count) {
+            $countValue = $this->normalizeCount($count);
+            if ($countValue <= 0) {
                 continue;
             }
 
             $sections[] = [
                 'type' => $type,
-                'count' => min((int) ceil((int) $count / self::PAGE_SIZE), self::MAX_PAGE),
+                'count' => min((int) ceil($countValue / self::PAGE_SIZE), self::MAX_PAGE),
             ];
         }
 
@@ -207,7 +217,7 @@ class DefaultController extends AbstractController
             ->getQuery()
             ->execute();
 
-        return min((int) ceil((int) $count / self::PAGE_SIZE), self::MAX_PAGE);
+        return min((int) ceil($this->normalizeCount($count) / self::PAGE_SIZE), self::MAX_PAGE);
     }
 
     private function assertAllowedContentType(string $type, string $channelId): void
@@ -217,6 +227,7 @@ class DefaultController extends AbstractController
         }
     }
 
+    /** @return list<string> */
     private function getIndexableContentTypes(string $channelId): array
     {
         $allowed = $this->contentTypeInformation->getPublishingAllowedContentTypes($channelId);
@@ -232,11 +243,24 @@ class DefaultController extends AbstractController
         $response->setPublic();
         $response->setMaxAge(self::CACHE_TTL);
         $response->setSharedMaxAge(self::CACHE_TTL);
-        $response->headers->addCacheControlDirective('stale-while-revalidate', self::CACHE_TTL);
+        $response->headers->addCacheControlDirective('stale-while-revalidate', (string) self::CACHE_TTL);
         $response->setLastModified(\DateTimeImmutable::createFromInterface($generatedAt));
         $response->setEtag(sha1((string) $response->getContent()));
         $response->isNotModified($request);
 
         return $response;
+    }
+
+    private function normalizeCount(mixed $value): int
+    {
+        if (\is_int($value)) {
+            return $value;
+        }
+
+        if (is_numeric($value)) {
+            return (int) $value;
+        }
+
+        return 0;
     }
 }

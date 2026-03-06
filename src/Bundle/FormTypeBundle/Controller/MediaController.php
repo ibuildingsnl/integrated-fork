@@ -26,28 +26,53 @@ class MediaController extends AbstractController
 
     public function image(Request $request): Response
     {
-        if ($contentType = $request->query->get('contenttypes')) {
-            $request->query->set('contenttypes', [$contentType]);
-        }
+        $this->normalizeContentTypes($request);
 
         return $this->render('@IntegratedFormType/media/image.html.twig', $this->controller->indexComponent($request));
     }
 
     public function gallery(Request $request): Response
     {
-        if ($contentType = $request->query->get('contenttypes')) {
-            $request->query->set('contenttypes', [$contentType]);
-        }
+        $this->normalizeContentTypes($request);
 
         return $this->render('@IntegratedFormType/media/gallery.html.twig', $this->controller->indexComponent($request));
     }
 
     public function video(Request $request): Response
     {
-        if ($contentType = $request->query->get('contenttypes')) {
-            $request->query->set('contenttypes', [$contentType]);
-        }
+        $this->normalizeContentTypes($request);
 
         return $this->render('@IntegratedFormType/media/video.html.twig', $this->controller->indexComponent($request));
+    }
+
+    private function normalizeContentTypes(Request $request): void
+    {
+        $query = $request->query->all();
+        $raw = $query['contenttypes'] ?? null;
+
+        if (\is_array($raw)) {
+            $normalized = array_values(array_filter(array_map(static function (mixed $value): string {
+                return trim((string) $value);
+            }, $raw), static function (string $value): bool {
+                return '' !== $value;
+            }));
+
+            if ([] === $normalized) {
+                $request->query->remove('contenttypes');
+
+                return;
+            }
+
+            $request->query->set('contenttypes', $normalized);
+
+            return;
+        }
+
+        if (\is_scalar($raw)) {
+            $contentType = trim((string) $raw);
+            if ('' !== $contentType) {
+                $request->query->set('contenttypes', [$contentType]);
+            }
+        }
     }
 }

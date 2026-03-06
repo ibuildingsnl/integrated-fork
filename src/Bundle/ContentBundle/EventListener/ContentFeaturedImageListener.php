@@ -40,7 +40,7 @@ class ContentFeaturedImageListener implements EventSubscriberInterface
                 $image = $this->documentManager->getRepository(Content::class)->find(
                     $content->getFeaturedImage()->getId()
                 );
-                $changed = $this->syncSingleReferenceRelation($content, '__featured_image', 'embedded', $image) || $changed;
+                $changed = $this->syncSingleReferenceRelation($content, '__featured_image', 'embedded', $image);
             }
         }
 

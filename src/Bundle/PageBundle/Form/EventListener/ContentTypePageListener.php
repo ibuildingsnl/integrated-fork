@@ -103,7 +103,7 @@ class ContentTypePageListener implements EventSubscriberInterface
         $choices = [];
 
         foreach ($actions as $action) {
-            if (!\is_string($action) || '' === trim($action)) {
+            if ('' === trim($action)) {
                 continue;
             }
 

@@ -33,6 +33,7 @@ class WorkflowStateListenerTest extends TestCase
         $current->addTransition($otherDuplicate);
 
         $listener = new class($this->createMock(Definition::class)) extends WorkflowStateListener {
+            /** @return array<int|string, State> */
             public function exposeChoices(State $state): array
             {
                 return $this->getChoices($state);

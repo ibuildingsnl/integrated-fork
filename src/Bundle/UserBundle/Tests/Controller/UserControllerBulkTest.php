@@ -18,6 +18,52 @@ use Symfony\Component\HttpFoundation\Request;
 
 class UserControllerBulkTest extends TestCase
 {
+    public function testEnableRejectsInvalidCsrfToken(): void
+    {
+        [$controller, $manager] = $this->createController();
+        $controller->csrfValid = false;
+
+        $user = $this->createUser("disabled-user");
+        $user->setEnabled(false);
+
+        $manager->method("find")->with("1")->willReturn($user);
+        $manager->expects(self::never())->method("persist");
+
+        $request = new Request(["id" => "1"], ["enable_token" => "invalid"], [], [], [], ["REQUEST_METHOD" => "POST"]);
+        $response = $controller->enable($request);
+
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertSame("/integrated_user_user_index", $response->getTargetUrl());
+        self::assertSame("danger", $controller->flashes[0]["type"]);
+    }
+
+    public function testEnablePersistsUserWhenCsrfTokenIsValid(): void
+    {
+        [$controller, $manager, , , $logger] = $this->createController();
+        $controller->currentUser = $this->createUser("admin");
+
+        $user = $this->createUser("disabled-user");
+        $user->setEnabled(false);
+
+        $manager->method("find")->with("1")->willReturn($user);
+        $manager->expects(self::once())->method("persist")->with($user);
+
+        $logger->expects(self::once())->method("info")->with(
+            "User enabled",
+            self::callback(static function (array $context): bool {
+                return $context["actor"] === "admin" && $context["target_username"] === "disabled-user";
+            })
+        );
+
+        $request = new Request(["id" => "1"], ["enable_token" => "valid"], [], [], [], ["REQUEST_METHOD" => "POST"]);
+        $response = $controller->enable($request);
+
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertSame("/integrated_user_user_index", $response->getTargetUrl());
+        self::assertSame("success", $controller->flashes[0]["type"]);
+        self::assertTrue($user->isEnabled());
+    }
+
     public function testBulkRejectsInvalidCsrfToken(): void
     {
         [$controller] = $this->createController();
@@ -178,6 +224,7 @@ final class TestUserController extends UserController
     public bool $csrfValid = true;
     public bool $granted = true;
     public ?User $currentUser = null;
+    /** @var array<int, array{type: string, message: mixed}> */
     public array $flashes = [];
 
     protected function isGranted(mixed $attribute, mixed $subject = null): bool
@@ -195,6 +242,9 @@ final class TestUserController extends UserController
         $this->flashes[] = ['type' => $type, 'message' => $message];
     }
 
+    /**
+     * @param array<string, mixed> $parameters
+     */
     protected function redirectToRoute(string $route, array $parameters = [], int $status = 302): RedirectResponse
     {
         return new RedirectResponse('/'.$route, $status);

@@ -161,6 +161,25 @@ class UserManager implements UserManagerInterface
         return $builder->getQuery()->getOneOrNullResult();
     }
 
+    public function findEnabledByUsernameOrEmailAndScope($identifier, ?ScopeInterface $scope = null)
+    {
+        $builder = $this->createQueryBuilder()
+            ->select('User')
+            ->leftJoin('User.scope', 'Scope')
+            ->where('(User.username = :identifier OR User.email = :identifier)')
+            ->andWhere('User.enabled = true')
+            ->setParameter('identifier', $identifier);
+
+        if ($scope) {
+            $builder->andWhere('(User.scope = :scope)');
+            $builder->setParameter('scope', (int) $scope->getId());
+        } else {
+            $builder->andWhere('(Scope.admin = true)');
+        }
+
+        return $builder->getQuery()->getOneOrNullResult();
+    }
+
     /**
      * @return \Doctrine\ORM\QueryBuilder
      */

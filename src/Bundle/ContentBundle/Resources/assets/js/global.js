@@ -10,6 +10,9 @@ window.iframeWindow = '';
 window.popupShown = false;
 const CONTENT_NAVIGATOR_OPEN_FACETS_KEY = 'contentNavigator.openFacets.v1';
 const CONTENT_NAVIGATOR_ASIDE_SCROLL_KEY = 'contentNavigator.asideScrollTop.v1';
+const FLASH_MESSAGES_PERSIST_KEY = 'integrated.flashMessages.persist.v1';
+const SIDEBAR_MENU_SCROLL_KEY = 'integrated.sidebarMenu.scrollTop.v1';
+const SIDEBAR_MENU_OPEN_ITEMS_KEY = 'integrated.sidebarMenu.openItems.v1';
 const listSearchDebounceTimers = new WeakMap();
 
 $(document).mouseup(function(e) {
@@ -122,6 +125,8 @@ const init = () => {
         const filterElements = document.querySelectorAll('.aside-item-list');
         filterElements.forEach(openSelectedOptions);
     }
+
+    syncContentWrapperToolbarState();
 };
 
 function onSubmitButtonClick(e) {
@@ -179,6 +184,27 @@ function onEditorSectionClick(event) {
     if (editorHeader) {
         toggleOptionsElement(editorHeader);
     }
+}
+
+function syncContentWrapperToolbarState() {
+    const pageBody = document.body;
+    if (!pageBody) {
+        return;
+    }
+
+    const contentWrapper = document.querySelector('#wrapper-holder > .content-wrapper');
+    if (!contentWrapper) {
+        pageBody.classList.remove('has-content-toolbar');
+
+        return;
+    }
+
+    const toolbars = contentWrapper.querySelectorAll('#toolbar');
+    const hasSupportedToolbar = Array.from(toolbars).some((toolbar) => {
+        return !toolbar.closest('.style-guide-preview-surface');
+    });
+
+    pageBody.classList.toggle('has-content-toolbar', hasSupportedToolbar);
 }
 
 function showElement(el) {
@@ -309,10 +335,12 @@ function toggleOptionsElement(el) {
 function toggleSidebarElement(event) {
     popupShown = true;
     event.preventDefault();
-    const menu = event.currentTarget.parentNode.querySelector(
-        '.sub-menu-children');
+    const wrapper = event.currentTarget.parentNode;
+    const menu = wrapper.querySelector('.sub-menu-children');
     if (menu) {
+        const willOpen = !(wrapper.classList.contains('show') || menu.classList.contains('show'));
         toggleElement(menu);
+        persistSidebarMenuState(wrapper, willOpen);
     }
 }
 
@@ -429,6 +457,108 @@ function restoreAsideScrollPosition(root = document) {
     if (!Number.isNaN(scrollTop) && scrollTop > 0) {
         asideHolder.scrollTop = scrollTop;
     }
+}
+
+function restoreSidebarMenuScrollPosition(root = document) {
+    const rootNode = (root && typeof root.querySelector === 'function')
+        ? root
+        : ((root && root.target && typeof root.target.querySelector === 'function') ? root.target : document);
+
+    const sidebarMenu = rootNode.querySelector('.sidebar-menu');
+    if (!sidebarMenu) {
+        return;
+    }
+
+    const stored = sessionStorage.getItem(SIDEBAR_MENU_SCROLL_KEY);
+    const scrollTop = Number.parseInt(stored || '0', 10);
+    if (!Number.isNaN(scrollTop) && scrollTop > 0) {
+        sidebarMenu.scrollTop = scrollTop;
+    }
+}
+
+function persistSidebarMenuScrollPosition(root = document) {
+    const rootNode = (root && typeof root.querySelector === 'function')
+        ? root
+        : ((root && root.target && typeof root.target.querySelector === 'function') ? root.target : document);
+
+    const sidebarMenu = rootNode.querySelector('.sidebar-menu');
+    if (!sidebarMenu) {
+        return;
+    }
+
+    sessionStorage.setItem(SIDEBAR_MENU_SCROLL_KEY, String(sidebarMenu.scrollTop));
+}
+
+function getPersistedOpenSidebarMenuItems() {
+    let persisted = [];
+
+    try {
+        persisted = JSON.parse(sessionStorage.getItem(SIDEBAR_MENU_OPEN_ITEMS_KEY) || '[]');
+    } catch (error) {
+        persisted = [];
+    }
+
+    return new Set(Array.isArray(persisted) ? persisted : []);
+}
+
+function savePersistedOpenSidebarMenuItems(items) {
+    sessionStorage.setItem(SIDEBAR_MENU_OPEN_ITEMS_KEY, JSON.stringify(Array.from(items)));
+}
+
+function getSidebarMenuPersistenceKey(wrapper) {
+    if (!wrapper) {
+        return '';
+    }
+
+    const title = wrapper.querySelector('.menu-label .title');
+    return title ? title.textContent.trim() : '';
+}
+
+function persistSidebarMenuState(wrapper, isOpen) {
+    const key = getSidebarMenuPersistenceKey(wrapper);
+    if (!key) {
+        return;
+    }
+
+    const items = getPersistedOpenSidebarMenuItems();
+    if (isOpen) {
+        items.add(key);
+    } else {
+        items.delete(key);
+    }
+    savePersistedOpenSidebarMenuItems(items);
+}
+
+function applyPersistedSidebarMenuState(root = document) {
+    const items = getPersistedOpenSidebarMenuItems();
+    if (items.size === 0) {
+        return;
+    }
+
+    root.querySelectorAll('.sidebar-menu-wrapper .sidebar-sub-menu').forEach((wrapper) => {
+        const key = getSidebarMenuPersistenceKey(wrapper);
+        if (!key || !items.has(key) || wrapper.classList.contains('show')) {
+            return;
+        }
+
+        const list = wrapper.querySelector('.sub-menu-children');
+        if (!list) {
+            return;
+        }
+
+        wrapper.classList.add('show');
+        list.classList.add('show');
+        list.style.display = 'block';
+        list.style.height = '';
+    });
+}
+
+function restorePersistedSidebarMenuState(root = document) {
+    const rootNode = (root && typeof root.querySelector === 'function')
+        ? root
+        : ((root && root.target && typeof root.target.querySelector === 'function') ? root.target : document);
+
+    applyPersistedSidebarMenuState(rootNode);
 }
 
 function announceContentNavigatorResults(root = document) {
@@ -561,26 +691,153 @@ function initDismissibleAlerts() {
     }, 10000);
 }
 
+function clearBoundInitializationFlags() {
+    const selectors = [
+        '[data-bound-focus]',
+        '[data-bound-toggle-dropdown]',
+        '[data-bound-toggle-data-target]',
+        '[data-bound-toggle-sidebar]',
+        '[data-bound-toggle-options]',
+        '[data-bound-list-search]',
+        '[data-bound-submit-click]',
+        '[data-bound-aside-holder]',
+        '[data-bound-editor-section]',
+        '[data-bound-facet-persistence-change]',
+    ];
+
+    document.querySelectorAll(selectors.join(',')).forEach((element) => {
+        element.removeAttribute('data-bound-focus');
+        element.removeAttribute('data-bound-toggle-dropdown');
+        element.removeAttribute('data-bound-toggle-data-target');
+        element.removeAttribute('data-bound-toggle-sidebar');
+        element.removeAttribute('data-bound-toggle-options');
+        element.removeAttribute('data-bound-list-search');
+        element.removeAttribute('data-bound-submit-click');
+        element.removeAttribute('data-bound-aside-holder');
+        element.removeAttribute('data-bound-editor-section');
+        element.removeAttribute('data-bound-facet-persistence-change');
+    });
+}
+
+function flashMessageSignature(node) {
+    if (!(node instanceof HTMLElement)) {
+        return '';
+    }
+
+    const className = node.className || '';
+    const text = node.textContent ? node.textContent.replace(/\s+/g, ' ').trim() : '';
+
+    return `${className}::${text}`;
+}
+
+function stashFlashMessagesForNextVisit() {
+    if (typeof window.sessionStorage === 'undefined') {
+        return;
+    }
+
+    const flashContainer = document.getElementById('flash-messages');
+    if (!(flashContainer instanceof HTMLElement)) {
+        window.sessionStorage.removeItem(FLASH_MESSAGES_PERSIST_KEY);
+
+        return;
+    }
+
+    const alerts = Array.from(flashContainer.children).filter((child) => {
+        return child instanceof HTMLElement && child.classList.contains('alert');
+    });
+    const payload = alerts.map((alert) => alert.outerHTML);
+
+    if (payload.length === 0) {
+        window.sessionStorage.removeItem(FLASH_MESSAGES_PERSIST_KEY);
+
+        return;
+    }
+
+    window.sessionStorage.setItem(FLASH_MESSAGES_PERSIST_KEY, JSON.stringify(payload));
+}
+
+function restoreFlashMessagesFromPreviousVisit() {
+    if (typeof window.sessionStorage === 'undefined') {
+        return;
+    }
+
+    const flashContainer = document.getElementById('flash-messages');
+    if (!(flashContainer instanceof HTMLElement)) {
+        window.sessionStorage.removeItem(FLASH_MESSAGES_PERSIST_KEY);
+
+        return;
+    }
+
+    const rawPayload = window.sessionStorage.getItem(FLASH_MESSAGES_PERSIST_KEY);
+    window.sessionStorage.removeItem(FLASH_MESSAGES_PERSIST_KEY);
+    if (!rawPayload) {
+        return;
+    }
+
+    let payload = null;
+    try {
+        payload = JSON.parse(rawPayload);
+    } catch (error) {
+        return;
+    }
+
+    if (!Array.isArray(payload)) {
+        return;
+    }
+
+    payload.forEach((html) => {
+        if (typeof html !== 'string' || html.trim() === '') {
+            return;
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = html;
+
+        const alert = wrapper.firstElementChild;
+        if (!(alert instanceof HTMLElement) || !alert.classList.contains('alert')) {
+            return;
+        }
+
+        const signature = flashMessageSignature(alert);
+        const exists = Array.from(flashContainer.children).some((child) => {
+            return flashMessageSignature(child) === signature;
+        });
+        if (exists) {
+            return;
+        }
+
+        flashContainer.insertBefore(alert, flashContainer.firstChild);
+    });
+}
+
 // Initialization
 
+document.addEventListener('DOMContentLoaded', restoreFlashMessagesFromPreviousVisit);
 document.addEventListener('DOMContentLoaded', initDismissibleAlerts);
 document.addEventListener('DOMContentLoaded', hideButtonIfNoOptions);
 document.addEventListener('DOMContentLoaded', init);
 document.addEventListener('DOMContentLoaded', restorePersistedFacetState);
 document.addEventListener('DOMContentLoaded', restoreAsideScrollPosition);
+document.addEventListener('DOMContentLoaded', restoreSidebarMenuScrollPosition);
+document.addEventListener('DOMContentLoaded', restorePersistedSidebarMenuState);
 document.addEventListener('DOMContentLoaded', announceContentNavigatorResults);
 document.addEventListener('DOMContentLoaded', bindFacetPersistenceOnFilterChange);
+document.addEventListener('turbo:load', restoreFlashMessagesFromPreviousVisit);
 document.addEventListener('turbo:load', initDismissibleAlerts);
 document.addEventListener('turbo:load', hideButtonIfNoOptions);
 document.addEventListener('turbo:load', init);
 document.addEventListener('turbo:load', restorePersistedFacetState);
 document.addEventListener('turbo:load', restoreAsideScrollPosition);
+document.addEventListener('turbo:load', restoreSidebarMenuScrollPosition);
+document.addEventListener('turbo:load', restorePersistedSidebarMenuState);
 document.addEventListener('turbo:load', announceContentNavigatorResults);
 document.addEventListener('turbo:load', bindFacetPersistenceOnFilterChange);
 document.addEventListener('turbo:render', hideButtonIfNoOptions);
 document.addEventListener('turbo:render', init);
 document.addEventListener('turbo:render', restorePersistedFacetState);
 document.addEventListener('turbo:render', restoreAsideScrollPosition);
+document.addEventListener('turbo:render', restoreSidebarMenuScrollPosition);
+document.addEventListener('turbo:render', restorePersistedSidebarMenuState);
 document.addEventListener('turbo:render', announceContentNavigatorResults);
 document.addEventListener('turbo:render', bindFacetPersistenceOnFilterChange);
 document.addEventListener('turbo:before-frame-render', (event) => {
@@ -604,6 +861,7 @@ document.addEventListener('turbo:before-frame-render', (event) => {
 });
 document.addEventListener('turbo:submit-start', resetPopupState);
 document.addEventListener('turbo:before-render', resetPopupState);
+document.addEventListener('turbo:before-render', persistSidebarMenuScrollPosition);
 document.addEventListener('turbo:load', () => {
     if (window.registerIntegratedHandlebarsHelpers) {
         window.registerIntegratedHandlebarsHelpers();
@@ -615,8 +873,14 @@ document.addEventListener('turbo:render', () => {
     }
 });
 document.addEventListener('turbo:before-cache', () => {
+    persistSidebarMenuScrollPosition();
+    clearBoundInitializationFlags();
+    stashFlashMessagesForNextVisit();
+
     const flashContainer = document.getElementById('flash-messages');
     if (flashContainer) {
         flashContainer.innerHTML = '';
     }
 });
+
+window.addEventListener('beforeunload', persistSidebarMenuScrollPosition);

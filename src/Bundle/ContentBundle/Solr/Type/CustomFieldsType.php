@@ -26,6 +26,11 @@ class CustomFieldsType implements TypeInterface
         $customFields = $data->getCustomFields();
 
         foreach ($customFields as $key => $value) {
+            // Keep core/indexed fields authoritative when a custom field uses the same key.
+            if ($container->has($key)) {
+                continue;
+            }
+
             $container->add($key, $value);
         }
     }

@@ -12,8 +12,10 @@
 namespace Integrated\Bundle\SitemapBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Query\Builder;
 use Integrated\Bundle\ContentBundle\Document\Content\News;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,8 +52,9 @@ class NewsController extends AbstractController
         $page = $this->getValidatedPage($page);
         $channel = $this->getChannelOr404();
         $now = new \DateTimeImmutable();
+        $channelId = (string) $channel->getId();
 
-        $documents = $this->createPublishedNewsQueryBuilder($channel->getId(), $now)
+        $documents = $this->createPublishedNewsQueryBuilder($channelId, $now)
             ->select('contentType', 'slug', 'publishTime', 'title', 'createdAt', 'updatedAt')
             ->sort('createdAt', 'desc')
             ->skip(($page - 1) * self::PAGE_SIZE)
@@ -68,7 +71,7 @@ class NewsController extends AbstractController
         return $this->withCacheHeaders($request, $response, $now);
     }
 
-    private function getChannelOr404()
+    private function getChannelOr404(): ChannelInterface
     {
         $channel = $this->context->getChannel();
         if (!$channel) {
@@ -87,7 +90,7 @@ class NewsController extends AbstractController
         return $page;
     }
 
-    private function createPublishedNewsQueryBuilder(string $channelId, \DateTimeInterface $now)
+    private function createPublishedNewsQueryBuilder(string $channelId, \DateTimeInterface $now): Builder
     {
         $queryBuilder = $this->manager->createQueryBuilder(News::class);
 
@@ -110,7 +113,7 @@ class NewsController extends AbstractController
         $response->setPublic();
         $response->setMaxAge(self::CACHE_TTL);
         $response->setSharedMaxAge(self::CACHE_TTL);
-        $response->headers->addCacheControlDirective('stale-while-revalidate', self::CACHE_TTL);
+        $response->headers->addCacheControlDirective('stale-while-revalidate', (string) self::CACHE_TTL);
         $response->setLastModified(\DateTimeImmutable::createFromInterface($generatedAt));
         $response->setEtag(sha1((string) $response->getContent()));
         $response->isNotModified($request);

@@ -23,7 +23,7 @@ class BulkHandlersTest extends TestCase
 {
     public function testCanonicalHandlerUpdatesSourceAndSourceUrl(): void
     {
-        $content = new class() extends Content {
+        $content = new class extends Content {
             private ?string $source = null;
             private ?string $sourceUrl = null;
 
@@ -71,12 +71,12 @@ class BulkHandlersTest extends TestCase
 
         $handler->execute($content);
 
-        self::assertTrue(true);
+        self::addToAssertionCount(1);
     }
 
     public function testFeaturedHandlerUpdatesContent(): void
     {
-        $content = new class() extends Content {
+        $content = new class extends Content {
             public function __toString(): string
             {
                 return '';
@@ -91,7 +91,7 @@ class BulkHandlersTest extends TestCase
 
     public function testPremiumHandlerUpdatesContent(): void
     {
-        $content = new class() extends Content {
+        $content = new class extends Content {
             public function __toString(): string
             {
                 return '';
@@ -109,7 +109,7 @@ class BulkHandlersTest extends TestCase
         $start = new \DateTimeImmutable('2026-01-01 10:00:00');
         $end = new \DateTimeImmutable('2026-01-02 20:00:00');
 
-        $content = new class() extends Content {
+        $content = new class extends Content {
             public function __toString(): string
             {
                 return '';
@@ -130,6 +130,6 @@ class BulkHandlersTest extends TestCase
 
         $handler->execute($content);
 
-        self::assertTrue(true);
+        self::addToAssertionCount(1);
     }
 }

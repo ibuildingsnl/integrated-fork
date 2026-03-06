@@ -1,0 +1,44 @@
+<script>
+(function () {
+    const initSearchSelectionCustomSort = function(root) {
+        const scope = root instanceof Element ? root : document;
+        const sortSelects = scope.querySelectorAll('select[id$="_sort"], select[name$="[sort]"]');
+
+        sortSelects.forEach(function(sortSelect) {
+            if (sortSelect.dataset.searchSelectionCustomSortBound === '1') {
+                return;
+            }
+
+            const form = sortSelect.closest('form');
+            if (!form) {
+                return;
+            }
+
+            const customSortInput = form.querySelector('input[id$="_customSort"], input[name$="[customSort]"]');
+            if (!customSortInput) {
+                return;
+            }
+
+            const customSortRow = customSortInput.closest('.search-selection-custom-sort-row')
+                || customSortInput.closest('.form-item')
+                || customSortInput.parentElement;
+
+            const syncVisibility = function() {
+                const showCustomSort = sortSelect.value === '__custom__';
+
+                if (customSortRow) {
+                    customSortRow.style.display = showCustomSort ? '' : 'none';
+                }
+
+                customSortInput.disabled = !showCustomSort;
+            };
+
+            sortSelect.addEventListener('change', syncVisibility);
+            sortSelect.dataset.searchSelectionCustomSortBound = '1';
+            syncVisibility();
+        });
+    };
+
+    initSearchSelectionCustomSort(document);
+})();
+</script>
