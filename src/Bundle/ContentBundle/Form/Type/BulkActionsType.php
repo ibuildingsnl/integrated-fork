@@ -46,6 +46,7 @@ class BulkActionsType extends AbstractType
                 [
                     'config' => $config,
                     'mapped' => false,
+                    'disabled' => $options['readonly'],
                 ]
             );
 

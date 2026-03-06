@@ -588,11 +588,11 @@ video {
 .left-0 {
   left: 0px;
 }
-.m-auto {
-  margin: auto;
-}
 .m-0 {
   margin: 0px;
+}
+.m-auto {
+  margin: auto;
 }
 .mb-0 {
   margin-bottom: 0px;
@@ -629,9 +629,6 @@ video {
 }
 .mt-8 {
   margin-top: 2rem;
-}
-.ml-auto {
-  margin-left: auto;
 }
 .line-clamp-1 {
   overflow: hidden;
@@ -757,9 +754,6 @@ video {
 .items-start {
   align-items: flex-start;
 }
-.items-end {
-  align-items: flex-end;
-}
 .items-center {
   align-items: center;
 }
@@ -823,6 +817,12 @@ video {
 .border {
   border-width: 1px;
 }
+.border-0 {
+  border-width: 0px;
+}
+.border-b {
+  border-bottom-width: 1px;
+}
 .border-b-0 {
   border-bottom-width: 0px;
 }
@@ -834,9 +834,6 @@ video {
 }
 .border-t-0 {
   border-top-width: 0px;
-}
-.border-b {
-  border-bottom-width: 1px;
 }
 .\!border-red-400 {
   --tw-border-opacity: 1 !important;
@@ -854,13 +851,15 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(0 123 103 / var(--tw-bg-opacity, 1));
 }
+.bg-transparent {
+  background-color: transparent;
+}
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
-.bg-gray-100 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
+.p-0 {
+  padding: 0px;
 }
 .p-2 {
   padding: 0.5rem;
@@ -957,6 +956,9 @@ video {
 }
 .filter {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+.backdrop-filter {
+  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
 }
 .transition {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
@@ -1114,7 +1116,6 @@ select.form-control {
 .form-group .checkbox, .form-item .checkbox {
   background-color: white;
   border-radius: 8px;
-  border: 1px solid #dfe3e9;
   max-width: 750px;
 }
 .form-group .checkbox label, .form-item .checkbox label {
@@ -1340,6 +1341,11 @@ label {
   max-width: 100%;
 }
 
+input#bulk-date-from,
+input#bulk-date-to {
+  padding: 3px 1rem;
+}
+
 /* List group form */
 .form-list-group {
   border: 1px solid #DEE3E9;
@@ -1552,7 +1558,7 @@ label {
   padding: 0.5rem 1rem;
   background-color: white;
   border-radius: 8px;
-  border: 1px solid #dfe3e9;
+  border: none !important;
   /* Hide the browser's default checkbox */
   /* Create a custom checkbox */
   /* On mouse-over, add a grey background color */
@@ -1632,9 +1638,20 @@ label {
 .form-item .control-label {
   display: flex;
   align-items: center;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.5);
 }
 .form-item:last-child {
   margin: 0;
+}
+
+label.control-label {
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .remove {

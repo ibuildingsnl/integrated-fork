@@ -3,7 +3,7 @@
 
     <div class="row">
         {% block form_start %}
-            {{ form_start(form) }}
+            {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
         {% endblock %}
         {% block toolbar %}
             <div id="toolbar" class="w-full flex justify-between">
@@ -46,15 +46,188 @@
 
 {% endblock %}
 
+{% block style %}
+{{ parent() }}
+
+<link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/edit.css') }}">
+
+<style>
+    .aside-item-wrapper {
+        overflow: visible;
+    }
+
+    .integrated_content_bulk_confirm .aside-item-wrapper {
+        max-width: 750px;
+    }
+
+    .integrated_content_bulk_confirm .aside-item-wrapper .aside-item-list {
+        display: block;
+        height: 100%;
+        padding: .5rem;
+    }
+
+    .integrated_content_bulk_confirm .aside-item-wrapper .aside-item-list .aside-item-list-container {
+        height: 100%;
+    }
+
+    .integrated_content_bulk_confirm .bulk-taxonomy-category .checkbox {
+        border: none;
+    }
+
+    .integrated_content_bulk_confirm .bulk-taxonomy-category .category_wrapper:not(.show) .togglefullscreen {
+        right: -55px;
+        top: -7px;
+        background: none;
+    }
+
+    .integrated_content_bulk_confirm .bulk-action-toolbar {
+        margin-bottom: 1rem;
+        padding: .75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: .5rem;
+        background: #f8fafc;
+    }
+
+    .integrated_content_bulk_confirm .bulk-action-toolbar .bulk-action-picker {
+        display: flex;
+        gap: .5rem;
+        align-items: center;
+        margin-bottom: .5rem;
+    }
+
+    .integrated_content_bulk_confirm .bulk-action-toolbar .bulk-action-picker select {
+        min-width: 280px;
+        max-width: 420px;
+        padding: 3px 1rem;
+    }
+
+    .integrated_content_bulk_confirm .bulk-action-toolbar .bulk-action-selected-title {
+        font-weight: 600;
+        margin-right: .5rem;
+    }
+
+    .integrated_content_bulk_confirm .bulk-action-toolbar .bulk-action-chips {
+        display: flex;
+        gap: .5rem;
+        flex-wrap: wrap;
+    }
+
+    .integrated_content_bulk_confirm .bulk-action-toolbar .bulk-action-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        background: #ffffff;
+        border: 1px solid #d1d5db;
+        border-radius: 999px;
+        padding: .2rem .55rem;
+        font-size: .875rem;
+    }
+
+    .integrated_content_bulk_confirm .bulk-action-toolbar .bulk-action-chip-remove {
+        border: none;
+        background: transparent;
+        padding: 0;
+        line-height: 1;
+    }
+
+    .integrated_content_bulk_confirm .bulk-action-toolbar .bulk-action-empty {
+        color: #64748b;
+        font-size: .875rem;
+    }
+
+    .integrated_content_bulk_confirm #integrated_content_bulk_confirm_actions > .form-group {
+        max-width: 750px;
+        margin-bottom: .75rem;
+        padding: .75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: .5rem;
+    }
+
+    .integrated_content_bulk_confirm .bulk-action-title {
+        font-weight: 600;
+        margin-bottom: .5rem;
+    }
+
+    .integrated_content_bulk_confirm .tailwind-datetime {
+        padding-right: 180px;
+        padding-top: 0;
+        align-items: center;
+    }
+
+    .integrated_content_bulk_confirm .tailwind-datetime input[type=date] {
+        width: 165px;
+    }
+
+    .integrated_content_bulk_confirm .tailwind-datetime input[type=time] {
+        margin-left: .5rem;
+        margin-right: .5rem;
+        width: 120px;
+    }
+
+    .integrated_content_bulk_confirm .tailwind-datetime .ok-date {
+        height: 33px;
+        line-height: 33px;
+        margin-left: auto;
+    }
+
+    .integrated_content_bulk_confirm .tailwind-datetime .set-now-date {
+        top: 0;
+        right: 55px;
+        height: 33px;
+        line-height: 33px;
+        background: #fff;
+    }
+
+    .integrated_content_bulk_confirm .tailwind-datetime .clear-date {
+        top: 0;
+        right: 0;
+        height: 33px;
+        line-height: 33px;
+        background: #fff;
+    }
+
+    .integrated_content_bulk_confirm .date-text {
+        border: 1px solid #dee3e9;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        min-height: 33px;
+        padding: 0 .75rem;
+    }
+
+    .integrated_content_bulk_confirm .bulk-relation-options {
+        display: inline-flex;
+        align-items: center;
+        gap: .75rem;
+        margin-top: .5rem;
+        max-width: 750px;
+        flex-wrap: wrap;
+    }
+
+    .integrated_content_bulk_confirm .bulk-relation-options-label {
+        font-weight: 500;
+    }
+</style>
+{% endblock style %}
+
 {% block javascript %}
 {{ parent() }}
 
 <script>
-    $(document).ready(function () {
-        implementSelect2();
-    });
+    (function () {
+        function initBulkConfirm() {
+            if (window.jQuery && typeof window.implementSelect2 === 'function') {
+                window.implementSelect2();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initBulkConfirm);
+        document.addEventListener('turbo:load', initBulkConfirm);
+    })();
 </script>
 
 <script src="{{ asset('bundles/integratedcontent/js/bulk_relation.js') }}" defer data-turbo-track="reload"></script>
+<script src="{{ asset('bundles/integratedcontent/js/bulk_taxonomy_category.js') }}" defer data-turbo-track="reload"></script>
+<script src="{{ asset('bundles/integratedcontent/js/bulk_publish_window.js') }}" defer data-turbo-track="reload"></script>
 
 {% endblock javascript %}

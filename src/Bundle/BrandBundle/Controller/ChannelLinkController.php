@@ -15,6 +15,7 @@ use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
 use Integrated\Common\Channel\Event\ChannelEvent;
 use Integrated\Common\Channel\Events;
 use Integrated\Common\Services\Flusher;
+use Symfony\Component\Form\FormError;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,6 +59,16 @@ class ChannelLinkController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if (!$link->channel instanceof Channel) {
+                $form->addError(new FormError('Please select an existing channel.'));
+
+                return $this->render('@IntegratedBrand/brand/channel_add.html.twig', [
+                    'linkType' => $channelType,
+                    'brand' => $brand,
+                    'form' => $form,
+                ]);
+            }
+
             $brand->addChannelLink($link);
             $this->dm->persist($link->channel);
 
@@ -81,6 +92,7 @@ class ChannelLinkController extends AbstractController
     public function editChannel(Request $request, Brand $brand, ChannelLink $link): Response
     {
         $this->checkPermissions();
+        $this->assertLinkBelongsToBrand($brand, $link);
 
         $form = $this->createForm(ChannelFormType::class, $link->channel, [
             'method' => 'PUT',
@@ -118,6 +130,7 @@ class ChannelLinkController extends AbstractController
     public function removeChannel(Request $request, Brand $brand, ChannelLink $link): Response
     {
         $this->checkPermissions();
+        $this->assertLinkBelongsToBrand($brand, $link);
 
         $form = $this->createFormBuilder()
             ->setMethod(Request::METHOD_DELETE)
@@ -151,6 +164,13 @@ class ChannelLinkController extends AbstractController
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
+        }
+    }
+
+    private function assertLinkBelongsToBrand(Brand $brand, ChannelLink $link): void
+    {
+        if (!$brand->hasChannelLink($link)) {
+            throw $this->createNotFoundException('Channel link not found for this brand.');
         }
     }
 }

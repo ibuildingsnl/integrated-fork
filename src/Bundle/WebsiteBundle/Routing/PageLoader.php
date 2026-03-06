@@ -49,7 +49,7 @@ class PageLoader implements LoaderInterface
 
         $routes = new RouteCollection();
 
-        $pages = $this->dm->getRepository(Page::class)->findBy(['disabled' => false]);
+        $pages = $this->dm->getRepository(Page::class)->findAll();
 
         /** @var Page $page */
         foreach ($pages as $page) {

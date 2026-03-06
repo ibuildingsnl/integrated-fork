@@ -144,6 +144,13 @@ class Content extends AbstractType
         $resolver->setNormalizer('sort', function (Options $options, $value) {
             $value = strtolower(trim($value));
 
+            if (str_starts_with($value, 'custom:')) {
+                // Support custom sort fields (for example from search selections).
+                $sortOption = explode(' ', $value, 2);
+
+                return substr($sortOption[0], 7);
+            }
+
             if ($this->sorting->hasByField($value)) {
                 // rel is only allowed if there is a query
                 if ($value !== 'rel' || $options['q']) {
@@ -161,8 +168,20 @@ class Content extends AbstractType
         $resolver->setNormalizer('order', function (Options $options, $value) {
             $value = strtolower(trim($value));
 
+            if (str_starts_with($value, 'custom:')) {
+                // Support "custom:<field> <order>" value style.
+                $sortOption = explode(' ', $value, 2);
+
+                return $sortOption[1] ?? 'asc';
+            }
+
             if (\is_string($value) && \in_array($value, ['asc', 'desc'])) {
                 return $value;
+            }
+
+            if (!$this->sorting->hasByField($options['sort'])) {
+                // Custom sort fields are not part of the default sort option list.
+                return 'asc';
             }
 
             return $this->sorting->getByField($options['sort'])->order;
@@ -201,8 +220,26 @@ class Content extends AbstractType
         ]);
 
         $arrayNormalizer = function (Options $options, $value) {
+            if (\is_string($value)) {
+                $value = trim($value);
+                return '' !== $value ? [$value] : [];
+            }
+
             if (\is_array($value)) {
-                return array_filter(array_map('trim', $value));
+                $values = [];
+
+                foreach ($value as $item) {
+                    if (!\is_string($item)) {
+                        continue;
+                    }
+
+                    $item = trim($item);
+                    if ('' !== $item) {
+                        $values[] = $item;
+                    }
+                }
+
+                return $values;
             }
 
             return [];

@@ -16,7 +16,7 @@
 {% block content %}
     <div class="row">
         {% block form_start %}
-            {{ form_start(form, { 'style': 'inline' }) }}
+            {{ form_start(form, { 'style': 'inline', 'attr': {'data-turbo': 'false'} }) }}
         {% endblock %}
         {% block toolbar %}
             <div id="toolbar" class="w-full flex justify-between">
@@ -46,6 +46,16 @@
                     <hr/>
 
                     {{ form_errors(form) }}
+                    <div id="bulk-action-toolbar"
+                         class="bulk-action-toolbar"
+                         data-placeholder="{{ 'Choose operation'|trans }}"
+                         data-selected-label="{{ 'Selected operations'|trans }}"
+                         data-empty-label="{{ 'No operations selected yet.'|trans }}"
+                         data-group-add="{{ 'Add'|trans({}, 'messages') }}"
+                         data-group-remove="{{ 'Remove'|trans({}, 'messages') }}"
+                         data-group-fields="{{ 'Fields'|trans }}"
+                         data-group-channels="{{ 'Channels'|trans }}">
+                    </div>
                     {{ form_row(form.actions, {'style': 'horizontal'}) }}
 
                 </section>
@@ -56,31 +66,438 @@
 
 {% endblock content %}
 
+{% block style %}
+{{ parent() }}
+
+<link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/edit.css') }}">
+
+<style>
+    .aside-item-wrapper {
+        overflow: visible;
+    }
+
+    .integrated_content_bulk_configure .aside-item-wrapper {
+        max-width: 750px;
+    }
+
+    .integrated_content_bulk_configure .aside-item-wrapper .aside-item-list {
+        display: block;
+        height: 100%;
+        padding: .5rem;
+    }
+
+    .integrated_content_bulk_configure .aside-item-wrapper .aside-item-list .aside-item-list-container {
+        height: 100%;
+    }
+
+    .integrated_content_bulk_configure .bulk-taxonomy-category .checkbox {
+        border: none;
+    }
+
+    .integrated_content_bulk_configure .bulk-taxonomy-category .category_wrapper:not(.show) .togglefullscreen {
+        right: -7px;
+        top: -43px;
+        background: none;
+        width: 30px;
+        height: 30px;
+        background-color: #01ae93;
+        color: white;
+        border: 1px;
+    }
+
+    .integrated_content_bulk_configure .bulk-action-toolbar {
+        margin-bottom: 1rem;
+        padding: .75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: .5rem;
+        background: #f8fafc;
+    }
+
+    .integrated_content_bulk_configure .bulk-action-toolbar .bulk-action-picker {
+        display: flex;
+        gap: .5rem;
+        align-items: center;
+        margin-bottom: .5rem;
+    }
+
+    .integrated_content_bulk_configure .bulk-action-toolbar .bulk-action-picker select {
+        min-width: 280px;
+        max-width: 420px;
+        padding: 3px 1rem;
+    }
+
+    .integrated_content_bulk_configure .bulk-action-toolbar .bulk-action-selected-title {
+        font-weight: 600;
+        margin-right: .5rem;
+    }
+
+    .integrated_content_bulk_configure .bulk-action-toolbar .bulk-action-chips {
+        display: flex;
+        gap: .5rem;
+        flex-wrap: wrap;
+    }
+
+    .integrated_content_bulk_configure .bulk-action-toolbar .bulk-action-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        background: #ffffff;
+        border: 1px solid #d1d5db;
+        border-radius: 999px;
+        padding: .2rem .55rem;
+        font-size: .875rem;
+    }
+
+    .integrated_content_bulk_configure .bulk-action-toolbar .bulk-action-chip-remove {
+        border: none;
+        background: transparent;
+        padding: 0;
+        line-height: 1;
+    }
+
+    .integrated_content_bulk_configure .bulk-action-toolbar .bulk-action-empty {
+        color: #64748b;
+        font-size: .875rem;
+    }
+
+    .integrated_content_bulk_configure #integrated_content_bulk_configure_actions > .form-group {
+        max-width: 750px;
+        margin-bottom: .75rem;
+        padding: .75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: .5rem;
+    }
+
+    .integrated_content_bulk_configure .bulk-action-title {
+        font-weight: 600;
+        margin-bottom: .5rem;
+    }
+
+    .integrated_content_bulk_configure .tailwind-datetime {
+        padding-right: 180px;
+        padding-top: 0;
+        align-items: center;
+    }
+
+    .integrated_content_bulk_configure .tailwind-datetime input[type=date] {
+        width: 165px;
+    }
+
+    .integrated_content_bulk_configure .tailwind-datetime input[type=time] {
+        margin-left: .5rem;
+        margin-right: .5rem;
+        width: 120px;
+    }
+
+    .integrated_content_bulk_configure .tailwind-datetime .ok-date {
+        height: 33px;
+        line-height: 33px;
+        margin-left: auto;
+    }
+
+    .integrated_content_bulk_configure .tailwind-datetime .set-now-date {
+        top: 0;
+        right: 55px;
+        height: 33px;
+        line-height: 33px;
+        background: #fff;
+    }
+
+    .integrated_content_bulk_configure .tailwind-datetime .clear-date {
+        top: 0;
+        right: 0;
+        height: 33px;
+        line-height: 33px;
+        background: #fff;
+    }
+
+    .integrated_content_bulk_configure .date-text {
+        border: 1px solid #dee3e9;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        min-height: 33px;
+        padding: 0 .75rem;
+    }
+
+    .integrated_content_bulk_configure .bulk-relation-options {
+        display: inline-flex;
+        align-items: center;
+        gap: .75rem;
+        margin-top: .5rem;
+        max-width: 750px;
+        flex-wrap: wrap;
+    }
+
+    .integrated_content_bulk_configure .bulk-relation-options-label {
+        font-weight: 700;
+        display: block;
+        width: 100%;
+    }
+</style>
+{% endblock style %}
+
 {% block javascript %}
 {{ parent() }}
 
 <script>
-    $(document).ready(function () {
-        implementSelect2();
+    (function () {
+        function getActionGroups(actionsContainer) {
+            var groups = [];
 
-        $('[data-action-toggle="1"] input:checkbox')
-            .click(toggle)
-            .each(toggle);
+            Array.prototype.forEach.call(actionsContainer.children, function (child) {
+                if (child.classList && child.classList.contains('form-group')) {
+                    groups.push(child);
+                }
+            });
 
-        function toggle() {
-            var self = $(this);
-
-            if (self.is(':checked')) {
-                self.parents('[data-action-toggle="1"]').next().show();
-            } else {
-                self.parents('[data-action-toggle="1"]').next().hide();
-            }
+            return groups;
         }
-    });
+
+        function syncToggle(checkbox) {
+            var toggleContainer = checkbox.closest('[data-action-toggle="1"]');
+            if (!toggleContainer) {
+                return;
+            }
+
+            var details = toggleContainer.nextElementSibling;
+            if (!details) {
+                return;
+            }
+
+            details.classList.toggle('hidden', !checkbox.checked);
+        }
+
+        function ensureToolbar(toolbarHost) {
+            if (!toolbarHost.querySelector('[data-bulk-action-picker="1"]')) {
+                var placeholder = toolbarHost.getAttribute('data-placeholder') || 'Choose operation';
+                var selectedLabel = toolbarHost.getAttribute('data-selected-label') || 'Selected operations';
+                var emptyLabel = toolbarHost.getAttribute('data-empty-label') || 'No operations selected yet.';
+
+                toolbarHost.innerHTML = ''
+                    + '<div class="bulk-action-picker" data-bulk-action-picker="1">'
+                    + '<select class="form-control" data-bulk-action-select="1"></select>'
+                    + '</div>'
+                    + '<div class="bulk-action-selection">'
+                    + '<span class="bulk-action-selected-title">' + selectedLabel + '</span>'
+                    + '<div class="bulk-action-chips" data-bulk-action-chips="1"></div>'
+                    + '<div class="bulk-action-empty" data-bulk-action-empty="1">' + emptyLabel + '</div>'
+                    + '</div>';
+
+                toolbarHost.setAttribute('data-bulk-action-placeholder', placeholder);
+            }
+
+            return {
+                placeholder: toolbarHost.getAttribute('data-bulk-action-placeholder') || 'Choose operation',
+                select: toolbarHost.querySelector('[data-bulk-action-select="1"]'),
+                chips: toolbarHost.querySelector('[data-bulk-action-chips="1"]'),
+                empty: toolbarHost.querySelector('[data-bulk-action-empty="1"]'),
+                groupLabels: {
+                    add: toolbarHost.getAttribute('data-group-add') || 'Toevoegen',
+                    remove: toolbarHost.getAttribute('data-group-remove') || 'Verwijderen',
+                    fields: toolbarHost.getAttribute('data-group-fields') || 'Fields',
+                    channels: toolbarHost.getAttribute('data-group-channels') || 'Channels'
+                },
+            };
+        }
+
+        function initBulkConfigure() {
+            if (window.jQuery && typeof window.implementSelect2 === 'function') {
+                window.implementSelect2();
+            }
+
+            var actionsContainer = document.getElementById('integrated_content_bulk_configure_actions');
+            if (!actionsContainer || actionsContainer.dataset.bulkUiBound === '1') {
+                return;
+            }
+
+            var toolbarHost = document.getElementById('bulk-action-toolbar');
+            var toolbar = toolbarHost ? ensureToolbar(toolbarHost) : null;
+
+            var actionGroups = getActionGroups(actionsContainer).map(function (group) {
+                var toggleContainer = group.querySelector('[data-action-toggle="1"]');
+                if (!toggleContainer) {
+                    return null;
+                }
+
+                var checkbox = toggleContainer.querySelector('input[type="checkbox"]');
+                if (!checkbox) {
+                    return null;
+                }
+
+                var labelNode = toggleContainer.querySelector('.checkbox-container');
+                var label = labelNode ? labelNode.textContent.trim().replace(/\s+/g, ' ') : checkbox.id;
+
+                return {
+                    id: checkbox.id,
+                    group: group,
+                    checkbox: checkbox,
+                    label: label,
+                };
+            }).filter(function (item) {
+                return item !== null;
+            });
+
+            function getActionGroupKey(action) {
+                var id = action.id.toLowerCase();
+
+                if (id.indexOf('addchannel') !== -1 || id.indexOf('add_') !== -1) {
+                    return 'add';
+                }
+
+                if (id.indexOf('removechannel') !== -1 || id.indexOf('remove_') !== -1 || id.indexOf('delete') !== -1) {
+                    return 'remove';
+                }
+
+                return 'fields';
+            }
+
+            function activateActionById(id) {
+                actionGroups.forEach(function (action) {
+                    if (action.id !== id) {
+                        return;
+                    }
+
+                    action.checkbox.checked = true;
+                    action.checkbox.dispatchEvent(new Event('change', {bubbles: true}));
+                });
+            }
+
+            function deactivateActionById(id) {
+                actionGroups.forEach(function (action) {
+                    if (action.id !== id) {
+                        return;
+                    }
+
+                    action.checkbox.checked = false;
+                    action.checkbox.dispatchEvent(new Event('change', {bubbles: true}));
+                });
+            }
+
+            function renderToolbar() {
+                if (!toolbar) {
+                    return;
+                }
+
+                var currentValue = toolbar.select.value;
+
+                toolbar.select.innerHTML = '';
+
+                var placeholderOption = document.createElement('option');
+                placeholderOption.value = '';
+                placeholderOption.textContent = toolbar.placeholder;
+                toolbar.select.appendChild(placeholderOption);
+
+                var selectedCount = 0;
+                toolbar.chips.innerHTML = '';
+                var groupedOptions = {
+                    add: [],
+                    remove: [],
+                    fields: [],
+                    channels: []
+                };
+
+                actionGroups.forEach(function (action) {
+                    action.group.classList.toggle('hidden', !action.checkbox.checked);
+                    syncToggle(action.checkbox);
+
+                    if (action.checkbox.checked) {
+                        selectedCount += 1;
+
+                        var chip = document.createElement('span');
+                        chip.className = 'bulk-action-chip';
+                        chip.textContent = action.label;
+
+                        var removeButton = document.createElement('button');
+                        removeButton.type = 'button';
+                        removeButton.className = 'bulk-action-chip-remove';
+                        removeButton.innerHTML = '<i class="iconoir-xmark"></i>';
+                        removeButton.addEventListener('click', function () {
+                            deactivateActionById(action.id);
+                        });
+
+                        chip.appendChild(removeButton);
+                        toolbar.chips.appendChild(chip);
+
+                        return;
+                    }
+
+                    var option = document.createElement('option');
+                    option.value = action.id;
+                    option.textContent = action.label;
+                    groupedOptions[getActionGroupKey(action)].push(option);
+                });
+
+                ['add', 'remove', 'fields', 'channels'].forEach(function (groupKey) {
+                    var options = groupedOptions[groupKey];
+
+                    if (!options.length) {
+                        return;
+                    }
+
+                    var optgroup = document.createElement('optgroup');
+                    optgroup.label = toolbar.groupLabels[groupKey];
+
+                    options.forEach(function (option) {
+                        optgroup.appendChild(option);
+                    });
+
+                    toolbar.select.appendChild(optgroup);
+                });
+
+                var hasCurrentValue = false;
+                Array.prototype.forEach.call(toolbar.select.options, function (option) {
+                    if (option.value === currentValue) {
+                        hasCurrentValue = true;
+                    }
+                });
+
+                if (currentValue && hasCurrentValue) {
+                    toolbar.select.value = currentValue;
+                } else {
+                    toolbar.select.value = '';
+                }
+
+                toolbar.empty.style.display = selectedCount > 0 ? 'none' : '';
+            }
+
+            actionGroups.forEach(function (action) {
+                if (action.checkbox.dataset.bulkActionBound !== '1') {
+                    action.checkbox.addEventListener('change', function () {
+                        renderToolbar();
+                    });
+                    action.checkbox.dataset.bulkActionBound = '1';
+                }
+            });
+
+            if (toolbar) {
+                if (toolbar.select.dataset.bulkActionSelectBound !== '1') {
+                    toolbar.select.addEventListener('change', function () {
+                        if (!toolbar.select.value) {
+                            return;
+                        }
+
+                        activateActionById(toolbar.select.value);
+                    });
+                    toolbar.select.dataset.bulkActionSelectBound = '1';
+                }
+            }
+
+            renderToolbar();
+            actionsContainer.dataset.bulkUiBound = '1';
+        }
+
+        document.addEventListener('DOMContentLoaded', initBulkConfigure);
+        document.addEventListener('turbo:load', initBulkConfigure);
+    })();
 
 </script>
 
 <script src="{{ asset('bundles/integratedcontent/js/bulk_relation.js') }}" defer data-turbo-track="reload">
+</script>
+<script src="{{ asset('bundles/integratedcontent/js/bulk_taxonomy_category.js') }}" defer data-turbo-track="reload">
+</script>
+<script src="{{ asset('bundles/integratedcontent/js/bulk_publish_window.js') }}" defer data-turbo-track="reload">
 </script>
 
 {% endblock javascript %}

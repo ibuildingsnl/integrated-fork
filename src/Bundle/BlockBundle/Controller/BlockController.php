@@ -24,6 +24,7 @@ use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Content\Form\Event\BlockEvent;
 use Integrated\Common\Content\Form\Events;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
+use Integrated\Common\Security\Permissions;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -33,6 +34,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class BlockController extends AbstractController
 {
+    private ?array $allowedBlockClasses = null;
+
     public function __construct(
         private MetadataFactoryInterface $metadataFactory,
         private DocumentManager $documentManager,
@@ -92,7 +95,21 @@ class BlockController extends AbstractController
 
         $class = $request->get('class');
 
-        $block = class_exists($class) ? new $class() : null;
+        if (
+            !\is_string($class)
+            || $class === ''
+            || !class_exists($class)
+            || !is_subclass_of($class, Block::class)
+            || !$this->isAllowedBlockClass($class)
+        ) {
+            throw $this->createNotFoundException(\sprintf('Invalid block "%s"', (string) $class));
+        }
+
+        try {
+            $block = new $class();
+        } catch (\Throwable) {
+            throw $this->createNotFoundException(\sprintf('Invalid block "%s"', $class));
+        }
 
         if (!$block instanceof BlockInterface) {
             throw $this->createNotFoundException(\sprintf('Invalid block "%s"', $class));
@@ -250,6 +267,14 @@ class BlockController extends AbstractController
      */
     public function usedBy(Content $content, Request $request)
     {
+        if (
+            !$this->isGranted('ROLE_WEBSITE_MANAGER')
+            && !$this->isGranted('ROLE_ADMIN')
+            && !$this->isGranted(Permissions::EDIT, $content)
+        ) {
+            throw $this->createAccessDeniedException();
+        }
+
         $query = $this->documentManager
             ->createQueryBuilder(Block::class)
             ->field('relations.references.$id')
@@ -266,5 +291,24 @@ class BlockController extends AbstractController
             'content' => $content,
             'pagination' => $pagination,
         ]);
+    }
+
+    private function isAllowedBlockClass(string $class): bool
+    {
+        $classKey = strtolower(ltrim($class, '\\'));
+
+        if (\is_array($this->allowedBlockClasses)) {
+            return isset($this->allowedBlockClasses[$classKey]);
+        }
+
+        $this->allowedBlockClasses = [];
+        foreach ($this->metadataFactory->getAllMetadata() as $metadata) {
+            $metadataClass = $metadata->getClass();
+            if (\is_string($metadataClass) && $metadataClass !== '') {
+                $this->allowedBlockClasses[strtolower(ltrim($metadataClass, '\\'))] = true;
+            }
+        }
+
+        return isset($this->allowedBlockClasses[$classKey]);
     }
 }

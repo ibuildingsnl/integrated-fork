@@ -18,6 +18,11 @@
             <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
         </service>
 
+        <service id="Integrated\Bundle\BlockBundle\Controller\ChannelBlockController">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager"/>
+            <argument type="service" id="integrated_block.metadata.factory"/>
+        </service>
+
     </services>
 
 </container>

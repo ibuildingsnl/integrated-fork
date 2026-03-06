@@ -1,3 +1,5 @@
+import {visitWithTurbo} from './turbo_navigation';
+
 function initEditPanel() {
     const wrapper = document.querySelector('#editimagewrapper');
     const panel = document.querySelector('#media-edit-panel');
@@ -28,9 +30,9 @@ function initEditPanel() {
             : 'media_gallery';
 
         if (selectedModus == 'media_gallery') {
-            window.location.href = editImagePath.replace('REPLACE', mediaId);
+            visitWithTurbo(editImagePath.replace('REPLACE', mediaId));
         } else {
-            window.location.href = editImageIframePath.replace('REPLACE', mediaId);
+            visitWithTurbo(editImageIframePath.replace('REPLACE', mediaId));
         }
     }
 }

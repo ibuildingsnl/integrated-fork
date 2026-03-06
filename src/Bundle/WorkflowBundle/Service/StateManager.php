@@ -17,6 +17,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Entity\Workflow\State;
+use Integrated\Common\Content\MetadataInterface;
 
 class StateManager
 {
@@ -58,7 +59,7 @@ class StateManager
             return;
         }
 
-        $defaultState = $workflow->getDefault();
+        $stateRepository = $this->entityManager->getRepository(State::class);
 
         $contentIds = $this->documentManager->createQueryBuilder(Content::class)
             ->select('_id', 'class')
@@ -67,21 +68,82 @@ class StateManager
             ->getQuery()
             ->execute();
 
-        foreach ($contentIds as $content) {
-            if (!$this->entityManager->getRepository(State::class)->findOneBy(['content_id' => $content['_id'], 'content_class' => $content['class']])) {
-                $content = $this->documentManager->getRepository(Content::class)->find($content['_id']);
-
-                // is disabled field state same as published state? we don't want to change the disabled state without an item review
-                if ($content->isDisabled() != $defaultState->isPublishable()) {
-                    // explicitly assign new state to article
-                    $state = new State();
-                    $state->setContent($content);
-                    $state->setState($defaultState);
-
-                    $this->entityManager->persist($state);
-                    $this->entityManager->flush();
-                }
+        foreach ($contentIds as $item) {
+            $content = $this->documentManager->getRepository(Content::class)->find($item['_id']);
+            if (!$content instanceof Content) {
+                continue;
             }
+
+            $state = $stateRepository->findOneBy(['content_id' => $item['_id'], 'content_class' => $item['class']]);
+
+            if (!$state instanceof State) {
+                $initialState = $this->resolveInitialState($workflow, $content);
+                if (!$initialState instanceof Definition\State) {
+                    continue;
+                }
+
+                $state = new State();
+                $state->setContent($content);
+                $state->setState($initialState);
+
+                $this->entityManager->persist($state);
+                $this->entityManager->flush();
+            }
+
+            $this->syncContentWithState($content, $workflow, $state->getState());
+        }
+    }
+
+    private function resolveInitialState(Definition $workflow, Content $content): ?Definition\State
+    {
+        $defaultState = $workflow->getDefault();
+        if ($defaultState instanceof Definition\State && $this->isStateCompatibleWithContent($defaultState, $content)) {
+            return $defaultState;
+        }
+
+        foreach ($workflow->getStates() as $state) {
+            if ($state instanceof Definition\State && $this->isStateCompatibleWithContent($state, $content)) {
+                return $state;
+            }
+        }
+
+        return $defaultState instanceof Definition\State ? $defaultState : null;
+    }
+
+    private function isStateCompatibleWithContent(Definition\State $state, Content $content): bool
+    {
+        return (bool) $content->isDisabled() !== $state->isPublishable();
+    }
+
+    private function syncContentWithState(Content $content, Definition $workflow, ?Definition\State $state): void
+    {
+        if (!$state instanceof Definition\State) {
+            return;
+        }
+
+        $changed = false;
+
+        if ($content instanceof MetadataInterface) {
+            if ($content->getMetadata()->get('workflow') !== $workflow->getId()) {
+                $content->getMetadata()->set('workflow', $workflow->getId());
+                $changed = true;
+            }
+
+            if ($content->getMetadata()->get('workflow_state') !== $state->getId()) {
+                $content->getMetadata()->set('workflow_state', $state->getId());
+                $changed = true;
+            }
+        }
+
+        $disabled = !$state->isPublishable();
+        if ((bool) $content->isDisabled() !== $disabled) {
+            $content->setDisabled($disabled);
+            $changed = true;
+        }
+
+        if ($changed) {
+            $this->documentManager->persist($content);
+            $this->documentManager->flush();
         }
     }
 }

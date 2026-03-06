@@ -125,7 +125,11 @@ const init = () => {
 };
 
 function onSubmitButtonClick(e) {
-    const form = e.target.closest('form');
+    const form = e.target.closest('form') || e.target.form;
+    if (!form) {
+        return;
+    }
+
     const inputs = form.querySelectorAll('input, textarea');
 
     inputs.forEach(input => {

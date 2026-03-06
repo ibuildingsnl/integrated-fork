@@ -28,6 +28,31 @@
 
 {% block webpack_js %}
     <script>
+        window.resolveMediaPickerUri = window.resolveMediaPickerUri || function (media) {
+            if (!media) {
+                return '';
+            }
+
+            var raw = (media.dataset.file || '').trim();
+            var fallback = (media.dataset.thumbnail || '').trim();
+
+            if (!raw) {
+                return fallback;
+            }
+
+            if (raw.charAt(0) === '{') {
+                try {
+                    var parsed = JSON.parse(raw);
+                    raw = (parsed && (parsed.pathName || parsed.pathname || parsed.path || parsed.url)) || '';
+                } catch (e) {
+                    var match = raw.match(/"(?:pathName|pathname|path|url)"\s*:\s*"([^"]+)"/);
+                    raw = match ? match[1] : '';
+                }
+            }
+
+            return (raw && raw !== '{') ? raw : fallback;
+        };
+
         document.addEventListener('keyup', function (e) {
             if (e.key !== 'Escape') {
                 return;

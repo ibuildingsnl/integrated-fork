@@ -4,7 +4,7 @@ namespace Integrated\Bundle\InstallerBundle\Test;
 
 use Symfony\Component\Finder\Finder;
 
-class BundleTest
+class BundleChecker
 {
     public const BUNDLES_DIRECTORY = '/../../';
 

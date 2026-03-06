@@ -38,6 +38,7 @@
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_queue.solr_indexer" />
             <argument type="service" id="integrated_content.services.search.content.referenced" />
+            <argument type="service" id="logger" />
 
             <tag name="integrated_content.bulk.handler" class="Integrated\Bundle\ContentBundle\Bulk\ContentTypeHandler" />
         </service>
@@ -61,6 +62,39 @@
             <tag name="integrated_content.bulk.handler" class="Integrated\Bundle\ContentBundle\Bulk\RelationRemoveHandler" />
         </service>
 
+        <service id="integrated_content.bulk.action.canonical_handler_factory" class="Integrated\Bundle\ContentBundle\Bulk\CanonicalHandlerFactory" public="false">
+            <tag name="integrated_content.bulk.handler" class="Integrated\Bundle\ContentBundle\Bulk\CanonicalHandler" />
+        </service>
+
+        <service id="integrated_content.bulk.action.featured_handler_factory" class="Integrated\Bundle\ContentBundle\Bulk\FeaturedHandlerFactory" public="false">
+            <tag name="integrated_content.bulk.handler" class="Integrated\Bundle\ContentBundle\Bulk\FeaturedHandler" />
+        </service>
+
+        <service id="integrated_content.bulk.action.premium_handler_factory" class="Integrated\Bundle\ContentBundle\Bulk\PremiumHandlerFactory" public="false">
+            <tag name="integrated_content.bulk.handler" class="Integrated\Bundle\ContentBundle\Bulk\PremiumHandler" />
+        </service>
+
+        <service id="integrated_content.bulk.action.publish_window_handler_factory" class="Integrated\Bundle\ContentBundle\Bulk\PublishWindowHandlerFactory" public="false">
+            <tag name="integrated_content.bulk.handler" class="Integrated\Bundle\ContentBundle\Bulk\PublishWindowHandler" />
+        </service>
+
+        <service id="integrated_content.bulk.action.workflow_state_handler_factory" class="Integrated\Bundle\ContentBundle\Bulk\WorkflowStateHandlerFactory" public="false">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="integrated_content.resolver" />
+
+            <tag name="integrated_content.bulk.handler" class="Integrated\Bundle\ContentBundle\Bulk\WorkflowStateHandler" />
+        </service>
+
+        <service id="integrated_content.bulk.action.workflow_assign_handler_factory" class="Integrated\Bundle\ContentBundle\Bulk\WorkflowAssignHandlerFactory" public="false">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="integrated_content.resolver" />
+            <argument type="service" id="Integrated\Bundle\UserBundle\Model\UserManagerInterface" />
+
+            <tag name="integrated_content.bulk.handler" class="Integrated\Bundle\ContentBundle\Bulk\WorkflowAssignHandler" />
+        </service>
+
+        <service id="integrated_content.bulk.capability_resolver" class="Integrated\Bundle\ContentBundle\Bulk\BulkCapabilityResolver" />
+
         <service id="integrated_content.bulk.form.chain_provider_builder" class="Integrated\Common\Bulk\Form\ChainProviderBuilder" public="false" />
 
         <service id="integrated_content.bulk.form.chian_provider" class="Integrated\Common\Bulk\Form\ChainProvider" public="false">
@@ -83,6 +117,46 @@
 
         <service id="integrated_content.bulk.form.relation_provider" class="Integrated\Bundle\ContentBundle\Bulk\RelationFormProvider" public="false">
             <argument type="service" id="doctrine_mongodb" />
+            <argument type="service" id="integrated_taxonomy.taxonomy.overview" />
+
+            <tag name="integrated_content.bulk.form.provider" />
+        </service>
+
+        <service id="integrated_content.bulk.form.canonical_provider" class="Integrated\Bundle\ContentBundle\Bulk\CanonicalFormProvider" public="false">
+            <argument type="service" id="integrated_content.bulk.capability_resolver" />
+
+            <tag name="integrated_content.bulk.form.provider" />
+        </service>
+
+        <service id="integrated_content.bulk.form.featured_provider" class="Integrated\Bundle\ContentBundle\Bulk\FeaturedFormProvider" public="false">
+            <argument type="service" id="integrated_content.bulk.capability_resolver" />
+
+            <tag name="integrated_content.bulk.form.provider" />
+        </service>
+
+        <service id="integrated_content.bulk.form.premium_provider" class="Integrated\Bundle\ContentBundle\Bulk\PremiumFormProvider" public="false">
+            <argument type="service" id="integrated_content.bulk.capability_resolver" />
+
+            <tag name="integrated_content.bulk.form.provider" />
+        </service>
+
+        <service id="integrated_content.bulk.form.publish_window_provider" class="Integrated\Bundle\ContentBundle\Bulk\PublishWindowFormProvider" public="false">
+            <argument type="service" id="integrated_content.bulk.capability_resolver" />
+
+            <tag name="integrated_content.bulk.form.provider" />
+        </service>
+
+        <service id="integrated_content.bulk.form.workflow_state_provider" class="Integrated\Bundle\ContentBundle\Bulk\WorkflowStateFormProvider" public="false">
+            <argument type="service" id="integrated_content.bulk.capability_resolver" />
+            <argument type="service" id="integrated_content.resolver" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+
+            <tag name="integrated_content.bulk.form.provider" />
+        </service>
+
+        <service id="integrated_content.bulk.form.workflow_assign_provider" class="Integrated\Bundle\ContentBundle\Bulk\WorkflowAssignFormProvider" public="false">
+            <argument type="service" id="integrated_content.bulk.capability_resolver" />
+            <argument type="service" id="Integrated\Bundle\UserBundle\Doctrine\UserManager" />
 
             <tag name="integrated_content.bulk.form.provider" />
         </service>

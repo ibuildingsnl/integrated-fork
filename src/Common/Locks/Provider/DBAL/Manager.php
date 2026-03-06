@@ -111,6 +111,8 @@ class Manager implements ManagerInterface
             throw new UnexpectedTypeException($lock, 'string or Integrated\Common\Locks\LockInterface');
         }
 
+        $data = null;
+
         try {
             $this->connection->beginTransaction();
 
@@ -131,7 +133,9 @@ class Manager implements ManagerInterface
 
             $this->connection->commit();
         } catch (\Exception $e) {
-            $this->connection->rollBack();
+            if ($this->connection->isTransactionActive()) {
+                $this->connection->rollBack();
+            }
 
             return null; // probably should raise a error
         }

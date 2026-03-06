@@ -223,9 +223,9 @@ class SolariumProvider
                     $facet->getLocalParameters()->setExclude($field);
                 }
 
-                $param = isset($request[$field]) ? $request[$field] : null;
+                $param = $this->sanitizeArrayValues($request[$field] ?? []);
 
-                if ($param) {
+                if (!empty($param)) {
                     ++$count; // facet fields count
 
                     $query
@@ -238,6 +238,15 @@ class SolariumProvider
 
         if (isset($options['filters'])) {
             foreach ((array) $options['filters'] as $field => $value) {
+                if (!\is_scalar($value)) {
+                    continue;
+                }
+
+                $value = trim((string) $value);
+                if ('' === $value) {
+                    continue;
+                }
+
                 $query
                     ->createFilterQuery('filter_'.$field.$suffix)
                     ->setQuery($field.': (%1%)', array_map($filter, [$value]))
@@ -270,6 +279,33 @@ class SolariumProvider
         }
 
         return $count;
+    }
+
+    private function sanitizeArrayValues(mixed $value): array
+    {
+        if (\is_string($value)) {
+            $value = trim($value);
+            return '' !== $value ? [$value] : [];
+        }
+
+        if (!\is_array($value)) {
+            return [];
+        }
+
+        $values = [];
+
+        foreach ($value as $item) {
+            if (!\is_string($item)) {
+                continue;
+            }
+
+            $item = trim($item);
+            if ('' !== $item) {
+                $values[] = $item;
+            }
+        }
+
+        return $values;
     }
 
     /**

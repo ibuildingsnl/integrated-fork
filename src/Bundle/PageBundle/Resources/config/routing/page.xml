@@ -20,6 +20,14 @@
         <default key="_controller">Integrated\Bundle\PageBundle\Controller\PageController::delete</default>
     </route>
 
+    <route id="integrated_page_page_delete_without_channel" path="/{id}/delete-without-channel" methods="POST">
+        <default key="_controller">Integrated\Bundle\PageBundle\Controller\PageController::deleteWithoutChannel</default>
+    </route>
+
+    <route id="integrated_page_page_delete_without_channel_bulk" path="/delete-without-channel/bulk" methods="POST">
+        <default key="_controller">Integrated\Bundle\PageBundle\Controller\PageController::deleteWithoutChannelBulk</default>
+    </route>
+
     <route id="integrated_page_page_copy" path="/copy">
         <default key="_controller">Integrated\Bundle\PageBundle\Controller\PageController::copy</default>
     </route>

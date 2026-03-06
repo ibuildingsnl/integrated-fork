@@ -7,7 +7,10 @@
 
     {% for facetName, facet in facets %}
         {% if facet.values.values|default|length %}
-            {% set activeFilters = app.request.query.all(facetName)|default([]) %}
+            {% set activeFilters = app.request.query.all[facetName]|default([]) %}
+            {% if activeFilters is not iterable %}
+                {% set activeFilters = activeFilters is empty ? [] : [activeFilters] %}
+            {% endif %}
 
             <div class="panel-body">
                 <b>{{ facet.name }}</b>

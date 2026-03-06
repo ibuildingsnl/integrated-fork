@@ -3,34 +3,38 @@
 {% block javascript %}
     {{ parent() }}
 
-    <script>
-        jQuery(function($) {
-            window.send_cancel_to_parent = function() {
-                window.parent.postMessage({mceAction: 'close'}, {{ app.request.schemeAndHttpHost|json_encode|raw }});
-            }
+<script>
+        (function () {
+            var targetOrigin = {{ app.request.schemeAndHttpHost|json_encode|raw }};
+            var resolveMediaUri = window.resolveMediaPickerUri || function () { return ''; };
 
-            $(document).keyup(function(e) {
-                if (e.key === "Escape") {
-                    window.parent.postMessage({mceAction: 'close'}, {{ app.request.schemeAndHttpHost|json_encode|raw }});
+            var closeDialog = function () {
+                window.parent.postMessage({mceAction: 'close'}, targetOrigin);
+            };
+
+            window.send_cancel_to_parent = closeDialog;
+
+            document.addEventListener('keyup', function (e) {
+                if (e.key === 'Escape') {
+                    closeDialog();
                 }
             });
 
-            window.send_message_to_parent = function(e) {
-                var media = $('#gallery li.media-item.selected');
-
-                if (!media.length) {
+            window.send_message_to_parent = function () {
+                var media = document.querySelector('#gallery li.media-item.selected');
+                if (!media) {
                     return;
                 }
 
                 window.parent.postMessage({
                     mceAction: 'insertImage',
                     image: {
-                        id: media.data('id'),
-                        uri: media.data('file'),
-                        title: media.data('title')
+                        id: media.dataset.id,
+                        uri: resolveMediaUri(media),
+                        title: media.dataset.title
                     }
-                }, {{ app.request.schemeAndHttpHost|json_encode|raw }});
+                }, targetOrigin);
             };
-        })
+        })();
     </script>
 {% endblock %}

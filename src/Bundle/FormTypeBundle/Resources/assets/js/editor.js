@@ -39,12 +39,30 @@ function isValidURL(str) {
 function initTinyMceEditors(root = document) {
     $('.integrated_tinymce', root).each(function(key, elem){
         const element = $(elem);
+        let existingEditor = elem.id ? tinymce.get(elem.id) : null;
+
+        if (existingEditor) {
+            const targetElement = existingEditor.targetElm || null;
+            if (targetElement && targetElement !== elem) {
+                existingEditor.remove();
+                existingEditor = null;
+            } else if (targetElement && !targetElement.isConnected) {
+                existingEditor.remove();
+                existingEditor = null;
+            }
+        }
+
+        const hasEditorInstance = Boolean(existingEditor || (elem.id && tinymce.get(elem.id)));
+
+        if (element.data('tinymce-initialized') && !hasEditorInstance) {
+            element.removeData('tinymce-initialized');
+        }
 
         if (element.data('tinymce-initialized')) {
             return;
         }
 
-        if (elem.id && tinymce.get(elem.id)) {
+        if (hasEditorInstance) {
             element.data('tinymce-initialized', true);
             return;
         }
@@ -246,6 +264,39 @@ function destroyTinyMceEditors() {
     if (typeof tinymce !== 'undefined') {
         tinymce.remove();
     }
+
+    $('.integrated_tinymce').each(function(key, elem) {
+        $(elem).removeData('tinymce-initialized');
+    });
+}
+
+function destroyTinyMceEditorsWithin(root = document) {
+    if (typeof tinymce === 'undefined') {
+        return;
+    }
+
+    $('.integrated_tinymce', root).each(function(key, elem) {
+        if (elem.id) {
+            const editor = tinymce.get(elem.id);
+            if (editor) {
+                editor.remove();
+            }
+        }
+
+        $(elem).removeData('tinymce-initialized');
+    });
+
+    if (Array.isArray(tinymce.editors)) {
+        tinymce.editors.slice().forEach((editor) => {
+            if (!editor || !editor.targetElm) {
+                return;
+            }
+
+            if (!editor.targetElm.isConnected) {
+                editor.remove();
+            }
+        });
+    }
 }
 
 function initTinyMceFromDom() {
@@ -268,10 +319,20 @@ function scheduleTinyMceInitFromEvent(event) {
     scheduleTinyMceInit(root);
 }
 
+function cleanupTinyMceBeforeFrameRender(event) {
+    const root = event && event.target ? event.target : null;
+    if (!root) {
+        return;
+    }
+
+    destroyTinyMceEditorsWithin(root);
+}
+
 document.addEventListener('DOMContentLoaded', () => scheduleTinyMceInit(document));
 window.addEventListener('load', () => scheduleTinyMceInit(document));
 document.addEventListener('turbo:load', () => scheduleTinyMceInit(document));
 document.addEventListener('turbo:render', () => scheduleTinyMceInit(document));
+document.addEventListener('turbo:before-frame-render', cleanupTinyMceBeforeFrameRender);
 document.addEventListener('turbo:frame-load', scheduleTinyMceInitFromEvent);
 document.addEventListener('turbo:frame-render', scheduleTinyMceInitFromEvent);
 document.addEventListener('turbo:before-cache', destroyTinyMceEditors);

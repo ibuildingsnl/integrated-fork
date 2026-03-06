@@ -1,6 +1,10 @@
 {
   "bundles/integratedintegrated/app.css": "/bundles/integratedintegrated/app.css",
   "bundles/integratedintegrated/app.js": "/bundles/integratedintegrated/app.js",
+  "bundles/integratedintegrated/iconoir.css": "/bundles/integratedintegrated/iconoir.css",
+  "bundles/integratedintegrated/iconoir.js": "/bundles/integratedintegrated/iconoir.js",
+  "bundles/integratedintegrated/pickr.css": "/bundles/integratedintegrated/pickr.css",
+  "bundles/integratedintegrated/pickr.js": "/bundles/integratedintegrated/pickr.js",
   "bundles/integratedintegrated/edit.css": "/bundles/integratedintegrated/edit.css",
   "bundles/integratedintegrated/edit.js": "/bundles/integratedintegrated/edit.js",
   "bundles/integratedintegrated/collection.js": "/bundles/integratedintegrated/collection.js",

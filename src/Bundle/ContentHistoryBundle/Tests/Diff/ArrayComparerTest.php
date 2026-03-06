@@ -133,6 +133,67 @@ class ArrayComparerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testRelationsAreComparedByStableRelationAndReferenceKeys(): void
+    {
+        $old = [
+            'relations' => [
+                2 => [
+                    'relationId' => '__featured_image',
+                    'relationType' => 'embedded',
+                    'references' => [
+                        ['class' => 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Image', '_$id' => 'img-old'],
+                    ],
+                ],
+                3 => [
+                    'relationId' => '__authors',
+                    'relationType' => 'author',
+                    'references' => [
+                        ['class' => 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Relation\\Person', '_$id' => 'person-1'],
+                    ],
+                ],
+            ],
+        ];
+
+        $new = [
+            'relations' => [
+                1 => [
+                    'relationId' => 'file',
+                    'relationType' => 'embedded',
+                    'references' => [
+                        ['class' => 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Image', '_$id' => 'img-new'],
+                    ],
+                ],
+                2 => [
+                    'relationId' => '__featured_image',
+                    'relationType' => 'embedded',
+                    'references' => [
+                        ['class' => 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Image', '_$id' => 'img-new'],
+                    ],
+                ],
+                3 => [
+                    'relationId' => '__authors',
+                    'relationType' => null,
+                    'references' => [],
+                ],
+            ],
+        ];
+
+        $diff = ArrayComparer::diff($old, $new);
+
+        self::assertArrayHasKey('relations', $diff);
+        self::assertArrayHasKey('__featured_image', $diff['relations']);
+        self::assertArrayHasKey('file', $diff['relations']);
+        self::assertArrayHasKey('__authors', $diff['relations']);
+        self::assertArrayHasKey(
+            'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Image#img-new',
+            $diff['relations']['__featured_image']['references']
+        );
+        self::assertArrayNotHasKey(
+            'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Relation\\Person#person-1',
+            $diff['relations']['__featured_image']['references']
+        );
+    }
+
     protected function assertDiff(array $old = [], array $new = [], array $expected = [])
     {
         $this->assertEquals($expected, ArrayComparer::diff($old, $new));

@@ -113,6 +113,10 @@ class ContentHistorySubscriber
             return false;
         }
 
+        if ($this->shouldMergeWithPreviousUpdate($dm, $last, $history)) {
+            return true;
+        }
+
         if ($last->getChangeSet() !== $history->getChangeSet()) {
             return false;
         }
@@ -141,5 +145,80 @@ class ContentHistorySubscriber
         }
 
         return true;
+    }
+
+    private function shouldMergeWithPreviousUpdate(DocumentManager $dm, ContentHistory $last, ContentHistory $current): bool
+    {
+        $lastRequest = $last->getRequest();
+        $currentRequest = $current->getRequest();
+
+        $lastRequestId = $lastRequest?->getRequestId();
+        $currentRequestId = $currentRequest?->getRequestId();
+
+        if (!\is_string($lastRequestId) || $lastRequestId === '' || !\is_string($currentRequestId) || $currentRequestId === '') {
+            return false;
+        }
+
+        if ($lastRequestId !== $currentRequestId) {
+            return false;
+        }
+
+        $merged = $this->mergeChangeSets($last->getChangeSet(), $current->getChangeSet());
+        $last->setChangeSet($merged);
+
+        $classMetadata = $dm->getClassMetadata($this->className);
+        $dm->persist($last);
+        $dm->getUnitOfWork()->recomputeSingleDocumentChangeSet($classMetadata, $last);
+
+        return true;
+    }
+
+    private function mergeChangeSets(array $base, array $delta): array
+    {
+        $merged = $base;
+
+        foreach ($delta as $key => $value) {
+            if (\array_key_exists($key, $merged)) {
+                $merged[$key] = $this->mergeChangeSetValue($merged[$key], $value);
+                continue;
+            }
+
+            $merged[$key] = $value;
+        }
+
+        return $merged;
+    }
+
+    private function mergeChangeSetValue(mixed $baseValue, mixed $deltaValue): mixed
+    {
+        if (!\is_array($baseValue) || !\is_array($deltaValue)) {
+            return $deltaValue;
+        }
+
+        if ($this->isDiffPair($baseValue) && $this->isDiffPair($deltaValue)) {
+            return [$baseValue[0], $deltaValue[1]];
+        }
+
+        if ($this->isDiffPair($baseValue) || $this->isDiffPair($deltaValue)) {
+            return $deltaValue;
+        }
+
+        $merged = $baseValue;
+
+        foreach ($deltaValue as $key => $value) {
+            if (\array_key_exists($key, $merged)) {
+                $merged[$key] = $this->mergeChangeSetValue($merged[$key], $value);
+                continue;
+            }
+
+            $merged[$key] = $value;
+        }
+
+        return $merged;
+    }
+
+    private function isDiffPair(array $value): bool
+    {
+        return \array_keys($value) === [0, 1];
     }
 }

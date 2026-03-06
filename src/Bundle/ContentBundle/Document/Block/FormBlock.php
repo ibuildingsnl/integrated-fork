@@ -46,13 +46,13 @@ class FormBlock extends Block
         'priority' => 470,
         'required' => false,
     ])]
-    protected string $returnUrl;
+    protected ?string $returnUrl = null;
 
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: [
         'priority' => 460,
         'required' => false,
     ])]
-    protected string $textAfterSubmit;
+    protected ?string $textAfterSubmit = null;
 
     /**
      * @var array
@@ -85,7 +85,7 @@ class FormBlock extends Block
         'placeholder' => 'Do not link',
         'required' => false,
     ])]
-    protected Relation $linkRelation;
+    protected ?Relation $linkRelation = null;
 
     public function getContentType(): ContentType
     {
@@ -111,24 +111,24 @@ class FormBlock extends Block
         return $this;
     }
 
-    public function getReturnUrl(): string
+    public function getReturnUrl(): ?string
     {
         return $this->returnUrl;
     }
 
-    public function setReturnUrl(string $returnUrl): self
+    public function setReturnUrl(?string $returnUrl): self
     {
         $this->returnUrl = $returnUrl;
 
         return $this;
     }
 
-    public function getTextAfterSubmit(): string
+    public function getTextAfterSubmit(): ?string
     {
         return $this->textAfterSubmit;
     }
 
-    public function setTextAfterSubmit(string $textAfterSubmit): self
+    public function setTextAfterSubmit(?string $textAfterSubmit): self
     {
         $this->textAfterSubmit = $textAfterSubmit;
 
@@ -159,12 +159,12 @@ class FormBlock extends Block
         return $this;
     }
 
-    public function getLinkRelation(): Relation
+    public function getLinkRelation(): ?Relation
     {
         return $this->linkRelation;
     }
 
-    public function setLinkRelation(Relation $linkRelation): self
+    public function setLinkRelation(?Relation $linkRelation): self
     {
         $this->linkRelation = $linkRelation;
 

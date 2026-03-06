@@ -42,10 +42,11 @@ class RelationExtension extends AbstractTypeExtension
             $facetField->setField($field = 'facet_'.$relation->getId())
                 ->getLocalParameters()->setExclude($name);
 
-            if ($options['relation'][$relation->getId()] ?? []) {
+            $values = $this->sanitizeListValues($options['relation'][$relation->getId()] ?? []);
+            if (\count($values)) {
                 $query->createFilterQuery($name)
                     ->addTag($name)
-                    ->setQuery($field.': ((%1%))', [implode(') OR (', array_map($escape, $options['relation'][$relation->getId()]))]);
+                    ->setQuery($field.': ((%1%))', [implode(') OR (', array_map($escape, $values))]);
             }
         }
     }
@@ -80,7 +81,7 @@ class RelationExtension extends AbstractTypeExtension
                     continue;
                 }
 
-                $relations[$key] = array_filter(array_map('trim', $value));
+                $relations[$key] = $this->sanitizeListValues($value);
             }
 
             return array_filter($relations);
@@ -92,5 +93,23 @@ class RelationExtension extends AbstractTypeExtension
         return [
             IntegratedContent::class,
         ];
+    }
+
+    private function sanitizeListValues(array $values): array
+    {
+        $sanitized = [];
+
+        foreach ($values as $value) {
+            if (!\is_string($value)) {
+                continue;
+            }
+
+            $value = trim($value);
+            if ('' !== $value) {
+                $sanitized[] = $value;
+            }
+        }
+
+        return $sanitized;
     }
 }

@@ -9,6 +9,7 @@ global.XHRUpload = XHRUpload
 
 import ImageEditor from '@uppy/image-editor'
 global.ImageEditor = ImageEditor
+import {reloadWithTurbo} from './turbo_navigation'
 
 function inititalizeUppy(uppyOptions) {
     let default_height = '750px'
@@ -113,7 +114,7 @@ function inititalizeUppy(uppyOptions) {
     function closeUppyWithRefresh() {
         $('#upload_container').removeClass('show');
         $('#dropdown_overlay').addClass('hide');
-        window.location.reload();
+        reloadWithTurbo();
     }
 
     uppy.use(XHRUpload, {

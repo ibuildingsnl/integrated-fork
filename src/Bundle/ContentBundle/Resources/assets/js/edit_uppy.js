@@ -2,13 +2,12 @@ import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import XHRUpload from '@uppy/xhr-upload'
 import ImageEditor from '@uppy/image-editor'
+import {visitWithTurbo} from './turbo_navigation'
 
 global.Uppy = Uppy
 global.Dashboard = Dashboard
 global.XHRUpload = XHRUpload
 global.ImageEditor = ImageEditor
-
-
 
 function addShowPopupButton() {
     const statusBar = document.querySelector('#uppy-DashboardContent-panel--editor .uppy-DashboardContent-bar')
@@ -57,7 +56,7 @@ async function inititalizeUppy(uppyOptions) {
     });
 
     function closeUppyWithRefresh() {
-        window.location.href = previous_url
+        visitWithTurbo(previous_url)
     }
 
     uppy.use(XHRUpload, {
@@ -108,7 +107,7 @@ async function inititalizeUppy(uppyOptions) {
     document.querySelectorAll('.uppy-DashboardContent-back').forEach((button) => {
         button.addEventListener('click', () => {
             document.querySelector('.uppy-Root').hidden = true
-            window.location.href = previous_url
+            visitWithTurbo(previous_url)
         });
     })
 

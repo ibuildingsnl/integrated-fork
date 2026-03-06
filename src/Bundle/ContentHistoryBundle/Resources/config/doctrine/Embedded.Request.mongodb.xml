@@ -5,6 +5,7 @@
 
     <embedded-document name="Integrated\Bundle\ContentHistoryBundle\Document\Embedded\Request">
 
+        <field field-name="requestId" type="string" nullable="true" />
         <field field-name="ipAddress" type="string" />
         <field field-name="endpoint" type="string" />
 

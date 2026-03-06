@@ -27,6 +27,8 @@ use Solarium\Core\Query\DocumentInterface;
  */
 class BlockRepository extends ServiceDocumentRepository
 {
+    private ?bool $hasPagesWithoutBlockIds = null;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Block::class);
@@ -72,18 +74,38 @@ class BlockRepository extends ServiceDocumentRepository
 
     /**
      * @return \Doctrine\ODM\MongoDB\Query\Query
-     *
-     * @internal heavy query, multiple calls make page slow
      */
     public function pagesByBlockQb(Block $block)
     {
         return $this->dm
             ->createQueryBuilder(Page::class)
+            ->field('blockIds')->equals($block->getId())
+            ->getQuery();
+    }
+
+    /**
+     * @return \Doctrine\ODM\MongoDB\Query\Query
+     *
+     * @internal heavy fallback query for legacy pages without denormalized block ids
+     */
+    private function legacyPagesByBlockQb(Block $block)
+    {
+        $blockId = json_encode(
+            (string) $block->getId(),
+            JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+        );
+
+        if ($blockId === false) {
+            $blockId = '""';
+        }
+
+        return $this->dm
+            ->createQueryBuilder(Page::class)
             ->where('function() {
-                var block_id = "'.$block->getId().'";
+                var block_id = '.$blockId.';
 
                 var checkItem = function(item) {
-                        if ("block" in item && item.block.$id == block_id) {
+                        if ("block" in item && item.block.$id === block_id) {
                             return true;
                         }
 
@@ -183,6 +205,32 @@ class BlockRepository extends ServiceDocumentRepository
      */
     public function isUsed(Block $block)
     {
-        return $this->pagesByBlockQb($block)->getSingleResult() ? true : false;
+        if ($this->pagesByBlockQb($block)->getSingleResult()) {
+            return true;
+        }
+
+        if (!$this->hasPagesWithoutBlockIds()) {
+            return false;
+        }
+
+        return $this->legacyPagesByBlockQb($block)->getSingleResult() ? true : false;
+    }
+
+    private function hasPagesWithoutBlockIds(): bool
+    {
+        if ($this->hasPagesWithoutBlockIds !== null) {
+            return $this->hasPagesWithoutBlockIds;
+        }
+
+        $count = $this->dm
+            ->createQueryBuilder(Page::class)
+            ->field('blockIds')->exists(false)
+            ->count()
+            ->getQuery()
+            ->execute();
+
+        $this->hasPagesWithoutBlockIds = (int) $count > 0;
+
+        return $this->hasPagesWithoutBlockIds;
     }
 }

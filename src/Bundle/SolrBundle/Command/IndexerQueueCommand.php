@@ -16,6 +16,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Solr\Indexer\Job;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -35,12 +36,14 @@ class IndexerQueueCommand extends Command
     private DocumentManager $documentManager;
     private QueueInterface $queue;
     private ResolverInterface $resolver;
+    private LoggerInterface $logger;
 
-    public function __construct(DocumentManager $documentManager, QueueInterface $queue, ResolverInterface $resolver)
+    public function __construct(DocumentManager $documentManager, QueueInterface $queue, ResolverInterface $resolver, LoggerInterface $logger)
     {
         $this->documentManager = $documentManager;
         $this->queue = $queue;
         $this->resolver = $resolver;
+        $this->logger = $logger;
 
         parent::__construct();
     }
@@ -234,13 +237,22 @@ The <info>%command.name%</info> command starts a index of the site.
         foreach ($cursor as $document) {
             $progress->advance();
 
+            $documentId = isset($document['_id']) ? trim((string) $document['_id']) : '';
+            if ($documentId === '') {
+                $this->logger->warning('Skipping Solr queue ADD job: missing document id.', [
+                    'contentType' => $document['contentType'] ?? null,
+                    'class' => $document['class'] ?? null,
+                ]);
+                continue;
+            }
+
             $job = new Job('ADD');
 
             $contentType = $document['contentType'] ?? '';
 
-            $job->setOption('document.id', $contentType.'-'.$document['_id']);
+            $job->setOption('document.id', $contentType.'-'.$documentId);
 
-            $job->setOption('document.data', json_encode(['id' => $document['_id']]));
+            $job->setOption('document.data', json_encode(['id' => $documentId, '$id' => $documentId]));
             $job->setOption('document.class', $document['class']);
             $job->setOption('document.format', 'json');
 

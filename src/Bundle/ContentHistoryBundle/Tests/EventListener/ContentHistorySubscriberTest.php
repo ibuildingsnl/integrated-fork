@@ -102,7 +102,35 @@ class ContentHistorySubscriberTest extends TestCase
         self::assertFalse($result);
     }
 
-    private function createHistory(array $changeSet, int $timestamp): ContentHistory
+    public function testMergeChangeSetsCombinesOldAndNewValues(): void
+    {
+        $subscriber = new ContentHistorySubscriber(
+            $this->createMock(EventDispatcherInterface::class),
+            ContentHistory::class
+        );
+
+        $result = $this->invokePrivate($subscriber, 'mergeChangeSets', [
+            [
+                'title' => ['old', 'new'],
+                'status' => ['draft', 'review'],
+            ],
+            [
+                'status' => ['review', 'published'],
+                'relations' => ['authors' => [['old-author'], ['new-author']]],
+            ],
+        ]);
+
+        self::assertSame(
+            [
+                'title' => ['old', 'new'],
+                'status' => ['draft', 'published'],
+                'relations' => ['authors' => [['old-author'], ['new-author']]],
+            ],
+            $result
+        );
+    }
+
+    private function createHistory(array $changeSet, int $timestamp, ?string $requestId = null): ContentHistory
     {
         $content = $this->createMock(ContentInterface::class);
         $content->method('getId')->willReturn('content-id');
@@ -112,6 +140,7 @@ class ContentHistorySubscriberTest extends TestCase
         $history->setChangeSet($changeSet);
 
         $request = new Request();
+        $request->setRequestId($requestId);
         $request->setEndpoint('https://localhost/admin/content/edit');
         $history->setRequest($request);
 
@@ -137,4 +166,3 @@ class ContentHistorySubscriberTest extends TestCase
         return $target->invokeArgs($instance, $args);
     }
 }
-

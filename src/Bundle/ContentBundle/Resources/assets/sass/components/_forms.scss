@@ -78,7 +78,6 @@ select.form-control {
     .checkbox {
         background-color: white;
         border-radius: 8px;
-        border: 1px solid #dfe3e9;
         max-width: 750px;
 
         label {
@@ -287,6 +286,11 @@ label {
             }
         }
     }
+}
+
+input#bulk-date-from,
+input#bulk-date-to {
+    padding: 3px 1rem;
 }
 
 /* List group form */
@@ -542,7 +546,7 @@ label {
     padding: 0.5rem 1rem;
     background-color: white;
     border-radius: 8px;
-    border: 1px solid #dfe3e9;
+    border: none !important;
     /* Hide the browser's default checkbox */
     input {
         position: absolute;
@@ -632,11 +636,22 @@ label {
     .control-label {
         display: flex;
         align-items: center;
+        font-weight: 600;
+        font-size: .8rem;
+        text-transform: uppercase;
+        color: rgba(0, 0, 0, .5);
     }
 
     &:last-child {
         margin: 0;
     }
+}
+
+label.control-label {
+    font-weight: 600;
+    font-size: .8rem;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, .5);
 }
 
 .remove {
@@ -941,4 +956,3 @@ input#block_edit_id.disabled {
     height: 33px;
     line-height: 33px;
 }
-

@@ -47,8 +47,15 @@ class RequestSubscriber implements EventSubscriberInterface
             $masterRequest = $this->requestStack->getMainRequest();
 
             if ($masterRequest instanceof Request) {
+                $requestId = $masterRequest->attributes->get('_integrated_content_history_request_id');
+                if (!\is_string($requestId) || $requestId === '') {
+                    $requestId = bin2hex(random_bytes(16));
+                    $masterRequest->attributes->set('_integrated_content_history_request_id', $requestId);
+                }
+
                 $request = new Embedded\Request();
 
+                $request->setRequestId($requestId);
                 $request->setIpAddress($masterRequest->getClientIp());
                 $request->setEndpoint($masterRequest->getSchemeAndHttpHost().$masterRequest->getRequestUri());
 

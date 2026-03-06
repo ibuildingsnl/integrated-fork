@@ -83,10 +83,10 @@ class FilterQueryProvider
 
     public function getScopeChoices($data)
     {
-        $sql = 'SELECT s.id, s.name, count(u.scope) as count
+        $sql = 'SELECT s.id, s.name, count(DISTINCT u.id) as count
             FROM security_scopes s
             INNER JOIN security_users u ON s.id = u.scope
-            INNER JOIN security_user_groups g ON u.id = g.user_id
+            LEFT JOIN security_user_groups g ON u.id = g.user_id
             WHERE (:scope <= 0 OR u.scope = :scope)
             AND (:groups <= 0 OR g.group_id IN (:groups))
             GROUP BY u.scope

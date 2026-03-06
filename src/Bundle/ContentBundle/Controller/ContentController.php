@@ -20,6 +20,7 @@ use Integrated\Bundle\ContentBundle\Controller\MediaController;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
+use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepository;
 use Integrated\Bundle\ContentBundle\Event\ContentDeletedEvent;
 use Integrated\Bundle\ContentBundle\Event\ContentDistributedEvent;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
@@ -46,6 +47,7 @@ use Integrated\Common\Locks\Filter;
 use Integrated\Common\Locks\Provider\DBAL\Manager;
 use Integrated\Common\Locks\Resource;
 use Integrated\Common\Security\Permissions;
+use Integrated\Common\Queue\Provider\DBAL\QueueProvider;
 use Integrated\Common\Solr\Configurable;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
 use Integrated\Common\Solr\Search\QueryFactoryInterface;
@@ -58,12 +60,16 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\UX\Turbo\TurboStreamResponse;
 
 class ContentController extends AbstractController
 {
+    private const NAVDROPDOWNS_CACHE_NAMESPACE = 'integrated_content_fragments_navdropdowns';
+    private const CONTENT_LOCK_TIMEOUT_SECONDS = 15;
+
     /**
      * @var string
      */
@@ -86,6 +92,8 @@ class ContentController extends AbstractController
         private readonly EventDispatcherInterface $dispatcher,
         private readonly DocumentManager $documentManager,
         private readonly CalendarOptions $calendarOptions,
+        private readonly QueueProvider $queueProvider,
+        private readonly PublicationRepository $publicationRepository,
     ) {
     }
 
@@ -363,11 +371,7 @@ class ContentController extends AbstractController
      */
     public function edit(Request $request, string $id): Response
     {
-        /** @var Content|null $content */
-        $content = $this->documentManager->getRepository(Content::class)->find($id);
-        if (!$content && preg_match('/^[a-z0-9_]+-([a-f0-9]{24}|[a-f0-9]{32})$/i', $id, $matches)) {
-            $content = $this->documentManager->getRepository(Content::class)->find($matches[1]);
-        }
+        $content = $this->findContentByIdentifier($id);
 
         if (!$content) {
             throw $this->createNotFoundException('Content not found.');
@@ -380,25 +384,37 @@ class ContentController extends AbstractController
             throw new AccessDeniedException();
         }
 
-        $locking = $this->getLock($content, 15);
-        $locking['locked'] = (bool) $locking['lock'];
+        $prefetchRequest = $this->isPrefetchRequest($request);
+        $hasRequestedLock = $request->query->has('lock') && '' !== trim((string) $request->query->get('lock'));
+        $locking = $prefetchRequest
+            ? $this->createPendingLocking()
+            : ($hasRequestedLock
+                ? $this->getLock($content, self::CONTENT_LOCK_TIMEOUT_SECONDS)
+                : $this->getExistingLock($content));
+        $locking['locked'] = (bool) ($locking['pending'] ?? false) || (bool) ($locking['lock'] ?? null);
 
         if (true === $content instanceof File) {
             $locking['locked'] = false;
+            $locking['pending'] = false;
         } else {
             if ($locking['lock'] && $locking['owner']) {
-                // If you own the lock, allow editing even if the lock id isn't in the URL.
-                $locking['locked'] = false;
+                $requestedLockId = trim((string) $request->query->get('lock', ''));
+                $currentLockId = $locking['lock']->getId();
 
                 if ($locking['new']) {
-                    if ($request->isMethod('get')) {
+                    $locking['locked'] = false;
+
+                    if ($request->isMethod('get') && $requestedLockId !== $currentLockId) {
                         $parameters = array_merge($request->query->all(), [
                             'id' => $content->getId(),
-                            'lock' => $locking['lock']->getId(),
+                            'lock' => $currentLockId,
                         ]);
 
                         return $this->redirectToRoute($request->get('_route'), $parameters);
                     }
+                } elseif ($requestedLockId === $currentLockId) {
+                    // Reusing a lock requires the lock token in the URL for this tab.
+                    $locking['locked'] = false;
                 }
             }
         }
@@ -408,8 +424,18 @@ class ContentController extends AbstractController
 
         if ($form->isSubmitted()) {
             // possible actions are cancel, back, reload, reload_changed and save
+            $submittedActionData = $form->get('actions')->getData();
+            $submittedAction = \is_scalar($submittedActionData) ? (string) $submittedActionData : '';
+            if ('' === $submittedAction) {
+                foreach (['cancel', 'back', 'reload', 'save', 'reload_changed'] as $candidate) {
+                    if ($this->isSubmittedAction($request, $candidate)) {
+                        $submittedAction = $candidate;
+                        break;
+                    }
+                }
+            }
 
-            if ($form->get('actions')->getData() == 'cancel' || $form->get('actions')->getData() == 'back') {
+            if ($submittedAction === 'cancel' || $submittedAction === 'back') {
                 if (!$locking['locked']) {
                     $locking['release']();
                 }
@@ -426,12 +452,19 @@ class ContentController extends AbstractController
                 throw new AccessDeniedException();
             }
 
-            if ($form->get('actions')->getData() == 'reload') {
-                return $this->redirectToRoute($request->get('_route'), ['id' => $content->getId()]);
+            if ($submittedAction === 'reload') {
+                $parameters = array_merge($request->query->all(), ['id' => $content->getId()]);
+                if (!($locking['locked'] ?? false) && ($locking['lock'] ?? null) && ($locking['owner'] ?? false)) {
+                    $parameters['lock'] = $locking['lock']->getId();
+                } else {
+                    unset($parameters['lock']);
+                }
+
+                return $this->redirectToRoute($request->get('_route'), $parameters);
             }
 
             // this is not rest compatible since a button click is required to save
-            if ($form->get('actions')->getData() == 'save') {
+            if ($submittedAction === 'save') {
                 $saved = false;
 
                 if (!$locking['locked'] && $form->isValid()) {
@@ -511,7 +544,11 @@ class ContentController extends AbstractController
                 }
 
                 if ($this->isTurboStreamRequest($request) && !$request->query->getBoolean('frame')) {
-                    $content = $this->renderView('@IntegratedContent/content/flash.turbo_stream.html.twig');
+                    $content = $this->renderView('@IntegratedContent/content/edit.status_options.turbo_stream.html.twig', [
+                        'content' => $content,
+                        'locking' => $locking,
+                        'form' => $form->createView(),
+                    ]);
 
                     return new TurboStreamResponse($content);
                 }
@@ -522,7 +559,7 @@ class ContentController extends AbstractController
             // not lost and there is a new change to get a lock on the content.
         }
 
-        if ($locking['locked']) {
+        if ($locking['locked'] && !($locking['pending'] ?? false)) {
             // the document is locked so display display a error message explaining that
             // the user can not edit this page will the lock is there.
 
@@ -610,8 +647,11 @@ class ContentController extends AbstractController
         }
         // get a lock on this content resource.
 
-        $locking = $this->getLock($content, 15);
-        $locking['locked'] = $locking['lock'] ? true : false;
+        $prefetchRequest = $this->isPrefetchRequest($request);
+        $locking = $prefetchRequest
+            ? $this->createUnlockedLocking()
+            : $this->getLock($content, self::CONTENT_LOCK_TIMEOUT_SECONDS);
+        $locking['locked'] = $prefetchRequest || (bool) $locking['lock'];
 
         if ($locking['lock'] && $locking['owner']) {
             if ($request->query->has('lock') && $locking['lock']->getId() == $request->query->get('lock')) {
@@ -740,87 +780,38 @@ class ContentController extends AbstractController
      */
     private function getLock(object $object, ?int $timeout = null): array
     {
-        if (!$this->isGranted(Permissions::EDIT, $object)) {
-            return [
-                'lock' => null,
-                'user' => null,
-                'owner' => false,
-                'new' => false,
-                'release' => function (): void {
-                },
-            ];
+        $locking = $this->getExistingLock($object);
+        if (($locking['lock'] ?? null) || !($locking['pending'] ?? false)) {
+            return $locking;
         }
 
-        $this->lockManager->clean();
-
-        $object = Resource::fromObject($object);
-        $owner = null;
-
-        if ($user = $this->getUser()) {
-            $owner = Resource::fromAccount($user);
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->createUnlockedLocking();
         }
 
-        if ($owner) {
-            $request = new Locks\Request($object);
-            $request->setOwner($owner);
-            $request->setTimeout($timeout);
+        $owner = Resource::fromAccount($user);
+        $resource = Resource::fromObject($object);
 
-            if ($lock = $this->lockManager->acquire($request)) {
-                return [
-                    'lock' => $lock,
-                    'user' => $this->getUser(),
-                    'owner' => true,
-                    'new' => true,
-                    'release' => function () use ($lock): void {
-                        $this->lockManager->release($lock);
-                    },
-                ];
-            }
-        } // can not acquire a lock if not logged in.
-
-        if ($lock = $this->lockManager->findByResource($object)) {
-            $lock = $lock[0];
-
-            if ($owner && $owner->equals($lock->getRequest()->getOwner())) {
-                return [
-                    'lock' => $lock,
-                    'user' => $this->getUser(),
-                    'owner' => true,
-                    'new' => false,
-                    'release' => function () use ($lock): void {
-                        $this->lockManager->release($lock);
-                    },
-                ];
-            }
-
-            // get the user the locks belongs to.
-            $user = null;
-
-            if ($owner = $lock->getRequest()->getOwner()) {
-                if ($this->userManager->getClassName() === $owner->getType()) {
-                    $user = $this->userManager->findByUsername($owner->getIdentifier());
-                }
-            }
-
+        if ($lock = $this->acquireLock($resource, $owner, $timeout)) {
             return [
                 'lock' => $lock,
                 'user' => $user,
-                'owner' => false,
-                'new' => false,
+                'owner' => true,
+                'new' => true,
+                'pending' => false,
                 'release' => function () use ($lock): void {
                     $this->lockManager->release($lock);
                 },
             ];
         }
 
-        return [
-            'lock' => null,
-            'user' => null,
-            'owner' => false,
-            'new' => false,
-            'release' => function (): void {
-            },
-        ];
+        $locking = $this->getExistingLock($object);
+        if ($locking['lock'] ?? null) {
+            return $locking;
+        }
+
+        return $this->createUnlockedLocking();
     }
 
     private function getLocks(\Traversable $iterator): array
@@ -837,7 +828,16 @@ class ContentController extends AbstractController
             return $results;
         }
 
-        foreach ($this->lockManager->findBy($filter) as $lock) {
+        $locks = $this->lockManager->findBy($filter);
+        if (!\is_iterable($locks)) {
+            return $results;
+        }
+
+        foreach ($locks as $lock) {
+            if ($this->isLockExpired($lock)) {
+                continue;
+            }
+
             // get the user the locks belongs to.
             $user = null;
 
@@ -847,77 +847,574 @@ class ContentController extends AbstractController
                 }
             }
 
-            $text = '';
-
-            if ($user) {
-                $text = $user->getUserIdentifier();
-
-                // we got a basic user name now try to get a better one
-
-                if (method_exists($user, 'getRelation')) {
-                    if ($relation = $user->getRelation()) {
-                        if (method_exists($relation, '__toString')) {
-                            $text = (string) $relation;
-                        }
-                    }
-                }
-            }
-
             $results[$lock->getRequest()->getResource()->getIdentifier()] = [
                 'lock' => $lock,
-                'user' => $text,
+                'user' => $this->resolveLockUserText($user),
             ];
         }
 
         return $results;
     }
 
+    public function locksStatus(Request $request): JsonResponse
+    {
+        $resources = $request->request->all('resources');
+        if (!\is_array($resources) || [] === $resources) {
+            $payload = json_decode((string) $request->getContent(), true);
+            $resources = \is_array($payload['resources'] ?? null) ? $payload['resources'] : [];
+        }
+
+        $filter = new Filter();
+        $seen = [];
+
+        foreach ($resources as $resource) {
+            if (!\is_array($resource)) {
+                continue;
+            }
+
+            $type = trim((string) ($resource['type'] ?? ''));
+            $id = trim((string) ($resource['id'] ?? ''));
+
+            if ('' === $type || '' === $id) {
+                continue;
+            }
+
+            $key = $this->getLockResourceKey($type, $id);
+            if (isset($seen[$key])) {
+                continue;
+            }
+
+            $seen[$key] = true;
+            $filter->resources[] = new Resource($type, $id);
+        }
+
+        $locks = [];
+        if ($filter->resources) {
+            $matches = $this->lockManager->findBy($filter);
+            if (\is_iterable($matches)) {
+                foreach ($matches as $lock) {
+                    if ($this->isLockExpired($lock)) {
+                        continue;
+                    }
+
+                    $user = null;
+
+                    if ($owner = $lock->getRequest()->getOwner()) {
+                        if ($this->userManager->getClassName() === $owner->getType()) {
+                            $user = $this->userManager->findByUsername($owner->getIdentifier());
+                        }
+                    }
+
+                    $resource = $lock->getRequest()->getResource();
+                    $key = $this->getLockResourceKey($resource->getType(), $resource->getIdentifier());
+
+                    $locks[$key] = [
+                        'type' => $resource->getType(),
+                        'id' => $resource->getIdentifier(),
+                        'user' => $this->resolveLockUserText($user),
+                    ];
+                }
+            }
+        }
+
+        $response = new JsonResponse(['locks' => $locks]);
+        $response->setPrivate();
+        $response->headers->addCacheControlDirective('no-store', true);
+        $response->headers->addCacheControlDirective('max-age', 0);
+
+        return $response;
+    }
+
+    public function lock(Request $request, string $id): JsonResponse
+    {
+        $content = $this->findContentByIdentifier($id);
+        if (!$content) {
+            throw $this->createNotFoundException('Content not found.');
+        }
+        $translator = $this->getTranslator();
+
+        if (!$this->isGranted(Permissions::VIEW, $content)) {
+            throw new AccessDeniedException();
+        }
+
+        if (!$this->isGranted(Permissions::EDIT, $content)) {
+            return new JsonResponse([
+                'acquired' => false,
+                'lock' => null,
+                'message' => $translator->trans('You are not allowed to lock this document.'),
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $token = trim((string) $request->request->get('_token', $request->query->get('_token', '')));
+        if (!$this->isCsrfTokenValid('integrated_content_lock_'.$content->getId(), $token)) {
+            return new JsonResponse([
+                'acquired' => false,
+                'lock' => null,
+                'message' => $translator->trans('The lock request token is invalid. Please reload and try again.'),
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        if ($content instanceof File) {
+            return new JsonResponse([
+                'acquired' => true,
+                'lock' => null,
+            ]);
+        }
+
+        $locking = $this->getLock($content, self::CONTENT_LOCK_TIMEOUT_SECONDS);
+        $knownLock = trim((string) $request->request->get('known_lock', $request->query->get('known_lock', '')));
+
+        if ($locking['lock'] && $locking['owner']) {
+            $lockId = $locking['lock']->getId();
+            if (!$locking['new'] && ('' === $knownLock || $knownLock !== $lockId)) {
+                return new JsonResponse([
+                    'acquired' => false,
+                    'lock' => null,
+                    'message' => $translator->trans('The document is currently locked by your self in a different browser or tab and can not be edited until this lock is released.'),
+                ], Response::HTTP_LOCKED);
+            }
+
+            return new JsonResponse([
+                'acquired' => true,
+                'lock' => $lockId,
+            ]);
+        }
+
+        if ($locking['lock']) {
+            $user = $this->resolveLockUserText($locking['user'] ?? null);
+            $message = $user
+                ? sprintf(
+                    $translator->trans('The document is currently locked by %s, the document can not be edited until this lock is released.'),
+                    $user
+                )
+                : $translator->trans('The document is currently locked and can not be edited until this lock is released.');
+
+            return new JsonResponse([
+                'acquired' => false,
+                'lock' => null,
+                'user' => $user,
+                'message' => $message,
+            ], Response::HTTP_LOCKED);
+        }
+
+        return new JsonResponse([
+            'acquired' => false,
+            'lock' => null,
+            'message' => $translator->trans('The lock could not be acquired, please reload and try again.'),
+        ], Response::HTTP_CONFLICT);
+    }
+
     public function navdropdowns(Request $request): Response
     {
-        $session = $request->getSession();
+        $user = $this->getUser();
+        $userId = $user instanceof UserInterface ? (string) $user->getId() : 'anonymous';
 
-        $queuecount = (int) 0; // $this->container->get('integrated_queue.dbal.provider')->count();
-        $queuepercentage = 100;
-        if ($queuecount > 0) {
-            $queuemaxcount = max($queuecount, $session->get('queuemaxcount'));
-            $session->set('queuemaxcount', $queuemaxcount);
-            $queuepercentage = round(($queuemaxcount - $queuecount) / $queuemaxcount * 100);
-        } else {
-            $session->remove('queuemaxcount');
+        $queueStatus = $this->getQueueStatus($request);
+        $queuecount = $queueStatus['queuecount'];
+        $assignedContent = $this->getAssignedContent();
+        $assignedCount = \count($assignedContent);
+
+        $cache = new FilesystemAdapter(self::NAVDROPDOWNS_CACHE_NAMESPACE);
+        $cacheItem = $cache->getItem('navdropdowns_'.md5($userId.'|'.$request->getLocale().'|'.$queuecount.'|'.$assignedCount));
+
+        if ($cacheItem->isHit()) {
+            return new Response((string) $cacheItem->get());
         }
 
         $email = '';
 
         $avatarurl = '//www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s=45';
 
-        // Get documents assigned to this user
-        $query = $this->getSolarium()->createSelect();
-
-        $assignedContent = [];
-
-        $user = $this->getUser();
-
-        if ($user instanceof UserInterface) {
-            $userId = $user->getId();
-
-            $query
-                ->createFilterQuery('workflow_assigned_id')
-                ->setQuery('facet_workflow_assigned_id:'.$userId.'');
-
-            $query->createFilterQuery('pub_not_active')
-                  ->setQuery('-pub_active:true');
-
-            $result = $this->getSolarium()->select($query);
-
-            $assignedContent = $result->getDocuments();
-        }
-
-        return $this->render('@IntegratedContent/content/navdropdowns.html.twig', [
+        $html = $this->renderView('@IntegratedContent/content/navdropdowns.html.twig', [
             'avatarurl' => $avatarurl,
             'queuecount' => $queuecount,
-            'queuepercentage' => $queuepercentage,
+            'queuepercentage' => $queueStatus['queuepercentage'],
             'assignedContent' => $assignedContent,
         ]);
+
+        $cacheItem->set($html);
+        $cacheItem->expiresAfter(86400);
+        $cache->save($cacheItem);
+
+        return new Response($html);
+    }
+
+    public function assignedStatus(): JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user instanceof UserInterface) {
+            return new JsonResponse([], Response::HTTP_FORBIDDEN);
+        }
+
+        $items = array_map(function ($document): array {
+            $contentId = (string) ($document['type_id'] ?? '');
+            $title = (string) ($document['title'] ?? '');
+
+            $statusColor = '#f2f2f2';
+            $statusIcon = '';
+
+            if (isset($document['workflow_color_string'])) {
+                $colors = (array) $document['workflow_color_string'];
+                $firstColor = reset($colors);
+                if ($firstColor) {
+                    $statusColor = (string) $firstColor;
+                }
+            }
+
+            if (isset($document['workflow_icon_string'])) {
+                $icons = (array) $document['workflow_icon_string'];
+                $firstIcon = reset($icons);
+                if ($firstIcon) {
+                    $statusIcon = (string) $firstIcon;
+                }
+            }
+
+            return [
+                'id' => $contentId,
+                'title' => $title,
+                'status_color' => $statusColor,
+                'status_icon' => $statusIcon,
+                'edit_url' => $contentId !== '' ? $this->generateUrl('integrated_content_content_edit', ['id' => $contentId]) : '#',
+            ];
+        }, $this->getAssignedContent());
+
+        $response = new JsonResponse([
+            'count' => \count($items),
+            'items' => $items,
+        ]);
+
+        $response->setPrivate();
+        $response->headers->addCacheControlDirective('no-store', true);
+        $response->headers->addCacheControlDirective('max-age', 0);
+
+        return $response;
+    }
+
+    public function queueStatus(Request $request): JsonResponse
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return new JsonResponse([], Response::HTTP_FORBIDDEN);
+        }
+
+        $queueStatus = $this->getQueueStatus($request);
+
+        $response = new JsonResponse([
+            'queuecount' => $queueStatus['queuecount'],
+            'queuepercentage' => $queueStatus['queuepercentage'],
+        ]);
+
+        $response->setPrivate();
+        $response->headers->addCacheControlDirective('no-store', true);
+        $response->headers->addCacheControlDirective('max-age', 0);
+
+        return $response;
+    }
+
+    private function getQueueStatus(Request $request): array
+    {
+        $queuecount = (int) $this->queueProvider->count();
+        $queuepercentage = 100;
+        $session = $request->getSession();
+
+        if ($queuecount > 0) {
+            $queuemaxcount = max($queuecount, (int) $session->get('queuemaxcount', 0));
+            $session->set('queuemaxcount', $queuemaxcount);
+            $queuepercentage = (int) round(($queuemaxcount - $queuecount) / $queuemaxcount * 100);
+        } else {
+            $session->remove('queuemaxcount');
+        }
+
+        return [
+            'queuecount' => $queuecount,
+            'queuepercentage' => $queuepercentage,
+        ];
+    }
+
+    private function getAssignedContent(): array
+    {
+        $user = $this->getUser();
+        if (!$user instanceof UserInterface) {
+            return [];
+        }
+
+        $query = $this->getSolarium()->createSelect();
+
+        $query
+            ->createFilterQuery('pub_not_active')
+            ->setQuery('-pub_active:true');
+
+        $query
+            ->createFilterQuery('workflow_assigned_id')
+            ->setQuery('facet_workflow_assigned_id:'.$user->getId());
+
+        $result = $this->getSolarium()->select($query);
+
+        return $result->getDocuments();
+    }
+
+    private function resolveLockUserText(mixed $user): string
+    {
+        if (!$user) {
+            return '';
+        }
+
+        $text = method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : '';
+
+        if (method_exists($user, 'getRelation')) {
+            if ($relation = $user->getRelation()) {
+                if (method_exists($relation, '__toString')) {
+                    $text = (string) $relation;
+                }
+            }
+        }
+
+        return $text;
+    }
+
+    private function findContentByIdentifier(string $id): ?Content
+    {
+        /** @var Content|null $content */
+        $content = $this->documentManager->getRepository(Content::class)->find($id);
+        if ($content) {
+            return $content;
+        }
+
+        if (preg_match('/^[a-z0-9_]+-([a-f0-9]{24}|[a-f0-9]{32})$/i', $id, $matches)) {
+            /** @var Content|null $fallback */
+            $fallback = $this->documentManager->getRepository(Content::class)->find($matches[1]);
+
+            return $fallback;
+        }
+
+        return null;
+    }
+
+    private function isPrefetchRequest(Request $request): bool
+    {
+        $secPurpose = strtolower(trim((string) $request->headers->get('X-Sec-Purpose', $request->headers->get('Sec-Purpose', ''))));
+        if ('prefetch' === $secPurpose) {
+            return true;
+        }
+
+        $purpose = strtolower(trim((string) $request->headers->get('Purpose', '')));
+
+        return 'prefetch' === $purpose;
+    }
+
+    private function createUnlockedLocking(): array
+    {
+        return [
+            'lock' => null,
+            'user' => null,
+            'owner' => false,
+            'new' => false,
+            'pending' => false,
+            'release' => function (): void {
+            },
+        ];
+    }
+
+    private function createPendingLocking(): array
+    {
+        $locking = $this->createUnlockedLocking();
+        $locking['pending'] = true;
+
+        return $locking;
+    }
+
+    private function getExistingLock(object $object): array
+    {
+        if (!$this->isGranted(Permissions::EDIT, $object)) {
+            return $this->createUnlockedLocking();
+        }
+
+        $resource = Resource::fromObject($object);
+        $owner = null;
+
+        if ($user = $this->getUser()) {
+            $owner = Resource::fromAccount($user);
+        }
+
+        $locksByResource = $this->lockManager->findByResource($resource);
+        $ownerLock = $this->resolveOwnerLock($locksByResource, $owner);
+        $lock = $ownerLock
+            ?: $this->resolveActiveLock($locksByResource);
+
+        if (!$lock && $this->releaseExpiredLocks($locksByResource)) {
+            $locksByResource = $this->lockManager->findByResource($resource);
+            $ownerLock = $this->resolveOwnerLock($locksByResource, $owner);
+            $lock = $ownerLock
+                ?: $this->resolveActiveLock($locksByResource);
+        }
+
+        if ($ownerLock) {
+            $keepLockId = method_exists($ownerLock, 'getId') ? (string) $ownerLock->getId() : null;
+            $this->releaseDuplicateOwnerLocks($locksByResource, $owner, $keepLockId);
+        }
+
+        if ($lock) {
+            if ($owner && $owner->equals($lock->getRequest()->getOwner())) {
+                return [
+                    'lock' => $lock,
+                    'user' => $this->getUser(),
+                    'owner' => true,
+                    'new' => false,
+                    'pending' => false,
+                    'release' => function () use ($lock): void {
+                        $this->lockManager->release($lock);
+                    },
+                ];
+            }
+
+            $user = null;
+
+            if ($lockOwner = $lock->getRequest()->getOwner()) {
+                if ($this->userManager->getClassName() === $lockOwner->getType()) {
+                    $user = $this->userManager->findByUsername($lockOwner->getIdentifier());
+                }
+            }
+
+            return [
+                'lock' => $lock,
+                'user' => $user,
+                'owner' => false,
+                'new' => false,
+                'pending' => false,
+                'release' => function () use ($lock): void {
+                    $this->lockManager->release($lock);
+                },
+            ];
+        }
+
+        return $this->createPendingLocking();
+    }
+
+    private function getLockResourceKey(string $type, string $id): string
+    {
+        return $type.'|'.$id;
+    }
+
+    private function acquireLock(Resource $resource, Resource $owner, ?int $timeout = null): mixed
+    {
+        $request = new Locks\Request($resource);
+        $request->setOwner($owner);
+        $request->setTimeout($timeout);
+
+        return $this->lockManager->acquire($request);
+    }
+
+    private function resolveOwnerLock(mixed $locks, ?Resource $owner): mixed
+    {
+        if (!$owner || !\is_iterable($locks)) {
+            return null;
+        }
+
+        foreach ($locks as $lock) {
+            if ($this->isLockExpired($lock)) {
+                continue;
+            }
+
+            if (!\is_object($lock) || !method_exists($lock, 'getRequest')) {
+                continue;
+            }
+
+            $request = $lock->getRequest();
+            if (!\is_object($request) || !method_exists($request, 'getOwner')) {
+                continue;
+            }
+
+            $lockOwner = $request->getOwner();
+            if ($lockOwner && $owner->equals($lockOwner)) {
+                return $lock;
+            }
+        }
+
+        return null;
+    }
+
+    private function releaseDuplicateOwnerLocks(mixed $locks, ?Resource $owner, ?string $keepLockId = null): void
+    {
+        if (!$owner || !\is_iterable($locks)) {
+            return;
+        }
+
+        foreach ($locks as $lock) {
+            if ($this->isLockExpired($lock)) {
+                continue;
+            }
+
+            if (!\is_object($lock) || !method_exists($lock, 'getRequest') || !method_exists($lock, 'getId')) {
+                continue;
+            }
+
+            $request = $lock->getRequest();
+            if (!\is_object($request) || !method_exists($request, 'getOwner')) {
+                continue;
+            }
+
+            $lockOwner = $request->getOwner();
+            if (!$lockOwner || !$owner->equals($lockOwner)) {
+                continue;
+            }
+
+            $lockId = (string) $lock->getId();
+            if ($keepLockId !== null && $lockId === $keepLockId) {
+                continue;
+            }
+
+            $this->lockManager->release($lock);
+        }
+    }
+
+    private function resolveActiveLock(mixed $locks): mixed
+    {
+        if (!\is_iterable($locks)) {
+            return null;
+        }
+
+        foreach ($locks as $lock) {
+            if ($this->isLockExpired($lock)) {
+                continue;
+            }
+
+            return $lock;
+        }
+
+        return null;
+    }
+
+    private function releaseExpiredLocks(mixed $locks): bool
+    {
+        if (!\is_iterable($locks)) {
+            return false;
+        }
+
+        $released = false;
+
+        foreach ($locks as $lock) {
+            if (!$this->isLockExpired($lock)) {
+                continue;
+            }
+
+            $this->lockManager->release($lock);
+            $released = true;
+        }
+
+        return $released;
+    }
+
+    private function isLockExpired(mixed $lock): bool
+    {
+        if (!\is_object($lock) || !method_exists($lock, 'getExpires')) {
+            return false;
+        }
+
+        $expires = $lock->getExpires();
+        if (!$expires instanceof \DateTimeInterface) {
+            return false;
+        }
+
+        return $expires->getTimestamp() <= time();
     }
 
     public function usedBy(Content $content, Request $request): Response
@@ -938,6 +1435,11 @@ class ContentController extends AbstractController
             'content' => $content,
             'pagination' => $pagination,
         ]);
+    }
+
+    public function mediaTypesAction(?string $filter = null): Response
+    {
+        return $this->mediaTypes($filter);
     }
 
     public function mediaTypes(?string $filter = null): Response
@@ -985,13 +1487,17 @@ class ContentController extends AbstractController
         array $locking,
         ?Request $request = null,
     ): FormInterface {
-        $parameters = ($locking['lock'] ? [
+        $hasUsableLock = $locking['lock'] && !($locking['locked'] ?? false);
+        $parameters = ($hasUsableLock ? [
             'id' => $content->getId(),
             'lock' => $locking['lock']->getId(),
         ] : ['id' => $content->getId()]);
 
         if ($request instanceof Request) {
             $parameters = array_merge($request->query->all(), $parameters);
+            if (!$hasUsableLock) {
+                unset($parameters['lock']);
+            }
         }
 
         $options = [
@@ -1003,11 +1509,18 @@ class ContentController extends AbstractController
                 'class' => 'content-form',
                 'data-content-id' => $content->getId(),
                 'data-content-type' => $contentType->getId(),
+                'data-lock-id' => $locking['lock'] ? $locking['lock']->getId() : '',
+                'data-lock-pending' => ($locking['pending'] ?? false) ? '1' : '0',
+                'data-content-locked' => ($locking['locked'] && !($locking['pending'] ?? false)) ? '1' : '0',
+                'data-lock-init-url' => $this->generateUrl('integrated_content_content_lock', ['id' => $content->getId()]),
             ],
             'content_type' => $contentType,
         ];
 
-        if ($locking['locked']) {
+        $pendingLock = (bool) ($locking['pending'] ?? false);
+        $reloadSubmitted = $request instanceof Request && $this->isSubmittedAction($request, 'reload');
+
+        if ($locking['locked'] && !$pendingLock) {
             // don't display error's when the content is locked as the user can't save in the first place
             $options['validation_groups'] = false;
         }
@@ -1025,11 +1538,36 @@ class ContentController extends AbstractController
             return $form->add('actions', ActionsType::class, ['buttons' => ['cancel']]);
         }
 
-        if ($locking['locked']) {
+        if ($locking['locked'] && !$pendingLock) {
             return $form->add('actions', ActionsType::class, ['buttons' => ['reload', 'cancel']]);
         }
 
+        if ($reloadSubmitted) {
+            return $form->add('actions', ActionsType::class, ['buttons' => ['reload', 'save', 'cancel']]);
+        }
+
         return $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
+    }
+
+    private function isSubmittedAction(Request $request, string $action): bool
+    {
+        foreach ([$request->request, $request->query] as $bag) {
+            $payload = $bag->all()['integrated_content'] ?? null;
+            if (!\is_array($payload)) {
+                continue;
+            }
+
+            $actions = $payload['actions'] ?? null;
+            if (!\is_array($actions)) {
+                continue;
+            }
+
+            if (\array_key_exists($action, $actions)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function createDeleteForm(ContentInterface $content, array $locking, bool $notDelete = false): FormInterface

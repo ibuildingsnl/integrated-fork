@@ -116,11 +116,11 @@ class WorkflowExtension extends AbstractTypeExtension
         ]);
 
         $arrayNormalizer = function (Options $options, $value) {
-            if (\is_array($value)) {
-                return array_filter(array_map('trim', $value));
+            if (!\is_array($value)) {
+                return [];
             }
 
-            return [];
+            return $this->sanitizeListValues($value);
         };
 
         $resolver->setNormalizer('workflow_state', $arrayNormalizer);
@@ -132,5 +132,23 @@ class WorkflowExtension extends AbstractTypeExtension
         return [
             IntegratedContent::class,
         ];
+    }
+
+    private function sanitizeListValues(array $values): array
+    {
+        $sanitized = [];
+
+        foreach ($values as $value) {
+            if (!\is_string($value)) {
+                continue;
+            }
+
+            $value = trim($value);
+            if ($value !== '') {
+                $sanitized[] = $value;
+            }
+        }
+
+        return $sanitized;
     }
 }

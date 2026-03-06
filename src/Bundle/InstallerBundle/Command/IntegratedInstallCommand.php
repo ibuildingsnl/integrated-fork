@@ -2,7 +2,7 @@
 
 namespace Integrated\Bundle\InstallerBundle\Command;
 
-use Integrated\Bundle\InstallerBundle\Test\BundleTest;
+use Integrated\Bundle\InstallerBundle\Test\BundleChecker;
 use Solarium\Client;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -22,14 +22,14 @@ use Symfony\Component\Process\Process;
 class IntegratedInstallCommand extends Command
 {
     private Client $solrClient;
-    private BundleTest $bundleTest;
+    private BundleChecker $bundleChecker;
     private KernelInterface $kernel;
     private ?string $php = null;
 
-    public function __construct(Client $solrClient, BundleTest $bundleTest, KernelInterface $kernel)
+    public function __construct(Client $solrClient, BundleChecker $bundleChecker, KernelInterface $kernel)
     {
         $this->solrClient = $solrClient;
-        $this->bundleTest = $bundleTest;
+        $this->bundleChecker = $bundleChecker;
         $this->kernel = $kernel;
 
         parent::__construct();
@@ -61,7 +61,7 @@ class IntegratedInstallCommand extends Command
             $this->solrClient->execute(new Query());
             $io->success('Solr connection successful');
 
-            $bundleErrors = $this->bundleTest->execute();
+            $bundleErrors = $this->bundleChecker->execute();
             if (\count($bundleErrors) > 0) {
                 foreach ($bundleErrors as $bundleError) {
                     $io->error($bundleError);

@@ -6,10 +6,15 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
     .setPublicPath('/bundles/integratedintegrated')
     .setManifestKeyPrefix('bundles/integratedintegrated')
     .addEntry('app', [
-        './node_modules/iconoir/css/iconoir.css',
         './src/Bundle/ContentBundle/Resources/assets/sass/main.scss',
         './src/Bundle/WorkflowBundle/Resources/assets/css/style.css',
         './src/Bundle/ContentBundle/Resources/assets/js/main.js',
+    ])
+    .addEntry('iconoir', [
+        './node_modules/iconoir/css/iconoir.css',
+    ])
+    .addEntry('pickr', [
+        './src/Bundle/ContentBundle/Resources/assets/js/pickr.js',
     ])
     .addEntry('edit', [
         './node_modules/jquery-datetimepicker/jquery.datetimepicker.css',

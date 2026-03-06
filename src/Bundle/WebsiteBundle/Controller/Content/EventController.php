@@ -38,4 +38,9 @@ class EventController extends AbstractController
             'page' => $page,
         ]);
     }
+
+    public function showAction(ContentTypePage $page, Event $event): Response
+    {
+        return $this->show($page, $event);
+    }
 }

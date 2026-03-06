@@ -44,7 +44,7 @@ class BulkController extends AbstractController
         $limit = 1000;
 
         if ($bulk) {
-            $request->query->replace($bulk->getFilters());
+            $request->query->replace(array_replace($bulk->getFilters() ?? [], $request->query->all()));
         }
 
         if (!$content = $this->contentProvider->getContentFromSolr($request, $limit + 1)) {

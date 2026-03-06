@@ -15,11 +15,17 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\News;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class NewsController extends AbstractController
 {
+    private const PAGE_SIZE = 1000;
+    private const MAX_PAGE = 50000;
+    private const NEWS_LOOKBACK = '-2 days';
+    private const CACHE_TTL = 300;
+
     private DocumentManager $manager;
     private ChannelContextInterface $context;
 
@@ -29,35 +35,86 @@ class NewsController extends AbstractController
         $this->context = $context;
     }
 
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $channel = $this->context->getChannel();
+        return $this->renderNewsPage($request, 1);
+    }
 
-        if (!$channel) {
-            throw new NotFoundHttpException('No channel found');
-        }
+    public function list(Request $request, int $page): Response
+    {
+        return $this->renderNewsPage($request, $page);
+    }
 
-        $now = new \DateTime();
+    private function renderNewsPage(Request $request, int $page): Response
+    {
+        $page = $this->getValidatedPage($page);
+        $channel = $this->getChannelOr404();
+        $now = new \DateTimeImmutable();
 
-        $queryBuilder = $this->manager->createQueryBuilder(News::class);
-        $documents = $queryBuilder
-            ->select('contentType', 'slug', 'publishTime', 'title', 'relations')
-            ->field('channels.$id')->equals($channel->getId())
-            ->field('disabled')->equals(false)
-            ->field('publishTime.startDate')->gte(new \DateTime('-2 days')) // Only the last 2 days for Google
-            ->field('publishTime.startDate')->lte($now)
-            ->field('publishTime.endDate')->gte($now)
-            ->addOr($queryBuilder->expr()->field('primaryChannel.$id')->equals($channel->getId()))
-            ->addOr($queryBuilder->expr()->field('primaryChannel')->exists(false))
+        $documents = $this->createPublishedNewsQueryBuilder($channel->getId(), $now)
+            ->select('contentType', 'slug', 'publishTime', 'title', 'createdAt', 'updatedAt')
             ->sort('createdAt', 'desc')
-            ->limit(1000)
+            ->skip(($page - 1) * self::PAGE_SIZE)
+            ->limit(self::PAGE_SIZE)
             ->getQuery()
             ->getIterator();
 
-        return $this->render('@IntegratedSitemap/news/index.xml.twig', [
+        $response = $this->render('@IntegratedSitemap/news/index.xml.twig', [
             'channel' => $channel,
             'locale' => $this->getParameter('kernel.default_locale'),
             'documents' => $documents,
         ]);
+
+        return $this->withCacheHeaders($request, $response, $now);
+    }
+
+    private function getChannelOr404()
+    {
+        $channel = $this->context->getChannel();
+        if (!$channel) {
+            throw new NotFoundHttpException('No channel found');
+        }
+
+        return $channel;
+    }
+
+    private function getValidatedPage(int $page): int
+    {
+        if ($page !== min(max($page, 1), self::MAX_PAGE)) {
+            throw new NotFoundHttpException();
+        }
+
+        return $page;
+    }
+
+    private function createPublishedNewsQueryBuilder(string $channelId, \DateTimeInterface $now)
+    {
+        $queryBuilder = $this->manager->createQueryBuilder(News::class);
+
+        return $queryBuilder
+            ->field('channels.$id')->equals($channelId)
+            ->field('disabled')->equals(false)
+            ->field('slug')->exists(true)
+            ->field('slug')->notEqual('')
+            ->field('seoMetadata.noindex')->notEqual(true)
+            // Google News sitemap only includes the most recent publication window.
+            ->field('publishTime.startDate')->gte(new \DateTimeImmutable(self::NEWS_LOOKBACK))
+            ->field('publishTime.startDate')->lte($now)
+            ->field('publishTime.endDate')->gte($now)
+            ->addOr($queryBuilder->expr()->field('primaryChannel.$id')->equals($channelId))
+            ->addOr($queryBuilder->expr()->field('primaryChannel')->exists(false));
+    }
+
+    private function withCacheHeaders(Request $request, Response $response, \DateTimeInterface $generatedAt): Response
+    {
+        $response->setPublic();
+        $response->setMaxAge(self::CACHE_TTL);
+        $response->setSharedMaxAge(self::CACHE_TTL);
+        $response->headers->addCacheControlDirective('stale-while-revalidate', self::CACHE_TTL);
+        $response->setLastModified(\DateTimeImmutable::createFromInterface($generatedAt));
+        $response->setEtag(sha1((string) $response->getContent()));
+        $response->isNotModified($request);
+
+        return $response;
     }
 }

@@ -43,7 +43,7 @@
                             <span>{% trans %}Filter{% endtrans %}</span>
                         </button>
                     </div>
-                    <div class="options">
+                    <div class="options options-toolbar">
                         <ul class="content-navigator-menu">
                             {% block options_start %}{% endblock options_start %}
                             {% block options %}
@@ -54,9 +54,10 @@
 
                                     <ul role="menu" class=" dropdown-menu">
                                         <li role="presentation">
-                                            <a href="{{ path('integrated_content_bulk_select', queryParams) }}"
-                                               tabindex="-1"
-                                               role="menuitem">{% trans %}Bulk change this selection{% endtrans %}</a>
+                                        <a href="{{ path('integrated_content_bulk_select', queryParams) }}"
+                                           data-turbo-frame="_top"
+                                           tabindex="-1"
+                                           role="menuitem">{% trans %}Bulk change this selection{% endtrans %}</a>
                                         </li>
                                     </ul>
                                 </li>

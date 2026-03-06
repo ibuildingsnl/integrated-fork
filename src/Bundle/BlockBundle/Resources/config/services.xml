@@ -34,6 +34,7 @@
 
         <service id="integrated_block.provider.block_usage" class="Integrated\Bundle\BlockBundle\Provider\BlockUsageProvider">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="cache.app" />
         </service>
 
         <service id="integrated_block.provider.filter_query" class="Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider" public="true">

@@ -8,6 +8,22 @@
         "/bundles/integratedintegrated/app.js"
       ]
     },
+    "iconoir": {
+      "css": [
+        "/bundles/integratedintegrated/iconoir.css"
+      ],
+      "js": [
+        "/bundles/integratedintegrated/iconoir.js"
+      ]
+    },
+    "pickr": {
+      "css": [
+        "/bundles/integratedintegrated/pickr.css"
+      ],
+      "js": [
+        "/bundles/integratedintegrated/pickr.js"
+      ]
+    },
     "edit": {
       "css": [
         "/bundles/integratedintegrated/edit.css"

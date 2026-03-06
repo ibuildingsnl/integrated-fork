@@ -16,12 +16,13 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
 
-        {% block style %}
+{% block style %}
+            <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/iconoir.css') }}">
             <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/app.css') }}">
 
             {{ integrated_stylesheets() }}
 
-        {% block head_javascript %}
+{% block head_javascript %}
             <script src="{{ asset('bundles/integratedintegrated/app.js') }}" defer data-turbo-track="reload"></script>
 
             {% block webpack_js %}{% endblock %}
@@ -86,7 +87,10 @@
 
                 <div class="flex wrap w-full">
                     {% block website_navigation_buttons %}
-                        {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ChannelController::getchannels')) }}
+                        <div id="topbar-channels-fragment"
+                             data-turbo-permanent>
+                            {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ChannelController::getChannels')) }}
+                        </div>
                     {% endblock website_navigation_buttons %}
                     {% block navbar_content_type %}
 
@@ -98,7 +102,10 @@
                         </div>
                     {% endblock navbar_content_type %}
                     {% include '@IntegratedContent/partials/block.search.html.twig' %}
-                    {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ContentController::navdropdowns')) }}
+                    <div id="topbar-navdropdowns-fragment"
+                         data-turbo-permanent>
+                        {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ContentController::navdropdowns')) }}
+                    </div>
                 </div>
             </div>
         </nav>

@@ -1,4 +1,5 @@
 import 'select2/dist/js/select2.full';
+import {reloadWithTurbo, visitWithTurbo} from './turbo_navigation';
 
 const MEDIA_GALLERY_NS = '.mediaGallery';
 
@@ -141,9 +142,9 @@ function bindMediaItemActions() {
             }
 
             if (selectedModus === 'media_gallery') {
-                window.location.href = editImagePath.replace('REPLACE', mediaId);
+                visitWithTurbo(editImagePath.replace('REPLACE', mediaId));
             } else {
-                window.location.href = editImageIframePath.replace('REPLACE', mediaId);
+                visitWithTurbo(editImageIframePath.replace('REPLACE', mediaId));
             }
         });
 
@@ -196,7 +197,7 @@ function bindEditPanelForm() {
 function closeUppyWithRefresh() {
     $('#upload_container').removeClass('show');
     $('#dropdown_overlay').addClass('hide');
-    window.location.reload();
+    reloadWithTurbo();
 }
 
 function bindEditPanelSaveButton() {
@@ -423,17 +424,21 @@ function getAdditionalInfo(media_id) {
     return $('#' + media_id)[0];
 }
 
-window.send_cancel_to_parent = function() {
-    window.parent.postMessage('cancel', '*');
-};
+if (typeof window.send_cancel_to_parent !== 'function') {
+    window.send_cancel_to_parent = function() {
+        window.parent.postMessage('cancel', '*');
+    };
+}
 
-window.send_message_to_parent = function() {
-    const selection = bulkSelection.map((key) => {
-        return getAdditionalInfo(key).dataset;
-    });
+if (typeof window.send_message_to_parent !== 'function') {
+    window.send_message_to_parent = function() {
+        const selection = bulkSelection.map((key) => {
+            return getAdditionalInfo(key).dataset;
+        });
 
-    window.parent.postMessage(JSON.stringify(selection), '*');
-};
+        window.parent.postMessage(JSON.stringify(selection), '*');
+    };
+}
 
 window.onlyUnique = function(value, index, self) {
     return self.indexOf(value) === index;
@@ -607,7 +612,7 @@ async function confirmDelete(confirmed_by_user) {
         showUsedByPopup(json_response)
     } else {
         document.querySelector('#bulkdelete_confirm_popup').classList.add('hidden')
-        window.location.reload();
+        reloadWithTurbo();
     }
 
     async function deleteData(url = '', data = {}) {

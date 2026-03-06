@@ -1,15 +1,18 @@
 <ul class="header-nav">
     {% block navbar_assignee %}
-        {% if assignedContent|length > 0 %}
-            <li class="dropdown-assigned-to-me dropdown close-outside top-bar hidden-xs">
+        {% if app.user %}
+            <li class="dropdown-assigned-to-me dropdown close-outside top-bar hidden-xs {% if assignedContent|length == 0 %}hidden{% endif %}"
+                data-assigned-status-url="{{ path('integrated_content_content_assigned_status') }}"
+                data-assigned-poll-interval="15000"
+                data-assigned-header="{% trans %}Assigned to me{% endtrans %}:">
                 <a class="btn btn-orange icon-left" data-toggle="dropdown">
                     <i class="iconoir-bell-notification"></i>
-                    <span>{{ assignedContent|length }}</span>
+                    <span class="js-assigned-count">{{ assignedContent|length }}</span>
                 </a>
                 <ul class="dropdown-menu-right dropdown-icons">
                     <li>
                         <div class="megamenu-content">
-                            <ul class="list list-large list-border">
+                            <ul class="list list-large list-border js-assigned-list">
                                 <li class="header">
                                     {% trans %}Assigned to me{% endtrans %}:
                                 </li>
@@ -38,15 +41,125 @@
                     </li>
                 </ul>
             </li>
+
+            <script>
+                (function () {
+                    if (window.__integratedAssignedPollerInitialized) {
+                        return;
+                    }
+                    window.__integratedAssignedPollerInitialized = true;
+
+                    var assignedNode = document.querySelector('.dropdown-assigned-to-me[data-assigned-status-url]');
+                    if (!assignedNode) {
+                        return;
+                    }
+
+                    var assignedUrl = assignedNode.getAttribute('data-assigned-status-url');
+                    var assignedPollInterval = parseInt(assignedNode.getAttribute('data-assigned-poll-interval') || '15000', 10);
+                    var assignedHeader = assignedNode.getAttribute('data-assigned-header') || 'Assigned to me:';
+                    var assignedCountNode = assignedNode.querySelector('.js-assigned-count');
+                    var assignedListNode = assignedNode.querySelector('.js-assigned-list');
+                    var assignedRequestRunning = false;
+
+                    function escapeHtml(value) {
+                        return String(value)
+                            .replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;')
+                            .replace(/"/g, '&quot;')
+                            .replace(/'/g, '&#039;');
+                    }
+
+                    function renderAssignedItems(items) {
+                        if (!assignedListNode) {
+                            return;
+                        }
+
+                        var html = '<li class="header">' + escapeHtml(assignedHeader) + '</li>';
+                        for (var i = 0; i < items.length; i++) {
+                            var item = items[i];
+                            html += '<li class="assigned-item">';
+                            html += '<a href="' + escapeHtml(item.edit_url || '#') + '" data-turbo-frame="_top">';
+                            html += '<div class="workflow-status" style="background-color:' + escapeHtml(item.status_color || '#f2f2f2') + ';">';
+                            html += '<i class="iconoir-' + escapeHtml(item.status_icon || '') + '"></i>';
+                            html += '</div>';
+                            html += '<span class="item-title">' + escapeHtml(item.title || '') + '</span>';
+                            html += '</a>';
+                            html += '</li>';
+                        }
+
+                        assignedListNode.innerHTML = html;
+                    }
+
+                    function applyAssignedStatus(status) {
+                        var assignedCount = parseInt(status.count || 0, 10);
+                        var assignedItems = Array.isArray(status.items) ? status.items : [];
+
+                        if (assignedCount <= 0) {
+                            assignedNode.classList.add('hidden');
+                            if (assignedCountNode) {
+                                assignedCountNode.textContent = '0';
+                            }
+                            return;
+                        }
+
+                        assignedNode.classList.remove('hidden');
+
+                        if (assignedCountNode) {
+                            assignedCountNode.textContent = String(assignedCount);
+                        }
+
+                        renderAssignedItems(assignedItems);
+                    }
+
+                    function pollAssignedStatus() {
+                        if (assignedRequestRunning || document.visibilityState === 'hidden') {
+                            return;
+                        }
+
+                        assignedRequestRunning = true;
+
+                        fetch(assignedUrl, {
+                            credentials: 'same-origin',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                            .then(function (response) {
+                                if (!response.ok) {
+                                    throw new Error('Assigned status request failed');
+                                }
+
+                                return response.json();
+                            })
+                            .then(applyAssignedStatus)
+                            .catch(function () {
+                            })
+                            .finally(function () {
+                                assignedRequestRunning = false;
+                            });
+                    }
+
+                    pollAssignedStatus();
+                    window.setInterval(pollAssignedStatus, assignedPollInterval);
+                    document.addEventListener('visibilitychange', function () {
+                        if (document.visibilityState === 'visible') {
+                            pollAssignedStatus();
+                        }
+                    });
+                })();
+            </script>
         {% endif %}
     {% endblock navbar_assignee %}
 
     {% block navbar_queue %}
-        {% if queuecount > 0 and is_granted('ROLE_ADMIN') %}
-            <li class="dropdown-queue dropdown close-outside top-bar hidden-xs">
+        {% if is_granted('ROLE_ADMIN') %}
+            <li class="dropdown-queue dropdown close-outside top-bar hidden-xs {% if queuecount == 0 %}hidden{% endif %}"
+                data-queue-status-url="{{ path('integrated_content_content_queue_status') }}"
+                data-queue-poll-interval="15000">
                 <a class="btn btn-green icon-left" data-toggle="dropdown">
                     <i class="iconoir-database-backup"></i>
-                    <span class="">{{ queuecount }}</span>
+                    <span class="js-queue-count">{{ queuecount }}</span>
                 </a>
                 <ul class="dropdown-menu-left dropdown-icons">
                     <li>
@@ -55,10 +168,13 @@
                                 <li class="text-sm text-black">{% trans %}Background indexing{% endtrans %}...
                                 <li>
                                     <div class="progress progress-striped">
-                                        <div style="width: {{ queuepercentage }}%" aria-valuemax="100"
-                                             aria-valuemin="0" aria-valuenow="{{ queuepercentage }}" role="progressbar"
-                                             class="progress-bar progress-bar-success">
-                                            <span class="font-bold">{{ queuepercentage }}%</span>
+                                        <div class="progress-bar progress-bar-success js-queue-progress"
+                                             style="width: {{ queuepercentage }}%"
+                                             aria-valuemax="100"
+                                             aria-valuemin="0"
+                                             aria-valuenow="{{ queuepercentage }}"
+                                             role="progressbar">
+                                            <span class="font-bold js-queue-percentage">{{ queuepercentage }}%</span>
                                         </div>
                                     </div>
                                 </li>
@@ -67,6 +183,88 @@
                     </li>
                 </ul>
             </li>
+
+            <script>
+                (function () {
+                    if (window.__integratedQueuePollerInitialized) {
+                        return;
+                    }
+                    window.__integratedQueuePollerInitialized = true;
+
+                    var queueNode = document.querySelector('.dropdown-queue[data-queue-status-url]');
+                    if (!queueNode) {
+                        return;
+                    }
+
+                    var queueUrl = queueNode.getAttribute('data-queue-status-url');
+                    var queuePollInterval = parseInt(queueNode.getAttribute('data-queue-poll-interval') || '15000', 10);
+                    var queueCountNode = queueNode.querySelector('.js-queue-count');
+                    var queueProgressNode = queueNode.querySelector('.js-queue-progress');
+                    var queuePercentageNode = queueNode.querySelector('.js-queue-percentage');
+                    var queueRequestRunning = false;
+
+                    function applyQueueStatus(status) {
+                        var queueCount = parseInt(status.queuecount || 0, 10);
+                        var queuePercentage = parseInt(status.queuepercentage || 0, 10);
+
+                        if (queueCount <= 0) {
+                            queueNode.classList.add('hidden');
+                            return;
+                        }
+
+                        queueNode.classList.remove('hidden');
+
+                        if (queueCountNode) {
+                            queueCountNode.textContent = String(queueCount);
+                        }
+
+                        if (queueProgressNode) {
+                            queueProgressNode.style.width = queuePercentage + '%';
+                            queueProgressNode.setAttribute('aria-valuenow', String(queuePercentage));
+                        }
+
+                        if (queuePercentageNode) {
+                            queuePercentageNode.textContent = queuePercentage + '%';
+                        }
+                    }
+
+                    function pollQueueStatus() {
+                        if (queueRequestRunning || document.visibilityState === 'hidden') {
+                            return;
+                        }
+
+                        queueRequestRunning = true;
+
+                        fetch(queueUrl, {
+                            credentials: 'same-origin',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                            .then(function (response) {
+                                if (!response.ok) {
+                                    throw new Error('Queue status request failed');
+                                }
+
+                                return response.json();
+                            })
+                            .then(applyQueueStatus)
+                            .catch(function () {
+                            })
+                            .finally(function () {
+                                queueRequestRunning = false;
+                            });
+                    }
+
+                    pollQueueStatus();
+                    window.setInterval(pollQueueStatus, queuePollInterval);
+                    document.addEventListener('visibilitychange', function () {
+                        if (document.visibilityState === 'visible') {
+                            pollQueueStatus();
+                        }
+                    });
+                })();
+            </script>
         {% endif %}
     {% endblock navbar_queue %}
 

@@ -105,6 +105,10 @@ class ArrayComparer
         }
 
         if ($allowArray && \is_array($value)) {
+            if (isset($value['relations']) && \is_array($value['relations'])) {
+                $value['relations'] = self::normalizeRelationsList($value['relations']);
+            }
+
             foreach ($value as $key => $item) {
                 if (substr($key, 0, 1) === '$') {
                     $value['_'.$key] = $item;
@@ -118,6 +122,78 @@ class ArrayComparer
         }
 
         return $value;
+    }
+
+    private static function normalizeRelationsList(array $relations): array
+    {
+        $normalized = [];
+        foreach ($relations as $index => $relation) {
+            if (!\is_array($relation)) {
+                $normalized['__index_'.$index] = $relation;
+                continue;
+            }
+
+            $relationId = self::pickScalar($relation['relationId'] ?? null);
+            $key = (\is_string($relationId) && $relationId !== '') ? $relationId : '__index_'.$index;
+
+            if (isset($relation['references']) && \is_array($relation['references'])) {
+                $relation['references'] = self::normalizeReferencesList($relation['references']);
+            }
+
+            $normalized[$key] = $relation;
+        }
+
+        ksort($normalized);
+
+        return $normalized;
+    }
+
+    private static function normalizeReferencesList(array $references): array
+    {
+        $normalized = [];
+        foreach ($references as $index => $reference) {
+            if (!\is_array($reference)) {
+                $normalized['__index_'.$index] = $reference;
+                continue;
+            }
+
+            $refClass = self::pickScalar($reference['class'] ?? null);
+            $refId = self::pickScalar($reference['_$id'] ?? ($reference['$id'] ?? null));
+
+            $key = '';
+            if (\is_string($refClass) && $refClass !== '' && \is_string($refId) && $refId !== '') {
+                $key = $refClass.'#'.$refId;
+            } elseif (\is_string($refId) && $refId !== '') {
+                $key = '#'.$refId;
+            } else {
+                $key = '__index_'.$index;
+            }
+
+            $normalized[$key] = $reference;
+        }
+
+        ksort($normalized);
+
+        return $normalized;
+    }
+
+    private static function pickScalar(mixed $value): ?string
+    {
+        if (\is_scalar($value) && (string) $value !== '') {
+            return (string) $value;
+        }
+
+        if (!\is_array($value)) {
+            return null;
+        }
+
+        foreach ($value as $item) {
+            if (\is_scalar($item) && (string) $item !== '') {
+                return (string) $item;
+            }
+        }
+
+        return null;
     }
 
     public static function isSame($value1, $value2): bool

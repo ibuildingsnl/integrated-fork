@@ -21,6 +21,7 @@
                         </a>
                     </div>
                 {% endif %}
+                {% block user_profile_extra %}{% endblock %}
                 <section class="editor editor-wrapped">
                     {{ form_rest(form, {'style':'horizontal', 'state': 'show'}) }}
                 </section>

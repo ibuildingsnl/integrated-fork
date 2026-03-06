@@ -14,12 +14,14 @@ namespace Integrated\Bundle\ContentHistoryBundle\Controller;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Query\Builder as MongoQueryBuilder;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentHistoryBundle\Document\ContentHistory;
 use Integrated\Bundle\ContentHistoryBundle\History\Parser;
+use Integrated\Bundle\WorkflowBundle\Entity\Definition\State as WorkflowDefinitionState;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,15 +33,18 @@ class ContentHistoryController extends AbstractController
     private Parser $parser;
     private PaginatorInterface $paginator;
     private ContentTypeManager $contentTypeManager;
+    private ?EntityManagerInterface $entityManager;
     private array $formattedValueCache = [];
     private array $referenceDocumentCache = [];
+    private array $workflowStateNameCache = [];
 
-    public function __construct(DocumentManager $manager, Parser $parser, PaginatorInterface $paginator, ContentTypeManager $contentTypeManager)
+    public function __construct(DocumentManager $manager, Parser $parser, PaginatorInterface $paginator, ContentTypeManager $contentTypeManager, ?EntityManagerInterface $entityManager = null)
     {
         $this->manager = $manager;
         $this->parser = $parser;
         $this->paginator = $paginator;
         $this->contentTypeManager = $contentTypeManager;
+        $this->entityManager = $entityManager;
     }
 
     public function index(Content $content, Request $request): Response
@@ -132,9 +137,13 @@ class ContentHistoryController extends AbstractController
         $fromSnapshot = $this->normalizeSnapshotForCompare($snapshots[$fromIndex] ?? []);
         $toSnapshot = $this->normalizeSnapshotForCompare($snapshots[$toIndex] ?? []);
         $compareDiff = \Integrated\Bundle\ContentHistoryBundle\Diff\ArrayComparer::diff($fromSnapshot, $toSnapshot);
-        $compareTable = $this->parser->getReadableChangesetFromArray($compareDiff);
+        $compareTable = $this->removeConflictingFeaturedImageRows(
+            $this->parser->getReadableChangesetFromArray($compareDiff)
+        );
         [$filteredCompareTable, $hiddenCompareRows] = $this->filterReadableRows($compareTable, $showTechnical);
-        $revisionChangeSet = $this->parser->getReadableChangeset($contentHistory);
+        $revisionChangeSet = $this->removeConflictingFeaturedImageRows(
+            $this->parser->getReadableChangeset($contentHistory)
+        );
         [$filteredRevisionChangeSet, $hiddenRevisionRows] = $this->filterReadableRows($revisionChangeSet, $showTechnical);
 
         return $this->render('@IntegratedContentHistory/content_history/show.html.twig', [
@@ -177,9 +186,10 @@ class ContentHistoryController extends AbstractController
     private function enhanceChangeSetForDisplay(array $rows): array
     {
         return array_map(function (array $row): array {
+            $fieldName = (string) ($row['name'] ?? '');
             $row['displayName'] = $this->humanizeHistoryFieldName((string) ($row['name'] ?? ''));
-            $row['oldDisplay'] = $this->formatHistoryValue($row['old'] ?? '');
-            $row['newDisplay'] = $this->formatHistoryValue($row['new'] ?? '');
+            $row['oldDisplay'] = $this->formatHistoryValue($row['old'] ?? '', $fieldName);
+            $row['newDisplay'] = $this->formatHistoryValue($row['new'] ?? '', $fieldName);
             $row = $this->applyInlineDiffForTextRow($row);
 
             return $row;
@@ -205,6 +215,63 @@ class ContentHistoryController extends AbstractController
         }
 
         return [$filtered, $hidden];
+    }
+
+    private function removeConflictingFeaturedImageRows(array $rows): array
+    {
+        $dedicatedIndex = null;
+        $relationIndex = null;
+
+        foreach ($rows as $index => $row) {
+            $name = strtolower(trim((string) ($row['name'] ?? '')));
+            if ($name === 'featuredimage' || $name === 'featured_image') {
+                $dedicatedIndex = $index;
+                continue;
+            }
+
+            if ($name === 'relations > __featured_image' || $name === 'relations > featured_image') {
+                $relationIndex = $index;
+            }
+        }
+
+        if ($dedicatedIndex === null || $relationIndex === null) {
+            return $rows;
+        }
+
+        $dedicatedRow = $rows[$dedicatedIndex];
+        $relationRow = $rows[$relationIndex];
+
+        $dedicatedHasOld = !$this->isHistoryRowValueEmpty($dedicatedRow['old'] ?? null);
+        $dedicatedHasNew = !$this->isHistoryRowValueEmpty($dedicatedRow['new'] ?? null);
+        $relationHasOld = !$this->isHistoryRowValueEmpty($relationRow['old'] ?? null);
+        $relationHasNew = !$this->isHistoryRowValueEmpty($relationRow['new'] ?? null);
+
+        // Prefer the relation row when it contains full old/new context and the dedicated row is one-sided/noisy.
+        if ($relationHasOld && $relationHasNew && (!$dedicatedHasOld || !$dedicatedHasNew)) {
+            unset($rows[$dedicatedIndex]);
+
+            return array_values($rows);
+        }
+
+        // Default behavior: keep dedicated field and hide relation duplicate.
+        unset($rows[$relationIndex]);
+
+        return array_values($rows);
+    }
+
+    private function isHistoryRowValueEmpty(mixed $value): bool
+    {
+        if ($value === null) {
+            return true;
+        }
+
+        if (is_string($value)) {
+            $normalized = strtolower(trim($value));
+
+            return $normalized === '' || $normalized === '—' || $normalized === 'none';
+        }
+
+        return false;
     }
 
     private function isNoOpRow(array $row): bool
@@ -291,9 +358,10 @@ class ContentHistoryController extends AbstractController
         return implode(' > ', $displaySegments);
     }
 
-    private function formatHistoryValue(mixed $value): array
+    private function formatHistoryValue(mixed $value, ?string $fieldPath = null): array
     {
-        $cacheKey = md5(is_scalar($value) || $value === null ? (string) $value : serialize($value));
+        $cacheInput = is_scalar($value) || $value === null ? (string) $value : serialize($value);
+        $cacheKey = md5(($fieldPath ?? '').'|'.$cacheInput);
         if (isset($this->formattedValueCache[$cacheKey])) {
             return $this->formattedValueCache[$cacheKey];
         }
@@ -317,6 +385,11 @@ class ContentHistoryController extends AbstractController
         $value = trim($value);
         if ($value === '') {
             return $this->formattedValueCache[$cacheKey] = ['type' => 'empty', 'text' => ''];
+        }
+
+        $workflowStateName = $this->resolveWorkflowStateName($value, $fieldPath);
+        if ($workflowStateName !== null) {
+            return $this->formattedValueCache[$cacheKey] = ['type' => 'text', 'text' => $workflowStateName];
         }
 
         $resolvedComposite = $this->resolveCompositeReferenceValue($value);
@@ -345,6 +418,52 @@ class ContentHistoryController extends AbstractController
         }
 
         return $this->formattedValueCache[$cacheKey] = ['type' => 'text', 'text' => $value];
+    }
+
+    private function resolveWorkflowStateName(string $value, ?string $fieldPath): ?string
+    {
+        if ($this->entityManager === null || !$this->isWorkflowStateField($fieldPath) || !$this->isUuid($value)) {
+            return null;
+        }
+
+        if (array_key_exists($value, $this->workflowStateNameCache)) {
+            return $this->workflowStateNameCache[$value];
+        }
+
+        $state = $this->entityManager->getRepository(WorkflowDefinitionState::class)->find($value);
+        if (!$state instanceof WorkflowDefinitionState) {
+            $this->workflowStateNameCache[$value] = null;
+
+            return null;
+        }
+
+        $name = trim($state->getName());
+        $this->workflowStateNameCache[$value] = $name !== '' ? $name : $value;
+
+        return $this->workflowStateNameCache[$value];
+    }
+
+    private function isWorkflowStateField(?string $fieldPath): bool
+    {
+        if (!is_string($fieldPath) || trim($fieldPath) === '') {
+            return false;
+        }
+
+        $normalizedPath = strtolower(trim($fieldPath));
+        if (str_contains($normalizedPath, 'workflow_state')) {
+            return true;
+        }
+
+        if (!str_contains($normalizedPath, 'workflow')) {
+            return false;
+        }
+
+        return preg_match('/(^| > )state($| > )/', $normalizedPath) === 1;
+    }
+
+    private function isUuid(string $value): bool
+    {
+        return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $value) === 1;
     }
 
     private function resolveCompositeReferenceValue(string $value): ?array
@@ -622,15 +741,21 @@ class ContentHistoryController extends AbstractController
             return $value;
         }
 
+        // Relations and references may be sparse numeric arrays (e.g. keys 2,3,4 after unset),
+        // so treat them as collections regardless of "is list" shape.
+        if ($parentKey === 'relations') {
+            return $this->normalizeRelationsListForCompare($value);
+        }
+
+        if ($parentKey === 'references') {
+            return $this->normalizeReferencesListForCompare($value);
+        }
+
+        if ($parentKey === 'channels') {
+            return $this->normalizeChannelsListForCompare($value);
+        }
+
         if ($this->isList($value)) {
-            if ($parentKey === 'relations') {
-                return $this->normalizeRelationsListForCompare($value);
-            }
-
-            if ($parentKey === 'references') {
-                return $this->normalizeReferencesListForCompare($value);
-            }
-
             return array_map(fn ($item) => $this->normalizeCompareValue($item), $value);
         }
 
@@ -659,7 +784,53 @@ class ContentHistoryController extends AbstractController
                 $relationId = end($relationId) ?: reset($relationId);
             }
 
-            $key = is_scalar($relationId) && (string) $relationId !== '' ? (string) $relationId : '__index_'.$index;
+            $key = '';
+            if (is_scalar($relationId) && (string) $relationId !== '') {
+                $key = (string) $relationId;
+            } else {
+                $relationType = $relation['relationType'] ?? null;
+                if (is_array($relationType)) {
+                    $relationType = end($relationType) ?: reset($relationType);
+                }
+
+                $references = $relation['references'] ?? [];
+                $referenceKeys = [];
+                if (is_array($references)) {
+                    foreach ($references as $reference) {
+                        if (!is_array($reference)) {
+                            continue;
+                        }
+
+                        $refId = $reference['$id'] ?? $reference['_$id'] ?? null;
+                        if (is_array($refId)) {
+                            $refId = end($refId) ?: reset($refId);
+                        }
+
+                        $refClass = $reference['class'] ?? null;
+                        if (is_array($refClass)) {
+                            $refClass = end($refClass) ?: reset($refClass);
+                        }
+
+                        if (is_scalar($refClass) && (string) $refClass !== '' && is_scalar($refId) && (string) $refId !== '') {
+                            $referenceKeys[] = (string) $refClass.'#'.(string) $refId;
+                        } elseif (is_scalar($refId) && (string) $refId !== '') {
+                            $referenceKeys[] = '#'.(string) $refId;
+                        }
+                    }
+                }
+
+                sort($referenceKeys);
+                $signature = implode('|', $referenceKeys);
+                if (is_scalar($relationType) && (string) $relationType !== '') {
+                    $key = '__relationType:'.(string) $relationType.($signature !== '' ? ':'.$signature : '');
+                } elseif ($signature !== '') {
+                    $key = '__references:'.$signature;
+                }
+            }
+
+            if ($key === '') {
+                $key = '__index_'.$index;
+            }
             $normalized[$key] = $this->normalizeCompareValue($relation);
         }
 
@@ -700,6 +871,51 @@ class ContentHistoryController extends AbstractController
             }
 
             $normalized[$key] = $this->normalizeCompareValue($reference);
+        }
+
+        ksort($normalized);
+
+        return $normalized;
+    }
+
+    private function normalizeChannelsListForCompare(array $channels): array
+    {
+        $normalized = [];
+
+        foreach ($channels as $index => $channel) {
+            $key = null;
+
+            if (is_array($channel)) {
+                $channelId = $channel['$id'] ?? $channel['_$id'] ?? null;
+                if (is_array($channelId)) {
+                    $channelId = end($channelId) ?: reset($channelId);
+                }
+
+                $channelClass = $channel['class'] ?? null;
+                if (is_array($channelClass)) {
+                    $channelClass = end($channelClass) ?: reset($channelClass);
+                }
+
+                if (is_scalar($channelId) && (string) $channelId !== '') {
+                    $key = strtolower((string) $channelId);
+                    if (is_scalar($channelClass) && (string) $channelClass !== '') {
+                        $key = strtolower((string) $channelClass.'#'.(string) $channelId);
+                    }
+                }
+            } elseif (is_scalar($channel)) {
+                $channelString = trim((string) $channel);
+                if (preg_match('/(?:reference|channel)\s+#([A-Za-z0-9_]+)/i', $channelString, $matches)) {
+                    $key = strtolower($matches[1]);
+                } elseif ($channelString !== '') {
+                    $key = strtolower($channelString);
+                }
+            }
+
+            if (!is_string($key) || $key === '') {
+                $key = '__index_'.$index;
+            }
+
+            $normalized[$key] = $this->normalizeCompareValue($channel);
         }
 
         ksort($normalized);
@@ -771,8 +987,7 @@ class ContentHistoryController extends AbstractController
     private function applyDiff(array $base, array $diff): array
     {
         foreach ($diff as $key => $value) {
-            if (\is_array($value) && \array_key_exists(0, $value) && \array_key_exists(1, $value)
-                && !\is_array($value[0]) && !\is_array($value[1])) {
+            if (\is_array($value) && $this->isHistoryDiffPairForField($key, $value)) {
                 $base[$key] = $value[1];
                 continue;
             }
@@ -786,6 +1001,30 @@ class ContentHistoryController extends AbstractController
         }
 
         return $base;
+    }
+
+    private function isHistoryDiffPair(array $value): bool
+    {
+        return array_keys($value) === [0, 1];
+    }
+
+    private function isHistoryDiffPairForField(int|string $key, array $value): bool
+    {
+        if (!$this->isHistoryDiffPair($value)) {
+            return false;
+        }
+
+        if (!is_string($key)) {
+            return false;
+        }
+
+        // Always treat top-level relation/reference field changes as [old, new].
+        if ($key === 'relations' || $key === 'references') {
+            return true;
+        }
+
+        // Scalar/bool/null changes are safe as [old, new].
+        return !is_array($value[0]) || !is_array($value[1]);
     }
 
     public function history(Content $content, int $limit = 3): Response

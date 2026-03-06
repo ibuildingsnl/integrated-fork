@@ -38,4 +38,9 @@ class ArticleController extends AbstractController
             'page' => $page,
         ]);
     }
+
+    public function showAction(ContentTypePage $page, Article $article): Response
+    {
+        return $this->show($page, $article);
+    }
 }

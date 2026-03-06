@@ -1,10 +1,21 @@
 {% apply spaceless %}
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    {% for page in 0..count-1 %}
-        <sitemap>
-            <loc>{{ absolute_url(path('integrated_sitemap_list', {page: loop.index})) }}</loc>
-        </sitemap>
+    {% for section in sections %}
+        {% for page in 1..section.count %}
+            <sitemap>
+                <loc>{{ absolute_url(path('integrated_sitemap_list_by_type', {type: section.type, page: page})) }}</loc>
+                <lastmod>{{ generatedAt|date('c') }}</lastmod>
+            </sitemap>
+        {% endfor %}
     {% endfor %}
+    {% if pagesCount > 0 %}
+        {% for page in 1..pagesCount %}
+            <sitemap>
+                <loc>{{ absolute_url(path('integrated_sitemap_list_pages', {page: page})) }}</loc>
+                <lastmod>{{ generatedAt|date('c') }}</lastmod>
+            </sitemap>
+        {% endfor %}
+    {% endif %}
 </sitemapindex>
 {% endapply %}

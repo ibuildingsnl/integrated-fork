@@ -38,4 +38,9 @@ class PersonController extends AbstractController
             'page' => $page,
         ]);
     }
+
+    public function showAction(ContentTypePage $page, Person $person): Response
+    {
+        return $this->show($page, $person);
+    }
 }

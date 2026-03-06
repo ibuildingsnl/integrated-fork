@@ -1,5 +1,16 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% form_theme form _self %}
+{% import _self as helper %}
+
+{% macro hidden_query_input(name, value) %}
+    {% if value is iterable %}
+        {% for key, item in value %}
+            {{ _self.hidden_query_input(name ~ '[' ~ key ~ ']', item) }}
+        {% endfor %}
+    {% elseif value is not same as(null) %}
+        <input type="hidden" name="{{ name }}" value="{{ value }}">
+    {% endif %}
+{% endmacro %}
 
 {% block form_errors %}
     {% apply spaceless %}
@@ -16,8 +27,27 @@
 {% block content %}
 
 <div class="row">
+    {% set bulkId = app.request.attributes.get('id') %}
+    {% set routeParams = bulkId ? {'id': bulkId} : {} %}
+    {% set query = app.request.query.all %}
+    {% set dateFrom = app.request.query.get('date_from')|default('') %}
+    {% set dateTo = app.request.query.get('date_to')|default('') %}
+    {% set dateLabel = 'All dates'|trans %}
+    {% if dateFrom or dateTo %}
+        {% set dateLabel = (dateFrom ?: '...') ~ ' - ' ~ (dateTo ?: '...') %}
+    {% endif %}
+
+    <form id="bulk-date-filter-form" method="get" action="{{ path('integrated_content_bulk_select', routeParams) }}">
+        {% for key, value in query %}
+            {% if key not in ['date_from', 'date_to', 'page'] %}
+                {{ helper.hidden_query_input(key, value) }}
+            {% endif %}
+        {% endfor %}
+        <input type="hidden" name="page" value="1">
+    </form>
+
     {% block form_start %}
-        {{ form_start(form) }}
+        {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
     {% endblock %}
     {% block toolbar %}
         <div id="toolbar" class="w-full flex justify-between">
@@ -31,9 +61,46 @@
             </div>
         </div>
     {% endblock toolbar %}
-    <div class="index-wrapper-full">
 
-    <h1>{% trans %}Step 1 of 3: Choose Issues{% endtrans %}</h1>
+    <div class="index-wrapper-full">
+        <div class="page-title">
+            <div class="heading flex justify-between w-full">
+                <div class="heading-switcher">
+                    <h1 class="heading">{% trans %}Step 1 of 3: Choose Issues{% endtrans %}</h1>
+                </div>
+            </div>
+            <div class="options options-toolbar">
+                <ul class="content-navigator-menu">
+                    <li class="dropdown close-outside" data-underlay="no">
+                        <a data-toggle="dropdown" role="button" id="bulk-date-range"
+                           class="btn btn-select space-between">
+                            <span>{% trans %}Date range{% endtrans %}: {{ dateLabel }}</span>
+                            <i class="iconoir-nav-arrow-down"></i>
+                        </a>
+                        <ul aria-labelledby="bulk-date-range" role="menu" class="dropdown-menu">
+                            <li role="presentation" style="padding: 10px 12px; min-width: 320px;">
+                                <div class="form-group" style="margin-bottom: 8px;">
+                                    <label for="bulk-date-from">{% trans %}From{% endtrans %}</label>
+                                    <input id="bulk-date-from" type="date" name="date_from" class="form-control"
+                                           value="{{ dateFrom }}" form="bulk-date-filter-form">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 10px;">
+                                    <label for="bulk-date-to">{% trans %}Until{% endtrans %}</label>
+                                    <input id="bulk-date-to" type="date" name="date_to" class="form-control"
+                                           value="{{ dateTo }}" form="bulk-date-filter-form">
+                                </div>
+                                <button class="btn btn-green no-icon" type="submit" form="bulk-date-filter-form">{% trans %}Apply{% endtrans %}</button>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="btn btn-white" href="{{ path('integrated_content_bulk_select', routeParams|merge(query|merge({'date_from': '', 'date_to': '', 'page': 1}))) }}">
+                            {% trans %}Reset date{% endtrans %}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
 
     {{ form_errors(form) }}
 
@@ -72,6 +139,10 @@
                         <td>{{ content[item.vars.label].getContentType()|capitalize }}</td>
                         <td>{{ content[item.vars.label].getCreatedAt()|format_date('medium') }}</td>
                         <td>{{ content[item.vars.label].getUpdatedAt()|format_date('medium') }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">{% trans %}No items found for this date range{% endtrans %}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

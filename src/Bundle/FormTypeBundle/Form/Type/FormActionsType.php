@@ -60,6 +60,9 @@ class FormActionsType extends AbstractType
             'buttons' => [],
             'options' => [],
             'mapped' => false,
+            // Button sets can change between render and submit (e.g. lock state transitions).
+            // Ignore unknown button keys to keep the parent form structurally valid.
+            'allow_extra_fields' => true,
         ]);
     }
 

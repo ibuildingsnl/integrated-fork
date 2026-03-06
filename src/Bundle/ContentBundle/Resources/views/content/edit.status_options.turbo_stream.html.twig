@@ -1,0 +1,23 @@
+{% if form is defined %}
+    {% form_theme form with '@IntegratedContent/form/form_div_layout.html.twig' %}
+{% endif %}
+
+{{ include('@IntegratedContent/content/flash.turbo_stream.html.twig') }}
+
+<turbo-stream action="replace" target="content-workflow-section">
+    <template>
+        {{ include('@IntegratedContent/content/partial/workflow_info.html.twig') }}
+    </template>
+</turbo-stream>
+
+<turbo-stream action="replace" target="content-status-options">
+    <template>
+        {{ include('@IntegratedContent/content/partial/status_options.html.twig') }}
+    </template>
+</turbo-stream>
+
+<turbo-stream action="replace" target="content-history-section">
+    <template>
+        {{ render(controller('Integrated\\Bundle\\ContentHistoryBundle\\Controller\\ContentHistoryController::history', { 'content': content })) }}
+    </template>
+</turbo-stream>

@@ -46,6 +46,10 @@
 
 {% block integrated_color_widget %}
     {% apply spaceless %}
+        {% integrated_stylesheets mode='append' 'bundles/integratedintegrated/pickr.css' %}
+        {% endintegrated_stylesheets %}
+        {% integrated_javascripts mode='append' 'bundles/integratedintegrated/pickr.js' %}
+        {% endintegrated_javascripts %}
         <div class="input-group coloris">
             <input {{ block('widget_attributes') }} class="form-control" type="text" value="{{ value }}" data-coloris>
             <span class="input-group-addon"><i></i></span>

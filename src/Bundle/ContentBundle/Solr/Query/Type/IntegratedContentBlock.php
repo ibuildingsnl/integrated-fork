@@ -56,10 +56,11 @@ class IntegratedContentBlock extends AbstractType
                 ->setMinCount(1)
                 ->getLocalParameters()->setExclude($field);
 
-            if ($value) {
+            $values = $this->sanitizeListValues($value);
+            if (\count($values)) {
                 $query
                     ->createFilterQuery($field)
-                    ->setQuery($field.': ((%1%))', [implode(') OR (', array_map($escape, $value))])
+                    ->setQuery($field.': ((%1%))', [implode(') OR (', array_map($escape, $values))])
                     ->addTag($field);
             }
         }
@@ -70,10 +71,11 @@ class IntegratedContentBlock extends AbstractType
             $facetField->setField($field)
                 ->setMinCount(1);
 
-            if ($value) {
+            $values = $this->sanitizeListValues($value);
+            if (\count($values)) {
                 $query
                     ->createFilterQuery($field.'_search_selection')
-                    ->setQuery($field.': ((%1%))', [implode(') OR (', array_map($escape, $value))])
+                    ->setQuery($field.': ((%1%))', [implode(') OR (', array_map($escape, $values))])
                     ->addTag($field.'_search_selection');
             }
         }
@@ -85,6 +87,11 @@ class IntegratedContentBlock extends AbstractType
         if (\count($options['relation_search_selection'])) {
             foreach ($this->manager->getRepository(Relation::class)->findAll() as $relation) {
                 if ($value = $options['relation_search_selection'][$relation->getId()] ?? []) {
+                    $value = $this->sanitizeListValues($value);
+                    if (!\count($value)) {
+                        continue;
+                    }
+
                     /** @var Field $facetField */
                     $facetField = $facet->createFacetField($name = 'relation_'.$relation->getId().'_search_selection');
                     $facetField->setField($field = 'facet_'.$relation->getId());
@@ -109,15 +116,61 @@ class IntegratedContentBlock extends AbstractType
 
         $resolver->setAllowedTypes('exclude', 'boolean');
 
-        $arrayNormalizer = function (Options $options, $value) {
-            if (\is_array($value)) {
-                return array_filter(array_map('trim', $value));
+        $listNormalizer = function ($value): array {
+            if (\is_string($value)) {
+                $value = trim($value);
+
+                return '' !== $value ? [$value] : [];
             }
 
-            return [];
+            if (!\is_array($value)) {
+                return [];
+            }
+
+            $result = [];
+
+            foreach ($value as $item) {
+                if (!\is_scalar($item) || null === $item) {
+                    continue;
+                }
+
+                $item = trim((string) $item);
+                if ('' !== $item) {
+                    $result[] = $item;
+                }
+            }
+
+            return $result;
         };
 
-        $resolver->setNormalizer('exclude_ids', $arrayNormalizer);
+        $mapListNormalizer = function ($value) use ($listNormalizer): array {
+            if (!\is_array($value)) {
+                return [];
+            }
+
+            $result = [];
+
+            foreach ($value as $key => $items) {
+                $key = trim((string) $key);
+                if ('' === $key) {
+                    continue;
+                }
+
+                $result[$key] = $listNormalizer($items);
+            }
+
+            return $result;
+        };
+
+        $resolver->setNormalizer('exclude_ids', function (Options $options, $value) use ($listNormalizer) {
+            return $listNormalizer($value);
+        });
+        $resolver->setNormalizer('facets', function (Options $options, $value) use ($mapListNormalizer) {
+            return $mapListNormalizer($value);
+        });
+        $resolver->setNormalizer('facets_search_selection', function (Options $options, $value) use ($mapListNormalizer) {
+            return $mapListNormalizer($value);
+        });
 
         $resolver->setNormalizer('params', function (Options $options, $values) {
             $filters = [];
@@ -166,7 +219,7 @@ class IntegratedContentBlock extends AbstractType
                     continue;
                 }
 
-                $relations[$key] = array_filter(array_map('trim', $value));
+                $relations[$key] = $this->sanitizeListValues($value);
             }
 
             return array_filter($relations);
@@ -203,11 +256,16 @@ class IntegratedContentBlock extends AbstractType
                 // support for custom query in database, while waiting for a better solution
                 $sortOption = explode(' ', $value, 2);
 
-                return $sortOption[1];
+                return $sortOption[1] ?? 'asc';
             }
 
             if (\is_string($value) && \in_array($value, ['asc', 'desc'])) {
                 return $value;
+            }
+
+            if (!$this->sorting->hasByField($options['sort'])) {
+                // Custom sort fields are not part of the default sort option list.
+                return 'asc';
             }
 
             return $this->sorting->getByField($options['sort'])->order;
@@ -217,5 +275,23 @@ class IntegratedContentBlock extends AbstractType
     public function getParent(): ?string
     {
         return Content::class;
+    }
+
+    private function sanitizeListValues(array $values): array
+    {
+        $sanitized = [];
+
+        foreach ($values as $value) {
+            if (!\is_string($value)) {
+                continue;
+            }
+
+            $value = trim($value);
+            if ('' !== $value) {
+                $sanitized[] = $value;
+            }
+        }
+
+        return $sanitized;
     }
 }

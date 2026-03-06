@@ -63,7 +63,10 @@ class UserController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $data = $request->query->get('integrated_user_filter');
+        $data = $request->query->all('integrated_user_filter');
+        if (!\is_array($data)) {
+            $data = [];
+        }
 
         $users = $this->provider->getUsers($data);
 

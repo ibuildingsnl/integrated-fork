@@ -31,7 +31,7 @@
                                                     {% set url = "//" ~ domain ~ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': url}) %}
                                                 {% endif %}
                                                 <li>
-                                                    <a target="_blank"
+                                                    <a target="_blank" rel="noopener noreferrer" data-turbo="false"
                                                        href="{{ url }}">{% trans %}View on{% endtrans %} {{ channel.name }}</a>
                                                 </li>
                                             {% endif %}
