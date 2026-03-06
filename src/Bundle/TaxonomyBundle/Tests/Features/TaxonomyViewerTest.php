@@ -12,6 +12,7 @@ use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyLister;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyViewer;
 use Integrated\Bundle\TaxonomyBundle\Tests\Features\Doubles\MemoryTaxonomyRepository;
 use Integrated\Bundle\UserBundle\Model\User;
+use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\Iterator;
 use Integrated\Common\ContentType\ResolverInterface;
 use PHPUnit\Framework\TestCase;
@@ -56,12 +57,12 @@ final class TaxonomyViewerTest extends TestCase
 
 final class CountingTypeResolver implements ResolverInterface
 {
-    /** @var array<string, object> */
+    /** @var array<string, ContentTypeInterface> */
     private array $types;
 
     public int $getTypeCalls = 0;
 
-    /** @param array<string, object> $types */
+    /** @param array<string, ContentTypeInterface> $types */
     public function __construct(array $types)
     {
         $this->types = $types;
