@@ -118,6 +118,37 @@ class UserControllerBulkTest extends TestCase
         self::assertSame('warning', $controller->flashes[0]['type']);
     }
 
+    public function testBulkAssignGroupRejectsAdministratorGroupForNonAdmin(): void
+    {
+        [$controller, $manager, , , , $groupManager, , $bulkService] = $this->createController();
+        $controller->grantedAttributes = [
+            'ROLE_USER_MANAGER' => true,
+            'ROLE_ADMIN' => false,
+        ];
+
+        $user = $this->createUser('u1');
+        $manager->method('find')->with('1')->willReturn($user);
+
+        $adminGroup = $this->createMock(\Integrated\Bundle\UserBundle\Model\GroupInterface::class);
+        $adminGroup->method('getRoles')->willReturn(['ROLE_ADMIN']);
+        $groupManager->method('find')->with('99')->willReturn($adminGroup);
+
+        $bulkService->expects(self::never())->method('apply');
+
+        $request = new Request([], [
+            '_token' => 'valid',
+            'bulk_action' => BulkUserActionService::ACTION_ASSIGN_GROUP,
+            'user_ids' => ['1'],
+            'bulk_group' => '99',
+        ]);
+
+        $response = $controller->bulk($request);
+
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertSame('/integrated_user_user_index', $response->getTargetUrl());
+        self::assertSame('danger', $controller->flashes[0]['type']);
+    }
+
     public function testBulkChangeScopeRequiresScopeSelection(): void
     {
         [$controller, $manager] = $this->createController();
@@ -223,12 +254,18 @@ final class TestUserController extends UserController
 {
     public bool $csrfValid = true;
     public bool $granted = true;
+    /** @var array<string, bool> */
+    public array $grantedAttributes = [];
     public ?User $currentUser = null;
     /** @var array<int, array{type: string, message: mixed}> */
     public array $flashes = [];
 
     protected function isGranted(mixed $attribute, mixed $subject = null): bool
     {
+        if (\is_string($attribute) && \array_key_exists($attribute, $this->grantedAttributes)) {
+            return $this->grantedAttributes[$attribute];
+        }
+
         return $this->granted;
     }
 

@@ -81,7 +81,7 @@ class XmlProviderTest extends \PHPUnit\Framework\TestCase
         $this->getInstance($this->getFinder(['mapping.does-not-exist.xml']))->getTypes('class');
     }
 
-    public function testGetTypesInvalidXmlSchemaLikeInputIsIgnoredWithoutXsd()
+    public function testGetTypesInvalidXmlSchemaLikeInputIsIgnoredWithoutXsd(): void
     {
         self::assertSame([], $this->getInstance($this->getFinder(['mapping.invalid.xml']))->getTypes('class'));
     }
@@ -108,7 +108,9 @@ class XmlProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTypesOptionKeys()
     {
-        $provider = $this->getInstance($this->getFinder(['mapping.keys.xml']));
+        $finder = $this->getFinder(['mapping.keys.xml']);
+        self::assertInstanceOf(Finder::class, $finder);
+        $provider = $this->getInstance($finder);
 
         self::assertSame([
             'null' => [null],

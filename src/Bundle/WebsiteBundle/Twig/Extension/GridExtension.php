@@ -35,14 +35,21 @@ class GridExtension extends AbstractExtension
      */
     protected $request;
 
+    /**
+     * @var ThemeManager
+     */
+    protected $themeManager;
+
     public function __construct(RequestStack $requestStack, ThemeManager $themeManager)
     {
         $this->request = $requestStack->getMainRequest();
+        $this->themeManager = $themeManager;
 
         $this->resolver = new OptionsResolver();
         $this->resolver->setDefaults([
-            'template' => $themeManager->locateTemplate('page/grid.html.twig'),
+            'template' => null,
         ]);
+        $this->resolver->setAllowedTypes('template', ['null', 'string']);
     }
 
     public function getFunctions()
@@ -65,6 +72,7 @@ class GridExtension extends AbstractExtension
     public function renderGrid(Environment $environment, $context, $id, array $options = [])
     {
         $options = $this->resolver->resolve($options);
+        $template = $options['template'] ?: $this->themeManager->locateTemplate('page/grid.html.twig');
 
         $page = isset($context['page']) ? $context['page'] : null;
 
@@ -75,7 +83,7 @@ class GridExtension extends AbstractExtension
                 $grid = new Grid($id);
             }
 
-            return $environment->render($options['template'], [
+            return $environment->render($template, [
                 'grid' => $grid,
             ]);
         }

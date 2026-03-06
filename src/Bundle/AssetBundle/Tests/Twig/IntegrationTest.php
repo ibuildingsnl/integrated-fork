@@ -35,8 +35,6 @@ class IntegrationTest extends IntegrationTestCase
     ): void {
         // Twig integration tests return this placeholder when no legacy fixtures are available.
         if ('not' === $file && '-' === $message && '' === $condition && [] === $templates && '' === $exception && [] === $outputs) {
-            self::assertTrue(true);
-
             return;
         }
 

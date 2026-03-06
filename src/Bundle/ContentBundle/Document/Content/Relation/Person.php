@@ -30,9 +30,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 #[Type\Document('Person')]
 class Person extends Relation
 {
-    /**
-     * @var string
-     */
+    /** @var string|null */
     #[Type\Field(options: [
         'priority' => 990,
         'label' => 'First name',
@@ -40,9 +38,7 @@ class Person extends Relation
     ], location: 'editor')]
     protected $firstName;
 
-    /**
-     * @var string
-     */
+    /** @var string|null */
     #[Type\Field(options: [
         'priority' => 980,
         'label' => 'Last name',
@@ -50,9 +46,7 @@ class Person extends Relation
     ], location: 'editor')]
     protected $lastName;
 
-    /**
-     * @var string
-     */
+    /** @var string|null */
     #[Type\Field(type: ChoiceType::class, options: [
         'placeholder' => 'Select gender',
         'choices' => ['Male' => 'Male', 'Female' => 'Female'],
@@ -60,15 +54,11 @@ class Person extends Relation
     ], location: 'sidebar')]
     protected $gender;
 
-    /**
-     * @var string
-     */
+    /** @var string|null */
     #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'sidebar')]
     protected $prefix;
 
-    /**
-     * @var string
-     */
+    /** @var string|null */
     #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'sidebar')]
     protected $nickname;
 

@@ -14,12 +14,427 @@
                 <div class="page-title">
                     <h1 class="heading">{% trans %}Edit{% endtrans %} {% trans %}group{% endtrans %}</h1>
                 </div>
-                <section class="editor editor-wrapped">
+                <section class="editor editor-wrapped group-settings-card">
                     {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
+                </section>
+                <section class="section-white section-radius mt-4 p-4 group-users-card">
+                    <div class="group-users-header">
+                        <div class="group-users-heading">
+                            <h3 class="heading mb-0">{% trans %}Users{% endtrans %}</h3>
+                            <p class="m-0 text-light">{% trans %}Manage users in this group{% endtrans %}</p>
+                        </div>
+                        <button type="button" class="btn btn-white icon-left" id="group-users-open-modal">
+                            <i class="iconoir-plus"></i>
+                            <span>{% trans %}Users toevoegen{% endtrans %}</span>
+                        </button>
+                    </div>
+                    <div class="group-users-toolbar">
+                        <div class="group-users-count" id="group-users-count">0</div>
+                        <div class="group-users-search">
+                            <input id="group-users-search" type="search" class="form-control" placeholder="{% trans %}Search users{% endtrans %}">
+                            <i class="iconoir-search" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div class="group-users-list-wrap">
+                        <ul id="group-users-current-list" class="m-0 p-0 group-users-list">
+                            {% for user in availableUsers|default([]) %}
+                                {% if user.id in selectedGroupUserIds|default([]) %}
+                                    <li class="group-user-row flex justify-between items-center p-2 section-radius" data-user-id="{{ user.id }}" data-filter-text="{{ user.username|lower }}">
+                                        <div class="group-user-meta">
+                                            <a class="group-user-link" href="{{ path('integrated_user_user_edit', {'id': user.id}) }}">{{ user.username }}</a>
+                                            {% if not user.enabled %}
+                                                <span class="status-badge status-failed group-user-status">{% trans %}Disabled{% endtrans %}</span>
+                                            {% endif %}
+                                        </div>
+                                        <button type="button" class="btn btn-white btn-xs group-user-remove" data-action="remove-group-user" data-user-id="{{ user.id }}">
+                                            {% trans %}Remove{% endtrans %}
+                                        </button>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            <li id="group-users-empty-state" class="group-users-empty text-light {% if selectedGroupUserIds|default([])|length > 0 %}hidden{% endif %}">
+                                {% trans %}No users in this group{% endtrans %}
+                            </li>
+                            <li id="group-users-no-results" class="group-users-empty text-light hidden">{% trans %}No users match your search{% endtrans %}</li>
+                        </ul>
+                        <div id="group-users-hidden-inputs">
+                            {% for user in availableUsers|default([]) %}
+                                {% if user.id in selectedGroupUserIds|default([]) %}
+                                    <input type="hidden" name="group_user_ids[]" value="{{ user.id }}" data-user-id="{{ user.id }}">
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
                 </section>
             </div>
             {% block form_end %}
                 {{ form_end(form) }}
             {% endblock %}
         </div>
+
+        <div id="group-users-modal-backdrop" class="group-users-modal-backdrop hidden" aria-hidden="true"></div>
+        <div class="modal add-modal close-outside" id="group-users-add-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display:none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-action="close-group-users-modal"><span aria-hidden="true"><i class="iconoir-xmark"></i></span><span class="sr-only">{% trans %}Close{% endtrans %}</span></button>
+                        <h4 class="modal-title">{% trans %}Users toevoegen{% endtrans %}</h4>
+                    </div>
+                    <div class="modal-body p-4">
+                        <label class="control-label">{% trans %}Select users{% endtrans %}</label>
+                        <select id="group-users-add-select" class="form-control select2" multiple data-placeholder="{% trans %}Select users{% endtrans %}" style="width:100%;">
+                            {% for user in availableUsers|default([]) %}
+                                <option value="{{ user.id }}"
+                                        data-enabled="{{ user.enabled ? '1' : '0' }}"
+                                        data-username="{{ user.username }}"
+                                        data-edit-url="{{ path('integrated_user_user_edit', {'id': user.id}) }}">
+                                    {{ user.username }}{% if not user.enabled %} ({% trans %}Disabled{% endtrans %}){% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-action="close-group-users-modal">{% trans %}Cancel{% endtrans %}</button>
+                        <button type="button" class="btn btn-green" id="group-users-add-selected">{% trans %}Toevoegen{% endtrans %}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            (function bindGroupUserManagement() {
+                var openButton = document.getElementById('group-users-open-modal');
+                var modal = document.getElementById('group-users-add-modal');
+                var backdrop = document.getElementById('group-users-modal-backdrop');
+                var addButton = document.getElementById('group-users-add-selected');
+                var addSelect = document.getElementById('group-users-add-select');
+                var list = document.getElementById('group-users-current-list');
+                var hiddenInputs = document.getElementById('group-users-hidden-inputs');
+                var emptyState = document.getElementById('group-users-empty-state');
+                var noResultsState = document.getElementById('group-users-no-results');
+                var searchInput = document.getElementById('group-users-search');
+                var countOutput = document.getElementById('group-users-count');
+                if (!openButton || !modal || !backdrop || !addButton || !addSelect || !list || !hiddenInputs || !emptyState || !noResultsState || !searchInput || !countOutput) {
+                    return;
+                }
+
+                if (window.jQuery && window.jQuery.fn && typeof window.jQuery.fn.select2 === 'function') {
+                    window.jQuery(addSelect).select2({
+                        width: '100%',
+                        dropdownAutoWidth: true
+                    });
+                }
+
+                function getRows() {
+                    return Array.prototype.slice.call(list.querySelectorAll('.group-user-row'));
+                }
+
+                function applyUserFilter() {
+                    var query = String(searchInput.value || '').trim().toLowerCase();
+                    var rows = getRows();
+                    var visibleCount = 0;
+
+                    rows.forEach(function (row) {
+                        var filterText = String(row.getAttribute('data-filter-text') || row.textContent || '').toLowerCase();
+                        var matches = query === '' || filterText.indexOf(query) !== -1;
+                        row.classList.toggle('hidden', !matches);
+                        if (matches) {
+                            visibleCount += 1;
+                        }
+                    });
+
+                    if (query !== '' && rows.length > 0 && visibleCount === 0) {
+                        noResultsState.classList.remove('hidden');
+                    } else {
+                        noResultsState.classList.add('hidden');
+                    }
+
+                    countOutput.textContent = query === '' ? String(rows.length) : (visibleCount + ' / ' + rows.length);
+                }
+
+                function updateEmptyState() {
+                    var totalCount = hiddenInputs.querySelectorAll('input[data-user-id]').length;
+                    emptyState.classList.toggle('hidden', totalCount > 0);
+                    if (totalCount === 0) {
+                        noResultsState.classList.add('hidden');
+                    }
+                    applyUserFilter();
+                }
+
+                function openModal() {
+                    modal.style.display = 'block';
+                    modal.classList.add('show');
+                    backdrop.classList.remove('hidden');
+                }
+
+                function closeModal() {
+                    modal.classList.remove('show');
+                    modal.style.display = 'none';
+                    backdrop.classList.add('hidden');
+                    if (window.jQuery && window.jQuery.fn && typeof window.jQuery.fn.select2 === 'function') {
+                        window.jQuery(addSelect).val(null).trigger('change');
+                    } else {
+                        Array.prototype.forEach.call(addSelect.options, function (option) {
+                            option.selected = false;
+                        });
+                    }
+                }
+
+                function hasUser(userId) {
+                    return hiddenInputs.querySelector('input[data-user-id="' + userId + '"]') !== null;
+                }
+
+                function addUser(userId, userLabel, userEnabled, editUrl) {
+                    if (hasUser(userId)) {
+                        return;
+                    }
+
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'group_user_ids[]';
+                    input.value = userId;
+                    input.setAttribute('data-user-id', userId);
+                    hiddenInputs.appendChild(input);
+
+                    var item = document.createElement('li');
+                    item.className = 'group-user-row flex justify-between items-center p-2 section-radius';
+                    item.setAttribute('data-user-id', userId);
+                    item.setAttribute('data-filter-text', String(userLabel || '').toLowerCase());
+
+                    var info = document.createElement('div');
+                    info.className = 'group-user-meta';
+                    if (editUrl) {
+                        var link = document.createElement('a');
+                        link.className = 'group-user-link';
+                        link.href = editUrl;
+                        link.textContent = userLabel;
+                        info.appendChild(link);
+                    } else {
+                        info.textContent = userLabel;
+                    }
+                    if (!userEnabled) {
+                        var disabledLabel = document.createElement('span');
+                        disabledLabel.className = 'status-badge status-failed group-user-status';
+                        disabledLabel.textContent = '{{ "Disabled"|trans }}';
+                        info.appendChild(disabledLabel);
+                    }
+
+                    var removeButton = document.createElement('button');
+                    removeButton.type = 'button';
+                    removeButton.className = 'btn btn-white btn-xs group-user-remove';
+                    removeButton.setAttribute('data-action', 'remove-group-user');
+                    removeButton.setAttribute('data-user-id', userId);
+                    removeButton.textContent = '{{ "Remove"|trans }}';
+
+                    item.appendChild(info);
+                    item.appendChild(removeButton);
+                    list.insertBefore(item, emptyState);
+                }
+
+                openButton.addEventListener('click', openModal);
+                backdrop.addEventListener('click', closeModal);
+
+                modal.addEventListener('click', function (event) {
+                    if (event.target === modal || event.target.closest('[data-action="close-group-users-modal"]')) {
+                        closeModal();
+                    }
+                });
+
+                addButton.addEventListener('click', function () {
+                    var selectedOptions = Array.prototype.filter.call(addSelect.options, function (option) {
+                        return option.selected;
+                    });
+
+                    selectedOptions.forEach(function (option) {
+                        addUser(
+                            String(option.value),
+                            String(option.getAttribute('data-username') || option.textContent || ''),
+                            String(option.getAttribute('data-enabled') || '1') === '1',
+                            String(option.getAttribute('data-edit-url') || '')
+                        );
+                    });
+
+                    updateEmptyState();
+                    closeModal();
+                });
+
+                list.addEventListener('click', function (event) {
+                    var trigger = event.target.closest('[data-action="remove-group-user"]');
+                    if (!trigger) {
+                        return;
+                    }
+
+                    var userId = String(trigger.getAttribute('data-user-id') || '');
+                    var row = list.querySelector('li[data-user-id="' + userId + '"]');
+                    var input = hiddenInputs.querySelector('input[data-user-id="' + userId + '"]');
+
+                    if (row) {
+                        row.remove();
+                    }
+                    if (input) {
+                        input.remove();
+                    }
+
+                    updateEmptyState();
+                });
+
+                searchInput.addEventListener('input', applyUserFilter);
+                updateEmptyState();
+            })();
+        </script>
+    {% endblock %}
+
+    {% block style %}
+        {{ parent() }}
+        <style>
+            .group-settings-card {
+                border: 1px solid #dbe4ec;
+                box-shadow: 0 2px 10px rgba(31, 52, 73, 0.05);
+            }
+
+            .group-users-card {
+                border: 1px solid #dbe4ec;
+                box-shadow: 0 2px 10px rgba(31, 52, 73, 0.05);
+            }
+
+            .group-users-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: 1rem;
+                margin-bottom: .85rem;
+            }
+
+            .group-users-heading h3 {
+                margin-bottom: .25rem;
+            }
+
+            .group-users-toolbar {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: space-between;
+                gap: .75rem;
+                padding: .7rem;
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+                background: #f8fafc;
+                margin-bottom: .8rem;
+            }
+
+            .group-users-count {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 3rem;
+                height: 2.9rem;
+                padding: 0 .85rem;
+                border-radius: 999px;
+                background: #ecf6ff;
+                color: #2f649a;
+                font-weight: 700;
+            }
+
+            .group-users-search {
+                position: relative;
+                width: min(420px, 100%);
+                flex: 1 1 300px;
+            }
+
+            .group-users-search .form-control {
+                border-radius: 8px;
+                padding-left: 2.6rem;
+            }
+
+            .group-users-search .iconoir-search {
+                position: absolute;
+                left: .9rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #9fb0c3;
+                pointer-events: none;
+            }
+
+            .group-users-list-wrap {
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+                background: #fff;
+            }
+
+            .group-users-list {
+                list-style: none;
+                margin: 0;
+                padding: .4rem;
+                max-height: 55vh;
+                overflow: auto;
+            }
+
+            .group-user-row {
+                transition: background-color .12s ease;
+                border: 1px solid transparent;
+            }
+
+            .group-user-row:hover {
+                background-color: #eef4f7;
+                border-color: #dbe4ec;
+            }
+
+            .group-user-meta {
+                display: inline-flex;
+                align-items: center;
+                gap: .6rem;
+            }
+
+            .group-user-link {
+                font-weight: 600;
+            }
+
+            .group-user-remove {
+                color: #c94131;
+                border-color: #f3d8d4;
+            }
+
+            .group-user-remove:hover,
+            .group-user-remove:focus {
+                color: #9f2618;
+                background: #fff5f3;
+            }
+
+            .group-users-empty {
+                padding: 1rem .8rem;
+            }
+
+            .group-users-modal-backdrop {
+                position: fixed;
+                inset: 0;
+                background: rgba(24, 32, 42, 0.45);
+                z-index: 1040;
+            }
+
+            .group-users-modal-backdrop.hidden {
+                display: none;
+            }
+
+            #group-users-add-modal {
+                z-index: 1050;
+            }
+
+            #group-users-add-modal .modal-body .control-label {
+                display: block;
+                margin-bottom: .45rem;
+                font-weight: 600;
+            }
+
+            @media (max-width: 768px) {
+                .group-users-header {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+
+                .group-users-header .btn {
+                    width: 100%;
+                    justify-content: center;
+                }
+            }
+        </style>
     {% endblock %}

@@ -129,7 +129,7 @@ class ArticleSearchService implements ArticleSearchServiceInterface
 
         return array_map(static function (array $contentItem) use ($domain): array {
             return array_merge($contentItem, [
-                'url' => 'https://'.$domain.(string) ($contentItem['url'] ?? ''),
+                'url' => 'https://'.$domain.(string) $contentItem['url'],
             ]);
         }, $results);
     }

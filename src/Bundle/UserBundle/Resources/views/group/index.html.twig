@@ -21,12 +21,14 @@
                     <colgroup>
                         <col style="width: 3em"/>
                         <col/>
+                        <col/>
                     </colgroup>
 
                     <thead>
                     <tr>
                         <th>#</th>
-                        <th>Name</th>
+                        <th>{% trans %}Name{% endtrans %}</th>
+                        <th>{% trans %}Users{% endtrans %}</th>
                     </tr>
                     </thead>
 
@@ -48,6 +50,9 @@
                                     <a href="{{ path('integrated_user_group_delete', {'id': group.id}) }}"
                                        class="color-red" title="{% trans %}Delete{% endtrans %}">{% trans %}Delete{% endtrans %}</a>
                                 </div>
+                            </td>
+                            <td>
+                                {{ userCountsByGroupId[group.id]|default(0) }}
                             </td>
                         </tr>
 

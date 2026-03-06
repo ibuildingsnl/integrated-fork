@@ -1526,6 +1526,7 @@ class ContentController extends AbstractController
     }
 
     /**
+     * @param FormInterface<mixed> $searchSelectionForm
      * @param array<string, mixed> $filters
      *
      * @return array<string, mixed>
@@ -1750,12 +1751,16 @@ class ContentController extends AbstractController
         }
 
         $dirty = false;
-        foreach (
-            $this->documentManager->createQueryBuilder(Content::class)
-                ->field('relations.references.$id')->equals($contentId)
-                ->getQuery()
-                ->execute() as $document
-        ) {
+        $documents = $this->documentManager->createQueryBuilder(Content::class)
+            ->field('relations.references.$id')->equals($contentId)
+            ->getQuery()
+            ->execute();
+
+        if (!is_iterable($documents)) {
+            $documents = [];
+        }
+
+        foreach ($documents as $document) {
             if (!$document instanceof Content) {
                 continue;
             }
@@ -1768,8 +1773,7 @@ class ContentController extends AbstractController
 
                 $references = $relation->getReferences();
                 $filtered = array_values(array_filter($references, static function ($reference) use ($contentId): bool {
-                    return !$reference instanceof ContentInterface
-                        || trim((string) $reference->getId()) !== $contentId;
+                    return trim((string) $reference->getId()) !== $contentId;
                 }));
 
                 if (\count($filtered) !== \count($references)) {

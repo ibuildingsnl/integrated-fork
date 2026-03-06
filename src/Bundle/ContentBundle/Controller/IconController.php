@@ -74,7 +74,7 @@ class IconController extends AbstractController
         $response->setPrivate();
         $response->setMaxAge(self::ICON_PAGE_CACHE_TTL);
         $response->headers->addCacheControlDirective('must-revalidate', true);
-        $response->headers->addCacheControlDirective('stale-while-revalidate', self::ICON_PAGE_CACHE_TTL);
+        $response->headers->addCacheControlDirective('stale-while-revalidate', (string) self::ICON_PAGE_CACHE_TTL);
         $response->setLastModified($lastModifiedAt);
 
         if ($response->isNotModified($request)) {
@@ -104,7 +104,7 @@ class IconController extends AbstractController
             return $this->extractIconNamesFromCss();
         });
 
-        self::$iconNames = \is_array($icons) ? $icons : [];
+        self::$iconNames = $icons;
 
         return self::$iconNames;
     }
@@ -139,7 +139,7 @@ class IconController extends AbstractController
         }
 
         preg_match_all('/\\.iconoir-([a-z0-9-]+)::before/i', $contents, $matches);
-        $icons = array_values(array_unique($matches[1] ?? []));
+        $icons = array_values(array_unique($matches[1]));
         sort($icons, \SORT_NATURAL);
 
         return $icons;

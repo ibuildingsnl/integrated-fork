@@ -175,6 +175,9 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
         $menu->reorderChildren($names);
     }
 
+    /**
+     * @param array<int, string> $preferredOrder
+     */
     private function reorderChildren(ItemInterface $menu, array $preferredOrder): void
     {
         $children = $menu->getChildren();

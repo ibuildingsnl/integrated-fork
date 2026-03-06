@@ -53,6 +53,9 @@ class ContentSubscriberStateDataTest extends TestCase
             ->willReturn($stateRepository);
 
         $subscriber = new class($this->createStub(UserManagerInterface::class), $this->createStub(EventDispatcherInterface::class), $this->createStub(TokenStorageInterface::class), $this->createStub(ResolverInterface::class), $entityManager, $this->createStub(DocumentManager::class), $this->createStub(MailerInterface::class), $this->createStub(RouterInterface::class), $this->createStub(ThemeManager::class), 'noreply@example.test', $this->createStub(RequestStack::class)) extends ContentSubscriber {
+            /**
+             * @return array{state: State, assigned: string|null, deadline: \DateTimeInterface|null}|null
+             */
             public function readStateData(ContentInterface $content): ?array
             {
                 return $this->getStateData($content);

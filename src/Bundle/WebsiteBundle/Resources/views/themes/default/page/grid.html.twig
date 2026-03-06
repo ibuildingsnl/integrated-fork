@@ -15,14 +15,28 @@
     {% if grid.items is defined %}
         {% for item in grid.items %}
             {% if item.block %}
+                {% set blockId = item.block.id|default(item.block) %}
+                {% set blockHtml = integrated_block(item.block, {'gridLevel': level}) %}
                 {% if edit|default %}<div class="integrated-website-sortable" data-block-type="block" data-id="{{ item.block.id }}">{% endif %}
                 <div class="integrated-block">
                 {% if item.attributes|length %}
                     <div{% for key, value in item.attributes %} {{ key }}="{{ value }}"{% endfor %}>
-                    {{ integrated_block(item.block, {'gridLevel': level}) }}
+                    {% if edit|default and blockHtml|trim is empty %}
+                        <div class="panel panel-warning">
+                            <div class="panel-heading">Blok (id: {{ blockId }}) niet gevonden</div>
+                        </div>
+                    {% else %}
+                        {{ blockHtml|raw }}
+                    {% endif %}
                     </div>
                 {% else %}
-                    {{ integrated_block(item.block, {'gridLevel': level}) }}
+                    {% if edit|default and blockHtml|trim is empty %}
+                        <div class="panel panel-warning">
+                            <div class="panel-heading">Blok (id: {{ blockId }}) niet gevonden</div>
+                        </div>
+                    {% else %}
+                        {{ blockHtml|raw }}
+                    {% endif %}
                 {% endif %}
                 </div>
                 {% if edit|default %}</div>{% endif %}

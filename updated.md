@@ -1,13 +1,17 @@
-# Diff report: `release/0.90` -> `improvement/13-locking-bundle`
+# Diff report: `release/0.90` -> `improvement/24-final-changes`
 
 ## Scope
 
 - Repository: `vendor/integrated/integrated`
-- Compared range: `release/0.90...improvement/13-locking-bundle`
-- Total: `424 files changed, 459420 insertions(+), 4964 deletions(-)`
-- This range is **stacked** and includes all previous `improvement/*` work that `improvement/13-locking-bundle` depends on.
+- Compared range: `release/0.90...improvement/24-final-changes`
+- Total: `676 files changed, 482544 insertions(+), 6677 deletions(-)`
+- Commits in range: `281`
+- This range is **stacked** and includes all previous `improvement/*` work up to and including `improvement/24-final-changes`.
 
-## Commit stream on first-parent (high level)
+## Commit stream on first-parent (high level milestones)
+
+The list below captures the baseline stacked milestones through the `improvement/13-*` phase.
+Later milestones and final branch updates are documented in sections **18-27**.
 
 1. `46d659000` Merged in fix/menu-rendering (pull request #553)
 2. `f6990a686` Merged in feature/article-links-search (pull request #515)
@@ -75,24 +79,25 @@
 
 ## Bundle/file-area impact (by changed file count)
 
-- `src/Bundle/ContentBundle`: 177 files
-- `src/Bundle/IntegratedBundle`: 102 files (mostly compiled frontend assets)
-- `src/Bundle/UserBundle`: 29 files
-- `src/Bundle/WebsiteBundle`: 16 files
-- `src/Bundle/ContentHistoryBundle`: 16 files
-- `src/Bundle/BrandBundle`: 14 files
-- `src/Bundle/BlockBundle`: 13 files
+- `src/Bundle/ContentBundle`: 269 files
+- `src/Bundle/IntegratedBundle`: 104 files (mostly compiled frontend assets)
+- `src/Bundle/UserBundle`: 61 files
+- `src/Bundle/WebsiteBundle`: 30 files
+- `src/Bundle/BlockBundle`: 30 files
+- `src/Bundle/BrandBundle`: 25 files
+- `src/Bundle/TaxonomyBundle`: 20 files
+- `src/Bundle/FormTypeBundle`: 18 files
+- `src/Bundle/ContentHistoryBundle`: 18 files
+- `src/Bundle/WorkflowBundle`: 17 files
+- `src/Bundle/PageBundle`: 16 files
+- `src/Bundle/ChannelBundle`: 13 files
 - `src/Bundle/SitemapBundle`: 9 files
-- `src/Bundle/FormTypeBundle`: 7 files
-- `src/Bundle/TaxonomyBundle`: 6 files
-- `src/Bundle/WorkflowBundle`: 5 files
+- `src/Bundle/SolrBundle`: 8 files
 - `src/Bundle/LockingBundle`: 5 files
+- `src/Bundle/InstallerBundle`: 5 files
 - `src/Bundle/MenuBundle`: 4 files
-- `src/Bundle/InstallerBundle`: 4 files
-- `src/Bundle/SolrBundle`: 2 files
 - `src/Bundle/ImageBundle`: 2 files
-- `src/Bundle/ChannelBundle`: 2 files
-- plus shared config/build files (`package.json`, `postcss.config.js`, `tailwind.config.js`, `webpack.config.js`, `yarn.lock`)
+- plus shared files (`package.json`, `tailwind.config.js`, `webpack.config.js`, compiled assets in `IntegratedBundle`, tests, and docs)
 
 ## What changed and why it was needed
 
@@ -339,6 +344,117 @@
   - The branch introduced broad behavior changes; coverage was necessary to reduce regression risk.
   - Several fixes were specifically prompted by runtime regressions and needed guardrails.
 
+## 18) Workflow and publication state hardening
+
+- Added/fixed behavior in workflow change-state flow and publication sync:
+  - prevent invalid transitions where concept content remained publishable
+  - turbo refresh improvements for publication panels
+  - extra tests around workflow state updates and queue-triggered propagation
+- Why needed:
+  - Workflow/UI state mismatches created invalid publication records and confusing editor status.
+  - Publication list behavior under Turbo needed deterministic refresh and guardrails.
+
+## 19) Page and block bundle improvements
+
+- Page admin:
+  - improved draft visibility and filtering behavior
+  - orphan-channel management and safer page/channel filtering
+- Block bundle:
+  - block used-by parsing hardening and faster usage lookups via denormalized `blockIds`
+  - improved block create/edit/remove flows and used-by accessibility for edit-capable users
+  - container/grid behavior cleanup and facet filter hardening
+- Why needed:
+  - Reduce slow/fragile block usage queries and improve editor confidence when cleaning up blocks.
+  - Make page administration safer when channels are removed or page state is mixed.
+
+## 20) Brand and channel connector hardening
+
+- Brand/channel management:
+  - stronger ownership and return-flow checks
+  - channel create/edit safeguards for website-only fields
+  - OAuth/session flow hardening and safer connector redirects
+  - connector action UX cleanup (availability-based actions, reset styles, post-create flow)
+- Why needed:
+  - Connector configuration had edge cases that caused broken redirects or mismatched field sets.
+  - Brand/channel linking needed stricter invariants to prevent invalid cross-brand links.
+
+## 21) Taxonomy reliability and ordering
+
+- Improved taxonomy create/edit/index behavior:
+  - parent/ordering consistency fixes
+  - pagination normalization for ODM paginator results
+  - indexing hardening and post-create behavior cleanup
+  - delete guard improvements and relation select label correctness
+- Why needed:
+  - Taxonomy ordering and refresh behavior were inconsistent under Turbo and mixed datasets.
+  - Deletion/indexing needed safer checks to avoid partial state and stale UI.
+
+## 22) Editor/picker/sidebar UX stabilization
+
+- Sidebar/menu:
+  - persisted open-state and collapse behavior across admin navigation
+  - content-default-open logic and order stabilization
+- Pickers/forms:
+  - Pickr asset loading and popup stability fixes
+  - relation picker/typeahead initialization and optional relation value handling
+  - website-aware search-selection controls + translations and classification helpers
+- Why needed:
+  - UI state reset/regression issues in Turbo sessions caused repeated user friction.
+  - Picker initialization timing and asset order caused broken interactions on first load.
+
+## 23) Flash/message and admin interaction consistency
+
+- Unified flash stack behavior for Turbo and full-page requests:
+  - stable flash container position
+  - correct routing of frame flashes to global flash area
+  - reduced duplicate/stacking inconsistencies
+- Why needed:
+  - Mixed rendering contexts created hidden, duplicate, or misplaced notifications.
+  - Consistent feedback is required for trust in save/publish/editor actions.
+
+## 24) User, roles, and group management upgrades
+
+- User/auth improvements:
+  - identifier login support (username or email)
+  - stronger role handling to prevent non-admin privilege escalation
+  - backward compatibility for legacy choice-type wiring
+- Group management:
+  - user membership management directly from group detail
+  - visual polish and usability updates for group user administration
+- Why needed:
+  - Authentication/authorization flows needed stricter safety and clearer UX.
+  - Group maintenance was previously slow and error-prone in larger organizations.
+
+## 25) Website/grid/editor final fixes in `improvement/24-final-changes`
+
+- Final branch fixes include:
+  - remove publication popup in editor
+  - show missing block warning in editor grid
+  - make grid template resolution request-scoped (fix cross-request theme/template leakage)
+  - queue and lock error-policy hardening (explicit failures + retry/reschedule semantics)
+  - deterministic tests for lock/flusher/queue behavior
+- Why needed:
+  - Shared service-state caused domain/theme cross-contamination in grid rendering.
+  - Queue/lock paths needed explicit failure semantics to avoid silent data integrity issues.
+
+## 26) Additional frontend/theme consistency updates
+
+- Icon and style updates:
+  - iconoir upgrade and broader icon usage consistency
+  - settings-group navigation style additions
+  - connector/action card and button alignment cleanups
+- Why needed:
+  - Ensure coherent cross-bundle admin styling while preserving compatibility in older templates.
+
+## 27) Full range coverage note
+
+- The report covers all work from:
+  - media/turbo foundation and early UX rollouts
+  - bulk-edit/workflow/taxonomy/locking hardening phases
+  - brand/channel/page/block/user/auth follow-up bundles
+  - final queue/lock/grid correctness and regression-test updates
+- For exact commit-by-commit trace, use the first-parent log command in the reproduce section.
+
 ## Notes on “why this was needed” at branch level
 
 - The stack addresses a long chain of real admin pain points:
@@ -355,8 +471,7 @@
 
 ```bash
 cd vendor/integrated/integrated
-git diff --shortstat release/0.90...improvement/13-locking-bundle
-git diff --name-status release/0.90...improvement/13-locking-bundle
-git log --first-parent --oneline release/0.90..improvement/13-locking-bundle
+git diff --shortstat release/0.90...improvement/24-final-changes
+git diff --name-status release/0.90...improvement/24-final-changes
+git log --first-parent --oneline release/0.90..improvement/24-final-changes
 ```
-

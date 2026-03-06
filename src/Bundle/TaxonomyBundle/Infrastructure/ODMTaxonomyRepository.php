@@ -15,9 +15,10 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
     public function __construct(
         private readonly DocumentManager $manager,
         private readonly ObjectRepository $doctrineRepo,
-        private readonly QueryFactoryInterface $queryFactory,
-        private readonly ClientInterface $solrClient,
+        QueryFactoryInterface $queryFactory,
+        ClientInterface $solrClient,
     ) {
+        unset($queryFactory, $solrClient);
     }
 
     public function all(): array

@@ -40,6 +40,9 @@ PHPFILE;
         $output = $this->createMock(OutputInterface::class);
 
         $command = new class($queue, $tmp) extends WorkerCommand {
+            /**
+             * @param array<int, string> $arguments
+             */
             public function invokeExecuteCommand(InputInterface $input, OutputInterface $output, string $command, array $arguments = []): void
             {
                 $this->executeCommand($input, $output, $command, $arguments);
@@ -51,6 +54,7 @@ PHPFILE;
 
             $this->assertFileExists($counterFile);
             $lines = file($counterFile, \FILE_IGNORE_NEW_LINES | \FILE_SKIP_EMPTY_LINES);
+            $this->assertIsArray($lines);
             $this->assertCount(1, $lines, 'Expected one subprocess execution per executeCommand call');
         } finally {
             @unlink($bin.'/console');
