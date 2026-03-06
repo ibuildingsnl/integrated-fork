@@ -49,8 +49,6 @@ final class TaxonomyParentRequiredSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param mixed $constraints
-     *
      * @return array<int, mixed>
      */
     private function normalizeConstraints($constraints): array

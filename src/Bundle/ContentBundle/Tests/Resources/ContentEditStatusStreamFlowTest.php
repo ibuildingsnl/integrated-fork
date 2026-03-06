@@ -52,6 +52,6 @@ class ContentEditStatusStreamFlowTest extends TestCase
         $this->assertIsString($template);
         $this->assertStringContainsString("streamTarget !== 'content-workflow-section' && streamTarget !== 'content-publications-section'", $template);
         $this->assertStringContainsString("if (streamTarget === 'content-publications-section')", $template);
-        $this->assertStringContainsString("window.schedulePublicationSettingsInit()", $template);
+        $this->assertStringContainsString('window.schedulePublicationSettingsInit()', $template);
     }
 }

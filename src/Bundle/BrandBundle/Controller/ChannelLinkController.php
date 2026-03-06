@@ -45,7 +45,7 @@ class ChannelLinkController extends AbstractController
 
         $channel = new Channel();
         $channel->setType($channelType);
-        $defaultChannelName = sprintf('%s %s', $brand->getName(), $channelType->getName());
+        $defaultChannelName = \sprintf('%s %s', $brand->getName(), $channelType->getName());
         $channel->setName($defaultChannelName);
 
         $link = new ChannelLink($channelType, $channel, false);

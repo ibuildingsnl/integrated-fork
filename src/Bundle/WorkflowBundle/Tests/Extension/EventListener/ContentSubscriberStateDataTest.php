@@ -4,8 +4,8 @@ namespace Integrated\Bundle\WorkflowBundle\Tests\Extension\EventListener;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
@@ -52,19 +52,7 @@ class ContentSubscriberStateDataTest extends TestCase
             ->with(State::class)
             ->willReturn($stateRepository);
 
-        $subscriber = new class(
-            $this->createStub(UserManagerInterface::class),
-            $this->createStub(EventDispatcherInterface::class),
-            $this->createStub(TokenStorageInterface::class),
-            $this->createStub(ResolverInterface::class),
-            $entityManager,
-            $this->createStub(DocumentManager::class),
-            $this->createStub(MailerInterface::class),
-            $this->createStub(RouterInterface::class),
-            $this->createStub(ThemeManager::class),
-            'noreply@example.test',
-            $this->createStub(RequestStack::class)
-        ) extends ContentSubscriber {
+        $subscriber = new class($this->createStub(UserManagerInterface::class), $this->createStub(EventDispatcherInterface::class), $this->createStub(TokenStorageInterface::class), $this->createStub(ResolverInterface::class), $entityManager, $this->createStub(DocumentManager::class), $this->createStub(MailerInterface::class), $this->createStub(RouterInterface::class), $this->createStub(ThemeManager::class), 'noreply@example.test', $this->createStub(RequestStack::class)) extends ContentSubscriber {
             public function readStateData(ContentInterface $content): ?array
             {
                 return $this->getStateData($content);

@@ -15,7 +15,7 @@ trait PaginationQueryTrait
         }
 
         if (\is_string($value)) {
-            $int = filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+            $int = filter_var($value, \FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
             if (false !== $int) {
                 return $int;
             }

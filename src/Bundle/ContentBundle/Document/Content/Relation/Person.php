@@ -120,7 +120,7 @@ class Person extends Relation
         return $this->gender;
     }
 
-    public function setGender(string $gender): static
+    public function setGender(?string $gender): static
     {
         $this->gender = $gender;
 
@@ -132,7 +132,7 @@ class Person extends Relation
         return $this->prefix;
     }
 
-    public function setPrefix(string $prefix): static
+    public function setPrefix(?string $prefix): static
     {
         $this->prefix = $prefix;
 
@@ -144,7 +144,7 @@ class Person extends Relation
         return $this->nickname;
     }
 
-    public function setNickname(string $nickname): static
+    public function setNickname(?string $nickname): static
     {
         $this->nickname = $nickname;
 
@@ -156,7 +156,7 @@ class Person extends Relation
         return $this->firstName;
     }
 
-    public function setFirstName(string $firstName): static
+    public function setFirstName(?string $firstName): static
     {
         $this->firstName = $firstName;
 
@@ -168,7 +168,7 @@ class Person extends Relation
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName): static
+    public function setLastName(?string $lastName): static
     {
         $this->lastName = $lastName;
 

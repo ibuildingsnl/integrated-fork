@@ -18,7 +18,8 @@ const props = defineProps({
 });
 
 const translations = JSON.parse(props.translations);
-const searchParams = JSON.parse(new URLSearchParams(window.location.search).get('data'));
+const rawSearchParams = new URLSearchParams(window.location.search).get('data');
+const searchParams = rawSearchParams ? JSON.parse(rawSearchParams) : {};
 const endpoint = `${window.location.protocol}//${window.location.host}/admin`;
 const linkText = ref(searchParams.selectionText ?? '');
 const linkTitle = ref(searchParams.title ?? '');

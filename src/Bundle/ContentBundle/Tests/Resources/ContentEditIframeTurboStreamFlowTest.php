@@ -13,8 +13,7 @@ class ContentEditIframeTurboStreamFlowTest extends TestCase
         $template = file_get_contents(__DIR__.'/../../Resources/views/content/edit.iframe.turbo_stream.html.twig');
 
         $this->assertIsString($template);
-        $this->assertStringContainsString("@IntegratedContent/content/flash.turbo_stream.html.twig", $template);
+        $this->assertStringContainsString('@IntegratedContent/content/flash.turbo_stream.html.twig', $template);
         $this->assertStringContainsString('target="media-edit-panel"', $template);
     }
 }
-

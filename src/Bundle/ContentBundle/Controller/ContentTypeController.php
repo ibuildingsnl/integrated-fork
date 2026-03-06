@@ -15,8 +15,11 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ChannelBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
+use Integrated\Bundle\ContentBundle\Event\ContentDeletedEvent;
 use Integrated\Bundle\ContentBundle\Form\Type\ContentTypeFormType;
+use Integrated\Common\Content\Form\Events as ContentEvents;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\Event\ContentTypeEvent;
 use Integrated\Common\ContentType\Events;
@@ -25,6 +28,7 @@ use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Form\Mapping\MetadataInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -77,7 +81,7 @@ class ContentTypeController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $contentType = $this->getContentType($id);
-        $form = $this->createDeleteForm($contentType);
+        $form = $this->createDeleteForm($contentType, \count($this->getRelatedContent($contentType)) === 0);
 
         return $this->render('@IntegratedContent/content_type/show.html.twig', [
             'form' => $form,
@@ -170,7 +174,8 @@ class ContentTypeController extends AbstractController
             throw new AccessDeniedHttpException(\sprintf('Content type with id "%s" is locked.', $id));
         }
 
-        $form = $this->createDeleteForm($contentType);
+        $relatedContent = $this->getRelatedContent($contentType);
+        $form = $this->createDeleteForm($contentType, \count($relatedContent) === 0);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
@@ -179,19 +184,17 @@ class ContentTypeController extends AbstractController
             }
 
             if ($form->isValid()) {
-                $count = \count(
-                    $this->documentManager->getRepository($contentType->getClass())->findBy(
-                        ['contentType' => $contentType->getId()]
-                    )
-                );
+                $relatedContent = $this->getRelatedContent($contentType);
+                $deleteRelatedContent = $form->has('delete_related_content') && (bool) $form->get('delete_related_content')->getData();
 
-                if ($count > 0) {
-                    $this->addFlash('danger', 'Unable te delete, ContentType is not empty');
+                if (\count($relatedContent) > 0 && !$deleteRelatedContent) {
+                    $this->addFlash('warning', 'This content type still contains content. Select "Delete related content" to proceed.');
 
-                    return $this->redirectToRoute(
-                        'integrated_content_content_type_edit',
-                        ['id' => $contentType->getId()]
-                    );
+                    return $this->redirectToRoute('integrated_content_content_type_delete', ['id' => $contentType->getId()]);
+                }
+
+                if ($deleteRelatedContent) {
+                    $this->removeRelatedContent($relatedContent);
                 }
 
                 $this->documentManager->remove($contentType);
@@ -209,6 +212,7 @@ class ContentTypeController extends AbstractController
         return $this->render('@IntegratedContent/content_type/delete.html.twig', [
             'contentType' => $contentType,
             'form' => $form,
+            'hasRelatedContent' => \count($relatedContent) > 0,
         ]);
     }
 
@@ -245,14 +249,57 @@ class ContentTypeController extends AbstractController
         return $form;
     }
 
-    private function createDeleteForm(ContentType $type): FormInterface
+    private function createDeleteForm(ContentType $type, bool $deleteAllowed): FormInterface
     {
         $form = $this->createForm(DeleteFormType::class, $type, [
             'action' => $this->generateUrl('integrated_content_content_type_delete', ['id' => $type->getId()]),
         ]);
 
+        if (!$deleteAllowed) {
+            $form->add('delete_related_content', CheckboxType::class, [
+                'mapped' => false,
+                'required' => false,
+                'label' => 'Delete related content',
+                'label_attr' => ['class' => 'control-label'],
+                'attr' => ['class' => 'form-control'],
+            ]);
+        }
+
         $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 
         return $form;
+    }
+
+    /**
+     * @return array<int, mixed>
+     */
+    private function getRelatedContent(ContentTypeInterface $contentType): array
+    {
+        $relatedContent = $this->documentManager->getRepository($contentType->getClass())->findBy(
+            ['contentType' => $contentType->getId()]
+        );
+
+        return \is_array($relatedContent) ? $relatedContent : [];
+    }
+
+    /**
+     * @param array<int, mixed> $relatedContent
+     */
+    private function removeRelatedContent(array $relatedContent): void
+    {
+        foreach ($relatedContent as $content) {
+            if (!$content instanceof Content) {
+                continue;
+            }
+
+            if ($this->eventDispatcher->hasListeners(ContentEvents::CONTENT_DELETED)) {
+                $this->eventDispatcher->dispatch(
+                    new ContentDeletedEvent($content),
+                    ContentEvents::CONTENT_DELETED
+                );
+            }
+
+            $this->documentManager->remove($content);
+        }
     }
 }

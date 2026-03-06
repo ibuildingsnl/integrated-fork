@@ -15,7 +15,7 @@ final class TaxonomyRepositoryHardeningTest extends TestCase
         $this->assertIsString($repository);
         $this->assertStringContainsString('->createQueryBuilder(Taxonomy::class)', $repository);
         $this->assertStringContainsString("->field('contentType')", $repository);
-        $this->assertStringContainsString("->equals(\$contentType)", $repository);
+        $this->assertStringContainsString('->equals($contentType)', $repository);
         $this->assertStringContainsString("->sort('rank', 'asc')", $repository);
         $this->assertStringContainsString("->sort('title', 'asc')", $repository);
         $this->assertStringContainsString('->skip($offset)', $repository);

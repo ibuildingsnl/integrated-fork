@@ -62,6 +62,7 @@ class ChannelLinkType extends AbstractType
                 $link = $event->getData();
                 if ($form->get('choose_channel')?->getData() && $link instanceof ChannelLink) {
                     $link->channel = $form->get('channel_choice')->getData();
+
                     return;
                 }
 

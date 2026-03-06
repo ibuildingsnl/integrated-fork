@@ -336,7 +336,7 @@ class ContentPublicationIntegrationListenerTest extends TestCase
         $listener->buildForm($event);
         self::assertIsCallable($postSubmitListener);
 
-        $workflowState = new class () {
+        $workflowState = new class {
             public function isPublishable(): bool
             {
                 return true;
@@ -459,7 +459,7 @@ class ContentPublicationIntegrationListenerTest extends TestCase
         $listener->buildForm($event);
         self::assertIsCallable($postSubmitListener);
 
-        $workflowState = new class () {
+        $workflowState = new class {
             public function isPublishable(): bool
             {
                 return true;

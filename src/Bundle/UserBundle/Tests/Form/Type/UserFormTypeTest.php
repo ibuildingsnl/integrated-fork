@@ -2,16 +2,16 @@
 
 namespace Integrated\Bundle\UserBundle\Tests\Form\Type;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\UserBundle\Form\Type\UserFormType;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Bundle\UserBundle\Model\RoleInterface;
 use Integrated\Bundle\UserBundle\Model\ScopeInterface;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
-use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
+use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
-use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 
 class UserFormTypeTest extends TestCase
 {

@@ -20362,7 +20362,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     __expose();
     var props = __props;
     var translations = JSON.parse(props.translations);
-    var searchParams = JSON.parse(new URLSearchParams(window.location.search).get('data'));
+    var rawSearchParams = new URLSearchParams(window.location.search).get('data');
+    var searchParams = rawSearchParams ? JSON.parse(rawSearchParams) : {};
     var endpoint = "".concat(window.location.protocol, "//").concat(window.location.host, "/admin");
     var linkText = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)((_searchParams$selecti = searchParams.selectionText) !== null && _searchParams$selecti !== void 0 ? _searchParams$selecti : '');
     var linkTitle = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)((_searchParams$title = searchParams.title) !== null && _searchParams$title !== void 0 ? _searchParams$title : '');
@@ -20542,6 +20543,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     var __returned__ = {
       props: props,
       translations: translations,
+      rawSearchParams: rawSearchParams,
       searchParams: searchParams,
       endpoint: endpoint,
       linkText: linkText,
@@ -20945,6 +20947,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     };
     var selectSuggestion = function selectSuggestion(key) {
+      var url = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
       if (props.suggestions.findIndex(function (v) {
         return v.id === key;
       }) !== -1) {
@@ -20963,6 +20966,9 @@ __webpack_require__.r(__webpack_exports__);
           return;
         }
         selections.value = [key];
+        if (typeof url === 'string' && url.length > 0) {
+          emit('update:modelValue', url);
+        }
       } else {
         if (props.multiple) {
           selections.value = selections.value.filter(function (v) {
@@ -21688,7 +21694,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       url = _ref.url;
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)($setup["SuggestionTextInputSuggestion"], {
       onSelect: function onSelect() {
-        return $setup.selectSuggestion(id);
+        return $setup.selectSuggestion(id, url);
       },
       onFocusout: $setup.onBlur,
       key: id,

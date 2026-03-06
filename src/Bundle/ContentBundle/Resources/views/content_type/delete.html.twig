@@ -21,6 +21,11 @@
                     {% endtrans %}
                 </p>
                 {{ form_rest(form, {'style':'horizontal'})}}
+                {% if hasRelatedContent %}
+                    <div class="alert alert-warning">
+                        {% trans %}This content type has related content. Select "Delete related content" to remove that content before deleting this content type.{% endtrans %}
+                    </div>
+                {% endif %}
             </section>
         </div>
         {% block form_end %}

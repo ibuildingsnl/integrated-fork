@@ -50,7 +50,7 @@ PHPFILE;
             $command->invokeExecuteCommand($input, $output, 'workflow:index', ['--ignore', 'workflow-id']);
 
             $this->assertFileExists($counterFile);
-            $lines = file($counterFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            $lines = file($counterFile, \FILE_IGNORE_NEW_LINES | \FILE_SKIP_EMPTY_LINES);
             $this->assertCount(1, $lines, 'Expected one subprocess execution per executeCommand call');
         } finally {
             @unlink($bin.'/console');

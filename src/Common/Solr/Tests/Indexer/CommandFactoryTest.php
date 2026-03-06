@@ -15,6 +15,7 @@ use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\ConverterInterface;
 use Integrated\Common\Solr\Indexer\CommandFactory;
 use Integrated\Common\Solr\Indexer\CommandFactoryInterface;
+use Integrated\Common\Solr\Indexer\Job;
 use Integrated\Common\Solr\Indexer\JobInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -380,36 +381,11 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $action
      *
-     * @return JobInterface|MockObject
+     * @return JobInterface
      */
     protected function getJob($action = null, array $options = [])
     {
-        $mock = $this->createMock(JobInterface::class);
-        $mock->expects($this->atLeastOnce())
-            ->method('hasAction')
-            ->willReturn($action ? true : false);
-
-        $mock->expects($this->any())
-            ->method('getAction')
-            ->willReturn($action ?: null);
-
-        $hasOption = function ($key) use ($options) {
-            return isset($options[$key]);
-        };
-
-        $mock->expects($this->any())
-            ->method('hasOption')
-            ->willReturnCallback($hasOption);
-
-        $getOption = function ($key) use ($options) {
-            return isset($options[$key]) ? $options[$key] : null;
-        };
-
-        $mock->expects($this->any())
-            ->method('getOption')
-            ->willReturnCallback($getOption);
-
-        return $mock;
+        return new Job($action, $options);
     }
 
     /**

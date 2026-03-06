@@ -27,7 +27,7 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
 
     public function paged(string $contentType, int $offset, int $limit): array
     {
-        return $this->manager->createQueryBuilder(Taxonomy::class)
+        $result = $this->manager->createQueryBuilder(Taxonomy::class)
             ->field('contentType')
             ->equals($contentType)
             ->sort('rank', 'asc')
@@ -35,8 +35,20 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
             ->skip($offset)
             ->limit($limit)
             ->getQuery()
-            ->execute()
-            ->toArray();
+            ->execute();
+
+        if (\is_array($result)) {
+            $items = $result;
+        } elseif ($result instanceof \Traversable) {
+            $items = iterator_to_array($result, false);
+        } elseif (\is_object($result) && method_exists($result, 'toArray')) {
+            /** @var array<int, mixed> $items */
+            $items = $result->toArray();
+        } else {
+            $items = [];
+        }
+
+        return array_values(array_filter($items, static fn (mixed $item): bool => $item instanceof Taxonomy));
     }
 
     public function byId(string $id): ?Taxonomy

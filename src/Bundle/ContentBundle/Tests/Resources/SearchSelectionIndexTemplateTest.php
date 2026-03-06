@@ -19,4 +19,3 @@ final class SearchSelectionIndexTemplateTest extends TestCase
         self::assertStringContainsString('{% trans %}Custom sorting{% endtrans %}', $template);
     }
 }
-

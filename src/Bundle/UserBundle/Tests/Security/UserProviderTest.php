@@ -23,13 +23,18 @@ final class UserProviderTest extends TestCase
             ->method('getClassName')
             ->willReturn(User::class);
 
-        $user = (new User())->setUsername('bas@twindigital.nl');
+        $user = new User();
+        $user->setUsername('bas@twindigital.nl');
 
         $manager
             ->expects(self::once())
             ->method('findEnabledByUsernameOrEmailAndScope')
-            ->with('bas@twindigital.nl')
-            ->willReturn($user);
+            ->willReturnCallback(static function (string $identifier, mixed $scope = null) use ($user) {
+                self::assertSame('bas@twindigital.nl', $identifier);
+                self::assertNull($scope);
+
+                return $user;
+            });
 
         $provider = new UserProvider($manager);
 
@@ -47,8 +52,12 @@ final class UserProviderTest extends TestCase
         $manager
             ->expects(self::once())
             ->method('findEnabledByUsernameOrEmailAndScope')
-            ->with('unknown@example.com')
-            ->willReturn(null);
+            ->willReturnCallback(static function (string $identifier, mixed $scope = null) {
+                self::assertSame('unknown@example.com', $identifier);
+                self::assertNull($scope);
+
+                return null;
+            });
 
         $provider = new UserProvider($manager);
 
@@ -73,17 +82,21 @@ final class UserProviderTest extends TestCase
             ->method('getScope')
             ->willReturn($scope);
 
-        $user = (new User())->setUsername('yolinde');
+        $user = new User();
+        $user->setUsername('yolinde');
 
         $manager
             ->expects(self::once())
             ->method('findEnabledByUsernameOrEmailAndScope')
-            ->with('yolinde@daily.nl', $scope)
-            ->willReturn($user);
+            ->willReturnCallback(static function (string $identifier, mixed $scopeArg = null) use ($user, $scope) {
+                self::assertSame('yolinde@daily.nl', $identifier);
+                self::assertSame($scope, $scopeArg);
+
+                return $user;
+            });
 
         $provider = new UserScopeProvider($manager, $context);
 
         self::assertSame($user, $provider->loadUserByIdentifier('yolinde@daily.nl'));
     }
 }
-

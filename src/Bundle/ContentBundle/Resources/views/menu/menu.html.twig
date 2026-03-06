@@ -39,9 +39,12 @@
 
         {%- set attributes = item.attributes %}
         {% if item.level == 1 %}
-            {% set shouldOpen = options.currentClass in classes or options.ancestorClass in classes or item.name is same as('Content') %}
+            {% set shouldOpen = options.currentClass in classes or options.ancestorClass in classes %}
             {% set state = shouldOpen ? 'sidebar-sub-menu show' : 'sidebar-sub-menu' %}
             {%- set classes = classes|merge({'class': state}) %}
+            {% if item.name is same as('Content') %}
+                {%- set attributes = attributes|merge({'data-sidebar-default': 'content'}) %}
+            {% endif %}
         {% endif %}
         {%- if classes is not empty %}
             {%- set attributes = attributes|merge({'class': classes|join(' ')}) %}

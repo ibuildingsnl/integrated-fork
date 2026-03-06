@@ -65,7 +65,7 @@ class CalendarPublicationProvider implements EventSubscriberInterface
         $scannedPublications = 0;
 
         foreach ($publications as $publication) {
-            $scannedPublications++;
+            ++$scannedPublications;
             if ($scannedPublications > $scanLimit) {
                 break;
             }
@@ -194,7 +194,7 @@ class CalendarPublicationProvider implements EventSubscriberInterface
     }
 
     /**
-     * @param Brand[]                $brands
+     * @param Brand[]                  $brands
      * @param array<string, true>|null $selectedBrandIds
      *
      * @return array{brand: Brand, profile: BrandProfile}|null
@@ -234,7 +234,7 @@ class CalendarPublicationProvider implements EventSubscriberInterface
             return max(1, min(self::MAX_SCHEDULE_LIMIT, (int) $value));
         }
 
-        if (\is_numeric($value)) {
+        if (is_numeric($value)) {
             return max(1, min(self::MAX_SCHEDULE_LIMIT, (int) $value));
         }
 

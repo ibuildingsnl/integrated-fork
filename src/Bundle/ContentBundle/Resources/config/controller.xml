@@ -129,10 +129,7 @@
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Controller\ArticleSearchController">
-            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
-            <argument type="service" id="integrated_solr.search.query_factory"/>
-            <argument type="service" id="solarium.client"/>
-            <argument>%integrated_article_link_search.document_types.whitelist%</argument>
+            <argument type="service" id="Integrated\Bundle\ContentBundle\Services\ArticleSearchServiceInterface" />
         </service>
 
     </services>

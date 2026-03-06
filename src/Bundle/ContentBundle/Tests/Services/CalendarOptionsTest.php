@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Integrated\Bundle\ContentBundle\Tests\Services;
 
 use Integrated\Bundle\ContentBundle\Services\CalendarOptions;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -27,9 +28,7 @@ final class CalendarOptionsTest extends TestCase
         self::assertInstanceOf(\DateTimeImmutable::class, $options['end']);
     }
 
-    /**
-     * @dataProvider provideCappedLimits
-     */
+    #[DataProvider('provideCappedLimits')]
     public function testWeekViewCapsAndNormalizesLimit(mixed $rawLimit, int $expected): void
     {
         $service = new CalendarOptions(new EventDispatcher());
@@ -43,9 +42,7 @@ final class CalendarOptionsTest extends TestCase
         self::assertSame($expected, $options['limit']);
     }
 
-    /**
-     * @dataProvider provideCappedLimits
-     */
+    #[DataProvider('provideCappedLimits')]
     public function testMonthViewCapsAndNormalizesLimit(mixed $rawLimit, int $expected): void
     {
         $service = new CalendarOptions(new EventDispatcher());
@@ -63,7 +60,7 @@ final class CalendarOptionsTest extends TestCase
     /**
      * @return iterable<string, array{0:mixed, 1:int}>
      */
-    public function provideCappedLimits(): iterable
+    public static function provideCappedLimits(): iterable
     {
         yield 'lower string limit' => ['25', 25];
         yield 'lower int limit' => [25, 25];

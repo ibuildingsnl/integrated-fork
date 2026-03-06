@@ -11,7 +11,7 @@ class UserTest extends TestCase
     public function testSetRelationAllowsClearingTheRelation(): void
     {
         $user = new User();
-        $relation = new class() extends Relation {
+        $relation = new class extends Relation {
             public function __toString()
             {
                 return 'relation';

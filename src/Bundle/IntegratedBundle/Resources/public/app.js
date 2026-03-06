@@ -7330,10 +7330,38 @@ window.popupShown = false;
 var CONTENT_NAVIGATOR_OPEN_FACETS_KEY = 'contentNavigator.openFacets.v1';
 var CONTENT_NAVIGATOR_ASIDE_SCROLL_KEY = 'contentNavigator.asideScrollTop.v1';
 var FLASH_MESSAGES_PERSIST_KEY = 'integrated.flashMessages.persist.v1';
-var SIDEBAR_MENU_SCROLL_KEY = 'integrated.sidebarMenu.scrollTop.v1';
-var SIDEBAR_MENU_OPEN_ITEMS_KEY = 'integrated.sidebarMenu.openItems.v1';
+var SIDEBAR_MENU_SCROLL_KEY = 'integrated.sidebarMenu.scrollTop.v2';
+var SIDEBAR_MENU_OPEN_ITEMS_KEY = 'integrated.sidebarMenu.openItems.v2';
 var OPTIONS_SIDEBAR_HIDDEN_KEY = 'integrated.optionsSidebar.hidden.v1';
 var listSearchDebounceTimers = new WeakMap();
+function normalizeSidebarHref(href) {
+  if (!href) {
+    return '';
+  }
+  try {
+    var url = new URL(href, window.location.origin);
+    return "".concat(url.pathname).concat(url.search).trim();
+  } catch (error) {
+    return String(href).trim();
+  }
+}
+function buildSidebarMenuPersistenceKey(wrapper, index) {
+  var title = wrapper.querySelector('.menu-label .title');
+  var titleKey = title ? title.textContent.trim() : '';
+  var firstLink = wrapper.querySelector('.sub-menu-children a[href]');
+  var hrefKey = normalizeSidebarHref(firstLink ? firstLink.getAttribute('href') : '');
+  var base = hrefKey || titleKey || 'menu-item';
+  return "".concat(index, ":").concat(base);
+}
+function ensureSidebarMenuPersistenceKeys() {
+  var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+  var rootNode = root && typeof root.querySelector === 'function' ? root : root && root.target && typeof root.target.querySelector === 'function' ? root.target : document;
+  rootNode.querySelectorAll('.sidebar-menu-wrapper .sidebar-sub-menu').forEach(function (wrapper, index) {
+    if (!wrapper.dataset.sidebarMenuKey) {
+      wrapper.dataset.sidebarMenuKey = buildSidebarMenuPersistenceKey(wrapper, index);
+    }
+  });
+}
 $(document).mouseup(function (e) {
   if (e.button !== 0) {
     return;
@@ -7831,8 +7859,12 @@ function getSidebarMenuPersistenceKey(wrapper) {
   if (!wrapper) {
     return '';
   }
-  var title = wrapper.querySelector('.menu-label .title');
-  return title ? title.textContent.trim() : '';
+  if (!wrapper.dataset.sidebarMenuKey) {
+    var wrappers = document.querySelectorAll('.sidebar-menu-wrapper .sidebar-sub-menu');
+    var index = Array.from(wrappers).indexOf(wrapper);
+    wrapper.dataset.sidebarMenuKey = buildSidebarMenuPersistenceKey(wrapper, index >= 0 ? index : 0);
+  }
+  return wrapper.dataset.sidebarMenuKey || '';
 }
 function persistSidebarMenuState(wrapper, isOpen) {
   var key = getSidebarMenuPersistenceKey(wrapper);
@@ -7853,6 +7885,7 @@ function applyPersistedSidebarMenuState() {
   if (items === null) {
     return;
   }
+  ensureSidebarMenuPersistenceKeys(root);
   root.querySelectorAll('.sidebar-menu-wrapper .sidebar-sub-menu').forEach(function (wrapper) {
     var key = getSidebarMenuPersistenceKey(wrapper);
     var list = wrapper.querySelector('.sub-menu-children');
@@ -7869,7 +7902,40 @@ function applyPersistedSidebarMenuState() {
 function restorePersistedSidebarMenuState() {
   var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
   var rootNode = root && typeof root.querySelector === 'function' ? root : root && root.target && typeof root.target.querySelector === 'function' ? root.target : document;
+  ensureSidebarMenuPersistenceKeys(rootNode);
+  var persistedItems = getPersistedOpenSidebarMenuItems();
+  if (persistedItems === null) {
+    applyDefaultSidebarMenuState(rootNode);
+    return;
+  }
   applyPersistedSidebarMenuState(rootNode);
+}
+function applyDefaultSidebarMenuState() {
+  var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+  var wrappers = Array.from(root.querySelectorAll('.sidebar-menu-wrapper .sidebar-sub-menu'));
+  if (wrappers.length === 0) {
+    return;
+  }
+  var hasOpenWrapper = wrappers.some(function (wrapper) {
+    return wrapper.classList.contains('show');
+  });
+  if (hasOpenWrapper) {
+    return;
+  }
+  var contentWrapper = wrappers.find(function (wrapper) {
+    return wrapper.dataset.sidebarDefault === 'content';
+  });
+  if (!contentWrapper) {
+    return;
+  }
+  var list = contentWrapper.querySelector('.sub-menu-children');
+  if (!list) {
+    return;
+  }
+  contentWrapper.classList.add('show');
+  list.classList.add('show');
+  list.style.display = 'block';
+  list.style.height = '';
 }
 function announceContentNavigatorResults() {
   var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;

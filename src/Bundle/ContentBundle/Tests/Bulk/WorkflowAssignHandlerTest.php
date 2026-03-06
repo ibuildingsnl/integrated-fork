@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Integrated\Bundle\ContentBundle\Bulk\WorkflowAssignHandler;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Integrated\Bundle\UserBundle\Model\UserInterface;
+use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Entity\Workflow\State as WorkflowState;
@@ -27,8 +27,7 @@ class WorkflowAssignHandlerTest extends TestCase
         $workflow->addState($publishedState);
         $workflow->setDefault($defaultState);
 
-        $assigned = $this->createMock(UserInterface::class);
-        $assigned->method('getId')->willReturn('u1');
+        $assigned = $this->createUser('u1');
 
         $workflowStateRepository = $this->createMock(EntityRepository::class);
         $workflowStateRepository
@@ -87,8 +86,7 @@ class WorkflowAssignHandlerTest extends TestCase
         $workflow->addState($conceptState);
         $workflow->setDefault($conceptState);
 
-        $assigned = $this->createMock(UserInterface::class);
-        $assigned->method('getId')->willReturn('u1');
+        $assigned = $this->createUser('u1');
 
         $existingState = new WorkflowState();
         $existingState->setContent($content);
@@ -153,5 +151,16 @@ class WorkflowAssignHandlerTest extends TestCase
         $content->setDisabled($disabled);
 
         return $content;
+    }
+
+    private function createUser(string $id): User
+    {
+        $user = new User();
+
+        $reflection = new \ReflectionProperty(User::class, 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($user, $id);
+
+        return $user;
     }
 }

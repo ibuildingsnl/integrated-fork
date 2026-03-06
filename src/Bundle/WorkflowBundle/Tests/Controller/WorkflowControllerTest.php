@@ -16,7 +16,6 @@ use Integrated\Bundle\WorkflowBundle\Entity\Definition\Permission;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
 use Integrated\Common\Security\PermissionInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -112,7 +111,7 @@ class WorkflowControllerTest extends TestCase
 
         $entityManager = $this->createMock(EntityManager::class);
         $entityManager->method('getRepository')->willReturnMap([
-            [Definition\State::class, $stateRepository],
+            [State::class, $stateRepository],
             [User::class, $userRepository],
         ]);
 
