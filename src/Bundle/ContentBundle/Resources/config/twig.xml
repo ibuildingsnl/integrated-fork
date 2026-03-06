@@ -89,6 +89,8 @@
             <argument type="service" id="integrated_content.resolver" />
         </service>
 
+        <service id="integrated_content.twig_title.link_health" class="Integrated\Bundle\ContentBundle\Twig\Resolver\LinkHealthTitleResolver" />
+
         <service id="integrated_content.facet_setting.channel" class="Integrated\Bundle\ContentBundle\Twig\FacetSettings">
             <argument>channels</argument>
             <argument type="expression">true</argument>
@@ -100,6 +102,13 @@
             <argument>contenttypes</argument>
             <argument type="expression">true</argument>
             <argument type="service" id="integrated_content.twig_title.content_type" />
+            <tag name="integrated_content.facet_setting" />
+        </service>
+
+        <service id="integrated_content.facet_setting.link_health" class="Integrated\Bundle\ContentBundle\Twig\FacetSettings">
+            <argument>link_health</argument>
+            <argument type="expression">true</argument>
+            <argument type="service" id="integrated_content.twig_title.link_health" />
             <tag name="integrated_content.facet_setting" />
         </service>
 

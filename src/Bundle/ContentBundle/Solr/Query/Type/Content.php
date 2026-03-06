@@ -65,6 +65,11 @@ class Content extends AbstractType
         $facetField->setField('facet_properties')
             ->getLocalParameters()->setExclude('properties');
 
+        /** @var Field $facetField */
+        $facetField = $facet->createFacetField('link_health');
+        $facetField->setField('link_health_status')
+            ->getLocalParameters()->setExclude('link_health');
+
         $helper = $query->getHelper();
         $escape = function ($param) use ($helper) {
             return $helper->escapePhrase($param);
@@ -100,6 +105,12 @@ class Content extends AbstractType
             $query->createFilterQuery('properties')
                 ->addTag('properties')
                 ->setQuery('facet_properties: ((%1%))', [implode(') OR (', array_map($escape, $options['properties']))]);
+        }
+
+        if ($options['link_health']) {
+            $query->createFilterQuery('link_health')
+                ->addTag('link_health')
+                ->setQuery('link_health_status: ((%1%))', [implode(') OR (', array_map($escape, $options['link_health']))]);
         }
 
         if ($created = $options['created']) {
@@ -222,6 +233,7 @@ class Content extends AbstractType
             'authors' => [],
             'pub_channels' => [],
             'properties' => [],
+            'link_health' => [],
         ]);
 
         $arrayNormalizer = function (Options $options, $value) {
@@ -256,6 +268,7 @@ class Content extends AbstractType
         $resolver->setNormalizer('brands', $arrayNormalizer);
         $resolver->setNormalizer('authors', $arrayNormalizer);
         $resolver->setNormalizer('properties', $arrayNormalizer);
+        $resolver->setNormalizer('link_health', $arrayNormalizer);
 
         // handle filters that will be directly inserted into the query base on a key value
         $resolver->setDefaults([
