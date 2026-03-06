@@ -6,6 +6,9 @@ use Integrated\Common\ContentType\ResolverInterface;
 
 final class TaxonomyViewer implements TaxonomyOverview
 {
+    /** @var array<string, bool> */
+    private array $parentsEnabled = [];
+
     public function __construct(
         private readonly ResolverInterface $types,
         private readonly TaxonomyIndexer $indexer,
@@ -36,6 +39,12 @@ final class TaxonomyViewer implements TaxonomyOverview
 
     private function hasParents(string $contentType): bool
     {
-        return $this->types->getType($contentType)->hasField('parent_id');
+        if (isset($this->parentsEnabled[$contentType])) {
+            return $this->parentsEnabled[$contentType];
+        }
+
+        return $this->parentsEnabled[$contentType] = $this->types
+            ->getType($contentType)
+            ->hasField('parent_id');
     }
 }

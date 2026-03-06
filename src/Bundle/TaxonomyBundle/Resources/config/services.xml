@@ -12,8 +12,6 @@
         <service id="integrated_taxonomy.taxonomy.repository" class="Integrated\Bundle\TaxonomyBundle\Infrastructure\ODMTaxonomyRepository">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_taxonomy.taxonomy.odm.repository" />
-            <argument type="service" id="integrated_solr.search.query_factory"/>
-            <argument type="service" id="solarium.client"/>
         </service>
         <service id="integrated_taxonomy.taxonomy.overview" class="Integrated\Bundle\TaxonomyBundle\Services\TaxonomyViewer">
             <argument type="service" id="integrated_content.resolver" />

@@ -9,7 +9,6 @@
         "@babel/core": "^7.24.0",
         "@babel/preset-env": "^7.24.0",
         "@symfony/webpack-encore": "^4.6.1",
-        "@vue/compiler-sfc": "^3.4.21",
         "autoprefixer": "^10.4.24",
         "dart-sass": "^1.25.0",
         "file-loader": "^6.2.0",
@@ -18,13 +17,13 @@
         "sass": "^1.72.0",
         "sass-loader": "^14.1.1",
         "tailwindcss": "^3.4.17",
-        "vue": "^3.2.14",
-        "vue-loader": "^17.0.0",
         "webpack-cli": "^5.1.4"
     },
     "dependencies": {
+        "@hotwired/stimulus": "^3.2.2",
         "@hotwired/turbo": "^8.0.4",
         "@simonwep/pickr": "^1.9.1",
+        "@symfony/ux-live-component": "^2.32.0",
         "@uppy/locales": "^3.0.4",
         "ajv": "^8.12.0",
         "bootstrap-sass": "^3.4.1",

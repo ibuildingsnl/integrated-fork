@@ -3,8 +3,9 @@
 namespace Integrated\Bundle\WorkflowBundle\Tests\Service;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Iterator\IterableResult;
+use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ODM\MongoDB\Query\Builder;
+use Doctrine\ODM\MongoDB\Query\Query;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectRepository;
@@ -15,6 +16,7 @@ use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State as DefinitionState;
 use Integrated\Bundle\WorkflowBundle\Entity\Workflow\State as WorkflowState;
 use Integrated\Bundle\WorkflowBundle\Service\StateManager;
+use MongoDB\Collection;
 use PHPUnit\Framework\TestCase;
 
 class StateManagerTest extends TestCase
@@ -43,8 +45,7 @@ class StateManagerTest extends TestCase
             ['_id' => 'content-b', 'class' => Article::class],
         ];
 
-        $query = $this->createMock(IterableResult::class);
-        $query->expects(self::once())->method('execute')->willReturn($items);
+        $query = $this->createBuilderQueryResult($items);
 
         $queryBuilder = $this->createMock(Builder::class);
         $queryBuilder->method('select')->willReturnSelf();
@@ -97,5 +98,42 @@ class StateManagerTest extends TestCase
 
         $manager = new StateManager($entityManager, $documentManager);
         $manager->ensureWorkflowState('article');
+    }
+
+    /**
+     * @param array<int, array{_id: string, class: class-string<Content>}> $items
+     */
+    private function createBuilderQueryResult(array $items): object
+    {
+        $returnType = (new \ReflectionMethod(Builder::class, 'getQuery'))->getReturnType();
+        self::assertInstanceOf(\ReflectionNamedType::class, $returnType);
+
+        if ($returnType->getName() === 'Doctrine\ODM\MongoDB\Iterator\IterableResult') {
+            /** @var \PHPUnit\Framework\MockObject\MockObject $query */
+            $query = $this->createMock('Doctrine\ODM\MongoDB\Iterator\IterableResult');
+            $query->expects(self::once())->method('execute')->willReturn($items);
+
+            return $query;
+        }
+
+        if ($returnType->getName() === Query::class) {
+            $collection = $this->createMock(Collection::class);
+            $collection
+                ->expects(self::once())
+                ->method('distinct')
+                ->with('_id', [], self::isType('array'))
+                ->willReturn($items);
+
+            return new Query(
+                $this->createMock(DocumentManager::class),
+                $this->createMock(ClassMetadata::class),
+                $collection,
+                ['type' => Query::TYPE_DISTINCT, 'distinct' => '_id', 'query' => []],
+                [],
+                false
+            );
+        }
+
+        self::fail(\sprintf('Unsupported Builder::getQuery() return type: %s', $returnType->getName()));
     }
 }

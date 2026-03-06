@@ -128,6 +128,20 @@ final class TaxonomyFilteringTest extends TestCase
         self::assertEquals('Rocks', $rootItems['rocks']);
     }
 
+    public function testFindingChildrenOfTheRootSortsByRankThenTitle(): void
+    {
+        $this->add(
+            $this->taxonomy('trees', 'Trees', 'trees', 'm'),
+            $this->taxonomy('rocks', 'Rocks', 'rocks', 'm'),
+            $this->taxonomy('aaaaa', 'aaaaa', 'aaaaa', 'm'),
+            $this->taxonomy('first', 'First', 'first', 'a'),
+        );
+
+        $rootItems = $this->indexer->childrenOf('taxonomy', 'root');
+
+        self::assertSame(['First', 'aaaaa', 'Rocks', 'Trees'], array_values($rootItems));
+    }
+
     public function testNonExistingElementsDoNotHaveChildren()
     {
         $this->add(

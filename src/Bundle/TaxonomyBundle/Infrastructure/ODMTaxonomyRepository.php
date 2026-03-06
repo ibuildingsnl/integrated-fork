@@ -7,18 +7,13 @@ use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
-use Integrated\Common\Solr\Search\QueryFactoryInterface;
-use Solarium\Core\Client\ClientInterface;
 
 final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
 {
     public function __construct(
         private readonly DocumentManager $manager,
         private readonly ObjectRepository $doctrineRepo,
-        QueryFactoryInterface $queryFactory,
-        ClientInterface $solrClient,
     ) {
-        unset($queryFactory, $solrClient);
     }
 
     public function all(): array
@@ -107,22 +102,31 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
         }
 
         $counts = array_fill_keys($ids, 0);
-        $rows = $this->manager->getDocumentCollection(Content::class)->aggregate([
+        $rows = iterator_to_array($this->manager->getDocumentCollection(Content::class)->aggregate([
             ['$match' => ['relations.references.$id' => ['$in' => $ids]]],
             ['$unwind' => '$relations'],
             ['$unwind' => '$relations.references'],
             ['$match' => ['relations.references.$id' => ['$in' => $ids]]],
             ['$group' => ['_id' => ['taxonomy' => '$relations.references.$id', 'content' => '$_id']]],
             ['$group' => ['_id' => '$_id.taxonomy', 'count' => ['$sum' => 1]]],
-        ])->toArray();
+        ]), false);
 
         foreach ($rows as $row) {
-            $id = trim((string) ($row['_id'] ?? ''));
+            if (\is_array($row)) {
+                $rowData = $row;
+            } elseif (\is_object($row)) {
+                /** @var array<string, mixed> $rowData */
+                $rowData = (array) $row;
+            } else {
+                continue;
+            }
+
+            $id = trim((string) ($rowData['_id'] ?? ''));
             if ('' === $id) {
                 continue;
             }
 
-            $counts[$id] = (int) ($row['count'] ?? 0);
+            $counts[$id] = (int) ($rowData['count'] ?? 0);
         }
 
         return $counts;

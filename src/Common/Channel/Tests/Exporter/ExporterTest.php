@@ -252,6 +252,76 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
         $exporter->export($content, self::TEST_STATE, $channel); // check if the exporters are cached
     }
 
+    public function testExportAllowsPastConnectorStartDateForOlderContent(): void
+    {
+        $content = new Article();
+        $content->setDisabled(false);
+        $content->getPublishTime()->setStartDate(new \DateTimeImmutable('-10 days'));
+        $content->getPublishTime()->setEndDate(new \DateTimeImmutable('+10 years'));
+        $channel = $this->getChannel('channel');
+
+        $config = $this->createMock(ConfigInterface::class);
+        $config->expects($this->once())
+            ->method('getAdapter')
+            ->willReturn('adapter-active');
+        $config->expects($this->once())
+            ->method('getPublicationStartDate')
+            ->willReturn(new \DateTime('yesterday'));
+
+        $this->resolver->expects($this->once())
+            ->method('getConfigs')
+            ->with($this->identicalTo($channel))
+            ->willReturn(new \ArrayIterator([$config]));
+
+        $connectorExporter = $this->getExporter();
+        $connectorExporter->expects($this->once())
+            ->method('export')
+            ->with(
+                $this->identicalTo($content),
+                $this->equalTo(self::TEST_STATE),
+                $this->identicalTo($channel)
+            );
+
+        $adapter = $this->createMock(ExportableInterface::class);
+        $adapter->expects($this->once())
+            ->method('getExporter')
+            ->with($this->identicalTo($config))
+            ->willReturn($connectorExporter);
+
+        $this->registry->expects($this->once())
+            ->method('getAdapter')
+            ->with($this->equalTo('adapter-active'))
+            ->willReturn($adapter);
+
+        $this->getInstance()->export($content, self::TEST_STATE, $channel);
+    }
+
+    public function testExportSkipsFutureConnectorStartDate(): void
+    {
+        $content = new Article();
+        $content->setDisabled(false);
+        $content->getPublishTime()->setStartDate(new \DateTimeImmutable('-10 days'));
+        $content->getPublishTime()->setEndDate(new \DateTimeImmutable('+10 years'));
+        $channel = $this->getChannel('channel');
+
+        $config = $this->createMock(ConfigInterface::class);
+        $config->expects($this->never())
+            ->method('getAdapter');
+        $config->expects($this->once())
+            ->method('getPublicationStartDate')
+            ->willReturn(new \DateTime('tomorrow'));
+
+        $this->resolver->expects($this->once())
+            ->method('getConfigs')
+            ->with($this->identicalTo($channel))
+            ->willReturn(new \ArrayIterator([$config]));
+
+        $this->registry->expects($this->never())
+            ->method('getAdapter');
+
+        $this->getInstance()->export($content, self::TEST_STATE, $channel);
+    }
+
     protected function getPreparedExporter($document, ChannelInterface $channel): Exporter
     {
         $exporterResponse = new ExporterResponse(1, 'test-exporter');
@@ -290,11 +360,9 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $id
-     *
-     * @return ChannelInterface|MockObject
+     * @return ChannelInterface&MockObject
      */
-    protected function getChannel($id)
+    protected function getChannel(string $id): ChannelInterface
     {
         $mock = $this->createMock(ChannelInterface::class);
         $mock->expects($this->atLeastOnce())
@@ -305,9 +373,9 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ExporterInterface|MockObject
+     * @return ExporterInterface&MockObject
      */
-    protected function getExporter()
+    protected function getExporter(): ExporterInterface
     {
         return $this->createMock(ExporterInterface::class);
     }
