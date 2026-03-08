@@ -8,6 +8,7 @@
     {% set sortOptions = {
         'createdAt': 'Date created'|trans,
         'username': 'Username'|trans,
+        'role': 'Role'|trans,
         'scope.name': 'Scope'|trans,
         'id': 'ID'
     } %}
@@ -78,6 +79,12 @@
                     {% block user_filter_groups %}
                     <div class="aside-item-holder {% if facetFilter.groups|length == 0 %} hidden{% endif %}">
                         {{ form_row(facetFilter.groups, {'style':'sidebar', 'icon': 'download', 'state': 'show'}) }}
+                    </div>
+                    {% endblock %}
+
+                    {% block user_filter_roles %}
+                    <div class="aside-item-holder {% if facetFilter.roles|length == 0 %} hidden{% endif %}">
+                        {{ form_row(facetFilter.roles, {'style':'sidebar', 'icon': 'user', 'state': 'show'}) }}
                     </div>
                     {% endblock %}
 
