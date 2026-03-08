@@ -50,10 +50,27 @@
                 {% if brandNames is empty %}
                     {% set document = integrated_document(content) %}
                 {% endif %}
+                {% set websiteChannels = [] %}
+                {% set websiteChannelIds = [] %}
+                {% if document is not null and document.channels is defined and document.channels is not null %}
+                    {% for channel in document.channels %}
+                        {% set websiteChannel = channel|integrated_brand_website_channel %}
+                        {% if websiteChannel is null and channel.type is defined and channel.type is not null and channel.type.id|default('') == 'website' %}
+                            {% set websiteChannel = channel %}
+                        {% endif %}
+                        {% if websiteChannel is not null %}
+                            {% set websiteChannelId = websiteChannel.id|default('') %}
+                            {% if websiteChannelId is not empty and websiteChannelId not in websiteChannelIds %}
+                                {% set websiteChannels = websiteChannels|merge([websiteChannel]) %}
+                                {% set websiteChannelIds = websiteChannelIds|merge([websiteChannelId]) %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
                 {% set visibleBrandNames = brandNames|slice(0, 3) %}
                 {% set channelCount = brandNames|length %}
                 {% if channelCount == 0 and document is not null and document.channels is defined and document.channels is not null %}
-                    {% set channelCount = document.channels|length %}
+                    {% set channelCount = websiteChannels|length %}
                 {% endif %}
 
                 {% set class_name = content.type_class|split('\\')|last %}
@@ -126,7 +143,7 @@
                                         </div>
                                     {% endfor %}
                                 {% elseif document.channels is defined and document.channels is not null %}
-                                    {% for channel in document.channels %}
+                                    {% for channel in websiteChannels %}
                                         {% if channel|integrated_brand_profile.favicon.file is defined %}
                                             <div class="channel-favicon"
                                                  style="background-image:url('{{ image(channel|integrated_brand_profile.favicon.file).cropResize(36, 36) }}')"
