@@ -14,16 +14,22 @@
     } %}
     <div class="row flex flex-wrap">
         <div class="index-wrapper">
-            <div class="page-title">
-                <div class="heading flex justify-between w-full">
-                    <div class="heading-switcher">
-                        <h1 class="heading">{% trans %}Users{% endtrans %}</h1>
-                    </div>
-                    <button class="toggle-filters toggle-data-target btn btn-orange icon-left" data-target="aside-filters">
-                        <i class="iconoir-filter-alt"></i>
-                        <span>{% trans %}Filter{% endtrans %}</span>
-                    </button>
+            <div class="page-title flex justify-between flex-wrap">
+                <div class="flex items-center">
+                    <h1 class="heading">{% trans %}Users{% endtrans %}</h1>
+                    <ul class="create">
+                        <li>
+                            <a class="btn btn-create-new" href="{{ path('integrated_user_user_new') }}">
+                                <span>{% trans %}New user{% endtrans %}</span>
+                                <i class="iconoir-plus"></i>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
+                <button class="toggle-filters toggle-data-target btn btn-orange icon-left" data-target="aside-filters">
+                    <i class="iconoir-filter-alt"></i>
+                    <span>{% trans %}Filter{% endtrans %}</span>
+                </button>
                 <div class="options options-toolbar">
                     <ul class="content-navigator-menu">
                         <li class="dropdown close-outside" data-underlay="no">
@@ -39,12 +45,6 @@
                                     </li>
                                 {% endfor %}
                             </ul>
-                        </li>
-                        <li>
-                            <a class="btn btn-orange icon-left" href="{{ path('integrated_user_user_new') }}">
-                                <i class="iconoir-plus"></i>
-                                <span>{% trans %}New user{% endtrans %}</span>
-                            </a>
                         </li>
                     </ul>
                 </div>

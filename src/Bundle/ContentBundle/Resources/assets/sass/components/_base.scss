@@ -79,10 +79,17 @@ body {
         max-height: calc(100vh - 48px);
         overflow: auto;
         position: relative;
-        padding: 2rem 2rem;
+        padding: 2rem 2rem 6rem 2rem;
+        gap: 8px;
+        display: flex;
+        flex-direction: column;
 
         &.index-wrapper {
             position: inherit;
+        }
+
+        h2.heading {
+            margin-bottom: 0;
         }
 
         &-full {
@@ -92,6 +99,9 @@ body {
             position: relative;
             padding: 2rem;
             padding-bottom: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
             @include media(max-lg) {
                 padding: 1rem;
             }
@@ -99,6 +109,10 @@ body {
                 * {
                     word-break: break-word;
                 }
+            }
+
+            h2.heading {
+                margin-bottom: 0;
             }
         }
 
@@ -293,7 +307,6 @@ body.hide-options {
 
 .page-title {
     display: flex;
-    margin-bottom: 1rem;
     align-items: center;
     flex-wrap: wrap;
     position: relative;
