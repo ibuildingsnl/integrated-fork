@@ -2,6 +2,8 @@
 
 namespace Integrated\Bundle\UserBundle\Tests\Provider;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NativeQuery;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Integrated\Bundle\UserBundle\Doctrine\UserManager;
@@ -86,5 +88,36 @@ class FilterQueryProviderTest extends TestCase
             $andWhere
         );
         self::assertSame(['ROLE_ADMIN', 'ROLE_USER'], $params['roles'] ?? null);
+    }
+
+    public function testGetRoleChoicesRendersFacetWrapperMarkupInChoiceLabel(): void
+    {
+        $nativeQuery = $this->createMock(NativeQuery::class);
+        $nativeQuery->method('setParameter')->willReturnSelf();
+        $nativeQuery->method('getResult')->willReturn([
+            [
+                'role' => 'ROLE_ADMIN',
+                'label' => 'Admin',
+                'count' => 8,
+            ],
+        ]);
+
+        $objectManager = $this->createMock(EntityManagerInterface::class);
+        $objectManager->method('createNativeQuery')->willReturn($nativeQuery);
+
+        $manager = $this->createMock(UserManager::class);
+        $manager->method('getObjectManager')->willReturn($objectManager);
+
+        $provider = new FilterQueryProvider($manager);
+        $choices = $provider->getRoleChoices([]);
+
+        self::assertArrayHasKey(
+            '<div class="facet-wrapper"><span class="facet-title">Admin</span><span class="facet-count">(8)</span></div>',
+            $choices
+        );
+        self::assertSame(
+            'ROLE_ADMIN',
+            $choices['<div class="facet-wrapper"><span class="facet-title">Admin</span><span class="facet-count">(8)</span></div>']
+        );
     }
 }

@@ -201,7 +201,7 @@ class FilterQueryProvider
             }
 
             $count = max(0, (int) ($result['count'] ?? 0));
-            $choices[\sprintf('%s %d', $label, $count)] = $role;
+            $choices[$this->formatFacetLabel($label, $count)] = $role;
         }
 
         return $choices;
@@ -234,9 +234,20 @@ class FilterQueryProvider
 
         $choices = [];
         foreach ($query->getResult() as $result) {
-            $choices[\sprintf('%s %d', $result['name'], $result['count'])] = $result['id'];
+            $choices[$this->formatFacetLabel((string) $result['name'], (int) $result['count'])] = $result['id'];
         }
 
         return $choices;
+    }
+
+    private function formatFacetLabel(string $name, int $count): string
+    {
+        $escapedName = htmlspecialchars($name, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
+
+        return \sprintf(
+            '<div class="facet-wrapper"><span class="facet-title">%s</span><span class="facet-count">(%d)</span></div>',
+            $escapedName,
+            max(0, $count)
+        );
     }
 }
