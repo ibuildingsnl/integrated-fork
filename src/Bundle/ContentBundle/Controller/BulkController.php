@@ -17,6 +17,7 @@ use Integrated\Bundle\ContentBundle\Form\Type\BulkActionConfirmType;
 use Integrated\Bundle\ContentBundle\Form\Type\BulkConfigureType;
 use Integrated\Bundle\ContentBundle\Form\Type\BulkSelectionType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
+use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\Bulk\BulkHandlerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,6 +45,7 @@ class BulkController extends AbstractController
         $limit = 1000;
 
         if ($bulk) {
+            $this->assertBulkAccess($bulk);
             $request->query->replace(array_replace($bulk->getFilters() ?? [], $request->query->all()));
         }
 
@@ -60,6 +62,12 @@ class BulkController extends AbstractController
             $bulk->setFilters($request->query->all());
 
             if (!$bulk->getId()) {
+                $user = $this->getUser();
+                if (!$user instanceof UserInterface) {
+                    throw $this->createAccessDeniedException();
+                }
+
+                $bulk->setOwnerId((string) $user->getId());
                 $this->manager->persist($bulk);
             }
 
@@ -77,6 +85,8 @@ class BulkController extends AbstractController
 
     public function configure(Request $request, BulkAction $bulk): Response
     {
+        $this->assertBulkAccess($bulk);
+
         if ($bulk->getExecutedAt()) {
             return $this->redirectToRoute('integrated_content_content_index', $bulk->getFilters());
         }
@@ -100,6 +110,7 @@ class BulkController extends AbstractController
     public function confirm(Request $request, BulkAction $bulk): Response
     {
         $this->preventTimeout();
+        $this->assertBulkAccess($bulk);
 
         if ($bulk->getExecutedAt()) {
             return $this->redirectToRoute('integrated_content_content_index', $bulk->getFilters());
@@ -139,5 +150,22 @@ class BulkController extends AbstractController
     private function preventTimeout(): void
     {
         ini_set('max_execution_time', '600');
+    }
+
+    private function assertBulkAccess(BulkAction $bulk): void
+    {
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return;
+        }
+
+        $user = $this->getUser();
+        if (!$user instanceof UserInterface) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $ownerId = trim((string) ($bulk->getOwnerId() ?? ''));
+        if ($ownerId === '' || $ownerId !== (string) $user->getId()) {
+            throw $this->createAccessDeniedException();
+        }
     }
 }

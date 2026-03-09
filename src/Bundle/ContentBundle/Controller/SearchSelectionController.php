@@ -59,10 +59,15 @@ class SearchSelectionController extends AbstractController
 
     public function new(Request $request): Response
     {
+        $user = $this->getUser();
+        if (!$user instanceof UserInterface) {
+            throw new AccessDeniedException();
+        }
+
         $searchSelection = new SearchSelection();
 
         $searchSelection->setFilters($request->query->all());
-        $searchSelection->setUserId($this->getUser()->getId());
+        $searchSelection->setUserId((int) $user->getId());
 
         $form = $this->createCreateForm($searchSelection);
         $form->handleRequest($request);
@@ -89,7 +94,7 @@ class SearchSelectionController extends AbstractController
 
     public function edit(Request $request, SearchSelection $searchSelection): Response
     {
-        // TODO: security check
+        $this->assertSearchSelectionAccess($searchSelection);
 
         if ($searchSelection->isLocked()) {
             throw new AccessDeniedException();
@@ -118,7 +123,7 @@ class SearchSelectionController extends AbstractController
 
     public function delete(Request $request, SearchSelection $searchSelection): Response
     {
-        // TODO: security check
+        $this->assertSearchSelectionAccess($searchSelection);
 
         if ($searchSelection->isLocked()) {
             throw new AccessDeniedException();
@@ -223,7 +228,12 @@ class SearchSelectionController extends AbstractController
         $builder = $this->documentManager->createQueryBuilder(SearchSelection::class);
 
         if (false === $this->isGranted('ROLE_ADMIN')) {
-            $builder->field('userId')->equals($this->getUser()->getId());
+            $user = $this->getUser();
+            if (!$user instanceof UserInterface) {
+                throw new AccessDeniedException();
+            }
+
+            $builder->field('userId')->equals((int) $user->getId());
         }
 
         return $builder;
@@ -270,5 +280,21 @@ class SearchSelectionController extends AbstractController
         }
 
         return $filters;
+    }
+
+    private function assertSearchSelectionAccess(SearchSelection $searchSelection): void
+    {
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return;
+        }
+
+        $user = $this->getUser();
+        if (!$user instanceof UserInterface) {
+            throw new AccessDeniedException();
+        }
+
+        if ((int) $searchSelection->getUserId() !== (int) $user->getId()) {
+            throw new AccessDeniedException();
+        }
     }
 }

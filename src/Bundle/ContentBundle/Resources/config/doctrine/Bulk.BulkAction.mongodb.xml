@@ -8,6 +8,7 @@
         <field field-name="filters" type="string"/>
         <field field-name="createdAt" type="date"/>
         <field field-name="executedAt" type="date"/>
+        <field field-name="ownerId" type="string"/>
 
         <embed-many field="actions" strategy="set"/>
 
