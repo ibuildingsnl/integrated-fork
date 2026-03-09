@@ -12,6 +12,11 @@
         <field field-name="contentId" type="string" />
         <field field-name="userId" type="string" />
         <field field-name="payload" type="hash" />
+        <embed-many
+            field="versions"
+            target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\ContentEditDraftVersion"
+            strategy="set"
+        />
         <field field-name="createdAt" type="date" />
         <field field-name="updatedAt" type="date" />
 

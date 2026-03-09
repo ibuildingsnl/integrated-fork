@@ -38,5 +38,19 @@ class ContentEditAutosaveFlowTest extends TestCase
         $this->assertStringContainsString('public function saveDraft(Request $request, string $id): JsonResponse', $controller);
         $this->assertStringContainsString('public function deleteDraft(Request $request, string $id): JsonResponse', $controller);
         $this->assertStringContainsString('private function clearCurrentUserDraft(Content $content): void', $controller);
+        $this->assertStringContainsString("'versions' => \$this->normalizeDraftVersions(\$draft)", $controller);
+        $this->assertStringContainsString('private function normalizeDraftVersions(ContentEditDraft $draft): array', $controller);
+        $this->assertStringContainsString("'contentUpdatedAt' => \$this->normalizeContentUpdatedAt(\$content)", $controller);
+        $this->assertStringContainsString('private function isContentUpdatedAfterBaseline(Content $content, ?string $baseline): bool', $controller);
+    }
+
+    public function testToolbarContainsDraftActionsAndVersionControls(): void
+    {
+        $toolbar = file_get_contents(__DIR__.'/../../Resources/views/partials/block.toolbar.html.twig');
+
+        $this->assertIsString($toolbar);
+        $this->assertStringContainsString('integrated_content_actions_save_draft', $toolbar);
+        $this->assertStringContainsString('integrated_content_actions_draft_version', $toolbar);
+        $this->assertStringContainsString('integrated_content_actions_restore_draft_version', $toolbar);
     }
 }

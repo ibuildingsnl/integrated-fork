@@ -6,11 +6,13 @@ $(document).ready(function () {
         getUrl: '',
         deleteUrl: '',
         enabled: false,
-        timer: null,
-        intervalId: null,
         inFlight: false,
         lastHash: '',
-        statusNode: null,
+        versions: {},
+        versionSelectNode: null,
+        restoreButtonNode: null,
+        versionsContainerNode: null,
+        contentUpdatedAt: '',
     };
 
     if (!form.length) {
@@ -20,6 +22,7 @@ $(document).ready(function () {
     autosaveState.saveUrl = String(form.attr('data-draft-save-url') || '');
     autosaveState.getUrl = String(form.attr('data-draft-get-url') || '');
     autosaveState.deleteUrl = String(form.attr('data-draft-delete-url') || '');
+    autosaveState.contentUpdatedAt = String(form.attr('data-content-updated-at') || '');
     autosaveState.enabled = autosaveState.saveUrl !== '' && autosaveState.getUrl !== '' && autosaveState.deleteUrl !== '';
 
     form.data('changed', false);
@@ -49,7 +52,6 @@ $(document).ready(function () {
 
     function markFormChanged() {
         form.data('changed', true);
-        scheduleAutosave();
     }
 
     function initFormChangeObservation() {
@@ -126,20 +128,13 @@ $(document).ready(function () {
             return;
         }
 
-        createAutosaveStatusNode();
+        initManualDraftButton();
+        initDraftVersionControls();
         loadDraftOnInit();
-
-        autosaveState.intervalId = window.setInterval(function () {
-            saveDraftIfNeeded(false, false);
-        }, 30000);
-
-        window.addEventListener('pagehide', function () {
-            saveDraftIfNeeded(true, true);
-        });
     }
 
     function initFormButtons() {
-        $('button', form).on('click', function () {
+        $('button[type="submit"]', form).on('click', function () {
             window.onbeforeunload = null;
         });
 
@@ -154,15 +149,53 @@ $(document).ready(function () {
 
             form.data('changed', false);
             clearDraft();
-            setAutosaveStatus('All changes saved', 'ok');
         });
 
         window.onbeforeunload = function () {
             if (form.data('changed')) {
-                saveDraftIfNeeded(true, true);
                 return 'You have unsaved changes. When you leave this page your changes will be lost.';
             }
         };
+    }
+
+    function initManualDraftButton() {
+        const button = document.getElementById('integrated_content_actions_save_draft');
+        if (!button || button.getAttribute('data-draft-bound') === '1') {
+            return;
+        }
+
+        button.setAttribute('data-draft-bound', '1');
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+            saveDraftIfNeeded(true, false);
+        });
+    }
+
+    function initDraftVersionControls() {
+        autosaveState.versionSelectNode = document.getElementById('integrated_content_actions_draft_version');
+        autosaveState.restoreButtonNode = document.getElementById('integrated_content_actions_restore_draft_version');
+        autosaveState.versionsContainerNode = document.getElementById('integrated_content_draft_versions');
+
+        if (!autosaveState.versionSelectNode || !autosaveState.restoreButtonNode) {
+            return;
+        }
+
+        if (autosaveState.versionSelectNode.getAttribute('data-draft-bound') !== '1') {
+            autosaveState.versionSelectNode.setAttribute('data-draft-bound', '1');
+            autosaveState.versionSelectNode.addEventListener('change', function () {
+                setRestoreButtonState();
+            });
+        }
+
+        if (autosaveState.restoreButtonNode.getAttribute('data-draft-bound') !== '1') {
+            autosaveState.restoreButtonNode.setAttribute('data-draft-bound', '1');
+            autosaveState.restoreButtonNode.addEventListener('click', function (event) {
+                event.preventDefault();
+                restoreSelectedVersion();
+            });
+        }
+
+        setRestoreButtonState();
     }
 
     function clearDraft() {
@@ -180,38 +213,6 @@ $(document).ready(function () {
         }).catch(function () {
             // Ignore clear failures; autosave will overwrite on next edit.
         });
-    }
-
-    function createAutosaveStatusNode() {
-        if (autosaveState.statusNode) {
-            return autosaveState.statusNode;
-        }
-
-        const saveButton = document.getElementById('integrated_content_actions_save');
-        if (!saveButton || !saveButton.parentNode) {
-            return null;
-        }
-
-        const status = document.createElement('span');
-        status.className = 'content-autosave-status';
-        status.style.marginLeft = '.75rem';
-        status.style.fontSize = '.85rem';
-        status.style.opacity = '.9';
-        status.textContent = '';
-        saveButton.parentNode.appendChild(status);
-        autosaveState.statusNode = status;
-
-        return status;
-    }
-
-    function setAutosaveStatus(message, mode) {
-        const node = createAutosaveStatusNode();
-        if (!node) {
-            return;
-        }
-
-        node.textContent = message || '';
-        node.style.color = mode === 'error' ? '#b73d3d' : '#6b7280';
     }
 
     function shouldSkipField(name) {
@@ -325,7 +326,6 @@ $(document).ready(function () {
         }
 
         autosaveState.inFlight = true;
-        setAutosaveStatus('Saving draft...', 'pending');
 
         fetch(autosaveState.saveUrl, {
             method: 'POST',
@@ -336,39 +336,41 @@ $(document).ready(function () {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ payload: payload }),
+            body: JSON.stringify({
+                payload: payload,
+                baseContentUpdatedAt: autosaveState.contentUpdatedAt || null,
+            }),
         })
             .then(function (response) {
                 if (!response.ok) {
+                    if (response.status === 409) {
+                        return response.json().then(function (data) {
+                            throw new Error(data && data.message ? data.message : 'Draft conflict detected');
+                        });
+                    }
+
                     throw new Error('autosave failed');
                 }
 
                 return response.json();
             })
-            .then(function () {
+            .then(function (data) {
                 autosaveState.lastHash = payloadHash;
-                setAutosaveStatus('Draft saved', 'ok');
+                form.data('changed', false);
+
+                if (data && Array.isArray(data.versions)) {
+                    populateDraftVersions(data.versions);
+                }
+                if (data && data.contentUpdatedAt) {
+                    autosaveState.contentUpdatedAt = String(data.contentUpdatedAt);
+                }
             })
-            .catch(function () {
-                setAutosaveStatus('Draft save failed', 'error');
+            .catch(function (error) {
+                console.error('Draft save failed', error);
             })
             .finally(function () {
                 autosaveState.inFlight = false;
             });
-    }
-
-    function scheduleAutosave() {
-        if (!autosaveState.enabled) {
-            return;
-        }
-
-        if (autosaveState.timer) {
-            window.clearTimeout(autosaveState.timer);
-        }
-
-        autosaveState.timer = window.setTimeout(function () {
-            saveDraftIfNeeded(false, false);
-        }, 1200);
     }
 
     function loadDraftOnInit() {
@@ -396,18 +398,90 @@ $(document).ready(function () {
                     return;
                 }
 
-                if (!window.confirm('A draft was found for this item. Do you want to restore it?')) {
-                    return;
-                }
-
                 applyDraftPayload(data.payload);
                 autosaveState.lastHash = JSON.stringify(collectFormPayload());
-                markFormChanged();
-                setAutosaveStatus('Draft restored', 'ok');
+                form.data('changed', true);
+
+                if (Array.isArray(data.versions)) {
+                    populateDraftVersions(data.versions);
+                }
+                if (data.contentUpdatedAt) {
+                    autosaveState.contentUpdatedAt = String(data.contentUpdatedAt);
+                }
             })
             .catch(function () {
                 // Ignore recover errors to avoid interrupting editing.
             });
+    }
+
+    function populateDraftVersions(versions) {
+        if (!autosaveState.versionSelectNode || !autosaveState.restoreButtonNode) {
+            return;
+        }
+
+        autosaveState.versions = {};
+        autosaveState.versionSelectNode.innerHTML = '<option value="">Current draft</option>';
+
+        (versions || []).forEach(function (version, index) {
+            if (!version || typeof version !== 'object' || !version.id) {
+                return;
+            }
+
+            autosaveState.versions[String(version.id)] = version;
+
+            const option = document.createElement('option');
+            option.value = String(version.id);
+            option.textContent = formatDraftVersionLabel(version, index);
+            autosaveState.versionSelectNode.appendChild(option);
+        });
+
+        autosaveState.versionSelectNode.value = '';
+
+        if (autosaveState.versionsContainerNode) {
+            const hasVersions = Object.keys(autosaveState.versions).length > 0;
+            autosaveState.versionsContainerNode.style.display = hasVersions ? 'flex' : 'none';
+        }
+
+        setRestoreButtonState();
+    }
+
+    function setRestoreButtonState() {
+        if (!autosaveState.restoreButtonNode || !autosaveState.versionSelectNode) {
+            return;
+        }
+
+        const versionId = String(autosaveState.versionSelectNode.value || '');
+        autosaveState.restoreButtonNode.disabled = !(versionId && autosaveState.versions[versionId]);
+    }
+
+    function restoreSelectedVersion() {
+        if (!autosaveState.versionSelectNode) {
+            return;
+        }
+
+        const versionId = String(autosaveState.versionSelectNode.value || '');
+        if (!versionId || !autosaveState.versions[versionId]) {
+            return;
+        }
+
+        const version = autosaveState.versions[versionId];
+        applyDraftPayload(version.payload || {});
+        form.data('changed', true);
+        saveDraftIfNeeded(true, false);
+    }
+
+    function formatDraftVersionLabel(version, index) {
+        const fallback = 'Version ' + String(index + 1);
+        if (!version || !version.savedAt) {
+            return fallback;
+        }
+
+        const parsed = new Date(String(version.savedAt));
+        if (Number.isNaN(parsed.getTime())) {
+            return fallback;
+        }
+
+        return 'Version ' + String(index + 1) + ' - ' + parsed.toLocaleString();
     }
 
     function setModalReturnUrl(url) {
@@ -428,7 +502,6 @@ $(document).ready(function () {
         const returnUrlInput = $('.return-url', form);
         const cancelButton = $('[name*=cancel]', form);
 
-        saveDraftIfNeeded(true, true);
         window.onbeforeunload = null;
         form.data('changed', false);
 

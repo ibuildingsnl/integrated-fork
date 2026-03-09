@@ -15,6 +15,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\ContentEditDraft;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\ContentEditDraftVersion;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
@@ -77,6 +78,8 @@ class ContentController extends AbstractController
     private const CONTENT_LOCK_TIMEOUT_SECONDS = 15;
     private const ASSIGNED_STATUS_CACHE_TTL_SECONDS = 10;
     private const ASSIGNED_STATUS_LIMIT = 25;
+    private const DRAFT_MAX_VERSIONS = 25;
+    private const DRAFT_VERSION_MAX_AGE_DAYS = 30;
 
     /**
      * @var string
@@ -846,6 +849,8 @@ class ContentController extends AbstractController
             'exists' => true,
             'payload' => $draft->getPayload(),
             'updatedAt' => $draft->getUpdatedAt()->format(\DateTimeInterface::ATOM),
+            'versions' => $this->normalizeDraftVersions($draft),
+            'contentUpdatedAt' => $this->normalizeContentUpdatedAt($content),
         ]);
     }
 
@@ -865,9 +870,18 @@ class ContentController extends AbstractController
             return new JsonResponse(['message' => 'No authenticated user found.'], Response::HTTP_UNAUTHORIZED);
         }
 
-        $payload = $this->extractDraftPayload($request);
-        if (null === $payload) {
+        $draftData = $this->extractDraftRequestData($request);
+        if (null === $draftData) {
             return new JsonResponse(['message' => 'Invalid draft payload.'], Response::HTTP_BAD_REQUEST);
+        }
+        $payload = $draftData['payload'];
+
+        if ($this->isContentUpdatedAfterBaseline($content, $draftData['baseContentUpdatedAt'])) {
+            return new JsonResponse([
+                'saved' => false,
+                'conflict' => true,
+                'message' => 'Content changed since this draft session started. Reload editor before saving draft.',
+            ], Response::HTTP_CONFLICT);
         }
 
         /** @var ContentEditDraft|null $draft */
@@ -881,12 +895,23 @@ class ContentController extends AbstractController
             $this->documentManager->persist($draft);
         }
 
+        $payloadChanged = $draft->getPayload() !== $payload;
+        if ($payloadChanged) {
+            $draft->pushVersion($payload, self::DRAFT_MAX_VERSIONS);
+        }
+        $draft->pruneVersions(
+            new \DateTimeImmutable(sprintf('-%d days', self::DRAFT_VERSION_MAX_AGE_DAYS)),
+            self::DRAFT_MAX_VERSIONS
+        );
         $draft->setPayload($payload);
         $this->documentManager->flush();
 
         return new JsonResponse([
             'saved' => true,
+            'changed' => $payloadChanged,
             'updatedAt' => $draft->getUpdatedAt()->format(\DateTimeInterface::ATOM),
+            'versions' => $this->normalizeDraftVersions($draft),
+            'contentUpdatedAt' => $this->normalizeContentUpdatedAt($content),
         ]);
     }
 
@@ -1741,6 +1766,7 @@ class ContentController extends AbstractController
                 'data-draft-get-url' => $this->generateUrl('integrated_content_content_draft_get', ['id' => $content->getId()]),
                 'data-draft-save-url' => $this->generateUrl('integrated_content_content_draft_save', ['id' => $content->getId()]),
                 'data-draft-delete-url' => $this->generateUrl('integrated_content_content_draft_delete', ['id' => $content->getId()]),
+                'data-content-updated-at' => $this->normalizeContentUpdatedAt($content) ?? '',
             ],
             'content_type' => $contentType,
         ];
@@ -1959,9 +1985,9 @@ class ContentController extends AbstractController
     }
 
     /**
-     * @return array<string, array<int, string>>|null
+     * @return array{payload: array<string, array<int, string>>, baseContentUpdatedAt: ?string}|null
      */
-    private function extractDraftPayload(Request $request): ?array
+    private function extractDraftRequestData(Request $request): ?array
     {
         $content = trim((string) $request->getContent());
         if ('' === $content) {
@@ -1989,7 +2015,16 @@ class ContentController extends AbstractController
             $payload[$field] = $normalizedValues;
         }
 
-        return $payload;
+        $baseContentUpdatedAt = null;
+        if (isset($decoded['baseContentUpdatedAt']) && \is_scalar($decoded['baseContentUpdatedAt'])) {
+            $candidate = trim((string) $decoded['baseContentUpdatedAt']);
+            $baseContentUpdatedAt = '' === $candidate ? null : $candidate;
+        }
+
+        return [
+            'payload' => $payload,
+            'baseContentUpdatedAt' => $baseContentUpdatedAt,
+        ];
     }
 
     private function getCurrentUserIdentifier(): string
@@ -2002,5 +2037,52 @@ class ContentController extends AbstractController
         $id = $user->getId();
 
         return \is_scalar($id) ? (string) $id : '';
+    }
+
+    /**
+     * @return array<int, array{id: string, savedAt: string, payload: array<mixed>}>
+     */
+    private function normalizeDraftVersions(ContentEditDraft $draft): array
+    {
+        return array_values(
+            array_map(
+                static fn (ContentEditDraftVersion $version): array => [
+                    'id' => $version->getId(),
+                    'savedAt' => $version->getSavedAt()->format(\DateTimeInterface::ATOM),
+                    'payload' => $version->getPayload(),
+                ],
+                $draft->getVersions()
+            )
+        );
+    }
+
+    private function normalizeContentUpdatedAt(Content $content): ?string
+    {
+        $updatedAt = $content->getUpdatedAt();
+        if (!$updatedAt instanceof \DateTimeInterface) {
+            return null;
+        }
+
+        return $updatedAt->format(\DateTimeInterface::ATOM);
+    }
+
+    private function isContentUpdatedAfterBaseline(Content $content, ?string $baseline): bool
+    {
+        if (null === $baseline || '' === trim($baseline)) {
+            return false;
+        }
+
+        $updatedAt = $content->getUpdatedAt();
+        if (!$updatedAt instanceof \DateTimeInterface) {
+            return false;
+        }
+
+        try {
+            $baselineAt = new \DateTimeImmutable($baseline);
+        } catch (\Exception) {
+            return false;
+        }
+
+        return $updatedAt->getTimestamp() > $baselineAt->getTimestamp();
     }
 }
