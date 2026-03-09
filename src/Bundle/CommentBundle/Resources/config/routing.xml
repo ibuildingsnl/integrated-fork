@@ -8,11 +8,11 @@
         <default key="_controller">Integrated\Bundle\CommentBundle\Controller\DefaultController::new</default>
     </route>
 
-    <route id="integrated_comment_delete" path="/comment/delete/{comment}">
+    <route id="integrated_comment_delete" path="/comment/delete/{comment}" methods="POST">
         <default key="_controller">Integrated\Bundle\CommentBundle\Controller\DefaultController::delete</default>
     </route>
 
-    <route id="integrated_comment_delete_reply" path="/comment/delete/{comment}/{replyId}">
+    <route id="integrated_comment_delete_reply" path="/comment/delete/{comment}/{replyId}" methods="POST">
         <default key="_controller">Integrated\Bundle\CommentBundle\Controller\DefaultController::deleteReply</default>
     </route>
 

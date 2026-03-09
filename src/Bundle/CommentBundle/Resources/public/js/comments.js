@@ -244,7 +244,7 @@
     $(document).on('click', '.comment-holder .delete-comment', function (e) {
         e.preventDefault();
 
-        $.get($(this).attr('href'), function (data) {
+        $.post($(this).attr('href'), function (data) {
             removeControls();
 
             $('.added-comment-line[data-comment-id="' + data.id + '"]').remove();

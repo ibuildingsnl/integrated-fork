@@ -17,6 +17,7 @@ use Integrated\Bundle\CommentBundle\Document\Embedded\Reply;
 use Integrated\Bundle\CommentBundle\Form\Type\CommentType;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\UserBundle\Model\User;
+use Integrated\Common\Security\Permissions;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,6 +34,10 @@ class DefaultController extends AbstractController
 
     public function new(Request $request, Content $content, string $field): Response
     {
+        if (!$this->isGranted(Permissions::EDIT, $content)) {
+            throw $this->createAccessDeniedException();
+        }
+
         $comment = new Comment();
         $comment->setContent($content);
         $comment->setField($field);
@@ -62,6 +67,8 @@ class DefaultController extends AbstractController
 
     public function getComment(Request $request, Comment $comment): Response
     {
+        $this->assertCommentAccess($comment);
+
         $reply = new Reply();
         $reply->setDate(new \DateTime());
 
@@ -91,6 +98,8 @@ class DefaultController extends AbstractController
 
     public function delete(Comment $comment): Response
     {
+        $this->assertCommentAccess($comment);
+
         $this->manager->remove($comment);
         $this->manager->flush();
 
@@ -102,6 +111,8 @@ class DefaultController extends AbstractController
 
     public function deleteReply(Comment $comment, $replyId): Response
     {
+        $this->assertCommentAccess($comment);
+
         $result = $comment->removeReplyById($replyId);
 
         $this->manager->flush();
@@ -110,5 +121,13 @@ class DefaultController extends AbstractController
             'deleted' => $result,
             'id' => $replyId,
         ]);
+    }
+
+    private function assertCommentAccess(Comment $comment): void
+    {
+        $content = $comment->getContent();
+        if (!$content instanceof Content || !$this->isGranted(Permissions::EDIT, $content)) {
+            throw $this->createAccessDeniedException();
+        }
     }
 }
