@@ -648,11 +648,11 @@
       </trans-unit>
       <trans-unit id="162">
         <source>This item is locked</source>
-        <target>This item is locked</target>
+        <target>Dit item is vergrendeld</target>
       </trans-unit>
       <trans-unit id="163">
         <source>This item is locked by</source>
-        <target>This item is locked by</target>
+        <target>Dit item is vergrendeld door</target>
       </trans-unit>
       <trans-unit id="164">
         <source>This item is still on use by:</source>

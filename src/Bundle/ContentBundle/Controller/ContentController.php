@@ -1115,7 +1115,7 @@ class ContentController extends AbstractController
                 $contentId = (string) ($document['type_id'] ?? '');
                 $title = (string) ($document['title'] ?? '');
 
-                $statusColor = '#f2f2f2';
+                $statusColor = '#6c7b89';
                 $statusIcon = '';
 
                 if (isset($document['workflow_color_string'])) {
