@@ -19,6 +19,8 @@ interface ArticleSearchServiceInterface
 
     public function findChannel(string $channelId): ?Channel;
 
+    public function canAccessChannelForCurrentUser(Channel $channel): bool;
+
     /**
      * @param array<int, string> $contentTypeIds
      *

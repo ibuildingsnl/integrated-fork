@@ -66,6 +66,10 @@ class ArticleSearchControllerTest extends TestCase
         $service = $this->createMock(ArticleSearchServiceInterface::class);
         $service->expects(self::once())->method('findChannel')->with('channel-1')->willReturn($channel);
         $service->expects(self::once())
+            ->method('canAccessChannelForCurrentUser')
+            ->with($channel)
+            ->willReturn(true);
+        $service->expects(self::once())
             ->method('searchInChannel')
             ->with($channel, 'hello', ['article', 'news'])
             ->willReturn($payload);
@@ -88,6 +92,10 @@ class ArticleSearchControllerTest extends TestCase
         $service = $this->createMock(ArticleSearchServiceInterface::class);
         $service->expects(self::once())->method('findChannel')->with('channel-1')->willReturn($channel);
         $service->expects(self::once())
+            ->method('canAccessChannelForCurrentUser')
+            ->with($channel)
+            ->willReturn(true);
+        $service->expects(self::once())
             ->method('searchInChannel')
             ->with($channel, 'hello', [''])
             ->willReturn([]);
@@ -104,6 +112,29 @@ class ArticleSearchControllerTest extends TestCase
             'channelId' => 'channel-1',
             'contentTypeId' => '',
         ], $this->decodeJson($response));
+    }
+
+    public function testSearchContentByChannelReturnsForbiddenWhenChannelIsNotAllowed(): void
+    {
+        $channel = new Channel();
+        $channel->setId('channel-1');
+
+        $service = $this->createMock(ArticleSearchServiceInterface::class);
+        $service->expects(self::once())->method('findChannel')->with('channel-1')->willReturn($channel);
+        $service->expects(self::once())
+            ->method('canAccessChannelForCurrentUser')
+            ->with($channel)
+            ->willReturn(false);
+        $service->expects(self::never())->method('searchInChannel');
+
+        $controller = new ArticleSearchController($service);
+        $response = $controller->searchContentByChannel(
+            new Request(['term' => 'hello']),
+            'channel-1'
+        );
+
+        self::assertSame(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+        self::assertSame(['msg' => 'Channel access denied'], $this->decodeJson($response));
     }
 
     /** @return array<string, mixed>|array<int, mixed> */
