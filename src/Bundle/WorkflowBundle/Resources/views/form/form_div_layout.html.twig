@@ -56,7 +56,7 @@
                                     <a data-toggle="collapse">
                                         <i class="iconoir-line-space"></i>
                                         <div class="workflow-status"
-                                             style="background-color:{{ field.vars.value.color }};">
+                                             style="background-color:{{ field.vars.value.color|alpha(12) }};border-color:{{ field.vars.value.color|alpha(45) }};color:{{ field.vars.value.color }};">
                                             <i class="iconoir-{{ field.vars.value.icon }}"></i>
                                         </div>
                                         <span class="state-name">{{ field.vars.value.name|default(form.vars.default_title|default('New status')) }}</span>
