@@ -21,6 +21,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentHistoryBundle\Document\ContentHistory;
 use Integrated\Bundle\ContentHistoryBundle\History\Parser;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State as WorkflowDefinitionState;
+use Integrated\Common\Security\Permissions;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,6 +52,10 @@ class ContentHistoryController extends AbstractController
 
     public function index(Content $content, Request $request): Response
     {
+        if (!$this->isGranted(Permissions::VIEW, $content)) {
+            throw $this->createAccessDeniedException();
+        }
+
         $contentType = $this->contentTypeManager->getType($content->getContentType());
         $filters = $this->extractHistoryFilters($request);
         $contentId = $content->getId();
@@ -75,6 +80,10 @@ class ContentHistoryController extends AbstractController
 
     public function indexIframe(Content $content, Request $request): Response
     {
+        if (!$this->isGranted(Permissions::VIEW, $content)) {
+            throw $this->createAccessDeniedException();
+        }
+
         $contentType = $this->contentTypeManager->getType($content->getContentType());
         $filters = $this->extractHistoryFilters($request);
         $contentId = $content->getId();
@@ -102,6 +111,13 @@ class ContentHistoryController extends AbstractController
         $showTechnical = $request->query->getBoolean('technical', false);
 
         $content = $this->manager->find(Content::class, $contentHistory->getContentId());
+        if (!$content instanceof Content) {
+            throw $this->createNotFoundException('Content not found');
+        }
+        if (!$this->isGranted(Permissions::VIEW, $content)) {
+            throw $this->createAccessDeniedException();
+        }
+
         $contentType = $this->contentTypeManager->getType($content->getContentType());
         $historyRepo = $this->manager->getRepository(ContentHistory::class);
         $histories = $historyRepo->findBy(
@@ -178,6 +194,13 @@ class ContentHistoryController extends AbstractController
         $showTechnical = $request->query->getBoolean('technical', false);
 
         $content = $this->manager->find(Content::class, $contentHistory->getContentId());
+        if (!$content instanceof Content) {
+            throw $this->createNotFoundException('Content not found');
+        }
+        if (!$this->isGranted(Permissions::VIEW, $content)) {
+            throw $this->createAccessDeniedException();
+        }
+
         $contentType = $this->contentTypeManager->getType($content->getContentType());
         $revisionChangeSet = $this->parser->getReadableChangeset($contentHistory);
         [$filteredRevisionChangeSet, $hiddenRevisionRows] = $this->filterReadableRows($revisionChangeSet, $showTechnical);
