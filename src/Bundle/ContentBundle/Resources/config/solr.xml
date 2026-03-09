@@ -51,6 +51,11 @@
             <tag name="integrated_solr.type_extension" />
         </service>
 
+        <service id="integrated_content.solr.seo_meta.extension" class="Integrated\Bundle\ContentBundle\Solr\Extension\SeoMetaExtension" public="false">
+            <argument type="service" id="integrated_content.resolver" />
+            <tag name="integrated_solr.type_extension" />
+        </service>
+
         <service id="Integrated\Bundle\ContentBundle\Solr\Extension\ParentRelationExtension" public="false">
             <tag name="integrated_solr.type_extension" />
         </service>

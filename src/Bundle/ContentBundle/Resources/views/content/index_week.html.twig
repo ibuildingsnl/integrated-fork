@@ -227,7 +227,21 @@
                                 </div>
                             </div>
                             <div class="heading-right">
-
+                                {% set hasSeoMetadata = content.has_seo_metadata|default(false) %}
+                                {% if hasSeoMetadata is iterable %}
+                                    {% set hasSeoMetadata = hasSeoMetadata|first %}
+                                {% endif %}
+                                {% if hasSeoMetadata in [true, 1, '1', 'true'] %}
+                                    {% set seoScore = content.seo_score|default('feedback') %}
+                                    {% set readabilityScore = content.readability_score|default('feedback') %}
+                                    {% if seoScore is iterable %}
+                                        {% set seoScore = seoScore|first %}
+                                    {% endif %}
+                                    {% if readabilityScore is iterable %}
+                                        {% set readabilityScore = readabilityScore|first %}
+                                    {% endif %}
+                                    <span class="btn btn-white no-icon seo-button readability-{{ readabilityScore }} seo-{{ seoScore }}">SEO</span>
+                                {% endif %}
                             </div>
                         </div>
                         <div class="calendar-item-content">
