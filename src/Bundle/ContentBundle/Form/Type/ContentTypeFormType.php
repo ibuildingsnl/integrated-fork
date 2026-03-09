@@ -76,6 +76,18 @@ class ContentTypeFormType extends AbstractType
             'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show', 'icon' => 'link'],
         ]);
 
+        $builder->add('options_sitemap', ChoiceType::class, [
+            'label' => 'Sitemap',
+            'choices' => [
+                'Use SitemapBundle default' => '',
+                'Include in sitemap' => 'enabled',
+                'Exclude from sitemap' => 'disabled',
+            ],
+            'property_path' => 'options[sitemap]',
+            'required' => false,
+            'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show', 'icon' => 'map'],
+        ]);
+
         if ($metadata->isTypeOf(Taxonomy::class)) {
             $builder->add('options_enforce_parent', CheckboxSwitcherType::class, [
                 'label' => 'Enforce parent',
