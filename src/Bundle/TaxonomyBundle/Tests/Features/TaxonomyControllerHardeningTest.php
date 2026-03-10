@@ -37,4 +37,15 @@ final class TaxonomyControllerHardeningTest extends TestCase
         $this->assertStringContainsString("content.published in [true, 'true', 1, '1']", $template);
         $this->assertStringNotContainsString("content.published == 'true'", $template);
     }
+
+    public function testIndexTemplateUsesAdminComponentsForListingShell(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/index/index.html.twig');
+
+        $this->assertIsString($template);
+        $this->assertStringContainsString("component('integrated_admin:page_title'", $template);
+        $this->assertStringContainsString("component('integrated_admin:options_toolbar'", $template);
+        $this->assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
+        $this->assertStringContainsString("component('integrated_admin:data_table'", $template);
+    }
 }
