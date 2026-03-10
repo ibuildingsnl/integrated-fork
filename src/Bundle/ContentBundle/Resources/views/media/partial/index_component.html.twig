@@ -56,9 +56,63 @@
     </div>
 
     <div class="media-gallery index-wrapper">
-        <div class="page-title">
+        {% set mediaPageTitleHtml %}
+            <div class="flex items-center">
+                <h1 class="heading">{% trans %}Media Library{% endtrans %}</h1>
+                <ul class="options-no-bg">
+                    {% if contentTypeSelectOptions %}
+                        <li class="dropdown close-outside" data-underlay="no">
+                            <a data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
+                                <span>{% trans %}New{% endtrans %}</span>
+                                <i class="iconoir-plus"></i>
+                            </a>
+                            <ul aria-labelledby="drop_1" role="menu" class="p-2 dropdown-menu" id="menu_1">
+                                {% for type_key, type in contentTypeSelectOptions %}
+                                    {% if type %}
+                                        {% set rawTypeId = type.getId is defined ? type.getId : '' %}
+                                        {% set typeId = rawTypeId is iterable ? '' : rawTypeId %}
+                                        {% set rawTypeName = type.getName is defined ? type.getName : '' %}
+                                        {% set typeName = '' %}
+                                        {% if rawTypeName is iterable %}
+                                            {% for value in rawTypeName %}
+                                                {% if typeName == '' and value is not iterable and value is not same as(null) %}
+                                                    {% set typeName = value %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            {% set typeName = rawTypeName %}
+                                        {% endif %}
+                                        <li role="presentation">
+                                            <a data-id="{{ typeId }}"
+                                               class="cursor-pointer button_toggle_upload_view_with_contenttype">{{ (typeName != '' ? typeName : typeId)|trans|title }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% else %}
+                        <a data-toggle="dropdown" role="button" id="drop_1" class="button_toggle_upload_view btn btn-select">
+                            <span>{% trans %}New{% endtrans %}</span>
+                            <i class="iconoir-plus"></i>
+                        </a>
+                    {% endif %}
+                </ul>
+            </div>
+        {% endset %}
+        {% set mediaPageTitleActionsHtml %}
+            <button class="toggle-filters toggle-data-target btn btn-orange icon-left" data-target="aside-filters">
+                <i class="iconoir-filter-alt"></i>
+                <span>{% trans %}Filter{% endtrans %}</span>
+            </button>
+        {% endset %}
+        {% set mediaPageTitleContentHtml %}
             {% include '@IntegratedContent/media/partial/header_component.html.twig' %}
-        </div>
+        {% endset %}
+        {{ component('integrated_admin:page_title', {
+            titleHtml: mediaPageTitleHtml,
+            actionsHtml: mediaPageTitleActionsHtml,
+            contentHtml: mediaPageTitleContentHtml,
+        }) }}
 
         <section class="section-white section-radius sm:p-4">
             <div id="upload_container" class="close-outside">
