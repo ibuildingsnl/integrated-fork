@@ -38,7 +38,7 @@
                     </div>
                 </div>
             {% endif %}
-            <div class="page-title flex justify-between flex-wrap">
+            {% set pageTitleHtml %}
                 <div class="flex items-center">
                     <h1 class="heading">{% trans %}Pages{% endtrans %}</h1>
                     <ul class="create">
@@ -77,119 +77,123 @@
                         </li>
                     </ul>
                 </div>
-                <button class="toggle-filters toggle-data-target btn btn-orange icon-left"  data-target="aside-filters">
+            {% endset %}
+            {% set pageActionsHtml %}
+                <button class="toggle-filters toggle-data-target btn btn-orange icon-left" data-target="aside-filters">
                     <i class="iconoir-filter-alt"></i>
                     <span>{% trans %}Filter{% endtrans %}</span>
                 </button>
-            </div>
-            <section class="section-white section-radius">
+            {% endset %}
+            {{ component('integrated_admin:page_title', {
+                titleHtml: pageTitleHtml,
+                actionsHtml: pageActionsHtml,
+                extraClass: 'flex-wrap',
+            }) }}
 
-                <table class="table table-hover">
-                    <colgroup>
-                        <col/>
-                        <col/>
-                        <col/>
-                        <col/>
-                    </colgroup>
-
-                    <thead>
-                    <tr>
-                        <th>{% trans %}Path{% endtrans %}</th>
-                        <th>{% trans %}Title{% endtrans %}</th>
-                        <th>{% trans %}Channel{% endtrans %}</th>
-                        <th>{% trans %}Layout{% endtrans %}</th>
-                        <th>{% trans %}Status{% endtrans %}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    {% for page in pages %}
-                        <tr class="has-options">
-                            <td>
-                                <strong>
-                                    {% if page.type == 'page' and page.domain != "" %}
-                                    {% if (page.domain == app.request.httphost) %}
-                                    <a href="{{ page.path }}" title="{% trans %}Open page{% endtrans %}" target="_blank" rel="noopener noreferrer" data-turbo="false">
-                                        {% else %}
-                                        <a href="//{{ page.domain }}{{ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': page.path}) }}"
-                                           title="{% trans %}Open page{% endtrans %}" target="_blank" rel="noopener noreferrer" data-turbo="false">
+            {% component 'integrated_admin:section_card' %}
+                {% block content %}
+                    {% set pageTableColGroupHtml %}
+                        <colgroup>
+                            <col/>
+                            <col/>
+                            <col/>
+                            <col/>
+                        </colgroup>
+                    {% endset %}
+                    {% set pageTableHeadHtml %}
+                        <tr>
+                            <th>{% trans %}Path{% endtrans %}</th>
+                            <th>{% trans %}Title{% endtrans %}</th>
+                            <th>{% trans %}Channel{% endtrans %}</th>
+                            <th>{% trans %}Layout{% endtrans %}</th>
+                            <th>{% trans %}Status{% endtrans %}</th>
+                        </tr>
+                    {% endset %}
+                    {% set pageTableBodyHtml %}
+                        {% for page in pages %}
+                            <tr class="has-options">
+                                <td>
+                                    <strong>
+                                        {% if page.type == 'page' and page.domain != "" %}
+                                        {% if (page.domain == app.request.httphost) %}
+                                        <a href="{{ page.path }}" title="{% trans %}Open page{% endtrans %}" target="_blank" rel="noopener noreferrer" data-turbo="false">
+                                            {% else %}
+                                            <a href="//{{ page.domain }}{{ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': page.path}) }}"
+                                               title="{% trans %}Open page{% endtrans %}" target="_blank" rel="noopener noreferrer" data-turbo="false">
+                                                {% endif %}
+                                                {% endif %}
+                                                {{ page.path }}
+                                                {% if page.type == 'page' and page.domain != "" %}
+                                            </a>
                                             {% endif %}
-                                            {% endif %}
-                                            {{ page.path }}
-                                            {% if page.type == 'page' and page.domain != "" %}
+                                        </a>
+                                    </strong>
+                                    <div class="row-options">
+                                        <a href="{{ path('integrated_page_'~page.type~'_edit', { 'id': page.id}) }}"
+                                           title="{% trans %}Edit page properties{% endtrans %}">
+                                            {% trans %}Edit page properties{% endtrans %}
+                                        </a>
+                                        {% if page.type == 'page' and page.disabled and previewLinks[page.id]|default('') %}
+                                            | <a href="{{ previewLinks[page.id] }}" target="_blank" rel="noopener noreferrer" data-turbo="false"
+                                                 title="{% trans %}Preview link (24h){% endtrans %}">
+                                            {% trans %}Preview link (24h){% endtrans %}
                                         </a>
                                         {% endif %}
-                                    </a>
-                                </strong>
-                                <div class="row-options">
-                                    <a href="{{ path('integrated_page_'~page.type~'_edit', { 'id': page.id}) }}"
-                                       title="{% trans %}Edit page properties{% endtrans %}">
-                                        {% trans %}Edit page properties{% endtrans %}
-                                    </a>
-                                    {% if page.type == 'page' and page.disabled and previewLinks[page.id]|default('') %}
-                                        | <a href="{{ previewLinks[page.id] }}" target="_blank" rel="noopener noreferrer" data-turbo="false"
-                                             title="{% trans %}Preview link (24h){% endtrans %}">
-                                        {% trans %}Preview link (24h){% endtrans %}
-                                    </a>
-                                    {% endif %}
-                                    {% if not page.locked %}
-                                        | <a href="{{ path('integrated_page_page_delete', { 'id': page.id }) }}"
-                                             class="color-red" title="{% trans %}Delete{% endtrans %}">
-                                        {% trans %}Delete{% endtrans %}
-                                    </a>
-                                    {% endif %}
-                                    {% if orphanChannelPageIds[page.id]|default(false) and is_granted('ROLE_ADMIN') %}
-                                        | <form method="post" action="{{ path('integrated_page_page_delete_without_channel', { 'id': page.id }) }}"
-                                                style="display:inline"
-                                                onsubmit="return confirm('{% trans %}Are you sure you want to delete this page without channel?{% endtrans %}');">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_without_channel_page_' ~ page.id) }}">
-                                        <button type="submit" class="color-red border-0 bg-transparent p-0"
-                                                title="{% trans %}Delete without channel{% endtrans %}">
-                                            {% trans %}Delete without channel{% endtrans %}
-                                        </button>
-                                    </form>
-                                    {% endif %}
-                                </div>
-                            </td>
-                            <td>
-                                {{ page.title }}
-                            </td>
-                            <td>
-                                {{ page.channel.name }}
-                            </td>
-                            <td>
-                                {{ page.layout|split('/')|last|replace({'.html.twig': ''}) }}
-                            </td>
-                            <td>
-                                {% if page.type == 'page' %}
-                                    {% if page.disabled %}
-                                        <span class="label label-default">{% trans %}Draft{% endtrans %}</span>
+                                        {% if not page.locked %}
+                                            | <a href="{{ path('integrated_page_page_delete', { 'id': page.id }) }}"
+                                                 class="color-red" title="{% trans %}Delete{% endtrans %}">
+                                            {% trans %}Delete{% endtrans %}
+                                        </a>
+                                        {% endif %}
+                                        {% if orphanChannelPageIds[page.id]|default(false) and is_granted('ROLE_ADMIN') %}
+                                            | <form method="post" action="{{ path('integrated_page_page_delete_without_channel', { 'id': page.id }) }}"
+                                                    style="display:inline"
+                                                    onsubmit="return confirm('{% trans %}Are you sure you want to delete this page without channel?{% endtrans %}');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_without_channel_page_' ~ page.id) }}">
+                                            <button type="submit" class="color-red border-0 bg-transparent p-0"
+                                                    title="{% trans %}Delete without channel{% endtrans %}">
+                                                {% trans %}Delete without channel{% endtrans %}
+                                            </button>
+                                        </form>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    {{ page.title }}
+                                </td>
+                                <td>
+                                    {{ page.channel.name }}
+                                </td>
+                                <td>
+                                    {{ page.layout|split('/')|last|replace({'.html.twig': ''}) }}
+                                </td>
+                                <td>
+                                    {% if page.type == 'page' %}
+                                        {% if page.disabled %}
+                                            <span class="label label-default">{% trans %}Draft{% endtrans %}</span>
+                                        {% else %}
+                                            <span class="label label-primary">{% trans %}Published{% endtrans %}</span>
+                                        {% endif %}
+                                    {% elseif page.type == 'content_type_page' %}
+                                        <span class="label label-info">{% trans %}System page{% endtrans %}</span>
                                     {% else %}
-                                        <span class="label label-primary">{% trans %}Published{% endtrans %}</span>
+                                        <span class="text-muted">—</span>
                                     {% endif %}
-                                {% elseif page.type == 'content_type_page' %}
-                                    <span class="label label-info">{% trans %}System page{% endtrans %}</span>
-                                {% else %}
-                                    <span class="text-muted">—</span>
-                                {% endif %}
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endset %}
+                    {{ component('integrated_admin:data_table', {
+                        colGroupHtml: pageTableColGroupHtml,
+                        headHtml: pageTableHeadHtml,
+                        bodyHtml: pageTableBodyHtml,
+                        emptyMessage: 'No pages added'|trans,
+                        colSpan: 5,
+                    }) }}
 
-                    {% else %}
-
-                        <tr>
-                            <td colspan="5">
-                                {% trans %}No pages added{% endtrans %}
-                            </td>
-                        </tr>
-
-                    {% endfor %}
-
-                    </tbody>
-                </table>
-
-                {{ knp_pagination_render(pages, '@KnpPaginator/Pagination/sliding.html.twig') }}
-            </section>
+                    {{ knp_pagination_render(pages, '@KnpPaginator/Pagination/sliding.html.twig') }}
+                {% endblock %}
+            {% endcomponent %}
         </div>
         <div class="aside-filters close-outside">
             <aside>
