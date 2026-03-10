@@ -26,4 +26,22 @@ final class ContentHistoryTemplateComponentsTest extends TestCase
         yield ['content_history/index.html.twig'];
         yield ['content_history/index.iframe.html.twig'];
     }
+
+    /**
+     * @dataProvider showTemplateProvider
+     */
+    public function testShowTemplatesUseAdminPageTitleAndSectionCard(string $relativePath): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/'.$relativePath);
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:page_title'", $template);
+        self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
+    }
+
+    public static function showTemplateProvider(): iterable
+    {
+        yield ['content_history/show.html.twig'];
+        yield ['content_history/show.iframe.html.twig'];
+    }
 }

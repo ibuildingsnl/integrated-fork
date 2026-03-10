@@ -63,84 +63,86 @@
             </div>
         {% endblock toolbar %}
         <div class="index-wrapper-full">
-            <div class="page-title">
-                <h1 class="heading">{% trans %}History{% endtrans %}</h1>
-            </div>
-            <section class="section-white section-padding section-radius">
-                <p>
-                    <b>{% trans %}Date{% endtrans %}:</b> {{ contentHistory.date|format_datetime('medium', 'short') }}<br/>
-                    <b>{% trans %}Action{% endtrans %}:</b> {{ contentHistory.action|trans }}<br/>
-                    <b>{% trans %}User{% endtrans %}
-                        :</b> {{ contentHistory.user.name|default('Unknown'|trans) }} {% if contentHistory.user.id is defined %}(#{{ contentHistory.user.id }}){% endif %}
-                </p>
-                <div class="history-view-options mb-4">
-                    {% set toggleParams = app.request.query.all|merge({'id': contentHistory.id, 'technical': showTechnical ? 0 : 1}) %}
-                    <a class="btn btn-select" href="{{ path('integrated_content_history_show_iframe', toggleParams) }}">
-                        {% if showTechnical %}
-                            {% trans %}Hide technical changes{% endtrans %}
-                        {% else %}
-                            {% trans %}Show technical changes{% endtrans %}
+            {{ component('integrated_admin:page_title', {
+                title: 'History'|trans,
+            }) }}
+            {% component 'integrated_admin:section_card' with {extraClass: 'section-padding'} %}
+                {% block content %}
+                    <p>
+                        <b>{% trans %}Date{% endtrans %}:</b> {{ contentHistory.date|format_datetime('medium', 'short') }}<br/>
+                        <b>{% trans %}Action{% endtrans %}:</b> {{ contentHistory.action|trans }}<br/>
+                        <b>{% trans %}User{% endtrans %}
+                            :</b> {{ contentHistory.user.name|default('Unknown'|trans) }} {% if contentHistory.user.id is defined %}(#{{ contentHistory.user.id }}){% endif %}
+                    </p>
+                    <div class="history-view-options mb-4">
+                        {% set toggleParams = app.request.query.all|merge({'id': contentHistory.id, 'technical': showTechnical ? 0 : 1}) %}
+                        <a class="btn btn-select" href="{{ path('integrated_content_history_show_iframe', toggleParams) }}">
+                            {% if showTechnical %}
+                                {% trans %}Hide technical changes{% endtrans %}
+                            {% else %}
+                                {% trans %}Show technical changes{% endtrans %}
+                            {% endif %}
+                        </a>
+                        {% if not showTechnical and hiddenRevisionRows > 0 %}
+                            <span class="history-meta-label ml-2">
+                                {% trans %}Hidden rows{% endtrans %}: {{ hiddenRevisionRows }}
+                            </span>
                         {% endif %}
-                    </a>
-                    {% if not showTechnical and hiddenRevisionRows > 0 %}
-                        <span class="history-meta-label ml-2">
-                            {% trans %}Hidden rows{% endtrans %}: {{ hiddenRevisionRows }}
-                        </span>
+                    </div>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <details class="history-admin-details">
+                            <summary>{% trans %}Show technical request details{% endtrans %}</summary>
+                            <div class="history-admin-grid">
+                                <div>
+                                    <span class="history-meta-label">{% trans %}Endpoint{% endtrans %}</span>
+                                    <div class="history-meta-value history-code">{{ contentHistory.request.endpoint|default('—') }}</div>
+                                </div>
+                                <div>
+                                    <span class="history-meta-label">{% trans %}IP address{% endtrans %}</span>
+                                    <div class="history-meta-value">{{ contentHistory.request.ipAddress|default('—') }}</div>
+                                </div>
+                            </div>
+                        </details>
                     {% endif %}
-                </div>
-                {% if is_granted('ROLE_ADMIN') %}
-                    <details class="history-admin-details">
-                        <summary>{% trans %}Show technical request details{% endtrans %}</summary>
-                        <div class="history-admin-grid">
-                            <div>
-                                <span class="history-meta-label">{% trans %}Endpoint{% endtrans %}</span>
-                                <div class="history-meta-value history-code">{{ contentHistory.request.endpoint|default('—') }}</div>
-                            </div>
-                            <div>
-                                <span class="history-meta-label">{% trans %}IP address{% endtrans %}</span>
-                                <div class="history-meta-value">{{ contentHistory.request.ipAddress|default('—') }}</div>
-                            </div>
-                        </div>
-                    </details>
-                {% endif %}
 
-                {% set showOld = contentHistory.action in ['delete', 'update'] %}
-                {% set showNew = contentHistory.action in ['insert', 'update'] %}
+                    {% set showOld = contentHistory.action in ['delete', 'update'] %}
+                    {% set showNew = contentHistory.action in ['insert', 'update'] %}
 
-                <br/>
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>{% trans %}Field{% endtrans %}</th>
-                        {% if showOld %}
-                            <th>{% trans %}Old value{% endtrans %}</th>
-                        {% endif %}
-                        {% if showNew %}
-                            <th>{% trans %}New value{% endtrans %}</th>
-                        {% endif %}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for line in displayChangeSet %}
-                        {% if changeSet is not null %}
-                            <tr>
-                                <td>{{ line.displayName|default(line.name) }}</td>
-                                {% if showOld %}
-                                    <td>
-                                        {{ history.render_history_value(line.oldDisplay) }}
-                                    </td>
-                                {% endif %}
-                                {% if showNew %}
-                                    <td>
-                                        {{ history.render_history_value(line.newDisplay) }}
-                                    </td>
-                                {% endif %}
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </section>
+                    <br/>
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>{% trans %}Field{% endtrans %}</th>
+                            {% if showOld %}
+                                <th>{% trans %}Old value{% endtrans %}</th>
+                            {% endif %}
+                            {% if showNew %}
+                                <th>{% trans %}New value{% endtrans %}</th>
+                            {% endif %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for line in displayChangeSet %}
+                            {% if changeSet is not null %}
+                                <tr>
+                                    <td>{{ line.displayName|default(line.name) }}</td>
+                                    {% if showOld %}
+                                        <td>
+                                            {{ history.render_history_value(line.oldDisplay) }}
+                                        </td>
+                                    {% endif %}
+                                    {% if showNew %}
+                                        <td>
+                                            {{ history.render_history_value(line.newDisplay) }}
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endblock %}
+            {% endcomponent %}
         </div>
     </div>
 {% endblock %}
