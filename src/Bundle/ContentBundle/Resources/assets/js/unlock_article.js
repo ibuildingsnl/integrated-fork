@@ -12,6 +12,7 @@ $(document).ready(function () {
         versionSelectNode: null,
         restoreButtonNode: null,
         versionsContainerNode: null,
+        statusNode: null,
         contentUpdatedAt: '',
     };
 
@@ -128,9 +129,22 @@ $(document).ready(function () {
             return;
         }
 
+        initDraftStatusNode();
         initManualDraftButton();
         initDraftVersionControls();
         loadDraftOnInit();
+    }
+
+    function initDraftStatusNode() {
+        autosaveState.statusNode = document.getElementById('integrated_content_draft_status');
+    }
+
+    function setDraftStatus(message) {
+        if (!autosaveState.statusNode) {
+            return;
+        }
+
+        autosaveState.statusNode.textContent = String(message || '');
     }
 
     function initFormButtons() {
@@ -326,6 +340,7 @@ $(document).ready(function () {
         }
 
         autosaveState.inFlight = true;
+        setDraftStatus('Saving draft...');
 
         fetch(autosaveState.saveUrl, {
             method: 'POST',
@@ -357,6 +372,7 @@ $(document).ready(function () {
             .then(function (data) {
                 autosaveState.lastHash = payloadHash;
                 form.data('changed', false);
+                setDraftStatus('Draft saved.');
 
                 if (data && Array.isArray(data.versions)) {
                     populateDraftVersions(data.versions);
@@ -366,7 +382,13 @@ $(document).ready(function () {
                 }
             })
             .catch(function (error) {
-                console.error('Draft save failed', error);
+                const message = String((error && error.message) || '');
+                if (message.toLowerCase().indexOf('conflict') !== -1) {
+                    setDraftStatus('Draft conflict detected. Reload editor before continuing.');
+                    return;
+                }
+
+                setDraftStatus('Draft save failed. Try again.');
             })
             .finally(function () {
                 autosaveState.inFlight = false;
@@ -401,6 +423,7 @@ $(document).ready(function () {
                 applyDraftPayload(data.payload);
                 autosaveState.lastHash = JSON.stringify(collectFormPayload());
                 form.data('changed', true);
+                setDraftStatus('Draft restored.');
 
                 if (Array.isArray(data.versions)) {
                     populateDraftVersions(data.versions);
