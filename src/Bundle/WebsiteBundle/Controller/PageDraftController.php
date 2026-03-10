@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace Integrated\Bundle\WebsiteBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\MenuBundle\Menu\DatabaseMenuFactory;
+use Integrated\Bundle\MenuBundle\Provider\IntegratedMenuProvider;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Grid;
 use Integrated\Bundle\PageBundle\Document\Page\PageEditDraft;
 use Integrated\Bundle\PageBundle\Document\Page\PageEditDraftRepository;
 use Integrated\Bundle\PageBundle\Grid\GridFactory;
+use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,6 +29,9 @@ class PageDraftController extends AbstractController
         private DocumentManager $documentManager,
         private GridFactory $gridFactory,
         private UriSigner $uriSigner,
+        private IntegratedMenuProvider $menuProvider,
+        private DatabaseMenuFactory $menuFactory,
+        private ChannelContextInterface $channelContext,
     ) {
     }
 
@@ -166,6 +172,7 @@ class PageDraftController extends AbstractController
         }
 
         $page->setGrids($grids);
+        $this->applyMenuPayload($draft->getMenuPayload());
         $page->setUpdatedAt(new \DateTime());
 
         $this->documentManager->remove($draft);
@@ -303,6 +310,67 @@ class PageDraftController extends AbstractController
             'menuPayload' => $menuPayload,
             'basePageUpdatedAt' => $basePageUpdatedAt !== '' ? $basePageUpdatedAt : null,
         ];
+    }
+
+    /**
+     * @param array<mixed> $menuPayload
+     */
+    private function applyMenuPayload(array $menuPayload): void
+    {
+        foreach ($menuPayload as $menuArray) {
+            $sanitized = $this->sanitizeMenuArray((array) $menuArray, true);
+            if (!$sanitized) {
+                continue;
+            }
+
+            $menu = $this->menuFactory->fromArray($sanitized);
+            if (!$menu) {
+                continue;
+            }
+
+            if ($this->menuProvider->has($menu->getName())) {
+                $existingMenu = $this->menuProvider->get($menu->getName());
+                $existingMenu->setChildren($menu->getChildren());
+
+                continue;
+            }
+
+            $menu->setChannel($this->channelContext->getChannel());
+            $this->documentManager->persist($menu);
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $item
+     *
+     * @return array<string, mixed>|null
+     */
+    private function sanitizeMenuArray(array $item, bool $isRoot = false): ?array
+    {
+        $children = [];
+        foreach ((array) ($item['children'] ?? []) as $child) {
+            $sanitizedChild = $this->sanitizeMenuArray((array) $child);
+            if ($sanitizedChild) {
+                $children[] = $sanitizedChild;
+            }
+        }
+        $item['children'] = $children;
+
+        if ($isRoot) {
+            return $item;
+        }
+
+        $name = trim((string) ($item['name'] ?? ''));
+        $uri = trim((string) ($item['uri'] ?? ''));
+        $searchSelection = trim((string) ($item['searchSelection'] ?? ''));
+        $hasChildren = \count($children) > 0;
+
+        $isPlaceholder = ($name === '' || $name === '+')
+            && ($uri === '' || $uri === '#')
+            && $searchSelection === ''
+            && !$hasChildren;
+
+        return $isPlaceholder ? null : $item;
     }
 
     /**

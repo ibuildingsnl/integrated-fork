@@ -6,6 +6,8 @@ namespace Integrated\Bundle\WebsiteBundle\Tests\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Persistence\ObjectRepository;
+use Integrated\Bundle\MenuBundle\Menu\DatabaseMenuFactory;
+use Integrated\Bundle\MenuBundle\Provider\IntegratedMenuProvider;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Grid;
@@ -13,6 +15,7 @@ use Integrated\Bundle\PageBundle\Document\Page\PageEditDraft;
 use Integrated\Bundle\PageBundle\Document\Page\PageEditDraftRepository;
 use Integrated\Bundle\PageBundle\Grid\GridFactory;
 use Integrated\Bundle\WebsiteBundle\Controller\PageDraftController;
+use Integrated\Common\Content\Channel\ChannelContextInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,6 +33,12 @@ final class PageDraftControllerTest extends TestCase
     private PageEditDraftRepository $draftRepository;
     /** @var GridFactory&MockObject */
     private GridFactory $gridFactory;
+    /** @var IntegratedMenuProvider&MockObject */
+    private IntegratedMenuProvider $menuProvider;
+    /** @var DatabaseMenuFactory&MockObject */
+    private DatabaseMenuFactory $menuFactory;
+    /** @var ChannelContextInterface&MockObject */
+    private ChannelContextInterface $channelContext;
     private UriSigner $uriSigner;
 
     protected function setUp(): void
@@ -38,6 +47,9 @@ final class PageDraftControllerTest extends TestCase
         $this->pageRepository = $this->createMock(ObjectRepository::class);
         $this->draftRepository = $this->createMock(PageEditDraftRepository::class);
         $this->gridFactory = $this->createMock(GridFactory::class);
+        $this->menuProvider = $this->createMock(IntegratedMenuProvider::class);
+        $this->menuFactory = $this->createMock(DatabaseMenuFactory::class);
+        $this->channelContext = $this->createMock(ChannelContextInterface::class);
         $this->uriSigner = new UriSigner('page-draft-controller-test-secret');
 
         $this->documentManager
@@ -142,6 +154,85 @@ final class PageDraftControllerTest extends TestCase
         self::assertCount(1, $page->getGrids());
     }
 
+    public function testPublishDraftAppliesDraftMenuPayload(): void
+    {
+        $page = new Page();
+        $page->setPath('/example');
+        $page->setLayout('default.html.twig');
+        $page->setUpdatedAt(new \DateTime('2026-03-10T08:30:00+00:00'));
+
+        $draft = new PageEditDraft('page-1', 'user-1');
+        $draft->setGridPayload([
+            ['id' => 'main', 'items' => []],
+        ]);
+        $draft->setMenuPayload([
+            [
+                'name' => 'main',
+                'children' => [
+                    [
+                        'id' => 'real-item',
+                        'name' => 'Real item',
+                        'uri' => '/real-item',
+                        'children' => [],
+                    ],
+                ],
+            ],
+        ]);
+        $draft->setBasePageUpdatedAt('2026-03-10T09:00:00+00:00');
+
+        $this->pageRepository->method('find')->with('page-1')->willReturn($page);
+        $this->draftRepository->method('findOneByPageAndUser')->with('page-1', 'user-1')->willReturn($draft);
+        $this->gridFactory->expects($this->once())->method('fromArray')->willReturn(new Grid('main'));
+        $channel = new \stdClass();
+        $menu = new class {
+            public ?object $channel = null;
+
+            public function getName(): string
+            {
+                return 'main';
+            }
+
+            /** @return array<int, mixed> */
+            public function getChildren(): array
+            {
+                return [];
+            }
+
+            public function setChannel(object $channel): void
+            {
+                $this->channel = $channel;
+            }
+        };
+
+        $this->channelContext->method('getChannel')->willReturn($channel);
+        $this->menuProvider->method('has')->with('main')->willReturn(false);
+        $this->menuFactory
+            ->expects($this->once())
+            ->method('fromArray')
+            ->with($this->callback(static function (array $payload): bool {
+                return ($payload['name'] ?? null) === 'main'
+                    && \count((array) ($payload['children'] ?? [])) === 1;
+            }))
+            ->willReturn($menu);
+
+        $this->documentManager
+            ->expects($this->once())
+            ->method('persist')
+            ->with($this->callback(static function ($menu): bool {
+                return \is_object($menu)
+                    && method_exists($menu, 'getName')
+                    && $menu->getName() === 'main';
+            }));
+        $this->documentManager->expects($this->once())->method('remove')->with($draft);
+        $this->documentManager->expects($this->once())->method('flush');
+
+        $controller = $this->createController();
+        $response = $controller->publishDraft(Request::create('/page-draft/page-1/publish', 'POST'), 'page-1');
+
+        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
+        self::assertTrue((bool) json_decode((string) $response->getContent(), true, 512, \JSON_THROW_ON_ERROR)['published']);
+    }
+
     public function testPublishDraftReturnsConflictWhenPageChangedAfterBaseline(): void
     {
         $page = new Page();
@@ -197,6 +288,9 @@ final class PageDraftControllerTest extends TestCase
         $documentManager = $this->documentManager;
         $gridFactory = $this->gridFactory;
         $uriSigner = $this->uriSigner;
+        $menuProvider = $this->menuProvider;
+        $menuFactory = $this->menuFactory;
+        $channelContext = $this->channelContext;
         $grants = [
             'ROLE_WEBSITE_MANAGER' => true,
             'ROLE_ADMIN' => false,
@@ -217,13 +311,13 @@ final class PageDraftControllerTest extends TestCase
             }
         };
 
-        return new class($documentManager, $gridFactory, $uriSigner, $grants, $user) extends PageDraftController {
+        return new class($documentManager, $gridFactory, $uriSigner, $menuProvider, $menuFactory, $channelContext, $grants, $user) extends PageDraftController {
             /**
              * @param array<string, bool> $grants
              */
-            public function __construct(DocumentManager $documentManager, GridFactory $gridFactory, UriSigner $uriSigner, private readonly array $grants, private readonly UserInterface $user)
+            public function __construct(DocumentManager $documentManager, GridFactory $gridFactory, UriSigner $uriSigner, IntegratedMenuProvider $menuProvider, DatabaseMenuFactory $menuFactory, ChannelContextInterface $channelContext, private readonly array $grants, private readonly UserInterface $user)
             {
-                parent::__construct($documentManager, $gridFactory, $uriSigner);
+                parent::__construct($documentManager, $gridFactory, $uriSigner, $menuProvider, $menuFactory, $channelContext);
             }
 
             protected function isGranted(mixed $attribute, mixed $subject = null): bool
