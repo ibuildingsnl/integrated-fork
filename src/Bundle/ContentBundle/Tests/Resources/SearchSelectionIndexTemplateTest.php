@@ -27,5 +27,6 @@ final class SearchSelectionIndexTemplateTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:page_title'", $template);
         self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
         self::assertStringContainsString("component('integrated_admin:data_table'", $template);
+        self::assertStringContainsString("component('integrated_admin:pagination_footer'", $template);
     }
 }

@@ -91,7 +91,9 @@
                     colSpan: 4,
                 }) }}
 
-                {{ knp_pagination_render(searchSelections, '@KnpPaginator/Pagination/sliding.html.twig') }}
+                {{ component('integrated_admin:pagination_footer', {
+                    pagination: searchSelections,
+                }) }}
                 {% endblock %}
             {% endcomponent %}
         </div>
