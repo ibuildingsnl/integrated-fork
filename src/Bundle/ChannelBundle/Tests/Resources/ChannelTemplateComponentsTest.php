@@ -18,6 +18,14 @@ final class ChannelTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:data_table'", $template);
     }
 
+    public function testChannelOptionsFormThemeUsesAdminSectionCardsForSocialConnectorLayout(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/form/options.html.twig');
+
+        self::assertIsString($template);
+        self::assertSame(3, substr_count($template, "{% component 'integrated_admin:section_card'"));
+    }
+
     /**
      * @dataProvider configCrudTemplateProvider
      */
