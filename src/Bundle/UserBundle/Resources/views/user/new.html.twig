@@ -17,20 +17,16 @@
                             </button>
                             <span>{% trans %}User info{% endtrans %}</span>
                         </div>
-                        <div class="aside-item-wrapper show">
-                            <div class="aside-item-header">
-                                <h3 class="aside-item-title">
-                                    <i class="iconoir-info-circle"></i>
-                                    <span class="aside-item-icon">{% trans %}Tip{% endtrans %}</span>
-                                </h3>
-                                <i class="iconoir-nav-arrow-up"></i>
-                            </div>
-                            <div class="aside-item-list">
-                                <div class="aside-item-list-container">
-                                    <p>{% trans %}You can directly link this user to an existing author via the Author field.{% endtrans %}</p>
-                                </div>
-                            </div>
-                        </div>
+                        {% set userNewTipPanelHtml %}
+                            <p>{% trans %}You can directly link this user to an existing author via the Author field.{% endtrans %}</p>
+                        {% endset %}
+                        {{ component('integrated_admin:aside_panel', {
+                            title: 'Tip'|trans,
+                            icon: 'info-circle',
+                            withHolder: false,
+                            indicatorIcon: 'nav-arrow-up',
+                            contentHtml: userNewTipPanelHtml,
+                        }) }}
                     </div>
                 </aside>
             </div>

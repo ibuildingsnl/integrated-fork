@@ -92,4 +92,15 @@ final class UserTemplateComponentsTest extends TestCase
         self::assertIsString($template);
         self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
     }
+
+    public function testUserSidebarTemplatesUseAdminAsidePanel(): void
+    {
+        $newTemplate = file_get_contents(__DIR__.'/../../Resources/views/user/new.html.twig');
+        $editTemplate = file_get_contents(__DIR__.'/../../Resources/views/user/edit.html.twig');
+
+        self::assertIsString($newTemplate);
+        self::assertIsString($editTemplate);
+        self::assertStringContainsString("component('integrated_admin:aside_panel'", $newTemplate);
+        self::assertSame(2, substr_count($editTemplate, "component('integrated_admin:aside_panel'"));
+    }
 }
