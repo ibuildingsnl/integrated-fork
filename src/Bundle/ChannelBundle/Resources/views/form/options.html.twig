@@ -66,6 +66,7 @@
                         {% component 'integrated_admin:section_card' with {
                             extraClass: 'connector-config-overview',
                         } %}
+                            {% block content %}
                             <div class="connector-config-overview-grid">
                                 <article class="connector-config-overview-card">
                                     <small>{% trans %}Verbindingsstatus{% endtrans %}</small>
@@ -88,6 +89,7 @@
                                 <small>{% trans %}Setup status{% endtrans %}</small>
                                 <span>{{ setupStatusValue|default('-') }}</span>
                             </div>
+                            {% endblock %}
                         {% endcomponent %}
                     </div>
 
@@ -95,6 +97,7 @@
                         {% component 'integrated_admin:section_card' with {
                             extraClass: 'connector-config-section',
                         } %}
+                            {% block content %}
                             <h3 class="heading">{% trans %}Koppeling beheren{% endtrans %}</h3>
 
                             {% for fieldName in ['page', 'chosenPage'] %}
@@ -122,11 +125,13 @@
                                     {% endif %}
                                 {% endfor %}
                             </div>
+                            {% endblock %}
                         {% endcomponent %}
 
                         {% component 'integrated_admin:section_card' with {
                             extraClass: 'connector-config-section connector-config-section--details',
                         } %}
+                            {% block content %}
                             <h3 class="heading">{% trans %}Verbindingsdetails{% endtrans %}</h3>
 
                             {% for fieldName in ['connection_status', 'linked_channel_id', 'user', 'ig_account', 'access_token_status', 'access_token_expires_at', 'page_token_status', 'page_token_expires_at', 'health_status', 'last_connection_test_at', 'rate_limit_status', 'chosen_page_status', 'last_successful_publication_at', 'last_failed_publication_at', 'last_failed_publication_error'] %}
@@ -135,6 +140,7 @@
                                     {% set renderedFields = renderedFields|merge([fieldName]) %}
                                 {% endif %}
                             {% endfor %}
+                            {% endblock %}
                         {% endcomponent %}
                     </div>
                 </div>
