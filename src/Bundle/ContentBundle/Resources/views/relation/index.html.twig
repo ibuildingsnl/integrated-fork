@@ -2,8 +2,7 @@
 {% block content %}
     <div class="row">
         <div class="index-wrapper-full">
-            <div class="page-title">
-                <h1 class="heading">{% trans %}Relations{% endtrans %}</h1>
+            {% set createActionsHtml %}
                 <ul class="create">
                     <li>
                         <a class="btn btn-create-new" href="{{ path('integrated_content_relation_new') }}">
@@ -12,18 +11,22 @@
                         </a>
                     </li>
                 </ul>
-            </div>
-            <section class="section-white section-radius">
-                <table class="table table-hover">
-                    <thead>
+            {% endset %}
+            {{ component('integrated_admin:page_title', {
+                title: 'Relations'|trans,
+                actionsHtml: createActionsHtml,
+            }) }}
+            {% component 'integrated_admin:section_card' %}
+                {% block content %}
+                {% set tableHeadHtml %}
                     <tr>
                         <th>{% trans %}Name{% endtrans %}</th>
                         <th>{% trans %}Type{% endtrans %}</th>
                         <th>{% trans %}Location{% endtrans %}</th>
                         <th>{% trans %}Created{% endtrans %}</th>
                     </tr>
-                    </thead>
-                    <tbody>
+                {% endset %}
+                {% set tableBodyHtml %}
                     {% for document in documents %}
                         <tr class="has-options">
                             <td>
@@ -50,16 +53,16 @@
                                 {{ document.createdAt|date }}
                             </td>
                         </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="4">
-                                {% trans %}No relations added{% endtrans %}
-                            </td>
-                        </tr>
                     {% endfor %}
-                    </tbody>
-                </table>
-            </section>
+                {% endset %}
+                {{ component('integrated_admin:data_table', {
+                    headHtml: tableHeadHtml,
+                    bodyHtml: tableBodyHtml,
+                    emptyMessage: 'No relations added'|trans,
+                    colSpan: 4,
+                }) }}
+                {% endblock %}
+            {% endcomponent %}
         </div>
     </div>
 {% endblock %}

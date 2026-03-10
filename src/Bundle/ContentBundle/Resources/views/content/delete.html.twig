@@ -11,9 +11,9 @@
         {% endblock toolbar %}
         <div class="aside-options"></div>
         <div class="editor-wrapper">
-            <div class="page-title">
-                <h1 class="heading">{% trans %}Delete{% endtrans %} {{ type.name }}</h1>
-            </div>
+            {{ component('integrated_admin:page_title', {
+                title: 'Delete'|trans ~ ' ' ~ type.name,
+            }) }}
             <section class="editor editor-wrapped">
                 <p>
                     {% trans with {'%name%': content.title|default(content.name|default(content.id)) } %}

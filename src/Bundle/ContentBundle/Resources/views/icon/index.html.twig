@@ -4,14 +4,15 @@
 
 {% block content %}
     <div class="index-wrapper-full icon-library-page">
-        <div class="page-title">
-            <div class="heading">
-                <h1 class="heading">{% trans %}Icon library{% endtrans %}</h1>
-                <span class="icon-library-subtitle">
-                    {% trans %}Search and copy the icon name to use in icon fields.{% endtrans %}
-                </span>
-            </div>
-        </div>
+        {% set pageTitleContentHtml %}
+            <span class="icon-library-subtitle">
+                {% trans %}Search and copy the icon name to use in icon fields.{% endtrans %}
+            </span>
+        {% endset %}
+        {{ component('integrated_admin:page_title', {
+            title: 'Icon library'|trans,
+            contentHtml: pageTitleContentHtml,
+        }) }}
 
         <div class="icon-library-toolbar section-radius bg-white">
             <label class="icon-library-search-label" for="icon-library-search">

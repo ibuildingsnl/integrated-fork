@@ -3,10 +3,13 @@
 {% block content %}
     <div class="row">
         <div class="index-wrapper-full">
-            <div class="page-title">
-                <h1 class="heading">{% trans %}Show{% endtrans %} {{ contentType.name }}</h1>
-            </div>
-            <section class="section-white section-padding section-radius">
+            {{ component('integrated_admin:page_title', {
+                title: 'Show'|trans ~ ' ' ~ contentType.name,
+            }) }}
+            {% component 'integrated_admin:section_card' with {
+                extraClass: 'section-padding',
+            } %}
+                {% block content %}
                 <a class="btn btn-primary" href="{{ path('integrated_content_content_type_index') }}">{% trans %}Back to Overview{% endtrans %}</a>
                 <dl class="dl-horizontal">
                     <dt>
@@ -71,7 +74,8 @@
                 {% if not contentType.locked %}
                     {{ form(form, { 'style': 'inline' }) }}
                 {% endif %}
-            </section>
+                {% endblock %}
+            {% endcomponent %}
         </div>
     </div>
 {% endblock %}

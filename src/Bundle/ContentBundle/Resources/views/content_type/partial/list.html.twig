@@ -1,15 +1,14 @@
 <section class="section-white section-radius">
-    <table class="table table-hover">
-        <thead>
+    {% set tableHeadHtml %}
         <tr>
             <th style="width:25%">{% trans %}Name{% endtrans %}</th>
             <th style="width:25%">{% trans %}ID{% endtrans %}</th>
             <th style="width:25%">{% trans %}Document type{% endtrans %}</th>
             <th style="width:25%">{% trans %}Visuals{% endtrans %}</th>
         </tr>
-        </thead>
-        <tbody>
-        {% set documentTypePrinted = false %}
+    {% endset %}
+    {% set documentTypePrinted = false %}
+    {% set tableBodyHtml %}
         {% for document in documents %}
             {% set documentType = '' %}
             {% for type in documentTypes %}
@@ -96,13 +95,11 @@
                 </tr>
             {% endif %}
         {% endfor %}
-        {% if documentTypePrinted == false %}
-            <tr>
-                <td colspan="4">
-                    {% trans %}No content types added{% endtrans %}
-                </td>
-            </tr>
-        {% endif %}
-        </tbody>
-    </table>
+    {% endset %}
+    {{ component('integrated_admin:data_table', {
+        headHtml: tableHeadHtml,
+        bodyHtml: documentTypePrinted ? tableBodyHtml : null,
+        emptyMessage: 'No content types added'|trans,
+        colSpan: 4,
+    }) }}
 </section>

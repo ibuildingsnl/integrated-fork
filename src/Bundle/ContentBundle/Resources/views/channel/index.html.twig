@@ -3,8 +3,7 @@
 {% block content %}
     <div class="row">
         <div class="index-wrapper-full">
-            <div class="page-title">
-                <h1 class="heading">{% trans %}Channels{% endtrans %}</h1>
+            {% set createActionsHtml %}
                 <ul class="create">
                     <li>
                         <a class="btn btn-create-new" href="{{ path('integrated_content_channel_new') }}">
@@ -13,20 +12,22 @@
                         </a>
                     </li>
                 </ul>
-            </div>
-
-            <section class="section-white section-radius">
-
-                <table class="table table-hover">
-                    <thead>
+            {% endset %}
+            {{ component('integrated_admin:page_title', {
+                title: 'Channels'|trans,
+                actionsHtml: createActionsHtml,
+            }) }}
+            {% component 'integrated_admin:section_card' %}
+                {% block content %}
+                {% set tableHeadHtml %}
                     <tr>
                         <th class="name">{% trans %}Name{% endtrans %}</th>
                         <th class="id">{% trans %}Id{% endtrans %}</th>
                         <th class="domains">{% trans %}Domains{% endtrans %}</th>
                         <th class="created">{% trans %}Created{% endtrans %}</th>
                     </tr>
-                    </thead>
-                    <tbody>
+                {% endset %}
+                {% set tableBodyHtml %}
                     {% for document in documents %}
                         <tr class="has-options">
                             <td class="name">
@@ -54,16 +55,16 @@
                                 {{ document.createdAt|date }}
                             </td>
                         </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="4">
-                                {% trans %}No channels added{% endtrans %}
-                            </td>
-                        </tr>
                     {% endfor %}
-                    </tbody>
-                </table>
-            </section>
+                {% endset %}
+                {{ component('integrated_admin:data_table', {
+                    headHtml: tableHeadHtml,
+                    bodyHtml: tableBodyHtml,
+                    emptyMessage: 'No channels added'|trans,
+                    colSpan: 4,
+                }) }}
+                {% endblock %}
+            {% endcomponent %}
         </div>
     </div>
 {% endblock %}

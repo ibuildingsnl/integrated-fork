@@ -18,4 +18,13 @@ final class SearchSelectionIndexTemplateTest extends TestCase
         self::assertStringContainsString("sortField starts with('custom:')", $template);
         self::assertStringContainsString('{% trans %}Custom sorting{% endtrans %}', $template);
     }
+
+    public function testIndexTemplateUsesAdminPageTitleAndSectionCardComponents(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/search_selection/index.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:page_title'", $template);
+        self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
+    }
 }
