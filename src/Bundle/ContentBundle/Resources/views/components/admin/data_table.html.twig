@@ -1,0 +1,22 @@
+{% if this.hasWrapper %}
+    <div class="{{ wrapperClass }}">
+{% endif %}
+<table class="{{ this.tableClass }}">
+    {% if headHtml %}
+        <thead>
+            {{ headHtml|raw }}
+        </thead>
+    {% endif %}
+    <tbody>
+        {% if bodyHtml and bodyHtml|trim is not empty %}
+            {{ bodyHtml|raw }}
+        {% elseif emptyMessage %}
+            <tr>
+                <td colspan="{{ colSpan }}">{{ emptyMessage }}</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% if this.hasWrapper %}
+    </div>
+{% endif %}

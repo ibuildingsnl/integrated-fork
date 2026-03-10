@@ -1,0 +1,9 @@
+<span
+    class="{{ this.statusClass }} status-badge{% if extraClass %} {{ extraClass }}{% endif %}"
+    {% if title %}title="{{ title }}"{% endif %}
+>
+    {% if icon %}
+        <i class="{{ icon }}"></i>
+    {% endif %}
+    {{ label }}
+</span>

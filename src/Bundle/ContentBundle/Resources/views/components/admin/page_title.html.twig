@@ -1,0 +1,26 @@
+{% set wrapperClass = this.wrapperClass %}
+{% set headingElement = headingTag in ['h1', 'h2', 'h3'] ? headingTag : 'h1' %}
+<div class="{{ wrapperClass }}">
+    <div class="heading flex justify-between w-full">
+        <div>
+            {% if titleHtml and titleHtml|trim is not empty %}
+                {{ titleHtml|raw }}
+            {% else %}
+                <{{ headingElement }} class="heading">{{ title }}</{{ headingElement }}>
+                {% if subtitle %}
+                    <p class="mb-1 text-light">{{ subtitle }}</p>
+                {% endif %}
+            {% endif %}
+        </div>
+        {% if actionsHtml %}
+            <div class="page-title-actions">
+                {{ actionsHtml|raw }}
+            </div>
+        {% endif %}
+    </div>
+    {% if contentHtml %}
+        {{ contentHtml|raw }}
+    {% elseif block('content') is defined and block('content')|trim is not empty %}
+        {% block content %}{% endblock %}
+    {% endif %}
+</div>

@@ -1,0 +1,30 @@
+<div class="{{ this.wrapperClass }}">
+    {% if contentHtml %}
+        {{ contentHtml|raw }}
+    {% elseif block('content') is defined and block('content')|trim is not empty %}
+        {% block content %}{% endblock %}
+    {% else %}
+        <ul class="{{ menuClass }}">
+            {% for item in listItems %}
+                {% set itemClass = item.class|default('') %}
+                {% if item.active|default(false) %}
+                    {% set itemClass = (itemClass ~ ' active')|trim %}
+                {% endif %}
+                <li{% if itemClass != '' %} class="{{ itemClass }}"{% endif %}>
+                    {% if item.html is defined and item.html is not empty %}
+                        {{ item.html|raw }}
+                    {% else %}
+                        <a
+                            href="{{ item.href|default('#') }}"
+                            class="{{ item.link_class|default('btn btn-select') }}"
+                            {% if item.target is defined and item.target is not empty %}target="{{ item.target }}"{% endif %}
+                            {% if item.turbo_frame is defined and item.turbo_frame is not empty %}data-turbo-frame="{{ item.turbo_frame }}"{% endif %}
+                        >
+                            {{ item.label|default('') }}
+                        </a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
