@@ -17,4 +17,33 @@ final class BrandTemplateComponentsTest extends TestCase
         self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
         self::assertStringContainsString("component('integrated_admin:data_table'", $template);
     }
+
+    /**
+     * @dataProvider brandCrudTemplateProvider
+     */
+    public function testBrandCrudTemplatesUseAdminPageTitleComponent(string $relativePath): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/'.$relativePath);
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:page_title'", $template);
+    }
+
+    public function testBrandEditUsesAdminComponentsForChannelList(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/brand/edit.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:page_title'", $template);
+        self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
+        self::assertStringContainsString("component('integrated_admin:data_table'", $template);
+    }
+
+    public static function brandCrudTemplateProvider(): iterable
+    {
+        yield ['brand/delete.html.twig'];
+        yield ['brand/channel_add.html.twig'];
+        yield ['brand/channel_edit.html.twig'];
+        yield ['brand/channel_remove.html.twig'];
+    }
 }

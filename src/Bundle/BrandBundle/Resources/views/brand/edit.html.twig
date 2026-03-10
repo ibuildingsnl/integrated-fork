@@ -44,15 +44,9 @@
             </aside>
         </div>
         <div class="editor-wrapper">
-            <div class="page-title">
-                <h1 class="heading">
-                    {% if brand|default %}
-                        {% trans %}Edit {% endtrans %} {{ brand.name }}
-                    {% else %}
-                        {% trans %}New{% endtrans %} {% trans %}Brand{% endtrans %}
-                    {% endif %}
-                </h1>
-            </div>
+            {{ component('integrated_admin:page_title', {
+                title: brand|default ? (('Edit'|trans) ~ ' ' ~ brand.name) : (('New'|trans) ~ ' ' ~ ('Brand'|trans)),
+            }) }}
             <section class="editor">
                 {{ form_errors(form) }}
 
@@ -63,8 +57,7 @@
             </section>
 
             {% if brand|default %}
-            <div class="page-title">
-                <h1 class="heading">{% trans %}Channels{% endtrans %}</h1>
+            {% set brandChannelsActionsHtml %}
                 <ul class="create">
                     {% for linkType in linkTypes %}
                         {% if linkType.name not in brand.channelTypeNames %}
@@ -81,77 +74,80 @@
                         {% endif %}
                     {% endfor %}
                 </ul>
-            </div>
-            <section class="section-white section-radius">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th class="name">{% trans %}Type{% endtrans %}</th>
-                        <th class="default">{% trans %}Default{% endtrans %}</th>
-                        <th class="channel">{% trans %}Channel{% endtrans %}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for link in brand.channelLinks|default([]) %}
-                        {% if link %}
-                            <tr class="has-options">
-                                <td class="name">
-                                    <strong>
-                                        <a href="{{ path('integrated_content_brand_edit_channel', {'id': brand.id, 'link': link.id}) }}">
-                                            {{ link.name }}
-                                        </a>
-                                    </strong>
-                                    <div class="row-options">
-                                        <a
-                                            href="{{ path('integrated_content_brand_edit_channel', {'id': brand.id, 'link': link.id}) }}"
-                                            title="{% trans with {'%brand%': brand.name, '%type%': link.name } %}Edit %brand%'s %type% Channel{% endtrans %}"
-                                        >
-                                            {% trans %}Edit{% endtrans %}
-                                        </a> |
-                                        {% if link.type.connector and link.type.connector in availableConnectors|default([]) %}
-                                            <a
-                                                href="{{ path('integrated_content_brand_manage_connector', {'id': brand.id, 'link': link.id}) }}"
-                                                title="{% trans with {'%brand%': brand.name, '%type%': link.name} %}Manage %brand%'s %type% Connector{% endtrans %}"
-                                            >
-                                                {% trans %}Connector{% endtrans %}
-                                            </a> |
-                                        {% endif %}
-                                        <a
-                                            class="color-red"
-                                            href="{{ path('integrated_content_brand_remove_channel', {'id': brand.id, 'link': link.id}) }}"
-                                            title="{% trans with {'%brand%': brand.name, '%type%': link.name } %}Remove %type% from %brand%{% endtrans %}"
-                                        >
-                                            {% trans %}Remove{% endtrans %}
-                                        </a>
-                                    </div>
-                                </td>
-                                <td class="default">
-                                    {% if link.default %}
-                                        {% trans %}Yes{% endtrans %}
-                                    {% else %}
-                                        {% trans %}No{% endtrans %}
-                                    {% endif %}
-                                </td>
-                                <td class="channel">
-                                    {% if link.channel %}
-                                        {{ link.channel.name }}
-                                    {% else %}
-                                        <span class="text-muted">-</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endif %}
-                    {% else %}
+            {% endset %}
+            {{ component('integrated_admin:page_title', {
+                title: 'Channels'|trans,
+                actionsHtml: brandChannelsActionsHtml,
+            }) }}
+            {% component 'integrated_admin:section_card' %}
+                {% block content %}
+                    {% set brandChannelsTableHeadHtml %}
                         <tr>
-                            <td colspan="3">
-                                {% trans %}No channels added{% endtrans %}
-                            </td>
+                            <th class="name">{% trans %}Type{% endtrans %}</th>
+                            <th class="default">{% trans %}Default{% endtrans %}</th>
+                            <th class="channel">{% trans %}Channel{% endtrans %}</th>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-
-            </section>
+                    {% endset %}
+                    {% set brandChannelsTableBodyHtml %}
+                        {% for link in brand.channelLinks|default([]) %}
+                            {% if link %}
+                                <tr class="has-options">
+                                    <td class="name">
+                                        <strong>
+                                            <a href="{{ path('integrated_content_brand_edit_channel', {'id': brand.id, 'link': link.id}) }}">
+                                                {{ link.name }}
+                                            </a>
+                                        </strong>
+                                        <div class="row-options">
+                                            <a
+                                                href="{{ path('integrated_content_brand_edit_channel', {'id': brand.id, 'link': link.id}) }}"
+                                                title="{% trans with {'%brand%': brand.name, '%type%': link.name } %}Edit %brand%'s %type% Channel{% endtrans %}"
+                                            >
+                                                {% trans %}Edit{% endtrans %}
+                                            </a> |
+                                            {% if link.type.connector and link.type.connector in availableConnectors|default([]) %}
+                                                <a
+                                                    href="{{ path('integrated_content_brand_manage_connector', {'id': brand.id, 'link': link.id}) }}"
+                                                    title="{% trans with {'%brand%': brand.name, '%type%': link.name} %}Manage %brand%'s %type% Connector{% endtrans %}"
+                                                >
+                                                    {% trans %}Connector{% endtrans %}
+                                                </a> |
+                                            {% endif %}
+                                            <a
+                                                class="color-red"
+                                                href="{{ path('integrated_content_brand_remove_channel', {'id': brand.id, 'link': link.id}) }}"
+                                                title="{% trans with {'%brand%': brand.name, '%type%': link.name } %}Remove %type% from %brand%{% endtrans %}"
+                                            >
+                                                {% trans %}Remove{% endtrans %}
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td class="default">
+                                        {% if link.default %}
+                                            {% trans %}Yes{% endtrans %}
+                                        {% else %}
+                                            {% trans %}No{% endtrans %}
+                                        {% endif %}
+                                    </td>
+                                    <td class="channel">
+                                        {% if link.channel %}
+                                            {{ link.channel.name }}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endset %}
+                    {{ component('integrated_admin:data_table', {
+                        headHtml: brandChannelsTableHeadHtml,
+                        bodyHtml: brandChannelsTableBodyHtml,
+                        emptyMessage: 'No channels added'|trans,
+                        colSpan: 3,
+                    }) }}
+                {% endblock %}
+            {% endcomponent %}
             {% endif %}
             <section class="editor">
 

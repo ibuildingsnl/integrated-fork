@@ -14,11 +14,9 @@
         {% endblock toolbar %}
         <div class="aside-options"></div>
         <div class="editor-wrapper" style="margin-top: 50px">
-            <div class="page-title">
-                <h1 class="heading">
-                    {% trans %}Remove{% endtrans %} {{ link.name }} {% trans %}from{% endtrans %} {{ brand.name }}
-                </h1>
-            </div>
+            {{ component('integrated_admin:page_title', {
+                title: ('Remove'|trans) ~ ' ' ~ link.name ~ ' ' ~ ('from'|trans) ~ ' ' ~ brand.name,
+            }) }}
             <section class="editor editor-wrapped">
                 <p>
                     {% trans with {'%link%': link.name, '%name%':  brand.name} %}You are about to remove the %link% from the "%name%" brand. Click the delete button to confirm the action.{% endtrans %}
