@@ -6,6 +6,7 @@ namespace Integrated\Bundle\ContentBundle\Tests\Twig\Component\Admin;
 
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\AsidePanel;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\DataTable;
+use Integrated\Bundle\ContentBundle\Twig\Component\Admin\EditDrawerPanel;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\FilterGroup;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\FolderMenuPanel;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\OptionsToolbar;
@@ -273,6 +274,23 @@ final class AdminComponentRenderingTest extends KernelTestCase
         self::assertStringContainsString('aside-item-search', $output);
         self::assertStringContainsString('aside-filter-menu', $output);
     }
+
+    #[Test]
+    public function itRendersEditDrawerPanelMarkup(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:edit_drawer_panel', [
+            'editImagePath' => '/admin/media/edit/REPLACE',
+            'editImageIframePath' => '/admin/media/edit/iframe/REPLACE',
+        ])->toString();
+
+        self::assertStringContainsString('aside-edit-holder bg-white hide', $output);
+        self::assertStringContainsString('aside-item-wrapper', $output);
+        self::assertStringContainsString('id="editimagewrapper"', $output);
+        self::assertStringContainsString('data-editImagePath="/admin/media/edit/REPLACE"', $output);
+        self::assertStringContainsString('data-editImageIframePath="/admin/media/edit/iframe/REPLACE"', $output);
+        self::assertStringContainsString('close-media-edit-form', $output);
+        self::assertStringContainsString('<turbo-frame id="media-edit-panel"', $output);
+    }
 }
 
 final class AdminComponentRenderingTestKernel extends Kernel
@@ -312,6 +330,7 @@ final class AdminComponentRenderingTestKernel extends Kernel
         $services->set(OptionsToolbar::class);
         $services->set(DataTable::class);
         $services->set(AsidePanel::class)->tag('twig.component');
+        $services->set(EditDrawerPanel::class)->tag('twig.component');
         $services->set(FilterGroup::class)->tag('twig.component');
         $services->set(FolderMenuPanel::class)->tag('twig.component');
     }

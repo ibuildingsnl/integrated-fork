@@ -29,4 +29,14 @@ final class MediaIndexTemplateComponentsTest extends TestCase
         self::assertStringContainsString('rootLinkHtml: mediaFolderMenuRootLinkHtml', $template);
         self::assertStringContainsString('searchHtml: mediaFolderMenuSearchHtml', $template);
     }
+
+    public function testMediaEditPanelUsesEditDrawerPanel(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/media/partial/edit_panel.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:edit_drawer_panel'", $template);
+        self::assertStringContainsString("editImagePath: path('integrated_content_media_edit_image', {'id': 'REPLACE'})", $template);
+        self::assertStringContainsString("editImageIframePath: path('integrated_content_media_edit_image_iframe', {'id': 'REPLACE'})", $template);
+    }
 }
