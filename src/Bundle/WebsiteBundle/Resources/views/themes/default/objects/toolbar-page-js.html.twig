@@ -23,7 +23,7 @@
             document.querySelectorAll('[data-action="integrated-website-page-save-draft"]').forEach(item =>
                 item.addEventListener('click', function (e) {
                     e.preventDefault();
-                    setDraftStatus('Saving draft...');
+                    setDraftStatus('Saving draft...', 'saving');
                     saveDraft(this.dataset.id);
                 })
             );
@@ -31,7 +31,7 @@
             document.querySelectorAll('[data-action="integrated-website-page-publish"]').forEach(item =>
                 item.addEventListener('click', function (e) {
                     e.preventDefault();
-                    setDraftStatus('Publishing changes...');
+                    setDraftStatus('Publishing changes...', 'saving');
                     publishDraft(this.dataset.id, this.dataset.target || null);
                 })
             );
@@ -45,7 +45,7 @@
                         return;
                     }
 
-                    setDraftStatus('Generating preview link...');
+                    setDraftStatus('Generating preview link...', 'info');
                     fetch(resolveDraftUrl(draftPreviewLinkUrlTemplate, pageId), {
                         method: 'POST',
                         headers: {
@@ -56,14 +56,14 @@
                         .then(function (payload) {
                             if (payload && payload.url) {
                                 window.open(payload.url, '_blank', 'noopener,noreferrer');
-                                setDraftStatus('Preview link generated.');
+                                setDraftStatus('Preview link generated.', 'success');
                                 return;
                             }
 
-                            setDraftStatus('Preview link unavailable.');
+                            setDraftStatus('Preview link unavailable.', 'error');
                         })
                         .catch(function () {
-                            setDraftStatus('Preview link unavailable.');
+                            setDraftStatus('Preview link unavailable.', 'error');
                         });
                 })
             );
@@ -81,13 +81,17 @@
             return template.replace('__PAGE_ID__', encodeURIComponent(String(pageId || '')));
         };
 
-        var setDraftStatus = function (message) {
+        var setDraftStatus = function (message, state) {
             var statusElement = document.getElementById(draftStatusElementId);
             if (!statusElement) {
                 return;
             }
 
             statusElement.textContent = message;
+            statusElement.classList.remove('is-info', 'is-saving', 'is-success', 'is-warning', 'is-error');
+            if (state) {
+                statusElement.classList.add('is-' + state);
+            }
         };
 
         var collectMenus = function () {
@@ -126,15 +130,15 @@
                 .then(response => response.json())
                 .then(function (payload) {
                     if (payload && payload.saved) {
-                        setDraftStatus('Draft saved.');
+                        setDraftStatus('Draft saved.', 'success');
                         return;
                     }
 
-                    setDraftStatus('Saving failed. Falling back to direct save...');
+                    setDraftStatus('Saving failed. Falling back to direct save...', 'warning');
                     savePage(pageId, null);
                 })
                 .catch(function () {
-                    setDraftStatus('Saving failed. Falling back to direct save...');
+                    setDraftStatus('Saving failed. Falling back to direct save...', 'warning');
                     savePage(pageId, null);
                 });
         };
@@ -153,7 +157,7 @@
                 .then(response => response.json())
                 .then(function (payload) {
                     if (payload && payload.published) {
-                        setDraftStatus('Published.');
+                        setDraftStatus('Published.', 'success');
                         if (redirectTarget) {
                             window.location.replace(redirectTarget);
                         }
@@ -161,11 +165,16 @@
                         return;
                     }
 
-                    setDraftStatus('Publish failed. Falling back to direct save...');
+                    if (payload && payload.conflict) {
+                        setDraftStatus(payload.message || 'Publish conflict detected. Reload before publishing again.', 'warning');
+                        return;
+                    }
+
+                    setDraftStatus('Publish failed. Falling back to direct save...', 'warning');
                     savePage(pageId, redirectTarget);
                 })
                 .catch(function () {
-                    setDraftStatus('Publish failed. Falling back to direct save...');
+                    setDraftStatus('Publish failed. Falling back to direct save...', 'warning');
                     savePage(pageId, redirectTarget);
                 });
         };
@@ -249,11 +258,11 @@
                 return;
             }
 
-            setDraftStatus('Draft saved.');
+            setDraftStatus('Draft saved.', 'success');
         };
 
         var handleError = function (result) {
-            setDraftStatus('Saving failed.');
+            setDraftStatus('Saving failed.', 'error');
         }
 
     }();

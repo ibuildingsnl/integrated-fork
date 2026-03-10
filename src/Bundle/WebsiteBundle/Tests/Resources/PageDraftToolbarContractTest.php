@@ -22,11 +22,17 @@ final class PageDraftToolbarContractTest extends TestCase
     public function testToolbarPageScriptUsesPageDraftEndpoints(): void
     {
         $script = file_get_contents(__DIR__.'/../../Resources/views/themes/default/objects/toolbar-page-js.html.twig');
+        $css = file_get_contents(__DIR__.'/../../Resources/views/themes/default/objects/toolbar-css.html.twig');
 
         $this->assertIsString($script);
+        $this->assertIsString($css);
         $this->assertStringContainsString('integrated_website_page_draft_save', $script);
         $this->assertStringContainsString('integrated_website_page_draft_publish', $script);
         $this->assertStringContainsString('integrated_website_page_draft_preview_link', $script);
         $this->assertStringContainsString('integrated-website-draft-status', $script);
+        $this->assertStringContainsString('payload && payload.conflict', $script);
+        $this->assertStringContainsString('is-warning', $script);
+        $this->assertStringContainsString('.integrated-draft-status.is-warning', $css);
+        $this->assertStringContainsString('.integrated-draft-status.is-error', $css);
     }
 }

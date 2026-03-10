@@ -239,6 +239,70 @@ class PageControllerTest extends TestCase
         self::assertSame('preview-grid', $page->getGrids()[0]->getId());
     }
 
+    public function testShowStoresSanitizedDraftMenuPreviewPayloadOnRequest(): void
+    {
+        $page = new Page();
+        $page->setLayout('default.html.twig');
+        $page->setDisabled(false);
+        $page->setPath('/published-page');
+
+        $draft = new PageEditDraft('', 'user-1');
+        $draft->setId('draft-preview-2');
+        $draft->setGridPayload([
+            ['id' => 'preview-grid', 'items' => []],
+        ]);
+        $draft->setMenuPayload([
+            [
+                'name' => 'main',
+                'children' => [
+                    [
+                        'id' => 'real-item',
+                        'name' => 'Real item',
+                        'uri' => '/real-item',
+                        'children' => [],
+                    ],
+                    [
+                        'id' => 'placeholder-item',
+                        'name' => '+',
+                        'uri' => '#',
+                        'searchSelection' => '',
+                        'children' => [],
+                    ],
+                ],
+            ],
+        ]);
+        $this->draftRepository
+            ->expects($this->once())
+            ->method('find')
+            ->with('draft-preview-2')
+            ->willReturn($draft);
+        $this->gridFactory
+            ->expects($this->once())
+            ->method('fromArray')
+            ->willReturn(new Grid('preview-grid'));
+
+        $this->themeManager
+            ->expects($this->once())
+            ->method('locateTemplate')
+            ->with('default.html.twig')
+            ->willReturn('layout.html.twig');
+
+        $controller = $this->createController([
+            'ROLE_WEBSITE_MANAGER' => false,
+            'ROLE_ADMIN' => false,
+        ]);
+
+        $request = $this->createSignedDraftPreviewRequest('/published-page', 'draft-preview-2', time() + 600);
+        $response = $controller->show($request, $page);
+
+        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
+        $menuPayload = $request->attributes->get('integrated_website_draft_menu_payload');
+        self::assertIsArray($menuPayload);
+        self::assertArrayHasKey('main', $menuPayload);
+        self::assertCount(1, (array) ($menuPayload['main']['children'] ?? []));
+        self::assertSame('Real item', $menuPayload['main']['children'][0]['name'] ?? null);
+    }
+
     /**
      * @param array<string, bool> $grants
      */
