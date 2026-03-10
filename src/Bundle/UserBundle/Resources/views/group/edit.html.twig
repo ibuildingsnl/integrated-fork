@@ -17,7 +17,10 @@
                 <section class="editor editor-wrapped group-settings-card">
                     {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
                 </section>
-                <section class="section-white section-radius mt-4 p-4 group-users-card">
+                {% component 'integrated_admin:section_card' with {
+                    padding: true,
+                    extraClass: 'mt-4 group-users-card',
+                } %}
                     <div class="group-users-header">
                         <div class="group-users-heading">
                             <h3 class="heading mb-0">{% trans %}Users{% endtrans %}</h3>
@@ -65,7 +68,7 @@
                             {% endfor %}
                         </div>
                     </div>
-                </section>
+                {% endcomponent %}
             </div>
             {% block form_end %}
                 {{ form_end(form) }}

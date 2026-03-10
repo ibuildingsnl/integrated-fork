@@ -76,4 +76,20 @@ final class UserTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:data_table'", $template);
         self::assertStringContainsString("'No users found for the current filters.'|trans", $template);
     }
+
+    public function testProfileUsesAdminSectionCardForTwoFactorBlock(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/profile/index.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
+    }
+
+    public function testGroupEditUsesAdminSectionCardForUserManagement(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/group/edit.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
+    }
 }

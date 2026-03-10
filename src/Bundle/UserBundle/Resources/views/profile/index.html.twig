@@ -28,7 +28,9 @@
                 {% block form_end %}
                     {{ form_end(form) }}
                 {% endblock %}
-                <section class="section-white section-radius section-padding mt-4">
+                {% component 'integrated_admin:section_card' with {
+                    extraClass: 'section-padding mt-4',
+                } %}
                     <h3>{% trans %}Two-factor authentication{% endtrans %}</h3>
                     {% if user.googleAuthenticatorEnabled %}
                         <div class="alert alert-success">
@@ -52,7 +54,7 @@
                             {% trans %}Activate 2FA{% endtrans %}
                         </a>
                     {% endif %}
-                </section>
+                {% endcomponent %}
             </div>
         </div>
     {% endblock %}
