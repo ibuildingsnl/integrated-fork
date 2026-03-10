@@ -10,6 +10,7 @@ use Integrated\Bundle\ContentBundle\Twig\Component\Admin\EditDrawerPanel;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\FilterGroup;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\FolderMenuPanel;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\OptionsToolbar;
+use Integrated\Bundle\ContentBundle\Twig\Component\Admin\PaginationFooter;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\PageTitle;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\SectionCard;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\StatusBadge;
@@ -21,6 +22,8 @@ use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 use Symfony\UX\TwigComponent\Test\InteractsWithTwigComponents;
 use Symfony\UX\TwigComponent\TwigComponentBundle;
 
@@ -291,6 +294,19 @@ final class AdminComponentRenderingTest extends KernelTestCase
         self::assertStringContainsString('close-media-edit-form', $output);
         self::assertStringContainsString('<turbo-frame id="media-edit-panel"', $output);
     }
+
+    #[Test]
+    public function itRendersPaginationFooterMarkup(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:pagination_footer', [
+            'pagination' => new PaginationFooterTestPager(),
+            'wrapperClass' => 'table-pagination mt-4',
+        ])->toString();
+
+        self::assertStringContainsString('<div class="table-pagination mt-4">', $output);
+        self::assertStringContainsString('pagination-page-1', $output);
+        self::assertStringContainsString('pagination-page-2', $output);
+    }
 }
 
 final class AdminComponentRenderingTestKernel extends Kernel
@@ -333,6 +349,8 @@ final class AdminComponentRenderingTestKernel extends Kernel
         $services->set(EditDrawerPanel::class)->tag('twig.component');
         $services->set(FilterGroup::class)->tag('twig.component');
         $services->set(FolderMenuPanel::class)->tag('twig.component');
+        $services->set(PaginationFooter::class)->tag('twig.component');
+        $services->set(PaginationFooterTestTwigExtension::class)->tag('twig.extension');
     }
 
     public function getCacheDir(): string
@@ -357,5 +375,33 @@ final class AdminComponentRenderingTestKernel extends Kernel
     private static function projectDir(): string
     {
         return \dirname(__DIR__, 10);
+    }
+}
+
+final class PaginationFooterTestPager implements \IteratorAggregate
+{
+    public function getIterator(): \Traversable
+    {
+        yield 1;
+        yield 2;
+    }
+}
+
+final class PaginationFooterTestTwigExtension extends AbstractExtension
+{
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction(
+                'knp_pagination_render',
+                static function (mixed $pagination, string $template): string {
+                    return sprintf(
+                        '<nav class="pagination-test" data-template="%s"><a class="pagination-page-1">1</a><a class="pagination-page-2">2</a></nav>',
+                        htmlspecialchars($template, ENT_QUOTES)
+                    );
+                },
+                ['is_safe' => ['html']]
+            ),
+        ];
     }
 }

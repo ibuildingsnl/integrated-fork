@@ -1,0 +1,7 @@
+{% if this.hasWrapper %}
+    <div class="{{ wrapperClass }}">
+{% endif %}
+{{ knp_pagination_render(pagination, template) }}
+{% if this.hasWrapper %}
+    </div>
+{% endif %}

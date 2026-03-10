@@ -51,6 +51,13 @@
                 template="@IntegratedContent/components/admin/options_toolbar.html.twig"
             />
         </service>
+        <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\PaginationFooter">
+            <tag
+                name="twig.component"
+                key="integrated_admin:pagination_footer"
+                template="@IntegratedContent/components/admin/pagination_footer.html.twig"
+            />
+        </service>
         <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\PageTitle">
             <tag
                 name="twig.component"
