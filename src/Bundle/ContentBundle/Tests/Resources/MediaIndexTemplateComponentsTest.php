@@ -18,4 +18,15 @@ final class MediaIndexTemplateComponentsTest extends TestCase
         self::assertStringContainsString("actionsHtml: mediaPageTitleActionsHtml", $template);
         self::assertStringContainsString("contentHtml: mediaPageTitleContentHtml", $template);
     }
+
+    public function testMediaMenuComponentUsesFolderMenuPanel(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/media/partial/menu_component.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:folder_menu_panel'", $template);
+        self::assertStringContainsString('contentHtml: mediaFolderMenuContentHtml', $template);
+        self::assertStringContainsString('rootLinkHtml: mediaFolderMenuRootLinkHtml', $template);
+        self::assertStringContainsString('searchHtml: mediaFolderMenuSearchHtml', $template);
+    }
 }

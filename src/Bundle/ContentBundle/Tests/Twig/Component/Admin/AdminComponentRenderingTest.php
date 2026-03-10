@@ -7,6 +7,7 @@ namespace Integrated\Bundle\ContentBundle\Tests\Twig\Component\Admin;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\AsidePanel;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\DataTable;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\FilterGroup;
+use Integrated\Bundle\ContentBundle\Twig\Component\Admin\FolderMenuPanel;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\OptionsToolbar;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\PageTitle;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\SectionCard;
@@ -252,6 +253,26 @@ final class AdminComponentRenderingTest extends KernelTestCase
         self::assertStringContainsString('style="max-height: 24rem;"', $output);
         self::assertStringContainsString('filters_list', $output);
     }
+
+    #[Test]
+    public function itRendersFolderMenuPanelMarkup(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:folder_menu_panel', [
+            'title' => 'Folders',
+            'holderClass' => 'bg-white section-radius',
+            'rootLinkHtml' => '<a href="/admin/media"><i class="iconoir-folder"></i><span class="text-black">All files</span></a>',
+            'searchHtml' => '<div class="aside-item-search"><i class="iconoir-search"></i><input type="text" class="list-search" /></div>',
+            'contentHtml' => '<ul class="aside-filter-menu"><li class="menu-parent">Folder</li></ul>',
+        ])->toString();
+
+        self::assertStringContainsString('aside-header', $output);
+        self::assertStringContainsString('Folders', $output);
+        self::assertStringContainsString('aside-holder bg-white section-radius', $output);
+        self::assertStringContainsString('aside-folder-header', $output);
+        self::assertStringContainsString('iconoir-folder', $output);
+        self::assertStringContainsString('aside-item-search', $output);
+        self::assertStringContainsString('aside-filter-menu', $output);
+    }
 }
 
 final class AdminComponentRenderingTestKernel extends Kernel
@@ -292,6 +313,7 @@ final class AdminComponentRenderingTestKernel extends Kernel
         $services->set(DataTable::class);
         $services->set(AsidePanel::class)->tag('twig.component');
         $services->set(FilterGroup::class)->tag('twig.component');
+        $services->set(FolderMenuPanel::class)->tag('twig.component');
     }
 
     public function getCacheDir(): string

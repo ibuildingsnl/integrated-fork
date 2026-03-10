@@ -1,0 +1,15 @@
+<div class="aside-header">
+    <button class="toggle-filters toggle-data-target" data-target="{{ target }}"><i class="iconoir-xmark"></i></button>
+    <span>{{ title }}</span>
+</div>
+<div class="{{ this.holderClasses }}">
+    <div class="{{ this.wrapperClasses }}">
+        <div class="aside-folder-header">
+            {{ rootLinkHtml|raw }}
+        </div>
+        <div class="aside-item-list-container">
+            {{ searchHtml|raw }}
+            {{ contentHtml|raw }}
+        </div>
+    </div>
+</div>

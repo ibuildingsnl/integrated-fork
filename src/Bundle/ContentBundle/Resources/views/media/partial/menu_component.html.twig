@@ -1,155 +1,158 @@
-<div class="aside-header">
-    <button class="toggle-filters toggle-data-target" data-target="aside-filters"><i
-            class="iconoir-xmark"></i></button>
-    <span>{% trans %}Folders{% endtrans %}</span>
-</div>
-<div class="aside-holder bg-white section-radius">
-    <div class="aside-item-wrapper">
-        <div class="aside-folder-header">
-            {% if selected_modus == 'media_gallery' %}
-                <a href="{{ path(app.request.attributes.get('_route') ) }}">
-                    <i class="iconoir-folder"></i>
-                    <span class="text-black">{% trans %}All files{% endtrans %}</span>
-                </a>
-           {% else %}
-               {% set queryParams = [] %}
-               {% set availableContentTypes = app.request.query.all('available_contenttypes')|default([]) %}
-               {% set safeContentTypes = [] %}
-               {% for type in availableContentTypes %}
-                   {% if type is not iterable %}
-                       {% set safeContentTypes = safeContentTypes|merge([type]) %}
-                   {% endif %}
-               {% endfor %}
-               {% set queryParams = queryParams|merge({'available_contenttypes[]': safeContentTypes|join(','), page: 1}) %}
+{% if selected_modus == 'media_gallery' %}
+    {% set mediaFolderMenuRootLinkHtml %}
+        <a href="{{ path(app.request.attributes.get('_route') ) }}">
+            <i class="iconoir-folder"></i>
+            <span class="text-black">{% trans %}All files{% endtrans %}</span>
+        </a>
+    {% endset %}
+{% else %}
+    {% set queryParams = [] %}
+    {% set availableContentTypes = app.request.query.all('available_contenttypes')|default([]) %}
+    {% set safeContentTypes = [] %}
+    {% for type in availableContentTypes %}
+        {% if type is not iterable %}
+            {% set safeContentTypes = safeContentTypes|merge([type]) %}
+        {% endif %}
+    {% endfor %}
+    {% set queryParams = queryParams|merge({'available_contenttypes[]': safeContentTypes|join(','), page: 1}) %}
+    {% set mediaFolderMenuRootLinkHtml %}
+        <a href="{{ path(app.request.attributes.get('_route'), queryParams) }}" tabindex="-1">
+            <i class="iconoir-folder"></i>
+            <span class="text-black">{% trans %}All files{% endtrans %}</span>
+        </a>
+    {% endset %}
+{% endif %}
 
-               <a href="{{ path(app.request.attributes.get('_route'), queryParams) }}" tabindex="-1">
-                   <i class="iconoir-folder"></i>
-                   <span class="text-black">{% trans %}All files{% endtrans %}</span>
-                </a>
-            {% endif %}
-        </div>
-        <div class="aside-item-list-container">
-            <div class="aside-item-search">
-                <i class="iconoir-search"></i>
-                <input type="text" class="input_aside_folder_search list-search"
-                       placeholder="{% trans %}Search in folders{% endtrans %}">
-            </div>
-
-            <form id="media_form" action="{{ path('integrated_content_media_manage_relations') }}">
-                <input type="hidden" id="media_category_csrf" name="token"
-                       value="{{ csrf_token('delete-item') }}"/>
-                <input type="hidden" id="media_id" name="media_id" value=""/>
-                <input type="hidden" id="category_id" name="category_id" value=""/>
-                <input type="hidden" id="channel_id" name="channel_id" value=""/>
-            </form>
-            <ul class="aside-filter-menu">
-                {% for key, menu_item in menu %}
-                    {% set rawMenuItemId = menu_item.ID|default('') %}
-                    {% set menuItemId = rawMenuItemId is iterable ? '' : rawMenuItemId %}
-                    {% set menuItemTitle = menu_item.title|default('') %}
-                    {% if menuItemTitle is iterable %}
-                        {% set menuItemTitle = '' %}
-                        {% for value in menu_item.title %}
-                            {% if menuItemTitle == '' and value is not iterable and value is not same as(null) %}
-                                {% set menuItemTitle = value %}
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                    <li class="menu-parent {% if app.request.query.get('media_taxonomy_id') == menuItemId %}current-menu-item{% endif %}">
-                        {% if app.request.query.get('media_taxonomy_id') == menuItemId %}
-                        <a tabindex="-1" role="menuitem" class="media_category" id="{{ menuItemId }}">
-                            {% else %}
-                            <a href="{{ path(app.request.attributes.get('_route'),
-                                app.request.query.all|
-                                merge({'relation[media_taxonomy][]': menuItemTitle })|
-                                merge({'media_taxonomy_id':menuItemId})|
-                                merge({'page':1})
-                            ) }}"
-                               tabindex="-1"
-                               role="menuitem"
-                               class="media_category"
-                               id="{{ menuItemId }}">
-                                {% endif %}
-                                <i class="iconoir-folder"></i>
-                                <span>{{ menuItemTitle|trans }}</span>
-                            </a>
-                            {% if menu_item.children %}
-                                <ul class="child-menu">
-                                    {% for key_1, menu_item_1 in menu_item.children %}
-                                        {% set rawMenuItem1Id = menu_item_1.ID|default('') %}
-                                        {% set menuItem1Id = rawMenuItem1Id is iterable ? '' : rawMenuItem1Id %}
-                                        {% set menuItem1Title = menu_item_1.title|default('') %}
-                                        {% if menuItem1Title is iterable %}
-                                            {% set menuItem1Title = '' %}
-                                            {% for value in menu_item_1.title %}
-                                                {% if menuItem1Title == '' and value is not iterable and value is not same as(null) %}
-                                                    {% set menuItem1Title = value %}
-                                                {% endif %}
-                                            {% endfor %}
-                                        {% endif %}
-                                        <li class="menu-child {% if app.request.query.get('media_taxonomy_id') == menuItem1Id %}current-menu-item{% endif %}">
-                                            {% if app.request.query.get('media_taxonomy_id') == menuItem1Id %}
-                                            <a tabindex="-1" role="menuitem" class="media_category"
-                                               id="{{ menuItem1Id }}">
-                                                {% else %}
-                                                <a href="{{ path(app.request.attributes.get('_route'),
-                                                    app.request.query.all|
-                                                    merge({'relation[media_taxonomy][]': menuItem1Title })|
-                                                    merge({'media_taxonomy_id':menuItem1Id})|
-                                                    merge({'page':1})
-                                                ) }}"
-                                                   tabindex="-1"
-                                                   role="menuitem"
-                                                   class="media_category"
-                                                   id="{{ menuItem1Id }}">
-                                                    {% endif %}
-                                                    <i class="iconoir-folder"></i>
-                                                    <span>{{ menuItem1Title|trans }}</span></a>
-                                                {% if menu_item_1.children %}
-                                                    <ul class="child-menu">
-                                                        {% for key_2, menu_item_2 in menu_item_1.children %}
-                                                            {% set rawMenuItem2Id = menu_item_2.ID|default('') %}
-                                                            {% set menuItem2Id = rawMenuItem2Id is iterable ? '' : rawMenuItem2Id %}
-                                                            {% set menuItem2Title = menu_item_2.title|default('') %}
-                                                            {% if menuItem2Title is iterable %}
-                                                                {% set menuItem2Title = '' %}
-                                                                {% for value in menu_item_2.title %}
-                                                                    {% if menuItem2Title == '' and value is not iterable and value is not same as(null) %}
-                                                                        {% set menuItem2Title = value %}
-                                                                    {% endif %}
-                                                                {% endfor %}
-                                                            {% endif %}
-                                                            <li class="menu-child {% if app.request.query.get('media_taxonomy_id') == menuItem2Id %}current-menu-item{% endif %}">
-                                                                {% if app.request.query.get('media_taxonomy_id') == menuItem2Id %}
-                                                                <a tabindex="-1" role="menuitem"
-                                                                   class="media_category"
-                                                                   id="{{ menuItem2Id }}">
-                                                                    {% else %}
-                                                                    <a href="{{ path(app.request.attributes.get('_route'),
-                                                                        app.request.query.all|
-                                                                        merge({'relation[media_taxonomy][]': menuItem2Title })|
-                                                                        merge({'media_taxonomy_id':menuItem2Id})|
-                                                                        merge({'page':1})
-                                                                    ) }}"
-                                                                       tabindex="-1"
-                                                                       role="menuitem"
-                                                                       class="media_category"
-                                                                       id="{{ menuItem2Id }}">
-                                                                        {% endif %}
-                                                                        <i class="iconoir-folder"></i>
-                                                                        <span>{{ menuItem2Title|trans }}</span>
-                                                                    </a>
-                                                            </li>
-                                                        {% endfor %}
-                                                    </ul>
-                                                {% endif %}
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
+{% set mediaFolderMenuSearchHtml %}
+    <div class="aside-item-search">
+        <i class="iconoir-search"></i>
+        <input type="text" class="input_aside_folder_search list-search"
+               placeholder="{% trans %}Search in folders{% endtrans %}">
     </div>
-</div>
+{% endset %}
+
+{% set mediaFolderMenuContentHtml %}
+    <form id="media_form" action="{{ path('integrated_content_media_manage_relations') }}">
+        <input type="hidden" id="media_category_csrf" name="token"
+               value="{{ csrf_token('delete-item') }}"/>
+        <input type="hidden" id="media_id" name="media_id" value=""/>
+        <input type="hidden" id="category_id" name="category_id" value=""/>
+        <input type="hidden" id="channel_id" name="channel_id" value=""/>
+    </form>
+    <ul class="aside-filter-menu">
+        {% for key, menu_item in menu %}
+            {% set rawMenuItemId = menu_item.ID|default('') %}
+            {% set menuItemId = rawMenuItemId is iterable ? '' : rawMenuItemId %}
+            {% set menuItemTitle = menu_item.title|default('') %}
+            {% if menuItemTitle is iterable %}
+                {% set menuItemTitle = '' %}
+                {% for value in menu_item.title %}
+                    {% if menuItemTitle == '' and value is not iterable and value is not same as(null) %}
+                        {% set menuItemTitle = value %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <li class="menu-parent {% if app.request.query.get('media_taxonomy_id') == menuItemId %}current-menu-item{% endif %}">
+                {% if app.request.query.get('media_taxonomy_id') == menuItemId %}
+                <a tabindex="-1" role="menuitem" class="media_category" id="{{ menuItemId }}">
+                    {% else %}
+                    <a href="{{ path(app.request.attributes.get('_route'),
+                        app.request.query.all|
+                        merge({'relation[media_taxonomy][]': menuItemTitle })|
+                        merge({'media_taxonomy_id':menuItemId})|
+                        merge({'page':1})
+                    ) }}"
+                       tabindex="-1"
+                       role="menuitem"
+                       class="media_category"
+                       id="{{ menuItemId }}">
+                        {% endif %}
+                        <i class="iconoir-folder"></i>
+                        <span>{{ menuItemTitle|trans }}</span>
+                    </a>
+                    {% if menu_item.children %}
+                        <ul class="child-menu">
+                            {% for key_1, menu_item_1 in menu_item.children %}
+                                {% set rawMenuItem1Id = menu_item_1.ID|default('') %}
+                                {% set menuItem1Id = rawMenuItem1Id is iterable ? '' : rawMenuItem1Id %}
+                                {% set menuItem1Title = menu_item_1.title|default('') %}
+                                {% if menuItem1Title is iterable %}
+                                    {% set menuItem1Title = '' %}
+                                    {% for value in menu_item_1.title %}
+                                        {% if menuItem1Title == '' and value is not iterable and value is not same as(null) %}
+                                            {% set menuItem1Title = value %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                <li class="menu-child {% if app.request.query.get('media_taxonomy_id') == menuItem1Id %}current-menu-item{% endif %}">
+                                    {% if app.request.query.get('media_taxonomy_id') == menuItem1Id %}
+                                    <a tabindex="-1" role="menuitem" class="media_category"
+                                       id="{{ menuItem1Id }}">
+                                        {% else %}
+                                        <a href="{{ path(app.request.attributes.get('_route'),
+                                            app.request.query.all|
+                                            merge({'relation[media_taxonomy][]': menuItem1Title })|
+                                            merge({'media_taxonomy_id':menuItem1Id})|
+                                            merge({'page':1})
+                                        ) }}"
+                                           tabindex="-1"
+                                           role="menuitem"
+                                           class="media_category"
+                                           id="{{ menuItem1Id }}">
+                                            {% endif %}
+                                            <i class="iconoir-folder"></i>
+                                            <span>{{ menuItem1Title|trans }}</span></a>
+                                        {% if menu_item_1.children %}
+                                            <ul class="child-menu">
+                                                {% for key_2, menu_item_2 in menu_item_1.children %}
+                                                    {% set rawMenuItem2Id = menu_item_2.ID|default('') %}
+                                                    {% set menuItem2Id = rawMenuItem2Id is iterable ? '' : rawMenuItem2Id %}
+                                                    {% set menuItem2Title = menu_item_2.title|default('') %}
+                                                    {% if menuItem2Title is iterable %}
+                                                        {% set menuItem2Title = '' %}
+                                                        {% for value in menu_item_2.title %}
+                                                            {% if menuItem2Title == '' and value is not iterable and value is not same as(null) %}
+                                                                {% set menuItem2Title = value %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                    <li class="menu-child {% if app.request.query.get('media_taxonomy_id') == menuItem2Id %}current-menu-item{% endif %}">
+                                                        {% if app.request.query.get('media_taxonomy_id') == menuItem2Id %}
+                                                        <a tabindex="-1" role="menuitem"
+                                                           class="media_category"
+                                                           id="{{ menuItem2Id }}">
+                                                            {% else %}
+                                                            <a href="{{ path(app.request.attributes.get('_route'),
+                                                                app.request.query.all|
+                                                                merge({'relation[media_taxonomy][]': menuItem2Title })|
+                                                                merge({'media_taxonomy_id':menuItem2Id})|
+                                                                merge({'page':1})
+                                                            ) }}"
+                                                               tabindex="-1"
+                                                               role="menuitem"
+                                                               class="media_category"
+                                                               id="{{ menuItem2Id }}">
+                                                                {% endif %}
+                                                                <i class="iconoir-folder"></i>
+                                                                <span>{{ menuItem2Title|trans }}</span>
+                                                            </a>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endset %}
+
+{{ component('integrated_admin:folder_menu_panel', {
+    title: 'Folders'|trans,
+    holderClass: 'bg-white section-radius',
+    rootLinkHtml: mediaFolderMenuRootLinkHtml,
+    searchHtml: mediaFolderMenuSearchHtml,
+    contentHtml: mediaFolderMenuContentHtml,
+}) }}
