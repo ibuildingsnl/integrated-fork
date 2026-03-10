@@ -22,47 +22,52 @@
             </div>
         {% endblock toolbar %}
         <div class="index-wrapper-full">
-            <div class="page-title">
-                <h1 class="heading">{% trans %}History for{% endtrans %} {{ content.title }}</h1>
-            </div>
-            <section class="section-white section-radius">
-                <form id="content-history-filter-form-iframe" method="get" class="history-index-filters p-4">
-                    <div class="flex flex-wrap gap-2">
-                        <input class="form-control" type="text" name="q" value="{{ filters.q|default('') }}" placeholder="{% trans %}Search user/action{% endtrans %}">
-                        <select class="form-control" name="action">
-                            <option value="">{% trans %}All actions{% endtrans %}</option>
-                            <option value="insert" {% if filters.action == 'insert' %}selected{% endif %}>{% trans %}insert{% endtrans %}</option>
-                            <option value="update" {% if filters.action == 'update' %}selected{% endif %}>{% trans %}update{% endtrans %}</option>
-                            <option value="delete" {% if filters.action == 'delete' %}selected{% endif %}>{% trans %}delete{% endtrans %}</option>
-                        </select>
-                        <input class="form-control" type="text" name="user" value="{{ filters.user|default('') }}" placeholder="{% trans %}User{% endtrans %}">
-                        <input class="form-control" type="date" name="from" value="{{ filters.from|default('') }}">
-                        <input class="form-control" type="date" name="to" value="{{ filters.to|default('') }}">
-                    </div>
-                </form>
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>{% trans %}Date{% endtrans %}</th>
-                        <th>{% trans %}Action{% endtrans %}</th>
-                        <th>{% trans %}User{% endtrans %}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for document in paginator %}
+            {{ component('integrated_admin:page_title', {
+                title: ('History for'|trans) ~ ' ' ~ content.title,
+            }) }}
+            {% component 'integrated_admin:section_card' %}
+                {% block content %}
+                    <form id="content-history-filter-form-iframe" method="get" class="history-index-filters p-4">
+                        <div class="flex flex-wrap gap-2">
+                            <input class="form-control" type="text" name="q" value="{{ filters.q|default('') }}" placeholder="{% trans %}Search user/action{% endtrans %}">
+                            <select class="form-control" name="action">
+                                <option value="">{% trans %}All actions{% endtrans %}</option>
+                                <option value="insert" {% if filters.action == 'insert' %}selected{% endif %}>{% trans %}insert{% endtrans %}</option>
+                                <option value="update" {% if filters.action == 'update' %}selected{% endif %}>{% trans %}update{% endtrans %}</option>
+                                <option value="delete" {% if filters.action == 'delete' %}selected{% endif %}>{% trans %}delete{% endtrans %}</option>
+                            </select>
+                            <input class="form-control" type="text" name="user" value="{{ filters.user|default('') }}" placeholder="{% trans %}User{% endtrans %}">
+                            <input class="form-control" type="date" name="from" value="{{ filters.from|default('') }}">
+                            <input class="form-control" type="date" name="to" value="{{ filters.to|default('') }}">
+                        </div>
+                    </form>
+                    {% set historyIframeTableHeadHtml %}
                         <tr>
-                            <td>
-                                <a href="{{ path('integrated_content_history_show_iframe', { 'id': document.id }) }}">{{ document.date|format_datetime('medium', 'short') }}</a>
-                            </td>
-                            <td>{{ document.action|trans }}</td>
-                            <td>{{ document.user.name|default('Unknown'|trans) }} {% if document.user.id is defined %}(#{{ document.user.id }}){% endif %}</td>
+                            <th>{% trans %}Date{% endtrans %}</th>
+                            <th>{% trans %}Action{% endtrans %}</th>
+                            <th>{% trans %}User{% endtrans %}</th>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                    {% endset %}
+                    {% set historyIframeTableBodyHtml %}
+                        {% for document in paginator %}
+                            <tr>
+                                <td>
+                                    <a href="{{ path('integrated_content_history_show_iframe', { 'id': document.id }) }}">{{ document.date|format_datetime('medium', 'short') }}</a>
+                                </td>
+                                <td>{{ document.action|trans }}</td>
+                                <td>{{ document.user.name|default('Unknown'|trans) }} {% if document.user.id is defined %}(#{{ document.user.id }}){% endif %}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endset %}
+                    {{ component('integrated_admin:data_table', {
+                        headHtml: historyIframeTableHeadHtml,
+                        bodyHtml: historyIframeTableBodyHtml,
+                        colSpan: 3,
+                    }) }}
 
-                {{ knp_pagination_render(paginator, '@KnpPaginator/Pagination/sliding.html.twig') }}
-            </section>
+                    {{ knp_pagination_render(paginator, '@KnpPaginator/Pagination/sliding.html.twig') }}
+                {% endblock %}
+            {% endcomponent %}
         </div>
     </div>
 {% endblock %}
