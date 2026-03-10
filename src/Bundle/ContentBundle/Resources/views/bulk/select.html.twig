@@ -63,13 +63,7 @@
     {% endblock toolbar %}
 
     <div class="index-wrapper-full">
-        <div class="page-title">
-            <div class="heading flex justify-between w-full">
-                <div class="heading-switcher">
-                    <h1 class="heading">{% trans %}Step 1 of 3: Choose Issues{% endtrans %}</h1>
-                </div>
-            </div>
-            <div class="options options-toolbar">
+        {% set bulkToolbarHtml %}
                 <ul class="content-navigator-menu">
                     <li class="dropdown close-outside" data-underlay="no">
                         <a data-toggle="dropdown" role="button" id="bulk-date-range"
@@ -99,8 +93,16 @@
                         </a>
                     </li>
                 </ul>
-            </div>
-        </div>
+        {% endset %}
+        {% set pageTitleContentHtml %}
+            {{ component('integrated_admin:options_toolbar', {
+                contentHtml: bulkToolbarHtml,
+            }) }}
+        {% endset %}
+        {{ component('integrated_admin:page_title', {
+            title: 'Step 1 of 3: Choose Issues'|trans,
+            contentHtml: pageTitleContentHtml,
+        }) }}
 
     {{ form_errors(form) }}
 
@@ -121,8 +123,7 @@
 
             <hr/>
 
-            <table class="table table-hover">
-                <thead>
+            {% set tableHeadHtml %}
                 <tr>
                     <th><input type="checkbox" id="{{ form.vars['full_name'] }}_selection_all"/></th>
                     <th>{% trans %}Title{% endtrans %}</th>
@@ -130,8 +131,8 @@
                     <th>{% trans %}Created{% endtrans %}</th>
                     <th>{% trans %}Edited{% endtrans %}</th>
                 </tr>
-                </thead>
-                <tbody>
+            {% endset %}
+            {% set tableBodyHtml %}
                 {% for item in form.selection %}
                     <tr>
                         <td>{{ form_widget(item) }}</td>
@@ -140,13 +141,14 @@
                         <td>{{ content[item.vars.label].getCreatedAt()|format_date('medium') }}</td>
                         <td>{{ content[item.vars.label].getUpdatedAt()|format_date('medium') }}</td>
                     </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="5">{% trans %}No items found for this date range{% endtrans %}</td>
-                    </tr>
                 {% endfor %}
-                </tbody>
-            </table>
+            {% endset %}
+            {{ component('integrated_admin:data_table', {
+                headHtml: tableHeadHtml,
+                bodyHtml: tableBodyHtml,
+                emptyMessage: 'No items found for this date range'|trans,
+                colSpan: 5,
+            }) }}
 
         </section>
     </div>

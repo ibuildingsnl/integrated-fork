@@ -19,31 +19,31 @@
         <div class="flex flex-wrap {{ pageClass }}">
 
             <div class="index-wrapper">
-                <div class="page-title">
-                    <div class="heading flex justify-between w-full">
-                        <div class="heading-switcher">
-                            <h1 class="heading">{% block heading %}{% trans %}Content navigator{% endtrans %}{% endblock heading %}</h1>
-                            <div class="switcher-buttons">
-                                <a class="button_list_view list switcher btn btn-select {% if pageClass == 'list' %}active{% endif %}"
-                                   href="{{ path('integrated_content_content_index', queryParams|merge({view: 'list', page: 1, limit: 25, order: 'desc'})) }}">
-                                    <span>{% trans %}List{% endtrans %}</span>
-                                    <i class="iconoir-list"></i>
-                                </a>
-                                <a class="button_calendar_view toggle_view calendar switcher btn btn-select {% if pageClass == 'calendar' %}active{% endif %}"
-                                   href="{{ path('integrated_content_content_index', queryParams|merge({view: 'week', page: 1, limit: 100})) }}">
-                                    <span>{% trans %}Calendar{% endtrans %}</span>
-                                    <i class="iconoir-calendar"></i>
-                                </a>
-                            </div>
+                {% set pageTitleHtml %}
+                    <div class="heading-switcher">
+                        <h1 class="heading">{% block heading %}{% trans %}Content navigator{% endtrans %}{% endblock heading %}</h1>
+                        <div class="switcher-buttons">
+                            <a class="button_list_view list switcher btn btn-select {% if pageClass == 'list' %}active{% endif %}"
+                               href="{{ path('integrated_content_content_index', queryParams|merge({view: 'list', page: 1, limit: 25, order: 'desc'})) }}">
+                                <span>{% trans %}List{% endtrans %}</span>
+                                <i class="iconoir-list"></i>
+                            </a>
+                            <a class="button_calendar_view toggle_view calendar switcher btn btn-select {% if pageClass == 'calendar' %}active{% endif %}"
+                               href="{{ path('integrated_content_content_index', queryParams|merge({view: 'week', page: 1, limit: 100})) }}">
+                                <span>{% trans %}Calendar{% endtrans %}</span>
+                                <i class="iconoir-calendar"></i>
+                            </a>
                         </div>
-
-                        <button class="toggle-filters toggle-data-target btn btn-orange icon-left"
-                                data-target="aside-filters">
-                            <i class="iconoir-filter-alt"></i>
-                            <span>{% trans %}Filter{% endtrans %}</span>
-                        </button>
                     </div>
-                    <div class="options options-toolbar">
+                {% endset %}
+                {% set filterActionsHtml %}
+                    <button class="toggle-filters toggle-data-target btn btn-orange icon-left"
+                            data-target="aside-filters">
+                        <i class="iconoir-filter-alt"></i>
+                        <span>{% trans %}Filter{% endtrans %}</span>
+                    </button>
+                {% endset %}
+                {% set toolbarContentHtml %}
                         <ul class="content-navigator-menu">
                             {% block options_start %}{% endblock options_start %}
                             {% block options %}
@@ -111,7 +111,11 @@
                             {% endblock options %}
                             {% block options_end %}{% endblock options_end %}
                         </ul>
-                    </div>
+                {% endset %}
+                {% set pageTitleContentHtml %}
+                    {{ component('integrated_admin:options_toolbar', {
+                        contentHtml: toolbarContentHtml,
+                    }) }}
                     {% block search_selection_form %}
                         <div class="searchselection-edit-form close-outside">
                             {{ form_start(searchSelectionForm) }}
@@ -138,7 +142,12 @@
                             {{ form_end(searchSelectionForm) }}
                         </div>
                     {% endblock search_selection_form %}
-                </div>
+                {% endset %}
+                {{ component('integrated_admin:page_title', {
+                    titleHtml: pageTitleHtml,
+                    actionsHtml: filterActionsHtml,
+                    contentHtml: pageTitleContentHtml,
+                }) }}
 
                 {% block content_items %}{% endblock content_items %}
             </div>
@@ -206,100 +215,75 @@
     {% else %}
         {% set facetTitle = key|capitalize %}
     {% endif %}
-    <div class="aside-item-holder">
-        <div class="aside-item-wrapper {% if integrated_facet_show(key) %}show{% endif %}">
-            <div class="aside-item-header"
-                 role="button"
-                 tabindex="0"
-                 aria-expanded="{% if integrated_facet_show(key) %}true{% else %}false{% endif %}">
-                <h3 class="aside-item-title">
-                    <span class="aside-item-icon">
-                        {{ facetTitle|trans }}
-                    </span>
-                </h3>
-                <i class="iconoir-nav-arrow-down"></i>
+    {% set facetContentHtml %}
+        {% if (facet|length >= 6) %}
+            <div class="aside-item-search">
+                <i class="iconoir-search"></i>
+                <input type="text" class="list-search"
+                       placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle|trans }}">
             </div>
-            <div class="aside-item-list">
-                <div class="aside-item-list-container">
-                    {% if (facet|length >= 6) %}
-                        <div class="aside-item-search">
-                            <i class="iconoir-search"></i>
-                            <input type="text" class="list-search"
-                                   placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle|trans }}">
+        {% endif %}
+        <ul class="filters_list">
+            {% for title, count in facet %}
+                <li class="checkbox">
+                    <label class="checkbox-container">
+                        <input {% if title in params[key]|default %}checked="checked"{% endif %}
+                               onclick="this.form.requestSubmit ? this.form.requestSubmit() : this.form.submit();" type="checkbox" name="{{ key }}[]"
+                               value="{{ title }}"/>
+                        <span class="checkmark"></span>
+                        <div class="facet-wrapper">
+                            <span class="facet-title">
+                                {{ integrated_facet_title(key, title)|default(title|trans) }}
+                            </span>
+                            <span class="facet-count">({{ count }})</span>
                         </div>
-                    {% endif %}
-                    <ul class="filters_list">
-                        {% for title, count in facet %}
-                            <li class="checkbox">
-                                <label class="checkbox-container">
-                                    <input {% if title in params[key]|default %}checked="checked"{% endif %}
-                                           onclick="this.form.requestSubmit ? this.form.requestSubmit() : this.form.submit();" type="checkbox" name="{{ key }}[]"
-                                           value="{{ title }}"/>
-                                    <span class="checkmark"></span>
-                                    <div class="facet-wrapper">
-                                        <span class="facet-title">
-                                            {{ integrated_facet_title(key, title)|default(title|trans) }}
-                                        </span>
-                                        <span class="facet-count">({{ count }})</span>
-                                    </div>
-                                </label>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+                    </label>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endset %}
+    {{ component('integrated_admin:aside_panel', {
+        title: facetTitle|trans,
+        expanded: integrated_facet_show(key),
+        contentHtml: facetContentHtml,
+    }) }}
 {% endblock %}
 
 {% block relation_facet %}
     {% set key = key[9:] %}
 
     {% set facetTitle = key|integrated_relation.name|default(key|capitalize) %}
-    <div class="aside-item-holder">
-        <div class="aside-item-wrapper">
-            <div class="aside-item-header"
-                 role="button"
-                 tabindex="0"
-                 aria-expanded="false">
-                <h3 class="aside-item-title">
-                    <span class="aside-item-icon">
-                        {{ facetTitle }}
-                    </span>
-                </h3>
-                <i class="iconoir-nav-arrow-down"></i>
+    {% set relationFacetContentHtml %}
+        {% if (facet|length >= 6) %}
+            <div class="aside-item-search">
+                <i class="iconoir-search"></i>
+                <input type="text" class="list-search"
+                       placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle }}">
             </div>
-            <div class="aside-item-list">
-                <div class="aside-item-list-container">
-                    {% if (facet|length >= 6) %}
-                        <div class="aside-item-search">
-                            <i class="iconoir-search"></i>
-                            <input type="text" class="list-search"
-                                   placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle }}">
+        {% endif %}
+        <ul class="filters_list">
+            {% for title, count in facet %}
+                <li class="checkbox">
+                    <label class="checkbox-container">
+                        <input {% if title in params['relation'][key]|default %}checked="checked"{% endif %}
+                               onclick="this.form.requestSubmit ? this.form.requestSubmit() : this.form.submit();" type="checkbox" name="relation[{{ key }}][]"
+                               value="{{ title }}"/>
+                        <span class="checkmark"></span>
+                        <div class="facet-wrapper">
+                            <span class="facet-title">
+                                {{ title }}
+                            </span>
+                            <span class="facet-count">({{ count }})</span>
                         </div>
-                    {% endif %}
-                    <ul class="filters_list">
-                        {% for title, count in facet %}
-                            <li class="checkbox">
-                                <label class="checkbox-container">
-                                    <input {% if title in params['relation'][key]|default %}checked="checked"{% endif %}
-                                           onclick="this.form.requestSubmit ? this.form.requestSubmit() : this.form.submit();" type="checkbox" name="relation[{{ key }}][]"
-                                           value="{{ title }}"/>
-                                    <span class="checkmark"></span>
-                                    <div class="facet-wrapper">
-                                        <span class="facet-title">
-                                            {{ title }}
-                                        </span>
-                                        <span class="facet-count">({{ count }})</span>
-                                    </div>
-                                </label>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+                    </label>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endset %}
+    {{ component('integrated_admin:aside_panel', {
+        title: facetTitle,
+        contentHtml: relationFacetContentHtml,
+    }) }}
 {% endblock %}
 
 {% block javascript %}
