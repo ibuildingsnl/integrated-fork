@@ -35,5 +35,6 @@ final class PageTemplateComponentsTest extends TestCase
         yield ['page/edit.html.twig'];
         yield ['page/delete.html.twig'];
         yield ['page/copy.html.twig'];
+        yield ['content_type_page/edit.html.twig'];
     }
 }

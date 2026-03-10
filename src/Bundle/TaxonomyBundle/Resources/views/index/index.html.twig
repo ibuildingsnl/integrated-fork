@@ -252,9 +252,9 @@
                     </aside>
                 </div>
                 <div class="editor-wrapper">
-                    <div class="page-title">
-                        <h1 class="heading">{% trans %}Create {% endtrans %} {{ content_type.name }}</h1>
-                    </div>
+                    {{ component('integrated_admin:page_title', {
+                        title: ('Create'|trans) ~ ' ' ~ content_type.name
+                    }) }}
                     <section class="editor">
                         {% block content_form %}
                             {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR')) %}

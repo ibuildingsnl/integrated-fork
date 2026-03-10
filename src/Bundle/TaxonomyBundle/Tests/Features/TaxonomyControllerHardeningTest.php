@@ -48,4 +48,12 @@ final class TaxonomyControllerHardeningTest extends TestCase
         $this->assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
         $this->assertStringContainsString("component('integrated_admin:data_table'", $template);
     }
+
+    public function testIndexTemplateUsesAdminPageTitleForEditorPane(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/index/index.html.twig');
+
+        $this->assertIsString($template);
+        $this->assertGreaterThanOrEqual(2, substr_count($template, "component('integrated_admin:page_title'"));
+    }
 }

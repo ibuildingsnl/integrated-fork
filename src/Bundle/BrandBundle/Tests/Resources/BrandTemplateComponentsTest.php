@@ -45,5 +45,6 @@ final class BrandTemplateComponentsTest extends TestCase
         yield ['brand/channel_add.html.twig'];
         yield ['brand/channel_edit.html.twig'];
         yield ['brand/channel_remove.html.twig'];
+        yield ['brand/config_manage.html.twig'];
     }
 }
