@@ -9,6 +9,13 @@
         <defaults autowire="true" autoconfigure="true"/>
 
         <prototype namespace="Integrated\Bundle\ContentBundle\Twig\Component\" resource="../../Twig/Component" />
+        <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\FilterGroup">
+            <tag
+                name="twig.component"
+                key="integrated_admin:filter_group"
+                template="@IntegratedContent/components/admin/filter_group.html.twig"
+            />
+        </service>
 
         <service id="integrated_content.twig.json_pagination_extension" class="Integrated\Bundle\ContentBundle\Twig\JsonPaginationExtension">
             <argument type="service" id="router" />
