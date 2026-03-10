@@ -26,4 +26,13 @@ final class ContentModalTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:confirm_modal'", $template);
         self::assertStringContainsString("modalId: 'content-edit-modal'", $template);
     }
+
+    public function testMediaEditImageUsesAdminSelectionModal(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/media/edit_image.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:selection_modal'", $template);
+        self::assertStringContainsString("modalId: 'image-edit-modal'", $template);
+    }
 }

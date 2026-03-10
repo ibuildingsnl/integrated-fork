@@ -93,6 +93,7 @@ final class UserTemplateComponentsTest extends TestCase
 
         self::assertIsString($template);
         self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
+        self::assertStringContainsString("component('integrated_admin:selection_modal'", $template);
     }
 
     public function testUserSidebarTemplatesUseAdminAsidePanel(): void

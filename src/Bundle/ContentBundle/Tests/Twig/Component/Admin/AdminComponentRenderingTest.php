@@ -18,6 +18,7 @@ use Integrated\Bundle\ContentBundle\Twig\Component\Admin\OptionsToolbar;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\PaginationFooter;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\PageTitle;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\RowActions;
+use Integrated\Bundle\ContentBundle\Twig\Component\Admin\SelectionModal;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\SectionCard;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\StatusBadge;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\TaxonomyCategoryPicker;
@@ -448,6 +449,28 @@ final class AdminComponentRenderingTest extends KernelTestCase
         self::assertStringContainsString('/admin/example/1/edit', $output);
         self::assertStringContainsString('color-red', $output);
     }
+
+    #[Test]
+    public function itRendersSelectionModalMarkup(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:selection_modal', [
+            'modalId' => 'group-users-add-modal',
+            'title' => 'Select users',
+            'bodyHtml' => '<label class="control-label">Select users</label><select class="form-control"></select>',
+            'footerHtml' => '<button type="button" class="btn btn-white">Cancel</button><button type="button" class="btn btn-green">Add</button>',
+            'modalAttributes' => 'style="display:none;"',
+            'bodyClass' => 'p-4',
+            'closeButtonAttributes' => 'data-action="close-group-users-modal"',
+        ])->toString();
+
+        self::assertStringContainsString('modal add-modal close-outside', $output);
+        self::assertStringContainsString('id="group-users-add-modal"', $output);
+        self::assertStringContainsString('style="display:none;"', $output);
+        self::assertStringContainsString('modal-title">Select users</h4>', $output);
+        self::assertStringContainsString('modal-body p-4', $output);
+        self::assertStringContainsString('close-group-users-modal', $output);
+        self::assertStringContainsString('btn btn-green', $output);
+    }
 }
 
 final class AdminComponentRenderingTestKernel extends Kernel
@@ -497,6 +520,7 @@ final class AdminComponentRenderingTestKernel extends Kernel
         $services->set(IframeModal::class)->tag('twig.component');
         $services->set(PaginationFooter::class)->tag('twig.component');
         $services->set(RowActions::class)->tag('twig.component');
+        $services->set(SelectionModal::class)->tag('twig.component');
         $services->set(TaxonomyCategoryPicker::class)->tag('twig.component');
         $services->set(PaginationFooterTestTwigExtension::class)->tag('twig.extension');
     }

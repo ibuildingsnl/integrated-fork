@@ -4,34 +4,32 @@
 
 {% block title %} {% trans %}Media Library{% endtrans %} - Edit image{% endblock title %}
 {% block content %}
+    {% set imageEditModalBodyHtml %}
+        <p>If you want to replace the image, you can check this checkbox. Else it will be saved as a copy.</p>
+        <p id="not-used-by">Currently the image is not in use.</p>
+        <li class="used-by-item" hidden>
+            <a href=""></a>
+        </li>
 
-    <div class="modal fade" id="image-edit-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Save image</h4>
-                </div>
-                <div class="modal-body">
-                    <p>If you want to replace the image, you can check this checkbox. Else it will be saved as a copy.</p>
-                    <p id="not-used-by">Currently the image is not in use.</p>
-                    <li class="used-by-item" hidden>
-                        <a href=""></a>
-                    </li>
+        <ul id="used-by-list" hidden></ul>
 
-                    <ul id="used-by-list" hidden></ul>
-
-                    <div>
-                        <input type="checkbox" id="overwriteImage" name="overwriteImage">
-                        <label for="overwriteImage">Overwrite image</label>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="saveEditedImage" class="btn btn-green">Save image</button>
-                    <button type="button" id="cancelModal" class="btn btn-white" data-dismiss="modal">Cancel</button>
-                </div>
-            </div>
+        <div>
+            <input type="checkbox" id="overwriteImage" name="overwriteImage">
+            <label for="overwriteImage">Overwrite image</label>
         </div>
-    </div>
+    {% endset %}
+    {% set imageEditModalFooterHtml %}
+        <button type="button" id="saveEditedImage" class="btn btn-green">Save image</button>
+        <button type="button" id="cancelModal" class="btn btn-white" data-dismiss="modal">Cancel</button>
+    {% endset %}
+    {{ component('integrated_admin:selection_modal', {
+        modalId: 'image-edit-modal',
+        title: 'Save image',
+        bodyHtml: imageEditModalBodyHtml,
+        footerHtml: imageEditModalFooterHtml,
+        modalClass: 'modal fade',
+        showCloseButton: false,
+    }) }}
 
     <div class="drag-drop-area"
          data-endpoint="{{ endpoint|default( path('integrated_content_media_upload_file') ) }}"

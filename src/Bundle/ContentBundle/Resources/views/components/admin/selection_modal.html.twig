@@ -1,0 +1,28 @@
+<div class="{{ this.modalClasses }}" id="{{ modalId }}" tabindex="-1" role="dialog" aria-hidden="true"{% if modalAttributes %} {{ modalAttributes|raw }}{% endif %}>
+    <div class="{{ this.dialogClasses }}">
+        <div class="modal-content">
+            <div class="modal-header">
+                {% if showCloseButton %}
+                    <button type="button" class="close"{% if closeButtonAttributes %} {{ closeButtonAttributes|raw }}{% endif %}><span aria-hidden="true"><i class="iconoir-xmark"></i></span><span class="sr-only">{{ closeLabel }}</span></button>
+                {% endif %}
+                <h4 class="modal-title">{% if titleHtml %}{{ titleHtml|raw }}{% else %}{{ title }}{% endif %}</h4>
+            </div>
+            <div class="{{ this.bodyClasses }}">
+                {% if bodyHtml %}
+                    {{ bodyHtml|raw }}
+                {% elseif block('body') is defined and block('body')|trim is not empty %}
+                    {% block body %}{% endblock %}
+                {% endif %}
+            </div>
+            {% if footerHtml or (block('footer') is defined and block('footer')|trim is not empty) %}
+                <div class="modal-footer">
+                    {% if footerHtml %}
+                        {{ footerHtml|raw }}
+                    {% else %}
+                        {% block footer %}{% endblock %}
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

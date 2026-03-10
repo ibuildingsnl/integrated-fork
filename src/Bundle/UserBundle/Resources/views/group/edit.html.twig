@@ -21,6 +21,7 @@
                     padding: true,
                     extraClass: 'mt-4 group-users-card',
                 } %}
+                    {% block content %}
                     <div class="group-users-header">
                         <div class="group-users-heading">
                             <h3 class="heading mb-0">{% trans %}Users{% endtrans %}</h3>
@@ -68,6 +69,7 @@
                             {% endfor %}
                         </div>
                     </div>
+                    {% endblock %}
                 {% endcomponent %}
             </div>
             {% block form_end %}
@@ -76,33 +78,33 @@
         </div>
 
         <div id="group-users-modal-backdrop" class="group-users-modal-backdrop hidden" aria-hidden="true"></div>
-        <div class="modal add-modal close-outside" id="group-users-add-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display:none;">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-action="close-group-users-modal"><span aria-hidden="true"><i class="iconoir-xmark"></i></span><span class="sr-only">{% trans %}Close{% endtrans %}</span></button>
-                        <h4 class="modal-title">{% trans %}Users toevoegen{% endtrans %}</h4>
-                    </div>
-                    <div class="modal-body p-4">
-                        <label class="control-label">{% trans %}Select users{% endtrans %}</label>
-                        <select id="group-users-add-select" class="form-control select2" multiple data-placeholder="{% trans %}Select users{% endtrans %}" style="width:100%;">
-                            {% for user in availableUsers|default([]) %}
-                                <option value="{{ user.id }}"
-                                        data-enabled="{{ user.enabled ? '1' : '0' }}"
-                                        data-username="{{ user.username }}"
-                                        data-edit-url="{{ path('integrated_user_user_edit', {'id': user.id}) }}">
-                                    {{ user.username }}{% if not user.enabled %} ({% trans %}Disabled{% endtrans %}){% endif %}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-white" data-action="close-group-users-modal">{% trans %}Cancel{% endtrans %}</button>
-                        <button type="button" class="btn btn-green" id="group-users-add-selected">{% trans %}Toevoegen{% endtrans %}</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% set groupUsersModalBodyHtml %}
+            <label class="control-label">{% trans %}Select users{% endtrans %}</label>
+            <select id="group-users-add-select" class="form-control select2" multiple data-placeholder="{% trans %}Select users{% endtrans %}" style="width:100%;">
+                {% for user in availableUsers|default([]) %}
+                    <option value="{{ user.id }}"
+                            data-enabled="{{ user.enabled ? '1' : '0' }}"
+                            data-username="{{ user.username }}"
+                            data-edit-url="{{ path('integrated_user_user_edit', {'id': user.id}) }}">
+                        {{ user.username }}{% if not user.enabled %} ({% trans %}Disabled{% endtrans %}){% endif %}
+                    </option>
+                {% endfor %}
+            </select>
+        {% endset %}
+        {% set groupUsersModalFooterHtml %}
+            <button type="button" class="btn btn-white" data-action="close-group-users-modal">{% trans %}Cancel{% endtrans %}</button>
+            <button type="button" class="btn btn-green" id="group-users-add-selected">{% trans %}Toevoegen{% endtrans %}</button>
+        {% endset %}
+        {{ component('integrated_admin:selection_modal', {
+            modalId: 'group-users-add-modal',
+            title: 'Users toevoegen'|trans,
+            bodyHtml: groupUsersModalBodyHtml,
+            footerHtml: groupUsersModalFooterHtml,
+            bodyClass: 'p-4',
+            modalAttributes: 'style="display:none;"',
+            closeButtonAttributes: 'data-action="close-group-users-modal"',
+            closeLabel: 'Close'|trans,
+        }) }}
 
         <script>
             (function bindGroupUserManagement() {

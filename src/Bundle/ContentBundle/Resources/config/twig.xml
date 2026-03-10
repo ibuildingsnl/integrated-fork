@@ -107,6 +107,13 @@
                 template="@IntegratedContent/components/admin/row_actions.html.twig"
             />
         </service>
+        <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\SelectionModal">
+            <tag
+                name="twig.component"
+                key="integrated_admin:selection_modal"
+                template="@IntegratedContent/components/admin/selection_modal.html.twig"
+            />
+        </service>
         <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\SectionCard">
             <tag
                 name="twig.component"
