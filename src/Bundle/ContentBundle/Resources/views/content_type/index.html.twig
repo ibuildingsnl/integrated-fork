@@ -4,30 +4,32 @@
 {% block content %}
     <div class="row flex flex-wrap h-full">
         <div class="index-wrapper-full">
-            {% set createActionsHtml %}
-                <ul class="options-no-bg">
-                    <li class="dropdown close-outside" data-underlay="no">
-                        <a data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
-                            <span>{% trans %}New{% endtrans %} {% trans %}content type{% endtrans %}</span>
-                            <i class="iconoir-plus"></i>
-                        </a>
-                        <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
-                            {% for type in documentTypes %}
-                                {% if type.type %}
-                                    <li role="presentation">
-                                        <a href="{{ path('integrated_content_content_type_new') }}?class={{ type.class }}">
-                                            {{ type.type|trans }}
-                                        </a>
-                                    </li>
-                                {% endif %}
-                            {% endfor %}
-                        </ul>
-                    </li>
-                </ul>
+            {% set pageTitleHtml %}
+                <div class="flex flex-wrap items-center gap-4">
+                    <h1 class="heading mb-0">{% trans %}Content types{% endtrans %}</h1>
+                    <ul class="options-no-bg m-0">
+                        <li class="dropdown close-outside" data-underlay="no">
+                            <a data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
+                                <span>{% trans %}New{% endtrans %} {% trans %}content type{% endtrans %}</span>
+                                <i class="iconoir-plus"></i>
+                            </a>
+                            <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
+                                {% for type in documentTypes %}
+                                    {% if type.type %}
+                                        <li role="presentation">
+                                            <a href="{{ path('integrated_content_content_type_new') }}?class={{ type.class }}">
+                                                {{ type.type|trans }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             {% endset %}
             {{ component('integrated_admin:page_title', {
-                title: 'Content types'|trans,
-                actionsHtml: createActionsHtml,
+                titleHtml: pageTitleHtml,
             }) }}
 
             <h3 class="mt-8">{% trans %}Content Types{% endtrans %}</h3>

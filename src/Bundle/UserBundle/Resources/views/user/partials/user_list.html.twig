@@ -1,117 +1,119 @@
 {% component 'integrated_admin:section_card' %}
-    <form method="post" action="{{ path('integrated_user_user_bulk') }}">
-    <input type="hidden" name="_token" value="{{ csrf_token('user_bulk_action') }}">
-    <input type="hidden" name="enable_token" value="{{ csrf_token('user_enable') }}">
-    <div id="bulk-actions" class="p-3 flex flex-wrap items-center gap-2 border-b border-light">
-        <select name="bulk_action" id="bulk_action" class="form-control" style="width: 220px;">
-            <option value="">{% trans %}Bulk action{% endtrans %}</option>
-            {% for actionValue, actionLabel in bulkActions %}
-                <option value="{{ actionValue }}">{{ actionLabel|trans }}</option>
-            {% endfor %}
-        </select>
-        <div id="bulk-group-container" class="hidden">
-            <select name="bulk_group" id="bulk_group" class="form-control" disabled>
-                <option value="">{% trans %}Select group{% endtrans %}</option>
-                {% for group in allGroups %}
-                    <option value="{{ group.id }}">{{ group.name }}</option>
+    {% block content %}
+        <form method="post" action="{{ path('integrated_user_user_bulk') }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('user_bulk_action') }}">
+        <input type="hidden" name="enable_token" value="{{ csrf_token('user_enable') }}">
+        <div id="bulk-actions" class="p-3 flex flex-wrap items-center gap-2 border-b border-light">
+            <select name="bulk_action" id="bulk_action" class="form-control" style="width: 220px;">
+                <option value="">{% trans %}Bulk action{% endtrans %}</option>
+                {% for actionValue, actionLabel in bulkActions %}
+                    <option value="{{ actionValue }}">{{ actionLabel|trans }}</option>
                 {% endfor %}
             </select>
+            <div id="bulk-group-container" class="hidden">
+                <select name="bulk_group" id="bulk_group" class="form-control" disabled>
+                    <option value="">{% trans %}Select group{% endtrans %}</option>
+                    {% for group in allGroups %}
+                        <option value="{{ group.id }}">{{ group.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div id="bulk-scope-container" class="hidden">
+                <select name="bulk_scope" id="bulk_scope" class="form-control" disabled>
+                    <option value="">{% trans %}Select scope{% endtrans %}</option>
+                    {% for scope in allScopes %}
+                        <option value="{{ scope.id }}">{{ scope.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-orange">{% trans %}Apply{% endtrans %}</button>
+            <span id="bulk-selection-count" class="text-sm">0 {% trans %}selected{% endtrans %}</span>
         </div>
-        <div id="bulk-scope-container" class="hidden">
-            <select name="bulk_scope" id="bulk_scope" class="form-control" disabled>
-                <option value="">{% trans %}Select scope{% endtrans %}</option>
-                {% for scope in allScopes %}
-                    <option value="{{ scope.id }}">{{ scope.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <button type="submit" class="btn btn-orange">{% trans %}Apply{% endtrans %}</button>
-        <span id="bulk-selection-count" class="text-sm">0 {% trans %}selected{% endtrans %}</span>
-    </div>
-    {% set userTableColGroupHtml %}
-        <colgroup>
-            <col style="width: 3em"/>
-            <col style="width: 3em"/>
-            <col/>
-            <col/>
-            <col style="width: 5em"/>
-        </colgroup>
-    {% endset %}
-    {% set userTableHeadHtml %}
-        <tr>
-            <th>
-                <input type="checkbox" id="bulk_select_all">
-            </th>
-            <th>#</th>
-            <th>{% trans %}Username{% endtrans %}</th>
-            <th>{% trans %}Scope{% endtrans %}</th>
-            <th>{% trans %}Date created{% endtrans %}</th>
-            <th>{% trans %}Relation{% endtrans %}</th>
-        </tr>
-    {% endset %}
-    {% set userTableBodyHtml %}
-        {% for user in users %}
-            <tr class="has-options">
-                <td>
-                    <input type="checkbox" name="user_ids[]" value="{{ user.id }}" class="bulk-user-checkbox">
-                </td>
-                <td>
-                    {{ user.id }}
-                </td>
+        {% set userTableColGroupHtml %}
+            <colgroup>
+                <col style="width: 3em"/>
+                <col style="width: 3em"/>
+                <col/>
+                <col/>
+                <col style="width: 5em"/>
+            </colgroup>
+        {% endset %}
+        {% set userTableHeadHtml %}
+            <tr>
+                <th>
+                    <input type="checkbox" id="bulk_select_all">
+                </th>
+                <th>#</th>
+                <th>{% trans %}Username{% endtrans %}</th>
+                <th>{% trans %}Scope{% endtrans %}</th>
+                <th>{% trans %}Date created{% endtrans %}</th>
+                <th>{% trans %}Relation{% endtrans %}</th>
+            </tr>
+        {% endset %}
+        {% set userTableBodyHtml %}
+            {% for user in users %}
+                <tr class="has-options">
+                    <td>
+                        <input type="checkbox" name="user_ids[]" value="{{ user.id }}" class="bulk-user-checkbox">
+                    </td>
+                    <td>
+                        {{ user.id }}
+                    </td>
 
-                {% if user.enabled == false %}
-                    <td style="color: lightgrey">
+                    {% if user.enabled == false %}
+                        <td style="color: lightgrey">
+                            <a href="{{ path('integrated_user_user_edit', {'id': user.id}) }}"
+                               title="{% trans %}Edit{% endtrans %}">
+                                <strong>{{ user.username }}</strong>
+                            </a>
+                    {% else %}
+                        <td>
                         <a href="{{ path('integrated_user_user_edit', {'id': user.id}) }}"
                            title="{% trans %}Edit{% endtrans %}">
                             <strong>{{ user.username }}</strong>
                         </a>
-                {% else %}
-                    <td>
-                    <a href="{{ path('integrated_user_user_edit', {'id': user.id}) }}"
-                       title="{% trans %}Edit{% endtrans %}">
-                        <strong>{{ user.username }}</strong>
-                    </a>
-                {% endif %}
-                <div class="row-options">
-                    <a href="{{ path('integrated_user_user_edit', {'id': user.id}) }}"
-                       title="{% trans %}Edit{% endtrans %}">{% trans %}Edit{% endtrans %}</a> |
-                    <a href="{{ path('integrated_user_user_delete', {'id': user.id}) }}"
-                       class="color-red" title="{% trans %}Deactivate{% endtrans %}">{% trans %}Deactivate{% endtrans %}</a>
-                    {% if user.enabled == false %}
-                        | <button type="submit"
-                                  formaction="{{ path('integrated_user_user_enable', {'id': user.id}) }}"
-                                  formmethod="post"
-                                  style="background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;"
-                                  title="{% trans %}Enable account{% endtrans %}">{% trans %}Enable account{% endtrans %}</button>
                     {% endif %}
-                    {% if user.googleAuthenticatorEnabled %}
-                         | <a href="{{ path('integrated_user_user_delete_authenticator', {'id': user.id}) }}"
-                           class="color-red" title="{% trans %}Delete{% endtrans %} {% trans %}two factor authenticator{% endtrans %}">{% trans %}Delete{% endtrans %} {% trans %}two factor authenticator{% endtrans %}</a>
-                    {% endif %}
-                    | <a href="{{ path('integrated_user_user_delete_account', {'id': user.id}) }}"
-                         class="color-red" title="{% trans %}Delete account{% endtrans %}">{% trans %}Delete account{% endtrans %}</a>
-                </div>
+                    <div class="row-options">
+                        <a href="{{ path('integrated_user_user_edit', {'id': user.id}) }}"
+                           title="{% trans %}Edit{% endtrans %}">{% trans %}Edit{% endtrans %}</a> |
+                        <a href="{{ path('integrated_user_user_delete', {'id': user.id}) }}"
+                           class="color-red" title="{% trans %}Deactivate{% endtrans %}">{% trans %}Deactivate{% endtrans %}</a>
+                        {% if user.enabled == false %}
+                            | <button type="submit"
+                                      formaction="{{ path('integrated_user_user_enable', {'id': user.id}) }}"
+                                      formmethod="post"
+                                      style="background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;"
+                                      title="{% trans %}Enable account{% endtrans %}">{% trans %}Enable account{% endtrans %}</button>
+                        {% endif %}
+                        {% if user.googleAuthenticatorEnabled %}
+                             | <a href="{{ path('integrated_user_user_delete_authenticator', {'id': user.id}) }}"
+                               class="color-red" title="{% trans %}Delete{% endtrans %} {% trans %}two factor authenticator{% endtrans %}">{% trans %}Delete{% endtrans %} {% trans %}two factor authenticator{% endtrans %}</a>
+                        {% endif %}
+                        | <a href="{{ path('integrated_user_user_delete_account', {'id': user.id}) }}"
+                             class="color-red" title="{% trans %}Delete account{% endtrans %}">{% trans %}Delete account{% endtrans %}</a>
+                    </div>
+                        </td>
+
+                    <td>{{ user.scope.name|default('') }}</td>
+                    <td>{% if user.createdAt|date('Y') > 0 %}{{ user.createdAt|format_date("medium", "none") }}{% endif %}</td>
+                    <td>{% if user.relation.id|default %}
+                            <a href="{{ path('integrated_content_content_edit', {id: user.relation.id}) }}">{{ user.relation.name|default }} {{ user.relation.firstname|default }} {{ user.relation.lastname|default }}</a>
+                        {% endif %}
                     </td>
+                </tr>
+            {% endfor %}
+        {% endset %}
+        {{ component('integrated_admin:data_table', {
+            colGroupHtml: userTableColGroupHtml,
+            headHtml: userTableHeadHtml,
+            bodyHtml: userTableBodyHtml,
+            colSpan: 6,
+            emptyMessage: 'No users found for the current filters.'|trans,
+        }) }}
+        </form>
 
-                <td>{{ user.scope.name|default('') }}</td>
-                <td>{% if user.createdAt|date('Y') > 0 %}{{ user.createdAt|format_date("medium", "none") }}{% endif %}</td>
-                <td>{% if user.relation.id|default %}
-                        <a href="{{ path('integrated_content_content_edit', {id: user.relation.id}) }}">{{ user.relation.name|default }} {{ user.relation.firstname|default }} {{ user.relation.lastname|default }}</a>
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
-    {% endset %}
-    {{ component('integrated_admin:data_table', {
-        colGroupHtml: userTableColGroupHtml,
-        headHtml: userTableHeadHtml,
-        bodyHtml: userTableBodyHtml,
-        colSpan: 6,
-        emptyMessage: 'No users found for the current filters.'|trans,
-    }) }}
-    </form>
-
-    {{ knp_pagination_render(users, '@KnpPaginator/Pagination/sliding.html.twig') }}
+        {{ knp_pagination_render(users, '@KnpPaginator/Pagination/sliding.html.twig') }}
+    {% endblock %}
 
 {% endcomponent %}
 

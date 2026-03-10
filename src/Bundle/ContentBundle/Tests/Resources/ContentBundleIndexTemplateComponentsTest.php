@@ -36,6 +36,15 @@ final class ContentBundleIndexTemplateComponentsTest extends TestCase
         self::assertStringContainsString("'No relations added'|trans", $template);
     }
 
+    public function testContentTypeIndexKeepsCreateActionInlineWithTitle(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content_type/index.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString('titleHtml: pageTitleHtml', $template);
+        self::assertStringNotContainsString('actionsHtml: createActionsHtml', $template);
+    }
+
     public static function pageTitleProvider(): iterable
     {
         yield ['channel/index.html.twig'];

@@ -1,7 +1,7 @@
 {% set wrapperClass = this.wrapperClass %}
 {% set headingElement = headingTag in ['h1', 'h2', 'h3'] ? headingTag : 'h1' %}
 <div class="{{ wrapperClass }}">
-    <div class="heading flex justify-between w-full">
+    <div class="flex heading items-center w-full">
         <div>
             {% if titleHtml and titleHtml|trim is not empty %}
                 {{ titleHtml|raw }}
