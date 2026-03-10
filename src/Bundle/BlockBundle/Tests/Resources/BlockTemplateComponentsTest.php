@@ -25,6 +25,17 @@ final class BlockTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:data_table'", $template);
     }
 
+    public function testBlockSidebarTemplatesUseAdminAsidePanel(): void
+    {
+        $newTemplate = file_get_contents(__DIR__.'/../../Resources/views/block/new.html.twig');
+        $editTemplate = file_get_contents(__DIR__.'/../../Resources/views/block/edit.html.twig');
+
+        self::assertIsString($newTemplate);
+        self::assertIsString($editTemplate);
+        self::assertStringContainsString("component('integrated_admin:aside_panel'", $newTemplate);
+        self::assertSame(2, substr_count($editTemplate, "component('integrated_admin:aside_panel'"));
+    }
+
     /**
      * @dataProvider blockCrudTemplateProvider
      */

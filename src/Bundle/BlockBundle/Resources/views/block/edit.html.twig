@@ -21,95 +21,87 @@
                             </button>
                             <span>{% trans %}Options{% endtrans %}</span>
                         </div>
-                        <div class="aside-item-wrapper show">
-                            <div class="aside-item-header">
-                                <h3 class="aside-item-title">
-                                    <i class="iconoir-info-circle"></i>
-                                    <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
-                                </h3>
-                                <i class="iconoir-nav-arrow-up"></i>
-                            </div>
-                            <div class="aside-item-list">
-                                <div class="aside-item-list-container">
-                                    <div class="status-info">
-                                        <div class="form-group">
-                                            <label class="control-label w-full sm:w-1/3 required"
-                                                   for="block_edit_searchSelection">Block
-                                                type</label>
-                                            <div class="w-full sm:w-2/3">
-                                                {{ blockType }}
-                                            </div>
-                                        </div>
-                                        {% if form.publishedAt is defined %}
-                                            {{ form_row(form.publishedAt) }}
-                                        {% endif %}
-                                        {% if form.publishedUntil is defined %}
-                                            {{ form_row(form.publishedUntil) }}
-                                        {% endif %}
+                        {% set blockEditStatusPanelHtml %}
+                            <div class="status-info">
+                                <div class="form-group">
+                                    <label class="control-label w-full sm:w-1/3 required"
+                                           for="block_edit_searchSelection">Block
+                                        type</label>
+                                    <div class="w-full sm:w-2/3">
+                                        {{ blockType }}
                                     </div>
-                                    <div class="status-options">
-                                        {% if form.publishedAt is defined %}
-                                            <div class="status published">
-                                                <i class="iconoir-check-circle"></i> {% trans %}Published{% endtrans %}
-                                            </div>
-                                            <a class="delete"
-                                               href="{{ path('integrated_block_block_delete', {'id': block.id}) }}">
-                                                <i class="iconoir-trash"></i>
+                                </div>
+                                {% if form.publishedAt is defined %}
+                                    {{ form_row(form.publishedAt) }}
+                                {% endif %}
+                                {% if form.publishedUntil is defined %}
+                                    {{ form_row(form.publishedUntil) }}
+                                {% endif %}
+                            </div>
+                            <div class="status-options">
+                                {% if form.publishedAt is defined %}
+                                    <div class="status published">
+                                        <i class="iconoir-check-circle"></i> {% trans %}Published{% endtrans %}
+                                    </div>
+                                    <a class="delete"
+                                       href="{{ path('integrated_block_block_delete', {'id': block.id}) }}">
+                                        <i class="iconoir-trash"></i>
+                                    </a>
+                                {% else %}
+                                    <div class="status draft">
+                                        <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endset %}
+                        {{ component('integrated_admin:aside_panel', {
+                            title: 'Status'|trans,
+                            icon: 'info-circle',
+                            withHolder: false,
+                            indicatorIcon: 'nav-arrow-up',
+                            contentHtml: blockEditStatusPanelHtml,
+                        }) }}
+                        {% set blockEditUsedOnPanelHtml %}
+                            {% if usedPages|length > 0 %}
+                                {% if usedChannels|length > 0 %}
+                                    <h4>{% trans %}Channels{% endtrans %}</h4>
+                                    <ul>
+                                        {% for channel in usedChannels %}
+                                            {% if channel.name is defined %}
+                                                <li>{{ channel.name }}</li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                                <h4>{% trans %}Pages{% endtrans %}</h4>
+                                <ul>
+                                    {% for page in usedPages %}
+                                        {% set channelId = page.channel['$id']|default(null) %}
+                                        {% set channelName = null %}
+                                        {% if channelId and usedChannels[channelId] is defined and usedChannels[channelId].name is defined %}
+                                            {% set channelName = usedChannels[channelId].name %}
+                                        {% endif %}
+                                        <li>
+                                            <a href="{{ path('integrated_page_page_edit', {'id': page['_id']}) }}" target="_blank" rel="noopener noreferrer">
+                                                {{ page.title|default(page['_id']) }}
                                             </a>
-                                        {% else %}
-                                            <div class="status draft">
-                                                <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="aside-item-wrapper show">
-                            <div class="aside-item-header">
-                                <h3 class="aside-item-title">
-                                    <i class="iconoir-link"></i>
-                                    <span class="aside-item-icon">{% trans %}Used on{% endtrans %}</span>
-                                </h3>
-                                <i class="iconoir-nav-arrow-up"></i>
-                            </div>
-                            <div class="aside-item-list">
-                                <div class="aside-item-list-container">
-                                    {% if usedPages|length > 0 %}
-                                        {% if usedChannels|length > 0 %}
-                                            <h4>{% trans %}Channels{% endtrans %}</h4>
-                                            <ul>
-                                                {% for channel in usedChannels %}
-                                                    {% if channel.name is defined %}
-                                                        <li>{{ channel.name }}</li>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </ul>
-                                        {% endif %}
-                                        <h4>{% trans %}Pages{% endtrans %}</h4>
-                                        <ul>
-                                            {% for page in usedPages %}
-                                                {% set channelId = page.channel['$id']|default(null) %}
-                                                {% set channelName = null %}
-                                                {% if channelId and usedChannels[channelId] is defined and usedChannels[channelId].name is defined %}
-                                                    {% set channelName = usedChannels[channelId].name %}
-                                                {% endif %}
-                                                <li>
-                                                    <a href="{{ path('integrated_page_page_edit', {'id': page['_id']}) }}" target="_blank" rel="noopener noreferrer">
-                                                        {{ page.title|default(page['_id']) }}
-                                                    </a>
-                                                    {% if channelName %}
-                                                        <small>({{ channelName }})</small>
-                                                    {% endif %}
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
-                                    {% else %}
-                                        <p>{% trans %}This block is not used on any pages yet.{% endtrans %}</p>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
+                                            {% if channelName %}
+                                                <small>({{ channelName }})</small>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p>{% trans %}This block is not used on any pages yet.{% endtrans %}</p>
+                            {% endif %}
+                        {% endset %}
+                        {{ component('integrated_admin:aside_panel', {
+                            title: 'Used on'|trans,
+                            icon: 'link',
+                            withHolder: false,
+                            indicatorIcon: 'nav-arrow-up',
+                            contentHtml: blockEditUsedOnPanelHtml,
+                        }) }}
                         {% block content_meta %}
                             {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR'))  %}
                                 {{ form_row(child) }}
