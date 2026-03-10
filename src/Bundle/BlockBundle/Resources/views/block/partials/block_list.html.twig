@@ -1,118 +1,116 @@
-<section class="section-white section-radius">
-
-    <div class="row flex flex-wrap">
-        <div class="w-full">
-
-            <table class="table table-fixed">
-                <thead>
+{% component 'integrated_admin:section_card' %}
+    {% block content %}
+        <div class="row flex flex-wrap">
+            <div class="w-full">
+                {% set blockTableHeadHtml %}
                     <tr>
                         <th>{{ knp_pagination_sortable(blocks, 'Block name'|trans, 'title') }}</th>
                         <th>{{ knp_pagination_sortable(blocks, 'Short code'|trans, 'id') }}</th>
                         <th>{{ knp_pagination_sortable(blocks, 'Type'|trans, 'type') }}</th>
                         <th>{% trans %}Used on{% endtrans %}</th>
                     </tr>
-                </thead>
-                <tbody>
-
-                {% for block in blocks %}
-                    {% set usedPages = integrated_find_pages(block) %}
-                    {% set usedChannels = integrated_find_channels(block) %}
-                    <tr class="has-options">
-                        <td>
-                            <strong>
-                                <a href="{{ path('integrated_block_block_edit', {id: block.id}) }}">
-                                    {{ block.title }}
-                                </a>
-                            </strong>
-                            <div class="row-options">
-                                <a href="{{ path('integrated_block_block_edit', { 'id': block.id}) }}"
-                                   title="{% trans %}Edit{% endtrans %}">
-                                    {% trans %}Edit{% endtrans %}
-                                </a>
-                                {% if not block.locked and (is_granted('ROLE_ADMIN') or is_granted('ROLE_WEBSITE_MANAGER')) %}
-                                    {% if not usedPages %}
-                                        | <a href="{{ path('integrated_block_block_delete', { 'id': block.id }) }}"
-                                             class="color-red" title="{% trans %}Delete{% endtrans %}">
-                                        {% trans %}Delete{% endtrans %}
+                {% endset %}
+                {% set blockTableBodyHtml %}
+                    {% for block in blocks %}
+                        {% set usedPages = integrated_find_pages(block) %}
+                        {% set usedChannels = integrated_find_channels(block) %}
+                        <tr class="has-options">
+                            <td>
+                                <strong>
+                                    <a href="{{ path('integrated_block_block_edit', {id: block.id}) }}">
+                                        {{ block.title }}
                                     </a>
+                                </strong>
+                                <div class="row-options">
+                                    <a href="{{ path('integrated_block_block_edit', { 'id': block.id}) }}"
+                                       title="{% trans %}Edit{% endtrans %}">
+                                        {% trans %}Edit{% endtrans %}
+                                    </a>
+                                    {% if not block.locked and (is_granted('ROLE_ADMIN') or is_granted('ROLE_WEBSITE_MANAGER')) %}
+                                        {% if not usedPages %}
+                                            | <a href="{{ path('integrated_block_block_delete', { 'id': block.id }) }}"
+                                                 class="color-red" title="{% trans %}Delete{% endtrans %}">
+                                            {% trans %}Delete{% endtrans %}
+                                        </a>
+                                        {% endif %}
                                     {% endif %}
-                                {% endif %}
-                            </div>
-                        </td>
-                        <td class="break-word">
-                            {{ block.id }}
-                        </td>
-                        <td>
-                            {{ block|integrated_block_type }}
-                        </td>
-                        <td>
-                            {% if usedPages|length > 0 %}
-                                {% set pageList %}
-                                    {% if usedChannels|length > 0 %}
-                                        <h3>{% trans %}Channels{% endtrans %}</h3>
+                                </div>
+                            </td>
+                            <td class="break-word">
+                                {{ block.id }}
+                            </td>
+                            <td>
+                                {{ block|integrated_block_type }}
+                            </td>
+                            <td>
+                                {% if usedPages|length > 0 %}
+                                    {% set pageList %}
+                                        {% if usedChannels|length > 0 %}
+                                            <h3>{% trans %}Channels{% endtrans %}</h3>
+                                            <ul>
+                                                {% for channel in usedChannels %}
+                                                    {% if channel.name is defined %}
+                                                        <li>{{ channel.name }}</li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </ul>
+                                        {% endif %}
+                                        <h3>{% trans %}Pages{% endtrans %}</h3>
                                         <ul>
-                                            {% for channel in usedChannels %}
-                                                {% if channel.name is defined %}
-                                                    <li>{{ channel.name }}</li>
+                                            {% for page in usedPages %}
+                                                {% set channelId = page.channel['$id']|default(null) %}
+                                                {% set channelName = null %}
+                                                {% if channelId and usedChannels[channelId] is defined and usedChannels[channelId].name is defined %}
+                                                    {% set channelName = usedChannels[channelId].name %}
                                                 {% endif %}
+                                                <li>
+                                                    <a href="{{ path('integrated_page_page_edit', {'id': page['_id']}) }}" target="_blank" rel="noopener noreferrer">
+                                                        {{ page.title|default(page['_id']) }}
+                                                    </a>
+                                                    {% if channelName %}
+                                                        <small>({{ channelName }})</small>
+                                                    {% endif %}
+                                                </li>
                                             {% endfor %}
                                         </ul>
-                                    {% endif %}
-                                    <h3>{% trans %}Pages{% endtrans %}</h3>
-                                    <ul>
-                                        {% for page in usedPages %}
-                                            {% set channelId = page.channel['$id']|default(null) %}
-                                            {% set channelName = null %}
-                                            {% if channelId and usedChannels[channelId] is defined and usedChannels[channelId].name is defined %}
-                                                {% set channelName = usedChannels[channelId].name %}
-                                            {% endif %}
-                                            <li>
-                                                <a href="{{ path('integrated_page_page_edit', {'id': page['_id']}) }}" target="_blank" rel="noopener noreferrer">
-                                                    {{ page.title|default(page['_id']) }}
-                                                </a>
-                                                {% if channelName %}
-                                                    <small>({{ channelName }})</small>
-                                                {% endif %}
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                {% endset %}
+                                    {% endset %}
 
-                                <button type="button"
-                                        class="btn btn-white"
-                                        data-toggle="popover"
-                                        data-trigger="click"
-                                        data-content="{{ pageList|e('html_attr') }}"
-                                        data-html="true"
-                                        data-placement="left"
-                                        data-container="body">
-                                    {{ usedPages|length }}
-                                    <i class="iconoir-list"></i>
-                                </button>
-                            {% else %}
-                                <small>-</small>
-                            {% endif %}
-                        </td>
-                    </tr>
+                                    <button type="button"
+                                            class="btn btn-white"
+                                            data-toggle="popover"
+                                            data-trigger="click"
+                                            data-content="{{ pageList|e('html_attr') }}"
+                                            data-html="true"
+                                            data-placement="left"
+                                            data-container="body">
+                                        {{ usedPages|length }}
+                                        <i class="iconoir-list"></i>
+                                    </button>
+                                {% else %}
+                                    <small>-</small>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endset %}
+                {% set emptyBlocksMessage %}
+                    {% if facetFilter.vars.value.q|default or facetFilter.vars.value.type|default or facetFilter.vars.value.channels|default %}
+                        {% trans %}No blocks found{% endtrans %}
+                    {% else %}
+                        {% trans %}No blocks added{% endtrans %}
+                    {% endif %}
+                {% endset %}
+                {{ component('integrated_admin:data_table', {
+                    headHtml: blockTableHeadHtml,
+                    bodyHtml: blockTableBodyHtml,
+                    emptyMessage: emptyBlocksMessage|trim,
+                    colSpan: 4,
+                    hover: false,
+                    extraClass: 'table-fixed',
+                }) }}
 
-                {% else %}
-
-                    <tr>
-                        <td colspan="4">
-                            {% if facetFilter.vars.value.q|default or facetFilter.vars.value.type|default or facetFilter.vars.value.channels|default %}
-                                {% trans %}No blocks found{% endtrans %}
-                            {% else %}
-                                {% trans %}No blocks added{% endtrans %}
-                            {% endif %}
-                        </td>
-                    </tr>
-
-                {% endfor %}
-
-                </tbody>
-            </table>
-
-            {{ knp_pagination_render(blocks, '@KnpPaginator/Pagination/sliding.html.twig') }}
+                {{ knp_pagination_render(blocks, '@KnpPaginator/Pagination/sliding.html.twig') }}
+            </div>
         </div>
-    </div>
-</section>
+    {% endblock %}
+{% endcomponent %}

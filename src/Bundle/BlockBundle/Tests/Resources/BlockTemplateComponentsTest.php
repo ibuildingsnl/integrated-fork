@@ -8,6 +8,15 @@ use PHPUnit\Framework\TestCase;
 
 final class BlockTemplateComponentsTest extends TestCase
 {
+    public function testBlockListPartialUsesAdminSectionCardAndDataTable(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/block/partials/block_list.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
+        self::assertStringContainsString("component('integrated_admin:data_table'", $template);
+    }
+
     /**
      * @dataProvider blockCrudTemplateProvider
      */
