@@ -4,8 +4,7 @@
 {% block content %}
     <div class="row">
         <div class="index-wrapper-full">
-            <div class="page-title">
-                <h1 class="heading">{% trans %}Connectors{% endtrans %}</h1>
+            {% set createActionsHtml %}
                 <ul class="options-no-bg">
                     <li class="dropdown close-outside" data-underlay="no">
                         <a href="#" data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
@@ -22,28 +21,28 @@
                         </ul>
                     </li>
                 </ul>
-            </div>
+            {% endset %}
+            {{ component('integrated_admin:page_title', {
+                title: 'Connectors'|trans,
+                actionsHtml: createActionsHtml,
+            }) }}
 
-            <section class="section-white section-radius">
-
-                <table class="table table-hover">
-
+            {% component 'integrated_admin:section_card' %}
+                {% block content %}
+                {% set configTableColGroupHtml %}
                     <colgroup>
                         <col style="width: 20%"/>
                         <col/>
                     </colgroup>
-
-                    <thead>
+                {% endset %}
+                {% set configTableHeadHtml %}
                     <tr>
                         <th>{% trans %}Name{% endtrans %}</th>
                         <th>{% trans %}Connector{% endtrans %}</th>
                     </tr>
-                    </thead>
-
-                    <tbody>
-
+                {% endset %}
+                {% set configTableBodyHtml %}
                     {% for data in pager %}
-
                         <tr class="has-options">
                             <td>
                             <strong>
@@ -60,16 +59,18 @@
                             </td>
                             <td>{{ data.adapter }}</td>
                         </tr>
-
                     {% endfor %}
-
-                    </tbody>
-
-                </table>
+                {% endset %}
+                {{ component('integrated_admin:data_table', {
+                    colGroupHtml: configTableColGroupHtml,
+                    headHtml: configTableHeadHtml,
+                    bodyHtml: configTableBodyHtml,
+                    colSpan: 2,
+                }) }}
 
                 {{ knp_pagination_render(pager, '@KnpPaginator/Pagination/sliding.html.twig') }}
-
-            </section>
+                {% endblock %}
+            {% endcomponent %}
         </div>
     </div>
 {% endblock %}

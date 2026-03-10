@@ -3,8 +3,7 @@
 {% block content %}
     <div class="row">
         <div class="index-wrapper-full">
-            <div class="page-title">
-                <h1 class="heading">{% trans %}User scopes{% endtrans %}</h1>
+            {% set createActionsHtml %}
                 <ul class="create">
                     <li>
                         <a class="btn btn-create-new" href="{{ path('integrated_user_scope_new') }}">
@@ -13,27 +12,27 @@
                         </a>
                     </li>
                 </ul>
-            </div>
-            <section class="section-white section-radius">
-
-                <table class="table table-hover">
-
+            {% endset %}
+            {{ component('integrated_admin:page_title', {
+                title: 'User scopes'|trans,
+                actionsHtml: createActionsHtml,
+            }) }}
+            {% component 'integrated_admin:section_card' %}
+                {% block content %}
+                {% set scopeTableColGroupHtml %}
                     <colgroup>
                         <col style="width: 3em"/>
                         <col/>
                     </colgroup>
-
-                    <thead>
+                {% endset %}
+                {% set scopeTableHeadHtml %}
                     <tr>
                         <th>#</th>
                         <th>Name</th>
                     </tr>
-                    </thead>
-
-                    <tbody>
-
+                {% endset %}
+                {% set scopeTableBodyHtml %}
                     {% for scope in scopes %}
-
                         <tr class="has-options">
                             <td>{{ scope.id }}</td>
                             <td>
@@ -50,16 +49,18 @@
                                 </div>
                             </td>
                         </tr>
-
                     {% endfor %}
-
-                    </tbody>
-
-                </table>
+                {% endset %}
+                {{ component('integrated_admin:data_table', {
+                    colGroupHtml: scopeTableColGroupHtml,
+                    headHtml: scopeTableHeadHtml,
+                    bodyHtml: scopeTableBodyHtml,
+                    colSpan: 2,
+                }) }}
 
                 {{ knp_pagination_render(scopes, '@KnpPaginator/Pagination/sliding.html.twig') }}
-
-            </section>
+                {% endblock %}
+            {% endcomponent %}
         </div>
     </div>
 {% endblock %}
