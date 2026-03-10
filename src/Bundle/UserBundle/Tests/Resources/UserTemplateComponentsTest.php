@@ -75,6 +75,7 @@ final class UserTemplateComponentsTest extends TestCase
         self::assertIsString($template);
         self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
         self::assertStringContainsString("component('integrated_admin:data_table'", $template);
+        self::assertStringContainsString("component('integrated_admin:row_actions'", $template);
         self::assertStringContainsString("'No users found for the current filters.'|trans", $template);
     }
 

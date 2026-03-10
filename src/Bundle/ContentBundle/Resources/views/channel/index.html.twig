@@ -36,14 +36,17 @@
                                         {{ document.name }}
                                     </a>
                                 </strong>
-                                <div class="row-options">
+                                {% set channelRowActionsHtml %}
                                     <a href="{{ path('integrated_content_channel_edit', {'id': document.id}) }}" title="{% trans %}Edit{% endtrans %}">
                                         {% trans %}Edit{% endtrans %}
                                     </a> |
                                     <a class="color-red" href="{{ path('integrated_content_channel_delete', {'id': document.id}) }}" title="{% trans %}Delete{% endtrans %}">
                                         {% trans %}Delete{% endtrans %}
                                     </a>
-                                </div>
+                                {% endset %}
+                                {{ component('integrated_admin:row_actions', {
+                                    contentHtml: channelRowActionsHtml,
+                                }) }}
                             </td>
                             <td class="id">
                                 {{ document.id }}

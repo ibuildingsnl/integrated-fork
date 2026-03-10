@@ -38,12 +38,15 @@
                                         {{ workflow.name }}
                                     </a>
                                 </strong>
-                                <div class="row-options">
+                                {% set workflowRowActionsHtml %}
                                     <a href="{{ path('integrated_workflow_edit', {'id': workflow.id}) }}"
                                        title="{% trans %}Edit{% endtrans %}">{% trans %}Edit{% endtrans %}</a> |
                                     <a href="{{ path('integrated_workflow_delete', {'id': workflow.id}) }}"
                                        class="color-red" title="{% trans %}Delete{% endtrans %}">{% trans %}Delete{% endtrans %}</a>
-                                </div>
+                                {% endset %}
+                                {{ component('integrated_admin:row_actions', {
+                                    contentHtml: workflowRowActionsHtml,
+                                }) }}
                             </td>
                         </tr>
                     {% endfor %}

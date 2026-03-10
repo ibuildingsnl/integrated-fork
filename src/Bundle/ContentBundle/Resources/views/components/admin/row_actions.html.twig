@@ -1,0 +1,7 @@
+<div class="{{ this.classes }}">
+    {% if contentHtml %}
+        {{ contentHtml|raw }}
+    {% elseif block('content') is defined and block('content')|trim is not empty %}
+        {% block content %}{% endblock %}
+    {% endif %}
+</div>

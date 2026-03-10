@@ -52,12 +52,15 @@
                                         {{ searchSelection.title }}
                                     </a>
                                 </strong>
-                                <div class="row-options">
+                                {% set searchSelectionRowActionsHtml %}
                                     <a href="{{ path('integrated_content_search_selection_edit', {'id': searchSelection.id}) }}"
                                        title="{% trans %}Edit{% endtrans %}">{% trans %}Edit{% endtrans %}</a> |
                                     <a href="{{ path('integrated_content_search_selection_delete', {'id': searchSelection.id}) }}"
                                        class="color-red" title="{% trans %}Delete{% endtrans %}">{% trans %}Delete{% endtrans %}</a>
-                                </div>
+                                {% endset %}
+                                {{ component('integrated_admin:row_actions', {
+                                    contentHtml: searchSelectionRowActionsHtml,
+                                }) }}
                             </td>
                             <td>{{ searchSelection.id|default }}</td>
                             <td>

@@ -73,7 +73,7 @@
                             <strong>{{ user.username }}</strong>
                         </a>
                     {% endif %}
-                    <div class="row-options">
+                    {% set userRowActionsHtml %}
                         <a href="{{ path('integrated_user_user_edit', {'id': user.id}) }}"
                            title="{% trans %}Edit{% endtrans %}">{% trans %}Edit{% endtrans %}</a> |
                         <a href="{{ path('integrated_user_user_delete', {'id': user.id}) }}"
@@ -91,7 +91,10 @@
                         {% endif %}
                         | <a href="{{ path('integrated_user_user_delete_account', {'id': user.id}) }}"
                              class="color-red" title="{% trans %}Delete account{% endtrans %}">{% trans %}Delete account{% endtrans %}</a>
-                    </div>
+                    {% endset %}
+                    {{ component('integrated_admin:row_actions', {
+                        contentHtml: userRowActionsHtml,
+                    }) }}
                         </td>
 
                     <td>{{ user.scope.name|default('') }}</td>

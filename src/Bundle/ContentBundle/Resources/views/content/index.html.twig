@@ -117,7 +117,7 @@
                                 </a>
                             </strong>
                         </div>
-                        <div class="row-options">
+                        {% set contentRowActionsHtml %}
                             <a href="{{ editLink }}" data-turbo-frame="_top">
                                 {% trans %}Edit{% endtrans %}
                             </a> |
@@ -128,7 +128,10 @@
                                tabindex="-1" role="option">
                                 {% trans %}Delete{% endtrans %}
                             </a>
-                        </div>
+                        {% endset %}
+                        {{ component('integrated_admin:row_actions', {
+                            contentHtml: contentRowActionsHtml,
+                        }) }}
                     </td>
 
                     <td class="channels">

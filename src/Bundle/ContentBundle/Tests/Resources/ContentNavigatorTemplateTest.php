@@ -17,8 +17,7 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString('data-result-count="', $template);
         $this->assertStringContainsString('id="content-navigator-live-region"', $template);
         $this->assertStringContainsString('aria-live="polite"', $template);
-        $this->assertStringContainsString('role="button"', $template);
-        $this->assertStringContainsString('aria-expanded=', $template);
+        $this->assertStringContainsString("component('integrated_admin:aside_panel'", $template);
         $this->assertStringContainsString(
             "path('integrated_content_search_selection_delete', {'id': selection.id}) }}\"",
             $template
@@ -46,6 +45,7 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString('integrated_content_content_locks_status', $template);
         $this->assertStringContainsString("document.addEventListener('turbo:load', initLockPolling);", $template);
         $this->assertStringContainsString("document.addEventListener('turbo:frame-load', function(event)", $template);
+        $this->assertStringContainsString("component('integrated_admin:row_actions'", $template);
     }
 
     public function testIndexTemplatesKeepEditLinksPrefetchable(): void

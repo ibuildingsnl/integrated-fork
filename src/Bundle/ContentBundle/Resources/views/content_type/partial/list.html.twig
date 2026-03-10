@@ -25,7 +25,7 @@
                                 {{ document.name }}
                             </a>
                         </strong>
-                        <div class="row-options">
+                        {% set contentTypeRowActionsHtml %}
                             <a href="{{ path('integrated_content_content_type_edit', {'id': document.id}) }}"
                                title="{% trans %}Edit{% endtrans %}">
                                 {% trans %}Edit{% endtrans %}
@@ -35,7 +35,10 @@
                                title="{% trans %}Delete{% endtrans %}">
                                 {% trans %}Delete{% endtrans %}
                             </a>
-                        </div>
+                        {% endset %}
+                        {{ component('integrated_admin:row_actions', {
+                            contentHtml: contentTypeRowActionsHtml,
+                        }) }}
                     </td>
                     <td>
                         {{ document.id }}
@@ -64,7 +67,7 @@
                                 {{ document.name }}
                             </a>
                         </strong>
-                        <div class="row-options">
+                        {% set contentTypeRowActionsHtml %}
                             <a href="{{ path('integrated_content_content_type_edit', {'id': document.id}) }}"
                                title="{% trans %}Edit{% endtrans %}">
                                 {% trans %}Edit{% endtrans %}
@@ -74,7 +77,10 @@
                                title="{% trans %}Delete{% endtrans %}">
                                 {% trans %}Delete{% endtrans %}
                             </a>
-                        </div>
+                        {% endset %}
+                        {{ component('integrated_admin:row_actions', {
+                            contentHtml: contentTypeRowActionsHtml,
+                        }) }}
                     </td>
                     <td>
                         {{ document.id }}

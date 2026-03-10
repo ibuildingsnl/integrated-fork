@@ -39,6 +39,7 @@ final class AdminComponentRegistrationTest extends TestCase
             'integrated_admin:options_toolbar' => '@IntegratedContent/components/admin/options_toolbar.html.twig',
             'integrated_admin:pagination_footer' => '@IntegratedContent/components/admin/pagination_footer.html.twig',
             'integrated_admin:page_title' => '@IntegratedContent/components/admin/page_title.html.twig',
+            'integrated_admin:row_actions' => '@IntegratedContent/components/admin/row_actions.html.twig',
             'integrated_admin:section_card' => '@IntegratedContent/components/admin/section_card.html.twig',
             'integrated_admin:status_badge' => '@IntegratedContent/components/admin/status_badge.html.twig',
             'integrated_admin:taxonomy_category_picker' => '@IntegratedContent/components/admin/taxonomy_category_picker.html.twig',

@@ -35,13 +35,16 @@
                                         {{ document.name }}
                                     </a>
                                 </strong>
-                                <div class="row-options">
+                                {% set relationRowActionsHtml %}
                                     <a href="{{ path('integrated_content_relation_edit', {'id': document.id}) }}" title="{% trans %}Edit{% endtrans %}">
                                         {% trans %}Edit{% endtrans %}
                                     </a> |
                                     <a href="{{ path('integrated_content_relation_delete', {'id': document.id}) }}"
                                        class="color-red" title="{% trans %}Delete{% endtrans %}">{% trans %}Delete{% endtrans %}</a>
-                                </div>
+                                {% endset %}
+                                {{ component('integrated_admin:row_actions', {
+                                    contentHtml: relationRowActionsHtml,
+                                }) }}
                             </td>
                             <td>
                                 {{ document.type }}

@@ -17,6 +17,7 @@ use Integrated\Bundle\ContentBundle\Twig\Component\Admin\IframeModal;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\OptionsToolbar;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\PaginationFooter;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\PageTitle;
+use Integrated\Bundle\ContentBundle\Twig\Component\Admin\RowActions;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\SectionCard;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\StatusBadge;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\TaxonomyCategoryPicker;
@@ -434,6 +435,19 @@ final class AdminComponentRenderingTest extends KernelTestCase
         self::assertStringContainsString('for="relation_1_topics"', $output);
         self::assertStringContainsString('class="relation-items"', $output);
     }
+
+    #[Test]
+    public function itRendersRowActionsMarkup(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:row_actions', [
+            'contentHtml' => '<a href="/admin/example/1/edit">Edit</a> | <a class="color-red" href="/admin/example/1/delete">Delete</a>',
+            'extraClass' => 'compact-actions',
+        ])->toString();
+
+        self::assertStringContainsString('<div class="row-options compact-actions">', $output);
+        self::assertStringContainsString('/admin/example/1/edit', $output);
+        self::assertStringContainsString('color-red', $output);
+    }
 }
 
 final class AdminComponentRenderingTestKernel extends Kernel
@@ -482,6 +496,7 @@ final class AdminComponentRenderingTestKernel extends Kernel
         $services->set(FolderMenuPanel::class)->tag('twig.component');
         $services->set(IframeModal::class)->tag('twig.component');
         $services->set(PaginationFooter::class)->tag('twig.component');
+        $services->set(RowActions::class)->tag('twig.component');
         $services->set(TaxonomyCategoryPicker::class)->tag('twig.component');
         $services->set(PaginationFooterTestTwigExtension::class)->tag('twig.extension');
     }

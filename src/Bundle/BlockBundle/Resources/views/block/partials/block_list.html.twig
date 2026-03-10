@@ -21,7 +21,7 @@
                                         {{ block.title }}
                                     </a>
                                 </strong>
-                                <div class="row-options">
+                                {% set blockRowActionsHtml %}
                                     <a href="{{ path('integrated_block_block_edit', { 'id': block.id}) }}"
                                        title="{% trans %}Edit{% endtrans %}">
                                         {% trans %}Edit{% endtrans %}
@@ -34,7 +34,10 @@
                                         </a>
                                         {% endif %}
                                     {% endif %}
-                                </div>
+                                {% endset %}
+                                {{ component('integrated_admin:row_actions', {
+                                    contentHtml: blockRowActionsHtml,
+                                }) }}
                             </td>
                             <td class="break-word">
                                 {{ block.id }}

@@ -100,6 +100,13 @@
                 template="@IntegratedContent/components/admin/page_title.html.twig"
             />
         </service>
+        <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\RowActions">
+            <tag
+                name="twig.component"
+                key="integrated_admin:row_actions"
+                template="@IntegratedContent/components/admin/row_actions.html.twig"
+            />
+        </service>
         <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\SectionCard">
             <tag
                 name="twig.component"
