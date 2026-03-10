@@ -26,7 +26,7 @@ final class ContentBundleFormTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:aside_panel'", $template);
         self::assertStringContainsString("title: 'Relations'|trans", $template);
         self::assertStringContainsString("icon: 'info-circle'", $template);
-        self::assertStringContainsString("expanded: true", $template);
+        self::assertStringNotContainsString("expanded: true", $template);
         self::assertStringContainsString("withHolder: false", $template);
     }
 
@@ -45,6 +45,7 @@ final class ContentBundleFormTemplateComponentsTest extends TestCase
         self::assertStringContainsString("iconoir-{{ relation.vars.attr['data-icon'] }}", $template);
         self::assertStringContainsString("wrapperClass: 'relations'", $template);
         self::assertStringContainsString("containerClass: 'relation'", $template);
+        self::assertStringNotContainsString("expanded: true", $template);
     }
 
     public static function pageTitleProvider(): iterable

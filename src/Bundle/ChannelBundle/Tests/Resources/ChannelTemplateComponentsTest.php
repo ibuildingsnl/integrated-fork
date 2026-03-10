@@ -38,6 +38,8 @@ final class ChannelTemplateComponentsTest extends TestCase
 
         self::assertIsString($template);
         self::assertStringContainsString("component('integrated_admin:aside_panel'", $template);
+        self::assertStringNotContainsString("expanded: true", $template);
+        self::assertStringNotContainsString("wrapperClass: 'show'", $template);
     }
 
     public static function configCrudTemplateProvider(): iterable
