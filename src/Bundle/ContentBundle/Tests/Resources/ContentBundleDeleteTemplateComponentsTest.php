@@ -24,4 +24,17 @@ final class ContentBundleDeleteTemplateComponentsTest extends TestCase
         yield ['relation/delete.html.twig'];
         yield ['content_type/delete.html.twig'];
     }
+
+    public function testDeleteTemplatesUseAdminAlertBoxForWarnings(): void
+    {
+        $channelTemplate = file_get_contents(__DIR__.'/../../Resources/views/channel/delete.html.twig');
+        $contentTypeTemplate = file_get_contents(__DIR__.'/../../Resources/views/content_type/delete.html.twig');
+
+        self::assertIsString($channelTemplate);
+        self::assertIsString($contentTypeTemplate);
+        self::assertStringContainsString("component('integrated_admin:alert_box'", $channelTemplate);
+        self::assertStringContainsString("variant: 'warning'", $channelTemplate);
+        self::assertStringContainsString("component('integrated_admin:alert_box'", $contentTypeTemplate);
+        self::assertStringContainsString("variant: 'warning'", $contentTypeTemplate);
+    }
 }

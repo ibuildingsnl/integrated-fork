@@ -38,4 +38,13 @@ final class ContentBundleMiscTemplateComponentsTest extends TestCase
     {
         yield ['content_type/select.html.twig'];
     }
+
+    public function testReferencedAlertUsesAdminAlertBox(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/referencedAlert.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:alert_box'", $template);
+        self::assertStringContainsString("variant: 'danger'", $template);
+    }
 }

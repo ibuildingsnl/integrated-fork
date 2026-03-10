@@ -1,0 +1,12 @@
+{% set tagName = this.tagName %}
+<{{ tagName }} class="{{ this.classes() }}">
+    {% if dismissible %}
+        <button type="button" class="close" data-dismiss="alert" aria-label="{{ closeLabel }}"><i class="iconoir-xmark"></i>
+        </button>
+    {% endif %}
+    {% if bodyHtml %}
+        {{ bodyHtml|raw }}
+    {% elseif block('content') is defined and block('content')|trim is not empty %}
+        {% block content %}{% endblock %}
+    {% endif %}
+</{{ tagName }}>

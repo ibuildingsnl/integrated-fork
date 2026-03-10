@@ -1,4 +1,4 @@
-<div class="alert alert-danger">
+{% set referencedAlertBodyHtml %}
     {% trans %} This item is still on use by: {% endtrans %}<br>
     {% for item in referenced %}
         {% if item.action is defined %}
@@ -7,4 +7,8 @@
             {{ item.name }} &nbsp; {{ item.id }}<br>
         {% endif %}
     {% endfor %}
-</div>
+{% endset %}
+{{ component('integrated_admin:alert_box', {
+    variant: 'danger',
+    bodyHtml: referencedAlertBodyHtml,
+}) }}

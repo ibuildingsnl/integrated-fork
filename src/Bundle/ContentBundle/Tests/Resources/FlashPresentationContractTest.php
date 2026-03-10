@@ -38,12 +38,12 @@ class FlashPresentationContractTest extends TestCase
         $this->assertIsString($baseTemplate);
         $this->assertIsString($turboTemplate);
 
-        $this->assertStringContainsString('class="alert alert-{{ label }} alert-dismissible"', $baseTemplate);
-        $this->assertStringContainsString('class="close"', $baseTemplate);
-        $this->assertStringContainsString('aria-label="Close notification"', $baseTemplate);
+        $this->assertStringContainsString("component('integrated_admin:alert_box'", $baseTemplate);
+        $this->assertStringContainsString('dismissible: true', $baseTemplate);
+        $this->assertStringContainsString('bodyHtml: message|trans', $baseTemplate);
 
-        $this->assertStringContainsString('class="alert alert-{{ label }} alert-dismissible"', $turboTemplate);
-        $this->assertStringContainsString('class="close"', $turboTemplate);
-        $this->assertStringContainsString('aria-label="Close notification"', $turboTemplate);
+        $this->assertStringContainsString("component('integrated_admin:alert_box'", $turboTemplate);
+        $this->assertStringContainsString('dismissible: true', $turboTemplate);
+        $this->assertStringContainsString('bodyHtml: message|trans', $turboTemplate);
     }
 }

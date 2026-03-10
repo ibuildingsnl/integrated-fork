@@ -18,6 +18,7 @@ final class PageTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:data_table'", $template);
         self::assertStringContainsString("component('integrated_admin:pagination_footer'", $template);
         self::assertStringContainsString("component('integrated_admin:filter_search_input'", $template);
+        self::assertStringContainsString("component('integrated_admin:alert_box'", $template);
     }
 
     /**

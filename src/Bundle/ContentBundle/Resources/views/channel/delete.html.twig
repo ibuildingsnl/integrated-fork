@@ -20,9 +20,10 @@
                 </p>
                 {{ form_rest(form, {'style':'horizontal'})}}
                 {% if referenced %}
-                    <div class="alert alert-warning">
-                        {% trans %}This channel has related pages. Select "Delete related pages" to remove them before deleting the channel.{% endtrans %}
-                    </div>
+                    {{ component('integrated_admin:alert_box', {
+                        variant: 'warning',
+                        bodyHtml: 'This channel has related pages. Select "Delete related pages" to remove them before deleting the channel.'|trans,
+                    }) }}
                     {% include '@IntegratedContent/referencedAlert.html.twig' with {'referenced':referenced} only %}
                 {% endif %}
             </section>

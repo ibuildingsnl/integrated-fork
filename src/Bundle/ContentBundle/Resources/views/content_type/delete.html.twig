@@ -22,9 +22,10 @@
                 </p>
                 {{ form_rest(form, {'style':'horizontal'})}}
                 {% if hasRelatedContent %}
-                    <div class="alert alert-warning">
-                        {% trans %}This content type has related content. Select "Delete related content" to remove that content before deleting this content type.{% endtrans %}
-                    </div>
+                    {{ component('integrated_admin:alert_box', {
+                        variant: 'warning',
+                        bodyHtml: 'This content type has related content. Select "Delete related content" to remove that content before deleting this content type.'|trans,
+                    }) }}
                 {% endif %}
             </section>
         </div>

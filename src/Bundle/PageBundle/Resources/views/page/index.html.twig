@@ -13,7 +13,7 @@
                     {% set editUrl = '//'~lastPage.domain~path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': lastPage.path ~ '?integrated_website_edit=1'}) %}
                 {% endif %}
                 {#        //TODO: FIX THIS #}
-                <div class="alert alert-info alert-inline">
+                {% set lastChangedAlertBodyHtml %}
                     <div class="flex justify-between">
                         <span class="flex items-center"><b class="mr-2">{% trans %}Last changed{% endtrans %}:</b> "{{ lastPage.title }}" {% trans %}on{% endtrans %} "{{ lastPage.channel.name }}"</span>
                         <ul class="options-no-bg flex">
@@ -36,7 +36,12 @@
                             </li>
                         </ul>
                     </div>
-                </div>
+                {% endset %}
+                {{ component('integrated_admin:alert_box', {
+                    variant: 'info',
+                    extraClass: 'alert-inline',
+                    bodyHtml: lastChangedAlertBodyHtml,
+                }) }}
             {% endif %}
             {% set pageTitleHtml %}
                 <div class="flex items-center">

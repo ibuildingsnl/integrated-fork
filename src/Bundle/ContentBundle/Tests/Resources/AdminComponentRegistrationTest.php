@@ -26,6 +26,7 @@ final class AdminComponentRegistrationTest extends TestCase
     private function expectedComponentMap(): array
     {
         return [
+            'integrated_admin:alert_box' => '@IntegratedContent/components/admin/alert_box.html.twig',
             'integrated_admin:aside_panel' => '@IntegratedContent/components/admin/aside_panel.html.twig',
             'integrated_admin:confirm_modal' => '@IntegratedContent/components/admin/confirm_modal.html.twig',
             'integrated_admin:data_table' => '@IntegratedContent/components/admin/data_table.html.twig',

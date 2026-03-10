@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Integrated\Bundle\ContentBundle\Tests\Twig\Component\Admin;
 
+use Integrated\Bundle\ContentBundle\Twig\Component\Admin\AlertBox;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\AsidePanel;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\ConfirmModal;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\DataTable;
@@ -58,6 +59,22 @@ final class AdminComponentRenderingTest extends KernelTestCase
         self::assertStringContainsString('status-sent', $output);
         self::assertStringContainsString('Sent', $output);
         self::assertStringContainsString('Mail status', $output);
+    }
+
+    #[Test]
+    public function itRendersDismissibleAlertBoxMarkup(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:alert_box', [
+            'variant' => 'warning',
+            'dismissible' => true,
+            'bodyHtml' => '<strong>Heads up</strong>',
+            'extraClass' => 'alert-inline',
+        ])->toString();
+
+        self::assertStringContainsString('alert alert-warning alert-dismissible alert-inline', $output);
+        self::assertStringContainsString('class="close"', $output);
+        self::assertStringContainsString('aria-label="Close notification"', $output);
+        self::assertStringContainsString('<strong>Heads up</strong>', $output);
     }
 
     #[Test]
@@ -400,6 +417,7 @@ final class AdminComponentRenderingTestKernel extends Kernel
 
         $services = $container->services()->defaults()->autowire(true)->autoconfigure(true)->public();
 
+        $services->set(AlertBox::class)->tag('twig.component');
         $services->set(StatusBadge::class);
         $services->set(ConfirmModal::class)->tag('twig.component');
         $services->set(SectionCard::class);
