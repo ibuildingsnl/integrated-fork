@@ -17,4 +17,13 @@ final class ContentModalTemplateComponentsTest extends TestCase
         self::assertStringContainsString("modalId: 'navigator-edit-modal'", $template);
         self::assertStringContainsString("iframeId: 'editmodaliframe'", $template);
     }
+
+    public function testContentEditUsesAdminConfirmModalForUnsavedChanges(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content/edit.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:confirm_modal'", $template);
+        self::assertStringContainsString("modalId: 'content-edit-modal'", $template);
+    }
 }

@@ -1,0 +1,20 @@
+<div class="{{ this.modalClasses }}" id="{{ modalId }}"{% if modalAttributes %} {{ modalAttributes|raw }}{% endif %}>
+    <div class="{{ this.dialogClasses }}">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{% if titleHtml %}{{ titleHtml|raw }}{% else %}{{ title }}{% endif %}</h4>
+            </div>
+            <div class="modal-body">
+                {{ bodyHtml|default('')|raw }}
+            </div>
+            <div class="modal-footer">
+                {% if cancelHtml %}
+                    {{ cancelHtml|raw }}
+                {% endif %}
+                {% if confirmHtml %}
+                    {{ confirmHtml|raw }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

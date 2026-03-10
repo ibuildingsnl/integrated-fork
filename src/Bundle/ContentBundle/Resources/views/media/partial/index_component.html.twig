@@ -16,31 +16,32 @@
         {% endblock toolbar %}
     {% endif %}
 
-    <div class="modal fade" id="bulkdelete_confirm_popup" style="display: none;">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">{% trans %}Delete images{% endtrans %}</h4>
-                </div>
-                <div class="modal-body">
-                    <p>{% trans %}Are you sure you want to delete these files?{% endtrans %}</p>
+    {% set bulkDeleteModalBodyHtml %}
+        <p>{% trans %}Are you sure you want to delete these files?{% endtrans %}</p>
 
-                    <p id="used_images_message" style="display:none;">{% trans %}These images are currently used in other content{% endtrans %}</p>
-                    <p id="used_images"></p>
-                    <div id="used_image" class="used_image">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" data-modal-hide="popup-modal" id="cancel_delete" class="btn btn-white"
-                            data-dismiss="modal">{% trans %}Cancel{% endtrans %}
-                    </button>
-                    <button type="button" data-modal-hide="popup-modal" id="confirm_delete"
-                            class="btn btn-dark-green live-page">{% trans %}Remove images{% endtrans %}
-                    </button>
-                </div>
-            </div>
+        <p id="used_images_message" style="display:none;">{% trans %}These images are currently used in other content{% endtrans %}</p>
+        <p id="used_images"></p>
+        <div id="used_image" class="used_image">
         </div>
-    </div>
+    {% endset %}
+    {% set bulkDeleteModalCancelHtml %}
+        <button type="button" data-modal-hide="popup-modal" id="cancel_delete" class="btn btn-white"
+                data-dismiss="modal">{% trans %}Cancel{% endtrans %}
+        </button>
+    {% endset %}
+    {% set bulkDeleteModalConfirmHtml %}
+        <button type="button" data-modal-hide="popup-modal" id="confirm_delete"
+                class="btn btn-dark-green live-page">{% trans %}Remove images{% endtrans %}
+        </button>
+    {% endset %}
+    {{ component('integrated_admin:confirm_modal', {
+        modalId: 'bulkdelete_confirm_popup',
+        title: 'Delete images'|trans,
+        bodyHtml: bulkDeleteModalBodyHtml,
+        cancelHtml: bulkDeleteModalCancelHtml,
+        confirmHtml: bulkDeleteModalConfirmHtml,
+        modalAttributes: 'style="display: none;"',
+    }) }}
 
 
     <div class="aside-filters close-outside media-sidebar">

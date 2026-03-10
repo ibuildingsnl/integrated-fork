@@ -27,6 +27,7 @@ final class AdminComponentRegistrationTest extends TestCase
     {
         return [
             'integrated_admin:aside_panel' => '@IntegratedContent/components/admin/aside_panel.html.twig',
+            'integrated_admin:confirm_modal' => '@IntegratedContent/components/admin/confirm_modal.html.twig',
             'integrated_admin:data_table' => '@IntegratedContent/components/admin/data_table.html.twig',
             'integrated_admin:edit_drawer_panel' => '@IntegratedContent/components/admin/edit_drawer_panel.html.twig',
             'integrated_admin:filter_search_input' => '@IntegratedContent/components/admin/filter_search_input.html.twig',

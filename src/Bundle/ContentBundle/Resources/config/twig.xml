@@ -16,6 +16,13 @@
                 template="@IntegratedContent/components/admin/aside_panel.html.twig"
             />
         </service>
+        <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\ConfirmModal">
+            <tag
+                name="twig.component"
+                key="integrated_admin:confirm_modal"
+                template="@IntegratedContent/components/admin/confirm_modal.html.twig"
+            />
+        </service>
         <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\DataTable">
             <tag
                 name="twig.component"

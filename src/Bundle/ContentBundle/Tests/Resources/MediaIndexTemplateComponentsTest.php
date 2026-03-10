@@ -14,6 +14,7 @@ final class MediaIndexTemplateComponentsTest extends TestCase
 
         self::assertIsString($template);
         self::assertStringContainsString("component('integrated_admin:page_title'", $template);
+        self::assertStringContainsString("component('integrated_admin:confirm_modal'", $template);
         self::assertStringContainsString("titleHtml: mediaPageTitleHtml", $template);
         self::assertStringContainsString("actionsHtml: mediaPageTitleActionsHtml", $template);
         self::assertStringContainsString("contentHtml: mediaPageTitleContentHtml", $template);

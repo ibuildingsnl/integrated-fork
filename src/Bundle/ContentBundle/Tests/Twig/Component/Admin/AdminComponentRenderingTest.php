@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Integrated\Bundle\ContentBundle\Tests\Twig\Component\Admin;
 
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\AsidePanel;
+use Integrated\Bundle\ContentBundle\Twig\Component\Admin\ConfirmModal;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\DataTable;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\EditDrawerPanel;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\FilterGroup;
@@ -187,6 +188,28 @@ final class AdminComponentRenderingTest extends KernelTestCase
         self::assertStringNotContainsString('table-hover', $output);
         self::assertStringContainsString('colspan="2"', $output);
         self::assertStringContainsString('No rows found', $output);
+    }
+
+    #[Test]
+    public function itRendersConfirmModalMarkup(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:confirm_modal', [
+            'modalId' => 'content-edit-modal',
+            'title' => 'Unsaved changes',
+            'bodyHtml' => '<p>Leave this page?</p>',
+            'cancelHtml' => '<button type="button" class="btn btn-white" data-dismiss="modal">Stay</button>',
+            'confirmHtml' => '<button type="button" class="btn btn-dark-green live-page">Leave</button>',
+            'modalAttributes' => 'style="display: none;"',
+        ])->toString();
+
+        self::assertStringContainsString('modal fade', $output);
+        self::assertStringContainsString('id="content-edit-modal"', $output);
+        self::assertStringContainsString('style="display: none;"', $output);
+        self::assertStringContainsString('modal-title">Unsaved changes</h4>', $output);
+        self::assertStringContainsString('<div class="modal-body">', $output);
+        self::assertStringContainsString('Leave this page?', $output);
+        self::assertStringContainsString('btn btn-white', $output);
+        self::assertStringContainsString('btn btn-dark-green live-page', $output);
     }
 
     #[Test]
@@ -378,6 +401,7 @@ final class AdminComponentRenderingTestKernel extends Kernel
         $services = $container->services()->defaults()->autowire(true)->autoconfigure(true)->public();
 
         $services->set(StatusBadge::class);
+        $services->set(ConfirmModal::class)->tag('twig.component');
         $services->set(SectionCard::class);
         $services->set(PageTitle::class);
         $services->set(OptionsToolbar::class);
