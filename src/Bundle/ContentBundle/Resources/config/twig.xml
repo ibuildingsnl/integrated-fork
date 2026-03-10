@@ -9,6 +9,27 @@
         <defaults autowire="true" autoconfigure="true"/>
 
         <prototype namespace="Integrated\Bundle\ContentBundle\Twig\Component\" resource="../../Twig/Component" />
+        <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\AsidePanel">
+            <tag
+                name="twig.component"
+                key="integrated_admin:aside_panel"
+                template="@IntegratedContent/components/admin/aside_panel.html.twig"
+            />
+        </service>
+        <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\DataTable">
+            <tag
+                name="twig.component"
+                key="integrated_admin:data_table"
+                template="@IntegratedContent/components/admin/data_table.html.twig"
+            />
+        </service>
+        <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\EditDrawerPanel">
+            <tag
+                name="twig.component"
+                key="integrated_admin:edit_drawer_panel"
+                template="@IntegratedContent/components/admin/edit_drawer_panel.html.twig"
+            />
+        </service>
         <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\FilterGroup">
             <tag
                 name="twig.component"
@@ -23,11 +44,32 @@
                 template="@IntegratedContent/components/admin/folder_menu_panel.html.twig"
             />
         </service>
-        <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\EditDrawerPanel">
+        <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\OptionsToolbar">
             <tag
                 name="twig.component"
-                key="integrated_admin:edit_drawer_panel"
-                template="@IntegratedContent/components/admin/edit_drawer_panel.html.twig"
+                key="integrated_admin:options_toolbar"
+                template="@IntegratedContent/components/admin/options_toolbar.html.twig"
+            />
+        </service>
+        <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\PageTitle">
+            <tag
+                name="twig.component"
+                key="integrated_admin:page_title"
+                template="@IntegratedContent/components/admin/page_title.html.twig"
+            />
+        </service>
+        <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\SectionCard">
+            <tag
+                name="twig.component"
+                key="integrated_admin:section_card"
+                template="@IntegratedContent/components/admin/section_card.html.twig"
+            />
+        </service>
+        <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\StatusBadge">
+            <tag
+                name="twig.component"
+                key="integrated_admin:status_badge"
+                template="@IntegratedContent/components/admin/status_badge.html.twig"
             />
         </service>
 
