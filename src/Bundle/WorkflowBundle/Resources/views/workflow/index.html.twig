@@ -3,8 +3,7 @@
 {% block content %}
     <div class="row">
         <div class="index-wrapper-full">
-            <div class="page-title">
-                <h1 class="heading">{% trans %}Workflows{% endtrans %}</h1>
+            {% set createActionsHtml %}
                 <ul class="create">
                     <li>
                         <a class="btn btn-create-new" href="{{ path('integrated_workflow_new') }}">
@@ -13,25 +12,25 @@
                         </a>
                     </li>
                 </ul>
-            </div>
-            <section class="section-white section-radius">
-
-                <table class="table table-hover">
-
+            {% endset %}
+            {{ component('integrated_admin:page_title', {
+                title: 'Workflows'|trans,
+                actionsHtml: createActionsHtml,
+            }) }}
+            {% component 'integrated_admin:section_card' %}
+                {% block content %}
+                {% set workflowTableColGroupHtml %}
                     <colgroup>
                         <col/>
                     </colgroup>
-
-                    <thead>
+                {% endset %}
+                {% set workflowTableHeadHtml %}
                     <tr>
                         <th>Workflow</th>
                     </tr>
-                    </thead>
-
-                    <tbody>
-
+                {% endset %}
+                {% set workflowTableBodyHtml %}
                     {% for workflow in pager %}
-
                         <tr class="has-options">
                             <td>
                                 <strong>
@@ -47,16 +46,18 @@
                                 </div>
                             </td>
                         </tr>
-
                     {% endfor %}
-
-                    </tbody>
-
-                </table>
+                {% endset %}
+                {{ component('integrated_admin:data_table', {
+                    colGroupHtml: workflowTableColGroupHtml,
+                    headHtml: workflowTableHeadHtml,
+                    bodyHtml: workflowTableBodyHtml,
+                    colSpan: 1,
+                }) }}
 
                 {{ knp_pagination_render(pager, '@KnpPaginator/Pagination/sliding.html.twig') }}
-
-            </section>
+                {% endblock %}
+            {% endcomponent %}
 
         </div>
     </div>

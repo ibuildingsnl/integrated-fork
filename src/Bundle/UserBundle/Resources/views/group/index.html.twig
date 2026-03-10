@@ -3,8 +3,7 @@
 {% block content %}
     <div class="row">
         <div class="index-wrapper-full">
-            <div class="page-title">
-                <h1 class="heading">{% trans %}Groups{% endtrans %}</h1>
+            {% set createActionsHtml %}
                 <ul class="create">
                     <li>
                         <a class="btn btn-create-new" href="{{ path('integrated_user_group_new') }}">
@@ -13,29 +12,29 @@
                         </a>
                     </li>
                 </ul>
-            </div>
-            <section class="section-white section-radius">
-
-                <table class="table table-hover">
-
+            {% endset %}
+            {{ component('integrated_admin:page_title', {
+                title: 'Groups'|trans,
+                actionsHtml: createActionsHtml,
+            }) }}
+            {% component 'integrated_admin:section_card' %}
+                {% block content %}
+                {% set groupTableColGroupHtml %}
                     <colgroup>
                         <col style="width: 3em"/>
                         <col/>
                         <col/>
                     </colgroup>
-
-                    <thead>
+                {% endset %}
+                {% set groupTableHeadHtml %}
                     <tr>
                         <th>#</th>
                         <th>{% trans %}Name{% endtrans %}</th>
                         <th>{% trans %}Users{% endtrans %}</th>
                     </tr>
-                    </thead>
-
-                    <tbody>
-
+                {% endset %}
+                {% set groupTableBodyHtml %}
                     {% for group in groups %}
-
                         <tr class="has-options">
                             <td>{{ group.id }}</td>
                             <td>
@@ -55,16 +54,18 @@
                                 {{ userCountsByGroupId[group.id]|default(0) }}
                             </td>
                         </tr>
-
                     {% endfor %}
-
-                    </tbody>
-
-                </table>
+                {% endset %}
+                {{ component('integrated_admin:data_table', {
+                    colGroupHtml: groupTableColGroupHtml,
+                    headHtml: groupTableHeadHtml,
+                    bodyHtml: groupTableBodyHtml,
+                    colSpan: 3,
+                }) }}
 
                 {{ knp_pagination_render(groups, '@KnpPaginator/Pagination/sliding.html.twig') }}
-
-            </section>
+                {% endblock %}
+            {% endcomponent %}
         </div>
     </div>
 {% endblock %}
