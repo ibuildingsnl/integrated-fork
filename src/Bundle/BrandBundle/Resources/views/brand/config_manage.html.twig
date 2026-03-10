@@ -20,64 +20,47 @@
                             </button>
                             <span>{% trans %}Options{% endtrans %}</span>
                         </div>
-                        <div class="aside-item-wrapper show">
-                            <div class="aside-item-header">
-                                <h3 class="aside-item-title">
-                                    <i class="iconoir-info-circle"></i>
-                                    <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
-                                </h3>
-                                <i class="iconoir-nav-arrow-up"></i>
+                        {% set brandConfigManageStatusPanelHtml %}
+                            <div class="status-info">
+                                {% if form.publicationStartDate is defined %}
+                                    {{ form_row(form.publicationStartDate) }}
+                                {% endif %}
                             </div>
-                            {% if new %}
-                            <div class="aside-item-list">
-                                <div class="aside-item-list-container">
-                                    <div class="status-info">
-                                        {% if form.publicationStartDate is defined %}
-                                            {{ form_row(form.publicationStartDate) }}
-                                        {% endif %}
+                            <div class="status-options">
+                                {% if new %}
+                                    <div class="status draft">
+                                        <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
                                     </div>
-                                    <div class="status-options">
-                                        <div class="status draft">
-                                            <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
-                                        </div>
+                                {% elseif config.publicationStartDate is defined and ('now'|date('U') > config.publicationStartDate|date('U')) %}
+                                    <div class="status published">
+                                        <i class="iconoir-check-circle"></i> {% trans %}Published{% endtrans %}
                                     </div>
-                                </div>
+                                    <a class="delete"
+                                       href="{{ path('integrated_channel_config_delete', {'id': config.id}) }}">
+                                        <i class="iconoir-trash"></i>
+                                    </a>
+                                {% elseif ('now'|date('U') < config.publicationStartDate|date('U')) %}
+                                    <div class="status planned">
+                                        <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
+                                    </div>
+                                    <a class="delete"
+                                       href="{{ path('integrated_channel_config_delete', {'id': config.id}) }}">
+                                        <i class="iconoir-trash"></i>
+                                    </a>
+                                {% else %}
+                                    <div class="status draft">
+                                        <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
+                                    </div>
+                                {% endif %}
                             </div>
-                            {% else %}
-                            <div class="aside-item-list">
-                                <div class="aside-item-list-container">
-                                    <div class="status-info">
-                                        {% if form.publicationStartDate is defined %}
-                                            {{ form_row(form.publicationStartDate) }}
-                                        {% endif %}
-                                    </div>
-                                    <div class="status-options">
-                                        {% if config.publicationStartDate is defined and ('now'|date('U') > config.publicationStartDate|date('U'))%}
-                                            <div class="status published">
-                                                <i class="iconoir-check-circle"></i> {% trans %}Published{% endtrans %}
-                                            </div>
-                                            <a class="delete"
-                                               href="{{ path('integrated_channel_config_delete', {'id': config.id}) }}">
-                                                <i class="iconoir-trash"></i>
-                                            </a>
-                                        {% elseif ('now'|date('U') < config.publicationStartDate|date('U')) %}
-                                            <div class="status planned">
-                                                <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
-                                            </div>
-                                            <a class="delete"
-                                               href="{{ path('integrated_channel_config_delete', {'id': config.id}) }}">
-                                                <i class="iconoir-trash"></i>
-                                            </a>
-                                        {% else %}
-                                            <div class="status draft">
-                                                <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
+                        {% endset %}
+                        {{ component('integrated_admin:aside_panel', {
+                            title: 'Status'|trans,
+                            icon: 'info-circle',
+                            withHolder: false,
+                            indicatorIcon: 'nav-arrow-up',
+                            contentHtml: brandConfigManageStatusPanelHtml,
+                        }) }}
                         {% block content_meta %}
                             {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR'))  %}
                                 {{ form_row(child) }}

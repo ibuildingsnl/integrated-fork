@@ -39,6 +39,15 @@ final class BrandTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:data_table'", $template);
     }
 
+    public function testBrandConfigManageUsesAdminAsidePanelForStatusSidebar(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/brand/config_manage.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:aside_panel'", $template);
+        self::assertStringContainsString("title: 'Status'|trans", $template);
+    }
+
     public static function brandCrudTemplateProvider(): iterable
     {
         yield ['brand/delete.html.twig'];
