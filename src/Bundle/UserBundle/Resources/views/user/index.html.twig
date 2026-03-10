@@ -14,7 +14,7 @@
     } %}
     <div class="row flex flex-wrap">
         <div class="index-wrapper">
-            <div class="page-title flex justify-between flex-wrap">
+            {% set userIndexTitleHtml %}
                 <div class="flex items-center">
                     <h1 class="heading">{% trans %}Users{% endtrans %}</h1>
                     <ul class="create">
@@ -26,29 +26,44 @@
                         </li>
                     </ul>
                 </div>
+            {% endset %}
+            {% set userIndexActionsHtml %}
                 <button class="toggle-filters toggle-data-target btn btn-orange icon-left" data-target="aside-filters">
                     <i class="iconoir-filter-alt"></i>
                     <span>{% trans %}Filter{% endtrans %}</span>
                 </button>
-                <div class="options options-toolbar">
-                    <ul class="content-navigator-menu">
-                        <li class="dropdown close-outside" data-underlay="no">
-                            <a data-toggle="dropdown" role="button" id="sorting-list" class="btn btn-select space-between">
-                                <span>{% trans %}Sort by{% endtrans %}: {{ sortOptions[currentSort]|default(sortOptions['createdAt']) }}</span>
-                                <i class="iconoir-nav-arrow-down"></i>
-                            </a>
-                            <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
-                                {% for field, label in sortOptions %}
-                                    {% set nextDirection = (currentSort == field and currentDirection == 'asc') ? 'desc' : 'asc' %}
-                                    <li {% if currentSort == field %}class="active"{% endif %} role="presentation">
-                                        <a href="{{ path('integrated_user_user_index', app.request.query.all|merge({'sort': field, 'direction': nextDirection, 'page': 1})) }}" tabindex="-1" role="menuitem">{{ label }}</a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            {% endset %}
+            {% set userIndexSortingItemsHtml %}
+                {% for field, label in sortOptions %}
+                    {% set nextDirection = (currentSort == field and currentDirection == 'asc') ? 'desc' : 'asc' %}
+                    <li {% if currentSort == field %}class="active"{% endif %} role="presentation">
+                        <a href="{{ path('integrated_user_user_index', app.request.query.all|merge({'sort': field, 'direction': nextDirection, 'page': 1})) }}" tabindex="-1" role="menuitem">{{ label }}</a>
+                    </li>
+                {% endfor %}
+            {% endset %}
+            {% set userIndexToolbarContentHtml %}
+                <ul class="content-navigator-menu">
+                    <li class="dropdown close-outside" data-underlay="no">
+                        <a data-toggle="dropdown" role="button" id="sorting-list" class="btn btn-select space-between">
+                            <span>{% trans %}Sort by{% endtrans %}: {{ sortOptions[currentSort]|default(sortOptions['createdAt']) }}</span>
+                            <i class="iconoir-nav-arrow-down"></i>
+                        </a>
+                        <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
+                            {{ userIndexSortingItemsHtml }}
+                        </ul>
+                    </li>
+                </ul>
+            {% endset %}
+            {% set userIndexToolbarHtml %}
+                {{ component('integrated_admin:options_toolbar', {
+                    contentHtml: userIndexToolbarContentHtml
+                }) }}
+            {% endset %}
+            {{ component('integrated_admin:page_title', {
+                titleHtml: userIndexTitleHtml,
+                actionsHtml: userIndexActionsHtml,
+                contentHtml: userIndexToolbarHtml,
+            }) }}
 
             {% include '@IntegratedUser/user/partials/user_list.html.twig' %}
 

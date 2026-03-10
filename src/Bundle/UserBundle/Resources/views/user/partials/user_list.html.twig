@@ -1,4 +1,4 @@
-<section class="section-white section-radius">
+{% component 'integrated_admin:section_card' %}
     <form method="post" action="{{ path('integrated_user_user_bulk') }}">
     <input type="hidden" name="_token" value="{{ csrf_token('user_bulk_action') }}">
     <input type="hidden" name="enable_token" value="{{ csrf_token('user_enable') }}">
@@ -113,7 +113,7 @@
 
     {{ knp_pagination_render(users, '@KnpPaginator/Pagination/sliding.html.twig') }}
 
-</section>
+{% endcomponent %}
 
 <script>
     (function bindBulkUserSelectionAndActionFields() {

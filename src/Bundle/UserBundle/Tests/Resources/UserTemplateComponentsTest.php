@@ -8,6 +8,15 @@ use PHPUnit\Framework\TestCase;
 
 final class UserTemplateComponentsTest extends TestCase
 {
+    public function testUserIndexUsesAdminPageTitleAndOptionsToolbar(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/user/index.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:page_title'", $template);
+        self::assertStringContainsString("component('integrated_admin:options_toolbar'", $template);
+    }
+
     /**
      * @dataProvider indexTemplateProvider
      */
@@ -63,6 +72,7 @@ final class UserTemplateComponentsTest extends TestCase
         $template = file_get_contents(__DIR__.'/../../Resources/views/user/partials/user_list.html.twig');
 
         self::assertIsString($template);
+        self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
         self::assertStringContainsString("component('integrated_admin:data_table'", $template);
         self::assertStringContainsString("'No users found for the current filters.'|trans", $template);
     }
