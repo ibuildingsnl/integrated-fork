@@ -45,6 +45,18 @@ class ContentEditStatusStreamFlowTest extends TestCase
         $this->assertStringContainsString('ContentHistoryController::history', $template);
     }
 
+    public function testPublicationsPartialUsesAdminAsidePanelWhilePreservingJsHooks(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content/partial/publications.html.twig');
+
+        $this->assertIsString($template);
+        $this->assertStringContainsString("component('integrated_admin:aside_panel'", $template);
+        $this->assertStringContainsString("wrapperClass: 'publications'", $template);
+        $this->assertStringContainsString("withHolder: false", $template);
+        $this->assertStringContainsString('class="pub-count"', $template);
+        $this->assertStringContainsString('class="publication-list"', $template);
+    }
+
     public function testEditTemplateReinitializesPublicationInteractionsAfterTurboStreamReplace(): void
     {
         $template = file_get_contents(__DIR__.'/../../Resources/views/content/edit.html.twig');
