@@ -45,7 +45,7 @@
         <span>{% trans %}Filter{% endtrans %}</span>
     </button>
 </div>
-<div class="options options-toolbar flex justify-between sm:mr-2">
+{% set mediaToolbarContentHtml %}
     <div class="left flex flex-wrap">
         <button class="button_enable_grid_view toggle_view grid active switcher mr-2"><i
                 class="iconoir-view-grid"></i></button>
@@ -135,8 +135,12 @@
         </button>
 
     </div>
-</div>
-<div class="options options-toolbar flex flex-1">
+{% endset %}
+{{ component('integrated_admin:options_toolbar', {
+    extraClass: 'flex justify-between sm:mr-2',
+    contentHtml: mediaToolbarContentHtml,
+}) }}
+{% set mediaSearchToolbarContentHtml %}
     <form action="" class="media-search-form" method="get">
         <div class="form-group relative" style="width: 100%">
             {% set queryValue = app.request.query.get('q') %}
@@ -149,4 +153,8 @@
             <button type="submit"><i class="iconoir-search"></i></button>
         </div>
     </form>
-</div>
+{% endset %}
+{{ component('integrated_admin:options_toolbar', {
+    extraClass: 'flex flex-1',
+    contentHtml: mediaSearchToolbarContentHtml,
+}) }}
