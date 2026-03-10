@@ -17,4 +17,21 @@ final class WorkflowTemplateComponentsTest extends TestCase
         self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
         self::assertStringContainsString("component('integrated_admin:data_table'", $template);
     }
+
+    /**
+     * @dataProvider workflowCrudTemplateProvider
+     */
+    public function testWorkflowCrudTemplatesUseAdminPageTitleComponent(string $relativePath): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/'.$relativePath);
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:page_title'", $template);
+    }
+
+    public static function workflowCrudTemplateProvider(): iterable
+    {
+        yield ['workflow/edit.html.twig'];
+        yield ['workflow/delete.html.twig'];
+    }
 }

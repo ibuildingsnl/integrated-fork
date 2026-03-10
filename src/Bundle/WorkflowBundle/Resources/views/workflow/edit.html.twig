@@ -11,13 +11,16 @@
         {% endblock toolbar %}
         <div class="aside-options"></div>
         <div class="editor-wrapper editor-wrapper-full">
-            <div class="page-title">
+            {% set workflowTitleHtml %}
                 <h1 class="heading">
                     {% block contentTitle %}
                         {% trans %}Edit{% endtrans %} {% trans %}workflow{% endtrans %}
                     {% endblock %}
                 </h1>
-            </div>
+            {% endset %}
+            {{ component('integrated_admin:page_title', {
+                titleHtml: workflowTitleHtml,
+            }) }}
             <section class="editor editor-wrapped">
                 {{ form_errors(form) }}
 

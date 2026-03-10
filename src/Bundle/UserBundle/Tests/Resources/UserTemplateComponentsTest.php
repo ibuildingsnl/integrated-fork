@@ -28,6 +28,30 @@ final class UserTemplateComponentsTest extends TestCase
         yield ['ip_list/index.html.twig'];
     }
 
+    /**
+     * @dataProvider crudTemplateProvider
+     */
+    public function testCrudTemplatesUseAdminPageTitleComponent(string $relativePath): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/'.$relativePath);
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:page_title'", $template);
+    }
+
+    public static function crudTemplateProvider(): iterable
+    {
+        yield ['group/new.html.twig'];
+        yield ['group/edit.html.twig'];
+        yield ['group/delete.html.twig'];
+        yield ['scope/new.html.twig'];
+        yield ['scope/edit.html.twig'];
+        yield ['scope/delete.html.twig'];
+        yield ['ip_list/new.html.twig'];
+        yield ['ip_list/edit.html.twig'];
+        yield ['ip_list/delete.html.twig'];
+    }
+
     public function testUserListPartialUsesAdminDataTableComponent(): void
     {
         $template = file_get_contents(__DIR__.'/../../Resources/views/user/partials/user_list.html.twig');
