@@ -44,4 +44,22 @@ final class ContentHistoryTemplateComponentsTest extends TestCase
         yield ['content_history/show.html.twig'];
         yield ['content_history/show.iframe.html.twig'];
     }
+
+    /**
+     * @dataProvider historySidebarTemplateProvider
+     */
+    public function testHistorySidebarTemplatesUseAdminAsidePanel(string $relativePath): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/'.$relativePath);
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:aside_panel'", $template);
+        self::assertStringContainsString("titleHtml: historyTitleHtml", $template);
+    }
+
+    public static function historySidebarTemplateProvider(): iterable
+    {
+        yield ['content_history/history.html.twig'];
+        yield ['content_history/history.iframe.html.twig'];
+    }
 }

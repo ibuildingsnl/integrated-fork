@@ -1,41 +1,40 @@
 {% if documents|length %}
-    <div class="aside-item-wrapper">
-        <div class="aside-item-header">
-            <h3 class="aside-item-title">
-                <i class="iconoir-floppy-disk"></i>
-                <span class="aside-item-icon"><label class="control-label w-full">{% trans %}History{% endtrans %}</label></span>
-            </h3>
-            <i class="iconoir-nav-arrow-up"></i>
-        </div>
-        <div class="aside-item-list">
-            <div class="aside-item-list-container">
-            {% for document in documents|slice(0, limit) %}
-                <div class="media">
-                    <a href="{{ path('integrated_content_history_show_iframe', { 'id': document.id }) }}" data-turbo-frame="_top">
-                        <div class="media-left">
-                            <img class="media-object img-circle" src="https://www.gravatar.com/avatar/d41d8cd98f00b204e9800998ecf8427e?s=36" alt="">
-                        </div>
-                        <div class="media-body">
-                            <h4 class="media-heading">
-                                {{ document.user.name|default('Unknown'|trans) }}
-                            </h4>
+    {% set historyTitleHtml %}
+        <i class="iconoir-floppy-disk"></i>
+        <span class="aside-item-icon"><label class="control-label w-full">{% trans %}History{% endtrans %}</label></span>
+    {% endset %}
+    {% set historyPanelContentHtml %}
+        {% for document in documents|slice(0, limit) %}
+            <div class="media">
+                <a href="{{ path('integrated_content_history_show_iframe', { 'id': document.id }) }}" data-turbo-frame="_top">
+                    <div class="media-left">
+                        <img class="media-object img-circle" src="https://www.gravatar.com/avatar/d41d8cd98f00b204e9800998ecf8427e?s=36" alt="">
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading">
+                            {{ document.user.name|default('Unknown'|trans) }}
+                        </h4>
 
-                            <p>
-                                <small>
-                                    <span class="label label-primary">{{ document.action|trans }}</span>
-                                    {{ document.date|format_datetime('medium', 'short') }}
-                                </small>
-                            </p>
-                        </div>
-                    </a>
-                </div>
-            {% endfor %}
-
-            {% if documents|length > limit %}
-                <br />
-                <a href="{{ path('integrated_content_history_index_iframe', { 'id': content.id }) }}" data-turbo-frame="_top">{% trans %}Show full history{% endtrans %}</a>
-            {% endif %}
+                        <p>
+                            <small>
+                                <span class="label label-primary">{{ document.action|trans }}</span>
+                                {{ document.date|format_datetime('medium', 'short') }}
+                            </small>
+                        </p>
+                    </div>
+                </a>
             </div>
-        </div>
-    </div>
+        {% endfor %}
+
+        {% if documents|length > limit %}
+            <br />
+            <a href="{{ path('integrated_content_history_index_iframe', { 'id': content.id }) }}" data-turbo-frame="_top">{% trans %}Show full history{% endtrans %}</a>
+        {% endif %}
+    {% endset %}
+    {{ component('integrated_admin:aside_panel', {
+        titleHtml: historyTitleHtml,
+        withHolder: false,
+        indicatorIcon: 'nav-arrow-up',
+        contentHtml: historyPanelContentHtml,
+    }) }}
 {% endif %}
