@@ -29,10 +29,27 @@ final class ChannelTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:page_title'", $template);
     }
 
+    /**
+     * @dataProvider configSidebarTemplateProvider
+     */
+    public function testConfigSidebarTemplatesUseAdminAsidePanel(string $relativePath): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/'.$relativePath);
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:aside_panel'", $template);
+    }
+
     public static function configCrudTemplateProvider(): iterable
     {
         yield ['config/new.html.twig'];
         yield ['config/edit.html.twig'];
         yield ['config/delete.html.twig'];
+    }
+
+    public static function configSidebarTemplateProvider(): iterable
+    {
+        yield ['config/new.html.twig'];
+        yield ['config/edit.html.twig'];
     }
 }
