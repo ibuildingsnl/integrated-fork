@@ -27,6 +27,8 @@ final class AsidePanel
 
     public string $indicatorIcon = 'nav-arrow-down';
 
+    public bool $withHolder = true;
+
     public function wrapperClasses(): string
     {
         $classes = ['aside-item-wrapper'];

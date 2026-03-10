@@ -1,29 +1,33 @@
-<div class="aside-item-holder">
-    <div class="{{ this.wrapperClasses }}">
-        <div class="aside-item-header"
-             role="button"
-             tabindex="0"
-             aria-expanded="{% if expanded %}true{% else %}false{% endif %}">
-            <h3 class="aside-item-title">
-                {% if titleHtml and titleHtml|trim is not empty %}
-                    {{ titleHtml|raw }}
-                {% else %}
-                    {% if icon %}
-                        <i class="iconoir-{{ icon }}"></i>
-                    {% endif %}
-                    <span class="aside-item-icon">{{ title }}</span>
+{% if withHolder %}
+    <div class="aside-item-holder">
+{% endif %}
+<div class="{{ this.wrapperClasses }}">
+    <div class="aside-item-header"
+         role="button"
+         tabindex="0"
+         aria-expanded="{% if expanded %}true{% else %}false{% endif %}">
+        <h3 class="aside-item-title">
+            {% if titleHtml and titleHtml|trim is not empty %}
+                {{ titleHtml|raw }}
+            {% else %}
+                {% if icon %}
+                    <i class="iconoir-{{ icon }}"></i>
                 {% endif %}
-            </h3>
-            <i class="iconoir-{{ indicatorIcon }}"></i>
-        </div>
-        <div class="{{ this.listClasses }}">
-            <div class="{{ this.containerClasses }}">
-                {% if contentHtml %}
-                    {{ contentHtml|raw }}
-                {% elseif block('content') is defined and block('content')|trim is not empty %}
-                    {% block content %}{% endblock %}
-                {% endif %}
-            </div>
+                <span class="aside-item-icon">{{ title }}</span>
+            {% endif %}
+        </h3>
+        <i class="iconoir-{{ indicatorIcon }}"></i>
+    </div>
+    <div class="{{ this.listClasses }}">
+        <div class="{{ this.containerClasses }}">
+            {% if contentHtml %}
+                {{ contentHtml|raw }}
+            {% elseif block('content') is defined and block('content')|trim is not empty %}
+                {% block content %}{% endblock %}
+            {% endif %}
         </div>
     </div>
 </div>
+{% if withHolder %}
+    </div>
+{% endif %}

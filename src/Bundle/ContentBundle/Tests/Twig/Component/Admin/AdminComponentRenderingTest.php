@@ -213,6 +213,22 @@ final class AdminComponentRenderingTest extends KernelTestCase
         self::assertStringContainsString('filters-panel-body', $output);
         self::assertStringContainsString('filters_list', $output);
     }
+
+    #[Test]
+    public function itCanRenderAsidePanelWithoutHolderWrapper(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:aside_panel', [
+            'title' => 'Status',
+            'icon' => 'info-circle',
+            'expanded' => true,
+            'withHolder' => false,
+            'contentHtml' => '<div class="status-info">Example</div>',
+        ])->toString();
+
+        self::assertStringNotContainsString('aside-item-holder', $output);
+        self::assertStringContainsString('aside-item-wrapper show', $output);
+        self::assertStringContainsString('status-info', $output);
+    }
 }
 
 final class AdminComponentRenderingTestKernel extends Kernel

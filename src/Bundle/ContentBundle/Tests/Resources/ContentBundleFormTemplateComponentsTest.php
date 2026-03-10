@@ -27,6 +27,7 @@ final class ContentBundleFormTemplateComponentsTest extends TestCase
         self::assertStringContainsString("title: 'Relations'|trans", $template);
         self::assertStringContainsString("icon: 'info-circle'", $template);
         self::assertStringContainsString("expanded: true", $template);
+        self::assertStringContainsString("withHolder: false", $template);
     }
 
     public function testContentEditUsesAdminAsidePanelForStableSidebarBlocks(): void
@@ -39,6 +40,7 @@ final class ContentBundleFormTemplateComponentsTest extends TestCase
         self::assertStringContainsString("icon: 'info-circle'", $template);
         self::assertStringContainsString("title: 'Content Options'|trans", $template);
         self::assertStringContainsString("icon: 'settings'", $template);
+        self::assertSame(3, substr_count($template, "withHolder: false"));
         self::assertStringContainsString("titleHtml: relationSidebarTitleHtml", $template);
         self::assertStringContainsString("iconoir-{{ relation.vars.attr['data-icon'] }}", $template);
         self::assertStringContainsString("wrapperClass: 'relations'", $template);
