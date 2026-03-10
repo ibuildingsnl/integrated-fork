@@ -3,8 +3,7 @@
 {% block content %}
     <div class="row">
         <div class="index-wrapper-full">
-            <div class="page-title">
-                <h1 class="heading">{% trans %}Brands{% endtrans %}</h1>
+            {% set createActionsHtml %}
                 <ul class="create">
                     <li>
                         <a class="btn btn-create-new" href="{{ path('integrated_content_brand_new') }}">
@@ -15,19 +14,22 @@
                     <li><a class="btn btn-create-new" href="{{ path('integrated_content_channel_index') }}">{% trans %}All channels{% endtrans %}</a></li>
                     <li><a class="btn btn-create-new" href="{{ path('integrated_channel_config_index') }}">{% trans %}All connectors{% endtrans %}</a></li>
                 </ul>
-            </div>
+            {% endset %}
+            {{ component('integrated_admin:page_title', {
+                title: 'Brands'|trans,
+                actionsHtml: createActionsHtml,
+            }) }}
 
-            <section class="section-white section-radius">
-
-                <table class="table table-hover">
-                    <thead>
+            {% component 'integrated_admin:section_card' %}
+                {% block content %}
+                {% set brandTableHeadHtml %}
                     <tr>
                         <th class="name">{% trans %}Name{% endtrans %}</th>
                         <th class="id">{% trans %}Id{% endtrans %}</th>
                         <th class="channels">{% trans %}Channels{% endtrans %}</th>
                     </tr>
-                    </thead>
-                    <tbody>
+                {% endset %}
+                {% set brandTableBodyHtml %}
                     {% for document in documents %}
                         <tr class="has-options">
                             <td class="name">
@@ -52,16 +54,16 @@
                                 {{ document.channelTypeNames|join(', ') }}
                             </td>
                         </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="4">
-                                {% trans %}No brands added{% endtrans %}
-                            </td>
-                        </tr>
                     {% endfor %}
-                    </tbody>
-                </table>
-            </section>
+                {% endset %}
+                {{ component('integrated_admin:data_table', {
+                    headHtml: brandTableHeadHtml,
+                    bodyHtml: brandTableBodyHtml,
+                    emptyMessage: 'No brands added'|trans,
+                    colSpan: 3,
+                }) }}
+                {% endblock %}
+            {% endcomponent %}
         </div>
     </div>
 {% endblock %}

@@ -27,4 +27,13 @@ final class UserTemplateComponentsTest extends TestCase
         yield ['scope/index.html.twig'];
         yield ['ip_list/index.html.twig'];
     }
+
+    public function testUserListPartialUsesAdminDataTableComponent(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/user/partials/user_list.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:data_table'", $template);
+        self::assertStringContainsString("'No users found for the current filters.'|trans", $template);
+    }
 }

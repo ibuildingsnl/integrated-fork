@@ -28,9 +28,7 @@
         <button type="submit" class="btn btn-orange">{% trans %}Apply{% endtrans %}</button>
         <span id="bulk-selection-count" class="text-sm">0 {% trans %}selected{% endtrans %}</span>
     </div>
-
-    <table class="table table-hover">
-
+    {% set userTableColGroupHtml %}
         <colgroup>
             <col style="width: 3em"/>
             <col style="width: 3em"/>
@@ -38,8 +36,8 @@
             <col/>
             <col style="width: 5em"/>
         </colgroup>
-
-        <thead>
+    {% endset %}
+    {% set userTableHeadHtml %}
         <tr>
             <th>
                 <input type="checkbox" id="bulk_select_all">
@@ -50,10 +48,8 @@
             <th>{% trans %}Date created{% endtrans %}</th>
             <th>{% trans %}Relation{% endtrans %}</th>
         </tr>
-        </thead>
-
-        <tbody>
-
+    {% endset %}
+    {% set userTableBodyHtml %}
         {% for user in users %}
             <tr class="has-options">
                 <td>
@@ -104,20 +100,15 @@
                     {% endif %}
                 </td>
             </tr>
-
-        {% else %}
-            <tr>
-                <td colspan="6">
-                    <div class="alert alert-info m-0">
-                        {% trans %}No users found for the current filters.{% endtrans %}
-                    </div>
-                </td>
-            </tr>
         {% endfor %}
-
-        </tbody>
-
-    </table>
+    {% endset %}
+    {{ component('integrated_admin:data_table', {
+        colGroupHtml: userTableColGroupHtml,
+        headHtml: userTableHeadHtml,
+        bodyHtml: userTableBodyHtml,
+        colSpan: 6,
+        emptyMessage: 'No users found for the current filters.'|trans,
+    }) }}
     </form>
 
     {{ knp_pagination_render(users, '@KnpPaginator/Pagination/sliding.html.twig') }}
