@@ -14,6 +14,7 @@ final class BlockTemplateComponentsTest extends TestCase
 
         self::assertIsString($template);
         self::assertStringContainsString("component('integrated_admin:page_title'", $template);
+        self::assertStringContainsString("component('integrated_admin:filter_search_input'", $template);
     }
 
     public function testBlockListPartialUsesAdminSectionCardAndDataTable(): void

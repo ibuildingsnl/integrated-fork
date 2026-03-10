@@ -210,11 +210,9 @@
                     {{ form_start(filterForm) }}
 
                     {% if filterForm.q is defined %}
-                        <div class="aside-item-holder">
-                            <div class="input-group input-group-search">
-                                {{ form_widget(filterForm.q) }}
-                            </div>
-                        </div>
+                        {{ component('integrated_admin:filter_search_input', {
+                            inputHtml: form_widget(filterForm.q),
+                        }) }}
                     {% endif %}
                     {% if filterForm.pagetype is defined %}
                         <div

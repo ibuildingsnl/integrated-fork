@@ -80,16 +80,15 @@
                         </a>
                     </div>
                     {{ form_start(facetFilter) }}
-                    <div class="aside-item-holder">
-                        <div class="input-group input-group-search">
-                            {{ form_widget(facetFilter.q) }}
-                            <span class="input-group-btn">
-                                <button type="submit" class="">
-                                    <i class="iconoir-search"></i>
-                                </button>
-                            </span>
-                        </div>
-                    </div>
+                    {% set userSearchButtonHtml %}
+                        <button type="submit" class="">
+                            <i class="iconoir-search"></i>
+                        </button>
+                    {% endset %}
+                    {{ component('integrated_admin:filter_search_input', {
+                        inputHtml: form_widget(facetFilter.q),
+                        buttonHtml: userSearchButtonHtml,
+                    }) }}
 
                     {% block user_filter_groups %}
                     <div class="aside-item-holder {% if facetFilter.groups|length == 0 %} hidden{% endif %}">

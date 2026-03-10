@@ -15,6 +15,7 @@ final class UserTemplateComponentsTest extends TestCase
         self::assertIsString($template);
         self::assertStringContainsString("component('integrated_admin:page_title'", $template);
         self::assertStringContainsString("component('integrated_admin:options_toolbar'", $template);
+        self::assertStringContainsString("component('integrated_admin:filter_search_input'", $template);
     }
 
     /**
