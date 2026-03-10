@@ -98,7 +98,7 @@
 
         <service id="integrated_content.facet_setting.channel" class="Integrated\Bundle\ContentBundle\Twig\FacetSettings">
             <argument>channels</argument>
-            <argument type="expression">true</argument>
+            <argument type="expression">false</argument>
             <argument type="service" id="integrated_content.twig_title.channel" />
             <tag name="integrated_content.facet_setting" />
         </service>
