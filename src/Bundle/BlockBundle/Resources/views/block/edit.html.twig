@@ -120,9 +120,9 @@
             </aside>
         </div>
         <div class="editor-wrapper">
-            <div class="page-title">
-                <h1 class="heading">{% trans %}Edit{% endtrans %} {% trans %}block{% endtrans %}</h1>
-            </div>
+            {{ component('integrated_admin:page_title', {
+                title: ('Edit'|trans) ~ ' ' ~ ('block'|trans),
+            }) }}
             <section class="editor editor-wrapped">
                 <div id="integrated_block_block">
                     {{ form_errors(form) }}

@@ -50,6 +50,12 @@ final class UserTemplateComponentsTest extends TestCase
         yield ['ip_list/new.html.twig'];
         yield ['ip_list/edit.html.twig'];
         yield ['ip_list/delete.html.twig'];
+        yield ['profile/index.html.twig'];
+        yield ['two_factor/delete.html.twig'];
+        yield ['user/new.html.twig'];
+        yield ['user/edit.html.twig'];
+        yield ['user/delete.html.twig'];
+        yield ['user/delete_account.html.twig'];
     }
 
     public function testUserListPartialUsesAdminDataTableComponent(): void
