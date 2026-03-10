@@ -24,20 +24,16 @@
                             {% endfor %}
                         {% endblock %}
                     {% endblock %}
-                    <div class="aside-item-wrapper show">
-                        <div class="aside-item-header">
-                            <h3 class="aside-item-title">
-                                <i class="iconoir-info-circle"></i>
-                                <span class="aside-item-icon">{% trans %}Relations{% endtrans %}</span>
-                            </h3>
-                            <i class="iconoir-nav-arrow-up"></i>
-                        </div>
-                        <div class="aside-item-list">
-                            <div class="aside-item-list-container">
-                                {{ render(controller("Integrated\\Bundle\\ContentBundle\\Controller\\RelationController::index", {'contentType': contentType.id, '_format': 'inline.html'})) }}
-                            </div>
-                        </div>
-                    </div>
+                    {% set relationsPanelContentHtml %}
+                        {{ render(controller("Integrated\\Bundle\\ContentBundle\\Controller\\RelationController::index", {'contentType': contentType.id, '_format': 'inline.html'})) }}
+                    {% endset %}
+                    {{ component('integrated_admin:aside_panel', {
+                        title: 'Relations'|trans,
+                        icon: 'info-circle',
+                        expanded: true,
+                        indicatorIcon: 'nav-arrow-up',
+                        contentHtml: relationsPanelContentHtml,
+                    }) }}
                 </div>
             </aside>
         </div>

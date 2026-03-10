@@ -38,34 +38,30 @@
                                     <i class="iconoir-xmark"></i></button>
                                 <span>{% trans %}Options{% endtrans %}</span>
                             </div>
-                            <div class="aside-item-wrapper show">
-                                <div class="aside-item-header">
-                                    <h3 class="aside-item-title">
-                                        <i class="iconoir-info-circle"></i>
-                                        <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
-                                    </h3>
-                                    <i class="iconoir-nav-arrow-up"></i>
+                            {% set statusPanelContentHtml %}
+                                <div class="status-info">
+                                    {% if form.publishTime is defined %}
+                                        {{ form_row(form.publishTime, {style: 'inline'}) }}
+                                    {% endif %}
                                 </div>
-                                <div class="aside-item-list">
-                                    <div class="aside-item-list-container">
-                                        <div class="status-info">
-                                            {% if form.publishTime is defined %}
-                                                {{ form_row(form.publishTime, {style: 'inline'}) }}
-                                            {% endif %}
-                                        </div>
-                                        {{ include('@IntegratedContent/content/partial/workflow_info.html.twig') }}
-                                        {{ include('@IntegratedContent/content/partial/status_options.html.twig') }}
-                                        <div class="mt-2">
-                                            {% if form.disabled is defined %}
-                                                {{ form_row(form.disabled) }}
-                                            {% endif %}
-                                            {% if form.orderable is defined %}
-                                                {{ form_row(form.orderable) }}
-                                            {% endif %}
-                                        </div>
-                                    </div>
+                                {{ include('@IntegratedContent/content/partial/workflow_info.html.twig') }}
+                                {{ include('@IntegratedContent/content/partial/status_options.html.twig') }}
+                                <div class="mt-2">
+                                    {% if form.disabled is defined %}
+                                        {{ form_row(form.disabled) }}
+                                    {% endif %}
+                                    {% if form.orderable is defined %}
+                                        {{ form_row(form.orderable) }}
+                                    {% endif %}
                                 </div>
-                            </div>
+                            {% endset %}
+                            {{ component('integrated_admin:aside_panel', {
+                                title: 'Status'|trans,
+                                icon: 'info-circle',
+                                expanded: true,
+                                indicatorIcon: 'nav-arrow-up',
+                                contentHtml: statusPanelContentHtml,
+                            }) }}
 
                             {{ include('@IntegratedContent/content/partial/publications.html.twig') }}
 
@@ -81,30 +77,24 @@
                                     {% endfor %}
                                 {% endif %}
                                 {% if options == true %}
-                                    <div class="aside-item-wrapper">
-                                        <div class="aside-item-header">
-                                            <h3 class="aside-item-title">
-                                                <i class="iconoir-settings"></i>
-                                                <span
-                                                    class="aside-item-icon">{% trans %}Content Options{% endtrans %}</span>
-                                            </h3>
-                                            <i class="iconoir-nav-arrow-up"></i>
-                                        </div>
-                                        <div class="aside-item-list">
-                                            <div class="aside-item-list-container">
-                                                {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
-                                                    {{ form_row(child) }}
+                                    {% set contentOptionsPanelContentHtml %}
+                                        {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                            {{ form_row(child) }}
+                                        {% endfor %}
+                                        {% block custom_sidebar_fields %}
+                                            {% if form.children.customFields is defined %}
+                                                {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                                    {{ form_row(field) }}
                                                 {% endfor %}
-                                                {% block custom_sidebar_fields %}
-                                                    {% if form.children.customFields is defined %}
-                                                        {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
-                                                            {{ form_row(field) }}
-                                                        {% endfor %}
-                                                    {% endif %}
-                                                {% endblock %}
-                                            </div>
-                                        </div>
-                                    </div>
+                                            {% endif %}
+                                        {% endblock %}
+                                    {% endset %}
+                                    {{ component('integrated_admin:aside_panel', {
+                                        title: 'Content Options'|trans,
+                                        icon: 'settings',
+                                        indicatorIcon: 'nav-arrow-up',
+                                        contentHtml: contentOptionsPanelContentHtml,
+                                    }) }}
                                 {% endif %}
                             {% endblock %}
 
@@ -130,45 +120,43 @@
                                     <input type="hidden" id="default_references" value="{{ references }}">
                                     {% for relation in form.relations %}
                                         {% if relation.vars.attr['data-location'] == 'sidebar' %}
+                                            {% set relationSidebarTitleHtml %}
+                                                <i class="iconoir-{{ relation.vars.attr['data-icon'] }}"></i>
+                                                <label
+                                                    class="aside-item-icon"
+                                                    for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
+                                            {% endset %}
+                                            {% set relationSidebarContentHtml %}
+                                                {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
+                                                    {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
+                                                        relation: relation,
+                                                        form_relations: formRelations|default(null),
+                                                    } %}
 
-                                            <div class="aside-item-wrapper relations">
-                                                <div class="aside-item-header">
-                                                    <h3 class="aside-item-title">
-                                                        <i class="iconoir-{{ relation.vars.attr['data-icon'] }}"></i>
-                                                        <label
-                                                            class="aside-item-icon"
-                                                            for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
-                                                    </h3>
-                                                    <i class="iconoir-nav-arrow-up"></i>
-                                                </div>
-                                                <div class="aside-item-list">
+                                                {% elseif relation.vars.attr['data-relationtype'] == 'taxonomy_category' %}
+                                                    {% include '@IntegratedContent/content/partial/category_selection_component.html.twig' %}
 
-                                                    <div class="aside-item-list-container relation">
-                                                        {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
-                                                            {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
-                                                                relation: relation,
-                                                                form_relations: formRelations|default(null),
-                                                            } %}
-
-                                                        {% elseif relation.vars.attr['data-relationtype'] == 'taxonomy_category' %}
-                                                            {% include '@IntegratedContent/content/partial/category_selection_component.html.twig' %}
-
-                                                        {% else %}
-                                                            <select
-                                                                multiple
-                                                                id="{{ relation.vars.name }}"
-                                                                data-multiple="{{ relation.vars.attr['data-multiple'] }}"
-                                                                data-types="{{ relation.vars.attr['data-types'] }}"
-                                                                data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
-                                                                data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
-                                                                class="relation-items form-control"
-                                                                style="display: none; width: 89%">
-                                                            </select>
-                                                            <span class="input-group-addon" data-add="1"></span>
-                                                        {% endif %}
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                {% else %}
+                                                    <select
+                                                        multiple
+                                                        id="{{ relation.vars.name }}"
+                                                        data-multiple="{{ relation.vars.attr['data-multiple'] }}"
+                                                        data-types="{{ relation.vars.attr['data-types'] }}"
+                                                        data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
+                                                        data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
+                                                        class="relation-items form-control"
+                                                        style="display: none; width: 89%">
+                                                    </select>
+                                                    <span class="input-group-addon" data-add="1"></span>
+                                                {% endif %}
+                                            {% endset %}
+                                            {{ component('integrated_admin:aside_panel', {
+                                                titleHtml: relationSidebarTitleHtml,
+                                                wrapperClass: 'relations',
+                                                containerClass: 'relation',
+                                                indicatorIcon: 'nav-arrow-up',
+                                                contentHtml: relationSidebarContentHtml,
+                                            }) }}
                                         {% endif %}
                                     {% endfor %}
                                 {% endif %}

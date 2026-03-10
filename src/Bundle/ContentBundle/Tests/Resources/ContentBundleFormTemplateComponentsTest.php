@@ -18,6 +18,33 @@ final class ContentBundleFormTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:page_title'", $template);
     }
 
+    public function testContentTypeEditUsesAdminAsidePanelForRelationsSidebar(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content_type/edit.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:aside_panel'", $template);
+        self::assertStringContainsString("title: 'Relations'|trans", $template);
+        self::assertStringContainsString("icon: 'info-circle'", $template);
+        self::assertStringContainsString("expanded: true", $template);
+    }
+
+    public function testContentEditUsesAdminAsidePanelForStableSidebarBlocks(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content/edit.html.twig');
+
+        self::assertIsString($template);
+        self::assertSame(3, substr_count($template, "component('integrated_admin:aside_panel'"));
+        self::assertStringContainsString("title: 'Status'|trans", $template);
+        self::assertStringContainsString("icon: 'info-circle'", $template);
+        self::assertStringContainsString("title: 'Content Options'|trans", $template);
+        self::assertStringContainsString("icon: 'settings'", $template);
+        self::assertStringContainsString("titleHtml: relationSidebarTitleHtml", $template);
+        self::assertStringContainsString("iconoir-{{ relation.vars.attr['data-icon'] }}", $template);
+        self::assertStringContainsString("wrapperClass: 'relations'", $template);
+        self::assertStringContainsString("containerClass: 'relation'", $template);
+    }
+
     public static function pageTitleProvider(): iterable
     {
         yield ['channel/new.html.twig'];
