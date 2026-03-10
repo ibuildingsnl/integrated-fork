@@ -1,0 +1,20 @@
+<div class="{{ this.wrapperClasses }}">
+    <div class="aside-item-header">
+        <h3 class="aside-item-title">
+            {% if titleHtml and titleHtml|trim is not empty %}
+                {{ titleHtml|raw }}
+            {% else %}
+                {{ title }}
+            {% endif %}
+        </h3>
+    </div>
+    <div class="{{ this.listClasses }}"{% if listStyle %} style="{{ listStyle }}"{% endif %}>
+        <div class="{{ this.containerClasses }}">
+            {% if contentHtml %}
+                {{ contentHtml|raw }}
+            {% elseif block('content') is defined and block('content')|trim is not empty %}
+                {% block content %}{% endblock %}
+            {% endif %}
+        </div>
+    </div>
+</div>

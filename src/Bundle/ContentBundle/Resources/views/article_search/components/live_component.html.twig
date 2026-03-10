@@ -9,62 +9,62 @@
 <div {{ attributes }} data-article-search-root="">
     <div class="flex flex-row">
         <aside class="aside-item-wrapper">
-            <div class="aside-item-container">
-                <div class="aside-item-header">
-                    <h3 class="aside-item-title">{{ this.translations.channels|default('Channels') }}</h3>
-                </div>
-                <div class="aside-item-list form-group w-full flex flex-wrap overflow-y-auto" style="max-height: calc(-35px + 50vh);">
-                    <div class="aside-item-list-container w-full">
-                        <ul class="filters_list">
-                        {% for channel in this.channels %}
-                            <li>
-                                <label class="radiobutton-container" for="{{ channel.key|e('html_attr') }}">
-                                    <input
-                                        type="radio"
-                                        id="{{ channel.key|e('html_attr') }}"
-                                        name="channel"
-                                        value="{{ channel.key }}"
-                                        data-model="channelId"
-                                        {% if this.channelId == channel.key %}checked{% endif %}
-                                    />
-                                    <span class="radiobutton"></span>
-                                    <div class="background"></div>
-                                    {{ channel.label }}
-                                </label>
-                            </li>
-                        {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            {% set channelFilterGroupContentHtml %}
+                <ul class="filters_list">
+                {% for channel in this.channels %}
+                    <li>
+                        <label class="radiobutton-container" for="{{ channel.key|e('html_attr') }}">
+                            <input
+                                type="radio"
+                                id="{{ channel.key|e('html_attr') }}"
+                                name="channel"
+                                value="{{ channel.key }}"
+                                data-model="channelId"
+                                {% if this.channelId == channel.key %}checked{% endif %}
+                            />
+                            <span class="radiobutton"></span>
+                            <div class="background"></div>
+                            {{ channel.label }}
+                        </label>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% endset %}
+            {{ component('integrated_admin:filter_group', {
+                title: this.translations.channels|default('Channels'),
+                listClass: 'form-group w-full flex flex-wrap overflow-y-auto',
+                containerClass: 'w-full',
+                listStyle: 'max-height: calc(-35px + 50vh);',
+                contentHtml: channelFilterGroupContentHtml,
+            }) }}
 
-            <div class="aside-item-container">
-                <div class="aside-item-header">
-                    <h3 class="aside-item-title">{{ this.translations.content_types|default('Content types') }}</h3>
-                </div>
-                <div class="aside-item-list form-group w-full flex flex-wrap overflow-y-auto" style="max-height: calc(-35px + 50vh);">
-                    <div class="aside-item-list-container w-full">
-                        <ul class="filters_list">
-                            {% for contentType in this.contentTypes %}
-                                <li class="checkbox">
-                                    <label for="{{ contentType.key|e('html_attr') }}" class="checkbox-container">
-                                        <input
-                                            id="{{ contentType.key|e('html_attr') }}"
-                                            type="checkbox"
-                                            value="{{ contentType.key }}"
-                                            data-model="contentTypeIds"
-                                            {% if contentType.key in this.contentTypeIds %}checked{% endif %}
-                                        />
-                                        <span class="checkmark"></span>
-                                        <div class="background"></div>
-                                        {{ contentType.label }}
-                                    </label>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            {% set contentTypeFilterGroupContentHtml %}
+                <ul class="filters_list">
+                    {% for contentType in this.contentTypes %}
+                        <li class="checkbox">
+                            <label for="{{ contentType.key|e('html_attr') }}" class="checkbox-container">
+                                <input
+                                    id="{{ contentType.key|e('html_attr') }}"
+                                    type="checkbox"
+                                    value="{{ contentType.key }}"
+                                    data-model="contentTypeIds"
+                                    {% if contentType.key in this.contentTypeIds %}checked{% endif %}
+                                />
+                                <span class="checkmark"></span>
+                                <div class="background"></div>
+                                {{ contentType.label }}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endset %}
+            {{ component('integrated_admin:filter_group', {
+                title: this.translations.content_types|default('Content types'),
+                listClass: 'form-group w-full flex flex-wrap overflow-y-auto',
+                containerClass: 'w-full',
+                listStyle: 'max-height: calc(-35px + 50vh);',
+                contentHtml: contentTypeFilterGroupContentHtml,
+            }) }}
         </aside>
 
         <main class="flex flex-col justify-between">

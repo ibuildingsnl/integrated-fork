@@ -6,6 +6,7 @@ namespace Integrated\Bundle\ContentBundle\Tests\Twig\Component\Admin;
 
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\AsidePanel;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\DataTable;
+use Integrated\Bundle\ContentBundle\Twig\Component\Admin\FilterGroup;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\OptionsToolbar;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\PageTitle;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\SectionCard;
@@ -229,6 +230,26 @@ final class AdminComponentRenderingTest extends KernelTestCase
         self::assertStringContainsString('aside-item-wrapper show', $output);
         self::assertStringContainsString('status-info', $output);
     }
+
+    #[Test]
+    public function itRendersFilterGroupMarkup(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:filter_group', [
+            'title' => 'Channels',
+            'wrapperClass' => 'channel-group',
+            'listClass' => 'form-group overflow-y-auto',
+            'containerClass' => 'w-full',
+            'listStyle' => 'max-height: 24rem;',
+            'contentHtml' => '<ul class="filters_list"><li>Website</li></ul>',
+        ])->toString();
+
+        self::assertStringContainsString('aside-item-container channel-group', $output);
+        self::assertStringContainsString('aside-item-header', $output);
+        self::assertStringContainsString('Channels', $output);
+        self::assertStringContainsString('aside-item-list form-group overflow-y-auto', $output);
+        self::assertStringContainsString('style="max-height: 24rem;"', $output);
+        self::assertStringContainsString('filters_list', $output);
+    }
 }
 
 final class AdminComponentRenderingTestKernel extends Kernel
@@ -268,6 +289,7 @@ final class AdminComponentRenderingTestKernel extends Kernel
         $services->set(OptionsToolbar::class);
         $services->set(DataTable::class);
         $services->set(AsidePanel::class)->tag('twig.component');
+        $services->set(FilterGroup::class)->tag('twig.component');
     }
 
     public function getCacheDir(): string

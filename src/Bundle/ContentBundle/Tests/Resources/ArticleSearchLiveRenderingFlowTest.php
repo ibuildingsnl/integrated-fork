@@ -17,6 +17,18 @@ final class ArticleSearchLiveRenderingFlowTest extends TestCase
         self::assertStringNotContainsString('article-search-component', $source);
     }
 
+    public function testLiveComponentUsesAdminFilterGroupForSearchFilters(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/article_search/components/live_component.html.twig');
+
+        self::assertIsString($template);
+        self::assertSame(2, substr_count($template, "component('integrated_admin:filter_group'"));
+        self::assertStringContainsString("title: this.translations.channels|default('Channels')", $template);
+        self::assertStringContainsString("title: this.translations.content_types|default('Content types')", $template);
+        self::assertStringContainsString("listClass: 'form-group w-full flex flex-wrap overflow-y-auto'", $template);
+        self::assertStringContainsString("listStyle: 'max-height: calc(-35px + 50vh);'", $template);
+    }
+
     public function testCompiledAssetContainsLiveBridgeAndNoVueMount(): void
     {
         $compiled = file_get_contents(__DIR__.'/../../../IntegratedBundle/Resources/public/article-search.js');
