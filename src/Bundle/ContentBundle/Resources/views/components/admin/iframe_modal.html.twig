@@ -1,0 +1,11 @@
+<div class="{{ this.modalClasses }}" id="{{ modalId }}" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="{{ this.dialogClasses }}">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"><i class="iconoir-xmark"></i></span><span class="sr-only">{{ closeLabel }}</span></button>
+                <h4 class="modal-title">{% if titleHtml %}{{ titleHtml|raw }}{% else %}{{ title }}{% endif %}</h4>
+            </div>
+            <iframe id="{{ iframeId }}" src="{{ iframeSrc }}"{% if iframeClass %} class="{{ iframeClass }}"{% endif %}{% if iframeAttributes %} {{ iframeAttributes|raw }}{% endif %}></iframe>
+        </div>
+    </div>
+</div>

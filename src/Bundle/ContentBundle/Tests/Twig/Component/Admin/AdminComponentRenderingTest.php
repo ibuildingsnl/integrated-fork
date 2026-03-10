@@ -8,7 +8,9 @@ use Integrated\Bundle\ContentBundle\Twig\Component\Admin\AsidePanel;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\DataTable;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\EditDrawerPanel;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\FilterGroup;
+use Integrated\Bundle\ContentBundle\Twig\Component\Admin\FilterSearchInput;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\FolderMenuPanel;
+use Integrated\Bundle\ContentBundle\Twig\Component\Admin\IframeModal;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\OptionsToolbar;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\PaginationFooter;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\PageTitle;
@@ -259,6 +261,22 @@ final class AdminComponentRenderingTest extends KernelTestCase
     }
 
     #[Test]
+    public function itRendersFilterSearchInputMarkup(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:filter_search_input', [
+            'inputHtml' => '<input class="form-control" type="search" value="query" />',
+            'buttonHtml' => '<button type="submit"><i class="iconoir-search"></i></button>',
+            'holderClass' => 'search-holder',
+        ])->toString();
+
+        self::assertStringContainsString('aside-item-holder search-holder', $output);
+        self::assertStringContainsString('input-group input-group-search', $output);
+        self::assertStringContainsString('form-control', $output);
+        self::assertStringContainsString('input-group-btn', $output);
+        self::assertStringContainsString('iconoir-search', $output);
+    }
+
+    #[Test]
     public function itRendersFolderMenuPanelMarkup(): void
     {
         $output = $this->renderTwigComponent('integrated_admin:folder_menu_panel', [
@@ -293,6 +311,25 @@ final class AdminComponentRenderingTest extends KernelTestCase
         self::assertStringContainsString('data-editImageIframePath="/admin/media/edit/iframe/REPLACE"', $output);
         self::assertStringContainsString('close-media-edit-form', $output);
         self::assertStringContainsString('<turbo-frame id="media-edit-panel"', $output);
+    }
+
+    #[Test]
+    public function itRendersIframeModalMarkup(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:iframe_modal', [
+            'modalId' => 'navigator-edit-modal',
+            'title' => 'Edit',
+            'iframeId' => 'editmodaliframe',
+            'iframeSrc' => '/admin/content/edit/123',
+            'dialogClass' => 'modal-lg',
+        ])->toString();
+
+        self::assertStringContainsString('modal add-modal close-outside', $output);
+        self::assertStringContainsString('id="navigator-edit-modal"', $output);
+        self::assertStringContainsString('modal-dialog modal-lg', $output);
+        self::assertStringContainsString('modal-title">Edit</h4>', $output);
+        self::assertStringContainsString('id="editmodaliframe"', $output);
+        self::assertStringContainsString('src="/admin/content/edit/123"', $output);
     }
 
     #[Test]
@@ -347,8 +384,10 @@ final class AdminComponentRenderingTestKernel extends Kernel
         $services->set(DataTable::class);
         $services->set(AsidePanel::class)->tag('twig.component');
         $services->set(EditDrawerPanel::class)->tag('twig.component');
+        $services->set(FilterSearchInput::class)->tag('twig.component');
         $services->set(FilterGroup::class)->tag('twig.component');
         $services->set(FolderMenuPanel::class)->tag('twig.component');
+        $services->set(IframeModal::class)->tag('twig.component');
         $services->set(PaginationFooter::class)->tag('twig.component');
         $services->set(PaginationFooterTestTwigExtension::class)->tag('twig.extension');
     }

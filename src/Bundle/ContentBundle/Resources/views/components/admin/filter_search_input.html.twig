@@ -1,0 +1,10 @@
+<div class="{{ this.holderClasses }}">
+    <div class="{{ this.groupClasses }}">
+        {{ inputHtml|default('')|raw }}
+        {% if buttonHtml %}
+            <span class="input-group-btn">
+                {{ buttonHtml|raw }}
+            </span>
+        {% endif %}
+    </div>
+</div>

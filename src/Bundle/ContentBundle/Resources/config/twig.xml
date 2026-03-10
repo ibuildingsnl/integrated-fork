@@ -30,6 +30,13 @@
                 template="@IntegratedContent/components/admin/edit_drawer_panel.html.twig"
             />
         </service>
+        <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\FilterSearchInput">
+            <tag
+                name="twig.component"
+                key="integrated_admin:filter_search_input"
+                template="@IntegratedContent/components/admin/filter_search_input.html.twig"
+            />
+        </service>
         <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\FilterGroup">
             <tag
                 name="twig.component"
@@ -42,6 +49,13 @@
                 name="twig.component"
                 key="integrated_admin:folder_menu_panel"
                 template="@IntegratedContent/components/admin/folder_menu_panel.html.twig"
+            />
+        </service>
+        <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\IframeModal">
+            <tag
+                name="twig.component"
+                key="integrated_admin:iframe_modal"
+                template="@IntegratedContent/components/admin/iframe_modal.html.twig"
             />
         </service>
         <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\OptionsToolbar">
