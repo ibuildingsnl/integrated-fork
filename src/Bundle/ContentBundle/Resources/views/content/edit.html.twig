@@ -48,6 +48,11 @@
                                 </div>
                                 <div class="aside-item-list">
                                     <div class="aside-item-list-container">
+                                        {% if form.actions.save is defined and attribute(form.vars.attr|default({}), 'data-draft-save-url')|default('') is not empty %}
+                                            <span id="integrated_content_draft_status"
+                                                  class="integrated-content-draft-status"
+                                                  aria-live="polite"></span>
+                                        {% endif %}
                                         <div class="status-info">
                                             {% if form.publishTime is defined %}
                                                 {{ form_row(form.publishTime, {style: 'inline'}) }}
@@ -112,6 +117,36 @@
                             <div class="aside-item-wrapper" id="used-by"></div>
 
                             {% block content_history %}
+                                {% if form.actions.save is defined and attribute(form.vars.attr|default({}), 'data-draft-save-url')|default('') is not empty %}
+                                    <div class="aside-item-wrapper" id="integrated_content_draft_versions_section" style="display:none;">
+                                        <div class="aside-item-header">
+                                            <h3 class="aside-item-title">
+                                                <i class="iconoir-clock-rotate-right"></i>
+                                                <span class="aside-item-icon">{% trans %}Draft versions{% endtrans %}</span>
+                                            </h3>
+                                            <i class="iconoir-nav-arrow-up"></i>
+                                        </div>
+                                        <div class="aside-item-list">
+                                            <div class="aside-item-list-container">
+                                                <div id="integrated_content_draft_versions"
+                                                     class="flex"
+                                                     style="display:none; align-items:center; gap:.5rem; flex-wrap:wrap;">
+                                                    <select id="integrated_content_actions_draft_version"
+                                                            class="form-control"
+                                                            style="min-width: 200px; flex: 1 1 220px;">
+                                                        <option value="">{% trans %}Current draft{% endtrans %}</option>
+                                                    </select>
+                                                    <button type="button"
+                                                            id="integrated_content_actions_restore_draft_version"
+                                                            class="btn btn-white no-icon"
+                                                            disabled>
+                                                        {% trans %}Restore version{% endtrans %}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
                                 <div id="content-history-section">
                                     {% if showContentHistory %}
                                         {{ render(controller('Integrated\\Bundle\\ContentHistoryBundle\\Controller\\ContentHistoryController::history', { 'content': content })) }}

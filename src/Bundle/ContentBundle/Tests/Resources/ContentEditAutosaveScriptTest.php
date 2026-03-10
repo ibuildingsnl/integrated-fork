@@ -21,6 +21,7 @@ class ContentEditAutosaveScriptTest extends TestCase
         $this->assertStringContainsString('integrated_content_actions_draft_version', $script);
         $this->assertStringContainsString('integrated_content_actions_restore_draft_version', $script);
         $this->assertStringContainsString('integrated_content_draft_status', $script);
+        $this->assertStringContainsString('syncRelationSelectFromHiddenInput', $script);
         $this->assertStringNotContainsString('A draft was found for this item.', $script);
     }
 }

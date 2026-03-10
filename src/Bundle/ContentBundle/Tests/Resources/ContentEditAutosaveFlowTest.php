@@ -44,13 +44,24 @@ class ContentEditAutosaveFlowTest extends TestCase
         $this->assertStringContainsString('private function isContentUpdatedAfterBaseline(Content $content, ?string $baseline): bool', $controller);
     }
 
-    public function testToolbarContainsDraftActionsAndVersionControls(): void
+    public function testToolbarContainsDraftSaveButton(): void
     {
         $toolbar = file_get_contents(__DIR__.'/../../Resources/views/partials/block.toolbar.html.twig');
 
         $this->assertIsString($toolbar);
         $this->assertStringContainsString('integrated_content_actions_save_draft', $toolbar);
-        $this->assertStringContainsString('integrated_content_actions_draft_version', $toolbar);
-        $this->assertStringContainsString('integrated_content_actions_restore_draft_version', $toolbar);
+        $this->assertStringNotContainsString('integrated_content_actions_draft_version', $toolbar);
+        $this->assertStringNotContainsString('integrated_content_actions_restore_draft_version', $toolbar);
+    }
+
+    public function testEditViewContainsDraftVersionControlsInHistorySection(): void
+    {
+        $editView = file_get_contents(__DIR__.'/../../Resources/views/content/edit.html.twig');
+
+        $this->assertIsString($editView);
+        $this->assertStringContainsString('integrated_content_draft_versions_section', $editView);
+        $this->assertStringContainsString('integrated_content_actions_draft_version', $editView);
+        $this->assertStringContainsString('integrated_content_actions_restore_draft_version', $editView);
+        $this->assertStringContainsString('content-history-section', $editView);
     }
 }

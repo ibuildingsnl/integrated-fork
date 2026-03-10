@@ -25,6 +25,7 @@ function initTaxonomyCategory() {
 document.addEventListener("DOMContentLoaded", initTaxonomyCategory);
 document.addEventListener("turbo:load", initTaxonomyCategory);
 document.addEventListener("turbo:render", initTaxonomyCategory);
+document.addEventListener('integrated:draft-restored', refreshTaxonomyCategoryFromInputs);
 
 function setupRelations() {
     const relevant_relations = document.querySelectorAll('.taxonomy_category');
@@ -38,6 +39,20 @@ function setupRelations() {
         enabled_categories: new Set((relation.querySelector('.enabled_categories')?.dataset.ids || '').split(",").filter(Boolean)),
         popup_tabs: relation.querySelectorAll('.category_tab')
     }));
+}
+
+function refreshTaxonomyCategoryFromInputs() {
+    if (!relations.length) {
+        setupRelations();
+    }
+    if (!relations.length) {
+        return;
+    }
+
+    enabled_channels = getEnabledChannels(document.querySelectorAll(channels_selector + channel_brands_selector));
+    selected_tab = '';
+    filterBasedOnChannels();
+    updateDOMForAllRelations();
 }
 
 function setupChannels() {

@@ -12,7 +12,11 @@ $(document).ready(function () {
         versionSelectNode: null,
         restoreButtonNode: null,
         versionsContainerNode: null,
+        versionsSectionNode: null,
         statusNode: null,
+        saveButtonNode: null,
+        saveButtonDefaultLabel: 'Save as draft',
+        saveButtonSavingLabel: 'Saving draft...',
         contentUpdatedAt: '',
     };
 
@@ -178,6 +182,9 @@ $(document).ready(function () {
             return;
         }
 
+        autosaveState.saveButtonNode = button;
+        autosaveState.saveButtonDefaultLabel = String(button.textContent || '').trim() || autosaveState.saveButtonDefaultLabel;
+
         button.setAttribute('data-draft-bound', '1');
         button.addEventListener('click', function (event) {
             event.preventDefault();
@@ -185,10 +192,26 @@ $(document).ready(function () {
         });
     }
 
+    function setManualDraftButtonSavingState(isSaving) {
+        if (!autosaveState.saveButtonNode) {
+            return;
+        }
+
+        if (isSaving) {
+            autosaveState.saveButtonNode.textContent = autosaveState.saveButtonSavingLabel;
+            autosaveState.saveButtonNode.setAttribute('aria-busy', 'true');
+            return;
+        }
+
+        autosaveState.saveButtonNode.textContent = autosaveState.saveButtonDefaultLabel;
+        autosaveState.saveButtonNode.removeAttribute('aria-busy');
+    }
+
     function initDraftVersionControls() {
         autosaveState.versionSelectNode = document.getElementById('integrated_content_actions_draft_version');
         autosaveState.restoreButtonNode = document.getElementById('integrated_content_actions_restore_draft_version');
         autosaveState.versionsContainerNode = document.getElementById('integrated_content_draft_versions');
+        autosaveState.versionsSectionNode = document.getElementById('integrated_content_draft_versions_section');
 
         if (!autosaveState.versionSelectNode || !autosaveState.restoreButtonNode) {
             return;
@@ -302,22 +325,110 @@ $(document).ready(function () {
                 }
 
                 if (tag === 'select' && field.multiple) {
-                    Array.from(field.options).forEach(function (option) {
-                        option.selected = values.indexOf(String(option.value)) !== -1;
+                    values.forEach(function (value) {
+                        ensureSelectOption(field, value);
                     });
+
+                    if (typeof window.jQuery !== 'undefined' && window.jQuery) {
+                        window.jQuery(field).val(values);
+                    } else {
+                        Array.from(field.options).forEach(function (option) {
+                            option.selected = values.indexOf(String(option.value)) !== -1;
+                        });
+                    }
+
+                    return;
+                }
+
+                if (tag === 'select') {
+                    const selectedValue = values.length ? values[0] : '';
+                    ensureSelectOption(field, selectedValue);
+
+                    if (typeof window.jQuery !== 'undefined' && window.jQuery) {
+                        window.jQuery(field).val(selectedValue);
+                    } else {
+                        field.value = selectedValue;
+                    }
+
                     return;
                 }
 
                 field.value = values.length ? values[0] : '';
+
+                syncRelationSelectFromHiddenInput(field);
             });
 
             fields.trigger('change');
             fields.trigger('input');
         });
+
+        form.find('input[type="hidden"][data-relation]').each(function () {
+            syncRelationSelectFromHiddenInput(this);
+        });
+
+        document.dispatchEvent(new CustomEvent('integrated:draft-restored'));
     }
 
     function escapeSelectorValue(value) {
         return String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    }
+
+    function ensureSelectOption(field, value) {
+        const normalizedValue = String(value || '');
+        if (!normalizedValue || !field || !field.options) {
+            return;
+        }
+
+        const exists = Array.from(field.options).some(function (option) {
+            return String(option.value) === normalizedValue;
+        });
+
+        if (exists) {
+            return;
+        }
+
+        field.appendChild(new Option(normalizedValue, normalizedValue, false, false));
+    }
+
+    function syncRelationSelectFromHiddenInput(field) {
+        if (!field || field.type !== 'hidden' || !field.hasAttribute('data-relation')) {
+            return;
+        }
+
+        const relationId = String(field.getAttribute('data-relation') || '');
+        if (!relationId) {
+            return;
+        }
+
+        const relationSelect = document.getElementById(relationId);
+        if (!relationSelect) {
+            return;
+        }
+
+        const rawValue = String(field.value || '');
+        const selectedValues = rawValue === ''
+            ? []
+            : rawValue.split(',').map(function (part) {
+                return String(part || '').trim();
+            }).filter(Boolean);
+
+        selectedValues.forEach(function (value) {
+            ensureSelectOption(relationSelect, value);
+        });
+
+        if (typeof window.jQuery !== 'undefined' && window.jQuery) {
+            const $relationSelect = window.jQuery(relationSelect);
+            $relationSelect.val(selectedValues);
+            $relationSelect.trigger('change');
+
+            return;
+        }
+
+        Array.from(relationSelect.options).forEach(function (option) {
+            option.selected = selectedValues.indexOf(String(option.value)) !== -1;
+        });
+
+        relationSelect.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
     function saveDraftIfNeeded(force, keepalive) {
@@ -341,6 +452,7 @@ $(document).ready(function () {
 
         autosaveState.inFlight = true;
         setDraftStatus('Saving draft...');
+        setManualDraftButtonSavingState(true);
 
         fetch(autosaveState.saveUrl, {
             method: 'POST',
@@ -392,6 +504,7 @@ $(document).ready(function () {
             })
             .finally(function () {
                 autosaveState.inFlight = false;
+                setManualDraftButtonSavingState(false);
             });
     }
 
@@ -463,6 +576,9 @@ $(document).ready(function () {
         if (autosaveState.versionsContainerNode) {
             const hasVersions = Object.keys(autosaveState.versions).length > 0;
             autosaveState.versionsContainerNode.style.display = hasVersions ? 'flex' : 'none';
+            if (autosaveState.versionsSectionNode) {
+                autosaveState.versionsSectionNode.style.display = hasVersions ? '' : 'none';
+            }
         }
 
         setRestoreButtonState();

@@ -77,24 +77,6 @@
                             class="btn btn-white no-icon">
                         {% trans %}Save as draft{% endtrans %}
                     </button>
-                    <span id="integrated_content_draft_status"
-                          class="integrated-content-draft-status"
-                          aria-live="polite"></span>
-                    <div id="integrated_content_draft_versions"
-                         class="flex"
-                         style="display:none; align-items:center; gap:.5rem;">
-                        <select id="integrated_content_actions_draft_version"
-                                class="form-control"
-                                style="min-width: 200px;">
-                            <option value="">{% trans %}Current draft{% endtrans %}</option>
-                        </select>
-                        <button type="button"
-                                id="integrated_content_actions_restore_draft_version"
-                                class="btn btn-white no-icon"
-                                disabled>
-                            {% trans %}Restore version{% endtrans %}
-                        </button>
-                    </div>
                 {% endif %}
                 {% if form.actions.save is defined %}
                     {{ form_row(form.actions.save) }}
