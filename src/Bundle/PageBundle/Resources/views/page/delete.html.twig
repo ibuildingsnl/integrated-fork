@@ -11,9 +11,9 @@
         {% endblock toolbar %}
         <div class="aside-options"></div>
         <div class="editor-wrapper">
-            <div class="page-title">
-                <h1 class="heading">{% trans %}Delete{% endtrans %} {% trans %}page{% endtrans %}</h1>
-            </div>
+            {{ component('integrated_admin:page_title', {
+                title: ('Delete'|trans) ~ ' ' ~ ('page'|trans),
+            }) }}
             <section class="editor editor-wrapped">
                 <p>
                     {% trans with {'%name%':  page.title, '%channel%':  page.channel.name} %}You are about to delete "%name%" on %channel%, click the delete button to confirm the action.{% endtrans %}

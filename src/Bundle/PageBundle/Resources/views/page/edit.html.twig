@@ -10,13 +10,9 @@
         {% endblock toolbar %}
         <div class="aside-options"></div>
         <div class="editor-wrapper">
-            <div class="page-title">
-                <h1 class="heading">
-                    {% block contentTitle %}
-                        {% trans %}Edit{% endtrans %} {% trans %}page{% endtrans %}
-                    {% endblock %}
-                </h1>
-            </div>
+            {{ component('integrated_admin:page_title', {
+                title: ('Edit'|trans) ~ ' ' ~ ('page'|trans),
+            }) }}
             <section class="editor editor-wrapped">
                 {{ form_rest(form, {'style': 'horizontal', 'state': 'show'})}}
             </section>

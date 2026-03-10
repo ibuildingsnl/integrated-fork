@@ -23,13 +23,9 @@
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
         {% endblock toolbar %}
         <div class="editor-wrapper editor-wrapper-full">
-            <div class="page-title">
-                <h1 class="heading">
-                    {% block contentTitle %}
-                        {% trans %}Copy{% endtrans %} {% trans %}pages{% endtrans %}
-                    {% endblock %}
-                </h1>
-            </div>
+            {{ component('integrated_admin:page_title', {
+                title: ('Copy'|trans) ~ ' ' ~ ('pages'|trans),
+            }) }}
             <section class="editor editor-wrapped">
                 {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
             </section>

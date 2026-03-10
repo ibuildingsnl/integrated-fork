@@ -17,4 +17,22 @@ final class ThemeTemplateComponentsTest extends TestCase
         self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
         self::assertStringContainsString("component('integrated_admin:data_table'", $template);
     }
+
+    /**
+     * @dataProvider scraperCrudTemplateProvider
+     */
+    public function testScraperCrudTemplatesUseAdminPageTitleComponent(string $relativePath): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/'.$relativePath);
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:page_title'", $template);
+    }
+
+    public static function scraperCrudTemplateProvider(): iterable
+    {
+        yield ['scraper/new.html.twig'];
+        yield ['scraper/edit.html.twig'];
+        yield ['scraper/delete.html.twig'];
+    }
 }
