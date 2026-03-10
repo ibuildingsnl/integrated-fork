@@ -1,107 +1,17 @@
-<div class="taxonomy_category bulk-taxonomy-category" id="taxonomy_category_{{ relation.vars.id }}">
-    <div class="taxonomy_backdrop hide"></div>
-    <div class="category_wrapper close-outside">
-        <div class="hidden"></div>
-
-        {% set categories = relation.vars.taxonomy_categories|default([]) %}
-        <div class="categories_tabs flex flex-wrap">
-            {% set showAllTab = false %}
-            {% for category in categories %}
-                {% if category.depth == 0 and category.linkToChannel|length == 0 %}
-                    {% set showAllTab = true %}
-                {% endif %}
-            {% endfor %}
-
-            {% if showAllTab %}
-                <div class="category_tab active"
-                     data-fulltitle="{{ relation.vars.relation_title }}"
-                     data-title="{{ relation.vars.relation_title }}"
-                     data-linkedchannel="">
-                    {{ relation.vars.relation_title }}
-                </div>
-            {% endif %}
-
-            {% for category in categories %}
-                {% if category.depth == 0 and category.linkToChannel|length > 0 %}
-                    <div class="category_tab{% if not showAllTab and loop.first %} active{% endif %}"
-                         data-fulltitle="{{ category.title }}"
-                         data-title="{{ category.title }}"
-                         data-taxonomyId="{{ category.taxonomyId }}"
-                         data-linkedchannel="{{ category.linkToChannel }}">
-                        {{ category.title }}
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-
-        <div class="aside-item-search">
-            <i class="iconoir-search"></i>
-            <input type="text" class="list-search" placeholder="{% trans %}Search in{% endtrans %}">
-        </div>
-
-        <ul class="categories_checkboxes categories_checkboxes_basic">
-            {% for category in categories %}
-                {% set className = '' %}
-                {% if category.depth == 0 and category.linkToChannel|length > 0 %}
-                    {% set pillTitle = category.title %}
-                    {% set level0 = category.title %}
-                    {% set className = 'parent' %}
-                    {% set linkedChannel = category.linkToChannel %}
-                {% elseif category.depth == 0 and category.linkToChannel|length == 0 %}
-                    {% set pillTitle = category.title %}
-                    {% set level0 = category.title %}
-                    {% set linkedChannel = '' %}
-                {% endif %}
-
-                {% if category.depth == 1 %}
-                    {% set pillTitle = level0 ~ ' > ' ~ category.title %}
-                    {% set level1 = category.title %}
-                    {% set className = 'first-child' %}
-                {% endif %}
-
-                {% if category.depth == 2 %}
-                    {% set pillTitle = level0 ~ ' > ' ~ level1 ~ ' > ' ~ category.title %}
-                    {% set level2 = category.title %}
-                    {% set className = 'secondary-child' %}
-                {% endif %}
-
-                {% if category.depth == 3 %}
-                    {% set pillTitle = level0 ~ ' > ' ~ level1 ~ ' > ' ~ level2 ~ ' > ' ~ category.title %}
-                    {% set className = 'tertiary-child' %}
-                {% endif %}
-
-                <li class="inline-block mr-2 {{ className }}"
-                    data-fulltitle="{{ pillTitle }}"
-                    data-title="{{ category.title }}"
-                    data-taxonomyId="{{ category.taxonomyId }}"
-                    data-linkedchannel="{{ linkedChannel }}">
-                    <div class="checkbox">
-                        <label class="checkbox-container" for="{{ relation.vars.id }}_{{ category.taxonomyId }}">
-                            <input type="checkbox" data-id="{{ category.taxonomyId }}" id="{{ relation.vars.id }}_{{ category.taxonomyId }}">
-                            <span class="checkmark"></span>
-                            <div class="background"></div>
-                            {{ category.title|raw }}
-                        </label>
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
-
-        <div class="current_selection">
-            <span class="heading">{% trans %}Current Selection:{% endtrans %}</span>
-            <div class="enabled_categories_pills"></div>
-        </div>
-
-        <div class="togglefullscreen">
-            <i class="iconoir-open-new-window"></i>
-            <i class="iconoir-xmark"></i>
-        </div>
-
-        {{ form_widget(relation, {'attr': {
-            'class': 'relation-items form-control',
-            'data-value': dataValue,
-            'data-taxonomy-popup': '1',
-            'style': 'display:none',
-        }}) }}
-    </div>
-</div>
+{% set bulkCategorySelectionHiddenContentHtml %}
+    {{ form_widget(relation, {'attr': {
+        'class': 'relation-items form-control',
+        'data-value': dataValue,
+        'data-taxonomy-popup': '1',
+        'style': 'display:none',
+    }}) }}
+{% endset %}
+{{ component('integrated_admin:taxonomy_category_picker', {
+    rootId: 'taxonomy_category_' ~ relation.vars.id,
+    rootClass: 'bulk-taxonomy-category',
+    relationTitle: relation.vars.relation_title,
+    categories: relation.vars.taxonomy_categories|default([]),
+    checkboxIdPrefix: relation.vars.id ~ '_',
+    allTabActive: true,
+    hiddenContentHtml: bulkCategorySelectionHiddenContentHtml,
+}) }}

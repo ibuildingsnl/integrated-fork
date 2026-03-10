@@ -18,6 +18,7 @@ use Integrated\Bundle\ContentBundle\Twig\Component\Admin\PaginationFooter;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\PageTitle;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\SectionCard;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\StatusBadge;
+use Integrated\Bundle\ContentBundle\Twig\Component\Admin\TaxonomyCategoryPicker;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -384,6 +385,31 @@ final class AdminComponentRenderingTest extends KernelTestCase
         self::assertStringContainsString('pagination-page-1', $output);
         self::assertStringContainsString('pagination-page-2', $output);
     }
+
+    #[Test]
+    public function itRendersTaxonomyCategoryPickerMarkup(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:taxonomy_category_picker', [
+            'rootId' => 'taxonomy_category_topics',
+            'rootClass' => 'bulk-taxonomy-category',
+            'relationTitle' => 'Topics',
+            'categories' => [
+                ['depth' => 0, 'title' => 'Topics', 'taxonomyId' => 'topics', 'linkToChannel' => ''],
+                ['depth' => 1, 'title' => 'News', 'taxonomyId' => 'news', 'linkToChannel' => ''],
+            ],
+            'checkboxIdPrefix' => 'relation_1_',
+            'allTabActive' => true,
+            'hiddenContentHtml' => '<input type="hidden" class="relation-items" value="news" />',
+        ])->toString();
+
+        self::assertStringContainsString('taxonomy_category bulk-taxonomy-category', $output);
+        self::assertStringContainsString('id="taxonomy_category_topics"', $output);
+        self::assertStringContainsString('category_tab active', $output);
+        self::assertStringContainsString('aside-item-search', $output);
+        self::assertStringContainsString('Current Selection:', $output);
+        self::assertStringContainsString('for="relation_1_topics"', $output);
+        self::assertStringContainsString('class="relation-items"', $output);
+    }
 }
 
 final class AdminComponentRenderingTestKernel extends Kernel
@@ -431,6 +457,7 @@ final class AdminComponentRenderingTestKernel extends Kernel
         $services->set(FolderMenuPanel::class)->tag('twig.component');
         $services->set(IframeModal::class)->tag('twig.component');
         $services->set(PaginationFooter::class)->tag('twig.component');
+        $services->set(TaxonomyCategoryPicker::class)->tag('twig.component');
         $services->set(PaginationFooterTestTwigExtension::class)->tag('twig.extension');
     }
 

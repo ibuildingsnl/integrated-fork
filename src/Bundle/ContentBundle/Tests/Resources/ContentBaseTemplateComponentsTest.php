@@ -32,4 +32,14 @@ final class ContentBaseTemplateComponentsTest extends TestCase
         self::assertStringContainsString("icon: facetIcon", $template);
         self::assertStringContainsString("icon: 'link'", $template);
     }
+
+    public function testContentCategorySelectionPartialUsesTaxonomyCategoryPicker(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content/partial/category_selection_component.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:taxonomy_category_picker'", $template);
+        self::assertStringContainsString("relationTitle: relation.vars.attr['data-title']", $template);
+        self::assertStringContainsString('hiddenContentHtml: categorySelectionHiddenContentHtml', $template);
+    }
 }
