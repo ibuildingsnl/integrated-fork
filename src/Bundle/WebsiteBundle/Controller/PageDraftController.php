@@ -12,6 +12,7 @@ use Integrated\Bundle\PageBundle\Document\Page\Grid\Grid;
 use Integrated\Bundle\PageBundle\Document\Page\PageEditDraft;
 use Integrated\Bundle\PageBundle\Document\Page\PageEditDraftRepository;
 use Integrated\Bundle\PageBundle\Grid\GridFactory;
+use Integrated\Bundle\WebsiteBundle\Menu\MenuPayloadSanitizer;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -317,13 +318,8 @@ class PageDraftController extends AbstractController
      */
     private function applyMenuPayload(array $menuPayload): void
     {
-        foreach ($menuPayload as $menuArray) {
-            $sanitized = $this->sanitizeMenuArray((array) $menuArray, true);
-            if (!$sanitized) {
-                continue;
-            }
-
-            $menu = $this->menuFactory->fromArray($sanitized);
+        foreach (MenuPayloadSanitizer::sanitizePayload($menuPayload) as $menuArray) {
+            $menu = $this->menuFactory->fromArray($menuArray);
             if (!$menu) {
                 continue;
             }
@@ -338,39 +334,6 @@ class PageDraftController extends AbstractController
             $menu->setChannel($this->channelContext->getChannel());
             $this->documentManager->persist($menu);
         }
-    }
-
-    /**
-     * @param array<string, mixed> $item
-     *
-     * @return array<string, mixed>|null
-     */
-    private function sanitizeMenuArray(array $item, bool $isRoot = false): ?array
-    {
-        $children = [];
-        foreach ((array) ($item['children'] ?? []) as $child) {
-            $sanitizedChild = $this->sanitizeMenuArray((array) $child);
-            if ($sanitizedChild) {
-                $children[] = $sanitizedChild;
-            }
-        }
-        $item['children'] = $children;
-
-        if ($isRoot) {
-            return $item;
-        }
-
-        $name = trim((string) ($item['name'] ?? ''));
-        $uri = trim((string) ($item['uri'] ?? ''));
-        $searchSelection = trim((string) ($item['searchSelection'] ?? ''));
-        $hasChildren = \count($children) > 0;
-
-        $isPlaceholder = ($name === '' || $name === '+')
-            && ($uri === '' || $uri === '#')
-            && $searchSelection === ''
-            && !$hasChildren;
-
-        return $isPlaceholder ? null : $item;
     }
 
     /**

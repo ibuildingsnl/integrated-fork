@@ -18,6 +18,7 @@ use Integrated\Bundle\PageBundle\Document\Page\PageEditDraft;
 use Integrated\Bundle\PageBundle\Grid\GridFactory;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\EventListener\WebsiteToolbarListener;
+use Integrated\Bundle\WebsiteBundle\Menu\MenuPayloadSanitizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -116,7 +117,7 @@ class PageController extends AbstractController
 
         $request->attributes->set(
             self::PREVIEW_DRAFT_MENU_ATTRIBUTE,
-            $this->extractDraftMenuPayloadByName($draft->getMenuPayload())
+            MenuPayloadSanitizer::mapPayloadByMenuName($draft->getMenuPayload())
         );
 
         $grids = [];
@@ -132,63 +133,5 @@ class PageController extends AbstractController
         }
 
         $page->setGrids($grids);
-    }
-
-    /**
-     * @param array<mixed> $menuPayload
-     *
-     * @return array<string, array<string, mixed>>
-     */
-    private function extractDraftMenuPayloadByName(array $menuPayload): array
-    {
-        $menus = [];
-        foreach ($menuPayload as $menu) {
-            $sanitized = $this->sanitizeMenuArray((array) $menu, true);
-            if (!$sanitized) {
-                continue;
-            }
-
-            $name = trim((string) ($sanitized['name'] ?? ''));
-            if ($name === '') {
-                continue;
-            }
-
-            $menus[$name] = $sanitized;
-        }
-
-        return $menus;
-    }
-
-    /**
-     * @param array<string, mixed> $item
-     *
-     * @return array<string, mixed>|null
-     */
-    private function sanitizeMenuArray(array $item, bool $isRoot = false): ?array
-    {
-        $children = [];
-        foreach ((array) ($item['children'] ?? []) as $child) {
-            $sanitizedChild = $this->sanitizeMenuArray((array) $child);
-            if ($sanitizedChild) {
-                $children[] = $sanitizedChild;
-            }
-        }
-        $item['children'] = $children;
-
-        if ($isRoot) {
-            return $item;
-        }
-
-        $name = trim((string) ($item['name'] ?? ''));
-        $uri = trim((string) ($item['uri'] ?? ''));
-        $searchSelection = trim((string) ($item['searchSelection'] ?? ''));
-        $hasChildren = \count($children) > 0;
-
-        $isPlaceholder = ($name === '' || $name === '+')
-            && ($uri === '' || $uri === '#')
-            && $searchSelection === ''
-            && !$hasChildren;
-
-        return $isPlaceholder ? null : $item;
     }
 }

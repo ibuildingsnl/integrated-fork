@@ -16,6 +16,7 @@ use Integrated\Bundle\PageBundle\Document\Page\PageEditDraftRepository;
 use Integrated\Bundle\PageBundle\Grid\GridFactory;
 use Integrated\Bundle\WebsiteBundle\Controller\PageDraftController;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
+use Knp\Menu\MenuFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -231,6 +232,73 @@ final class PageDraftControllerTest extends TestCase
 
         self::assertSame(Response::HTTP_OK, $response->getStatusCode());
         self::assertTrue((bool) json_decode((string) $response->getContent(), true, 512, \JSON_THROW_ON_ERROR)['published']);
+    }
+
+    public function testPublishDraftUpdatesExistingMenuWhenAlreadyPresent(): void
+    {
+        $page = new Page();
+        $page->setPath('/example');
+        $page->setLayout('default.html.twig');
+        $page->setUpdatedAt(new \DateTime('2026-03-10T08:30:00+00:00'));
+
+        $draft = new PageEditDraft('page-1', 'user-1');
+        $draft->setGridPayload([
+            ['id' => 'main', 'items' => []],
+        ]);
+        $draft->setMenuPayload([
+            [
+                'name' => 'main',
+                'children' => [
+                    [
+                        'id' => 'real-item',
+                        'name' => 'Real item',
+                        'uri' => '/real-item',
+                        'children' => [],
+                    ],
+                    [
+                        'id' => 'placeholder-item',
+                        'name' => '+',
+                        'uri' => '#',
+                        'searchSelection' => '',
+                        'children' => [],
+                    ],
+                ],
+            ],
+        ]);
+        $draft->setBasePageUpdatedAt('2026-03-10T09:00:00+00:00');
+
+        $knpMenuFactory = new MenuFactory();
+        $parsedMenu = $knpMenuFactory->createItem('main');
+        $parsedMenu->addChild('Real item', ['uri' => '/real-item']);
+        $existingMenu = $knpMenuFactory->createItem('main');
+
+        $this->pageRepository->method('find')->with('page-1')->willReturn($page);
+        $this->draftRepository->method('findOneByPageAndUser')->with('page-1', 'user-1')->willReturn($draft);
+        $this->gridFactory->expects($this->once())->method('fromArray')->willReturn(new Grid('main'));
+        $this->menuFactory
+            ->expects($this->once())
+            ->method('fromArray')
+            ->with($this->callback(static function (array $payload): bool {
+                return ($payload['name'] ?? null) === 'main'
+                    && \count((array) ($payload['children'] ?? [])) === 1;
+            }))
+            ->willReturn($parsedMenu);
+        $this->menuProvider->method('has')->with('main')->willReturn(true);
+        $this->menuProvider->method('get')->with('main')->willReturn($existingMenu);
+        $this->channelContext->expects($this->never())->method('getChannel');
+        $this->documentManager->expects($this->never())->method('persist');
+        $this->documentManager->expects($this->once())->method('remove')->with($draft);
+        $this->documentManager->expects($this->once())->method('flush');
+
+        $controller = $this->createController();
+        $response = $controller->publishDraft(Request::create('/page-draft/page-1/publish', 'POST'), 'page-1');
+
+        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
+        $children = $existingMenu->getChildren();
+        self::assertCount(1, $children);
+        $firstChild = reset($children);
+        self::assertNotFalse($firstChild);
+        self::assertSame('Real item', $firstChild->getName());
     }
 
     public function testPublishDraftReturnsConflictWhenPageChangedAfterBaseline(): void
