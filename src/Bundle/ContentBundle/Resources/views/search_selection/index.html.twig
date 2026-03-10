@@ -19,73 +19,77 @@
             }) }}
             {% component 'integrated_admin:section_card' %}
                 {% block content %}
-                <table class="table table-hover">
+                {% set tableColGroupHtml %}
                     <colgroup>
                         <col />
                         <col />
                         <col />
                         <col />
                     </colgroup>
+                {% endset %}
+                {% set tableHeadHtml %}
+                    <tr>
+                        <th>{% trans %}Search selections{% endtrans %}</th>
+                        <th>{% trans %}Short code{% endtrans %}</th>
+                        <th>{% trans %}Sort by{% endtrans %}</th>
+                        <th>{% trans %}Sort order{% endtrans %}</th>
+                    </tr>
+                {% endset %}
+                {% set tableBodyHtml %}
+                    {% for searchSelection in searchSelections %}
+                        {% set filters = searchSelection.filters|default({}) %}
+                        {% set sortField = filters.sort|default('')|trim %}
+                        {% set sortOrder = filters.order|default('')|lower|trim %}
+                        {% set sortOption = null %}
+                        {% if sortField is not empty and not (sortField starts with('custom:')) %}
+                            {% set sortOption = integrated_search_sorting_option(sortField) %}
+                        {% endif %}
 
-                    <thead>
-                        <tr>
-                            <th>{% trans %}Search selections{% endtrans %}</th>
-                            <th>{% trans %}Short code{% endtrans %}</th>
-                            <th>{% trans %}Sort by{% endtrans %}</th>
-                            <th>{% trans %}Sort order{% endtrans %}</th>
+                        <tr class="has-options">
+                            <td>
+                                <strong>
+                                    <a href="{{ path('integrated_content_search_selection_edit', {'id': searchSelection.id}) }}">
+                                        {{ searchSelection.title }}
+                                    </a>
+                                </strong>
+                                <div class="row-options">
+                                    <a href="{{ path('integrated_content_search_selection_edit', {'id': searchSelection.id}) }}"
+                                       title="{% trans %}Edit{% endtrans %}">{% trans %}Edit{% endtrans %}</a> |
+                                    <a href="{{ path('integrated_content_search_selection_delete', {'id': searchSelection.id}) }}"
+                                       class="color-red" title="{% trans %}Delete{% endtrans %}">{% trans %}Delete{% endtrans %}</a>
+                                </div>
+                            </td>
+                            <td>{{ searchSelection.id|default }}</td>
+                            <td>
+                                {% if sortField starts with('custom:') %}
+                                    {% trans %}Custom sorting{% endtrans %}: <code>{{ sortField|slice(7) }}</code>
+                                {% elseif sortOption is not null %}
+                                    {{ sortOption.label|trans|capitalize }}
+                                {% elseif sortField is not empty %}
+                                    {{ sortField }}
+                                {% else %}
+                                    <span class="text-light">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if sortOrder in ['asc', 'desc'] %}
+                                    {{ (sortOrder == 'asc' ? 'Ascending' : 'Descending')|trans }}
+                                {% elseif sortOrder is not empty %}
+                                    {{ sortOrder|upper }}
+                                {% else %}
+                                    <span class="text-light">-</span>
+                                {% endif %}
+                            </td>
                         </tr>
-                    </thead>
-
-                    <tbody>
-                        {% for searchSelection in searchSelections %}
-                            {% set filters = searchSelection.filters|default({}) %}
-                            {% set sortField = filters.sort|default('')|trim %}
-                            {% set sortOrder = filters.order|default('')|lower|trim %}
-                            {% set sortOption = null %}
-                            {% if sortField is not empty and not (sortField starts with('custom:')) %}
-                                {% set sortOption = integrated_search_sorting_option(sortField) %}
-                            {% endif %}
-
-                            <tr class="has-options">
-                                <td>
-                                    <strong>
-                                        <a href="{{ path('integrated_content_search_selection_edit', {'id': searchSelection.id}) }}">
-                                            {{ searchSelection.title }}
-                                        </a>
-                                    </strong>
-                                    <div class="row-options">
-                                        <a href="{{ path('integrated_content_search_selection_edit', {'id': searchSelection.id}) }}"
-                                           title="{% trans %}Edit{% endtrans %}">{% trans %}Edit{% endtrans %}</a> |
-                                        <a href="{{ path('integrated_content_search_selection_delete', {'id': searchSelection.id}) }}"
-                                           class="color-red" title="{% trans %}Delete{% endtrans %}">{% trans %}Delete{% endtrans %}</a>
-                                    </div>
-                                </td>
-                                <td>{{ searchSelection.id|default }}</td>
-                                <td>
-                                    {% if sortField starts with('custom:') %}
-                                        {% trans %}Custom sorting{% endtrans %}: <code>{{ sortField|slice(7) }}</code>
-                                    {% elseif sortOption is not null %}
-                                        {{ sortOption.label|trans|capitalize }}
-                                    {% elseif sortField is not empty %}
-                                        {{ sortField }}
-                                    {% else %}
-                                        <span class="text-light">-</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if sortOrder in ['asc', 'desc'] %}
-                                        {{ (sortOrder == 'asc' ? 'Ascending' : 'Descending')|trans }}
-                                    {% elseif sortOrder is not empty %}
-                                        {{ sortOrder|upper }}
-                                    {% else %}
-                                        <span class="text-light">-</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-
-                        {% endfor %}
-                    </tbody>
-                </table>
+                    {% endfor %}
+                {% endset %}
+                {{ component('integrated_admin:data_table', {
+                    colGroupHtml: tableColGroupHtml,
+                    headHtml: tableHeadHtml,
+                    bodyHtml: tableBodyHtml,
+                    emptyMessage: 'No search selections found'|trans,
+                    colSpan: 4,
+                }) }}
 
                 {{ knp_pagination_render(searchSelections, '@KnpPaginator/Pagination/sliding.html.twig') }}
                 {% endblock %}

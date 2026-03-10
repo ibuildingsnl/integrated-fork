@@ -27,6 +27,14 @@ final class ContentBundleShowTemplateComponentsTest extends TestCase
         self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
     }
 
+    public function testContentTypeShowUsesAdminDataTableComponentForFields(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content_type/show.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:data_table'", $template);
+    }
+
     public static function pageTitleProvider(): iterable
     {
         yield ['channel/show.html.twig'];

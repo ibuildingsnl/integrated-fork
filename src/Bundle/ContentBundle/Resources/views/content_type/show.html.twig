@@ -28,14 +28,13 @@
                         {% trans %}Fields{% endtrans %}
                     </dt>
                     <dd>
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th width="40%">{% trans %}Field{% endtrans %}</th>
-                                    <th>{% trans %}Required{% endtrans %}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                        {% set fieldsTableHeadHtml %}
+                            <tr>
+                                <th width="40%">{% trans %}Field{% endtrans %}</th>
+                                <th>{% trans %}Required{% endtrans %}</th>
+                            </tr>
+                        {% endset %}
+                        {% set fieldsTableBodyHtml %}
                             {% for field in contentType.fields %}
                                 <tr>
                                     <td>
@@ -49,15 +48,14 @@
                                         {% endif %}
                                     </td>
                                 </tr>
-                            {% else %}
-                                <tr>
-                                    <td>
-                                        {% trans %}No fields added{% endtrans %}
-                                    </td>
-                                </tr>
                             {% endfor %}
-                            </tbody>
-                        </table>
+                        {% endset %}
+                        {{ component('integrated_admin:data_table', {
+                            headHtml: fieldsTableHeadHtml,
+                            bodyHtml: fieldsTableBodyHtml,
+                            emptyMessage: 'No fields added'|trans,
+                            colSpan: 2,
+                        }) }}
                     </dd>
                     <dt>
                         {% trans %}Relations{% endtrans %}

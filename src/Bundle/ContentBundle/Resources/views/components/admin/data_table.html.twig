@@ -2,6 +2,9 @@
     <div class="{{ wrapperClass }}">
 {% endif %}
 <table class="{{ this.tableClass }}">
+    {% if colGroupHtml %}
+        {{ colGroupHtml|raw }}
+    {% endif %}
     {% if headHtml %}
         <thead>
             {{ headHtml|raw }}

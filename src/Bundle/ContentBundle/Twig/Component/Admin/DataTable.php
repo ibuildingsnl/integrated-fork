@@ -13,6 +13,8 @@ final class DataTable
 
     public ?string $headHtml = null;
 
+    public ?string $colGroupHtml = null;
+
     public ?string $bodyHtml = null;
 
     public ?string $emptyMessage = null;

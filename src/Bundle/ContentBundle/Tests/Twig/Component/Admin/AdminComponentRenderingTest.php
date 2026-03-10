@@ -152,12 +152,14 @@ final class AdminComponentRenderingTest extends KernelTestCase
     public function itRendersDataTableMarkupWithRows(): void
     {
         $output = $this->renderTwigComponent('integrated_admin:data_table', [
+            'colGroupHtml' => '<colgroup><col /><col /></colgroup>',
             'headHtml' => '<tr><th>Name</th><th>Status</th></tr>',
             'bodyHtml' => '<tr class="has-options"><td>Example</td><td>Draft</td></tr>',
         ])->toString();
 
         self::assertStringContainsString('<table', $output);
         self::assertStringContainsString('table table-hover', $output);
+        self::assertStringContainsString('<colgroup><col /><col /></colgroup>', $output);
         self::assertStringContainsString('<thead>', $output);
         self::assertStringContainsString('<tbody>', $output);
         self::assertStringContainsString('has-options', $output);
