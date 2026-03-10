@@ -1,14 +1,15 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}New relation{% endtrans %}{% endblock title %}
 {% block content %}
-<div class="flex flex-wrap edit-form">
     {% block form_start %}
         {{ form_start(form) }}
     {% endblock %}
-    {% block toolbar %}
-        {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
-    {% endblock toolbar %}
-    <div class="aside-options">
+    {% set relationNewToolbarHtml %}
+        {% block toolbar %}
+            {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+        {% endblock toolbar %}
+    {% endset %}
+    {% set relationNewSidebarHtml %}
         <aside>
             <div class="aside-holder">
                 {% block sidebar %}
@@ -26,27 +27,32 @@
                 {% endblock %}
             </div>
         </aside>
-    </div>
-    <div class="editor-wrapper">
+    {% endset %}
+    {% set relationNewTitleHtml %}
         {{ component('integrated_admin:page_title', {
             title: 'New relation'|trans,
         }) }}
-        <section class="editor editor-wrapped">
-            {{ form_errors(form) }}
+    {% endset %}
+    {% set relationNewEditorContentHtml %}
+        {{ form_errors(form) }}
 
-            {% block content_form %}
-                {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
-                    {{ form_row(child) }}
-                {% endfor %}
+        {% block content_form %}
+            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
+                {{ form_row(child) }}
+            {% endfor %}
 
-                {{ form_rest(form, {'style':'horizontal'}) }}
-            {% endblock %}
-        </section>
-    </div>
+            {{ form_rest(form, {'style':'horizontal'}) }}
+        {% endblock %}
+    {% endset %}
+    {{ component('integrated_admin:edit_form_shell', {
+        toolbarHtml: relationNewToolbarHtml,
+        sidebarContentHtml: relationNewSidebarHtml,
+        pageTitleHtml: relationNewTitleHtml,
+        editorContentHtml: relationNewEditorContentHtml,
+    }) }}
     {% block form_end %}
         {{ form_end(form) }}
     {% endblock %}
-</div>
 {% endblock %}
 {% block javascript %}
 {{ parent() }}

@@ -18,6 +18,15 @@ final class ContentBundleFormTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:page_title'", $template);
     }
 
+    #[DataProvider('editFormShellProvider')]
+    public function testEditFormTemplateUsesAdminEditFormShellComponent(string $relativePath): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/'.$relativePath);
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
+    }
+
     public function testContentTypeEditUsesAdminAsidePanelForRelationsSidebar(): void
     {
         $template = file_get_contents(__DIR__.'/../../Resources/views/content_type/edit.html.twig');
@@ -56,5 +65,11 @@ final class ContentBundleFormTemplateComponentsTest extends TestCase
         yield ['relation/edit.html.twig'];
         yield ['content_type/new.html.twig'];
         yield ['content_type/edit.html.twig'];
+    }
+
+    public static function editFormShellProvider(): iterable
+    {
+        yield ['relation/new.html.twig'];
+        yield ['relation/edit.html.twig'];
     }
 }

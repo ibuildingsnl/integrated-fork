@@ -32,6 +32,22 @@ final class PageTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:page_title'", $template);
     }
 
+    public function testPageEditUsesAdminEditFormShellComponent(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/page/edit.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
+    }
+
+    public function testPageNewUsesAdminEditFormShellComponent(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/page/new.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
+    }
+
     public static function pageCrudTemplateProvider(): iterable
     {
         yield ['page/new.html.twig'];

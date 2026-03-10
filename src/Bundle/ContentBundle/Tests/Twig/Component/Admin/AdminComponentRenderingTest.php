@@ -8,6 +8,7 @@ use Integrated\Bundle\ContentBundle\Twig\Component\Admin\AlertBox;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\AsidePanel;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\ConfirmModal;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\DataTable;
+use Integrated\Bundle\ContentBundle\Twig\Component\Admin\EditFormShell;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\EditDrawerPanel;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\FilterGroup;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\FilterSearchInput;
@@ -206,6 +207,29 @@ final class AdminComponentRenderingTest extends KernelTestCase
         self::assertStringNotContainsString('table-hover', $output);
         self::assertStringContainsString('colspan="2"', $output);
         self::assertStringContainsString('No rows found', $output);
+    }
+
+    #[Test]
+    public function itRendersEditFormShellMarkup(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:edit_form_shell', [
+            'extraClass' => 'edit-form--channel-config',
+            'toolbarHtml' => '<div class="block-toolbar">Toolbar</div>',
+            'sidebarContentHtml' => '<aside><div class="aside-holder"><div class="aside-header"><span>Options</span></div><div class="aside-item-wrapper">Sidebar</div></div></aside>',
+            'editorWrapperClass' => 'editor-wrapper-full',
+            'pageTitleHtml' => '<div class="page-title"><div class="heading"><h1 class="heading">Edit relation</h1></div></div>',
+            'editorContentHtml' => '<div class="form-body">Editor</div>',
+            'editorClass' => 'relation-editor',
+        ])->toString();
+
+        self::assertStringContainsString('flex flex-wrap edit-form edit-form--channel-config', $output);
+        self::assertStringContainsString('<div class="block-toolbar">Toolbar</div>', $output);
+        self::assertStringContainsString('<div class="aside-options">', $output);
+        self::assertStringContainsString('aside-holder', $output);
+        self::assertStringContainsString('<div class="editor-wrapper editor-wrapper-full">', $output);
+        self::assertStringContainsString('<div class="page-title">', $output);
+        self::assertStringContainsString('<section class="editor editor-wrapped relation-editor">', $output);
+        self::assertStringContainsString('<div class="form-body">Editor</div>', $output);
     }
 
     #[Test]
@@ -450,6 +474,7 @@ final class AdminComponentRenderingTestKernel extends Kernel
         $services->set(PageTitle::class);
         $services->set(OptionsToolbar::class);
         $services->set(DataTable::class);
+        $services->set(EditFormShell::class)->tag('twig.component');
         $services->set(AsidePanel::class)->tag('twig.component');
         $services->set(EditDrawerPanel::class)->tag('twig.component');
         $services->set(FilterSearchInput::class)->tag('twig.component');

@@ -1,0 +1,20 @@
+<div class="{{ this.shellClasses }}">
+    {% if toolbarHtml %}
+        {{ toolbarHtml|raw }}
+    {% endif %}
+    <div class="aside-options">
+        {% if sidebarContentHtml %}
+            {{ sidebarContentHtml|raw }}
+        {% endif %}
+    </div>
+    <div class="{{ this.editorWrapperClasses }}">
+        {% if pageTitleHtml %}
+            {{ pageTitleHtml|raw }}
+        {% endif %}
+        <section class="{{ this.editorClasses }}">
+            {% if editorContentHtml %}
+                {{ editorContentHtml|raw }}
+            {% endif %}
+        </section>
+    </div>
+</div>

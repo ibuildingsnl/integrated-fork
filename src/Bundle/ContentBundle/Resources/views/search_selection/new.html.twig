@@ -1,26 +1,30 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}New search selection{% endtrans %}{% endblock title %}
 {% block content %}
-    <div class="flex flex-wrap edit-form">
-        {% block form_start %}
-            {{ form_start(form) }}
-        {% endblock %}
+    {% block form_start %}
+        {{ form_start(form) }}
+    {% endblock %}
+    {% set searchSelectionNewToolbarHtml %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
         {% endblock toolbar %}
-        <div class="aside-options"></div>
-        <div class="editor-wrapper">
-            {{ component('integrated_admin:page_title', {
-                title: 'New'|trans ~ ' ' ~ ('search selection'|trans),
-            }) }}
-            <section class="editor editor-wrapped">
-                {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
-            </section>
-        </div>
-        {% block form_end %}
-            {{ form_end(form) }}
-        {% endblock %}
-    </div>
+    {% endset %}
+    {% set searchSelectionNewTitleHtml %}
+        {{ component('integrated_admin:page_title', {
+            title: 'New'|trans ~ ' ' ~ ('search selection'|trans),
+        }) }}
+    {% endset %}
+    {% set searchSelectionNewContentHtml %}
+        {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
+    {% endset %}
+    {{ component('integrated_admin:edit_form_shell', {
+        toolbarHtml: searchSelectionNewToolbarHtml,
+        pageTitleHtml: searchSelectionNewTitleHtml,
+        editorContentHtml: searchSelectionNewContentHtml,
+    }) }}
+    {% block form_end %}
+        {{ form_end(form) }}
+    {% endblock %}
 {% endblock %}
 
 {% block javascript %}

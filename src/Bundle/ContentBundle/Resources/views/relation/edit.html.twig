@@ -1,14 +1,15 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Edit {% endtrans %} {{ relation.name }}{% endblock title %}
 {% block content %}
-<div class="flex flex-wrap edit-form">
     {% block form_start %}
         {{ form_start(form) }}
     {% endblock %}
-    {% block toolbar %}
-        {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
-    {% endblock toolbar %}
-    <div class="aside-options">
+    {% set relationEditToolbarHtml %}
+        {% block toolbar %}
+            {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+        {% endblock toolbar %}
+    {% endset %}
+    {% set relationEditSidebarHtml %}
         <aside>
             <div class="aside-holder">
                 {% block sidebar %}
@@ -26,25 +27,30 @@
                 {% endblock %}
             </div>
         </aside>
-    </div>
-    <div class="editor-wrapper">
+    {% endset %}
+    {% set relationEditTitleHtml %}
         {{ component('integrated_admin:page_title', {
             title: 'Edit'|trans ~ ' ' ~ relation.name,
         }) }}
-        <section class="editor editor-wrapped">
-            {% block content_form %}
-                {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
-                    {{ form_row(child) }}
-                {% endfor %}
+    {% endset %}
+    {% set relationEditEditorContentHtml %}
+        {% block content_form %}
+            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
+                {{ form_row(child) }}
+            {% endfor %}
 
-                {{ form_rest(form, {'style':'horizontal'}) }}
-            {% endblock %}
-        </section>
-    </div>
+            {{ form_rest(form, {'style':'horizontal'}) }}
+        {% endblock %}
+    {% endset %}
+    {{ component('integrated_admin:edit_form_shell', {
+        toolbarHtml: relationEditToolbarHtml,
+        sidebarContentHtml: relationEditSidebarHtml,
+        pageTitleHtml: relationEditTitleHtml,
+        editorContentHtml: relationEditEditorContentHtml,
+    }) }}
     {% block form_end %}
         {{ form_end(form) }}
     {% endblock %}
-</div>
 {% endblock %}
 
 {% block javascript %}

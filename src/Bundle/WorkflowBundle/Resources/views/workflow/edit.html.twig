@@ -2,35 +2,40 @@
 {% block title %}{% trans %}Edit workflow{% endtrans %}{% endblock title %}
 
 {% block content %}
-    <div class="flex flex-wrap edit-form">
-        {% block form_start %}
-            {{ form_start(form) }}
-        {% endblock %}
+    {% block form_start %}
+        {{ form_start(form) }}
+    {% endblock %}
+    {% set workflowToolbarHtml %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
         {% endblock toolbar %}
-        <div class="aside-options"></div>
-        <div class="editor-wrapper editor-wrapper-full">
-            {% set workflowTitleHtml %}
-                <h1 class="heading">
-                    {% block contentTitle %}
-                        {% trans %}Edit{% endtrans %} {% trans %}workflow{% endtrans %}
-                    {% endblock %}
-                </h1>
-            {% endset %}
-            {{ component('integrated_admin:page_title', {
-                titleHtml: workflowTitleHtml,
-            }) }}
-            <section class="editor editor-wrapped">
-                {{ form_errors(form) }}
+    {% endset %}
+    {% set workflowHeadingHtml %}
+        <h1 class="heading">
+            {% block contentTitle %}
+                {% trans %}Edit{% endtrans %} {% trans %}workflow{% endtrans %}
+            {% endblock %}
+        </h1>
+    {% endset %}
+    {% set workflowTitleHtml %}
+        {{ component('integrated_admin:page_title', {
+            titleHtml: workflowHeadingHtml,
+        }) }}
+    {% endset %}
+    {% set workflowEditorContentHtml %}
+        {{ form_errors(form) }}
 
-                {{ form_rest(form, {'style':'horizontal', 'state': 'show'}) }}
-            </section>
-        </div>
-        {% block form_end %}
-            {{ form_end(form) }}
-        {% endblock %}
-    </div>
+        {{ form_rest(form, {'style':'horizontal', 'state': 'show'}) }}
+    {% endset %}
+    {{ component('integrated_admin:edit_form_shell', {
+        toolbarHtml: workflowToolbarHtml,
+        editorWrapperClass: 'editor-wrapper-full',
+        pageTitleHtml: workflowTitleHtml,
+        editorContentHtml: workflowEditorContentHtml,
+    }) }}
+    {% block form_end %}
+        {{ form_end(form) }}
+    {% endblock %}
 {% endblock %}
 
 {% block javascript %}
