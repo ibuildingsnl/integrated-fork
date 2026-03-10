@@ -27,6 +27,15 @@ final class ContentBundleIndexTemplateComponentsTest extends TestCase
         self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
     }
 
+    public function testRelationListPartialUsesAdminDataTableComponent(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/relation/partial/list.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:data_table'", $template);
+        self::assertStringContainsString("'No relations added'|trans", $template);
+    }
+
     public static function pageTitleProvider(): iterable
     {
         yield ['channel/index.html.twig'];

@@ -1,11 +1,10 @@
-<table class="table table-hover">
-    <thead>
+{% set relationTableHeadHtml %}
     <tr>
         <th>{% trans %}Name{% endtrans %}</th>
         <th>{% trans %}Info{% endtrans %}</th>
     </tr>
-    </thead>
-    <tbody>
+{% endset %}
+{% set relationTableBodyHtml %}
     {% for document in documents %}
         <tr class="has-options">
             <td>
@@ -49,13 +48,11 @@
                 {% endif %}
             </td>
         </tr>
-
-    {% else %}
-        <tr>
-            <td colspan="2">
-                {% trans %}No relations added{% endtrans %}
-            </td>
-        </tr>
     {% endfor %}
-    </tbody>
-</table>
+{% endset %}
+{{ component('integrated_admin:data_table', {
+    headHtml: relationTableHeadHtml,
+    bodyHtml: relationTableBodyHtml,
+    emptyMessage: 'No relations added'|trans,
+    colSpan: 2,
+}) }}
