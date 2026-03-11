@@ -43,6 +43,11 @@
                     align-items: center;
                     cursor: pointer;
                     padding: 0.5rem 0;
+                    border-radius: 0;
+                    font-weight: 400;
+                    letter-spacing: normal;
+                    line-height: 1.35;
+                    text-transform: none;
 
                     i {
                         margin-right: 10px;
@@ -72,6 +77,31 @@
                     transition: height 0.35s ease-in-out;
                     margin-left: -10px;
                     margin-right: -10px;
+
+                    > li.tracking-menu-group {
+                        margin-top: 11px;
+
+                        &:first-child {
+                            margin-top: 6px;
+                        }
+
+                        > span {
+                            display: block;
+                            padding: 0 0 2px 14px;
+                            color: #8fa7b4;
+                            font-size: 11px;
+                            font-weight: 700;
+                            letter-spacing: 0.07em;
+                            text-transform: uppercase;
+                            line-height: 1.2;
+                            cursor: default;
+                            opacity: 0.95;
+                        }
+
+                        > ul {
+                            margin: 0;
+                        }
+                    }
 
                     li {
                         a {
@@ -189,6 +219,26 @@
                         background-color: #345767;
                         padding: 0.5rem;
                         margin: 0;
+
+                        > li.tracking-menu-group {
+                            margin-top: 10px;
+
+                            &:first-child {
+                                margin-top: 0;
+                            }
+
+                            > span {
+                                display: block;
+                                padding: 0 0.5rem 0.35rem;
+                                color: #a9bfca;
+                                font-size: 10px;
+                                font-weight: 700;
+                                letter-spacing: 0.12em;
+                                text-transform: uppercase;
+                                line-height: 1.2;
+                                cursor: default;
+                            }
+                        }
 
                         li {
                             a {

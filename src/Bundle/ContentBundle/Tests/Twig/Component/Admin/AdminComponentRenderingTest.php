@@ -477,6 +477,7 @@ final class AdminComponentRenderingTest extends AdminComponentKernelTestCase
             'iframeId' => 'editmodaliframe',
             'iframeSrc' => '/admin/content/edit/123',
             'dialogClass' => 'modal-lg',
+            'iframeAttributes' => 'width="100%" height="400" title="Loading"',
         ])->toString();
 
         self::assertStringContainsString('modal add-modal close-outside', $output);
@@ -485,6 +486,8 @@ final class AdminComponentRenderingTest extends AdminComponentKernelTestCase
         self::assertStringContainsString('modal-title">Edit</h4>', $output);
         self::assertStringContainsString('id="editmodaliframe"', $output);
         self::assertStringContainsString('src="/admin/content/edit/123"', $output);
+        self::assertStringContainsString('width="100%"', $output);
+        self::assertStringContainsString('title="Loading"', $output);
     }
 
     #[Test]

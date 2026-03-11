@@ -27,6 +27,16 @@ final class ContentModalTemplateComponentsTest extends TestCase
         self::assertStringContainsString("modalId: 'content-edit-modal'", $template);
     }
 
+    public function testContentEditUsesAdminIframeModalForRelationAdd(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content/edit.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:iframe_modal'", $template);
+        self::assertStringContainsString("modalId: 'relation-add-modal'", $template);
+        self::assertStringContainsString("iframeId: 'relation-add-iframe'", $template);
+    }
+
     public function testMediaEditImageUsesAdminSelectionModal(): void
     {
         $template = file_get_contents(__DIR__.'/../../Resources/views/media/edit_image.html.twig');
