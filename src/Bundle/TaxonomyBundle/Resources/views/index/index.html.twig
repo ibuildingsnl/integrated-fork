@@ -113,9 +113,9 @@
                             emptyMessage: 'No taxonomies added'|trans,
                             colSpan: 4,
                         }) }}
-                        <div>
-                            {{ knp_pagination_render(index, '@KnpPaginator/Pagination/sliding.html.twig') }}
-                        </div>
+                        {{ component('integrated_admin:pagination_footer', {
+                            pagination: index,
+                        }) }}
                     {% endblock %}
                 {% endcomponent %}
             </div>

@@ -47,6 +47,7 @@ final class TaxonomyControllerHardeningTest extends TestCase
         $this->assertStringContainsString("component('integrated_admin:options_toolbar'", $template);
         $this->assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
         $this->assertStringContainsString("component('integrated_admin:data_table'", $template);
+        $this->assertStringContainsString("component('integrated_admin:pagination_footer'", $template);
         $this->assertStringContainsString("component('integrated_admin:row_actions'", $template);
     }
 

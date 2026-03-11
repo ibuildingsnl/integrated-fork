@@ -55,4 +55,12 @@ final class ContentBundleMiscTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:alert_box'", $template);
         self::assertStringContainsString("variant: 'danger'", $template);
     }
+
+    public function testContentUsedByTemplateUsesAdminPaginationFooter(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content/used_by.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:pagination_footer'", $template);
+    }
 }

@@ -75,4 +75,12 @@ final class BlockTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $newTemplate);
         self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $editTemplate);
     }
+
+    public function testBlockUsedByTemplateUsesAdminPaginationFooter(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/block/used_by.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:pagination_footer'", $template);
+    }
 }

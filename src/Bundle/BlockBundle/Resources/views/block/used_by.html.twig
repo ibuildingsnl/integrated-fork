@@ -18,7 +18,9 @@
                 {% endfor %}
                 <div class="item_row">
                     <div class="pull-right">
-                        {{ knp_pagination_render(pagination, '@KnpPaginator/Pagination/sliding.html.twig') }}
+                        {{ component('integrated_admin:pagination_footer', {
+                            pagination: pagination,
+                        }) }}
                     </div>
                 </div>
             </div>
