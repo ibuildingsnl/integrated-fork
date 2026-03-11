@@ -71,7 +71,10 @@
                                 {% elseif sortField is not empty %}
                                     {{ sortField }}
                                 {% else %}
-                                    <span class="text-light">-</span>
+                                    {{ component('integrated_admin:empty_state_message', {
+                                        tag: 'span',
+                                        message: '-',
+                                    }) }}
                                 {% endif %}
                             </td>
                             <td>
@@ -80,7 +83,10 @@
                                 {% elseif sortOrder is not empty %}
                                     {{ sortOrder|upper }}
                                 {% else %}
-                                    <span class="text-light">-</span>
+                                    {{ component('integrated_admin:empty_state_message', {
+                                        tag: 'span',
+                                        message: '-',
+                                    }) }}
                                 {% endif %}
                             </td>
                         </tr>

@@ -233,16 +233,13 @@
                         {% endif %}
                     </td>
                 </tr>
-            {% else %}
-                <tr>
-                    <td class="title">{% trans %}No items found{% endtrans %}</td>
-                </tr>
             {% endfor %}
         {% endset %}
         {{ component('integrated_admin:data_table', {
             headHtml: contentTableHeadHtml,
-            bodyHtml: contentTableBodyHtml,
+            bodyHtml: contentTableBodyHtml|trim ?: null,
             tbodyAttributes: 'id="post-list"',
+            emptyMessage: 'No items found'|trans,
             hover: false,
             colSpan: 6,
         }) }}

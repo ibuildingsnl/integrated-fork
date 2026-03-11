@@ -43,6 +43,7 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString("component('integrated_admin:pagination_footer'", $template);
         $this->assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
         $this->assertStringContainsString('tbodyAttributes: \'id="post-list"\'', $template);
+        $this->assertStringContainsString("emptyMessage: 'No items found'|trans", $template);
         $this->assertStringContainsString('data-lock-resource-type="', $template);
         $this->assertStringContainsString('data-lock-resource-id="', $template);
         $this->assertStringContainsString('data-lock-slot', $template);
