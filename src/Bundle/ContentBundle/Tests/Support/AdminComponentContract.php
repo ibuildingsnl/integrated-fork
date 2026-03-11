@@ -24,6 +24,7 @@ use Integrated\Bundle\ContentBundle\Twig\Component\Admin\SectionCard;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\SelectionModal;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\StatusBadge;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\TaxonomyCategoryPicker;
+use Integrated\Bundle\ContentBundle\Twig\Component\Admin\WorkflowStatus;
 
 final class AdminComponentContract
 {
@@ -112,6 +113,10 @@ final class AdminComponentContract
             'integrated_admin:taxonomy_category_picker' => [
                 'class' => TaxonomyCategoryPicker::class,
                 'template' => '@IntegratedContent/components/admin/taxonomy_category_picker.html.twig',
+            ],
+            'integrated_admin:workflow_status' => [
+                'class' => WorkflowStatus::class,
+                'template' => '@IntegratedContent/components/admin/workflow_status.html.twig',
             ],
         ];
     }

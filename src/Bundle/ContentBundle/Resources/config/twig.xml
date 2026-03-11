@@ -149,6 +149,13 @@
                 template="@IntegratedContent/components/admin/taxonomy_category_picker.html.twig"
             />
         </service>
+        <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\WorkflowStatus">
+            <tag
+                name="twig.component"
+                key="integrated_admin:workflow_status"
+                template="@IntegratedContent/components/admin/workflow_status.html.twig"
+            />
+        </service>
 
         <service id="integrated_content.twig.json_pagination_extension" class="Integrated\Bundle\ContentBundle\Twig\JsonPaginationExtension">
             <argument type="service" id="router" />

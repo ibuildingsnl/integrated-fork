@@ -208,28 +208,33 @@
                         {% if content.workflow_state is defined and ('now'|date('U') > content.pub_time |date('U')) %}
                             {% if content.workflow_color_string is defined %}
                                 {% set status_color = content.workflow_color_string|first %}
-                                <div class="workflow-status" style="background-color:{{ status_color|alpha(12) }};border-color:{{ status_color|alpha(45) }};color:{{ status_color }};">
-                                    <i class="iconoir-{{ content.workflow_icon_string|first|default }}"></i>
-                                </div>
+                                {{ component('integrated_admin:workflow_status', {
+                                    color: status_color,
+                                    icon: content.workflow_icon_string|first|default,
+                                }) }}
                             {% else %}
-                                <div class="workflow-status" style="background-color:{{ '#6c7b89'|alpha(12) }};border-color:{{ '#6c7b89'|alpha(45) }};color:#6c7b89;">
-                                    <i class="iconoir-{{ content.workflow_icon_string|first|default }}"></i>
-                                </div>
+                                {{ component('integrated_admin:workflow_status', {
+                                    color: '#6c7b89',
+                                    icon: content.workflow_icon_string|first|default,
+                                }) }}
                             {% endif %}
                             {% set status_color = '' %}
                         {% elseif ('now'|date('U') < content.pub_time |date('U')) %}
-                            <div class="workflow-status" style="background-color:{{ '#5f84db'|alpha(12) }};border-color:{{ '#5f84db'|alpha(45) }};color:#5f84db;">
-                                <i class="iconoir-calendar"></i>
-                            </div>
+                            {{ component('integrated_admin:workflow_status', {
+                                color: '#5f84db',
+                                icon: 'calendar',
+                            }) }}
                         {% endif %}
                         {% if content.workflow_state is not defined and content.published is defined and content.published == "true" and 'now'|date('U') > content.pub_time |date('U') %}
-                            <div class="workflow-status" style="background-color:{{ '#00ae93'|alpha(12) }};border-color:{{ '#00ae93'|alpha(45) }};color:#00ae93;">
-                                <i class="iconoir-check"></i>
-                            </div>
+                            {{ component('integrated_admin:workflow_status', {
+                                color: '#00ae93',
+                                icon: 'check',
+                            }) }}
                         {% elseif content.workflow_state is not defined and content.published is defined and content.published == "false" and 'now'|date('U') > content.pub_time |date('U')%}
-                            <div class="workflow-status" style="background-color:{{ '#ababab'|alpha(12) }};border-color:{{ '#ababab'|alpha(45) }};color:#5b6b79;">
-                                <i class="iconoir-edit-pencil"></i>
-                            </div>
+                            {{ component('integrated_admin:workflow_status', {
+                                color: '#ababab',
+                                icon: 'edit-pencil',
+                            }) }}
                         {% endif %}
                     </td>
                 </tr>

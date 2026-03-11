@@ -29,9 +29,10 @@
                                             {% else %}
                                                 {% set status_icon = '' %}
                                             {% endif %}
-                                            <div class="workflow-status" style="background-color:{{ status_color|alpha(12) }};border-color:{{ status_color|alpha(45) }};color:{{ status_color }};">
-                                                <i class="iconoir-{{ status_icon }}"></i>
-                                            </div>
+                                            {{ component('integrated_admin:workflow_status', {
+                                                color: status_color,
+                                                icon: status_icon,
+                                            }) }}
                                             <span class="item-title">{{ doc.title|default }}</span>
                                         </a>
                                     </li>

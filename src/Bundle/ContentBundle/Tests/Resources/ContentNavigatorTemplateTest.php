@@ -51,6 +51,7 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString("document.addEventListener('turbo:load', initLockPolling);", $template);
         $this->assertStringContainsString("document.addEventListener('turbo:frame-load', function(event)", $template);
         $this->assertStringContainsString("component('integrated_admin:row_actions'", $template);
+        $this->assertStringContainsString("component('integrated_admin:workflow_status'", $template);
     }
 
     public function testIndexTemplatesKeepEditLinksPrefetchable(): void
@@ -75,6 +76,7 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringNotContainsString('class="list list-large list-border js-assigned-list" data-turbo-prefetch="false"', $navDropdownTemplate);
         $this->assertStringContainsString("path('integrated_content_content_edit', {id: doc.type_id}) }}\" data-turbo-frame=\"_top\"", $navDropdownTemplate);
         $this->assertStringNotContainsString("path('integrated_content_content_edit', {id: doc.type_id}) }}\" data-turbo-frame=\"_top\" data-turbo-prefetch=\"false\"", $navDropdownTemplate);
+        $this->assertStringContainsString("component('integrated_admin:workflow_status'", $navDropdownTemplate);
     }
 
     public function testIndexTemplatesKeepChannelFallbackForMissingFacetBrands(): void

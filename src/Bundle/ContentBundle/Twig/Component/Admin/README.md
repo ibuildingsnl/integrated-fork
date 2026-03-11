@@ -22,6 +22,7 @@ Public admin component keys in core:
 - `integrated_admin:selection_modal`
 - `integrated_admin:status_badge`
 - `integrated_admin:taxonomy_category_picker`
+- `integrated_admin:workflow_status`
 
 Testing
 
@@ -41,6 +42,7 @@ Component boundaries
 
 - Use `page_title`, `section_card`, `data_table`, `pagination_footer`, `row_actions`, `status_badge` as the default admin list stack.
 - Use `empty_state_message` for inline empty or secondary feedback in panels, sidebars, and lightweight list views.
+- Use `workflow_status` for the color-coded workflow icon bubble wherever the same admin workflow marker appears.
 - Use `edit_form_shell` only for the shared edit/delete page shell.
 - Use `aside_panel` for hand-built accordion panels, not Symfony form-theme sidebar rows.
 - Use `filter_group` for static titled filter/list groups, not collapsible aside panels.

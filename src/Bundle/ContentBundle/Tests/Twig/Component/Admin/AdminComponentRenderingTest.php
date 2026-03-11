@@ -39,6 +39,21 @@ final class AdminComponentRenderingTest extends AdminComponentKernelTestCase
     }
 
     #[Test]
+    public function itRendersWorkflowStatusMarkup(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:workflow_status', [
+            'color' => '#00ae93',
+            'icon' => 'check',
+            'title' => 'Published',
+        ])->toString();
+
+        self::assertStringContainsString('workflow-status', $output);
+        self::assertStringContainsString('iconoir-check', $output);
+        self::assertStringContainsString('background-color:rgba(0,174,147,0.12)', str_replace(' ', '', $output));
+        self::assertStringContainsString('title="Published"', $output);
+    }
+
+    #[Test]
     public function itRendersEmptyStateMessageMarkup(): void
     {
         $output = $this->renderTwigComponent('integrated_admin:empty_state_message', [

@@ -38,6 +38,14 @@ final class WorkflowTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
     }
 
+    public function testWorkflowFormThemeUsesAdminWorkflowStatusComponent(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/form/form_div_layout.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:workflow_status'", $template);
+    }
+
     public function testWorkflowDeleteUsesAdminEditFormShellComponent(): void
     {
         $template = file_get_contents(__DIR__.'/../../Resources/views/workflow/delete.html.twig');

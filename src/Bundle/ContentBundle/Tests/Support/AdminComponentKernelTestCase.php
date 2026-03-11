@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Integrated\Bundle\ContentBundle\Tests\Support;
 
+use Integrated\Bundle\FormTypeBundle\Twig\TwigColorTools;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
@@ -78,6 +79,7 @@ final class AdminComponentTestKernel extends Kernel
             $services->set($componentClass)->tag('twig.component');
         }
 
+        $services->set(TwigColorTools::class)->tag('twig.extension');
         $services->set(PaginationFooterTestTwigExtension::class)->tag('twig.extension');
     }
 

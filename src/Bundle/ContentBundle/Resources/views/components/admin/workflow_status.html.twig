@@ -1,0 +1,9 @@
+<div
+    class="{{ this.classes() }}"
+    style="background-color:{{ color|alpha(12) }};border-color:{{ color|alpha(45) }};color:{{ color }};"
+    {% if title %}title="{{ title }}"{% endif %}
+>
+    {% if icon %}
+        <i class="iconoir-{{ icon }}"></i>
+    {% endif %}
+</div>
