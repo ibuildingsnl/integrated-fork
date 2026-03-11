@@ -50,12 +50,15 @@
                                     {{ data.name }}
                                 </a>
                             </strong>
-                                <div class="row-options">
+                                {% set configRowActionsHtml %}
                                     <a href="{{ path('integrated_channel_config_edit', {'id': data.id}) }}"
                                        title="{% trans %}Edit{% endtrans %}">{% trans %}Edit{% endtrans %}</a> |
                                     <a href="{{ path('integrated_channel_config_delete', {'id': data.id}) }}"
                                        class="color-red" title="{% trans %}Delete{% endtrans %}">{% trans %}Delete{% endtrans %}</a>
-                                </div>
+                                {% endset %}
+                                {{ component('integrated_admin:row_actions', {
+                                    contentHtml: configRowActionsHtml,
+                                }) }}
                             </td>
                             <td>{{ data.adapter }}</td>
                         </tr>

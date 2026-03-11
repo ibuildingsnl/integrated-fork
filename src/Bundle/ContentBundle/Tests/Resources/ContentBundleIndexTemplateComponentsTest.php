@@ -33,6 +33,7 @@ final class ContentBundleIndexTemplateComponentsTest extends TestCase
 
         self::assertIsString($template);
         self::assertStringContainsString("component('integrated_admin:data_table'", $template);
+        self::assertStringContainsString("component('integrated_admin:row_actions'", $template);
         self::assertStringContainsString("'No relations added'|trans", $template);
     }
 

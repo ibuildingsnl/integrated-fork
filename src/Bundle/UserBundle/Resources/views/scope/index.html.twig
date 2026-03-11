@@ -41,12 +41,15 @@
                                         {{ scope.name }}
                                     </a>
                                 </strong>
-                                <div class="row-options">
+                                {% set scopeRowActionsHtml %}
                                     <a href="{{ path('integrated_user_scope_edit', {'id': scope.id}) }}"
                                        title="{% trans %}Edit{% endtrans %}">{% trans %}Edit{% endtrans %}</a> |
                                     <a href="{{ path('integrated_user_scope_delete', {'id': scope.id}) }}"
                                        class="color-red" title="{% trans %}Delete{% endtrans %}">{% trans %}Delete{% endtrans %}</a>
-                                </div>
+                                {% endset %}
+                                {{ component('integrated_admin:row_actions', {
+                                    contentHtml: scopeRowActionsHtml,
+                                }) }}
                             </td>
                         </tr>
                     {% endfor %}

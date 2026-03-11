@@ -80,7 +80,7 @@
                                                 {{ item.title }}
                                             </a>
                                         </strong>
-                                        <div class="row-options">
+                                        {% set taxonomyRowActionsHtml %}
                                             <a href="{{ path('integrated_content_content_edit', {'id': item.taxonomyId}) }}"
                                                title="{% trans %}Edit{% endtrans %}">
                                                 {% trans %}Edit{% endtrans %}
@@ -90,7 +90,10 @@
                                                title="{% trans %}Delete{% endtrans %}">
                                                 {% trans %}Delete{% endtrans %}
                                             </a>
-                                        </div>
+                                        {% endset %}
+                                        {{ component('integrated_admin:row_actions', {
+                                            contentHtml: taxonomyRowActionsHtml,
+                                        }) }}
                                     </td>
                                     <td>
                                         {{ item.description|striptags|u.truncate(50, '...')|raw }}

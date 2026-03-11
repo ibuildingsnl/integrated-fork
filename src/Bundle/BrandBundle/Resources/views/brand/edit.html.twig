@@ -98,7 +98,7 @@
                                                 {{ link.name }}
                                             </a>
                                         </strong>
-                                        <div class="row-options">
+                                        {% set brandChannelRowActionsHtml %}
                                             <a
                                                 href="{{ path('integrated_content_brand_edit_channel', {'id': brand.id, 'link': link.id}) }}"
                                                 title="{% trans with {'%brand%': brand.name, '%type%': link.name } %}Edit %brand%'s %type% Channel{% endtrans %}"
@@ -120,7 +120,10 @@
                                             >
                                                 {% trans %}Remove{% endtrans %}
                                             </a>
-                                        </div>
+                                        {% endset %}
+                                        {{ component('integrated_admin:row_actions', {
+                                            contentHtml: brandChannelRowActionsHtml,
+                                        }) }}
                                     </td>
                                     <td class="default">
                                         {% if link.default %}

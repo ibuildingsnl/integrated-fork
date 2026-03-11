@@ -29,6 +29,7 @@ final class UserTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:page_title'", $template);
         self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
         self::assertStringContainsString("component('integrated_admin:data_table'", $template);
+        self::assertStringContainsString("component('integrated_admin:row_actions'", $template);
     }
 
     public static function indexTemplateProvider(): iterable

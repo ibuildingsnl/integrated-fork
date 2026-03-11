@@ -38,14 +38,17 @@
                                         {{ document.name }}
                                     </a>
                                 </strong>
-                                <div class="row-options">
+                                {% set brandRowActionsHtml %}
                                     <a href="{{ path('integrated_content_brand_edit', {'id': document.id}) }}" title="{% trans %}Edit{% endtrans %}">
                                         {% trans %}Edit{% endtrans %}
                                     </a> |
                                     <a class="color-red" href="{{ path('integrated_content_brand_delete', {'id': document.id}) }}" title="{% trans %}Delete{% endtrans %}">
                                         {% trans %}Delete{% endtrans %}
                                     </a>
-                                </div>
+                                {% endset %}
+                                {{ component('integrated_admin:row_actions', {
+                                    contentHtml: brandRowActionsHtml,
+                                }) }}
                             </td>
                             <td class="id">
                                 {{ document.id }}

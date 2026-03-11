@@ -44,7 +44,7 @@
                                         {{ list.ip.protocolAppropriateAddress }}
                                     </a>
                                 </strong>
-                                <div class="row-options">
+                                {% set ipListRowActionsHtml %}
                                     <a href="{{ path('integrated_user_iplist_edit', {'id': list.id}) }}"
                                        title="{% trans %}Edit{% endtrans %}">
                                         {% trans %}Edit{% endtrans %}
@@ -54,7 +54,10 @@
                                        title="{% trans %}Remove{% endtrans %}">
                                         {% trans %}Remove{% endtrans %}
                                     </a>
-                                </div>
+                                {% endset %}
+                                {{ component('integrated_admin:row_actions', {
+                                    contentHtml: ipListRowActionsHtml,
+                                }) }}
                             </td>
                             <td>{{ list.description }}</td>
                         </tr>

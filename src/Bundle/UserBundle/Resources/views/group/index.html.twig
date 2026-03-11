@@ -43,12 +43,15 @@
                                         {{ group.name }}
                                     </a>
                                 </strong>
-                                <div class="row-options">
+                                {% set groupRowActionsHtml %}
                                     <a href="{{ path('integrated_user_group_edit', {'id': group.id}) }}"
                                        title="{% trans %}Edit{% endtrans %}">{% trans %}Edit{% endtrans %}</a> |
                                     <a href="{{ path('integrated_user_group_delete', {'id': group.id}) }}"
                                        class="color-red" title="{% trans %}Delete{% endtrans %}">{% trans %}Delete{% endtrans %}</a>
-                                </div>
+                                {% endset %}
+                                {{ component('integrated_admin:row_actions', {
+                                    contentHtml: groupRowActionsHtml,
+                                }) }}
                             </td>
                             <td>
                                 {{ userCountsByGroupId[group.id]|default(0) }}

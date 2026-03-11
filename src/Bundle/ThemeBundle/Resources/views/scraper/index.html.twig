@@ -39,7 +39,7 @@
                                         {{ scraper.name }}
                                     </a>
                                 </strong>
-                                <div class="row-options">
+                                {% set scraperRowActionsHtml %}
                                     <a href="{{ path('integrated_theme_scraper_edit', {'id': scraper.id}) }}"
                                        title="{% trans %}Edit{% endtrans %}">
                                         {% trans %}Edit{% endtrans %}
@@ -49,7 +49,10 @@
                                        title="{% trans %}Delete{% endtrans %}">
                                         {% trans %}Delete{% endtrans %}
                                     </a>
-                                </div>
+                                {% endset %}
+                                {{ component('integrated_admin:row_actions', {
+                                    contentHtml: scraperRowActionsHtml,
+                                }) }}
                             </td>
                             <td>
                             </td>
