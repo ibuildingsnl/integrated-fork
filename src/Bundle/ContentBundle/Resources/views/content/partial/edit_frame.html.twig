@@ -11,9 +11,10 @@
     {% endblock %}
     <div id="dropdown_overlay" class="hide"></div>
     {% if form is defined and form.vars.valid is defined and not form.vars.valid %}
-        <div class="alert alert-danger">
-            {{ form_errors(form) }}
-        </div>
+        {{ component('integrated_admin:alert_box', {
+            variant: 'danger',
+            bodyHtml: form_errors(form),
+        }) }}
     {% endif %}
     <div class="flex flex-wrap sidebar-edit-form">
         <div class="aside-edit">

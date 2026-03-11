@@ -26,21 +26,25 @@
                         {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning', 'error']) %}
                             {% for message in messages %}
                                 {% if label == 'alert' %}
-                                    {% set label = 'warning' %}
+                                    {% set alertVariant = 'warning' %}
                                 {% elseif label == 'error' %}
-                                    {% set label = 'danger' %}
+                                    {% set alertVariant = 'danger' %}
+                                {% else %}
+                                    {% set alertVariant = label %}
                                 {% endif %}
-                                <div class="alert alert-{{ label }} alert-dismissible">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close notification">&times;</button>
-                                    {{ message|trans }}
-                                </div>
+                                {{ component('integrated_admin:alert_box', {
+                                    variant: alertVariant,
+                                    dismissible: true,
+                                    bodyHtml: message|trans,
+                                }) }}
                             {% endfor %}
                         {% endfor %}
 
                         {% if form.vars.errors|length > 0 %}
-                            <div class="alert alert-info">
-                                {{ 'Login help: use your username or e-mail address, and verify that login is enabled and your account has admin scope access.'|trans }}
-                            </div>
+                            {{ component('integrated_admin:alert_box', {
+                                variant: 'info',
+                                bodyHtml: 'Login help: use your username or e-mail address, and verify that login is enabled and your account has admin scope access.'|trans,
+                            }) }}
                         {% endif %}
 
                         {{ form_widget(form) }}

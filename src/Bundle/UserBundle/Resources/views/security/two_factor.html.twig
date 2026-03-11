@@ -23,11 +23,14 @@
                         </div>
                         <div class="modal-body">
                             {% if authenticationError %}
-                                <div class="alert alert-danger">
-                                    <ul>
-                                        <li>{{ authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') }}</li>
-                                    </ul>
-                                </div>
+                                {% set twoFactorErrorHtml %}
+                                    <li>{{ authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') }}</li>
+                                {% endset %}
+                                {{ component('integrated_admin:alert_box', {
+                                    tag: 'ul',
+                                    variant: 'danger',
+                                    bodyHtml: twoFactorErrorHtml,
+                                }) }}
                             {% endif %}
 
                             <div class="form-group w-full flex flex-wrap">

@@ -16,12 +16,16 @@
         {% endset %}
         {% set userProfileEditorContentHtml %}
             {% if user.relation is defined and user.relation %}
-                <div class="alert alert-info">
+                {% set linkedAuthorAlertHtml %}
                     <strong>{% trans %}Linked author{% endtrans %}:</strong>
                     <a href="{{ path('integrated_content_content_edit', {id: user.relation.id}) }}">
                         {{ user.relation.name|default('') }} {{ user.relation.firstname|default('') }} {{ user.relation.lastname|default('') }}
                     </a>
-                </div>
+                {% endset %}
+                {{ component('integrated_admin:alert_box', {
+                    variant: 'info',
+                    bodyHtml: linkedAuthorAlertHtml,
+                }) }}
             {% endif %}
             {% block user_profile_extra %}{% endblock %}
             {{ form_rest(form, {'style':'horizontal', 'state': 'show'}) }}
@@ -33,9 +37,10 @@
                 {% block content %}
                 <h3>{% trans %}Two-factor authentication{% endtrans %}</h3>
                 {% if user.googleAuthenticatorEnabled %}
-                    <div class="alert alert-success">
-                        {% trans %}Two-factor authentication is active for your account.{% endtrans %}
-                    </div>
+                    {{ component('integrated_admin:alert_box', {
+                        variant: 'success',
+                        bodyHtml: 'Two-factor authentication is active for your account.'|trans,
+                    }) }}
                     <div class="flex items-center gap-2">
                         <form method="post" action="{{ path('integrated_user_profile_two_factor_deactivate') }}" onsubmit="return confirm('{{ 'Are you sure you want to deactivate 2FA for your account?'|trans }}');">
                             <input type="hidden" name="_token" value="{{ csrf_token('profile_2fa_deactivate') }}">
@@ -47,9 +52,10 @@
                         </form>
                     </div>
                 {% else %}
-                    <div class="alert alert-warning">
-                        {% trans %}Two-factor authentication is not active yet. Activate it to better protect your account.{% endtrans %}
-                    </div>
+                    {{ component('integrated_admin:alert_box', {
+                        variant: 'warning',
+                        bodyHtml: 'Two-factor authentication is not active yet. Activate it to better protect your account.'|trans,
+                    }) }}
                     <a class="btn btn-orange" href="{{ path('integrated_user_two_factor_authenticator_activate') }}">
                         {% trans %}Activate 2FA{% endtrans %}
                     </a>

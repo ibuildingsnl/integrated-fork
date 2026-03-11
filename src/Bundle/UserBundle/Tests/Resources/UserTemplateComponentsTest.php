@@ -98,6 +98,7 @@ final class UserTemplateComponentsTest extends TestCase
         self::assertIsString($template);
         self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
         self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
+        self::assertSame(3, substr_count($template, "component('integrated_admin:alert_box'"));
     }
 
     public function testGroupEditUsesAdminSectionCardForUserManagement(): void
@@ -119,6 +120,35 @@ final class UserTemplateComponentsTest extends TestCase
         self::assertIsString($editTemplate);
         self::assertStringContainsString("component('integrated_admin:aside_panel'", $newTemplate);
         self::assertSame(2, substr_count($editTemplate, "component('integrated_admin:aside_panel'"));
+    }
+
+    public function testLoginTemplateUsesAdminAlertBox(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/security/login.html.twig');
+
+        self::assertIsString($template);
+        self::assertSame(2, substr_count($template, "component('integrated_admin:alert_box'"));
+        self::assertStringContainsString('dismissible: true', $template);
+        self::assertStringContainsString("variant: 'info'", $template);
+    }
+
+    public function testPasswordResetTemplateUsesAdminAlertBox(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/security/password_reset.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:alert_box'", $template);
+        self::assertStringContainsString('dismissible: true', $template);
+    }
+
+    public function testTwoFactorTemplateUsesAdminAlertBox(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/security/two_factor.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:alert_box'", $template);
+        self::assertStringContainsString("variant: 'danger'", $template);
+        self::assertStringContainsString("tag: 'ul'", $template);
     }
 
     public static function editFormShellTemplateProvider(): iterable

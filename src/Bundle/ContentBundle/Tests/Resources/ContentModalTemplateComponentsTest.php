@@ -35,4 +35,13 @@ final class ContentModalTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:selection_modal'", $template);
         self::assertStringContainsString("modalId: 'image-edit-modal'", $template);
     }
+
+    public function testMediaEditFrameUsesAdminAlertBoxForFormErrors(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content/partial/edit_frame.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:alert_box'", $template);
+        self::assertStringContainsString("variant: 'danger'", $template);
+    }
 }
