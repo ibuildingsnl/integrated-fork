@@ -4,53 +4,12 @@ declare(strict_types=1);
 
 namespace Integrated\Bundle\ContentBundle\Tests\Twig\Component\Admin;
 
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\AlertBox;
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\AsidePanel;
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\ConfirmModal;
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\DataTable;
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\DetailList;
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\EditFormShell;
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\EditDrawerPanel;
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\FilterGroup;
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\FilterSearchInput;
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\FolderMenuPanel;
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\IframeModal;
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\OptionsToolbar;
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\PaginationFooter;
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\PageTitle;
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\RowActions;
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\SelectionModal;
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\SectionCard;
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\StatusBadge;
-use Integrated\Bundle\ContentBundle\Twig\Component\Admin\TaxonomyCategoryPicker;
+use Integrated\Bundle\ContentBundle\Tests\Support\AdminComponentKernelTestCase;
+use Integrated\Bundle\ContentBundle\Tests\Support\PaginationFooterTestPager;
 use PHPUnit\Framework\Attributes\Test;
-use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
-use Symfony\Bundle\TwigBundle\TwigBundle;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
-use Symfony\UX\TwigComponent\Test\InteractsWithTwigComponents;
-use Symfony\UX\TwigComponent\TwigComponentBundle;
 
-final class AdminComponentRenderingTest extends KernelTestCase
+final class AdminComponentRenderingTest extends AdminComponentKernelTestCase
 {
-    use InteractsWithTwigComponents;
-
-    protected static function createKernel(array $options = []): KernelInterface
-    {
-        return new AdminComponentRenderingTestKernel('test', true);
-    }
-
-    protected function tearDown(): void
-    {
-        self::ensureKernelShutdown();
-        parent::tearDown();
-    }
-
     #[Test]
     public function itRendersStatusBadgeMarkup(): void
     {
@@ -166,10 +125,11 @@ final class AdminComponentRenderingTest extends KernelTestCase
     {
         $output = $this->renderTwigComponent('integrated_admin:page_title', [
             'title' => 'Mail accounts',
+            'wrapperClass' => 'page-title--mail',
             'contentHtml' => '<div class="options options-toolbar"><ul class="options-no-bg"><li>Toolbar</li></ul></div>',
         ])->toString();
 
-        self::assertStringContainsString('page-title', $output);
+        self::assertStringContainsString('page-title page-title--mail', $output);
         self::assertStringContainsString('<h1', $output);
         self::assertStringContainsString('Mail accounts', $output);
         self::assertStringContainsString('options options-toolbar', $output);
@@ -194,13 +154,14 @@ final class AdminComponentRenderingTest extends KernelTestCase
     public function itRendersOptionsToolbarMarkupFromListItems(): void
     {
         $output = $this->renderTwigComponent('integrated_admin:options_toolbar', [
+            'wrapperClass' => 'toolbar-inline',
             'listItems' => [
                 ['label' => 'Overview', 'href' => '/admin/content'],
                 ['label' => 'Settings', 'href' => '/admin/settings', 'active' => true],
             ],
         ])->toString();
 
-        self::assertStringContainsString('options options-toolbar', $output);
+        self::assertStringContainsString('options options-toolbar toolbar-inline', $output);
         self::assertStringContainsString('content-navigator-menu', $output);
         self::assertStringContainsString('Overview', $output);
         self::assertStringContainsString('/admin/settings', $output);
@@ -227,10 +188,11 @@ final class AdminComponentRenderingTest extends KernelTestCase
             'colGroupHtml' => '<colgroup><col /><col /></colgroup>',
             'headHtml' => '<tr><th>Name</th><th>Status</th></tr>',
             'bodyHtml' => '<tr class="has-options"><td>Example</td><td>Draft</td></tr>',
+            'tableClass' => 'table-sm',
         ])->toString();
 
         self::assertStringContainsString('<table', $output);
-        self::assertStringContainsString('table table-hover', $output);
+        self::assertStringContainsString('table table-hover table-sm', $output);
         self::assertStringContainsString('<colgroup><col /><col /></colgroup>', $output);
         self::assertStringContainsString('<thead>', $output);
         self::assertStringContainsString('<tbody>', $output);
@@ -521,7 +483,7 @@ final class AdminComponentRenderingTest extends KernelTestCase
     {
         $output = $this->renderTwigComponent('integrated_admin:row_actions', [
             'contentHtml' => '<a href="/admin/example/1/edit">Edit</a> | <a class="color-red" href="/admin/example/1/delete">Delete</a>',
-            'extraClass' => 'compact-actions',
+            'wrapperClass' => 'compact-actions',
         ])->toString();
 
         self::assertStringContainsString('<div class="row-options compact-actions">', $output);
@@ -549,111 +511,5 @@ final class AdminComponentRenderingTest extends KernelTestCase
         self::assertStringContainsString('modal-body p-4', $output);
         self::assertStringContainsString('close-group-users-modal', $output);
         self::assertStringContainsString('btn btn-green', $output);
-    }
-}
-
-final class AdminComponentRenderingTestKernel extends Kernel
-{
-    use MicroKernelTrait;
-
-    public function registerBundles(): iterable
-    {
-        return [
-            new FrameworkBundle(),
-            new TwigBundle(),
-            new TwigComponentBundle(),
-        ];
-    }
-
-    protected function configureContainer(ContainerConfigurator $container): void
-    {
-        $container->extension('framework', [
-            'secret' => 'integrated-admin-component-render-tests',
-            'test' => true,
-            'router' => ['utf8' => true],
-            'http_method_override' => false,
-        ]);
-
-        $container->extension('twig', [
-            'strict_variables' => true,
-            'paths' => [
-                self::projectDir().'/vendor/integrated/integrated/src/Bundle/ContentBundle/Resources/views' => 'IntegratedContent',
-            ],
-        ]);
-
-        $services = $container->services()->defaults()->autowire(true)->autoconfigure(true)->public();
-
-        $services->set(AlertBox::class)->tag('twig.component');
-        $services->set(StatusBadge::class);
-        $services->set(ConfirmModal::class)->tag('twig.component');
-        $services->set(SectionCard::class);
-        $services->set(PageTitle::class);
-        $services->set(OptionsToolbar::class);
-        $services->set(DataTable::class);
-        $services->set(DetailList::class)->tag('twig.component');
-        $services->set(EditFormShell::class)->tag('twig.component');
-        $services->set(AsidePanel::class)->tag('twig.component');
-        $services->set(EditDrawerPanel::class)->tag('twig.component');
-        $services->set(FilterSearchInput::class)->tag('twig.component');
-        $services->set(FilterGroup::class)->tag('twig.component');
-        $services->set(FolderMenuPanel::class)->tag('twig.component');
-        $services->set(IframeModal::class)->tag('twig.component');
-        $services->set(PaginationFooter::class)->tag('twig.component');
-        $services->set(RowActions::class)->tag('twig.component');
-        $services->set(SelectionModal::class)->tag('twig.component');
-        $services->set(TaxonomyCategoryPicker::class)->tag('twig.component');
-        $services->set(PaginationFooterTestTwigExtension::class)->tag('twig.extension');
-    }
-
-    public function getCacheDir(): string
-    {
-        $suffix = md5((string) @filemtime(__FILE__));
-
-        return sys_get_temp_dir().'/integrated_content_bundle_component_tests/'.$suffix.'/cache';
-    }
-
-    public function getLogDir(): string
-    {
-        $suffix = md5((string) @filemtime(__FILE__));
-
-        return sys_get_temp_dir().'/integrated_content_bundle_component_tests/'.$suffix.'/logs';
-    }
-
-    public function getProjectDir(): string
-    {
-        return self::projectDir();
-    }
-
-    private static function projectDir(): string
-    {
-        return \dirname(__DIR__, 10);
-    }
-}
-
-final class PaginationFooterTestPager implements \IteratorAggregate
-{
-    public function getIterator(): \Traversable
-    {
-        yield 1;
-        yield 2;
-    }
-}
-
-final class PaginationFooterTestTwigExtension extends AbstractExtension
-{
-    public function getFunctions(): array
-    {
-        return [
-            new TwigFunction(
-                'knp_pagination_render',
-                static function (mixed $pagination, string $template): string {
-                    return sprintf(
-                        '<nav class="pagination-test" data-template="%s"><a class="pagination-page-1">1</a><a class="pagination-page-2">2</a></nav>',
-                        htmlspecialchars($template, ENT_QUOTES)
-                    );
-                },
-                ['is_safe' => ['html']]
-            ),
-        ];
     }
 }

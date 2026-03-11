@@ -11,11 +11,17 @@ final class RowActions
 {
     public ?string $contentHtml = null;
 
+    public ?string $wrapperClass = null;
+
     public ?string $extraClass = null;
 
     public function classes(): string
     {
         $classes = ['row-options'];
+
+        if ($this->wrapperClass) {
+            $classes[] = trim($this->wrapperClass);
+        }
 
         if ($this->extraClass) {
             $classes[] = trim($this->extraClass);

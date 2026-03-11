@@ -18,11 +18,17 @@ final class OptionsToolbar
 
     public string $menuClass = 'content-navigator-menu';
 
+    public ?string $wrapperClass = null;
+
     public ?string $extraClass = null;
 
-    public function wrapperClass(): string
+    public function classes(): string
     {
         $classes = ['options', 'options-toolbar'];
+
+        if ($this->wrapperClass) {
+            $classes[] = trim($this->wrapperClass);
+        }
 
         if ($this->extraClass) {
             $classes[] = trim($this->extraClass);

@@ -17,15 +17,21 @@ final class PageTitle
 
     public string $headingTag = 'h1';
 
+    public ?string $wrapperClass = null;
+
     public ?string $extraClass = null;
 
     public ?string $actionsHtml = null;
 
     public ?string $contentHtml = null;
 
-    public function wrapperClass(): string
+    public function classes(): string
     {
         $classes = ['page-title'];
+
+        if ($this->wrapperClass) {
+            $classes[] = trim($this->wrapperClass);
+        }
 
         if ($this->extraClass) {
             $classes[] = trim($this->extraClass);

@@ -17,6 +17,8 @@ final class SectionCard
 
     public ?string $subtitle = null;
 
+    public ?string $wrapperClass = null;
+
     public ?string $extraClass = null;
 
     public function surfaceClass(): string
@@ -25,6 +27,10 @@ final class SectionCard
 
         if ($this->padding) {
             $classes[] = 'p-4';
+        }
+
+        if ($this->wrapperClass) {
+            $classes[] = trim($this->wrapperClass);
         }
 
         if ($this->extraClass) {

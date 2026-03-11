@@ -25,14 +25,20 @@ final class DataTable
 
     public bool $hover = true;
 
+    public ?string $tableClass = null;
+
     public ?string $extraClass = null;
 
-    public function tableClass(): string
+    public function tableClasses(): string
     {
         $classes = ['table'];
 
         if ($this->hover) {
             $classes[] = 'table-hover';
+        }
+
+        if ($this->tableClass) {
+            $classes[] = trim($this->tableClass);
         }
 
         if ($this->extraClass) {
