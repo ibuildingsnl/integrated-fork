@@ -55,6 +55,7 @@ final class ContentHistoryTemplateComponentsTest extends TestCase
 
         self::assertIsString($template);
         self::assertStringContainsString("component('integrated_admin:aside_panel'", $template);
+        self::assertStringContainsString("component('integrated_admin:status_badge'", $template);
         self::assertStringContainsString("titleHtml: historyTitleHtml", $template);
     }
 

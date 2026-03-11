@@ -19,8 +19,21 @@
     align-items: center;
 }
 
+.label {
+    padding: .12rem .55rem;
+    border-radius: 9999px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    line-height: 1.4;
+    display: inline-flex;
+    align-items: center;
+}
+
 .status-badge.status-sent,
-.status-badge.status-active {
+.status-badge.status-active,
+.label.label-primary {
 	background: rgba(1, 174, 147, .12);
 	color: #018a75;
 	border: 1px solid #73b7ac;
@@ -46,8 +59,16 @@
 }
 
 .status-badge.status-queued,
-.status-badge.status-inactive {
+.status-badge.status-inactive,
+.label.label-default {
 	background: rgba(108, 123, 137, .16);
 	color: #5b6b79;
 	border: 1px solid #8d9ca9;
+}
+
+.status-badge.status-info,
+.label.label-info {
+    background: rgba(70, 122, 194, .12);
+    color: #325f99;
+    border: 1px solid #8eadd4;
 }

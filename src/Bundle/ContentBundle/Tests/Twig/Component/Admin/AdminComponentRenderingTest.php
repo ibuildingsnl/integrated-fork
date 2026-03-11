@@ -26,6 +26,19 @@ final class AdminComponentRenderingTest extends AdminComponentKernelTestCase
     }
 
     #[Test]
+    public function itRendersInfoStatusBadgeMarkup(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:status_badge', [
+            'label' => 'System page',
+            'variant' => 'info',
+        ])->toString();
+
+        self::assertStringContainsString('status-badge', $output);
+        self::assertStringContainsString('status-info', $output);
+        self::assertStringContainsString('System page', $output);
+    }
+
+    #[Test]
     public function itRendersDismissibleAlertBoxMarkup(): void
     {
         $output = $this->renderTwigComponent('integrated_admin:alert_box', [

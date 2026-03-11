@@ -177,12 +177,21 @@
                                 <td>
                                     {% if page.type == 'page' %}
                                         {% if page.disabled %}
-                                            <span class="label label-default">{% trans %}Draft{% endtrans %}</span>
+                                            {{ component('integrated_admin:status_badge', {
+                                                label: 'Draft'|trans,
+                                                variant: 'inactive',
+                                            }) }}
                                         {% else %}
-                                            <span class="label label-primary">{% trans %}Published{% endtrans %}</span>
+                                            {{ component('integrated_admin:status_badge', {
+                                                label: 'Published'|trans,
+                                                variant: 'active',
+                                            }) }}
                                         {% endif %}
                                     {% elseif page.type == 'content_type_page' %}
-                                        <span class="label label-info">{% trans %}System page{% endtrans %}</span>
+                                        {{ component('integrated_admin:status_badge', {
+                                            label: 'System page'|trans,
+                                            variant: 'info',
+                                        }) }}
                                     {% else %}
                                         <span class="text-muted">—</span>
                                     {% endif %}

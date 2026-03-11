@@ -24,6 +24,7 @@ final class StatusBadge
         return match ($this->variant) {
             'sent' => 'status-sent',
             'active' => 'status-active',
+            'info' => 'status-info',
             'sending' => 'status-sending',
             'retrying' => 'status-retrying',
             'failed' => 'status-failed',

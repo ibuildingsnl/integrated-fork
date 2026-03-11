@@ -14,6 +14,8 @@ button * {
     border: 1px solid;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    gap: .65rem;
     border-radius: 8px;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -22,6 +24,8 @@ button * {
     appearance: none;
     cursor: pointer;
     white-space: nowrap;
+    box-shadow: none;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
 
     &:visited {
         color: inherit;
@@ -37,17 +41,21 @@ button * {
         outline: none;
     }
 
+    &:focus-visible {
+        box-shadow: 0 0 0 3px rgba(1, 174, 147, .16);
+    }
+
     &.svg {
         padding-left: 0.5rem;
     }
 
     span {
-        margin-right: 1rem;
+        margin-right: 0;
     }
 
     &.icon-left {
         span {
-            margin-left: 1rem;
+            margin-left: 0;
             margin-right: 0;
         }
     }
@@ -66,6 +74,7 @@ button * {
 
     i, svg {
         display: inline-block;
+        flex-shrink: 0;
     }
 
     @include media(md) {
@@ -208,6 +217,12 @@ button * {
         color: #515865;
         height: 34px;
         line-height: 34px;
+
+        &:hover, &:focus {
+            background-color: #f3f5f7;
+            border-color: color.adjust($border-color, $lightness: -8%);
+            color: #3f4955;
+        }
     }
     &.btn-dropdown {
         background: #fff;
@@ -225,6 +240,13 @@ button * {
         background-color: white;
         border-color: $border-color;
         color: #515865;
+        font-weight: 500;
+
+        &:hover, &:focus {
+            background-color: #f3f5f7;
+            border-color: color.adjust($border-color, $lightness: -8%);
+            color: #3f4955;
+        }
     }
     &.btn-danger {
         background: white;
@@ -239,6 +261,7 @@ button * {
         background-color: $orange;
         border-color: $orange;
         color:white;
+        font-weight: 500;
         &:hover, &:focus {
             color: white;
             background-color: color.adjust($orange, $lightness: -20%);
@@ -249,6 +272,7 @@ button * {
         background-color: $green;
         border-color: $green;
         color:white;
+        font-weight: 500;
         &:hover, &:focus {
             color: white;
             background-color: color.adjust($green, $lightness: -20%);
@@ -259,6 +283,7 @@ button * {
         background-color: white;
         border-color: $border-color;
         color: #637281;
+        font-weight: 500;
         &:hover, &:focus {
             color: #637281;
             background-color: $border-color;
@@ -278,6 +303,7 @@ button * {
         border-color: #E5F6F4;
         color: #0D4E4D;
         height: 34px;
+        font-weight: 500;
         &:hover, &:focus {
             color: #0D4E4D;
             background-color: color.adjust(#E5F6F4, $lightness: -20%);

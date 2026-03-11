@@ -27,6 +27,15 @@ final class StatusBadgeComponentTest extends TestCase
         self::assertSame('status-sent', $component->statusClass());
     }
 
+    public function testMapsInfoVariantToIntegratedClass(): void
+    {
+        $component = new StatusBadge();
+        $component->label = 'System page';
+        $component->variant = 'info';
+
+        self::assertSame('status-info', $component->statusClass());
+    }
+
     public function testFallsBackToInactiveClassForUnknownVariant(): void
     {
         $component = new StatusBadge();
