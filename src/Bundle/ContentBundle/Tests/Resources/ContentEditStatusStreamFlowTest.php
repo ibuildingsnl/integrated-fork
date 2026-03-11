@@ -23,6 +23,7 @@ class ContentEditStatusStreamFlowTest extends TestCase
         $template = file_get_contents(__DIR__.'/../../Resources/views/content/edit.html.twig');
 
         $this->assertIsString($template);
+        $this->assertStringContainsString('content is defined and content.title is defined', $template);
         $this->assertStringContainsString('@IntegratedContent/content/partial/workflow_info.html.twig', $template);
         $this->assertStringContainsString('@IntegratedContent/content/partial/status_options.html.twig', $template);
         $this->assertStringContainsString('id="content-history-section"', $template);

@@ -1,6 +1,6 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}
-    {% if content.title is defined and content.title is not null %}
+    {% if content is defined and content.title is defined and content.title is not null %}
         {% trans %}Edit{% endtrans %} {{ content.title }}
     {% else %}
         {% trans %}Edit{% endtrans %} {{ type.name|trans }}
@@ -58,6 +58,7 @@
                             {{ component('integrated_admin:aside_panel', {
                                 title: 'Status'|trans,
                                 icon: 'info-circle',
+                                expanded: true,
                                 withHolder: false,
                                 indicatorIcon: 'nav-arrow-up',
                                 contentHtml: statusPanelContentHtml,
