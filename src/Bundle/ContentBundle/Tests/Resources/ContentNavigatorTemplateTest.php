@@ -39,6 +39,10 @@ class ContentNavigatorTemplateTest extends TestCase
         $template = file_get_contents(__DIR__.'/../../Resources/views/content/index.html.twig');
 
         $this->assertIsString($template);
+        $this->assertStringContainsString("component('integrated_admin:data_table'", $template);
+        $this->assertStringContainsString("component('integrated_admin:pagination_footer'", $template);
+        $this->assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
+        $this->assertStringContainsString('tbodyAttributes: \'id="post-list"\'', $template);
         $this->assertStringContainsString('data-lock-resource-type="', $template);
         $this->assertStringContainsString('data-lock-resource-id="', $template);
         $this->assertStringContainsString('data-lock-slot', $template);

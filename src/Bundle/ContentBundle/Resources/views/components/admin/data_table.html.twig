@@ -10,7 +10,7 @@
             {{ headHtml|raw }}
         </thead>
     {% endif %}
-    <tbody>
+    <tbody{% if tbodyAttributes %} {{ tbodyAttributes|raw }}{% endif %}>
         {% if bodyHtml and bodyHtml|trim is not empty %}
             {{ bodyHtml|raw }}
         {% elseif emptyMessage %}

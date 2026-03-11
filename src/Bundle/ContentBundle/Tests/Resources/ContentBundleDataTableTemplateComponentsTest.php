@@ -23,5 +23,6 @@ final class ContentBundleDataTableTemplateComponentsTest extends TestCase
         yield ['channel/index.html.twig'];
         yield ['relation/index.html.twig'];
         yield ['content_type/partial/list.html.twig'];
+        yield ['content/index.html.twig'];
     }
 }

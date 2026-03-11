@@ -21,10 +21,10 @@
     </li>
 {% endblock options_start %}
 {% block content_items %}
-    <section class="section-white section-radius">
+    {% component 'integrated_admin:section_card' %}
+        {% block content %}
         {% set media_gallery_classes = ["Image", "Video", "File"] %}
-        <table class="table">
-            <thead>
+        {% set contentTableHeadHtml %}
             <tr>
                 <th class="title">
                     <span>{% trans %}Title{% endtrans %}</span>
@@ -45,8 +45,8 @@
                     <span>{% trans %}Status{% endtrans %}</span>
                 </th>
             </tr>
-            </thead>
-            <tbody id="post-list">
+        {% endset %}
+        {% set contentTableBodyHtml %}
             {% for content in pager %}
                 {% set brandNames = content.facet_brands|default([]) %}
                 {% set document = null %}
@@ -238,13 +238,21 @@
                     <td class="title">{% trans %}No items found{% endtrans %}</td>
                 </tr>
             {% endfor %}
-            </tbody>
-        </table>
+        {% endset %}
+        {{ component('integrated_admin:data_table', {
+            headHtml: contentTableHeadHtml,
+            bodyHtml: contentTableBodyHtml,
+            tbodyAttributes: 'id="post-list"',
+            hover: false,
+            colSpan: 6,
+        }) }}
 
-        <div class="flex flex-wrap ">
-            {{ knp_pagination_render(pager, '@KnpPaginator/Pagination/sliding.html.twig') }}
-        </div>
-    </section>
+        {{ component('integrated_admin:pagination_footer', {
+            pagination: pager,
+            wrapperClass: 'flex flex-wrap',
+        }) }}
+        {% endblock %}
+    {% endcomponent %}
 {% endblock content_items %}
 
 {% block javascript %}

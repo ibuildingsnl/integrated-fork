@@ -296,6 +296,19 @@ final class AdminComponentRenderingTest extends KernelTestCase
     }
 
     #[Test]
+    public function itRendersDataTableTbodyAttributes(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:data_table', [
+            'headHtml' => '<tr><th>Name</th></tr>',
+            'bodyHtml' => '<tr><td>Example</td></tr>',
+            'tbodyAttributes' => 'id="post-list" data-list="content"',
+        ])->toString();
+
+        self::assertStringContainsString('<tbody id="post-list" data-list="content">', $output);
+        self::assertStringContainsString('<td>Example</td>', $output);
+    }
+
+    #[Test]
     public function itRendersAsidePanelMarkup(): void
     {
         $output = $this->renderTwigComponent('integrated_admin:aside_panel', [

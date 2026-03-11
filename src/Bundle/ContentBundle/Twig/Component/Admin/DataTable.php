@@ -17,6 +17,8 @@ final class DataTable
 
     public ?string $bodyHtml = null;
 
+    public ?string $tbodyAttributes = null;
+
     public ?string $emptyMessage = null;
 
     public int $colSpan = 1;
