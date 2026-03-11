@@ -215,6 +215,7 @@ final class AdminComponentRenderingTest extends KernelTestCase
     public function itRendersEditFormShellMarkup(): void
     {
         $output = $this->renderTwigComponent('integrated_admin:edit_form_shell', [
+            'shellId' => 'channel-config-form',
             'extraClass' => 'edit-form--channel-config',
             'toolbarHtml' => '<div class="block-toolbar">Toolbar</div>',
             'sidebarContentHtml' => '<aside><div class="aside-holder"><div class="aside-header"><span>Options</span></div><div class="aside-item-wrapper">Sidebar</div></div></aside>',
@@ -224,6 +225,7 @@ final class AdminComponentRenderingTest extends KernelTestCase
             'editorClass' => 'relation-editor',
         ])->toString();
 
+        self::assertStringContainsString('id="channel-config-form"', $output);
         self::assertStringContainsString('flex flex-wrap edit-form edit-form--channel-config', $output);
         self::assertStringContainsString('<div class="block-toolbar">Toolbar</div>', $output);
         self::assertStringContainsString('<div class="aside-options">', $output);

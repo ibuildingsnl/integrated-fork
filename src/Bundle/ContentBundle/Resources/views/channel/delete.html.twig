@@ -2,34 +2,39 @@
 {% block title %}{% trans %}Delete channel{% endtrans %}{% endblock title %}
 
 {% block content %}
-    <div id="channel-delete-page" class="flex flex-wrap edit-form">
-        {% block form_start %}
-            {{ form_start(form, { attr: { 'data-turbo': 'false' } }) }}
-        {% endblock %}
+    {% block form_start %}
+        {{ form_start(form, { attr: { 'data-turbo': 'false' } }) }}
+    {% endblock %}
+    {% set channelDeleteToolbarHtml %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
         {% endblock toolbar %}
-        <div class="aside-options"></div>
-        <div class="editor-wrapper">
-            {{ component('integrated_admin:page_title', {
-                title: 'Delete'|trans ~ ' ' ~ ('channel'|trans),
+    {% endset %}
+    {% set channelDeleteTitleHtml %}
+        {{ component('integrated_admin:page_title', {
+            title: 'Delete'|trans ~ ' ' ~ ('channel'|trans),
+        }) }}
+    {% endset %}
+    {% set channelDeleteContentHtml %}
+        <p>
+            {% trans with {'%name%':  channel.name} %}You are about to delete the channel "%name%", click the delete button to confirm the action.{% endtrans %}
+        </p>
+        {{ form_rest(form, {'style':'horizontal'})}}
+        {% if referenced %}
+            {{ component('integrated_admin:alert_box', {
+                variant: 'warning',
+                bodyHtml: 'This channel has related pages. Select "Delete related pages" to remove them before deleting the channel.'|trans,
             }) }}
-            <section class="editor editor-wrapped">
-                <p>
-                    {% trans with {'%name%':  channel.name} %}You are about to delete the channel "%name%", click the delete button to confirm the action.{% endtrans %}
-                </p>
-                {{ form_rest(form, {'style':'horizontal'})}}
-                {% if referenced %}
-                    {{ component('integrated_admin:alert_box', {
-                        variant: 'warning',
-                        bodyHtml: 'This channel has related pages. Select "Delete related pages" to remove them before deleting the channel.'|trans,
-                    }) }}
-                    {% include '@IntegratedContent/referencedAlert.html.twig' with {'referenced':referenced} only %}
-                {% endif %}
-            </section>
-        </div>
-        {% block form_end %}
-            {{ form_end(form) }}
-        {% endblock %}
-    </div>
+            {% include '@IntegratedContent/referencedAlert.html.twig' with {'referenced':referenced} only %}
+        {% endif %}
+    {% endset %}
+    {{ component('integrated_admin:edit_form_shell', {
+        shellId: 'channel-delete-page',
+        toolbarHtml: channelDeleteToolbarHtml,
+        pageTitleHtml: channelDeleteTitleHtml,
+        editorContentHtml: channelDeleteContentHtml,
+    }) }}
+    {% block form_end %}
+        {{ form_end(form) }}
+    {% endblock %}
 {% endblock %}

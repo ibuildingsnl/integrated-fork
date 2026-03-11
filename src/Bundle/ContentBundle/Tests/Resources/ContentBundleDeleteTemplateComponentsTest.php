@@ -18,7 +18,23 @@ final class ContentBundleDeleteTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:page_title'", $template);
     }
 
+    #[DataProvider('editFormShellProvider')]
+    public function testDeleteTemplateUsesAdminEditFormShellComponent(string $relativePath): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/'.$relativePath);
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
+    }
+
     public static function pageTitleProvider(): iterable
+    {
+        yield ['channel/delete.html.twig'];
+        yield ['relation/delete.html.twig'];
+        yield ['content_type/delete.html.twig'];
+    }
+
+    public static function editFormShellProvider(): iterable
     {
         yield ['channel/delete.html.twig'];
         yield ['relation/delete.html.twig'];

@@ -51,6 +51,14 @@ final class ChannelTemplateComponentsTest extends TestCase
         self::assertStringNotContainsString("wrapperClass: 'show'", $template);
     }
 
+    public function testConfigDeleteUsesAdminEditFormShellComponent(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/config/delete.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
+    }
+
     public static function configCrudTemplateProvider(): iterable
     {
         yield ['config/new.html.twig'];

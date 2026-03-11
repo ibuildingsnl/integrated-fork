@@ -9,6 +9,8 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 #[AsTwigComponent('integrated_admin:edit_form_shell', template: '@IntegratedContent/components/admin/edit_form_shell.html.twig')]
 final class EditFormShell
 {
+    public ?string $shellId = null;
+
     public ?string $extraClass = null;
 
     public ?string $toolbarHtml = null;

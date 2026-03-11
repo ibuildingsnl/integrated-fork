@@ -50,6 +50,14 @@ final class BrandTemplateComponentsTest extends TestCase
         self::assertStringContainsString("title: 'Status'|trans", $template);
     }
 
+    public function testBrandDeleteUsesAdminEditFormShellComponent(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/brand/delete.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
+    }
+
     public static function brandCrudTemplateProvider(): iterable
     {
         yield ['brand/delete.html.twig'];

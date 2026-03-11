@@ -121,10 +121,15 @@ final class UserTemplateComponentsTest extends TestCase
 
     public static function editFormShellTemplateProvider(): iterable
     {
+        yield ['group/delete.html.twig'];
         yield ['scope/new.html.twig'];
         yield ['scope/edit.html.twig'];
         yield ['scope/delete.html.twig'];
         yield ['ip_list/new.html.twig'];
         yield ['ip_list/edit.html.twig'];
+        yield ['ip_list/delete.html.twig'];
+        yield ['two_factor/delete.html.twig'];
+        yield ['user/delete.html.twig'];
+        yield ['user/delete_account.html.twig'];
     }
 }

@@ -2,27 +2,31 @@
 {% block title %}{% trans %}Delete account{% endtrans %} {% endblock title %}
 
 {% block content %}
-    <div class="flex flex-wrap edit-form">
-        {% block form_start %}
-            {{ form_start(form) }}
-        {% endblock %}
+    {% block form_start %}
+        {{ form_start(form) }}
+    {% endblock %}
+    {% set userDeleteAccountToolbarHtml %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
         {% endblock toolbar %}
-        <div class="aside-options"></div>
-        <div class="editor-wrapper">
-            {{ component('integrated_admin:page_title', {
-                title: 'Delete account'|trans,
-            }) }}
-            <section class="editor editor-wrapped">
-                <p>
-                    {% trans with {'%name%':  user.username} %}You are about to permanently delete the account "%name%". This action cannot be undone.{% endtrans %}
-                </p>
-                {{ form_rest(form, {'style':'horizontal'})}}
-            </section>
-        </div>
-        {% block form_end %}
-            {{ form_end(form) }}
-        {% endblock %}
-    </div>
+    {% endset %}
+    {% set userDeleteAccountTitleHtml %}
+        {{ component('integrated_admin:page_title', {
+            title: 'Delete account'|trans,
+        }) }}
+    {% endset %}
+    {% set userDeleteAccountContentHtml %}
+        <p>
+            {% trans with {'%name%':  user.username} %}You are about to permanently delete the account "%name%". This action cannot be undone.{% endtrans %}
+        </p>
+        {{ form_rest(form, {'style':'horizontal'})}}
+    {% endset %}
+    {{ component('integrated_admin:edit_form_shell', {
+        toolbarHtml: userDeleteAccountToolbarHtml,
+        pageTitleHtml: userDeleteAccountTitleHtml,
+        editorContentHtml: userDeleteAccountContentHtml,
+    }) }}
+    {% block form_end %}
+        {{ form_end(form) }}
+    {% endblock %}
 {% endblock %}

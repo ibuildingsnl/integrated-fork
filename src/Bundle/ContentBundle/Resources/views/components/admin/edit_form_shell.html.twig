@@ -1,4 +1,4 @@
-<div class="{{ this.shellClasses }}">
+<div{% if this.shellId %} id="{{ this.shellId }}"{% endif %} class="{{ this.shellClasses }}">
     {% if toolbarHtml %}
         {{ toolbarHtml|raw }}
     {% endif %}

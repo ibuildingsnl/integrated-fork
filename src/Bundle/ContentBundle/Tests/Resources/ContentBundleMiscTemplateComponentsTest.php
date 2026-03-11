@@ -27,6 +27,14 @@ final class ContentBundleMiscTemplateComponentsTest extends TestCase
         self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
     }
 
+    public function testContentDeleteUsesAdminEditFormShellComponent(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content/delete.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
+    }
+
     public static function pageTitleProvider(): iterable
     {
         yield ['content/delete.html.twig'];

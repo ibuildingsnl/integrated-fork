@@ -2,27 +2,31 @@
 {% block title %}{% trans %}Delete group{% endtrans %} {% endblock title %}
 
 {% block content %}
-    <div class="flex flex-wrap edit-form">
-        {% block form_start %}
-            {{ form_start(form) }}
-        {% endblock %}
+    {% block form_start %}
+        {{ form_start(form) }}
+    {% endblock %}
+    {% set groupDeleteToolbarHtml %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
         {% endblock toolbar %}
-        <div class="aside-options"></div>
-        <div class="editor-wrapper">
-            {{ component('integrated_admin:page_title', {
-                title: ('Delete'|trans) ~ ' ' ~ ('group'|trans),
-            }) }}
-            <section class="editor editor-wrapped">
-                <p>
-                    {% trans with {'%name%':  group.name} %}You are about to delete the group "%name%", click the delete button to confirm the action.{% endtrans %}
-                </p>
-                {{ form_rest(form, {'style':'horizontal'})}}
-            </section>
-        </div>
-        {% block form_end %}
-            {{ form_end(form) }}
-        {% endblock %}
-    </div>
+    {% endset %}
+    {% set groupDeleteTitleHtml %}
+        {{ component('integrated_admin:page_title', {
+            title: ('Delete'|trans) ~ ' ' ~ ('group'|trans),
+        }) }}
+    {% endset %}
+    {% set groupDeleteContentHtml %}
+        <p>
+            {% trans with {'%name%':  group.name} %}You are about to delete the group "%name%", click the delete button to confirm the action.{% endtrans %}
+        </p>
+        {{ form_rest(form, {'style':'horizontal'})}}
+    {% endset %}
+    {{ component('integrated_admin:edit_form_shell', {
+        toolbarHtml: groupDeleteToolbarHtml,
+        pageTitleHtml: groupDeleteTitleHtml,
+        editorContentHtml: groupDeleteContentHtml,
+    }) }}
+    {% block form_end %}
+        {{ form_end(form) }}
+    {% endblock %}
 {% endblock %}

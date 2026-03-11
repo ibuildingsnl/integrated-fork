@@ -55,4 +55,12 @@ final class BlockTemplateComponentsTest extends TestCase
         yield ['block/edit.html.twig'];
         yield ['block/delete.html.twig'];
     }
+
+    public function testBlockDeleteUsesAdminEditFormShellComponent(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/block/delete.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
+    }
 }
