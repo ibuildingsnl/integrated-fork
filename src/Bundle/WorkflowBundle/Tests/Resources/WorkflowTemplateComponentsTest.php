@@ -37,6 +37,14 @@ final class WorkflowTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
     }
 
+    public function testWorkflowDeleteUsesAdminEditFormShellComponent(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/workflow/delete.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
+    }
+
     public static function workflowCrudTemplateProvider(): iterable
     {
         yield ['workflow/edit.html.twig'];

@@ -123,6 +123,7 @@ final class UserTemplateComponentsTest extends TestCase
     {
         yield ['scope/new.html.twig'];
         yield ['scope/edit.html.twig'];
+        yield ['scope/delete.html.twig'];
         yield ['ip_list/new.html.twig'];
         yield ['ip_list/edit.html.twig'];
     }

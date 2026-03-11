@@ -38,5 +38,6 @@ final class SearchSelectionEditTemplateTest extends TestCase
     {
         yield ['new.html.twig'];
         yield ['edit.html.twig'];
+        yield ['delete.html.twig'];
     }
 }

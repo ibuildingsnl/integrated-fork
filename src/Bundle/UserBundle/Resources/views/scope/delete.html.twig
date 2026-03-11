@@ -2,27 +2,31 @@
 {% block title %}{% trans %}Delete user scope{% endtrans %} {% endblock title %}
 
 {% block content %}
-    <div class="flex flex-wrap edit-form">
-        {% block form_start %}
-            {{ form_start(form) }}
-        {% endblock %}
+    {% block form_start %}
+        {{ form_start(form) }}
+    {% endblock %}
+    {% set scopeDeleteToolbarHtml %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
         {% endblock toolbar %}
-        <div class="aside-options"></div>
-        <div class="editor-wrapper">
-            {{ component('integrated_admin:page_title', {
-                title: ('Delete'|trans) ~ ' ' ~ ('scope'|trans),
-            }) }}
-            <section class="editor editor-wrapped">
-                <p>
-                    {% trans with {'%name%':  scope.name} %}You are about to delete the scope "%name%", click the delete button to confirm the action.{% endtrans %}
-                </p>
-                {{ form_rest(form, {'style':'horizontal'})}}
-            </section>
-        </div>
-        {% block form_end %}
-            {{ form_end(form) }}
-        {% endblock %}
-    </div>
+    {% endset %}
+    {% set scopeDeleteTitleHtml %}
+        {{ component('integrated_admin:page_title', {
+            title: ('Delete'|trans) ~ ' ' ~ ('scope'|trans),
+        }) }}
+    {% endset %}
+    {% set scopeDeleteContentHtml %}
+        <p>
+            {% trans with {'%name%':  scope.name} %}You are about to delete the scope "%name%", click the delete button to confirm the action.{% endtrans %}
+        </p>
+        {{ form_rest(form, {'style':'horizontal'})}}
+    {% endset %}
+    {{ component('integrated_admin:edit_form_shell', {
+        toolbarHtml: scopeDeleteToolbarHtml,
+        pageTitleHtml: scopeDeleteTitleHtml,
+        editorContentHtml: scopeDeleteContentHtml,
+    }) }}
+    {% block form_end %}
+        {{ form_end(form) }}
+    {% endblock %}
 {% endblock %}

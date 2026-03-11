@@ -2,29 +2,33 @@
 {% block title %}{% trans %}Delete{% endtrans %} {{ scraper.name }}{% endblock title %}
 
 {% block content %}
-    <div class="flex flex-wrap edit-form">
-        {% block form_start %}
-            {{ form_start(form) }}
-        {% endblock %}
+    {% block form_start %}
+        {{ form_start(form) }}
+    {% endblock %}
+    {% set scraperDeleteToolbarHtml %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
         {% endblock toolbar %}
-        <div class="aside-options"></div>
-        <div class="editor-wrapper">
-            {{ component('integrated_admin:page_title', {
-                title: ('Delete'|trans) ~ ' ' ~ scraper.name,
-            }) }}
-            <section class="editor editor-wrapped">
-                <p>
-                    {% trans with {'%name%': scraper.name} %}
-                        You are about to delete "%name%", click the delete button below to confirm the action.
-                    {% endtrans %}
-                </p>
-                {{ form_rest(form, {'style':'horizontal'})}}
-            </section>
-        </div>
-        {% block form_end %}
-            {{ form_end(form) }}
-        {% endblock %}
-    </div>
+    {% endset %}
+    {% set scraperDeleteTitleHtml %}
+        {{ component('integrated_admin:page_title', {
+            title: ('Delete'|trans) ~ ' ' ~ scraper.name,
+        }) }}
+    {% endset %}
+    {% set scraperDeleteContentHtml %}
+        <p>
+            {% trans with {'%name%': scraper.name} %}
+                You are about to delete "%name%", click the delete button below to confirm the action.
+            {% endtrans %}
+        </p>
+        {{ form_rest(form, {'style':'horizontal'})}}
+    {% endset %}
+    {{ component('integrated_admin:edit_form_shell', {
+        toolbarHtml: scraperDeleteToolbarHtml,
+        pageTitleHtml: scraperDeleteTitleHtml,
+        editorContentHtml: scraperDeleteContentHtml,
+    }) }}
+    {% block form_end %}
+        {{ form_end(form) }}
+    {% endblock %}
 {% endblock %}

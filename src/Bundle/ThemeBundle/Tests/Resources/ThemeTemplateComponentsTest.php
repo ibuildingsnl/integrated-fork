@@ -52,5 +52,6 @@ final class ThemeTemplateComponentsTest extends TestCase
     {
         yield ['scraper/new.html.twig'];
         yield ['scraper/edit.html.twig'];
+        yield ['scraper/delete.html.twig'];
     }
 }
