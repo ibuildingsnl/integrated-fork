@@ -58,6 +58,22 @@ final class BrandTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
     }
 
+    public function testBrandChannelAndConfigFormsUseAdminEditFormShell(): void
+    {
+        $channelAddTemplate = file_get_contents(__DIR__.'/../../Resources/views/brand/channel_add.html.twig');
+        $channelEditTemplate = file_get_contents(__DIR__.'/../../Resources/views/brand/channel_edit.html.twig');
+        $configManageTemplate = file_get_contents(__DIR__.'/../../Resources/views/brand/config_manage.html.twig');
+
+        self::assertIsString($channelAddTemplate);
+        self::assertIsString($channelEditTemplate);
+        self::assertIsString($configManageTemplate);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $channelAddTemplate);
+        self::assertStringContainsString("extraClass: 'edit-form--channel-config'", $channelAddTemplate);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $channelEditTemplate);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $configManageTemplate);
+        self::assertStringContainsString("extraClass: 'edit-form--channel-config'", $configManageTemplate);
+    }
+
     public static function brandCrudTemplateProvider(): iterable
     {
         yield ['brand/delete.html.twig'];
