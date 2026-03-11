@@ -54,11 +54,11 @@
                     {% set expiresAtValue = form.page_token_expires_at.vars.value|default('-') %}
                 {% endif %}
                 {% set normalizedStatus = connectionStatusValue|lower %}
-                {% set statusClass = 'status-inactive' %}
+                {% set statusVariant = 'inactive' %}
                 {% if 'connected' in normalizedStatus or 'ok' in normalizedStatus %}
-                    {% set statusClass = 'status-active' %}
+                    {% set statusVariant = 'active' %}
                 {% elseif 'issue' in normalizedStatus or 'error' in normalizedStatus or 'fail' in normalizedStatus %}
-                    {% set statusClass = 'status-failed' %}
+                    {% set statusVariant = 'failed' %}
                 {% endif %}
 
                 <div class="connector-config-layout">
@@ -70,7 +70,10 @@
                             <div class="connector-config-overview-grid">
                                 <article class="connector-config-overview-card">
                                     <small>{% trans %}Verbindingsstatus{% endtrans %}</small>
-                                    <span class="status-badge {{ statusClass }}">{{ connectionStatusValue|default('-') }}</span>
+                                    {{ component('integrated_admin:status_badge', {
+                                        label: connectionStatusValue|default('-'),
+                                        variant: statusVariant,
+                                    }) }}
                                 </article>
                                 <article class="connector-config-overview-card">
                                     <small>{% trans %}Gekoppelde gebruiker/account{% endtrans %}</small>

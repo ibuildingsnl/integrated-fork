@@ -26,6 +26,7 @@ final class ChannelTemplateComponentsTest extends TestCase
 
         self::assertIsString($template);
         self::assertSame(3, substr_count($template, "{% component 'integrated_admin:section_card'"));
+        self::assertStringContainsString("component('integrated_admin:status_badge'", $template);
     }
 
     /**
