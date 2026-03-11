@@ -21,9 +21,10 @@
                     {{ contentType }}
                 </li>
             {% else %}
-                <li>
-                    {% trans %}No sources added{% endtrans %}
-                </li>
+                {{ component('integrated_admin:empty_state_message', {
+                    tag: 'li',
+                    message: 'No sources added'|trans,
+                }) }}
             {% endfor %}
         </ul>
     {% endset %}
@@ -34,9 +35,10 @@
                     {{ contentType }}
                 </li>
             {% else %}
-                <li>
-                    {% trans %}No targets added{% endtrans %}
-                </li>
+                {{ component('integrated_admin:empty_state_message', {
+                    tag: 'li',
+                    message: 'No targets added'|trans,
+                }) }}
             {% endfor %}
         </ul>
     {% endset %}

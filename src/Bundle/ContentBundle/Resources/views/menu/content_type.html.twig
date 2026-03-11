@@ -16,9 +16,10 @@
     {%  else %}
         {% if item.level == 0 %}
             <ul class="dropdown-menu dropdown-top-fixed">
-                <li>
-                    {% trans %}No content types added{% endtrans %}
-                </li>
+                {{ component('integrated_admin:empty_state_message', {
+                    tag: 'li',
+                    message: 'No content types added'|trans,
+                }) }}
             </ul>
         {% endif %}
     {% endif %}

@@ -41,6 +41,7 @@ final class ContentBundleShowTemplateComponentsTest extends TestCase
 
         self::assertIsString($template);
         self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
+        self::assertStringContainsString("component('integrated_admin:empty_state_message'", $template);
     }
 
     /**

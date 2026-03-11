@@ -64,4 +64,12 @@ final class ContentBundleMiscTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:pagination_footer'", $template);
         self::assertStringContainsString("component('integrated_admin:empty_state_message'", $template);
     }
+
+    public function testContentTypeMenuUsesAdminEmptyStateMessage(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/menu/content_type.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:empty_state_message'", $template);
+    }
 }
