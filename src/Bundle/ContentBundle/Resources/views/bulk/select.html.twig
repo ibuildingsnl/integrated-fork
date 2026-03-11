@@ -15,11 +15,16 @@
 {% block form_errors %}
     {% apply spaceless %}
         {% if errors|length > 0 %}
-            <ul class="alert alert-danger">
+            {% set bulkSelectFormErrorHtml %}
                 {% for error in errors %}
                     <li>{{ error.message }}</li>
                 {% endfor %}
-            </ul>
+            {% endset %}
+            {{ component('integrated_admin:alert_box', {
+                tag: 'ul',
+                variant: 'danger',
+                bodyHtml: bulkSelectFormErrorHtml,
+            }) }}
         {% endif %}
     {% endapply %}
 {% endblock form_errors %}
@@ -107,11 +112,16 @@
     {{ form_errors(form) }}
 
     {% if content|length > limit %}
-        <ul class="alert alert-danger">
+        {% set bulkSelectionLimitWarningHtml %}
             <li>
                 {% trans %}The bulk action is limited to change %limit% content items at once. Only the first %limit% content items have been included.{% endtrans %}
             </li>
-        </ul>
+        {% endset %}
+        {{ component('integrated_admin:alert_box', {
+            tag: 'ul',
+            variant: 'danger',
+            bodyHtml: bulkSelectionLimitWarningHtml,
+        }) }}
     {% endif %}
 
     <div class="row">

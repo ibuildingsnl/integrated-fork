@@ -118,22 +118,7 @@
                         {% for page in pages %}
                             <tr class="has-options">
                                 <td>
-                                    <strong>
-                                        {% if page.type == 'page' and page.domain != "" %}
-                                        {% if (page.domain == app.request.httphost) %}
-                                        <a href="{{ page.path }}" title="{% trans %}Open page{% endtrans %}" target="_blank" rel="noopener noreferrer" data-turbo="false">
-                                            {% else %}
-                                            <a href="//{{ page.domain }}{{ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': page.path}) }}"
-                                               title="{% trans %}Open page{% endtrans %}" target="_blank" rel="noopener noreferrer" data-turbo="false">
-                                                {% endif %}
-                                                {% endif %}
-                                                {{ page.path }}
-                                                {% if page.type == 'page' and page.domain != "" %}
-                                            </a>
-                                            {% endif %}
-                                        </a>
-                                    </strong>
-                                    <div class="row-options">
+                                    {% set pageRowActionsHtml %}
                                         <a href="{{ path('integrated_page_'~page.type~'_edit', { 'id': page.id}) }}"
                                            title="{% trans %}Edit page properties{% endtrans %}">
                                             {% trans %}Edit page properties{% endtrans %}
@@ -161,7 +146,24 @@
                                             </button>
                                         </form>
                                         {% endif %}
-                                    </div>
+                                    {% endset %}
+                                    <strong>
+                                        {% if page.type == 'page' and page.domain != "" %}
+                                        {% if (page.domain == app.request.httphost) %}
+                                        <a href="{{ page.path }}" title="{% trans %}Open page{% endtrans %}" target="_blank" rel="noopener noreferrer" data-turbo="false">
+                                            {% else %}
+                                            <a href="//{{ page.domain }}{{ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': page.path}) }}"
+                                               title="{% trans %}Open page{% endtrans %}" target="_blank" rel="noopener noreferrer" data-turbo="false">
+                                                {% endif %}
+                                                {% endif %}
+                                                {{ page.path }}
+                                                {% if page.type == 'page' and page.domain != "" %}
+                                            </a>
+                                            {% endif %}
+                                    </strong>
+                                    {{ component('integrated_admin:row_actions', {
+                                        contentHtml: pageRowActionsHtml,
+                                    }) }}
                                 </td>
                                 <td>
                                     {{ page.title }}

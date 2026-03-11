@@ -16,6 +16,16 @@ final class BulkSelectTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:page_title'", $template);
         self::assertStringContainsString("component('integrated_admin:options_toolbar'", $template);
         self::assertStringContainsString("component('integrated_admin:data_table'", $template);
+        self::assertStringContainsString("component('integrated_admin:alert_box'", $template);
+    }
+
+    public function testBulkConfigureUsesAdminAlertBoxForErrors(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/bulk/configure.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:alert_box'", $template);
+        self::assertStringContainsString("tag: 'ul'", $template);
     }
 
     public function testBulkCategorySelectionPartialUsesTaxonomyCategoryPicker(): void
