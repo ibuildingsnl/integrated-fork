@@ -2,70 +2,76 @@
 {% block title %}{% trans %}New block{% endtrans %}{% endblock title %}
 {% block content %}
     {% block form_section %}
-        <div class="flex flex-wrap edit-form">
-            {% block form_start %}
-                {{ form_start(form) }}
-            {% endblock %}
+        {% block form_start %}
+            {{ form_start(form) }}
+        {% endblock %}
+        {% set blockNewToolbarHtml %}
             {% block toolbar %}
                 {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
             {% endblock toolbar %}
-            <div class="aside-options">
-                <aside>
-                    <div class="aside-holder">
-                        {% block sidebar %}
-                            {% set blockNewStatusPanelHtml %}
-                                <div class="status-info">
-                                    {% if form.publishedAt is defined %}
-                                        {{ form_row(form.publishedAt) }}
-                                    {% endif %}
-                                    {% if form.publishedUntil is defined %}
-                                        {{ form_row(form.publishedUntil) }}
-                                    {% endif %}
+        {% endset %}
+        {% set blockNewSidebarHtml %}
+            <aside>
+                <div class="aside-holder">
+                    {% block sidebar %}
+                        {% set blockNewStatusPanelHtml %}
+                            <div class="status-info">
+                                {% if form.publishedAt is defined %}
+                                    {{ form_row(form.publishedAt) }}
+                                {% endif %}
+                                {% if form.publishedUntil is defined %}
+                                    {{ form_row(form.publishedUntil) }}
+                                {% endif %}
+                            </div>
+                            <div class="status-options">
+                                <div class="status draft">
+                                    <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
                                 </div>
-                                <div class="status-options">
-                                    <div class="status draft">
-                                        <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
-                                    </div>
-                                </div>
-                            {% endset %}
-                            {{ component('integrated_admin:aside_panel', {
-                                title: 'Status'|trans,
-                                icon: 'info-circle',
-                                withHolder: false,
-                                indicatorIcon: 'nav-arrow-up',
-                                contentHtml: blockNewStatusPanelHtml,
-                            }) }}
-                            {% block content_meta %}
-                                {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR'))  %}
-                                    {{ form_row(child) }}
-                                {% endfor %}
-                            {% endblock %}
-                        {% endblock %}
-                    </div>
-                </aside>
-            </div>
-            <div class="editor-wrapper">
-                {{ component('integrated_admin:page_title', {
-                    title: 'New block'|trans,
-                }) }}
-                <section class="editor editor-wrapped">
-                    <div id="integrated_block_block">
-                        {{ form_errors(form) }}
-
-                        {% block content_form %}
-                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
+                            </div>
+                        {% endset %}
+                        {{ component('integrated_admin:aside_panel', {
+                            title: 'Status'|trans,
+                            icon: 'info-circle',
+                            withHolder: false,
+                            indicatorIcon: 'nav-arrow-up',
+                            contentHtml: blockNewStatusPanelHtml,
+                        }) }}
+                        {% block content_meta %}
+                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR'))  %}
                                 {{ form_row(child) }}
                             {% endfor %}
-
-                            {{ form_rest(form, {'style':'horizontal'}) }}
                         {% endblock %}
-                    </div>
-                </section>
+                    {% endblock %}
+                </div>
+            </aside>
+        {% endset %}
+        {% set blockNewTitleHtml %}
+            {{ component('integrated_admin:page_title', {
+                title: 'New block'|trans,
+            }) }}
+        {% endset %}
+        {% set blockNewEditorContentHtml %}
+            <div id="integrated_block_block">
+                {{ form_errors(form) }}
+
+                {% block content_form %}
+                    {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
+                        {{ form_row(child) }}
+                    {% endfor %}
+
+                    {{ form_rest(form, {'style':'horizontal'}) }}
+                {% endblock %}
             </div>
-            {% block form_end %}
-                {{ form_end(form) }}
-            {% endblock %}
-        </div>
+        {% endset %}
+        {{ component('integrated_admin:edit_form_shell', {
+            toolbarHtml: blockNewToolbarHtml,
+            sidebarContentHtml: blockNewSidebarHtml,
+            pageTitleHtml: blockNewTitleHtml,
+            editorContentHtml: blockNewEditorContentHtml,
+        }) }}
+        {% block form_end %}
+            {{ form_end(form) }}
+        {% endblock %}
     {% endblock form_section %}
 {% endblock %}
 

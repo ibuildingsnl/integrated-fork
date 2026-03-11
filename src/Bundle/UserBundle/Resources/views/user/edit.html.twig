@@ -1,74 +1,80 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 
     {% block content %}
-        <div class="flex flex-wrap edit-form">
-            {% block form_start %}
-                {{ form_start(form) }}
-            {% endblock %}
+        {% block form_start %}
+            {{ form_start(form) }}
+        {% endblock %}
+        {% set userEditToolbarHtml %}
             {% block toolbar %}
                 {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
             {% endblock toolbar %}
-            <div class="aside-options">
-                <aside>
-                    <div class="aside-holder">
-                        <div class="aside-header">
-                            <button class="toggle-filters toggle-options-sidebar" data-target="aside-options" type="button">
-                                <i class="iconoir-xmark"></i>
-                            </button>
-                            <span>{% trans %}User info{% endtrans %}</span>
-                        </div>
-                        {% set userEditEffectiveRolesPanelHtml %}
-                            {% if user.roles|length > 0 %}
-                                <ul class="filters_list">
-                                    {% for role in user.roles %}
-                                        <li>{{ role }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% else %}
-                                <p class="text-light">{% trans %}No effective roles found{% endtrans %}</p>
-                            {% endif %}
-                        {% endset %}
-                        {{ component('integrated_admin:aside_panel', {
-                            title: 'Effective roles'|trans,
-                            icon: 'info-circle',
-                            withHolder: false,
-                            indicatorIcon: 'nav-arrow-up',
-                            contentHtml: userEditEffectiveRolesPanelHtml,
-                        }) }}
-
-                        {% set userEditLinkedAuthorPanelHtml %}
-                            {% if user.relation is defined and user.relation %}
-                                <a href="{{ path('integrated_content_content_edit', {id: user.relation.id}) }}">
-                                    {{ user.relation.name|default('') }} {{ user.relation.firstname|default('') }} {{ user.relation.lastname|default('') }}
-                                </a>
-                            {% else %}
-                                <p class="text-light">{% trans %}No author linked{% endtrans %}</p>
-                            {% endif %}
-                        {% endset %}
-                        {{ component('integrated_admin:aside_panel', {
-                            title: 'Linked author'|trans,
-                            icon: 'user',
-                            withHolder: false,
-                            indicatorIcon: 'nav-arrow-up',
-                            contentHtml: userEditLinkedAuthorPanelHtml,
-                        }) }}
-
-                        {% block user_edit_aside_extra %}{% endblock %}
+        {% endset %}
+        {% set userEditSidebarHtml %}
+            <aside>
+                <div class="aside-holder">
+                    <div class="aside-header">
+                        <button class="toggle-filters toggle-options-sidebar" data-target="aside-options" type="button">
+                            <i class="iconoir-xmark"></i>
+                        </button>
+                        <span>{% trans %}User info{% endtrans %}</span>
                     </div>
-                </aside>
-            </div>
-            <div class="editor-wrapper">
-                {{ component('integrated_admin:page_title', {
-                    title: ('Edit'|trans) ~ ' ' ~ ('user'|trans),
-                }) }}
-                <section class="editor editor-wrapped">
-                    {{ form_rest(form) }}
-                </section>
-            </div>
-            {% block form_end %}
-                {{ form_end(form) }}
-            {% endblock %}
-        </div>
+                    {% set userEditEffectiveRolesPanelHtml %}
+                        {% if user.roles|length > 0 %}
+                            <ul class="filters_list">
+                                {% for role in user.roles %}
+                                    <li>{{ role }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-light">{% trans %}No effective roles found{% endtrans %}</p>
+                        {% endif %}
+                    {% endset %}
+                    {{ component('integrated_admin:aside_panel', {
+                        title: 'Effective roles'|trans,
+                        icon: 'info-circle',
+                        withHolder: false,
+                        indicatorIcon: 'nav-arrow-up',
+                        contentHtml: userEditEffectiveRolesPanelHtml,
+                    }) }}
+
+                    {% set userEditLinkedAuthorPanelHtml %}
+                        {% if user.relation is defined and user.relation %}
+                            <a href="{{ path('integrated_content_content_edit', {id: user.relation.id}) }}">
+                                {{ user.relation.name|default('') }} {{ user.relation.firstname|default('') }} {{ user.relation.lastname|default('') }}
+                            </a>
+                        {% else %}
+                            <p class="text-light">{% trans %}No author linked{% endtrans %}</p>
+                        {% endif %}
+                    {% endset %}
+                    {{ component('integrated_admin:aside_panel', {
+                        title: 'Linked author'|trans,
+                        icon: 'user',
+                        withHolder: false,
+                        indicatorIcon: 'nav-arrow-up',
+                        contentHtml: userEditLinkedAuthorPanelHtml,
+                    }) }}
+
+                    {% block user_edit_aside_extra %}{% endblock %}
+                </div>
+            </aside>
+        {% endset %}
+        {% set userEditTitleHtml %}
+            {{ component('integrated_admin:page_title', {
+                title: ('Edit'|trans) ~ ' ' ~ ('user'|trans),
+            }) }}
+        {% endset %}
+        {% set userEditEditorContentHtml %}
+            {{ form_rest(form) }}
+        {% endset %}
+        {{ component('integrated_admin:edit_form_shell', {
+            toolbarHtml: userEditToolbarHtml,
+            sidebarContentHtml: userEditSidebarHtml,
+            pageTitleHtml: userEditTitleHtml,
+            editorContentHtml: userEditEditorContentHtml,
+        }) }}
+        {% block form_end %}
+            {{ form_end(form) }}
+        {% endblock %}
     {% endblock %}
 
     {% block javascript %}

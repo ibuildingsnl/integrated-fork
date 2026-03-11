@@ -63,4 +63,15 @@ final class BlockTemplateComponentsTest extends TestCase
         self::assertIsString($template);
         self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
     }
+
+    public function testBlockEditorFormsUseAdminEditFormShellComponent(): void
+    {
+        $newTemplate = file_get_contents(__DIR__.'/../../Resources/views/block/new.html.twig');
+        $editTemplate = file_get_contents(__DIR__.'/../../Resources/views/block/edit.html.twig');
+
+        self::assertIsString($newTemplate);
+        self::assertIsString($editTemplate);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $newTemplate);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $editTemplate);
+    }
 }
