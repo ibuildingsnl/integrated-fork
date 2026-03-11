@@ -69,6 +69,10 @@ final class ContentBundleFormTemplateComponentsTest extends TestCase
 
     public static function editFormShellProvider(): iterable
     {
+        yield ['channel/new.html.twig'];
+        yield ['channel/edit.html.twig'];
+        yield ['content_type/new.html.twig'];
+        yield ['content_type/edit.html.twig'];
         yield ['relation/new.html.twig'];
         yield ['relation/edit.html.twig'];
     }

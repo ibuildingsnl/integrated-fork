@@ -2,63 +2,68 @@
 {% block title %}{% trans %}Edit{% endtrans %} {{ contentType.name }}{% endblock title %}
 
 {% block content %}
-    <div class="flex flex-wrap edit-form">
-        {% block form_start %}
-            {{ form_start(form) }}
-        {% endblock %}
+    {% block form_start %}
+        {{ form_start(form) }}
+    {% endblock %}
+    {% set contentTypeEditToolbarHtml %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
         {% endblock toolbar %}
-        <div class="aside-options">
-            <aside>
-                <div class="aside-holder">
-                    {% block sidebar %}
-                        <div class="aside-header">
-                            <button class="toggle-filters toggle-options-sidebar"  data-target="aside-options" type="button">
-                                <i class="iconoir-xmark"></i></button>
-                            <span>{% trans %}Options{% endtrans %}</span>
-                        </div>
-                        {% block content_meta %}
-                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR'))  %}
-                                {{ form_row(child) }}
-                            {% endfor %}
-                        {% endblock %}
+    {% endset %}
+    {% set contentTypeEditSidebarHtml %}
+        <aside>
+            <div class="aside-holder">
+                {% block sidebar %}
+                    <div class="aside-header">
+                        <button class="toggle-filters toggle-options-sidebar"  data-target="aside-options" type="button">
+                            <i class="iconoir-xmark"></i></button>
+                        <span>{% trans %}Options{% endtrans %}</span>
+                    </div>
+                    {% block content_meta %}
+                        {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR'))  %}
+                            {{ form_row(child) }}
+                        {% endfor %}
                     {% endblock %}
-                    {% set relationsPanelContentHtml %}
-                        {{ render(controller("Integrated\\Bundle\\ContentBundle\\Controller\\RelationController::index", {'contentType': contentType.id, '_format': 'inline.html'})) }}
-                    {% endset %}
-                    {{ component('integrated_admin:aside_panel', {
-                        title: 'Relations'|trans,
-                        icon: 'info-circle',
-                        withHolder: false,
-                        indicatorIcon: 'nav-arrow-up',
-                        contentHtml: relationsPanelContentHtml,
-                    }) }}
-                </div>
-            </aside>
-        </div>
-        <div class="editor-wrapper">
-            {{ component('integrated_admin:page_title', {
-                title: 'Edit'|trans ~ ' ' ~ contentType.name,
-            }) }}
-            <section class="editor">
-                {% block content_form %}
-                    {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
-                        {{ form_row(child) }}
-                    {% endfor %}
-
-                    {{ form_errors(form) }}
-
-                    {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
                 {% endblock %}
-            </section>
-        </div>
+                {% set relationsPanelContentHtml %}
+                    {{ render(controller("Integrated\\Bundle\\ContentBundle\\Controller\\RelationController::index", {'contentType': contentType.id, '_format': 'inline.html'})) }}
+                {% endset %}
+                {{ component('integrated_admin:aside_panel', {
+                    title: 'Relations'|trans,
+                    icon: 'info-circle',
+                    withHolder: false,
+                    indicatorIcon: 'nav-arrow-up',
+                    contentHtml: relationsPanelContentHtml,
+                }) }}
+            </div>
+        </aside>
+    {% endset %}
+    {% set contentTypeEditTitleHtml %}
+        {{ component('integrated_admin:page_title', {
+            title: 'Edit'|trans ~ ' ' ~ contentType.name,
+        }) }}
+    {% endset %}
+    {% set contentTypeEditEditorContentHtml %}
+        {% block content_form %}
+            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
+                {{ form_row(child) }}
+            {% endfor %}
 
+            {{ form_errors(form) }}
 
-        {% block form_end %}
-            {{ form_end(form) }}
+            {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
         {% endblock %}
-    </div>
+    {% endset %}
+    {{ component('integrated_admin:edit_form_shell', {
+        toolbarHtml: contentTypeEditToolbarHtml,
+        sidebarContentHtml: contentTypeEditSidebarHtml,
+        pageTitleHtml: contentTypeEditTitleHtml,
+        editorContentHtml: contentTypeEditEditorContentHtml,
+        editorClass: '',
+    }) }}
+    {% block form_end %}
+        {{ form_end(form) }}
+    {% endblock %}
 {% endblock %}
 
 {% block javascript %}

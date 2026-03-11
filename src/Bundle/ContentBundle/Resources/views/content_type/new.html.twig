@@ -2,53 +2,56 @@
 {% block title %}{% trans %}New content type{% endtrans %}{% endblock title %}
 
 {% block content %}
-    <div class="flex flex-wrap edit-form">
-        {% block form_start %}
-            {{ form_start(form) }}
-        {% endblock %}
+    {% block form_start %}
+        {{ form_start(form) }}
+    {% endblock %}
+    {% set contentTypeNewToolbarHtml %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
         {% endblock toolbar %}
-        <div class="aside-options">
-            <aside>
-                <div class="aside-holder">
-                    {% block sidebar %}
-                        <div class="aside-header">
-                            <button class="toggle-filters toggle-options-sidebar"  data-target="aside-options" type="button">
-                                <i class="iconoir-xmark"></i></button>
-                            <span>{% trans %}Options{% endtrans %}</span>
-                        </div>
-                        {% block content_meta %}
-                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR'))  %}
-                                {{ form_row(child) }}
-                            {% endfor %}
-                        {% endblock %}
-
-
+    {% endset %}
+    {% set contentTypeNewSidebarHtml %}
+        <aside>
+            <div class="aside-holder">
+                {% block sidebar %}
+                    <div class="aside-header">
+                        <button class="toggle-filters toggle-options-sidebar"  data-target="aside-options" type="button">
+                            <i class="iconoir-xmark"></i></button>
+                        <span>{% trans %}Options{% endtrans %}</span>
+                    </div>
+                    {% block content_meta %}
+                        {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR'))  %}
+                            {{ form_row(child) }}
+                        {% endfor %}
                     {% endblock %}
-                </div>
-            </aside>
-        </div>
-        <div class="editor-wrapper">
-            {{ component('integrated_admin:page_title', {
-                title: 'New'|trans ~ ' ' ~ 'ContentType',
-            }) }}
-            <section class="editor">
-                {% block content_form %}
-                    {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
-                        {{ form_row(child) }}
-                    {% endfor %}
-
-                    {{ form_rest(form, {'style':'editor', 'state':'show'})}}
                 {% endblock %}
-            </section>
-        </div>
+            </div>
+        </aside>
+    {% endset %}
+    {% set contentTypeNewTitleHtml %}
+        {{ component('integrated_admin:page_title', {
+            title: 'New'|trans ~ ' ' ~ 'ContentType',
+        }) }}
+    {% endset %}
+    {% set contentTypeNewEditorContentHtml %}
+        {% block content_form %}
+            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
+                {{ form_row(child) }}
+            {% endfor %}
 
-
-        {% block form_end %}
-            {{ form_end(form) }}
+            {{ form_rest(form, {'style':'editor', 'state':'show'})}}
         {% endblock %}
-    </div>
+    {% endset %}
+    {{ component('integrated_admin:edit_form_shell', {
+        toolbarHtml: contentTypeNewToolbarHtml,
+        sidebarContentHtml: contentTypeNewSidebarHtml,
+        pageTitleHtml: contentTypeNewTitleHtml,
+        editorContentHtml: contentTypeNewEditorContentHtml,
+        editorClass: '',
+    }) }}
+    {% block form_end %}
+        {{ form_end(form) }}
+    {% endblock %}
 {% endblock %}
 
 {% block webpack_js %}

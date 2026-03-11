@@ -59,6 +59,19 @@ final class ChannelTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
     }
 
+    public function testConfigEditorTemplatesUseAdminEditFormShell(): void
+    {
+        $newTemplate = file_get_contents(__DIR__.'/../../Resources/views/config/new.html.twig');
+        $editTemplate = file_get_contents(__DIR__.'/../../Resources/views/config/edit.html.twig');
+
+        self::assertIsString($newTemplate);
+        self::assertIsString($editTemplate);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $newTemplate);
+        self::assertStringContainsString("extraClass: 'edit-form--channel-config'", $newTemplate);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $editTemplate);
+        self::assertStringContainsString("extraClass: 'edit-form--channel-config'", $editTemplate);
+    }
+
     public static function configCrudTemplateProvider(): iterable
     {
         yield ['config/new.html.twig'];
