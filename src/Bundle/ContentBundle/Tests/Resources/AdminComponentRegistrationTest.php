@@ -20,6 +20,22 @@ final class AdminComponentRegistrationTest extends TestCase
         }
     }
 
+    public function testExpectedComponentMapStaysInSyncWithAdminComponentClassFiles(): void
+    {
+        $componentClasses = glob(__DIR__.'/../../Twig/Component/Admin/*.php');
+
+        self::assertIsArray($componentClasses);
+        self::assertCount(\count($this->expectedComponentMap()), $componentClasses);
+    }
+
+    public function testExpectedComponentMapStaysInSyncWithAdminComponentTemplates(): void
+    {
+        $componentTemplates = glob(__DIR__.'/../../Resources/views/components/admin/*.html.twig');
+
+        self::assertIsArray($componentTemplates);
+        self::assertCount(\count($this->expectedComponentMap()), $componentTemplates);
+    }
+
     /**
      * @return array<string, string>
      */

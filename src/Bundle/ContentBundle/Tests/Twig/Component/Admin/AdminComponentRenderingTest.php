@@ -83,6 +83,20 @@ final class AdminComponentRenderingTest extends KernelTestCase
     }
 
     #[Test]
+    public function itFallsBackToSafeAlertBoxTagMarkup(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:alert_box', [
+            'tag' => 'ol',
+            'variant' => 'danger',
+            'bodyHtml' => '<p>Fallback tag</p>',
+        ])->toString();
+
+        self::assertStringContainsString('<div class="alert alert-danger">', $output);
+        self::assertStringNotContainsString('<ol', $output);
+        self::assertStringContainsString('<p>Fallback tag</p>', $output);
+    }
+
+    #[Test]
     public function itRendersSectionCardMarkupWithContentBlock(): void
     {
         $output = $this->renderTwigComponent(
@@ -104,6 +118,22 @@ final class AdminComponentRenderingTest extends KernelTestCase
     }
 
     #[Test]
+    public function itFallsBackToSafeSectionCardTagMarkup(): void
+    {
+        $output = $this->renderTwigComponent(
+            'integrated_admin:section_card',
+            [
+                'tag' => 'main',
+            ],
+            '<p>Body content</p>'
+        )->toString();
+
+        self::assertStringContainsString('<section class="section-white section-radius">', $output);
+        self::assertStringNotContainsString('<main', $output);
+        self::assertStringContainsString('<p>Body content</p>', $output);
+    }
+
+    #[Test]
     public function itRendersPageTitleMarkupWithActions(): void
     {
         $output = $this->renderTwigComponent('integrated_admin:page_title', [
@@ -117,6 +147,18 @@ final class AdminComponentRenderingTest extends KernelTestCase
         self::assertStringContainsString('Content', $output);
         self::assertStringContainsString('Manage records', $output);
         self::assertStringContainsString('btn btn-primary', $output);
+    }
+
+    #[Test]
+    public function itFallsBackToSafePageTitleHeadingMarkup(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:page_title', [
+            'title' => 'Content',
+            'headingTag' => 'div',
+        ])->toString();
+
+        self::assertStringContainsString('<h1 class="heading">Content</h1>', $output);
+        self::assertStringNotContainsString('<div class="heading">Content</div>', $output);
     }
 
     #[Test]
