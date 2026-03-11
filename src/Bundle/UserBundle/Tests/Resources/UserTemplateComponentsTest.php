@@ -96,6 +96,7 @@ final class UserTemplateComponentsTest extends TestCase
         $template = file_get_contents(__DIR__.'/../../Resources/views/profile/index.html.twig');
 
         self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
         self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
     }
 
@@ -104,6 +105,7 @@ final class UserTemplateComponentsTest extends TestCase
         $template = file_get_contents(__DIR__.'/../../Resources/views/group/edit.html.twig');
 
         self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
         self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
         self::assertStringContainsString("component('integrated_admin:selection_modal'", $template);
     }

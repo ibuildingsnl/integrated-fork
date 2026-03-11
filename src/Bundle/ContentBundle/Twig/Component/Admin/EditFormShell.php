@@ -25,6 +25,8 @@ final class EditFormShell
 
     public ?string $editorClass = null;
 
+    public ?string $afterEditorHtml = null;
+
     public function shellClasses(): string
     {
         $classes = ['flex', 'flex-wrap', 'edit-form'];

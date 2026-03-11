@@ -35,6 +35,7 @@ final class BrandTemplateComponentsTest extends TestCase
         $template = file_get_contents(__DIR__.'/../../Resources/views/brand/edit.html.twig');
 
         self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
         self::assertStringContainsString("component('integrated_admin:page_title'", $template);
         self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
         self::assertStringContainsString("component('integrated_admin:data_table'", $template);

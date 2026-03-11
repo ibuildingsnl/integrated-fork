@@ -223,6 +223,7 @@ final class AdminComponentRenderingTest extends KernelTestCase
             'pageTitleHtml' => '<div class="page-title"><div class="heading"><h1 class="heading">Edit relation</h1></div></div>',
             'editorContentHtml' => '<div class="form-body">Editor</div>',
             'editorClass' => 'relation-editor',
+            'afterEditorHtml' => '<div class="after-editor">After</div>',
         ])->toString();
 
         self::assertStringContainsString('id="channel-config-form"', $output);
@@ -234,6 +235,7 @@ final class AdminComponentRenderingTest extends KernelTestCase
         self::assertStringContainsString('<div class="page-title">', $output);
         self::assertStringContainsString('<section class="editor editor-wrapped relation-editor">', $output);
         self::assertStringContainsString('<div class="form-body">Editor</div>', $output);
+        self::assertStringContainsString('<div class="after-editor">After</div>', $output);
     }
 
     #[Test]

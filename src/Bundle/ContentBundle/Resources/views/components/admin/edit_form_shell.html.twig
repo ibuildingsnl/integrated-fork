@@ -16,5 +16,8 @@
                 {{ editorContentHtml|raw }}
             {% endif %}
         </section>
+        {% if afterEditorHtml %}
+            {{ afterEditorHtml|raw }}
+        {% endif %}
     </div>
 </div>

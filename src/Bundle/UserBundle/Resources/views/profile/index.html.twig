@@ -1,62 +1,71 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 
     {% block content %}
-        <div class="flex flex-wrap edit-form">
-            {% block form_start %}
-                {{ form_start(form, {'attr': {'id': 'integrated_user_profile_form'}}) }}
-            {% endblock %}
+        {% block form_start %}
+            {{ form_start(form, {'attr': {'id': 'integrated_user_profile_form'}}) }}
+        {% endblock %}
+        {% set userProfileToolbarHtml %}
             {% block toolbar %}
                 {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
             {% endblock toolbar %}
-            <div class="aside-options"></div>
-            <div class="editor-wrapper">
-                {{ component('integrated_admin:page_title', {
-                    title: ('Edit'|trans) ~ ' ' ~ ('profile'|trans),
-                }) }}
-                {% if user.relation is defined and user.relation %}
-                    <div class="alert alert-info">
-                        <strong>{% trans %}Linked author{% endtrans %}:</strong>
-                        <a href="{{ path('integrated_content_content_edit', {id: user.relation.id}) }}">
-                            {{ user.relation.name|default('') }} {{ user.relation.firstname|default('') }} {{ user.relation.lastname|default('') }}
-                        </a>
+        {% endset %}
+        {% set userProfileTitleHtml %}
+            {{ component('integrated_admin:page_title', {
+                title: ('Edit'|trans) ~ ' ' ~ ('profile'|trans),
+            }) }}
+        {% endset %}
+        {% set userProfileEditorContentHtml %}
+            {% if user.relation is defined and user.relation %}
+                <div class="alert alert-info">
+                    <strong>{% trans %}Linked author{% endtrans %}:</strong>
+                    <a href="{{ path('integrated_content_content_edit', {id: user.relation.id}) }}">
+                        {{ user.relation.name|default('') }} {{ user.relation.firstname|default('') }} {{ user.relation.lastname|default('') }}
+                    </a>
+                </div>
+            {% endif %}
+            {% block user_profile_extra %}{% endblock %}
+            {{ form_rest(form, {'style':'horizontal', 'state': 'show'}) }}
+        {% endset %}
+        {% set userProfileAfterEditorHtml %}
+            {% component 'integrated_admin:section_card' with {
+                extraClass: 'section-padding mt-4',
+            } %}
+                {% block content %}
+                <h3>{% trans %}Two-factor authentication{% endtrans %}</h3>
+                {% if user.googleAuthenticatorEnabled %}
+                    <div class="alert alert-success">
+                        {% trans %}Two-factor authentication is active for your account.{% endtrans %}
                     </div>
+                    <div class="flex items-center gap-2">
+                        <form method="post" action="{{ path('integrated_user_profile_two_factor_deactivate') }}" onsubmit="return confirm('{{ 'Are you sure you want to deactivate 2FA for your account?'|trans }}');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('profile_2fa_deactivate') }}">
+                            <button type="submit" class="btn btn-red">{% trans %}Deactivate 2FA{% endtrans %}</button>
+                        </form>
+                        <form method="post" action="{{ path('integrated_user_profile_two_factor_reset') }}" onsubmit="return confirm('{{ 'Are you sure you want to reset 2FA for your account?'|trans }}');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('profile_2fa_reset') }}">
+                            <button type="submit" class="btn btn-white">{% trans %}Reset 2FA{% endtrans %}</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        {% trans %}Two-factor authentication is not active yet. Activate it to better protect your account.{% endtrans %}
+                    </div>
+                    <a class="btn btn-orange" href="{{ path('integrated_user_two_factor_authenticator_activate') }}">
+                        {% trans %}Activate 2FA{% endtrans %}
+                    </a>
                 {% endif %}
-                {% block user_profile_extra %}{% endblock %}
-                <section class="editor editor-wrapped">
-                    {{ form_rest(form, {'style':'horizontal', 'state': 'show'}) }}
-                </section>
-                {% block form_end %}
-                    {{ form_end(form) }}
                 {% endblock %}
-                {% component 'integrated_admin:section_card' with {
-                    extraClass: 'section-padding mt-4',
-                } %}
-                    <h3>{% trans %}Two-factor authentication{% endtrans %}</h3>
-                    {% if user.googleAuthenticatorEnabled %}
-                        <div class="alert alert-success">
-                            {% trans %}Two-factor authentication is active for your account.{% endtrans %}
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <form method="post" action="{{ path('integrated_user_profile_two_factor_deactivate') }}" onsubmit="return confirm('{{ 'Are you sure you want to deactivate 2FA for your account?'|trans }}');">
-                                <input type="hidden" name="_token" value="{{ csrf_token('profile_2fa_deactivate') }}">
-                                <button type="submit" class="btn btn-red">{% trans %}Deactivate 2FA{% endtrans %}</button>
-                            </form>
-                            <form method="post" action="{{ path('integrated_user_profile_two_factor_reset') }}" onsubmit="return confirm('{{ 'Are you sure you want to reset 2FA for your account?'|trans }}');">
-                                <input type="hidden" name="_token" value="{{ csrf_token('profile_2fa_reset') }}">
-                                <button type="submit" class="btn btn-white">{% trans %}Reset 2FA{% endtrans %}</button>
-                            </form>
-                        </div>
-                    {% else %}
-                        <div class="alert alert-warning">
-                            {% trans %}Two-factor authentication is not active yet. Activate it to better protect your account.{% endtrans %}
-                        </div>
-                        <a class="btn btn-orange" href="{{ path('integrated_user_two_factor_authenticator_activate') }}">
-                            {% trans %}Activate 2FA{% endtrans %}
-                        </a>
-                    {% endif %}
-                {% endcomponent %}
-            </div>
-        </div>
+            {% endcomponent %}
+        {% endset %}
+        {{ component('integrated_admin:edit_form_shell', {
+            toolbarHtml: userProfileToolbarHtml,
+            pageTitleHtml: userProfileTitleHtml,
+            editorContentHtml: userProfileEditorContentHtml,
+            afterEditorHtml: userProfileAfterEditorHtml,
+        }) }}
+        {% block form_end %}
+            {{ form_end(form) }}
+        {% endblock %}
     {% endblock %}
 
     {% block javascript %}
