@@ -58,7 +58,9 @@
                     colSpan: 1,
                 }) }}
 
-                {{ knp_pagination_render(pager, '@KnpPaginator/Pagination/sliding.html.twig') }}
+                {{ component('integrated_admin:pagination_footer', {
+                    pagination: pager,
+                }) }}
                 {% endblock %}
             {% endcomponent %}
 

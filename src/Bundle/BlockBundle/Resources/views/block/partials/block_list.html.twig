@@ -112,7 +112,9 @@
                     extraClass: 'table-fixed',
                 }) }}
 
-                {{ knp_pagination_render(blocks, '@KnpPaginator/Pagination/sliding.html.twig') }}
+                {{ component('integrated_admin:pagination_footer', {
+                    pagination: blocks,
+                }) }}
             </div>
         </div>
     {% endblock %}

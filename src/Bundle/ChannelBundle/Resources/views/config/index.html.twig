@@ -71,7 +71,9 @@
                     colSpan: 2,
                 }) }}
 
-                {{ knp_pagination_render(pager, '@KnpPaginator/Pagination/sliding.html.twig') }}
+                {{ component('integrated_admin:pagination_footer', {
+                    pagination: pager,
+                }) }}
                 {% endblock %}
             {% endcomponent %}
         </div>

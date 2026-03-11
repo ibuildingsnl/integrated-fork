@@ -115,7 +115,9 @@
         }) }}
         </form>
 
-        {{ knp_pagination_render(users, '@KnpPaginator/Pagination/sliding.html.twig') }}
+        {{ component('integrated_admin:pagination_footer', {
+            pagination: users,
+        }) }}
     {% endblock %}
 
 {% endcomponent %}

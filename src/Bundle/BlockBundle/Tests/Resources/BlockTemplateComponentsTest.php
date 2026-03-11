@@ -24,6 +24,7 @@ final class BlockTemplateComponentsTest extends TestCase
         self::assertIsString($template);
         self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
         self::assertStringContainsString("component('integrated_admin:data_table'", $template);
+        self::assertStringContainsString("component('integrated_admin:pagination_footer'", $template);
         self::assertStringContainsString("component('integrated_admin:row_actions'", $template);
     }
 
