@@ -18,6 +18,14 @@ final class ContentBundleDataTableTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:data_table'", $template);
     }
 
+    public function testContentTypeListUsesAdminSectionCard(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content_type/partial/list.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
+    }
+
     public static function dataTableProvider(): iterable
     {
         yield ['channel/index.html.twig'];

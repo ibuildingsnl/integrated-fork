@@ -1,111 +1,113 @@
-<section class="section-white section-radius">
-    {% set tableHeadHtml %}
-        <tr>
-            <th style="width:25%">{% trans %}Name{% endtrans %}</th>
-            <th style="width:25%">{% trans %}ID{% endtrans %}</th>
-            <th style="width:25%">{% trans %}Document type{% endtrans %}</th>
-            <th style="width:25%">{% trans %}Visuals{% endtrans %}</th>
-        </tr>
-    {% endset %}
-    {% set documentTypePrinted = false %}
-    {% set tableBodyHtml %}
-        {% for document in documents %}
-            {% set documentType = '' %}
-            {% for type in documentTypes %}
-                {% if type.class == document.class %}
-                    {% set documentType = type.type %}
+{% component 'integrated_admin:section_card' %}
+    {% block content %}
+        {% set tableHeadHtml %}
+            <tr>
+                <th style="width:25%">{% trans %}Name{% endtrans %}</th>
+                <th style="width:25%">{% trans %}ID{% endtrans %}</th>
+                <th style="width:25%">{% trans %}Document type{% endtrans %}</th>
+                <th style="width:25%">{% trans %}Visuals{% endtrans %}</th>
+            </tr>
+        {% endset %}
+        {% set documentTypePrinted = false %}
+        {% set tableBodyHtml %}
+            {% for document in documents %}
+                {% set documentType = '' %}
+                {% for type in documentTypes %}
+                    {% if type.class == document.class %}
+                        {% set documentType = type.type %}
+                    {% endif %}
+                {% endfor %}
+                {% if documentType is defined and showDocumentTypes is defined and documentType in showDocumentTypes %}
+                    {% set documentTypePrinted = true %}
+                    <tr class="has-options">
+                        <td>
+                            <strong>
+                                <a href="{{ path('integrated_content_content_type_edit', {id: document.id}) }}">
+                                    {{ document.name }}
+                                </a>
+                            </strong>
+                            {% set contentTypeRowActionsHtml %}
+                                <a href="{{ path('integrated_content_content_type_edit', {'id': document.id}) }}"
+                                   title="{% trans %}Edit{% endtrans %}">
+                                    {% trans %}Edit{% endtrans %}
+                                </a> |
+                                <a class="color-red"
+                                   href="{{ path('integrated_content_content_type_delete', {'id': document.id}) }}"
+                                   title="{% trans %}Delete{% endtrans %}">
+                                    {% trans %}Delete{% endtrans %}
+                                </a>
+                            {% endset %}
+                            {{ component('integrated_admin:row_actions', {
+                                contentHtml: contentTypeRowActionsHtml,
+                            }) }}
+                        </td>
+                        <td>
+                            {{ document.id }}
+                        </td>
+                        <td>
+                            {% for type in documentTypes %}
+                                {% if type.class == document.class %}
+                                    {{ type.type|trans }}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <span class="flex font-bold" style="color: {{ document.options.color|default('gray') }}">
+                                <i class="mr-2 icon iconoir-{{ document.options.icon|default('empty-page') }}"></i>
+                                {{ document.name }}
+                            </span>
+                        </td>
+                    </tr>
+                {% endif %}
+                {% if documentType is defined and hideDocumentTypes is defined and documentType not in hideDocumentTypes %}
+                    {% set documentTypePrinted = true %}
+                    <tr class="has-options">
+                        <td>
+                            <strong>
+                                <a href="{{ path('integrated_content_content_type_edit', {id: document.id}) }}">
+                                    {{ document.name }}
+                                </a>
+                            </strong>
+                            {% set contentTypeRowActionsHtml %}
+                                <a href="{{ path('integrated_content_content_type_edit', {'id': document.id}) }}"
+                                   title="{% trans %}Edit{% endtrans %}">
+                                    {% trans %}Edit{% endtrans %}
+                                </a> |
+                                <a class="color-red"
+                                   href="{{ path('integrated_content_content_type_delete', {'id': document.id}) }}"
+                                   title="{% trans %}Delete{% endtrans %}">
+                                    {% trans %}Delete{% endtrans %}
+                                </a>
+                            {% endset %}
+                            {{ component('integrated_admin:row_actions', {
+                                contentHtml: contentTypeRowActionsHtml,
+                            }) }}
+                        </td>
+                        <td>
+                            {{ document.id }}
+                        </td>
+                        <td>
+                            {% for type in documentTypes %}
+                                {% if type.class == document.class %}
+                                    {{ type.type }}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <span class="flex font-bold" style="color: {{ document.options.color|default('gray') }}">
+                                <i class="mr-2 icon iconoir-{{ document.options.icon|default('empty-page') }}"></i>
+                                {{ document.name }}
+                            </span>
+                        </td>
+                    </tr>
                 {% endif %}
             {% endfor %}
-            {% if documentType is defined and showDocumentTypes is defined and documentType in showDocumentTypes %}
-                {% set documentTypePrinted = true %}
-                <tr class="has-options">
-                    <td>
-                        <strong>
-                            <a href="{{ path('integrated_content_content_type_edit', {id: document.id}) }}">
-                                {{ document.name }}
-                            </a>
-                        </strong>
-                        {% set contentTypeRowActionsHtml %}
-                            <a href="{{ path('integrated_content_content_type_edit', {'id': document.id}) }}"
-                               title="{% trans %}Edit{% endtrans %}">
-                                {% trans %}Edit{% endtrans %}
-                            </a> |
-                            <a class="color-red"
-                               href="{{ path('integrated_content_content_type_delete', {'id': document.id}) }}"
-                               title="{% trans %}Delete{% endtrans %}">
-                                {% trans %}Delete{% endtrans %}
-                            </a>
-                        {% endset %}
-                        {{ component('integrated_admin:row_actions', {
-                            contentHtml: contentTypeRowActionsHtml,
-                        }) }}
-                    </td>
-                    <td>
-                        {{ document.id }}
-                    </td>
-                    <td>
-                        {% for type in documentTypes %}
-                            {% if type.class == document.class %}
-                                {{ type.type|trans }}
-                            {% endif %}
-                        {% endfor %}
-                    </td>
-                    <td>
-                        <span class="flex font-bold" style="color: {{ document.options.color|default('gray') }}">
-                            <i class="mr-2 icon iconoir-{{ document.options.icon|default('empty-page') }}"></i>
-                            {{ document.name }}
-                        </span>
-                    </td>
-                </tr>
-            {% endif %}
-            {% if documentType is defined and hideDocumentTypes is defined and documentType not in hideDocumentTypes %}
-                {% set documentTypePrinted = true %}
-                <tr class="has-options">
-                    <td>
-                        <strong>
-                            <a href="{{ path('integrated_content_content_type_edit', {id: document.id}) }}">
-                                {{ document.name }}
-                            </a>
-                        </strong>
-                        {% set contentTypeRowActionsHtml %}
-                            <a href="{{ path('integrated_content_content_type_edit', {'id': document.id}) }}"
-                               title="{% trans %}Edit{% endtrans %}">
-                                {% trans %}Edit{% endtrans %}
-                            </a> |
-                            <a class="color-red"
-                               href="{{ path('integrated_content_content_type_delete', {'id': document.id}) }}"
-                               title="{% trans %}Delete{% endtrans %}">
-                                {% trans %}Delete{% endtrans %}
-                            </a>
-                        {% endset %}
-                        {{ component('integrated_admin:row_actions', {
-                            contentHtml: contentTypeRowActionsHtml,
-                        }) }}
-                    </td>
-                    <td>
-                        {{ document.id }}
-                    </td>
-                    <td>
-                        {% for type in documentTypes %}
-                            {% if type.class == document.class %}
-                                {{ type.type }}
-                            {% endif %}
-                        {% endfor %}
-                    </td>
-                    <td>
-                        <span class="flex font-bold" style="color: {{ document.options.color|default('gray') }}">
-                            <i class="mr-2 icon iconoir-{{ document.options.icon|default('empty-page') }}"></i>
-                            {{ document.name }}
-                        </span>
-                    </td>
-                </tr>
-            {% endif %}
-        {% endfor %}
-    {% endset %}
-    {{ component('integrated_admin:data_table', {
-        headHtml: tableHeadHtml,
-        bodyHtml: documentTypePrinted ? tableBodyHtml : null,
-        emptyMessage: 'No content types added'|trans,
-        colSpan: 4,
-    }) }}
-</section>
+        {% endset %}
+        {{ component('integrated_admin:data_table', {
+            headHtml: tableHeadHtml,
+            bodyHtml: documentTypePrinted ? tableBodyHtml : null,
+            emptyMessage: 'No content types added'|trans,
+            colSpan: 4,
+        }) }}
+    {% endblock %}
+{% endcomponent %}

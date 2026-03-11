@@ -115,79 +115,82 @@
             contentHtml: mediaPageTitleContentHtml,
         }) }}
 
-        <section class="section-white section-radius sm:p-4">
-            <div id="upload_container" class="close-outside">
-                <a class="uppy-close remove"><i class="iconoir-xmark"></i></a>
-                {% include '@IntegratedContent/media/upload.html.twig'
-                    with {
-                    'language': app.request.defaultLocale,
-                    'endpoint': path('integrated_content_media_upload_file'),
-                    'height': '750px',
-                    'imageEditorEnabled': true,
-                    'target': '#upload_container .drag-drop-area',
-                } %}
-            </div>
-
-            {# When you work on bulk select, use the class "mode-select" on media container when you activate bulk select #}
-            <div class="media-container">
-                <div class="media-wrapper grid_view">
-                    {% if paginator.items|length == 0 %}
-                        <div>
-                            {% trans %}No results with this selection.{% endtrans %}
-                        </div>
-                    {% endif %}
-                    <ul class="flex flex-wrap gallery ui-helper-reset ui-helper-clearfix" id="gallery">
-                        {% set selected_ids = [] %}
-                        {% set rendered_ids = [] %}
-                        {% for media in selectedMedia|default([]) %}
-                            {% set media_content_id = media.type_id is defined ? media.type_id : (media.typeId is defined ? media.typeId : (media.typeid is defined ? media.typeid : media.id)) %}
-                            {% if media_content_id and media_content_id not in selected_ids %}
-                                {% set selected_ids = selected_ids|merge([media_content_id]) %}
-                            {% endif %}
-                        {% endfor %}
-
-                        {% for media in selectedMedia|default([]) %}
-                            {% set media_content_id = media.type_id is defined ? media.type_id : (media.typeId is defined ? media.typeId : (media.typeid is defined ? media.typeid : media.id)) %}
-                            {% if media_content_id and media_content_id not in rendered_ids %}
-                                {% include '@IntegratedContent/media/partial/media_thumbnail_component.html.twig' %}
-                                {% set rendered_ids = rendered_ids|merge([media_content_id]) %}
-                            {% endif %}
-                        {% endfor %}
-
-                        {% set per_page = paginator.getItemNumberPerPage() %}
-                        {% set remaining = per_page - (selected_ids|length) %}
-                        {% if remaining < 0 %}{% set remaining = 0 %}{% endif %}
-                        {% set shown = 0 %}
-                        {% for media in paginator.items %}
-                            {% set media_content_id = media.type_id is defined ? media.type_id : (media.typeId is defined ? media.typeId : (media.typeid is defined ? media.typeid : media.id)) %}
-                            {% if media_content_id and media_content_id not in rendered_ids and shown < remaining %}
-                                {% include '@IntegratedContent/media/partial/media_thumbnail_component.html.twig' %}
-                                {% set rendered_ids = rendered_ids|merge([media_content_id]) %}
-                                {% set shown = shown + 1 %}
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
+        {% component 'integrated_admin:section_card' with {
+            extraClass: 'sm:p-4',
+        } %}
+            {% block content %}
+                <div id="upload_container" class="close-outside">
+                    <a class="uppy-close remove"><i class="iconoir-xmark"></i></a>
+                    {% include '@IntegratedContent/media/upload.html.twig'
+                        with {
+                        'language': app.request.defaultLocale,
+                        'endpoint': path('integrated_content_media_upload_file'),
+                        'height': '750px',
+                        'imageEditorEnabled': true,
+                        'target': '#upload_container .drag-drop-area',
+                    } %}
                 </div>
 
-                <div class="mt-2">
-                    {{ component('integrated_admin:pagination_footer', {
-                        pagination: paginator,
-                    }) }}
-                    <div class="flex justify-center">
-                        <span>{% trans %} Total {% endtrans %}
-                            {{ paginator.getTotalItemCount() }}
-                            {% trans %} Items {% endtrans %}.
-                            {% if paginator.getItemNumberPerPage() < paginator.getTotalItemCount() %}
-                                {% trans %} Showing {% endtrans %}
-                                {{ paginator.getCurrentPageNumber() * paginator.getItemNumberPerPage() - paginator.getItemNumberPerPage() + 1 }}
-                                {% trans %} till {% endtrans %}
-                                {{ paginator.getCurrentPageNumber() * paginator.getItemNumberPerPage() }}.
-                            {% endif %}
-                        </span>
+                {# When you work on bulk select, use the class "mode-select" on media container when you activate bulk select #}
+                <div class="media-container">
+                    <div class="media-wrapper grid_view">
+                        {% if paginator.items|length == 0 %}
+                            <div>
+                                {% trans %}No results with this selection.{% endtrans %}
+                            </div>
+                        {% endif %}
+                        <ul class="flex flex-wrap gallery ui-helper-reset ui-helper-clearfix" id="gallery">
+                            {% set selected_ids = [] %}
+                            {% set rendered_ids = [] %}
+                            {% for media in selectedMedia|default([]) %}
+                                {% set media_content_id = media.type_id is defined ? media.type_id : (media.typeId is defined ? media.typeId : (media.typeid is defined ? media.typeid : media.id)) %}
+                                {% if media_content_id and media_content_id not in selected_ids %}
+                                    {% set selected_ids = selected_ids|merge([media_content_id]) %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% for media in selectedMedia|default([]) %}
+                                {% set media_content_id = media.type_id is defined ? media.type_id : (media.typeId is defined ? media.typeId : (media.typeid is defined ? media.typeid : media.id)) %}
+                                {% if media_content_id and media_content_id not in rendered_ids %}
+                                    {% include '@IntegratedContent/media/partial/media_thumbnail_component.html.twig' %}
+                                    {% set rendered_ids = rendered_ids|merge([media_content_id]) %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% set per_page = paginator.getItemNumberPerPage() %}
+                            {% set remaining = per_page - (selected_ids|length) %}
+                            {% if remaining < 0 %}{% set remaining = 0 %}{% endif %}
+                            {% set shown = 0 %}
+                            {% for media in paginator.items %}
+                                {% set media_content_id = media.type_id is defined ? media.type_id : (media.typeId is defined ? media.typeId : (media.typeid is defined ? media.typeid : media.id)) %}
+                                {% if media_content_id and media_content_id not in rendered_ids and shown < remaining %}
+                                    {% include '@IntegratedContent/media/partial/media_thumbnail_component.html.twig' %}
+                                    {% set rendered_ids = rendered_ids|merge([media_content_id]) %}
+                                    {% set shown = shown + 1 %}
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="mt-2">
+                        {{ component('integrated_admin:pagination_footer', {
+                            pagination: paginator,
+                        }) }}
+                        <div class="flex justify-center">
+                            <span>{% trans %} Total {% endtrans %}
+                                {{ paginator.getTotalItemCount() }}
+                                {% trans %} Items {% endtrans %}.
+                                {% if paginator.getItemNumberPerPage() < paginator.getTotalItemCount() %}
+                                    {% trans %} Showing {% endtrans %}
+                                    {{ paginator.getCurrentPageNumber() * paginator.getItemNumberPerPage() - paginator.getItemNumberPerPage() + 1 }}
+                                    {% trans %} till {% endtrans %}
+                                    {{ paginator.getCurrentPageNumber() * paginator.getItemNumberPerPage() }}.
+                                {% endif %}
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-        </section>
+            {% endblock %}
+        {% endcomponent %}
     </div>
 </div>
