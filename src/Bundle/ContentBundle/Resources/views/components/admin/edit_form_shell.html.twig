@@ -7,7 +7,7 @@
             {{ sidebarContentHtml|raw }}
         {% endif %}
     </div>
-    <div class="{{ this.editorWrapperClasses }}">
+    <div class="{{ this.editorWrapperClasses }}"{% if this.editorWrapperAttributes %} {{ this.editorWrapperAttributes|raw }}{% endif %}>
         {% if pageTitleHtml %}
             {{ pageTitleHtml|raw }}
         {% endif %}

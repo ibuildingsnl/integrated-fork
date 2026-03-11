@@ -19,6 +19,8 @@ final class EditFormShell
 
     public ?string $editorWrapperClass = null;
 
+    public ?string $editorWrapperAttributes = null;
+
     public ?string $pageTitleHtml = null;
 
     public ?string $editorContentHtml = null;

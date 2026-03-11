@@ -220,6 +220,7 @@ final class AdminComponentRenderingTest extends KernelTestCase
             'toolbarHtml' => '<div class="block-toolbar">Toolbar</div>',
             'sidebarContentHtml' => '<aside><div class="aside-holder"><div class="aside-header"><span>Options</span></div><div class="aside-item-wrapper">Sidebar</div></div></aside>',
             'editorWrapperClass' => 'editor-wrapper-full',
+            'editorWrapperAttributes' => 'data-panel="edit-shell"',
             'pageTitleHtml' => '<div class="page-title"><div class="heading"><h1 class="heading">Edit relation</h1></div></div>',
             'editorContentHtml' => '<div class="form-body">Editor</div>',
             'editorClass' => 'relation-editor',
@@ -231,7 +232,7 @@ final class AdminComponentRenderingTest extends KernelTestCase
         self::assertStringContainsString('<div class="block-toolbar">Toolbar</div>', $output);
         self::assertStringContainsString('<div class="aside-options">', $output);
         self::assertStringContainsString('aside-holder', $output);
-        self::assertStringContainsString('<div class="editor-wrapper editor-wrapper-full">', $output);
+        self::assertStringContainsString('<div class="editor-wrapper editor-wrapper-full" data-panel="edit-shell">', $output);
         self::assertStringContainsString('<div class="page-title">', $output);
         self::assertStringContainsString('<section class="editor editor-wrapped relation-editor">', $output);
         self::assertStringContainsString('<div class="form-body">Editor</div>', $output);

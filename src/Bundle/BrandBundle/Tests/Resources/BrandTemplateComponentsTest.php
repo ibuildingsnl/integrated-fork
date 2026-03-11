@@ -63,14 +63,18 @@ final class BrandTemplateComponentsTest extends TestCase
     {
         $channelAddTemplate = file_get_contents(__DIR__.'/../../Resources/views/brand/channel_add.html.twig');
         $channelEditTemplate = file_get_contents(__DIR__.'/../../Resources/views/brand/channel_edit.html.twig');
+        $channelRemoveTemplate = file_get_contents(__DIR__.'/../../Resources/views/brand/channel_remove.html.twig');
         $configManageTemplate = file_get_contents(__DIR__.'/../../Resources/views/brand/config_manage.html.twig');
 
         self::assertIsString($channelAddTemplate);
         self::assertIsString($channelEditTemplate);
+        self::assertIsString($channelRemoveTemplate);
         self::assertIsString($configManageTemplate);
         self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $channelAddTemplate);
         self::assertStringContainsString("extraClass: 'edit-form--channel-config'", $channelAddTemplate);
         self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $channelEditTemplate);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $channelRemoveTemplate);
+        self::assertStringContainsString("editorWrapperAttributes: 'style=\"margin-top: 50px\"'", $channelRemoveTemplate);
         self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $configManageTemplate);
         self::assertStringContainsString("extraClass: 'edit-form--channel-config'", $configManageTemplate);
     }

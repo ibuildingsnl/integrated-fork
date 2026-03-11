@@ -35,6 +35,14 @@ final class ContentBundleShowTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:data_table'", $template);
     }
 
+    public function testRelationShowUsesAdminEditFormShellComponent(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/relation/show.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
+    }
+
     public static function pageTitleProvider(): iterable
     {
         yield ['channel/show.html.twig'];

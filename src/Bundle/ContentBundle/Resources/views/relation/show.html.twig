@@ -1,92 +1,97 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Show {% endtrans %} {{ relation.name }}{% endblock title %}
 {% block content %}
-    <div class="flex flex-wrap edit-form">
-        {% block form_start %}
-            {{ form_start(form) }}
-        {% endblock %}
+    {% block form_start %}
+        {{ form_start(form) }}
+    {% endblock %}
+    {% set relationShowToolbarHtml %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
         {% endblock toolbar %}
-        <div class="aside-options"></div>
-        <div class="editor-wrapper">
-            {{ component('integrated_admin:page_title', {
-                title: 'Show'|trans ~ ' ' ~ relation.name,
-            }) }}
-            <section class="editor">
-                <section class="section-white section-padding section-radius">
-                    <dl class="dl-horizontal">
-                        <dt>
-                            {% trans %}Name{% endtrans %}
-                        </dt>
-                        <dd>
-                            {{ relation.name }}
-                        </dd>
-                        <dt>
-                            {% trans %}Sources{% endtrans %}
-                        </dt>
-                        <dd>
-                            <ul>
-                                {% for contentType in relation.sources %}
-                                    <li>
-                                        {{ contentType }}
-                                    </li>
-                                {% else %}
-                                    <li>
-                                        {% trans %}No sources added{% endtrans %}
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </dd>
-                        <dt>
-                            {% trans %}Targets{% endtrans %}
-                        </dt>
-                        <dd>
-                            <ul>
-                                {% for contentType in relation.targets %}
-                                    <li>
-                                        {{ contentType }}
-                                    </li>
-                                {% else %}
-                                    <li>
-                                        {% trans %}No targets added{% endtrans %}
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </dd>
-                        <dt>
-                            {% trans %}Location{% endtrans %}
-                        </dt>
-                        <dd>
-                            {{ relation.location }}
-                        </dd>
-                        <dt>
-                            {% trans %}Multiple{% endtrans %}
-                        </dt>
-                        <dd>
-                            {% if relation.multiple == 1 %}
-                                {% trans %}Multiple{% endtrans %}
-                            {% else %}
-                                {% trans %}One{% endtrans %}
-                            {% endif %}
-                        </dd>
-                        <dt>
-                            {% trans %}Required{% endtrans %}
-                        </dt>
-                        <dd>
-                            {% if relation.required %}
-                                {% trans %}Yes{% endtrans %}
-                            {% else %}
-                                {% trans %}No{% endtrans %}
-                            {% endif %}
-                        </dd>
-                    </dl>
-                    {{ form_rest(form, {'style':'horizontal'})}}
-                </section>
-            </section>
-        </div>
-        {% block form_end %}
-            {{ form_end(form) }}
-        {% endblock %}
-    </div>
+    {% endset %}
+    {% set relationShowTitleHtml %}
+        {{ component('integrated_admin:page_title', {
+            title: 'Show'|trans ~ ' ' ~ relation.name,
+        }) }}
+    {% endset %}
+    {% set relationShowEditorContentHtml %}
+        <section class="section-white section-padding section-radius">
+            <dl class="dl-horizontal">
+                <dt>
+                    {% trans %}Name{% endtrans %}
+                </dt>
+                <dd>
+                    {{ relation.name }}
+                </dd>
+                <dt>
+                    {% trans %}Sources{% endtrans %}
+                </dt>
+                <dd>
+                    <ul>
+                        {% for contentType in relation.sources %}
+                            <li>
+                                {{ contentType }}
+                            </li>
+                        {% else %}
+                            <li>
+                                {% trans %}No sources added{% endtrans %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+                <dt>
+                    {% trans %}Targets{% endtrans %}
+                </dt>
+                <dd>
+                    <ul>
+                        {% for contentType in relation.targets %}
+                            <li>
+                                {{ contentType }}
+                            </li>
+                        {% else %}
+                            <li>
+                                {% trans %}No targets added{% endtrans %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+                <dt>
+                    {% trans %}Location{% endtrans %}
+                </dt>
+                <dd>
+                    {{ relation.location }}
+                </dd>
+                <dt>
+                    {% trans %}Multiple{% endtrans %}
+                </dt>
+                <dd>
+                    {% if relation.multiple == 1 %}
+                        {% trans %}Multiple{% endtrans %}
+                    {% else %}
+                        {% trans %}One{% endtrans %}
+                    {% endif %}
+                </dd>
+                <dt>
+                    {% trans %}Required{% endtrans %}
+                </dt>
+                <dd>
+                    {% if relation.required %}
+                        {% trans %}Yes{% endtrans %}
+                    {% else %}
+                        {% trans %}No{% endtrans %}
+                    {% endif %}
+                </dd>
+            </dl>
+            {{ form_rest(form, {'style':'horizontal'})}}
+        </section>
+    {% endset %}
+    {{ component('integrated_admin:edit_form_shell', {
+        toolbarHtml: relationShowToolbarHtml,
+        pageTitleHtml: relationShowTitleHtml,
+        editorContentHtml: relationShowEditorContentHtml,
+        editorClass: '',
+    }) }}
+    {% block form_end %}
+        {{ form_end(form) }}
+    {% endblock %}
 {% endblock %}
