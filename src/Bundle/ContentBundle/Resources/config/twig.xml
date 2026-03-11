@@ -44,6 +44,13 @@
                 template="@IntegratedContent/components/admin/detail_list.html.twig"
             />
         </service>
+        <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\EmptyStateMessage">
+            <tag
+                name="twig.component"
+                key="integrated_admin:empty_state_message"
+                template="@IntegratedContent/components/admin/empty_state_message.html.twig"
+            />
+        </service>
         <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\EditFormShell">
             <tag
                 name="twig.component"

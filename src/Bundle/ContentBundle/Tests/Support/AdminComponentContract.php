@@ -9,6 +9,7 @@ use Integrated\Bundle\ContentBundle\Twig\Component\Admin\AsidePanel;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\ConfirmModal;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\DataTable;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\DetailList;
+use Integrated\Bundle\ContentBundle\Twig\Component\Admin\EmptyStateMessage;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\EditDrawerPanel;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\EditFormShell;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\FilterGroup;
@@ -51,6 +52,10 @@ final class AdminComponentContract
             'integrated_admin:detail_list' => [
                 'class' => DetailList::class,
                 'template' => '@IntegratedContent/components/admin/detail_list.html.twig',
+            ],
+            'integrated_admin:empty_state_message' => [
+                'class' => EmptyStateMessage::class,
+                'template' => '@IntegratedContent/components/admin/empty_state_message.html.twig',
             ],
             'integrated_admin:edit_drawer_panel' => [
                 'class' => EditDrawerPanel::class,

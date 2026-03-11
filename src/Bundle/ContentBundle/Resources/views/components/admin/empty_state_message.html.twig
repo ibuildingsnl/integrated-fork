@@ -1,0 +1,7 @@
+<{{ this.tagName }} class="{{ this.classes() }}"{% if elementAttributes %} {{ elementAttributes|raw }}{% endif %}>
+    {% if message is not null %}
+        {{ message }}
+    {% elseif block('content') is defined and block('content')|trim is not empty %}
+        {% block content %}{% endblock %}
+    {% endif %}
+</{{ this.tagName }}>

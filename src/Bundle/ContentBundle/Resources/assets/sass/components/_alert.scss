@@ -109,6 +109,19 @@
     position: absolute;
 }
 
+.empty-state-message {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.empty-state-message-muted {
+    color: #7a8593;
+}
+
+.empty-state-message-danger {
+    color: #a6242f;
+}
+
 @mixin alert($name,$bgColor) {
     $accentColor: color.adjust($bgColor, $lightness: -50%);
     .#{$name} {

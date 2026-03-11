@@ -111,6 +111,8 @@ final class UserTemplateComponentsTest extends TestCase
         self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
         self::assertStringContainsString("{% component 'integrated_admin:section_card'", $template);
         self::assertStringContainsString("component('integrated_admin:selection_modal'", $template);
+        self::assertStringContainsString("component('integrated_admin:status_badge'", $template);
+        self::assertStringContainsString("component('integrated_admin:empty_state_message'", $template);
     }
 
     public function testUserSidebarTemplatesUseAdminAsidePanel(): void
@@ -122,6 +124,7 @@ final class UserTemplateComponentsTest extends TestCase
         self::assertIsString($editTemplate);
         self::assertStringContainsString("component('integrated_admin:aside_panel'", $newTemplate);
         self::assertSame(2, substr_count($editTemplate, "component('integrated_admin:aside_panel'"));
+        self::assertStringContainsString("component('integrated_admin:empty_state_message'", $editTemplate);
     }
 
     public function testLoginTemplateUsesAdminAlertBox(): void

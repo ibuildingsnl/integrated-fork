@@ -83,14 +83,14 @@ final class AdminComponentTestKernel extends Kernel
 
     public function getCacheDir(): string
     {
-        $suffix = md5((string) @filemtime(__FILE__));
+        $suffix = md5((string) @filemtime(__FILE__).(string) @filemtime(__DIR__.'/AdminComponentContract.php'));
 
         return sys_get_temp_dir().'/integrated_content_bundle_component_tests/'.$suffix.'/cache';
     }
 
     public function getLogDir(): string
     {
-        $suffix = md5((string) @filemtime(__FILE__));
+        $suffix = md5((string) @filemtime(__FILE__).(string) @filemtime(__DIR__.'/AdminComponentContract.php'));
 
         return sys_get_temp_dir().'/integrated_content_bundle_component_tests/'.$suffix.'/logs';
     }

@@ -7,6 +7,7 @@ Public admin component keys in core:
 - `integrated_admin:confirm_modal`
 - `integrated_admin:data_table`
 - `integrated_admin:detail_list`
+- `integrated_admin:empty_state_message`
 - `integrated_admin:edit_drawer_panel`
 - `integrated_admin:edit_form_shell`
 - `integrated_admin:filter_group`
@@ -39,6 +40,7 @@ Prop conventions
 Component boundaries
 
 - Use `page_title`, `section_card`, `data_table`, `pagination_footer`, `row_actions`, `status_badge` as the default admin list stack.
+- Use `empty_state_message` for inline empty or secondary feedback in panels, sidebars, and lightweight list views.
 - Use `edit_form_shell` only for the shared edit/delete page shell.
 - Use `aside_panel` for hand-built accordion panels, not Symfony form-theme sidebar rows.
 - Use `filter_group` for static titled filter/list groups, not collapsible aside panels.

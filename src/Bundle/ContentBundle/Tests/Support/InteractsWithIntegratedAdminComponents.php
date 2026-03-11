@@ -6,6 +6,7 @@ namespace Integrated\Bundle\ContentBundle\Tests\Support;
 
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\AlertBox;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\DataTable;
+use Integrated\Bundle\ContentBundle\Twig\Component\Admin\EmptyStateMessage;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\OptionsToolbar;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\PageTitle;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\PaginationFooter;
@@ -30,6 +31,7 @@ trait InteractsWithIntegratedAdminComponents
         return match ($name) {
             'integrated_admin:alert_box' => $this->renderIntegratedAdminAlertBox($data),
             'integrated_admin:data_table' => $this->renderIntegratedAdminDataTable($data),
+            'integrated_admin:empty_state_message' => $this->renderIntegratedAdminEmptyStateMessage($data),
             'integrated_admin:pagination_footer' => $this->renderIntegratedAdminPaginationFooter($data),
             'integrated_admin:row_actions' => $this->renderIntegratedAdminRowActions($data),
             'integrated_admin:section_card' => $this->renderIntegratedAdminSectionCard($data),
@@ -38,6 +40,28 @@ trait InteractsWithIntegratedAdminComponents
             'integrated_admin:page_title' => $this->renderIntegratedAdminPageTitle($data),
             default => throw new \InvalidArgumentException(sprintf('Unsupported component "%s".', $name)),
         };
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function renderIntegratedAdminEmptyStateMessage(array $data): string
+    {
+        $component = new EmptyStateMessage();
+        $component->tag = isset($data['tag']) ? (string) $data['tag'] : $component->tag;
+        $component->variant = isset($data['variant']) ? (string) $data['variant'] : $component->variant;
+        $component->message = isset($data['message']) ? (string) $data['message'] : null;
+        $component->elementAttributes = isset($data['elementAttributes']) ? (string) $data['elementAttributes'] : null;
+        $component->wrapperClass = isset($data['wrapperClass']) ? (string) $data['wrapperClass'] : null;
+        $component->extraClass = isset($data['extraClass']) ? (string) $data['extraClass'] : null;
+
+        return sprintf(
+            '<%1$s class="%2$s"%4$s>%3$s</%1$s>',
+            htmlspecialchars($component->tagName(), ENT_QUOTES),
+            htmlspecialchars($component->classes(), ENT_QUOTES),
+            htmlspecialchars((string) $component->message, ENT_QUOTES),
+            $component->elementAttributes ? ' '.$component->elementAttributes : ''
+        );
     }
 
     /**

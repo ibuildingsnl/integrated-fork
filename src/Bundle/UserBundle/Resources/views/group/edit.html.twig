@@ -49,7 +49,11 @@
                                     <div class="group-user-meta">
                                         <a class="group-user-link" href="{{ path('integrated_user_user_edit', {'id': user.id}) }}">{{ user.username }}</a>
                                         {% if not user.enabled %}
-                                            <span class="status-badge status-failed group-user-status">{% trans %}Disabled{% endtrans %}</span>
+                                            {{ component('integrated_admin:status_badge', {
+                                                label: 'Disabled'|trans,
+                                                variant: 'failed',
+                                                extraClass: 'group-user-status',
+                                            }) }}
                                         {% endif %}
                                     </div>
                                     <button type="button" class="btn btn-white btn-xs group-user-remove" data-action="remove-group-user" data-user-id="{{ user.id }}">
@@ -58,10 +62,19 @@
                                 </li>
                             {% endif %}
                         {% endfor %}
-                        <li id="group-users-empty-state" class="group-users-empty text-light {% if selectedGroupUserIds|default([])|length > 0 %}hidden{% endif %}">
-                            {% trans %}No users in this group{% endtrans %}
-                        </li>
-                        <li id="group-users-no-results" class="group-users-empty text-light hidden">{% trans %}No users match your search{% endtrans %}</li>
+                        {{ component('integrated_admin:empty_state_message', {
+                            tag: 'li',
+                            message: 'No users in this group'|trans,
+                            elementAttributes: 'id="group-users-empty-state"',
+                            wrapperClass: 'group-users-empty',
+                            extraClass: (selectedGroupUserIds|default([])|length > 0 ? 'hidden' : ''),
+                        }) }}
+                        {{ component('integrated_admin:empty_state_message', {
+                            tag: 'li',
+                            message: 'No users match your search'|trans,
+                            elementAttributes: 'id="group-users-no-results"',
+                            wrapperClass: 'group-users-empty hidden',
+                        }) }}
                     </ul>
                     <div id="group-users-hidden-inputs">
                         {% for user in availableUsers|default([]) %}

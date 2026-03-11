@@ -26,7 +26,9 @@
                                 {% endfor %}
                             </ul>
                         {% else %}
-                            <p class="text-light">{% trans %}No effective roles found{% endtrans %}</p>
+                            {{ component('integrated_admin:empty_state_message', {
+                                message: 'No effective roles found'|trans,
+                            }) }}
                         {% endif %}
                     {% endset %}
                     {{ component('integrated_admin:aside_panel', {
@@ -43,7 +45,9 @@
                                 {{ user.relation.name|default('') }} {{ user.relation.firstname|default('') }} {{ user.relation.lastname|default('') }}
                             </a>
                         {% else %}
-                            <p class="text-light">{% trans %}No author linked{% endtrans %}</p>
+                            {{ component('integrated_admin:empty_state_message', {
+                                message: 'No author linked'|trans,
+                            }) }}
                         {% endif %}
                     {% endset %}
                     {{ component('integrated_admin:aside_panel', {

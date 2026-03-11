@@ -39,6 +39,25 @@ final class AdminComponentRenderingTest extends AdminComponentKernelTestCase
     }
 
     #[Test]
+    public function itRendersEmptyStateMessageMarkup(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:empty_state_message', [
+            'tag' => 'li',
+            'message' => 'No users found',
+            'variant' => 'danger',
+            'elementAttributes' => 'id="empty-users"',
+            'wrapperClass' => 'group-users-empty',
+        ])->toString();
+
+        self::assertStringContainsString('<li', $output);
+        self::assertStringContainsString('empty-state-message', $output);
+        self::assertStringContainsString('empty-state-message-danger', $output);
+        self::assertStringContainsString('group-users-empty', $output);
+        self::assertStringContainsString('id="empty-users"', $output);
+        self::assertStringContainsString('No users found', $output);
+    }
+
+    #[Test]
     public function itRendersDismissibleAlertBoxMarkup(): void
     {
         $output = $this->renderTwigComponent('integrated_admin:alert_box', [
