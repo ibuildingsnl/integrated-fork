@@ -80,6 +80,17 @@ final class UserTemplateComponentsTest extends TestCase
         self::assertStringContainsString("'No users found for the current filters.'|trans", $template);
     }
 
+    /**
+     * @dataProvider editFormShellTemplateProvider
+     */
+    public function testSimpleUserFormsUseAdminEditFormShell(string $relativePath): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/'.$relativePath);
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
+    }
+
     public function testProfileUsesAdminSectionCardForTwoFactorBlock(): void
     {
         $template = file_get_contents(__DIR__.'/../../Resources/views/profile/index.html.twig');
@@ -106,5 +117,13 @@ final class UserTemplateComponentsTest extends TestCase
         self::assertIsString($editTemplate);
         self::assertStringContainsString("component('integrated_admin:aside_panel'", $newTemplate);
         self::assertSame(2, substr_count($editTemplate, "component('integrated_admin:aside_panel'"));
+    }
+
+    public static function editFormShellTemplateProvider(): iterable
+    {
+        yield ['scope/new.html.twig'];
+        yield ['scope/edit.html.twig'];
+        yield ['ip_list/new.html.twig'];
+        yield ['ip_list/edit.html.twig'];
     }
 }

@@ -1,24 +1,28 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}New scraper{% endtrans %} {% endblock title %}
 {% block content %}
-    <div class="flex flex-wrap edit-form">
-        {% block form_start %}
-            {{ form_start(form) }}
-        {% endblock %}
+    {% block form_start %}
+        {{ form_start(form) }}
+    {% endblock %}
+    {% set scraperNewToolbarHtml %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
         {% endblock toolbar %}
-        <div class="aside-options"></div>
-        <div class="editor-wrapper">
-            {{ component('integrated_admin:page_title', {
-                title: 'New Scraper'|trans,
-            }) }}
-            <section class="editor editor-wrapped">
-                {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
-            </section>
-        </div>
-        {% block form_end %}
-            {{ form_end(form) }}
-        {% endblock %}
-    </div>
+    {% endset %}
+    {% set scraperNewTitleHtml %}
+        {{ component('integrated_admin:page_title', {
+            title: 'New Scraper'|trans,
+        }) }}
+    {% endset %}
+    {% set scraperNewContentHtml %}
+        {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
+    {% endset %}
+    {{ component('integrated_admin:edit_form_shell', {
+        toolbarHtml: scraperNewToolbarHtml,
+        pageTitleHtml: scraperNewTitleHtml,
+        editorContentHtml: scraperNewContentHtml,
+    }) }}
+    {% block form_end %}
+        {{ form_end(form) }}
+    {% endblock %}
 {% endblock %}

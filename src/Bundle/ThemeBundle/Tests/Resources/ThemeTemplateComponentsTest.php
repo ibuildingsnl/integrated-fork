@@ -20,6 +20,17 @@ final class ThemeTemplateComponentsTest extends TestCase
     }
 
     /**
+     * @dataProvider scraperEditFormShellTemplateProvider
+     */
+    public function testScraperFormsUseAdminEditFormShell(string $relativePath): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/'.$relativePath);
+
+        self::assertIsString($template);
+        self::assertStringContainsString("component('integrated_admin:edit_form_shell'", $template);
+    }
+
+    /**
      * @dataProvider scraperCrudTemplateProvider
      */
     public function testScraperCrudTemplatesUseAdminPageTitleComponent(string $relativePath): void
@@ -35,5 +46,11 @@ final class ThemeTemplateComponentsTest extends TestCase
         yield ['scraper/new.html.twig'];
         yield ['scraper/edit.html.twig'];
         yield ['scraper/delete.html.twig'];
+    }
+
+    public static function scraperEditFormShellTemplateProvider(): iterable
+    {
+        yield ['scraper/new.html.twig'];
+        yield ['scraper/edit.html.twig'];
     }
 }

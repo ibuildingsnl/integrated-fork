@@ -2,24 +2,28 @@
 {% block title %}{% trans %}Edit IP list{% endtrans %} {% endblock title %}
 
 {% block content %}
-    <div class="flex flex-wrap edit-form">
-        {% block form_start %}
-            {{ form_start(form) }}
-        {% endblock %}
+    {% block form_start %}
+        {{ form_start(form) }}
+    {% endblock %}
+    {% set ipListEditToolbarHtml %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
         {% endblock toolbar %}
-        <div class="aside-options"></div>
-        <div class="editor-wrapper">
-            {{ component('integrated_admin:page_title', {
-                title: ('Edit'|trans) ~ ' ' ~ ('IP list'|trans),
-            }) }}
-            <section class="editor editor-wrapped">
-                {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
-            </section>
-        </div>
-        {% block form_end %}
-            {{ form_end(form) }}
-        {% endblock %}
-    </div>
+    {% endset %}
+    {% set ipListEditTitleHtml %}
+        {{ component('integrated_admin:page_title', {
+            title: ('Edit'|trans) ~ ' ' ~ ('IP list'|trans),
+        }) }}
+    {% endset %}
+    {% set ipListEditContentHtml %}
+        {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
+    {% endset %}
+    {{ component('integrated_admin:edit_form_shell', {
+        toolbarHtml: ipListEditToolbarHtml,
+        pageTitleHtml: ipListEditTitleHtml,
+        editorContentHtml: ipListEditContentHtml,
+    }) }}
+    {% block form_end %}
+        {{ form_end(form) }}
+    {% endblock %}
 {% endblock %}
