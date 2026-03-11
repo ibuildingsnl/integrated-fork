@@ -8,6 +8,7 @@ use Integrated\Bundle\ContentBundle\Twig\Component\Admin\AlertBox;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\AsidePanel;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\ConfirmModal;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\DataTable;
+use Integrated\Bundle\ContentBundle\Twig\Component\Admin\DetailList;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\EditFormShell;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\EditDrawerPanel;
 use Integrated\Bundle\ContentBundle\Twig\Component\Admin\FilterGroup;
@@ -209,6 +210,24 @@ final class AdminComponentRenderingTest extends KernelTestCase
         self::assertStringNotContainsString('table-hover', $output);
         self::assertStringContainsString('colspan="2"', $output);
         self::assertStringContainsString('No rows found', $output);
+    }
+
+    #[Test]
+    public function itRendersDetailListMarkup(): void
+    {
+        $output = $this->renderTwigComponent('integrated_admin:detail_list', [
+            'rows' => [
+                ['term' => 'Name', 'valueHtml' => 'Example'],
+                ['termHtml' => '<strong>Status</strong>', 'valueHtml' => '<span>Active</span>'],
+            ],
+            'extraClass' => 'detail-list-compact',
+        ])->toString();
+
+        self::assertStringContainsString('<dl class="dl-horizontal detail-list-compact">', $output);
+        self::assertStringContainsString('<dt>', $output);
+        self::assertStringContainsString('Name', $output);
+        self::assertStringContainsString('<strong>Status</strong>', $output);
+        self::assertStringContainsString('<span>Active</span>', $output);
     }
 
     #[Test]
@@ -516,6 +535,7 @@ final class AdminComponentRenderingTestKernel extends Kernel
         $services->set(PageTitle::class);
         $services->set(OptionsToolbar::class);
         $services->set(DataTable::class);
+        $services->set(DetailList::class)->tag('twig.component');
         $services->set(EditFormShell::class)->tag('twig.component');
         $services->set(AsidePanel::class)->tag('twig.component');
         $services->set(EditDrawerPanel::class)->tag('twig.component');

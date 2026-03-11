@@ -1,0 +1,18 @@
+<dl class="{{ this.classes() }}">
+    {% for row in rows %}
+        <dt>
+            {% if row.termHtml is defined %}
+                {{ row.termHtml|raw }}
+            {% else %}
+                {{ row.term|default('') }}
+            {% endif %}
+        </dt>
+        <dd>
+            {% if row.valueHtml is defined %}
+                {{ row.valueHtml|raw }}
+            {% else %}
+                {{ row.value|default('') }}
+            {% endif %}
+        </dd>
+    {% endfor %}
+</dl>

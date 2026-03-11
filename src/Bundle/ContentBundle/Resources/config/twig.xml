@@ -37,6 +37,13 @@
                 template="@IntegratedContent/components/admin/data_table.html.twig"
             />
         </service>
+        <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\DetailList">
+            <tag
+                name="twig.component"
+                key="integrated_admin:detail_list"
+                template="@IntegratedContent/components/admin/detail_list.html.twig"
+            />
+        </service>
         <service id="Integrated\Bundle\ContentBundle\Twig\Component\Admin\EditFormShell">
             <tag
                 name="twig.component"

@@ -14,74 +14,44 @@
             title: 'Show'|trans ~ ' ' ~ relation.name,
         }) }}
     {% endset %}
+    {% set relationSourcesHtml %}
+        <ul>
+            {% for contentType in relation.sources %}
+                <li>
+                    {{ contentType }}
+                </li>
+            {% else %}
+                <li>
+                    {% trans %}No sources added{% endtrans %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endset %}
+    {% set relationTargetsHtml %}
+        <ul>
+            {% for contentType in relation.targets %}
+                <li>
+                    {{ contentType }}
+                </li>
+            {% else %}
+                <li>
+                    {% trans %}No targets added{% endtrans %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endset %}
     {% set relationShowEditorContentHtml %}
         <section class="section-white section-padding section-radius">
-            <dl class="dl-horizontal">
-                <dt>
-                    {% trans %}Name{% endtrans %}
-                </dt>
-                <dd>
-                    {{ relation.name }}
-                </dd>
-                <dt>
-                    {% trans %}Sources{% endtrans %}
-                </dt>
-                <dd>
-                    <ul>
-                        {% for contentType in relation.sources %}
-                            <li>
-                                {{ contentType }}
-                            </li>
-                        {% else %}
-                            <li>
-                                {% trans %}No sources added{% endtrans %}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </dd>
-                <dt>
-                    {% trans %}Targets{% endtrans %}
-                </dt>
-                <dd>
-                    <ul>
-                        {% for contentType in relation.targets %}
-                            <li>
-                                {{ contentType }}
-                            </li>
-                        {% else %}
-                            <li>
-                                {% trans %}No targets added{% endtrans %}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </dd>
-                <dt>
-                    {% trans %}Location{% endtrans %}
-                </dt>
-                <dd>
-                    {{ relation.location }}
-                </dd>
-                <dt>
-                    {% trans %}Multiple{% endtrans %}
-                </dt>
-                <dd>
-                    {% if relation.multiple == 1 %}
-                        {% trans %}Multiple{% endtrans %}
-                    {% else %}
-                        {% trans %}One{% endtrans %}
-                    {% endif %}
-                </dd>
-                <dt>
-                    {% trans %}Required{% endtrans %}
-                </dt>
-                <dd>
-                    {% if relation.required %}
-                        {% trans %}Yes{% endtrans %}
-                    {% else %}
-                        {% trans %}No{% endtrans %}
-                    {% endif %}
-                </dd>
-            </dl>
+            {{ component('integrated_admin:detail_list', {
+                rows: [
+                    {term: 'Name'|trans, value: relation.name},
+                    {term: 'Sources'|trans, valueHtml: relationSourcesHtml},
+                    {term: 'Targets'|trans, valueHtml: relationTargetsHtml},
+                    {term: 'Location'|trans, value: relation.location},
+                    {term: 'Multiple'|trans, value: relation.multiple == 1 ? 'Multiple'|trans : 'One'|trans},
+                    {term: 'Required'|trans, value: relation.required ? 'Yes'|trans : 'No'|trans},
+                ],
+            }) }}
             {{ form_rest(form, {'style':'horizontal'})}}
         </section>
     {% endset %}
