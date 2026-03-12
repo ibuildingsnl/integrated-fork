@@ -342,8 +342,8 @@
                 return;
             }
 
-            var page = document.getElementById('content-edit-page');
-            if (!page) {
+            var flashContainer = document.getElementById('flash-messages');
+            if (!flashContainer) {
                 return;
             }
 
@@ -352,7 +352,7 @@
             alertNode.setAttribute('data-edit-lock-init-message', '1');
             alertNode.textContent = message;
 
-            page.insertBefore(alertNode, page.firstChild);
+            flashContainer.appendChild(alertNode);
         }
 
         function postLockRequest(url, body, keepalive) {

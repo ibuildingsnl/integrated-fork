@@ -58,6 +58,8 @@ class ContentEditLockFlowTest extends TestCase
         $this->assertStringContainsString('window.__integratedLockPolling', $template);
         $this->assertStringContainsString('data-content-lock-overlay', $template);
         $this->assertStringContainsString('setLockOverlay(form,', $template);
+        $this->assertStringContainsString("var flashContainer = document.getElementById('flash-messages');", $template);
+        $this->assertStringContainsString('flashContainer.appendChild(alertNode);', $template);
         $this->assertStringContainsString('document.addEventListener(\'turbo:load\'', $template);
         $this->assertStringContainsString('window.history.replaceState', $template);
         $this->assertStringContainsString('startLockPolling', $template);
