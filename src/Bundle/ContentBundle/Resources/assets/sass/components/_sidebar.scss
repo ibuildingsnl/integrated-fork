@@ -111,7 +111,7 @@
                             }
                         }
 
-                        &.last {
+                        &:not(.tracking-menu-group).last {
                             margin-bottom: 10px;
                         }
                     }

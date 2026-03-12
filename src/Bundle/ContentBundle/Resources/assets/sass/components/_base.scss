@@ -55,6 +55,9 @@ body {
         position: relative;
         background-color: white;
         padding-bottom: 100px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
 
         &-full {
             width: 100%;
