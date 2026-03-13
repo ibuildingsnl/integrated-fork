@@ -94,6 +94,10 @@ class MetadataFactory implements MetadataFactoryInterface
 
     public function getMetadata($class)
     {
+        if (!\is_string($class) || '' === trim($class)) {
+            return null;
+        }
+
         if (isset($this->data[$class])) {
             return $this->data[$class];
         }

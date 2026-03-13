@@ -93,7 +93,13 @@ class ContentTypeController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $metadata = $this->metadata->getMetadata($request->get('class'));
+        $class = trim((string) $request->query->get('class', ''));
+
+        if ('' === $class) {
+            return $this->redirectToRoute('integrated_content_content_type_select');
+        }
+
+        $metadata = $this->metadata->getMetadata($class);
 
         if (!$metadata) {
             return $this->redirectToRoute('integrated_content_content_type_select');

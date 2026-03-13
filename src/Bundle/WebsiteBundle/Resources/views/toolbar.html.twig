@@ -175,7 +175,6 @@
 
 <script>
     const body = document.body;
-    const targetClassesClosing = '.close-outside.show';
     const openClasses = [
         '.close-outside', //dropdown select
         '.button_toggle_upload_view', //media gallery button
@@ -184,76 +183,76 @@
     ];
     let popupShown = false;
 
-    $(document).mouseup(function (e) {
-        const closeOutside = $('.close-outside.show');
-        const toggleButton = $('.toggle-button');
-        const isTargetCloseOutside = closeOutside.is(e.target) || closeOutside.has(e.target).length > 0;
-        const isTargetToggleButton = toggleButton.is(e.target) || toggleButton.has(e.target).length > 0;
-        const isTargetInput = $(e.target).hasClass('tt-input') || $(e.target).hasClass('dropdown-menu');
-        const clickedOutside = !isTargetCloseOutside && !isTargetToggleButton && !isTargetInput;
+    function getShownCloseOutsideElements() {
+        return Array.from(document.querySelectorAll('.close-outside.show'));
+    }
 
-        if (clickedOutside) {
-            closeOutside.removeClass('show');
-            hideDropDownBackGround();
-            popupShown = false;
+    function targetMatchesAnySelector(target, selectors) {
+        if (!(target instanceof Element)) {
+            return false;
         }
-    });
 
-    $(document).keyup(function (e) {
-        if (e.key === 'Escape') {
-            const closeOutside = $('.close-outside.show');
-            if (closeOutside.is('#upload_container')) {
-                closeOutside.removeClass('close-outside');
-            }
-            closeOutside.removeClass('show');
-            hideDropDownBackGround();
-            popupShown = false;
-        }
-    });
-
-    function addPopupEventListeners() {
-        $(document).on('mouseup', openClasses.join(','), function (event) {
-            event.stopPropagation();
-            openPopup();
+        return selectors.some(function (selector) {
+            return target.closest(selector) !== null;
         });
     }
 
-    addPopupEventListeners();
+    function isInsideShownCloseOutside(target) {
+        if (!(target instanceof Element)) {
+            return false;
+        }
+
+        return getShownCloseOutsideElements().some(function (element) {
+            return element === target || element.contains(target);
+        });
+    }
+
+    function closeShownPopups() {
+        const shownElements = getShownCloseOutsideElements();
+        if (shownElements.length === 0) {
+            popupShown = false;
+            return;
+        }
+
+        shownElements.forEach(function (element) {
+            if (element.id === 'upload_container') {
+                element.classList.remove('close-outside');
+            }
+            element.classList.remove('show');
+        });
+
+        hideDropDownBackGround();
+        sendCancelEvent();
+        popupShown = false;
+    }
+
+    document.addEventListener('mouseup', function (event) {
+        const target = event.target;
+
+        if (targetMatchesAnySelector(target, openClasses)) {
+            event.stopPropagation();
+            openPopup();
+            return;
+        }
+
+        const isTargetToggleButton = targetMatchesAnySelector(target, ['.toggle-button']);
+        const isTargetInput = targetMatchesAnySelector(target, ['.tt-input', '.dropdown-menu']);
+        const clickedOutside = !isInsideShownCloseOutside(target) && !isTargetToggleButton && !isTargetInput;
+
+        if (clickedOutside) {
+            closeShownPopups();
+        }
+    });
+
+    document.addEventListener('keyup', function (event) {
+        if (event.key === 'Escape') {
+            closeShownPopups();
+        }
+    });
 
     function openPopup() {
         if (!popupShown) {
-            enableClosingOfPopup();
             popupShown = true;
-        }
-    }
-
-    function enableClosingOfPopup() {
-        $(document).on('mouseup', handlePopupClose);
-        $(document).on('keyup', handleKeyPress);
-    }
-
-    function handlePopupClose(event) {
-        const closeOutside = $(targetClassesClosing);
-        const clickedOutside = !closeOutside.is(event.target) && closeOutside.has(event.target).length === 0;
-
-        if (clickedOutside) {
-            event.stopPropagation();
-            closeOutside.removeClass('show');
-            disableEventListeners();
-            hideDropDownBackGround();
-            sendCancelEvent();
-            popupShown = false;
-        }
-    }
-
-    function disableEventListeners() {
-        $(document).off('mouseup', handlePopupClose);
-        $(document).off('keyup', handleKeyPress);
-    }
-
-    function handleKeyPress(event) {
-        if (event.key === 'Escape') {
-            handlePopupClose(event);
         }
     }
 
