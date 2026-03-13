@@ -1,5 +1,10 @@
-.integrated_content_content_type_edit .form-group .checkbox, .integrated_content_content_type_edit .form-item .checkbox {
-    border: 1px solid #DEE3E9;
+.integrated_content_content_type_edit,
+.integrated_content_content_type_new {
+    .form-group, .form-item {
+        .checkbox {
+            border: 1px solid #dee3e9;
+        }
+    }
 }
 
 .contenttypes {
@@ -105,5 +110,5 @@
 }
 
 .integrated_user_user_edit .checkbox {
-    border: 1px solid #DEE3E9;
+    border: 1px solid #dee3e9;
 }
