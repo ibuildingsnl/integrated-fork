@@ -80,6 +80,10 @@ class ContentController extends AbstractController
     private const ASSIGNED_STATUS_LIMIT = 25;
     private const DRAFT_MAX_VERSIONS = 25;
     private const DRAFT_VERSION_MAX_AGE_DAYS = 30;
+    private const NAVIGATOR_EXCLUDED_CONTENT_CLASSES = [
+        Image::class,
+        File::class,
+    ];
 
     /**
      * @var string
@@ -140,6 +144,8 @@ class ContentController extends AbstractController
                 $options = array_merge($selectionFilters, $options);
             }
         }
+
+        $options = $this->applyNavigatorContentTypeFilter($request, $options);
 
         $newSelection = false;
         if (!$selection) {
@@ -261,6 +267,43 @@ class ContentController extends AbstractController
                 'queryParams' => array_merge($request->query->all(), $options),
             ]
         );
+    }
+
+    /**
+     * Keep media management in the dedicated media library instead of the content navigator.
+     *
+     * @param array<string, mixed> $options
+     *
+     * @return array<string, mixed>
+     */
+    private function applyNavigatorContentTypeFilter(Request $request, array $options): array
+    {
+        if ($request->getRequestFormat() === 'json') {
+            return $options;
+        }
+
+        $excludedContentTypeIds = [];
+
+        foreach ($this->contentTypeManager->getAll() as $contentType) {
+            if ($this->isNavigatorExcludedContentClass($contentType->getClass())) {
+                $excludedContentTypeIds[] = $contentType->getId();
+            }
+        }
+
+        $options['exclude_contenttypes'] = $excludedContentTypeIds;
+
+        return $options;
+    }
+
+    private function isNavigatorExcludedContentClass(string $className): bool
+    {
+        foreach (self::NAVIGATOR_EXCLUDED_CONTENT_CLASSES as $excludedClass) {
+            if (is_a($className, $excludedClass, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function show(Request $request, Content $content): Response

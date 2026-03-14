@@ -76,6 +76,11 @@ class Content extends AbstractType
                 ->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($escape, $options['contenttypes']))]);
         }
 
+        if ($options['exclude_contenttypes']) {
+            $query->createFilterQuery('excluded_contenttypes')
+                ->setQuery('-type_name: ((%1%))', [implode(') OR (', array_map($escape, $options['exclude_contenttypes']))]);
+        }
+
         if ($options['channels']) {
             $query->createFilterQuery('channels')
                 ->addTag('channels')
@@ -217,6 +222,7 @@ class Content extends AbstractType
 
         $resolver->setDefaults([
             'contenttypes' => [],
+            'exclude_contenttypes' => [],
             'channels' => [],
             'brands' => [],
             'authors' => [],
@@ -252,6 +258,7 @@ class Content extends AbstractType
         };
 
         $resolver->setNormalizer('contenttypes', $arrayNormalizer);
+        $resolver->setNormalizer('exclude_contenttypes', $arrayNormalizer);
         $resolver->setNormalizer('channels', $arrayNormalizer);
         $resolver->setNormalizer('brands', $arrayNormalizer);
         $resolver->setNormalizer('authors', $arrayNormalizer);
