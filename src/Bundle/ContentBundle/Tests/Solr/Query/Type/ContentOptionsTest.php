@@ -30,12 +30,14 @@ class ContentOptionsTest extends TestCase
             'channels' => [' channel_a ', '', null, []],
             'properties' => [' featured ', ' ', 1, ['x']],
             'authors' => '',
+            'exclude_contenttypes' => [' image ', '', null, []],
         ]);
 
         self::assertSame(['bioprocessing_news'], $options['brands']);
         self::assertSame(['channel_a'], $options['channels']);
         self::assertSame(['featured'], $options['properties']);
         self::assertSame([], $options['authors']);
+        self::assertSame(['image'], $options['exclude_contenttypes']);
     }
 
     public function testSortFallsBackToConfiguredDefaultWhenUnknownSortIsUsed(): void
