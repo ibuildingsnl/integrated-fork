@@ -373,12 +373,20 @@
                 return;
             }
 
-            if (document.querySelector('[data-edit-lock-init-message]')) {
+            var flashContainer = document.getElementById('flash-messages');
+            if (!flashContainer) {
                 return;
             }
 
-            var flashContainer = document.getElementById('flash-messages');
-            if (!flashContainer) {
+            var normalizedMessage = String(message).trim();
+            var alerts = flashContainer.querySelectorAll('.alert');
+            for (var i = 0; i < alerts.length; i++) {
+                if (alerts[i].textContent && alerts[i].textContent.trim() === normalizedMessage) {
+                    return;
+                }
+            }
+
+            if (document.querySelector('[data-edit-lock-init-message]')) {
                 return;
             }
 
@@ -709,7 +717,9 @@
 
                     form.setAttribute('data-content-locked', '1');
                     setLockOverlay(form, (result && result.payload && result.payload.message) || '');
-                    renderLockMessage((result && result.payload && result.payload.message) || '');
+                    if (result.status !== 423) {
+                        renderLockMessage((result && result.payload && result.payload.message) || '');
+                    }
                     setSaveButtonDisabled(true);
                 })
                 .catch(function () {
