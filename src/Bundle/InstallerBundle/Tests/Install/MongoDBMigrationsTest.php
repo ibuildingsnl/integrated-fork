@@ -5,47 +5,30 @@ declare(strict_types=1);
 namespace Integrated\Bundle\InstallerBundle\Tests\Install;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\ImportBundle\Migrations\MongoDB\Version20260224193000;
 use Integrated\Bundle\InstallerBundle\Install\MongoDBMigrations;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class MongoDBMigrationsTest extends TestCase
 {
-    public function testMigrationSourcesIncludeImportBundleMongoMigrations(): void
+    public function testIntegratedMongoMigrationsStayScopedToInstallerBundle(): void
     {
-        $projectDir = dirname(__DIR__, 8);
-        $container = $this->createMock(ContainerInterface::class);
-        $container
-            ->method('getParameter')
-            ->with('kernel.project_dir')
-            ->willReturn($projectDir);
-
         $migrations = new MongoDBMigrations(
-            $this->createMock(DocumentManager::class),
-            $container
+            $this->createMock(DocumentManager::class)
         );
-        $importMigrationsDirectory = realpath($projectDir.'/vendor/twindigital/integrated-import-bundle/src/Migrations/MongoDB');
 
-        $method = new \ReflectionMethod(MongoDBMigrations::class, 'getMigrationSources');
-        $method->setAccessible(true);
+        $reflection = new \ReflectionClass($migrations);
+        $constantDirectory = $reflection->getConstant('DOCTRINE_MIGRATIONS_DIRECTORY');
+        $constantNamespace = $reflection->getConstant('DOCTRINE_MIGRATIONS_NAMESPACE');
 
-        $sources = $method->invoke($migrations);
+        self::assertSame('../Migrations/MongoDB', ltrim((string) $constantDirectory, '/'));
+        self::assertSame('Integrated\\Bundle\\InstallerBundle\\Migrations\\MongoDB', $constantNamespace);
+        self::assertFalse($reflection->hasConstant('IMPORT_BUNDLE_MIGRATIONS_DIRECTORY'));
+        self::assertFalse($reflection->hasConstant('IMPORT_BUNDLE_MIGRATIONS_NAMESPACE'));
 
-        self::assertIsArray($sources);
-        self::assertContains(
-            [
-                'namespace' => 'Integrated\\Bundle\\ImportBundle\\Migrations\\MongoDB',
-                'directory' => $importMigrationsDirectory,
-            ],
-            $sources
-        );
-        self::assertContains(
-            [
-                'namespace' => (new \ReflectionClass(Version20260224193000::class))->getNamespaceName(),
-                'directory' => $importMigrationsDirectory,
-            ],
-            $sources
-        );
+        $source = file_get_contents($reflection->getFileName());
+
+        self::assertIsString($source);
+        self::assertStringNotContainsString('integrated-import-bundle', $source);
+        self::assertStringNotContainsString('Integrated\\Bundle\\ImportBundle', $source);
     }
 }
