@@ -4,6 +4,9 @@
         padding: 2rem 2rem 100px;
         overflow-y: auto;
         height: calc(100vh - 96px);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
         @include media(max-3xl) {
             height: unset;
             width:100%;

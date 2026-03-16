@@ -245,10 +245,20 @@ function syncContentWrapperToolbarState() {
 
 function showElement(el) {
     el.style.height = '0';
-    el.style.display = 'block';
+    const isSidebarSubMenu = el.classList.contains('sub-menu-children');
+
+    if (!isSidebarSubMenu) {
+        el.style.display = 'block';
+    }
+
+    if (isSidebarSubMenu) {
+        el.parentNode.classList.add('show');
+    }
 
     const height = el.scrollHeight + 'px';
-    el.parentNode.classList.add('show');
+    if (!isSidebarSubMenu) {
+        el.parentNode.classList.add('show');
+    }
     el.style.height = height;
 
     window.setTimeout(() => {
@@ -704,7 +714,6 @@ function applyPersistedSidebarMenuState(root = document) {
         const shouldOpen = items.has(key);
         wrapper.classList.toggle('show', shouldOpen);
         list.classList.toggle('show', shouldOpen);
-        list.style.display = shouldOpen ? 'block' : '';
         list.style.height = '';
     });
 }
@@ -747,7 +756,6 @@ function applyDefaultSidebarMenuState(root = document) {
 
     contentWrapper.classList.add('show');
     list.classList.add('show');
-    list.style.display = 'block';
     list.style.height = '';
 }
 
