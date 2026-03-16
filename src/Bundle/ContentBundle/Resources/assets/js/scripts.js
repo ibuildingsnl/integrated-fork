@@ -68,6 +68,15 @@ function syncSearchFormWithCurrentQuery(form) {
     }
 
     const $form = $(form);
+    const preservedHiddenInputs = [];
+
+    $form.find('input[type="hidden"][data-preserve-search-query-sync]').each(function() {
+        preservedHiddenInputs.push({
+            name: this.name,
+            value: this.value
+        });
+    });
+
     $form.find('input[type="hidden"]').remove();
 
     const params = new URLSearchParams(window.location.search || '');
@@ -80,6 +89,19 @@ function syncSearchFormWithCurrentQuery(form) {
             type: 'hidden',
             name: key,
             value: value
+        }).appendTo($form);
+    });
+
+    preservedHiddenInputs.forEach(function(field) {
+        if (!field.value || params.has(field.name)) {
+            return;
+        }
+
+        $('<input>', {
+            type: 'hidden',
+            name: field.name,
+            value: field.value,
+            'data-preserve-search-query-sync': 'true'
         }).appendTo($form);
     });
 }
