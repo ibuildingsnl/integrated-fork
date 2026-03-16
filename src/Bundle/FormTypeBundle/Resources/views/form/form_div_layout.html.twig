@@ -390,6 +390,51 @@
     {% endapply %}
 {% endblock %}
 
+{% block integrated_filterable_content_choice_widget %}
+    {% integrated_javascripts mode='prepend'
+        'bundles/integratedformtype/js/filterable_content_choice.js' %}
+    {% endintegrated_javascripts %}
+    {% set attr = attr|merge({
+        'data-ajax-url' : path(route, params),
+        'data-types' : content_types|default(''),
+        'data-allow-clear' : (allow_clear ? 'true' : 'false'),
+        'class' : (attr.class|default('') ~ ' form-control integrated_filterable_content_choice')|trim
+    }) %}
+    <div class="integrated_filterable_content_choice_widget">
+        {% if show_channel_filter|default(false) or show_content_type_filter|default(false) %}
+            <div class="integrated_filterable_content_choice_filters grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                {% if show_channel_filter|default(false) %}
+                    <select class="form-control" data-filter-role="channel">
+                        <option value="">{% trans %}Alle kanalen{% endtrans %}</option>
+                        {% for channel in channel_choices|default([]) %}
+                            <option value="{{ channel.value }}">{{ channel.label }}</option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+                {% if show_content_type_filter|default(false) %}
+                    <select class="form-control" data-filter-role="content-type">
+                        <option value="">{% trans %}All content types{% endtrans %}</option>
+                        {% for type in content_type_choices|default([]) %}
+                            <option value="{{ type.value }}">{{ type.label }}</option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+            </div>
+        {% endif %}
+        <div class="w-full">
+            {% apply spaceless %}
+                <select {{ block('widget_attributes') }}>
+                    {% if multiple %}
+                        {{ block('integrated_content_choice_multiple') }}
+                    {% else %}
+                        {{ block('integrated_content_choice_single') }}
+                    {% endif %}
+                </select>
+            {% endapply %}
+        </div>
+    </div>
+{% endblock %}
+
 {% block integrated_content_rank_widget %}
     {% integrated_javascripts mode='prepend'
         'bundles/integratedformtype/js/content_choice.js' %}

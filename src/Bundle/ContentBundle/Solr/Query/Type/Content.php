@@ -3,6 +3,7 @@
 namespace Integrated\Bundle\ContentBundle\Solr\Query\Type;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\ContentBundle\Solr\Query\SortOptions;
 use Integrated\Common\Solr\Search\Type\AbstractType;
 use Solarium\Component\Facet\Field;
@@ -20,12 +21,19 @@ class Content extends AbstractType
 
     public function build(Query $query, array $options): void
     {
+        $contentChoiceBrands = [];
         if ($options['q']) {
             $query->getEDisMax()
-                ->setQueryFields('title content')
-                ->setMinimumMatch('75%');
+                ->setQueryFields($this->getQueryFields($options))
+                ->setMinimumMatch($this->getMinimumMatch($options));
 
-            $query->setQuery($options['q']);
+            if ($this->isContentChoiceSearch($options)) {
+                $contentChoiceBrands = $this->extractMatchingBrands($options['q']);
+                $query->setQueryDefaultOperator(Query::QUERY_OPERATOR_AND);
+                $query->setQuery($this->buildContentChoiceQuery($query, $options['q'], $contentChoiceBrands));
+            } else {
+                $query->setQuery($options['q']);
+            }
         }
 
         $query->addSort($options['sort'], $options['order']);
@@ -87,6 +95,11 @@ class Content extends AbstractType
                 ->setQuery('facet_channels: ((%1%))', [implode(') OR (', array_map($escape, $options['channels']))]);
         }
 
+        if ($contentChoiceBrands) {
+            $query->createFilterQuery('content_choice_brands')
+                ->setQuery('facet_brands: ((%1%))', [implode(') OR (', array_map($escape, array_keys($contentChoiceBrands)))]);
+        }
+
         if ($options['pub_channels']) {
             foreach ($options['pub_channels'] as $channel) {
                 $channel = $helper->escapeTerm($channel);
@@ -140,6 +153,7 @@ class Content extends AbstractType
             'order' => '',
             'ids' => '',
             'created' => null,
+            'search_context' => '',
         ]);
 
         $resolver->setNormalizer('q', function (Options $options, $value) {
@@ -220,6 +234,10 @@ class Content extends AbstractType
             ];
         });
 
+        $resolver->setNormalizer('search_context', function (Options $options, $value) {
+            return trim((string) $value);
+        });
+
         $resolver->setDefaults([
             'contenttypes' => [],
             'exclude_contenttypes' => [],
@@ -293,5 +311,110 @@ class Content extends AbstractType
             'start' => null,
             'end' => null,
         ]);
+    }
+
+    /**
+     * @param array<string, mixed> $options
+     */
+    private function isContentChoiceSearch(array $options): bool
+    {
+        return ($options['search_context'] ?? '') === 'filterable_content_choice';
+    }
+
+    /**
+     * @param array<string, mixed> $options
+     */
+    private function getQueryFields(array $options): string
+    {
+        return 'title content';
+    }
+
+    /**
+     * @param array<string, mixed> $options
+     */
+    private function getMinimumMatch(array $options): string
+    {
+        if ($this->isContentChoiceSearch($options)) {
+            return '100%';
+        }
+
+        return '75%';
+    }
+
+    /**
+     * @param array<string, string> $brands
+     */
+    private function buildContentChoiceQuery(Query $query, string $search, array $brands): string
+    {
+        $search = $this->stripMatchedBrandNames($search, $brands);
+        $terms = preg_split('/\s+/', trim($search)) ?: [];
+        $terms = array_filter(array_map('trim', $terms));
+
+        if (!$terms) {
+            return '*:*';
+        }
+
+        $helper = $query->getHelper();
+
+        return implode(' ', array_map(function (string $term) use ($helper): string {
+            if (preg_match('/^[a-f0-9]{32}$/i', $term)) {
+                return $helper->escapeTerm($term);
+            }
+
+            return $helper->escapeTerm($term).'*';
+        }, $terms));
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function extractMatchingBrands(string $search): array
+    {
+        $needle = mb_strtolower(trim($search));
+        if ($needle === '') {
+            return [];
+        }
+
+        $repository = $this->manager->getRepository(Brand::class);
+        $matched = [];
+
+        foreach ($repository->findAll() as $brand) {
+            if (!$brand instanceof Brand) {
+                continue;
+            }
+
+            $name = trim($brand->getName());
+            if ($name === '') {
+                continue;
+            }
+
+            if (mb_stripos($needle, mb_strtolower($name)) !== false) {
+                $matched[$brand->getId()] = $name;
+            }
+        }
+
+        uasort($matched, static fn (string $left, string $right): int => mb_strlen($right) <=> mb_strlen($left));
+
+        return $matched;
+    }
+
+    /**
+     * @param array<string, string> $brands
+     */
+    private function stripMatchedBrandNames(string $search, array $brands): string
+    {
+        if (!$brands) {
+            return $search;
+        }
+
+        foreach ($brands as $name) {
+            if ($name === '') {
+                continue;
+            }
+
+            $search = preg_replace('/\b'.preg_quote($name, '/').'\b/i', ' ', $search) ?? $search;
+        }
+
+        return preg_replace('/\s+/', ' ', trim($search)) ?? trim($search);
     }
 }

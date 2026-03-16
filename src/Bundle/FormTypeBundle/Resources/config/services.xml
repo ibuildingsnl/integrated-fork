@@ -65,6 +65,19 @@
             <tag name="form.type" />
         </service>
 
+        <service id="integrated_form_type.form_type.filterable_content_choice_type" class="Integrated\Bundle\FormTypeBundle\Form\Type\FilterableContentChoiceType">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="string">Integrated\Bundle\ContentBundle\Document\Content\Content</argument>
+            <argument type="string">integrated_content_content_index</argument>
+            <argument type="collection">
+                <argument key="_format">json</argument>
+            </argument>
+            <argument type="service" id="integrated_content.channel.manager" />
+            <argument type="service" id="integrated_content.content_type.manager" />
+
+            <tag name="form.type" />
+        </service>
+
         <service id="Integrated\Bundle\FormTypeBundle\Form\Type\ContentRankType">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="string">Integrated\Bundle\ContentBundle\Document\Content\Content</argument>
