@@ -16,6 +16,7 @@ use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
 use Integrated\Bundle\BlockBundle\Provider\BlockUsageProvider;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -86,6 +87,15 @@ class BlockFilterType extends AbstractType
                 'choices' => $this->getChannelChoices($options['blockIds']),
                 'expanded' => true,
                 'multiple' => true,
+            ]
+        );
+
+        $builder->add(
+            'unused',
+            CheckboxType::class,
+            [
+                'required' => false,
+                'label' => 'Unused',
             ]
         );
 

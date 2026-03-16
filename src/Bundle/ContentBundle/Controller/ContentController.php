@@ -78,8 +78,6 @@ class ContentController extends AbstractController
     private const CONTENT_LOCK_TIMEOUT_SECONDS = 15;
     private const ASSIGNED_STATUS_CACHE_TTL_SECONDS = 10;
     private const ASSIGNED_STATUS_LIMIT = 25;
-    private const DRAFT_MAX_VERSIONS = 25;
-    private const DRAFT_VERSION_MAX_AGE_DAYS = 30;
     private const NAVIGATOR_EXCLUDED_CONTENT_CLASSES = [
         Image::class,
         File::class,

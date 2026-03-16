@@ -142,6 +142,15 @@ label {
     color: #111827;
 }
 
+.integrated_filterable_content_choice_filters {
+    max-width: 750px;
+    padding: .5rem .5rem 1rem .5rem;
+    border: 1px solid #dfe3e9;
+    border-radius: 8px 8px 0 0;
+    border-bottom: 0;
+    margin-bottom: -6px;
+}
+
 .form-horizontal {
     label {
         &.control-label {

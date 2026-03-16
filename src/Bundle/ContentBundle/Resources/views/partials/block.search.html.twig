@@ -19,11 +19,29 @@
 <div class="nav-form-holder">
     <div class="nav-form-inner">
         <form action="{{ path('integrated_content_content_index') }}" class="navbar-form navbar-left search-form" method="get">
+            {% set effectiveSort = params.sort|default(app.request.query.get('sort')) %}
+            {% set effectiveOrder = params.order|default(app.request.query.get('order')) %}
             {% for key, value in app.request.query.all %}
-                {% if key not in ['q', 'page'] %}
+                {% if key not in ['q', 'page', 'sort', 'order'] %}
                     {{ search_form.hidden_query_field(key, value) }}
                 {% endif %}
             {% endfor %}
+            {% if effectiveSort is not empty %}
+                <input
+                    type="hidden"
+                    name="sort"
+                    value="{{ effectiveSort }}"
+                    data-preserve-search-query-sync="true"
+                >
+            {% endif %}
+            {% if effectiveOrder is not empty %}
+                <input
+                    type="hidden"
+                    name="order"
+                    value="{{ effectiveOrder }}"
+                    data-preserve-search-query-sync="true"
+                >
+            {% endif %}
             <div class="form-group relative">
                 <input type="text" name="q" class="form-control" value="{{ app.request.query.get('q')|trim }}" placeholder="{% trans %}Search here{% endtrans %}...">
                 <button type="submit"><i class="iconoir-search"></i></button>

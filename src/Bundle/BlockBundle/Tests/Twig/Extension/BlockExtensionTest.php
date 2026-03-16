@@ -41,6 +41,56 @@ class BlockExtensionTest extends TestCase
         self::assertSame([], $extension->findPages($block));
     }
 
+    public function testFindContainerBlocksReturnsEmptyArrayWhenUsageProviderReturnsNull(): void
+    {
+        $usageProvider = $this->createMock(BlockUsageProvider::class);
+        $usageProvider
+            ->expects(self::once())
+            ->method('getContainerBlocksPerBlock')
+            ->with('block-id')
+            ->willReturn(null);
+
+        $extension = new BlockExtension(
+            $this->createMock(BlockManager::class),
+            $this->createMock(ThemeManager::class),
+            $usageProvider,
+            $this->createMock(MetadataFactoryInterface::class),
+            $this->createMock(ChannelContextInterface::class),
+            $this->createMock(LoggerInterface::class),
+            'test'
+        );
+
+        $block = $this->createMock(BlockInterface::class);
+        $block->method('getId')->willReturn('block-id');
+
+        self::assertSame([], $extension->findContainerBlocks($block));
+    }
+
+    public function testFindTemplateUsagesReturnsEmptyArrayWhenUsageProviderReturnsNull(): void
+    {
+        $usageProvider = $this->createMock(BlockUsageProvider::class);
+        $usageProvider
+            ->expects(self::once())
+            ->method('getTemplateUsagesPerBlock')
+            ->with('block-id')
+            ->willReturn(null);
+
+        $extension = new BlockExtension(
+            $this->createMock(BlockManager::class),
+            $this->createMock(ThemeManager::class),
+            $usageProvider,
+            $this->createMock(MetadataFactoryInterface::class),
+            $this->createMock(ChannelContextInterface::class),
+            $this->createMock(LoggerInterface::class),
+            'test'
+        );
+
+        $block = $this->createMock(BlockInterface::class);
+        $block->method('getId')->willReturn('block-id');
+
+        self::assertSame([], $extension->findTemplateUsages($block));
+    }
+
     public function testGetBlockCssClassReturnsResolvedCssClassForId(): void
     {
         $resolvedBlock = $this->createMock(BlockInterface::class);

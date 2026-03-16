@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\BlockBundle\Provider;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\BlockBundle\Document\Block\ContainerBlock;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -23,7 +24,7 @@ use Symfony\Contracts\Cache\ItemInterface;
  */
 class BlockUsageProvider
 {
-    public const CACHE_KEY = 'integrated_block.provider.block_usage.v1';
+    public const CACHE_KEY = 'integrated_block.provider.block_usage.v2';
 
     /**
      * @var DocumentManager
@@ -41,6 +42,16 @@ class BlockUsageProvider
     protected $channelBlocks;
 
     /**
+     * @var array|null
+     */
+    protected $blockContainers;
+
+    /**
+     * @var array|null
+     */
+    protected $blockTemplates;
+
+    /**
      * @var ChannelInterface[]
      */
     protected $channels = [];
@@ -48,6 +59,7 @@ class BlockUsageProvider
     public function __construct(
         DocumentManager $manager,
         private ?CacheInterface $cache = null,
+        private iterable $usageSources = [],
     ) {
         $this->manager = $manager;
     }
@@ -101,6 +113,71 @@ class BlockUsageProvider
     }
 
     /**
+     * @param string|null $blockId
+     *
+     * @return array|null
+     */
+    public function getContainerBlocksPerBlock($blockId = null)
+    {
+        if (null === $this->blockContainers) {
+            $this->convertPages();
+
+            if (null === $this->blockContainers) {
+                $this->blockContainers = [];
+            }
+        }
+
+        if (null !== $blockId) {
+            return \array_key_exists($blockId, $this->blockContainers) ? $this->blockContainers[$blockId] : null;
+        }
+
+        return $this->blockContainers;
+    }
+
+    /**
+     * @param string|null $blockId
+     *
+     * @return array|null
+     */
+    public function getTemplateUsagesPerBlock($blockId = null)
+    {
+        if (null === $this->blockTemplates) {
+            $this->convertPages();
+
+            if (null === $this->blockTemplates) {
+                $this->blockTemplates = [];
+            }
+        }
+
+        if (null !== $blockId) {
+            return \array_key_exists($blockId, $this->blockTemplates) ? $this->blockTemplates[$blockId] : null;
+        }
+
+        return $this->blockTemplates;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getUsedBlockIds(): array
+    {
+        if (null === $this->blockPages || null === $this->blockContainers) {
+            $this->convertPages();
+        }
+
+        $usedBlockIds = array_merge(
+            array_keys(\is_array($this->blockPages) ? $this->blockPages : []),
+            array_keys(\is_array($this->blockContainers) ? $this->blockContainers : []),
+            array_keys(\is_array($this->blockTemplates) ? $this->blockTemplates : [])
+        );
+
+        return array_values(array_unique(array_filter(array_map(
+            static fn (mixed $value): string => \is_scalar($value) ? trim((string) $value) : '',
+            $usedBlockIds
+        ))));
+    }
+
+    /**
      * @param string $id
      *
      * @return ChannelInterface|null
@@ -132,18 +209,24 @@ class BlockUsageProvider
 
         $this->blockPages = $data['blockPages'];
         $this->channelBlocks = $data['channelBlocks'];
+        $this->blockContainers = $data['blockContainers'] ?? [];
+        $this->blockTemplates = $data['blockTemplates'] ?? [];
     }
 
     /**
      * @return array{
      *     blockPages: array<string, array<string, array<string, mixed>>>,
-     *     channelBlocks: array<string, array<string, string>>
+     *     channelBlocks: array<string, array<string, string>>,
+     *     blockContainers: array<string, array<string, array<string, mixed>>>,
+     *     blockTemplates: array<string, array<string, array<string, string>>>
      * }
      */
     private function buildUsageMaps(): array
     {
         $blockPages = [];
         $channelBlocks = [];
+        $blockContainers = [];
+        $blockTemplates = [];
 
         $pages = $this->manager->createQueryBuilder(Page::class)
             ->hydrate(false)
@@ -173,9 +256,94 @@ class BlockUsageProvider
             }
         }
 
+        $containers = $this->manager->createQueryBuilder(ContainerBlock::class)
+            ->hydrate(false)
+            ->select(['title', 'items'])
+            ->getQuery()
+            ->getIterator();
+
+        foreach ($containers as $container) {
+            if (!\is_array($container) || !\array_key_exists('_id', $container) || !\is_scalar($container['_id'])) {
+                continue;
+            }
+
+            $containerId = trim((string) $container['_id']);
+            if ($containerId === '') {
+                continue;
+            }
+
+            $containerData = [
+                '_id' => $containerId,
+                'title' => \is_scalar($container['title'] ?? null) && trim((string) $container['title']) !== ''
+                    ? trim((string) $container['title'])
+                    : $containerId,
+            ];
+
+            foreach ($this->extractContainerBlockIds($container) as $nestedBlockId) {
+                $blockContainers[$nestedBlockId][$containerId] = $containerData;
+
+                foreach (($blockPages[$containerId] ?? []) as $pageId => $pageData) {
+                    if (!\is_array($pageData)) {
+                        continue;
+                    }
+
+                    $pageData['_used_via_container_id'] = $containerId;
+                    $pageData['_used_via_container_title'] = $containerData['title'];
+                    $blockPages[$nestedBlockId][$pageId] = $pageData;
+                }
+            }
+        }
+
+        foreach ($this->usageSources as $usageSource) {
+            if (!$usageSource instanceof BlockUsageSourceInterface) {
+                continue;
+            }
+
+            $usageMaps = $usageSource->getUsageMaps();
+
+            if (\array_key_exists('blockTemplates', $usageMaps) && \is_array($usageMaps['blockTemplates'])) {
+                foreach ($usageMaps['blockTemplates'] as $blockId => $usages) {
+                    if (!\is_array($usages)) {
+                        continue;
+                    }
+
+                    foreach ($usages as $usageKey => $usage) {
+                        if (!\is_array($usage)) {
+                            continue;
+                        }
+
+                        $blockTemplates[$blockId][$usageKey] = $usage;
+                    }
+                }
+            }
+
+            if (\array_key_exists('channelBlocks', $usageMaps) && \is_array($usageMaps['channelBlocks'])) {
+                foreach ($usageMaps['channelBlocks'] as $channelId => $usedBlockIds) {
+                    if (!\is_array($usedBlockIds)) {
+                        continue;
+                    }
+
+                    foreach ($usedBlockIds as $blockId) {
+                        if (!\is_scalar($blockId)) {
+                            continue;
+                        }
+
+                        $value = trim((string) $blockId);
+                        if ($value === '') {
+                            continue;
+                        }
+
+                        $channelBlocks[$channelId][$value] = $value;
+                    }
+                }
+            }
+        }
+
         return [
             'blockPages' => $blockPages,
             'channelBlocks' => $channelBlocks,
+            'blockContainers' => $blockContainers,
+            'blockTemplates' => $blockTemplates,
         ];
     }
 
@@ -278,5 +446,40 @@ class BlockUsageProvider
                 }
             }
         }
+    }
+
+    /**
+     * @param array<string, mixed> $container
+     * @return string[]
+     */
+    private function extractContainerBlockIds(array $container): array
+    {
+        $items = $container['items'] ?? null;
+        if (!\is_array($items)) {
+            return [];
+        }
+
+        $indexedBlockIds = [];
+
+        foreach ($items as $item) {
+            if (
+                !\is_array($item)
+                || !\array_key_exists('block', $item)
+                || !\is_array($item['block'])
+                || !\array_key_exists('$id', $item['block'])
+                || !\is_scalar($item['block']['$id'])
+            ) {
+                continue;
+            }
+
+            $blockId = trim((string) $item['block']['$id']);
+            if ($blockId === '') {
+                continue;
+            }
+
+            $indexedBlockIds[$blockId] = true;
+        }
+
+        return array_keys($indexedBlockIds);
     }
 }

@@ -107,9 +107,16 @@
             {% endif %}
             <div class="{{ class }}">
         {% endif %}
+        {% set channel_brand_profile = _channel is defined and _channel ? (_channel|integrated_brand_profile) : null %}
+        {% set channel_brand_color = channel_brand_profile.color|default('#d2312f') %}
+        {% set channel_brand_secondary_color = channel_brand_profile.secondaryColor|default(channel_brand_profile.secondarycolor|default(channel_brand_color)) %}
+        {% set channel_brand_color_dark = channel_brand_color|darken(20) %}
+        {% set channel_brand_secondary_color_dark = channel_brand_secondary_color|darken(20) %}
+        {% set content_style = ':root{--td-color-accent:' ~ channel_brand_color ~ ';--td-color-accent-secondary:' ~ channel_brand_secondary_color ~ ';--td-color-accent-dark:' ~ channel_brand_color_dark ~ ';--td-color-accent-secondary-dark:' ~ channel_brand_secondary_color_dark ~ ';}' %}
         <div id="{{ id }}_container">
                 <textarea id="{{ id }}" name="{{ full_name }}" class="form-control integrated_tinymce"
                           data-content_css="{{ content_styles.content_css|merge([asset(styles)])|join(',') }}"
+                          data-content_style="{{ content_style }}"
                           data-format_styles="{{ content_styles.style_formats|json_encode(true) }}"
                           data-integrated_browser_image_dialog_url="{{ path('integrated_formtype_media_image') }}"
                           data-integrated_browser_gallery_dialog_url="{{ path('integrated_formtype_media_gallery') }}"
@@ -381,6 +388,51 @@
             {% endif %}
         </select>
     {% endapply %}
+{% endblock %}
+
+{% block integrated_filterable_content_choice_widget %}
+    {% integrated_javascripts mode='prepend'
+        'bundles/integratedformtype/js/filterable_content_choice.js' %}
+    {% endintegrated_javascripts %}
+    {% set attr = attr|merge({
+        'data-ajax-url' : path(route, params),
+        'data-types' : content_types|default(''),
+        'data-allow-clear' : (allow_clear ? 'true' : 'false'),
+        'class' : (attr.class|default('') ~ ' form-control integrated_filterable_content_choice')|trim
+    }) %}
+    <div class="integrated_filterable_content_choice_widget">
+        {% if show_channel_filter|default(false) or show_content_type_filter|default(false) %}
+            <div class="integrated_filterable_content_choice_filters grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                {% if show_channel_filter|default(false) %}
+                    <select class="form-control" data-filter-role="channel">
+                        <option value="">{% trans %}Alle kanalen{% endtrans %}</option>
+                        {% for channel in channel_choices|default([]) %}
+                            <option value="{{ channel.value }}">{{ channel.label }}</option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+                {% if show_content_type_filter|default(false) %}
+                    <select class="form-control" data-filter-role="content-type">
+                        <option value="">{% trans %}All content types{% endtrans %}</option>
+                        {% for type in content_type_choices|default([]) %}
+                            <option value="{{ type.value }}">{{ type.label }}</option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+            </div>
+        {% endif %}
+        <div class="w-full">
+            {% apply spaceless %}
+                <select {{ block('widget_attributes') }}>
+                    {% if multiple %}
+                        {{ block('integrated_content_choice_multiple') }}
+                    {% else %}
+                        {{ block('integrated_content_choice_single') }}
+                    {% endif %}
+                </select>
+            {% endapply %}
+        </div>
+    </div>
 {% endblock %}
 
 {% block integrated_content_rank_widget %}
