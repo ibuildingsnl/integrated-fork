@@ -36,6 +36,27 @@ function isValidURL(str) {
     return (a.host && a.host != window.location.host);
 }
 
+function normalizeTinyMceStyleFormats(styles = []) {
+    return styles.map((style) => {
+        const newStyle = {...style};
+
+        for (const property in newStyle) {
+            if (newStyle[property] === 'true') {
+                newStyle[property] = true;
+            } else if (newStyle[property] === 'false') {
+                newStyle[property] = false;
+            }
+        }
+
+        if (newStyle.inline === 'a' && !newStyle.selector) {
+            newStyle.selector = 'a';
+            delete newStyle.inline;
+        }
+
+        return newStyle;
+    });
+}
+
 function initTinyMceEditors(root = document) {
     $('.integrated_tinymce', root).each(function(key, elem){
         const element = $(elem);
@@ -82,21 +103,7 @@ function initTinyMceEditors(root = document) {
 
     let custom_styles = element.data('format_styles') || [];
 
-    custom_styles = custom_styles.map(style => {
-        const newStyle = {...style};
-
-        for (const property in newStyle) {
-            if (newStyle[property] === 'true') {
-                newStyle[property] = true;
-            } else if (newStyle[property] === 'false') {
-                newStyle[property] = false;
-            }
-        }
-
-        return newStyle;
-    });
-
-    style_formats = style_formats.concat(custom_styles);
+    style_formats = style_formats.concat(normalizeTinyMceStyleFormats(custom_styles));
 
     tinymce.init({
         target: elem,
@@ -134,6 +141,7 @@ function initTinyMceEditors(root = document) {
         autoresize_bottom_margin: 0,
         convert_urls: false,
         content_css: element.data('content_css'),
+        content_style: element.data('content_style'),
         integrated_browser_image_dialog_url: element.data('integrated_browser_image_dialog_url'),
         integrated_browser_gallery_dialog_url: element.data('integrated_browser_gallery_dialog_url'),
         integrated_browser_video_dialog_url: element.data('integrated_browser_video_dialog_url'),

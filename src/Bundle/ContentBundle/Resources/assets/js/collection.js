@@ -4,6 +4,27 @@ jQuery = $;
 global.$ = global.jQuery = $;
 window.$ = window.jQuery = $;
 
+function normalizeTinyMceStyleFormats(styles = []) {
+    return styles.map((style) => {
+        const newStyle = {...style};
+
+        for (const property in newStyle) {
+            if (newStyle[property] === 'true') {
+                newStyle[property] = true;
+            } else if (newStyle[property] === 'false') {
+                newStyle[property] = false;
+            }
+        }
+
+        if (newStyle.inline === 'a' && !newStyle.selector) {
+            newStyle.selector = 'a';
+            delete newStyle.inline;
+        }
+
+        return newStyle;
+    });
+}
+
 $('[data-prototype]').each(function(index, elm) {
     init($(this));
 
@@ -59,8 +80,7 @@ $('[data-prototype]').each(function(index, elm) {
                     {title: 'Subscript', icon: 'subscript', inline: 'sub'},
                 ];
 
-                style_formats = style_formats.concat(
-                    editor.data('format_styles'));
+                style_formats = style_formats.concat(normalizeTinyMceStyleFormats(editor.data('format_styles') || []));
                 tinymce.init({
                     selector: '#' + editor.attr('id'),
                     plugins:
@@ -77,6 +97,7 @@ $('[data-prototype]').each(function(index, elm) {
                     browser_spellcheck: true,
                     convert_urls: false,
                     content_css: editor.data('content_css'),
+                    content_style: editor.data('content_style'),
                     integrated_browser_media_types_url: editor.data(
                         'integrated_browser_media_types_url'),
                     integrated_browser_search_url: editor.data(
@@ -117,4 +138,3 @@ $('[data-prototype]').each(function(index, elm) {
         }
     }
 });
-

@@ -107,9 +107,16 @@
             {% endif %}
             <div class="{{ class }}">
         {% endif %}
+        {% set channel_brand_profile = _channel is defined and _channel ? (_channel|integrated_brand_profile) : null %}
+        {% set channel_brand_color = channel_brand_profile.color|default('#d2312f') %}
+        {% set channel_brand_secondary_color = channel_brand_profile.secondaryColor|default(channel_brand_profile.secondarycolor|default(channel_brand_color)) %}
+        {% set channel_brand_color_dark = channel_brand_color|darken(20) %}
+        {% set channel_brand_secondary_color_dark = channel_brand_secondary_color|darken(20) %}
+        {% set content_style = ':root{--td-color-accent:' ~ channel_brand_color ~ ';--td-color-accent-secondary:' ~ channel_brand_secondary_color ~ ';--td-color-accent-dark:' ~ channel_brand_color_dark ~ ';--td-color-accent-secondary-dark:' ~ channel_brand_secondary_color_dark ~ ';}' %}
         <div id="{{ id }}_container">
                 <textarea id="{{ id }}" name="{{ full_name }}" class="form-control integrated_tinymce"
                           data-content_css="{{ content_styles.content_css|merge([asset(styles)])|join(',') }}"
+                          data-content_style="{{ content_style }}"
                           data-format_styles="{{ content_styles.style_formats|json_encode(true) }}"
                           data-integrated_browser_image_dialog_url="{{ path('integrated_formtype_media_image') }}"
                           data-integrated_browser_gallery_dialog_url="{{ path('integrated_formtype_media_gallery') }}"

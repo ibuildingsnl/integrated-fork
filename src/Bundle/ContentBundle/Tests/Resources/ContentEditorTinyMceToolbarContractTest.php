@@ -55,4 +55,33 @@ final class ContentEditorTinyMceToolbarContractTest extends TestCase
         self::assertStringContainsString('closeTinyMceToolbarOverflow();', $source);
         self::assertStringContainsString("document.body.dataset.boundTinyMceToolbarOverflowClose = 'true';", $source);
     }
+
+    public function testTinyMceNormalizesCmsAnchorStylesAsLinkSelectors(): void
+    {
+        $editorSource = file_get_contents(__DIR__.'/../../../FormTypeBundle/Resources/assets/js/editor.js');
+        $collectionSource = file_get_contents(__DIR__.'/../../Resources/assets/js/collection.js');
+        $templateSource = file_get_contents(__DIR__.'/../../../FormTypeBundle/Resources/views/form/form_div_layout.html.twig');
+
+        self::assertIsString($editorSource);
+        self::assertIsString($collectionSource);
+        self::assertIsString($templateSource);
+
+        self::assertStringContainsString('function normalizeTinyMceStyleFormats(styles = [])', $editorSource);
+        self::assertStringContainsString("if (newStyle.inline === 'a' && !newStyle.selector) {", $editorSource);
+        self::assertStringContainsString("newStyle.selector = 'a';", $editorSource);
+        self::assertStringContainsString('delete newStyle.inline;', $editorSource);
+        self::assertStringContainsString('style_formats = style_formats.concat(normalizeTinyMceStyleFormats(custom_styles));', $editorSource);
+        self::assertStringContainsString("content_style: element.data('content_style'),", $editorSource);
+
+        self::assertStringContainsString('function normalizeTinyMceStyleFormats(styles = [])', $collectionSource);
+        self::assertStringContainsString("if (newStyle.inline === 'a' && !newStyle.selector) {", $collectionSource);
+        self::assertStringContainsString("newStyle.selector = 'a';", $collectionSource);
+        self::assertStringContainsString('delete newStyle.inline;', $collectionSource);
+        self::assertStringContainsString('style_formats = style_formats.concat(normalizeTinyMceStyleFormats(editor.data(\'format_styles\') || []));', $collectionSource);
+        self::assertStringContainsString("content_style: editor.data('content_style'),", $collectionSource);
+
+        self::assertStringContainsString("{% set channel_brand_profile = _channel is defined and _channel ? (_channel|integrated_brand_profile) : null %}", $templateSource);
+        self::assertStringContainsString("{% set content_style = ':root{--td-color-accent:' ~ channel_brand_color ~ ';--td-color-accent-secondary:' ~ channel_brand_secondary_color ~ ';--td-color-accent-dark:' ~ channel_brand_color_dark ~ ';--td-color-accent-secondary-dark:' ~ channel_brand_secondary_color_dark ~ ';}' %}", $templateSource);
+        self::assertStringContainsString('data-content_style="{{ content_style }}"', $templateSource);
+    }
 }

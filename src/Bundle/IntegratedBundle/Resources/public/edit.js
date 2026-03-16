@@ -13173,10 +13173,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 /* provided dependency */ var jQuery = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* provided dependency */ var __webpack_provided_window_dot_jQuery = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
 jQuery = (jquery__WEBPACK_IMPORTED_MODULE_0___default());
 __webpack_require__.g.$ = __webpack_require__.g.jQuery = (jquery__WEBPACK_IMPORTED_MODULE_0___default());
 window.$ = __webpack_provided_window_dot_jQuery = (jquery__WEBPACK_IMPORTED_MODULE_0___default());
+function normalizeTinyMceStyleFormats() {
+  var styles = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  return styles.map(function (style) {
+    var newStyle = _objectSpread({}, style);
+    for (var property in newStyle) {
+      if (newStyle[property] === 'true') {
+        newStyle[property] = true;
+      } else if (newStyle[property] === 'false') {
+        newStyle[property] = false;
+      }
+    }
+    if (newStyle.inline === 'a' && !newStyle.selector) {
+      newStyle.selector = 'a';
+      delete newStyle.inline;
+    }
+    return newStyle;
+  });
+}
 jquery__WEBPACK_IMPORTED_MODULE_0___default()('[data-prototype]').each(function (index, elm) {
   init(jquery__WEBPACK_IMPORTED_MODULE_0___default()(this));
   function init($collection) {
@@ -13231,7 +13255,7 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('[data-prototype]').each(function 
           icon: 'subscript',
           inline: 'sub'
         }];
-        style_formats = style_formats.concat(editor.data('format_styles'));
+        style_formats = style_formats.concat(normalizeTinyMceStyleFormats(editor.data('format_styles') || []));
         tinymce.init({
           selector: '#' + editor.attr('id'),
           plugins: 'advlist autolink link lists charmap anchor pagebreak ' + 'searchreplace wordcount visualchars fullscreen nonbreaking ' + 'table directionality template wordcount autoresize code articlelinksearch',
@@ -13242,6 +13266,7 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('[data-prototype]').each(function 
           browser_spellcheck: true,
           convert_urls: false,
           content_css: editor.data('content_css'),
+          content_style: editor.data('content_style'),
           integrated_browser_media_types_url: editor.data('integrated_browser_media_types_url'),
           integrated_browser_search_url: editor.data('integrated_browser_search_url'),
           integrated_browser_file_url: editor.data('integrated_browser_file_url'),
@@ -16549,6 +16574,24 @@ function isValidURL(str) {
   console.log(window.location.host);
   return a.host && a.host != window.location.host;
 }
+function normalizeTinyMceStyleFormats() {
+  var styles = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  return styles.map(function (style) {
+    var newStyle = _objectSpread({}, style);
+    for (var property in newStyle) {
+      if (newStyle[property] === 'true') {
+        newStyle[property] = true;
+      } else if (newStyle[property] === 'false') {
+        newStyle[property] = false;
+      }
+    }
+    if (newStyle.inline === 'a' && !newStyle.selector) {
+      newStyle.selector = 'a';
+      delete newStyle.inline;
+    }
+    return newStyle;
+  });
+}
 function initTinyMceEditors() {
   var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
   $('.integrated_tinymce', root).each(function (key, elem) {
@@ -16606,18 +16649,7 @@ function initTinyMceEditors() {
       inline: 'sub'
     }];
     var custom_styles = element.data('format_styles') || [];
-    custom_styles = custom_styles.map(function (style) {
-      var newStyle = _objectSpread({}, style);
-      for (var property in newStyle) {
-        if (newStyle[property] === 'true') {
-          newStyle[property] = true;
-        } else if (newStyle[property] === 'false') {
-          newStyle[property] = false;
-        }
-      }
-      return newStyle;
-    });
-    style_formats = style_formats.concat(custom_styles);
+    style_formats = style_formats.concat(normalizeTinyMceStyleFormats(custom_styles));
     tinymce__WEBPACK_IMPORTED_MODULE_0___default().init({
       target: elem,
       theme: "silver",
@@ -16660,6 +16692,7 @@ function initTinyMceEditors() {
       autoresize_bottom_margin: 0,
       convert_urls: false,
       content_css: element.data('content_css'),
+      content_style: element.data('content_style'),
       integrated_browser_image_dialog_url: element.data('integrated_browser_image_dialog_url'),
       integrated_browser_gallery_dialog_url: element.data('integrated_browser_gallery_dialog_url'),
       integrated_browser_video_dialog_url: element.data('integrated_browser_video_dialog_url'),
