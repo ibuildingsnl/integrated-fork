@@ -56,6 +56,21 @@ final class ContentEditorTinyMceToolbarContractTest extends TestCase
         self::assertStringContainsString("document.body.dataset.boundTinyMceToolbarOverflowClose = 'true';", $source);
     }
 
+    public function testTinyMceReinitializesAfterTurboStreamUpdates(): void
+    {
+        $source = file_get_contents(__DIR__.'/../../../FormTypeBundle/Resources/assets/js/editor.js');
+
+        self::assertIsString($source);
+        self::assertStringContainsString('function scheduleTinyMceInit(root = document)', $source);
+        self::assertStringContainsString('function getTinyMceInitRootFromEvent(event)', $source);
+        self::assertStringContainsString("const targetId = stream.getAttribute('target') || stream.target || '';", $source);
+        self::assertStringContainsString("return document.getElementById(targetId) || document;", $source);
+        self::assertStringContainsString("const targets = stream.getAttribute('targets');", $source);
+        self::assertStringContainsString('return document.querySelector(targets) || document;', $source);
+        self::assertStringContainsString('const root = getTinyMceInitRootFromEvent(event);', $source);
+        self::assertStringContainsString("document.addEventListener('turbo:after-stream-render', scheduleTinyMceInitFromEvent);", $source);
+    }
+
     public function testTinyMceNormalizesCmsAnchorStylesAsLinkSelectors(): void
     {
         $editorSource = file_get_contents(__DIR__.'/../../../FormTypeBundle/Resources/assets/js/editor.js');
@@ -84,4 +99,28 @@ final class ContentEditorTinyMceToolbarContractTest extends TestCase
         self::assertStringContainsString("{% set content_style = ':root{--td-color-accent:' ~ channel_brand_color ~ ';--td-color-accent-secondary:' ~ channel_brand_secondary_color ~ ';--td-color-accent-dark:' ~ channel_brand_color_dark ~ ';--td-color-accent-secondary-dark:' ~ channel_brand_secondary_color_dark ~ ';}' %}", $templateSource);
         self::assertStringContainsString('data-content_style="{{ content_style }}"', $templateSource);
     }
+
+    public function testTinyMceNormalizesWrappedListsForWrapperDivStyles(): void
+    {
+        $editorSource = file_get_contents(__DIR__.'/../../../FormTypeBundle/Resources/assets/js/editor.js');
+        $collectionSource = file_get_contents(__DIR__.'/../../Resources/assets/js/collection.js');
+
+        self::assertIsString($editorSource);
+        self::assertIsString($collectionSource);
+
+        self::assertStringContainsString('function getTinyMceStyleClasses(style)', $editorSource);
+        self::assertStringContainsString('function getTinyMceWrapperDivStyles(styles = [])', $editorSource);
+        self::assertStringContainsString('function normalizeTinyMceWrappedLists(editor, wrapperStyles = [])', $editorSource);
+        self::assertStringContainsString("if (Array.isArray(style.classes)) {", $editorSource);
+        self::assertStringContainsString("body.querySelectorAll('ul, ol').forEach((list) => {", $editorSource);
+        self::assertStringContainsString("const items = Array.from(list.children || []).filter((item) => item.tagName === 'LI');", $editorSource);
+        self::assertStringContainsString("container = editor.dom.create('div', {'class': getTinyMceStyleClasses(style).join(' ')});", $editorSource);
+        self::assertStringContainsString("editor.on('init change SetContent ExecCommand', normalizeWrappedLists);", $editorSource);
+
+        self::assertStringContainsString('function getTinyMceStyleClasses(style)', $collectionSource);
+        self::assertStringContainsString('function getTinyMceWrapperDivStyles(styles = [])', $collectionSource);
+        self::assertStringContainsString('function normalizeTinyMceWrappedLists(editor, wrapperStyles = [])', $collectionSource);
+        self::assertStringContainsString("tinyEditor.on('init change SetContent ExecCommand', normalizeWrappedLists);", $collectionSource);
+    }
+
 }

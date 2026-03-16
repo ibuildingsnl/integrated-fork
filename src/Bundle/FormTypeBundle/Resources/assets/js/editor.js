@@ -57,6 +57,109 @@ function normalizeTinyMceStyleFormats(styles = []) {
     });
 }
 
+function getTinyMceStyleClasses(style) {
+    if (!style || style.classes == null) {
+        return [];
+    }
+
+    if (typeof style.classes === 'string') {
+        return style.classes.trim().split(/\s+/).filter(Boolean);
+    }
+
+    if (Array.isArray(style.classes)) {
+        return style.classes
+            .filter((className) => typeof className === 'string')
+            .map((className) => className.trim())
+            .filter(Boolean);
+    }
+
+    return [];
+}
+
+function getTinyMceWrapperDivStyles(styles = []) {
+    return styles.filter((style) => {
+        return style
+            && style.wrapper === true
+            && style.block === 'div'
+            && getTinyMceStyleClasses(style).length > 0;
+    });
+}
+
+function matchesTinyMceWrapperClasses(element, style) {
+    if (!element || !style || element.tagName !== 'DIV') {
+        return false;
+    }
+
+    const classes = getTinyMceStyleClasses(style);
+
+    return classes.every((className) => element.classList.contains(className));
+}
+
+function getSignificantChildNodes(element) {
+    return Array.from(element.childNodes || []).filter((node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+            return String(node.textContent || '').trim() !== '';
+        }
+
+        return node.nodeType === Node.ELEMENT_NODE;
+    });
+}
+
+function normalizeTinyMceWrappedLists(editor, wrapperStyles = []) {
+    if (!editor || !editor.dom || !editor.getBody || !wrapperStyles.length) {
+        return;
+    }
+
+    const body = editor.getBody();
+    if (!body || body.dataset.integratedNormalizingWrappedLists === '1') {
+        return;
+    }
+
+    body.dataset.integratedNormalizingWrappedLists = '1';
+
+    try {
+        body.querySelectorAll('ul, ol').forEach((list) => {
+            const items = Array.from(list.children || []).filter((item) => item.tagName === 'LI');
+            if (!items.length) {
+                return;
+            }
+
+            wrapperStyles.forEach((style) => {
+                const wrappers = items.map((item) => {
+                    const children = getSignificantChildNodes(item);
+                    if (children.length !== 1 || children[0].nodeType !== Node.ELEMENT_NODE) {
+                        return null;
+                    }
+
+                    const child = children[0];
+                    return matchesTinyMceWrapperClasses(child, style) ? child : null;
+                });
+
+                if (wrappers.some((wrapper) => !wrapper)) {
+                    return;
+                }
+
+                wrappers.forEach((wrapper) => {
+                    while (wrapper.firstChild) {
+                        wrapper.parentNode.insertBefore(wrapper.firstChild, wrapper);
+                    }
+
+                    wrapper.remove();
+                });
+
+                let container = list.parentElement;
+                if (!matchesTinyMceWrapperClasses(container, style)) {
+                    container = editor.dom.create('div', {'class': getTinyMceStyleClasses(style).join(' ')});
+                    list.parentNode.insertBefore(container, list);
+                    container.appendChild(list);
+                }
+            });
+        });
+    } finally {
+        delete body.dataset.integratedNormalizingWrappedLists;
+    }
+}
+
 function initTinyMceEditors(root = document) {
     $('.integrated_tinymce', root).each(function(key, elem){
         const element = $(elem);
@@ -104,6 +207,7 @@ function initTinyMceEditors(root = document) {
     let custom_styles = element.data('format_styles') || [];
 
     style_formats = style_formats.concat(normalizeTinyMceStyleFormats(custom_styles));
+    const wrapperDivStyles = getTinyMceWrapperDivStyles(style_formats);
 
     tinymce.init({
         target: elem,
@@ -692,6 +796,14 @@ function initTinyMceEditors(root = document) {
             editor.on('blur', function() {
                 closeTinyMceToolbarOverflow();
             });
+
+            const normalizeWrappedLists = function() {
+                window.requestAnimationFrame(function() {
+                    normalizeTinyMceWrappedLists(editor, wrapperDivStyles);
+                });
+            };
+
+            editor.on('init change SetContent ExecCommand', normalizeWrappedLists);
         }
     });
 
@@ -847,8 +959,31 @@ function scheduleTinyMceInit(root = document) {
     window.setTimeout(() => initTinyMceEditors(root), 120);
 }
 
+function getTinyMceInitRootFromEvent(event) {
+    if (event && event.detail && event.detail.newStream) {
+        const stream = event.detail.newStream;
+        const targetId = stream.getAttribute('target') || stream.target || '';
+        if (targetId) {
+            return document.getElementById(targetId) || document;
+        }
+
+        const targets = stream.getAttribute('targets');
+        if (targets) {
+            return document.querySelector(targets) || document;
+        }
+
+        return document;
+    }
+
+    if (event && event.target) {
+        return event.target;
+    }
+
+    return document;
+}
+
 function scheduleTinyMceInitFromEvent(event) {
-    const root = event && event.target ? event.target : document;
+    const root = getTinyMceInitRootFromEvent(event);
     scheduleTinyMceInit(root);
 }
 
@@ -865,6 +1000,7 @@ document.addEventListener('DOMContentLoaded', () => scheduleTinyMceInit(document
 window.addEventListener('load', () => scheduleTinyMceInit(document));
 document.addEventListener('turbo:load', () => scheduleTinyMceInit(document));
 document.addEventListener('turbo:render', () => scheduleTinyMceInit(document));
+document.addEventListener('turbo:after-stream-render', scheduleTinyMceInitFromEvent);
 document.addEventListener('turbo:before-frame-render', cleanupTinyMceBeforeFrameRender);
 document.addEventListener('turbo:frame-load', scheduleTinyMceInitFromEvent);
 document.addEventListener('turbo:frame-render', scheduleTinyMceInitFromEvent);
