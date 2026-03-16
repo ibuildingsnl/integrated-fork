@@ -645,6 +645,12 @@ function initTinyMceEditors(root = document) {
 
                 let event = new CustomEvent('tinyMCEInitialized', { detail: { editor } });
                 window.dispatchEvent(event);
+                if (editor.contentDocument?.body && editor.contentDocument.body.dataset.boundTinyMceToolbarOverflowClose !== 'true') {
+                    editor.contentDocument.addEventListener('mousedown', function() {
+                        closeTinyMceToolbarOverflow();
+                    });
+                    editor.contentDocument.body.dataset.boundTinyMceToolbarOverflowClose = 'true';
+                }
                 normalizeAllArticleSwipers();
                 normalizeAllEditableImages();
                 const currentNode = editor.selection && editor.selection.getNode ? editor.selection.getNode() : null;
@@ -674,6 +680,10 @@ function initTinyMceEditors(root = document) {
                 rememberArticleSwiper(currentNode);
                 rememberEditableImage(currentNode);
             });
+
+            editor.on('blur', function() {
+                closeTinyMceToolbarOverflow();
+            });
         }
     });
 
@@ -681,8 +691,93 @@ function initTinyMceEditors(root = document) {
     });
 }
 
+function closeTinyMceToolbarOverflow() {
+    let closedViaToggle = false;
+
+    document.querySelectorAll('.tox-tinymce-aux .tox-toolbar__overflow').forEach((overflow) => {
+        const container = overflow.closest('[id^="aria-controls_"]');
+        const toggle = findTinyMceToolbarOverflowToggle(container ? container.id : null);
+        if (toggle && toggle.getAttribute('aria-expanded') === 'true') {
+            toggle.click();
+            closedViaToggle = true;
+            return;
+        }
+
+        if (container) {
+            resetTinyMceToolbarOverflowToggle(container.id);
+            container.remove();
+            return;
+        }
+
+        overflow.remove();
+    });
+
+    if (!closedViaToggle) {
+        resetTinyMceToolbarOverflowToggle();
+    }
+}
+
+function findTinyMceToolbarOverflowToggle(controlId = null) {
+    return Array.from(document.querySelectorAll('.tox .tox-tbtn[aria-haspopup="true"]')).find((button) => {
+        const label = button.getAttribute('aria-label');
+        if (label !== 'Reveal or hide additional toolbar items') {
+            return false;
+        }
+
+        if (!controlId) {
+            return true;
+        }
+
+        return button.getAttribute('aria-controls') === controlId;
+    }) || null;
+}
+
+function resetTinyMceToolbarOverflowToggle(controlId = null) {
+    const button = findTinyMceToolbarOverflowToggle(controlId);
+    if (!button) {
+        return;
+    }
+
+    if (!controlId && button.getAttribute('aria-expanded') !== 'true') {
+        return;
+    }
+
+    button.setAttribute('aria-expanded', 'false');
+    button.removeAttribute('aria-controls');
+    button.classList.remove('tox-tbtn--enabled');
+}
+
+function bindTinyMceToolbarOverflowClose() {
+    if (document.body?.dataset.boundTinyMceToolbarOverflowClose === 'true') {
+        return;
+    }
+
+    document.addEventListener('mousedown', function(event) {
+        const target = event.target;
+        if (!(target instanceof Element)) {
+            return;
+        }
+
+        const openOverflow = document.querySelector('.tox-tinymce-aux .tox-toolbar__overflow');
+        if (!openOverflow) {
+            return;
+        }
+
+        if (target.closest('.tox-tinymce-aux .tox-toolbar__overflow')) {
+            return;
+        }
+
+        closeTinyMceToolbarOverflow();
+    });
+
+    if (document.body) {
+        document.body.dataset.boundTinyMceToolbarOverflowClose = 'true';
+    }
+}
+
 $(window).keyup(function(e) {
     if (e.key === "Escape") {
+        closeTinyMceToolbarOverflow();
         $('.tox-tinymce-aux').empty()
     }
 });
@@ -727,15 +822,18 @@ function destroyTinyMceEditorsWithin(root = document) {
 }
 
 function initTinyMceFromDom() {
+    bindTinyMceToolbarOverflowClose();
     initTinyMceEditors(document);
 }
 
 function initTinyMceFromFrame(event) {
     const root = event && event.target ? event.target : document;
+    bindTinyMceToolbarOverflowClose();
     initTinyMceEditors(root);
 }
 
 function scheduleTinyMceInit(root = document) {
+    bindTinyMceToolbarOverflowClose();
     initTinyMceEditors(root);
     window.requestAnimationFrame(() => initTinyMceEditors(root));
     window.setTimeout(() => initTinyMceEditors(root), 120);
