@@ -14,6 +14,8 @@
                 <div class="aside-holder">
                     {% block sidebar %}
                         {% set usedPages = integrated_find_pages(block) %}
+                        {% set usedContainerBlocks = integrated_find_container_blocks(block) %}
+                        {% set usedTemplateUsages = integrated_find_template_usages(block) %}
                         {% set usedChannels = integrated_find_channels(block) %}
                         <div class="aside-header">
                             <button class="toggle-filters toggle-options-sidebar" data-target="aside-options" type="button">
@@ -75,7 +77,32 @@
                             </div>
                             <div class="aside-item-list">
                                 <div class="aside-item-list-container">
-                                    {% if usedPages|length > 0 %}
+                                    {% if usedPages|length > 0 or usedContainerBlocks|length > 0 or usedTemplateUsages|length > 0 %}
+                                        {% if usedTemplateUsages|length > 0 %}
+                                            <h4>{% trans %}Code usage{% endtrans %}</h4>
+                                            <ul>
+                                                {% for templateUsage in usedTemplateUsages %}
+                                                    <li>
+                                                        {{ templateUsage.template|default('unknown template') }}
+                                                        {% if templateUsage.channel_id is defined %}
+                                                            <small>({{ templateUsage.channel_id }})</small>
+                                                        {% endif %}
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% endif %}
+                                        {% if usedContainerBlocks|length > 0 %}
+                                            <h4>{% trans %}Container blocks{% endtrans %}</h4>
+                                            <ul>
+                                                {% for containerBlock in usedContainerBlocks %}
+                                                    <li>
+                                                        <a href="{{ path('integrated_block_block_edit', {'id': containerBlock['_id']}) }}" target="_blank" rel="noopener noreferrer">
+                                                            {{ containerBlock.title|default(containerBlock['_id']) }}
+                                                        </a>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% endif %}
                                         {% if usedChannels|length > 0 %}
                                             <h4>{% trans %}Channels{% endtrans %}</h4>
                                             <ul>
@@ -98,6 +125,9 @@
                                                     <a href="{{ path('integrated_page_page_edit', {'id': page['_id']}) }}" target="_blank" rel="noopener noreferrer">
                                                         {{ page.title|default(page['_id']) }}
                                                     </a>
+                                                    {% if page._used_via_container_title is defined %}
+                                                        <small>({% trans %}via{% endtrans %} {{ page._used_via_container_title }})</small>
+                                                    {% endif %}
                                                     {% if channelName %}
                                                         <small>({{ channelName }})</small>
                                                     {% endif %}

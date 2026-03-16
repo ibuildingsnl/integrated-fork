@@ -101,6 +101,8 @@ class BlockExtension extends AbstractExtension
             ),
             new TwigFunction('integrated_block_css_class', $this->getBlockCssClass(...)),
             new TwigFunction('integrated_find_channels', $this->findChannels(...)),
+            new TwigFunction('integrated_find_container_blocks', $this->findContainerBlocks(...)),
+            new TwigFunction('integrated_find_template_usages', $this->findTemplateUsages(...)),
             new TwigFunction('integrated_find_pages', $this->findPages(...)),
             new TwigFunction('integrated_find_block_types', $this->findBlockTypes(...)),
         ];
@@ -238,6 +240,26 @@ class BlockExtension extends AbstractExtension
         $pages = $this->blockUsageProvider->getPagesPerBlock($block->getId());
 
         return \is_array($pages) ? $pages : [];
+    }
+
+    /**
+     * @return array
+     */
+    public function findContainerBlocks(BlockInterface $block)
+    {
+        $containers = $this->blockUsageProvider->getContainerBlocksPerBlock($block->getId());
+
+        return \is_array($containers) ? $containers : [];
+    }
+
+    /**
+     * @return array
+     */
+    public function findTemplateUsages(BlockInterface $block)
+    {
+        $templateUsages = $this->blockUsageProvider->getTemplateUsagesPerBlock($block->getId());
+
+        return \is_array($templateUsages) ? $templateUsages : [];
     }
 
     /**
