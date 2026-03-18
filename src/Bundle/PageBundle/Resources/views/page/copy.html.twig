@@ -4,17 +4,29 @@
     {{ parent() }}
 
     <style>
-        #copy-table .radio {
+        [data-page-copy-panel-header] .radio {
             padding-right: 15px;
         }
-        #copy-table .radio:last-child {
-            padding-right: 0px;
+        [data-page-copy-panel-header] .radio:last-child {
+            padding-right: 0;
+        }
+        [data-page-copy-panel][data-page-copy-expanded="true"] [data-page-copy-toggle] {
+            font-weight: 600;
         }
     </style>
 {% endblock %}
 {% block content %}
     <div class="flex flex-wrap edit-form">
         {% form_theme form with ['@IntegratedPage/form/form_div_layout.html.twig', '@IntegratedContent/form/form_div_layout.html.twig'] %}
+        {% set pageCount = form.pages is defined ? form.pages|length : 0 %}
+        {% set overwriteCount = 0 %}
+        {% if form.pages is defined %}
+            {% for pageField in form.pages %}
+                {% if pageField.vars.copyAction|default('') == 'overwrite' %}
+                    {% set overwriteCount = overwriteCount + 1 %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
 
         {% block form_start %}
             {{ form_start(form) }}
@@ -31,6 +43,18 @@
                 </h1>
             </div>
             <section class="editor editor-wrapped">
+                {% if form.pages is defined %}
+                    <div class="alert alert-info alert-inline mb-4" data-page-copy-summary>
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            <span>
+                                {% trans with {'%pages%': pageCount} %}%pages% pages found{% endtrans %}
+                            </span>
+                            <span>
+                                {% trans with {'%pages%': overwriteCount} %}%pages% overwrites{% endtrans %}
+                            </span>
+                        </div>
+                    </div>
+                {% endif %}
                 {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
             </section>
         </div>
@@ -44,24 +68,66 @@
     {{ parent() }}
 
     <script>
-    window.addEventListener('DOMContentLoaded', function() {
-      var fields = document.querySelectorAll('[name*=newBlockId]');
+    function initializePageCopyPanels() {
+        document.querySelectorAll('[data-page-copy-panel]').forEach(function(panel) {
+            var body = panel.querySelector('[data-page-copy-panel-body]');
+            var toggle = panel.querySelector('[data-page-copy-toggle]');
 
-      for (var i = 0; i < fields.length; i++) {
-        fields[i].disabled = true;
-      }
-    });
-    $('.copy-pages-blocks select').change(function() {
-        var newBlockIdField = $(this).closest('div.row').find('input:text');
-        if ($(this).val() == '') {
-            newBlockIdField.prop('disabled', true);
-            newBlockIdField.prop('required', false);
-            newBlockIdField.val('');
-        } else {
-            newBlockIdField.prop('disabled', false);
-            newBlockIdField.prop('required', true);
-            newBlockIdField.val(newBlockIdField.data('proposed-block-id'));
-        }
-    });
+            var syncExpandedState = function(expanded) {
+                panel.setAttribute('data-page-copy-expanded', expanded ? 'true' : 'false');
+
+                if (body) {
+                    body.style.display = expanded ? '' : 'none';
+                }
+
+                if (toggle) {
+                    toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                }
+            };
+
+            if (toggle) {
+                toggle.addEventListener('click', function() {
+                    syncExpandedState(panel.getAttribute('data-page-copy-expanded') !== 'true');
+                });
+            }
+
+            syncExpandedState(panel.getAttribute('data-page-copy-expanded') === 'true');
+
+            panel.querySelectorAll('[data-page-copy-block-operation] select').forEach(function(select) {
+                var row = select.closest('[data-page-copy-block-row]');
+                if (!row) {
+                    return;
+                }
+
+                var container = row.querySelector('[data-page-copy-new-block-id-container]');
+                var input = container ? container.querySelector('input[type="text"]') : null;
+                if (!container || !input) {
+                    return;
+                }
+
+                var syncCloneState = function() {
+                    var isClone = select.value === 'clone';
+                    container.style.display = isClone ? '' : 'none';
+                    input.disabled = !isClone;
+                    input.required = isClone;
+
+                    if (isClone && input.value === '') {
+                        input.value = input.dataset.proposedBlockId || '';
+                    }
+
+                    if (!isClone) {
+                        input.value = '';
+                    }
+                };
+
+                syncCloneState();
+                select.addEventListener('change', syncCloneState);
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', initializePageCopyPanels);
+    document.addEventListener('turbo:load', initializePageCopyPanels);
+    document.addEventListener('turbo:frame-load', initializePageCopyPanels);
     </script>
 {% endblock %}
