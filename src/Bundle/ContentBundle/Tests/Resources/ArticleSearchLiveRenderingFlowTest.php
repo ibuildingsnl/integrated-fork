@@ -27,20 +27,20 @@ final class ArticleSearchLiveRenderingFlowTest extends TestCase
         self::assertStringNotContainsString("title=\"{% if linkTitleInvalid %}", $template);
     }
 
-    public function testCompiledAssetContainsLiveBridgeAndNoVueMount(): void
+    public function testArticleSearchSourceUsesLiveBridgeAndNoVueMount(): void
     {
-        $compiled = file_get_contents(__DIR__.'/../../../IntegratedBundle/Resources/public/article-search.js');
-        $editorCompiled = file_get_contents(__DIR__.'/../../../IntegratedBundle/Resources/public/edit.js');
+        $source = file_get_contents(__DIR__.'/../../Resources/assets/js/article_search_live.js');
+        $editorSource = file_get_contents(__DIR__.'/../../Resources/assets/js/article_search.js');
 
-        self::assertIsString($compiled);
-        self::assertIsString($editorCompiled);
-        self::assertStringContainsString('data-article-search-apply', $compiled);
-        self::assertStringContainsString('data-article-search-root', $compiled);
-        self::assertStringContainsString("mceAction: 'close'", $compiled);
-        self::assertStringNotContainsString('state.linkTitle.length===0', $compiled);
-        self::assertStringNotContainsString('title="${safeTitle}"', $compiled);
-        self::assertStringContainsString("setAttrib(selectedNode, 'title', data.title || null)", $editorCompiled);
-        self::assertStringNotContainsString('createApp', $compiled);
-        self::assertStringNotContainsString('article-search/ArticleSearchComponent.vue', $compiled);
+        self::assertIsString($source);
+        self::assertIsString($editorSource);
+        self::assertStringContainsString("const ROOT_SELECTOR = '[data-article-search-root]';", $source);
+        self::assertStringContainsString("const APPLY_SELECTOR = '[data-article-search-apply]';", $source);
+        self::assertStringContainsString("mceAction: 'close'", $source);
+        self::assertStringContainsString('const title = normalizeOptionalTitle(state.linkTitle);', $source);
+        self::assertStringNotContainsString('linkTitle.length === 0', $source);
+        self::assertStringNotContainsString('createApp', $source);
+        self::assertStringNotContainsString('ArticleSearchComponent.vue', $source);
+        self::assertStringContainsString("editor.dom.setAttrib(selectedNode, 'title', data.title || null);", $editorSource);
     }
 }

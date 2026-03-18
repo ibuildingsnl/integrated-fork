@@ -22,14 +22,15 @@ final class ContentEditorTinyMceToolbarContractTest extends TestCase
         self::assertStringContainsString('width: calc(100% - 600px);', $source);
     }
 
-    public function testTinyMceEditAreaNoLongerUsesFixedHeaderOffset(): void
+    public function testTinyMceEditAreaUsesCurrentToolbarOffsets(): void
     {
         $source = file_get_contents(__DIR__.'/../../Resources/assets/sass/components/_tinymce.scss');
 
         self::assertIsString($source);
         self::assertStringContainsString('.tox-edit-area {', $source);
+        self::assertStringContainsString('top: 96px;', $source);
+        self::assertStringContainsString('position: relative;', $source);
         self::assertStringContainsString('margin-top: 82px;', $source);
-        self::assertStringNotContainsString('top: 96px;', $source);
     }
 
     public function testTinyMceEditorClosesToolbarOverflowOnOutsideClick(): void

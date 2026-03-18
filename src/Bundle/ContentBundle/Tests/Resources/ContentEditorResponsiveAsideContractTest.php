@@ -23,10 +23,10 @@ final class ContentEditorResponsiveAsideContractTest extends TestCase
         $source = file_get_contents(__DIR__.'/../../Resources/assets/sass/components/_seo_settings.scss');
 
         self::assertIsString($source);
-        self::assertStringContainsString('@include media(max-lg) {', $source);
         self::assertStringContainsString('@include media(max-sm) {', $source);
-        self::assertStringContainsString('transform: translateX(100%);', $source);
-        self::assertStringContainsString('top: 96px;', $source);
-        self::assertStringContainsString('height: calc(100vh - 96px);', $source);
+        self::assertStringContainsString('width: 700px;', $source);
+        self::assertStringContainsString('transform: translateX(700px);', $source);
+        self::assertStringContainsString('width: 100%;', $source);
+        self::assertStringContainsString('top: 39px;', $source);
     }
 }
