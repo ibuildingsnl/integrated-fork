@@ -143,11 +143,18 @@ class ContentOptionsTest extends TestCase
         return new Content($sortOptions, $manager);
     }
 
+    /**
+     * @return ObjectRepository<Brand>
+     */
     private function createBrandRepository(): ObjectRepository
     {
         return new class implements ObjectRepository {
+            /** @var list<Brand>|null */
             private ?array $brands = null;
 
+            /**
+             * @return list<Brand>
+             */
             private function brands(): array
             {
                 return $this->brands ??= [

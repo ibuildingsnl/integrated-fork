@@ -126,7 +126,7 @@ class DefaultController extends AbstractController
     private function assertCommentAccess(Comment $comment): void
     {
         $content = $comment->getContent();
-        if (!$content instanceof Content || !$this->isGranted(Permissions::EDIT, $content)) {
+        if (!$this->isGranted(Permissions::EDIT, $content)) {
             throw $this->createAccessDeniedException();
         }
     }

@@ -71,6 +71,9 @@ final class EventDateDefaultTimeListenerTest extends TestCase
         self::assertCount($listenerCount, $builder->getEventDispatcher()->getListeners(FormEvents::PRE_SUBMIT));
     }
 
+    /**
+     * @return FormBuilderInterface<mixed>
+     */
     private function createBuilder(string $dataClass): FormBuilderInterface
     {
         $builder = Forms::createFormFactoryBuilder()
@@ -103,6 +106,9 @@ final class EventDateDefaultTimeListenerTest extends TestCase
         self::assertFalse($view['endDate']['time']->vars['required']);
     }
 
+    /**
+     * @param FormBuilderInterface<mixed> $builder
+     */
     private function createBuilderEvent(string $contentClass, FormBuilderInterface $builder): BuilderEvent
     {
         $type = new \Integrated\Bundle\ContentBundle\Document\ContentType\ContentType();

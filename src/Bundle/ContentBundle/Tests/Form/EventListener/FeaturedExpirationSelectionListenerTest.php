@@ -22,6 +22,7 @@ use Symfony\Component\Form\ResolvedFormTypeFactory;
 
 final class FeaturedExpirationSelectionListenerTest extends TestCase
 {
+    /** @var FormBuilderInterface<mixed> */
     private FormBuilderInterface $builder;
     private FeaturedExpirationSelectionListener $listener;
 

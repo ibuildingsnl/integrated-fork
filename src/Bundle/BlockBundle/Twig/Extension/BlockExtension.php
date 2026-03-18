@@ -233,7 +233,7 @@ class BlockExtension extends AbstractExtension
     }
 
     /**
-     * @return array
+     * @return array<string, array<string, mixed>>
      */
     public function findPages(BlockInterface $block)
     {
@@ -243,7 +243,7 @@ class BlockExtension extends AbstractExtension
     }
 
     /**
-     * @return array
+     * @return array<string, array<string, mixed>>
      */
     public function findContainerBlocks(BlockInterface $block)
     {
@@ -253,7 +253,7 @@ class BlockExtension extends AbstractExtension
     }
 
     /**
-     * @return array
+     * @return array<string, array<string, string>>
      */
     public function findTemplateUsages(BlockInterface $block)
     {

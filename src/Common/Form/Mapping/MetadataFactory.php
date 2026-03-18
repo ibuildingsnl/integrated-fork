@@ -94,7 +94,8 @@ class MetadataFactory implements MetadataFactoryInterface
 
     public function getMetadata($class)
     {
-        if (!\is_string($class) || '' === trim($class)) {
+        $class = trim((string) $class);
+        if ($class === '') {
             return null;
         }
 

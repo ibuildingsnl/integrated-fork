@@ -31,6 +31,9 @@ class SeoMetaExtensionTest extends TestCase
     }
 
     #[DataProvider('buildProvider')]
+    /**
+     * @param array<string, list<bool|string>> $expected
+     */
     public function testBuild(
         string $contentTypeId,
         bool $hasSeoField,
@@ -51,6 +54,9 @@ class SeoMetaExtensionTest extends TestCase
         self::assertEquals($expected, $container->toArray());
     }
 
+    /**
+     * @return array<string, array<int, mixed>>
+     */
     public static function buildProvider(): array
     {
         return [
@@ -107,9 +113,12 @@ class SeoMetaExtensionTest extends TestCase
         return new SeoMetaExtension($resolver);
     }
 
-    protected function getResolver(): ResolverInterface|MockObject
+    protected function getResolver(): ResolverInterface
     {
-        return $this->createMock(ResolverInterface::class);
+        /** @var ResolverInterface&MockObject $resolver */
+        $resolver = $this->createMock(ResolverInterface::class);
+
+        return $resolver;
     }
 
     private function createContentMock(string $contentTypeId, ?string $seoScore, ?string $readabilityScore): Content
@@ -147,7 +156,7 @@ class SeoMetaExtensionTest extends TestCase
         return $content;
     }
 
-    private function createResolverMock(string $contentTypeId, bool $hasSeoField): ResolverInterface|MockObject
+    private function createResolverMock(string $contentTypeId, bool $hasSeoField): ResolverInterface
     {
         $contentType = $this->createMock(ContentTypeInterface::class);
         $contentType->expects($this->atLeastOnce())
@@ -155,6 +164,7 @@ class SeoMetaExtensionTest extends TestCase
             ->with('seoMetadata')
             ->willReturn($hasSeoField);
 
+        /** @var ResolverInterface&MockObject $resolver */
         $resolver = $this->createMock(ResolverInterface::class);
         $resolver->expects($this->atLeastOnce())
             ->method('getType')

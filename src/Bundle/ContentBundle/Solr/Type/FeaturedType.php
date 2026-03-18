@@ -77,6 +77,6 @@ class FeaturedType implements TypeInterface
 
         $expirationDate = $referenceDate->modify(\sprintf('+%d days', $days));
 
-        return false !== $expirationDate && $expirationDate <= new \DateTimeImmutable();
+        return $expirationDate <= new \DateTimeImmutable();
     }
 }

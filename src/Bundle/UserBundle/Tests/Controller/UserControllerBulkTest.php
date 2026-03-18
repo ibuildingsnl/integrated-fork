@@ -305,6 +305,7 @@ final class TestUserController extends UserController
     public string $lastRenderedTemplate = '';
     /** @var array<string, mixed> */
     public array $lastRenderedParameters = [];
+    /** @var FormInterface<mixed>|null */
     public ?FormInterface $form = null;
 
     protected function isGranted(mixed $attribute, mixed $subject = null): bool
@@ -348,6 +349,9 @@ final class TestUserController extends UserController
         return $this->form;
     }
 
+    /**
+     * @param array<string, mixed> $parameters
+     */
     protected function render(string $view, array $parameters = [], ?Response $response = null): Response
     {
         $this->lastRenderedTemplate = $view;

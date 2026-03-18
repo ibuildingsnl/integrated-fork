@@ -15,7 +15,6 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\PageBundle\Resolver\ThemeResolver;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
-use Integrated\Common\Content\Channel\ChannelInterface;
 
 class TemplateBlockUsageProvider implements BlockUsageSourceInterface
 {
@@ -99,19 +98,13 @@ class TemplateBlockUsageProvider implements BlockUsageSourceInterface
     }
 
     /**
-     * @return ChannelInterface[]
+     * @return Channel[]
      */
     private function getChannels(): array
     {
-        $channels = $this->manager->getRepository(Channel::class)->findAll();
-
-        if (!is_iterable($channels)) {
-            return [];
-        }
-
         return array_values(array_filter(
-            \is_array($channels) ? $channels : iterator_to_array($channels),
-            static fn (mixed $channel): bool => $channel instanceof ChannelInterface && trim($channel->getId()) !== ''
+            $this->manager->getRepository(Channel::class)->findAll(),
+            static fn (Channel $channel): bool => trim((string) $channel->getId()) !== ''
         ));
     }
 
@@ -192,7 +185,7 @@ class TemplateBlockUsageProvider implements BlockUsageSourceInterface
         if (str_starts_with($path, '@')) {
             foreach ($this->themeManager->locateResources($path) as $resolvedPath) {
                 $realPath = realpath($resolvedPath);
-                if (\is_string($realPath) && $realPath !== '') {
+                if ($realPath !== false) {
                     $directories[$realPath] = $realPath;
                 }
             }
@@ -201,13 +194,13 @@ class TemplateBlockUsageProvider implements BlockUsageSourceInterface
         }
 
         $realPath = realpath($path);
-        if (\is_string($realPath) && $realPath !== '') {
+        if ($realPath !== false) {
             return [$realPath];
         }
 
         $realPath = realpath(rtrim($this->projectDir, \DIRECTORY_SEPARATOR).\DIRECTORY_SEPARATOR.ltrim($path, \DIRECTORY_SEPARATOR));
 
-        return \is_string($realPath) && $realPath !== '' ? [$realPath] : [];
+        return $realPath !== false ? [$realPath] : [];
     }
 
     /**
@@ -217,7 +210,7 @@ class TemplateBlockUsageProvider implements BlockUsageSourceInterface
     {
         preg_match_all('/integrated_block\(\s*([\'"])([^\'"]+)\1\s*(?:,|\))/m', $content, $matches);
 
-        return $this->normalizeScalarValues($matches[2] ?? []);
+        return $this->normalizeScalarValues($matches[2]);
     }
 
     /**
@@ -231,7 +224,7 @@ class TemplateBlockUsageProvider implements BlockUsageSourceInterface
             $matches
         );
 
-        return $this->normalizeScalarValues($matches[2] ?? []);
+        return $this->normalizeScalarValues($matches[2]);
     }
 
     /**
@@ -241,7 +234,7 @@ class TemplateBlockUsageProvider implements BlockUsageSourceInterface
     {
         preg_match_all('/integrated_block\(\s*([\'"])([^\'"]*)\1\s*~\s*_channel\.id\s*\)/m', $content, $matches);
 
-        return $this->normalizeScalarValues($matches[2] ?? []);
+        return $this->normalizeScalarValues($matches[2]);
     }
 
     /**
@@ -259,10 +252,10 @@ class TemplateBlockUsageProvider implements BlockUsageSourceInterface
         $patterns = [];
 
         foreach ($matches as $match) {
-            $prefix = isset($match[2]) && \is_string($match[2]) ? trim($match[2]) : '';
-            $default = isset($match[4]) && \is_string($match[4]) ? trim($match[4]) : '';
+            $prefix = trim($match[2]);
+            $default = trim($match[4]);
 
-            if ($prefix === '' || $default === '') {
+            if ($prefix === '') {
                 continue;
             }
 
@@ -282,7 +275,7 @@ class TemplateBlockUsageProvider implements BlockUsageSourceInterface
     {
         preg_match_all('/integrated_channel_block\(\s*([\'"])([^\'"]+)\1\s*,/m', $content, $matches);
 
-        return $this->normalizeScalarValues($matches[2] ?? []);
+        return $this->normalizeScalarValues($matches[2]);
     }
 
     /**
@@ -301,7 +294,7 @@ class TemplateBlockUsageProvider implements BlockUsageSourceInterface
             'theme' => $themeId,
         ];
 
-        if ($channelId !== null && $channelId !== '') {
+        if ($channelId !== null) {
             $usage['channel_id'] = $channelId;
         }
 

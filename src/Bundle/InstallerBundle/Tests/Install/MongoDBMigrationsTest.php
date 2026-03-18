@@ -25,7 +25,10 @@ final class MongoDBMigrationsTest extends TestCase
         self::assertFalse($reflection->hasConstant('IMPORT_BUNDLE_MIGRATIONS_DIRECTORY'));
         self::assertFalse($reflection->hasConstant('IMPORT_BUNDLE_MIGRATIONS_NAMESPACE'));
 
-        $source = file_get_contents($reflection->getFileName());
+        $fileName = $reflection->getFileName();
+        self::assertIsString($fileName);
+
+        $source = file_get_contents($fileName);
 
         self::assertIsString($source);
         self::assertStringNotContainsString('integrated-import-bundle', $source);

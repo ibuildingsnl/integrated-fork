@@ -32,22 +32,22 @@ class BlockUsageProvider
     protected $manager;
 
     /**
-     * @var array|null
+     * @var array<string, array<string, array<string, mixed>>>|null
      */
     protected $blockPages;
 
     /**
-     * @var array|null
+     * @var array<string, array<string, string>>|null
      */
     protected $channelBlocks;
 
     /**
-     * @var array|null
+     * @var array<string, array<string, array<string, mixed>>>|null
      */
     protected $blockContainers;
 
     /**
-     * @var array|null
+     * @var array<string, array<string, array<string, string>>>|null
      */
     protected $blockTemplates;
 
@@ -56,18 +56,24 @@ class BlockUsageProvider
      */
     protected $channels = [];
 
+    /**
+     * @var iterable<BlockUsageSourceInterface>
+     */
+    private iterable $usageSources;
+
     public function __construct(
         DocumentManager $manager,
         private ?CacheInterface $cache = null,
-        private iterable $usageSources = [],
+        iterable $usageSources = [],
     ) {
         $this->manager = $manager;
+        $this->usageSources = $usageSources;
     }
 
     /**
      * @param string|null $blockId
      *
-     * @return array|null
+     * @return array<string, array<string, mixed>>|array<string, array<string, array<string, mixed>>>|null
      */
     public function getPagesPerBlock($blockId = null)
     {
@@ -91,7 +97,7 @@ class BlockUsageProvider
     /**
      * @param string|null $channelId
      *
-     * @return array
+     * @return array<string, string>|array<string, array<string, string>>
      */
     public function getBlocksPerChannel($channelId = null)
     {
@@ -115,7 +121,7 @@ class BlockUsageProvider
     /**
      * @param string|null $blockId
      *
-     * @return array|null
+     * @return array<string, array<string, mixed>>|array<string, array<string, array<string, mixed>>>|null
      */
     public function getContainerBlocksPerBlock($blockId = null)
     {
@@ -137,7 +143,7 @@ class BlockUsageProvider
     /**
      * @param string|null $blockId
      *
-     * @return array|null
+     * @return array<string, array<string, string>>|array<string, array<string, array<string, string>>>|null
      */
     public function getTemplateUsagesPerBlock($blockId = null)
     {
@@ -172,7 +178,7 @@ class BlockUsageProvider
         );
 
         return array_values(array_unique(array_filter(array_map(
-            static fn (mixed $value): string => \is_scalar($value) ? trim((string) $value) : '',
+            static fn (mixed $value): string => trim((string) $value),
             $usedBlockIds
         ))));
     }
@@ -209,8 +215,8 @@ class BlockUsageProvider
 
         $this->blockPages = $data['blockPages'];
         $this->channelBlocks = $data['channelBlocks'];
-        $this->blockContainers = $data['blockContainers'] ?? [];
-        $this->blockTemplates = $data['blockTemplates'] ?? [];
+        $this->blockContainers = $data['blockContainers'];
+        $this->blockTemplates = $data['blockTemplates'];
     }
 
     /**
@@ -283,10 +289,6 @@ class BlockUsageProvider
                 $blockContainers[$nestedBlockId][$containerId] = $containerData;
 
                 foreach (($blockPages[$containerId] ?? []) as $pageId => $pageData) {
-                    if (!\is_array($pageData)) {
-                        continue;
-                    }
-
                     $pageData['_used_via_container_id'] = $containerId;
                     $pageData['_used_via_container_title'] = $containerData['title'];
                     $blockPages[$nestedBlockId][$pageId] = $pageData;
@@ -295,39 +297,19 @@ class BlockUsageProvider
         }
 
         foreach ($this->usageSources as $usageSource) {
-            if (!$usageSource instanceof BlockUsageSourceInterface) {
-                continue;
-            }
-
             $usageMaps = $usageSource->getUsageMaps();
 
-            if (\array_key_exists('blockTemplates', $usageMaps) && \is_array($usageMaps['blockTemplates'])) {
+            if (\array_key_exists('blockTemplates', $usageMaps)) {
                 foreach ($usageMaps['blockTemplates'] as $blockId => $usages) {
-                    if (!\is_array($usages)) {
-                        continue;
-                    }
-
                     foreach ($usages as $usageKey => $usage) {
-                        if (!\is_array($usage)) {
-                            continue;
-                        }
-
                         $blockTemplates[$blockId][$usageKey] = $usage;
                     }
                 }
             }
 
-            if (\array_key_exists('channelBlocks', $usageMaps) && \is_array($usageMaps['channelBlocks'])) {
+            if (\array_key_exists('channelBlocks', $usageMaps)) {
                 foreach ($usageMaps['channelBlocks'] as $channelId => $usedBlockIds) {
-                    if (!\is_array($usedBlockIds)) {
-                        continue;
-                    }
-
                     foreach ($usedBlockIds as $blockId) {
-                        if (!\is_scalar($blockId)) {
-                            continue;
-                        }
-
                         $value = trim((string) $blockId);
                         if ($value === '') {
                             continue;

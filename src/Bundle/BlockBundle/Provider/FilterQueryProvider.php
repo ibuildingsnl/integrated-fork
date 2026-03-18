@@ -117,7 +117,10 @@ class FilterQueryProvider
         return $blockIds;
     }
 
-    private function isUnusedFilterEnabled($data): bool
+    /**
+     * @param array<string, mixed>|null $data
+     */
+    private function isUnusedFilterEnabled(?array $data): bool
     {
         if (!\is_array($data) || !\array_key_exists('unused', $data)) {
             return false;

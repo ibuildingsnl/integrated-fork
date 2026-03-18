@@ -118,6 +118,9 @@ class ContentControllerSavePublicationGuardTest extends TestCase
         return $result;
     }
 
+    /**
+     * @param \Symfony\Component\Form\FormInterface<mixed> $form
+     */
     private function invokeHandleDuplicateSlugSaveFailure(
         ContentController $controller,
         \Symfony\Component\Form\FormInterface $form,

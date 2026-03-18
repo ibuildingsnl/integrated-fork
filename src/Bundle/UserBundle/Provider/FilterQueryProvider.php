@@ -157,6 +157,11 @@ class FilterQueryProvider
         return $this->formatChoices($manager->createNativeQuery($sql, $this->getMapping()), $data);
     }
 
+    /**
+     * @param array<string, mixed>|null $data
+     *
+     * @return array<string, string>
+     */
     public function getRoleChoices($data = []): array
     {
         $data = \is_array($data) ? $data : [];

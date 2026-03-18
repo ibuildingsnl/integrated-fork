@@ -316,6 +316,9 @@ class ContentController extends AbstractController
         $contentType = $this->contentTypeManager->getType($request->get('type'));
 
         $content = $contentType->create();
+        if (!$content instanceof Content) {
+            throw new \LogicException(\sprintf('Expected %s, got %s.', Content::class, $content::class));
+        }
 
         if (!$this->isGranted(Permissions::CREATE, $content)) {
             throw new AccessDeniedException();
@@ -1790,6 +1793,9 @@ class ContentController extends AbstractController
         return '';
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     private function guardRequiredDepublicationDate(
         FormInterface $form,
         ContentTypeInterface $contentType,
@@ -1814,6 +1820,9 @@ class ContentController extends AbstractController
         return true;
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     private function handleDuplicateSlugSaveFailure(FormInterface $form, \Throwable $exception): ?string
     {
         $message = strtolower($exception->getMessage());

@@ -13,6 +13,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FilterableContentChoiceType extends ContentChoiceType
 {
+    /**
+     * @param array<string, mixed>|null $params
+     */
     public function __construct(
         DocumentManager $dm,
         string $repositoryClass,
@@ -24,7 +27,7 @@ class FilterableContentChoiceType extends ContentChoiceType
         parent::__construct($dm, $repositoryClass, $route, $params);
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         parent::buildView($view, $form, $options);
 
@@ -48,8 +51,8 @@ class FilterableContentChoiceType extends ContentChoiceType
             ];
         }
 
-        usort($channels, static fn (array $left, array $right): int => strcmp($left['label'], $right['label']));
-        usort($contentTypes, static fn (array $left, array $right): int => strcmp($left['label'], $right['label']));
+        usort($channels, static fn (array $left, array $right): int => strcmp((string) $left['label'], (string) $right['label']));
+        usort($contentTypes, static fn (array $left, array $right): int => strcmp((string) $left['label'], (string) $right['label']));
 
         $view->vars['show_channel_filter'] = (bool) $options['show_channel_filter'];
         $view->vars['show_content_type_filter'] = (bool) $options['show_content_type_filter'];

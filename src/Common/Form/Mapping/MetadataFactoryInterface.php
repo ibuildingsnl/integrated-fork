@@ -19,7 +19,7 @@ interface MetadataFactoryInterface
     /**
      * @param string $class
      *
-     * @return MetadataInterface
+     * @return MetadataInterface|null
      */
     public function getMetadata($class);
 
