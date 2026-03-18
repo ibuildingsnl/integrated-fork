@@ -88,6 +88,20 @@ class ContentTypeFormType extends AbstractType
             'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show', 'icon' => 'map'],
         ]);
 
+        $builder->add('options_featured_expiration', CheckboxSwitcherType::class, [
+            'label' => 'Featured expiration',
+            'property_path' => 'options[featured_expiration]',
+            'required' => false,
+            'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show', 'icon' => 'star'],
+        ]);
+
+        $builder->add('options_required_depublication_date', CheckboxSwitcherType::class, [
+            'label' => 'Required depublication date',
+            'property_path' => 'options[required_depublication_date]',
+            'required' => false,
+            'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show', 'icon' => 'calendar'],
+        ]);
+
         if ($metadata->isTypeOf(Taxonomy::class)) {
             $builder->add('options_enforce_parent', CheckboxSwitcherType::class, [
                 'label' => 'Enforce parent',

@@ -116,10 +116,6 @@ class MongoDBContentTypeListener
             }
 
             $options = $field->getOptions();
-            if (!\is_array($options)) {
-                return null;
-            }
-
             unset($options['value']);
             ksort($options);
 

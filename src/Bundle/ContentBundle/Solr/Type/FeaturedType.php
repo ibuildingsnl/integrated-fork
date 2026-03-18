@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Solr\Type;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
+use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\Type\TypeInterface;
 
@@ -23,6 +24,11 @@ use Integrated\Common\Converter\Type\TypeInterface;
  */
 class FeaturedType implements TypeInterface
 {
+    public function __construct(
+        private readonly ResolverInterface $resolver,
+    ) {
+    }
+
     public function build(ContainerInterface $container, $data, array $options = [])
     {
         if (!$data instanceof Content) {
@@ -30,7 +36,7 @@ class FeaturedType implements TypeInterface
         }
 
         // Add property for has image / doesn't have image (usefull to make selections with articles for views with image, or to find articles with missing image)
-        $featured = $data->isFeatured();
+        $featured = $data->isFeatured() && !$this->isExpired($data);
 
         if ($featured) {
             $container->add('facet_properties', 'Featured');
@@ -44,5 +50,33 @@ class FeaturedType implements TypeInterface
     public function getName()
     {
         return 'integrated.featured';
+    }
+
+    private function isExpired(Content $content): bool
+    {
+        if (!$content->isFeatured() || !$content->getContentType()) {
+            return false;
+        }
+
+        $contentType = $this->resolver->getType($content->getContentType());
+
+        if (!$contentType->getOption('featured_expiration')) {
+            return false;
+        }
+
+        $days = $content->getFeaturedExpiration();
+
+        if (null === $days || $days < 1) {
+            return false;
+        }
+
+        $startDate = $content->getPublishTime()->getStartDate();
+        $referenceDate = $startDate instanceof \DateTimeInterface
+            ? \DateTimeImmutable::createFromInterface($startDate)
+            : new \DateTimeImmutable();
+
+        $expirationDate = $referenceDate->modify(\sprintf('+%d days', $days));
+
+        return $expirationDate <= new \DateTimeImmutable();
     }
 }

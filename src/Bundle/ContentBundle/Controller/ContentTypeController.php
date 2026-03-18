@@ -56,7 +56,7 @@ class ContentTypeController extends AbstractController
 
     public function index(): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAdminAccessUnlessGranted();
 
         $documents = $this->contentTypeManager->getAll();
         $documentTypes = $this->metadata->getAllMetadata();
@@ -78,7 +78,7 @@ class ContentTypeController extends AbstractController
 
     public function show(string $id): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAdminAccessUnlessGranted();
 
         $contentType = $this->getContentType($id);
         $form = $this->createDeleteForm($contentType, \count($this->getRelatedContent($contentType)) === 0);
@@ -91,7 +91,7 @@ class ContentTypeController extends AbstractController
 
     public function new(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAdminAccessUnlessGranted();
 
         $class = trim((string) $request->query->get('class', ''));
 
@@ -135,10 +135,10 @@ class ContentTypeController extends AbstractController
 
     public function edit(Request $request, string $id): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAdminAccessUnlessGranted();
 
         $contentType = $this->getContentType($id);
-        $metadata = $this->metadata->getMetadata($contentType->getClass());
+        $metadata = $this->getRequiredMetadata($contentType->getClass());
 
         $form = $this->createEditForm($contentType, $metadata);
         $form->handleRequest($request);
@@ -172,7 +172,7 @@ class ContentTypeController extends AbstractController
 
     public function delete(Request $request, string $id): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAdminAccessUnlessGranted();
 
         $contentType = $this->getContentType($id);
 
@@ -231,6 +231,13 @@ class ContentTypeController extends AbstractController
         }
     }
 
+    private function denyAdminAccessUnlessGranted(): void
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+    }
+
     private function createNewForm(ContentType $type, MetadataInterface $metadata): FormInterface
     {
         $form = $this->createForm(ContentTypeFormType::class, $type, [
@@ -274,6 +281,16 @@ class ContentTypeController extends AbstractController
         $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 
         return $form;
+    }
+
+    private function getRequiredMetadata(string $class): MetadataInterface
+    {
+        $metadata = $this->metadata->getMetadata($class);
+        if (!$metadata instanceof MetadataInterface) {
+            throw new NotFoundHttpException(\sprintf('No metadata found for class "%s".', $class));
+        }
+
+        return $metadata;
     }
 
     /**

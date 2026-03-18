@@ -17,7 +17,6 @@
     (function initEditLockOnLoad() {
         var LOCK_REFRESH_URL = "{{ path('integrated_locking_api_refresh')|e('js') }}";
         var LOCK_POLLING_KEY = '__integratedEditLockPolling';
-        var LOCK_CSRF_TOKEN = "{{ (content is defined ? csrf_token('integrated_content_lock_' ~ content.id) : '')|e('js') }}";
         var LOCKED_ITEM_MESSAGE = "{{ 'This item is currently locked and cannot be edited until the lock is released.'|trans|e('js') }}";
         var LOCK_ACQUIRE_FAILED_MESSAGE = "{{ 'The lock could not be acquired, please reload and try again.'|trans|e('js') }}";
         var lockPollingStore = window[LOCK_POLLING_KEY] || (window[LOCK_POLLING_KEY] = {});
@@ -298,8 +297,9 @@
             }
 
             var requestBody = new URLSearchParams();
-            if (LOCK_CSRF_TOKEN) {
-                requestBody.set('_token', LOCK_CSRF_TOKEN);
+            var lockCsrfToken = form.getAttribute('data-lock-csrf') || '';
+            if (lockCsrfToken) {
+                requestBody.set('_token', lockCsrfToken);
             }
             if (knownLock) {
                 requestBody.set('known_lock', knownLock);
@@ -339,6 +339,54 @@
         document.addEventListener('turbo:render', initLockOnLoad);
         document.addEventListener('turbo:frame-load', initLockOnLoad);
         document.addEventListener('turbo:frame-render', initLockOnLoad);
+
+        function initializeFeaturedExpirationVisibility() {
+            var featuredToggle = document.getElementById('{{ form.featured is defined ? form.featured.vars.id|e('js') : '' }}');
+            var featuredExpirationContainer = document.querySelector('[data-featured-expiration-container]');
+            if (!featuredToggle || !featuredExpirationContainer) {
+                return;
+            }
+
+            function syncFeaturedExpirationVisibility() {
+                featuredExpirationContainer.style.display = featuredToggle.checked ? '' : 'none';
+            }
+
+            featuredToggle.addEventListener('change', syncFeaturedExpirationVisibility);
+            syncFeaturedExpirationVisibility();
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeFeaturedExpirationVisibility);
+        document.addEventListener('turbo:load', initializeFeaturedExpirationVisibility);
+        document.addEventListener('turbo:render', initializeFeaturedExpirationVisibility);
+        document.addEventListener('turbo:frame-load', initializeFeaturedExpirationVisibility);
+        document.addEventListener('turbo:frame-render', initializeFeaturedExpirationVisibility);
+
+        function hideImplicitEventMidnightTime() {
+            var eventTimeFieldIds = [
+                '{{ form.startDate is defined and form.startDate.time is defined ? form.startDate.time.vars.id|e('js') : '' }}',
+                '{{ form.endDate is defined and form.endDate.time is defined ? form.endDate.time.vars.id|e('js') : '' }}',
+            ].filter(Boolean);
+
+            eventTimeFieldIds.forEach(function(fieldId) {
+                var timeField = document.getElementById(fieldId);
+
+                if (!timeField || timeField.dataset.implicitMidnightHandled === 'true') {
+                    return;
+                }
+
+                if (timeField.value === '00:00') {
+                    timeField.value = '';
+                }
+
+                timeField.dataset.implicitMidnightHandled = 'true';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', hideImplicitEventMidnightTime);
+        document.addEventListener('turbo:load', hideImplicitEventMidnightTime);
+        document.addEventListener('turbo:render', hideImplicitEventMidnightTime);
+        document.addEventListener('turbo:frame-load', hideImplicitEventMidnightTime);
+        document.addEventListener('turbo:frame-render', hideImplicitEventMidnightTime);
     })();
 </script>
 {% if content is defined %}

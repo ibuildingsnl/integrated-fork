@@ -83,16 +83,25 @@ class MongoDBContenTypeListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @param array<string, mixed> $changeSet
+     *
      * @return MongoDBContentTypeListener
      */
     protected function getInstance(array $changeSet = [])
     {
         return new class($this->queue, $changeSet) extends MongoDBContentTypeListener {
+            /** @var array<string, mixed> */
+            private readonly array $changeSet;
+
+            /**
+             * @param array<string, mixed> $changeSet
+             */
             public function __construct(
                 QueueInterface $queue,
-                private readonly array $changeSet,
+                array $changeSet,
             ) {
                 parent::__construct($queue);
+                $this->changeSet = $changeSet;
             }
 
             protected function getDocumentChangeSet(LifecycleEventArgs $event, ContentTypeInterface $document): array

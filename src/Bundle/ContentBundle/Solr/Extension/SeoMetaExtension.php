@@ -27,6 +27,9 @@ class SeoMetaExtension implements TypeExtensionInterface
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function build(ContainerInterface $container, $data, array $options = []): void
     {
         if (!$data instanceof ContentInterface) {
@@ -36,7 +39,7 @@ class SeoMetaExtension implements TypeExtensionInterface
         $container->set('has_seo_metadata', false);
 
         $contentType = $this->resolver->getType($data->getContentType());
-        if (!$contentType || !$contentType->hasField('seoMetadata')) {
+        if (!$contentType->hasField('seoMetadata')) {
             return;
         }
 

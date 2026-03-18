@@ -67,6 +67,14 @@
             <tag name="integrated_content.form.event_subscriber"/>
         </service>
 
+        <service id="integrated_content.form.featured_expiration_listener" class="Integrated\Bundle\ContentBundle\Form\EventListener\FeaturedExpirationSelectionListener">
+            <tag name="integrated_content.form.event_subscriber"/>
+        </service>
+
+        <service id="integrated_content.form.event_date_default_time_listener" class="Integrated\Bundle\ContentBundle\Form\EventListener\EventDateDefaultTimeListener">
+            <tag name="integrated_content.form.event_subscriber"/>
+        </service>
+
         <service id="integrated_content.form.type.image_choice" class="Integrated\Bundle\ContentBundle\Form\Type\ImageChoiceType">
             <argument type="service" id="doctrine_mongodb.odm.document_manager"/>
             <tag name="form.type"/>

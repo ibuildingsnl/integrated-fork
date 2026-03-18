@@ -15,7 +15,9 @@ final class MetadataFactoryTest extends TestCase
         $factory = new TestableMetadataFactory(new DriverRegistry());
 
         self::assertNull($factory->getMetadata(''));
-        self::assertNull($factory->getMetadata(null));
+        /** @var string|null $class */
+        $class = null;
+        self::assertNull($factory->getMetadata($class));
         self::assertSame(0, $factory->loadCalls);
     }
 }

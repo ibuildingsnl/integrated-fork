@@ -112,7 +112,8 @@ class WorkflowVoter implements VoterInterface
 
         $class = ClassUtils::getRealClass($object);
 
-        if (!$this->getMetadata($class)->hasOption('workflow')) {
+        $metadata = $this->getMetadata($class);
+        if (!$metadata instanceof MetadataInterface || !$metadata->hasOption('workflow')) {
             return VoterInterface::ACCESS_ABSTAIN;
         }
 
@@ -216,7 +217,7 @@ class WorkflowVoter implements VoterInterface
     }
 
     /**
-     * @return MetadataInterface
+     * @return MetadataInterface|null
      */
     protected function getMetadata($class)
     {

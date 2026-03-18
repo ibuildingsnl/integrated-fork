@@ -13,6 +13,6 @@ final class ContentItemsBlockFilterableChoiceTest extends TestCase
         $source = file_get_contents(__DIR__.'/../../Document/Block/ContentItemsBlock.php');
 
         self::assertIsString($source);
-        self::assertStringContainsString("Integrated\\Bundle\\FormTypeBundle\\Form\\Type\\FilterableContentChoiceType", $source);
+        self::assertStringContainsString('Integrated\\Bundle\\FormTypeBundle\\Form\\Type\\FilterableContentChoiceType', $source);
     }
 }

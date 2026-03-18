@@ -82,6 +82,9 @@ class MetadataFactory implements MetadataFactoryInterface
         foreach ($this->registry->getDrivers() as $driver) {
             foreach ($driver->getAllClassNames() as $class) {
                 $data = $this->getMetadata($class);
+                if (!$data instanceof MetadataInterface) {
+                    continue;
+                }
 
                 if ($data->isTypeOf($this->type)) {
                     $metadata[] = $data;
@@ -94,7 +97,8 @@ class MetadataFactory implements MetadataFactoryInterface
 
     public function getMetadata($class)
     {
-        if (!\is_string($class) || '' === trim($class)) {
+        $class = trim((string) $class);
+        if ($class === '') {
             return null;
         }
 

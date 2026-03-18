@@ -41,9 +41,11 @@ use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Form\ContentFormType;
 use Integrated\Common\Content\Form\Event\ValidationEvent;
 use Integrated\Common\Content\Form\Events;
+use Integrated\Common\Content\PublishTimeInterface;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
+use Integrated\Common\Form\Mapping\MetadataInterface;
 use Integrated\Common\Locks;
 use Integrated\Common\Locks\Filter;
 use Integrated\Common\Locks\LockInterface;
@@ -317,6 +319,9 @@ class ContentController extends AbstractController
         $contentType = $this->contentTypeManager->getType($request->get('type'));
 
         $content = $contentType->create();
+        if (!$content instanceof Content) {
+            throw new \LogicException(\sprintf('Expected %s, got %s.', Content::class, $content::class));
+        }
 
         if (!$this->isGranted(Permissions::CREATE, $content)) {
             throw new AccessDeniedException();
@@ -330,12 +335,12 @@ class ContentController extends AbstractController
                 return $this->redirectToRoute('integrated_content_content_index', ['remember' => 1]);
             }
 
-            if ($form->isValid()) {
+            if ($form->isValid() && $this->guardRequiredDepublicationDate($form, $contentType, $content)) {
                 if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
                     $this->dispatcher->dispatch(
                         new ValidationEvent(
                             $contentType,
-                            $this->metadataFactory->getMetadata($contentType->getClass()),
+                            $this->getRequiredMetadata($contentType->getClass()),
                             $content,
                         ),
                         Events::POST_VALIDATE
@@ -345,8 +350,26 @@ class ContentController extends AbstractController
                 $queue = $this->queueSubscriber->getQueue();
                 $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
 
-                $this->documentManager->persist($content);
-                $this->documentManager->flush();
+                try {
+                    $this->documentManager->persist($content);
+                    $this->documentManager->flush();
+                } catch (\Throwable $exception) {
+                    $duplicateSlugMessage = $this->handleDuplicateSlugSaveFailure($form, $exception);
+                    if (null === $duplicateSlugMessage) {
+                        throw $exception;
+                    }
+
+                    $this->addFlash('danger', $this->getTranslator()->trans($duplicateSlugMessage));
+
+                    return $this->render(\sprintf('@IntegratedContent/content/new.%s.twig', $request->getRequestFormat()), [
+                        'taxonomyCategories' => $this->getTaxonomyCategories($content),
+                        'editable' => true,
+                        'type' => $contentType,
+                        'form' => $form,
+                        'showContentHistory' => false,
+                        'references' => json_encode($this->getReferences($content)),
+                    ]);
+                }
 
                 if ($this->dispatcher->hasListeners(Events::CONTENT_DISTRIBUTED)) {
                     $this->dispatcher->dispatch(
@@ -522,13 +545,18 @@ class ContentController extends AbstractController
             // this is not rest compatible since a button click is required to save
             if ($submittedAction === 'save') {
                 $saved = false;
+                $saveFailed = false;
 
-                if (!$locking['locked'] && $form->isValid()) {
+                if (
+                    !$locking['locked']
+                    && $form->isValid()
+                    && $this->guardRequiredDepublicationDate($form, $contentType, $content)
+                ) {
                     if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
                         $this->dispatcher->dispatch(
                             new ValidationEvent(
                                 $contentType,
-                                $this->metadataFactory->getMetadata($contentType->getClass()),
+                                $this->getRequiredMetadata($contentType->getClass()),
                                 $content,
                             ),
                             Events::POST_VALIDATE
@@ -539,44 +567,56 @@ class ContentController extends AbstractController
                     $queue = $this->queueSubscriber->getQueue();
                     $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
 
-                    $this->documentManager->flush();
-
-                    if ($this->dispatcher->hasListeners(Events::CONTENT_DISTRIBUTED)) {
-                        $this->dispatcher->dispatch(
-                            new ContentDistributedEvent($content),
-                            Events::CONTENT_DISTRIBUTED
-                        );
-                    }
-
-                    $this->clearCurrentUserDraft($content);
-
-                    // Set flash message
-                    $this->addFlash(
-                        'success',
-                        $this->getTranslator()->trans(
-                            'The changes to %name% are saved',
-                            ['%name%' => $contentType->getName()]
-                        )
-                    );
-
-                    $lock = $this->lockFactory->createLock(self::class);
-                    $lock->acquire(true);
-
                     try {
-                        if ($this->indexer instanceof Configurable) {
-                            $this->indexer->setOption('queue.size', 2);
+                        $this->documentManager->flush();
+                    } catch (\Throwable $exception) {
+                        $duplicateSlugMessage = $this->handleDuplicateSlugSaveFailure($form, $exception);
+                        if (null === $duplicateSlugMessage) {
+                            throw $exception;
                         }
 
-                        $this->indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
-                    } finally {
-                        $lock->release();
+                        $this->addFlash('danger', $this->getTranslator()->trans($duplicateSlugMessage));
+                        $saveFailed = true;
                     }
 
-                    if (!$locking['locked'] && !$this->isTurboStreamRequest($request)) {
-                        $locking['release']();
-                    }
+                    if ($saveFailed) {
+                        $saved = false;
+                    } else {
+                        if ($this->dispatcher->hasListeners(Events::CONTENT_DISTRIBUTED)) {
+                            $this->dispatcher->dispatch(
+                                new ContentDistributedEvent($content),
+                                Events::CONTENT_DISTRIBUTED
+                            );
+                        }
 
-                    $saved = true;
+                        // Set flash message
+                        $this->addFlash(
+                            'success',
+                            $this->getTranslator()->trans(
+                                'The changes to %name% are saved',
+                                ['%name%' => $contentType->getName()]
+                            )
+                        );
+
+                        $lock = $this->lockFactory->createLock(self::class);
+                        $lock->acquire(true);
+
+                        try {
+                            if ($this->indexer instanceof Configurable) {
+                                $this->indexer->setOption('queue.size', 2);
+                            }
+
+                            $this->indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
+                        } finally {
+                            $lock->release();
+                        }
+
+                        if (!$locking['locked'] && !$this->isTurboStreamRequest($request)) {
+                            $locking['release']();
+                        }
+
+                        $saved = true;
+                    }
                 }
 
                 if ($this->isTurboStreamRequest($request) && $request->query->getBoolean('frame')) {
@@ -612,7 +652,9 @@ class ContentController extends AbstractController
                     return new Response($content, Response::HTTP_OK, ['Content-Type' => 'text/vnd.turbo-stream.html; charset=UTF-8']);
                 }
 
-                return $this->redirectToRoute($request->get('_route'), ['id' => $content->getId()]);
+                if ($saved) {
+                    return $this->redirectToRoute($request->get('_route'), ['id' => $content->getId()]);
+                }
             }
             // reload_changed is just submitting without saving so the changes made are
             // not lost and there is a new change to get a lock on the content.
@@ -1884,6 +1926,65 @@ class ContentController extends AbstractController
         }
 
         return '';
+    }
+
+    /**
+     * @param FormInterface<mixed> $form
+     */
+    private function guardRequiredDepublicationDate(
+        FormInterface $form,
+        ContentTypeInterface $contentType,
+        Content $content,
+    ): bool {
+        if (!$contentType->getOption('required_depublication_date')) {
+            return true;
+        }
+
+        $endDate = $content->getPublishTime()->getEndDate();
+        $maxDate = new \DateTime(PublishTimeInterface::DATE_MAX);
+
+        if (!$endDate instanceof \DateTimeInterface || $endDate == $maxDate) {
+            $message = 'Please set a depublication date.';
+
+            $form->addError(new FormError($message));
+            $this->addFlash('danger', $message);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param FormInterface<mixed> $form
+     */
+    private function handleDuplicateSlugSaveFailure(FormInterface $form, \Throwable $exception): ?string
+    {
+        $message = strtolower($exception->getMessage());
+
+        if (!str_contains($message, 'e11000') || !str_contains($message, 'slug')) {
+            return null;
+        }
+
+        $friendlyMessage = 'This slug already exists. Please choose another slug.';
+
+        if ($form->has('slug')) {
+            $form->get('slug')->addError(new FormError($friendlyMessage));
+        } else {
+            $form->addError(new FormError($friendlyMessage));
+        }
+
+        return $friendlyMessage;
+    }
+
+    private function getRequiredMetadata(string $class): MetadataInterface
+    {
+        $metadata = $this->metadataFactory->getMetadata($class);
+        if (!$metadata instanceof MetadataInterface) {
+            throw new \LogicException(\sprintf('No form metadata found for "%s".', $class));
+        }
+
+        return $metadata;
     }
 
     protected function createDeleteForm(ContentInterface $content, array $locking, bool $notDelete = false): FormInterface

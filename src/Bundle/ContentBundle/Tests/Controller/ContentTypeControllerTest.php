@@ -47,11 +47,17 @@ final class TestableContentTypeController extends ContentTypeController
         return true;
     }
 
+    /**
+     * @param array<string, mixed> $parameters
+     */
     protected function redirectToRoute(string $route, array $parameters = [], int $status = 302): RedirectResponse
     {
         return new RedirectResponse($route, $status);
     }
 
+    /**
+     * @param array<string, mixed> $parameters
+     */
     protected function render(string $view, array $parameters = [], ?Response $response = null): Response
     {
         return $response ?? new Response('', Response::HTTP_OK);

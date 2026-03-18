@@ -25,6 +25,7 @@ class Event extends Article
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\DateTimeType', options: [
         'priority' => 495,
         'label' => 'Event start',
+        'required' => false,
         'attr' => [
             'style' => 'sidebar',
             'icon' => 'calendar',
@@ -43,6 +44,7 @@ class Event extends Article
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\DateTimeType', options: [
         'priority' => 494,
         'label' => 'Event end',
+        'required' => false,
         'attr' => [
             'style' => 'sidebar',
             'icon' => 'calendar',

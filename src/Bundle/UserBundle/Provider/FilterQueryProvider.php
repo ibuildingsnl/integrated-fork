@@ -19,7 +19,7 @@ class FilterQueryProvider
     }
 
     /**
-     * @param array|null $data
+     * @param array|null                                $data
      * @param array{field?: string, direction?: string} $sort
      *
      * @return \Doctrine\ORM\Query
@@ -111,7 +111,7 @@ class FilterQueryProvider
     private function normalizeSortField(mixed $value): string
     {
         $field = trim((string) $value);
-        if (!in_array($field, ['createdAt', 'username', 'scope.name', 'id', 'role'], true)) {
+        if (!\in_array($field, ['createdAt', 'username', 'scope.name', 'id', 'role'], true)) {
             return 'createdAt';
         }
 
@@ -157,6 +157,11 @@ class FilterQueryProvider
         return $this->formatChoices($manager->createNativeQuery($sql, $this->getMapping()), $data);
     }
 
+    /**
+     * @param array<string, mixed>|null $data
+     *
+     * @return array<string, string>
+     */
     public function getRoleChoices($data = []): array
     {
         $data = \is_array($data) ? $data : [];

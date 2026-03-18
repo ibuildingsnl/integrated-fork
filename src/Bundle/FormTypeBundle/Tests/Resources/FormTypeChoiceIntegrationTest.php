@@ -59,11 +59,11 @@ class FormTypeChoiceIntegrationTest extends TestCase
 
         $this->assertIsString($template);
         $this->assertStringContainsString('{% block integrated_filterable_content_choice_widget %}', $template);
-        $this->assertStringContainsString("bundles/integratedformtype/js/filterable_content_choice.js", $template);
-        $this->assertStringContainsString("integrated_filterable_content_choice_filters", $template);
-        $this->assertStringContainsString("{% if show_channel_filter|default(false) or show_content_type_filter|default(false) %}", $template);
-        $this->assertStringContainsString("data-filter-role=\"channel\"", $template);
-        $this->assertStringContainsString("data-filter-role=\"content-type\"", $template);
+        $this->assertStringContainsString('bundles/integratedformtype/js/filterable_content_choice.js', $template);
+        $this->assertStringContainsString('integrated_filterable_content_choice_filters', $template);
+        $this->assertStringContainsString('{% if show_channel_filter|default(false) or show_content_type_filter|default(false) %}', $template);
+        $this->assertStringContainsString('data-filter-role="channel"', $template);
+        $this->assertStringContainsString('data-filter-role="content-type"', $template);
     }
 
     public function testMediaControllerNormalizesContentTypesWithHelper(): void

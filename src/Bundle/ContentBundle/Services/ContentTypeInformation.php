@@ -35,10 +35,6 @@ class ContentTypeInformation
 
         $contentTypes = $this->dm->getRepository(ContentType::class)->findAll();
         foreach ($contentTypes as $contentType) {
-            if (!$contentType instanceof ContentType) {
-                continue;
-            }
-
             if (!$this->isPublishingAllowedForChannel($contentType, $channelId)) {
                 continue;
             }
@@ -61,10 +57,6 @@ class ContentTypeInformation
 
         $contentTypes = $this->dm->getRepository(ContentType::class)->findAll();
         foreach ($contentTypes as $contentType) {
-            if (!$contentType instanceof ContentType) {
-                continue;
-            }
-
             if (!$this->isPublishingAllowedForChannel($contentType, $channelId)) {
                 continue;
             }

@@ -379,10 +379,6 @@ class Content extends AbstractType
         $matched = [];
 
         foreach ($repository->findAll() as $brand) {
-            if (!$brand instanceof Brand) {
-                continue;
-            }
-
             $name = trim($brand->getName());
             if ($name === '') {
                 continue;

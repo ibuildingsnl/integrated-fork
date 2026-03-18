@@ -40,7 +40,7 @@ tinymce.PluginManager.add('articlelinksearch', (editor, url) => {
                         if(selectedNode.nodeName.toLocaleUpperCase() === 'A') {
                             selectedNode.innerText = data.linkText;
                             editor.dom.setAttrib(selectedNode, 'href', data.href);
-                            editor.dom.setAttrib(selectedNode, 'title', data.title);
+                            editor.dom.setAttrib(selectedNode, 'title', data.title || null);
                             editor.dom.setAttrib(selectedNode, 'target', data.newTab ? '_blank' : '');
                             break;
                         }

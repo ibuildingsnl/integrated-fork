@@ -54,4 +54,15 @@ class ContentEditStatusStreamFlowTest extends TestCase
         $this->assertStringContainsString("if (streamTarget === 'content-publications-section')", $template);
         $this->assertStringContainsString('window.schedulePublicationSettingsInit()', $template);
     }
+
+    public function testStatusOptionsOnlyMarkPlannedWhenContentIsActuallyPublished(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content/partial/status_options.html.twig');
+
+        $this->assertIsString($template);
+        $this->assertStringContainsString('{% set isPublished = content is defined and ((content.isPublished and content.getChannels|length > 0) or content.published == \'true\') %}', $template);
+        $this->assertStringContainsString('{% set isPlanned = isPublished and content is defined and (\'now\'|date(\'U\') < content.publishTime.startDate|date(\'U\')) %}', $template);
+        $this->assertStringContainsString('{% elseif isPlanned %}', $template);
+        $this->assertStringNotContainsString("{% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate|date('U'))) %}", $template);
+    }
 }
