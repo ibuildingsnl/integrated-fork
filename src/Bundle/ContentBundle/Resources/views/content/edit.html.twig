@@ -1040,6 +1040,33 @@
         document.addEventListener('turbo:render', initializeFeaturedExpirationVisibility);
     })();
 
+    (function() {
+        function hideImplicitEventMidnightTime() {
+            var eventTimeFieldIds = [
+                '{{ form.startDate is defined and form.startDate.time is defined ? form.startDate.time.vars.id|e('js') : '' }}',
+                '{{ form.endDate is defined and form.endDate.time is defined ? form.endDate.time.vars.id|e('js') : '' }}',
+            ].filter(Boolean);
+
+            eventTimeFieldIds.forEach(function(fieldId) {
+                var timeField = document.getElementById(fieldId);
+
+                if (!timeField || timeField.dataset.implicitMidnightHandled === 'true') {
+                    return;
+                }
+
+                if (timeField.value === '00:00') {
+                    timeField.value = '';
+                }
+
+                timeField.dataset.implicitMidnightHandled = 'true';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', hideImplicitEventMidnightTime);
+        document.addEventListener('turbo:load', hideImplicitEventMidnightTime);
+        document.addEventListener('turbo:render', hideImplicitEventMidnightTime);
+    })();
+
     textarea = document.querySelector('.title_tinymce_input');
     if (textarea !== null) {
         textarea.addEventListener('input', autoResize, false);
