@@ -4,3 +4,7 @@
 {% block content_title %}
     <h1 class="main-title font-regular">{% trans %}New{% endtrans %} {{ type.name|trans }}</h1>
 {% endblock %}
+
+{% block form_start %}
+    {{ form_start(form, { attr: { 'data-turbo': 'false' } }) }}
+{% endblock %}
