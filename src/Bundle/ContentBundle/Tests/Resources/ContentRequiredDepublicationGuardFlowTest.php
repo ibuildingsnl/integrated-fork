@@ -16,5 +16,6 @@ final class ContentRequiredDepublicationGuardFlowTest extends TestCase
         $this->assertStringContainsString('guardRequiredDepublicationDate(', $controller);
         $this->assertStringContainsString("getOption('required_depublication_date')", $controller);
         $this->assertStringContainsString('Please set a depublication date.', $controller);
+        $this->assertStringContainsString("\$this->addFlash('danger', \$message);", $controller);
     }
 }

@@ -1260,7 +1260,7 @@
             </trans-unit>
             <trans-unit id="319">
                 <source>Set depublication date</source>
-                <target>Einddatum instellen</target>
+                <target>Depublicatiedatum instellen</target>
             </trans-unit>
             <trans-unit id="320">
                 <source>Set publication date</source>
@@ -1501,6 +1501,18 @@
             <trans-unit id="380">
                 <source>Please set a depublication date.</source>
                 <target>Stel een depublicatiedatum in.</target>
+            </trans-unit>
+            <trans-unit id="381">
+                <source>Add Persoon</source>
+                <target>Persoon toevoegen</target>
+            </trans-unit>
+            <trans-unit id="382">
+                <source>Add Bedrijf</source>
+                <target>Bedrijf toevoegen</target>
+            </trans-unit>
+            <trans-unit id="383">
+                <source>Add Tag</source>
+                <target>Tag toevoegen</target>
             </trans-unit>
         </body>
     </file>

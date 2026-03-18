@@ -1803,7 +1803,10 @@ class ContentController extends AbstractController
         $maxDate = new \DateTime(PublishTimeInterface::DATE_MAX);
 
         if (!$endDate instanceof \DateTimeInterface || $endDate == $maxDate) {
-            $form->addError(new FormError('Please set a depublication date.'));
+            $message = 'Please set a depublication date.';
+
+            $form->addError(new FormError($message));
+            $this->addFlash('danger', $message);
 
             return false;
         }
