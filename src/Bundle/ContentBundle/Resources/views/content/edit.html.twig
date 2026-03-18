@@ -375,6 +375,7 @@
 {% block javascript %}
 {{ parent() }}
 
+{% if content is defined %}
 <script>
     (function initEditLockOnLoad() {
         var LOCK_REFRESH_URL = "{{ path('integrated_locking_api_refresh')|e('js') }}";
@@ -736,7 +737,10 @@
         document.addEventListener('turbo:frame-load', initLockOnLoad);
         document.addEventListener('turbo:frame-render', initLockOnLoad);
     })();
+</script>
+{% endif %}
 
+<script>
     (function initWorkflowStateAfterTurboStream() {
         function createOrFindWorkflowButton(parent, className, text) {
             var button = parent.querySelector('.' + className);

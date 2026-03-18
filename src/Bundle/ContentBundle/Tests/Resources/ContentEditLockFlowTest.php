@@ -50,6 +50,7 @@ class ContentEditLockFlowTest extends TestCase
         $template = file_get_contents(__DIR__.'/../../Resources/views/content/edit.html.twig');
 
         $this->assertIsString($template);
+        $this->assertStringContainsString('{% if content is defined %}', $template);
         $this->assertStringContainsString('data-lock-pending', $template);
         $this->assertStringContainsString('data-lock-init-url', $template);
         $this->assertStringContainsString('integrated-content-lock:', $template);
