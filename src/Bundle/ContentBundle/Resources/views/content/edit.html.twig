@@ -71,15 +71,54 @@
 
 
                             {% block content_options %}
-                                {% set options = false %}
-                                {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
-                                    {% set options = true %}
-                                {% endfor %}
+                                {% set optionFields = form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                {% set remainingOptions = optionFields|filter(row => row.vars.name not in ['premium', 'featured', 'featured_expiration']) %}
+                                {% set options = remainingOptions|length > 0 %}
                                 {% if form.children.customFields is defined %}
                                     {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
                                         {% set options = true %}
                                     {% endfor %}
                                 {% endif %}
+
+                                {% if form.premium is defined %}
+                                    <div class="aside-item-wrapper">
+                                        <div class="aside-item-header">
+                                            <h3 class="aside-item-title">
+                                                <i class="iconoir-half-cookie"></i>
+                                                <span class="aside-item-icon">{% trans %}Premium{% endtrans %}</span>
+                                            </h3>
+                                            <i class="iconoir-nav-arrow-up"></i>
+                                        </div>
+                                        <div class="aside-item-list">
+                                            <div class="aside-item-list-container">
+                                                {{ form_row(form.premium) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                                {% if form.featured is defined %}
+                                    <div class="aside-item-wrapper">
+                                        <div class="aside-item-header">
+                                            <h3 class="aside-item-title">
+                                                <i class="iconoir-star"></i>
+                                                <span class="aside-item-icon">{% trans %}Featured{% endtrans %}</span>
+                                            </h3>
+                                            <i class="iconoir-nav-arrow-up"></i>
+                                        </div>
+                                        <div class="aside-item-list">
+                                            <div class="aside-item-list-container">
+                                                {{ form_row(form.featured) }}
+                                                {% if form.featured_expiration is defined %}
+                                                    <div data-featured-expiration-container {% if not form.featured.vars.data|default(false) %}hidden{% endif %}>
+                                                        {{ form_row(form.featured_expiration) }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
                                 {% if options == true %}
                                     <div class="aside-item-wrapper">
                                         <div class="aside-item-header">
@@ -92,7 +131,7 @@
                                         </div>
                                         <div class="aside-item-list">
                                             <div class="aside-item-list-container">
-                                                {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                                {% for child in remainingOptions %}
                                                     {{ form_row(child) }}
                                                 {% endfor %}
                                                 {% block custom_sidebar_fields %}
@@ -966,6 +1005,26 @@
                 }
             };
         });
+    })();
+
+    (function() {
+        function initializeFeaturedExpirationVisibility() {
+            var featuredToggle = document.querySelector('input[id$="_featured"]');
+            var featuredExpirationContainer = document.querySelector('[data-featured-expiration-container]');
+            if (!featuredToggle || !featuredExpirationContainer) {
+                return;
+            }
+
+            function syncFeaturedExpirationVisibility() {
+                featuredExpirationContainer.hidden = !featuredToggle.checked;
+            }
+
+            featuredToggle.addEventListener('change', syncFeaturedExpirationVisibility);
+            syncFeaturedExpirationVisibility();
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeFeaturedExpirationVisibility);
+        document.addEventListener('turbo:load', initializeFeaturedExpirationVisibility);
     })();
 
     textarea = document.querySelector('.title_tinymce_input');

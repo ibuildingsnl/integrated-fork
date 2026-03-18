@@ -41,6 +41,7 @@ use Integrated\Common\Content\Form\Event\ValidationEvent;
 use Integrated\Common\Content\Form\Events;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
+use Integrated\Common\Content\PublishTimeInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Locks;
 use Integrated\Common\Locks\Filter;
@@ -328,7 +329,7 @@ class ContentController extends AbstractController
                 return $this->redirectToRoute('integrated_content_content_index', ['remember' => 1]);
             }
 
-            if ($form->isValid()) {
+            if ($form->isValid() && $this->guardRequiredDepublicationDate($form, $contentType, $content)) {
                 if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
                     $this->dispatcher->dispatch(
                         new ValidationEvent(
@@ -521,7 +522,11 @@ class ContentController extends AbstractController
             if ($submittedAction === 'save') {
                 $saved = false;
 
-                if (!$locking['locked'] && $form->isValid()) {
+                if (
+                    !$locking['locked']
+                    && $form->isValid()
+                    && $this->guardRequiredDepublicationDate($form, $contentType, $content)
+                ) {
                     if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
                         $this->dispatcher->dispatch(
                             new ValidationEvent(
@@ -1748,6 +1753,27 @@ class ContentController extends AbstractController
         }
 
         return '';
+    }
+
+    private function guardRequiredDepublicationDate(
+        FormInterface $form,
+        ContentTypeInterface $contentType,
+        Content $content
+    ): bool {
+        if (!$contentType->getOption('required_depublication_date')) {
+            return true;
+        }
+
+        $endDate = $content->getPublishTime()->getEndDate();
+        $maxDate = new \DateTime(PublishTimeInterface::DATE_MAX);
+
+        if (!$endDate instanceof \DateTimeInterface || $endDate == $maxDate) {
+            $form->addError(new FormError('Please set a depublication date.'));
+
+            return false;
+        }
+
+        return true;
     }
 
     protected function createDeleteForm(ContentInterface $content, array $locking, bool $notDelete = false): FormInterface

@@ -323,6 +323,27 @@
         document.addEventListener('turbo:render', initLockOnLoad);
         document.addEventListener('turbo:frame-load', initLockOnLoad);
         document.addEventListener('turbo:frame-render', initLockOnLoad);
+
+        function initializeFeaturedExpirationVisibility() {
+            var featuredToggle = document.querySelector('input[id$="_featured"]');
+            var featuredExpirationContainer = document.querySelector('[data-featured-expiration-container]');
+            if (!featuredToggle || !featuredExpirationContainer) {
+                return;
+            }
+
+            function syncFeaturedExpirationVisibility() {
+                featuredExpirationContainer.hidden = !featuredToggle.checked;
+            }
+
+            featuredToggle.addEventListener('change', syncFeaturedExpirationVisibility);
+            syncFeaturedExpirationVisibility();
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeFeaturedExpirationVisibility);
+        document.addEventListener('turbo:load', initializeFeaturedExpirationVisibility);
+        document.addEventListener('turbo:render', initializeFeaturedExpirationVisibility);
+        document.addEventListener('turbo:frame-load', initializeFeaturedExpirationVisibility);
+        document.addEventListener('turbo:frame-render', initializeFeaturedExpirationVisibility);
     })();
 </script>
 {% if content is defined %}

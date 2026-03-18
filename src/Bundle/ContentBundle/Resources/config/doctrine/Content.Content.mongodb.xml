@@ -18,6 +18,7 @@
         <field field-name="disabled" type="bool" />
         <field field-name="premium" type="bool" />
         <field field-name="featured" type="bool" />
+        <field field-name="featuredExpiration" type="int" nullable="true" />
         <field field-name="customFields" type="hash" />
         <field field-name="copyrightRestrictions" type="string" />
 

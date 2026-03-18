@@ -1490,6 +1490,18 @@
                 <source>Select a standard sorting field for this search selection. Choose "Custom" if you want to sort by a specific Solr field name.</source>
                 <target>Selecteer een standaard sorteerveld voor deze zoekselectie. Kies "Aangepast" als je wilt sorteren op een specifieke Solr-veldnaam.</target>
             </trans-unit>
+            <trans-unit id="378">
+                <source>Featured expiration</source>
+                <target>Featured-verloop</target>
+            </trans-unit>
+            <trans-unit id="379">
+                <source>Required depublication date</source>
+                <target>Verplichte depublicatiedatum</target>
+            </trans-unit>
+            <trans-unit id="380">
+                <source>Please set a depublication date.</source>
+                <target>Stel een depublicatiedatum in.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
