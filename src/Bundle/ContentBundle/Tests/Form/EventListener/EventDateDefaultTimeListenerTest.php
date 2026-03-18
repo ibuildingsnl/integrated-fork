@@ -80,17 +80,27 @@ final class EventDateDefaultTimeListenerTest extends TestCase
             ]);
 
         $builder->add('startDate', DateTimeType::class, [
+            'required' => false,
             'html5' => true,
             'date_widget' => 'single_text',
             'time_widget' => 'single_text',
         ]);
         $builder->add('endDate', DateTimeType::class, [
+            'required' => false,
             'html5' => true,
             'date_widget' => 'single_text',
             'time_widget' => 'single_text',
         ]);
 
         return $builder;
+    }
+
+    public function testRenderedEventDateInputsDoNotRequireTime(): void
+    {
+        $view = $this->createBuilder(Event::class)->getForm()->createView();
+
+        self::assertFalse($view['startDate']['time']->vars['required']);
+        self::assertFalse($view['endDate']['time']->vars['required']);
     }
 
     private function createBuilderEvent(string $contentClass, FormBuilderInterface $builder): BuilderEvent
