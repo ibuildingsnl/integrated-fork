@@ -3,7 +3,7 @@
 {% block content %}
     <div class="flex flex-wrap edit-form">
         {% block form_start %}
-            {{ form_start(form) }}
+            {{ form_start(form, { attr: { 'data-turbo': 'false' } }) }}
         {% endblock %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
