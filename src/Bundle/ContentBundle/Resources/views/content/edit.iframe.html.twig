@@ -17,7 +17,6 @@
     (function initEditLockOnLoad() {
         var LOCK_REFRESH_URL = "{{ path('integrated_locking_api_refresh')|e('js') }}";
         var LOCK_POLLING_KEY = '__integratedEditLockPolling';
-        var LOCK_CSRF_TOKEN = "{{ (content is defined ? csrf_token('integrated_content_lock_' ~ content.id) : '')|e('js') }}";
         var LOCKED_ITEM_MESSAGE = "{{ 'This item is currently locked and cannot be edited until the lock is released.'|trans|e('js') }}";
         var LOCK_ACQUIRE_FAILED_MESSAGE = "{{ 'The lock could not be acquired, please reload and try again.'|trans|e('js') }}";
         var lockPollingStore = window[LOCK_POLLING_KEY] || (window[LOCK_POLLING_KEY] = {});
@@ -282,8 +281,9 @@
             }
 
             var requestBody = new URLSearchParams();
-            if (LOCK_CSRF_TOKEN) {
-                requestBody.set('_token', LOCK_CSRF_TOKEN);
+            var lockCsrfToken = form.getAttribute('data-lock-csrf') || '';
+            if (lockCsrfToken) {
+                requestBody.set('_token', lockCsrfToken);
             }
             if (knownLock) {
                 requestBody.set('known_lock', knownLock);

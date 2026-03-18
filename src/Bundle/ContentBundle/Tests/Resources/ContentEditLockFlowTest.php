@@ -54,6 +54,7 @@ class ContentEditLockFlowTest extends TestCase
         $this->assertStringContainsString('data-lock-pending', $template);
         $this->assertStringContainsString('data-lock-init-url', $template);
         $this->assertStringContainsString('data-lock-csrf', $template);
+        $this->assertStringContainsString("content is defined ? csrf_token('integrated_content_lock_' ~ content.id) : ''", $template);
         $this->assertStringContainsString('integrated-content-lock:', $template);
         $this->assertStringContainsString("var lockCsrfToken = form.getAttribute('data-lock-csrf') || '';", $template);
         $this->assertStringContainsString("requestBody.set('_token', lockCsrfToken);", $template);
@@ -78,6 +79,9 @@ class ContentEditLockFlowTest extends TestCase
         $this->assertStringContainsString('data-lock-csrf', $template);
         $this->assertStringContainsString("var lockCsrfToken = form.getAttribute('data-lock-csrf') || '';", $template);
         $this->assertStringContainsString("requestBody.set('_token', lockCsrfToken);", $template);
+        $partialTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/partial/edit_frame.html.twig');
+        $this->assertIsString($partialTemplate);
+        $this->assertStringContainsString("content is defined ? csrf_token('integrated_content_lock_' ~ content.id) : ''", $partialTemplate);
     }
 
     public function testEditTemplatesOnlyFlagFormInvalidAfterSubmittedInvalidPost(): void

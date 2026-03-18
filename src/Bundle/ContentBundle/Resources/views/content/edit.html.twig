@@ -16,7 +16,7 @@
         <div class="flex flex-wrap content-edit-form">
             {% set isContentLocked = locking is defined and locking.locked and not (locking.pending|default(false)) %}
             {% block form_start %}
-                {{ form_start(form, { attr: form.vars.attr|merge({ 'data-turbo-stream': 'true', 'data-lock-csrf': csrf_token('integrated_content_lock_' ~ content.id) }) }) }}
+                {{ form_start(form, { attr: form.vars.attr|merge({ 'data-turbo-stream': 'true', 'data-lock-csrf': content is defined ? csrf_token('integrated_content_lock_' ~ content.id) : '' }) }) }}
             {% endblock %}
             {% block toolbar %}
                 {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}

@@ -20,7 +20,7 @@
             {% block form_start %}
                 {% set turbo_stream = app.request.query.get('turbo_stream') %}
                 {% set form_class = (form.vars.attr.class|default('')) ~ ' form-inline' %}
-                {% set form_attr = form.vars.attr|merge({ 'class': form_class|trim, 'data-lock-csrf': csrf_token('integrated_content_lock_' ~ content.id) }) %}
+                {% set form_attr = form.vars.attr|merge({ 'class': form_class|trim, 'data-lock-csrf': content is defined ? csrf_token('integrated_content_lock_' ~ content.id) : '' }) %}
                 {% if turbo_stream %}
                     {{ form_start(form, { 'style': 'inline', attr: form_attr|merge({ 'data-turbo-stream': 'true' }) }) }}
                 {% else %}
