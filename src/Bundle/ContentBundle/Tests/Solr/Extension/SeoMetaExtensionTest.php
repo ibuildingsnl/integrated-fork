@@ -36,9 +36,8 @@ class SeoMetaExtensionTest extends TestCase
         bool $hasSeoField,
         ?string $seoScore,
         ?string $readabilityScore,
-        array $expected
-    ): void
-    {
+        array $expected,
+    ): void {
         $content = $this->createContentMock($contentTypeId, $seoScore, $readabilityScore);
         $resolver = $this->createResolverMock($contentTypeId, $hasSeoField);
 

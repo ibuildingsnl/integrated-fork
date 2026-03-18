@@ -39,9 +39,9 @@ use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Form\ContentFormType;
 use Integrated\Common\Content\Form\Event\ValidationEvent;
 use Integrated\Common\Content\Form\Events;
+use Integrated\Common\Content\PublishTimeInterface;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
-use Integrated\Common\Content\PublishTimeInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Locks;
 use Integrated\Common\Locks\Filter;
@@ -1793,7 +1793,7 @@ class ContentController extends AbstractController
     private function guardRequiredDepublicationDate(
         FormInterface $form,
         ContentTypeInterface $contentType,
-        Content $content
+        Content $content,
     ): bool {
         if (!$contentType->getOption('required_depublication_date')) {
             return true;

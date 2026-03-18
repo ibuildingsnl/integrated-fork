@@ -16,8 +16,7 @@ final class EventFieldOptionsTest extends TestCase
     public function testEventDateFieldsDoNotRequireTimeInput(): void
     {
         $driverRegistry = new DriverRegistry();
-        $driverRegistry->addDriver(new AttributeDriver(new class implements MappingDriver
-        {
+        $driverRegistry->addDriver(new AttributeDriver(new class implements MappingDriver {
             public function loadMetadataForClass($className, $metadata): void
             {
             }

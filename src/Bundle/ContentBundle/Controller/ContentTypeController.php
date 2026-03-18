@@ -56,7 +56,7 @@ class ContentTypeController extends AbstractController
 
     public function index(): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAdminAccessUnlessGranted();
 
         $documents = $this->contentTypeManager->getAll();
         $documentTypes = $this->metadata->getAllMetadata();
@@ -78,7 +78,7 @@ class ContentTypeController extends AbstractController
 
     public function show(string $id): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAdminAccessUnlessGranted();
 
         $contentType = $this->getContentType($id);
         $form = $this->createDeleteForm($contentType, \count($this->getRelatedContent($contentType)) === 0);
@@ -91,7 +91,7 @@ class ContentTypeController extends AbstractController
 
     public function new(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAdminAccessUnlessGranted();
 
         $class = trim((string) $request->query->get('class', ''));
 
@@ -135,7 +135,7 @@ class ContentTypeController extends AbstractController
 
     public function edit(Request $request, string $id): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAdminAccessUnlessGranted();
 
         $contentType = $this->getContentType($id);
         $metadata = $this->metadata->getMetadata($contentType->getClass());
@@ -172,7 +172,7 @@ class ContentTypeController extends AbstractController
 
     public function delete(Request $request, string $id): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAdminAccessUnlessGranted();
 
         $contentType = $this->getContentType($id);
 
@@ -228,6 +228,13 @@ class ContentTypeController extends AbstractController
             return $this->contentTypeManager->getType($id);
         } catch (\InvalidArgumentException $e) {
             throw new NotFoundHttpException(\sprintf('Content type with id "%s" not found.', $id));
+        }
+    }
+
+    private function denyAdminAccessUnlessGranted(): void
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
         }
     }
 

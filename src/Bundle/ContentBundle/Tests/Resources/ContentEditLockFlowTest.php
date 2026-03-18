@@ -62,8 +62,8 @@ class ContentEditLockFlowTest extends TestCase
         $this->assertStringContainsString('data-content-lock-overlay', $template);
         $this->assertStringContainsString('setLockOverlay(form,', $template);
         $this->assertStringContainsString("var flashContainer = document.getElementById('flash-messages');", $template);
-        $this->assertStringContainsString("var normalizedMessage = String(message).trim();", $template);
-        $this->assertStringContainsString("if (alerts[i].textContent && alerts[i].textContent.trim() === normalizedMessage)", $template);
+        $this->assertStringContainsString('var normalizedMessage = String(message).trim();', $template);
+        $this->assertStringContainsString('if (alerts[i].textContent && alerts[i].textContent.trim() === normalizedMessage)', $template);
         $this->assertStringContainsString('if (result.status !== 423) {', $template);
         $this->assertStringContainsString('flashContainer.appendChild(alertNode);', $template);
         $this->assertStringContainsString('document.addEventListener(\'turbo:load\'', $template);

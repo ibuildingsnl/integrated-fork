@@ -145,7 +145,7 @@ class ContentOptionsTest extends TestCase
 
     private function createBrandRepository(): ObjectRepository
     {
-        return new class() implements ObjectRepository {
+        return new class implements ObjectRepository {
             private ?array $brands = null;
 
             private function brands(): array

@@ -8,7 +8,7 @@ class WorkflowDefinitionStateCollectionTemplateTest extends TestCase
 {
     public function testWorkflowStatusUsesTintedBackgroundAndBorderStyle(): void
     {
-        $templatePath = dirname(__DIR__, 2).'/Resources/views/form/form_div_layout.html.twig';
+        $templatePath = \dirname(__DIR__, 2).'/Resources/views/form/form_div_layout.html.twig';
         $template = file_get_contents($templatePath);
 
         self::assertNotFalse($template);
@@ -17,4 +17,3 @@ class WorkflowDefinitionStateCollectionTemplateTest extends TestCase
         self::assertStringContainsString('color:{{ field.vars.value.color }};', $template);
     }
 }
-

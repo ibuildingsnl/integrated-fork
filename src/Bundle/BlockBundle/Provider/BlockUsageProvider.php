@@ -450,6 +450,7 @@ class BlockUsageProvider
 
     /**
      * @param array<string, mixed> $container
+     *
      * @return string[]
      */
     private function extractContainerBlockIds(array $container): array

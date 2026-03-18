@@ -16,8 +16,8 @@ final class ContentEventImplicitMidnightTemplateTest extends TestCase
         $this->assertStringContainsString('hideImplicitEventMidnightTime', $template);
         $this->assertStringContainsString("if (timeField.value === '00:00')", $template);
         $this->assertStringContainsString("timeField.value = '';", $template);
-        $this->assertStringContainsString("form.startDate is defined and form.startDate.time is defined", $template);
-        $this->assertStringContainsString("form.endDate is defined and form.endDate.time is defined", $template);
+        $this->assertStringContainsString('form.startDate is defined and form.startDate.time is defined', $template);
+        $this->assertStringContainsString('form.endDate is defined and form.endDate.time is defined', $template);
     }
 
     public function testIframeTemplateHidesImplicitMidnightForEventFields(): void

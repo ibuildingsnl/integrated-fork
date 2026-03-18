@@ -17,15 +17,8 @@ use Integrated\Bundle\PageBundle\Resolver\ThemeResolver;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
-class TemplateBlockUsageProvider
-implements BlockUsageSourceInterface
+class TemplateBlockUsageProvider implements BlockUsageSourceInterface
 {
-    /**
-     * @param DocumentManager $manager
-     * @param ThemeManager    $themeManager
-     * @param ThemeResolver   $themeResolver
-     * @param string          $projectDir
-     */
     public function __construct(
         private readonly DocumentManager $manager,
         private readonly ThemeManager $themeManager,
@@ -67,7 +60,7 @@ implements BlockUsageSourceInterface
 
                 foreach ($this->extractFormattedChannelPatterns($content) as $pattern) {
                     foreach ($channels as $channel) {
-                        $blockId = str_contains($pattern, '%s') ? sprintf($pattern, $channel->getId()) : $pattern;
+                        $blockId = str_contains($pattern, '%s') ? \sprintf($pattern, $channel->getId()) : $pattern;
                         $this->registerUsage($blockTemplates, $blockId, $templatePath, $themeId, $channel->getId());
                         $channelBlocks[$channel->getId()][$blockId] = $blockId;
                     }
@@ -112,12 +105,12 @@ implements BlockUsageSourceInterface
     {
         $channels = $this->manager->getRepository(Channel::class)->findAll();
 
-        if (!\is_iterable($channels)) {
+        if (!is_iterable($channels)) {
             return [];
         }
 
         return array_values(array_filter(
-            is_array($channels) ? $channels : iterator_to_array($channels),
+            \is_array($channels) ? $channels : iterator_to_array($channels),
             static fn (mixed $channel): bool => $channel instanceof ChannelInterface && trim($channel->getId()) !== ''
         ));
     }
@@ -317,6 +310,7 @@ implements BlockUsageSourceInterface
 
     /**
      * @param array<int, mixed> $values
+     *
      * @return string[]
      */
     private function normalizeScalarValues(array $values): array
@@ -345,7 +339,7 @@ implements BlockUsageSourceInterface
         $projectDir = rtrim($this->projectDir, \DIRECTORY_SEPARATOR).\DIRECTORY_SEPARATOR;
 
         if (str_starts_with($realFilePath, $projectDir)) {
-            return str_replace(\DIRECTORY_SEPARATOR, '/', substr($realFilePath, strlen($projectDir)));
+            return str_replace(\DIRECTORY_SEPARATOR, '/', substr($realFilePath, \strlen($projectDir)));
         }
 
         return str_replace(\DIRECTORY_SEPARATOR, '/', $realFilePath);

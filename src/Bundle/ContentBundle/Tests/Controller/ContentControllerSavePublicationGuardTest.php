@@ -121,7 +121,7 @@ class ContentControllerSavePublicationGuardTest extends TestCase
     private function invokeHandleDuplicateSlugSaveFailure(
         ContentController $controller,
         \Symfony\Component\Form\FormInterface $form,
-        \Throwable $exception
+        \Throwable $exception,
     ): ?string {
         $method = new \ReflectionMethod(ContentController::class, 'handleDuplicateSlugSaveFailure');
         $method->setAccessible(true);

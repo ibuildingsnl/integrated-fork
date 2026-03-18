@@ -142,9 +142,9 @@ class ContentNavigatorTemplateTest extends TestCase
         $script = file_get_contents(__DIR__.'/../../Resources/assets/js/scripts.js');
 
         $this->assertIsString($script);
-        $this->assertStringContainsString("input[type=\"hidden\"][data-preserve-search-query-sync]", $script);
+        $this->assertStringContainsString('input[type="hidden"][data-preserve-search-query-sync]', $script);
         $this->assertStringContainsString('const preservedHiddenInputs = [];', $script);
-        $this->assertStringContainsString("if (!field.value || params.has(field.name)) {", $script);
+        $this->assertStringContainsString('if (!field.value || params.has(field.name)) {', $script);
         $this->assertStringContainsString("'data-preserve-search-query-sync': 'true'", $script);
     }
 
@@ -175,7 +175,7 @@ class ContentNavigatorTemplateTest extends TestCase
 
         $this->assertIsString($script);
         $this->assertStringContainsString("const isSidebarSubMenu = el.classList.contains('sub-menu-children');", $script);
-        $this->assertStringContainsString("if (!isSidebarSubMenu) {", $script);
+        $this->assertStringContainsString('if (!isSidebarSubMenu) {', $script);
         $this->assertStringContainsString("el.style.display = 'block';", $script);
         $this->assertStringNotContainsString("list.style.display = shouldOpen ? 'block' : '';", $script);
         $this->assertStringNotContainsString("contentWrapper.classList.add('show');\n    list.classList.add('show');\n    list.style.display = 'block';", $script);

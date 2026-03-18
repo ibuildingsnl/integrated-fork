@@ -75,7 +75,7 @@ class FeaturedType implements TypeInterface
             ? \DateTimeImmutable::createFromInterface($startDate)
             : new \DateTimeImmutable();
 
-        $expirationDate = $referenceDate->modify(sprintf('+%d days', $days));
+        $expirationDate = $referenceDate->modify(\sprintf('+%d days', $days));
 
         return false !== $expirationDate && $expirationDate <= new \DateTimeImmutable();
     }

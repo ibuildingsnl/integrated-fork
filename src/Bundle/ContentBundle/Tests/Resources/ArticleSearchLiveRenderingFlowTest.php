@@ -24,7 +24,7 @@ final class ArticleSearchLiveRenderingFlowTest extends TestCase
         self::assertIsString($template);
         self::assertStringNotContainsString('{% set linkTitleInvalid = this.linkTitle is empty %}', $template);
         self::assertStringNotContainsString('require_link_title', $template);
-        self::assertStringNotContainsString("title=\"{% if linkTitleInvalid %}", $template);
+        self::assertStringNotContainsString('title="{% if linkTitleInvalid %}', $template);
     }
 
     public function testArticleSearchSourceUsesLiveBridgeAndNoVueMount(): void
