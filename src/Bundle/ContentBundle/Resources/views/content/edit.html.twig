@@ -110,8 +110,20 @@
                                             <div class="aside-item-list-container">
                                                 {{ form_row(form.featured) }}
                                                 {% if form.featured_expiration is defined %}
-                                                    <div data-featured-expiration-container {% if not form.featured.vars.data|default(false) %}hidden{% endif %}>
-                                                        {{ form_row(form.featured_expiration) }}
+                                                    <div data-featured-expiration-container style="{% if not form.featured.vars.data|default(false) %}display: none;{% endif %}">
+                                                        <div class="form-group w-full flex flex-wrap{% if form.featured_expiration.vars.errors|length > 0 %} has-error{% endif %}">
+                                                            <label class="control-label w-full" for="{{ form.featured_expiration.vars.id }}">
+                                                                {% trans %}Featured expires in x days{% endtrans %}
+                                                            </label>
+                                                            <div class="w-full widget">
+                                                                {{ form_widget(form.featured_expiration, {
+                                                                    attr: form.featured_expiration.vars.attr|merge({
+                                                                        placeholder: 'Featured expires in x days'|trans
+                                                                    })
+                                                                }) }}
+                                                                {{ form_errors(form.featured_expiration) }}
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 {% endif %}
                                             </div>
@@ -1009,14 +1021,14 @@
 
     (function() {
         function initializeFeaturedExpirationVisibility() {
-            var featuredToggle = document.querySelector('input[id$="_featured"]');
+            var featuredToggle = document.getElementById('{{ form.featured is defined ? form.featured.vars.id|e('js') : '' }}');
             var featuredExpirationContainer = document.querySelector('[data-featured-expiration-container]');
             if (!featuredToggle || !featuredExpirationContainer) {
                 return;
             }
 
             function syncFeaturedExpirationVisibility() {
-                featuredExpirationContainer.hidden = !featuredToggle.checked;
+                featuredExpirationContainer.style.display = featuredToggle.checked ? '' : 'none';
             }
 
             featuredToggle.addEventListener('change', syncFeaturedExpirationVisibility);
@@ -1025,6 +1037,7 @@
 
         document.addEventListener('DOMContentLoaded', initializeFeaturedExpirationVisibility);
         document.addEventListener('turbo:load', initializeFeaturedExpirationVisibility);
+        document.addEventListener('turbo:render', initializeFeaturedExpirationVisibility);
     })();
 
     textarea = document.querySelector('.title_tinymce_input');

@@ -37,10 +37,11 @@ class FeaturedExpirationSelectionListener implements EventSubscriberInterface
         $builder->add('featured_expiration', IntegerType::class, [
             'property_path' => 'featuredExpiration',
             'required' => false,
-            'label' => 'Featured expiration',
+            'label' => 'Featured expires in x days',
             'attr' => [
+                'placeholder' => 'Featured expires in x days',
                 'location' => 'options',
-                'style' => 'sidebar',
+                'style' => 'inline',
                 'align_with_widget' => true,
             ],
         ]);

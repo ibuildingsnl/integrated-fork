@@ -1491,8 +1491,8 @@
                 <target>Selecteer een standaard sorteerveld voor deze zoekselectie. Kies "Aangepast" als je wilt sorteren op een specifieke Solr-veldnaam.</target>
             </trans-unit>
             <trans-unit id="378">
-                <source>Featured expiration</source>
-                <target>Featured-verloop</target>
+                <source>Featured expires in x days</source>
+                <target>Featured verloopt over x dagen</target>
             </trans-unit>
             <trans-unit id="379">
                 <source>Required depublication date</source>

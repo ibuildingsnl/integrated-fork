@@ -325,14 +325,14 @@
         document.addEventListener('turbo:frame-render', initLockOnLoad);
 
         function initializeFeaturedExpirationVisibility() {
-            var featuredToggle = document.querySelector('input[id$="_featured"]');
+            var featuredToggle = document.getElementById('{{ form.featured is defined ? form.featured.vars.id|e('js') : '' }}');
             var featuredExpirationContainer = document.querySelector('[data-featured-expiration-container]');
             if (!featuredToggle || !featuredExpirationContainer) {
                 return;
             }
 
             function syncFeaturedExpirationVisibility() {
-                featuredExpirationContainer.hidden = !featuredToggle.checked;
+                featuredExpirationContainer.style.display = featuredToggle.checked ? '' : 'none';
             }
 
             featuredToggle.addEventListener('change', syncFeaturedExpirationVisibility);
