@@ -22,12 +22,14 @@ use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\PageBundle\Form\Type\PageCopyType;
 use Integrated\Bundle\PageBundle\Form\Type\PageFilterType;
 use Integrated\Bundle\PageBundle\Form\Type\PageType;
+use Integrated\Bundle\PageBundle\Services\PageCopy\PageCopyRequestFactory;
 use Integrated\Bundle\PageBundle\Services\PageCopyService;
 use Integrated\Bundle\PageBundle\Services\RouteCache;
 use Knp\Component\Pager\PaginatorInterface;
 use MongoDB\BSON\Regex;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -44,6 +46,7 @@ class PageController extends AbstractController
     private DocumentManager $documentManager;
     private PaginatorInterface $paginator;
     private PageCopyService $pageCopyService;
+    private PageCopyRequestFactory $pageCopyRequestFactory;
     private RouteCache $routeCache;
     private UriSigner $uriSigner;
     /** @var array<int, string>|null */
@@ -53,12 +56,14 @@ class PageController extends AbstractController
         DocumentManager $documentManager,
         PaginatorInterface $paginator,
         PageCopyService $pageCopyService,
+        PageCopyRequestFactory $pageCopyRequestFactory,
         RouteCache $routeCache,
         UriSigner $uriSigner,
     ) {
         $this->documentManager = $documentManager;
         $this->paginator = $paginator;
         $this->pageCopyService = $pageCopyService;
+        $this->pageCopyRequestFactory = $pageCopyRequestFactory;
         $this->routeCache = $routeCache;
         $this->uriSigner = $uriSigner;
     }
@@ -435,7 +440,16 @@ class PageController extends AbstractController
             $data = $form->getData();
 
             if ($data['action'] != 'refresh') {
-                $this->pageCopyService->copyPages($form->getData());
+                try {
+                    $requestModel = $this->pageCopyRequestFactory->createFromFormData($data);
+                    $this->pageCopyService->copyPages($requestModel);
+                } catch (\InvalidArgumentException $exception) {
+                    $form->addError(new FormError($exception->getMessage()));
+
+                    return $this->render('@IntegratedPage/page/copy.html.twig', [
+                        'form' => $form,
+                    ]);
+                }
 
                 $this->addFlash('success', 'Pages copied');
 
