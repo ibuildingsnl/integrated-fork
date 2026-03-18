@@ -43,6 +43,7 @@ use Integrated\Common\Content\PublishTimeInterface;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
+use Integrated\Common\Form\Mapping\MetadataInterface;
 use Integrated\Common\Locks;
 use Integrated\Common\Locks\Filter;
 use Integrated\Common\Locks\LockInterface;
@@ -337,7 +338,7 @@ class ContentController extends AbstractController
                     $this->dispatcher->dispatch(
                         new ValidationEvent(
                             $contentType,
-                            $this->metadataFactory->getMetadata($contentType->getClass()),
+                            $this->getRequiredMetadata($contentType->getClass()),
                             $content,
                         ),
                         Events::POST_VALIDATE
@@ -553,7 +554,7 @@ class ContentController extends AbstractController
                         $this->dispatcher->dispatch(
                             new ValidationEvent(
                                 $contentType,
-                                $this->metadataFactory->getMetadata($contentType->getClass()),
+                                $this->getRequiredMetadata($contentType->getClass()),
                                 $content,
                             ),
                             Events::POST_VALIDATE
@@ -1840,6 +1841,16 @@ class ContentController extends AbstractController
         }
 
         return $friendlyMessage;
+    }
+
+    private function getRequiredMetadata(string $class): MetadataInterface
+    {
+        $metadata = $this->metadataFactory->getMetadata($class);
+        if (!$metadata instanceof MetadataInterface) {
+            throw new \LogicException(\sprintf('No form metadata found for "%s".', $class));
+        }
+
+        return $metadata;
     }
 
     protected function createDeleteForm(ContentInterface $content, array $locking, bool $notDelete = false): FormInterface

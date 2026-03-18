@@ -17,7 +17,7 @@ namespace Integrated\Common\Form\Mapping;
 interface MetadataFactoryInterface
 {
     /**
-     * @param string $class
+     * @param string|null $class
      *
      * @return MetadataInterface|null
      */

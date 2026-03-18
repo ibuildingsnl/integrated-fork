@@ -259,7 +259,19 @@ class BlockExtension extends AbstractExtension
     {
         $templateUsages = $this->blockUsageProvider->getTemplateUsagesPerBlock($block->getId());
 
-        return \is_array($templateUsages) ? $templateUsages : [];
+        if (!\is_array($templateUsages)) {
+            return [];
+        }
+
+        $normalized = [];
+        foreach ($templateUsages as $usageKey => $usage) {
+            $normalized[$usageKey] = array_filter(
+                $usage,
+                static fn (mixed $value): bool => \is_string($value)
+            );
+        }
+
+        return $normalized;
     }
 
     /**
@@ -267,7 +279,7 @@ class BlockExtension extends AbstractExtension
      */
     public function getBlockTypeName(BlockInterface $block)
     {
-        return $this->metadataFactory->getMetadata($block::class)->getType();
+        return $block->getType();
     }
 
     /**

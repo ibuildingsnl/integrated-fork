@@ -148,70 +148,74 @@ class ContentOptionsTest extends TestCase
      */
     private function createBrandRepository(): ObjectRepository
     {
-        return new class implements ObjectRepository {
-            /** @var list<Brand>|null */
-            private ?array $brands = null;
+        return new BrandRepositoryStub();
+    }
+}
 
-            /**
-             * @return list<Brand>
-             */
-            private function brands(): array
-            {
-                return $this->brands ??= [
-                    $this->createBrand('bakkerij_nollen', 'Bakkerij Nollen'),
-                    $this->createBrand('vismagazine', 'Vismagazine'),
-                ];
-            }
+/** @implements ObjectRepository<Brand> */
+final class BrandRepositoryStub implements ObjectRepository
+{
+    /** @var list<Brand>|null */
+    private ?array $brands = null;
 
-            public function find(mixed $id): ?object
-            {
-                foreach ($this->brands() as $brand) {
-                    if ($brand->getId() === $id) {
-                        return $brand;
-                    }
-                }
-
-                return null;
-            }
-
-            public function add(Brand $brand): void
-            {
-            }
-
-            public function remove(Brand $brand): void
-            {
-            }
-
-            public function findAll(): array
-            {
-                return $this->brands();
-            }
-
-            public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null): array
-            {
-                return [];
-            }
-
-            public function findOneBy(array $criteria): ?object
-            {
-                return null;
-            }
-
-            public function getClassName(): string
-            {
-                return Brand::class;
-            }
-
-            private function createBrand(string $id, string $name): Brand
-            {
-                $profile = new BrandProfile();
-                $profile->name = $name;
-
-                $brand = new Brand($profile);
-                $brand->setId($id);
-
+    public function find(mixed $id): ?object
+    {
+        foreach ($this->brands() as $brand) {
+            if ($brand->getId() === $id) {
                 return $brand;
             }
-        };
+        }
+
+        return null;
+    }
+
+    public function add(Brand $brand): void
+    {
+    }
+
+    public function remove(Brand $brand): void
+    {
+    }
+
+    public function findAll(): array
+    {
+        return $this->brands();
+    }
+
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null): array
+    {
+        return [];
+    }
+
+    public function findOneBy(array $criteria): ?object
+    {
+        return null;
+    }
+
+    public function getClassName(): string
+    {
+        return Brand::class;
+    }
+
+    /**
+     * @return list<Brand>
+     */
+    private function brands(): array
+    {
+        return $this->brands ??= [
+            $this->createBrand('bakkerij_nollen', 'Bakkerij Nollen'),
+            $this->createBrand('vismagazine', 'Vismagazine'),
+        ];
+    }
+
+    private function createBrand(string $id, string $name): Brand
+    {
+        $profile = new BrandProfile();
+        $profile->name = $name;
+
+        $brand = new Brand($profile);
+        $brand->setId($id);
+
+        return $brand;
     }
 }

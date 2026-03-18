@@ -122,7 +122,7 @@ class TemplateBlockUsageProvider implements BlockUsageSourceInterface
 
         while ($queue !== []) {
             $currentThemeId = array_shift($queue);
-            if (!\is_string($currentThemeId) || $currentThemeId === '' || isset($resolved[$currentThemeId])) {
+            if ($currentThemeId === '' || isset($resolved[$currentThemeId])) {
                 continue;
             }
 

@@ -33,6 +33,9 @@ class MetadataType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $metadata = $this->factory->getMetadata($options['data_class']); // @todo: auto-resolve class
+        if ($metadata === null) {
+            return;
+        }
 
         foreach ($metadata->getFields() as $field) {
             $builder->add(

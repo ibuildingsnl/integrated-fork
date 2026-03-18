@@ -30,10 +30,10 @@ class SeoMetaExtensionTest extends TestCase
         self::assertInstanceOf(TypeExtensionInterface::class, $this->getInstance($this->getResolver()));
     }
 
-    #[DataProvider('buildProvider')]
     /**
-     * @param array<string, list<bool|string>> $expected
+     * @param array<string, array<int, bool|string>> $expected
      */
+    #[DataProvider('buildProvider')]
     public function testBuild(
         string $contentTypeId,
         bool $hasSeoField,

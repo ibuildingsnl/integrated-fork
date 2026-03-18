@@ -138,7 +138,7 @@ class ContentTypeController extends AbstractController
         $this->denyAdminAccessUnlessGranted();
 
         $contentType = $this->getContentType($id);
-        $metadata = $this->metadata->getMetadata($contentType->getClass());
+        $metadata = $this->getRequiredMetadata($contentType->getClass());
 
         $form = $this->createEditForm($contentType, $metadata);
         $form->handleRequest($request);
@@ -281,6 +281,16 @@ class ContentTypeController extends AbstractController
         $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 
         return $form;
+    }
+
+    private function getRequiredMetadata(string $class): MetadataInterface
+    {
+        $metadata = $this->metadata->getMetadata($class);
+        if (!$metadata instanceof MetadataInterface) {
+            throw new NotFoundHttpException(\sprintf('No metadata found for class "%s".', $class));
+        }
+
+        return $metadata;
     }
 
     /**

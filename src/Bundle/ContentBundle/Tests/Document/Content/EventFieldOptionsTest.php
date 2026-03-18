@@ -33,6 +33,7 @@ final class EventFieldOptionsTest extends TestCase
         }));
 
         $metadata = (new MetadataFactory($driverRegistry))->getMetadata(Event::class);
+        self::assertNotNull($metadata);
 
         self::assertFalse($metadata->getField('startDate')->getOption('required'));
         self::assertFalse($metadata->getField('endDate')->getOption('required'));

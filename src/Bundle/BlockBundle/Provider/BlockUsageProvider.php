@@ -52,15 +52,8 @@ class BlockUsageProvider
     protected $blockTemplates;
 
     /**
-     * @var ChannelInterface[]
+     * @param iterable<BlockUsageSourceInterface> $usageSources
      */
-    protected $channels = [];
-
-    /**
-     * @var iterable<BlockUsageSourceInterface>
-     */
-    private iterable $usageSources;
-
     public function __construct(
         DocumentManager $manager,
         private ?CacheInterface $cache = null,
@@ -69,6 +62,16 @@ class BlockUsageProvider
         $this->manager = $manager;
         $this->usageSources = $usageSources;
     }
+
+    /**
+     * @var ChannelInterface[]
+     */
+    protected $channels = [];
+
+    /**
+     * @var iterable<BlockUsageSourceInterface>
+     */
+    private iterable $usageSources;
 
     /**
      * @param string|null $blockId
