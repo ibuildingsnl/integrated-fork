@@ -3,7 +3,9 @@
 namespace Integrated\Bundle\UserBundle\Tests\Controller;
 
 use Integrated\Bundle\UserBundle\Controller\UserController;
+use Integrated\Bundle\UserBundle\Model\Group;
 use Integrated\Bundle\UserBundle\Model\GroupManagerInterface;
+use Integrated\Bundle\UserBundle\Model\Role;
 use Integrated\Bundle\UserBundle\Model\ScopeManagerInterface;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
@@ -105,6 +107,30 @@ class UserControllerBulkTest extends TestCase
         self::assertSame('/integrated_user_user_index', $response->getTargetUrl());
         self::assertSame('success', $controller->flashes[0]['type']);
         self::assertTrue($user->isEnabled());
+    }
+
+    public function testEnableRejectsAdministratorAccountForNonAdmin(): void
+    {
+        [$controller, $manager, , , $logger] = $this->createController();
+        $controller->grantedAttributes = [
+            'ROLE_USER_MANAGER' => true,
+            'ROLE_ADMIN' => false,
+        ];
+
+        $user = $this->createAdminUser('disabled-admin');
+        $user->setEnabled(false);
+
+        $manager->method('find')->with('1')->willReturn($user);
+        $manager->expects(self::never())->method('persist');
+        $logger->expects(self::never())->method('info');
+
+        $request = new Request(['id' => '1'], ['enable_token' => 'valid'], [], [], [], ['REQUEST_METHOD' => 'POST']);
+        $response = $controller->enable($request);
+
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertSame('/integrated_user_user_index', $response->getTargetUrl());
+        self::assertSame('danger', $controller->flashes[0]['type']);
+        self::assertFalse($user->isEnabled());
     }
 
     public function testBulkRejectsInvalidCsrfToken(): void
@@ -258,6 +284,73 @@ class UserControllerBulkTest extends TestCase
         self::assertSame('success', $controller->flashes[0]['type']);
     }
 
+    public function testBulkRejectsAdministratorTargetForNonAdmin(): void
+    {
+        [$controller, $manager, , , $logger, , , $bulkService] = $this->createController();
+        $controller->grantedAttributes = [
+            'ROLE_USER_MANAGER' => true,
+            'ROLE_ADMIN' => false,
+        ];
+
+        $adminUser = $this->createAdminUser('admin-user');
+        $manager->method('find')->with('1')->willReturn($adminUser);
+        $manager->expects(self::never())->method('persist');
+        $bulkService->expects(self::never())->method('apply');
+        $logger->expects(self::never())->method('info');
+
+        $request = new Request([], [
+            '_token' => 'valid',
+            'bulk_action' => BulkUserActionService::ACTION_RESET_2FA,
+            'user_ids' => ['1'],
+        ]);
+
+        $response = $controller->bulk($request);
+
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertSame('/integrated_user_user_index', $response->getTargetUrl());
+        self::assertSame('danger', $controller->flashes[0]['type']);
+    }
+
+    public function testDeleteAccountRejectsAdministratorAccountForNonAdmin(): void
+    {
+        [$controller, $manager, , , $logger] = $this->createController();
+        $controller->grantedAttributes = [
+            'ROLE_USER_MANAGER' => true,
+            'ROLE_ADMIN' => false,
+        ];
+
+        $adminUser = $this->createAdminUser('admin-user');
+        $manager->method('find')->with('1')->willReturn($adminUser);
+        $manager->expects(self::never())->method('remove');
+        $logger->expects(self::never())->method('info');
+
+        $response = $controller->deleteAccount(new Request(['id' => '1']));
+
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertSame('/integrated_user_user_index', $response->getTargetUrl());
+        self::assertSame('danger', $controller->flashes[0]['type']);
+    }
+
+    public function testDeleteRejectsAdministratorAccountForNonAdmin(): void
+    {
+        [$controller, $manager, , , $logger] = $this->createController();
+        $controller->grantedAttributes = [
+            'ROLE_USER_MANAGER' => true,
+            'ROLE_ADMIN' => false,
+        ];
+
+        $adminUser = $this->createAdminUser('admin-user');
+        $manager->method('find')->with('1')->willReturn($adminUser);
+        $manager->expects(self::never())->method('persist');
+        $logger->expects(self::never())->method('info');
+
+        $response = $controller->delete(new Request(['id' => '1']));
+
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertSame('/integrated_user_user_index', $response->getTargetUrl());
+        self::assertSame('danger', $controller->flashes[0]['type']);
+    }
+
     /**
      * @return array{TestUserController, UserManagerInterface&MockObject, FilterQueryProvider&MockObject, PaginatorInterface&MockObject, LoggerInterface&MockObject, GroupManagerInterface&MockObject, ScopeManagerInterface&MockObject, BulkUserActionService&MockObject}
      */
@@ -288,6 +381,17 @@ class UserControllerBulkTest extends TestCase
     {
         $user = new User();
         $user->setUsername($username);
+
+        return $user;
+    }
+
+    private function createAdminUser(string $username): User
+    {
+        $user = $this->createUser($username);
+        $group = new Group('g-admin');
+        $group->setName('Administrators');
+        $group->addRole(new Role('ROLE_ADMIN', 'Administrator'));
+        $user->addGroup($group);
 
         return $user;
     }

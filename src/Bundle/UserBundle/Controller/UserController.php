@@ -141,6 +141,16 @@ class UserController extends AbstractController
             return $this->redirectToRoute('integrated_user_user_index');
         }
 
+        if (!$this->canManageAdminPrivileges()) {
+            foreach ($users as $user) {
+                if ($this->userHasAdminPrivileges($user)) {
+                    $this->addFlash('danger', 'You are not allowed to manage administrator accounts.');
+
+                    return $this->redirectToRoute('integrated_user_user_index');
+                }
+            }
+        }
+
         $group = null;
         $scope = null;
 
@@ -205,7 +215,7 @@ class UserController extends AbstractController
 
             if ($form->isValid()) {
                 $user = $form->getData();
-                if (!$this->canManageAdminPrivileges() && $this->userHasAdminGroup($user)) {
+                if (!$this->canManageAdminPrivileges() && $this->userHasAdminPrivileges($user)) {
                     $errorTarget = $form->has('groups') ? $form->get('groups') : $form;
                     $errorTarget->addError(new FormError('You are not allowed to assign administrator groups.'));
 
@@ -253,7 +263,7 @@ class UserController extends AbstractController
             }
 
             if ($form->isValid()) {
-                if (!$this->canManageAdminPrivileges() && $this->userHasAdminGroup($user)) {
+                if (!$this->canManageAdminPrivileges() && $this->userHasAdminPrivileges($user)) {
                     $errorTarget = $form->has('groups') ? $form->get('groups') : $form;
                     $errorTarget->addError(new FormError('You are not allowed to assign administrator groups.'));
 
@@ -291,6 +301,12 @@ class UserController extends AbstractController
 
         if (!$user) {
             return $this->redirectToRoute('integrated_user_user_index'); // user is already gone
+        }
+
+        if (!$this->canManageAdminPrivileges() && $this->userHasAdminPrivileges($user)) {
+            $this->addFlash('danger', 'You are not allowed to manage administrator accounts.');
+
+            return $this->redirectToRoute('integrated_user_user_index');
         }
 
         /** @var Form $form */
@@ -348,6 +364,12 @@ class UserController extends AbstractController
             return $this->redirectToRoute('integrated_user_user_index');
         }
 
+        if (!$this->canManageAdminPrivileges() && $this->userHasAdminPrivileges($user)) {
+            $this->addFlash('danger', 'You are not allowed to manage administrator accounts.');
+
+            return $this->redirectToRoute('integrated_user_user_index');
+        }
+
         if (!$user->isEnabled()) {
             $user->setEnabled(true);
             $this->manager->persist($user);
@@ -378,6 +400,12 @@ class UserController extends AbstractController
         $currentUser = $this->getUser();
         if ($currentUser instanceof UserInterface && $currentUser->getId() === $user->getId()) {
             $this->addFlash('danger', 'You cannot delete your own account.');
+
+            return $this->redirectToRoute('integrated_user_user_index');
+        }
+
+        if (!$this->canManageAdminPrivileges() && $this->userHasAdminPrivileges($user)) {
+            $this->addFlash('danger', 'You are not allowed to manage administrator accounts.');
 
             return $this->redirectToRoute('integrated_user_user_index');
         }
@@ -477,8 +505,12 @@ class UserController extends AbstractController
         return $this->isGranted('ROLE_ADMIN');
     }
 
-    private function userHasAdminGroup(UserInterface $user): bool
+    private function userHasAdminPrivileges(UserInterface $user): bool
     {
+        if (\in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+            return true;
+        }
+
         foreach ($user->getGroups() as $group) {
             if ($this->groupHasAdminRole($group)) {
                 return true;
