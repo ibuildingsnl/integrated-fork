@@ -207,8 +207,9 @@ label {
     }
 
     &[data-page-copy-selected="true"] {
-        border-color: #5f88cf;
+        border-color: #dee3e9;
         box-shadow: 0 0 0 1px rgba(95, 136, 207, 0.2);
+        border: none;
     }
 
     &[data-page-copy-selected="true"] [data-page-copy-panel-header] {

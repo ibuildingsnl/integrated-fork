@@ -242,7 +242,52 @@
 {{ parent() }}
 
 <script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', function () {
+    (function () {
+        function bindPageFilterAutoSubmit() {
+            document.querySelectorAll('form[name="page_filter"]').forEach(function (form) {
+                if (form.dataset.autoSubmitBound === '1') {
+                    return;
+                }
+
+                form.dataset.autoSubmitBound = '1';
+
+                var submitForm = function () {
+                    form.requestSubmit ? form.requestSubmit() : form.submit();
+                };
+
+                form.addEventListener('change', function () {
+                    submitForm();
+                });
+
+                var searchInput = form.querySelector('input[name="page_filter[q]"]');
+                if (!searchInput) {
+                    return;
+                }
+
+                var debounceTimer = null;
+
+                searchInput.addEventListener('input', function () {
+                    window.clearTimeout(debounceTimer);
+                    debounceTimer = window.setTimeout(function () {
+                        submitForm();
+                    }, 350);
+                });
+
+                searchInput.addEventListener('keydown', function (event) {
+                    if (event.key !== 'Enter') {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    window.clearTimeout(debounceTimer);
+                    submitForm();
+                });
+            });
+        }
+
+        function initializePageIndexInteractions() {
+            bindPageFilterAutoSubmit();
+
         if (window.jQuery && typeof window.jQuery.fn.popover === 'function') {
             window.jQuery('[data-toggle="popover"]').popover();
         } else if (window.bootstrap && typeof window.bootstrap.Popover === 'function') {
@@ -250,44 +295,15 @@
                 new window.bootstrap.Popover(element);
             });
         }
+        }
 
-        document.querySelectorAll('form[name="page_filter"]').forEach(function (form) {
-            var submitForm = function () {
-                form.submit();
-            };
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializePageIndexInteractions);
+        } else {
+            initializePageIndexInteractions();
+        }
 
-            form.addEventListener('change', function (event) {
-                if (!event.isTrusted) {
-                    return;
-                }
-
-                submitForm();
-            });
-
-            var searchInput = form.querySelector('input[name="page_filter[q]"]');
-            if (!searchInput) {
-                return;
-            }
-
-            var debounceTimer = null;
-
-            searchInput.addEventListener('input', function () {
-                window.clearTimeout(debounceTimer);
-                debounceTimer = window.setTimeout(function () {
-                    submitForm();
-                }, 350);
-            });
-
-            searchInput.addEventListener('keydown', function (event) {
-                if (event.key !== 'Enter') {
-                    return;
-                }
-
-                event.preventDefault();
-                window.clearTimeout(debounceTimer);
-                submitForm();
-            });
-        });
-    });
+        document.addEventListener('turbo:load', bindPageFilterAutoSubmit);
+    })();
 </script>
 {% endblock %}

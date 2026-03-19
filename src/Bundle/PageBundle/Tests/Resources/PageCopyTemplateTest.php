@@ -17,7 +17,7 @@ final class PageCopyTemplateTest extends TestCase
         $this->assertStringContainsString('data-page-copy-panel', $template);
         $this->assertStringContainsString('data-page-copy-panel-header', $template);
         $this->assertStringContainsString('data-page-copy-panel-body', $template);
-        $this->assertStringContainsString('data-page-copy-toggle', $template);
+        $this->assertStringNotContainsString('data-page-copy-toggle', $template);
         $this->assertStringNotContainsString('id="copy-table"', $template);
     }
 
@@ -29,6 +29,7 @@ final class PageCopyTemplateTest extends TestCase
         $this->assertIsString($template);
         $this->assertIsString($formTheme);
         $this->assertStringContainsString('data-page-copy-summary', $template);
+        $this->assertStringContainsString("{{ form_errors(form) }}", $template);
         $this->assertStringContainsString('queue-summary', $template);
         $this->assertStringContainsString('overwriteCount', $template);
         $this->assertStringContainsString('data-page-copy-action', $formTheme);
@@ -73,9 +74,10 @@ final class PageCopyTemplateTest extends TestCase
         $this->assertStringContainsString('data-page-copy-selected', $template);
         $this->assertStringContainsString('checkbox-switcher', $template);
         $this->assertStringContainsString('switch-input', $template);
-        $this->assertStringContainsString('syncSelectedState', $pageTemplate);
+        $this->assertStringContainsString('syncPageCopyPanelSelectedState', $pageTemplate);
         $this->assertStringContainsString("panel.setAttribute('data-page-copy-selected', selected ? 'true' : 'false');", $pageTemplate);
         $this->assertStringContainsString("select.addEventListener('change', function()", $pageTemplate);
+        $this->assertStringContainsString("event.target.matches('[data-page-copy-select]')", $pageTemplate);
     }
 
     public function testFormThemeOnlyShowsBlocksToggleWhenPageHasBlocks(): void
@@ -123,10 +125,15 @@ final class PageCopyTemplateTest extends TestCase
         $this->assertIsString($template);
         $this->assertIsString($pageTemplate);
         $this->assertStringContainsString('data-page-copy-new-block-id', $template);
-        $this->assertStringContainsString('applySearchReplace', $pageTemplate);
-        $this->assertStringContainsString('syncCloneAllState', $pageTemplate);
+        $this->assertStringContainsString('applyPageCopySearchReplace', $pageTemplate);
+        $this->assertStringContainsString('syncPageCopyCloneAllButtonState', $pageTemplate);
+        $this->assertStringContainsString('cloneAllPageCopyBlocks', $pageTemplate);
+        $this->assertStringContainsString('normalizePageCopyCloneInputs', $pageTemplate);
         $this->assertStringContainsString('input.dataset.proposedBlockId', $pageTemplate);
         $this->assertStringContainsString('data-page-copy-clone-all', $pageTemplate);
+        $this->assertStringContainsString("event.target.closest('[data-page-copy-clone-all]')", $pageTemplate);
+        $this->assertStringContainsString("event.target.closest('[data-page-copy-apply-replace]')", $pageTemplate);
+        $this->assertStringContainsString("pageCopyForm.addEventListener('submit'", $pageTemplate);
     }
 
     public function testTemplatesResetPanelSelectionStateWhenDeselected(): void
@@ -134,9 +141,9 @@ final class PageCopyTemplateTest extends TestCase
         $pageTemplate = file_get_contents(__DIR__.'/../../Resources/views/page/copy.html.twig');
 
         $this->assertIsString($pageTemplate);
-        $this->assertStringContainsString('hasPersistentExpandedState', $pageTemplate);
-        $this->assertStringContainsString('if (!selected && !hasPersistentExpandedState()) {', $pageTemplate);
-        $this->assertStringContainsString("syncExpandedState(false);", $pageTemplate);
+        $this->assertStringContainsString('pageCopyPanelHasPersistentExpandedState', $pageTemplate);
+        $this->assertStringContainsString('if (!pageCopyPanelHasPersistentExpandedState(panel)) {', $pageTemplate);
+        $this->assertStringContainsString("syncPageCopyPanelExpandedState(panel, false);", $pageTemplate);
     }
 
     public function testPageCopyTypeUsesDataHooksInsteadOfInlineRefreshSubmit(): void
@@ -150,14 +157,19 @@ final class PageCopyTemplateTest extends TestCase
         $this->assertStringContainsString('data-page-copy-source-channel', $formType);
         $this->assertStringContainsString('data-page-copy-target-channel', $formType);
         $this->assertStringContainsString('submitPageCopyRefresh', $template);
-        $this->assertStringContainsString("actionField.value = 'refresh';", $template);
+        $this->assertStringContainsString("querySelector('select[data-page-copy-source-channel]')", $template);
+        $this->assertStringContainsString("querySelector('select[data-page-copy-target-channel]')", $template);
+        $this->assertStringContainsString("window.Turbo.visit(refreshUrl.toString(), { action: 'replace' });", $template);
+        $this->assertStringContainsString("refreshUrl.searchParams.set('page_copy[sourceChannel]', sourceChannelField.value);", $template);
+        $this->assertStringContainsString("refreshUrl.searchParams.set('page_copy[targetChannel]', targetChannelField.value);", $template);
     }
 
-    public function testCopyTemplateDisablesImplicitRenderRestAtFormEnd(): void
+    public function testCopyTemplateExplicitlyRendersRemainingHiddenFields(): void
     {
         $template = file_get_contents(__DIR__.'/../../Resources/views/page/copy.html.twig');
 
         $this->assertIsString($template);
+        $this->assertStringContainsString("{{ form_rest(form) }}", $template);
         $this->assertStringContainsString("{{ form_end(form, { render_rest: false }) }}", $template);
         $this->assertStringNotContainsString("{{ form_row(form.actions, {'style':'horizontal', 'state': 'show'}) }}", $template);
     }

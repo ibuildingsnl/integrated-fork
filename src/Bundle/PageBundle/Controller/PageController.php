@@ -421,12 +421,19 @@ class PageController extends AbstractController
         }
 
         $formData = $request->request->all('page_copy');
+        if (!\is_array($formData) || $formData === []) {
+            $formData = $request->query->all('page_copy');
+        }
+
         $targetChannel = $formData['targetChannel'] ?? null;
         $sourceChannel = $formData['sourceChannel'] ?? null;
 
         $form = $this->createForm(
             PageCopyType::class,
-            null,
+            [
+                'sourceChannel' => $sourceChannel,
+                'targetChannel' => $targetChannel,
+            ],
             [
                 'sourceChannel' => $sourceChannel,
                 'targetChannel' => $targetChannel,

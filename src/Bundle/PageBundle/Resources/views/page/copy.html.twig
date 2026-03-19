@@ -28,6 +28,11 @@
                 </h1>
             </div>
             <section class="editor editor-wrapped">
+                {% if form.vars.errors|length > 0 %}
+                    <div class="alert alert-danger alert-inline mb-4">
+                        {{ form_errors(form) }}
+                    </div>
+                {% endif %}
                 <div class="form-actions form-actions--table-filters" data-page-copy-bulk-tools data-page-copy-channel-filters>
                     {% if form.sourceChannel is defined %}
                         <div class="form-item form-actions__item">
@@ -69,6 +74,7 @@
             </section>
         </div>
         {% block form_end %}
+            {{ form_rest(form) }}
             {{ form_end(form, { render_rest: false }) }}
         {% endblock %}
     </div>
@@ -78,64 +84,174 @@
     {{ parent() }}
 
     <script>
+    function syncPageCopyPanelExpandedState(panel, expanded) {
+        if (!panel) {
+            return;
+        }
+
+        var body = panel.querySelector('[data-page-copy-panel-body]');
+        panel.setAttribute('data-page-copy-expanded', expanded ? 'true' : 'false');
+
+        if (body) {
+            body.style.display = expanded ? '' : 'none';
+        }
+    }
+
+    function pageCopyPanelHasPersistentExpandedState(panel) {
+        if (!panel) {
+            return false;
+        }
+
+        return Array.prototype.some.call(
+            panel.querySelectorAll('[data-page-copy-block-operation] select'),
+            function(operationSelect) {
+                return operationSelect.value === 'clone';
+            }
+        );
+    }
+
+    function syncPageCopyPanelSelectedState(panel, selected) {
+        if (!panel) {
+            return;
+        }
+
+        panel.setAttribute('data-page-copy-selected', selected ? 'true' : 'false');
+
+        if (selected) {
+            syncPageCopyPanelExpandedState(panel, true);
+            return;
+        }
+
+        if (!pageCopyPanelHasPersistentExpandedState(panel)) {
+            syncPageCopyPanelExpandedState(panel, false);
+        }
+    }
+
+    function syncPageCopyCloneAllButtonState(panel) {
+        if (!panel) {
+            return;
+        }
+
+        var cloneAllButton = panel.querySelector('[data-page-copy-clone-all]');
+        var select = panel.querySelector('[data-page-copy-select]');
+
+        if (!cloneAllButton) {
+            return;
+        }
+
+        cloneAllButton.disabled = !select || !select.checked;
+    }
+
+    function replacePageCopyPlainString(value, search, replacement) {
+        if (typeof value !== 'string' || search === '') {
+            return value;
+        }
+
+        return value.split(search).join(replacement);
+    }
+
+    function applyPageCopySearchReplace() {
+        var replaceSearch = document.querySelector('[data-page-copy-search]');
+        var replaceValue = document.querySelector('[data-page-copy-replace]');
+        if (!replaceSearch || !replaceValue) {
+            return;
+        }
+
+        var search = replaceSearch.value;
+        var replacement = replaceValue.value;
+        if (search === '') {
+            return;
+        }
+
+        document.querySelectorAll('[data-page-copy-new-block-id]').forEach(function(input) {
+            var currentValue = input.value;
+            var proposedBlockId = input.dataset.proposedBlockId || '';
+
+            input.dataset.proposedBlockId = replacePageCopyPlainString(proposedBlockId, search, replacement);
+
+            if (currentValue !== '') {
+                input.value = replacePageCopyPlainString(currentValue, search, replacement);
+                return;
+            }
+
+            var row = input.closest('[data-page-copy-block-row]');
+            var operation = row ? row.querySelector('[data-page-copy-block-operation] select') : null;
+            if (operation && operation.value === 'clone') {
+                input.value = input.dataset.proposedBlockId || '';
+            }
+        });
+    }
+
+    function cloneAllPageCopyBlocks(panel) {
+        if (!panel) {
+            return;
+        }
+
+        syncPageCopyPanelExpandedState(panel, true);
+
+        panel.querySelectorAll('[data-page-copy-block-operation] select').forEach(function(select) {
+            var row = select.closest('[data-page-copy-block-row]');
+            var container = row ? row.querySelector('[data-page-copy-new-block-id-container]') : null;
+            var input = container ? container.querySelector('[data-page-copy-new-block-id]') : null;
+
+            select.value = 'clone';
+
+            if (container) {
+                container.style.display = '';
+            }
+
+            if (input) {
+                input.disabled = false;
+                input.required = true;
+                input.value = input.dataset.proposedBlockId || '';
+            }
+        });
+    }
+
+    function normalizePageCopyCloneInputs(scope) {
+        (scope || document).querySelectorAll('[data-page-copy-block-operation] select').forEach(function(select) {
+            if (select.value !== 'clone') {
+                return;
+            }
+
+            var row = select.closest('[data-page-copy-block-row]');
+            var container = row ? row.querySelector('[data-page-copy-new-block-id-container]') : null;
+            var input = container ? container.querySelector('[data-page-copy-new-block-id]') : null;
+            if (!container || !input) {
+                return;
+            }
+
+            container.style.display = '';
+            input.disabled = false;
+            input.required = true;
+
+            if (input.value === '') {
+                input.value = input.dataset.proposedBlockId || '';
+            }
+        });
+    }
+
     function initializePageCopyPanels() {
         var pageCopyForm = document.querySelector('[data-page-copy-form]');
         var actionField = pageCopyForm ? pageCopyForm.querySelector('#page_copy_action') : null;
-        var sourceChannelField = pageCopyForm ? pageCopyForm.querySelector('[data-page-copy-source-channel]') : null;
-        var targetChannelField = pageCopyForm ? pageCopyForm.querySelector('[data-page-copy-target-channel]') : null;
-        var replaceSearch = document.querySelector('[data-page-copy-search]');
-        var replaceValue = document.querySelector('[data-page-copy-replace]');
-        var replaceButton = document.querySelector('[data-page-copy-apply-replace]');
+        var sourceChannelField = pageCopyForm ? pageCopyForm.querySelector('select[data-page-copy-source-channel]') : null;
+        var targetChannelField = pageCopyForm ? pageCopyForm.querySelector('select[data-page-copy-target-channel]') : null;
 
         function submitPageCopyRefresh() {
-            if (!pageCopyForm || !actionField) {
+            if (!pageCopyForm || !sourceChannelField || !targetChannelField) {
                 return;
             }
 
-            actionField.value = 'refresh';
-            pageCopyForm.requestSubmit();
-        }
+            var refreshUrl = new URL(pageCopyForm.getAttribute('action') || window.location.href, window.location.origin);
+            refreshUrl.searchParams.set('page_copy[sourceChannel]', sourceChannelField.value);
+            refreshUrl.searchParams.set('page_copy[targetChannel]', targetChannelField.value);
 
-        function replacePlainString(value, search, replacement) {
-            if (typeof value !== 'string' || search === '') {
-                return value;
-            }
-
-            return value.split(search).join(replacement);
-        }
-
-        function applySearchReplace() {
-            if (!replaceSearch || !replaceValue) {
+            if (window.Turbo && typeof window.Turbo.visit === 'function') {
+                window.Turbo.visit(refreshUrl.toString(), { action: 'replace' });
                 return;
             }
 
-            var search = replaceSearch.value;
-            var replacement = replaceValue.value;
-            if (search === '') {
-                return;
-            }
-
-            document.querySelectorAll('[data-page-copy-new-block-id]').forEach(function(input) {
-                var currentValue = input.value;
-                var proposedBlockId = input.dataset.proposedBlockId || '';
-
-                input.dataset.proposedBlockId = replacePlainString(proposedBlockId, search, replacement);
-
-                if (currentValue !== '') {
-                    input.value = replacePlainString(currentValue, search, replacement);
-                    return;
-                }
-
-                var row = input.closest('[data-page-copy-block-row]');
-                var operation = row ? row.querySelector('[data-page-copy-block-operation] select') : null;
-                if (operation && operation.value === 'clone') {
-                    input.value = input.dataset.proposedBlockId || '';
-                }
-            });
-        }
-
-        if (replaceButton) {
-            replaceButton.addEventListener('click', applySearchReplace);
+            window.location.assign(refreshUrl.toString());
         }
 
         [sourceChannelField, targetChannelField].forEach(function(channelField) {
@@ -147,68 +263,19 @@
         });
 
         document.querySelectorAll('[data-page-copy-panel]').forEach(function(panel) {
-            var body = panel.querySelector('[data-page-copy-panel-body]');
-            var toggle = panel.querySelector('[data-page-copy-toggle]');
             var cloneAllButton = panel.querySelector('[data-page-copy-clone-all]');
-
-            var syncExpandedState = function(expanded) {
-                panel.setAttribute('data-page-copy-expanded', expanded ? 'true' : 'false');
-
-                if (body) {
-                    body.style.display = expanded ? '' : 'none';
-                }
-
-                if (toggle) {
-                    toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-                }
-            };
-
-            if (toggle) {
-                toggle.addEventListener('click', function() {
-                    syncExpandedState(panel.getAttribute('data-page-copy-expanded') !== 'true');
-                });
-            }
-
             var select = panel.querySelector('[data-page-copy-select]');
-            var hasPersistentExpandedState = function() {
-                return Array.prototype.some.call(
-                    panel.querySelectorAll('[data-page-copy-block-operation] select'),
-                    function(operationSelect) {
-                        return operationSelect.value === 'clone';
-                    }
-                );
-            };
-            var syncSelectedState = function(selected) {
-                panel.setAttribute('data-page-copy-selected', selected ? 'true' : 'false');
-
-                if (selected) {
-                    syncExpandedState(true);
-                    return;
-                }
-
-                if (!selected && !hasPersistentExpandedState()) {
-                    syncExpandedState(false);
-                }
-            };
-
-            var syncCloneAllState = function() {
-                if (!cloneAllButton) {
-                    return;
-                }
-
-                cloneAllButton.disabled = !select || !select.checked;
-            };
 
             if (select) {
                 select.addEventListener('change', function() {
-                    syncSelectedState(select.checked);
-                    syncCloneAllState();
+                    syncPageCopyPanelSelectedState(panel, select.checked);
+                    syncPageCopyCloneAllButtonState(panel);
                 });
             }
 
-            syncExpandedState(panel.getAttribute('data-page-copy-expanded') === 'true');
-            syncSelectedState(select ? select.checked : panel.getAttribute('data-page-copy-selected') === 'true');
-            syncCloneAllState();
+            syncPageCopyPanelExpandedState(panel, panel.getAttribute('data-page-copy-expanded') === 'true');
+            syncPageCopyPanelSelectedState(panel, select ? select.checked : panel.getAttribute('data-page-copy-selected') === 'true');
+            syncPageCopyCloneAllButtonState(panel);
 
             panel.querySelectorAll('[data-page-copy-block-operation] select').forEach(function(select) {
                 var row = select.closest('[data-page-copy-block-row]');
@@ -240,31 +307,55 @@
                 syncCloneState();
                 select.addEventListener('change', syncCloneState);
             });
-
-            if (cloneAllButton) {
-                cloneAllButton.addEventListener('click', function() {
-                    syncExpandedState(true);
-
-                    panel.querySelectorAll('[data-page-copy-block-operation] select').forEach(function(select) {
-                        var row = select.closest('[data-page-copy-block-row]');
-                        var container = row ? row.querySelector('[data-page-copy-new-block-id-container]') : null;
-                        var input = container ? container.querySelector('[data-page-copy-new-block-id]') : null;
-
-                        select.value = 'clone';
-
-                        if (container) {
-                            container.style.display = '';
-                        }
-
-                        if (input) {
-                            input.disabled = false;
-                            input.required = true;
-                            input.value = input.dataset.proposedBlockId || '';
-                        }
-                    });
-                });
-            }
         });
+
+        if (pageCopyForm && !pageCopyForm.dataset.pageCopySubmitNormalized) {
+            pageCopyForm.addEventListener('submit', function() {
+                normalizePageCopyCloneInputs(pageCopyForm);
+            });
+
+            pageCopyForm.dataset.pageCopySubmitNormalized = 'true';
+        }
+    }
+
+    if (!window.__integratedPageCopyDelegatedSelectionBound) {
+        document.addEventListener('change', function(event) {
+            if (!(event.target instanceof HTMLInputElement) || !event.target.matches('[data-page-copy-select]')) {
+                return;
+            }
+
+            var panel = event.target.closest('[data-page-copy-panel]');
+            syncPageCopyPanelSelectedState(panel, event.target.checked);
+            syncPageCopyCloneAllButtonState(panel);
+        });
+
+        window.__integratedPageCopyDelegatedSelectionBound = true;
+    }
+
+    if (!window.__integratedPageCopyDelegatedCloneAllBound) {
+        document.addEventListener('click', function(event) {
+            var button = event.target instanceof Element ? event.target.closest('[data-page-copy-clone-all]') : null;
+            if (!(button instanceof HTMLButtonElement) || button.disabled) {
+                return;
+            }
+
+            cloneAllPageCopyBlocks(button.closest('[data-page-copy-panel]'));
+        });
+
+        window.__integratedPageCopyDelegatedCloneAllBound = true;
+    }
+
+    if (!window.__integratedPageCopyDelegatedSearchReplaceBound) {
+        document.addEventListener('click', function(event) {
+            var button = event.target instanceof Element ? event.target.closest('[data-page-copy-apply-replace]') : null;
+            if (!(button instanceof HTMLButtonElement)) {
+                return;
+            }
+
+            applyPageCopySearchReplace();
+        });
+
+        window.__integratedPageCopyDelegatedSearchReplaceBound = true;
     }
 
     document.addEventListener('DOMContentLoaded', initializePageCopyPanels);
