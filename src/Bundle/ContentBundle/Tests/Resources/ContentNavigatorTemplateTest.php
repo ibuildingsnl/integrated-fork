@@ -32,15 +32,15 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString("{% set brandNames = content.facet_brands|default([])|filter(name => name is not empty and name != 'None') %}", $indexTemplate);
         $this->assertStringContainsString('{% set fallbackWebsiteChannelIds = content.website_channel_ids_string|default([])|filter(id => id is not empty and id != \'None\') %}', $indexTemplate);
         $this->assertStringContainsString('{% set fallbackWebsiteChannelFavicons = content.website_channel_favicon_paths_string|default([]) %}', $indexTemplate);
-        $this->assertStringContainsString("{% if faviconPath is not empty %}", $indexTemplate);
-        $this->assertStringContainsString("image(faviconPath).cropResize(36, 36)", $indexTemplate);
-        $this->assertStringNotContainsString("{% set brandNames = content.facet_brands|default([]) %}", $indexTemplate);
+        $this->assertStringContainsString('{% if faviconPath is not empty %}', $indexTemplate);
+        $this->assertStringContainsString('image(faviconPath).cropResize(36, 36)', $indexTemplate);
+        $this->assertStringNotContainsString('{% set brandNames = content.facet_brands|default([]) %}', $indexTemplate);
         $this->assertStringNotContainsString('{% set document = integrated_document(content) %}', $weekTemplate);
         $this->assertStringContainsString("{% set brandNames = content.facet_brands|default([])|filter(name => name is not empty and name != 'None') %}", $weekTemplate);
         $this->assertStringContainsString('{% set fallbackWebsiteChannelIds = content.website_channel_ids_string|default([])|filter(id => id is not empty and id != \'None\') %}', $weekTemplate);
         $this->assertStringContainsString('{% set fallbackWebsiteChannelFavicons = content.website_channel_favicon_paths_string|default([]) %}', $weekTemplate);
-        $this->assertStringContainsString("{% if faviconPath is not empty %}", $weekTemplate);
-        $this->assertStringContainsString("image(faviconPath).cropResize(36, 36)", $weekTemplate);
-        $this->assertStringNotContainsString("{% set brandNames = content.facet_brands|default([]) %}", $weekTemplate);
+        $this->assertStringContainsString('{% if faviconPath is not empty %}', $weekTemplate);
+        $this->assertStringContainsString('image(faviconPath).cropResize(36, 36)', $weekTemplate);
+        $this->assertStringNotContainsString('{% set brandNames = content.facet_brands|default([]) %}', $weekTemplate);
     }
 }
