@@ -452,6 +452,7 @@ class PageController extends AbstractController
                     $this->pageCopyService->copyPages($requestModel);
                 } catch (\InvalidArgumentException $exception) {
                     $form->addError(new FormError($exception->getMessage()));
+                    $this->addFlash('warning', $exception->getMessage());
 
                     return $this->render('@IntegratedPage/page/copy.html.twig', [
                         'form' => $form,
@@ -464,9 +465,31 @@ class PageController extends AbstractController
             }
         }
 
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->flashUniqueFormErrorsAsWarnings($form);
+        }
+
         return $this->render('@IntegratedPage/page/copy.html.twig', [
             'form' => $form,
         ]);
+    }
+
+    private function flashUniqueFormErrorsAsWarnings(FormInterface $form): void
+    {
+        $messages = [];
+
+        foreach ($form->getErrors(true, true) as $error) {
+            $message = trim((string) $error->getMessage());
+            if ($message === '') {
+                continue;
+            }
+
+            $messages[$message] = true;
+        }
+
+        foreach (array_keys($messages) as $message) {
+            $this->addFlash('warning', $message);
+        }
     }
 
     public function deleteWithoutChannel(Request $request, string $id): Response
