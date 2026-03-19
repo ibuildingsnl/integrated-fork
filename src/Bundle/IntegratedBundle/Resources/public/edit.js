@@ -16687,10 +16687,19 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 function isValidURL(str) {
   var a = document.createElement('a');
   a.href = str;
-  console.log(a.href);
-  console.log(a.host);
-  console.log(window.location.host);
   return a.host && a.host != window.location.host;
+}
+function extractEmbeddableUrl(input) {
+  if (!input) {
+    return '';
+  }
+  var container = document.createElement('div');
+  container.innerHTML = input;
+  var firstLink = container.querySelector('a[href]');
+  if (firstLink) {
+    return firstLink.getAttribute('href') || '';
+  }
+  return container.textContent ? container.textContent.trim() : input;
 }
 function normalizeTinyMceStyleFormats() {
   var styles = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
@@ -16730,6 +16739,71 @@ function getTinyMceWrapperDivStyles() {
   var styles = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
   return styles.filter(function (style) {
     return style && style.wrapper === true && style.block === 'div' && getTinyMceStyleClasses(style).length > 0;
+  });
+}
+function escapeHtml(value) {
+  return String(value !== null && value !== void 0 ? value : '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+function isFacebookFallbackEmbed(doc) {
+  return Boolean(doc && doc.querySelector && doc.querySelector('.fb-post[data-href]'));
+}
+function extractFacebookFallbackUrl(doc) {
+  var node = doc && doc.querySelector ? doc.querySelector('.fb-post[data-href]') : null;
+  return node ? node.getAttribute('data-href') || '' : '';
+}
+function buildFacebookEmbedPreview(data, extractedUrl) {
+  var image = data.image ? '<div style="background:#eef1f4;"><img src="' + escapeHtml(data.image) + '" alt="" style="display:block;width:100%;max-height:320px;object-fit:cover;"></div>' : '';
+  var title = escapeHtml(data.author_name || data.provider_name || 'Facebook');
+  var meta = escapeHtml(data.published_date || 'Facebook post');
+  var description = escapeHtml(data.description || extractedUrl || 'Facebook embed');
+  var visibleUrl = escapeHtml(data.provider_url || data.url || extractedUrl || '');
+  return '' + '<div class="facebook-embed-preview" style="max-width:500px;border:1px solid #d9dee5;border-radius:8px;overflow:hidden;background:#fff;font-family:Helvetica,Arial,sans-serif;color:#1c1e21;">' + image + '<div style="padding:16px;">' + '<div style="font-size:18px;line-height:1.3;font-weight:700;margin:0 0 4px;">' + title + '</div>' + '<div style="font-size:13px;line-height:1.4;color:#65676b;margin:0 0 12px;">' + meta + '</div>' + '<div style="font-size:16px;line-height:1.55;white-space:pre-wrap;margin:0 0 12px;">' + description + '</div>' + '<div style="font-size:12px;line-height:1.4;color:#65676b;word-break:break-word;">' + visibleUrl + '</div>' + '</div>' + '</div>';
+}
+function buildFacebookPreviewWrapper(originalHtml, previewHtml) {
+  return '<div class="embed-content Facebook" data-facebook-embed-original="' + escapeHtml(originalHtml) + '">' + previewHtml + '</div><br>';
+}
+function restoreFacebookEmbedOriginalMarkup(content) {
+  var container = document.createElement('div');
+  container.innerHTML = content;
+  container.querySelectorAll('.embed-content.Facebook[data-facebook-embed-original]').forEach(function (node) {
+    var original = node.getAttribute('data-facebook-embed-original');
+    if (!original) {
+      return;
+    }
+    node.innerHTML = original;
+    node.removeAttribute('data-facebook-embed-original');
+  });
+  return container.innerHTML;
+}
+function hydrateFacebookEmbedPreviews(root) {
+  if (!root || typeof root.querySelectorAll !== 'function') {
+    return;
+  }
+  root.querySelectorAll('.embed-content.Facebook').forEach(function (node) {
+    if (!(node instanceof Element) || node.querySelector('.facebook-embed-preview')) {
+      return;
+    }
+    var originalHtml = node.getAttribute('data-facebook-embed-original') || node.innerHTML;
+    if (!originalHtml) {
+      return;
+    }
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(originalHtml, 'text/html');
+    if (!isFacebookFallbackEmbed(doc)) {
+      return;
+    }
+    var extractedUrl = extractFacebookFallbackUrl(doc);
+    var previewHtml = buildFacebookEmbedPreview({
+      provider_name: 'Facebook',
+      description: '',
+      image: '',
+      author_name: '',
+      published_date: '',
+      provider_url: '',
+      url: extractedUrl
+    }, extractedUrl);
+    node.setAttribute('data-facebook-embed-original', originalHtml);
+    node.innerHTML = previewHtml;
   });
 }
 function matchesTinyMceWrapperClasses(element, style) {
@@ -16928,7 +17002,7 @@ function initTinyMceEditors() {
         var cleanContent = args.content.replace(/<meta[^>]*>/g, ''); // Remove <meta> tags
         cleanContent = cleanContent.replace(/<span[^>]*>(.*?)<\/span>/g, '$1'); // Unwrap <span> tags
         args.content = cleanContent;
-        var input = args.content.trim();
+        var input = extractEmbeddableUrl(args.content.trim());
         if (!isValidURL(input)) return;
         $.ajax({
           url: '/admin/_oembed/fetch-data',
@@ -16955,6 +17029,12 @@ function initTinyMceEditors() {
             }
             var serializer = new XMLSerializer();
             var modifiedCode = serializer.serializeToString(doc);
+            if (data.provider_name === 'Facebook' && isFacebookFallbackEmbed(doc)) {
+              var extractedUrl = extractFacebookFallbackUrl(doc);
+              var previewHtml = buildFacebookEmbedPreview(data, extractedUrl);
+              args.content = buildFacebookPreviewWrapper(modifiedCode, previewHtml);
+              return;
+            }
             args.content = '<div class="embed-content ' + data.provider_name + '">' + modifiedCode + '</div><br>';
           },
           error: function error(jqXHR, textStatus, errorThrown) {},
@@ -17364,6 +17444,15 @@ function initTinyMceEditors() {
           });
         };
         editor.on('init change SetContent ExecCommand', normalizeWrappedLists);
+        editor.on('init SetContent', function () {
+          hydrateFacebookEmbedPreviews(editor.getBody());
+        });
+        editor.on('GetContent', function (event) {
+          if (!event || typeof event.content !== 'string' || event.content.indexOf('data-facebook-embed-original') === -1) {
+            return;
+          }
+          event.content = restoreFacebookEmbedOriginalMarkup(event.content);
+        });
       }
     });
     element.data('tinymce-initialized', true);
