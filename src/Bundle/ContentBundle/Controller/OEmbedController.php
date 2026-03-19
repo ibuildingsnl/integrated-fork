@@ -63,7 +63,7 @@ class OEmbedController extends AbstractController
             ];
 
             if ($permissionFailure !== null) {
-                $payload['msg'] = sprintf(
+                $payload['msg'] = \sprintf(
                     '%s oEmbed is not available for this app. Meta oEmbed Read approval is required.',
                     $permissionFailure
                 );
@@ -99,13 +99,11 @@ class OEmbedController extends AbstractController
     {
         $value = $request->query->get('url');
 
-        if (!is_string($value) || $value === '') {
+        if (!\is_string($value) || $value === '') {
             return null;
         }
 
-        $url = urldecode($value);
-
-        return $url !== '' ? $url : null;
+        return urldecode($value);
     }
 
     private function fetchEmbedInfo(string $url): object
@@ -129,9 +127,9 @@ class OEmbedController extends AbstractController
 
     private function buildFacebookFallbackCode(string $url): string
     {
-        $escapedUrl = htmlspecialchars($url, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $escapedUrl = htmlspecialchars($url, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
 
-        return sprintf(
+        return \sprintf(
             '<div class="fb-post" data-href="%s" data-show-text="true"></div>',
             $escapedUrl
         );
@@ -146,7 +144,7 @@ class OEmbedController extends AbstractController
     {
         $value = $this->getProperty($info, $property);
 
-        if (!is_object($value)) {
+        if (!\is_object($value)) {
             return null;
         }
 
@@ -167,7 +165,7 @@ class OEmbedController extends AbstractController
 
         $oEmbed = $info->getOEmbed();
 
-        if (!is_object($oEmbed)) {
+        if (!\is_object($oEmbed)) {
             return [
                 'endpoint' => null,
                 'data' => [],
@@ -179,10 +177,13 @@ class OEmbedController extends AbstractController
 
         return [
             'endpoint' => $endpoint !== null ? $this->sanitizeDebugEndpoint((string) $endpoint) : null,
-            'data' => is_array($data) ? $this->sanitizeDebugData($data) : [],
+            'data' => \is_array($data) ? $this->sanitizeDebugData($data) : [],
         ];
     }
 
+    /**
+     * @param array<string, mixed> $oEmbedData
+     */
     private function detectMetaOEmbedPermissionFailure(object $info, string $requestedUrl, array $oEmbedData): ?string
     {
         $providerLabel = $this->resolveMetaProviderLabel($info, $requestedUrl);
@@ -193,7 +194,7 @@ class OEmbedController extends AbstractController
 
         $error = $oEmbedData['error'] ?? null;
 
-        if (!is_array($error)) {
+        if (!\is_array($error)) {
             return null;
         }
 
@@ -204,7 +205,7 @@ class OEmbedController extends AbstractController
             return $providerLabel;
         }
 
-        if (is_string($errorMessage) && stripos($errorMessage, 'Meta oEmbed Read') !== false) {
+        if (\is_string($errorMessage) && stripos($errorMessage, 'Meta oEmbed Read') !== false) {
             return $providerLabel;
         }
 
@@ -215,7 +216,7 @@ class OEmbedController extends AbstractController
     {
         $providerName = $this->getProperty($info, 'providerName');
 
-        if (is_string($providerName)) {
+        if (\is_string($providerName)) {
             $normalized = strtolower($providerName);
 
             if ($normalized === 'facebook') {
@@ -230,7 +231,7 @@ class OEmbedController extends AbstractController
         $resolvedUrl = $this->getProperty($info, 'url');
         $candidateUrls = [$requestedUrl];
 
-        if (is_string($resolvedUrl) && $resolvedUrl !== '') {
+        if (\is_string($resolvedUrl) && $resolvedUrl !== '') {
             $candidateUrls[] = $resolvedUrl;
         }
 
@@ -269,6 +270,7 @@ class OEmbedController extends AbstractController
 
     /**
      * @param array<mixed> $data
+     *
      * @return array<mixed>
      */
     private function sanitizeDebugData(array $data): array
@@ -280,7 +282,7 @@ class OEmbedController extends AbstractController
                 continue;
             }
 
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $sanitized[$key] = $this->sanitizeDebugData($value);
                 continue;
             }

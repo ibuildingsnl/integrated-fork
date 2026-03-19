@@ -23,9 +23,9 @@ final class MediaGalleryDragToUploadFlowTest extends TestCase
         $compiled = file_get_contents(__DIR__.'/../../../IntegratedBundle/Resources/public/mediagallery.js');
 
         self::assertIsString($compiled);
-        self::assertMatchesRegularExpression('/off\\("dragenter"\\+\\w+,"\\.media-library"\\)\\.on\\("dragenter"\\+\\w+,"\\.media-library"/', $compiled);
-        self::assertMatchesRegularExpression('/off\\("dragover"\\+\\w+,"\\.media-library"\\)\\.on\\("dragover"\\+\\w+,"\\.media-library"/', $compiled);
-        self::assertMatchesRegularExpression('/off\\("drop"\\+\\w+,"\\.media-library"\\)\\.on\\("drop"\\+\\w+,"\\.media-library"/', $compiled);
+        self::assertMatchesRegularExpression('/off\\([\'"]dragenter[\'"]\\s*\\+\\s*\\w+\\s*,\\s*[\'"]\\.media-library[\'"]\\)\\s*\\.on\\([\'"]dragenter[\'"]\\s*\\+\\s*\\w+\\s*,\\s*[\'"]\\.media-library[\'"]/', $compiled);
+        self::assertMatchesRegularExpression('/off\\([\'"]dragover[\'"]\\s*\\+\\s*\\w+\\s*,\\s*[\'"]\\.media-library[\'"]\\)\\s*\\.on\\([\'"]dragover[\'"]\\s*\\+\\s*\\w+\\s*,\\s*[\'"]\\.media-library[\'"]/', $compiled);
+        self::assertMatchesRegularExpression('/off\\([\'"]drop[\'"]\\s*\\+\\s*\\w+\\s*,\\s*[\'"]\\.media-library[\'"]\\)\\s*\\.on\\([\'"]drop[\'"]\\s*\\+\\s*\\w+\\s*,\\s*[\'"]\\.media-library[\'"]/', $compiled);
         self::assertStringContainsString('dataTransfer', $compiled);
         self::assertStringContainsString('toggle_upload_view()', $compiled);
     }

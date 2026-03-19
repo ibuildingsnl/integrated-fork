@@ -421,7 +421,7 @@ class PageController extends AbstractController
         }
 
         $formData = $request->request->all('page_copy');
-        if (!\is_array($formData) || $formData === []) {
+        if ($formData === []) {
             $formData = $request->query->all('page_copy');
         }
 
@@ -474,6 +474,9 @@ class PageController extends AbstractController
         ]);
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     private function flashUniqueFormErrorsAsWarnings(FormInterface $form): void
     {
         $messages = [];
