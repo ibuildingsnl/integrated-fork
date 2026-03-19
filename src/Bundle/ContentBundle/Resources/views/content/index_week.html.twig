@@ -136,7 +136,7 @@
                     {% set editLink = path('integrated_content_content_edit', {id: content.type_id}) %}
                 {% endif %}
                 {% set type = contentTypes|filter(t => t.id == content.type_name)|first %}
-                {% set brandNames = content.facet_brands|default([]) %}
+                {% set brandNames = content.facet_brands|default([])|filter(name => name is not empty and name != 'None') %}
                 {% set fallbackWebsiteChannelIds = content.website_channel_ids_string|default([])|filter(id => id is not empty and id != 'None') %}
                 {% set fallbackWebsiteChannelNames = content.website_channel_names_string|default([]) %}
                 {% set fallbackWebsiteChannelFavicons = content.website_channel_favicon_paths_string|default([]) %}
