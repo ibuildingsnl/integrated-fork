@@ -64,9 +64,9 @@ final class BrandExtensionTest extends TestCase
         $extension->build($container, $content);
 
         self::assertSame(['testmerk'], $container->get('facet_brands'));
-        self::assertSame(['testmerk_website'], $container->get('website_channel_ids'));
-        self::assertSame(['Testmerk'], $container->get('website_channel_names'));
-        self::assertSame(['/storage/brands/testmerk/favicon.png'], $container->get('website_channel_favicon_paths'));
+        self::assertSame(['testmerk_website'], $container->get('website_channel_ids_string'));
+        self::assertSame(['Testmerk'], $container->get('website_channel_names_string'));
+        self::assertSame(['/storage/brands/testmerk/favicon.png'], $container->get('website_channel_favicon_paths_string'));
     }
 
     public function testBuildFallsBackToWebsiteChannelNameWithoutBrandFavicon(): void
@@ -97,9 +97,9 @@ final class BrandExtensionTest extends TestCase
         $extension->build($container, $content);
 
         self::assertSame(['None'], $container->get('facet_brands'));
-        self::assertSame(['standalone_website'], $container->get('website_channel_ids'));
-        self::assertSame(['Standalone Website'], $container->get('website_channel_names'));
-        self::assertSame([''], $container->get('website_channel_favicon_paths'));
+        self::assertSame(['standalone_website'], $container->get('website_channel_ids_string'));
+        self::assertSame(['Standalone Website'], $container->get('website_channel_names_string'));
+        self::assertSame([''], $container->get('website_channel_favicon_paths_string'));
     }
 
     private function createStorageMock(string $pathname): Storage&MockObject

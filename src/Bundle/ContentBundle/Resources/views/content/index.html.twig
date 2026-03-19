@@ -49,9 +49,9 @@
             <tbody id="post-list">
             {% for content in pager %}
                 {% set brandNames = content.facet_brands|default([]) %}
-                {% set fallbackWebsiteChannelIds = content.website_channel_ids|default([])|filter(id => id is not empty and id != 'None') %}
-                {% set fallbackWebsiteChannelNames = content.website_channel_names|default([]) %}
-                {% set fallbackWebsiteChannelFavicons = content.website_channel_favicon_paths|default([]) %}
+                {% set fallbackWebsiteChannelIds = content.website_channel_ids_string|default([])|filter(id => id is not empty and id != 'None') %}
+                {% set fallbackWebsiteChannelNames = content.website_channel_names_string|default([]) %}
+                {% set fallbackWebsiteChannelFavicons = content.website_channel_favicon_paths_string|default([]) %}
                 {% set visibleBrandNames = brandNames|slice(0, 3) %}
                 {% set visibleFallbackWebsiteChannelIds = fallbackWebsiteChannelIds|slice(0, 3) %}
                 {% set channelCount = brandNames is not empty ? brandNames|length : fallbackWebsiteChannelIds|length %}
@@ -142,11 +142,6 @@
                                             </div>
                                         {% endif %}
                                     {% endfor %}
-                                {% else %}
-                                    <div class="channel-favicon font-bold"
-                                         style="background-color: {{ type.options.color|default('gray') }}">
-                                        ?
-                                    </div>
                                 {% endif %}
                             </div>
                         </div>

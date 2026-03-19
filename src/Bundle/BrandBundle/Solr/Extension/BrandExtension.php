@@ -82,8 +82,8 @@ class BrandExtension implements TypeExtensionInterface
         }
 
         $indexedWebsiteChannels[$channelId] = true;
-        $container->add('website_channel_ids', $channelId);
-        $container->add('website_channel_names', trim($name) !== '' ? $name : $channelId);
-        $container->add('website_channel_favicon_paths', $faviconPath ?? '');
+        $container->add('website_channel_ids_string', $channelId);
+        $container->add('website_channel_names_string', trim($name) !== '' ? $name : $channelId);
+        $container->add('website_channel_favicon_paths_string', $faviconPath ?? '');
     }
 }

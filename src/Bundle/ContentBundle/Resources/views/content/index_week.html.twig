@@ -137,9 +137,9 @@
                 {% endif %}
                 {% set type = contentTypes|filter(t => t.id == content.type_name)|first %}
                 {% set brandNames = content.facet_brands|default([]) %}
-                {% set fallbackWebsiteChannelIds = content.website_channel_ids|default([])|filter(id => id is not empty and id != 'None') %}
-                {% set fallbackWebsiteChannelNames = content.website_channel_names|default([]) %}
-                {% set fallbackWebsiteChannelFavicons = content.website_channel_favicon_paths|default([]) %}
+                {% set fallbackWebsiteChannelIds = content.website_channel_ids_string|default([])|filter(id => id is not empty and id != 'None') %}
+                {% set fallbackWebsiteChannelNames = content.website_channel_names_string|default([]) %}
+                {% set fallbackWebsiteChannelFavicons = content.website_channel_favicon_paths_string|default([]) %}
                 {% set visibleBrandNames = brandNames|slice(0, 3) %}
                 {% set visibleFallbackWebsiteChannelIds = fallbackWebsiteChannelIds|slice(0, 3) %}
                 {% set channelCount = brandNames is not empty ? brandNames|length : fallbackWebsiteChannelIds|length %}
