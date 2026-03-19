@@ -1,11 +1,8 @@
 {% if content is defined and content.extensions['integrated.extension.workflow']['state'] is defined %}
     {% set workflow = content.extensions['integrated.extension.workflow']['state'] %}
 {% endif %}
-{% set isPublishable = workflow is defined and workflow.isPublishable() %}
-{% if not isPublishable and content is defined %}
-    {% set isPublishable = content.isPublished(false) and content.getChannels|length > 0 %}
-{% endif %}
-{% set isPlanned = isPublishable and content is defined and ('now'|date('U') < content.publishTime.startDate|date('U')) %}
+{% set isPublishable = workflow is defined ? workflow.isPublishable() : (content is defined ? (content.isPublished(false) and content.getChannels|length > 0) : false) %}
+{% set isPlanned = isPublishable and content is defined and 'now'|date('U') < content.publishTime.startDate|date('U') %}
 {% set isPublished = isPublishable and not isPlanned %}
 
 <div class="status-options" id="content-status-options">

@@ -48,6 +48,18 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString("document.addEventListener('turbo:frame-load', function(event)", $template);
     }
 
+    public function testIndexTemplateUsesSolrNativeStatusLogic(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content/index.html.twig');
+
+        $this->assertIsString($template);
+        $this->assertStringNotContainsString('status_logic.html.twig', $template);
+        $this->assertStringContainsString('{% set published = content.published|default(false) %}', $template);
+        $this->assertStringContainsString("{% set isPublishable = published in [true, 1, '1', 'true'] and channelCount > 0 %}", $template);
+        $this->assertStringContainsString('{% set hasPublicationDate = content.pub_time is defined %}', $template);
+        $this->assertStringContainsString('{% set isPlanned = isPublishable and hasPublicationDate and not hasStarted %}', $template);
+    }
+
     public function testIndexTemplatesKeepEditLinksPrefetchable(): void
     {
         $indexTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/index.html.twig');

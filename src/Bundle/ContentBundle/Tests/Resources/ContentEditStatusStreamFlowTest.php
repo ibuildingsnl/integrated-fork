@@ -60,10 +60,8 @@ class ContentEditStatusStreamFlowTest extends TestCase
         $template = file_get_contents(__DIR__.'/../../Resources/views/content/partial/status_options.html.twig');
 
         $this->assertIsString($template);
-        $this->assertStringContainsString('{% set isPublishable = workflow is defined and workflow.isPublishable() %}', $template);
-        $this->assertStringContainsString('{% set isPlanned = isPublishable and content is defined and (\'now\'|date(\'U\') < content.publishTime.startDate|date(\'U\')) %}', $template);
-        $this->assertStringContainsString('{% elseif isPlanned %}', $template);
+        $this->assertStringContainsString("{% set isPublishable = workflow is defined ? workflow.isPublishable() : (content is defined ? (content.isPublished(false) and content.getChannels|length > 0) : false) %}", $template);
+        $this->assertStringContainsString("{% set isPlanned = isPublishable and content is defined and 'now'|date('U') < content.publishTime.startDate|date('U') %}", $template);
         $this->assertStringContainsString('{% set isPublished = isPublishable and not isPlanned %}', $template);
-        $this->assertStringNotContainsString("{% set isPublished = content is defined and ((content.isPublished and content.getChannels|length > 0) or content.published == 'true') %}", $template);
     }
 }
