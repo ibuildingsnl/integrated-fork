@@ -16780,7 +16780,7 @@ function hydrateFacebookEmbedPreviews(root) {
     return;
   }
   root.querySelectorAll('.embed-content.Facebook').forEach(function (node) {
-    if (!(node instanceof Element) || node.querySelector('.facebook-embed-preview')) {
+    if (!node || node.nodeType !== Node.ELEMENT_NODE || node.querySelector('.facebook-embed-preview')) {
       return;
     }
     var originalHtml = node.getAttribute('data-facebook-embed-original') || node.innerHTML;
@@ -16804,6 +16804,28 @@ function hydrateFacebookEmbedPreviews(root) {
     }, extractedUrl);
     node.setAttribute('data-facebook-embed-original', originalHtml);
     node.innerHTML = previewHtml;
+    if (!extractedUrl || node.dataset.facebookPreviewMetadataLoaded === 'true' || node.dataset.facebookPreviewMetadataLoading === 'true') {
+      return;
+    }
+    node.dataset.facebookPreviewMetadataLoading = 'true';
+    $.ajax({
+      url: '/admin/_oembed/fetch-data',
+      dataType: 'json',
+      data: {
+        url: encodeURIComponent(extractedUrl)
+      },
+      success: function success(data) {
+        if (!data || data.provider_name !== 'Facebook') {
+          return;
+        }
+        node.setAttribute('data-facebook-embed-original', originalHtml);
+        node.innerHTML = buildFacebookEmbedPreview(data, extractedUrl);
+        node.dataset.facebookPreviewMetadataLoaded = 'true';
+      },
+      complete: function complete() {
+        delete node.dataset.facebookPreviewMetadataLoading;
+      }
+    });
   });
 }
 function matchesTinyMceWrapperClasses(element, style) {

@@ -162,7 +162,7 @@ function hydrateFacebookEmbedPreviews(root) {
     }
 
     root.querySelectorAll('.embed-content.Facebook').forEach((node) => {
-        if (!(node instanceof Element) || node.querySelector('.facebook-embed-preview')) {
+        if (!node || node.nodeType !== Node.ELEMENT_NODE || node.querySelector('.facebook-embed-preview')) {
             return;
         }
 
@@ -190,6 +190,32 @@ function hydrateFacebookEmbedPreviews(root) {
 
         node.setAttribute('data-facebook-embed-original', originalHtml);
         node.innerHTML = previewHtml;
+
+        if (!extractedUrl || node.dataset.facebookPreviewMetadataLoaded === 'true' || node.dataset.facebookPreviewMetadataLoading === 'true') {
+            return;
+        }
+
+        node.dataset.facebookPreviewMetadataLoading = 'true';
+
+        $.ajax({
+            url: '/admin/_oembed/fetch-data',
+            dataType: 'json',
+            data: {
+                url: encodeURIComponent(extractedUrl)
+            },
+            success: function(data) {
+                if (!data || data.provider_name !== 'Facebook') {
+                    return;
+                }
+
+                node.setAttribute('data-facebook-embed-original', originalHtml);
+                node.innerHTML = buildFacebookEmbedPreview(data, extractedUrl);
+                node.dataset.facebookPreviewMetadataLoaded = 'true';
+            },
+            complete: function() {
+                delete node.dataset.facebookPreviewMetadataLoading;
+            }
+        });
     });
 }
 

@@ -20,6 +20,11 @@ final class FacebookEditorPreviewContractTest extends TestCase
         $this->assertStringContainsString("editor.on('GetContent', function(event) {", $script);
         $this->assertStringContainsString('data.provider_url || data.url || extractedUrl || \'\'', $script);
         $this->assertStringContainsString('data.description || extractedUrl || \'Facebook embed\'', $script);
+        $this->assertStringContainsString("if (!node || node.nodeType !== Node.ELEMENT_NODE || node.querySelector('.facebook-embed-preview')) {", $script);
+        $this->assertStringNotContainsString("if (!(node instanceof Element) || node.querySelector('.facebook-embed-preview')) {", $script);
+        $this->assertStringContainsString("node.dataset.facebookPreviewMetadataLoading = 'true';", $script);
+        $this->assertStringContainsString("url: '/admin/_oembed/fetch-data',", $script);
+        $this->assertStringContainsString("node.dataset.facebookPreviewMetadataLoaded = 'true';", $script);
     }
 
     public function testEditorNormalizesAnchorHtmlToExternalUrlBeforeOEmbedCheck(): void
