@@ -49,32 +49,12 @@
             <tbody id="post-list">
             {% for content in pager %}
                 {% set brandNames = content.facet_brands|default([]) %}
-                {% set document = null %}
-                {% if brandNames is empty %}
-                    {% set document = integrated_document(content) %}
-                {% endif %}
-                {% set websiteChannels = [] %}
-                {% set websiteChannelIds = [] %}
-                {% if document is not null and document.channels is defined and document.channels is not null %}
-                    {% for channel in document.channels %}
-                        {% set websiteChannel = channel|integrated_brand_website_channel %}
-                        {% if websiteChannel is null and channel.type is defined and channel.type is not null and channel.type.id|default('') == 'website' %}
-                            {% set websiteChannel = channel %}
-                        {% endif %}
-                        {% if websiteChannel is not null %}
-                            {% set websiteChannelId = websiteChannel.id|default('') %}
-                            {% if websiteChannelId is not empty and websiteChannelId not in websiteChannelIds %}
-                                {% set websiteChannels = websiteChannels|merge([websiteChannel]) %}
-                                {% set websiteChannelIds = websiteChannelIds|merge([websiteChannelId]) %}
-                            {% endif %}
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
+                {% set fallbackWebsiteChannelIds = content.website_channel_ids|default([])|filter(id => id is not empty and id != 'None') %}
+                {% set fallbackWebsiteChannelNames = content.website_channel_names|default([]) %}
+                {% set fallbackWebsiteChannelFavicons = content.website_channel_favicon_paths|default([]) %}
                 {% set visibleBrandNames = brandNames|slice(0, 3) %}
-                {% set channelCount = brandNames|length %}
-                {% if channelCount == 0 and document is not null and document.channels is defined and document.channels is not null %}
-                    {% set channelCount = websiteChannels|length %}
-                {% endif %}
+                {% set visibleFallbackWebsiteChannelIds = fallbackWebsiteChannelIds|slice(0, 3) %}
+                {% set channelCount = brandNames is not empty ? brandNames|length : fallbackWebsiteChannelIds|length %}
 
                 {% set class_name = content.type_class|split('\\')|last %}
                 <tr
@@ -145,18 +125,20 @@
                                             {{ brandName|first|upper }}
                                         </div>
                                     {% endfor %}
-                                {% elseif document.channels is defined and document.channels is not null %}
-                                    {% for channel in websiteChannels %}
-                                        {% if channel|integrated_brand_profile.favicon.file is defined %}
+                                {% elseif fallbackWebsiteChannelIds is not empty %}
+                                    {% for channelId in visibleFallbackWebsiteChannelIds %}
+                                        {% set channelName = fallbackWebsiteChannelNames[loop.index0]|default(channelId) %}
+                                        {% set faviconPath = fallbackWebsiteChannelFavicons[loop.index0]|default('') %}
+                                        {% if faviconPath is not empty %}
                                             <div class="channel-favicon"
-                                                 style="background-image:url('{{ image(channel|integrated_brand_profile.favicon.file).cropResize(36, 36) }}')"
-                                                 title="{{ channel.name }}">
+                                                 style="background-image:url('{{ image(faviconPath).cropResize(36, 36) }}')"
+                                                 title="{{ channelName }}">
                                             </div>
                                         {% else %}
                                             <div class="channel-favicon font-bold"
-                                                 title="{{ channel.name }}"
-                                                 style="background-color: {{ channel|integrated_brand.color|default('gray') }}">
-                                                {{ channel.name|first|upper }}
+                                                 title="{{ channelName }}"
+                                                 style="background-color: {{ type.options.color|default('gray') }}">
+                                                {{ channelName|first|upper }}
                                             </div>
                                         {% endif %}
                                     {% endfor %}

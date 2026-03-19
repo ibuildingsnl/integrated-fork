@@ -137,44 +137,13 @@
                 {% endif %}
                 {% set type = contentTypes|filter(t => t.id == content.type_name)|first %}
                 {% set brandNames = content.facet_brands|default([]) %}
-                {% set document = null %}
-                {% if brandNames is empty %}
-                    {% set document = integrated_document(content) %}
-                    {% set websiteChannels = [] %}
-                    {% set websiteChannelIds = [] %}
-                    {% if document.channels is defined and document.channels is not null %}
-                        {% for channel in document.channels %}
-                            {% set websiteChannel = channel|integrated_brand_website_channel %}
-                            {% if websiteChannel is null and channel.type is defined and channel.type is not null and channel.type.id|default('') == 'website' %}
-                                {% set websiteChannel = channel %}
-                            {% endif %}
-                            {% if websiteChannel is not null %}
-                                {% set websiteChannelId = websiteChannel.id|default('') %}
-                                {% if websiteChannelId is not empty and websiteChannelId not in websiteChannelIds %}
-                                    {% set websiteChannels = websiteChannels|merge([websiteChannel]) %}
-                                    {% set websiteChannelIds = websiteChannelIds|merge([websiteChannelId]) %}
-                                {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                    {% if brandNames is empty and document.channels is defined and document.channels is not null %}
-                        {% set channelBrandNames = [] %}
-                        {% for channel in websiteChannels %}
-                            {% set channelBrandName = channel|integrated_brand_profile.name|default(channel.name|default('')) %}
-                            {% if channelBrandName is not empty and channelBrandName not in channelBrandNames %}
-                                {% set channelBrandNames = channelBrandNames|merge([channelBrandName]) %}
-                            {% endif %}
-                        {% endfor %}
-                        {% set brandNames = channelBrandNames %}
-                    {% endif %}
-                {% else %}
-                    {% set websiteChannels = [] %}
-                {% endif %}
+                {% set fallbackWebsiteChannelIds = content.website_channel_ids|default([])|filter(id => id is not empty and id != 'None') %}
+                {% set fallbackWebsiteChannelNames = content.website_channel_names|default([]) %}
+                {% set fallbackWebsiteChannelFavicons = content.website_channel_favicon_paths|default([]) %}
                 {% set visibleBrandNames = brandNames|slice(0, 3) %}
-                {% set channelCount = brandNames|length %}
-                {% if channelCount == 0 and document is not null and document.channels is defined and document.channels is not null %}
-                    {% set channelCount = websiteChannels|length %}
-                {% endif %}
+                {% set visibleFallbackWebsiteChannelIds = fallbackWebsiteChannelIds|slice(0, 3) %}
+                {% set channelCount = brandNames is not empty ? brandNames|length : fallbackWebsiteChannelIds|length %}
+                {% set displayChannelNames = brandNames is not empty ? brandNames : fallbackWebsiteChannelNames %}
 
                 {% if content.pub_active and ('now'|date('U') > content.pub_time |date('U')) %}
                     {% set calendarState = 'published' %}
@@ -185,7 +154,7 @@
                 {% endif %}
 
                 <a class="calendar-item {{ calendarState }}" href="{{ editLink }}" target="_blank" data-turbo-frame="_top"
-                   data-id="{{ content.type_id }}" data-type="{{ type }}" data-brands="{{ brandNames|join(', ')|default('') }}"
+                   data-id="{{ content.type_id }}" data-type="{{ type }}" data-brands="{{ displayChannelNames|join(', ')|default('') }}"
                    data-premium="{% if content.premium|default(false) %}true{% else %}false{% endif %}"
                    data-title="Edit {{ type }}" data-time="{{ date(content.pub_time)|date('Hi') }}">
                     <div class="calendar-wrap" style="--color: {{ type.options.color|default('gray') }}">
@@ -207,18 +176,20 @@
                                                     {{ brandName|first|upper }}
                                                 </div>
                                             {% endfor %}
-                                        {% elseif document.channels is defined and document.channels is not null %}
-                                            {% for channel in websiteChannels %}
-                                                {% if channel|integrated_brand_profile.favicon.file is defined %}
+                                        {% elseif fallbackWebsiteChannelIds is not empty %}
+                                            {% for channelId in visibleFallbackWebsiteChannelIds %}
+                                                {% set channelName = fallbackWebsiteChannelNames[loop.index0]|default(channelId) %}
+                                                {% set faviconPath = fallbackWebsiteChannelFavicons[loop.index0]|default('') %}
+                                                {% if faviconPath is not empty %}
                                                     <div class="channel-favicon"
-                                                         style="background-image:url('{{ image(channel|integrated_brand_profile.favicon.file).cropResize(36, 36) }}')"
-                                                         title="{{ channel.name }}">
+                                                         style="background-image:url('{{ image(faviconPath).cropResize(36, 36) }}')"
+                                                         title="{{ channelName }}">
                                                     </div>
                                                 {% else %}
                                                     <div class="channel-favicon font-bold"
-                                                         title="{{ channel.name }}"
-                                                         style="background-color: {{ channel|integrated_brand.color|default('gray') }}">
-                                                        {{ channel.name|first|upper }}
+                                                         title="{{ channelName }}"
+                                                         style="background-color: {{ type.options.color|default('gray') }}">
+                                                        {{ channelName|first|upper }}
                                                     </div>
                                                 {% endif %}
                                             {% endfor %}

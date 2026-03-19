@@ -103,7 +103,7 @@ class OEmbedController extends AbstractController
             return null;
         }
 
-        return urldecode($value);
+        return $value;
     }
 
     private function fetchEmbedInfo(string $url): object

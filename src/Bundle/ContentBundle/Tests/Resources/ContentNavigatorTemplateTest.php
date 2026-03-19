@@ -84,7 +84,7 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringNotContainsString("path('integrated_content_content_edit', {id: doc.type_id}) }}\" data-turbo-frame=\"_top\" data-turbo-prefetch=\"false\"", $navDropdownTemplate);
     }
 
-    public function testIndexTemplatesKeepChannelFallbackForMissingFacetBrands(): void
+    public function testIndexTemplatesUseSolrNativeChannelFallbackForMissingFacetBrands(): void
     {
         $indexTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/index.html.twig');
         $weekTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/index_week.html.twig');
@@ -92,10 +92,16 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertIsString($indexTemplate);
         $this->assertIsString($weekTemplate);
 
-        $this->assertStringContainsString('{% set document = integrated_document(content) %}', $indexTemplate);
-        $this->assertStringContainsString('{% elseif document.channels is defined and document.channels is not null %}', $indexTemplate);
-        $this->assertStringContainsString('{% set document = integrated_document(content) %}', $weekTemplate);
-        $this->assertStringContainsString('{% if brandNames is empty and document.channels is defined and document.channels is not null %}', $weekTemplate);
+        $this->assertStringNotContainsString('{% set document = integrated_document(content) %}', $indexTemplate);
+        $this->assertStringContainsString('{% set fallbackWebsiteChannelIds = content.website_channel_ids|default([])|filter(id => id is not empty and id != \'None\') %}', $indexTemplate);
+        $this->assertStringContainsString('{% set fallbackWebsiteChannelFavicons = content.website_channel_favicon_paths|default([]) %}', $indexTemplate);
+        $this->assertStringContainsString("{% if faviconPath is not empty %}", $indexTemplate);
+        $this->assertStringContainsString("image(faviconPath).cropResize(36, 36)", $indexTemplate);
+        $this->assertStringNotContainsString('{% set document = integrated_document(content) %}', $weekTemplate);
+        $this->assertStringContainsString('{% set fallbackWebsiteChannelIds = content.website_channel_ids|default([])|filter(id => id is not empty and id != \'None\') %}', $weekTemplate);
+        $this->assertStringContainsString('{% set fallbackWebsiteChannelFavicons = content.website_channel_favicon_paths|default([]) %}', $weekTemplate);
+        $this->assertStringContainsString("{% if faviconPath is not empty %}", $weekTemplate);
+        $this->assertStringContainsString("image(faviconPath).cropResize(36, 36)", $weekTemplate);
     }
 
     public function testRoutingContainsLiveLockStatusEndpoint(): void
