@@ -32,6 +32,7 @@ final class PageCopyRequestFactory
             }
 
             $blockInstructions = [];
+            $copyAction = trim((string) ($pageData['copyAction'] ?? PageCopyInstruction::ACTION_CREATE));
             $blocks = \is_array($pageData['blocks'] ?? null) ? $pageData['blocks'] : [];
             foreach ($blocks as $blockKey => $blockData) {
                 if (!\is_string($blockKey) || !\is_array($blockData)) {
@@ -57,7 +58,11 @@ final class PageCopyRequestFactory
                 );
             }
 
-            $pageInstructions[$pageId] = new PageCopyInstruction($pageId, $blockInstructions);
+            $pageInstructions[$pageId] = new PageCopyInstruction(
+                $pageId,
+                $copyAction === PageCopyInstruction::ACTION_OVERWRITE ? PageCopyInstruction::ACTION_OVERWRITE : PageCopyInstruction::ACTION_CREATE,
+                $blockInstructions
+            );
         }
 
         return new PageCopyRequest($sourceChannelId, $targetChannelId, $pageInstructions);

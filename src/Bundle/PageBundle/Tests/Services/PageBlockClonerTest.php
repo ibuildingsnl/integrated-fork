@@ -128,6 +128,35 @@ final class PageBlockClonerTest extends TestCase
         self::assertSame(['main'], $cloned->getUpsellChannels());
     }
 
+    public function testClonesCustomBlockEmbeddedValueStateWithoutSharingObjects(): void
+    {
+        $source = new TestCompanyProfileBlock();
+        $source->setId('company-source');
+        $source->setTitle('Company block');
+        $source->setSettings(new TestCompanyProfileSettings('Original'));
+
+        $copiedPage = new Page();
+        $copiedPage->setPath('/copy');
+        $copiedPage->setLayout('default.html.twig');
+        $copiedPage->setTitle('Copy');
+
+        $cloned = (new PageBlockCloner())->cloneBlock($source, 'company-copy', $copiedPage);
+
+        self::assertInstanceOf(TestCompanyProfileBlock::class, $cloned);
+        $sourceSettings = $source->getSettings();
+        $clonedSettings = $cloned->getSettings();
+
+        self::assertNotNull($sourceSettings);
+        self::assertNotNull($clonedSettings);
+        self::assertNotSame($sourceSettings, $clonedSettings);
+        self::assertSame('Original', $clonedSettings->getLabel());
+
+        $clonedSettings->setLabel('Changed on clone');
+
+        self::assertSame('Original', $sourceSettings->getLabel());
+        self::assertSame('Changed on clone', $clonedSettings->getLabel());
+    }
+
     public function testPreservesConcreteCustomContentBlockSubclass(): void
     {
         $source = new TestContentWithAdvertBlock();
@@ -201,6 +230,7 @@ final class TestCompanyProfileBlock extends Block
     private array $upsells = [];
     /** @var string[] */
     private array $upsellChannels = [];
+    private ?TestCompanyProfileSettings $settings = null;
 
     public function getType()
     {
@@ -293,6 +323,33 @@ final class TestCompanyProfileBlock extends Block
     public function getUpsellChannels(): array
     {
         return $this->upsellChannels;
+    }
+
+    public function setSettings(?TestCompanyProfileSettings $settings): void
+    {
+        $this->settings = $settings;
+    }
+
+    public function getSettings(): ?TestCompanyProfileSettings
+    {
+        return $this->settings;
+    }
+}
+
+final class TestCompanyProfileSettings
+{
+    public function __construct(private string $label)
+    {
+    }
+
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(string $label): void
+    {
+        $this->label = $label;
     }
 }
 

@@ -70,6 +70,14 @@ class PageCopyService
                 $existingPage = $this->findExistingTargetPage($targetChannel->getId(), (string) $page->getPath(), $existingPages);
 
                 if ($existingPage !== null) {
+                    if (!$pageInstruction->shouldOverwrite()) {
+                        throw new \InvalidArgumentException(\sprintf(
+                            'Target page "%s" already exists in channel "%s".',
+                            (string) $page->getPath(),
+                            (string) $targetChannel->getId()
+                        ));
+                    }
+
                     $this->documentManager->remove($existingPage);
                     $this->documentManager->flush();
                     $existingPages[$targetChannel->getId().'|'.(string) $page->getPath()] = null;

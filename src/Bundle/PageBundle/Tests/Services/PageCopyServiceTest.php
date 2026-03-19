@@ -110,6 +110,7 @@ final class PageCopyServiceTest extends TestCase
             'pages' => [
                 'pagesource-page' => [
                     'selected' => true,
+                    'copyAction' => 'overwrite',
                     'blocks' => [],
                 ],
             ],
@@ -125,6 +126,46 @@ final class PageCopyServiceTest extends TestCase
             array_search('flush', $operations, true),
             array_search('persist_page', $operations, true)
         );
+    }
+
+    public function testCreateActionRejectsExistingTargetPageWithoutRemovingIt(): void
+    {
+        $operations = [];
+        $service = $this->createService($this->createConfiguredDocumentManager([
+            'channel' => $this->createChannel('target'),
+            'pages' => [$this->createPageWithBlock('source-page', '/page', 'source-block')],
+            'existingPage' => $this->createPageWithBlock('existing-page', '/page', 'existing-block'),
+            'existingBlock' => null,
+            'remove' => static function () use (&$operations): void {
+                $operations[] = 'remove';
+            },
+            'persist' => static function (object $document) use (&$operations): void {
+                $operations[] = $document instanceof Page ? 'persist_page' : 'persist_block';
+            },
+            'flush' => static function () use (&$operations): void {
+                $operations[] = 'flush';
+            },
+        ]));
+
+        try {
+            $service->copyPages($this->createRequest([
+                'sourceChannel' => 'source',
+                'targetChannel' => 'target',
+                'pages' => [
+                    'pagesource-page' => [
+                        'selected' => true,
+                        'copyAction' => 'create',
+                        'blocks' => [],
+                    ],
+                ],
+            ]));
+            self::fail('Expected create action to reject an existing target page.');
+        } catch (\InvalidArgumentException $exception) {
+            self::assertStringContainsString('already exists', $exception->getMessage());
+        }
+
+        self::assertNotContains('remove', $operations);
+        self::assertNotContains('persist_page', $operations);
     }
 
     public function testRouteCacheIsClearedOncePerCopyBatch(): void

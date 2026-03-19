@@ -6,11 +6,15 @@ namespace Integrated\Bundle\PageBundle\Services\PageCopy;
 
 final class PageCopyInstruction
 {
+    public const ACTION_CREATE = 'create';
+    public const ACTION_OVERWRITE = 'overwrite';
+
     /**
      * @param array<string, BlockCopyInstruction> $blockInstructions
      */
     public function __construct(
         private readonly string $sourcePageId,
+        private readonly string $copyAction,
         private readonly array $blockInstructions,
     ) {
     }
@@ -18,6 +22,16 @@ final class PageCopyInstruction
     public function getSourcePageId(): string
     {
         return $this->sourcePageId;
+    }
+
+    public function getCopyAction(): string
+    {
+        return $this->copyAction;
+    }
+
+    public function shouldOverwrite(): bool
+    {
+        return $this->copyAction === self::ACTION_OVERWRITE;
     }
 
     /**

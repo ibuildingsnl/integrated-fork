@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Integrated\Bundle\PageBundle\Services\PageCopy;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\Proxy;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\ContainerBlock;
@@ -111,9 +112,15 @@ final class PageBlockCloner
     private function cloneCustomBlock(Block $source): Block
     {
         $target = $this->instantiateSameBlockClass($source);
+        $clonedObjects = new \SplObjectStorage();
 
         foreach ($this->getCopyableGetterSetterMap($source, $target) as [$getter, $setter]) {
-            $target->{$setter}($this->cloneFieldValue($source->{$getter}()));
+            $value = $this->cloneFieldValue($source->{$getter}(), $clonedObjects);
+            if (!$this->canAssignValue($target, $setter, $value)) {
+                continue;
+            }
+
+            $target->{$setter}($value);
         }
 
         return $target;
@@ -240,7 +247,10 @@ final class PageBlockCloner
         return $pairs;
     }
 
-    private function cloneFieldValue(mixed $value): mixed
+    /**
+     * @param \SplObjectStorage<object, object> $clonedObjects
+     */
+    private function cloneFieldValue(mixed $value, \SplObjectStorage $clonedObjects): mixed
     {
         if ($value instanceof \DateTime) {
             return clone $value;
@@ -250,10 +260,100 @@ final class PageBlockCloner
             return clone $value;
         }
 
+        if ($value instanceof Collection) {
+            return new ArrayCollection(array_map(
+                fn (mixed $item): mixed => $this->cloneFieldValue($item, $clonedObjects),
+                $value->toArray()
+            ));
+        }
+
         if (\is_array($value)) {
-            return array_map(fn (mixed $item): mixed => $this->cloneFieldValue($item), $value);
+            return array_map(fn (mixed $item): mixed => $this->cloneFieldValue($item, $clonedObjects), $value);
+        }
+
+        if (\is_object($value)) {
+            return $this->cloneObjectValue($value, $clonedObjects);
         }
 
         return $value;
+    }
+
+    /**
+     * @param \SplObjectStorage<object, object> $clonedObjects
+     */
+    private function cloneObjectValue(object $value, \SplObjectStorage $clonedObjects): object
+    {
+        if ($this->shouldPreserveObjectReference($value)) {
+            return $value;
+        }
+
+        if (isset($clonedObjects[$value])) {
+            /** @var object $cloned */
+            $cloned = $clonedObjects[$value];
+
+            return $cloned;
+        }
+
+        $reflection = new \ReflectionObject($value);
+        if (!$reflection->isCloneable()) {
+            return $value;
+        }
+
+        $cloned = clone $value;
+        $clonedObjects[$value] = $cloned;
+
+        foreach ($this->getReflectionProperties($reflection) as $property) {
+            if ($property->isStatic() || $property->isReadOnly() || !$property->isInitialized($cloned)) {
+                continue;
+            }
+
+            $property->setValue($cloned, $this->cloneFieldValue($property->getValue($cloned), $clonedObjects));
+        }
+
+        return $cloned;
+    }
+
+    private function shouldPreserveObjectReference(object $value): bool
+    {
+        if ($value instanceof Block || $value instanceof Proxy) {
+            return true;
+        }
+
+        $class = $value::class;
+
+        return str_contains($class, '\\Document\\') && !str_contains($class, '\\Document\\Embedded\\');
+    }
+
+    /**
+     * @return list<\ReflectionProperty>
+     */
+    private function getReflectionProperties(\ReflectionObject $reflection): array
+    {
+        $properties = [];
+
+        do {
+            foreach ($reflection->getProperties() as $property) {
+                $property->setAccessible(true);
+                $properties[] = $property;
+            }
+
+            $reflection = $reflection->getParentClass();
+        } while ($reflection instanceof \ReflectionClass);
+
+        return $properties;
+    }
+
+    private function canAssignValue(object $target, string $setter, mixed $value): bool
+    {
+        $reflection = new \ReflectionMethod($target, $setter);
+        $parameter = $reflection->getParameters()[0] ?? null;
+
+        if ($parameter === null || $value !== null) {
+            return true;
+        }
+
+        $type = $parameter->getType();
+
+        return $type === null || $type->allowsNull();
     }
 }
