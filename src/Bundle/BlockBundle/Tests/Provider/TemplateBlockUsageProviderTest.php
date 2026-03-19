@@ -8,6 +8,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\BlockBundle\Provider\TemplateBlockUsageProvider;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use Integrated\Bundle\PageBundle\Resolver\ThemeResolver;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use PHPUnit\Framework\TestCase;
@@ -63,12 +64,19 @@ final class TemplateBlockUsageProviderTest extends TestCase
         $channel->setId('bakkersinbedrijf');
         $channel->setName('Bakkers in Bedrijf');
         $channel->setLanguage('nl');
+        $channel->setType(new ChannelType('website', 'Website'));
+
+        $nonWebsiteChannel = new Channel();
+        $nonWebsiteChannel->setId('newsletter');
+        $nonWebsiteChannel->setName('Newsletter');
+        $nonWebsiteChannel->setLanguage('nl');
+        $nonWebsiteChannel->setType(new ChannelType('newsletter', 'Newsletter'));
 
         $repository = $this->createMock(ObjectRepository::class);
         $repository
             ->expects(self::once())
             ->method('findAll')
-            ->willReturn([$channel]);
+            ->willReturn([$channel, $nonWebsiteChannel]);
 
         $documentManager = $this->createMock(DocumentManager::class);
         $documentManager
@@ -104,6 +112,8 @@ final class TemplateBlockUsageProviderTest extends TestCase
         self::assertArrayHasKey('premium_noaccess_bakkersinbedrijf', $usageMaps['blockTemplates']);
         self::assertArrayHasKey('alea_publishers_footer_nl', $usageMaps['blockTemplates']);
         self::assertArrayNotHasKey('unused_static_block', $usageMaps['blockTemplates']);
+        self::assertArrayNotHasKey('leaderboard_newsletter', $usageMaps['blockTemplates']);
+        self::assertArrayNotHasKey('newsletter', $usageMaps['channelBlocks']);
         self::assertEquals(
             ['leaderboard_bakkersinbedrijf' => 'leaderboard_bakkersinbedrijf', 'premium_bakkersinbedrijf_noaccess' => 'premium_bakkersinbedrijf_noaccess', 'static_help_block' => 'static_help_block', 'premium_noaccess_bakkersinbedrijf' => 'premium_noaccess_bakkersinbedrijf', 'alea_publishers_footer_nl' => 'alea_publishers_footer_nl'],
             $usageMaps['channelBlocks']['bakkersinbedrijf']

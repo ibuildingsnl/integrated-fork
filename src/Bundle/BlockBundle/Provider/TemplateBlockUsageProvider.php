@@ -105,6 +105,7 @@ class TemplateBlockUsageProvider implements BlockUsageSourceInterface
         return array_values(array_filter(
             $this->manager->getRepository(Channel::class)->findAll(),
             static fn (Channel $channel): bool => trim((string) $channel->getId()) !== ''
+                && $channel->getType()?->getId() === 'website'
         ));
     }
 
