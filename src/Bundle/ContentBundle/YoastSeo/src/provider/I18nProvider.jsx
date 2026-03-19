@@ -7,6 +7,20 @@ import fetch from '../helper/fetch';
 const I18nContext = createContext(null);
 const useI18n = () => useContext(I18nContext);
 
+const registerLocaleData = (newTranslations) => {
+    const localeData = newTranslations?.locale_data || {};
+
+    Object.entries(localeData).forEach(([domain, messages]) => {
+        if (messages) {
+            setLocaleData(messages, domain);
+        }
+    });
+
+    if (localeData['js-text-analysis'] && !localeData['yoast-components']) {
+        setLocaleData(localeData['js-text-analysis'], 'yoast-components');
+    }
+};
+
 /**
  * Fetch translations and store them for global usage
  */
@@ -39,7 +53,7 @@ const I18nProvider = ({ children, translationsUrl }) => {
                 } else {
                     newTranslations = translations;
                 }
-                setLocaleData(newTranslations['locale_data']['js-text-analysis'], 'yoast-components');
+                registerLocaleData(newTranslations);
                 setLoaded(true);
             })
             .catch((error) => {
