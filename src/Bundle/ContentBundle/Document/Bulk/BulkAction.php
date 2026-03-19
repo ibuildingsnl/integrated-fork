@@ -38,6 +38,11 @@ class BulkAction
     /**
      * @var string|null
      */
+    private $ownerId;
+
+    /**
+     * @var string|null
+     */
     private $filters;
 
     /**
@@ -100,6 +105,18 @@ class BulkAction
     public function setExecutedAt(\DateTime $executedAt)
     {
         $this->executedAt = $executedAt;
+
+        return $this;
+    }
+
+    public function getOwnerId(): ?string
+    {
+        return $this->ownerId;
+    }
+
+    public function setOwnerId(?string $ownerId = null): self
+    {
+        $this->ownerId = $ownerId;
 
         return $this;
     }

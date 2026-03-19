@@ -16,7 +16,7 @@
         <div class="flex flex-wrap content-edit-form">
             {% set isContentLocked = locking is defined and locking.locked and not (locking.pending|default(false)) %}
             {% block form_start %}
-                {{ form_start(form, { attr: { 'data-turbo-stream': 'true' } }) }}
+                {{ form_start(form, { attr: form.vars.attr|merge({ 'data-turbo-stream': 'true', 'data-lock-csrf': content is defined ? csrf_token('integrated_content_lock_' ~ content.id) : '' }) }) }}
             {% endblock %}
             {% block toolbar %}
                 {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
@@ -71,15 +71,66 @@
 
 
                             {% block content_options %}
-                                {% set options = false %}
-                                {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
-                                    {% set options = true %}
-                                {% endfor %}
+                                {% set optionFields = form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                {% set remainingOptions = optionFields|filter(row => row.vars.name not in ['premium', 'featured', 'featured_expiration']) %}
+                                {% set options = remainingOptions|length > 0 %}
                                 {% if form.children.customFields is defined %}
                                     {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
                                         {% set options = true %}
                                     {% endfor %}
                                 {% endif %}
+
+                                {% if form.premium is defined %}
+                                    <div class="aside-item-wrapper">
+                                        <div class="aside-item-header">
+                                            <h3 class="aside-item-title">
+                                                <i class="iconoir-half-cookie"></i>
+                                                <span class="aside-item-icon">{% trans %}Premium{% endtrans %}</span>
+                                            </h3>
+                                            <i class="iconoir-nav-arrow-up"></i>
+                                        </div>
+                                        <div class="aside-item-list">
+                                            <div class="aside-item-list-container">
+                                                {{ form_row(form.premium) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                                {% if form.featured is defined %}
+                                    <div class="aside-item-wrapper">
+                                        <div class="aside-item-header">
+                                            <h3 class="aside-item-title">
+                                                <i class="iconoir-star"></i>
+                                                <span class="aside-item-icon">{% trans %}Featured{% endtrans %}</span>
+                                            </h3>
+                                            <i class="iconoir-nav-arrow-up"></i>
+                                        </div>
+                                        <div class="aside-item-list">
+                                            <div class="aside-item-list-container">
+                                                {{ form_row(form.featured) }}
+                                                {% if form.featured_expiration is defined %}
+                                                    <div data-featured-expiration-container style="{% if not form.featured.vars.data|default(false) %}display: none;{% endif %}">
+                                                        <div class="form-group w-full flex flex-wrap{% if form.featured_expiration.vars.errors|length > 0 %} has-error{% endif %}">
+                                                            <label class="control-label w-full" for="{{ form.featured_expiration.vars.id }}">
+                                                                {% trans %}Featured expires in x days{% endtrans %}
+                                                            </label>
+                                                            <div class="w-full widget">
+                                                                {{ form_widget(form.featured_expiration, {
+                                                                    attr: form.featured_expiration.vars.attr|merge({
+                                                                        placeholder: 'Featured expires in x days'|trans
+                                                                    })
+                                                                }) }}
+                                                                {{ form_errors(form.featured_expiration) }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
                                 {% if options == true %}
                                     <div class="aside-item-wrapper">
                                         <div class="aside-item-header">
@@ -92,7 +143,7 @@
                                         </div>
                                         <div class="aside-item-list">
                                             <div class="aside-item-list-container">
-                                                {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                                {% for child in remainingOptions %}
                                                     {{ form_row(child) }}
                                                 {% endfor %}
                                                 {% block custom_sidebar_fields %}
@@ -324,11 +375,11 @@
 {% block javascript %}
 {{ parent() }}
 
+{% if content is defined %}
 <script>
     (function initEditLockOnLoad() {
         var LOCK_REFRESH_URL = "{{ path('integrated_locking_api_refresh')|e('js') }}";
         var LOCK_POLLING_KEY = '__integratedEditLockPolling';
-        var LOCK_CSRF_TOKEN = "{{ (content is defined ? csrf_token('integrated_content_lock_' ~ content.id) : '')|e('js') }}";
         var LOCKED_ITEM_MESSAGE = "{{ 'This item is currently locked and cannot be edited until the lock is released.'|trans|e('js') }}";
         var LOCK_ACQUIRE_FAILED_MESSAGE = "{{ 'The lock could not be acquired, please reload and try again.'|trans|e('js') }}";
         var lockPollingStore = window[LOCK_POLLING_KEY] || (window[LOCK_POLLING_KEY] = {});
@@ -338,12 +389,20 @@
                 return;
             }
 
-            if (document.querySelector('[data-edit-lock-init-message]')) {
+            var flashContainer = document.getElementById('flash-messages');
+            if (!flashContainer) {
                 return;
             }
 
-            var page = document.getElementById('content-edit-page');
-            if (!page) {
+            var normalizedMessage = String(message).trim();
+            var alerts = flashContainer.querySelectorAll('.alert');
+            for (var i = 0; i < alerts.length; i++) {
+                if (alerts[i].textContent && alerts[i].textContent.trim() === normalizedMessage) {
+                    return;
+                }
+            }
+
+            if (document.querySelector('[data-edit-lock-init-message]')) {
                 return;
             }
 
@@ -352,7 +411,7 @@
             alertNode.setAttribute('data-edit-lock-init-message', '1');
             alertNode.textContent = message;
 
-            page.insertBefore(alertNode, page.firstChild);
+            flashContainer.appendChild(alertNode);
         }
 
         function postLockRequest(url, body, keepalive) {
@@ -631,8 +690,9 @@
             }
 
             var requestBody = new URLSearchParams();
-            if (LOCK_CSRF_TOKEN) {
-                requestBody.set('_token', LOCK_CSRF_TOKEN);
+            var lockCsrfToken = form.getAttribute('data-lock-csrf') || '';
+            if (lockCsrfToken) {
+                requestBody.set('_token', lockCsrfToken);
             }
             if (knownLock) {
                 requestBody.set('known_lock', knownLock);
@@ -658,7 +718,9 @@
 
                     form.setAttribute('data-content-locked', '1');
                     setLockOverlay(form, (result && result.payload && result.payload.message) || '');
-                    renderLockMessage((result && result.payload && result.payload.message) || '');
+                    if (result.status !== 423) {
+                        renderLockMessage((result && result.payload && result.payload.message) || '');
+                    }
                     setSaveButtonDisabled(true);
                 })
                 .catch(function () {
@@ -675,7 +737,10 @@
         document.addEventListener('turbo:frame-load', initLockOnLoad);
         document.addEventListener('turbo:frame-render', initLockOnLoad);
     })();
+</script>
+{% endif %}
 
+<script>
     (function initWorkflowStateAfterTurboStream() {
         function createOrFindWorkflowButton(parent, className, text) {
             var button = parent.querySelector('.' + className);
@@ -956,6 +1021,54 @@
                 }
             };
         });
+    })();
+
+    (function() {
+        function initializeFeaturedExpirationVisibility() {
+            var featuredToggle = document.getElementById('{{ form.featured is defined ? form.featured.vars.id|e('js') : '' }}');
+            var featuredExpirationContainer = document.querySelector('[data-featured-expiration-container]');
+            if (!featuredToggle || !featuredExpirationContainer) {
+                return;
+            }
+
+            function syncFeaturedExpirationVisibility() {
+                featuredExpirationContainer.style.display = featuredToggle.checked ? '' : 'none';
+            }
+
+            featuredToggle.addEventListener('change', syncFeaturedExpirationVisibility);
+            syncFeaturedExpirationVisibility();
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeFeaturedExpirationVisibility);
+        document.addEventListener('turbo:load', initializeFeaturedExpirationVisibility);
+        document.addEventListener('turbo:render', initializeFeaturedExpirationVisibility);
+    })();
+
+    (function() {
+        function hideImplicitEventMidnightTime() {
+            var eventTimeFieldIds = [
+                '{{ form.startDate is defined and form.startDate.time is defined ? form.startDate.time.vars.id|e('js') : '' }}',
+                '{{ form.endDate is defined and form.endDate.time is defined ? form.endDate.time.vars.id|e('js') : '' }}',
+            ].filter(Boolean);
+
+            eventTimeFieldIds.forEach(function(fieldId) {
+                var timeField = document.getElementById(fieldId);
+
+                if (!timeField || timeField.dataset.implicitMidnightHandled === 'true') {
+                    return;
+                }
+
+                if (timeField.value === '00:00') {
+                    timeField.value = '';
+                }
+
+                timeField.dataset.implicitMidnightHandled = 'true';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', hideImplicitEventMidnightTime);
+        document.addEventListener('turbo:load', hideImplicitEventMidnightTime);
+        document.addEventListener('turbo:render', hideImplicitEventMidnightTime);
     })();
 
     textarea = document.querySelector('.title_tinymce_input');

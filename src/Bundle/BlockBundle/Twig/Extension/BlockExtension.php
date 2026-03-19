@@ -101,6 +101,8 @@ class BlockExtension extends AbstractExtension
             ),
             new TwigFunction('integrated_block_css_class', $this->getBlockCssClass(...)),
             new TwigFunction('integrated_find_channels', $this->findChannels(...)),
+            new TwigFunction('integrated_find_container_blocks', $this->findContainerBlocks(...)),
+            new TwigFunction('integrated_find_template_usages', $this->findTemplateUsages(...)),
             new TwigFunction('integrated_find_pages', $this->findPages(...)),
             new TwigFunction('integrated_find_block_types', $this->findBlockTypes(...)),
         ];
@@ -231,7 +233,7 @@ class BlockExtension extends AbstractExtension
     }
 
     /**
-     * @return array
+     * @return array<string, array<string, mixed>>
      */
     public function findPages(BlockInterface $block)
     {
@@ -241,11 +243,43 @@ class BlockExtension extends AbstractExtension
     }
 
     /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function findContainerBlocks(BlockInterface $block)
+    {
+        $containers = $this->blockUsageProvider->getContainerBlocksPerBlock($block->getId());
+
+        return \is_array($containers) ? $containers : [];
+    }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public function findTemplateUsages(BlockInterface $block)
+    {
+        $templateUsages = $this->blockUsageProvider->getTemplateUsagesPerBlock($block->getId());
+
+        if (!\is_array($templateUsages)) {
+            return [];
+        }
+
+        $normalized = [];
+        foreach ($templateUsages as $usageKey => $usage) {
+            $normalized[$usageKey] = array_filter(
+                $usage,
+                static fn (mixed $value): bool => \is_string($value)
+            );
+        }
+
+        return $normalized;
+    }
+
+    /**
      * @return string
      */
     public function getBlockTypeName(BlockInterface $block)
     {
-        return $this->metadataFactory->getMetadata($block::class)->getType();
+        return $block->getType();
     }
 
     /**

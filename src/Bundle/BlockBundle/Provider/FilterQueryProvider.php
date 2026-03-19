@@ -77,6 +77,13 @@ class FilterQueryProvider
             $qb->field('id')->in($availableBlockIds);
         }
 
+        if ($this->isUnusedFilterEnabled($data)) {
+            $usedBlockIds = $this->blockUsageProvider->getUsedBlockIds();
+            if ($usedBlockIds !== []) {
+                $qb->field('id')->notIn($usedBlockIds);
+            }
+        }
+
         if ($groupUser !== null) {
             $qb->field('groups')->in($this->getUserGroupIds($groupUser));
         }
@@ -108,6 +115,30 @@ class FilterQueryProvider
         }
 
         return $blockIds;
+    }
+
+    /**
+     * @param array<string, mixed>|null $data
+     */
+    private function isUnusedFilterEnabled(?array $data): bool
+    {
+        if (!\is_array($data) || !\array_key_exists('unused', $data)) {
+            return false;
+        }
+
+        $value = $data['unused'];
+
+        if (\is_bool($value)) {
+            return $value;
+        }
+
+        if (\is_scalar($value)) {
+            $normalized = strtolower(trim((string) $value));
+
+            return \in_array($normalized, ['1', 'true', 'on', 'yes'], true);
+        }
+
+        return false;
     }
 
     /**

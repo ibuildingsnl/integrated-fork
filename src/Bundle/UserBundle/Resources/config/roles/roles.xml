@@ -12,4 +12,10 @@
         <description></description>
         <hidden>0</hidden>
     </role>
+    <role>
+        <name>ROLE_WEBSITE_MANAGER</name>
+        <label>Website manager</label>
+        <description></description>
+        <hidden>0</hidden>
+    </role>
 </roles>

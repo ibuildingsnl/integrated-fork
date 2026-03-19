@@ -1,10 +1,9 @@
 {% set results = this.results %}
 {% set searchTermUrl = this.searchTermUrl %}
 {% set linkTextInvalid = this.linkText is empty %}
-{% set linkTitleInvalid = this.linkTitle is empty %}
 {% set searchTermInvalid = this.searchTerm is empty %}
 {% set hasSelection = this.selectedId is not empty %}
-{% set applyEnabled = (searchTermUrl or hasSelection) and (not linkTextInvalid) and (not linkTitleInvalid) %}
+{% set applyEnabled = (searchTermUrl or hasSelection) and (not linkTextInvalid) %}
 
 <div {{ attributes }} data-article-search-root="">
     <div class="flex flex-row">
@@ -87,8 +86,6 @@
                         data-article-search-link-title=""
                         value="{{ this.linkTitle }}"
                         placeholder="{{ this.translations.link_title|default('Link title') }}"
-                        class="{% if linkTitleInvalid %}!border-red-400{% endif %}"
-                        title="{% if linkTitleInvalid %}{{ this.translations.require_link_title|default('Please fill in the link title') }}{% endif %}"
                     />
                 </div>
                 <div class="relative">
@@ -135,9 +132,6 @@
                                     {% elseif linkTextInvalid %}
                                         <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor" class="w-10 h-10"><path d="M20.0429 21H3.95705C2.41902 21 1.45658 19.3364 2.22324 18.0031L10.2662 4.01533C11.0352 2.67792 12.9648 2.67791 13.7338 4.01532L21.7768 18.0031C22.5434 19.3364 21.581 21 20.0429 21Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12 9V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12 17.01L12.01 16.9989" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                                         <p>{{ this.translations.require_link_text|default('Please fill in the link text') }}</p>
-                                    {% elseif linkTitleInvalid %}
-                                        <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor" class="w-10 h-10"><path d="M20.0429 21H3.95705C2.41902 21 1.45658 19.3364 2.22324 18.0031L10.2662 4.01533C11.0352 2.67792 12.9648 2.67791 13.7338 4.01532L21.7768 18.0031C22.5434 19.3364 21.581 21 20.0429 21Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12 9V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12 17.01L12.01 16.9989" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-                                        <p>{{ this.translations.require_link_title|default('Please fill in the link title') }}</p>
                                     {% else %}
                                         <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor" class="w-10 h-10"><path d="M5 13L9 17L19 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                                         <p>{{ this.translations.ready|default('Good to go!') }}</p>

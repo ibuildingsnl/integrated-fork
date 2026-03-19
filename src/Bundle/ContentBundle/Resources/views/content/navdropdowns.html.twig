@@ -22,14 +22,14 @@
                                             {% if doc.workflow_color_string is defined %}
                                                 {% set status_color = doc.workflow_color_string|first %}
                                             {% else %}
-                                                {% set status_color = '#f2f2f2' %}
+                                                {% set status_color = '#6c7b89' %}
                                             {% endif %}
                                             {% if doc.workflow_icon_string is defined %}
                                                 {% set status_icon = doc.workflow_icon_string|first %}
                                             {% else %}
                                                 {% set status_icon = '' %}
                                             {% endif %}
-                                            <div class="workflow-status" style="background-color:{{ status_color }};">
+                                            <div class="workflow-status" style="background-color:{{ status_color|alpha(12) }};border-color:{{ status_color|alpha(45) }};color:{{ status_color }};">
                                                 <i class="iconoir-{{ status_icon }}"></i>
                                             </div>
                                             <span class="item-title">{{ doc.title|default }}</span>
@@ -70,6 +70,43 @@
                             .replace(/'/g, '&#039;');
                     }
 
+                    function normalizeHexColor(value) {
+                        var raw = String(value || '').trim();
+                        if (!raw) {
+                            return '';
+                        }
+                        var match = raw.match(/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/);
+                        if (!match) {
+                            return '';
+                        }
+                        var hex = match[1].toLowerCase();
+                        if (hex.length === 3) {
+                            hex = hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2);
+                        }
+                        return '#' + hex;
+                    }
+
+                    function rgbaFromHex(hexColor, alpha) {
+                        var hex = normalizeHexColor(hexColor).replace('#', '');
+                        if (!hex) {
+                            return '';
+                        }
+
+                        var red = parseInt(hex.substring(0, 2), 16);
+                        var green = parseInt(hex.substring(2, 4), 16);
+                        var blue = parseInt(hex.substring(4, 6), 16);
+
+                        return 'rgba(' + red + ', ' + green + ', ' + blue + ', ' + alpha + ')';
+                    }
+
+                    function workflowStatusStyle(color) {
+                        var baseColor = normalizeHexColor(color) || '#6c7b89';
+
+                        return 'background-color:' + rgbaFromHex(baseColor, 0.12) +
+                            ';border-color:' + rgbaFromHex(baseColor, 0.45) +
+                            ';color:' + baseColor + ';';
+                    }
+
                     function renderAssignedItems(items) {
                         if (!assignedListNode) {
                             return;
@@ -80,7 +117,7 @@
                             var item = items[i];
                             html += '<li class="assigned-item">';
                             html += '<a href="' + escapeHtml(item.edit_url || '#') + '" data-turbo-frame="_top">';
-                            html += '<div class="workflow-status" style="background-color:' + escapeHtml(item.status_color || '#f2f2f2') + ';">';
+                            html += '<div class="workflow-status" style="' + workflowStatusStyle(item.status_color || '#6c7b89') + '">';
                             html += '<i class="iconoir-' + escapeHtml(item.status_icon || '') + '"></i>';
                             html += '</div>';
                             html += '<span class="item-title">' + escapeHtml(item.title || '') + '</span>';

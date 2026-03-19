@@ -64,6 +64,7 @@ class PageCopyPageType extends AbstractType
         $view->vars = array_merge($view->vars, [
             'page' => $options['page'],
             'copyAction' => $options['copyAction'],
+            'blockCount' => \count($form->get('blocks')),
         ]);
     }
 

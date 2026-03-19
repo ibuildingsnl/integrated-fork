@@ -31,6 +31,7 @@ select.form-control {
     background-image: url('data:image/svg+xml;utf8,<svg width=\'20px\' height=\'20px\' stroke-width=\'0.95\' viewBox=\'0 0 24 24\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\' color=\'%23000000\'><path d=\'M6 9l6 6 6-6\' stroke=\'%23000000\' stroke-width=\'0.95\' stroke-linecap=\'round\' stroke-linejoin=\'round\'></path></svg>') !important;
     background-repeat: no-repeat !important;
     background-position: center right 5px !important;
+    padding-right: 3rem;
 }
 
 .form-group, .form-item {
@@ -109,6 +110,119 @@ label {
     }
 }
 
+.form-actions__item {
+    .control-label {
+        margin: 0;
+    }
+
+    .form-control {
+        width: 100%;
+    }
+}
+
+.form-actions--table-filters {
+    gap: .75rem;
+    align-items: flex-start;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: .75rem;
+    border: 1px solid #dee3e9;
+    border-radius: 8px;
+    background: #f8fafc;
+    display: flex;
+    flex-wrap: wrap;
+
+    .form-item {
+        margin-bottom: 0;
+    }
+
+    .form-actions__item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        min-width: 0;
+        flex: 1 1 170px;
+
+        .control-label {
+            display: block;
+            margin-bottom: 0;
+        }
+    }
+
+    > .form-actions__item > .form-item,
+    > .form-actions__item > .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.35rem;
+        width: 100%;
+
+        > .control-label,
+        > .widget {
+            width: 100%;
+            max-width: none;
+            flex: 0 0 100%;
+        }
+
+        > .control-label {
+            display: block;
+            padding-top: 0;
+        }
+    }
+
+    .form-actions__item--button,
+    .form-actions__item--submit-like {
+        flex: 0 0 auto;
+    }
+
+    .form-control {
+        min-height: initial;
+        background: #fff;
+    }
+
+    .form-actions__item--submit-like {
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end;
+        align-self: stretch;
+    }
+}
+
+.queue-summary {
+    border: 1px solid #dee3e9;
+    border-radius: 8px;
+    background: #f5f8f9;
+    color: #55606e;
+    font-size: 12px;
+    padding: .5rem .75rem;
+    margin-bottom: .75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.page-copy-panel {
+    &[data-page-copy-expanded="true"] [data-page-copy-toggle] {
+        font-weight: 600;
+    }
+
+    &[data-page-copy-selected="true"] {
+        border-color: #dee3e9;
+        box-shadow: 0 0 0 1px rgba(95, 136, 207, 0.2);
+        border: none;
+    }
+
+    &[data-page-copy-selected="true"] [data-page-copy-panel-header] {
+        background: rgba(95, 136, 207, 0.06);
+    }
+}
+
+.page-copy-panel-header {
+    .checkbox-switcher {
+        margin-bottom: 0;
+    }
+}
+
 .integrated-password-toggle {
     position: relative;
     display: block;
@@ -139,6 +253,15 @@ label {
 .integrated-password-toggle-button:hover,
 .integrated-password-toggle-button:focus {
     color: #111827;
+}
+
+.integrated_filterable_content_choice_filters {
+    max-width: 750px;
+    padding: .5rem .5rem 1rem .5rem;
+    border: 1px solid #dfe3e9;
+    border-radius: 8px 8px 0 0;
+    border-bottom: 0;
+    margin-bottom: -6px;
 }
 
 .form-horizontal {
@@ -462,107 +585,99 @@ input#bulk-date-to {
 
 
 .checkbox-switcher {
-    position: relative;
-    display: block;
-    vertical-align: top;
-    width: 100px;
-    height: 33px;
-    border-radius: 8px;
-    box-shadow: inset 0 -1px white, inset 0 1px 1px rgba(0, 0, 0, .05);
+    align-items: center;
+    color: #2f3b4d;
     cursor: pointer;
+    display: inline-flex;
+    font-size: 1rem;
+    font-weight: 700;
+    gap: .7rem;
+    line-height: 1.2;
+    position: relative;
+    vertical-align: middle;
+    width: auto;
+    min-height: 24px;
     box-sizing: content-box;
     padding: 0 !important;
 
     .switch-input {
         position: absolute;
-        top: 0;
-        left: 0;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        clip-path: inset(50%);
+        border: 0;
+        padding: 0;
         opacity: 0;
         box-sizing: content-box;
     }
 
     .switch-label {
         position: relative;
-        display: block;
-        height: inherit;
-        font-size: 14px;
-        background: #eceeef;
-        border-radius: inherit;
-        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.15);
+        background: #d8e0ea;
+        border-radius: 999px;
         box-sizing: content-box;
+        display: inline-block;
+        flex: 0 0 auto;
+        height: 24px;
+        transition: background-color .2s ease, box-shadow .2s ease;
+        width: 42px;
     }
 
     .switch-label:before, .switch-label:after {
         position: absolute;
-        top: 50%;
-        margin-top: -.5em;
-        line-height: 1;
-        -webkit-transition: inherit;
-        -moz-transition: inherit;
-        -o-transition: inherit;
-        transition: inherit;
         box-sizing: content-box;
     }
 
     .switch-label:before {
-        content: attr(data-off);
-        right: 11px;
-        color: black;
-        text-shadow: 0 1px rgba(255, 255, 255, 0.5);
+        content: '';
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        background: #ffffff;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.2);
+        transition: transform .2s ease;
     }
 
     .switch-label:after {
-        content: attr(data-on);
-        left: 11px;
-        color: #ffffff;
-        text-shadow: 0 1px rgba(0, 0, 0, 0.2);
-        opacity: 0;
+        content: none;
     }
 
     .switch-input:checked ~ .switch-label {
-        background: #00b2ee;
-        border-color: #345767;
+        background: #01b3ee;
     }
 
     .switch-input:checked ~ .switch-label:before {
-        opacity: 0;
-    }
-
-    .switch-input:checked ~ .switch-label:after {
-        opacity: 1;
+        transform: translateX(18px);
     }
 
     .switch-handle {
-        position: absolute;
-        top: 4px;
-        left: 4px;
-        bottom: 4px;
-        right: 50%;
-        z-index: 1;
-        background: #fff;
-        border-radius: 3px;
-        border: #cfd1d2 solid 1px;
-        -webkit-transition: all 0.25s ease;
-        -moz-transition: all 0.25s ease;
-        -o-transition: all 0.25s ease;
-        transition: all 0.25s ease;
-        transition-property: left, right;
+        display: none;
     }
 
-    .switch-input:checked ~ .switch-handle {
-        left: 50%;
-        right: 4px;
-        border-color: #007cba;
+    .switch-input:focus-visible ~ .switch-label {
+        box-shadow: 0 0 0 3px rgba(1, 179, 238, 0.24);
     }
 
-    /* Transition
-    ========================== */
-    .switch-label, .switch-handle {
-        transition: All 0.3s ease;
-        -webkit-transition: All 0.3s ease;
-        -moz-transition: All 0.3s ease;
-        -o-transition: All 0.3s ease;
+    .switch-input[disabled] ~ .switch-label {
+        background: #e5ebf2;
+        cursor: not-allowed;
+        opacity: .85;
     }
+
+    .switch-input[disabled] ~ .switch-label:before {
+        box-shadow: none;
+    }
+
+    &.is-disabled {
+        color: #8e98a7;
+    }
+
 }
 
 .radiobutton-container {

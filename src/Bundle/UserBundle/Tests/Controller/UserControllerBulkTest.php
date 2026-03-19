@@ -9,15 +9,58 @@ use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Bundle\UserBundle\Provider\FilterQueryProvider;
 use Integrated\Bundle\UserBundle\Service\BulkUserActionService;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserControllerBulkTest extends TestCase
 {
+    public function testIndexPassesRoleSortAndRolesFilterToProvider(): void
+    {
+        [$controller, , $provider, $paginator, , $groupManager, $scopeManager] = $this->createController();
+        $form = $this->createMock(FormInterface::class);
+        $form->expects(self::once())->method('handleRequest');
+        $controller->form = $form;
+
+        $query = new \stdClass();
+        $pagination = $this->createMock(PaginationInterface::class);
+
+        $provider->expects(self::once())
+            ->method('getUsers')
+            ->with(
+                ['roles' => ['ROLE_ADMIN']],
+                ['field' => 'role', 'direction' => 'asc']
+            )
+            ->willReturn($query);
+
+        $paginator->expects(self::once())
+            ->method('paginate')
+            ->with($query, 2, 15)
+            ->willReturn($pagination);
+
+        $groupManager->method('findAll')->willReturn([]);
+        $scopeManager->method('findAll')->willReturn([]);
+
+        $request = new Request([
+            'integrated_user_filter' => ['roles' => ['ROLE_ADMIN']],
+            'sort' => 'role',
+            'direction' => 'asc',
+            'page' => 2,
+        ]);
+
+        $response = $controller->index($request);
+
+        self::assertInstanceOf(Response::class, $response);
+        self::assertSame('@IntegratedUser/user/index.html.twig', $controller->lastRenderedTemplate);
+        self::assertSame($pagination, $controller->lastRenderedParameters['users'] ?? null);
+    }
+
     public function testEnableRejectsInvalidCsrfToken(): void
     {
         [$controller, $manager] = $this->createController();
@@ -259,6 +302,11 @@ final class TestUserController extends UserController
     public ?User $currentUser = null;
     /** @var array<int, array{type: string, message: mixed}> */
     public array $flashes = [];
+    public string $lastRenderedTemplate = '';
+    /** @var array<string, mixed> */
+    public array $lastRenderedParameters = [];
+    /** @var FormInterface<mixed>|null */
+    public ?FormInterface $form = null;
 
     protected function isGranted(mixed $attribute, mixed $subject = null): bool
     {
@@ -290,5 +338,25 @@ final class TestUserController extends UserController
     protected function getUser(): ?User
     {
         return $this->currentUser;
+    }
+
+    protected function createForm(string $type, mixed $data = null, array $options = []): FormInterface
+    {
+        if ($this->form === null) {
+            throw new \RuntimeException('Test form is not configured.');
+        }
+
+        return $this->form;
+    }
+
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    protected function render(string $view, array $parameters = [], ?Response $response = null): Response
+    {
+        $this->lastRenderedTemplate = $view;
+        $this->lastRenderedParameters = $parameters;
+
+        return $response ?? new Response();
     }
 }

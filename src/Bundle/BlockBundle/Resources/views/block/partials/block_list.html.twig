@@ -16,7 +16,10 @@
 
                 {% for block in blocks %}
                     {% set usedPages = integrated_find_pages(block) %}
+                    {% set usedContainerBlocks = integrated_find_container_blocks(block) %}
+                    {% set usedTemplateUsages = integrated_find_template_usages(block) %}
                     {% set usedChannels = integrated_find_channels(block) %}
+                    {% set usedOnCount = usedPages|length + usedContainerBlocks|length + usedTemplateUsages|length %}
                     <tr class="has-options">
                         <td>
                             <strong>
@@ -30,7 +33,7 @@
                                     {% trans %}Edit{% endtrans %}
                                 </a>
                                 {% if not block.locked and (is_granted('ROLE_ADMIN') or is_granted('ROLE_WEBSITE_MANAGER')) %}
-                                    {% if not usedPages %}
+                                    {% if not usedPages and not usedContainerBlocks and not usedTemplateUsages %}
                                         | <a href="{{ path('integrated_block_block_delete', { 'id': block.id }) }}"
                                              class="color-red" title="{% trans %}Delete{% endtrans %}">
                                         {% trans %}Delete{% endtrans %}
@@ -46,8 +49,33 @@
                             {{ block|integrated_block_type }}
                         </td>
                         <td>
-                            {% if usedPages|length > 0 %}
+                            {% if usedPages|length > 0 or usedContainerBlocks|length > 0 or usedTemplateUsages|length > 0 %}
                                 {% set pageList %}
+                                    {% if usedTemplateUsages|length > 0 %}
+                                        <h3>{% trans %}Code usage{% endtrans %}</h3>
+                                        <ul>
+                                            {% for templateUsage in usedTemplateUsages %}
+                                                <li>
+                                                    {{ templateUsage.template|default('unknown template') }}
+                                                    {% if templateUsage.channel_id is defined %}
+                                                        <small>({{ templateUsage.channel_id }})</small>
+                                                    {% endif %}
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                    {% if usedContainerBlocks|length > 0 %}
+                                        <h3>{% trans %}Container blocks{% endtrans %}</h3>
+                                        <ul>
+                                            {% for containerBlock in usedContainerBlocks %}
+                                                <li>
+                                                    <a href="{{ path('integrated_block_block_edit', {'id': containerBlock['_id']}) }}" target="_blank" rel="noopener noreferrer">
+                                                        {{ containerBlock.title|default(containerBlock['_id']) }}
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
                                     {% if usedChannels|length > 0 %}
                                         <h3>{% trans %}Channels{% endtrans %}</h3>
                                         <ul>
@@ -70,6 +98,9 @@
                                                 <a href="{{ path('integrated_page_page_edit', {'id': page['_id']}) }}" target="_blank" rel="noopener noreferrer">
                                                     {{ page.title|default(page['_id']) }}
                                                 </a>
+                                                {% if page._used_via_container_title is defined %}
+                                                    <small>({% trans %}via{% endtrans %} {{ page._used_via_container_title }})</small>
+                                                {% endif %}
                                                 {% if channelName %}
                                                     <small>({{ channelName }})</small>
                                                 {% endif %}
@@ -86,7 +117,7 @@
                                         data-html="true"
                                         data-placement="left"
                                         data-container="body">
-                                    {{ usedPages|length }}
+                                    {{ usedOnCount }}
                                     <i class="iconoir-list"></i>
                                 </button>
                             {% else %}

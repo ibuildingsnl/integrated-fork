@@ -88,6 +88,14 @@ class ArticleSearchController extends AbstractController
             );
         }
 
+        if (!$this->articleSearchService->canAccessChannelForCurrentUser($channel)) {
+            return new Response(
+                json_encode(['msg' => 'Channel access denied']) ?: '{}',
+                Response::HTTP_FORBIDDEN,
+                ['Content-Type' => 'application/json']
+            );
+        }
+
         $ret = $this->articleSearchService->searchInChannel($channel, $q, explode(',', $contentTypeIds));
 
         if (\count($ret) > 0) {

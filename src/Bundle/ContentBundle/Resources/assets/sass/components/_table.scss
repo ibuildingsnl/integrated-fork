@@ -21,7 +21,7 @@
         vertical-align: middle;
         font-size: 13px;
         line-height: 1.5em;
-        padding: .8rem;
+        padding: .4rem;
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         &.domains {
             max-width: 500px;
@@ -65,8 +65,7 @@
         text-align: left;
         line-height: 1.3em;
         font-size: 13px;
-        padding: .8rem;
-        padding: 1rem;
+        padding: 1rem .4rem;
     }
 
     thead {
@@ -156,13 +155,29 @@
         }
     }
 
+    .locked-info {
+        background-color: rgba(171, 8, 8, 0.12);
+        border: 1px solid rgba(171, 8, 8, 0.45);
+        color: #ab0808;
+        text-align: center;
+        justify-content: center;
+        border-radius: 999px;
+        display: inline-flex;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        line-height: 1;
+        padding: 0.22rem 1rem 0.22rem 0.75rem;
+        white-space: nowrap;
+    }
+
     span.locked-text {
         display: flex;
         align-items: center;
 
         i:before {
-            width: 15px;
-            height: 15px;
+            width: 12px;
+            height: 12px;
         }
     }
 }
@@ -267,8 +282,6 @@ thead {
                     position: absolute;
                     top: 0;
                     right: 0;
-                    border-bottom-right-radius: 0;
-                    border-top-left-radius: 0px;
                 }
             }
 

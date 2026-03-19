@@ -109,6 +109,11 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     protected $featured;
 
     /**
+     * @var int|null
+     */
+    protected $featuredExpiration;
+
+    /**
      * @var bool
      */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType', options: [
@@ -450,6 +455,18 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     public function setFeatured(bool $featured): static
     {
         $this->featured = $featured;
+
+        return $this;
+    }
+
+    public function getFeaturedExpiration(): ?int
+    {
+        return $this->featuredExpiration;
+    }
+
+    public function setFeaturedExpiration(?int $featuredExpiration): static
+    {
+        $this->featuredExpiration = $featuredExpiration;
 
         return $this;
     }

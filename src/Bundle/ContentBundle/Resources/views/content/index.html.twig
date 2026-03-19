@@ -38,6 +38,9 @@
                 <th class="pub-date">
                     <span>{% trans %}Publication date{% endtrans %}</span>
                 </th>
+                <th class="seo">
+                    <span>SEO</span>
+                </th>
                 <th class="state">
                     <span>{% trans %}Status{% endtrans %}</span>
                 </th>
@@ -50,10 +53,27 @@
                 {% if brandNames is empty %}
                     {% set document = integrated_document(content) %}
                 {% endif %}
+                {% set websiteChannels = [] %}
+                {% set websiteChannelIds = [] %}
+                {% if document is not null and document.channels is defined and document.channels is not null %}
+                    {% for channel in document.channels %}
+                        {% set websiteChannel = channel|integrated_brand_website_channel %}
+                        {% if websiteChannel is null and channel.type is defined and channel.type is not null and channel.type.id|default('') == 'website' %}
+                            {% set websiteChannel = channel %}
+                        {% endif %}
+                        {% if websiteChannel is not null %}
+                            {% set websiteChannelId = websiteChannel.id|default('') %}
+                            {% if websiteChannelId is not empty and websiteChannelId not in websiteChannelIds %}
+                                {% set websiteChannels = websiteChannels|merge([websiteChannel]) %}
+                                {% set websiteChannelIds = websiteChannelIds|merge([websiteChannelId]) %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
                 {% set visibleBrandNames = brandNames|slice(0, 3) %}
                 {% set channelCount = brandNames|length %}
                 {% if channelCount == 0 and document is not null and document.channels is defined and document.channels is not null %}
-                    {% set channelCount = document.channels|length %}
+                    {% set channelCount = websiteChannels|length %}
                 {% endif %}
 
                 {% set class_name = content.type_class|split('\\')|last %}
@@ -126,7 +146,7 @@
                                         </div>
                                     {% endfor %}
                                 {% elseif document.channels is defined and document.channels is not null %}
-                                    {% for channel in document.channels %}
+                                    {% for channel in websiteChannels %}
                                         {% if channel|integrated_brand_profile.favicon.file is defined %}
                                             <div class="channel-favicon"
                                                  style="background-image:url('{{ image(channel|integrated_brand_profile.favicon.file).cropResize(36, 36) }}')"
@@ -160,30 +180,59 @@
                             {{ content.pub_time|format_date('long') }}
                         {% endif %}
                     </td>
+                    <td class="seo">
+                        {% set hasSeoMetadata = content.has_seo_metadata|default(false) %}
+                        {% if hasSeoMetadata is iterable %}
+                            {% set hasSeoMetadata = hasSeoMetadata|first %}
+                        {% endif %}
+                        {% if hasSeoMetadata in [true, 1, '1', 'true'] %}
+                            {% set seoScore = content.seo_score|default('feedback') %}
+                            {% set readabilityScore = content.readability_score|default('feedback') %}
+                            {% if seoScore is iterable %}
+                                {% set seoScore = seoScore|first %}
+                            {% endif %}
+                            {% if readabilityScore is iterable %}
+                                {% set readabilityScore = readabilityScore|first %}
+                            {% endif %}
+                            <span class="btn btn-white no-icon seo-button readability-{{ readabilityScore }} seo-{{ seoScore }}">
+                                SEO
+                            </span>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
                     <td class="state">
-                        {% if content.workflow_state is defined and ('now'|date('U') > content.pub_time |date('U')) %}
+                        {% set published = content.published|default(false) %}
+                        {% if published is iterable %}
+                            {% set published = published|first %}
+                        {% endif %}
+                        {% set isPublishable = published in [true, 1, '1', 'true'] and channelCount > 0 %}
+                        {% set hasPublicationDate = content.pub_time is defined %}
+                        {% set hasStarted = hasPublicationDate and ('now'|date('U') > content.pub_time|date('U')) %}
+                        {% set isPlanned = isPublishable and hasPublicationDate and not hasStarted %}
+
+                        {% if content.workflow_state is defined and hasStarted %}
                             {% if content.workflow_color_string is defined %}
                                 {% set status_color = content.workflow_color_string|first %}
-                                <div class="workflow-status" style="background-color:{{ status_color }};">
+                                <div class="workflow-status" style="background-color:{{ status_color|alpha(12) }};border-color:{{ status_color|alpha(45) }};color:{{ status_color }};">
                                     <i class="iconoir-{{ content.workflow_icon_string|first|default }}"></i>
                                 </div>
                             {% else %}
-                                <div class="workflow-status" style="background-color:#d8d8d8;">
+                                <div class="workflow-status" style="background-color:{{ '#6c7b89'|alpha(12) }};border-color:{{ '#6c7b89'|alpha(45) }};color:#6c7b89;">
                                     <i class="iconoir-{{ content.workflow_icon_string|first|default }}"></i>
                                 </div>
                             {% endif %}
                             {% set status_color = '' %}
-                        {% elseif ('now'|date('U') < content.pub_time |date('U')) %}
-                            <div class="workflow-status" style="background-color:#5f84db;">
+                        {% elseif isPlanned %}
+                            <div class="workflow-status" style="background-color:{{ '#5f84db'|alpha(12) }};border-color:{{ '#5f84db'|alpha(45) }};color:#5f84db;">
                                 <i class="iconoir-calendar"></i>
                             </div>
-                        {% endif %}
-                        {% if content.workflow_state is not defined and content.published is defined and content.published == "true" and 'now'|date('U') > content.pub_time |date('U') %}
-                            <div class="workflow-status" style="background-color:#00ae93;">
+                        {% elseif isPublishable and hasStarted %}
+                            <div class="workflow-status" style="background-color:{{ '#00ae93'|alpha(12) }};border-color:{{ '#00ae93'|alpha(45) }};color:#00ae93;">
                                 <i class="iconoir-check"></i>
                             </div>
-                        {% elseif content.workflow_state is not defined and content.published is defined and content.published == "false" and 'now'|date('U') > content.pub_time |date('U')%}
-                            <div class="workflow-status" style="background-color:#ababab;">
+                        {% else %}
+                            <div class="workflow-status" style="background-color:{{ '#ababab'|alpha(12) }};border-color:{{ '#ababab'|alpha(45) }};color:#ababab;">
                                 <i class="iconoir-edit-pencil"></i>
                             </div>
                         {% endif %}

@@ -12,6 +12,8 @@
 namespace Integrated\Common\Solr\Tests\Task\Tasks\Doctrine\EventListener;
 
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
+use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
+use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Solr\Task\Tasks\ContentTypeQueueTask;
@@ -54,12 +56,59 @@ class MongoDBContenTypeListenerTest extends \PHPUnit\Framework\TestCase
         $this->getInstance()->postUpdate($this->getEvent(new \stdClass()));
     }
 
+    public function testPostUpdateSkipsQueueWhenOnlyCheckboxDefaultValueChanged(): void
+    {
+        $this->queue->expects($this->never())
+            ->method('push');
+
+        $contentType = new ContentType();
+        $contentType->setId('news');
+
+        $before = (new Field())
+            ->setName('featured')
+            ->setOptions([
+                'required' => false,
+            ]);
+
+        $after = (new Field())
+            ->setName('featured')
+            ->setOptions([
+                'required' => false,
+                'value' => 'checked',
+            ]);
+
+        $this->getInstance([
+            'fields' => [[$before], [$after]],
+        ])->postUpdate($this->getEvent($contentType));
+    }
+
     /**
+     * @param array<string, mixed> $changeSet
+     *
      * @return MongoDBContentTypeListener
      */
-    protected function getInstance()
+    protected function getInstance(array $changeSet = [])
     {
-        return new MongoDBContentTypeListener($this->queue);
+        return new class($this->queue, $changeSet) extends MongoDBContentTypeListener {
+            /** @var array<string, mixed> */
+            private readonly array $changeSet;
+
+            /**
+             * @param array<string, mixed> $changeSet
+             */
+            public function __construct(
+                QueueInterface $queue,
+                array $changeSet,
+            ) {
+                parent::__construct($queue);
+                $this->changeSet = $changeSet;
+            }
+
+            protected function getDocumentChangeSet(LifecycleEventArgs $event, ContentTypeInterface $document): array
+            {
+                return $this->changeSet;
+            }
+        };
     }
 
     /**

@@ -1,10 +1,20 @@
 .workflow-status {
-    font-weight: 500;
-    color: white;
     text-align: center;
-    width: 30px;
-    padding: 0.3rem 0.5rem;
-    border-radius: 6px;
-    display: flex;
     justify-content: center;
+    border: 1px solid #dbe3ec;
+    border-radius: 999px;
+    color: #ffffff;
+    display: inline-flex;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .01em;
+    line-height: 1;
+    padding: .22rem .22rem;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.workflow-status i:before {
+    width: 16px;
+    height: 16px;
 }

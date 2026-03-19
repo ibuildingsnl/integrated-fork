@@ -24,7 +24,6 @@
             <argument type="service">
                 <service class="Integrated\Bundle\InstallerBundle\Install\MongoDBMigrations">
                     <argument id="doctrine_mongodb.odm.document_manager" type="service"/>
-                    <argument id="service_container" type="service"/>
                 </service>
             </argument>
 

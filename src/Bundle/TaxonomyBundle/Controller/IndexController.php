@@ -12,6 +12,7 @@ use Integrated\Common\Content\Form\Event\ValidationEvent;
 use Integrated\Common\Content\Form\Events;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
+use Integrated\Common\Form\Mapping\MetadataInterface;
 use Integrated\Common\Security\Permissions;
 use Integrated\Common\Services\Flusher;
 use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
@@ -84,7 +85,7 @@ final class IndexController extends AbstractController
             if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
                 $this->dispatcher->dispatch(new ValidationEvent(
                     $contentType,
-                    $this->metadataFactory->getMetadata($contentType->getClass()),
+                    $this->getRequiredMetadata($contentType->getClass()),
                     $content,
                 ), Events::POST_VALIDATE);
             }
@@ -143,5 +144,15 @@ final class IndexController extends AbstractController
         $value = trim((string) $filter);
 
         return '' !== $value ? $value : 'root';
+    }
+
+    private function getRequiredMetadata(string $class): MetadataInterface
+    {
+        $metadata = $this->metadataFactory->getMetadata($class);
+        if (!$metadata instanceof MetadataInterface) {
+            throw new \LogicException(\sprintf('No form metadata found for "%s".', $class));
+        }
+
+        return $metadata;
     }
 }

@@ -68,6 +68,15 @@ function syncSearchFormWithCurrentQuery(form) {
     }
 
     const $form = $(form);
+    const preservedHiddenInputs = [];
+
+    $form.find('input[type="hidden"][data-preserve-search-query-sync]').each(function() {
+        preservedHiddenInputs.push({
+            name: this.name,
+            value: this.value
+        });
+    });
+
     $form.find('input[type="hidden"]').remove();
 
     const params = new URLSearchParams(window.location.search || '');
@@ -80,6 +89,19 @@ function syncSearchFormWithCurrentQuery(form) {
             type: 'hidden',
             name: key,
             value: value
+        }).appendTo($form);
+    });
+
+    preservedHiddenInputs.forEach(function(field) {
+        if (!field.value || params.has(field.name)) {
+            return;
+        }
+
+        $('<input>', {
+            type: 'hidden',
+            name: field.name,
+            value: field.value,
+            'data-preserve-search-query-sync': 'true'
         }).appendTo($form);
     });
 }
@@ -221,7 +243,7 @@ function initTypeahead() {
     // redirect to the edit page when a result is selected.
     elm.bind('typeahead:select', function(e, suggestion) {
         if (suggestion.type.result) {
-            window.location.href = suggestion.data.url;
+            window.location.href = resolveSuggestionUrl(suggestion.data);
         } else {
             const form = $(this).closest('form');
             if (form.length) {
@@ -288,6 +310,14 @@ function initTypeahead() {
         }
 
         return '';
+    }
+
+    function resolveSuggestionUrl(data) {
+        if (data && data.open_in_media_gallery && data.media_gallery_url) {
+            return data.media_gallery_url;
+        }
+
+        return data.url;
     }
 }
 

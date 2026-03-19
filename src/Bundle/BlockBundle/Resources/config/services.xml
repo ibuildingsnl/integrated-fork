@@ -35,6 +35,15 @@
         <service id="integrated_block.provider.block_usage" class="Integrated\Bundle\BlockBundle\Provider\BlockUsageProvider">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="cache.app" />
+            <argument type="tagged_iterator" tag="integrated_block.usage_source" />
+        </service>
+
+        <service id="integrated_block.provider.template_block_usage" class="Integrated\Bundle\BlockBundle\Provider\TemplateBlockUsageProvider">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="integrated_theme.templating.theme_manager" />
+            <argument type="service" id="integrated_page.theme_resolver" />
+            <argument>%kernel.project_dir%</argument>
+            <tag name="integrated_block.usage_source" />
         </service>
 
         <service id="integrated_block.provider.filter_query" class="Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider" public="true">

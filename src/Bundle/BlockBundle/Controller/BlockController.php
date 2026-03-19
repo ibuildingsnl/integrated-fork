@@ -206,7 +206,7 @@ class BlockController extends AbstractController
         return $this->render(\sprintf('@IntegratedBlock/block/edit.%s.twig', $request->getRequestFormat()), [
             'block' => $block,
             'form' => $form,
-            'blockType' => $metadata->getType(),
+            'blockType' => $block->getType(),
         ]);
     }
 

@@ -1,6 +1,9 @@
 {% if content is defined and content.extensions['integrated.extension.workflow']['state'] is defined %}
     {% set workflow = content.extensions['integrated.extension.workflow']['state'] %}
 {% endif %}
+{% set isPublishable = workflow is defined ? workflow.isPublishable() : (content is defined ? (content.isPublished(false) and content.getChannels|length > 0) : false) %}
+{% set isPlanned = isPublishable and content is defined and 'now'|date('U') < content.publishTime.startDate|date('U') %}
+{% set isPublished = isPublishable and not isPlanned %}
 
 <div class="status-options" id="content-status-options">
     {% if workflow is defined and ('now'|date('U') > content.publishTime.startDate|date('U')) %}
@@ -8,16 +11,16 @@
              style="background-color:{{ workflow.color|alpha(15) }};color:{{ workflow.color }};">
             <i class="iconoir-{{ workflow.icon }}"></i> {{ workflow.name }}
         </div>
-    {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate|date('U'))) %}
+    {% elseif isPlanned %}
         <div class="status planned">
             <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
         </div>
     {% else %}
-        {% if (content is defined and ((content.isPublished and content.getChannels|length > 0) or content.published == 'true')) %}
+        {% if isPublished %}
             <div class="status published">
                 <i class="iconoir-check-circle"></i> {% trans %}Published{% endtrans %}
             </div>
-        {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate|date('U'))) %}
+        {% elseif isPlanned %}
             <div class="status planned">
                 <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
             </div>

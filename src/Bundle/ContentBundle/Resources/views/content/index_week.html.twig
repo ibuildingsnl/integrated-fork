@@ -140,9 +140,26 @@
                 {% set document = null %}
                 {% if brandNames is empty %}
                     {% set document = integrated_document(content) %}
+                    {% set websiteChannels = [] %}
+                    {% set websiteChannelIds = [] %}
+                    {% if document.channels is defined and document.channels is not null %}
+                        {% for channel in document.channels %}
+                            {% set websiteChannel = channel|integrated_brand_website_channel %}
+                            {% if websiteChannel is null and channel.type is defined and channel.type is not null and channel.type.id|default('') == 'website' %}
+                                {% set websiteChannel = channel %}
+                            {% endif %}
+                            {% if websiteChannel is not null %}
+                                {% set websiteChannelId = websiteChannel.id|default('') %}
+                                {% if websiteChannelId is not empty and websiteChannelId not in websiteChannelIds %}
+                                    {% set websiteChannels = websiteChannels|merge([websiteChannel]) %}
+                                    {% set websiteChannelIds = websiteChannelIds|merge([websiteChannelId]) %}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
                     {% if brandNames is empty and document.channels is defined and document.channels is not null %}
                         {% set channelBrandNames = [] %}
-                        {% for channel in document.channels %}
+                        {% for channel in websiteChannels %}
                             {% set channelBrandName = channel|integrated_brand_profile.name|default(channel.name|default('')) %}
                             {% if channelBrandName is not empty and channelBrandName not in channelBrandNames %}
                                 {% set channelBrandNames = channelBrandNames|merge([channelBrandName]) %}
@@ -150,11 +167,13 @@
                         {% endfor %}
                         {% set brandNames = channelBrandNames %}
                     {% endif %}
+                {% else %}
+                    {% set websiteChannels = [] %}
                 {% endif %}
                 {% set visibleBrandNames = brandNames|slice(0, 3) %}
                 {% set channelCount = brandNames|length %}
                 {% if channelCount == 0 and document is not null and document.channels is defined and document.channels is not null %}
-                    {% set channelCount = document.channels|length %}
+                    {% set channelCount = websiteChannels|length %}
                 {% endif %}
 
                 {% if content.pub_active and ('now'|date('U') > content.pub_time |date('U')) %}
@@ -189,7 +208,7 @@
                                                 </div>
                                             {% endfor %}
                                         {% elseif document.channels is defined and document.channels is not null %}
-                                            {% for channel in document.channels %}
+                                            {% for channel in websiteChannels %}
                                                 {% if channel|integrated_brand_profile.favicon.file is defined %}
                                                     <div class="channel-favicon"
                                                          style="background-image:url('{{ image(channel|integrated_brand_profile.favicon.file).cropResize(36, 36) }}')"
@@ -208,7 +227,21 @@
                                 </div>
                             </div>
                             <div class="heading-right">
-
+                                {% set hasSeoMetadata = content.has_seo_metadata|default(false) %}
+                                {% if hasSeoMetadata is iterable %}
+                                    {% set hasSeoMetadata = hasSeoMetadata|first %}
+                                {% endif %}
+                                {% if hasSeoMetadata in [true, 1, '1', 'true'] %}
+                                    {% set seoScore = content.seo_score|default('feedback') %}
+                                    {% set readabilityScore = content.readability_score|default('feedback') %}
+                                    {% if seoScore is iterable %}
+                                        {% set seoScore = seoScore|first %}
+                                    {% endif %}
+                                    {% if readabilityScore is iterable %}
+                                        {% set readabilityScore = readabilityScore|first %}
+                                    {% endif %}
+                                    <span class="btn btn-white no-icon seo-button readability-{{ readabilityScore }} seo-{{ seoScore }}">SEO</span>
+                                {% endif %}
                             </div>
                         </div>
                         <div class="calendar-item-content">

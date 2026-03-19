@@ -230,12 +230,7 @@ class DefaultController extends AbstractController
     /** @return list<string> */
     private function getIndexableContentTypes(string $channelId): array
     {
-        $allowed = $this->contentTypeInformation->getPublishingAllowedContentTypes($channelId);
-
-        return array_values(array_filter(
-            $allowed,
-            static fn (string $type): bool => !\in_array(strtolower($type), self::EXCLUDED_TYPES, true)
-        ));
+        return $this->contentTypeInformation->getSitemapAllowedContentTypes($channelId, self::EXCLUDED_TYPES);
     }
 
     private function withCacheHeaders(Request $request, Response $response, \DateTimeInterface $generatedAt): Response

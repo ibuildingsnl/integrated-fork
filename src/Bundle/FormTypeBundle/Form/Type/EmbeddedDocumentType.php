@@ -33,6 +33,9 @@ class EmbeddedDocumentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $metadata = $this->metadataFactory->getMetadata($options['data_class']);
+        if ($metadata === null) {
+            return;
+        }
 
         foreach ($metadata->getFields() as $field) {
             $builder->add($field->getName(), $field->getType(), $field->getOptions());

@@ -12,6 +12,7 @@ use Integrated\Common\Security\Resolver\PermissionResolver;
 use Integrated\Common\Solr\Search\QueryFactoryInterface;
 use Solarium\Core\Client\ClientInterface;
 use Solarium\QueryType\Select\Result\Document;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ArticleSearchService implements ArticleSearchServiceInterface
 {
@@ -29,6 +30,7 @@ class ArticleSearchService implements ArticleSearchServiceInterface
         private readonly QueryFactoryInterface $queryFactory,
         private readonly ClientInterface $solrClient,
         private readonly array $allowedContentTypes,
+        private readonly TokenStorageInterface $tokenStorage,
     ) {
         $this->channelRepository = $this->documentManager->getRepository(Channel::class);
         $this->contentTypeRepository = $this->documentManager->getRepository(ContentType::class);
@@ -39,6 +41,24 @@ class ArticleSearchService implements ArticleSearchServiceInterface
         $channel = $this->channelRepository->find($channelId);
 
         return $channel instanceof Channel ? $channel : null;
+    }
+
+    public function canAccessChannelForCurrentUser(Channel $channel): bool
+    {
+        $token = $this->tokenStorage->getToken();
+        $user = $token ? $token->getUser() : null;
+
+        if (!$user instanceof UserInterface) {
+            return false;
+        }
+
+        foreach ($this->getAllowedChannels($user) as $allowedChannel) {
+            if ((string) $allowedChannel->getId() === (string) $channel->getId()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function getAvailableChannels(?UserInterface $user): array

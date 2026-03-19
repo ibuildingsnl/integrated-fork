@@ -30,6 +30,13 @@ class UserFilterType extends AbstractType
                 'label' => 'Find by username',
                 'required' => false,
             ])
+            ->add('roles', ChoiceType::class, [
+                'label' => 'Roles',
+                'choices' => $this->filterQueryProvider->getRoleChoices($options['data']),
+                'multiple' => true,
+                'expanded' => true,
+                'required' => false,
+            ])
             ->add('groups', ChoiceType::class, [
                 'choices' => $this->filterQueryProvider->getGroupChoices($options['data']),
                 'multiple' => true,

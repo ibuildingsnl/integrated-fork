@@ -18,6 +18,7 @@ use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Form\Mapping\Metadata\Field;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
+use Integrated\Common\Form\Mapping\MetadataInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractType;
@@ -67,7 +68,7 @@ class ContentFormType extends AbstractType
 
         unset($options['content_type']);
 
-        $metadata = $this->metadataFactory->getMetadata($type->getClass());
+        $metadata = $this->getRequiredMetadata($type);
 
         // Allow events to change the options or add fields at the start of the form
         if ($dispatcher->hasListeners(Events::PRE_BUILD)) {
@@ -161,7 +162,7 @@ class ContentFormType extends AbstractType
         $dispatcher->dispatch(
             new ViewEvent(
                 $type,
-                $this->metadataFactory->getMetadata($type->getClass()),
+                $this->getRequiredMetadata($type),
                 $view,
                 $form,
                 $options
@@ -185,7 +186,7 @@ class ContentFormType extends AbstractType
         $dispatcher->dispatch(
             new ViewEvent(
                 $type,
-                $this->metadataFactory->getMetadata($type->getClass()),
+                $this->getRequiredMetadata($type),
                 $view,
                 $form,
                 $options
@@ -245,5 +246,17 @@ class ContentFormType extends AbstractType
         }
 
         return $this->dispatcher;
+    }
+
+    private function getRequiredMetadata(ContentTypeInterface $type): MetadataInterface
+    {
+        $metadata = $this->metadataFactory->getMetadata($type->getClass());
+        if (!$metadata instanceof MetadataInterface) {
+            throw new InvalidOptionsException(
+                \sprintf('No form metadata found for content type class "%s".', $type->getClass())
+            );
+        }
+
+        return $metadata;
     }
 }

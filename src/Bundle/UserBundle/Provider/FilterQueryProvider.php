@@ -19,32 +19,55 @@ class FilterQueryProvider
     }
 
     /**
-     * @param array|null $data
+     * @param array|null                                $data
+     * @param array{field?: string, direction?: string} $sort
      *
      * @return \Doctrine\ORM\Query
      */
-    public function getUsers($data)
+    public function getUsers($data, array $sort = [])
     {
+        $data = \is_array($data) ? $data : [];
         $queryBuilder = $this->userManager->createQueryBuilder()->select('User');
 
         if (isset($data['groups'])) {
-            $queryBuilder
-                ->leftJoin('User.groups', 'Groups')
-                ->where('Groups IN (:groups)')
-                ->setParameter('groups', array_filter($data['groups']));
+            $groups = array_filter((array) $data['groups']);
+            if ($groups !== []) {
+                $queryBuilder
+                    ->leftJoin('User.groups', 'Groups')
+                    ->where('Groups IN (:groups)')
+                    ->setParameter('groups', $groups);
+            }
         }
 
         if (isset($data['scope'])) {
-            $queryBuilder
-                ->leftJoin('User.scope', 'Scope')
-                ->andWhere('Scope IN (:scope)')
-                ->setParameter('scope', array_filter($data['scope']));
+            $scope = array_filter((array) $data['scope']);
+            if ($scope !== []) {
+                $queryBuilder
+                    ->leftJoin('User.scope', 'Scope')
+                    ->andWhere('Scope IN (:scope)')
+                    ->setParameter('scope', $scope);
+            }
         }
 
-        if (isset($data['q'])) {
+        if (isset($data['q']) && trim((string) $data['q']) !== '') {
             $queryBuilder
                 ->andWhere('User.username LIKE :q OR User.email LIKE :q')
-                ->setParameter('q', '%'.$data['q'].'%');
+                ->setParameter('q', '%'.trim((string) $data['q']).'%');
+        }
+
+        if (isset($data['roles'])) {
+            $roles = array_values(array_filter(array_map(
+                static fn (mixed $value): string => \is_scalar($value) ? trim((string) $value) : '',
+                (array) $data['roles']
+            )));
+
+            if ($roles !== []) {
+                $queryBuilder
+                    ->andWhere(
+                        'EXISTS (SELECT 1 FROM Integrated\Bundle\UserBundle\Model\Role role_direct_selected WHERE role_direct_selected MEMBER OF User.roles AND role_direct_selected.role IN (:roles)) OR EXISTS (SELECT 1 FROM Integrated\Bundle\UserBundle\Model\Group group_selected JOIN group_selected.roles role_group_selected WHERE group_selected MEMBER OF User.groups AND role_group_selected.role IN (:roles))'
+                    )
+                    ->setParameter('roles', $roles);
+            }
         }
 
         if (isset($data['has_relation']) && \is_array($data['has_relation'])) {
@@ -61,7 +84,43 @@ class FilterQueryProvider
             }
         }
 
+        $sortField = $this->normalizeSortField($sort['field'] ?? null);
+        $sortDirection = $this->normalizeSortDirection($sort['direction'] ?? null);
+
+        if ($sortField === 'scope.name') {
+            $queryBuilder
+                ->leftJoin('User.scope', 'ScopeSort')
+                ->addOrderBy('ScopeSort.name', $sortDirection);
+        } elseif ($sortField === 'role') {
+            $queryBuilder
+                ->addSelect(
+                    "COALESCE((SELECT MIN(role_direct.role) FROM Integrated\Bundle\UserBundle\Model\Role role_direct WHERE role_direct MEMBER OF User.roles), (SELECT MIN(role_group.role) FROM Integrated\Bundle\UserBundle\Model\Group group_item JOIN group_item.roles role_group WHERE group_item MEMBER OF User.groups), '') AS HIDDEN sort_role"
+                )
+                ->addOrderBy('sort_role', $sortDirection);
+        } else {
+            $queryBuilder->addOrderBy('User.'.$sortField, $sortDirection);
+        }
+
+        if ($sortField !== 'id') {
+            $queryBuilder->addOrderBy('User.id', 'ASC');
+        }
+
         return $queryBuilder->getQuery();
+    }
+
+    private function normalizeSortField(mixed $value): string
+    {
+        $field = trim((string) $value);
+        if (!\in_array($field, ['createdAt', 'username', 'scope.name', 'id', 'role'], true)) {
+            return 'createdAt';
+        }
+
+        return $field;
+    }
+
+    private function normalizeSortDirection(mixed $value): string
+    {
+        return strtolower(trim((string) $value)) === 'asc' ? 'ASC' : 'DESC';
     }
 
     public function getGroupChoices($data)
@@ -98,6 +157,71 @@ class FilterQueryProvider
         return $this->formatChoices($manager->createNativeQuery($sql, $this->getMapping()), $data);
     }
 
+    /**
+     * @param array<string, mixed>|null $data
+     *
+     * @return array<string, string>
+     */
+    public function getRoleChoices($data = []): array
+    {
+        $data = \is_array($data) ? $data : [];
+
+        $sql = 'SELECT
+                r.name AS role,
+                COALESCE(NULLIF(r.label, \'\'), r.name) AS label,
+                COUNT(DISTINCT u.id) AS count
+            FROM security_roles r
+            LEFT JOIN (
+                SELECT ur.role_id AS role_id, ur.user_id AS user_id
+                FROM security_user_roles ur
+                UNION
+                SELECT gr.role_id AS role_id, ug.user_id AS user_id
+                FROM security_group_roles gr
+                INNER JOIN security_user_groups ug ON ug.group_id = gr.group_id
+            ) role_users ON role_users.role_id = r.id
+            LEFT JOIN security_users u ON u.id = role_users.user_id
+            LEFT JOIN security_user_groups user_groups ON user_groups.user_id = u.id
+            WHERE (:scope <= 0 OR u.scope = :scope)
+              AND (:groups <= 0 OR user_groups.group_id IN (:groups))
+            GROUP BY r.id, r.name, r.label
+            HAVING count > 0
+            ORDER BY label ASC';
+
+        /** @var EntityManagerInterface $manager */
+        $manager = $this->userManager->getObjectManager();
+        $query = $manager->createNativeQuery($sql, $this->getRoleMapping());
+        $query->setParameter('scope', isset($data['scope']) ? $data['scope'] : 0);
+        $query->setParameter('groups', isset($data['groups']) ? array_filter((array) $data['groups']) : 0);
+
+        $choices = [];
+        foreach ($query->getResult() as $result) {
+            $role = trim((string) ($result['role'] ?? ''));
+            if ($role === '') {
+                continue;
+            }
+
+            $label = trim((string) ($result['label'] ?? ''));
+            if ($label === '') {
+                $label = $role;
+            }
+
+            $count = max(0, (int) ($result['count'] ?? 0));
+            $choices[$this->formatFacetLabel($label, $count)] = $role;
+        }
+
+        return $choices;
+    }
+
+    private function getRoleMapping(): ResultSetMapping
+    {
+        $mapping = new ResultSetMapping();
+        $mapping->addScalarResult('role', 'role');
+        $mapping->addScalarResult('label', 'label');
+        $mapping->addScalarResult('count', 'count');
+
+        return $mapping;
+    }
+
     private function getMapping()
     {
         $mapping = new ResultSetMapping();
@@ -115,9 +239,20 @@ class FilterQueryProvider
 
         $choices = [];
         foreach ($query->getResult() as $result) {
-            $choices[\sprintf('%s %d', $result['name'], $result['count'])] = $result['id'];
+            $choices[$this->formatFacetLabel((string) $result['name'], (int) $result['count'])] = $result['id'];
         }
 
         return $choices;
+    }
+
+    private function formatFacetLabel(string $name, int $count): string
+    {
+        $escapedName = htmlspecialchars($name, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
+
+        return \sprintf(
+            '<div class="facet-wrapper"><span class="facet-title">%s</span><span class="facet-count">(%d)</span></div>',
+            $escapedName,
+            max(0, $count)
+        );
     }
 }

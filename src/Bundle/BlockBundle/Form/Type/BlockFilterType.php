@@ -16,6 +16,7 @@ use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
 use Integrated\Bundle\BlockBundle\Provider\BlockUsageProvider;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -89,6 +90,15 @@ class BlockFilterType extends AbstractType
             ]
         );
 
+        $builder->add(
+            'unused',
+            CheckboxType::class,
+            [
+                'required' => false,
+                'label' => 'Unused',
+            ]
+        );
+
         $builder->add('submit', SubmitType::class, [
             'label' => 'Filter',
         ]);
@@ -122,7 +132,7 @@ class BlockFilterType extends AbstractType
 
         $channelChoices = [];
         foreach ($channels as $channelId => $blocks) {
-            $count = \count(array_intersect($blocks, $blockIds));
+            $count = \count(array_intersect((array) $blocks, $blockIds));
             if ($count) {
                 if ($channel = $this->blockUsageProvider->getChannel($channelId)) {
                     $channelChoices[$channel->getName().' ('.$count.')'] = $channelId;

@@ -50,14 +50,22 @@ class ContentEditLockFlowTest extends TestCase
         $template = file_get_contents(__DIR__.'/../../Resources/views/content/edit.html.twig');
 
         $this->assertIsString($template);
+        $this->assertStringContainsString('{% if content is defined %}', $template);
         $this->assertStringContainsString('data-lock-pending', $template);
         $this->assertStringContainsString('data-lock-init-url', $template);
+        $this->assertStringContainsString('data-lock-csrf', $template);
+        $this->assertStringContainsString("content is defined ? csrf_token('integrated_content_lock_' ~ content.id) : ''", $template);
         $this->assertStringContainsString('integrated-content-lock:', $template);
-        $this->assertStringContainsString("csrf_token('integrated_content_lock_' ~ content.id)", $template);
-        $this->assertStringContainsString("requestBody.set('_token', LOCK_CSRF_TOKEN);", $template);
+        $this->assertStringContainsString("var lockCsrfToken = form.getAttribute('data-lock-csrf') || '';", $template);
+        $this->assertStringContainsString("requestBody.set('_token', lockCsrfToken);", $template);
         $this->assertStringContainsString('window.__integratedLockPolling', $template);
         $this->assertStringContainsString('data-content-lock-overlay', $template);
         $this->assertStringContainsString('setLockOverlay(form,', $template);
+        $this->assertStringContainsString("var flashContainer = document.getElementById('flash-messages');", $template);
+        $this->assertStringContainsString('var normalizedMessage = String(message).trim();', $template);
+        $this->assertStringContainsString('if (alerts[i].textContent && alerts[i].textContent.trim() === normalizedMessage)', $template);
+        $this->assertStringContainsString('if (result.status !== 423) {', $template);
+        $this->assertStringContainsString('flashContainer.appendChild(alertNode);', $template);
         $this->assertStringContainsString('document.addEventListener(\'turbo:load\'', $template);
         $this->assertStringContainsString('window.history.replaceState', $template);
         $this->assertStringContainsString('startLockPolling', $template);
@@ -68,8 +76,12 @@ class ContentEditLockFlowTest extends TestCase
         $template = file_get_contents(__DIR__.'/../../Resources/views/content/edit.iframe.html.twig');
 
         $this->assertIsString($template);
-        $this->assertStringContainsString("csrf_token('integrated_content_lock_' ~ content.id)", $template);
-        $this->assertStringContainsString("requestBody.set('_token', LOCK_CSRF_TOKEN);", $template);
+        $this->assertStringContainsString('data-lock-csrf', $template);
+        $this->assertStringContainsString("var lockCsrfToken = form.getAttribute('data-lock-csrf') || '';", $template);
+        $this->assertStringContainsString("requestBody.set('_token', lockCsrfToken);", $template);
+        $partialTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/partial/edit_frame.html.twig');
+        $this->assertIsString($partialTemplate);
+        $this->assertStringContainsString("content is defined ? csrf_token('integrated_content_lock_' ~ content.id) : ''", $partialTemplate);
     }
 
     public function testEditTemplatesOnlyFlagFormInvalidAfterSubmittedInvalidPost(): void

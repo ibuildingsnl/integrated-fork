@@ -90,6 +90,13 @@
                     </div>
 
                     <div class="aside-item-holder">
+                        {{ form_row(facetFilter.unused, {
+                            'style': 'sidebar',
+                            'state': 'show'
+                        }) }}
+                    </div>
+
+                    <div class="aside-item-holder">
                         {{ form_rest(facetFilter, {'style':'sidebar', 'state': 'show'}) }}
                     </div>
 

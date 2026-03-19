@@ -69,8 +69,12 @@ class UserController extends AbstractController
         }
 
         $data = $request->query->all('integrated_user_filter');
+        $sort = [
+            'field' => (string) $request->query->get('sort', 'createdAt'),
+            'direction' => (string) $request->query->get('direction', 'desc'),
+        ];
 
-        $users = $this->provider->getUsers($data);
+        $users = $this->provider->getUsers($data, $sort);
 
         $facetFilter = $this->createForm(UserFilterType::class, null, [
             'data' => $data,

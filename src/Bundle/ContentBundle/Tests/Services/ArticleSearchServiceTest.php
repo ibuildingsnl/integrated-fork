@@ -15,6 +15,7 @@ use Solarium\Core\Client\ClientInterface;
 use Solarium\QueryType\Select\Query\Query as SelectQuery;
 use Solarium\QueryType\Select\Result\Document;
 use Solarium\QueryType\Select\Result\Result as SelectResult;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ArticleSearchServiceTest extends TestCase
 {
@@ -188,6 +189,7 @@ class ArticleSearchServiceTest extends TestCase
             $queryFactory,
             $solrClient,
             $allowedContentTypes,
+            $this->createStub(TokenStorageInterface::class),
         );
     }
 }

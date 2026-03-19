@@ -216,6 +216,14 @@ function populateDOMWithImages() {
 }
 
 window.addEventListener('message', function(e) {
+    const activeIframe = selected_relation
+        ? document.querySelector(selected_relation.iframe_selector)
+        : null;
+
+    if (!activeIframe || activeIframe.contentWindow !== e.source) {
+        return;
+    }
+
     if (e.data === 'cancel') {
         closeMediaGallery();
         return;

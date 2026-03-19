@@ -11,6 +11,9 @@ use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Forms;
 
 class ContentControllerSavePublicationGuardTest extends TestCase
 {
@@ -63,6 +66,44 @@ class ContentControllerSavePublicationGuardTest extends TestCase
         self::assertCount(1, $this->invokeGetPublications($controller, $content));
     }
 
+    public function testHandleDuplicateSlugSaveFailureReturnsFriendlyMessageAndAddsSlugError(): void
+    {
+        $controller = (new \ReflectionClass(ContentController::class))->newInstanceWithoutConstructor();
+        $form = Forms::createFormFactoryBuilder()
+            ->getFormFactory()
+            ->createBuilder(FormType::class)
+            ->add('slug', TextType::class)
+            ->getForm();
+
+        $message = $this->invokeHandleDuplicateSlugSaveFailure(
+            $controller,
+            $form,
+            new \RuntimeException('E11000 duplicate key error collection: content index: slug_1 dup key')
+        );
+
+        self::assertSame('This slug already exists. Please choose another slug.', $message);
+        self::assertCount(1, iterator_to_array($form->get('slug')->getErrors()));
+    }
+
+    public function testHandleDuplicateSlugSaveFailureIgnoresOtherErrors(): void
+    {
+        $controller = (new \ReflectionClass(ContentController::class))->newInstanceWithoutConstructor();
+        $form = Forms::createFormFactoryBuilder()
+            ->getFormFactory()
+            ->createBuilder(FormType::class)
+            ->add('slug', TextType::class)
+            ->getForm();
+
+        $message = $this->invokeHandleDuplicateSlugSaveFailure(
+            $controller,
+            $form,
+            new \RuntimeException('some other persistence problem')
+        );
+
+        self::assertNull($message);
+        self::assertCount(0, iterator_to_array($form->get('slug')->getErrors()));
+    }
+
     /**
      * @return array<int, mixed>
      */
@@ -75,5 +116,21 @@ class ContentControllerSavePublicationGuardTest extends TestCase
         $result = $method->invoke($controller, $content);
 
         return $result;
+    }
+
+    /**
+     * @param \Symfony\Component\Form\FormInterface<mixed> $form
+     */
+    private function invokeHandleDuplicateSlugSaveFailure(
+        ContentController $controller,
+        \Symfony\Component\Form\FormInterface $form,
+        \Throwable $exception,
+    ): ?string {
+        $method = new \ReflectionMethod(ContentController::class, 'handleDuplicateSlugSaveFailure');
+        $method->setAccessible(true);
+
+        $result = $method->invoke($controller, $form, $exception);
+
+        return \is_string($result) ? $result : null;
     }
 }

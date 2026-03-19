@@ -35,14 +35,7 @@ class ContentTypeInformation
 
         $contentTypes = $this->dm->getRepository(ContentType::class)->findAll();
         foreach ($contentTypes as $contentType) {
-            $channelOption = $contentType->getOption('channels');
-            if (isset($channelOption['disabled'])
-                && $channelOption['disabled'] == 2
-                || $contentType->getOption('publication') === 'disabled') {
-                continue;
-            }
-
-            if (isset($channelOption['restricted']) && (\count($channelOption['restricted']) > 0) && !\in_array($channelId, $channelOption['restricted'])) {
+            if (!$this->isPublishingAllowedForChannel($contentType, $channelId)) {
                 continue;
             }
 
@@ -50,5 +43,56 @@ class ContentTypeInformation
         }
 
         return $result;
+    }
+
+    /**
+     * @param list<string> $defaultExcludedTypes
+     *
+     * @return list<string>
+     */
+    public function getSitemapAllowedContentTypes(string $channelId, array $defaultExcludedTypes = []): array
+    {
+        $result = [];
+        $excluded = array_flip(array_map(static fn (string $type): string => strtolower($type), $defaultExcludedTypes));
+
+        $contentTypes = $this->dm->getRepository(ContentType::class)->findAll();
+        foreach ($contentTypes as $contentType) {
+            if (!$this->isPublishingAllowedForChannel($contentType, $channelId)) {
+                continue;
+            }
+
+            $contentTypeId = (string) $contentType->getId();
+            if ($contentTypeId === '') {
+                continue;
+            }
+
+            $sitemapSetting = strtolower(trim((string) $contentType->getOption('sitemap')));
+            if ($sitemapSetting === 'disabled') {
+                continue;
+            }
+
+            if ($sitemapSetting !== 'enabled' && isset($excluded[strtolower($contentTypeId)])) {
+                continue;
+            }
+
+            $result[] = $contentTypeId;
+        }
+
+        return $result;
+    }
+
+    private function isPublishingAllowedForChannel(ContentType $contentType, string $channelId): bool
+    {
+        $channelOption = $contentType->getOption('channels');
+        if ((isset($channelOption['disabled']) && (int) $channelOption['disabled'] === 2)
+            || $contentType->getOption('publication') === 'disabled') {
+            return false;
+        }
+
+        if (isset($channelOption['restricted']) && (\count($channelOption['restricted']) > 0) && !\in_array($channelId, $channelOption['restricted'], true)) {
+            return false;
+        }
+
+        return true;
     }
 }

@@ -48,6 +48,18 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString("document.addEventListener('turbo:frame-load', function(event)", $template);
     }
 
+    public function testIndexTemplateUsesSolrNativeStatusLogic(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content/index.html.twig');
+
+        $this->assertIsString($template);
+        $this->assertStringNotContainsString('status_logic.html.twig', $template);
+        $this->assertStringContainsString('{% set published = content.published|default(false) %}', $template);
+        $this->assertStringContainsString("{% set isPublishable = published in [true, 1, '1', 'true'] and channelCount > 0 %}", $template);
+        $this->assertStringContainsString('{% set hasPublicationDate = content.pub_time is defined %}', $template);
+        $this->assertStringContainsString('{% set isPlanned = isPublishable and hasPublicationDate and not hasStarted %}', $template);
+    }
+
     public function testIndexTemplatesKeepEditLinksPrefetchable(): void
     {
         $indexTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/index.html.twig');
@@ -128,8 +140,24 @@ class ContentNavigatorTemplateTest extends TestCase
 
         $this->assertIsString($template);
         $this->assertStringContainsString('app.request.query.all', $template);
-        $this->assertStringContainsString("key not in ['q', 'page']", $template);
+        $this->assertStringContainsString("{% set effectiveSort = params.sort|default(app.request.query.get('sort')) %}", $template);
+        $this->assertStringContainsString("{% set effectiveOrder = params.order|default(app.request.query.get('order')) %}", $template);
+        $this->assertStringContainsString("key not in ['q', 'page', 'sort', 'order']", $template);
+        $this->assertStringContainsString('name="sort"', $template);
+        $this->assertStringContainsString('name="order"', $template);
+        $this->assertStringContainsString('data-preserve-search-query-sync="true"', $template);
         $this->assertStringContainsString('hidden_query_field', $template);
+    }
+
+    public function testSearchFormScriptPreservesServerSideSortFallbacks(): void
+    {
+        $script = file_get_contents(__DIR__.'/../../Resources/assets/js/scripts.js');
+
+        $this->assertIsString($script);
+        $this->assertStringContainsString('input[type="hidden"][data-preserve-search-query-sync]', $script);
+        $this->assertStringContainsString('const preservedHiddenInputs = [];', $script);
+        $this->assertStringContainsString('if (!field.value || params.has(field.name)) {', $script);
+        $this->assertStringContainsString("'data-preserve-search-query-sync': 'true'", $script);
     }
 
     public function testSidebarMenuDefaultsToContentOpenState(): void
@@ -151,5 +179,17 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString('function persistSidebarMenuScrollPosition', $script);
         $this->assertStringContainsString("document.addEventListener('turbo:before-render', persistSidebarMenuScrollPosition);", $script);
         $this->assertStringContainsString("window.addEventListener('beforeunload', persistSidebarMenuScrollPosition);", $script);
+    }
+
+    public function testGlobalScriptDoesNotForceInlineDisplayForSidebarSubMenus(): void
+    {
+        $script = file_get_contents(__DIR__.'/../../Resources/assets/js/global.js');
+
+        $this->assertIsString($script);
+        $this->assertStringContainsString("const isSidebarSubMenu = el.classList.contains('sub-menu-children');", $script);
+        $this->assertStringContainsString('if (!isSidebarSubMenu) {', $script);
+        $this->assertStringContainsString("el.style.display = 'block';", $script);
+        $this->assertStringNotContainsString("list.style.display = shouldOpen ? 'block' : '';", $script);
+        $this->assertStringNotContainsString("contentWrapper.classList.add('show');\n    list.classList.add('show');\n    list.style.display = 'block';", $script);
     }
 }

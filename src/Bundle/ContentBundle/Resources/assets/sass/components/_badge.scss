@@ -8,40 +8,46 @@
 }
 
 .status-badge {
-	display: inline-block;
 	padding: .12rem .55rem;
 	border-radius: 9999px;
-	font-size: 12px;
+	font-size: 10px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .03em;
 	line-height: 1.4;
+    display: inline-flex;
+    align-items: center;
 }
 
 .status-badge.status-sent,
 .status-badge.status-active {
 	background: rgba(1, 174, 147, .12);
 	color: #018a75;
+	border: 1px solid #73b7ac;
 }
 
 .status-badge.status-sending,
 .status-badge.status-retrying {
 	background: rgba(255, 166, 32, .16);
 	color: #9c5b00;
+	border: 1px solid #d7a766;
 }
 
 .status-badge.status-failed {
 	background: rgba(176, 49, 58, .12);
 	color: #a6242f;
+	border: 1px solid #c88a90;
 }
 
 .status-badge.status-dead-letter {
 	background: rgba(126, 51, 173, .12);
 	color: #7e33ad;
+	border: 1px solid #ad85c8;
 }
 
 .status-badge.status-queued,
 .status-badge.status-inactive {
 	background: rgba(108, 123, 137, .16);
 	color: #5b6b79;
+	border: 1px solid #8d9ca9;
 }

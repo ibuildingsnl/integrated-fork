@@ -91,6 +91,12 @@ function shouldOpenInNewTab(url, openInNewTab) {
     return openInNewTab && !startsWithAny(url, ['#', 'mailto:', 'tel:']);
 }
 
+function normalizeOptionalTitle(title) {
+    const normalizedTitle = title.trim();
+
+    return normalizedTitle.length > 0 ? normalizedTitle : null;
+}
+
 function getState(root) {
     const linkText = root.querySelector(LINK_TEXT_SELECTOR)?.value ?? '';
     const linkTitle = root.querySelector(LINK_TITLE_SELECTOR)?.value ?? '';
@@ -120,7 +126,7 @@ function getSelectedResultUrl(root) {
 function isApplyEnabled(root) {
     const state = getState(root);
 
-    if (state.linkText.length === 0 || state.linkTitle.length === 0) {
+    if (state.linkText.length === 0) {
         return false;
     }
 
@@ -168,7 +174,7 @@ function insertOrReplaceLink() {
 
     const state = getState(root);
 
-    if (state.linkText.length === 0 || state.linkTitle.length === 0) {
+    if (state.linkText.length === 0) {
         return;
     }
 
@@ -187,10 +193,12 @@ function insertOrReplaceLink() {
         url = ensureHttps(selectedResultUrl);
     }
 
+    const title = normalizeOptionalTitle(state.linkTitle);
+
     if (state.existing) {
         postToParent({
             mceAction: 'linkMakerReplace',
-            title: state.linkTitle,
+            title,
             href: url,
             newTab: shouldOpenInNewTab(url, state.openInNewTab),
             linkText: state.linkText,
@@ -198,12 +206,12 @@ function insertOrReplaceLink() {
     } else {
         const target = shouldOpenInNewTab(url, state.openInNewTab) ? ' target="_blank"' : '';
         const safeLinkText = escapeHtml(state.linkText);
-        const safeTitle = escapeHtml(state.linkTitle);
         const safeUrl = escapeHtml(url);
+        const titleAttribute = title === null ? '' : ` title="${escapeHtml(title)}"`;
 
         postToParent({
             mceAction: 'insertContent',
-            content: `<a href="${safeUrl}"${target} title="${safeTitle}">${safeLinkText}</a>`,
+            content: `<a href="${safeUrl}"${target}${titleAttribute}>${safeLinkText}</a>`,
         });
     }
 
