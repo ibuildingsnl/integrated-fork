@@ -29,13 +29,23 @@
                 {% set isExpanded = true %}
             {% endif %}
         {% endfor %}
-        <div class="section-white section-radius mb-4 overflow-hidden page-copy-panel" data-page-copy-panel data-page-copy-expanded="{{ isExpanded ? 'true' : 'false' }}">
+        <div class="section-white section-radius mb-4 overflow-hidden page-copy-panel" data-page-copy-panel data-page-copy-expanded="{{ isExpanded ? 'true' : 'false' }}" data-page-copy-selected="{{ form.selected.vars.data ? 'true' : 'false' }}">
             <div class="page-copy-panel-header px-4 py-3 border-b border-solid border-gray-200" data-page-copy-panel-header>
                 <div class="flex flex-wrap items-center justify-between gap-3">
-                    <div class="flex items-center gap-3">
-                        <div>
-                            {{ form_widget(form.selected) }}
-                        </div>
+                    <div class="flex items-center gap-3 page-copy-panel-header__selection">
+                        <label class="checkbox-switcher" for="{{ form.selected.vars.id }}">
+                            <input
+                                type="checkbox"
+                                id="{{ form.selected.vars.id }}"
+                                name="{{ form.selected.vars.full_name }}"
+                                class="switch-input"
+                                data-page-copy-select="true"
+                                value="{{ form.selected.vars.value }}"
+                                {% if form.selected.vars.checked %}checked="checked"{% endif %}
+                            />
+                            <span class="switch-label" data-on="{% trans %}Yes{% endtrans %}" data-off="{% trans %}No{% endtrans %}"></span>
+                            <span class="switch-handle"></span>
+                        </label>
                         <div>
                             <div class="font-semibold">{{ page.title }}</div>
                             <div class="text-sm text-gray-500">{{ page.path }}</div>
@@ -49,9 +59,16 @@
                                 {% trans %}Create{% endtrans %}
                             {% endif %}
                         </span>
-                        <button type="button" class="btn btn-select" data-page-copy-toggle aria-expanded="{{ isExpanded ? 'true' : 'false' }}">
-                            {% trans %}Blocks{% endtrans %}
-                        </button>
+                        {% if blockCount > 0 %}
+                            <button type="button" class="btn btn-white no-icon" data-page-copy-clone-all{% if not form.selected.vars.data %} disabled{% endif %}>
+                                {% trans %}Clone all blocks{% endtrans %}
+                            </button>
+                            <button type="button" class="btn btn-select" data-page-copy-toggle aria-expanded="{{ isExpanded ? 'true' : 'false' }}">
+                                {% trans %}Blocks{% endtrans %}
+                            </button>
+                        {% else %}
+                            <span class="text-sm text-gray-500" data-page-copy-no-blocks>{% trans %}No blocks{% endtrans %}</span>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -73,7 +90,7 @@
                 {{ form_widget(form.operation) }}
             </div>
             <div class="w-full md:w-1/3" data-page-copy-new-block-id-container{% if not isCloneOperation %} style="display:none;"{% endif %}>
-                {{ form_widget(form.newBlockId) }}
+                {{ form_widget(form.newBlockId, { attr: form.newBlockId.vars.attr|merge({ 'data-page-copy-new-block-id': 'true' }) }) }}
             </div>
         </div>
     {% endapply %}

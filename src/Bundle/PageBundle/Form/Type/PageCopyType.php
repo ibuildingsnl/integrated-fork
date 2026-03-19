@@ -30,7 +30,7 @@ class PageCopyType extends AbstractType
             'placeholder' => '-- choose a source channel --',
             'filter' => ['type.$id' => 'website'],
             'attr' => [
-                'onchange' => '$(\'#page_copy_action\').val(\'refresh\');document.page_copy.submit();',
+                'data-page-copy-source-channel' => 'true',
             ],
         ]);
 
@@ -39,7 +39,7 @@ class PageCopyType extends AbstractType
             'placeholder' => '-- choose a target channel --',
             'filter' => ['type.$id' => 'website'],
             'attr' => [
-                'onchange' => '$(\'#page_copy_action\').val(\'refresh\');document.page_copy.submit();',
+                'data-page-copy-target-channel' => 'true',
             ],
             'constraints' => ($options['sourceChannel']) ? [new NotEqualTo($options['sourceChannel'])] : [],
         ]);

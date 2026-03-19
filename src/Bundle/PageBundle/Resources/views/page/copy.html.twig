@@ -1,20 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Copy page{% endtrans %}{% endblock title %}
-{% block style %}
-    {{ parent() }}
-
-    <style>
-        [data-page-copy-panel-header] .radio {
-            padding-right: 15px;
-        }
-        [data-page-copy-panel-header] .radio:last-child {
-            padding-right: 0;
-        }
-        [data-page-copy-panel][data-page-copy-expanded="true"] [data-page-copy-toggle] {
-            font-weight: 600;
-        }
-    </style>
-{% endblock %}
 {% block content %}
     <div class="flex flex-wrap edit-form">
         {% form_theme form with ['@IntegratedPage/form/form_div_layout.html.twig', '@IntegratedContent/form/form_div_layout.html.twig'] %}
@@ -29,7 +14,7 @@
         {% endif %}
 
         {% block form_start %}
-            {{ form_start(form) }}
+            {{ form_start(form, { attr: form.vars.attr|merge({ 'data-page-copy-form': 'true' }) }) }}
         {% endblock %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
@@ -43,23 +28,48 @@
                 </h1>
             </div>
             <section class="editor editor-wrapped">
-                {% if form.pages is defined %}
-                    <div class="alert alert-info alert-inline mb-4" data-page-copy-summary>
-                        <div class="flex flex-wrap items-center justify-between gap-3">
-                            <span>
-                                {% trans with {'%pages%': pageCount} %}%pages% pages found{% endtrans %}
-                            </span>
-                            <span>
-                                {% trans with {'%pages%': overwriteCount} %}%pages% overwrites{% endtrans %}
-                            </span>
+                <div class="form-actions form-actions--table-filters" data-page-copy-bulk-tools data-page-copy-channel-filters>
+                    {% if form.sourceChannel is defined %}
+                        <div class="form-item form-actions__item">
+                            {{ form_row(form.sourceChannel) }}
                         </div>
+                    {% endif %}
+                    {% if form.targetChannel is defined %}
+                        <div class="form-item form-actions__item">
+                            {{ form_row(form.targetChannel) }}
+                        </div>
+                    {% endif %}
+                    {% if form.pages is defined %}
+                        <div class="form-item form-actions__item">
+                            <label class="control-label" for="page-copy-search">{% trans %}Search{% endtrans %}</label>
+                            <input type="text" id="page-copy-search" class="form-control" data-page-copy-search>
+                        </div>
+                        <div class="form-item form-actions__item">
+                            <label class="control-label" for="page-copy-replace">{% trans %}Replace{% endtrans %}</label>
+                            <input type="text" id="page-copy-replace" class="form-control" data-page-copy-replace>
+                        </div>
+                        <div class="form-item form-actions__item form-actions__item--submit-like">
+                            <button type="button" class="btn btn-select" data-page-copy-apply-replace>
+                                {% trans %}Apply to block IDs{% endtrans %}
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+                {% if form.pages is defined %}
+                    <div class="queue-summary" data-page-copy-summary>
+                        <strong>{% trans %}Pages found{% endtrans %}:</strong> {{ pageCount }}
+                        <span>|</span>
+                        <strong>{% trans %}Overwrites{% endtrans %}:</strong> {{ overwriteCount }}
                     </div>
                 {% endif %}
-                {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
+                {{ form_widget(form.action) }}
+                {% if form.pages is defined %}
+                    {{ form_widget(form.pages, {'style':'horizontal', 'state': 'show'}) }}
+                {% endif %}
             </section>
         </div>
         {% block form_end %}
-            {{ form_end(form) }}
+            {{ form_end(form, { render_rest: false }) }}
         {% endblock %}
     </div>
 {% endblock %}
@@ -69,9 +79,77 @@
 
     <script>
     function initializePageCopyPanels() {
+        var pageCopyForm = document.querySelector('[data-page-copy-form]');
+        var actionField = pageCopyForm ? pageCopyForm.querySelector('#page_copy_action') : null;
+        var sourceChannelField = pageCopyForm ? pageCopyForm.querySelector('[data-page-copy-source-channel]') : null;
+        var targetChannelField = pageCopyForm ? pageCopyForm.querySelector('[data-page-copy-target-channel]') : null;
+        var replaceSearch = document.querySelector('[data-page-copy-search]');
+        var replaceValue = document.querySelector('[data-page-copy-replace]');
+        var replaceButton = document.querySelector('[data-page-copy-apply-replace]');
+
+        function submitPageCopyRefresh() {
+            if (!pageCopyForm || !actionField) {
+                return;
+            }
+
+            actionField.value = 'refresh';
+            pageCopyForm.requestSubmit();
+        }
+
+        function replacePlainString(value, search, replacement) {
+            if (typeof value !== 'string' || search === '') {
+                return value;
+            }
+
+            return value.split(search).join(replacement);
+        }
+
+        function applySearchReplace() {
+            if (!replaceSearch || !replaceValue) {
+                return;
+            }
+
+            var search = replaceSearch.value;
+            var replacement = replaceValue.value;
+            if (search === '') {
+                return;
+            }
+
+            document.querySelectorAll('[data-page-copy-new-block-id]').forEach(function(input) {
+                var currentValue = input.value;
+                var proposedBlockId = input.dataset.proposedBlockId || '';
+
+                input.dataset.proposedBlockId = replacePlainString(proposedBlockId, search, replacement);
+
+                if (currentValue !== '') {
+                    input.value = replacePlainString(currentValue, search, replacement);
+                    return;
+                }
+
+                var row = input.closest('[data-page-copy-block-row]');
+                var operation = row ? row.querySelector('[data-page-copy-block-operation] select') : null;
+                if (operation && operation.value === 'clone') {
+                    input.value = input.dataset.proposedBlockId || '';
+                }
+            });
+        }
+
+        if (replaceButton) {
+            replaceButton.addEventListener('click', applySearchReplace);
+        }
+
+        [sourceChannelField, targetChannelField].forEach(function(channelField) {
+            if (!channelField) {
+                return;
+            }
+
+            channelField.addEventListener('change', submitPageCopyRefresh);
+        });
+
         document.querySelectorAll('[data-page-copy-panel]').forEach(function(panel) {
             var body = panel.querySelector('[data-page-copy-panel-body]');
             var toggle = panel.querySelector('[data-page-copy-toggle]');
+            var cloneAllButton = panel.querySelector('[data-page-copy-clone-all]');
 
             var syncExpandedState = function(expanded) {
                 panel.setAttribute('data-page-copy-expanded', expanded ? 'true' : 'false');
@@ -91,7 +169,46 @@
                 });
             }
 
+            var select = panel.querySelector('[data-page-copy-select]');
+            var hasPersistentExpandedState = function() {
+                return Array.prototype.some.call(
+                    panel.querySelectorAll('[data-page-copy-block-operation] select'),
+                    function(operationSelect) {
+                        return operationSelect.value === 'clone';
+                    }
+                );
+            };
+            var syncSelectedState = function(selected) {
+                panel.setAttribute('data-page-copy-selected', selected ? 'true' : 'false');
+
+                if (selected) {
+                    syncExpandedState(true);
+                    return;
+                }
+
+                if (!selected && !hasPersistentExpandedState()) {
+                    syncExpandedState(false);
+                }
+            };
+
+            var syncCloneAllState = function() {
+                if (!cloneAllButton) {
+                    return;
+                }
+
+                cloneAllButton.disabled = !select || !select.checked;
+            };
+
+            if (select) {
+                select.addEventListener('change', function() {
+                    syncSelectedState(select.checked);
+                    syncCloneAllState();
+                });
+            }
+
             syncExpandedState(panel.getAttribute('data-page-copy-expanded') === 'true');
+            syncSelectedState(select ? select.checked : panel.getAttribute('data-page-copy-selected') === 'true');
+            syncCloneAllState();
 
             panel.querySelectorAll('[data-page-copy-block-operation] select').forEach(function(select) {
                 var row = select.closest('[data-page-copy-block-row]');
@@ -100,7 +217,7 @@
                 }
 
                 var container = row.querySelector('[data-page-copy-new-block-id-container]');
-                var input = container ? container.querySelector('input[type="text"]') : null;
+                var input = container ? container.querySelector('[data-page-copy-new-block-id]') : null;
                 if (!container || !input) {
                     return;
                 }
@@ -123,6 +240,30 @@
                 syncCloneState();
                 select.addEventListener('change', syncCloneState);
             });
+
+            if (cloneAllButton) {
+                cloneAllButton.addEventListener('click', function() {
+                    syncExpandedState(true);
+
+                    panel.querySelectorAll('[data-page-copy-block-operation] select').forEach(function(select) {
+                        var row = select.closest('[data-page-copy-block-row]');
+                        var container = row ? row.querySelector('[data-page-copy-new-block-id-container]') : null;
+                        var input = container ? container.querySelector('[data-page-copy-new-block-id]') : null;
+
+                        select.value = 'clone';
+
+                        if (container) {
+                            container.style.display = '';
+                        }
+
+                        if (input) {
+                            input.disabled = false;
+                            input.required = true;
+                            input.value = input.dataset.proposedBlockId || '';
+                        }
+                    });
+                });
+            }
         });
     }
 
