@@ -159,8 +159,8 @@ final class PageBlockCloner
         $constructor = $reflection->getConstructor();
 
         if (
-            !$reflection->isInstantiable() ||
-            ($constructor !== null && $constructor->getNumberOfRequiredParameters() > 0)
+            !$reflection->isInstantiable()
+            || ($constructor !== null && $constructor->getNumberOfRequiredParameters() > 0)
         ) {
             throw new \InvalidArgumentException(\sprintf('Unsupported block type "%s".', $source::class));
         }
@@ -177,8 +177,8 @@ final class PageBlockCloner
     private function resolveConcreteBlockClass(Block $source): string
     {
         if ($source instanceof Proxy) {
-            $parentClass = \get_parent_class($source);
-            if (\is_string($parentClass) && \is_a($parentClass, Block::class, true)) {
+            $parentClass = get_parent_class($source);
+            if (\is_string($parentClass) && is_a($parentClass, Block::class, true)) {
                 return $parentClass;
             }
         }
@@ -209,11 +209,11 @@ final class PageBlockCloner
             'Relations',
         ];
 
-        foreach (\get_class_methods($source) as $method) {
-            if (\str_starts_with($method, 'get')) {
-                $property = \substr($method, 3);
-            } elseif (\str_starts_with($method, 'is')) {
-                $property = \substr($method, 2);
+        foreach (get_class_methods($source) as $method) {
+            if (str_starts_with($method, 'get')) {
+                $property = substr($method, 3);
+            } elseif (str_starts_with($method, 'is')) {
+                $property = substr($method, 2);
             } else {
                 continue;
             }
@@ -223,7 +223,7 @@ final class PageBlockCloner
             }
 
             $setter = 'set'.$property;
-            if (!\method_exists($target, $setter)) {
+            if (!method_exists($target, $setter)) {
                 continue;
             }
 
@@ -251,7 +251,7 @@ final class PageBlockCloner
         }
 
         if (\is_array($value)) {
-            return \array_map(fn (mixed $item): mixed => $this->cloneFieldValue($item), $value);
+            return array_map(fn (mixed $item): mixed => $this->cloneFieldValue($item), $value);
         }
 
         return $value;

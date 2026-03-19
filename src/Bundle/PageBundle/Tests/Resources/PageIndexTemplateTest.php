@@ -15,7 +15,7 @@ final class PageIndexTemplateTest extends TestCase
         $this->assertIsString($template);
         $this->assertStringContainsString('bindPageFilterAutoSubmit', $template);
         $this->assertStringContainsString("document.addEventListener('turbo:load', bindPageFilterAutoSubmit);", $template);
-        $this->assertStringContainsString("form.requestSubmit ? form.requestSubmit() : form.submit();", $template);
+        $this->assertStringContainsString('form.requestSubmit ? form.requestSubmit() : form.submit();', $template);
         $this->assertStringNotContainsString('event.isTrusted', $template);
     }
 }

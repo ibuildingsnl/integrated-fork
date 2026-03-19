@@ -14,7 +14,7 @@ final class PageCopyControllerFlowTest extends TestCase
 
         $this->assertIsString($controller);
         $this->assertStringContainsString("\$this->addFlash('warning', \$exception->getMessage());", $controller);
-        $this->assertStringContainsString("\$this->flashUniqueFormErrorsAsWarnings(\$form);", $controller);
+        $this->assertStringContainsString('$this->flashUniqueFormErrorsAsWarnings($form);', $controller);
         $this->assertStringContainsString('private function flashUniqueFormErrorsAsWarnings(FormInterface $form): void', $controller);
     }
 }

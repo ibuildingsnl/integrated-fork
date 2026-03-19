@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Integrated\Bundle\PageBundle\Tests\Services;
 
+use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\InlineTextBlock;
 use Integrated\Bundle\BlockBundle\Document\Block\TextBlock;
-use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\PageBundle\Services\PageCopy\PageBlockCloner;

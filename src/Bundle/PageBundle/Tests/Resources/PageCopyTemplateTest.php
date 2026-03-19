@@ -29,7 +29,7 @@ final class PageCopyTemplateTest extends TestCase
         $this->assertIsString($template);
         $this->assertIsString($formTheme);
         $this->assertStringContainsString('data-page-copy-summary', $template);
-        $this->assertStringContainsString("{{ form_errors(form) }}", $template);
+        $this->assertStringContainsString('{{ form_errors(form) }}', $template);
         $this->assertStringContainsString('queue-summary', $template);
         $this->assertStringContainsString('overwriteCount', $template);
         $this->assertStringContainsString('data-page-copy-action', $formTheme);
@@ -143,7 +143,7 @@ final class PageCopyTemplateTest extends TestCase
         $this->assertIsString($pageTemplate);
         $this->assertStringContainsString('pageCopyPanelHasPersistentExpandedState', $pageTemplate);
         $this->assertStringContainsString('if (!pageCopyPanelHasPersistentExpandedState(panel)) {', $pageTemplate);
-        $this->assertStringContainsString("syncPageCopyPanelExpandedState(panel, false);", $pageTemplate);
+        $this->assertStringContainsString('syncPageCopyPanelExpandedState(panel, false);', $pageTemplate);
     }
 
     public function testPageCopyTypeUsesDataHooksInsteadOfInlineRefreshSubmit(): void
@@ -153,7 +153,7 @@ final class PageCopyTemplateTest extends TestCase
 
         $this->assertIsString($formType);
         $this->assertIsString($template);
-        $this->assertStringNotContainsString("document.page_copy.submit();", $formType);
+        $this->assertStringNotContainsString('document.page_copy.submit();', $formType);
         $this->assertStringContainsString('data-page-copy-source-channel', $formType);
         $this->assertStringContainsString('data-page-copy-target-channel', $formType);
         $this->assertStringContainsString('submitPageCopyRefresh', $template);
@@ -169,8 +169,8 @@ final class PageCopyTemplateTest extends TestCase
         $template = file_get_contents(__DIR__.'/../../Resources/views/page/copy.html.twig');
 
         $this->assertIsString($template);
-        $this->assertStringContainsString("{{ form_rest(form) }}", $template);
-        $this->assertStringContainsString("{{ form_end(form, { render_rest: false }) }}", $template);
+        $this->assertStringContainsString('{{ form_rest(form) }}', $template);
+        $this->assertStringContainsString('{{ form_end(form, { render_rest: false }) }}', $template);
         $this->assertStringNotContainsString("{{ form_row(form.actions, {'style':'horizontal', 'state': 'show'}) }}", $template);
     }
 }
