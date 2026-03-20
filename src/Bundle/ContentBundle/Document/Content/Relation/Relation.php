@@ -156,13 +156,17 @@ abstract class Relation extends Content implements RankableInterface
         $this->phonenumbers = new ArrayCollection();
 
         foreach ($phonenumbers as $phonenumber) {
+            if ($this->isEmptyPhonenumber($phonenumber)) {
+                continue;
+            }
+
             $this->addPhonenumber($phonenumber);
         }
     }
 
     public function addPhonenumber(string|Phonenumber $phonenumber, ?string $type = null): void
     {
-        if ($phonenumber === null) {
+        if ($phonenumber === null || $this->isEmptyPhonenumber($phonenumber)) {
             return;
         }
 
@@ -191,6 +195,19 @@ abstract class Relation extends Content implements RankableInterface
         }
 
         return $return;
+    }
+
+    private function isEmptyPhonenumber(string|Phonenumber|null $phonenumber): bool
+    {
+        if ($phonenumber === null) {
+            return true;
+        }
+
+        if ($phonenumber instanceof Phonenumber) {
+            return '' === trim($phonenumber->getNumber());
+        }
+
+        return '' === trim($phonenumber);
     }
 
     public function getEmail(): ?string

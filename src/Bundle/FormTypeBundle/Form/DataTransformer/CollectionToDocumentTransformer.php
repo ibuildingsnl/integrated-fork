@@ -33,22 +33,16 @@ class CollectionToDocumentTransformer implements DataTransformerInterface
         if (null === $value) {
             return null;
         }
+
         if ($value instanceof Collection) {
-            if ($value->count()) {
-                $document = $value->first();
-
-                if (!\is_object($document)) {
-                    throw new TransformationFailedException(
-                        \sprintf('Expected an object in the Collection, "%s" given', \gettype($value))
-                    );
-                }
-
-                return $document;
-            }
-
-            return null;
+            return $this->extractDocument($value->toArray(), 'Collection');
         }
-        throw new TransformationFailedException(\sprintf('Expected a Collection, "%s" given', \gettype($value)));
+
+        if (\is_array($value)) {
+            return $this->extractDocument($value, 'array');
+        }
+
+        throw new TransformationFailedException(\sprintf('Expected a Collection or array, "%s" given', \gettype($value)));
     }
 
     /**
@@ -68,5 +62,25 @@ class CollectionToDocumentTransformer implements DataTransformerInterface
         }
 
         return new ArrayCollection();
+    }
+
+    /**
+     * @param array<mixed> $documents
+     */
+    private function extractDocument(array $documents, string $sourceType): mixed
+    {
+        if ([] === $documents) {
+            return null;
+        }
+
+        $document = reset($documents);
+
+        if (!\is_object($document)) {
+            throw new TransformationFailedException(
+                \sprintf('Expected an object in the %s, "%s" given', $sourceType, \gettype($document))
+            );
+        }
+
+        return $document;
     }
 }
