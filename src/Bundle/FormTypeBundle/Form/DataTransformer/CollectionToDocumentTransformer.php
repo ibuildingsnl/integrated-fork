@@ -22,13 +22,11 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 class CollectionToDocumentTransformer implements DataTransformerInterface
 {
     /**
-     * @param Collection|null $value
-     *
-     * @return object|null
+     * @param Collection<int, mixed>|array<int, mixed>|null $value
      *
      * @throws TransformationFailedException
      */
-    public function transform($value): mixed
+    public function transform(mixed $value): ?object
     {
         if (null === $value) {
             return null;
@@ -48,9 +46,9 @@ class CollectionToDocumentTransformer implements DataTransformerInterface
     /**
      * @param object|null $value
      *
-     * @return ArrayCollection
+     * @return ArrayCollection<int, object>
      */
-    public function reverseTransform($value): mixed
+    public function reverseTransform(mixed $value): ArrayCollection
     {
         if (null !== $value) {
             if (\is_object($value)) {
@@ -65,9 +63,9 @@ class CollectionToDocumentTransformer implements DataTransformerInterface
     }
 
     /**
-     * @param array<mixed> $documents
+     * @param array<int, mixed> $documents
      */
-    private function extractDocument(array $documents, string $sourceType): mixed
+    private function extractDocument(array $documents, string $sourceType): ?object
     {
         if ([] === $documents) {
             return null;

@@ -199,6 +199,7 @@ class MediaController extends AbstractController
                 ]
             ),
             'previous_url' => $request->headers->get('referer'),
+            'embedded' => $request->query->getBoolean('embedded'),
             'file_url' => $request->server->get('REQUEST_SCHEME').'://'.$request->server->get('SERVER_NAME').$file->getFile()->getPathName(),
         ]);
     }

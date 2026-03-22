@@ -43,30 +43,14 @@
          data-used-by-path="{{ path('integrated_content_content_used_by', {'id' : 'REPLACE'}) }}"
          data-used-by-block-path="{{ path('integrated_block_block_used_by', {'id' : 'REPLACE'}) }}"
          data-media-gallery-path="{{ path('integrated_content_media_index') }}"
+         data-previous-url="{{ previous_url|default('') }}"
+         data-embedded="{{ embedded ? 'true' : 'false' }}"
          data-meta="{{ meta }}"
          data-title="{{ title }}"
          data-file_url="{{ file_url|default("") }}">
     </div>
 
     <script src="{{ asset('bundles/integratedintegrated/edit_uppy.js') }}" defer data-turbo-track="reload"></script>
-{% endblock %}
-
-{% block head_javascript %}
-    {{ parent() }}
-
-    <script>
-        const path = '{{ path('integrated_content_media_manage_relations') }}'
-        const previous_url = '{{ previous_url }}'
-        const selected_modus = '{{ selected_modus|default('media_gallery') }}'
-
-        var modal = document.getElementById("image-edit-modal");
-        var cancel = document.getElementById("cancelModal");
-        cancel.onclick = function() {
-            modal.style.display = "none";
-        }
-    </script>
-
-    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}" defer data-turbo-track="reload"></script>
 {% endblock %}
 
 {% block webpack_js %}

@@ -2,6 +2,8 @@ import 'select2/dist/js/select2.full';
 import {reloadWithTurbo, visitWithTurbo} from './turbo_navigation';
 
 const MEDIA_GALLERY_NS = '.mediaGallery';
+const EMBEDDED_IMAGE_EDITOR_CANCEL = 'integrated-media-image-editor-cancel';
+const EMBEDDED_IMAGE_EDITOR_SAVED = 'integrated-media-image-editor-saved';
 
 function bindMediaGalleryEvents() {
     bindViewToggles();
@@ -139,6 +141,16 @@ function bindUploadActions() {
         });
 }
 
+function resetUploadContainerState() {
+    const uploadContainer = document.querySelector('#upload_container');
+    if (!uploadContainer) {
+        return;
+    }
+
+    uploadContainer.classList.remove('show');
+    uploadContainer.dataset.customContenttype = '';
+}
+
 function bindSearchActions() {
     const doc = $(document);
 
@@ -186,20 +198,124 @@ function bindMediaItemActions() {
             const selectedModus = (!selectedModusRaw || selectedModusRaw === 'undefined')
                 ? 'media_gallery'
                 : selectedModusRaw;
-            const editImagePath = wrapper.dataset.editimagepath;
             const editImageIframePath = wrapper.dataset.editimageiframepath;
 
-            if (!mediaId || !editImagePath || !editImageIframePath) {
+            if (!mediaId || !editImageIframePath) {
                 return;
             }
 
             if (selectedModus === 'media_gallery') {
-                visitWithTurbo(editImagePath.replace('REPLACE', mediaId));
+                openEmbeddedImageEditor(mediaId, selectedModus);
             } else {
                 visitWithTurbo(editImageIframePath.replace('REPLACE', mediaId));
             }
         });
 
+}
+
+function getEditPanelElements() {
+    return {
+        gallery: document.querySelector('.media-gallery'),
+        panelContainer: document.querySelector('.media-edit-panel'),
+        panel: document.querySelector('#media-edit-panel'),
+        editorFrame: document.querySelector('#media-image-editor-frame'),
+        wrapper: document.querySelector('#editimagewrapper'),
+    };
+}
+
+function buildEmbeddedImageEditorUrl(mediaId) {
+    const {wrapper} = getEditPanelElements();
+    if (!wrapper) {
+        return '';
+    }
+
+    const basePath = String(wrapper.dataset.editimageiframepath || '').trim();
+    const embeddedQuery = String(wrapper.dataset.editImageEmbeddedQuery || '').trim();
+    if (!basePath) {
+        return '';
+    }
+
+    const resolvedPath = basePath.replace('REPLACE', mediaId);
+    if (!embeddedQuery) {
+        return resolvedPath;
+    }
+
+    const separator = resolvedPath.includes('?') ? '&' : '?';
+
+    return resolvedPath + separator + embeddedQuery;
+}
+
+function showEditPanelDetailsMode() {
+    const {panelContainer, panel, editorFrame} = getEditPanelElements();
+    if (!panelContainer || !panel || !editorFrame) {
+        return;
+    }
+
+    panelContainer.classList.remove('show-image-editor');
+    panel.hidden = false;
+    editorFrame.hidden = true;
+}
+
+function resetEmbeddedImageEditorState() {
+    const {panelContainer, editorFrame} = getEditPanelElements();
+    if (!panelContainer || !editorFrame) {
+        return;
+    }
+
+    panelContainer.classList.remove('show-image-editor');
+    editorFrame.hidden = true;
+    editorFrame.removeAttribute('src');
+    delete editorFrame.dataset.mediaId;
+}
+
+function openEmbeddedImageEditor(mediaId, selectedModus) {
+    const {panelContainer, panel, editorFrame} = getEditPanelElements();
+    if (!panelContainer || !panel || !editorFrame) {
+        return;
+    }
+
+    if (selectedModus !== 'media_gallery') {
+        return;
+    }
+
+    editorFrame.dataset.mediaId = mediaId;
+    editorFrame.setAttribute('src', buildEmbeddedImageEditorUrl(mediaId));
+    panelContainer.classList.add('show-image-editor');
+    panel.hidden = true;
+    editorFrame.hidden = false;
+}
+
+function handleEmbeddedImageEditorMessage(event) {
+    const {editorFrame} = getEditPanelElements();
+    if (!editorFrame || !editorFrame.contentWindow || event.source !== editorFrame.contentWindow) {
+        return;
+    }
+
+    const payload = event.data;
+    if (!payload || typeof payload !== 'object' || !('type' in payload)) {
+        return;
+    }
+
+    if (payload.type === EMBEDDED_IMAGE_EDITOR_CANCEL) {
+        showEditPanelDetailsMode();
+        resetEmbeddedImageEditorState();
+        return;
+    }
+
+    if (payload.type === EMBEDDED_IMAGE_EDITOR_SAVED) {
+        showEditPanelDetailsMode();
+        resetEmbeddedImageEditorState();
+        reloadWithTurbo();
+    }
+}
+
+function bindEmbeddedImageEditorBridge() {
+    if (document.body.dataset.boundEmbeddedImageEditorBridge === 'true') {
+        return;
+    }
+
+    window.addEventListener('message', handleEmbeddedImageEditorMessage);
+    document.body.dataset.boundEmbeddedImageEditorBridge = 'true';
 }
 
 function bindEditPanelForm() {
@@ -378,10 +494,12 @@ document.addEventListener('turbo:frame-load', function(event) {
 });
 
 function initMediaGallery() {
+    resetUploadContainerState();
     bindEditPanelSaveButton();
     initEditPanelUi();
     initRelationItemsInPanel();
     bindMediaGalleryEvents();
+    bindEmbeddedImageEditorBridge();
 }
 
 document.addEventListener('turbo:after-stream-render', function(event) {
@@ -457,6 +575,8 @@ function initializeViewPreference() {
 function handleMediaClick(event) {
     $('.media-gallery').addClass('show-edit-form');
     $('.media-edit-panel').removeClass('hide');
+    resetEmbeddedImageEditorState();
+    showEditPanelDetailsMode();
 
     const selected_modus = document.querySelector('.media-library').dataset.selectedModus
     const frame = document.querySelector('#media-edit-panel');
@@ -468,6 +588,7 @@ function handleMediaClick(event) {
 }
 
 function handleMediaEditClose(event) {
+    resetEmbeddedImageEditorState();
     $('.media-gallery').removeClass('show-edit-form');
     $('.media-edit-panel').addClass('hide');
 }
