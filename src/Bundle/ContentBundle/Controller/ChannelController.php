@@ -35,23 +35,28 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class ChannelController extends AbstractController
 {
     private const CHANNELS_CACHE_NAMESPACE = 'integrated_content_fragments_channels';
+    private const CHANNELS_CACHE_TTL_SECONDS = 300;
 
     private DocumentManager $documentManager;
     private SearchContentReferenced $searchContentReferenced;
     private EventDispatcherInterface $dispatcher;
+    private RequestStack $requestStack;
 
     public function __construct(
         DocumentManager $documentManager,
         SearchContentReferenced $searchContentReferenced,
         EventDispatcherInterface $dispatcher,
+        RequestStack $requestStack,
     ) {
         $this->searchContentReferenced = $searchContentReferenced;
         $this->documentManager = $documentManager;
         $this->dispatcher = $dispatcher;
+        $this->requestStack = $requestStack;
     }
 
     public function index(): Response
@@ -341,7 +346,7 @@ class ChannelController extends AbstractController
         }
 
         $cache = new FilesystemAdapter(self::CHANNELS_CACHE_NAMESPACE);
-        $cacheItem = $cache->getItem('channels_'.md5((string) $user->getId()));
+        $cacheItem = $cache->getItem($this->buildChannelsCacheKey($user));
 
         if ($cacheItem->isHit()) {
             return new Response((string) $cacheItem->get());
@@ -352,10 +357,17 @@ class ChannelController extends AbstractController
         ]);
 
         $cacheItem->set($html);
-        $cacheItem->expiresAfter(86400);
+        $cacheItem->expiresAfter(self::CHANNELS_CACHE_TTL_SECONDS);
         $cache->save($cacheItem);
 
         return new Response($html);
+    }
+
+    private function buildChannelsCacheKey(UserInterface $user): string
+    {
+        $sessionId = (string) ($this->requestStack->getCurrentRequest()?->getSession()?->getId() ?? '');
+
+        return 'channels_'.md5((string) $user->getId().':'.$sessionId);
     }
 
     /**

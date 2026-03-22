@@ -66,6 +66,7 @@
         </service>
 
         <service id="Integrated\Bundle\WebsiteBundle\Controller\SessionController">
+            <argument type="service" id="uri_signer" />
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
         </service>

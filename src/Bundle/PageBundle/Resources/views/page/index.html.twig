@@ -9,8 +9,8 @@
                     {% set lastUrl = lastPage.path %}
                     {% set editUrl = lastPage.path ~ '?integrated_website_edit=1' %}
                 {% else %}
-                    {% set lastUrl = '//'~lastPage.domain~path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': lastPage.path}) %}
-                    {% set editUrl = '//'~lastPage.domain~path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': lastPage.path ~ '?integrated_website_edit=1'}) %}
+                    {% set lastUrl = integrated_session_bridge_url(lastPage.domain, app.session.id, lastPage.path) %}
+                    {% set editUrl = integrated_session_bridge_url(lastPage.domain, app.session.id, lastPage.path ~ '?integrated_website_edit=1') %}
                 {% endif %}
                 {#        //TODO: FIX THIS #}
                 <div class="alert alert-info alert-inline">
@@ -111,7 +111,7 @@
                                     {% if (page.domain == app.request.httphost) %}
                                     <a href="{{ page.path }}" title="{% trans %}Open page{% endtrans %}" target="_blank" rel="noopener noreferrer" data-turbo="false">
                                         {% else %}
-                                        <a href="//{{ page.domain }}{{ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': page.path}) }}"
+                                        <a href="{{ integrated_session_bridge_url(page.domain, app.session.id, page.path) }}"
                                            title="{% trans %}Open page{% endtrans %}" target="_blank" rel="noopener noreferrer" data-turbo="false">
                                             {% endif %}
                                             {% endif %}

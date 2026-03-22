@@ -28,6 +28,10 @@
         <service id="integrated_website.twig.url_extension" class="Integrated\Bundle\WebsiteBundle\Twig\Extension\UrlExtension">
             <argument type="service" id="integrated_page.services.url_resolver" />
             <argument type="service" id="integrated_page.services.solr_url_extractor" />
+            <argument type="service" id="request_stack" />
+            <argument type="service" id="router" />
+            <argument type="service" id="uri_signer" />
+            <argument>300</argument>
             <tag name="twig.extension" />
         </service>
 

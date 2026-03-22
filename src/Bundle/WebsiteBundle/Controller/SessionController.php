@@ -16,21 +16,45 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\UriSigner;
 
 class SessionController extends AbstractController
 {
+    public function __construct(
+        private readonly ?UriSigner $uriSigner = null
+    ) {
+    }
+
     public function enterSession(string $sessionId, Request $request): Response
     {
-        $page = $request->get('path', '/');
-
-        $response = new RedirectResponse($page);
-
-        if ($this->getUser() == false) {
-            $sessionId = preg_replace('/[^a-zA-Z0-9]+/', '', $sessionId);
-
-            $response->headers->setCookie(Cookie::create('PHPSESSID', $sessionId));
+        if (!$this->isValidSignedRequest($request)) {
+            return new Response('Forbidden', Response::HTTP_FORBIDDEN);
         }
 
+        $sessionId = trim($sessionId);
+        if ($sessionId === '') {
+            return new Response('Forbidden', Response::HTTP_FORBIDDEN);
+        }
+
+        $response = new RedirectResponse($this->normalizeInternalPath($request->get('path', '/')));
+        $response->headers->setCookie(Cookie::create('PHPSESSID', $sessionId));
+
         return $response;
+    }
+
+    private function normalizeInternalPath(mixed $path): string
+    {
+        $path = trim((string) $path);
+
+        if ($path === '' || !str_starts_with($path, '/') || str_starts_with($path, '//')) {
+            return '/';
+        }
+
+        return $path;
+    }
+
+    private function isValidSignedRequest(Request $request): bool
+    {
+        return $this->uriSigner !== null && $this->uriSigner->checkRequest($request);
     }
 }

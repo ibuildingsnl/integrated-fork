@@ -14,6 +14,9 @@ namespace Integrated\Bundle\WebsiteBundle\Twig\Extension;
 use Integrated\Bundle\PageBundle\Services\SolrUrlExtractor;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
 use Integrated\Common\Content\ContentInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\UriSigner;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -32,16 +35,35 @@ class UrlExtension extends AbstractExtension
      */
     protected $solrUrlExtractor;
 
-    public function __construct(UrlResolver $urlResolver, SolrUrlExtractor $solrUrlExtractor)
-    {
+    private ?RequestStack $requestStack;
+
+    private ?UrlGeneratorInterface $urlGenerator;
+
+    private ?UriSigner $uriSigner;
+
+    private int $sessionBridgeTtlSeconds;
+
+    public function __construct(
+        UrlResolver $urlResolver,
+        SolrUrlExtractor $solrUrlExtractor,
+        ?RequestStack $requestStack = null,
+        ?UrlGeneratorInterface $urlGenerator = null,
+        ?UriSigner $uriSigner = null,
+        int $sessionBridgeTtlSeconds = 300
+    ) {
         $this->urlResolver = $urlResolver;
         $this->solrUrlExtractor = $solrUrlExtractor;
+        $this->requestStack = $requestStack;
+        $this->urlGenerator = $urlGenerator;
+        $this->uriSigner = $uriSigner;
+        $this->sessionBridgeTtlSeconds = $sessionBridgeTtlSeconds;
     }
 
     public function getFunctions()
     {
         return [
             new TwigFunction('integrated_url', $this->getUrl(...)),
+            new TwigFunction('integrated_session_bridge_url', $this->getSessionBridgeUrl(...)),
         ];
     }
 
@@ -59,6 +81,39 @@ class UrlExtension extends AbstractExtension
 
         // probably solr document
         return $this->solrUrlExtractor->getUrl($document, $channelId);
+    }
+
+    public function getSessionBridgeUrl(string $domain, string $sessionId, mixed $path = '/'): string
+    {
+        $domain = trim($domain);
+        $sessionId = trim($sessionId);
+        $normalizedPath = $this->normalizeInternalPath($path);
+
+        if ($domain === '' || $sessionId === '' || $this->urlGenerator === null || $this->uriSigner === null) {
+            return $normalizedPath;
+        }
+
+        $scheme = $this->requestStack?->getCurrentRequest()?->getScheme() ?? 'https';
+        $bridgePath = $this->urlGenerator->generate('integrated_website_enter_session', [
+            'sessionId' => $sessionId,
+            'path' => $normalizedPath,
+        ], UrlGeneratorInterface::ABSOLUTE_PATH);
+
+        return $this->uriSigner->sign(
+            $scheme.'://'.$domain.$bridgePath,
+            time() + $this->sessionBridgeTtlSeconds
+        );
+    }
+
+    private function normalizeInternalPath(mixed $path): string
+    {
+        $path = trim((string) $path);
+
+        if ($path === '' || strpos($path, '/') !== 0 || strpos($path, '//') === 0) {
+            return '/';
+        }
+
+        return $path;
     }
 
     public function getName()
