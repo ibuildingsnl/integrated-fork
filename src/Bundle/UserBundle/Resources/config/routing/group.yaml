@@ -1,0 +1,17 @@
+integrated_user_group_index:
+  path: '/'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\GroupController::index'
+integrated_user_group_new:
+  path: '/new'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\GroupController::new'
+integrated_user_group_edit:
+  path: '/{id}'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\GroupController::edit'
+integrated_user_group_delete:
+  path: '/{id}/delete'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\GroupController::delete'

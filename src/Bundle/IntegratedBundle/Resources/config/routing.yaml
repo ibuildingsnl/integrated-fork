@@ -1,0 +1,29 @@
+import_01_routing:
+  resource: '@IntegratedBlockBundle/Resources/config/routing.yaml'
+import_02_routing:
+  resource: '@IntegratedBrandBundle/Resources/config/routing.yaml'
+import_03_routing:
+  resource: '@IntegratedChannelBundle/Resources/config/routing.yaml'
+import_04_routing:
+  resource: '@IntegratedCommentBundle/Resources/config/routing.yaml'
+import_05_routing:
+  resource: '@IntegratedContentBundle/Resources/config/routing.yaml'
+import_06_routing:
+  resource: '@IntegratedContentHistoryBundle/Resources/config/routing.yaml'
+import_07_routing:
+  resource: '@IntegratedLockingBundle/Resources/config/routing.yaml'
+import_08_routing:
+  resource: '@IntegratedPageBundle/Resources/config/routing.yaml'
+import_09_routing:
+  resource: '@IntegratedThemeBundle/Resources/config/routing.yaml'
+import_10_routing:
+  resource: '@IntegratedUserBundle/Resources/config/routing.yaml'
+import_11_routing_security:
+  resource: '@IntegratedUserBundle/Resources/config/routing.security.yaml'
+import_12_routing:
+  resource: '@IntegratedWorkflowBundle/Resources/config/routing.yaml'
+import_13_routing:
+  resource: '@IntegratedTaxonomyBundle/Resources/config/routing.yaml'
+integrated_integrated_index:
+  path: '/'
+  controller: 'Integrated\Bundle\IntegratedBundle\Controller\AdminEntrypointController::index'

@@ -1,0 +1,15 @@
+integrated_formtype_media_image:
+  path: '/image'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\FormTypeBundle\Controller\MediaController::image'
+integrated_formtype_media_gallery:
+  path: '/gallery'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\FormTypeBundle\Controller\MediaController::gallery'
+integrated_formtype_media_video:
+  path: '/video'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\FormTypeBundle\Controller\MediaController::video'

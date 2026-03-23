@@ -1,0 +1,5 @@
+import_01_security:
+  resource: '@IntegratedUserBundle/Resources/config/routing/website/security.yaml'
+import_02_registration:
+  resource: '@IntegratedUserBundle/Resources/config/routing/website/registration.yaml'
+  prefix: 'registration'

@@ -1,0 +1,11 @@
+integrated_content_search_suggestions:
+  path: 'suggestions/{query}'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\SearchController::suggestion'
+integrated_content_search_suggestions_empty:
+  path: 'suggestions/'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\SearchController::suggestion'
+    query: ''

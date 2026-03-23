@@ -1,0 +1,5 @@
+oembed_data_fetcher:
+  path: '_oembed/fetch-data'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\OEmbedController::oEmbed'

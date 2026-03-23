@@ -1,0 +1,16 @@
+integrated_user_website_security_login:
+  path: '/login'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\Website\SecurityController::login'
+integrated_user_website_security_check:
+  path: '/login-check'
+integrated_user_website_security_logout:
+  path: '/logout'
+integrated_user_website_security_password_reset:
+  path: '/login/reset-password'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\Website\SecurityController::passwordReset'
+integrated_user_website_security_password_change:
+  path: '/login/change-password/{id}/{timestamp}/{key}'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\Website\SecurityController::passwordChange'

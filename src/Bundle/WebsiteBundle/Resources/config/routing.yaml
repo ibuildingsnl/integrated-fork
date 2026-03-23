@@ -1,0 +1,18 @@
+import_01_grid:
+  resource: '@IntegratedWebsiteBundle/Resources/config/routing/grid.yaml'
+  prefix: '/grid'
+import_02_menu:
+  resource: '@IntegratedWebsiteBundle/Resources/config/routing/menu.yaml'
+  prefix: '/menu'
+import_03_search_selection:
+  resource: '@IntegratedWebsiteBundle/Resources/config/routing/search_selection.yaml'
+import_04_json:
+  resource: '@IntegratedWebsiteBundle/Resources/config/routing/json.yaml'
+import_05_session:
+  resource: '@IntegratedWebsiteBundle/Resources/config/routing/session.yaml'
+import_06_routing:
+  resource: '.'
+  type: 'integrated_website_page'
+import_07_routing:
+  resource: '.'
+  type: 'integrated_website_content_type_page'

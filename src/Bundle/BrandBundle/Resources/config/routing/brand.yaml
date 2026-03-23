@@ -1,0 +1,40 @@
+integrated_content_brand_index:
+  path: '/'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\BrandBundle\Controller\BrandController::index'
+integrated_content_brand_new:
+  path: '/new'
+  methods: ['GET', 'POST']
+  defaults:
+    _controller: 'Integrated\Bundle\BrandBundle\Controller\BrandController::create'
+integrated_content_brand_edit:
+  path: '/{id}/edit'
+  methods: ['GET', 'PUT']
+  defaults:
+    _controller: 'Integrated\Bundle\BrandBundle\Controller\BrandController::edit'
+integrated_content_brand_delete:
+  path: '/{id}/delete'
+  methods: ['GET', 'DELETE']
+  defaults:
+    _controller: 'Integrated\Bundle\BrandBundle\Controller\BrandController::delete'
+integrated_content_brand_add_channel:
+  path: '/{id}/add/{type}'
+  methods: ['GET', 'POST']
+  defaults:
+    _controller: 'Integrated\Bundle\BrandBundle\Controller\ChannelLinkController::addChannel'
+integrated_content_brand_edit_channel:
+  path: '/{id}/edit/{link}'
+  methods: ['GET', 'PUT']
+  defaults:
+    _controller: 'Integrated\Bundle\BrandBundle\Controller\ChannelLinkController::editChannel'
+integrated_content_brand_remove_channel:
+  path: '/{id}/remove/{link}'
+  methods: ['GET', 'DELETE']
+  defaults:
+    _controller: 'Integrated\Bundle\BrandBundle\Controller\ChannelLinkController::removeChannel'
+integrated_content_brand_manage_connector:
+  path: '/{id}/connector/{link}'
+  methods: ['GET', 'POST', 'PUT']
+  defaults:
+    _controller: 'Integrated\Bundle\BrandBundle\Controller\ConnectorController::configure'

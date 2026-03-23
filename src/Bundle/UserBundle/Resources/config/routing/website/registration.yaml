@@ -1,0 +1,8 @@
+integrated_user_website_registration_register:
+  path: '/'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\Website\RegistrationController::register'
+integrated_user_website_registration_activate:
+  path: '/activate/{id}/{timestamp}/{key}'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\Website\RegistrationController::activate'

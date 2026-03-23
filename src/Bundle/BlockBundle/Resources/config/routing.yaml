@@ -1,0 +1,9 @@
+import_01_block:
+  resource: '@IntegratedBlockBundle/Resources/config/routing/block.yaml'
+  prefix: '/block'
+import_02_channel_block:
+  resource: '@IntegratedBlockBundle/Resources/config/routing/channel-block.yaml'
+  prefix: '/block/channel-block'
+import_03_inline_text:
+  resource: '@IntegratedBlockBundle/Resources/config/routing/inline-text.yaml'
+  prefix: '/block/inline-text'

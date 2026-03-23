@@ -1,0 +1,6 @@
+integrated_website_grid_save:
+  path: '/save'
+  methods: ['POST']
+  defaults:
+    _controller: 'Integrated\Bundle\WebsiteBundle\Controller\GridController::save'
+    _format: 'json'

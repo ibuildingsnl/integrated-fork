@@ -1,0 +1,3 @@
+import_01_config:
+  resource: '@IntegratedChannelBundle/Resources/config/routing/config.yaml'
+  prefix: '/connector/config/'

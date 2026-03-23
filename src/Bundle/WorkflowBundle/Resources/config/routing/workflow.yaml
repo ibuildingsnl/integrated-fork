@@ -1,0 +1,22 @@
+integrated_workflow_index:
+  path: '/'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\WorkflowBundle\Controller\WorkflowController::index'
+integrated_workflow_new:
+  path: '/new'
+  defaults:
+    _controller: 'Integrated\Bundle\WorkflowBundle\Controller\WorkflowController::new'
+integrated_workflow_change_state:
+  path: '/change_state'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\WorkflowBundle\Controller\WorkflowController::changeState'
+integrated_workflow_edit:
+  path: '/{id}'
+  defaults:
+    _controller: 'Integrated\Bundle\WorkflowBundle\Controller\WorkflowController::edit'
+integrated_workflow_delete:
+  path: '/{id}/delete'
+  defaults:
+    _controller: 'Integrated\Bundle\WorkflowBundle\Controller\WorkflowController::delete'

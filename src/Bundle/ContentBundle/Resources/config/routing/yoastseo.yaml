@@ -1,0 +1,5 @@
+fetch_translations:
+  path: '_yoastseo/fetch-translations'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\YoastSeoLanguageProvider::fetchTranslations'

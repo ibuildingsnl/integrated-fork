@@ -1,0 +1,8 @@
+import_01_routing:
+  resource: '@IntegratedSitemapBundle/Resources/config/routing.yaml'
+import_02_routing:
+  resource: '@IntegratedStorageBundle/Resources/config/routing.yaml'
+import_03_routing_website:
+  resource: '@IntegratedPageBundle/Resources/config/routing.website.yaml'
+import_04_routing:
+  resource: '@IntegratedWebsiteBundle/Resources/config/routing.yaml'

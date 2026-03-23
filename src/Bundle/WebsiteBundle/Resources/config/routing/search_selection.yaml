@@ -1,0 +1,6 @@
+integrated_website_search_selection_rss:
+  path: '/content/rss/{id}'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\WebsiteBundle\Controller\RSSSearchSelectionController::rss'
+    _format: 'xml'

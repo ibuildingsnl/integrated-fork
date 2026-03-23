@@ -1,0 +1,3 @@
+import_01_brand:
+  resource: '@IntegratedBrandBundle/Resources/config/routing/brand.yaml'
+  prefix: '/brand'

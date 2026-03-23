@@ -1,0 +1,50 @@
+import_01_media:
+  resource: '@IntegratedFormTypeBundle/Resources/config/routing/media.yaml'
+  prefix: '/media/tinymce/dialog/'
+import_02_content:
+  resource: '@IntegratedContentBundle/Resources/config/routing/content.yaml'
+  prefix: '/content/'
+import_03_content_type:
+  resource: '@IntegratedContentBundle/Resources/config/routing/content_type.yaml'
+  prefix: '/contenttype/'
+import_04_channel:
+  resource: '@IntegratedContentBundle/Resources/config/routing/channel.yaml'
+  prefix: '/channel/'
+import_05_media:
+  resource: '@IntegratedContentBundle/Resources/config/routing/media.yaml'
+  prefix: '/media/'
+import_06_relation:
+  resource: '@IntegratedContentBundle/Resources/config/routing/relation.yaml'
+  prefix: '/relation/'
+import_07_icons:
+  resource: '@IntegratedContentBundle/Resources/config/routing/icons.yaml'
+import_08_rank:
+  resource: '@IntegratedContentBundle/Resources/config/routing/rank.yaml'
+  prefix: '/rank/'
+import_09_parent_id:
+  resource: '@IntegratedContentBundle/Resources/config/routing/parent_id.yaml'
+  prefix: '/parent_id/'
+import_10_search_selection:
+  resource: '@IntegratedContentBundle/Resources/config/routing/search_selection.yaml'
+  prefix: '/search-selection/'
+import_11_search:
+  resource: '@IntegratedContentBundle/Resources/config/routing/search.yaml'
+import_12_article_search:
+  resource: '@IntegratedContentBundle/Resources/config/routing/article_search.yaml'
+import_13_yoastseo:
+  resource: '@IntegratedContentBundle/Resources/config/routing/yoastseo.yaml'
+import_14_oembed:
+  resource: '@IntegratedContentBundle/Resources/config/routing/oembed.yaml'
+import_15_bulk:
+  resource: '@IntegratedContentBundle/Resources/config/routing/bulk.yaml'
+  prefix: '/bulk/'
+import_16_routing:
+  resource: '@IntegratedBlockBundle/Resources/config/routing.yaml'
+content_redirect:
+  path: '/'
+  controller: 'Symfony\Bundle\FrameworkBundle\Controller\RedirectController'
+  defaults:
+    route: 'integrated_content_content_index'
+    permanent: true
+    keepQueryParams: true
+    keepRequestMethod: true

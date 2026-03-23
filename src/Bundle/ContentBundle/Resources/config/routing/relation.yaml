@@ -1,0 +1,23 @@
+integrated_content_relation_index:
+  path: '/'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\RelationController::index'
+integrated_content_relation_new:
+  path: '/new'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\RelationController::new'
+integrated_content_relation_edit:
+  path: '/{id}/edit'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\RelationController::edit'
+integrated_content_relation_delete:
+  path: '/{id}/delete'
+  methods: ['GET', 'DELETE']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\RelationController::delete'
+integrated_content_relation_show:
+  path: '/{id}'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\RelationController::show'

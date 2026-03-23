@@ -1,0 +1,5 @@
+integrated_block_channel_block_new:
+  path: '/new/'
+  methods: ['POST']
+  defaults:
+    _controller: 'Integrated\Bundle\BlockBundle\Controller\ChannelBlockController::new'

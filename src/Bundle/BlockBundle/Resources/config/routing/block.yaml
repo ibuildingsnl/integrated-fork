@@ -1,0 +1,44 @@
+integrated_block_block_index:
+  path: '/{_format}'
+  defaults:
+    _controller: 'Integrated\Bundle\BlockBundle\Controller\BlockController::index'
+    _format: 'html'
+  requirements:
+    _format: 'html|json'
+integrated_block_block_new:
+  path: '/new/{_format}'
+  defaults:
+    _controller: 'Integrated\Bundle\BlockBundle\Controller\BlockController::new'
+    _format: 'html'
+  requirements:
+    _format: 'html|iframe.html'
+integrated_block_block_show:
+  path: '/{id}'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\BlockBundle\Controller\BlockController::show'
+    _format: 'json'
+integrated_block_block_edit:
+  path: '/{id}/edit/{_format}'
+  defaults:
+    _controller: 'Integrated\Bundle\BlockBundle\Controller\BlockController::edit'
+    _format: 'html'
+  requirements:
+    _format: 'html|iframe.html'
+integrated_block_block_delete:
+  path: '/{id}/delete'
+  defaults:
+    _controller: 'Integrated\Bundle\BlockBundle\Controller\BlockController::delete'
+integrated_block_block_used_by:
+  path: '/{id}/used-by/{_format}'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\BlockBundle\Controller\BlockController::usedBy'
+    _format: 'html'
+  requirements:
+    _format: 'html|json'
+integrated_block_inline_text_block_create:
+  path: '/inline-text/new/{id}'
+  methods: ['GET', 'PUT', 'POST']
+  defaults:
+    _controller: 'Integrated\Bundle\BlockBundle\Controller\InlineTextBlockController::new'

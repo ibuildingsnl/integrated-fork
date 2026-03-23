@@ -1,0 +1,17 @@
+integrated_user_scope_index:
+  path: '/'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\ScopeController::index'
+integrated_user_scope_new:
+  path: '/new'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\ScopeController::new'
+integrated_user_scope_edit:
+  path: '/{id}'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\ScopeController::edit'
+integrated_user_scope_delete:
+  path: '/{id}/delete'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\ScopeController::delete'

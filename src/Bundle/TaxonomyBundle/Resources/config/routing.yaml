@@ -1,0 +1,6 @@
+integrated_taxonomy_index:
+  path: '/taxonomy/{type}'
+  methods: ['GET', 'POST']
+  defaults:
+    _controller: 'Integrated\Bundle\TaxonomyBundle\Controller\IndexController::index'
+    _format: 'html'
