@@ -43,6 +43,7 @@ class IntegratedContentBlock extends AbstractType
                 ->setMinimumMatch('75%');
 
             $query->setQuery($options['q']);
+            $query->setQueryDefaultOperator(Query::QUERY_OPERATOR_AND);
         }
 
         if ($options['exclude'] && $options['exclude_ids']) {

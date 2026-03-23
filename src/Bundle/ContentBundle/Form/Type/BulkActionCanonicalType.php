@@ -37,6 +37,7 @@ class BulkActionCanonicalType extends AbstractType
             'sourceUrl',
             UrlType::class,
             [
+                'default_protocol' => 'https',
                 'label' => 'Source URL',
                 'required' => false,
             ]

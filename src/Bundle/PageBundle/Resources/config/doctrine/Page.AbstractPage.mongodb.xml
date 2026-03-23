@@ -2,7 +2,7 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
 
-    <mapped-superclass name="Integrated\Bundle\PageBundle\Document\Page\AbstractPage" collection="page" inheritance-type="SINGLE_COLLECTION">
+    <document name="Integrated\Bundle\PageBundle\Document\Page\AbstractPage" collection="page" inheritance-type="SINGLE_COLLECTION">
 
         <id field-name="id" strategy="UUID" />
         <field field-name="path" type="string" />
@@ -30,6 +30,6 @@
 
         <default-discriminator-value value="Page" />
 
-    </mapped-superclass>
+    </document>
 
 </doctrine-mongo-mapping>

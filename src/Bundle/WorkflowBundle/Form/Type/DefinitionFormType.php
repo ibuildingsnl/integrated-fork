@@ -49,7 +49,7 @@ class DefinitionFormType extends AbstractType
             'default_title' => 'New workflow state',
             'add_button_text' => 'Add workflow state',
             'constraints' => [
-                new Count(['min' => 1]),
+                new Count(min: 1),
                 new UniqueEntry(['fields' => ['name'], 'caseInsensitive' => true]),
             ],
         ]);

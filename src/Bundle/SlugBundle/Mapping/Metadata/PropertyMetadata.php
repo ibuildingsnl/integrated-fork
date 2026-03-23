@@ -53,7 +53,6 @@ class PropertyMetadata implements PropertyMetadataInterface
         $this->lengthLimit = $lengthLimit;
 
         $this->reflection = new \ReflectionProperty($class, $name);
-        $this->reflection->setAccessible(true);
     }
 
     public function getName(): string

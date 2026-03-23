@@ -48,9 +48,9 @@ class LayoutLocator
                                 fclose($f);
                                 if (str_starts_with($line, '{#')) {
                                     preg_match('/(?<=\{# Template name: )(.*?)(?=\ #})/', $line, $matchedLine);
-                                    $layouts[$matchedLine[0]] = $file->getRelativePathname();
+                                    $layouts[$matchedLine[0] ?? $this->humanizeFallbackLabel($file->getRelativePathname())] = $file->getRelativePathname();
                                 } else {
-                                    $layouts[$file->getRelativePathname()] = $file->getRelativePathname();
+                                    $layouts[$this->humanizeFallbackLabel($file->getRelativePathname())] = $file->getRelativePathname();
                                 }
                             }
                         }
@@ -60,5 +60,13 @@ class LayoutLocator
         }
 
         return $layouts;
+    }
+
+    private function humanizeFallbackLabel(string $relativePathname): string
+    {
+        $label = preg_replace('/\.html\.twig$/', '', basename($relativePathname));
+        $label = str_replace(['-', '_'], ' ', $label);
+
+        return ucwords($label);
     }
 }

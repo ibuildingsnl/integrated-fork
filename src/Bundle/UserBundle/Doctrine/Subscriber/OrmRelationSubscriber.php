@@ -44,12 +44,9 @@ class OrmRelationSubscriber
         $metadata = $args->getObjectManager()->getClassMetadata($object::class);
 
         $prop = $metadata->getReflectionClass()->getProperty('relation');
-        $prop->setAccessible(true);
-
         $id = $prop->getValue($object);
 
         $prop = $metadata->getReflectionClass()->getProperty('relation_instance');
-        $prop->setAccessible(true);
         $prop->setValue($object, $this->dm->getManager()->getRepository('Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content')->find($id));
     }
 }
