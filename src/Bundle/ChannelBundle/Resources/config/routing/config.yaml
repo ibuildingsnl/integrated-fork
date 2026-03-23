@@ -1,0 +1,22 @@
+integrated_channel_config_index:
+  path: '/'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ChannelBundle\Controller\ConfigController::index'
+integrated_channel_config_new:
+  path: '/new/{adapter}'
+  defaults:
+    _controller: 'Integrated\Bundle\ChannelBundle\Controller\ConfigController::new'
+integrated_channel_config_edit:
+  path: '/{id}'
+  defaults:
+    _controller: 'Integrated\Bundle\ChannelBundle\Controller\ConfigController::edit'
+integrated_channel_config_delete:
+  path: '/{id}/delete'
+  defaults:
+    _controller: 'Integrated\Bundle\ChannelBundle\Controller\ConfigController::delete'
+integrated_channel_config_external_return:
+  path: '/external/return'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ChannelBundle\Controller\ConfigController::externalReturn'

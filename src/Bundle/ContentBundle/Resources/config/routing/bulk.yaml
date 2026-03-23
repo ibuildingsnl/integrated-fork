@@ -1,0 +1,13 @@
+integrated_content_bulk_select:
+  path: '/select/{id}'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\BulkController::select'
+    id: ''
+integrated_content_bulk_configure:
+  path: '/configure/{id}'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\BulkController::configure'
+integrated_content_bulk_confirm:
+  path: '/confirm/{id}'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\BulkController::confirm'

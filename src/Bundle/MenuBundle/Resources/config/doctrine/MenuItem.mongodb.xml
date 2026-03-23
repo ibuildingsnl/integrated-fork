@@ -2,7 +2,7 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
 
-    <embedded-document name="Integrated\Bundle\MenuBundle\Document\MenuItem" collection="menu">
+    <embedded-document name="Integrated\Bundle\MenuBundle\Document\MenuItem">
 
         <id field-name="id" strategy="UUID" />
         <field field-name="typeLink" type="int" />

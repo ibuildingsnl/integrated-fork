@@ -1,0 +1,2 @@
+import_01_security:
+  resource: '@IntegratedUserBundle/Resources/config/routing/security.yaml'

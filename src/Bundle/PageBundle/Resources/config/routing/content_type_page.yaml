@@ -1,0 +1,4 @@
+integrated_page_content_type_page_edit:
+  path: '/{id}/edit'
+  defaults:
+    _controller: 'Integrated\Bundle\PageBundle\Controller\ContentTypePageController::edit'

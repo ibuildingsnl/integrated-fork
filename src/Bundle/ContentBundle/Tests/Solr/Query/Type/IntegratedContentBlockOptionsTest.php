@@ -41,6 +41,21 @@ class IntegratedContentBlockOptionsTest extends TestCase
         self::assertStringContainsString('recip(ms(NOW,pub_time)', (string) $query->getParams()['bf']);
     }
 
+    public function testFreeTextSearchMatchesAllTermsByDefault(): void
+    {
+        $resolver = $this->createResolver();
+        $type = $this->createType();
+
+        $options = $resolver->resolve([
+            'q' => '1 2026',
+        ]);
+
+        $query = new Query();
+        $type->build($query, $options);
+
+        self::assertSame(Query::QUERY_OPERATOR_AND, $query->getQueryDefaultOperator());
+    }
+
     public function testFacetMapOptionsAreSanitizedWithoutTypeErrors(): void
     {
         $resolver = $this->createResolver();

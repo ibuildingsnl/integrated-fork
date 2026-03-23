@@ -1,0 +1,12 @@
+integrated_website_menu_render:
+  path: '/render'
+  methods: ['POST']
+  defaults:
+    _controller: 'Integrated\Bundle\WebsiteBundle\Controller\MenuController::renderMenu'
+    _format: 'json'
+integrated_website_menu_save:
+  path: '/save'
+  methods: ['POST']
+  defaults:
+    _controller: 'Integrated\Bundle\WebsiteBundle\Controller\MenuController::save'
+    _format: 'json'

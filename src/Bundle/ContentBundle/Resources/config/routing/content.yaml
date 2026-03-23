@@ -1,0 +1,105 @@
+integrated_content_content_index:
+  path: '/{_format}'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentController::index'
+    _format: 'html'
+  requirements:
+    _format: 'html|json'
+integrated_content_content_selection:
+  path: '/s/{searchSelection}/{_format}'
+  methods: ['GET', 'POST']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentController::index'
+    searchSelection: 'all'
+    _format: 'html'
+  requirements:
+    _format: 'html|json'
+integrated_content_content_new:
+  path: '/new/{_format}'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentController::new'
+    _format: 'html'
+  requirements:
+    _format: 'html|iframe.html'
+integrated_content_content_media_types:
+  path: '/media_types/{filter}'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentController::mediaTypesAction'
+    filter: 'null'
+integrated_content_content_edit_iframe:
+  path: '/{id}/iframe.html'
+  methods: ['GET', 'PUT', 'POST']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentController::edit'
+    _format: 'iframe.html'
+  requirements:
+    _format: 'html|iframe.html'
+integrated_content_content_edit_modal_iframe:
+  path: '/{id}/modal-iframe.html'
+  methods: ['GET', 'PUT', 'POST']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentController::edit'
+    _format: 'modal-iframe.html'
+  requirements:
+    _format: 'html|modal-iframe.html'
+integrated_content_content_navdropdowns:
+  path: '/navdropdowns'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentController::navdropdowns'
+integrated_content_content_queue_status:
+  path: '/queue-status'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentController::queueStatus'
+integrated_content_content_assigned_status:
+  path: '/assigned-status'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentController::assignedStatus'
+integrated_content_content_locks_status:
+  path: '/locks-status'
+  methods: ['POST']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentController::locksStatus'
+integrated_content_content_channels_fragment:
+  path: '/channels-fragment'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ChannelController::getChannels'
+integrated_content_content_lock:
+  path: '/{id}/lock'
+  methods: ['POST']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentController::lock'
+integrated_content_content_edit:
+  path: '/{id}'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentController::edit'
+integrated_content_content_edit_rest:
+  path: '/{id}'
+  methods: ['PUT', 'POST']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentController::edit'
+integrated_content_content_delete:
+  path: '/{id}/delete'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentController::delete'
+integrated_content_content_used_by:
+  path: '/{id}/used-by/{_format}'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentController::usedBy'
+    _format: 'html'
+  requirements:
+    _format: 'html|json'
+integrated_content_content_show:
+  path: '/{id}/show/{_format}'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentController::show'
+    _format: 'html'
+  requirements:
+    _format: 'html|json'

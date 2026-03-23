@@ -1,0 +1,80 @@
+<?php
+
+namespace Integrated\Bundle\ContentBundle\Tests\EventListener;
+
+use Doctrine\Persistence\ObjectRepository;
+use Integrated\Bundle\ContentBundle\EventListener\ContentChannelIntegrationListener;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
+class ContentChannelIntegrationListenerTest extends TestCase
+{
+    public function testGetChannelsLoadsAllChannelsWhenIdsAreOmitted(): void
+    {
+        $expected = [new \stdClass()];
+
+        $repository = $this->createMock(ObjectRepository::class);
+        $repository
+            ->expects($this->once())
+            ->method('findAll')
+            ->willReturn($expected);
+        $repository
+            ->expects($this->never())
+            ->method('findBy');
+
+        $listener = new TestableContentChannelIntegrationListener(
+            $repository,
+            $this->createMock(AuthorizationCheckerInterface::class)
+        );
+
+        self::assertSame($expected, $listener->exposedGetChannels());
+    }
+
+    public function testGetChannelsReturnsEmptyListWithoutQueryForEmptyIds(): void
+    {
+        $repository = $this->createMock(ObjectRepository::class);
+        $repository
+            ->expects($this->never())
+            ->method('findAll');
+        $repository
+            ->expects($this->never())
+            ->method('findBy');
+
+        $listener = new TestableContentChannelIntegrationListener(
+            $repository,
+            $this->createMock(AuthorizationCheckerInterface::class)
+        );
+
+        self::assertSame([], $listener->exposedGetChannels([]));
+    }
+
+    public function testGetChannelsBuildsOrCriteriaForSpecificIds(): void
+    {
+        $expected = [new \stdClass()];
+
+        $repository = $this->createMock(ObjectRepository::class);
+        $repository
+            ->expects($this->never())
+            ->method('findAll');
+        $repository
+            ->expects($this->once())
+            ->method('findBy')
+            ->with(['$or' => [['id' => 'a'], ['id' => 'b']]])
+            ->willReturn($expected);
+
+        $listener = new TestableContentChannelIntegrationListener(
+            $repository,
+            $this->createMock(AuthorizationCheckerInterface::class)
+        );
+
+        self::assertSame($expected, $listener->exposedGetChannels(['a', 'b']));
+    }
+}
+
+final class TestableContentChannelIntegrationListener extends ContentChannelIntegrationListener
+{
+    public function exposedGetChannels(?array $ids = null): array
+    {
+        return $this->getChannels($ids);
+    }
+}

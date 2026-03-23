@@ -1,0 +1,27 @@
+integrated_content_channel_index:
+  path: '/'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ChannelController::index'
+integrated_content_channel_new:
+  path: '/new'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ChannelController::new'
+integrated_content_channel_edit:
+  path: '/{id}/edit'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ChannelController::edit'
+integrated_content_channel_update:
+  path: '/{id}'
+  methods: ['PUT']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ChannelController::edit'
+integrated_content_channel_delete:
+  path: '/{id}/delete'
+  methods: ['GET', 'POST', 'DELETE']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ChannelController::delete'
+integrated_content_channel_show:
+  path: '/{id}'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ChannelController::show'

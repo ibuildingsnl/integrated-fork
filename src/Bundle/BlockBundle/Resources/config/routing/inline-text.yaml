@@ -1,0 +1,4 @@
+integrated_block_inline_text_block_new:
+  path: '/new/{id}'
+  defaults:
+    _controller: 'Integrated\Bundle\BlockBundle\Controller\InlineTextBlockController::new'

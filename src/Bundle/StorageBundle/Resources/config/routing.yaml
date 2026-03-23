@@ -1,0 +1,2 @@
+import_01_storage:
+  resource: '@IntegratedStorageBundle/Resources/config/routing/storage.yaml'

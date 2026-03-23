@@ -1,0 +1,5 @@
+integrated_content_parent_id_lookup:
+  path: '/lookup'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ParentIDController::lookup'
+    _format: 'json'

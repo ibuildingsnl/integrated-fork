@@ -1,0 +1,9 @@
+integrated_user_two_factor_authenticator_activate_check:
+  path: '/'
+  methods: ['POST']
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\TwoFactor\GoogleController::check'
+integrated_user_two_factor_authenticator_activate:
+  path: '/'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\TwoFactor\GoogleController::form'

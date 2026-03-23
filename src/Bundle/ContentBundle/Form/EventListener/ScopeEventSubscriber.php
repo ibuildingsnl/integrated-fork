@@ -41,14 +41,12 @@ class ScopeEventSubscriber
         $dm = $eventArgs->getDocumentManager();
 
         $property = $dm->getClassMetadata($channel::class)->reflClass->getProperty('scope');
-        $property->setAccessible(true);
 
         if (!$id = $property->getValue($channel)) {
             return;
         }
 
         $property = $dm->getClassMetadata($channel::class)->reflClass->getProperty('scopeInstance');
-        $property->setAccessible(true);
         $property->setValue(
             $channel,
             $this->entityManager->getReference(Scope::class, $id)

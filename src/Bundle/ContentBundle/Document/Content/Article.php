@@ -100,6 +100,7 @@ class Article extends Content implements RankableInterface
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\UrlType', options: [
         'priority' => 440,
         'label' => 'Source URL',
+        'default_protocol' => 'https',
         'attr' => ['style' => 'sidebar', 'icon' => 'open-new-window'],
     ], location: 'sidebar')]
     protected ?string $sourceUrl = null;

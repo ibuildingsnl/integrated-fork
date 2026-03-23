@@ -1,0 +1,3 @@
+import_01_workflow:
+  resource: '@IntegratedWorkflowBundle/Resources/config/routing/workflow.yaml'
+  prefix: '/workflow/'

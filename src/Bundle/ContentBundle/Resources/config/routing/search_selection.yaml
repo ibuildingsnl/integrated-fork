@@ -1,0 +1,17 @@
+integrated_content_search_selection_index:
+  path: '/'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\SearchSelectionController::index'
+integrated_content_search_selection_new:
+  path: '/new'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\SearchSelectionController::new'
+integrated_content_search_selection_edit:
+  path: '/{id}/edit'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\SearchSelectionController::edit'
+integrated_content_search_selection_delete:
+  path: '/{id}/delete'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\SearchSelectionController::delete'

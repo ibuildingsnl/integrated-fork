@@ -194,6 +194,10 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
      */
     protected function getChannels(?array $ids = null): array
     {
+        if ($ids === null) {
+            return $this->repository->findAll();
+        }
+
         if ($ids === []) {
             return [];
         }

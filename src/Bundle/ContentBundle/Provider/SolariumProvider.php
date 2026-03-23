@@ -27,6 +27,9 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class SolariumProvider
 {
+    private const SEARCH_QUERY_FIELDS = 'title^80 content subtitle^20 intro^10';
+    private const RECENCY_BOOST_FUNCTION = 'if(exists(pub_time),product(8,recip(ms(NOW,pub_time),3.16e-11,1,1)),0)';
+
     /**
      * @var Client
      */
@@ -123,10 +126,12 @@ class SolariumProvider
 
         if ($search = $request->query->get($subject->getId().'-search')) {
             $edismax = $query->getEDisMax();
-            $edismax->setQueryFields('title^200 content subtitle intro');
+            $edismax->setQueryFields(self::SEARCH_QUERY_FIELDS);
             $edismax->setMinimumMatch('75%');
 
+            $query->setQueryDefaultOperator(Query::QUERY_OPERATOR_AND);
             $query->setQuery($search);
+            $this->appendBoostFunction($query, self::RECENCY_BOOST_FUNCTION);
 
             // It would be strange to exclude items when a search text is entered
             $options['exclude'] = false;
@@ -275,6 +280,10 @@ class SolariumProvider
                 $sort = \array_key_exists($sort, $sortOptions) ? $sort : $sortDefault;
 
                 $query->addSort($sortOptions[$sort]['field'], \in_array($order, $orderOptions) ? $order : $sortOptions[$sort]['order']);
+
+                if ($query->getQuery() && 'score' === $sortOptions[$sort]['field']) {
+                    $query->addSort('pub_time', 'desc');
+                }
             }
         }
 
@@ -324,5 +333,33 @@ class SolariumProvider
             'rank' => ['name' => 'rank', 'field' => 'rank', 'label' => 'rank', 'order' => 'asc'],
             'random' => ['name' => 'random', 'field' => 'random_'.mt_rand(), 'label' => 'random', 'order' => 'desc'],
         ];
+    }
+
+    private function appendBoostFunction(Query $query, string $boostFunction): void
+    {
+        $boosts = [];
+        $existingBoost = $query->getParams()['bf'] ?? null;
+
+        if (\is_string($existingBoost)) {
+            $existingBoost = trim($existingBoost);
+            if ('' !== $existingBoost) {
+                $boosts[] = $existingBoost;
+            }
+        } elseif (\is_array($existingBoost)) {
+            foreach ($existingBoost as $value) {
+                if (!\is_scalar($value)) {
+                    continue;
+                }
+
+                $value = trim((string) $value);
+                if ('' !== $value) {
+                    $boosts[] = $value;
+                }
+            }
+        }
+
+        $boosts[] = $boostFunction;
+
+        $query->addParam('bf', implode(' ', array_unique($boosts)));
     }
 }
