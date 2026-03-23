@@ -22,11 +22,13 @@ use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\PageBundle\Form\Type\PageCopyType;
 use Integrated\Bundle\PageBundle\Form\Type\PageFilterType;
 use Integrated\Bundle\PageBundle\Form\Type\PageType;
+use Integrated\Bundle\PageBundle\Services\PageCopy\PageCopyRequestFactory;
 use Integrated\Bundle\PageBundle\Services\PageCopyService;
 use Integrated\Bundle\PageBundle\Services\RouteCache;
 use Knp\Component\Pager\PaginatorInterface;
 use MongoDB\BSON\Regex;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,6 +46,7 @@ class PageController extends AbstractController
     private DocumentManager $documentManager;
     private PaginatorInterface $paginator;
     private PageCopyService $pageCopyService;
+    private PageCopyRequestFactory $pageCopyRequestFactory;
     private RouteCache $routeCache;
     private UriSigner $uriSigner;
     /** @var array<int, string>|null */
@@ -53,12 +56,14 @@ class PageController extends AbstractController
         DocumentManager $documentManager,
         PaginatorInterface $paginator,
         PageCopyService $pageCopyService,
+        PageCopyRequestFactory $pageCopyRequestFactory,
         RouteCache $routeCache,
         UriSigner $uriSigner,
     ) {
         $this->documentManager = $documentManager;
         $this->paginator = $paginator;
         $this->pageCopyService = $pageCopyService;
+        $this->pageCopyRequestFactory = $pageCopyRequestFactory;
         $this->routeCache = $routeCache;
         $this->uriSigner = $uriSigner;
     }
@@ -416,12 +421,19 @@ class PageController extends AbstractController
         }
 
         $formData = $request->request->all('page_copy');
+        if ($formData === []) {
+            $formData = $request->query->all('page_copy');
+        }
+
         $targetChannel = $formData['targetChannel'] ?? null;
         $sourceChannel = $formData['sourceChannel'] ?? null;
 
         $form = $this->createForm(
             PageCopyType::class,
-            null,
+            [
+                'sourceChannel' => $sourceChannel,
+                'targetChannel' => $targetChannel,
+            ],
             [
                 'sourceChannel' => $sourceChannel,
                 'targetChannel' => $targetChannel,
@@ -435,7 +447,17 @@ class PageController extends AbstractController
             $data = $form->getData();
 
             if ($data['action'] != 'refresh') {
-                $this->pageCopyService->copyPages($form->getData());
+                try {
+                    $requestModel = $this->pageCopyRequestFactory->createFromFormData($data);
+                    $this->pageCopyService->copyPages($requestModel);
+                } catch (\InvalidArgumentException $exception) {
+                    $form->addError(new FormError($exception->getMessage()));
+                    $this->addFlash('warning', $exception->getMessage());
+
+                    return $this->render('@IntegratedPage/page/copy.html.twig', [
+                        'form' => $form,
+                    ]);
+                }
 
                 $this->addFlash('success', 'Pages copied');
 
@@ -443,9 +465,34 @@ class PageController extends AbstractController
             }
         }
 
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->flashUniqueFormErrorsAsWarnings($form);
+        }
+
         return $this->render('@IntegratedPage/page/copy.html.twig', [
             'form' => $form,
         ]);
+    }
+
+    /**
+     * @param FormInterface<mixed> $form
+     */
+    private function flashUniqueFormErrorsAsWarnings(FormInterface $form): void
+    {
+        $messages = [];
+
+        foreach ($form->getErrors(true, true) as $error) {
+            $message = trim((string) $error->getMessage());
+            if ($message === '') {
+                continue;
+            }
+
+            $messages[$message] = true;
+        }
+
+        foreach (array_keys($messages) as $message) {
+            $this->addFlash('warning', $message);
+        }
     }
 
     public function deleteWithoutChannel(Request $request, string $id): Response

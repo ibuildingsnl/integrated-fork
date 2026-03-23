@@ -28,16 +28,18 @@ class PageCopyType extends AbstractType
         $builder->add('sourceChannel', ChannelChoiceType::class, [
             'label' => 'Source channel',
             'placeholder' => '-- choose a source channel --',
+            'filter' => ['type.$id' => 'website'],
             'attr' => [
-                'onchange' => '$(\'#page_copy_action\').val(\'refresh\');document.page_copy.submit();',
+                'data-page-copy-source-channel' => 'true',
             ],
         ]);
 
         $builder->add('targetChannel', ChannelChoiceType::class, [
             'label' => 'Target channel',
             'placeholder' => '-- choose a target channel --',
+            'filter' => ['type.$id' => 'website'],
             'attr' => [
-                'onchange' => '$(\'#page_copy_action\').val(\'refresh\');document.page_copy.submit();',
+                'data-page-copy-target-channel' => 'true',
             ],
             'constraints' => ($options['sourceChannel']) ? [new NotEqualTo($options['sourceChannel'])] : [],
         ]);

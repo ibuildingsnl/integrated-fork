@@ -856,8 +856,22 @@ ul {
             border-right: 0;
 
             &.hide {
-                transform: translateX(350px);
+                transform: translateX(100%);
                 transition: all .3s;
+            }
+
+            &.show-image-editor {
+                width: calc(100% - 250px);
+                max-width: calc(100% - 250px);
+
+                @include media(max-lg) {
+                    width: 100%;
+                    max-width: 100%;
+                }
+
+                button.close-media-edit-form {
+                    display: none;
+                }
             }
 
             .aside-item-wrapper {
@@ -879,6 +893,13 @@ ul {
                     width: 25px;
                     height: 25px;
                 }
+            }
+
+            .media-image-editor-frame {
+                width: 100%;
+                height: calc(100vh - 48px);
+                border: 0;
+                background-color: white;
             }
         }
     }

@@ -110,6 +110,119 @@ label {
     }
 }
 
+.form-actions__item {
+    .control-label {
+        margin: 0;
+    }
+
+    .form-control {
+        width: 100%;
+    }
+}
+
+.form-actions--table-filters {
+    gap: .75rem;
+    align-items: flex-start;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: .75rem;
+    border: 1px solid #dee3e9;
+    border-radius: 8px;
+    background: #f8fafc;
+    display: flex;
+    flex-wrap: wrap;
+
+    .form-item {
+        margin-bottom: 0;
+    }
+
+    .form-actions__item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        min-width: 0;
+        flex: 1 1 170px;
+
+        .control-label {
+            display: block;
+            margin-bottom: 0;
+        }
+    }
+
+    > .form-actions__item > .form-item,
+    > .form-actions__item > .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.35rem;
+        width: 100%;
+
+        > .control-label,
+        > .widget {
+            width: 100%;
+            max-width: none;
+            flex: 0 0 100%;
+        }
+
+        > .control-label {
+            display: block;
+            padding-top: 0;
+        }
+    }
+
+    .form-actions__item--button,
+    .form-actions__item--submit-like {
+        flex: 0 0 auto;
+    }
+
+    .form-control {
+        min-height: initial;
+        background: #fff;
+    }
+
+    .form-actions__item--submit-like {
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end;
+        align-self: stretch;
+    }
+}
+
+.queue-summary {
+    border: 1px solid #dee3e9;
+    border-radius: 8px;
+    background: #f5f8f9;
+    color: #55606e;
+    font-size: 12px;
+    padding: .5rem .75rem;
+    margin-bottom: .75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.page-copy-panel {
+    &[data-page-copy-expanded="true"] [data-page-copy-toggle] {
+        font-weight: 600;
+    }
+
+    &[data-page-copy-selected="true"] {
+        border-color: #dee3e9;
+        box-shadow: 0 0 0 1px rgba(95, 136, 207, 0.2);
+        border: none;
+    }
+
+    &[data-page-copy-selected="true"] [data-page-copy-panel-header] {
+        background: rgba(95, 136, 207, 0.06);
+    }
+}
+
+.page-copy-panel-header {
+    .checkbox-switcher {
+        margin-bottom: 0;
+    }
+}
+
 .integrated-password-toggle {
     position: relative;
     display: block;

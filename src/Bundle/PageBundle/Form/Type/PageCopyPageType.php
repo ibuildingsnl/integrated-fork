@@ -18,6 +18,7 @@ use Integrated\Bundle\PageBundle\Document\Page\Grid\ItemsInterface;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -29,6 +30,9 @@ class PageCopyPageType extends AbstractType
     {
         $builder->add('selected', CheckboxType::class, [
             'required' => false,
+        ]);
+        $builder->add('copyAction', HiddenType::class, [
+            'data' => $options['copyAction'],
         ]);
 
         /** @var Page $page */
@@ -64,6 +68,7 @@ class PageCopyPageType extends AbstractType
         $view->vars = array_merge($view->vars, [
             'page' => $options['page'],
             'copyAction' => $options['copyAction'],
+            'blockCount' => \count($form->get('blocks')),
         ]);
     }
 

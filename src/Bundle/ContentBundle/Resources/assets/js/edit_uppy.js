@@ -30,6 +30,9 @@ async function inititalizeUppy(uppyOptions) {
     let default_height = '750px'
     let default_language = '' //defaults to eng
     let uploaded_files = 0
+    const previousUrl = String(uppyOptions.previous_url || '').trim()
+    const mediaGalleryPath = String(uppyOptions.media_gallery_path || '').trim()
+    const isEmbedded = String(uppyOptions.embedded || '').toLowerCase() === 'true'
     if (! ("target" in uppyOptions)) {
         console.log("No target given for the Uppy component")
         return false
@@ -55,8 +58,39 @@ async function inititalizeUppy(uppyOptions) {
         showProgressDetails: false,
     });
 
-    function closeUppyWithRefresh() {
-        visitWithTurbo(previous_url)
+    function notifyParent(type) {
+        if (!isEmbedded || window.parent === window) {
+            return false
+        }
+
+        window.parent.postMessage({
+            type: type,
+            mediaId: uppyOptions.id,
+        }, window.location.origin)
+
+        return true
+    }
+
+    function closeUppyWithRefresh(reason = 'cancel') {
+        if (reason === 'saved' && notifyParent('integrated-media-image-editor-saved')) {
+            return
+        }
+
+        if (reason === 'cancel' && notifyParent('integrated-media-image-editor-cancel')) {
+            return
+        }
+
+        if (previousUrl !== '') {
+            visitWithTurbo(previousUrl)
+            return
+        }
+
+        if (mediaGalleryPath !== '') {
+            visitWithTurbo(mediaGalleryPath)
+            return
+        }
+
+        window.history.back()
     }
 
     uppy.use(XHRUpload, {
@@ -85,8 +119,12 @@ async function inititalizeUppy(uppyOptions) {
                 });
             }
 
-            closeUppyWithRefresh()
+            closeUppyWithRefresh('saved')
         });
+    })
+
+    uppy.on('file-editor:cancel', () => {
+        closeUppyWithRefresh('cancel')
     })
 
     uppy.on('file-added', (file) => {
@@ -101,15 +139,6 @@ async function inititalizeUppy(uppyOptions) {
         addShowPopupButton() 
     });
 
-
-    //I cant hook on the file-editor:cancel event, but this works as well:
-    //Most likely this is because of an open issue: https://github.com/transloadit/uppy/issues/4045
-    document.querySelectorAll('.uppy-DashboardContent-back').forEach((button) => {
-        button.addEventListener('click', () => {
-            document.querySelector('.uppy-Root').hidden = true
-            visitWithTurbo(previous_url)
-        });
-    })
 
     return uppy;
 }
@@ -185,6 +214,17 @@ $('.drag-drop-area').each(function() {
     let uppy = inititalizeUppy(uppyOptions)
 })
 
-document.querySelector('#saveEditedImage').onclick = function() {
-    document.querySelector('.uppy-DashboardContent-save').click()
+const saveEditedImageButton = document.querySelector('#saveEditedImage')
+if (saveEditedImageButton) {
+    saveEditedImageButton.onclick = function() {
+        document.querySelector('.uppy-DashboardContent-save').click()
+    }
+}
+
+const imageEditModal = document.getElementById('image-edit-modal')
+const cancelModalButton = document.getElementById('cancelModal')
+if (imageEditModal && cancelModalButton) {
+    cancelModalButton.onclick = function() {
+        imageEditModal.style.display = 'none'
+    }
 }

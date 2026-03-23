@@ -1054,6 +1054,7 @@ document.addEventListener('turbo:render', announceContentNavigatorResults);
 document.addEventListener('turbo:render', bindFacetPersistenceOnFilterChange);
 document.addEventListener('turbo:render', bindOptionsSidebarStateTracking);
 document.addEventListener('turbo:frame-load', scheduleRestorePersistedOptionsSidebarState);
+document.addEventListener('turbo:before-render', syncContentWrapperToolbarState);
 document.addEventListener('turbo:before-frame-render', (event) => {
     if (!event.target || event.target.id !== 'content-navigator') {
         scheduleRestorePersistedOptionsSidebarState(event.target || document);
@@ -1090,6 +1091,8 @@ document.addEventListener('turbo:render', () => {
     }
 });
 document.addEventListener('turbo:before-cache', () => {
+    resetPopupState();
+    syncContentWrapperToolbarState();
     persistCurrentOptionsSidebarState();
     persistSidebarMenuScrollPosition();
     clearBoundInitializationFlags();

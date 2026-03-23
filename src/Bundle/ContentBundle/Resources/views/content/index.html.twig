@@ -48,33 +48,13 @@
             </thead>
             <tbody id="post-list">
             {% for content in pager %}
-                {% set brandNames = content.facet_brands|default([]) %}
-                {% set document = null %}
-                {% if brandNames is empty %}
-                    {% set document = integrated_document(content) %}
-                {% endif %}
-                {% set websiteChannels = [] %}
-                {% set websiteChannelIds = [] %}
-                {% if document is not null and document.channels is defined and document.channels is not null %}
-                    {% for channel in document.channels %}
-                        {% set websiteChannel = channel|integrated_brand_website_channel %}
-                        {% if websiteChannel is null and channel.type is defined and channel.type is not null and channel.type.id|default('') == 'website' %}
-                            {% set websiteChannel = channel %}
-                        {% endif %}
-                        {% if websiteChannel is not null %}
-                            {% set websiteChannelId = websiteChannel.id|default('') %}
-                            {% if websiteChannelId is not empty and websiteChannelId not in websiteChannelIds %}
-                                {% set websiteChannels = websiteChannels|merge([websiteChannel]) %}
-                                {% set websiteChannelIds = websiteChannelIds|merge([websiteChannelId]) %}
-                            {% endif %}
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
+                {% set brandNames = content.facet_brands|default([])|filter(name => name is not empty and name != 'None') %}
+                {% set fallbackWebsiteChannelIds = content.website_channel_ids_string|default([])|filter(id => id is not empty and id != 'None') %}
+                {% set fallbackWebsiteChannelNames = content.website_channel_names_string|default([]) %}
+                {% set fallbackWebsiteChannelFavicons = content.website_channel_favicon_paths_string|default([]) %}
                 {% set visibleBrandNames = brandNames|slice(0, 3) %}
-                {% set channelCount = brandNames|length %}
-                {% if channelCount == 0 and document is not null and document.channels is defined and document.channels is not null %}
-                    {% set channelCount = websiteChannels|length %}
-                {% endif %}
+                {% set visibleFallbackWebsiteChannelIds = fallbackWebsiteChannelIds|slice(0, 3) %}
+                {% set channelCount = brandNames is not empty ? brandNames|length : fallbackWebsiteChannelIds|length %}
 
                 {% set class_name = content.type_class|split('\\')|last %}
                 <tr
@@ -145,26 +125,23 @@
                                             {{ brandName|first|upper }}
                                         </div>
                                     {% endfor %}
-                                {% elseif document.channels is defined and document.channels is not null %}
-                                    {% for channel in websiteChannels %}
-                                        {% if channel|integrated_brand_profile.favicon.file is defined %}
+                                {% elseif fallbackWebsiteChannelIds is not empty %}
+                                    {% for channelId in visibleFallbackWebsiteChannelIds %}
+                                        {% set channelName = fallbackWebsiteChannelNames[loop.index0]|default(channelId) %}
+                                        {% set faviconPath = fallbackWebsiteChannelFavicons[loop.index0]|default('') %}
+                                        {% if faviconPath is not empty %}
                                             <div class="channel-favicon"
-                                                 style="background-image:url('{{ image(channel|integrated_brand_profile.favicon.file).cropResize(36, 36) }}')"
-                                                 title="{{ channel.name }}">
+                                                 style="background-image:url('{{ image(faviconPath).cropResize(36, 36) }}')"
+                                                 title="{{ channelName }}">
                                             </div>
                                         {% else %}
                                             <div class="channel-favicon font-bold"
-                                                 title="{{ channel.name }}"
-                                                 style="background-color: {{ channel|integrated_brand.color|default('gray') }}">
-                                                {{ channel.name|first|upper }}
+                                                 title="{{ channelName }}"
+                                                 style="background-color: {{ type.options.color|default('gray') }}">
+                                                {{ channelName|first|upper }}
                                             </div>
                                         {% endif %}
                                     {% endfor %}
-                                {% else %}
-                                    <div class="channel-favicon font-bold"
-                                         style="background-color: {{ type.options.color|default('gray') }}">
-                                        ?
-                                    </div>
                                 {% endif %}
                             </div>
                         </div>
@@ -202,7 +179,16 @@
                         {% endif %}
                     </td>
                     <td class="state">
-                        {% if content.workflow_state is defined and ('now'|date('U') > content.pub_time |date('U')) %}
+                        {% set published = content.published|default(false) %}
+                        {% if published is iterable %}
+                            {% set published = published|first %}
+                        {% endif %}
+                        {% set isPublishable = published in [true, 1, '1', 'true'] and channelCount > 0 %}
+                        {% set hasPublicationDate = content.pub_time is defined %}
+                        {% set hasStarted = hasPublicationDate and ('now'|date('U') > content.pub_time|date('U')) %}
+                        {% set isPlanned = isPublishable and hasPublicationDate and not hasStarted %}
+
+                        {% if content.workflow_state is defined and hasStarted %}
                             {% if content.workflow_color_string is defined %}
                                 {% set status_color = content.workflow_color_string|first %}
                                 <div class="workflow-status" style="background-color:{{ status_color|alpha(12) }};border-color:{{ status_color|alpha(45) }};color:{{ status_color }};">
@@ -214,17 +200,16 @@
                                 </div>
                             {% endif %}
                             {% set status_color = '' %}
-                        {% elseif ('now'|date('U') < content.pub_time |date('U')) %}
+                        {% elseif isPlanned %}
                             <div class="workflow-status" style="background-color:{{ '#5f84db'|alpha(12) }};border-color:{{ '#5f84db'|alpha(45) }};color:#5f84db;">
                                 <i class="iconoir-calendar"></i>
                             </div>
-                        {% endif %}
-                        {% if content.workflow_state is not defined and content.published is defined and content.published == "true" and 'now'|date('U') > content.pub_time |date('U') %}
+                        {% elseif isPublishable and hasStarted %}
                             <div class="workflow-status" style="background-color:{{ '#00ae93'|alpha(12) }};border-color:{{ '#00ae93'|alpha(45) }};color:#00ae93;">
                                 <i class="iconoir-check"></i>
                             </div>
-                        {% elseif content.workflow_state is not defined and content.published is defined and content.published == "false" and 'now'|date('U') > content.pub_time |date('U')%}
-                            <div class="workflow-status" style="background-color:{{ '#ababab'|alpha(12) }};border-color:{{ '#ababab'|alpha(45) }};color:#5b6b79;">
+                        {% else %}
+                            <div class="workflow-status" style="background-color:{{ '#ababab'|alpha(12) }};border-color:{{ '#ababab'|alpha(45) }};color:#ababab;">
                                 <i class="iconoir-edit-pencil"></i>
                             </div>
                         {% endif %}

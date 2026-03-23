@@ -48,7 +48,7 @@ class MainFlusherTest extends \PHPUnit\Framework\TestCase
              */
             protected function configureOptions(OptionsResolver $resolver)
             {
-                $resolver->setDefined(['queue.size']);
+                $resolver->setDefaults(['queue.size' => 5000]);
             }
 
             /**
@@ -96,7 +96,7 @@ class MainFlusherTest extends \PHPUnit\Framework\TestCase
         $flusher = new MainFlusher($this->doctrine, $this->queueSubscriber, $indexer, $this->queue);
         $flusher->flush();
 
-        $this->assertSame(2, $indexer->getOption('queue.size'));
+        $this->assertSame(5000, $indexer->getOption('queue.size'));
         $this->assertSame(1, $indexer->executeCalls);
     }
 

@@ -1,9 +1,15 @@
 <div class="aside-edit-holder bg-white hide">
-    <div class="aside-item-wrapper" id="editimagewrapper" data-editImagePath="{{ path('integrated_content_media_edit_image', {'id': 'REPLACE'}) }}" data-editImageIframePath='{{ path('integrated_content_media_edit_image_iframe', {'id': 'REPLACE'}) }}'>
+    <div class="aside-item-wrapper"
+         id="editimagewrapper"
+         data-editImagePath="{{ path('integrated_content_media_edit_image', {'id': 'REPLACE'}) }}"
+         data-editImageIframePath='{{ path('integrated_content_media_edit_image_iframe', {'id': 'REPLACE'}) }}'
+         data-edit-image-embedded-query='embedded=1'>
         <button class="close-media-edit-form">
             <i class="iconoir-xmark"></i></button>
         <turbo-frame id="media-edit-panel" data-media-id="" data-file=""></turbo-frame>
+        <iframe id="media-image-editor-frame"
+                class="media-image-editor-frame"
+                title="Image editor"
+                hidden></iframe>
     </div>
 </div>
-
-<script src="{{ asset('bundles/integratedintegrated/edit_panel.js') }}" defer data-turbo-track="reload"></script>

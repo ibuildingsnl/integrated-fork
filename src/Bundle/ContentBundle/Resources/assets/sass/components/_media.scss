@@ -13,14 +13,7 @@
         }
 
         &.show-edit-form {
-            width: calc(100% - 600px);
             transition: width .3s;
-            @include media(max-xl) {
-                width: calc(100% - 250px);
-            }
-            @include media(max-lg) {
-                width: 100%;
-            }
         }
     }
 }
@@ -1132,4 +1125,3 @@
         background-color: transparent;
     }
 }
-
