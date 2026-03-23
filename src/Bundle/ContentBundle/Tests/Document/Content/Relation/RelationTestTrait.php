@@ -103,6 +103,17 @@ trait RelationTestTrait
         Assert::assertCount(1, $content->getPhonenumbers());
     }
 
+    public function testRemovePhonenumberFunctionWithEmbeddedPhonenumberObject()
+    {
+        $content = $this->getContent();
+        $content->setPhonenumbers([new Phonenumber('0123456789', 'work')]);
+
+        $phonenumber = $content->getPhonenumbers()[0];
+
+        Assert::assertTrue($content->removePhonenumber($phonenumber));
+        Assert::assertCount(0, $content->getPhonenumbers());
+    }
+
     /**
      * @return Relation
      */
