@@ -6,7 +6,6 @@
 
     <import resource="@IntegratedWebsiteBundle/Resources/config/routing/grid.xml" prefix="/grid" />
     <import resource="@IntegratedWebsiteBundle/Resources/config/routing/menu.xml" prefix="/menu" />
-    <import resource="@IntegratedWebsiteBundle/Resources/config/routing/page_draft.xml" prefix="/page-draft" />
 
     <import resource="@IntegratedWebsiteBundle/Resources/config/routing/search_selection.xml" />
     <import resource="@IntegratedWebsiteBundle/Resources/config/routing/json.xml" />

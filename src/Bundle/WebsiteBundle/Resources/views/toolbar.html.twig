@@ -94,8 +94,6 @@
                 {% set params = app.request.attributes.get('_route_params')|merge(app.request.query.all) %}
 
                 {% if app.request.query.get('integrated_website_edit') and layoutEditable %}
-                    <div id="integrated-website-draft-status" class="integrated-draft-status" aria-live="polite"></div>
-
                     <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white icon-left"
                        data-action="integrated-website-history-undo">
                         <i class="iconoir-undo"></i>
@@ -109,23 +107,10 @@
                     </a>
 
                     <a href="javascript:;" class="integrated-website-toolbar-button btn btn-green"
-                       data-action="integrated-website-page-save-draft"
+                       data-action="integrated-website-page-save"
                        {% if page.id|default %}data-id="{{ page.id }}" {% endif %}
                        data-target="{{ path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 0})) }}">
-                        {% trans %}Save draft{% endtrans %}
-                    </a>
-
-                    <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white"
-                       data-action="integrated-website-page-preview-draft"
-                       {% if page.id|default %}data-id="{{ page.id }}" {% endif %}>
-                        {% trans %}Preview draft{% endtrans %}
-                    </a>
-
-                    <a href="javascript:;" class="integrated-website-toolbar-button btn btn-green"
-                       data-action="integrated-website-page-publish"
-                       {% if page.id|default %}data-id="{{ page.id }}" {% endif %}
-                       data-target="{{ path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 0})) }}">
-                        {% trans %}Publish{% endtrans %}
+                        {% trans %}Save page{% endtrans %}
                     </a>
 
                     <a href="{{ path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 0})) }}"

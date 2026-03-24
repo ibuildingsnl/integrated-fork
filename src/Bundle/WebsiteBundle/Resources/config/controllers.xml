@@ -19,8 +19,6 @@
             <argument type="service" id="integrated_theme.templating.theme_manager" />
             <argument type="service" id="integrated_website.website_toolbar" />
             <argument type="service" id="uri_signer" />
-            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
-            <argument type="service" id="integrated_page.grid.factory" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
@@ -29,18 +27,6 @@
         <service id="Integrated\Bundle\WebsiteBundle\Controller\GridController">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_page.grid.factory" />
-
-            <tag name="controller.service_arguments" />
-            <tag name="container.service_subscriber" />
-        </service>
-
-        <service id="Integrated\Bundle\WebsiteBundle\Controller\PageDraftController">
-            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
-            <argument type="service" id="integrated_page.grid.factory" />
-            <argument type="service" id="uri_signer" />
-            <argument type="service" id="integrated_menu.provider.integrated_menu_provider" />
-            <argument type="service" id="integrated.menu_factory.database" />
-            <argument type="service" id="channel.context" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
