@@ -101,10 +101,16 @@ class ImageExtension extends AbstractExtension
     public function webImage($image)
     {
         if ($image instanceof StorageInterface) {
+            $metadata = $image->getMetadata();
+
             try {
                 // Returns the image in a webformat
                 return $this->imageHandling->open($this->webFormatConverter->convert($image)->getPathname());
             } catch (\Exception $e) {
+                if (strtolower((string) $metadata->getExtension()) === 'pdf') {
+                    return $this->safeOpen('bundles/integratedintegrated/images/fallbacks/pdf-fallback.jpg');
+                }
+
                 $image = $image->getIdentifier();
             }
         }
@@ -123,6 +129,10 @@ class ImageExtension extends AbstractExtension
             try {
                 $image = $this->webFormatConverter->convert($image)->getPathname();
             } catch (\Exception $e) {
+                if (strtolower((string) $metadata->getExtension()) === 'pdf') {
+                    return $this->safeOpen('bundles/integratedintegrated/images/fallbacks/pdf-fallback.jpg');
+                }
+
                 $image = $image->getIdentifier();
             }
 

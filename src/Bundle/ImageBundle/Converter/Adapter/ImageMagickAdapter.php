@@ -40,6 +40,7 @@ class ImageMagickAdapter implements AdapterInterface
     public function convert($outputFormat, StorageInterface $image)
     {
         $file = $this->cache->path($image);
+        $extension = strtolower((string) $image->getMetadata()->getExtension());
 
         // Make a reasonable path based on the cache path but in a conversion folder
         $cache = new \SplFileInfo(\sprintf('%s/%s.%s', $file->getPath(), $file->getFilename(), $outputFormat));
@@ -49,8 +50,16 @@ class ImageMagickAdapter implements AdapterInterface
             return $cache;
         }
 
+        if ($extension === 'pdf') {
+            $imagick = new \Imagick();
+            $imagick->setResolution(144, 144);
+            $imagick->readImage(\sprintf('%s[0]', $file->getPathname()));
+            $imagick->setIteratorIndex(0);
+            $imagick->setImageBackgroundColor('white');
+            $imagick = $imagick->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
+        }
         // Check if've got a video
-        if (preg_match('/^video\/(.*)$/', $image->getMetadata()->getMimeType())) {
+        elseif (preg_match('/^video\/(.*)$/', $image->getMetadata()->getMimeType())) {
             // Open the file on the tenth frame, this saves a us a hell of a lot memory
             // When no frame is specified Imagick will write every frame on /tmp
             $imagick = new \Imagick(\sprintf('%s[10]', $file->getPathname()));
