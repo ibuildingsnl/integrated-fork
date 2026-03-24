@@ -1,4 +1,6 @@
 {% set isEditorMode = app.request.query.get('integrated_website_edit') and layoutEditable %}
+{% set isEditorPreview = app.request.query.get('integrated_editor_preview') %}
+{% if not isEditorPreview %}
 {% include integrated_active_theme('objects/toolbar-css.html.twig') %}
 {% if isEditorMode %}
     <div id="integrated-editor-loader" aria-live="polite" aria-busy="true">
@@ -40,6 +42,7 @@
                 }
 
                 hideLoader();
+                document.dispatchEvent(new CustomEvent('integrated-editor-ready'));
             };
 
             var checkCompleted = function() {
@@ -74,79 +77,143 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/iconoir-icons/iconoir@7.11.0/css/iconoir.css">
 
-<div class="integrated-website-toolbar">
-    <div class="toolbar-wrapper" style="">
-        <a class="integrated-logo" href="{{ path('integrated_content_content_index') }}">
+<div class="integrated-website-toolbar {% if isEditorMode %}integrated-website-toolbar-editor{% else %}integrated-website-toolbar-view{% endif %}">
+    <div class="toolbar-wrapper">
+        <a class="integrated-logo" href="{{ path('integrated_content_content_index') }}" aria-label="{% trans %}Go to content overview{% endtrans %}">
         </a>
 
         <div class="integrated-website-toolbar-tools">
-            <div class="integrated-website-toolbar-left">
-                {% block website_navigation_buttons %}
-                    {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ChannelController::getChannels')) }}
-                {% endblock website_navigation_buttons %}
+            <div class="integrated-website-toolbar-left integrated-toolbar-workspace">
+                <ul class="integrated-toolbar-websites" role="list">
+                    {% block website_navigation_buttons %}
+                        {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ChannelController::getChannels')) }}
+                    {% endblock website_navigation_buttons %}
+                </ul>
                 <div class="new-contenttype close-outside dropdown top-bar">
                     <a href="#" class="btn btn-green icon-right"
                        data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}</span><i class="iconoir-plus"></i></a>
                     {{ knp_menu_render('content_type', {'template': '@IntegratedContent/menu/content_type.html.twig'}) }}
                 </div>
             </div>
+            {% set params = app.request.attributes.get('_route_params')|merge(app.request.query.all) %}
+
+            {% if app.request.query.get('integrated_website_edit') and layoutEditable %}
+                {% set editorExitTarget = path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 0})) %}
+                {% set pageRevision = page.layoutMeta.revision|default(0) %}
+                <div class="integrated-editor-commandbar" data-role="integrated-editor-commandbar">
+                    <div class="integrated-editor-commandbar-group integrated-editor-commandbar-group-history">
+                        <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white icon-left"
+                           data-action="integrated-website-history-undo"
+                           title="{% trans %}Undo (Ctrl/Cmd+Z){% endtrans %}"
+                           aria-label="{% trans %}Undo{% endtrans %}">
+                            <i class="iconoir-undo"></i>
+                            <span>{% trans %}Undo{% endtrans %}</span>
+                        </a>
+
+                        <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white icon-left"
+                           data-action="integrated-website-history-redo"
+                           title="{% trans %}Redo (Ctrl/Cmd+Shift+Z){% endtrans %}"
+                           aria-label="{% trans %}Redo{% endtrans %}">
+                            <i class="iconoir-redo"></i>
+                            <span>{% trans %}Redo{% endtrans %}</span>
+                        </a>
+                    </div>
+
+                    <div class="integrated-editor-commandbar-group integrated-editor-commandbar-group-viewport"
+                         data-role="integrated-editor-viewport-controls">
+                        <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white"
+                           data-action="integrated-editor-viewport-set"
+                           data-viewport="desktop"
+                           aria-pressed="true"
+                           title="{% trans %}Preview desktop{% endtrans %}"
+                           aria-label="{% trans %}Preview desktop{% endtrans %}">
+                            <i class="iconoir-computer" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white"
+                           data-action="integrated-editor-viewport-set"
+                           data-viewport="tablet"
+                           aria-pressed="false"
+                           title="{% trans %}Preview tablet{% endtrans %}"
+                           aria-label="{% trans %}Preview tablet{% endtrans %}">
+                            <i class="iconoir-laptop" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white"
+                           data-action="integrated-editor-viewport-set"
+                           data-viewport="mobile"
+                           aria-pressed="false"
+                           title="{% trans %}Preview mobile{% endtrans %}"
+                           aria-label="{% trans %}Preview mobile{% endtrans %}">
+                            <i class="iconoir-smartphone-device" aria-hidden="true"></i>
+                        </a>
+                    </div>
+
+                    <div class="integrated-editor-commandbar-group integrated-editor-commandbar-group-save">
+                        <a href="javascript:;" class="integrated-website-toolbar-button integrated-editor-save-primary btn btn-green"
+                           data-action="integrated-website-page-save"
+                           {% if page.id|default %}data-id="{{ page.id }}" {% endif %}
+                           data-revision="{{ pageRevision }}"
+                           data-close-editor-on-success="0"
+                           data-target="{{ editorExitTarget }}"
+                           aria-label="{% trans %}Save page{% endtrans %}">
+                            {% trans %}Save page{% endtrans %}
+                        </a>
+
+                        <a href="javascript:;" class="integrated-website-toolbar-button integrated-editor-save-secondary btn btn-white"
+                           data-action="integrated-website-page-save"
+                           {% if page.id|default %}data-id="{{ page.id }}" {% endif %}
+                           data-revision="{{ pageRevision }}"
+                           data-close-editor-on-success="1"
+                           data-target="{{ editorExitTarget }}"
+                           aria-label="{% trans %}Save and close{% endtrans %}">
+                            {% trans %}Save and close{% endtrans %}
+                        </a>
+
+                        <a href="{{ editorExitTarget }}"
+                           class="integrated-website-toolbar-button integrated-editor-close btn btn-white"
+                           aria-label="{% trans %}Close editor{% endtrans %}">
+                            {% trans %}Close{% endtrans %}
+                        </a>
+                    </div>
+
+                    <span class="integrated-website-save-status" data-role="integrated-website-save-status" role="status" aria-live="polite" aria-atomic="true"></span>
+                </div>
+            {% endif %}
+
             <div class="integrated-website-toolbar-right">
-                {% set params = app.request.attributes.get('_route_params')|merge(app.request.query.all) %}
-
-                {% if app.request.query.get('integrated_website_edit') and layoutEditable %}
-                    <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white icon-left"
-                       data-action="integrated-website-history-undo">
-                        <i class="iconoir-undo"></i>
-                        <span>{% trans %}Undo{% endtrans %}</span>
-                    </a>
-
-                    <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white icon-left"
-                       data-action="integrated-website-history-redo">
-                        <i class="iconoir-redo"></i>
-                        <span>{% trans %}Redo{% endtrans %}</span>
-                    </a>
-
-                    <a href="javascript:;" class="integrated-website-toolbar-button btn btn-green"
-                       data-action="integrated-website-page-save"
-                       {% if page.id|default %}data-id="{{ page.id }}" {% endif %}
-                       data-target="{{ path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 0})) }}">
-                        {% trans %}Save page{% endtrans %}
-                    </a>
-
-                    <a href="{{ path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 0})) }}"
-                       class="integrated-website-toolbar-button integrated-website-toolbar-button-secondary btn btn-white">
-                        {% trans %}Cancel{% endtrans %}
-                    </a>
-                {% else %}
-                    {% if content is defined and content is not null %}
-                        <a href="{{ path('integrated_content_content_edit', {'id': content.id}) }}"
-                           class="integrated-website-toolbar-button btn btn-green">
-                            {% trans %}Edit{% endtrans %}
-                        </a> &nbsp;
-                    {% endif %}
-
-                    {% if layoutEditable %}
-                        <div class="integrated-website-toolbar-button-group">
-                            <a href="{{ path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 1})) }}"
-                               class="integrated-website-toolbar-button btn btn-green">
-                                {% trans %}Edit page{% endtrans %}
+                {% if not (app.request.query.get('integrated_website_edit') and layoutEditable) %}
+                    <div class="integrated-view-commandbar">
+                        {% if content is defined and content is not null %}
+                            <a href="{{ path('integrated_content_content_edit', {'id': content.id}) }}"
+                               class="integrated-website-toolbar-button integrated-view-commandbar-primary btn btn-green">
+                                {% trans %}Edit{% endtrans %}
                             </a>
-                            {% if page %}
-                                {% if page.type == 'content_type_page' %}
-                                    <a href="{{ path('integrated_page_content_type_page_edit', {'id': page.id}) }}"
-                                       class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>
-                                {% else %}
-                                    <a href="{{ path('integrated_page_page_edit', {'id': page.id}) }}"
-                                       class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>
+                        {% endif %}
+
+                        {% if layoutEditable %}
+                            <div class="integrated-website-toolbar-button-group integrated-view-commandbar-group">
+                                <a href="{{ path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 1})) }}"
+                                   class="integrated-website-toolbar-button btn btn-green">
+                                    {% trans %}Edit page{% endtrans %}
+                                </a>
+                                {% if page %}
+                                    {% if page.type == 'content_type_page' %}
+                                        <a href="{{ path('integrated_page_content_type_page_edit', {'id': page.id}) }}"
+                                           class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>
+                                    {% else %}
+                                        <a href="{{ path('integrated_page_page_edit', {'id': page.id}) }}"
+                                           class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>
+                                    {% endif %}
+                                    <a href="{{ path('integrated_page_page_index') }}"
+                                       class="btn btn-white">{% trans %}Go to page overview{% endtrans %}</a>
                                 {% endif %}
-                                <a href="{{ path('integrated_page_page_index') }}"
-                                   class="btn btn-white">{% trans %}Go to page overview{% endtrans %}</a>
-                            {% endif %}
-                        </div>
-                    {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
                 {% endif %}
-                <div class="integrated-toolbar-account">
+                <div class="integrated-toolbar-account-shell">
+                    <div class="integrated-toolbar-account">
                     {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ContentController::navdropdowns')) }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -167,24 +234,35 @@
         '.toggle-filters', //filters when in mobile mode
     ];
     let popupShown = false;
+    
+    function collapseToolbarDropdowns() {
+        document.querySelectorAll('.dropdown.show').forEach(function(node) {
+            node.classList.remove('show');
+        });
+        document.querySelectorAll('.dropdown > a[data-toggle="dropdown"]').forEach(function(node) {
+            node.setAttribute('aria-expanded', 'false');
+        });
+    }
 
     function getShownCloseOutsideElements() {
         return Array.from(document.querySelectorAll('.close-outside.show'));
     }
 
-    function targetMatchesAnySelector(target, selectors) {
-        if (!(target instanceof Element)) {
-            return false;
+        if (clickedOutside) {
+            collapseToolbarDropdowns();
+            hideDropDownBackGround();
+            popupShown = false;
         }
 
-        return selectors.some(function (selector) {
-            return target.closest(selector) !== null;
-        });
-    }
-
-    function isInsideShownCloseOutside(target) {
-        if (!(target instanceof Element)) {
-            return false;
+    $(document).keyup(function (e) {
+        if (e.key === 'Escape') {
+            const closeOutside = $('.close-outside.show');
+            if (closeOutside.is('#upload_container')) {
+                closeOutside.removeClass('close-outside');
+            }
+            collapseToolbarDropdowns();
+            hideDropDownBackGround();
+            popupShown = false;
         }
 
         return getShownCloseOutsideElements().some(function (element) {
@@ -216,8 +294,11 @@
 
         if (targetMatchesAnySelector(target, openClasses)) {
             event.stopPropagation();
-            openPopup();
-            return;
+            collapseToolbarDropdowns();
+            disableEventListeners();
+            hideDropDownBackGround();
+            sendCancelEvent();
+            popupShown = false;
         }
 
         const isTargetToggleButton = targetMatchesAnySelector(target, ['.toggle-button']);
@@ -253,22 +334,57 @@
     }
 
     document.querySelectorAll('a[data-toggle="dropdown"]').forEach(function(el) {
+        el.setAttribute('aria-expanded', 'false');
+        el.setAttribute('aria-haspopup', 'true');
+        el.setAttribute('role', 'button');
         el.addEventListener('click', toggleDropdown, false);
     });
 
+    document.addEventListener('keydown', function(e) {
+        const toggle = e.target.closest('a[data-toggle="dropdown"]');
+        if (!toggle) {
+            return;
+        }
+
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleDropdown(e);
+        }
+    });
+
     function toggleDropdown(el) {
-        const dropdown = el.target.closest('.dropdown');
+        if (el && typeof el.preventDefault === 'function') {
+            el.preventDefault();
+        }
+
+        const toggle = el.target.closest('a[data-toggle="dropdown"]');
+        if (!toggle) {
+            return;
+        }
+
+        const dropdown = toggle.closest('.dropdown');
+        if (!dropdown) {
+            return;
+        }
+
+        const toggles = document.querySelectorAll('.dropdown > a[data-toggle="dropdown"]');
+
         if (!dropdown.classList.contains('show')) {
             const dropdowns = document.querySelectorAll('.dropdown');
             dropdowns.forEach(dropdown => {
                 dropdown.classList.remove('show');
             });
+            toggles.forEach(function(node) {
+                node.setAttribute('aria-expanded', 'false');
+            });
             dropdown.classList.add('show');
+            toggle.setAttribute('aria-expanded', 'true');
             if (dropdown.getAttribute('data-underlay') !== 'no') {
                 showDropDownBackGround();
             }
         } else {
             dropdown.classList.remove('show');
+            toggle.setAttribute('aria-expanded', 'false');
             if (dropdown.getAttribute('data-underlay') !== 'no') {
                 hideDropDownBackGround();
             }
@@ -294,3 +410,4 @@
 <div id="dropdown_overlay" class="hide"></div>
 
 <div class="integrated-website-body-margin-top"></div>
+{% endif %}

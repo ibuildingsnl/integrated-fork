@@ -1,0 +1,29 @@
+{% set role = component.props.role|default('') %}
+{% set componentId = component.props.id|default(gridId|default('')) %}
+{% set normalizedSize = (component.props.size|default(12)) ~ '' %}
+{% if normalizedSize not in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'] %}
+    {% set normalizedSize = '12' %}
+{% endif %}
+{% set edit = app.request.attributes.get('integrated_block_edit') %}
+
+{% if role == 'grid' %}
+    {% if edit %}
+        <div class="integrated-website-grid integrated-website-droppable" data-id="{{ componentId }}" data-grid-framework="bootstrap">
+    {% else %}
+        <div class="integrated-pagebuilder-container" data-grid-id="{{ componentId }}" data-grid-framework="bootstrap">
+    {% endif %}
+        {{ children_html|default('')|raw }}
+    </div>
+{% elseif role == 'row' %}
+    <div class="row{% if edit %} integrated-website-sortable{% endif %}"{% if edit %} data-block-type="row"{% endif %}>
+        {{ children_html|default('')|raw }}
+    </div>
+{% elseif role == 'column' %}
+    <div class="col-sm-{{ normalizedSize }}{% if edit %} integrated-website-col integrated-website-droppable{% endif %}"{% if edit %} data-block-type="column" data-size="{{ normalizedSize }}"{% endif %}>
+        {{ children_html|default('')|raw }}
+    </div>
+{% else %}
+    <div class="integrated-pagebuilder-container" data-grid-id="{{ componentId }}">
+        {{ children_html|default('')|raw }}
+    </div>
+{% endif %}

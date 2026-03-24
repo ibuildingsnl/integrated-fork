@@ -1,0 +1,164 @@
+    @media only screen and (max-width: 1024px) {
+        .integrated-website-toolbar {
+            height: auto;
+        }
+
+        .integrated-website-toolbar .toolbar-wrapper {
+            height: var(--integrated-toolbar-height);
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
+
+        .integrated-website-toolbar-tools {
+            min-width: max-content;
+            flex-wrap: nowrap;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .integrated-website-toolbar-left,
+        .integrated-website-toolbar-right {
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .integrated-website-save-status {
+            min-width: 90px;
+            margin-left: 6px;
+            font-size: 11px;
+        }
+
+        .integrated-editor-commandbar {
+            padding: 2px 6px;
+            gap: 6px;
+        }
+
+        .integrated-website-toolbar-editor .integrated-editor-commandbar {
+            position: static;
+            left: auto;
+            top: auto;
+            transform: none;
+        }
+
+        .integrated-editor-commandbar-group {
+            gap: 4px;
+            padding-right: 6px;
+        }
+
+        .integrated-editor-commandbar .integrated-website-toolbar-button.btn {
+            padding: 0 8px;
+            font-size: 11px;
+        }
+
+        .integrated-editor-commandbar .integrated-website-save-status {
+            min-width: 92px;
+            padding: 0 8px;
+            margin-left: 0;
+        }
+
+        .integrated-website-toolbar .btn {
+            padding: 0 0.5rem;
+        }
+
+        .integrated-website-toolbar [data-action="integrated-website-history-undo"],
+        .integrated-website-toolbar [data-action="integrated-website-history-redo"] {
+            width: 34px;
+            min-width: 34px;
+            padding: 0;
+            justify-content: center;
+        }
+
+        .integrated-website-toolbar [data-action="integrated-website-history-undo"] span,
+        .integrated-website-toolbar [data-action="integrated-website-history-redo"] span {
+            display: none;
+        }
+
+        .integrated-website-toolbar [data-action="integrated-website-history-undo"] i,
+        .integrated-website-toolbar [data-action="integrated-website-history-redo"] i {
+            margin-right: 0;
+        }
+
+        .integrated-website-toolbar-tools {
+            padding-left: 0;
+        }
+
+        .integrated-website-toolbar .toolbar-wrapper {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .integrated-website-toolbar .new-contenttype {
+            margin-left: 15px;
+        }
+
+        .integrated-website-toolbar .new-contenttype span {
+            display: none;
+        }
+
+        .integrated-website-toolbar .dropdown-profile {
+            margin-right: 10px;
+        }
+
+        .integrated-website-toolbar .dropdown-profile > a > span {
+            display: none;
+        }
+
+        .integrated-website-toolbar .dropdown-queue > a > span {
+            display: none;
+        }
+    }
+
+    @media only screen and (max-width: 768px) {
+        .integrated-website-toolbar .new-contenttype {
+            margin-left: 5px;
+        }
+
+        .integrated-website-toolbar li.dropdown-assigned-to-me > a > span {
+            position: absolute;
+            background-color: white;
+            color: black;
+            border-radius: 50%;
+            height: 20px;
+            width: 20px;
+            line-height: initial;
+            text-align: center;
+            top: 5px;
+            right: -5px;
+        }
+
+        .integrated-website-toolbar li.dropdown-assigned-to-me {
+            position: relative;
+        }
+
+        .integrated-website-toolbar .dropdown.top-bar {
+            margin-left: 5px;
+        }
+    }
+
+    .integrated-website-toolbar .integrated-logo {
+        background-image: url({{ asset('bundles/integratedintegrated/images/logo_white_trademark.svg') }});
+        flex: 0 0 26px;
+        margin-right: 10px;
+        height: var(--integrated-toolbar-height);
+        padding: 0;
+        background-size: 26px;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    @media only screen and (max-width: 1280px) {
+        .integrated-website-toolbar .integrated-logo {
+            background-image: url({{ asset('bundles/integratedintegrated/images/logo_white_trademark.svg') }});
+            flex: 0 0 26px;
+            margin-right: 10px;
+            height: var(--integrated-toolbar-height);
+            padding: 0;
+            background-size: 26px;
+        }
+    }
+
+    @media only screen and (max-width: 640px) {
+        .integrated-website-toolbar .integrated-logo {
+            display: none;
+        }
+    }

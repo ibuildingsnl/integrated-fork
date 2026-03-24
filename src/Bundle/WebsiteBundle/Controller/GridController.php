@@ -12,8 +12,6 @@
 namespace Integrated\Bundle\WebsiteBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
-use Integrated\Bundle\PageBundle\Document\Page\Grid\Grid;
 use Integrated\Bundle\PageBundle\Grid\GridFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -37,32 +35,9 @@ class GridController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $data = (array) json_decode($request->getContent(), true);
-
-        if (!isset($data['page'])) {
-            return new JsonResponse(['error' => 'No page specified']);
-        }
-
-        if (!$page = $this->documentManager->getRepository(AbstractPage::class)->find($data['page'])) {
-            return new JsonResponse(['error' => 'Page not found']);
-        }
-
-        $grids = [];
-
-        if (isset($data['grids'])) {
-            foreach ($data['grids'] as $grid) {
-                $grid = $this->gridFactory->fromArray($grid);
-
-                if ($grid instanceof Grid) {
-                    $grids[] = $grid;
-                }
-            }
-        }
-
-        $page->setGrids($grids);
-
-        $this->documentManager->flush();
-
-        return new JsonResponse(['success' => true]);
+        return new JsonResponse([
+            'success' => false,
+            'error' => 'Legacy grid save disabled after pagebuilder v2 cutover',
+        ], 410);
     }
 }

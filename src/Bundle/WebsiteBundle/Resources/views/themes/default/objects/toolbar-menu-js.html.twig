@@ -7,6 +7,17 @@
         var workspaceOriginalParent = null;
         var workspaceOriginalNextSibling = null;
         var workspaceVisualMirrorList = null;
+        var sortableActiveClass = 'integrated-sortable-active';
+        var notifyEditorContentChange = function(source) {
+            document.dispatchEvent(new CustomEvent('integrated-editor-content-change', {
+                detail: {
+                    source: source || 'menu',
+                }
+            }));
+        };
+        var setSortableActive = function(isActive) {
+            document.body.classList.toggle(sortableActiveClass, !!isActive);
+        };
         var markEditorReady = function(moduleName) {
             if (
                 window.IntegratedEditorLoader &&
@@ -667,6 +678,11 @@
                 scope.querySelectorAll('.integrated-menu-drop-target').forEach(function(list) {
                     list.classList.remove('integrated-menu-drop-target');
                 });
+
+                scope.querySelectorAll('.integrated-menu-drop-before, .integrated-menu-drop-after').forEach(function(node) {
+                    node.classList.remove('integrated-menu-drop-before');
+                    node.classList.remove('integrated-menu-drop-after');
+                });
             };
 
             sortableLists = collectSortableLists(root);
@@ -686,6 +702,10 @@
                     filter: '.integrated-menu-node-action',
                     ghostClass: 'integrated-website-item-ghost',
                     dragClass: 'integrated-website-item-dragging',
+                    onStart: function() {
+                        setSortableActive(true);
+                        root.classList.add('integrated-menu-dragging');
+                    },
                     onMove: function(evt) {
                         if (evt.originalEvent && typeof evt.originalEvent.clientX === 'number') {
                             dragPointerX = evt.originalEvent.clientX;
@@ -716,6 +736,11 @@
                             }
                         }
 
+                        var related = evt.related;
+                        if (related && related.classList && related.dataset.action === 'integrated-website-menu-item-edit') {
+                            related.classList.add(evt.willInsertAfter ? 'integrated-menu-drop-after' : 'integrated-menu-drop-before');
+                        }
+
                         return true;
                     },
                     onEnd: function(evt) {
@@ -725,6 +750,9 @@
                         clearDropTargets(root);
                         dragPointerX = null;
                         normalizeHasChildrenClasses(root);
+                        root.classList.remove('integrated-menu-dragging');
+                        setSortableActive(false);
+                        notifyEditorContentChange('menu');
                     }
                 });
 
@@ -1447,6 +1475,7 @@
 
                 new Item(saveNode).update(payload);
                 delete saveNode.dataset.integratedDraft;
+                notifyEditorContentChange('menu');
                 return true;
             }
             return false;
@@ -1467,6 +1496,7 @@
                 }
 
                 new Item(removeNode).remove();
+                notifyEditorContentChange('menu');
                 return true;
             }
             return false;

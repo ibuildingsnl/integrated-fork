@@ -41,6 +41,21 @@
         var historyPast = [];
         var historyFuture = [];
         var historyLimit = 40;
+        var rememberStateTimer = null;
+        var rememberStateDelay = 60;
+        var sortableActiveClass = 'integrated-sortable-active';
+        var sectionPresetCache = [];
+        var sectionPresetInsertContext = null;
+        var notifyEditorContentChange = function(source) {
+            document.dispatchEvent(new CustomEvent('integrated-editor-content-change', {
+                detail: {
+                    source: source || 'grid',
+                }
+            }));
+        };
+        var setSortableActive = function(isActive) {
+            document.body.classList.toggle(sortableActiveClass, !!isActive);
+        };
         var markEditorReady = function(moduleName) {
             if (
                 window.IntegratedEditorLoader &&
@@ -48,6 +63,61 @@
             ) {
                 window.IntegratedEditorLoader.markReady(moduleName);
             }
+        };
+        var resolveGridContext = function($context) {
+            if ($context && typeof $context.closest === 'function') {
+                var $grid = $context.closest('.integrated-website-grid');
+                if ($grid) {
+                    return $grid;
+                }
+            }
+
+            if ($context && $context.classList && $context.classList.contains('integrated-website-grid')) {
+                return $context;
+            }
+
+            return document.querySelector('.integrated-website-grid');
+        };
+        var hasClassPrefix = function($node, prefix) {
+            if (!$node || !$node.classList || !prefix) {
+                return false;
+            }
+
+            for (var i = 0; i < $node.classList.length; i++) {
+                if ($node.classList[i].indexOf(prefix) === 0) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+        var isTailwindLayout = function($context) {
+            if (typeof framework !== 'undefined') {
+                return framework === 'tailwind';
+            }
+
+            var $grid = resolveGridContext($context);
+            if ($grid && $grid.dataset && typeof $grid.dataset.gridFramework === 'string' && $grid.dataset.gridFramework.trim() !== '') {
+                return $grid.dataset.gridFramework === 'tailwind';
+            }
+
+            var sampleNodes = [];
+            if ($grid && typeof $grid.querySelectorAll === 'function') {
+                sampleNodes = Array.from($grid.querySelectorAll('[data-block-type="row"], [data-block-type="column"]')).slice(0, 24);
+            }
+
+            for (var i = 0; i < sampleNodes.length; i++) {
+                var $node = sampleNodes[i];
+                if ($node.classList && ($node.classList.contains('flex-wrap') || hasClassPrefix($node, 'md:w-'))) {
+                    return true;
+                }
+
+                if (hasClassPrefix($node, 'col-sm-')) {
+                    return false;
+                }
+            }
+
+            return false;
         };
 
         /**
@@ -64,9 +134,9 @@
 
             $element.appendChild(createColumnButtons());
 
-            $element.querySelectorAll('[data-block-type="block"]').forEach(item => {
-                item.prepend(createBlockButtons());
-            });
+            $element.querySelectorAll('[data-block-type="block"]').forEach(item =>
+                refreshBlock(item, true, false)
+            );
         };
 
         /**
@@ -75,7 +145,7 @@
          */
         var addBlock = function(blockId, $before) {
             if (!$before || !$before.parentNode) {
-                return;
+                return null;
             }
 
             var element = document.createElement('div');
@@ -87,6 +157,8 @@
             $before.insertAdjacentElement('beforebegin', element);
 
             refreshBlock(element);
+
+            return element;
         };
 
         var ensureRootColumnButtons = function($grid) {
@@ -119,7 +191,7 @@
 
             var $blockButtons = $trigger.closest('.integrated-block-buttons');
             if ($blockButtons) {
-                return $blockButtons;
+                return $blockButtons.parentNode;
             }
 
             var $column = $trigger.closest('[data-block-type="column"]');
@@ -160,11 +232,269 @@
             return wrapper.firstChild;
         };
 
+        var escapeHtml = function(value) {
+            if (value === null || typeof value === 'undefined') {
+                return '';
+            }
+
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        };
+
+        var fetchSectionPresets = function() {
+            return fetch('{{ path('integrated_website_pagebuilder_section_presets_list') }}', {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(function(response) {
+                    return response.text().then(function(rawBody) {
+                        var result = null;
+                        try {
+                            result = rawBody ? JSON.parse(rawBody) : {};
+                        } catch (e) {
+                            return [];
+                        }
+
+                        if (!response.ok || !result || result.success !== true || !Array.isArray(result.presets)) {
+                            return [];
+                        }
+
+                        return result.presets;
+                    });
+                })
+                .catch(function() {
+                    return [];
+                });
+        };
+
+        var saveSectionPreset = function(name, html, id) {
+            return fetch('{{ path('integrated_website_pagebuilder_section_presets_save') }}', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    id: id || '',
+                    name: name || '',
+                    html: html || ''
+                })
+            })
+                .then(function(response) {
+                    return response.text().then(function(rawBody) {
+                        var result = null;
+                        try {
+                            result = rawBody ? JSON.parse(rawBody) : {};
+                        } catch (e) {
+                            throw new Error('Unable to save section preset (HTTP ' + response.status + ')');
+                        }
+
+                        if (!response.ok || !result || result.success !== true || !result.preset) {
+                            throw new Error((result && result.error) ? result.error : 'Unable to save section preset');
+                        }
+
+                        return result.preset;
+                    });
+                });
+        };
+
+        var deleteSectionPreset = function(id) {
+            return fetch('{{ path('integrated_website_pagebuilder_section_presets_delete', {'id': 'preset-id'}) }}'.replace('preset-id', encodeURIComponent(id)), {
+                method: 'DELETE',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(function(response) {
+                    return response.text().then(function(rawBody) {
+                        var result = null;
+                        try {
+                            result = rawBody ? JSON.parse(rawBody) : {};
+                        } catch (e) {
+                            throw new Error('Unable to delete section preset (HTTP ' + response.status + ')');
+                        }
+
+                        if (!response.ok || !result || result.success !== true) {
+                            throw new Error((result && result.error) ? result.error : 'Unable to delete section preset');
+                        }
+
+                        return true;
+                    });
+                });
+        };
+
+        var getPresetErrorMessage = function(error, fallback) {
+            if (!error) {
+                return fallback;
+            }
+
+            if (typeof error === 'string' && error !== '') {
+                return error;
+            }
+
+            if (typeof error.message === 'string' && error.message !== '') {
+                return error.message;
+            }
+
+            return fallback;
+        };
+
+        var renderSectionPresetPanel = function() {
+            var listItems = sectionPresetCache.map(function(preset) {
+                return '<li class="integrated-section-preset-item">' +
+                    '<button type="button" class="integrated-section-preset-use" data-action="integrated-website-section-preset-use" data-id="' + escapeHtml(preset.id) + '">' +
+                    '<span class="integrated-section-preset-name">' + escapeHtml(preset.name || '') + '</span>' +
+                    '</button>' +
+                    '<button type="button" class="integrated-section-preset-delete" data-action="integrated-website-section-preset-delete" data-id="' + escapeHtml(preset.id) + '" aria-label="{% trans %}Delete section preset{% endtrans %}">' +
+                    '<i class="iconoir-trash"></i>' +
+                    '</button>' +
+                    '</li>';
+            }).join('');
+
+            if (listItems === '') {
+                listItems = '<li class="integrated-menu-empty-action">{% trans %}No section presets yet{% endtrans %}</li>';
+            }
+
+            return '<div class="integrated-section-presets">' +
+                '<div class="integrated-block-workspace-actions">' +
+                '<p class="integrated-menu-builder-context">{% trans %}Insert a shared section preset for this website{% endtrans %}</p>' +
+                '</div>' +
+                '<ul class="integrated-section-preset-list">' + listItems + '</ul>' +
+                '</div>';
+        };
+
+        var resolveSectionPresetInsertPosition = function() {
+            if (sectionPresetInsertContext) {
+                var $row = sectionPresetInsertContext.closest('[data-block-type="row"]');
+                if ($row && $row.parentNode) {
+                    if ($row.nextSibling) {
+                        return {
+                            parent: $row.parentNode,
+                            before: $row.nextSibling
+                        };
+                    }
+
+                    return {
+                        parent: $row.parentNode,
+                        before: null
+                    };
+                }
+
+                var $grid = sectionPresetInsertContext.closest('.integrated-website-grid');
+                if ($grid) {
+                    var $rootButtons = null;
+                    for (var i = 0; i < $grid.children.length; i++) {
+                        var child = $grid.children[i];
+                        if (child.classList && child.classList.contains('integrated-column-buttons')) {
+                            $rootButtons = child;
+                            break;
+                        }
+                    }
+
+                    return {
+                        parent: $grid,
+                        before: $rootButtons
+                    };
+                }
+            }
+
+            var $defaultGrid = document.querySelector('.integrated-website-grid');
+            if (!$defaultGrid) {
+                return null;
+            }
+
+            return {
+                parent: $defaultGrid,
+                before: ensureRootColumnButtons($defaultGrid)
+            };
+        };
+
+        var ensureInsertedRowControls = function($row) {
+            if (!$row.querySelector(':scope > .integrated-row-buttons')) {
+                $row.insertBefore(createRowButtons(), $row.firstChild);
+            }
+
+            $row.querySelectorAll(':scope > [data-block-type="column"]').forEach(function($column) {
+                if (!$column.querySelector(':scope > .integrated-column-buttons')) {
+                    $column.appendChild(createColumnButtons());
+                }
+
+                $column.querySelectorAll(':scope > [data-block-type="block"]').forEach(function($block) {
+                    if (!$block.querySelector(':scope > .integrated-block-buttons')) {
+                        $block.prepend(createBlockButtons(), $block.firstChild);
+                    }
+                });
+            });
+        };
+
+        var insertSectionPresetById = function(id) {
+            var preset = sectionPresetCache.find(function(item) {
+                return item.id === id;
+            });
+
+            if (!preset || !preset.html) {
+                return;
+            }
+
+            var $row = createElementFromHTML(preset.html);
+            if (!$row || !$row.dataset || $row.dataset.blockType !== 'row') {
+                return;
+            }
+
+            $row.classList.remove('integrated-grid-drop-target', 'integrated-grid-drop-before', 'integrated-grid-drop-after');
+            var position = resolveSectionPresetInsertPosition();
+            if (!position || !position.parent) {
+                return;
+            }
+
+            if (position.before) {
+                position.parent.insertBefore($row, position.before);
+            } else {
+                position.parent.appendChild($row);
+            }
+
+            ensureInsertedRowControls($row);
+            $row.querySelectorAll('[data-block-type="column"]').forEach(item => initSortable(item));
+            closeBlockSelectorPanel();
+            rememberState();
+        };
+
+        var openSectionPresetPanel = function($trigger) {
+            sectionPresetInsertContext = $trigger || null;
+            sectionPresetCache = [];
+
+            openBlockSelectorPanel(
+                '<div class="integrated-block-results-loading"><span class="integrated-inline-spinner"></span><span>{% trans %}Loading section presets...{% endtrans %}</span></div>',
+                {
+                    eyebrow: '{% trans %}Section library{% endtrans %}',
+                    title: '{% trans %}Insert section preset{% endtrans %}',
+                    context: '',
+                }
+            );
+
+            fetchSectionPresets().then(function(presets) {
+                sectionPresetCache = presets;
+                updateBlockSelectorPanelContent(renderSectionPresetPanel());
+            });
+        };
+
 
         /**
          * @param element $block
          */
-        var refreshBlock = function($block, buttons = true) {
+        var refreshBlock = function($block, buttons = true, trackState = true) {
             fetch(
                 '{{ path('integrated_block_block_show', {'id': 'block-id'}) }}'.replace('block-id', encodeURIComponent($block.dataset.id))).
                 then(response => {
@@ -175,21 +505,45 @@
                     return response.json();
                 }).
                 then(data => {
-                    $block.innerHTML = data.html;
+                    var existingWrapper = $block.querySelector(':scope > .integrated-block');
+                    var wrapperClasses = existingWrapper ? existingWrapper.className : 'integrated-block';
+                    var parsedWrapperClasses = wrapperClasses
+                        .split(/\s+/)
+                        .map(className => className.trim())
+                        .filter(className => className !== '');
 
-                    $block.className = '';
+                    if (!parsedWrapperClasses.includes('integrated-block')) {
+                        parsedWrapperClasses.unshift('integrated-block');
+                    }
+
+                    if (isTailwindLayout($block) && !parsedWrapperClasses.includes('w-full')) {
+                        parsedWrapperClasses.push('w-full');
+                    }
 
                     if (data.cssClass) {
-                        $block.classList.add('integrated-website-sortable', ...data.cssClass.split(" "));
-                    } else {
-                        $block.classList.add('integrated-website-sortable');
+                        data.cssClass
+                            .split(/\s+/)
+                            .map(className => className.trim())
+                            .filter(className => className !== '')
+                            .forEach(className => {
+                                if (!parsedWrapperClasses.includes(className)) {
+                                    parsedWrapperClasses.push(className);
+                                }
+                            });
                     }
+
+                    $block.innerHTML = '<div class="' + parsedWrapperClasses.join(' ') + '">' + data.html + '</div>';
+
+                    $block.className = '';
+                    $block.classList.add('integrated-website-sortable');
 
                     if (buttons) {
                         $block.prepend(createBlockButtons(), $block.firstChild);
                     }
 
-                    rememberState();
+                    if (trackState) {
+                        rememberState();
+                    }
                 }).
                 catch(function() {
                     $block.innerHTML = '<div class="integrated-menu-empty-action" style="padding:8px 12px">{% trans %}Unable to load block preview{% endtrans %}</div>';
@@ -200,13 +554,13 @@
         /**
          * @return element
          */
-        var createRow = function() {
+        var createRow = function($context) {
             var element = document.createElement('div');
 
             element.dataset.blockType = 'row';
             element.classList.add('row');
             element.classList.add('integrated-website-sortable');
-            if (typeof framework !== 'undefined' && framework === 'tailwind') {
+            if (isTailwindLayout($context)) {
                 element.classList.add('flex');
                 element.classList.add('flex-wrap');
             }
@@ -217,21 +571,26 @@
         /**
          * @param size
          */
-        var createColumn = function(size) {
+        var createColumn = function(size, $context) {
             var element = document.createElement('div');
-            var colClass = 'w-full';
+            var normalizedSize = parseInt(size, 10);
+            if (!Number.isInteger(normalizedSize) || normalizedSize < 1) {
+                normalizedSize = COLUMN_GRID_UNITS;
+            }
+            var useTailwindLayout = isTailwindLayout($context);
 
             element.dataset.blockType = 'column';
-            element.dataset.size = size;
+            element.dataset.size = normalizedSize;
             element.classList.add('integrated-website-col');
             element.classList.add('integrated-website-droppable');
 
-            if (typeof framework !== 'undefined' && (size !== 12 && framework === 'tailwind')) {
-                var colClass = ['w-full', 'md:w-' + size + '/12'];
-                element.classList.add(...colClass);
+            if (useTailwindLayout) {
+                element.classList.add('w-full');
+                if (normalizedSize !== COLUMN_GRID_UNITS) {
+                    element.classList.add('md:w-' + normalizedSize + '/12');
+                }
             } else {
-                var colClass = 'col-sm-' + size;
-                element.classList.add(colClass);
+                element.classList.add('col-sm-' + normalizedSize);
             }
 
             element.appendChild(createColumnButtons());
@@ -378,6 +737,12 @@
                 '<a href="javascript:;" class="integrated-block-button integrated-website-block-column-add" data-action="integrated-website-block-add" title="{% trans %}Add block{% endtrans %}">' +
                 '  <i class="iconoir-plus"></i>' +
                 '</a>' +
+                '<a href="javascript:;" class="integrated-block-button" data-action="integrated-website-section-preset-add" title="{% trans %}Insert section preset{% endtrans %}">' +
+                '  <i class="iconoir-grid-plus"></i>' +
+                '</a>' +
+                '<a href="javascript:;" class="integrated-block-button" data-action="integrated-website-section-preset-save" title="{% trans %}Save section as preset{% endtrans %}">' +
+                '  <i class="iconoir-bookmark"></i>' +
+                '</a>' +
                 '<a href="javascript:;" class="integrated-block-button" data-action="integrated-website-cols-config" title="{% trans %}Configure columns{% endtrans %}">' +
                 '  <i class="iconoir-settings"></i>' +
                 '</a>' +
@@ -403,6 +768,9 @@
                 '</a>' +
                 '<a href="javascript:;" class="integrated-block-button columns" data-action="integrated-website-cols-add" title="{% trans %}Add columns{% endtrans %}">' +
                 '   <i class="iconoir-view-columns-3"></i>' +
+                '</a>' +
+                '<a href="javascript:;" class="integrated-block-button presets" data-action="integrated-website-section-preset-add" title="{% trans %}Insert section preset{% endtrans %}">' +
+                '   <i class="iconoir-grid-plus"></i>' +
                 '</a>';
 
             return element;
@@ -454,9 +822,10 @@
             });
         };
 
-        var rememberState = function() {
+        var rememberStateNow = function() {
             var state = serializeGridState();
             if (historyPast.length && historyPast[historyPast.length - 1] === state) {
+                updateHistoryActionState();
                 return;
             }
 
@@ -466,26 +835,70 @@
             }
 
             historyFuture = [];
+            notifyEditorContentChange('grid');
+            updateHistoryActionState();
+        };
+
+        var rememberState = function() {
+            if (rememberStateTimer !== null) {
+                return;
+            }
+
+            rememberStateTimer = window.setTimeout(function() {
+                rememberStateTimer = null;
+                rememberStateNow();
+            }, rememberStateDelay);
+        };
+
+        var flushRememberState = function() {
+            if (rememberStateTimer === null) {
+                return;
+            }
+
+            window.clearTimeout(rememberStateTimer);
+            rememberStateTimer = null;
+            rememberStateNow();
+        };
+
+        var setHistoryActionEnabled = function(action, isEnabled) {
+            document.querySelectorAll('[data-action="' + action + '"]').forEach(function(button) {
+                button.classList.toggle('is-disabled', !isEnabled);
+                button.setAttribute('aria-disabled', isEnabled ? 'false' : 'true');
+                button.setAttribute('tabindex', isEnabled ? '0' : '-1');
+            });
+        };
+
+        var updateHistoryActionState = function() {
+            setHistoryActionEnabled('integrated-website-history-undo', historyPast.length > 1);
+            setHistoryActionEnabled('integrated-website-history-redo', historyFuture.length > 0);
         };
 
         var undoState = function() {
+            flushRememberState();
             if (historyPast.length < 2) {
+                updateHistoryActionState();
                 return;
             }
 
             var current = historyPast.pop();
             historyFuture.push(current);
             restoreGridState(historyPast[historyPast.length - 1]);
+            notifyEditorContentChange('grid');
+            updateHistoryActionState();
         };
 
         var redoState = function() {
+            flushRememberState();
             if (!historyFuture.length) {
+                updateHistoryActionState();
                 return;
             }
 
             var state = historyFuture.pop();
             historyPast.push(state);
             restoreGridState(state);
+            notifyEditorContentChange('grid');
+            updateHistoryActionState();
         };
 
         var showLoader = function() {
@@ -694,7 +1107,7 @@
                 initSortable(item),
             );
 
-            rememberState();
+            rememberStateNow();
             markEditorReady('grid');
         }
 
@@ -974,6 +1387,80 @@
          * Add columns
          */
         document.body.addEventListener('click', function(e) {
+            element = e.target.closest('[data-action="integrated-website-section-preset-add"]');
+            if (!element) {
+                return;
+            }
+
+            e.preventDefault();
+            openSectionPresetPanel(element);
+        });
+
+        document.body.addEventListener('click', function(e) {
+            element = e.target.closest('[data-action="integrated-website-section-preset-save"]');
+            if (!element) {
+                return;
+            }
+
+            e.preventDefault();
+
+            var $row = element.closest('[data-block-type="row"]');
+            if (!$row) {
+                return;
+            }
+
+            var name = window.prompt('{% trans %}Preset name{% endtrans %}', '{% trans %}New section preset{% endtrans %}');
+            if (!name) {
+                return;
+            }
+
+            saveSectionPreset(name, $row.outerHTML).then(function(savedPreset) {
+                sectionPresetCache = sectionPresetCache.filter(function(item) {
+                    return item.id !== savedPreset.id;
+                });
+                sectionPresetCache.unshift(savedPreset);
+            }).catch(function(error) {
+                alert(getPresetErrorMessage(error, '{% trans %}Unable to save section preset{% endtrans %}'));
+            });
+        });
+
+        document.body.addEventListener('click', function(e) {
+            element = e.target.closest('[data-action="integrated-website-section-preset-use"]');
+            if (!element) {
+                return;
+            }
+
+            e.preventDefault();
+            insertSectionPresetById(element.dataset.id || '');
+        });
+
+        document.body.addEventListener('click', function(e) {
+            element = e.target.closest('[data-action="integrated-website-section-preset-delete"]');
+            if (!element) {
+                return;
+            }
+
+            e.preventDefault();
+            if (!window.confirm('{% trans %}Delete this section preset?{% endtrans %}')) {
+                return;
+            }
+
+            var presetId = element.dataset.id || '';
+            if (!presetId) {
+                return;
+            }
+
+            deleteSectionPreset(presetId).then(function() {
+                sectionPresetCache = sectionPresetCache.filter(function(item) {
+                    return item.id !== presetId;
+                });
+                updateBlockSelectorPanelContent(renderSectionPresetPanel());
+            }).catch(function(error) {
+                alert(getPresetErrorMessage(error, '{% trans %}Unable to delete section preset{% endtrans %}'));
+            });
+        });
+
+        document.body.addEventListener('click', function(e) {
             element = e.target.closest('[data-action="integrated-website-cols-add"]');
             if (!element) {
                 return;
@@ -1092,21 +1579,25 @@
                     return;
                 }
 
-                var $row = createRow();
-                sizes.forEach(size => $row.append(createColumn(size)));
+                var $row = createRow($columnLayoutInsertBefore);
+                sizes.forEach(size => $row.append(createColumn(size, $row)));
                 $row.append(createRowButtons());
                 $columnLayoutInsertBefore.insertAdjacentElement('beforebegin', $row);
             }
 
             if (mode === 'config' && $columnLayoutTarget) {
                 var $oldColumns = $columnLayoutTarget.querySelectorAll(':scope > [data-block-type="column"]');
+                var useTailwindLayout = isTailwindLayout($columnLayoutTarget);
 
                 for (var i = 0; i < sizes.length; i++) {
                     var size = sizes[i];
-                    var colClass = ' w-full';
+                    var colClass = '';
 
-                    if (typeof framework !== 'undefined' && (size !== 12 && framework === 'tailwind')) {
-                        colClass = ' w-full md:w-' + size + '/12';
+                    if (useTailwindLayout) {
+                        colClass = ' w-full';
+                        if (size !== COLUMN_GRID_UNITS) {
+                            colClass += ' md:w-' + size + '/12';
+                        }
                     } else {
                         colClass = ' col-sm-' + size;
                     }
@@ -1115,7 +1606,7 @@
                         $oldColumns[i].setAttribute('class', 'integrated-website-col integrated-website-droppable' + colClass);
                         $oldColumns[i].dataset.size = size;
                     } else {
-                        $columnLayoutTarget.appendChild(createColumn(size));
+                        $columnLayoutTarget.appendChild(createColumn(size, $columnLayoutTarget));
                     }
                 }
 
@@ -1149,20 +1640,6 @@
 
             e.preventDefault();
             redoState();
-        });
-
-        document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z') {
-                e.preventDefault();
-                undoState();
-                return;
-            }
-
-            if (((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'z') || ((e.ctrlKey || e.metaKey) &&
-                e.key.toLowerCase() === 'y')) {
-                e.preventDefault();
-                redoState();
-            }
         });
 
         /**
@@ -1255,18 +1732,66 @@
          * @param $element
          */
         var initSortable = function($element) {
-            new Sortable($element, {
+            if ($element.__integratedSortableInstance) {
+                return;
+            }
+
+            var clearDropTargets = function() {
+                var $grid = resolveGridContext($element);
+                if (!$grid || typeof $grid.querySelectorAll !== 'function') {
+                    return;
+                }
+
+                $grid.querySelectorAll('.integrated-grid-drop-target, .integrated-grid-drop-before, .integrated-grid-drop-after').forEach(function(node) {
+                    node.classList.remove('integrated-grid-drop-target');
+                    node.classList.remove('integrated-grid-drop-before');
+                    node.classList.remove('integrated-grid-drop-after');
+                });
+            };
+
+            var applyDropTarget = function(evt) {
+                clearDropTargets();
+
+                if (!evt) {
+                    return;
+                }
+
+                var target = evt.to;
+                if (target && target.classList) {
+                    target.classList.add('integrated-grid-drop-target');
+                }
+
+                var related = evt.related;
+                if (related && related.classList && related.classList.contains('integrated-website-sortable')) {
+                    related.classList.add(evt.willInsertAfter ? 'integrated-grid-drop-after' : 'integrated-grid-drop-before');
+                }
+            };
+
+            $element.__integratedSortableInstance = new Sortable($element, {
                 group: 'integrated-grid',
                 sort: true,
                 forceFallback: true,
                 fallbackOnBody: true,
+                delayOnTouchOnly: true,
+                delay: 120,
                 scrollSpeed: 80,
+                animation: 120,
                 draggable: '.integrated-website-sortable',
                 handle: '.integrated-drag-handle',
                 ghostClass: 'integrated-website-item-ghost',
                 filter: '.integrated-block-button:not(.integrated-drag-handle)',
                 dragClass: 'integrated-website-item-dragging',
+                onStart: function() {
+                    setSortableActive(true);
+                    clearDropTargets();
+                },
+                onMove: function(evt) {
+                    applyDropTarget(evt);
+                    return true;
+                },
                 onEnd: function() {
+                    clearDropTargets();
+                    setSortableActive(false);
                     rememberState();
                 },
             });
@@ -1278,20 +1803,42 @@
         document.addEventListener('block-added', function(e) {
             closeBlockSelectorPanel();
 
+            var insertedBlock = null;
             if ($blockTarget) {
                 //new block inserted
-                addBlock(e.detail, $blockTarget);
-            } else {
+                insertedBlock = addBlock(e.detail, $blockTarget);
+            }
+
+            $blockTarget = null;
+            $lastBlockAddTrigger = null;
+
+            if (!insertedBlock) {
                 //update block
 
                 document.querySelectorAll('[data-id="' + e.detail + '"]').forEach(item => {
-                    refreshBlock(item, true);
+                    refreshBlock(item, true, false);
                 });
             }
         }, false);
 
         document.addEventListener('block-canceled', function() {
             closeBlockSelectorPanel();
+            $blockTarget = null;
+            $lastBlockAddTrigger = null;
+        }, false);
+
+        document.addEventListener('block-deleted', function(e) {
+            closeBlockSelectorPanel();
+
+            document.querySelectorAll('[data-id="' + e.detail + '"]').forEach(function(item) {
+                if (item.parentNode) {
+                    item.parentNode.removeChild(item);
+                }
+            });
+
+            $blockTarget = null;
+            $lastBlockAddTrigger = null;
+            rememberState();
         }, false);
 
         /**
@@ -1365,6 +1912,22 @@
                     refreshBlockData(form);
                 }
             }, 220);
+        });
+
+        window.Integrated = Object.assign({}, window.Integrated || {}, {
+            Grid: {
+                serializeState: function() {
+                    return serializeGridState();
+                },
+                restoreState: function(serializedState) {
+                    if (typeof serializedState !== 'string') {
+                        return;
+                    }
+
+                    restoreGridState(serializedState);
+                    rememberStateNow();
+                }
+            }
         });
     }(window.Routing);
 

@@ -7,6 +7,10 @@
         <id field-name="id" strategy="UUID" />
         <field field-name="path" type="string" />
         <field field-name="layout" type="string" />
+        <field field-name="layoutVersion" type="int" />
+        <field field-name="layoutPayload" type="hash" />
+        <field field-name="layoutMeta" type="hash" />
+        <field field-name="legacy" type="hash" />
         <field field-name="createdAt" type="date" />
         <field field-name="updatedAt" type="date" />
         <field field-name="blockIds" type="collection" />

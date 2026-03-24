@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<routes xmlns="http://symfony.com/schema/routing"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <route id="integrated_website_pagebuilder_save" path="/save" methods="POST">
+        <default key="_controller">Integrated\Bundle\WebsiteBundle\Controller\PageBuilderController::save</default>
+        <default key="_format">json</default>
+    </route>
+
+    <route id="integrated_website_pagebuilder_section_presets_list" path="/section-presets" methods="GET">
+        <default key="_controller">Integrated\Bundle\WebsiteBundle\Controller\PageBuilderController::listSectionPresets</default>
+        <default key="_format">json</default>
+    </route>
+
+    <route id="integrated_website_pagebuilder_section_presets_save" path="/section-presets" methods="POST">
+        <default key="_controller">Integrated\Bundle\WebsiteBundle\Controller\PageBuilderController::saveSectionPreset</default>
+        <default key="_format">json</default>
+    </route>
+
+    <route id="integrated_website_pagebuilder_section_presets_delete" path="/section-presets/{id}" methods="DELETE">
+        <default key="_controller">Integrated\Bundle\WebsiteBundle\Controller\PageBuilderController::deleteSectionPreset</default>
+        <default key="_format">json</default>
+    </route>
+
+</routes>

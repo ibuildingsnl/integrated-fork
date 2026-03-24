@@ -47,10 +47,39 @@
 
         <service id="Integrated\Bundle\PageBundle\Services\PageCopy\PageBlockCloner" />
 
+        <service id="Integrated\Bundle\PageBundle\PageBuilder\V2\Validation\LayoutPayloadValidator">
+            <argument type="string">%kernel.project_dir%/vendor/integrated/integrated/src/Bundle/PageBundle/Resources/schema/pagebuilder/v2</argument>
+        </service>
+
         <service id="Integrated\Bundle\PageBundle\Services\PageCopyService">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_page.services.route_cache"/>
             <argument type="service" id="Integrated\Bundle\PageBundle\Services\PageCopy\PageBlockCloner"/>
+        </service>
+
+        <service id="Integrated\Bundle\PageBundle\PageBuilder\V2\Migration\LayoutV1ToV2Mapper" />
+
+        <service id="Integrated\Bundle\PageBundle\PageBuilder\V2\Migration\MigrationJournal" />
+
+        <service id="Integrated\Bundle\PageBundle\PageBuilder\V2\Migration\SnapshotStore" />
+
+        <service id="integrated_page.command.pagebuilder_v2_migrate" class="Integrated\Bundle\PageBundle\Command\PageBuilderV2MigrateCommand">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="Integrated\Bundle\PageBundle\PageBuilder\V2\Migration\LayoutV1ToV2Mapper" />
+            <argument type="service" id="Integrated\Bundle\PageBundle\PageBuilder\V2\Validation\LayoutPayloadValidator" />
+            <argument type="service" id="Integrated\Bundle\PageBundle\PageBuilder\V2\Migration\MigrationJournal" />
+            <tag name="console.command" command="pagebuilder:v2:migrate" />
+        </service>
+
+        <service id="integrated_page.command.pagebuilder_v2_verify" class="Integrated\Bundle\PageBundle\Command\PageBuilderV2VerifyCommand">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="Integrated\Bundle\PageBundle\PageBuilder\V2\Validation\LayoutPayloadValidator" />
+            <tag name="console.command" command="pagebuilder:v2:verify" />
+        </service>
+
+        <service id="integrated_page.command.pagebuilder_v2_rollback" class="Integrated\Bundle\PageBundle\Command\PageBuilderV2RollbackCommand">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <tag name="console.command" command="pagebuilder:v2:rollback" />
         </service>
 
     </services>
