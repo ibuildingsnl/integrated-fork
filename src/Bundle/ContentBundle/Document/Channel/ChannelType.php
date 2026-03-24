@@ -4,6 +4,8 @@ namespace Integrated\Bundle\ContentBundle\Document\Channel;
 
 class ChannelType
 {
+    public ?string $icon = null;
+
     public function __construct(
         public string $id,
         public readonly string $name,
@@ -11,8 +13,9 @@ class ChannelType
         public readonly bool $canBeSetGlobally = true,
         public readonly ?string $connector = null,
         public readonly ?string $publicationSettingsForm = null,
-        public readonly ?string $icon = null,
+        ?string $icon = null,
     ) {
+        $this->icon = $icon;
     }
 
     public function getId(): string
