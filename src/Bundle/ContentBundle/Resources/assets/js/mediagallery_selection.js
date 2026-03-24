@@ -381,6 +381,3 @@ document.addEventListener('turbo:load', scheduleMediaGallerySelectionInit);
 document.addEventListener('turbo:render', scheduleMediaGallerySelectionInit);
 document.addEventListener('turbo:frame-load', scheduleMediaGallerySelectionInit);
 document.addEventListener('turbo:frame-render', scheduleMediaGallerySelectionInit);
-document.addEventListener('integrated:draft-restored', function() {
-    window.requestAnimationFrame(refreshMediaGallerySelectionFromInputs);
-});

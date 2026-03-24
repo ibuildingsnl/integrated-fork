@@ -64,18 +64,6 @@
 	        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::lock</default>
 	    </route>
 
-	    <route id="integrated_content_content_draft_get" path="/{id}/draft" methods="GET">
-	        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::getDraft</default>
-	    </route>
-
-	    <route id="integrated_content_content_draft_save" path="/{id}/draft" methods="POST">
-	        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::saveDraft</default>
-	    </route>
-
-	    <route id="integrated_content_content_draft_delete" path="/{id}/draft" methods="DELETE">
-	        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::deleteDraft</default>
-	    </route>
-
 	    <route id="integrated_content_content_edit" path="/{id}"  methods="GET">
 	        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::edit</default>
 	    </route>

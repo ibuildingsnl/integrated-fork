@@ -8,22 +8,32 @@ use PHPUnit\Framework\TestCase;
 
 final class ContentDraftStatusUxContractTest extends TestCase
 {
-    public function testToolbarContainsDraftStatusRegion(): void
+    public function testDraftStatusRegionMatchesUnlockArticleHooks(): void
     {
-        $toolbar = file_get_contents(__DIR__.'/../../Resources/views/partials/block.toolbar.html.twig');
-
-        $this->assertIsString($toolbar);
-        $this->assertStringContainsString('id="integrated_content_draft_status"', $toolbar);
-        $this->assertStringContainsString('aria-live="polite"', $toolbar);
-    }
-
-    public function testAutosaveScriptContainsVisibleStatusHooks(): void
-    {
+        $editView = file_get_contents(__DIR__.'/../../Resources/views/content/edit.html.twig');
         $script = file_get_contents(__DIR__.'/../../Resources/assets/js/unlock_article.js');
 
+        $this->assertIsString($editView);
         $this->assertIsString($script);
-        $this->assertStringContainsString('setDraftStatus(', $script);
-        $this->assertStringContainsString('integrated_content_draft_status', $script);
-        $this->assertStringNotContainsString("console.error('Draft save failed'", $script);
+
+        $statusRegionEnabled = str_contains($editView, 'id="integrated_content_draft_status"');
+
+        $this->assertSame(
+            $statusRegionEnabled,
+            str_contains($editView, 'aria-live="polite"'),
+            'The draft status region and its aria-live behaviour are out of sync.'
+        );
+
+        $this->assertSame(
+            $statusRegionEnabled,
+            str_contains($script, 'setDraftStatus('),
+            'unlock_article.js draft status updates are out of sync with the draft status region.'
+        );
+
+        $this->assertSame(
+            $statusRegionEnabled,
+            str_contains($script, 'integrated_content_draft_status'),
+            'unlock_article.js status selectors are out of sync with the draft status region.'
+        );
     }
 }

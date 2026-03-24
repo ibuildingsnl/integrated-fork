@@ -37,27 +37,10 @@
 
         function setSaveButtonDisabled(disabled) {
             var saveButton = document.getElementById('integrated_content_actions_save');
-            var saveDraftButton = document.getElementById('integrated_content_actions_save_draft');
-            var restoreDraftButton = document.getElementById('integrated_content_actions_restore_draft_version');
-            var draftVersionSelect = document.getElementById('integrated_content_actions_draft_version');
 
             if (saveButton) {
                 saveButton.disabled = !!disabled;
                 saveButton.classList.toggle('disabled', !!disabled);
-            }
-
-            if (saveDraftButton) {
-                saveDraftButton.disabled = !!disabled;
-                saveDraftButton.classList.toggle('disabled', !!disabled);
-            }
-
-            if (restoreDraftButton) {
-                restoreDraftButton.disabled = !!disabled;
-                restoreDraftButton.classList.toggle('disabled', !!disabled);
-            }
-
-            if (draftVersionSelect) {
-                draftVersionSelect.disabled = !!disabled;
             }
         }
 

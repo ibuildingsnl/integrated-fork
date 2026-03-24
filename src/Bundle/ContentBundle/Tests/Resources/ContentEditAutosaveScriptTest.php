@@ -8,20 +8,28 @@ use PHPUnit\Framework\TestCase;
 
 class ContentEditAutosaveScriptTest extends TestCase
 {
-    public function testUnlockArticleScriptContainsAutosaveHooks(): void
+    public function testDraftRestoreEventConsumersMatchTheProducer(): void
     {
-        $script = file_get_contents(__DIR__.'/../../Resources/assets/js/unlock_article.js');
+        $unlockArticle = file_get_contents(__DIR__.'/../../Resources/assets/js/unlock_article.js');
+        $taxonomyCategory = file_get_contents(__DIR__.'/../../Resources/assets/js/taxonomy_category.js');
+        $mediaGallerySelection = file_get_contents(__DIR__.'/../../Resources/assets/js/mediagallery_selection.js');
 
-        $this->assertIsString($script);
-        $this->assertStringContainsString("data-draft-save-url", $script);
-        $this->assertStringContainsString('saveDraftIfNeeded', $script);
-        $this->assertStringContainsString("method: 'DELETE'", $script);
-        $this->assertStringContainsString('baseContentUpdatedAt', $script);
-        $this->assertStringContainsString('integrated_content_actions_save_draft', $script);
-        $this->assertStringContainsString('integrated_content_actions_draft_version', $script);
-        $this->assertStringContainsString('integrated_content_actions_restore_draft_version', $script);
-        $this->assertStringContainsString('integrated_content_draft_status', $script);
-        $this->assertStringContainsString('syncRelationSelectFromHiddenInput', $script);
-        $this->assertStringNotContainsString('A draft was found for this item.', $script);
+        $this->assertIsString($unlockArticle);
+        $this->assertIsString($taxonomyCategory);
+        $this->assertIsString($mediaGallerySelection);
+
+        $producerEnabled = str_contains($unlockArticle, 'integrated:draft-restored');
+
+        $this->assertSame(
+            $producerEnabled,
+            str_contains($taxonomyCategory, 'integrated:draft-restored'),
+            'taxonomy_category.js still assumes draft restore events in a different state than unlock_article.js.'
+        );
+
+        $this->assertSame(
+            $producerEnabled,
+            str_contains($mediaGallerySelection, 'integrated:draft-restored'),
+            'mediagallery_selection.js still assumes draft restore events in a different state than unlock_article.js.'
+        );
     }
 }

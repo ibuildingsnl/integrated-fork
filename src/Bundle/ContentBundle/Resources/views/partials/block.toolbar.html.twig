@@ -71,13 +71,6 @@
                 {% if form.actions.delete is defined %}
                     {{ form_row(form.actions.delete) }}
                 {% endif %}
-                {% if form.actions.save is defined and attribute(form.vars.attr|default({}), 'data-draft-save-url')|default('') is not empty %}
-                    <button type="button"
-                            id="integrated_content_actions_save_draft"
-                            class="btn btn-white no-icon">
-                        {% trans %}Save as draft{% endtrans %}
-                    </button>
-                {% endif %}
                 {% if form.actions.save is defined %}
                     {{ form_row(form.actions.save) }}
                 {% endif %}
