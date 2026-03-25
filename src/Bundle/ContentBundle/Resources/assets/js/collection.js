@@ -138,11 +138,18 @@ $('[data-prototype]').each(function(index, elm) {
             register($(this));
         });
 
-        $collection.find('[data-addfield="collection"]').click(function(event) {
+        $collection.children('[data-addfield="collection"]').click(function(event) {
             event.preventDefault();
+            event.stopPropagation();
 
             append();
         });
+
+        function initNestedCollections($context) {
+            $context.find('[data-prototype]').each(function() {
+                init($(this));
+            });
+        }
 
         function append() {
             let index = $collection.data('index');
@@ -154,6 +161,7 @@ $('[data-prototype]').each(function(index, elm) {
 
             $collection.data('index', index + 1);
             $collection.find('> ul').append(item);
+            initNestedCollections(item);
 
             if ($collection.find('ul li:last-child').
                 find('select.integrated_content_choice').length > 0) {

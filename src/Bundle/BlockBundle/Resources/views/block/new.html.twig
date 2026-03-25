@@ -86,4 +86,5 @@
     {{ parent() }}
 
     <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/edit.css') }}">
+    {{ include('admin/_integrated_editor_stylesheets.html.twig', ignore_missing = true) }}
 {% endblock %}
