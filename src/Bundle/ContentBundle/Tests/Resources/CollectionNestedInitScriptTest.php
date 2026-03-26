@@ -46,4 +46,24 @@ final class CollectionNestedInitScriptTest extends TestCase
         self::assertStringContainsString(".children('[data-addfield=\"collection\"]').click(function (event) {", $compiled);
         self::assertStringContainsString('event.stopPropagation();', $compiled);
     }
+
+    public function testSourceBindsRemoveHandlerOnlyToCurrentCollectionItem(): void
+    {
+        $source = file_get_contents(__DIR__.'/../../Resources/assets/js/collection.js');
+
+        self::assertIsString($source);
+        self::assertStringContainsString("elm.find('[data-removefield=\"collection\"]')", $source);
+        self::assertStringContainsString(".closest('li').get(0) === elm.get(0);", $source);
+        self::assertStringContainsString('event.stopPropagation();', $source);
+    }
+
+    public function testCompiledAssetBindsRemoveHandlerOnlyToCurrentCollectionItem(): void
+    {
+        $compiled = file_get_contents(__DIR__.'/../../../IntegratedBundle/Resources/public/collection.js');
+
+        self::assertIsString($compiled);
+        self::assertStringContainsString(".find('[data-removefield=\"collection\"]').filter(function () {", $compiled);
+        self::assertStringContainsString(".closest('li').get(0) === elm.get(0);", $compiled);
+        self::assertStringContainsString('event.stopPropagation();', $compiled);
+    }
 }

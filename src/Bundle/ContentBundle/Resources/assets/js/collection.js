@@ -236,8 +236,12 @@ $('[data-prototype]').each(function(index, elm) {
 
         function register(elm) {
             elm.find('[data-removefield="collection"]').
+                filter(function() {
+                    return $(this).closest('li').get(0) === elm.get(0);
+                }).
                 on('click', function(event) {
                     event.preventDefault();
+                    event.stopPropagation();
 
                     elm.remove();
                 });
