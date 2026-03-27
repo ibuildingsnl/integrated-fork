@@ -202,6 +202,11 @@ final class PageTypeLifecycleFieldsTest extends TypeTestCase
     public static function invalidExpireRedirectUrlProvider(): iterable
     {
         yield 'missing leading slash and scheme' => ['expired'];
+        yield 'unsupported mailto scheme' => ['mailto:test@example.com'];
+        yield 'unsupported ftp scheme' => ['ftp://example.com/archive'];
+        yield 'protocol relative path' => ['//evil.test/archive'];
+        yield 'malformed absolute URL' => ['https:///archive'];
+        yield 'userinfo absolute URL' => ['https://user@evil.test/archive'];
     }
 
     private function createPage(): Page

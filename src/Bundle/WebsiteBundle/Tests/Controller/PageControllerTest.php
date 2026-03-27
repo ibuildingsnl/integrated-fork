@@ -159,6 +159,34 @@ class PageControllerTest extends TestCase
         self::assertSame('noindex, nofollow', $response->headers->get('X-Robots-Tag'));
     }
 
+    public function testShowAllowsFuturePublishPageForAdminPreview(): void
+    {
+        $page = $this->createLifecyclePage();
+        $page->setPublishAt(new \DateTimeImmutable('+1 day'));
+
+        $this->themeManager
+            ->expects($this->once())
+            ->method('locateTemplate')
+            ->with('default.html.twig')
+            ->willReturn('layout.html.twig');
+        $this->websiteToolbarListener
+            ->expects($this->once())
+            ->method('setToolbarMessage')
+            ->with('This item is currently unpublished');
+
+        $controller = $this->createController([
+            'ROLE_ADMIN' => true,
+        ]);
+
+        $response = $controller->show(Request::create('https://example.test/scheduled-page'), $page);
+
+        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
+        self::assertTrue((bool) $response->headers->getCacheControlDirective('private'));
+        self::assertTrue($response->headers->hasCacheControlDirective('no-store'));
+        self::assertSame(0, (int) $response->headers->getCacheControlDirective('max-age'));
+        self::assertSame('noindex, nofollow', $response->headers->get('X-Robots-Tag'));
+    }
+
     public function testShowThrowsNotFoundForExpiredPageWithoutRedirectWithoutPreviewAccess(): void
     {
         $page = $this->createLifecyclePage();
@@ -197,6 +225,60 @@ class PageControllerTest extends TestCase
         self::assertSame('/archive/expired-page', $response->headers->get('Location'));
     }
 
+    public function testShowDoesNotRedirectExpiredPageToUnsupportedScheme(): void
+    {
+        $page = $this->createLifecyclePage();
+        $page->setExpireAt(new \DateTimeImmutable('-1 day'));
+        $page->setExpireRedirectUrl('mailto:test@example.com');
+
+        $this->themeManager->expects($this->never())->method('locateTemplate');
+        $this->websiteToolbarListener->expects($this->never())->method('setToolbarMessage');
+
+        $controller = $this->createController([
+            'ROLE_WEBSITE_MANAGER' => false,
+            'ROLE_ADMIN' => false,
+        ]);
+
+        $this->expectException(NotFoundHttpException::class);
+        $controller->show(Request::create('https://example.test/expired-page'), $page);
+    }
+
+    public function testShowDoesNotRedirectExpiredPageToProtocolRelativeUrl(): void
+    {
+        $page = $this->createLifecyclePage();
+        $page->setExpireAt(new \DateTimeImmutable('-1 day'));
+        $page->setExpireRedirectUrl('//evil.test/archive');
+
+        $this->themeManager->expects($this->never())->method('locateTemplate');
+        $this->websiteToolbarListener->expects($this->never())->method('setToolbarMessage');
+
+        $controller = $this->createController([
+            'ROLE_WEBSITE_MANAGER' => false,
+            'ROLE_ADMIN' => false,
+        ]);
+
+        $this->expectException(NotFoundHttpException::class);
+        $controller->show(Request::create('https://example.test/expired-page'), $page);
+    }
+
+    public function testShowDoesNotRedirectExpiredPageToAbsoluteUrlWithUserInfo(): void
+    {
+        $page = $this->createLifecyclePage();
+        $page->setExpireAt(new \DateTimeImmutable('-1 day'));
+        $page->setExpireRedirectUrl('https://user@evil.test/archive');
+
+        $this->themeManager->expects($this->never())->method('locateTemplate');
+        $this->websiteToolbarListener->expects($this->never())->method('setToolbarMessage');
+
+        $controller = $this->createController([
+            'ROLE_WEBSITE_MANAGER' => false,
+            'ROLE_ADMIN' => false,
+        ]);
+
+        $this->expectException(NotFoundHttpException::class);
+        $controller->show(Request::create('https://example.test/expired-page'), $page);
+    }
+
     public function testShowAllowsExpiredPageForAdminPreview(): void
     {
         $page = $this->createLifecyclePage();
@@ -218,6 +300,36 @@ class PageControllerTest extends TestCase
         ]);
 
         $response = $controller->show(Request::create('https://example.test/expired-page'), $page);
+
+        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
+        self::assertTrue((bool) $response->headers->getCacheControlDirective('private'));
+        self::assertTrue($response->headers->hasCacheControlDirective('no-store'));
+        self::assertSame(0, (int) $response->headers->getCacheControlDirective('max-age'));
+        self::assertSame('noindex, nofollow', $response->headers->get('X-Robots-Tag'));
+    }
+
+    public function testShowAllowsExpiredPageWithSignedPreviewLink(): void
+    {
+        $page = $this->createLifecyclePage();
+        $page->setExpireAt(new \DateTimeImmutable('-1 day'));
+        $page->setExpireRedirectUrl('/archive/expired-page');
+
+        $this->themeManager
+            ->expects($this->once())
+            ->method('locateTemplate')
+            ->with('default.html.twig')
+            ->willReturn('layout.html.twig');
+        $this->websiteToolbarListener
+            ->expects($this->once())
+            ->method('setToolbarMessage')
+            ->with('This item is currently unpublished');
+
+        $controller = $this->createController([
+            'ROLE_WEBSITE_MANAGER' => false,
+            'ROLE_ADMIN' => false,
+        ]);
+
+        $response = $controller->show($this->createSignedPreviewRequest('/scheduled-page', time() + 600), $page);
 
         self::assertSame(Response::HTTP_OK, $response->getStatusCode());
         self::assertTrue((bool) $response->headers->getCacheControlDirective('private'));

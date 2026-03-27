@@ -102,11 +102,11 @@ class PageType extends AbstractType
             ]);
 
             $builder->add('publishAt', DateTimeType::class, [
-                'label' => 'Publish at',
+                'label' => 'Publication date',
                 'required' => false,
                 'placeholder' => ' ',
                 'attr' => [
-                    'data-set-date-text' => 'Set publication date and time',
+                    'data-set-date-text' => 'Set publication date',
                 ],
                 'html5' => true,
                 'date_widget' => 'single_text',
@@ -114,11 +114,11 @@ class PageType extends AbstractType
             ]);
 
             $builder->add('expireAt', DateTimeType::class, [
-                'label' => 'Expire at',
+                'label' => 'Depublication date',
                 'required' => false,
                 'placeholder' => ' ',
                 'attr' => [
-                    'data-set-date-text' => 'Set expiration date and time',
+                    'data-set-date-text' => 'Set depublication date',
                 ],
                 'html5' => true,
                 'date_widget' => 'single_text',
@@ -126,7 +126,7 @@ class PageType extends AbstractType
             ]);
 
             $builder->add('expireRedirectUrl', TextType::class, [
-                'label' => 'Redirect after expiration',
+                'label' => 'Redirect after depublication',
                 'required' => false,
                 'empty_data' => null,
             ]);
@@ -264,13 +264,41 @@ class PageType extends AbstractType
                 $form->get('expireAt')->addError(new FormError('The expiration date cannot be earlier than the publication date.'));
             }
 
-            if (null !== $expireRedirectUrl && !(
-                (0 === strpos($expireRedirectUrl, '/') && 0 !== strpos($expireRedirectUrl, '//'))
-                || false !== filter_var($expireRedirectUrl, FILTER_VALIDATE_URL)
-            )) {
+            if (null !== $expireRedirectUrl && !$this->isAllowedExpireRedirectUrl($expireRedirectUrl)) {
                 $form->get('expireRedirectUrl')->addError(new FormError('The redirect must be an absolute URL or a path starting with "/".'));
             }
         });
+    }
+
+    private function isAllowedExpireRedirectUrl(string $expireRedirectUrl): bool
+    {
+        if (0 === strpos($expireRedirectUrl, '/') && 0 !== strpos($expireRedirectUrl, '//')) {
+            return true;
+        }
+
+        if (false === filter_var($expireRedirectUrl, FILTER_VALIDATE_URL)) {
+            return false;
+        }
+
+        $parts = parse_url($expireRedirectUrl);
+        if (false === $parts) {
+            return false;
+        }
+
+        $scheme = strtolower((string) ($parts['scheme'] ?? ''));
+        if (!\in_array($scheme, ['http', 'https'], true)) {
+            return false;
+        }
+
+        if ('' === (string) ($parts['host'] ?? '')) {
+            return false;
+        }
+
+        if (isset($parts['user']) || isset($parts['pass'])) {
+            return false;
+        }
+
+        return true;
     }
 
     public function configureOptions(OptionsResolver $resolver)

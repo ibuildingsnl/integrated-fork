@@ -129,6 +129,41 @@ class PageController extends AbstractController
     {
         $redirectUrl = trim((string) $page->getExpireRedirectUrl());
 
-        return '' === $redirectUrl ? null : $redirectUrl;
+        if ('' === $redirectUrl || !$this->isAllowedRedirectUrl($redirectUrl)) {
+            return null;
+        }
+
+        return $redirectUrl;
+    }
+
+    private function isAllowedRedirectUrl(string $redirectUrl): bool
+    {
+        if (0 === strpos($redirectUrl, '/') && 0 !== strpos($redirectUrl, '//')) {
+            return true;
+        }
+
+        if (false === filter_var($redirectUrl, FILTER_VALIDATE_URL)) {
+            return false;
+        }
+
+        $parts = parse_url($redirectUrl);
+        if (false === $parts) {
+            return false;
+        }
+
+        $scheme = strtolower((string) ($parts['scheme'] ?? ''));
+        if (!\in_array($scheme, ['http', 'https'], true)) {
+            return false;
+        }
+
+        if ('' === (string) ($parts['host'] ?? '')) {
+            return false;
+        }
+
+        if (isset($parts['user']) || isset($parts['pass'])) {
+            return false;
+        }
+
+        return true;
     }
 }
