@@ -96,16 +96,33 @@ class RelatedContentBlockHandler extends BlockHandler
         }
 
         $pageParam = $block->getId().'-page';
+        $itemsPerPage = $block->getItemsPerPage();
+        $maxItems = $block->getMaxItems();
+        $page = $request->query->get($pageParam, 1);
 
-        return $this->paginator->paginate(
+        if ($maxItems > 0 && $maxItems <= $itemsPerPage) {
+            $page = 1;
+        }
+
+        $pagination = $this->paginator->paginate(
             $target,
-            $request->query->get($pageParam, 1),
-            $block->getItemsPerPage(),
+            $page,
+            $itemsPerPage,
             [
                 'pageParameterName' => $pageParam,
-                'maxItems' => $block->getMaxItems(),
+                'maxItems' => $maxItems,
             ]
         );
+
+        if ($pagination && $maxItems > 0) {
+            if ($maxItems <= $itemsPerPage) {
+                $pagination->setCurrentPageNumber(1);
+            }
+
+            $pagination->setTotalItemCount(min($maxItems, $pagination->getTotalItemCount()));
+        }
+
+        return $pagination;
     }
 
     /**
