@@ -45,6 +45,16 @@
             {% endblock %}
             {% block seo_meta_button %}
                 {% set hasSeoMetadata = false %}
+                {% set seoMetadata = content.seoMetadata|default(form.vars.value.seoMetadata|default(null)) %}
+                {% set pageDocument = page|default(form.vars.value|default(null)) %}
+                {% set pageChannel = form.channel.vars.data|default(null) %}
+                {% if not pageChannel and page is defined and page %}
+                    {% set pageChannel = attribute(page, 'channel')|default(null) %}
+                {% elseif not pageChannel and pageDocument %}
+                    {% set pageChannel = attribute(pageDocument, 'primaryChannel')|default(null) %}
+                {% endif %}
+                {% set pagePath = pageDocument and attribute(pageDocument, 'path') is defined ? attribute(pageDocument, 'path') : form.path.vars.value|default('') %}
+                {% set pageOpenUrl = pageChannel and pageChannel.primaryDomain is defined and pagePath and pageDocument and attribute(pageDocument, 'id') is defined and attribute(pageDocument, 'id') ? app.request.scheme ~ '://' ~ pageChannel.primaryDomain ~ pagePath : null %}
 
                 {% if type is defined %}
                     {% for field in type.fields %}
@@ -54,8 +64,19 @@
                     {% endfor %}
                 {% endif %}
 
+                {% if form.seoMetadata is defined %}
+                    {% set hasSeoMetadata = true %}
+                {% endif %}
+
                 {% if hasSeoMetadata %}
-                    <a href="#" class="btn btn-white seo-button readability-{{ content.seoMetadata.readabilityScore|default('feedback') }} seo-{{ content.seoMetadata.seoScore|default('feedback') }}">SEO</a>
+                    <a href="#" class="btn btn-white seo-button readability-{{ seoMetadata.readabilityScore|default('feedback') }} seo-{{ seoMetadata.seoScore|default('feedback') }}">SEO</a>
+                {% endif %}
+                {% if pageOpenUrl %}
+                    <a href="{{ pageOpenUrl }}"
+                       class="btn btn-white"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       data-turbo="false">{% trans %}Open page{% endtrans %}</a>
                 {% endif %}
             {% endblock %}
         </div>

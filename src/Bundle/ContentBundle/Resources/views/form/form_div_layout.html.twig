@@ -333,6 +333,19 @@
 {% block integrated_seo_meta_widget %}
 
     {% set documentNode = form.parent.vars.data %}
+    {% set pageTitle = attribute(documentNode, 'title')|default('') %}
+    {% set pageDescription = attribute(documentNode, 'description')|default('') %}
+    {% set pagePath = attribute(documentNode, 'path')|default('') %}
+    {% set pageSeoMetadata = attribute(documentNode, 'seoMetadata')|default(null) %}
+    {% set pageChannel = null %}
+    {% if form.parent.channel is defined %}
+        {% set pageChannel = form.parent.channel.vars.data|default(null) %}
+    {% endif %}
+    {% if not pageChannel and documentNode and documentNode.slug is not defined %}
+        {% set pageChannel = attribute(documentNode, 'channel')|default(null) %}
+    {% elseif not pageChannel and documentNode %}
+        {% set pageChannel = attribute(documentNode, 'primaryChannel')|default(null) %}
+    {% endif %}
 
     {% if documentNode.featuredImage.file is defined and documentNode.featuredImage.file is not null %}
         {% set featuredImage = image(documentNode.featuredImage.file).cropResize(512, 512).__toString %}
@@ -340,15 +353,15 @@
         {% set featuredImage = asset('bundles/integratedintegrated/images/favicon/apple-touch-icon.png') %}
     {% endif %}
 
-    {% if documentNode.primaryChannel|integrated_brand.favicon.file is defined and documentNode.primaryChannel|integrated_brand.favicon.file is not null %}
-        {% set faviconSrc = image(documentNode.primaryChannel|integrated_brand.favicon.file).cropResize(50, 50).__toString %}
+    {% if pageChannel|integrated_brand.favicon.file is defined and pageChannel|integrated_brand.favicon.file is not null %}
+        {% set faviconSrc = image(pageChannel|integrated_brand.favicon.file).cropResize(50, 50).__toString %}
     {% else %}
         {% set faviconSrc = asset('bundles/integratedintegrated/images/favicon/favicon-32x32.png') %}
     {% endif %}
 
-    {% if documentNode.primaryChannel is defined and documentNode.primaryChannel is not null %}
-        {% set primaryDomain = documentNode.primaryChannel.primaryDomain %}
-        {% set brandName = documentNode.primaryChannel.name|default|replace({' Website': ''}) %}
+    {% if pageChannel is defined and pageChannel is not null %}
+        {% set primaryDomain = pageChannel.primaryDomain %}
+        {% set brandName = pageChannel.name|default|replace({' Website': ''}) %}
     {% else %}
         {% set primaryDomain = '' %}
         {% set brandName = '' %}
@@ -356,16 +369,23 @@
 
 
     {% if documentNode.id is defined and documentNode.id is not null %}
-        {% set documentUrl = integrated_url(documentNode)|default("") %}
-        {% set documentSlug = documentNode.slug|default("") %}
-        {% set articleTitle = documentNode.title|default("") %}
-        {% set titleOverride = documentNode.seoMetadata.metaTitle|default(documentNode.title|default("")) %}
-        {% set description = documentNode.seoMetadata.metaDescription|default(documentNode.intro|default("")) %}
-        {% set focusKeyword = documentNode.seoMetadata.focusKeyphrase|default("") %}
-        {% set uriPathSegment = documentNode.slug|default("/") %}
+        {% if documentNode.slug is defined %}
+            {% set documentUrl = integrated_url(documentNode)|default("") %}
+            {% set articleTitle = pageTitle %}
+            {% set titleOverride = pageSeoMetadata.metaTitle|default(pageTitle) %}
+            {% set description = pageSeoMetadata.metaDescription|default(documentNode.intro|default(pageDescription)) %}
+            {% set focusKeyword = pageSeoMetadata.focusKeyphrase|default("") %}
+            {% set uriPathSegment = documentNode.slug|default("/") %}
+        {% else %}
+            {% set documentUrl = pagePath|default("/") %}
+            {% set articleTitle = pageTitle %}
+            {% set titleOverride = pageSeoMetadata.metaTitle|default(pageTitle) %}
+            {% set description = pageSeoMetadata.metaDescription|default(pageDescription) %}
+            {% set focusKeyword = pageSeoMetadata.focusKeyphrase|default("") %}
+            {% set uriPathSegment = pagePath|default("/") %}
+        {% endif %}
     {% else %}
         {% set documentUrl = 'https://temporary.domain/temporary-slug' %}
-        {% set documentSlug = 'sla-het-artikel-op-om-een-slug-te-genereren' %}
         {% set articleTitle = '' %}
         {% set titleOverride = '' %}
         {% set description = '' %}
@@ -390,7 +410,18 @@
                      'siteUrl': 'https://' ~ primaryDomain,
                      'brandName': brandName,
                      'pageUrl': documentUrl,
+                     'analysisContentUrl': documentNode.id is defined and documentNode.id is not null and documentNode.slug is not defined ? path('integrated_page_page_seo_content', {'id': documentNode.id}) : null,
                      'uriPathSegment': uriPathSegment,
+                     'fieldSelectors': {
+                         'title': '#' ~ form.parent.title.vars.id,
+                         'titleOverride': '#' ~ form.metaTitle.vars.id,
+                         'description': '#' ~ form.metaDescription.vars.id,
+                         'focusKeyword': '#' ~ form.focusKeyphrase.vars.id,
+                         'slug': form.parent.slug is defined ? '#' ~ form.parent.slug.vars.id : (form.parent.path is defined ? '#' ~ form.parent.path.vars.id : null),
+                         'content': form.parent.content is defined ? '#' ~ form.parent.content.vars.id : null,
+                         'seoScore': '#' ~ form.seoScore.vars.id,
+                         'readabilityScore': '#' ~ form.readabilityScore.vars.id
+                     },
                      'faviconSrc': faviconSrc,
                      'featuredImageSrc': featuredImage,
                      'twitterFallbackImage': asset('bundles/integratedcontent/twitter.svg'),
