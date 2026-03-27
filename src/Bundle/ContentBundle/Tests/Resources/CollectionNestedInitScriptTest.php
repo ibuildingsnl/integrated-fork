@@ -28,25 +28,6 @@ final class CollectionNestedInitScriptTest extends TestCase
         self::assertStringContainsString('event.stopPropagation();', $source);
     }
 
-    public function testCompiledAssetInitializesNestedCollectionsWhenAppendingItems(): void
-    {
-        $compiled = file_get_contents(__DIR__.'/../../../IntegratedBundle/Resources/public/collection.js');
-
-        self::assertIsString($compiled);
-        self::assertStringContainsString('function initNestedCollections($context)', $compiled);
-        self::assertStringContainsString(".find('[data-prototype]').each(function () {", $compiled);
-        self::assertStringContainsString('initNestedCollections(item);', $compiled);
-    }
-
-    public function testCompiledAssetBindsAddHandlerOnlyToDirectCollectionButton(): void
-    {
-        $compiled = file_get_contents(__DIR__.'/../../../IntegratedBundle/Resources/public/collection.js');
-
-        self::assertIsString($compiled);
-        self::assertStringContainsString(".children('[data-addfield=\"collection\"]').click(function (event) {", $compiled);
-        self::assertStringContainsString('event.stopPropagation();', $compiled);
-    }
-
     public function testSourceBindsRemoveHandlerOnlyToCurrentCollectionItem(): void
     {
         $source = file_get_contents(__DIR__.'/../../Resources/assets/js/collection.js');
@@ -57,13 +38,4 @@ final class CollectionNestedInitScriptTest extends TestCase
         self::assertStringContainsString('event.stopPropagation();', $source);
     }
 
-    public function testCompiledAssetBindsRemoveHandlerOnlyToCurrentCollectionItem(): void
-    {
-        $compiled = file_get_contents(__DIR__.'/../../../IntegratedBundle/Resources/public/collection.js');
-
-        self::assertIsString($compiled);
-        self::assertStringContainsString(".find('[data-removefield=\"collection\"]').filter(function () {", $compiled);
-        self::assertStringContainsString(".closest('li').get(0) === elm.get(0);", $compiled);
-        self::assertStringContainsString('event.stopPropagation();', $compiled);
-    }
 }

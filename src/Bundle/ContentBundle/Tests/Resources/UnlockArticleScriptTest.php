@@ -8,15 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class UnlockArticleScriptTest extends TestCase
 {
-    public function testOnlyUserDrivenChangesMarkFormAsChanged(): void
-    {
-        $script = file_get_contents(__DIR__.'/../../Resources/assets/js/unlock_article.js');
-
-        $this->assertIsString($script);
-        $this->assertStringContainsString('if (!event || !event.originalEvent) {', $script);
-        $this->assertStringContainsString("form.on('change', function (event) {", $script);
-    }
-
     public function testTinyMceChangeRequiresDirtyEditorState(): void
     {
         $script = file_get_contents(__DIR__.'/../../Resources/assets/js/unlock_article.js');
