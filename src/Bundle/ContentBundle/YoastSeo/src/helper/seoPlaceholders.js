@@ -29,6 +29,10 @@ function replacementMap(values = {}) {
     };
 }
 
+function placeholderName(token = '') {
+    return String(token).replace(/^%%|%%$/g, '');
+}
+
 export function containsSeoPlaceholder(value = '') {
     return /%%(title|site_title|separator|slug|channel)%%/.test(value);
 }
@@ -46,4 +50,15 @@ export function resolveSeoPlaceholders(value = '', values = {}) {
 
 export function seoPlaceholderDefinitions(configuration = {}) {
     return Array.isArray(configuration.seoPlaceholders) ? configuration.seoPlaceholders : [];
+}
+
+export function mapSeoPlaceholdersToReplacementVariables(configuration = {}, values = {}) {
+    const replacements = replacementMap(values);
+
+    return seoPlaceholderDefinitions(configuration).map((placeholder) => ({
+        name: placeholderName(placeholder.token),
+        value: replacements[placeholder.token] || '',
+        label: placeholder.label,
+        description: placeholder.description || '',
+    }));
 }

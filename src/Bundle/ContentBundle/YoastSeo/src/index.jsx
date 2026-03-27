@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { ThemeProvider } from 'styled-components';
 import { RecoilRoot } from 'recoil';
+import 'draft-js-mention-plugin/lib/plugin.css';
+import './seo-editor.css';
 
 import IntegratedYoastApp from './components/IntegratedYoastApp';
 import { I18nProvider } from './provider/I18nProvider';

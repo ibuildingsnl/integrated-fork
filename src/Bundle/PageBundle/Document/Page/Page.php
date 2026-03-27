@@ -61,6 +61,26 @@ class Page extends AbstractPage
     protected $canonicalUrl;
 
     /**
+     * @var \DateTimeInterface|null
+     */
+    protected $publishAt = null;
+
+    /**
+     * @var \DateTimeInterface|null
+     */
+    protected $expireAt = null;
+
+    /**
+     * @var string|null
+     */
+    protected $expireRedirectUrl = null;
+
+    /**
+     * @var bool|null
+     */
+    protected $hideFromSitemap = null;
+
+    /**
      * @var bool|null
      */
     protected $paginationNoindexEnabled = null;
@@ -228,6 +248,54 @@ class Page extends AbstractPage
     public function setCanonicalUrl($canonicalUrl)
     {
         $this->canonicalUrl = $canonicalUrl;
+
+        return $this;
+    }
+
+    public function getPublishAt(): ?\DateTimeInterface
+    {
+        return $this->publishAt;
+    }
+
+    public function setPublishAt(?\DateTimeInterface $publishAt): self
+    {
+        $this->publishAt = $publishAt;
+
+        return $this;
+    }
+
+    public function getExpireAt(): ?\DateTimeInterface
+    {
+        return $this->expireAt;
+    }
+
+    public function setExpireAt(?\DateTimeInterface $expireAt): self
+    {
+        $this->expireAt = $expireAt;
+
+        return $this;
+    }
+
+    public function getExpireRedirectUrl(): ?string
+    {
+        return null === $this->expireRedirectUrl ? null : (string) $this->expireRedirectUrl;
+    }
+
+    public function setExpireRedirectUrl($expireRedirectUrl): self
+    {
+        $this->expireRedirectUrl = null === $expireRedirectUrl || '' === $expireRedirectUrl ? null : $expireRedirectUrl;
+
+        return $this;
+    }
+
+    public function isHideFromSitemap(): ?bool
+    {
+        return null === $this->hideFromSitemap ? null : (bool) $this->hideFromSitemap;
+    }
+
+    public function setHideFromSitemap($hideFromSitemap): self
+    {
+        $this->hideFromSitemap = null === $hideFromSitemap ? null : (bool) $hideFromSitemap;
 
         return $this;
     }

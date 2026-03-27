@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {useRecoilValue} from 'recoil';
 import {__} from '@wordpress/i18n';
 
@@ -17,7 +17,11 @@ import useIntegratedFields from '../hooks/useIntegratedFields';
 import titleTemplateState from '../state/titleTemplateState';
 import faviconSrcState from '../state/faviconSrcState';
 import editorState from '../state/editorState';
-import {containsSeoPlaceholder, resolveSeoPlaceholders, seoPlaceholderDefinitions} from '../helper/seoPlaceholders';
+import {
+    containsSeoPlaceholder,
+    mapSeoPlaceholdersToReplacementVariables,
+    resolveSeoPlaceholders,
+} from '../helper/seoPlaceholders';
 
 const SeoTab = () => {
     const {configuration} = useConfiguration();
@@ -26,22 +30,26 @@ const SeoTab = () => {
     const editorData = useRecoilValue(editorState);
     const {updateEditorData} = useIntegratedFields();
     const [mode, setMode] = useState(DEFAULT_MODE);
+    const replacementValues = useMemo(
+        () => ({
+            title: configuration.title,
+            siteTitle: configuration.brandName,
+            separator: configuration.titleSeparator,
+            slug: editorData.slug || configuration.uriPathSegment,
+            channel: configuration.channelName || configuration.brandName,
+        }),
+        [configuration.brandName, configuration.channelName, configuration.title, configuration.titleSeparator, configuration.uriPathSegment, editorData.slug],
+    );
+    const replacementVariables = useMemo(
+        () => mapSeoPlaceholdersToReplacementVariables(configuration, replacementValues),
+        [configuration, replacementValues],
+    );
 
     const onUpdateKeyword = useCallback(
         (value = '') => {
             updateEditorData('focusKeyword', value);
         },
         [updateEditorData],
-    );
-
-    const insertPlaceholder = useCallback(
-        (key, token) => {
-            const currentValue = key === 'title' ? editorData.title : editorData.description;
-            const nextValue = currentValue && currentValue.trim() !== '' ? `${currentValue} ${token}` : token;
-
-            updateEditorData(key, nextValue);
-        },
-        [editorData.description, editorData.title, updateEditorData],
     );
 
     const onEditorChange = useCallback(
@@ -64,13 +72,6 @@ const SeoTab = () => {
      */
     const mapEditorDataToPreview = useCallback(
         ({title, description, url}) => {
-            const replacementValues = {
-                title: configuration.title,
-                siteTitle: configuration.brandName,
-                separator: configuration.titleSeparator,
-                slug: editorData.slug || configuration.uriPathSegment,
-                channel: configuration.channelName || configuration.brandName,
-            };
             const resolvedTitle = resolveSeoPlaceholders(title, replacementValues);
             const resolvedDescription = resolveSeoPlaceholders(description, replacementValues);
 
@@ -114,40 +115,9 @@ const SeoTab = () => {
                     baseUrl={configuration.baseUrl}
                     faviconSrc={faviconSrc}
                     mobileImageSrc={configuration.featuredImageSrc}
+                    replacementVariables={replacementVariables}
                     mapEditorDataToPreview={mapEditorDataToPreview}
                 />
-                <div className="yoast-seo-placeholder-toolbar">
-                    <div className="yoast-seo-placeholder-group">
-                        <span className="yoast-seo-placeholder-label">SEO-titel</span>
-                        <div className="yoast-seo-placeholder-chips">
-                            {seoPlaceholderDefinitions(configuration).map((placeholder) => (
-                                <button
-                                    key={`title-${placeholder.token}`}
-                                    type="button"
-                                    className="yoast-seo-placeholder-chip"
-                                    onClick={() => insertPlaceholder('title', placeholder.token)}
-                                >
-                                    {placeholder.label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="yoast-seo-placeholder-group">
-                        <span className="yoast-seo-placeholder-label">Metabeschrijving</span>
-                        <div className="yoast-seo-placeholder-chips">
-                            {seoPlaceholderDefinitions(configuration).map((placeholder) => (
-                                <button
-                                    key={`description-${placeholder.token}`}
-                                    type="button"
-                                    className="yoast-seo-placeholder-chip"
-                                    onClick={() => insertPlaceholder('description', placeholder.token)}
-                                >
-                                    {placeholder.label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                </div>
             </div>
             <SeoAnalysis/>
         </React.Fragment>

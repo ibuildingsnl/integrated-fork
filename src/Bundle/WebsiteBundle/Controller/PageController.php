@@ -16,6 +16,7 @@ use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\EventListener\WebsiteToolbarListener;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\UriSigner;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -38,14 +39,30 @@ class PageController extends AbstractController
 
     public function show(Request $request, Page $page): Response
     {
+        $now = new \DateTimeImmutable();
         $canPreviewDraft = $this->isGranted('ROLE_WEBSITE_MANAGER') || $this->isGranted('ROLE_ADMIN');
         $hasValidPreviewLink = $this->hasValidDraftPreviewLink($request, $page);
-
-        if ($page->isDisabled() && !$canPreviewDraft && !$hasValidPreviewLink) {
-            throw new NotFoundHttpException();
-        }
+        $canPreview = $canPreviewDraft || $hasValidPreviewLink;
+        $isPublic = $this->isPublicPage($page, $now);
 
         if ($page->isDisabled()) {
+            if (!$canPreview) {
+                throw new NotFoundHttpException();
+            }
+        } elseif (!$isPublic) {
+            if (!$canPreview && $this->isExpired($page, $now)) {
+                $redirectUrl = $this->getExpireRedirectUrl($page);
+                if (null !== $redirectUrl) {
+                    return new RedirectResponse($redirectUrl);
+                }
+            }
+
+            if (!$canPreview) {
+                throw new NotFoundHttpException();
+            }
+        }
+
+        if (!$isPublic) {
             $this->websiteToolbarListener->setToolbarMessage(self::DRAFT_NOTICE_TEXT);
         }
 
@@ -53,7 +70,7 @@ class PageController extends AbstractController
             'page' => $page,
         ]);
 
-        if ($page->isDisabled()) {
+        if (!$isPublic) {
             $response->setPrivate();
             $response->headers->addCacheControlDirective('no-store', true);
             $response->headers->addCacheControlDirective('max-age', '0');
@@ -80,5 +97,38 @@ class PageController extends AbstractController
         }
 
         return 0 === strcasecmp($request->getHost(), $pageDomain);
+    }
+
+    private function isPublicPage(Page $page, \DateTimeInterface $now): bool
+    {
+        if ($page->isDisabled()) {
+            return false;
+        }
+
+        $publishAt = $page->getPublishAt();
+        if (null !== $publishAt && $publishAt > $now) {
+            return false;
+        }
+
+        $expireAt = $page->getExpireAt();
+        if (null !== $expireAt && $expireAt <= $now) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function isExpired(Page $page, \DateTimeInterface $now): bool
+    {
+        $expireAt = $page->getExpireAt();
+
+        return null !== $expireAt && $expireAt <= $now;
+    }
+
+    private function getExpireRedirectUrl(Page $page): ?string
+    {
+        $redirectUrl = trim((string) $page->getExpireRedirectUrl());
+
+        return '' === $redirectUrl ? null : $redirectUrl;
     }
 }

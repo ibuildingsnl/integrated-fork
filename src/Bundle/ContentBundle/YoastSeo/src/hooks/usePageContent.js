@@ -47,8 +47,11 @@ const usePageContent = () => {
             const pageTitle = configuration.titleOverride || configuration.title;
             const brandName = configuration.brandName;
             const fullTitle = pageTitle + ' - ' + brandName;
+            const hasExplicitTitleOverride = !!titleOverride.trim();
 
-            if (fullTitle.indexOf(pageTitle) >= 0) {
+            if (hasExplicitTitleOverride) {
+                setTitleTemplate('{title}');
+            } else if (fullTitle.indexOf(pageTitle) >= 0) {
                 setTitleTemplate(fullTitle.replace(pageTitle, '{title}'));
             }
         }

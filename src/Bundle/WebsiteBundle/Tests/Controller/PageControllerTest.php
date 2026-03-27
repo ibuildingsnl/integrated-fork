@@ -12,6 +12,7 @@ use Integrated\Bundle\WebsiteBundle\EventListener\WebsiteToolbarListener;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\UriSigner;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -109,6 +110,119 @@ class PageControllerTest extends TestCase
         self::assertSame(Response::HTTP_OK, $response->getStatusCode());
         self::assertTrue($response->headers->hasCacheControlDirective('no-store'));
         self::assertStringNotContainsString('integrated-draft-notice', (string) $response->getContent());
+        self::assertSame('noindex, nofollow', $response->headers->get('X-Robots-Tag'));
+    }
+
+    public function testShowThrowsNotFoundForFuturePublishPageWithoutPreviewAccess(): void
+    {
+        $page = $this->createLifecyclePage();
+        $page->setPublishAt(new \DateTimeImmutable('+1 day'));
+
+        $this->themeManager->expects($this->never())->method('locateTemplate');
+        $this->websiteToolbarListener->expects($this->never())->method('setToolbarMessage');
+
+        $controller = $this->createController([
+            'ROLE_WEBSITE_MANAGER' => false,
+            'ROLE_ADMIN' => false,
+        ]);
+
+        $this->expectException(NotFoundHttpException::class);
+        $controller->show(Request::create('https://example.test/scheduled-page'), $page);
+    }
+
+    public function testShowAllowsFuturePublishPageWithValidPreviewLink(): void
+    {
+        $page = $this->createLifecyclePage();
+        $page->setPublishAt(new \DateTimeImmutable('+1 day'));
+
+        $this->themeManager
+            ->expects($this->once())
+            ->method('locateTemplate')
+            ->with('default.html.twig')
+            ->willReturn('layout.html.twig');
+        $this->websiteToolbarListener
+            ->expects($this->once())
+            ->method('setToolbarMessage')
+            ->with('This item is currently unpublished');
+
+        $controller = $this->createController([
+            'ROLE_WEBSITE_MANAGER' => false,
+            'ROLE_ADMIN' => false,
+        ]);
+
+        $response = $controller->show($this->createSignedPreviewRequest('/scheduled-page', time() + 600), $page);
+
+        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
+        self::assertTrue((bool) $response->headers->getCacheControlDirective('private'));
+        self::assertTrue($response->headers->hasCacheControlDirective('no-store'));
+        self::assertSame(0, (int) $response->headers->getCacheControlDirective('max-age'));
+        self::assertSame('noindex, nofollow', $response->headers->get('X-Robots-Tag'));
+    }
+
+    public function testShowThrowsNotFoundForExpiredPageWithoutRedirectWithoutPreviewAccess(): void
+    {
+        $page = $this->createLifecyclePage();
+        $page->setExpireAt(new \DateTimeImmutable('-1 day'));
+
+        $this->themeManager->expects($this->never())->method('locateTemplate');
+        $this->websiteToolbarListener->expects($this->never())->method('setToolbarMessage');
+
+        $controller = $this->createController([
+            'ROLE_WEBSITE_MANAGER' => false,
+            'ROLE_ADMIN' => false,
+        ]);
+
+        $this->expectException(NotFoundHttpException::class);
+        $controller->show(Request::create('https://example.test/expired-page'), $page);
+    }
+
+    public function testShowRedirectsExpiredPageWithoutPreviewAccess(): void
+    {
+        $page = $this->createLifecyclePage();
+        $page->setExpireAt(new \DateTimeImmutable('-1 day'));
+        $page->setExpireRedirectUrl('/archive/expired-page');
+
+        $this->themeManager->expects($this->never())->method('locateTemplate');
+        $this->websiteToolbarListener->expects($this->never())->method('setToolbarMessage');
+
+        $controller = $this->createController([
+            'ROLE_WEBSITE_MANAGER' => false,
+            'ROLE_ADMIN' => false,
+        ]);
+
+        $response = $controller->show(Request::create('https://example.test/expired-page'), $page);
+
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertSame(Response::HTTP_FOUND, $response->getStatusCode());
+        self::assertSame('/archive/expired-page', $response->headers->get('Location'));
+    }
+
+    public function testShowAllowsExpiredPageForAdminPreview(): void
+    {
+        $page = $this->createLifecyclePage();
+        $page->setExpireAt(new \DateTimeImmutable('-1 day'));
+        $page->setExpireRedirectUrl('/archive/expired-page');
+
+        $this->themeManager
+            ->expects($this->once())
+            ->method('locateTemplate')
+            ->with('default.html.twig')
+            ->willReturn('layout.html.twig');
+        $this->websiteToolbarListener
+            ->expects($this->once())
+            ->method('setToolbarMessage')
+            ->with('This item is currently unpublished');
+
+        $controller = $this->createController([
+            'ROLE_ADMIN' => true,
+        ]);
+
+        $response = $controller->show(Request::create('https://example.test/expired-page'), $page);
+
+        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
+        self::assertTrue((bool) $response->headers->getCacheControlDirective('private'));
+        self::assertTrue($response->headers->hasCacheControlDirective('no-store'));
+        self::assertSame(0, (int) $response->headers->getCacheControlDirective('max-age'));
         self::assertSame('noindex, nofollow', $response->headers->get('X-Robots-Tag'));
     }
 
@@ -210,6 +324,16 @@ class PageControllerTest extends TestCase
                 return $response ?? new Response('<html><body>ok</body></html>');
             }
         };
+    }
+
+    private function createLifecyclePage(): Page
+    {
+        $page = new Page();
+        $page->setLayout('default.html.twig');
+        $page->setDisabled(false);
+        $page->setPath('/scheduled-page');
+
+        return $page;
     }
 
     private function createSignedPreviewRequest(string $path, int $expires, string $host = 'example.test'): Request

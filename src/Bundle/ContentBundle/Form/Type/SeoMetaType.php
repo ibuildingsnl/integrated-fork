@@ -49,7 +49,7 @@ class SeoMetaType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => SeoMeta::class,
-                'meta_title_fallback' => null,
+                'meta_title_fallback' => '%%title%% %%separator%% %%channel%%',
                 'meta_description_fallback' => null,
             ]
         );

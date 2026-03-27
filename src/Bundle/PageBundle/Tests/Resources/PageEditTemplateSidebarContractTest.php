@@ -21,7 +21,8 @@ final class PageEditTemplateSidebarContractTest extends TestCase
         $this->assertStringContainsString("form.disabled", $template);
         $this->assertStringContainsString("{{ form_start(form) }}", $template);
         $this->assertStringContainsString("Page settings", $template);
-        $this->assertStringNotContainsString("['canonicalUrl', 'robotsDirective', 'twitterCard', 'paginationNoindexEnabled', 'disabled']", $template);
+        $this->assertStringContainsString("['canonicalUrl', 'robotsDirective', 'twitterCard', 'paginationNoindexEnabled', 'publishAt', 'expireAt', 'expireRedirectUrl', 'hideFromSitemap']", $template);
+        $this->assertStringNotContainsString("['canonicalUrl', 'robotsDirective', 'twitterCard', 'paginationNoindexEnabled', 'publishAt', 'expireAt', 'expireRedirectUrl', 'hideFromSitemap', 'disabled']", $template);
         $this->assertStringContainsString("form_row(attribute(form, fieldName), {'style': 'horizontal', 'state': 'show'})", $template);
 
         $toolbar = file_get_contents(__DIR__.'/../../../ContentBundle/Resources/views/partials/block.toolbar.html.twig');
@@ -43,7 +44,8 @@ final class PageEditTemplateSidebarContractTest extends TestCase
         $this->assertStringContainsString("form.disabled", $template);
         $this->assertStringContainsString("{{ form_start(form) }}", $template);
         $this->assertStringContainsString("Page settings", $template);
-        $this->assertStringNotContainsString("['canonicalUrl', 'robotsDirective', 'twitterCard', 'paginationNoindexEnabled', 'disabled']", $template);
+        $this->assertStringContainsString("['canonicalUrl', 'robotsDirective', 'twitterCard', 'paginationNoindexEnabled', 'publishAt', 'expireAt', 'expireRedirectUrl', 'hideFromSitemap']", $template);
+        $this->assertStringNotContainsString("['canonicalUrl', 'robotsDirective', 'twitterCard', 'paginationNoindexEnabled', 'publishAt', 'expireAt', 'expireRedirectUrl', 'hideFromSitemap', 'disabled']", $template);
         $this->assertStringContainsString("{% trans %}New{% endtrans %} {% trans %}page{% endtrans %}", $template);
     }
 }

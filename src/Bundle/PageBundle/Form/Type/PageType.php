@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\PageBundle\Form\Type;
 
 use Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
+use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryType;
 use Integrated\Bundle\ContentBundle\Form\Type\SeoMetaType;
 use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
@@ -21,8 +22,10 @@ use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -89,13 +92,51 @@ class PageType extends AbstractType
             $builder->add('seoMetadata', SeoMetaType::class, [
                 'label' => false,
                 'required' => false,
-                'meta_title_fallback' => $page ? (string) $page->getTitle() : null,
+                'meta_title_fallback' => '%%title%% %%separator%% %%channel%%',
                 'meta_description_fallback' => $page ? (string) $page->getDescription() : null,
             ]);
 
             $builder->add('canonicalUrl', TextType::class, [
                 'label' => 'Canonical URL',
                 'required' => false,
+            ]);
+
+            $builder->add('publishAt', DateTimeType::class, [
+                'label' => 'Publish at',
+                'required' => false,
+                'placeholder' => ' ',
+                'attr' => [
+                    'data-set-date-text' => 'Set publication date and time',
+                ],
+                'html5' => true,
+                'date_widget' => 'single_text',
+                'time_widget' => 'single_text',
+            ]);
+
+            $builder->add('expireAt', DateTimeType::class, [
+                'label' => 'Expire at',
+                'required' => false,
+                'placeholder' => ' ',
+                'attr' => [
+                    'data-set-date-text' => 'Set expiration date and time',
+                ],
+                'html5' => true,
+                'date_widget' => 'single_text',
+                'time_widget' => 'single_text',
+            ]);
+
+            $builder->add('expireRedirectUrl', TextType::class, [
+                'label' => 'Redirect after expiration',
+                'required' => false,
+                'empty_data' => null,
+            ]);
+
+            $builder->add('hideFromSitemap', CheckboxSwitcherType::class, [
+                'label' => 'Hide from sitemap',
+                'required' => false,
+                'attr' => [
+                    'align_with_widget' => true,
+                ],
             ]);
 
             $builder->add('featuredImage', MediaGalleryType::class, [
@@ -201,12 +242,35 @@ class PageType extends AbstractType
 
         $builder->get('path')->addModelTransformer(new CallbackTransformer(
             function ($path) {
-                return ltrim($path, '/');
+                return ltrim((string) $path, '/');
             },
             function ($path) {
-                return '/'.$path;
+                return '/'.(string) $path;
             }
         ));
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
+            $form = $event->getForm();
+            $page = $form->getData();
+            if (!$page instanceof Page) {
+                return;
+            }
+
+            $publishAt = $page->getPublishAt();
+            $expireAt = $page->getExpireAt();
+            $expireRedirectUrl = $page->getExpireRedirectUrl();
+
+            if ($publishAt instanceof \DateTimeInterface && $expireAt instanceof \DateTimeInterface && $expireAt < $publishAt) {
+                $form->get('expireAt')->addError(new FormError('The expiration date cannot be earlier than the publication date.'));
+            }
+
+            if (null !== $expireRedirectUrl && !(
+                (0 === strpos($expireRedirectUrl, '/') && 0 !== strpos($expireRedirectUrl, '//'))
+                || false !== filter_var($expireRedirectUrl, FILTER_VALIDATE_URL)
+            )) {
+                $form->get('expireRedirectUrl')->addError(new FormError('The redirect must be an absolute URL or a path starting with "/".'));
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)

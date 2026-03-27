@@ -439,7 +439,6 @@
                  }|json_encode }}">
             </div>
 
-            <div class="seo-placeholder-toolbar" data-seo-placeholder-toolbar="1"></div>
             <div class="seo-metadata-fields">
                 {{ form_widget(form) }}
             </div>
@@ -452,6 +451,8 @@
     {% endintegrated_javascripts %}
     {% integrated_javascripts mode='append' 'bundles/integratedcontent/js/YoastSeo.js' %}
     {% endintegrated_javascripts %}
+    {% integrated_stylesheets mode='append' 'bundles/integratedcontent/js/main.css' %}
+    {% endintegrated_stylesheets %}
 {% endblock %}
 
 {% block integrated_publishtime_widget %}

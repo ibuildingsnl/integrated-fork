@@ -1,0 +1,50 @@
+.yoast-seo-snippet-editor-wrapper {
+    margin: 1rem 0;
+    padding: 1rem 0 0;
+    border-top: 1px solid var(--border-light, rgba(0, 0, 0, 0.12));
+}
+
+.yoast-seo-snippet-editor-wrapper section button {
+    min-height: 36px;
+}
+
+.draftJsMentionPlugin__suggestions {
+    min-width: 220px;
+    margin-top: 0.5rem;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 14px;
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.12);
+    overflow: hidden;
+}
+
+.draftJsMentionPlugin__suggestions__list {
+    margin: 0;
+    padding: 0.35rem;
+    list-style: none;
+}
+
+.draftJsMentionPlugin__suggestions__item {
+    margin: 0;
+    border-radius: 10px;
+}
+
+.draftJsMentionPlugin__suggestions__item--focused {
+    background: #eef5ff;
+}
+
+.draftJsMentionPlugin__suggestions__entry,
+.draftJsMentionPlugin__suggestions__entry:visited {
+    display: block;
+    padding: 0.65rem 0.8rem;
+    color: #344054;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.draftJsMentionPlugin__suggestions__entry:hover,
+.draftJsMentionPlugin__suggestions__entry:focus {
+    color: #1d2939;
+    text-decoration: none;
+}

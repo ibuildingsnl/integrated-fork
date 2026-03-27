@@ -103,7 +103,7 @@
                         </div>
                         <div class="aside-item-list">
                             <div class="aside-item-list-container">
-                                {% for fieldName in ['canonicalUrl', 'robotsDirective', 'twitterCard', 'paginationNoindexEnabled'] %}
+                                {% for fieldName in ['canonicalUrl', 'robotsDirective', 'twitterCard', 'paginationNoindexEnabled', 'publishAt', 'expireAt', 'expireRedirectUrl', 'hideFromSitemap'] %}
                                     {% if attribute(form, fieldName) is defined %}
                                         {{ form_row(attribute(form, fieldName), { 'style': 'inline', 'label_col': 'w-full', 'widget_col': 'w-full' }) }}
                                     {% endif %}
@@ -131,7 +131,7 @@
                 {% endfor %}
 
                 {% for child in form %}
-                    {% if not child.rendered and child.vars.name not in ['featuredImage', 'canonicalUrl', 'robotsDirective', 'twitterCard', 'paginationNoindexEnabled', 'disabled', 'actions'] %}
+                    {% if not child.rendered and child.vars.name not in ['featuredImage', 'canonicalUrl', 'robotsDirective', 'twitterCard', 'paginationNoindexEnabled', 'publishAt', 'expireAt', 'expireRedirectUrl', 'hideFromSitemap', 'disabled', 'actions'] %}
                         {{ form_row(child, {'style': 'horizontal', 'state': 'show'}) }}
                     {% endif %}
                 {% endfor %}

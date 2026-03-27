@@ -24,65 +24,13 @@
 
         &-snippet-editor-wrapper {
             margin: 1rem 0;
-            padding: 1rem 0;
+            padding: 1rem 0 0;
             border-top: 1px solid var(--border-light);
-            border-bottom: 1px solid var(--border-light);
 
             legend {
                 display: none;
             }
 
-            // Hotfix to hide `Insert snippet variable` button
-            section button {
-                display: none;
-            }
-        }
-
-        &-placeholder-toolbar {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        &-placeholder-group {
-            display: flex;
-            flex-direction: column;
-            gap: .5rem;
-        }
-
-        &-placeholder-label {
-            color: var(--text-color-light);
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        &-placeholder-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: .5rem;
-        }
-
-        &-placeholder-chip {
-            appearance: none;
-            background: #eef2f7;
-            border: 1px solid var(--border-light);
-            border-radius: 999px;
-            color: var(--text-color);
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            line-height: 1;
-            padding: .55rem .85rem;
-            transition: background-color .15s ease, border-color .15s ease, color .15s ease;
-
-            &:hover,
-            &:focus {
-                background: #dde7f4;
-                border-color: #9cb3d1;
-                outline: none;
-            }
         }
 
         &-social-preview {

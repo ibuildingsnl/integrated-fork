@@ -11,6 +11,10 @@
         <field field-name="seoTitle" type="string" nullable="true" />
         <field field-name="seoDescription" type="string" nullable="true" />
         <field field-name="canonicalUrl" type="string" nullable="true" />
+        <field field-name="publishAt" type="date" nullable="true" />
+        <field field-name="expireAt" type="date" nullable="true" />
+        <field field-name="expireRedirectUrl" type="string" nullable="true" />
+        <field field-name="hideFromSitemap" type="bool" nullable="true" />
         <field field-name="paginationNoindexEnabled" type="bool" nullable="true" />
         <embed-one field="seoMetadata" target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\SeoMeta" />
         <reference-one field="featuredImage" target-document="Integrated\Bundle\ContentBundle\Document\Content\Image" />

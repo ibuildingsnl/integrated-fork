@@ -20,7 +20,7 @@ final class PageTypeSeoContractTest extends TestCase
         $this->assertStringContainsString("\$builder->add('robotsDirective'", $source);
         $this->assertStringContainsString("\$builder->add('featuredImage'", $source);
         $this->assertStringContainsString("\$builder->add('twitterCard'", $source);
-        $this->assertStringContainsString("'meta_title_fallback' => \$page ? (string) \$page->getTitle() : null", $source);
+        $this->assertStringContainsString("'meta_title_fallback' => '%%title%% %%separator%% %%channel%%'", $source);
         $this->assertStringContainsString("'meta_description_fallback' => \$page ? (string) \$page->getDescription() : null", $source);
         $this->assertStringContainsString("? 'default'", $source);
         $this->assertStringContainsString("\$page->getRobotsDirective()", $source);

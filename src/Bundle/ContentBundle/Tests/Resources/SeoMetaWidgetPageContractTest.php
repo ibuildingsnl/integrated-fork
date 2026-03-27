@@ -26,6 +26,7 @@ final class SeoMetaWidgetPageContractTest extends TestCase
         $this->assertStringContainsString("'analysisContentUrl': documentNode.id is defined and documentNode.id is not null and documentNode.slug is not defined ? path('integrated_page_page_seo_content', {'id': documentNode.id}) : null", $template);
         $this->assertStringContainsString("form.parent.path is defined ? '#' ~ form.parent.path.vars.id : null", $template);
         $this->assertStringContainsString("'content': form.parent.content is defined ? '#' ~ form.parent.content.vars.id : null", $template);
-        $this->assertStringContainsString('seo-placeholder-toolbar', $template);
+        $this->assertStringContainsString("{% integrated_stylesheets mode='append' 'bundles/integratedcontent/js/main.css' %}", $template);
+        $this->assertStringNotContainsString('seo-placeholder-toolbar', $template);
     }
 }
