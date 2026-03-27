@@ -32,6 +32,16 @@
             <argument id="integrated_website.website_toolbar" type="service"/>
         </service>
 
+        <service id="Integrated\Bundle\WebsiteBundle\Service\PageSeoMetadataResolver">
+            <argument type="service" id="request_stack" />
+            <argument>%integrated_page.default_paginated_noindex%</argument>
+        </service>
+
+        <service id="Integrated\Bundle\WebsiteBundle\Twig\Extension\PageSeoExtension">
+            <argument type="service" id="Integrated\Bundle\WebsiteBundle\Service\PageSeoMetadataResolver" />
+            <tag name="twig.extension" />
+        </service>
+
         <service id="integrated_website.event_listener.content_youtube_listener" class="Integrated\Bundle\WebsiteBundle\EventListener\Objects\ContentYoutubeListener">
             <argument type="service" id="integrated_theme.templating.theme_manager" />
             <argument type="service" id="twig" />

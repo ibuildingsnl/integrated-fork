@@ -8,6 +8,10 @@
         <field field-name="description" type="string" />
         <field field-name="disabled" type="bool" />
         <field field-name="locked" type="bool" />
+        <field field-name="seoTitle" type="string" nullable="true" />
+        <field field-name="seoDescription" type="string" nullable="true" />
+        <field field-name="canonicalUrl" type="string" nullable="true" />
+        <field field-name="paginationNoindexEnabled" type="bool" nullable="true" />
 
     </document>
 

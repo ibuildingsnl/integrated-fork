@@ -43,10 +43,20 @@ class PageType extends AbstractType
      */
     private $themeResolver;
 
-    public function __construct(ChannelContextInterface $channelContext, ThemeResolver $themeResolver)
+    /**
+     * @var bool
+     */
+    private $defaultPaginatedNoindex;
+
+    public function __construct(
+        ChannelContextInterface $channelContext,
+        ThemeResolver $themeResolver,
+        bool $defaultPaginatedNoindex = true
+    )
     {
         $this->channelContext = $channelContext;
         $this->themeResolver = $themeResolver;
+        $this->defaultPaginatedNoindex = $defaultPaginatedNoindex;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -72,6 +82,21 @@ class PageType extends AbstractType
             $builder->add('description', TextareaType::class, [
                 'required' => false,
             ]);
+
+            $builder->add('seoTitle', TextType::class, [
+                'label' => 'SEO title',
+                'required' => false,
+            ]);
+
+            $builder->add('seoDescription', TextareaType::class, [
+                'label' => 'SEO description',
+                'required' => false,
+            ]);
+
+            $builder->add('canonicalUrl', TextType::class, [
+                'label' => 'Canonical URL',
+                'required' => false,
+            ]);
         }
 
         $builder->add('path', TextType::class, [
@@ -87,6 +112,18 @@ class PageType extends AbstractType
             $builder->add('disabled', CheckboxSwitcherType::class, [
                 'label' => false,
                 'required' => false,
+                'attr' => [
+                    'align_with_widget' => true,
+                ],
+            ]);
+
+            $builder->add('paginationNoindexEnabled', CheckboxSwitcherType::class, [
+                'label' => 'Noindex paginated pages',
+                'required' => false,
+                'empty_data' => '0',
+                'data' => null === $page || null === $page->isPaginationNoindexEnabled()
+                    ? $this->defaultPaginatedNoindex
+                    : $page->isPaginationNoindexEnabled(),
                 'attr' => [
                     'align_with_widget' => true,
                 ],

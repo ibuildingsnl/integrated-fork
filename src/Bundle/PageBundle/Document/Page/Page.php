@@ -44,6 +44,26 @@ class Page extends AbstractPage
     protected $locked = false;
 
     /**
+     * @var string|null
+     */
+    protected $seoTitle;
+
+    /**
+     * @var string|null
+     */
+    protected $seoDescription;
+
+    /**
+     * @var string|null
+     */
+    protected $canonicalUrl;
+
+    /**
+     * @var bool|null
+     */
+    protected $paginationNoindexEnabled = null;
+
+    /**
      * @return string
      */
     public function getTitle()
@@ -119,6 +139,86 @@ class Page extends AbstractPage
     public function setLocked($locked)
     {
         $this->locked = (bool) $locked;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSeoTitle()
+    {
+        return $this->seoTitle;
+    }
+
+    /**
+     * @param string|null $seoTitle
+     *
+     * @return $this
+     */
+    public function setSeoTitle($seoTitle)
+    {
+        $this->seoTitle = $seoTitle;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSeoDescription()
+    {
+        return $this->seoDescription;
+    }
+
+    /**
+     * @param string|null $seoDescription
+     *
+     * @return $this
+     */
+    public function setSeoDescription($seoDescription)
+    {
+        $this->seoDescription = $seoDescription;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCanonicalUrl()
+    {
+        return $this->canonicalUrl;
+    }
+
+    /**
+     * @param string|null $canonicalUrl
+     *
+     * @return $this
+     */
+    public function setCanonicalUrl($canonicalUrl)
+    {
+        $this->canonicalUrl = $canonicalUrl;
+
+        return $this;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function isPaginationNoindexEnabled()
+    {
+        return $this->paginationNoindexEnabled;
+    }
+
+    /**
+     * @param bool|null $paginationNoindexEnabled
+     *
+     * @return $this
+     */
+    public function setPaginationNoindexEnabled($paginationNoindexEnabled)
+    {
+        $this->paginationNoindexEnabled = null === $paginationNoindexEnabled ? null : (bool) $paginationNoindexEnabled;
 
         return $this;
     }
