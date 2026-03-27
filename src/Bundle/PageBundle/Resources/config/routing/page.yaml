@@ -11,6 +11,11 @@ integrated_page_page_edit:
   path: '/{id}/edit'
   defaults:
     _controller: 'Integrated\Bundle\PageBundle\Controller\PageController::edit'
+integrated_page_page_seo_content:
+  path: '/{id}/seo-content'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\PageBundle\Controller\PageController::seoContent'
 integrated_page_page_delete:
   path: '/{id}/delete'
   defaults:

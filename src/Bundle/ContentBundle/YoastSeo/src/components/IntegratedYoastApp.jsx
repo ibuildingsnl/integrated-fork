@@ -21,7 +21,7 @@ import useAnalysis from '../hooks/useAnalysis';
 import analysisState from '../state/analysisState';
 
 const IntegratedYoastApp = () => {
-    const {configuration} = useConfiguration();
+    const {configuration, editorFieldMapping} = useConfiguration();
     const {loadPageContent} = usePageContent();
     const {isAnalyzing} = useAnalysis();
     const error = useRecoilValue(errorState);
@@ -37,11 +37,11 @@ const IntegratedYoastApp = () => {
     // Trigger initial page load for analysis
     useEffect(() => {
         setEditorData({
-            title: configuration.titleOverride || configuration.title,
-            description: configuration.description || '',
-            slug: configuration.uriPathSegment,
-            url: configuration.pageUrl + configuration.pageUrl,
-            focusKeyword: configuration.focusKeyword,
+            title: editorFieldMapping.titleOverride ? editorFieldMapping.titleOverride.value : (configuration.titleOverride || configuration.title),
+            description: editorFieldMapping.description ? editorFieldMapping.description.value : (configuration.description || ''),
+            slug: editorFieldMapping.slug ? editorFieldMapping.slug.value : configuration.uriPathSegment,
+            url: configuration.pageUrl,
+            focusKeyword: editorFieldMapping.focusKeyword ? editorFieldMapping.focusKeyword.value : configuration.focusKeyword,
         });
         loadPageContent();
 
@@ -49,41 +49,53 @@ const IntegratedYoastApp = () => {
             debouncedLoadPageContent();
         }
 
-        const titleInput = document.querySelector('#integrated_content_title');
-        const titleOverrideInput = document.querySelector(
-            '#integrated_content_seoMetadata_metaTitle');
+        const titleInput = editorFieldMapping.title;
+        const titleOverrideInput = editorFieldMapping.titleOverride;
 
         let shouldLinkInputs = true;
 
-        document.addEventListener('editorChange', () => {
+        const handleEditorLinkState = () => {
             setTimeout(() => {
-                if (titleInput.value !== titleOverrideInput.value) {
+                if (!titleInput || !titleOverrideInput) {
                     shouldLinkInputs = false;
-                } else {
-                    shouldLinkInputs = true;
+
+                    return;
                 }
+
+                shouldLinkInputs = titleInput.value === titleOverrideInput.value;
             }, 1000);
-        });
+        };
 
+        document.addEventListener('editorChange', handleEditorLinkState);
 
-        titleInput.addEventListener('input', () => {
-            if (shouldLinkInputs) {
-                titleOverrideInput.value = titleInput.value;
-
-                setEditorData((prev) => ({
-                    ...prev,
-                    title: titleOverrideInput.value,
-                }));
+        const syncTitleOverride = () => {
+            if (!titleInput || !titleOverrideInput || !shouldLinkInputs) {
+                return;
             }
-        });
 
-        const editor = tinymce.get('integrated_content_content');
+            titleOverrideInput.value = titleInput.value;
+
+            setEditorData((prev) => ({
+                ...prev,
+                title: titleOverrideInput.value,
+            }));
+        };
+
+        if (titleInput && titleOverrideInput) {
+            titleInput.addEventListener('input', syncTitleOverride);
+        }
+
+        const editor = editorFieldMapping.content && window.tinymce ? tinymce.get(editorFieldMapping.content.id) : null;
         if (editor) {
             editor.on('Change', handleEditorChange);
             editor.on('KeyUp', handleEditorChange);  // You might also want to reload content on key up
         }
 
         return () => {
+            document.removeEventListener('editorChange', handleEditorLinkState);
+            if (titleInput && titleOverrideInput) {
+                titleInput.removeEventListener('input', syncTitleOverride);
+            }
             if (editor) {
                 editor.off('Change', handleEditorChange);
                 editor.off('KeyUp', handleEditorChange);

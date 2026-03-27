@@ -18,6 +18,28 @@
         {% if seo.canonicalUrl %}
             <link rel="canonical" href="{{ seo.canonicalUrl }}" />
         {% endif %}
+
+        {% if seo.openGraphTitle %}
+            <meta property="og:title" content="{{ seo.openGraphTitle }}">
+        {% endif %}
+        {% if seo.openGraphDescription %}
+            <meta property="og:description" content="{{ seo.openGraphDescription }}">
+        {% endif %}
+        {% if seo.openGraphImageUrl %}
+            <meta property="og:image" content="{{ seo.openGraphImageUrl }}">
+        {% endif %}
+        {% if seo.twitterCard %}
+            <meta name="twitter:card" content="{{ seo.twitterCard }}">
+        {% endif %}
+        {% if seo.twitterTitle %}
+            <meta name="twitter:title" content="{{ seo.twitterTitle }}">
+        {% endif %}
+        {% if seo.twitterDescription %}
+            <meta name="twitter:description" content="{{ seo.twitterDescription }}">
+        {% endif %}
+        {% if seo.twitterImageUrl %}
+            <meta name="twitter:image" content="{{ seo.twitterImageUrl }}">
+        {% endif %}
     {% endblock %}
 
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">

@@ -8,9 +8,10 @@ import titleTemplateState from '../state/titleTemplateState';
 import firstPageLoadCompleteState from '../state/firstPageLoadCompleteState';
 import pageIsLoadingState from '../state/pageIsLoadingState';
 import errorState from '../state/errorState';
+import {resolveSeoPlaceholders} from '../helper/seoPlaceholders';
 
 const usePageContent = () => {
-    const {configuration} = useConfiguration();
+    const {configuration, editorFieldMapping} = useConfiguration();
     const [isLoading, setIsLoading] = useRecoilState(pageIsLoadingState);
     const [firstPageLoadComplete, setFirstPageLoadComplete] = useRecoilState(
         firstPageLoadCompleteState);
@@ -18,17 +19,25 @@ const usePageContent = () => {
     const setPageState = useSetRecoilState(parsedPageState);
     const setTitleTemplate = useSetRecoilState(titleTemplateState);
     const setError = useSetRecoilState(errorState);
+    const analysisContentRef = useRef(null);
 
-    const loadPageContent = useCallback(() => {
+    const loadPageContent = useCallback(async () => {
         if (isLoading) return;
 
         setIsLoading(true);
         // TODO: add loading indicator
 
         // Access content directly from the fields
-        const title = document.querySelector('#integrated_content_title').value;
-        const titleOverride = document.querySelector('#integrated_content_seoMetadata_metaTitle').value;
-        const description = document.querySelector('#integrated_content_seoMetadata_metaDescription').value;
+        const title = editorFieldMapping.title ? editorFieldMapping.title.value : configuration.title || '';
+        const titleOverride = editorFieldMapping.titleOverride ? editorFieldMapping.titleOverride.value : configuration.titleOverride || '';
+        const description = editorFieldMapping.description ? editorFieldMapping.description.value : configuration.description || '';
+        const replacementValues = {
+            title: title,
+            siteTitle: configuration.brandName,
+            separator: configuration.titleSeparator,
+            slug: editorFieldMapping.slug ? editorFieldMapping.slug.value : configuration.uriPathSegment,
+            channel: configuration.channelName || configuration.brandName,
+        };
 
 
         if (!firstPageLoadComplete) {
@@ -44,18 +53,48 @@ const usePageContent = () => {
             }
         }
 
-        // Access TinyMCE content with h1 title
-        const content = '<h1>' + title + '</h1>' + tinymce.get('integrated_content_content').getContent();
+        let bodyContent = '';
+        if (editorFieldMapping.content) {
+            const editor = window.tinymce ? tinymce.get(editorFieldMapping.content.id) : null;
+            bodyContent = editor ? editor.getContent() : (editorFieldMapping.content.value || '');
+        } else if (configuration.analysisContentUrl) {
+            if (analysisContentRef.current === null) {
+                try {
+                    const response = await fetch(configuration.analysisContentUrl, {
+                        credentials: 'same-origin',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Unable to fetch page analysis content: ${response.status}`);
+                    }
+
+                    const payload = await response.json();
+                    analysisContentRef.current = payload.content || '';
+                } catch (error) {
+                    console.error(error);
+                    setError('Unable to load page content for SEO analysis.');
+                    analysisContentRef.current = '';
+                }
+            }
+
+            bodyContent = analysisContentRef.current || '';
+        }
+
+        // Use the title as minimum content source when no rich editor exists, like pages.
+        const content = '<h1>' + title + '</h1>' + bodyContent;
         const noDivContent = content.replace(/<div/g, '<p').replace(/<\/div>/g, '</p>');
 
         setPageState((prev) => ({
             ...prev,
-            title: titleOverride ? titleOverride : title,
-            description: description,
+            title: resolveSeoPlaceholders(titleOverride ? titleOverride : title, replacementValues),
+            description: resolveSeoPlaceholders(description, replacementValues),
             locale: 'nl_NL',
             content: noDivContent,
-            twitterCard: twitterCard(configuration, title, titleOverride, description),
-            openGraph: openGraph(configuration, title, titleOverride, description)
+            twitterCard: twitterCard(configuration, title, titleOverride, description, replacementValues),
+            openGraph: openGraph(configuration, title, titleOverride, description, replacementValues)
         }));
 
 
@@ -70,25 +109,25 @@ const usePageContent = () => {
     return {loadPageContent: debouncedLoadPageContent};
 };
 
-function twitterCard(configuration, title, titleOverride, description) {
+function twitterCard(configuration, title, titleOverride, description, replacementValues) {
     return {
         card: null,
-        title: titleOverride ? titleOverride : title,
+        title: resolveSeoPlaceholders(titleOverride ? titleOverride : title, replacementValues),
         site: configuration.baseUrl,
-        description: description,
+        description: resolveSeoPlaceholders(description, replacementValues),
         creator: configuration.brandName,
         url: configuration.baseUrl + configuration.pageUrl,
         image: configuration.featuredImageSrc,
     };
 }
 
-function openGraph(configuration, title, titleOverride, description) {
+function openGraph(configuration, title, titleOverride, description, replacementValues) {
     return {
         type: null,
-        title: titleOverride ? titleOverride : title,
+        title: resolveSeoPlaceholders(titleOverride ? titleOverride : title, replacementValues),
         site_name: configuration.brandName,
         locale: configuration.uiLocale,
-        description: description,
+        description: resolveSeoPlaceholders(description, replacementValues),
         url: configuration.baseUrl + configuration.pageUrl,
         image: configuration.featuredImageSrc,
         'image:width': null,

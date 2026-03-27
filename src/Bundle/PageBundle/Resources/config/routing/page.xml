@@ -16,6 +16,10 @@
         <default key="_controller">Integrated\Bundle\PageBundle\Controller\PageController::edit</default>
     </route>
 
+    <route id="integrated_page_page_seo_content" path="/{id}/seo-content" methods="GET">
+        <default key="_controller">Integrated\Bundle\PageBundle\Controller\PageController::seoContent</default>
+    </route>
+
     <route id="integrated_page_page_delete" path="/{id}/delete">
         <default key="_controller">Integrated\Bundle\PageBundle\Controller\PageController::delete</default>
     </route>

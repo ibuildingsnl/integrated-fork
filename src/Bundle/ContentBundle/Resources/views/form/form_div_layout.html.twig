@@ -366,6 +366,13 @@
         {% set primaryDomain = '' %}
         {% set brandName = '' %}
     {% endif %}
+    {% set seoPlaceholderDefinitions = [
+        {'token': '%%title%%', 'label': 'Titel'},
+        {'token': '%%site_title%%', 'label': 'Sitetitel'},
+        {'token': '%%separator%%', 'label': 'Scheidingsteken'},
+        {'token': '%%slug%%', 'label': 'Slug'},
+        {'token': '%%channel%%', 'label': 'Kanaal'}
+    ] %}
 
 
     {% if documentNode.id is defined and documentNode.id is not null %}
@@ -409,9 +416,12 @@
                      'baseUrl': 'https://' ~ primaryDomain,
                      'siteUrl': 'https://' ~ primaryDomain,
                      'brandName': brandName,
+                     'channelName': pageChannel.name|default(brandName),
+                     'titleSeparator': '|',
                      'pageUrl': documentUrl,
                      'analysisContentUrl': documentNode.id is defined and documentNode.id is not null and documentNode.slug is not defined ? path('integrated_page_page_seo_content', {'id': documentNode.id}) : null,
                      'uriPathSegment': uriPathSegment,
+                     'seoPlaceholders': seoPlaceholderDefinitions,
                      'fieldSelectors': {
                          'title': '#' ~ form.parent.title.vars.id,
                          'titleOverride': '#' ~ form.metaTitle.vars.id,
@@ -429,6 +439,7 @@
                  }|json_encode }}">
             </div>
 
+            <div class="seo-placeholder-toolbar" data-seo-placeholder-toolbar="1"></div>
             <div class="seo-metadata-fields">
                 {{ form_widget(form) }}
             </div>

@@ -35,10 +35,15 @@
         <service id="Integrated\Bundle\WebsiteBundle\Service\PageSeoMetadataResolver">
             <argument type="service" id="request_stack" />
             <argument>%integrated_page.default_paginated_noindex%</argument>
+            <argument type="service" id="Integrated\Bundle\WebsiteBundle\Service\SeoPlaceholderResolver" />
+        </service>
+
+        <service id="Integrated\Bundle\WebsiteBundle\Service\SeoPlaceholderResolver">
         </service>
 
         <service id="Integrated\Bundle\WebsiteBundle\Twig\Extension\PageSeoExtension">
             <argument type="service" id="Integrated\Bundle\WebsiteBundle\Service\PageSeoMetadataResolver" />
+            <argument type="service" id="Integrated\Bundle\WebsiteBundle\Service\SeoPlaceholderResolver" />
             <tag name="twig.extension" />
         </service>
 

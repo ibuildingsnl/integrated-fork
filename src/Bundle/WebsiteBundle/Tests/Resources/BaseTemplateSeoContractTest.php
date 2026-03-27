@@ -16,5 +16,9 @@ final class BaseTemplateSeoContractTest extends TestCase
         $this->assertStringContainsString("{% set seo = integrated_page_seo(page|default(null)) %}", $template);
         $this->assertStringContainsString('<meta name="robots" content="{{ seo.robots }}">', $template);
         $this->assertStringContainsString('<link rel="canonical" href="{{ seo.canonicalUrl }}" />', $template);
+        $this->assertStringContainsString('<meta property="og:title" content="{{ seo.openGraphTitle }}">', $template);
+        $this->assertStringContainsString('<meta property="og:description" content="{{ seo.openGraphDescription }}">', $template);
+        $this->assertStringContainsString('<meta property="og:image" content="{{ seo.openGraphImageUrl }}">', $template);
+        $this->assertStringContainsString('<meta name="twitter:card" content="{{ seo.twitterCard }}">', $template);
     }
 }

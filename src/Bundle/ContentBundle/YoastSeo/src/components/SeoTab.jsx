@@ -17,6 +17,7 @@ import useIntegratedFields from '../hooks/useIntegratedFields';
 import titleTemplateState from '../state/titleTemplateState';
 import faviconSrcState from '../state/faviconSrcState';
 import editorState from '../state/editorState';
+import {containsSeoPlaceholder, resolveSeoPlaceholders, seoPlaceholderDefinitions} from '../helper/seoPlaceholders';
 
 const SeoTab = () => {
     const {configuration} = useConfiguration();
@@ -31,6 +32,16 @@ const SeoTab = () => {
             updateEditorData('focusKeyword', value);
         },
         [updateEditorData],
+    );
+
+    const insertPlaceholder = useCallback(
+        (key, token) => {
+            const currentValue = key === 'title' ? editorData.title : editorData.description;
+            const nextValue = currentValue && currentValue.trim() !== '' ? `${currentValue} ${token}` : token;
+
+            updateEditorData(key, nextValue);
+        },
+        [editorData.description, editorData.title, updateEditorData],
     );
 
     const onEditorChange = useCallback(
@@ -53,15 +64,24 @@ const SeoTab = () => {
      */
     const mapEditorDataToPreview = useCallback(
         ({title, description, url}) => {
+            const replacementValues = {
+                title: configuration.title,
+                siteTitle: configuration.brandName,
+                separator: configuration.titleSeparator,
+                slug: editorData.slug || configuration.uriPathSegment,
+                channel: configuration.channelName || configuration.brandName,
+            };
+            const resolvedTitle = resolveSeoPlaceholders(title, replacementValues);
+            const resolvedDescription = resolveSeoPlaceholders(description, replacementValues);
+
             return {
-                title: titleTemplate.replace('{title}', title),
-                // url: configuration.isHomepage ? configuration.baseUrl : url,
+                title: containsSeoPlaceholder(title) ? resolvedTitle : titleTemplate.replace('{title}', resolvedTitle),
                 url: configuration.baseUrl + configuration.pageUrl,
-                description: description,
+                description: resolvedDescription,
             };
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [titleTemplate],
+        [configuration.baseUrl, configuration.brandName, configuration.channelName, configuration.pageUrl, configuration.title, configuration.titleSeparator, configuration.uriPathSegment, editorData.slug, titleTemplate],
     );
 
     return (
@@ -96,6 +116,38 @@ const SeoTab = () => {
                     mobileImageSrc={configuration.featuredImageSrc}
                     mapEditorDataToPreview={mapEditorDataToPreview}
                 />
+                <div className="yoast-seo-placeholder-toolbar">
+                    <div className="yoast-seo-placeholder-group">
+                        <span className="yoast-seo-placeholder-label">SEO-titel</span>
+                        <div className="yoast-seo-placeholder-chips">
+                            {seoPlaceholderDefinitions(configuration).map((placeholder) => (
+                                <button
+                                    key={`title-${placeholder.token}`}
+                                    type="button"
+                                    className="yoast-seo-placeholder-chip"
+                                    onClick={() => insertPlaceholder('title', placeholder.token)}
+                                >
+                                    {placeholder.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="yoast-seo-placeholder-group">
+                        <span className="yoast-seo-placeholder-label">Metabeschrijving</span>
+                        <div className="yoast-seo-placeholder-chips">
+                            {seoPlaceholderDefinitions(configuration).map((placeholder) => (
+                                <button
+                                    key={`description-${placeholder.token}`}
+                                    type="button"
+                                    className="yoast-seo-placeholder-chip"
+                                    onClick={() => insertPlaceholder('description', placeholder.token)}
+                                >
+                                    {placeholder.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </div>
             <SeoAnalysis/>
         </React.Fragment>

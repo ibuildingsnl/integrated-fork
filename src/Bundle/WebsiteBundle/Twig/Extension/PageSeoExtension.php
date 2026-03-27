@@ -13,6 +13,7 @@ namespace Integrated\Bundle\WebsiteBundle\Twig\Extension;
 
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\WebsiteBundle\Service\PageSeoMetadataResolver;
+use Integrated\Bundle\WebsiteBundle\Service\SeoPlaceholderResolver;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -20,6 +21,7 @@ final class PageSeoExtension extends AbstractExtension
 {
     public function __construct(
         private readonly PageSeoMetadataResolver $resolver,
+        private readonly SeoPlaceholderResolver $seoPlaceholderResolver,
     ) {
     }
 
@@ -27,6 +29,7 @@ final class PageSeoExtension extends AbstractExtension
     {
         return [
             new TwigFunction('integrated_page_seo', $this->resolvePageSeo(...)),
+            new TwigFunction('integrated_resolve_seo_placeholders', $this->resolveSeoPlaceholders(...)),
         ];
     }
 
@@ -36,5 +39,10 @@ final class PageSeoExtension extends AbstractExtension
     public function resolvePageSeo(?AbstractPage $page): array
     {
         return $this->resolver->resolve($page);
+    }
+
+    public function resolveSeoPlaceholders(?string $value, array $context = []): ?string
+    {
+        return $this->seoPlaceholderResolver->resolve($value, $context);
     }
 }

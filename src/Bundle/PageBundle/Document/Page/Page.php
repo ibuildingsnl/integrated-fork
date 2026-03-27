@@ -12,6 +12,8 @@
 namespace Integrated\Bundle\PageBundle\Document\Page;
 
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\SeoMeta;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -62,6 +64,33 @@ class Page extends AbstractPage
      * @var bool|null
      */
     protected $paginationNoindexEnabled = null;
+
+    /**
+     * @var SeoMeta
+     */
+    protected $seoMetadata;
+
+    /**
+     * @var Image|null
+     */
+    protected $featuredImage;
+
+    /**
+     * @var string|null
+     */
+    protected $robotsDirective;
+
+    /**
+     * @var string|null
+     */
+    protected $twitterCard;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->seoMetadata = new SeoMeta();
+    }
 
     /**
      * @return string
@@ -219,6 +248,52 @@ class Page extends AbstractPage
     public function setPaginationNoindexEnabled($paginationNoindexEnabled)
     {
         $this->paginationNoindexEnabled = null === $paginationNoindexEnabled ? null : (bool) $paginationNoindexEnabled;
+
+        return $this;
+    }
+
+    public function setSeoMetadata(SeoMeta $seoMetadata): void
+    {
+        $this->seoMetadata = $seoMetadata;
+    }
+
+    public function getSeoMetadata(): ?SeoMeta
+    {
+        return $this->seoMetadata;
+    }
+
+    public function getFeaturedImage(): ?Image
+    {
+        return $this->featuredImage;
+    }
+
+    public function setFeaturedImage(?Image $featuredImage): self
+    {
+        $this->featuredImage = $featuredImage;
+
+        return $this;
+    }
+
+    public function getRobotsDirective(): ?string
+    {
+        return null === $this->robotsDirective ? null : (string) $this->robotsDirective;
+    }
+
+    public function setRobotsDirective($robotsDirective)
+    {
+        $this->robotsDirective = $robotsDirective;
+
+        return $this;
+    }
+
+    public function getTwitterCard(): ?string
+    {
+        return null === $this->twitterCard ? null : (string) $this->twitterCard;
+    }
+
+    public function setTwitterCard($twitterCard)
+    {
+        $this->twitterCard = $twitterCard;
 
         return $this;
     }

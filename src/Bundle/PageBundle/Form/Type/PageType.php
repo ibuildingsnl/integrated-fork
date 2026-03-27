@@ -12,12 +12,15 @@
 namespace Integrated\Bundle\PageBundle\Form\Type;
 
 use Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
+use Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryType;
+use Integrated\Bundle\ContentBundle\Form\Type\SeoMetaType;
 use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
 use Integrated\Bundle\PageBundle\Resolver\ThemeResolver;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -83,19 +86,56 @@ class PageType extends AbstractType
                 'required' => false,
             ]);
 
-            $builder->add('seoTitle', TextType::class, [
-                'label' => 'SEO title',
+            $builder->add('seoMetadata', SeoMetaType::class, [
+                'label' => false,
                 'required' => false,
-            ]);
-
-            $builder->add('seoDescription', TextareaType::class, [
-                'label' => 'SEO description',
-                'required' => false,
+                'meta_title_fallback' => $page ? (string) $page->getTitle() : null,
+                'meta_description_fallback' => $page ? (string) $page->getDescription() : null,
             ]);
 
             $builder->add('canonicalUrl', TextType::class, [
                 'label' => 'Canonical URL',
                 'required' => false,
+            ]);
+
+            $builder->add('featuredImage', MediaGalleryType::class, [
+                'label' => 'Featured image',
+                'required' => false,
+                'attr' => [
+                    'style' => 'sidebar',
+                    'icon' => 'media-image',
+                    'data-types' => '[{"type":"image","name":"Image"}]',
+                    'data-emptytext' => 'Select featured image',
+                    'data-multiple' => false,
+                ],
+            ]);
+
+            $builder->add('robotsDirective', ChoiceType::class, [
+                'label' => 'Robots',
+                'required' => false,
+                'choices' => [
+                    'Default' => 'default',
+                    'index,follow' => 'index,follow',
+                    'noindex,follow' => 'noindex,follow',
+                    'index,nofollow' => 'index,nofollow',
+                    'noindex,nofollow' => 'noindex,nofollow',
+                ],
+                'data' => null === $page || null === $page->getRobotsDirective()
+                    ? 'default'
+                    : $page->getRobotsDirective(),
+            ]);
+
+            $builder->add('twitterCard', ChoiceType::class, [
+                'label' => 'Twitter card',
+                'required' => false,
+                'choices' => [
+                    'Default' => 'default',
+                    'summary' => 'summary',
+                    'summary_large_image' => 'summary_large_image',
+                ],
+                'data' => null === $page || null === $page->getTwitterCard()
+                    ? 'default'
+                    : $page->getTwitterCard(),
             ]);
         }
 

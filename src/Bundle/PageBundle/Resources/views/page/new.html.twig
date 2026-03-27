@@ -1,24 +1,140 @@
 {% extends '@IntegratedContent/base.html.twig' %}
+{% form_theme form with ['@IntegratedPage/form/form_div_layout.html.twig', '@IntegratedContent/form/form_div_layout.html.twig'] %}
 {% block title %}{% trans %}New page{% endtrans %}{% endblock title %}
 {% block content %}
 <div class="flex flex-wrap edit-form">
     {% block form_start %}
-        {{ form_start(form, { attr: { 'data-turbo': 'false' } }) }}
+        {{ form_start(form) }}
     {% endblock %}
     {% block toolbar %}
         {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
     {% endblock toolbar %}
-    <div class="aside-options"></div>
+    <div class="aside-options">
+        <aside>
+            <div class="aside-holder">
+                {% set pageDocument = form.vars.value|default(null) %}
+                {% set pageChannel = pageDocument and attribute(pageDocument, 'channel') is defined ? attribute(pageDocument, 'channel') : form.channel.vars.data|default(null) %}
+                {% set pagePath = pageDocument and attribute(pageDocument, 'path') is defined ? attribute(pageDocument, 'path') : form.path.vars.value|default('') %}
+                {% set isConcept = form.disabled is defined and form.disabled.vars.data|default(false) %}
+                <div class="aside-header">
+                    <button class="toggle-filters toggle-options-sidebar" data-target="aside-options" type="button">
+                        <i class="iconoir-xmark"></i>
+                    </button>
+                    <span>{% trans %}Options{% endtrans %}</span>
+                </div>
+
+                <div class="aside-item-wrapper show">
+                    <div class="aside-item-header">
+                        <h3 class="aside-item-title">
+                            <i class="iconoir-info-circle"></i>
+                            <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
+                        </h3>
+                        <i class="iconoir-nav-arrow-up"></i>
+                    </div>
+                    <div class="aside-item-list">
+                        <div class="aside-item-list-container">
+                            <div class="status-info">
+                                <div class="form-group">
+                                    <label class="control-label w-full sm:w-1/3">{% trans %}Page type{% endtrans %}</label>
+                                    <div class="w-full sm:w-2/3">
+                                        {% trans %}Page{% endtrans %}
+                                    </div>
+                                </div>
+                                {% if pageChannel %}
+                                    <div class="form-group">
+                                        <label class="control-label w-full sm:w-1/3">{% trans %}Channel{% endtrans %}</label>
+                                        <div class="w-full sm:w-2/3">
+                                            {{ pageChannel.name }}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if pagePath %}
+                                    <div class="form-group">
+                                        <label class="control-label w-full sm:w-1/3">{% trans %}URL{% endtrans %}</label>
+                                        <div class="w-full sm:w-2/3">
+                                            /{{ pagePath|trim('/') }}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="status-options">
+                                <div class="status {{ isConcept ? 'draft' : 'published' }}">
+                                    <i class="iconoir-{{ isConcept ? 'design-pencil' : 'check-circle' }}"></i>
+                                    {% if isConcept %}
+                                        {% trans %}Concept{% endtrans %}
+                                    {% else %}
+                                        {% trans %}Published{% endtrans %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                {% if form.disabled is defined %}
+                                    {{ form_row(form.disabled) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if form.featuredImage is defined %}
+                    <div class="aside-item-wrapper show">
+                        <div class="aside-item-header">
+                            <h3 class="aside-item-title">
+                                <i class="iconoir-media-image"></i>
+                                <span class="aside-item-icon">{% trans %}Featured image{% endtrans %}</span>
+                            </h3>
+                            <i class="iconoir-nav-arrow-up"></i>
+                        </div>
+                        <div class="aside-item-list">
+                            <div class="aside-item-list-container">
+                                {{ form_row(form.featuredImage, { 'label': false, 'style': 'inline', 'label_col': 'w-full', 'widget_col': 'w-full' }) }}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="aside-item-wrapper show">
+                    <div class="aside-item-header">
+                        <h3 class="aside-item-title">
+                            <i class="iconoir-settings"></i>
+                            <span class="aside-item-icon">{% trans %}Page settings{% endtrans %}</span>
+                        </h3>
+                        <i class="iconoir-nav-arrow-up"></i>
+                    </div>
+                    <div class="aside-item-list">
+                        <div class="aside-item-list-container">
+                            {% for fieldName in ['canonicalUrl', 'robotsDirective', 'twitterCard', 'paginationNoindexEnabled'] %}
+                                {% if attribute(form, fieldName) is defined %}
+                                    {{ form_row(attribute(form, fieldName), { 'style': 'inline', 'label_col': 'w-full', 'widget_col': 'w-full' }) }}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
     <div class="editor-wrapper">
+        <div class="editor-overlay"></div>
         <div class="page-title">
             <h1 class="heading">
                 {% block contentTitle %}
-                    {% trans %}Edit{% endtrans %} {% trans %}page{% endtrans %}
+                    {% trans %}New{% endtrans %} {% trans %}page{% endtrans %}
                 {% endblock %}
             </h1>
         </div>
         <section class="editor editor-wrapped">
-            {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
+            {% for fieldName in ['channel', 'title', 'path', 'description', 'layout'] %}
+                {% if attribute(form, fieldName) is defined %}
+                    {{ form_row(attribute(form, fieldName), {'style': 'horizontal', 'state': 'show'}) }}
+                {% endif %}
+            {% endfor %}
+
+            {% for child in form %}
+                {% if not child.rendered and child.vars.name not in ['featuredImage', 'canonicalUrl', 'robotsDirective', 'twitterCard', 'paginationNoindexEnabled', 'disabled', 'actions'] %}
+                    {{ form_row(child, {'style': 'horizontal', 'state': 'show'}) }}
+                {% endif %}
+            {% endfor %}
         </section>
     </div>
     {% block form_end %}
