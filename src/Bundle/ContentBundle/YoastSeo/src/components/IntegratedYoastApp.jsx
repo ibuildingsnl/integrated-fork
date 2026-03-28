@@ -52,7 +52,7 @@ const IntegratedYoastApp = () => {
         const titleInput = editorFieldMapping.title;
         const titleOverrideInput = editorFieldMapping.titleOverride;
 
-        let shouldLinkInputs = true;
+        let shouldLinkInputs = !!titleInput && !!titleOverrideInput && titleInput.value === titleOverrideInput.value;
 
         const handleEditorLinkState = () => {
             setTimeout(() => {

@@ -4,9 +4,12 @@ namespace Integrated\Bundle\ContentBundle\Form\Type;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\SeoMeta;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -14,25 +17,8 @@ class SeoMetaType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        /** @var SeoMeta|null $seoMeta */
-        $seoMeta = $builder->getData();
-        $metaTitle = $seoMeta instanceof SeoMeta ? trim((string) $seoMeta->getMetatitle()) : '';
-        $metaDescription = $seoMeta instanceof SeoMeta ? trim((string) $seoMeta->getMetadescription()) : '';
-
         $builder->add('focusKeyphrase', TextType::class, [
             'priority' => 999,
-        ]);
-
-        $builder->add('metaTitle', TextType::class, [
-            'priority' => 990,
-            'empty_data' => $metaTitle !== '' ? $metaTitle : $options['meta_title_fallback'],
-            'data' => $metaTitle !== '' ? $metaTitle : $options['meta_title_fallback'],
-        ]);
-
-        $builder->add('metaDescription', TextareaType::class, [
-            'priority' => 970,
-            'empty_data' => $metaDescription !== '' ? $metaDescription : $options['meta_description_fallback'],
-            'data' => $metaDescription !== '' ? $metaDescription : $options['meta_description_fallback'],
         ]);
 
         $builder->add('seoScore', TextType::class, [
@@ -42,6 +28,12 @@ class SeoMetaType extends AbstractType
         $builder->add('readabilityScore', TextType::class, [
             'priority' => 980,
         ]);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, static function (FormEvent $event) use ($options): void {
+            $data = $event->getData();
+
+            self::configureSeoTextFields($event->getForm(), $data instanceof SeoMeta ? $data : null, $options);
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -79,5 +71,26 @@ class SeoMetaType extends AbstractType
     public function getBlockPrefix(): string
     {
         return 'integrated_seo_meta';
+    }
+
+    /**
+     * @param array<string, mixed> $options
+     */
+    private static function configureSeoTextFields(FormInterface $form, ?SeoMeta $seoMeta, array $options): void
+    {
+        $metaTitle = $seoMeta instanceof SeoMeta ? trim((string) $seoMeta->getMetatitle()) : '';
+        $metaDescription = $seoMeta instanceof SeoMeta ? trim((string) $seoMeta->getMetadescription()) : '';
+
+        $form->add('metaTitle', TextType::class, [
+            'priority' => 990,
+            'empty_data' => $metaTitle !== '' ? $metaTitle : $options['meta_title_fallback'],
+            'data' => $metaTitle !== '' ? $metaTitle : $options['meta_title_fallback'],
+        ]);
+
+        $form->add('metaDescription', TextareaType::class, [
+            'priority' => 970,
+            'empty_data' => $metaDescription !== '' ? $metaDescription : $options['meta_description_fallback'],
+            'data' => $metaDescription !== '' ? $metaDescription : $options['meta_description_fallback'],
+        ]);
     }
 }
