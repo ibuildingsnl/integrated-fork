@@ -134,6 +134,7 @@ class PageController extends AbstractController
             'lastPage' => $this->getLastEditPage($request->getSession()),
             'previewLinks' => $this->buildPreviewLinks($pagination, $request),
             'orphanChannelPageIds' => $this->getOrphanChannelPageIds($pagination),
+            'deletableContentTypePageIds' => $this->getDeletableContentTypePageIds($pagination),
             'activeFilterData' => $activeFilterData,
             'noneFilterActive' => \in_array(self::CHANNEL_NONE_VALUE, $selectedChannels, true),
         ]);
@@ -401,7 +402,7 @@ class PageController extends AbstractController
         ]);
     }
 
-    public function delete(Request $request, Page $page): Response
+    public function delete(Request $request, AbstractPage $page): Response
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -931,6 +932,62 @@ class PageController extends AbstractController
         }
 
         return $orphanPageIds;
+    }
+
+    /**
+     * @param iterable<mixed> $pages
+     *
+     * @return array<string, bool>
+     */
+    private function getDeletableContentTypePageIds(iterable $pages): array
+    {
+        $pageIdsByCombination = [];
+
+        foreach ($pages as $page) {
+            if (!$page instanceof ContentTypePage) {
+                continue;
+            }
+
+            $pageId = (string) $page->getId();
+            $channelId = $this->resolveChannelId($page->getChannel());
+            $contentTypeId = (string) $page->getContentType()->getId();
+
+            if ($pageId === '' || $channelId === null || $contentTypeId === '') {
+                continue;
+            }
+
+            $combinationKey = $channelId.'::'.$contentTypeId;
+            $pageIdsByCombination[$combinationKey][] = $pageId;
+        }
+
+        $deletablePageIds = [];
+
+        foreach ($pageIdsByCombination as $combinationKey => $pageIds) {
+            if (\count($pageIds) > 1) {
+                foreach ($pageIds as $pageId) {
+                    $deletablePageIds[$pageId] = true;
+                }
+
+                continue;
+            }
+
+            [$channelId, $contentTypeId] = explode('::', $combinationKey, 2);
+            $duplicateCount = $this->normalizeCountValue(
+                $this->documentManager
+                    ->createQueryBuilder(ContentTypePage::class)
+                    ->field('channel.$id')->equals($channelId)
+                    ->field('contentType.$id')->equals($contentTypeId)
+                    ->count()
+                    ->getQuery()
+                    ->execute()
+            );
+
+            if ($duplicateCount > 1) {
+                $deletablePageIds[$pageIds[0]] = true;
+            }
+        }
+
+        return $deletablePageIds;
     }
 
     /**

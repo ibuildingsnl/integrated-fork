@@ -99,7 +99,8 @@
                                         {% trans %}Preview link (24h){% endtrans %}
                                     </a>
                                     {% endif %}
-                                    {% if not page.locked %}
+                                    {% set canDeletePage = (not page.locked) or (page.type == 'content_type_page' and deletableContentTypePageIds[page.id]|default(false)) %}
+                                    {% if canDeletePage %}
                                         | <a href="{{ path('integrated_page_page_delete', { 'id': page.id }) }}"
                                              class="color-red" title="{% trans %}Delete{% endtrans %}">
                                         {% trans %}Delete{% endtrans %}
