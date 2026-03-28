@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Integrated\Bundle\ContentBundle\Tests\Form\EventListener;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
-use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManager;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Form\EventListener\ScopeEventSubscriber;
@@ -61,7 +61,7 @@ final class ScopeEventSubscriberTest extends TestCase
     {
         set_error_handler(
             static function (int $severity, string $message, string $file, int $line): bool {
-                if ($severity === E_DEPRECATED) {
+                if ($severity === \E_DEPRECATED) {
                     throw new \ErrorException($message, 0, $severity, $file, $line);
                 }
 

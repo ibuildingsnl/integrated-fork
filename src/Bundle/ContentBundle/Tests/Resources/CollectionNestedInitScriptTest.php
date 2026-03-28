@@ -37,5 +37,4 @@ final class CollectionNestedInitScriptTest extends TestCase
         self::assertStringContainsString(".closest('li').get(0) === elm.get(0);", $source);
         self::assertStringContainsString('event.stopPropagation();', $source);
     }
-
 }

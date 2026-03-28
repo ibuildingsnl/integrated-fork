@@ -25,7 +25,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ContactType extends AbstractType
 {
     /**
-     * @const array
+     * @var array
      */
     public const PROPERTIES = ['type', 'name', 'country', 'address1', 'address2', 'zipcode', 'city', 'email', 'phonenumber', 'mobilenumber'];
 

@@ -12,8 +12,8 @@
 namespace Integrated\Bundle\PageBundle\Document\Page;
 
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
-use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\SeoMeta;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -63,27 +63,27 @@ class Page extends AbstractPage
     /**
      * @var \DateTimeInterface|null
      */
-    protected $publishAt = null;
+    protected $publishAt;
 
     /**
      * @var \DateTimeInterface|null
      */
-    protected $expireAt = null;
+    protected $expireAt;
 
     /**
      * @var string|null
      */
-    protected $expireRedirectUrl = null;
+    protected $expireRedirectUrl;
 
     /**
      * @var bool|null
      */
-    protected $hideFromSitemap = null;
+    protected $hideFromSitemap;
 
     /**
      * @var bool|null
      */
-    protected $paginationNoindexEnabled = null;
+    protected $paginationNoindexEnabled;
 
     /**
      * @var SeoMeta

@@ -66,8 +66,8 @@ class ContentDraftCleanupCommand extends Command
         $maxVersions = max(1, (int) $input->getOption('max-versions'));
         $dryRun = (bool) $input->getOption('dry-run');
 
-        $draftThreshold = new \DateTimeImmutable(sprintf('-%d days', $draftMaxAgeDays));
-        $versionThreshold = new \DateTimeImmutable(sprintf('-%d days', $versionMaxAgeDays));
+        $draftThreshold = new \DateTimeImmutable(\sprintf('-%d days', $draftMaxAgeDays));
+        $versionThreshold = new \DateTimeImmutable(\sprintf('-%d days', $versionMaxAgeDays));
 
         $scanned = 0;
         $removedDrafts = 0;
@@ -105,12 +105,11 @@ class ContentDraftCleanupCommand extends Command
             $this->documentManager->flush();
         }
 
-        $output->writeln(sprintf('Drafts scanned: %d', $scanned));
-        $output->writeln(sprintf('Drafts removed: %d', $removedDrafts));
-        $output->writeln(sprintf('Versions pruned: %d', $prunedVersions));
-        $output->writeln(sprintf('Dry-run: %s', $dryRun ? 'yes' : 'no'));
+        $output->writeln(\sprintf('Drafts scanned: %d', $scanned));
+        $output->writeln(\sprintf('Drafts removed: %d', $removedDrafts));
+        $output->writeln(\sprintf('Versions pruned: %d', $prunedVersions));
+        $output->writeln(\sprintf('Dry-run: %s', $dryRun ? 'yes' : 'no'));
 
         return self::SUCCESS;
     }
 }
-

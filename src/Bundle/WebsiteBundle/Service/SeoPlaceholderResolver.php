@@ -43,7 +43,7 @@ final class SeoPlaceholderResolver
 
     private function normalizeText(mixed $value): string
     {
-        if (!is_scalar($value)) {
+        if (!\is_scalar($value)) {
             return '';
         }
 
@@ -65,7 +65,7 @@ final class SeoPlaceholderResolver
         }
 
         if (preg_match('#^https?://#i', $value) === 1) {
-            $path = (string) parse_url($value, PHP_URL_PATH);
+            $path = (string) parse_url($value, \PHP_URL_PATH);
             $value = $path !== '' ? $path : $value;
         }
 

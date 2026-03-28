@@ -20,7 +20,7 @@ use Integrated\Bundle\SolrBundle\Process\Exception\LogicException;
 class ArgumentProcess
 {
     /**
-     * @const string
+     * @var string
      */
     public const FORMAT = '/^(\d+):(\d+)$/';
 

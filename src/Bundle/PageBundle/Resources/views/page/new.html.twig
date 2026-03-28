@@ -67,7 +67,7 @@
                             <div class="status-info">
                                 {% for fieldName in ['publishAt', 'expireAt'] %}
                                     {% if attribute(form, fieldName) is defined %}
-                                        {{ form_row(attribute(form, fieldName), { 'style': 'inline', 'label_col': 'w-full', 'widget_col': 'w-full' }) }}
+                                        {{ form_row(attribute(form, fieldName), { 'style': 'inline', 'label_col': 'w-full', 'widget_col': 'w-full', 'label_attr': { 'class': 'inline-label-visible' } }) }}
                                     {% endif %}
                                 {% endfor %}
                                 <div class="form-group">

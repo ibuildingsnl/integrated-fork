@@ -23,7 +23,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 class SearchContentReferenced
 {
     /**
-     * @const IGNORE_CLASSES
+     * @var IGNORE_CLASSES
      */
     public const IGNORE_CLASSES = ['Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction'];
 

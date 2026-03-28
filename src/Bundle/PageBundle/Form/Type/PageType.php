@@ -12,10 +12,10 @@
 namespace Integrated\Bundle\PageBundle\Form\Type;
 
 use Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
-use Integrated\Bundle\PageBundle\Document\Page\Page;
+use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
 use Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryType;
 use Integrated\Bundle\ContentBundle\Form\Type\SeoMetaType;
-use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
+use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\PageBundle\Resolver\ThemeResolver;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -23,10 +23,10 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
@@ -57,9 +57,8 @@ class PageType extends AbstractType
     public function __construct(
         ChannelContextInterface $channelContext,
         ThemeResolver $themeResolver,
-        bool $defaultPaginatedNoindex = true
-    )
-    {
+        bool $defaultPaginatedNoindex = true,
+    ) {
         $this->channelContext = $channelContext;
         $this->themeResolver = $themeResolver;
         $this->defaultPaginatedNoindex = $defaultPaginatedNoindex;
@@ -272,11 +271,11 @@ class PageType extends AbstractType
 
     private function isAllowedExpireRedirectUrl(string $expireRedirectUrl): bool
     {
-        if (0 === strpos($expireRedirectUrl, '/') && 0 !== strpos($expireRedirectUrl, '//')) {
+        if (str_starts_with($expireRedirectUrl, '/') && !str_starts_with($expireRedirectUrl, '//')) {
             return true;
         }
 
-        if (false === filter_var($expireRedirectUrl, FILTER_VALIDATE_URL)) {
+        if (false === filter_var($expireRedirectUrl, \FILTER_VALIDATE_URL)) {
             return false;
         }
 

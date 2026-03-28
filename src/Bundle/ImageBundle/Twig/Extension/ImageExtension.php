@@ -247,7 +247,7 @@ class ImageExtension extends AbstractExtension
         }
 
         $targetDirectory = $this->resolveLocalPath('cache/pdf-preview');
-        $target = sprintf(
+        $target = \sprintf(
             '%s/%s.jpg',
             rtrim($targetDirectory, '/'),
             sha1($resolved.'|'.(string) filemtime($resolved))
@@ -264,7 +264,7 @@ class ImageExtension extends AbstractExtension
         try {
             $imagick = new \Imagick();
             $imagick->setResolution(144, 144);
-            $imagick->readImage(sprintf('%s[0]', $resolved));
+            $imagick->readImage(\sprintf('%s[0]', $resolved));
             $imagick->setIteratorIndex(0);
             $imagick->setImageBackgroundColor('white');
             $imagick = $imagick->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);

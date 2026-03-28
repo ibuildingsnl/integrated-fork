@@ -14,7 +14,6 @@ use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\SitemapBundle\Controller\DefaultController;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -225,14 +224,14 @@ final class DefaultControllerPageLifecycleTest extends TestCase
 
             public function select($fieldName = null): self
             {
-                $this->capture->selectCalls[] = func_get_args();
+                $this->capture->selectCalls[] = \func_get_args();
 
                 return $this;
             }
 
             public function sort($fieldName = null, $order = null): self
             {
-                $this->capture->sortCalls[] = func_get_args();
+                $this->capture->sortCalls[] = \func_get_args();
 
                 return $this;
             }
@@ -312,7 +311,7 @@ final class DefaultControllerPageLifecycleTest extends TestCase
 
             public function addOr($expression, ...$expressions): self
             {
-                $this->capture->addOrCount++;
+                ++$this->capture->addOrCount;
 
                 return $this;
             }

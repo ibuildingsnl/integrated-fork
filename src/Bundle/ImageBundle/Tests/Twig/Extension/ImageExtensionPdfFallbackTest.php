@@ -14,7 +14,7 @@ final class ImageExtensionPdfFallbackTest extends TestCase
 {
     public function testStringPdfPathUsesGeneratedPreviewWhenGhostscriptIsAvailable(): void
     {
-        if (!extension_loaded('imagick') || !is_file('/usr/bin/gs')) {
+        if (!\extension_loaded('imagick') || !is_file('/usr/bin/gs')) {
             self::markTestSkipped('Imagick with Ghostscript is required for PDF preview generation.');
         }
 
@@ -96,7 +96,7 @@ PDF);
             ->method('convert')
             ->willThrowException(new \RuntimeException('conversion failed'));
 
-        $metadata = new class() {
+        $metadata = new class {
             public function getExtension(): string
             {
                 return 'pdf';

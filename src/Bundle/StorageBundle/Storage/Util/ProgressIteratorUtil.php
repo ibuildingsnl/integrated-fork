@@ -22,7 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ProgressIteratorUtil
 {
     /**
-     * @const string
+     * @var string
      */
     public const FORMAT = '%current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%';
 

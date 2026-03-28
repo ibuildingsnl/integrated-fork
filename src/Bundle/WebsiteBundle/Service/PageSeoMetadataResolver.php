@@ -11,11 +11,11 @@
 
 namespace Integrated\Bundle\WebsiteBundle\Service;
 
-use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\SeoMeta;
-use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
+use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -210,11 +210,11 @@ final class PageSeoMetadataResolver
         }
 
         $channel = $request->attributes->get('_channel');
-        if (is_array($channel)) {
+        if (\is_array($channel)) {
             return trim((string) ($channel['name'] ?? $channel['label'] ?? $channel['title'] ?? ''));
         }
 
-        if (is_object($channel)) {
+        if (\is_object($channel)) {
             foreach (['getName', 'getLabel', 'getTitle'] as $method) {
                 if (method_exists($channel, $method)) {
                     return trim((string) $channel->{$method}());

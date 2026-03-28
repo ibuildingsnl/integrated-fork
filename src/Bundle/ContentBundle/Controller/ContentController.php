@@ -1970,5 +1970,4 @@ class ContentController extends AbstractController
 
         return $references;
     }
-
 }

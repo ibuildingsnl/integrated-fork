@@ -11,9 +11,9 @@ final class PdfPreviewSupportContractTest extends TestCase
         $adapter = file_get_contents(__DIR__.'/../../Converter/Adapter/ImageMagickAdapter.php');
 
         self::assertIsString($adapter);
-        self::assertStringContainsString("getMetadata()->getExtension()", $adapter);
+        self::assertStringContainsString('getMetadata()->getExtension()', $adapter);
         self::assertStringContainsString("'pdf'", $adapter);
-        self::assertStringContainsString("setResolution(", $adapter);
-        self::assertStringContainsString("[0]", $adapter);
+        self::assertStringContainsString('setResolution(', $adapter);
+        self::assertStringContainsString('[0]', $adapter);
     }
 }

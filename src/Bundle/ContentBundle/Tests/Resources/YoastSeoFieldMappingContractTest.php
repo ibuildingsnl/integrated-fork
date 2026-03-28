@@ -16,7 +16,7 @@ final class YoastSeoFieldMappingContractTest extends TestCase
         $this->assertStringContainsString('configuration.fieldSelectors', $source);
         $this->assertStringContainsString("import 'draft-js-mention-plugin/lib/plugin.css';", $source);
         $this->assertStringContainsString("import './seo-editor.css';", $source);
-        $this->assertStringContainsString("const selectField = (key) => fieldSelectors[key] ? document.querySelector(fieldSelectors[key]) : null;", $source);
+        $this->assertStringContainsString('const selectField = (key) => fieldSelectors[key] ? document.querySelector(fieldSelectors[key]) : null;', $source);
         $this->assertStringNotContainsString('#integrated_content_title', $source);
     }
 

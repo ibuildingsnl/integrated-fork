@@ -15,7 +15,7 @@ final class YoastSeoWorkerContractTest extends TestCase
 
         $this->assertIsString($config);
         $this->assertIsString($shim);
-        $this->assertStringContainsString("new webpack.ProvidePlugin({", $config);
+        $this->assertStringContainsString('new webpack.ProvidePlugin({', $config);
         $this->assertStringContainsString("process: path.resolve(__dirname, './src/shims/process.js')", $config);
         $this->assertStringContainsString('module.exports = self.process || {', $shim);
     }

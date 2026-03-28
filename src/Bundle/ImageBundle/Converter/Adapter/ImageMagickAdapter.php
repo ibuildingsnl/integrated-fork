@@ -23,7 +23,7 @@ use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 class ImageMagickAdapter implements AdapterInterface
 {
     /**
-     * @const string
+     * @var string
      */
     public const NAME = 'Imagick';
 

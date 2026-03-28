@@ -58,4 +58,3 @@ class ContentEditDraftVersion
         $this->savedAt = $savedAt;
     }
 }
-

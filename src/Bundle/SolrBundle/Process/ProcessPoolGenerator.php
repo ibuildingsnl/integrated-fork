@@ -23,7 +23,7 @@ use Symfony\Component\Process\Process;
 class ProcessPoolGenerator
 {
     /**
-     * @const
+     * @var
      */
     public const COMMAND = 'php bin/console %s %s %d:%d -e %s';
 

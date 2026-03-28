@@ -39,7 +39,7 @@ class ContentEditAutosaveFlowTest extends TestCase
                 && str_contains($editView, 'integrated_content_draft_versions_section')
                 && str_contains($editView, 'integrated_content_actions_draft_version')
                 && str_contains($editView, 'integrated_content_actions_restore_draft_version'),
-            'unlock_article draft hooks' => str_contains($script, "data-draft-save-url")
+            'unlock_article draft hooks' => str_contains($script, 'data-draft-save-url')
                 && str_contains($script, 'saveDraftIfNeeded')
                 && str_contains($script, 'integrated_content_actions_save_draft')
                 && str_contains($script, 'integrated_content_actions_draft_version')
@@ -51,7 +51,7 @@ class ContentEditAutosaveFlowTest extends TestCase
             $this->assertSame(
                 $baseline,
                 $enabled,
-                sprintf(
+                \sprintf(
                     'Draft autosave support is inconsistent: "%s" is %s while the baseline state is %s.',
                     $part,
                     $enabled ? 'enabled' : 'disabled',

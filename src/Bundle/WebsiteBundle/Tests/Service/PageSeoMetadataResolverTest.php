@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Integrated\Bundle\WebsiteBundle\Tests\Service;
 
-use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\SeoMeta;
-use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\WebsiteBundle\Service\PageSeoMetadataResolver;
+use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;

@@ -16,10 +16,10 @@ final class SeoMetaWidgetPageContractTest extends TestCase
         $this->assertStringContainsString("attribute(documentNode, 'channel')", $template);
         $this->assertStringContainsString("attribute(documentNode, 'path')", $template);
         $this->assertStringContainsString("attribute(documentNode, 'seoMetadata')", $template);
-        $this->assertStringContainsString("pageSeoMetadata.metaTitle|default(pageTitle)", $template);
-        $this->assertStringContainsString("{% set documentUrl = pagePath|default(\"/\") %}", $template);
+        $this->assertStringContainsString('pageSeoMetadata.metaTitle|default(pageTitle)', $template);
+        $this->assertStringContainsString('{% set documentUrl = pagePath|default("/") %}', $template);
         $this->assertStringContainsString("'fieldSelectors': {", $template);
-        $this->assertStringContainsString("{% set seoPlaceholderDefinitions = [", $template);
+        $this->assertStringContainsString('{% set seoPlaceholderDefinitions = [', $template);
         $this->assertStringContainsString("'seoPlaceholders': seoPlaceholderDefinitions", $template);
         $this->assertStringContainsString("'token': '%%title%%'", $template);
         $this->assertStringContainsString("'label': 'Titel'", $template);

@@ -15,8 +15,8 @@ use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\EventListener\WebsiteToolbarListener;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\UriSigner;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -138,11 +138,11 @@ class PageController extends AbstractController
 
     private function isAllowedRedirectUrl(string $redirectUrl): bool
     {
-        if (0 === strpos($redirectUrl, '/') && 0 !== strpos($redirectUrl, '//')) {
+        if (str_starts_with($redirectUrl, '/') && !str_starts_with($redirectUrl, '//')) {
             return true;
         }
 
-        if (false === filter_var($redirectUrl, FILTER_VALIDATE_URL)) {
+        if (false === filter_var($redirectUrl, \FILTER_VALIDATE_URL)) {
             return false;
         }
 

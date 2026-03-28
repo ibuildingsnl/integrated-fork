@@ -19,12 +19,12 @@ use Doctrine\Persistence\Proxy;
 class DoctrineDocument
 {
     /**
-     * @const string
+     * @var string
      */
     public const GET_SIGNATURE = 'get%s';
 
     /**
-     * @const string
+     * @var string
      */
     public const SET_SIGNATURE = 'set%s';
 

@@ -101,8 +101,8 @@ class ContentEditDraft
         $versions = $this->getVersions();
         array_unshift($versions, new ContentEditDraftVersion($payload));
 
-        if ($maxVersions > 0 && count($versions) > $maxVersions) {
-            $versions = array_slice($versions, 0, $maxVersions);
+        if ($maxVersions > 0 && \count($versions) > $maxVersions) {
+            $versions = \array_slice($versions, 0, $maxVersions);
         }
 
         $this->versions = $versions;
@@ -111,7 +111,7 @@ class ContentEditDraft
     public function pruneVersions(?\DateTimeInterface $minimumSavedAt = null, int $maxVersions = 25): int
     {
         $versions = $this->getVersions();
-        $before = count($versions);
+        $before = \count($versions);
 
         if ($minimumSavedAt instanceof \DateTimeInterface) {
             $threshold = $minimumSavedAt->getTimestamp();
@@ -123,13 +123,13 @@ class ContentEditDraft
             );
         }
 
-        if ($maxVersions > 0 && count($versions) > $maxVersions) {
-            $versions = array_slice($versions, 0, $maxVersions);
+        if ($maxVersions > 0 && \count($versions) > $maxVersions) {
+            $versions = \array_slice($versions, 0, $maxVersions);
         }
 
         $this->versions = $versions;
 
-        return max(0, $before - count($versions));
+        return max(0, $before - \count($versions));
     }
 
     public function getCreatedAt(): \DateTime

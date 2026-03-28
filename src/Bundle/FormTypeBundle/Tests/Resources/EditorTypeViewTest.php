@@ -6,8 +6,8 @@ namespace Integrated\Bundle\FormTypeBundle\Tests\Resources;
 
 use Integrated\Bundle\FormTypeBundle\Form\Type\EditorType;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 final class EditorTypeViewTest extends TestCase
 {
