@@ -130,8 +130,8 @@ final class RelatedContentBlockHandlerTest extends TestCase
 
 final class TestableRelatedContentBlockHandler extends RelatedContentBlockHandler
 {
-    protected function getQuery(RelatedContentBlock $block, $document)
+    protected function getQuery(RelatedContentBlock $block, mixed $document): ?\Doctrine\ODM\MongoDB\Query\Builder
     {
-        return new \stdClass();
+        return null;
     }
 }

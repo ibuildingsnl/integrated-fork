@@ -162,10 +162,6 @@ final class PageSeoMetadataResolver
         }
 
         $file = $image->getFile();
-        if (!$file instanceof StorageInterface) {
-            return null;
-        }
-
         $path = trim((string) $file->getPathname());
         if ($path === '') {
             return null;

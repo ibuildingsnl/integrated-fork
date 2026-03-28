@@ -20,7 +20,8 @@ final class ScopeEventSubscriberTest extends TestCase
         $channel = new Channel();
         $this->setProtectedProperty($channel, 'scope', 'scope-123');
 
-        $scopeReference = new Scope('scope-123');
+        $scopeReference = new Scope();
+        $this->setProtectedProperty($scopeReference, 'id', 'scope-123');
 
         $entityManager = $this->createMock(EntityManager::class);
         $entityManager

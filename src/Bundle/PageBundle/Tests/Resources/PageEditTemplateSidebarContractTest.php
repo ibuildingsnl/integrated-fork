@@ -23,6 +23,11 @@ final class PageEditTemplateSidebarContractTest extends TestCase
         $this->assertStringContainsString('form.disabled', $template);
         $this->assertStringContainsString("['publishAt', 'expireAt']", $template);
         $this->assertStringContainsString("'label_attr': { 'class': 'inline-label-visible' }", $template);
+        $this->assertStringContainsString('{% set pageOpenUrl = pagePath %}', $template);
+        $this->assertStringContainsString("path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': pagePath})", $template);
+        $this->assertStringContainsString('<a href="{{ pageOpenUrl }}" target="_blank" rel="noopener noreferrer" data-turbo="false">', $template);
+        $this->assertStringContainsString('{% if previewLink %}', $template);
+        $this->assertStringContainsString('{% trans %}Preview link (24h){% endtrans %}', $template);
         $this->assertStringContainsString("['expireRedirectUrl']", $template);
         $this->assertStringContainsString('{{ form_start(form) }}', $template);
         $this->assertStringContainsString('bundles/integratedintegrated/edit.js', $template);
@@ -48,6 +53,11 @@ final class PageEditTemplateSidebarContractTest extends TestCase
         $this->assertStringContainsString('form.disabled', $template);
         $this->assertStringContainsString("['publishAt', 'expireAt']", $template);
         $this->assertStringContainsString("'label_attr': { 'class': 'inline-label-visible' }", $template);
+        $this->assertStringContainsString('{% set pageOpenUrl = pagePath %}', $template);
+        $this->assertStringContainsString("path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': pagePath})", $template);
+        $this->assertStringContainsString('<a href="{{ pageOpenUrl }}" target="_blank" rel="noopener noreferrer" data-turbo="false">', $template);
+        $this->assertStringContainsString('{% if previewLink %}', $template);
+        $this->assertStringContainsString('{% trans %}Preview link (24h){% endtrans %}', $template);
         $this->assertStringContainsString("['expireRedirectUrl']", $template);
         $this->assertStringContainsString('{{ form_start(form) }}', $template);
         $this->assertStringContainsString('bundles/integratedintegrated/edit.js', $template);

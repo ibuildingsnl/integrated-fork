@@ -14,6 +14,7 @@ namespace Integrated\Bundle\WebsiteBundle\Controller;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\EventListener\WebsiteToolbarListener;
+use Integrated\Common\Security\PermissionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +41,7 @@ class PageController extends AbstractController
     public function show(Request $request, Page $page): Response
     {
         $now = new \DateTimeImmutable();
-        $canPreviewDraft = $this->isGranted('ROLE_WEBSITE_MANAGER') || $this->isGranted('ROLE_ADMIN');
+        $canPreviewDraft = $this->canPreviewUnpublishedPage($page);
         $hasValidPreviewLink = $this->hasValidDraftPreviewLink($request, $page);
         $canPreview = $canPreviewDraft || $hasValidPreviewLink;
         $isPublic = $this->isPublicPage($page, $now);
@@ -78,6 +79,17 @@ class PageController extends AbstractController
         }
 
         return $response;
+    }
+
+    private function canPreviewUnpublishedPage(Page $page): bool
+    {
+        if ($this->isGranted('ROLE_WEBSITE_MANAGER') || $this->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
+
+        $channel = $page->getChannel();
+        return $this->isGranted(PermissionInterface::READ, $channel)
+            || $this->isGranted(PermissionInterface::WRITE, $channel);
     }
 
     private function hasValidDraftPreviewLink(Request $request, Page $page): bool

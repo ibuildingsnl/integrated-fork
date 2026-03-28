@@ -98,7 +98,10 @@ class RelatedContentBlockHandler extends BlockHandler
         $pageParam = $block->getId().'-page';
         $itemsPerPage = $block->getItemsPerPage();
         $maxItems = $block->getMaxItems();
-        $page = $request->query->get($pageParam, 1);
+        $page = (int) $request->query->get($pageParam, 1);
+        if ($page < 1) {
+            $page = 1;
+        }
 
         if ($maxItems > 0 && $maxItems <= $itemsPerPage) {
             $page = 1;
@@ -114,7 +117,7 @@ class RelatedContentBlockHandler extends BlockHandler
             ]
         );
 
-        if ($pagination && $maxItems > 0) {
+        if ($maxItems > 0) {
             if ($maxItems <= $itemsPerPage) {
                 $pagination->setCurrentPageNumber(1);
             }

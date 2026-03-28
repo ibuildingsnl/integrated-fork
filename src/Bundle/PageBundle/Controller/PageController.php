@@ -351,6 +351,7 @@ class PageController extends AbstractController
 
         return $this->render('@IntegratedPage/page/new.html.twig', [
             'form' => $form,
+            'previewLink' => null,
         ]);
     }
 
@@ -385,6 +386,7 @@ class PageController extends AbstractController
         return $this->render('@IntegratedPage/page/edit.html.twig', [
             'page' => $page,
             'form' => $form,
+            'previewLink' => $this->buildPreviewLink($page, $request),
         ]);
     }
 
@@ -501,6 +503,7 @@ class PageController extends AbstractController
         $messages = [];
 
         foreach ($form->getErrors(true, true) as $error) {
+            /** @var FormError $error */
             $message = trim((string) $error->getMessage());
             if ($message === '') {
                 continue;
@@ -668,7 +671,14 @@ class PageController extends AbstractController
 
         $xpath = new \DOMXPath($dom);
         foreach ($xpath->query('//script|//style|//noscript') ?: [] as $node) {
-            $node->parentNode?->removeChild($node);
+            if (!$node instanceof \DOMNode) {
+                continue;
+            }
+
+            $parentNode = $node->parentNode;
+            if ($parentNode instanceof \DOMNode) {
+                $parentNode->removeChild($node);
+            }
         }
 
         foreach ([
@@ -682,7 +692,10 @@ class PageController extends AbstractController
                 continue;
             }
 
-            return $this->innerHtml($nodeList->item(0));
+            $node = $nodeList->item(0);
+            if ($node instanceof \DOMNode) {
+                return $this->innerHtml($node);
+            }
         }
 
         return trim(strip_tags($html));
@@ -742,7 +755,9 @@ class PageController extends AbstractController
             ));
         }
 
-        return $response->getContent() ?? '';
+        $content = $response->getContent();
+
+        return \is_string($content) ? $content : '';
     }
 
     private function renderSeoPageHtmlFromTemplate(Page $page): string
@@ -812,10 +827,9 @@ class PageController extends AbstractController
     private function buildPreviewLinks(iterable $pages, Request $request): array
     {
         $links = [];
-        $expires = time() + self::PREVIEW_LINK_TTL_SECONDS;
 
         foreach ($pages as $page) {
-            if (!$page instanceof Page || !$page->isDisabled()) {
+            if (!$page instanceof Page) {
                 continue;
             }
 
@@ -824,14 +838,34 @@ class PageController extends AbstractController
                 continue;
             }
 
-            $url = $this->buildAbsolutePageUrl($page, $request, [
-                self::PREVIEW_EXPIRES_PARAM => $expires,
-            ]);
+            $link = $this->buildPreviewLink($page, $request);
+            if (null === $link) {
+                continue;
+            }
 
-            $links[$id] = $this->uriSigner->sign($url);
+            $links[$id] = $link;
         }
 
         return $links;
+    }
+
+    private function buildPreviewLink(Page $page, Request $request): ?string
+    {
+        if (!$page->isDisabled()) {
+            return null;
+        }
+
+        $id = (string) $page->getId();
+        if ($id === '') {
+            return null;
+        }
+
+        $expires = time() + self::PREVIEW_LINK_TTL_SECONDS;
+        $url = $this->buildAbsolutePageUrl($page, $request, [
+            self::PREVIEW_EXPIRES_PARAM => $expires,
+        ]);
+
+        return $this->uriSigner->sign($url);
     }
 
     /**

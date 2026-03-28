@@ -23,6 +23,8 @@
             <argument type="service" id="security.authorization_checker" />
             <argument type="service" id="security.token_storage" />
             <argument type="service" id="request_stack" />
+            <argument type="service" id="router" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
         </service>
 
         <service id="integrated_website.service.content_service" class="Integrated\Bundle\WebsiteBundle\Service\ContentService">

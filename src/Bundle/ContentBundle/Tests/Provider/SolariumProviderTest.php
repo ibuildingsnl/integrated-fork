@@ -83,6 +83,9 @@ class SolariumProviderTest extends TestCase
 
 final class TestSolariumProvider extends SolariumProvider
 {
+    /**
+     * @param array<string, mixed> $options
+     */
     public function exposedGetQuery(ContentBlock $subject, Request $request, array $options = []): Query
     {
         return $this->getQuery($subject, $request, $options);

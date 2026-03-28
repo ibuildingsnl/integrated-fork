@@ -26,8 +26,9 @@ final class SeoMetaTypeRuntimeTest extends TypeTestCase
     {
         $article = new Article();
         $article->setTitle('asdfasdf');
-        $article->getSeoMetadata()->setMetatitle('sadfasdfsadfasdf %%title%% %%separator%% %%channel%%');
-        $article->getSeoMetadata()->setMetadescription('custom description %%title%%');
+        $article->setSeoMetadata(new SeoMeta());
+        $article->getSeoMetadata()?->setMetatitle('sadfasdfsadfasdf %%title%% %%separator%% %%channel%%');
+        $article->getSeoMetadata()?->setMetadescription('custom description %%title%%');
 
         $form = $this->factory
             ->createBuilder(FormType::class, $article)

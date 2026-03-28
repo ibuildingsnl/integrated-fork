@@ -73,6 +73,11 @@ class ContentChannelIntegrationListenerTest extends TestCase
 
 final class TestableContentChannelIntegrationListener extends ContentChannelIntegrationListener
 {
+    /**
+     * @param array<int, string>|null $ids
+     *
+     * @return array<int, \Integrated\Common\Content\Channel\ChannelInterface>
+     */
     public function exposedGetChannels(?array $ids = null): array
     {
         return $this->getChannels($ids);

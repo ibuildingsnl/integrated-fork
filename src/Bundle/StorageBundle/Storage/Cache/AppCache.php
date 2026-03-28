@@ -23,9 +23,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class AppCache implements CacheInterface
 {
-    /**
-     * @var
-     */
     public const CACHE_PATH = '%s/integrated/storage/file';
 
     /**

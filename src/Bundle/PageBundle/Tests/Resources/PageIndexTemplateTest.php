@@ -13,6 +13,13 @@ final class PageIndexTemplateTest extends TestCase
         $template = file_get_contents(__DIR__.'/../../Resources/views/page/index.html.twig');
 
         $this->assertIsString($template);
+        $this->assertStringContainsString('page-index-table', $template);
+        $this->assertStringContainsString('{% trans %}SEO{% endtrans %}', $template);
+        $this->assertStringContainsString('seo-button readability-', $template);
+        $this->assertStringContainsString('workflow-status', $template);
+        $this->assertStringContainsString('{% trans %}Scheduled{% endtrans %}', $template);
+        $this->assertStringContainsString('{% trans %}Expired{% endtrans %}', $template);
+        $this->assertStringContainsString('{% trans %}System page{% endtrans %}', $template);
         $this->assertStringContainsString('bindPageFilterAutoSubmit', $template);
         $this->assertStringContainsString("document.addEventListener('turbo:load', bindPageFilterAutoSubmit);", $template);
         $this->assertStringContainsString('form.requestSubmit ? form.requestSubmit() : form.submit();', $template);

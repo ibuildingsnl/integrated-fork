@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Integrated\Bundle\SitemapBundle\Tests\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Iterator\IterableResult;
 use Doctrine\ODM\MongoDB\Iterator\Iterator as MongoIterator;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\Query\Expr;
+use Doctrine\ODM\MongoDB\Query\Query;
 use Integrated\Bundle\ContentBundle\Services\ContentTypeInformation;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\SitemapBundle\Controller\DefaultController;
@@ -22,17 +22,9 @@ final class DefaultControllerPageLifecycleTest extends TestCase
 {
     public function testListPagesAppliesLifecycleFiltersToVisiblePages(): void
     {
-        $capture = (object) [
-            'fieldCalls' => [],
-            'selectCalls' => [],
-            'sortCalls' => [],
-            'skipCalls' => [],
-            'limitCalls' => [],
-            'addAndCalls' => [],
-        ];
-        $query = $this->createMock(IterableResult::class);
+        $capture = new LifecycleQueryCapture();
         $queryIterator = $this->createMock(MongoIterator::class);
-        $query->expects(self::once())->method('getIterator')->willReturn($queryIterator);
+        $query = $this->createFindQuery($queryIterator);
         [$builder, $publishExprLog, $expireExprLog, $publishNullLog, $publishLteLog, $expireNullLog, $expireGtLog] = $this->createLifecycleQueryBuilder($capture, $query);
 
         $manager = $this->createMock(DocumentManager::class);
@@ -71,16 +63,8 @@ final class DefaultControllerPageLifecycleTest extends TestCase
 
     public function testIndexUsesLifecycleFiltersForPageCount(): void
     {
-        $capture = (object) [
-            'fieldCalls' => [],
-            'selectCalls' => [],
-            'sortCalls' => [],
-            'skipCalls' => [],
-            'limitCalls' => [],
-            'addAndCalls' => [],
-        ];
-        $query = $this->createMock(IterableResult::class);
-        $query->expects(self::once())->method('execute')->willReturn(50001);
+        $capture = new LifecycleQueryCapture();
+        $query = $this->createCountQuery(50001);
         [$builder, $publishExprLog, $expireExprLog, $publishNullLog, $publishLteLog, $expireNullLog, $expireGtLog] = $this->createLifecycleQueryBuilder($capture, $query);
 
         $manager = $this->createMock(DocumentManager::class);
@@ -125,16 +109,16 @@ final class DefaultControllerPageLifecycleTest extends TestCase
     }
 
     /**
-     * @return array{0: Builder, 1: object, 2: object, 3: object, 4: object, 5: object, 6: object}
+     * @return array{0: Builder, 1: ExprLog, 2: ExprLog, 3: ExprLog, 4: ExprLog, 5: ExprLog, 6: ExprLog}
      */
-    private function createLifecycleQueryBuilder(object $capture, IterableResult $query): array
+    private function createLifecycleQueryBuilder(LifecycleQueryCapture $capture, Query $query): array
     {
-        $publishExprLog = (object) ['addOrCount' => 0];
-        $publishNullLog = (object) ['calls' => []];
-        $publishLteLog = (object) ['calls' => []];
-        $expireExprLog = (object) ['addOrCount' => 0];
-        $expireNullLog = (object) ['calls' => []];
-        $expireGtLog = (object) ['calls' => []];
+        $publishExprLog = new ExprLog();
+        $publishNullLog = new ExprLog();
+        $publishLteLog = new ExprLog();
+        $expireExprLog = new ExprLog();
+        $expireNullLog = new ExprLog();
+        $expireGtLog = new ExprLog();
 
         $publishExpr = $this->createExprSpy($publishExprLog);
         $publishNullExpr = $this->createExprSpy($publishNullLog);
@@ -164,19 +148,8 @@ final class DefaultControllerPageLifecycleTest extends TestCase
         DocumentManager $manager,
         ChannelContextInterface $context,
         ContentTypeInformation $contentTypeInformation,
-    ): object {
-        return new class($manager, $context, $contentTypeInformation) extends DefaultController {
-            public string $lastView = '';
-            public array $lastParameters = [];
-
-            protected function render(string $view, array $parameters = [], ?Response $response = null): Response
-            {
-                $this->lastView = $view;
-                $this->lastParameters = $parameters;
-
-                return $response ?? new Response('<xml/>');
-            }
-        };
+    ): RenderCaptureController {
+        return new RenderCaptureController($manager, $context, $contentTypeInformation);
     }
 
     private function createChannelContext(string $channelId): ChannelContextInterface
@@ -190,131 +163,246 @@ final class DefaultControllerPageLifecycleTest extends TestCase
         return $context;
     }
 
-    private function createBuilderSpy(object $capture, array $exprQueue, IterableResult $query): Builder
+    /**
+     * @param list<Expr> $exprQueue
+     */
+    private function createBuilderSpy(LifecycleQueryCapture $capture, array $exprQueue, Query $query): Builder
     {
-        return new class($capture, $exprQueue, $query) extends Builder {
-            /**
-             * @param list<Expr> $exprQueue
-             */
-            public function __construct(private object $capture, private array $exprQueue, private IterableResult $query)
-            {
-            }
-
-            public function field(string $field): self
-            {
-                $this->capture->fieldCalls[] = $field;
-
-                return $this;
-            }
-
-            public function equals($value): self
-            {
-                return $this;
-            }
-
-            public function notEqual($value): self
-            {
-                return $this;
-            }
-
-            public function exists(bool $bool): self
-            {
-                return $this;
-            }
-
-            public function select($fieldName = null): self
-            {
-                $this->capture->selectCalls[] = \func_get_args();
-
-                return $this;
-            }
-
-            public function sort($fieldName = null, $order = null): self
-            {
-                $this->capture->sortCalls[] = \func_get_args();
-
-                return $this;
-            }
-
-            public function skip(int $skip): self
-            {
-                $this->capture->skipCalls[] = $skip;
-
-                return $this;
-            }
-
-            public function limit(int $limit): self
-            {
-                $this->capture->limitCalls[] = $limit;
-
-                return $this;
-            }
-
-            public function count(): self
-            {
-                return $this;
-            }
-
-            public function addAnd($expression, ...$expressions): self
-            {
-                $this->capture->addAndCalls[] = $expression;
-
-                return $this;
-            }
-
-            public function expr(): Expr
-            {
-                return array_shift($this->exprQueue);
-            }
-
-            public function getQuery(array $options = []): IterableResult
-            {
-                return $this->query;
-            }
-        };
+        return new BuilderSpy($capture, $exprQueue, $query);
     }
 
-    private function createExprSpy(object $capture): Expr
+    /**
+     * @param MongoIterator<mixed> $iterator
+     */
+    private function createFindQuery(MongoIterator $iterator): Query
     {
-        return new class($capture) extends Expr {
-            public function __construct(private object $capture)
-            {
-            }
+        $collection = $this->createMock(\MongoDB\Collection::class);
 
-            public function field(string $field): self
-            {
-                $this->capture->calls[] = ['field', $field];
+        return $this->createDoctrineQuery(
+            $collection,
+            [
+                'type' => Query::TYPE_FIND,
+                'query' => [],
+            ],
+            $iterator
+        );
+    }
 
-                return $this;
-            }
+    private function createCountQuery(int $count): Query
+    {
+        $collection = $this->createMock(\MongoDB\Collection::class);
+        $collection
+            ->expects(self::once())
+            ->method('count')
+            ->willReturn($count);
 
-            public function equals($value): self
-            {
-                $this->capture->calls[] = ['equals', $value];
+        return $this->createDoctrineQuery(
+            $collection,
+            [
+                'type' => Query::TYPE_COUNT,
+                'query' => [],
+            ]
+        );
+    }
 
-                return $this;
-            }
+    /**
+     * @param array{type: Query::TYPE_FIND, query: array<string, mixed>}|array{type: Query::TYPE_COUNT, query: array<string, mixed>} $query
+     * @param MongoIterator<mixed>|null $iterator
+     */
+    private function createDoctrineQuery(\MongoDB\Collection $collection, array $query, ?MongoIterator $iterator = null): Query
+    {
+        $documentManager = $this->createMock(DocumentManager::class);
+        $classMetadata = new \Doctrine\ODM\MongoDB\Mapping\ClassMetadata(Page::class);
 
-            public function lte($value): self
-            {
-                $this->capture->calls[] = ['lte', $value];
+        $queryObject = new Query($documentManager, $classMetadata, $collection, $query, [], false);
 
-                return $this;
-            }
+        if ($iterator instanceof MongoIterator) {
+            $reflection = new \ReflectionProperty(Query::class, 'iterator');
+            $reflection->setValue($queryObject, $iterator);
+        }
 
-            public function gt($value): self
-            {
-                $this->capture->calls[] = ['gt', $value];
+        return $queryObject;
+    }
 
-                return $this;
-            }
+    private function createExprSpy(ExprLog $capture): Expr
+    {
+        return new ExprSpy($capture);
+    }
+}
 
-            public function addOr($expression, ...$expressions): self
-            {
-                ++$this->capture->addOrCount;
+final class LifecycleQueryCapture
+{
+    /** @var list<string> */
+    public array $fieldCalls = [];
+    /** @var list<array<int, string>> */
+    public array $selectCalls = [];
+    /** @var list<array<int, string>> */
+    public array $sortCalls = [];
+    /** @var list<int> */
+    public array $skipCalls = [];
+    /** @var list<int> */
+    public array $limitCalls = [];
+    /** @var list<mixed> */
+    public array $addAndCalls = [];
+}
 
-                return $this;
-            }
-        };
+final class ExprLog
+{
+    public int $addOrCount = 0;
+    /** @var list<array{0: string, 1: mixed}> */
+    public array $calls = [];
+}
+
+final class RenderCaptureController extends DefaultController
+{
+    public string $lastView = '';
+    /** @var array<string, mixed> */
+    public array $lastParameters = [];
+
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    protected function render(string $view, array $parameters = [], ?Response $response = null): Response
+    {
+        $this->lastView = $view;
+        $this->lastParameters = $parameters;
+
+        return $response ?? new Response('<xml/>');
+    }
+}
+
+final class BuilderSpy extends Builder
+{
+    /**
+     * @param list<Expr> $exprQueue
+     */
+    public function __construct(
+        private readonly LifecycleQueryCapture $capture,
+        private array $exprQueue,
+        private readonly Query $query,
+    ) {
+    }
+
+    public function field(string $field): self
+    {
+        $this->capture->fieldCalls[] = $field;
+
+        return $this;
+    }
+
+    public function equals($value): self
+    {
+        return $this;
+    }
+
+    public function notEqual($value): self
+    {
+        return $this;
+    }
+
+    public function exists(bool $bool): self
+    {
+        return $this;
+    }
+
+    public function select($fieldName = null): self
+    {
+        /** @var array<int, string> $args */
+        $args = \func_get_args();
+        $this->capture->selectCalls[] = $args;
+
+        return $this;
+    }
+
+    public function sort($fieldName = null, $order = null): self
+    {
+        /** @var array<int, string> $args */
+        $args = \func_get_args();
+        $this->capture->sortCalls[] = $args;
+
+        return $this;
+    }
+
+    public function skip(int $skip): self
+    {
+        $this->capture->skipCalls[] = $skip;
+
+        return $this;
+    }
+
+    public function limit(int $limit): self
+    {
+        $this->capture->limitCalls[] = $limit;
+
+        return $this;
+    }
+
+    public function count(): self
+    {
+        return $this;
+    }
+
+    public function addAnd($expression, ...$expressions): self
+    {
+        $this->capture->addAndCalls[] = $expression;
+
+        return $this;
+    }
+
+    public function expr(): Expr
+    {
+        $expr = array_shift($this->exprQueue);
+        if (!$expr instanceof Expr) {
+            throw new \LogicException('Expression queue exhausted.');
+        }
+
+        return $expr;
+    }
+
+    public function getQuery(array $options = []): Query
+    {
+        return $this->query;
+    }
+}
+
+final class ExprSpy extends Expr
+{
+    public function __construct(private readonly ExprLog $capture)
+    {
+    }
+
+    public function field(string $field): self
+    {
+        $this->capture->calls[] = ['field', $field];
+
+        return $this;
+    }
+
+    public function equals($value): self
+    {
+        $this->capture->calls[] = ['equals', $value];
+
+        return $this;
+    }
+
+    public function lte($value): self
+    {
+        $this->capture->calls[] = ['lte', $value];
+
+        return $this;
+    }
+
+    public function gt($value): self
+    {
+        $this->capture->calls[] = ['gt', $value];
+
+        return $this;
+    }
+
+    public function addOr($expression, ...$expressions): self
+    {
+        ++$this->capture->addOrCount;
+
+        return $this;
     }
 }

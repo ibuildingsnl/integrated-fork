@@ -19,6 +19,7 @@ use Integrated\Common\Security\PermissionInterface;
 use Integrated\Common\Security\Resolver\PermissionResolver;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 class ContentTypeVoter implements VoterInterface
@@ -58,7 +59,7 @@ class ContentTypeVoter implements VoterInterface
         return \in_array($attribute, $this->permissions);
     }
 
-    public function vote(TokenInterface $token, $contentType, array $attributes): int
+    public function vote(TokenInterface $token, mixed $contentType, array $attributes, ?Vote $vote = null): int
     {
         if (!$contentType instanceof ContentTypeInterface) {
             return VoterInterface::ACCESS_ABSTAIN;

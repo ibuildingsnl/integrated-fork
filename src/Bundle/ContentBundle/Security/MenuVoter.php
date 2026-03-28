@@ -18,6 +18,7 @@ use Integrated\Common\Security\PermissionInterface;
 use Integrated\Common\Security\Resolver\PermissionResolver;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 class MenuVoter implements VoterInterface
@@ -57,7 +58,7 @@ class MenuVoter implements VoterInterface
         return \in_array($attribute, $this->permissions);
     }
 
-    public function vote(TokenInterface $token, $menu, array $attributes): int
+    public function vote(TokenInterface $token, mixed $menu, array $attributes, ?Vote $vote = null): int
     {
         if (!$menu instanceof Taxonomy) {
             return VoterInterface::ACCESS_ABSTAIN;

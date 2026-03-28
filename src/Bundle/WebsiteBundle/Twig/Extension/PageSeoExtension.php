@@ -41,6 +41,9 @@ final class PageSeoExtension extends AbstractExtension
         return $this->resolver->resolve($page);
     }
 
+    /**
+     * @param array<string, scalar|null> $context
+     */
     public function resolveSeoPlaceholders(?string $value, array $context = []): ?string
     {
         return $this->seoPlaceholderResolver->resolve($value, $context);

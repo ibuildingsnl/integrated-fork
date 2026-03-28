@@ -47,7 +47,19 @@ body.hide-options .aside-options.publication-settings-aside.seo-settings {
     border-radius: 30px;
 }
 
+#content-navigator .seo-button,
+.page-index-table .seo-button {
+    height: 24px;
+    border-radius: 30px;
+}
+
 #content-navigator .seo-button:hover {
+    background-color: white;
+    cursor: unset;
+}
+
+#content-navigator .seo-button:hover,
+.page-index-table .seo-button:hover {
     background-color: white;
     cursor: unset;
 }
@@ -237,7 +249,6 @@ body.hide-options .aside-options.publication-settings-aside.seo-settings {
     padding: 0px;
     position: absolute;
 }
-
 
 
 

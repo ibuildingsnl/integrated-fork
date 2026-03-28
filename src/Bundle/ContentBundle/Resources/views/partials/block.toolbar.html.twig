@@ -54,7 +54,18 @@
                     {% set pageChannel = attribute(pageDocument, 'primaryChannel')|default(null) %}
                 {% endif %}
                 {% set pagePath = pageDocument and attribute(pageDocument, 'path') is defined ? attribute(pageDocument, 'path') : form.path.vars.value|default('') %}
-                {% set pageOpenUrl = pageChannel and pageChannel.primaryDomain is defined and pagePath and pageDocument and attribute(pageDocument, 'id') is defined and attribute(pageDocument, 'id') ? app.request.scheme ~ '://' ~ pageChannel.primaryDomain ~ pagePath : null %}
+                {% set isPageDocument = pageDocument and attribute(pageDocument, 'slug') is not defined %}
+                {% set pageOpenUrl = null %}
+                {% set pageEditUrl = null %}
+                {% if isPageDocument and pageChannel and pageChannel.primaryDomain is defined and pagePath and pageDocument and attribute(pageDocument, 'id') is defined and attribute(pageDocument, 'id') %}
+                    {% if pageChannel.primaryDomain == app.request.httphost %}
+                        {% set pageOpenUrl = pagePath %}
+                        {% set pageEditUrl = pagePath ~ '?integrated_website_edit=1' %}
+                    {% else %}
+                        {% set pageOpenUrl = '//' ~ pageChannel.primaryDomain ~ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': pagePath}) %}
+                        {% set pageEditUrl = '//' ~ pageChannel.primaryDomain ~ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': pagePath ~ '?integrated_website_edit=1'}) %}
+                    {% endif %}
+                {% endif %}
 
                 {% if type is defined %}
                     {% for field in type.fields %}
@@ -77,6 +88,13 @@
                        target="_blank"
                        rel="noopener noreferrer"
                        data-turbo="false">{% trans %}Open page{% endtrans %}</a>
+                {% endif %}
+                {% if pageEditUrl %}
+                    <a href="{{ pageEditUrl }}"
+                       class="btn btn-white"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       data-turbo="false">{% trans %}Edit page{% endtrans %}</a>
                 {% endif %}
             {% endblock %}
         </div>

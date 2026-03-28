@@ -8,12 +8,15 @@ class ContentEditDraftVersion
 {
     private string $id;
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $payload = [];
 
     private \DateTime $savedAt;
 
     /**
-     * @param array<mixed> $payload
+     * @param array<string, mixed> $payload
      */
     public function __construct(array $payload = [])
     {
@@ -33,7 +36,7 @@ class ContentEditDraftVersion
     }
 
     /**
-     * @return array<mixed>
+     * @return array<string, mixed>
      */
     public function getPayload(): array
     {
@@ -41,7 +44,7 @@ class ContentEditDraftVersion
     }
 
     /**
-     * @param array<mixed> $payload
+     * @param array<string, mixed> $payload
      */
     public function setPayload(array $payload): void
     {

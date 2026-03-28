@@ -6,6 +6,9 @@ namespace Integrated\Bundle\ContentBundle\Document\Content;
 
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 
+/**
+ * @extends DocumentRepository<ContentEditDraft>
+ */
 class ContentEditDraftRepository extends DocumentRepository
 {
     public function findOneByContentAndUser(string $contentId, string $userId): ?ContentEditDraft

@@ -31,7 +31,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class ContentChannelIntegrationListener implements EventSubscriberInterface
 {
     /**
-     * @var ObjectRepository
+     * @var ObjectRepository<ChannelInterface>
      */
     private $repository;
 
@@ -40,6 +40,9 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
      */
     private $authorizationChecker;
 
+    /**
+     * @param ObjectRepository<ChannelInterface> $repository
+     */
     public function __construct(ObjectRepository $repository, AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->repository = $repository;
@@ -172,6 +175,11 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
         }
     }
 
+    /**
+     * @param array<string, mixed>|null $options
+     *
+     * @return array<string, mixed>
+     */
     protected function getConfig($options)
     {
         // @TODO should probably validate the options in some way
@@ -195,7 +203,7 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
     protected function getChannels(?array $ids = null): array
     {
         if ($ids === null) {
-            return $this->repository->findAll();
+            return $this->filterChannels($this->repository->findAll());
         }
 
         if ($ids === []) {
@@ -204,10 +212,24 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
 
         $criteria = ['$or' => []];
 
-        foreach ($ids ?: [] as $id) {
+        foreach ($ids as $id) {
             $criteria['$or'][] = ['id' => $id];
         }
 
-        return $this->repository->findBy($criteria);
+        return $this->filterChannels($this->repository->findBy($criteria));
+    }
+
+    /**
+     * @param iterable<mixed> $channels
+     *
+     * @return array<int, ChannelInterface>
+     */
+    private function filterChannels(iterable $channels): array
+    {
+        if (!\is_array($channels)) {
+            $channels = iterator_to_array($channels, false);
+        }
+
+        return array_values(array_filter($channels, static fn (mixed $channel): bool => $channel instanceof ChannelInterface));
     }
 }

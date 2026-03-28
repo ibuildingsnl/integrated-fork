@@ -58,6 +58,9 @@ trait RelationTestTrait
      */
     public function testGetAndSetPhonenumbersFunction()
     {
+        /**
+         * @var Relation $content
+         */
         $content = $this->getContent();
         $content->setPhonenumbers($phonenumbers = [new Phonenumber('0123456789'), new Phonenumber('9876543210')]);
 
@@ -69,6 +72,9 @@ trait RelationTestTrait
      */
     public function testAddPhonenumberFunction()
     {
+        /**
+         * @var Relation $content
+         */
         $content = $this->getContent();
         $content->addPhonenumber('work', '0123456789');
 
@@ -80,6 +86,9 @@ trait RelationTestTrait
      */
     public function testAddPhonenumberFunctionWithDuplicatePhonenumber()
     {
+        /**
+         * @var Relation $content
+         */
         $content = $this->getContent();
 
         $content->addPhonenumber('work', '0123456789');
@@ -93,6 +102,9 @@ trait RelationTestTrait
      */
     public function testRemovePhonenumberFunctionWithUnknownPhonenumber()
     {
+        /**
+         * @var Relation $content
+         */
         $content = $this->getContent();
         $content->addPhonenumber('work', '0123456789');
 
@@ -103,8 +115,11 @@ trait RelationTestTrait
         Assert::assertCount(1, $content->getPhonenumbers());
     }
 
-    public function testRemovePhonenumberFunctionWithEmbeddedPhonenumberObject()
+    public function testRemovePhonenumberFunctionWithEmbeddedPhonenumberObject(): void
     {
+        /**
+         * @var Relation $content
+         */
         $content = $this->getContent();
         $content->setPhonenumbers([new Phonenumber('0123456789', 'work')]);
 

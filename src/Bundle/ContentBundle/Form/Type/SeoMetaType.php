@@ -74,6 +74,7 @@ class SeoMetaType extends AbstractType
     }
 
     /**
+     * @param FormInterface<mixed> $form
      * @param array<string, mixed> $options
      */
     private static function configureSeoTextFields(FormInterface $form, ?SeoMeta $seoMeta, array $options): void

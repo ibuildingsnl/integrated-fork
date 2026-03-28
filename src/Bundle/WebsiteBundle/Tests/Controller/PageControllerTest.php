@@ -9,6 +9,7 @@ use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\Controller\PageController;
 use Integrated\Bundle\WebsiteBundle\EventListener\WebsiteToolbarListener;
+use Integrated\Common\Security\PermissionInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -110,6 +111,37 @@ class PageControllerTest extends TestCase
         self::assertSame(Response::HTTP_OK, $response->getStatusCode());
         self::assertTrue($response->headers->hasCacheControlDirective('no-store'));
         self::assertStringNotContainsString('integrated-draft-notice', (string) $response->getContent());
+        self::assertSame('noindex, nofollow', $response->headers->get('X-Robots-Tag'));
+    }
+
+    public function testShowAllowsDisabledPageForUserWithChannelReadPermission(): void
+    {
+        $page = new Page();
+        $page->setLayout('default.html.twig');
+        $page->setDisabled(true);
+        $page->setPath('/draft-page');
+        $page->setChannel(new Channel());
+
+        $this->themeManager
+            ->expects($this->once())
+            ->method('locateTemplate')
+            ->with('default.html.twig')
+            ->willReturn('layout.html.twig');
+        $this->websiteToolbarListener
+            ->expects($this->once())
+            ->method('setToolbarMessage')
+            ->with('This item is currently unpublished');
+
+        $controller = $this->createController([
+            PermissionInterface::READ => true,
+        ]);
+
+        $response = $controller->show(Request::create('https://example.test/draft-page'), $page);
+
+        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
+        self::assertTrue((bool) $response->headers->getCacheControlDirective('private'));
+        self::assertTrue($response->headers->hasCacheControlDirective('no-store'));
+        self::assertSame(0, (int) $response->headers->getCacheControlDirective('max-age'));
         self::assertSame('noindex, nofollow', $response->headers->get('X-Robots-Tag'));
     }
 
@@ -406,7 +438,7 @@ class PageControllerTest extends TestCase
     }
 
     /**
-     * @param array<string, bool> $grants
+     * @param array<int|string, bool> $grants
      */
     private function createController(array $grants): PageController
     {
@@ -416,7 +448,7 @@ class PageControllerTest extends TestCase
 
         return new class($themeManager, $websiteToolbarListener, $uriSigner, $grants) extends PageController {
             /**
-             * @param array<string, bool> $grants
+             * @param array<int|string, bool> $grants
              */
             public function __construct(ThemeManager $themeManager, WebsiteToolbarListener $websiteToolbarListener, UriSigner $uriSigner, private readonly array $grants)
             {

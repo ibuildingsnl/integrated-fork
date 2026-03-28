@@ -19,6 +19,15 @@
         {% set pagePath = pageDocument and attribute(pageDocument, 'path') is defined ? attribute(pageDocument, 'path') : form.path.vars.value|default('') %}
         {% set pagePublishAt = pageDocument and attribute(pageDocument, 'publishAt') is defined ? attribute(pageDocument, 'publishAt') : (form.publishAt is defined ? form.publishAt.vars.data|default(null) : null) %}
         {% set pageExpireAt = pageDocument and attribute(pageDocument, 'expireAt') is defined ? attribute(pageDocument, 'expireAt') : (form.expireAt is defined ? form.expireAt.vars.data|default(null) : null) %}
+        {% set pageOpenUrl = null %}
+        {% set previewLink = previewLink|default(null) %}
+        {% if pageChannel and pageChannel.primaryDomain is defined and pagePath and pageDocument and attribute(pageDocument, 'id') is defined and attribute(pageDocument, 'id') %}
+            {% if pageChannel.primaryDomain == app.request.httphost %}
+                {% set pageOpenUrl = pagePath %}
+            {% else %}
+                {% set pageOpenUrl = '//' ~ pageChannel.primaryDomain ~ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': pagePath}) %}
+            {% endif %}
+        {% endif %}
         {% set now = date() %}
         {% block form_start %}
             {{ form_start(form) }}
@@ -88,7 +97,13 @@
                                         <div class="form-group">
                                             <label class="control-label w-full sm:w-1/3">{% trans %}URL{% endtrans %}</label>
                                             <div class="w-full sm:w-2/3">
-                                                /{{ pagePath|trim('/') }}
+                                                {% if pageOpenUrl %}
+                                                    <a href="{{ pageOpenUrl }}" target="_blank" rel="noopener noreferrer" data-turbo="false">
+                                                        /{{ pagePath|trim('/') }}
+                                                    </a>
+                                                {% else %}
+                                                    /{{ pagePath|trim('/') }}
+                                                {% endif %}
                                             </div>
                                         </div>
                                     {% endif %}
@@ -102,6 +117,16 @@
                                 <div class="mt-2">
                                     {% if form.disabled is defined %}
                                         {{ form_row(form.disabled) }}
+                                    {% endif %}
+                                    {% if previewLink %}
+                                        <div class="form-group">
+                                            <label class="control-label w-full">{% trans %}Preview link (24h){% endtrans %}</label>
+                                            <div class="w-full">
+                                                <a href="{{ previewLink }}" target="_blank" rel="noopener noreferrer" data-turbo="false">
+                                                    {{ previewLink }}
+                                                </a>
+                                            </div>
+                                        </div>
                                     {% endif %}
                                     {% for fieldName in ['expireRedirectUrl'] %}
                                         {% if attribute(form, fieldName) is defined %}

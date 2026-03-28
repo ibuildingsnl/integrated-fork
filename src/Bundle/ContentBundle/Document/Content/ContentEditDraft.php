@@ -10,6 +10,9 @@ class ContentEditDraft
 {
     private string $id;
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $payload = [];
 
     private \DateTime $createdAt;
@@ -61,7 +64,7 @@ class ContentEditDraft
     }
 
     /**
-     * @return array<mixed>
+     * @return array<string, mixed>
      */
     public function getPayload(): array
     {
@@ -69,7 +72,7 @@ class ContentEditDraft
     }
 
     /**
-     * @param array<mixed> $payload
+     * @param array<string, mixed> $payload
      */
     public function setPayload(array $payload): void
     {
@@ -94,7 +97,7 @@ class ContentEditDraft
     }
 
     /**
-     * @param array<mixed> $payload
+     * @param array<string, mixed> $payload
      */
     public function pushVersion(array $payload, int $maxVersions = 25): void
     {

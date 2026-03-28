@@ -281,7 +281,7 @@ class Page extends AbstractPage
         return null === $this->expireRedirectUrl ? null : (string) $this->expireRedirectUrl;
     }
 
-    public function setExpireRedirectUrl($expireRedirectUrl): self
+    public function setExpireRedirectUrl(?string $expireRedirectUrl): self
     {
         $this->expireRedirectUrl = null === $expireRedirectUrl || '' === $expireRedirectUrl ? null : $expireRedirectUrl;
 
@@ -293,7 +293,7 @@ class Page extends AbstractPage
         return null === $this->hideFromSitemap ? null : (bool) $this->hideFromSitemap;
     }
 
-    public function setHideFromSitemap($hideFromSitemap): self
+    public function setHideFromSitemap(?bool $hideFromSitemap): self
     {
         $this->hideFromSitemap = null === $hideFromSitemap ? null : (bool) $hideFromSitemap;
 
@@ -347,7 +347,7 @@ class Page extends AbstractPage
         return null === $this->robotsDirective ? null : (string) $this->robotsDirective;
     }
 
-    public function setRobotsDirective($robotsDirective)
+    public function setRobotsDirective(?string $robotsDirective): self
     {
         $this->robotsDirective = $robotsDirective;
 
@@ -359,7 +359,7 @@ class Page extends AbstractPage
         return null === $this->twitterCard ? null : (string) $this->twitterCard;
     }
 
-    public function setTwitterCard($twitterCard)
+    public function setTwitterCard(?string $twitterCard): self
     {
         $this->twitterCard = $twitterCard;
 

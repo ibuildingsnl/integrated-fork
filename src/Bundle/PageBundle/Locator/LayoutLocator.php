@@ -64,7 +64,7 @@ class LayoutLocator
 
     private function humanizeFallbackLabel(string $relativePathname): string
     {
-        $label = preg_replace('/\.html\.twig$/', '', basename($relativePathname));
+        $label = preg_replace('/\.html\.twig$/', '', basename($relativePathname)) ?? basename($relativePathname);
         $label = str_replace(['-', '_'], ' ', $label);
 
         return ucwords($label);

@@ -193,12 +193,18 @@ final class PageTypeLifecycleFieldsTest extends TypeTestCase
         self::assertFalse($form->isValid());
     }
 
+    /**
+     * @return iterable<string, array<int, string>>
+     */
     public static function validExpireRedirectUrlProvider(): iterable
     {
         yield 'absolute URL' => ['https://example.com/expired'];
         yield 'relative path' => ['/expired'];
     }
 
+    /**
+     * @return iterable<string, array<int, string>>
+     */
     public static function invalidExpireRedirectUrlProvider(): iterable
     {
         yield 'missing leading slash and scheme' => ['expired'];
@@ -250,6 +256,9 @@ final class PageTypeLifecycleFieldsTest extends TypeTestCase
         ], $overrides);
     }
 
+    /**
+     * @return FormInterface<mixed>
+     */
     private function createPageForm(?Page $page = null): FormInterface
     {
         return $this->factory->create(PageType::class, $page ?? $this->createPage());

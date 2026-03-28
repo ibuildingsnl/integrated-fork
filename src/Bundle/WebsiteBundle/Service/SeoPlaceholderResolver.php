@@ -20,6 +20,9 @@ final class SeoPlaceholderResolver
         ];
     }
 
+    /**
+     * @param array<string, scalar|null> $context
+     */
     public function resolve(?string $value, array $context = []): ?string
     {
         if ($value === null) {

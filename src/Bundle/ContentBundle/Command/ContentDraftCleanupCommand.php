@@ -78,6 +78,10 @@ class ContentDraftCleanupCommand extends Command
             ->getQuery()
             ->execute();
 
+        if (!\is_iterable($result)) {
+            $result = [];
+        }
+
         foreach ($result as $draft) {
             if (!$draft instanceof ContentEditDraft) {
                 continue;
