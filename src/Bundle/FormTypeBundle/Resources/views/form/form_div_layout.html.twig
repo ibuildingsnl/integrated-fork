@@ -414,8 +414,12 @@
                 {% if show_content_type_filter|default(false) %}
                     <select class="form-control" data-filter-role="content-type">
                         <option value="">{% trans %}All content types{% endtrans %}</option>
-                        {% for type in content_type_choices|default([]) %}
-                            <option value="{{ type.value }}">{{ type.label }}</option>
+                        {% for group in content_type_choice_groups|default([]) %}
+                            <optgroup label="{{ group.label }}">
+                                {% for type in group.choices %}
+                                    <option value="{{ type.value }}">{{ type.label }}</option>
+                                {% endfor %}
+                            </optgroup>
                         {% endfor %}
                     </select>
                 {% endif %}
