@@ -5,6 +5,7 @@ namespace Integrated\Bundle\BrandBundle\Controller;
 use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
 use Integrated\Bundle\BrandBundle\EventListener\ConnectorDeletionRedirectListener;
+use Integrated\Bundle\BrandBundle\Provider\ConnectorMissingThemeBlocksProvider;
 use Integrated\Bundle\ChannelBundle\Event\FilterResponseConfigEvent;
 use Integrated\Bundle\ChannelBundle\Event\FormConfigEvent;
 use Integrated\Bundle\ChannelBundle\Event\GetResponseConfigEvent;
@@ -25,6 +26,7 @@ class ConnectorController extends AbstractController
         private readonly ConfigManagerInterface $configs,
         private readonly RegistryInterface $adapters,
         private readonly EventDispatcherInterface $dispatcher,
+        private readonly ConnectorMissingThemeBlocksProvider $missingThemeBlocksProvider,
     ) {
     }
 
@@ -137,6 +139,7 @@ class ConnectorController extends AbstractController
             'adapter' => $adapter,
             'config' => $config,
             'form' => $form,
+            'missingConnectorBlocks' => $this->missingThemeBlocksProvider->getMissingBlocksForChannel($link->channel),
         ]);
     }
 }

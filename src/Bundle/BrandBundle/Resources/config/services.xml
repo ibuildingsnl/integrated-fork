@@ -40,6 +40,14 @@
             <argument type="service" id="integrated_channel.config.manager" />
             <argument type="service" id="integrated_channel.adapter.registry" />
             <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="Integrated\Bundle\BrandBundle\Provider\ConnectorMissingThemeBlocksProvider" />
+        </service>
+
+        <service id="Integrated\Bundle\BrandBundle\Provider\ConnectorMissingThemeBlocksProvider">
+            <argument type="service" id="integrated_block.provider.block_usage" />
+            <argument type="service" id="integrated_page.theme_resolver" />
+            <argument type="service" id="integrated_theme.templating.theme_manager" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
         </service>
 
         <service id="Integrated\Bundle\BrandBundle\Form\Type\BrandChoiceType">
