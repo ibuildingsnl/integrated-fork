@@ -1,4 +1,5 @@
-{% set isEditorMode = app.request.query.get('integrated_website_edit') and layoutEditable %}
+{% set canManagePages = is_granted('ROLE_ADMIN') or is_granted('ROLE_WEBSITE_MANAGER') %}
+{% set isEditorMode = app.request.query.get('integrated_website_edit') and layoutEditable and canManagePages %}
 {% include integrated_active_theme('objects/toolbar-css.html.twig') %}
 {% if isEditorMode %}
     <div id="integrated-editor-loader" aria-live="polite" aria-busy="true">
@@ -93,7 +94,7 @@
             <div class="integrated-website-toolbar-right">
                 {% set params = app.request.attributes.get('_route_params')|merge(app.request.query.all) %}
 
-                {% if app.request.query.get('integrated_website_edit') and layoutEditable %}
+                {% if app.request.query.get('integrated_website_edit') and layoutEditable and canManagePages %}
                     <a href="javascript:;" class="integrated-website-toolbar-button btn btn-white icon-left"
                        data-action="integrated-website-history-undo">
                         <i class="iconoir-undo"></i>
@@ -125,7 +126,7 @@
                         </a> &nbsp;
                     {% endif %}
 
-                    {% if layoutEditable %}
+                    {% if layoutEditable and canManagePages %}
                         <div class="integrated-website-toolbar-button-group">
                             <a href="{{ path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 1})) }}"
                                class="integrated-website-toolbar-button btn btn-green">

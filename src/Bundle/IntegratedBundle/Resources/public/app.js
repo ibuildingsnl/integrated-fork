@@ -8123,6 +8123,11 @@ function stashFlashMessagesForNextVisit() {
     return child instanceof HTMLElement && child.classList.contains('alert');
   });
   var payload = alerts.map(function (alert) {
+    var snapshot = alert.cloneNode(true);
+    if (snapshot instanceof HTMLElement) {
+      snapshot.removeAttribute('data-dismissible-alert-bound');
+      return snapshot.outerHTML;
+    }
     return alert.outerHTML;
   });
   if (payload.length === 0) {
@@ -8164,6 +8169,7 @@ function restoreFlashMessagesFromPreviousVisit() {
     if (!(alert instanceof HTMLElement) || !alert.classList.contains('alert')) {
       return;
     }
+    alert.removeAttribute('data-dismissible-alert-bound');
     var signature = flashMessageSignature(alert);
     var exists = Array.from(flashContainer.children).some(function (child) {
       return flashMessageSignature(child) === signature;

@@ -44,6 +44,7 @@ class EditorType extends AbstractType
     {
         $resolver->setDefaults([
             'mode' => 'default',
+            'empty_data' => '',
         ]);
 
         $resolver->setAllowedTypes('mode', 'string');

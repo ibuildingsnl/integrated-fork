@@ -20,6 +20,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class UserControllerBulkTest extends TestCase
 {
@@ -351,6 +352,44 @@ class UserControllerBulkTest extends TestCase
         self::assertSame('danger', $controller->flashes[0]['type']);
     }
 
+    public function testEditRedirectsBackToEditPageAfterSuccessfulSave(): void
+    {
+        [$controller, $manager, , , $logger] = $this->createController();
+        $controller->currentUser = $this->createUser('admin');
+
+        $user = $this->createMock(\Integrated\Bundle\UserBundle\Model\UserInterface::class);
+        $user->method('getId')->willReturn('42');
+        $user->method('getUserIdentifier')->willReturn('editor');
+
+        $form = $this->createMock(\Symfony\Component\Form\Form::class);
+        $form->method('add')->willReturnSelf();
+        $form->expects(self::once())->method('handleRequest');
+        $form->method('isSubmitted')->willReturn(true);
+        $form->method('getClickedButton')->willReturn(null);
+        $form->method('isValid')->willReturn(true);
+        $controller->form = $form;
+
+        $manager->method('find')->with('42')->willReturn($user);
+        $manager->expects(self::once())->method('persist')->with($user);
+
+        $logger->expects(self::once())->method('info')->with(
+            'User updated',
+            self::callback(static function (array $context): bool {
+                return $context['actor'] === 'admin'
+                    && $context['target_user_id'] === '42'
+                    && $context['target_username'] === 'editor';
+            })
+        );
+
+        $response = $controller->edit(new Request(['id' => '42'], [], [], [], [], ['REQUEST_METHOD' => 'POST']));
+
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertSame('/integrated_user_user_edit', $response->getTargetUrl());
+        self::assertSame('integrated_user_user_edit', $controller->lastRedirectRoute);
+        self::assertSame(['id' => '42'], $controller->lastRedirectParameters);
+        self::assertSame('success', $controller->flashes[0]['type']);
+    }
+
     /**
      * @return array{TestUserController, UserManagerInterface&MockObject, FilterQueryProvider&MockObject, PaginatorInterface&MockObject, LoggerInterface&MockObject, GroupManagerInterface&MockObject, ScopeManagerInterface&MockObject, BulkUserActionService&MockObject}
      */
@@ -411,6 +450,9 @@ final class TestUserController extends UserController
     public array $lastRenderedParameters = [];
     /** @var FormInterface<mixed>|null */
     public ?FormInterface $form = null;
+    public ?string $lastRedirectRoute = null;
+    /** @var array<string, mixed> */
+    public array $lastRedirectParameters = [];
 
     protected function isGranted(mixed $attribute, mixed $subject = null): bool
     {
@@ -436,6 +478,9 @@ final class TestUserController extends UserController
      */
     protected function redirectToRoute(string $route, array $parameters = [], int $status = 302): RedirectResponse
     {
+        $this->lastRedirectRoute = $route;
+        $this->lastRedirectParameters = $parameters;
+
         return new RedirectResponse('/'.$route, $status);
     }
 
@@ -444,6 +489,17 @@ final class TestUserController extends UserController
         return $this->currentUser;
     }
 
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    protected function generateUrl(string $route, array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string
+    {
+        return '/'.$route;
+    }
+
+    /**
+     * @param array<string, mixed> $options
+     */
     protected function createForm(string $type, mixed $data = null, array $options = []): FormInterface
     {
         if ($this->form === null) {

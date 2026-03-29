@@ -135,7 +135,7 @@ class User implements UserInterface
 
     public function getUserIdentifier(): string
     {
-        return $this->username;
+        return (string) $this->username;
     }
 
     public function setPassword($password)

@@ -18,4 +18,12 @@ final class FlashDismissibleAlertsScriptTest extends TestCase
         $this->assertStringContainsString('dismissibleAlertBound', $script);
         $this->assertStringContainsString('DISMISSIBLE_ALERT_TIMEOUT_MS', $script);
     }
+
+    public function testPersistedFlashMessagesDropRuntimeDismissBindingBeforeRestore(): void
+    {
+        $script = file_get_contents(__DIR__.'/../../Resources/assets/js/global.js');
+
+        $this->assertIsString($script);
+        $this->assertStringContainsString("removeAttribute('data-dismissible-alert-bound')", $script);
+    }
 }

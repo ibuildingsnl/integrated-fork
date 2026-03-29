@@ -36,4 +36,14 @@ final class PageToolbarContractTest extends TestCase
         $this->assertStringNotContainsString('integrated_website_page_draft_publish', $script);
         $this->assertStringNotContainsString('integrated_website_page_draft_preview_link', $script);
     }
+
+    public function testToolbarRestrictsPageButtonsToWebsiteManagers(): void
+    {
+        $toolbar = file_get_contents(__DIR__.'/../../Resources/views/toolbar.html.twig');
+
+        $this->assertIsString($toolbar);
+        $this->assertStringContainsString("{% set canManagePages = is_granted('ROLE_ADMIN') or is_granted('ROLE_WEBSITE_MANAGER') %}", $toolbar);
+        $this->assertStringContainsString('{% if layoutEditable and canManagePages %}', $toolbar);
+        $this->assertStringNotContainsString('{% if layoutEditable %}', $toolbar);
+    }
 }
