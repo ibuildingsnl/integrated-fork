@@ -27,6 +27,11 @@ use Integrated\Common\Security\PermissionInterface;
  */
 class WorkflowExtension implements TypeExtensionInterface
 {
+    private const CONTENT_TYPE_VISIBILITY_OPTION = 'require_content_type_permission_for_visibility';
+    private const SECURITY_CONTENT_TYPE_REQUIRED = 'security_content_type_required';
+    private const SECURITY_CONTENT_TYPE_READ = 'security_content_type_read';
+    private const SECURITY_CONTENT_TYPE_WRITE = 'security_content_type_write';
+
     /**
      * @var ResolverInterface
      */
@@ -60,6 +65,9 @@ class WorkflowExtension implements TypeExtensionInterface
 
         $container->remove('security_workflow_read');
         $container->remove('security_workflow_write');
+        $container->remove(self::SECURITY_CONTENT_TYPE_REQUIRED);
+        $container->remove(self::SECURITY_CONTENT_TYPE_READ);
+        $container->remove(self::SECURITY_CONTENT_TYPE_WRITE);
 
         if (!$contentType = $this->resolver->getType($data->getContentType())) {
             return; // got no content type
@@ -81,6 +89,12 @@ class WorkflowExtension implements TypeExtensionInterface
             }
         }
 
+        $this->addContentTypeVisibilityPermissions(
+            $container,
+            $contentType->getOption(self::CONTENT_TYPE_VISIBILITY_OPTION),
+            $permissions,
+        );
+
         if ($permissions instanceof Collection) {
             $permissions = $permissions->toArray();
         }
@@ -88,15 +102,19 @@ class WorkflowExtension implements TypeExtensionInterface
         $channelGroups = [];
 
         if ($data instanceof ChannelableInterface) {
-            foreach ($data->getChannels() as $channel) {
+            foreach (($data->getChannels() ?: []) as $channel) {
                 $channelPermissions = $channel->getPermissions();
 
                 if ($channelPermissions instanceof Collection) {
                     $channelPermissions = $channelPermissions->toArray();
                 }
 
+                if (!\is_iterable($channelPermissions)) {
+                    continue;
+                }
+
                 // Need all permissions
-                $permissions = array_merge($permissions, $channelPermissions);
+                $permissions = array_merge($permissions, is_array($channelPermissions) ? $channelPermissions : iterator_to_array($channelPermissions));
 
                 foreach ($channelPermissions as $permission) {
                     // Need channel permissions
@@ -107,13 +125,7 @@ class WorkflowExtension implements TypeExtensionInterface
 
         foreach ($permissions as $permission) {
             if (!\count($channelGroups) || isset($channelGroups[$permission->getGroup()])) {
-                if ($permission->hasMask(PermissionInterface::READ)) {
-                    $container->add('security_workflow_read', $permission->getGroup());
-                }
-
-                if ($permission->hasMask(PermissionInterface::WRITE)) {
-                    $container->add('security_workflow_write', $permission->getGroup());
-                }
+                $this->addPermission($container, 'security_workflow_read', 'security_workflow_write', $permission);
             }
         }
 
@@ -135,6 +147,42 @@ class WorkflowExtension implements TypeExtensionInterface
     public function getName()
     {
         return 'integrated.content';
+    }
+
+    /**
+     * @param iterable<PermissionInterface> $permissions
+     */
+    private function addContentTypeVisibilityPermissions(ContainerInterface $container, mixed $enabled, iterable $permissions): void
+    {
+        if (!$enabled) {
+            return;
+        }
+
+        $container->add(self::SECURITY_CONTENT_TYPE_REQUIRED, '1');
+
+        foreach ($permissions as $permission) {
+            $this->addPermission(
+                $container,
+                self::SECURITY_CONTENT_TYPE_READ,
+                self::SECURITY_CONTENT_TYPE_WRITE,
+                $permission,
+            );
+        }
+    }
+
+    private function addPermission(
+        ContainerInterface $container,
+        string $readField,
+        string $writeField,
+        PermissionInterface $permission,
+    ): void {
+        if ($permission->hasMask(PermissionInterface::READ)) {
+            $container->add($readField, $permission->getGroup());
+        }
+
+        if ($permission->hasMask(PermissionInterface::WRITE)) {
+            $container->add($writeField, $permission->getGroup());
+        }
     }
 
     /**

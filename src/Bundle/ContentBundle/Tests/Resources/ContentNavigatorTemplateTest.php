@@ -43,4 +43,23 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString('image(faviconPath).cropResize(36, 36)', $weekTemplate);
         $this->assertStringNotContainsString('{% set brandNames = content.facet_brands|default([]) %}', $weekTemplate);
     }
+
+    public function testIndexTemplatesOnlyRenderSeoUiWhenCurrentItemsContainSeoMetadata(): void
+    {
+        $indexTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/index.html.twig');
+        $weekTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/index_week.html.twig');
+
+        $this->assertIsString($indexTemplate);
+        $this->assertIsString($weekTemplate);
+
+        $this->assertStringContainsString('{% set showSeoColumn = pager.getItems()|filter(', $indexTemplate);
+        $this->assertStringContainsString("attribute(content, 'has_seo_metadata') is defined", $indexTemplate);
+        $this->assertStringContainsString('{% if showSeoColumn %}', $indexTemplate);
+        $this->assertStringContainsString('<span>SEO</span>', $indexTemplate);
+
+        $this->assertStringContainsString('{% set showSeoColumn = pager.getItems()|filter(', $weekTemplate);
+        $this->assertStringContainsString("attribute(content, 'has_seo_metadata') is defined", $weekTemplate);
+        $this->assertStringContainsString('{% if showSeoColumn %}', $weekTemplate);
+        $this->assertStringContainsString('<span class="btn btn-white no-icon seo-button readability-', $weekTemplate);
+    }
 }

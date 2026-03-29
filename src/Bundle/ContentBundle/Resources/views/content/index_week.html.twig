@@ -102,6 +102,7 @@
 
 {% block content_items %}
     {% set scroll_message = 'Scroll to see more'|trans %}
+    {% set showSeoColumn = pager.getItems()|filter(content => attribute(content, 'has_seo_metadata') is defined and ((attribute(content, 'has_seo_metadata') in [true, 1, '1', 'true']) or (attribute(content, 'has_seo_metadata') is iterable and (attribute(content, 'has_seo_metadata')|first) in [true, 1, '1', 'true']))) is not empty %}
     <div class="calendar-view calendar-week">
         <div class="week title">
             {% for i in range(0, 6) %}
@@ -197,23 +198,25 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="heading-right">
-                                {% set hasSeoMetadata = content.has_seo_metadata|default(false) %}
-                                {% if hasSeoMetadata is iterable %}
-                                    {% set hasSeoMetadata = hasSeoMetadata|first %}
-                                {% endif %}
-                                {% if hasSeoMetadata in [true, 1, '1', 'true'] %}
-                                    {% set seoScore = content.seo_score|default('feedback') %}
-                                    {% set readabilityScore = content.readability_score|default('feedback') %}
-                                    {% if seoScore is iterable %}
-                                        {% set seoScore = seoScore|first %}
+                            {% if showSeoColumn %}
+                                <div class="heading-right">
+                                    {% set hasSeoMetadata = attribute(content, 'has_seo_metadata')|default(false) %}
+                                    {% if hasSeoMetadata is iterable %}
+                                        {% set hasSeoMetadata = hasSeoMetadata|first %}
                                     {% endif %}
-                                    {% if readabilityScore is iterable %}
-                                        {% set readabilityScore = readabilityScore|first %}
+                                    {% if hasSeoMetadata in [true, 1, '1', 'true'] %}
+                                        {% set seoScore = attribute(content, 'seo_score')|default('feedback') %}
+                                        {% set readabilityScore = attribute(content, 'readability_score')|default('feedback') %}
+                                        {% if seoScore is iterable %}
+                                            {% set seoScore = seoScore|first %}
+                                        {% endif %}
+                                        {% if readabilityScore is iterable %}
+                                            {% set readabilityScore = readabilityScore|first %}
+                                        {% endif %}
+                                        <span class="btn btn-white no-icon seo-button readability-{{ readabilityScore }} seo-{{ seoScore }}">SEO</span>
                                     {% endif %}
-                                    <span class="btn btn-white no-icon seo-button readability-{{ readabilityScore }} seo-{{ seoScore }}">SEO</span>
-                                {% endif %}
-                            </div>
+                                </div>
+                            {% endif %}
                         </div>
                         <div class="calendar-item-content">
                             {{ content.title|default('untitled') }}
