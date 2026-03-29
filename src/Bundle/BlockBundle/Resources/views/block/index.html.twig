@@ -132,6 +132,32 @@
             });
         }
 
+        function bindFilterQueryAutoSubmit() {
+            document.querySelectorAll('form[name="integrated_block_filter"]').forEach(function (form) {
+                if (form.dataset.boundFilterQueryAutoSubmit === 'true') {
+                    return;
+                }
+
+                var input = form.querySelector('input[name="integrated_block_filter[q]"]');
+                if (!input) {
+                    return;
+                }
+
+                var debounceTimer = null;
+                input.addEventListener('input', function () {
+                    if (debounceTimer) {
+                        window.clearTimeout(debounceTimer);
+                    }
+
+                    debounceTimer = window.setTimeout(function () {
+                        form.requestSubmit ? form.requestSubmit() : form.submit();
+                    }, 250);
+                });
+
+                form.dataset.boundFilterQueryAutoSubmit = 'true';
+            });
+        }
+
         function normalizeBlockFilterSearchValue(value) {
             return String(value || '')
                 .normalize('NFD')
@@ -282,6 +308,7 @@
 
         function init() {
             bindFilterFormAutoSubmit();
+            bindFilterQueryAutoSubmit();
             initBlockFilterSidebarSearch();
             initUsagePopovers();
         }

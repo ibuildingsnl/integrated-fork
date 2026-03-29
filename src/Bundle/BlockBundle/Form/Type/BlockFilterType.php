@@ -18,7 +18,6 @@ use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -98,10 +97,6 @@ class BlockFilterType extends AbstractType
                 'label' => 'Unused',
             ]
         );
-
-        $builder->add('submit', SubmitType::class, [
-            'label' => 'Filter',
-        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
