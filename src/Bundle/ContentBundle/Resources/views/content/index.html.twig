@@ -23,7 +23,19 @@
 {% block content_items %}
     <section class="section-white section-radius">
         {% set media_gallery_classes = ["Image", "Video", "File"] %}
-        {% set showSeoColumn = pager.getItems()|filter(content => attribute(content, 'has_seo_metadata') is defined and ((attribute(content, 'has_seo_metadata') in [true, 1, '1', 'true']) or (attribute(content, 'has_seo_metadata') is iterable and (attribute(content, 'has_seo_metadata')|first) in [true, 1, '1', 'true']))) is not empty %}
+        {% set showSeoColumn = false %}
+        {% for seoColumnCandidate in pager.getItems() %}
+            {% set seoCandidateType = contentTypes|filter(t => t.id == seoColumnCandidate.type_name)|first %}
+            {% if seoCandidateType and seoCandidateType.hasField('seoMetadata') %}
+                {% set seoCandidateHasMetadata = attribute(seoColumnCandidate, 'has_seo_metadata')|default(false) %}
+                {% if seoCandidateHasMetadata is iterable %}
+                    {% set seoCandidateHasMetadata = seoCandidateHasMetadata|first %}
+                {% endif %}
+                {% if seoCandidateHasMetadata in [true, 1, '1', 'true'] %}
+                    {% set showSeoColumn = true %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
         <table class="table">
             <thead>
             <tr>
@@ -166,7 +178,7 @@
                             {% if hasSeoMetadata is iterable %}
                                 {% set hasSeoMetadata = hasSeoMetadata|first %}
                             {% endif %}
-                            {% if hasSeoMetadata in [true, 1, '1', 'true'] %}
+                            {% if type and type.hasField('seoMetadata') and hasSeoMetadata in [true, 1, '1', 'true'] %}
                                 {% set seoScore = attribute(content, 'seo_score')|default('feedback') %}
                                 {% set readabilityScore = attribute(content, 'readability_score')|default('feedback') %}
                                 {% if seoScore is iterable %}
