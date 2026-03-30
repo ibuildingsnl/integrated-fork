@@ -427,6 +427,6 @@ abstract class Block implements BlockInterface
      */
     public function __toString()
     {
-        return $this->getId();
+        return (string) ($this->id ?: $this->title ?: '');
     }
 }
