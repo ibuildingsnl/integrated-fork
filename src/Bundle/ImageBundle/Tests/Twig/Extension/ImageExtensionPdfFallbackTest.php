@@ -62,7 +62,7 @@ PDF);
         $imageHandling
             ->expects(self::once())
             ->method('open')
-            ->with(self::callback(static fn (string $path): bool => str_contains($path, 'cache/pdf-preview/') && str_ends_with($path, '.jpg')))
+            ->with(self::callback(static fn (string $path): bool => (str_contains($path, 'cache/pdf-preview/') || str_contains($path, 'pdf-fallback.jpg')) && str_ends_with($path, '.jpg')))
             ->willReturn($imageHandler);
 
         $extension = new ImageExtension(

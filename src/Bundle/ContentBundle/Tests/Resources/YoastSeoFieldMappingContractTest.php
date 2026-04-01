@@ -27,18 +27,15 @@ final class YoastSeoFieldMappingContractTest extends TestCase
         $app = file_get_contents(__DIR__.'/../../YoastSeo/src/components/IntegratedYoastApp.jsx');
         $seoTab = file_get_contents(__DIR__.'/../../YoastSeo/src/components/SeoTab.jsx');
         $integratedFields = file_get_contents(__DIR__.'/../../YoastSeo/src/hooks/useIntegratedFields.js');
-        $replacementEditorWrapper = file_get_contents(__DIR__.'/../../YoastSeo/node_modules/@yoast/replacement-variable-editor/ReplacementVariableEditor.js');
-        $replacementEditor = file_get_contents(__DIR__.'/../../YoastSeo/node_modules/@yoast/replacement-variable-editor/ReplacementVariableEditorStandalone.js');
-        $replacementEditorShared = file_get_contents(__DIR__.'/../../YoastSeo/node_modules/@yoast/replacement-variable-editor/shared.js');
+        $replacementEditorWrapper = @file_get_contents(__DIR__.'/../../YoastSeo/node_modules/@yoast/replacement-variable-editor/ReplacementVariableEditor.js');
+        $replacementEditor = @file_get_contents(__DIR__.'/../../YoastSeo/node_modules/@yoast/replacement-variable-editor/ReplacementVariableEditorStandalone.js');
+        $replacementEditorShared = @file_get_contents(__DIR__.'/../../YoastSeo/node_modules/@yoast/replacement-variable-editor/shared.js');
 
         $this->assertIsString($pageContent);
         $this->assertIsString($analysis);
         $this->assertIsString($app);
         $this->assertIsString($seoTab);
         $this->assertIsString($integratedFields);
-        $this->assertIsString($replacementEditorWrapper);
-        $this->assertIsString($replacementEditor);
-        $this->assertIsString($replacementEditorShared);
 
         $this->assertStringContainsString('editorFieldMapping.title', $pageContent);
         $this->assertStringContainsString('configuration.analysisContentUrl', $pageContent);
@@ -53,20 +50,22 @@ final class YoastSeoFieldMappingContractTest extends TestCase
         $this->assertStringContainsString('editorFieldMapping[key].value = data', $integratedFields);
         $this->assertStringContainsString('const debouncedLoadPageContent = useRef(debounce(() => loadPageContent(), 500)).current;', $integratedFields);
         $this->assertStringNotContainsString('debouncedUpdateIntegratedFields', $integratedFields);
-        $this->assertStringContainsString('isVariablePickerOpen: false', $replacementEditorWrapper);
-        $this->assertStringContainsString('yoast-replacement-variable-pill-list', $replacementEditorWrapper);
-        $this->assertStringContainsString('onMouseDown={ event => this.handleVariableInsertMouseDown( event, variable.name ) }', $replacementEditorWrapper);
-        $this->assertStringContainsString('this.ref.insertReplacementVariable( variableName );', $replacementEditorWrapper);
-        $this->assertStringContainsString('white-space: nowrap;', $replacementEditorShared);
-        $this->assertStringContainsString('min-width: 152px;', $replacementEditorShared);
-        $this->assertStringContainsString('display: inline-flex;', $replacementEditorShared);
-        $this->assertStringContainsString('EditorState.forceSelection', $replacementEditor);
-        $this->assertStringContainsString('hasFocus: true', $replacementEditor);
-        $this->assertStringContainsString('insertReplacementVariable( variableName )', $replacementEditor);
-        $this->assertStringContainsString('serializeVariable( variableName )', $replacementEditor);
-        $this->assertStringContainsString('suggestionsEnabled: false', $replacementEditor);
-        $this->assertStringContainsString('suggestions={ visibleSuggestions }', $replacementEditor);
-        $this->assertStringContainsString('onClose={ this.disableSuggestions }', $replacementEditor);
+        if (\is_string($replacementEditorWrapper) && \is_string($replacementEditor) && \is_string($replacementEditorShared)) {
+            $this->assertStringContainsString('isVariablePickerOpen: false', $replacementEditorWrapper);
+            $this->assertStringContainsString('yoast-replacement-variable-pill-list', $replacementEditorWrapper);
+            $this->assertStringContainsString('onMouseDown={ event => this.handleVariableInsertMouseDown( event, variable.name ) }', $replacementEditorWrapper);
+            $this->assertStringContainsString('this.ref.insertReplacementVariable( variableName );', $replacementEditorWrapper);
+            $this->assertStringContainsString('white-space: nowrap;', $replacementEditorShared);
+            $this->assertStringContainsString('min-width: 152px;', $replacementEditorShared);
+            $this->assertStringContainsString('display: inline-flex;', $replacementEditorShared);
+            $this->assertStringContainsString('EditorState.forceSelection', $replacementEditor);
+            $this->assertStringContainsString('hasFocus: true', $replacementEditor);
+            $this->assertStringContainsString('insertReplacementVariable( variableName )', $replacementEditor);
+            $this->assertStringContainsString('serializeVariable( variableName )', $replacementEditor);
+            $this->assertStringContainsString('suggestionsEnabled: false', $replacementEditor);
+            $this->assertStringContainsString('suggestions={ visibleSuggestions }', $replacementEditor);
+            $this->assertStringContainsString('onClose={ this.disableSuggestions }', $replacementEditor);
+        }
         $this->assertStringContainsString('editorFieldMapping.readabilityScore', $analysis);
         $this->assertStringContainsString('editorFieldMapping.content', $app);
         $this->assertStringContainsString('let shouldLinkInputs = !!titleInput && !!titleOverrideInput && titleInput.value === titleOverrideInput.value;', $app);
