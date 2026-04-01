@@ -207,7 +207,7 @@ final class DefaultControllerPageLifecycleTest extends TestCase
 
     /**
      * @param array{type: Query::TYPE_FIND, query: array<string, mixed>}|array{type: Query::TYPE_COUNT, query: array<string, mixed>} $query
-     * @param MongoIterator<mixed>|null $iterator
+     * @param MongoIterator<mixed>|null                                                                                              $iterator
      */
     private function createDoctrineQuery(\MongoDB\Collection $collection, array $query, ?MongoIterator $iterator = null): Query
     {

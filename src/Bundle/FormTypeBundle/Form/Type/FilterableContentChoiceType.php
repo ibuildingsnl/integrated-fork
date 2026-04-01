@@ -16,7 +16,7 @@ class FilterableContentChoiceType extends ContentChoiceType
 {
     /**
      * @param array<string, mixed>|null $params
-     * @param list<string> $excludedContentTypeKeys
+     * @param list<string>              $excludedContentTypeKeys
      */
     public function __construct(
         DocumentManager $dm,
@@ -113,8 +113,8 @@ class FilterableContentChoiceType extends ContentChoiceType
         $normalizedName = $this->normalizeContentTypeKey($name);
         $excludedKeys = array_map($this->normalizeContentTypeKey(...), $this->excludedContentTypeKeys);
 
-        return in_array($normalizedId, $excludedKeys, true)
-            || in_array($normalizedName, $excludedKeys, true);
+        return \in_array($normalizedId, $excludedKeys, true)
+            || \in_array($normalizedName, $excludedKeys, true);
     }
 
     private function normalizeContentTypeKey(string $value): string

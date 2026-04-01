@@ -53,14 +53,14 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertIsString($weekTemplate);
 
         $this->assertStringContainsString('{% set showSeoColumn = false %}', $indexTemplate);
-        $this->assertStringContainsString("{% set seoCandidateType = contentTypes|filter(t => t.id == seoColumnCandidate.type_name)|first %}", $indexTemplate);
+        $this->assertStringContainsString('{% set seoCandidateType = contentTypes|filter(t => t.id == seoColumnCandidate.type_name)|first %}', $indexTemplate);
         $this->assertStringContainsString("seoCandidateType.hasField('seoMetadata')", $indexTemplate);
         $this->assertStringContainsString('{% if showSeoColumn %}', $indexTemplate);
         $this->assertStringContainsString('<span>SEO</span>', $indexTemplate);
         $this->assertStringContainsString("type.hasField('seoMetadata')", $indexTemplate);
 
         $this->assertStringContainsString('{% set showSeoColumn = false %}', $weekTemplate);
-        $this->assertStringContainsString("{% set seoCandidateType = contentTypes|filter(t => t.id == seoColumnCandidate.type_name)|first %}", $weekTemplate);
+        $this->assertStringContainsString('{% set seoCandidateType = contentTypes|filter(t => t.id == seoColumnCandidate.type_name)|first %}', $weekTemplate);
         $this->assertStringContainsString("seoCandidateType.hasField('seoMetadata')", $weekTemplate);
         $this->assertStringContainsString('{% if showSeoColumn %}', $weekTemplate);
         $this->assertStringContainsString('<span class="btn btn-white no-icon seo-button readability-', $weekTemplate);

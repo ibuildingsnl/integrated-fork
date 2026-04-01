@@ -11,7 +11,7 @@ final class BlockStringCastTest extends TestCase
 {
     public function testUnsavedBlockCastsToEmptyString(): void
     {
-        $block = new class () extends Block {
+        $block = new class extends Block {
             public function getType()
             {
                 return 'test_block';
@@ -23,7 +23,7 @@ final class BlockStringCastTest extends TestCase
 
     public function testBlockFallsBackToTitleWhenIdIsMissing(): void
     {
-        $block = new class () extends Block {
+        $block = new class extends Block {
             public function getType()
             {
                 return 'test_block';

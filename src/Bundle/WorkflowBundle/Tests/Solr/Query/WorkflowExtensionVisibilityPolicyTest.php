@@ -25,6 +25,7 @@ final class WorkflowExtensionVisibilityPolicyTest extends TestCase
         self::assertArrayHasKey('workflow', $query->getFilterQueries());
 
         $securityQuery = $query->getFilterQueries()['workflow']->getQuery();
+        self::assertIsString($securityQuery);
 
         self::assertStringContainsString('-security_content_type_required:[* TO *]', $securityQuery);
         self::assertMatchesRegularExpression('/security_workflow_read:\s*\(\(21\s*\)\s*OR\s*\(29\)\)/', $securityQuery);
@@ -57,13 +58,13 @@ final class WorkflowExtensionVisibilityPolicyTest extends TestCase
         $user->expects(self::atLeastOnce())
             ->method('getGroups')
             ->willReturn([
-                new class() {
+                new class {
                     public function getId(): int
                     {
                         return 21;
                     }
                 },
-                new class() {
+                new class {
                     public function getId(): int
                     {
                         return 29;

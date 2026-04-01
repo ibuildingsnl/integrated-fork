@@ -80,7 +80,7 @@ class WorkflowExtension extends AbstractTypeExtension
     private function getSecurityQuery(): string
     {
         $query = [];
-        $query[] = sprintf(
+        $query[] = \sprintf(
             '((*:* -security_workflow_read:[* TO *]) AND (*:* -%s:[* TO *]))',
             self::SECURITY_CONTENT_TYPE_REQUIRED,
         ); // allow content without workflow unless a content type gate is enabled

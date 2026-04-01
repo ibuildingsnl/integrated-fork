@@ -45,7 +45,7 @@ final class SidebarMenuTemplateContractTest extends TestCase
     {
         $loader = new FilesystemLoader();
         $loader->addPath(__DIR__.'/../../Resources/views', 'IntegratedContent');
-        $loader->addPath(dirname(__DIR__, 7).'/knplabs/knp-menu/src/Knp/Menu/Resources/views');
+        $loader->addPath(\dirname(__DIR__, 7).'/knplabs/knp-menu/src/Knp/Menu/Resources/views');
 
         $twig = new Environment($loader);
         $twig->addFilter(new TwigFilter('trans', static fn (string $value): string => $value));

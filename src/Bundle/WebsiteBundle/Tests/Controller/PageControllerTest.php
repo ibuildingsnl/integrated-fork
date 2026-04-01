@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Integrated\Bundle\WebsiteBundle\Tests\Controller;
 
+use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\Controller\PageController;
 use Integrated\Bundle\WebsiteBundle\EventListener\WebsiteToolbarListener;
 use Integrated\Bundle\WebsiteBundle\Service\FacetQueryCanonicalizer;
-use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
 use Integrated\Common\Security\PermissionInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

@@ -203,12 +203,11 @@ class UserController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        /** @var Form $form */
         $form = $this->createNewForm();
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            $clickedButton = $form->getClickedButton();
+            $clickedButton = $form instanceof Form ? $form->getClickedButton() : null;
             if (\is_object($clickedButton) && method_exists($clickedButton, 'getName') && $clickedButton->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_user_user_index');
             }
@@ -253,12 +252,12 @@ class UserController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        /** @var Form $form */
         $form = $this->createEditForm($user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->getClickedButton()?->getName() === 'cancel') {
+            $clickedButton = $form instanceof Form ? $form->getClickedButton() : null;
+            if (\is_object($clickedButton) && method_exists($clickedButton, 'getName') && $clickedButton->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_user_user_index');
             }
 
@@ -309,12 +308,12 @@ class UserController extends AbstractController
             return $this->redirectToRoute('integrated_user_user_index');
         }
 
-        /** @var Form $form */
         $form = $this->createDeleteForm($user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->getClickedButton()?->getName() === 'cancel') {
+            $clickedButton = $form instanceof Form ? $form->getClickedButton() : null;
+            if (\is_object($clickedButton) && method_exists($clickedButton, 'getName') && $clickedButton->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_user_user_index');
             }
 
@@ -439,6 +438,7 @@ class UserController extends AbstractController
         ]);
     }
 
+    /** @return FormInterface<mixed> */
     protected function createNewForm(): FormInterface
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
@@ -454,6 +454,7 @@ class UserController extends AbstractController
         return $form;
     }
 
+    /** @return FormInterface<mixed> */
     protected function createEditForm(UserInterface $user): FormInterface
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
@@ -469,6 +470,7 @@ class UserController extends AbstractController
         return $form;
     }
 
+    /** @return FormInterface<mixed> */
     protected function createDeleteForm(UserInterface $user): FormInterface
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {

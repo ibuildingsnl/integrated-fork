@@ -259,10 +259,9 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
         $this->authorizationChecker
             ->expects($this->exactly(4))
             ->method('isGranted')
-            ->willReturnMap([
-                [ConfigureMenuSubscriber::ROLE_ADMIN, null, false],
-                [ConfigureMenuSubscriber::ROLE_CHANNEL_MANAGER, null, true],
-            ]);
+            ->willReturnCallback(static function (string $role): bool {
+                return ConfigureMenuSubscriber::ROLE_CHANNEL_MANAGER === $role;
+            });
 
         $this->subscriber->onMenuConfigureSettings($this->event);
     }

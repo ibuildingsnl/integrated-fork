@@ -98,6 +98,9 @@ class WorkflowExtension implements TypeExtensionInterface
         if ($permissions instanceof Collection) {
             $permissions = $permissions->toArray();
         }
+        if (!\is_array($permissions)) {
+            $permissions = iterator_to_array($permissions);
+        }
 
         $channelGroups = [];
 
@@ -109,12 +112,10 @@ class WorkflowExtension implements TypeExtensionInterface
                     $channelPermissions = $channelPermissions->toArray();
                 }
 
-                if (!\is_iterable($channelPermissions)) {
-                    continue;
-                }
+                $channelPermissions = \is_array($channelPermissions) ? $channelPermissions : iterator_to_array($channelPermissions);
 
                 // Need all permissions
-                $permissions = array_merge($permissions, is_array($channelPermissions) ? $channelPermissions : iterator_to_array($channelPermissions));
+                $permissions = array_merge($permissions, $channelPermissions);
 
                 foreach ($channelPermissions as $permission) {
                     // Need channel permissions

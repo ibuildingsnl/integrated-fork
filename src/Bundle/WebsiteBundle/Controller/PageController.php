@@ -97,6 +97,7 @@ class PageController extends AbstractController
         }
 
         $channel = $page->getChannel();
+
         return $this->isGranted(PermissionInterface::READ, $channel)
             || $this->isGranted(PermissionInterface::WRITE, $channel);
     }
