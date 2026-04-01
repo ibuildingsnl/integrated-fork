@@ -23,6 +23,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class WorkflowExtension extends AbstractTypeExtension
 {
+    private const SECURITY_CONTENT_TYPE_REQUIRED = 'security_content_type_required';
+    private const SECURITY_CONTENT_TYPE_READ = 'security_content_type_read';
+    private const SECURITY_CONTENT_TYPE_WRITE = 'security_content_type_write';
+
     private \Symfony\Bundle\SecurityBundle\Security $security;
 
     public function __construct(\Symfony\Bundle\SecurityBundle\Security $security)
@@ -76,7 +80,10 @@ class WorkflowExtension extends AbstractTypeExtension
     private function getSecurityQuery(): string
     {
         $query = [];
-        $query[] = '(*:* -security_workflow_read:[* TO *])'; // allow content without workflow
+        $query[] = sprintf(
+            '((*:* -security_workflow_read:[* TO *]) AND (*:* -%s:[* TO *]))',
+            self::SECURITY_CONTENT_TYPE_REQUIRED,
+        ); // allow content without workflow unless a content type gate is enabled
 
         $user = $this->security->getUser();
 
@@ -90,7 +97,14 @@ class WorkflowExtension extends AbstractTypeExtension
             // allow content with group access
 
             if ($groups) {
-                $query[] = \sprintf('security_workflow_read: ((%s))', implode(' ) OR (', $groups));
+                $groupList = implode(' ) OR (', $groups);
+                $query[] = \sprintf(
+                    '((security_workflow_read: ((%1$s)) AND (*:* -%2$s:[* TO *])) OR (security_workflow_read: ((%1$s)) AND security_workflow_write: ((%1$s)) AND %3$s: ((%1$s)) AND %4$s: ((%1$s))))',
+                    $groupList,
+                    self::SECURITY_CONTENT_TYPE_REQUIRED,
+                    self::SECURITY_CONTENT_TYPE_READ,
+                    self::SECURITY_CONTENT_TYPE_WRITE,
+                );
             }
         }
 

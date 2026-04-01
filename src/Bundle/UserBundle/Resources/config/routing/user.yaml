@@ -1,0 +1,35 @@
+integrated_user_user_index:
+  path: '/'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\UserController::index'
+integrated_user_user_new:
+  path: '/new'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\UserController::new'
+integrated_user_user_bulk:
+  path: '/bulk'
+  methods: ['POST']
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\UserController::bulk'
+integrated_user_user_edit:
+  path: '/{id}'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\UserController::edit'
+integrated_user_user_delete:
+  path: '/{id}/delete'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\UserController::delete'
+integrated_user_user_enable:
+  path: '/{id}/enable'
+  methods: ['POST']
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\UserController::enable'
+integrated_user_user_delete_account:
+  path: '/{id}/delete-account'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\UserController::deleteAccount'
+integrated_user_user_delete_authenticator:
+  path: '/{id}/authenticator/delete'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\TwoFactorController::delete'

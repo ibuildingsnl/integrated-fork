@@ -57,7 +57,7 @@ class DefaultController extends AbstractController
         $now = new \DateTimeImmutable();
         $channelId = (string) $channel->getId();
         $sections = $this->buildTypeSections($channelId, $now);
-        $pagesCount = $this->getPagesSectionCount($channelId);
+        $pagesCount = $this->getPagesSectionCount($channelId, $now);
         if (!$sections && !$pagesCount) {
             throw new NotFoundHttpException();
         }
@@ -124,11 +124,7 @@ class DefaultController extends AbstractController
         $now = new \DateTimeImmutable();
         $channelId = (string) $channel->getId();
 
-        $documents = $this->manager->createQueryBuilder(Page::class)
-            ->field('channel.$id')->equals($channelId)
-            ->field('disabled')->equals(false)
-            ->field('path')->exists(true)
-            ->field('path')->notEqual('')
+        $documents = $this->createPageQueryBuilder($channelId, $now)
             ->select('path', 'createdAt', 'updatedAt')
             ->sort('path')
             ->skip(($page - 1) * self::PAGE_SIZE)
@@ -206,13 +202,9 @@ class DefaultController extends AbstractController
         return $sections;
     }
 
-    private function getPagesSectionCount(string $channelId): int
+    private function getPagesSectionCount(string $channelId, \DateTimeInterface $now): int
     {
-        $count = $this->manager->createQueryBuilder(Page::class)
-            ->field('channel.$id')->equals($channelId)
-            ->field('disabled')->equals(false)
-            ->field('path')->exists(true)
-            ->field('path')->notEqual('')
+        $count = $this->createPageQueryBuilder($channelId, $now)
             ->count()
             ->getQuery()
             ->execute();
@@ -257,5 +249,29 @@ class DefaultController extends AbstractController
         }
 
         return 0;
+    }
+
+    private function createPageQueryBuilder(string $channelId, \DateTimeInterface $now): Builder
+    {
+        $queryBuilder = $this->manager->createQueryBuilder(Page::class);
+
+        $queryBuilder
+            ->field('channel.$id')->equals($channelId)
+            ->field('disabled')->equals(false)
+            ->field('path')->exists(true)
+            ->field('path')->notEqual('')
+            ->field('hideFromSitemap')->notEqual(true);
+
+        $publishExpr = $queryBuilder->expr();
+        $publishExpr->addOr($queryBuilder->expr()->field('publishAt')->equals(null));
+        $publishExpr->addOr($queryBuilder->expr()->field('publishAt')->lte($now));
+        $queryBuilder->addAnd($publishExpr);
+
+        $expireExpr = $queryBuilder->expr();
+        $expireExpr->addOr($queryBuilder->expr()->field('expireAt')->equals(null));
+        $expireExpr->addOr($queryBuilder->expr()->field('expireAt')->gt($now));
+        $queryBuilder->addAnd($expireExpr);
+
+        return $queryBuilder;
     }
 }

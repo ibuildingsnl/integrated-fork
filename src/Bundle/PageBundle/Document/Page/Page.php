@@ -12,6 +12,8 @@
 namespace Integrated\Bundle\PageBundle\Document\Page;
 
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\SeoMeta;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -42,6 +44,73 @@ class Page extends AbstractPage
      * @var bool
      */
     protected $locked = false;
+
+    /**
+     * @var string|null
+     */
+    protected $seoTitle;
+
+    /**
+     * @var string|null
+     */
+    protected $seoDescription;
+
+    /**
+     * @var string|null
+     */
+    protected $canonicalUrl;
+
+    /**
+     * @var \DateTimeInterface|null
+     */
+    protected $publishAt;
+
+    /**
+     * @var \DateTimeInterface|null
+     */
+    protected $expireAt;
+
+    /**
+     * @var string|null
+     */
+    protected $expireRedirectUrl;
+
+    /**
+     * @var bool|null
+     */
+    protected $hideFromSitemap;
+
+    /**
+     * @var bool|null
+     */
+    protected $paginationNoindexEnabled;
+
+    /**
+     * @var SeoMeta
+     */
+    protected $seoMetadata;
+
+    /**
+     * @var Image|null
+     */
+    protected $featuredImage;
+
+    /**
+     * @var string|null
+     */
+    protected $robotsDirective;
+
+    /**
+     * @var string|null
+     */
+    protected $twitterCard;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->seoMetadata = new SeoMeta();
+    }
 
     /**
      * @return string
@@ -119,6 +188,180 @@ class Page extends AbstractPage
     public function setLocked($locked)
     {
         $this->locked = (bool) $locked;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSeoTitle()
+    {
+        return $this->seoTitle;
+    }
+
+    /**
+     * @param string|null $seoTitle
+     *
+     * @return $this
+     */
+    public function setSeoTitle($seoTitle)
+    {
+        $this->seoTitle = $seoTitle;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSeoDescription()
+    {
+        return $this->seoDescription;
+    }
+
+    /**
+     * @param string|null $seoDescription
+     *
+     * @return $this
+     */
+    public function setSeoDescription($seoDescription)
+    {
+        $this->seoDescription = $seoDescription;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCanonicalUrl()
+    {
+        return $this->canonicalUrl;
+    }
+
+    /**
+     * @param string|null $canonicalUrl
+     *
+     * @return $this
+     */
+    public function setCanonicalUrl($canonicalUrl)
+    {
+        $this->canonicalUrl = $canonicalUrl;
+
+        return $this;
+    }
+
+    public function getPublishAt(): ?\DateTimeInterface
+    {
+        return $this->publishAt;
+    }
+
+    public function setPublishAt(?\DateTimeInterface $publishAt): self
+    {
+        $this->publishAt = $publishAt;
+
+        return $this;
+    }
+
+    public function getExpireAt(): ?\DateTimeInterface
+    {
+        return $this->expireAt;
+    }
+
+    public function setExpireAt(?\DateTimeInterface $expireAt): self
+    {
+        $this->expireAt = $expireAt;
+
+        return $this;
+    }
+
+    public function getExpireRedirectUrl(): ?string
+    {
+        return null === $this->expireRedirectUrl ? null : (string) $this->expireRedirectUrl;
+    }
+
+    public function setExpireRedirectUrl(?string $expireRedirectUrl): self
+    {
+        $this->expireRedirectUrl = null === $expireRedirectUrl || '' === $expireRedirectUrl ? null : $expireRedirectUrl;
+
+        return $this;
+    }
+
+    public function isHideFromSitemap(): ?bool
+    {
+        return null === $this->hideFromSitemap ? null : (bool) $this->hideFromSitemap;
+    }
+
+    public function setHideFromSitemap(?bool $hideFromSitemap): self
+    {
+        $this->hideFromSitemap = null === $hideFromSitemap ? null : (bool) $hideFromSitemap;
+
+        return $this;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function isPaginationNoindexEnabled()
+    {
+        return $this->paginationNoindexEnabled;
+    }
+
+    /**
+     * @param bool|null $paginationNoindexEnabled
+     *
+     * @return $this
+     */
+    public function setPaginationNoindexEnabled($paginationNoindexEnabled)
+    {
+        $this->paginationNoindexEnabled = null === $paginationNoindexEnabled ? null : (bool) $paginationNoindexEnabled;
+
+        return $this;
+    }
+
+    public function setSeoMetadata(SeoMeta $seoMetadata): void
+    {
+        $this->seoMetadata = $seoMetadata;
+    }
+
+    public function getSeoMetadata(): ?SeoMeta
+    {
+        return $this->seoMetadata;
+    }
+
+    public function getFeaturedImage(): ?Image
+    {
+        return $this->featuredImage;
+    }
+
+    public function setFeaturedImage(?Image $featuredImage): self
+    {
+        $this->featuredImage = $featuredImage;
+
+        return $this;
+    }
+
+    public function getRobotsDirective(): ?string
+    {
+        return null === $this->robotsDirective ? null : (string) $this->robotsDirective;
+    }
+
+    public function setRobotsDirective(?string $robotsDirective): self
+    {
+        $this->robotsDirective = $robotsDirective;
+
+        return $this;
+    }
+
+    public function getTwitterCard(): ?string
+    {
+        return null === $this->twitterCard ? null : (string) $this->twitterCard;
+    }
+
+    public function setTwitterCard(?string $twitterCard): self
+    {
+        $this->twitterCard = $twitterCard;
 
         return $this;
     }

@@ -5,6 +5,9 @@ parameters:
   level: 8
   paths:
     - src/
+  excludePaths:
+    analyse:
+      - src/Bundle/ContentBundle/YoastSeo/node_modules/*
   scanFiles:
     - phpstan-stubs/live-component-attributes.stub.php
   reportUnmatchedIgnoredErrors: false

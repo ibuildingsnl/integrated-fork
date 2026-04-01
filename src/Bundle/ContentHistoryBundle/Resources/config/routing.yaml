@@ -1,0 +1,3 @@
+import_01_content_history:
+  resource: '@IntegratedContentHistoryBundle/Resources/config/routing/content_history.yaml'
+  prefix: '/content-history'

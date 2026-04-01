@@ -1,0 +1,18 @@
+import_01_profile:
+  resource: '@IntegratedUserBundle/Resources/config/routing/profile.yaml'
+  prefix: '/user/profile'
+import_02_two_factor:
+  resource: '@IntegratedUserBundle/Resources/config/routing/two_factor.yaml'
+  prefix: '/user/authenticator'
+import_03_user:
+  resource: '@IntegratedUserBundle/Resources/config/routing/user.yaml'
+  prefix: '/user'
+import_04_group:
+  resource: '@IntegratedUserBundle/Resources/config/routing/group.yaml'
+  prefix: '/group'
+import_05_scope:
+  resource: '@IntegratedUserBundle/Resources/config/routing/scope.yaml'
+  prefix: '/scope'
+import_06_ip_list:
+  resource: '@IntegratedUserBundle/Resources/config/routing/ip_list.yaml'
+  prefix: '/ip-list'

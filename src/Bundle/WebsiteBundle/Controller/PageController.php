@@ -14,7 +14,10 @@ namespace Integrated\Bundle\WebsiteBundle\Controller;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\EventListener\WebsiteToolbarListener;
+use Integrated\Bundle\WebsiteBundle\Service\FacetQueryCanonicalizer;
+use Integrated\Common\Security\PermissionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\UriSigner;
@@ -28,32 +31,56 @@ class PageController extends AbstractController
     private ThemeManager $themeManager;
     private WebsiteToolbarListener $websiteToolbarListener;
     private UriSigner $uriSigner;
+    private FacetQueryCanonicalizer $facetQueryCanonicalizer;
 
-    public function __construct(ThemeManager $themeManager, WebsiteToolbarListener $websiteToolbarListener, UriSigner $uriSigner)
+    public function __construct(ThemeManager $themeManager, WebsiteToolbarListener $websiteToolbarListener, UriSigner $uriSigner, FacetQueryCanonicalizer $facetQueryCanonicalizer)
     {
         $this->themeManager = $themeManager;
         $this->websiteToolbarListener = $websiteToolbarListener;
         $this->uriSigner = $uriSigner;
+        $this->facetQueryCanonicalizer = $facetQueryCanonicalizer;
     }
 
     public function show(Request $request, Page $page): Response
     {
-        $canPreviewDraft = $this->isGranted('ROLE_WEBSITE_MANAGER') || $this->isGranted('ROLE_ADMIN');
+        $now = new \DateTimeImmutable();
+        $canPreviewDraft = $this->canPreviewUnpublishedPage($page);
         $hasValidPreviewLink = $this->hasValidDraftPreviewLink($request, $page);
-
-        if ($page->isDisabled() && !$canPreviewDraft && !$hasValidPreviewLink) {
-            throw new NotFoundHttpException();
-        }
+        $canPreview = $canPreviewDraft || $hasValidPreviewLink;
+        $isPublic = $this->isPublicPage($page, $now);
 
         if ($page->isDisabled()) {
+            if (!$canPreview) {
+                throw new NotFoundHttpException();
+            }
+        } elseif (!$isPublic) {
+            if (!$canPreview && $this->isExpired($page, $now)) {
+                $redirectUrl = $this->getExpireRedirectUrl($page);
+                if (null !== $redirectUrl) {
+                    return new RedirectResponse($redirectUrl);
+                }
+            }
+
+            if (!$canPreview) {
+                throw new NotFoundHttpException();
+            }
+        }
+
+        if (!$isPublic) {
             $this->websiteToolbarListener->setToolbarMessage(self::DRAFT_NOTICE_TEXT);
         }
+
+        if (null !== $normalizedPath = $this->facetQueryCanonicalizer->getNormalizedPath($page, $request)) {
+            return new RedirectResponse($normalizedPath);
+        }
+
+        $request->attributes->set('_integrated_page_document', $page);
 
         $response = $this->render($this->themeManager->locateTemplate($page->getLayout()), [
             'page' => $page,
         ]);
 
-        if ($page->isDisabled()) {
+        if (!$isPublic) {
             $response->setPrivate();
             $response->headers->addCacheControlDirective('no-store', true);
             $response->headers->addCacheControlDirective('max-age', '0');
@@ -61,6 +88,17 @@ class PageController extends AbstractController
         }
 
         return $response;
+    }
+
+    private function canPreviewUnpublishedPage(Page $page): bool
+    {
+        if ($this->isGranted('ROLE_WEBSITE_MANAGER') || $this->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
+
+        $channel = $page->getChannel();
+        return $this->isGranted(PermissionInterface::READ, $channel)
+            || $this->isGranted(PermissionInterface::WRITE, $channel);
     }
 
     private function hasValidDraftPreviewLink(Request $request, Page $page): bool
@@ -80,5 +118,73 @@ class PageController extends AbstractController
         }
 
         return 0 === strcasecmp($request->getHost(), $pageDomain);
+    }
+
+    private function isPublicPage(Page $page, \DateTimeInterface $now): bool
+    {
+        if ($page->isDisabled()) {
+            return false;
+        }
+
+        $publishAt = $page->getPublishAt();
+        if (null !== $publishAt && $publishAt > $now) {
+            return false;
+        }
+
+        $expireAt = $page->getExpireAt();
+        if (null !== $expireAt && $expireAt <= $now) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function isExpired(Page $page, \DateTimeInterface $now): bool
+    {
+        $expireAt = $page->getExpireAt();
+
+        return null !== $expireAt && $expireAt <= $now;
+    }
+
+    private function getExpireRedirectUrl(Page $page): ?string
+    {
+        $redirectUrl = trim((string) $page->getExpireRedirectUrl());
+
+        if ('' === $redirectUrl || !$this->isAllowedRedirectUrl($redirectUrl)) {
+            return null;
+        }
+
+        return $redirectUrl;
+    }
+
+    private function isAllowedRedirectUrl(string $redirectUrl): bool
+    {
+        if (str_starts_with($redirectUrl, '/') && !str_starts_with($redirectUrl, '//')) {
+            return true;
+        }
+
+        if (false === filter_var($redirectUrl, \FILTER_VALIDATE_URL)) {
+            return false;
+        }
+
+        $parts = parse_url($redirectUrl);
+        if (false === $parts) {
+            return false;
+        }
+
+        $scheme = strtolower((string) ($parts['scheme'] ?? ''));
+        if (!\in_array($scheme, ['http', 'https'], true)) {
+            return false;
+        }
+
+        if ('' === (string) ($parts['host'] ?? '')) {
+            return false;
+        }
+
+        if (isset($parts['user']) || isset($parts['pass'])) {
+            return false;
+        }
+
+        return true;
     }
 }

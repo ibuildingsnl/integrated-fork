@@ -1,0 +1,36 @@
+integrated_page_page_index:
+  path: '/'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\PageBundle\Controller\PageController::index'
+integrated_page_page_new:
+  path: '/new'
+  defaults:
+    _controller: 'Integrated\Bundle\PageBundle\Controller\PageController::new'
+integrated_page_page_edit:
+  path: '/{id}/edit'
+  defaults:
+    _controller: 'Integrated\Bundle\PageBundle\Controller\PageController::edit'
+integrated_page_page_seo_content:
+  path: '/{id}/seo-content'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\PageBundle\Controller\PageController::seoContent'
+integrated_page_page_delete:
+  path: '/{id}/delete'
+  defaults:
+    _controller: 'Integrated\Bundle\PageBundle\Controller\PageController::delete'
+integrated_page_page_delete_without_channel:
+  path: '/{id}/delete-without-channel'
+  methods: ['POST']
+  defaults:
+    _controller: 'Integrated\Bundle\PageBundle\Controller\PageController::deleteWithoutChannel'
+integrated_page_page_delete_without_channel_bulk:
+  path: '/delete-without-channel/bulk'
+  methods: ['POST']
+  defaults:
+    _controller: 'Integrated\Bundle\PageBundle\Controller\PageController::deleteWithoutChannelBulk'
+integrated_page_page_copy:
+  path: '/copy'
+  defaults:
+    _controller: 'Integrated\Bundle\PageBundle\Controller\PageController::copy'

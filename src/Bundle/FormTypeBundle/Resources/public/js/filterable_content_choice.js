@@ -71,7 +71,9 @@
             });
 
             $widget.find('[data-filter-role]').on('change', function () {
-                $element.val(null).trigger('change.select2');
+                if ($element.hasClass('select2-hidden-accessible')) {
+                    $element.select2('close');
+                }
             });
         });
     }

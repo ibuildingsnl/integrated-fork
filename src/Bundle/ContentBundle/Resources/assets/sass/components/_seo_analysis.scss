@@ -24,18 +24,13 @@
 
         &-snippet-editor-wrapper {
             margin: 1rem 0;
-            padding: 1rem 0;
+            padding: 1rem 0 0;
             border-top: 1px solid var(--border-light);
-            border-bottom: 1px solid var(--border-light);
 
             legend {
                 display: none;
             }
 
-            // Hotfix to hide `Insert snippet variable` button
-            section button {
-                display: none;
-            }
         }
 
         &-social-preview {

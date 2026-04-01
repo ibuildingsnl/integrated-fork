@@ -1,0 +1,51 @@
+integrated_sitemap_index:
+  path: '/sitemap.xml'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\SitemapBundle\Controller\DefaultController::index'
+    _format: 'xml'
+integrated_sitemap_list:
+  path: '/sitemap{page}.xml'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\SitemapBundle\Controller\DefaultController::list'
+    _format: 'xml'
+  requirements:
+    page: '[1-9]\d*'
+integrated_sitemap_list_pages:
+  path: '/sitemap-pages-{page}.xml'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\SitemapBundle\Controller\DefaultController::listPages'
+    _format: 'xml'
+  requirements:
+    page: '[1-9]\d*'
+integrated_sitemap_list_by_type:
+  path: '/sitemap-{type}-{page}.xml'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\SitemapBundle\Controller\DefaultController::listByType'
+    _format: 'xml'
+  requirements:
+    type: '[A-Za-z0-9_]+'
+    page: '[1-9]\d*'
+integrated_sitemap_news_index:
+  path: '/news-sitemap.xml'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\SitemapBundle\Controller\NewsController::index'
+    _format: 'xml'
+integrated_sitemap_news_list:
+  path: '/news-sitemap{page}.xml'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\SitemapBundle\Controller\NewsController::list'
+    _format: 'xml'
+  requirements:
+    page: '[1-9]\d*'
+integrated_sitemap_robots:
+  path: '/robots.txt'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\SitemapBundle\Controller\RobotsController::index'
+    _format: 'txt'

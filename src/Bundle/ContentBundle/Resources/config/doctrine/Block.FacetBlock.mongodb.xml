@@ -5,6 +5,9 @@
 
     <document name="Integrated\Bundle\ContentBundle\Document\Block\FacetBlock">
 
+        <field field-name="operator" type="string" nullable="true" />
+        <field field-name="selectionMode" type="string" nullable="true" />
+
         <embed-many
             field="fields"
             target-document="Integrated\Bundle\ContentBundle\Document\Block\Embedded\FacetField"

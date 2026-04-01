@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 class StorageLocator extends FileLocator
 {
     /**
-     * @var CacheInterface
+     * @var CacheInterface|null
      */
     private $cache;
 
@@ -33,7 +33,7 @@ class StorageLocator extends FileLocator
         parent::__construct($kernel);
     }
 
-    public function __sleep()
+    public function __serialize(): array
     {
         $this->cache = null;
 
@@ -43,6 +43,10 @@ class StorageLocator extends FileLocator
     public function locate(string|StorageInterface $file, ?string $currentPath = null, bool $first = true): array|string
     {
         if ($file instanceof StorageInterface) {
+            if (null === $this->cache) {
+                throw new \InvalidArgumentException('File not found.');
+            }
+
             try {
                 return $this->cache->path($file)->getPathname();
             } catch (\Exception $e) {

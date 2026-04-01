@@ -9,6 +9,7 @@ import './taxonomy_category';
 function initializePage() {
     bindPreventEnterOnContentForm();
     initBrandChannelChoiceHandlers();
+    initSubscriptionActionEditors();
     prepDateTimeFields();
     setupCharacterCounters();
     updatePublicationsAndChannels();
@@ -130,6 +131,105 @@ function bindPreventEnterOnContentForm() {
             return false;
         }
     });
+}
+
+function initSubscriptionActionEditors() {
+    document.querySelectorAll('.js-subscription-action-editor').forEach(function(root) {
+        if (!root || root.dataset.subscriptionActionEditorInitialized === 'true') {
+            syncSubscriptionActionEditor(root);
+            return;
+        }
+
+        var typeSelect = root.querySelector('.js-subscription-action-type');
+        if (typeSelect) {
+            typeSelect.addEventListener('change', function() {
+                syncSubscriptionActionEditor(root);
+            });
+        }
+
+        root.dataset.subscriptionActionEditorInitialized = 'true';
+        syncSubscriptionActionEditor(root);
+    });
+
+    if (document.body.dataset.subscriptionActionEditorCollectionBound !== 'true') {
+        document.addEventListener('click', function(event) {
+            var target = event.target;
+            if (!(target instanceof HTMLElement) || target.getAttribute('data-addfield') !== 'collection') {
+                return;
+            }
+
+            window.setTimeout(function() {
+                initSubscriptionActionEditors();
+            }, 0);
+        });
+
+        document.body.dataset.subscriptionActionEditorCollectionBound = 'true';
+    }
+}
+
+function syncSubscriptionActionEditor(root) {
+    if (!(root instanceof HTMLElement)) {
+        return;
+    }
+
+    var typeSelect = root.querySelector('.js-subscription-action-type');
+    if (!(typeSelect instanceof HTMLSelectElement)) {
+        return;
+    }
+
+    var currentType = String(typeSelect.value || '').trim();
+    if (!currentType) {
+        currentType = String(typeSelect.dataset.subscriptionActionDefault || 'form').trim();
+        typeSelect.value = currentType;
+    }
+
+    resolveSubscriptionActionRows(root, '.js-subscription-action-row--iframe, .js-subscription-action-row--form').forEach(function(row) {
+        if (!(row instanceof HTMLElement)) {
+            return;
+        }
+
+        var showForIframe = row.classList.contains('js-subscription-action-row--iframe');
+        var shouldShow = showForIframe ? currentType === 'iframe' : currentType === 'form';
+        row.classList.toggle('is-hidden', !shouldShow);
+        row.style.display = shouldShow ? '' : 'none';
+
+        row.querySelectorAll('.js-subscription-action-row--iframe, .js-subscription-action-row--form').forEach(function(marker) {
+            if (!(marker instanceof HTMLElement) || marker === row) {
+                return;
+            }
+
+            marker.style.display = shouldShow ? '' : 'none';
+        });
+    });
+}
+
+function resolveSubscriptionActionRows(root, selector) {
+    var rows = [];
+    var seen = new Set();
+
+    root.querySelectorAll(selector).forEach(function(marker) {
+        if (!(marker instanceof HTMLElement)) {
+            return;
+        }
+
+        var row = marker.closest('.form-item') || marker;
+        if (!(row instanceof HTMLElement) || seen.has(row)) {
+            return;
+        }
+
+        if (marker.classList.contains('js-subscription-action-row--iframe')) {
+            row.classList.add('js-subscription-action-row--iframe');
+        }
+
+        if (marker.classList.contains('js-subscription-action-row--form')) {
+            row.classList.add('js-subscription-action-row--form');
+        }
+
+        seen.add(row);
+        rows.push(row);
+    });
+
+    return rows;
 }
 
 function updateDateText(dateSelection, dateText) {

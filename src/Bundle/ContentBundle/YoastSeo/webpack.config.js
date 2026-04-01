@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
@@ -87,6 +88,11 @@ const webpackConfig = [
         optimization: {
             minimizer: [new TerserPlugin()],
         },
+        plugins: [
+            new webpack.ProvidePlugin({
+                process: path.resolve(__dirname, './src/shims/process.js'),
+            }),
+        ],
         module: {
             rules: [
                 {

@@ -37,12 +37,11 @@
 
         function setSaveButtonDisabled(disabled) {
             var saveButton = document.getElementById('integrated_content_actions_save');
-            if (!saveButton) {
-                return;
-            }
 
-            saveButton.disabled = !!disabled;
-            saveButton.classList.toggle('disabled', !!disabled);
+            if (saveButton) {
+                saveButton.disabled = !!disabled;
+                saveButton.classList.toggle('disabled', !!disabled);
+            }
         }
 
         function setLockOverlay(form, message) {
@@ -149,7 +148,7 @@
                     return;
                 }
 
-                state.timer = window.setTimeout(refresh, 5000);
+                state.timer = window.setTimeout(refresh, 10000);
             }
 
             function refresh() {

@@ -2,18 +2,23 @@ $(document).ready(function () {
     const form = $('form.content-form');
     const modal = $('#content-edit-modal');
 
-    if (modal.length && form.length) {
-        form.data('changed', false);
+    if (!form.length) {
+        return;
+    }
+
+    form.data('changed', false);
+    initFormChangeObservation();
+    initFormButtons();
+
+    if (modal.length) {
         initPageNavigationHandling();
-        initFormChangeObservation();
         initLeavePageHandling();
         initModalActions();
-        initFormButtons();
     }
 
     function initPageNavigationHandling() {
         history.pushState(null, null, location.href);
-        window.onpopstate = function (e) {
+        window.onpopstate = function () {
             $(':focus').blur();
             if (form.data('changed')) {
                 setModalReturnUrl(document.referrer);
@@ -25,28 +30,37 @@ $(document).ready(function () {
         };
     }
 
+    function markFormChanged() {
+        form.data('changed', true);
+    }
+
     function initFormChangeObservation() {
-        form.on('change', function (event) {
+        form.on('change input', function (event) {
             if (!event || !event.originalEvent) {
                 return;
             }
 
-            form.data('changed', true);
+            markFormChanged();
         });
 
-        if (typeof tinymce !== 'undefined' && tinymce.activeEditor !== null) {
-            const editor = tinymce.activeEditor;
-            editor.on('Change', function () {
-                if (typeof editor.isDirty === 'function' && !editor.isDirty()) {
+        if (typeof tinymce !== 'undefined' && Array.isArray(tinymce.editors)) {
+            tinymce.editors.forEach(function (editor) {
+                if (!editor || typeof editor.on !== 'function') {
                     return;
                 }
 
-                form.data('changed', true);
+                editor.on('Change', function () {
+                    if (typeof editor.isDirty === 'function' && !editor.isDirty()) {
+                        return;
+                    }
+
+                    markFormChanged();
+                });
             });
         }
 
-        if (global.formInvalid) {
-            form.data('changed', true);
+        if (window.formInvalid) {
+            markFormChanged();
         }
     }
 
@@ -90,7 +104,7 @@ $(document).ready(function () {
     }
 
     function initFormButtons() {
-        $('button', form).on('click', function () {
+        $('button[type="submit"]', form).on('click', function () {
             window.onbeforeunload = null;
         });
 

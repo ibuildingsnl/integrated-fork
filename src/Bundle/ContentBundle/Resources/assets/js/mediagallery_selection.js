@@ -1,5 +1,6 @@
 let form_relations = {}; //this holds all the form relation objects with an id
 const mediagallery_link = '/admin/media/';
+const empty_thumbnail = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 let selected_relation = null;
 
 function initializeMediaGallerySelection() {
@@ -20,6 +21,7 @@ function scheduleMediaGallerySelectionInit() {
 function setupFormRelations() {
     Object.values(form_relations).forEach(form_relation => {
         selected_relation = form_relation;
+        syncSelectedImagesFromInput(form_relation);
         rebuildDOM();
     });
 }
@@ -140,7 +142,7 @@ function createClone(selectedImage) {
     const remove_link = clone.querySelector('.remove_link');
     clone.id = selectedImage.id;
     clone.classList.remove('hidden');
-    clone_img.src = selectedImage.thumbnail;
+    clone_img.src = selectedImage.thumbnail || empty_thumbnail;
     remove_link.setAttribute('onclick', 'removeImage(event)');
     return clone;
 }
@@ -254,6 +256,68 @@ function rebuildDOM() {
     emptyShownImagesInDOM();
     populateDOMWithImages();
     addImageIDsToInputField();
+}
+
+function getSelectedIdsFromInput(form_relation) {
+    const input = document.querySelector(form_relation.input_selector);
+    if (!input) {
+        return [];
+    }
+
+    return String(input.value || '')
+        .split(',')
+        .map(item => String(item || '').trim())
+        .filter(Boolean);
+}
+
+function buildImageMetadataMap(form_relation) {
+    const map = {};
+
+    form_relation.selected_images.forEach((item) => {
+        if (!item || !item.id) {
+            return;
+        }
+        map[String(item.id)] = item;
+    });
+
+    const selector = `#${form_relation.relationid} .previously_selected_images li`;
+    document.querySelectorAll(selector).forEach((item) => {
+        const id = String(item.dataset.id || '');
+        if (!id || map[id]) {
+            return;
+        }
+        map[id] = {...item.dataset};
+    });
+
+    return map;
+}
+
+function syncSelectedImagesFromInput(form_relation) {
+    const ids = getSelectedIdsFromInput(form_relation);
+    const metadata = buildImageMetadataMap(form_relation);
+
+    form_relation.selected_images = ids.map((id) => {
+        const current = metadata[id] || {};
+        return {
+            ...current,
+            id: id,
+            thumbnail: current.thumbnail || empty_thumbnail,
+            title: current.title || id,
+        };
+    });
+}
+
+function refreshMediaGallerySelectionFromInputs() {
+    if (!Object.keys(form_relations).length) {
+        initializeMediaGallerySelection();
+        return;
+    }
+
+    Object.values(form_relations).forEach((form_relation) => {
+        selected_relation = form_relation;
+        syncSelectedImagesFromInput(form_relation);
+        rebuildDOM();
+    });
 }
 
 function closeMediaGallery() {

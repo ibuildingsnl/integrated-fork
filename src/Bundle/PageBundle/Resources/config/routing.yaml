@@ -1,0 +1,6 @@
+import_01_page:
+  resource: '@IntegratedPageBundle/Resources/config/routing/page.yaml'
+  prefix: '/page'
+import_02_content_type_page:
+  resource: '@IntegratedPageBundle/Resources/config/routing/content_type_page.yaml'
+  prefix: '/content-type-page'

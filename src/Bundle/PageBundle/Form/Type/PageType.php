@@ -13,14 +13,20 @@ namespace Integrated\Bundle\PageBundle\Form\Type;
 
 use Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
 use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
+use Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryType;
+use Integrated\Bundle\ContentBundle\Form\Type\SeoMetaType;
+use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\PageBundle\Resolver\ThemeResolver;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
@@ -43,10 +49,19 @@ class PageType extends AbstractType
      */
     private $themeResolver;
 
-    public function __construct(ChannelContextInterface $channelContext, ThemeResolver $themeResolver)
-    {
+    /**
+     * @var bool
+     */
+    private $defaultPaginatedNoindex;
+
+    public function __construct(
+        ChannelContextInterface $channelContext,
+        ThemeResolver $themeResolver,
+        bool $defaultPaginatedNoindex = true,
+    ) {
         $this->channelContext = $channelContext;
         $this->themeResolver = $themeResolver;
+        $this->defaultPaginatedNoindex = $defaultPaginatedNoindex;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -72,6 +87,96 @@ class PageType extends AbstractType
             $builder->add('description', TextareaType::class, [
                 'required' => false,
             ]);
+
+            $builder->add('seoMetadata', SeoMetaType::class, [
+                'label' => false,
+                'required' => false,
+                'meta_title_fallback' => '%%title%% %%separator%% %%channel%%',
+                'meta_description_fallback' => $page ? (string) $page->getDescription() : null,
+            ]);
+
+            $builder->add('canonicalUrl', TextType::class, [
+                'label' => 'Canonical URL',
+                'required' => false,
+            ]);
+
+            $builder->add('publishAt', DateTimeType::class, [
+                'label' => 'Publication date',
+                'required' => false,
+                'placeholder' => ' ',
+                'attr' => [
+                    'data-set-date-text' => 'Set publication date',
+                ],
+                'html5' => true,
+                'date_widget' => 'single_text',
+                'time_widget' => 'single_text',
+            ]);
+
+            $builder->add('expireAt', DateTimeType::class, [
+                'label' => 'Depublication date',
+                'required' => false,
+                'placeholder' => ' ',
+                'attr' => [
+                    'data-set-date-text' => 'Set depublication date',
+                ],
+                'html5' => true,
+                'date_widget' => 'single_text',
+                'time_widget' => 'single_text',
+            ]);
+
+            $builder->add('expireRedirectUrl', TextType::class, [
+                'label' => 'Redirect after depublication',
+                'required' => false,
+                'empty_data' => null,
+            ]);
+
+            $builder->add('hideFromSitemap', CheckboxSwitcherType::class, [
+                'label' => 'Hide from sitemap',
+                'required' => false,
+                'attr' => [
+                    'align_with_widget' => true,
+                ],
+            ]);
+
+            $builder->add('featuredImage', MediaGalleryType::class, [
+                'label' => 'Featured image',
+                'required' => false,
+                'attr' => [
+                    'style' => 'sidebar',
+                    'icon' => 'media-image',
+                    'data-types' => '[{"type":"image","name":"Image"}]',
+                    'data-emptytext' => 'Select featured image',
+                    'data-multiple' => false,
+                ],
+            ]);
+
+            $builder->add('robotsDirective', ChoiceType::class, [
+                'label' => 'Robots',
+                'required' => false,
+                'choices' => [
+                    'Default' => 'default',
+                    'index,follow' => 'index,follow',
+                    'noindex,follow' => 'noindex,follow',
+                    'index,nofollow' => 'index,nofollow',
+                    'noindex,nofollow' => 'noindex,nofollow',
+                ],
+                'data' => null === $page || null === $page->getRobotsDirective()
+                    ? 'default'
+                    : $page->getRobotsDirective(),
+            ]);
+
+            $builder->add('twitterCard', ChoiceType::class, [
+                'label' => 'Twitter card',
+                'required' => false,
+                'choices' => [
+                    'Default' => 'default',
+                    'summary' => 'summary',
+                    'summary_large_image' => 'summary_large_image',
+                ],
+                'data' => null === $page || null === $page->getTwitterCard()
+                    ? 'default'
+                    : $page->getTwitterCard(),
+            ]);
         }
 
         $builder->add('path', TextType::class, [
@@ -87,6 +192,18 @@ class PageType extends AbstractType
             $builder->add('disabled', CheckboxSwitcherType::class, [
                 'label' => false,
                 'required' => false,
+                'attr' => [
+                    'align_with_widget' => true,
+                ],
+            ]);
+
+            $builder->add('paginationNoindexEnabled', CheckboxSwitcherType::class, [
+                'label' => 'Noindex paginated pages',
+                'required' => false,
+                'empty_data' => '0',
+                'data' => null === $page || null === $page->isPaginationNoindexEnabled()
+                    ? $this->defaultPaginatedNoindex
+                    : $page->isPaginationNoindexEnabled(),
                 'attr' => [
                     'align_with_widget' => true,
                 ],
@@ -124,12 +241,63 @@ class PageType extends AbstractType
 
         $builder->get('path')->addModelTransformer(new CallbackTransformer(
             function ($path) {
-                return ltrim($path, '/');
+                return ltrim((string) $path, '/');
             },
             function ($path) {
-                return '/'.$path;
+                return '/'.(string) $path;
             }
         ));
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
+            $form = $event->getForm();
+            $page = $form->getData();
+            if (!$page instanceof Page) {
+                return;
+            }
+
+            $publishAt = $page->getPublishAt();
+            $expireAt = $page->getExpireAt();
+            $expireRedirectUrl = $page->getExpireRedirectUrl();
+
+            if ($publishAt instanceof \DateTimeInterface && $expireAt instanceof \DateTimeInterface && $expireAt < $publishAt) {
+                $form->get('expireAt')->addError(new FormError('The expiration date cannot be earlier than the publication date.'));
+            }
+
+            if (null !== $expireRedirectUrl && !$this->isAllowedExpireRedirectUrl($expireRedirectUrl)) {
+                $form->get('expireRedirectUrl')->addError(new FormError('The redirect must be an absolute URL or a path starting with "/".'));
+            }
+        });
+    }
+
+    private function isAllowedExpireRedirectUrl(string $expireRedirectUrl): bool
+    {
+        if (str_starts_with($expireRedirectUrl, '/') && !str_starts_with($expireRedirectUrl, '//')) {
+            return true;
+        }
+
+        if (false === filter_var($expireRedirectUrl, \FILTER_VALIDATE_URL)) {
+            return false;
+        }
+
+        $parts = parse_url($expireRedirectUrl);
+        if (false === $parts) {
+            return false;
+        }
+
+        $scheme = strtolower((string) ($parts['scheme'] ?? ''));
+        if (!\in_array($scheme, ['http', 'https'], true)) {
+            return false;
+        }
+
+        if ('' === (string) ($parts['host'] ?? '')) {
+            return false;
+        }
+
+        if (isset($parts['user']) || isset($parts['pass'])) {
+            return false;
+        }
+
+        return true;
     }
 
     public function configureOptions(OptionsResolver $resolver)

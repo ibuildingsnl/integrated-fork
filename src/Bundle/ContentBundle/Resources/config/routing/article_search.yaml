@@ -1,0 +1,10 @@
+integrated_content_article_search_index:
+  path: 'article-search'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ArticleSearchController::index'
+integrated_content_article_search_search:
+  path: 'article-search/search-channel/{channelId?}'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ArticleSearchController::searchContentByChannel'

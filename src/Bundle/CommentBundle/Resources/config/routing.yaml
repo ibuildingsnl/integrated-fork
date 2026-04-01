@@ -1,0 +1,18 @@
+integrated_comment_new:
+  path: '/comment/new/{content}/{field}'
+  defaults:
+    _controller: 'Integrated\Bundle\CommentBundle\Controller\DefaultController::new'
+integrated_comment_delete:
+  path: '/comment/delete/{comment}'
+  methods: ['POST']
+  defaults:
+    _controller: 'Integrated\Bundle\CommentBundle\Controller\DefaultController::delete'
+integrated_comment_delete_reply:
+  path: '/comment/delete/{comment}/{replyId}'
+  methods: ['POST']
+  defaults:
+    _controller: 'Integrated\Bundle\CommentBundle\Controller\DefaultController::deleteReply'
+integrated_comment_get:
+  path: '/comment/{comment}'
+  defaults:
+    _controller: 'Integrated\Bundle\CommentBundle\Controller\DefaultController::getComment'

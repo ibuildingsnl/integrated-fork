@@ -1,0 +1,14 @@
+integrated_user_profile_index:
+  path: '/'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\ProfileController::index'
+integrated_user_profile_two_factor_deactivate:
+  path: '/two-factor/deactivate'
+  methods: ['POST']
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\ProfileController::deactivateTwoFactor'
+integrated_user_profile_two_factor_reset:
+  path: '/two-factor/reset'
+  methods: ['POST']
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\ProfileController::resetTwoFactor'

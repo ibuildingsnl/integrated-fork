@@ -43,6 +43,7 @@ class IntegratedContentBlock extends AbstractType
                 ->setMinimumMatch('75%');
 
             $query->setQuery($options['q']);
+            $query->setQueryDefaultOperator(Query::QUERY_OPERATOR_AND);
         }
 
         if ($options['exclude'] && $options['exclude_ids']) {
@@ -55,15 +56,30 @@ class IntegratedContentBlock extends AbstractType
             /** @var Field $facetField */
             $facetField = $facet->createFacetField($field);
             $facetField->setField($field)
-                ->setMinCount(1)
-                ->getLocalParameters()->setExclude($field);
+                ->setMinCount(1);
+
+            if ('and' !== ($options['facet_operators'][$field] ?? 'or')) {
+                $facetField->getLocalParameters()->setExclude($field);
+            }
 
             $values = $this->sanitizeListValues($value);
+            if ('single' === ($options['facet_selection_modes'][$field] ?? 'multi') && \count($values) > 1) {
+                $values = [reset($values)];
+            }
             if (\count($values)) {
-                $query
-                    ->createFilterQuery($field)
-                    ->setQuery($field.': ((%1%))', [implode(') OR (', array_map($escape, $values))])
-                    ->addTag($field);
+                if ('and' === ($options['facet_operators'][$field] ?? 'or')) {
+                    foreach (array_values($values) as $index => $facetValue) {
+                        $query
+                            ->createFilterQuery($field.'_'.$index)
+                            ->setQuery($field.': (%1%)', [$escape($facetValue)])
+                            ->addTag($field);
+                    }
+                } else {
+                    $query
+                        ->createFilterQuery($field)
+                        ->setQuery($field.': ((%1%))', [implode(') OR (', array_map($escape, $values))])
+                        ->addTag($field);
+                }
             }
         }
 
@@ -117,6 +133,8 @@ class IntegratedContentBlock extends AbstractType
             'exclude_ids' => [],
             'params' => [],
             'facets' => [],
+            'facet_operators' => [],
+            'facet_selection_modes' => [],
             'facets_search_selection' => [],
         ]);
 
@@ -173,6 +191,50 @@ class IntegratedContentBlock extends AbstractType
         });
         $resolver->setNormalizer('facets', function (Options $options, $value) use ($mapListNormalizer) {
             return $mapListNormalizer($value);
+        });
+        $resolver->setNormalizer('facet_operators', function (Options $options, $value): array {
+            if (!\is_array($value)) {
+                return [];
+            }
+
+            $result = [];
+            foreach ($value as $key => $operator) {
+                $key = trim((string) $key);
+                if ('' === $key) {
+                    continue;
+                }
+
+                $operator = strtolower(trim((string) $operator));
+                if (!\in_array($operator, ['and', 'or'], true)) {
+                    $operator = 'or';
+                }
+
+                $result[$key] = $operator;
+            }
+
+            return $result;
+        });
+        $resolver->setNormalizer('facet_selection_modes', function (Options $options, $value): array {
+            if (!\is_array($value)) {
+                return [];
+            }
+
+            $result = [];
+            foreach ($value as $key => $selectionMode) {
+                $key = trim((string) $key);
+                if ('' === $key) {
+                    continue;
+                }
+
+                $selectionMode = strtolower(trim((string) $selectionMode));
+                if (!\in_array($selectionMode, ['single', 'multi'], true)) {
+                    $selectionMode = 'single';
+                }
+
+                $result[$key] = $selectionMode;
+            }
+
+            return $result;
         });
         $resolver->setNormalizer('facets_search_selection', function (Options $options, $value) use ($mapListNormalizer) {
             return $mapListNormalizer($value);

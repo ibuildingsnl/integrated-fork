@@ -19,6 +19,7 @@
             <argument type="service" id="integrated_theme.templating.theme_manager" />
             <argument type="service" id="integrated_website.website_toolbar" />
             <argument type="service" id="uri_signer" />
+            <argument type="service" id="Integrated\Bundle\WebsiteBundle\Service\FacetQueryCanonicalizer" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />

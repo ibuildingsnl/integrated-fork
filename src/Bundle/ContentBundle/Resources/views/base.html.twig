@@ -87,8 +87,7 @@
 
                 <div class="flex wrap w-full">
                     {% block website_navigation_buttons %}
-                        <div id="topbar-channels-fragment"
-                             data-turbo-permanent>
+                        <div id="topbar-channels-fragment">
                             {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ChannelController::getChannels')) }}
                         </div>
                     {% endblock website_navigation_buttons %}

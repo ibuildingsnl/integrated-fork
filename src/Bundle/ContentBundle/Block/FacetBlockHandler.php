@@ -45,6 +45,8 @@ class FacetBlockHandler extends BlockHandler
         }
 
         $options['exclude'] = false; // don't exclude already shown items
+        $options['facet_operators'] = $this->getFacetOperators($block, $options['facet_operators'] ?? []);
+        $options['facet_selection_modes'] = $this->getFacetSelectionModes($block, $options['facet_selection_modes'] ?? []);
 
         $pagination = $handler->getPagination($contentBlock, $request, $options);
 
@@ -88,5 +90,37 @@ class FacetBlockHandler extends BlockHandler
         ]);
 
         $resolver->setAllowedTypes('filters', 'array');
+    }
+
+    private function getFacetOperators(FacetBlock $block, array $existing): array
+    {
+        $operators = $existing;
+
+        foreach ($block->getFields() as $field) {
+            $fieldName = trim((string) $field->getField());
+            if ('' === $fieldName) {
+                continue;
+            }
+
+            $operators[$fieldName] = $block->getOperator();
+        }
+
+        return $operators;
+    }
+
+    private function getFacetSelectionModes(FacetBlock $block, array $existing): array
+    {
+        $selectionModes = $existing;
+
+        foreach ($block->getFields() as $field) {
+            $fieldName = trim((string) $field->getField());
+            if ('' === $fieldName) {
+                continue;
+            }
+
+            $selectionModes[$fieldName] = $block->getSelectionMode();
+        }
+
+        return $selectionModes;
     }
 }

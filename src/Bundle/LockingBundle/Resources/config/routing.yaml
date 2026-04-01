@@ -1,0 +1,10 @@
+integrated_locking_api_refresh:
+  path: '/_locking/api/refresh'
+  methods: ['POST']
+  defaults:
+    _controller: 'Integrated\Bundle\LockingBundle\Controller\ApiController::refresh'
+integrated_locking_api_release:
+  path: '/_locking/api/release'
+  methods: ['POST']
+  defaults:
+    _controller: 'Integrated\Bundle\LockingBundle\Controller\ApiController::release'

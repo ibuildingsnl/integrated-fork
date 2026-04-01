@@ -23,7 +23,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 class SearchContentReferenced
 {
     /**
-     * @const IGNORE_CLASSES
+     * @var array<int, class-string>
      */
     public const IGNORE_CLASSES = ['Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction'];
 
@@ -75,7 +75,7 @@ class SearchContentReferenced
         ];
 
         $idField = current($deleted['metadata']->getIdentifier());
-        if ($idField === false) {
+        if (!\is_string($idField) || $idField === '') {
             throw new \Exception('Unable to resolve identifier field for deleted object');
         }
 
@@ -107,7 +107,7 @@ class SearchContentReferenced
 
         /** @var ClassMetadata $classMetadata */
         foreach ($allMetadata as $classMetadata) {
-            if (\in_array($classMetadata->getName(), $this::IGNORE_CLASSES)) {
+            if (\in_array($classMetadata->getName(), self::IGNORE_CLASSES, true)) {
                 continue;
             }
 

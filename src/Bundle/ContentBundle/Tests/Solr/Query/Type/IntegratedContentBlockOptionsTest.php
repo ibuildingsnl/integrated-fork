@@ -19,6 +19,7 @@ use Integrated\Bundle\ContentBundle\Solr\Query\SortOptions;
 use Integrated\Bundle\ContentBundle\Solr\Query\Type\Content;
 use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContentBlock;
 use PHPUnit\Framework\TestCase;
+use Solarium\Component\Facet\Field;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -39,6 +40,21 @@ class IntegratedContentBlockOptionsTest extends TestCase
 
         self::assertArrayHasKey('bf', $query->getParams());
         self::assertStringContainsString('recip(ms(NOW,pub_time)', (string) $query->getParams()['bf']);
+    }
+
+    public function testFreeTextSearchMatchesAllTermsByDefault(): void
+    {
+        $resolver = $this->createResolver();
+        $type = $this->createType();
+
+        $options = $resolver->resolve([
+            'q' => '1 2026',
+        ]);
+
+        $query = new Query();
+        $type->build($query, $options);
+
+        self::assertSame(Query::QUERY_OPERATOR_AND, $query->getQueryDefaultOperator());
     }
 
     public function testFacetMapOptionsAreSanitizedWithoutTypeErrors(): void
@@ -62,6 +78,115 @@ class IntegratedContentBlockOptionsTest extends TestCase
         self::assertSame(['main_channel'], $options['facets']['facet_channels']);
         self::assertArrayNotHasKey('', $options['facets']);
         self::assertSame(['42', '7'], $options['facets_search_selection']['facet_authors']);
+    }
+
+    public function testFacetOperatorCanForceAndBetweenSelectedFacetValues(): void
+    {
+        $resolver = $this->createResolver();
+        $type = $this->createType();
+
+        $options = $resolver->resolve([
+            'facets' => [
+                'facet_company_category' => ['Machines', 'Transport'],
+            ],
+            'facet_operators' => [
+                'facet_company_category' => 'and',
+            ],
+        ]);
+
+        $query = new Query();
+        $type->build($query, $options);
+
+        self::assertArrayHasKey('facet_company_category_0', $query->getFilterQueries());
+        self::assertArrayHasKey('facet_company_category_1', $query->getFilterQueries());
+        self::assertSame(
+            'facet_company_category: ("Machines")',
+            $query->getFilterQueries()['facet_company_category_0']->getQuery()
+        );
+        self::assertSame(
+            'facet_company_category: ("Transport")',
+            $query->getFilterQueries()['facet_company_category_1']->getQuery()
+        );
+        self::assertSame(
+            ['facet_company_category'],
+            $query->getFilterQueries()['facet_company_category_0']->getTags()
+        );
+        self::assertSame(
+            ['facet_company_category'],
+            $query->getFilterQueries()['facet_company_category_1']->getTags()
+        );
+    }
+
+    public function testSingleSelectionModeKeepsOnlyFirstSelectedFacetValue(): void
+    {
+        $resolver = $this->createResolver();
+        $type = $this->createType();
+
+        $options = $resolver->resolve([
+            'facets' => [
+                'facet_company_category' => ['Machines', 'Transport'],
+            ],
+            'facet_selection_modes' => [
+                'facet_company_category' => 'single',
+            ],
+        ]);
+
+        $query = new Query();
+        $type->build($query, $options);
+
+        self::assertArrayHasKey('facet_company_category', $query->getFilterQueries());
+        self::assertSame(
+            'facet_company_category: (("Machines"))',
+            $query->getFilterQueries()['facet_company_category']->getQuery()
+        );
+    }
+
+    public function testAndFacetCountsStayBoundToCurrentResultSetWithoutSelfExclusion(): void
+    {
+        $resolver = $this->createResolver();
+        $type = $this->createType();
+
+        $options = $resolver->resolve([
+            'facets' => [
+                'facet_company_category' => ['Machines'],
+            ],
+            'facet_operators' => [
+                'facet_company_category' => 'and',
+            ],
+        ]);
+
+        $query = new Query();
+        $type->build($query, $options);
+
+        $facet = $query->getFacetSet()->getFacet('facet_company_category');
+
+        self::assertInstanceOf(Field::class, $facet);
+        self::assertSame([], $facet->getExcludes());
+        self::assertSame(1, $facet->getMinCount());
+    }
+
+    public function testOrFacetCountsKeepSelfExclusionForBroaderFacetSuggestions(): void
+    {
+        $resolver = $this->createResolver();
+        $type = $this->createType();
+
+        $options = $resolver->resolve([
+            'facets' => [
+                'facet_company_category' => ['Machines'],
+            ],
+            'facet_operators' => [
+                'facet_company_category' => 'or',
+            ],
+        ]);
+
+        $query = new Query();
+        $type->build($query, $options);
+
+        $facet = $query->getFacetSet()->getFacet('facet_company_category');
+
+        self::assertInstanceOf(Field::class, $facet);
+        self::assertSame(['facet_company_category'], $facet->getExcludes());
+        self::assertSame(1, $facet->getMinCount());
     }
 
     public function testRelevanceRecencyBoostIsNotAddedWhenSortingByTime(): void

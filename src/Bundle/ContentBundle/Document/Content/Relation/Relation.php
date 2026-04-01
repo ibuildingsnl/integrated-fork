@@ -181,16 +181,15 @@ abstract class Relation extends Content implements RankableInterface
 
     public function removePhonenumber(string|Phonenumber $phonenumber): bool
     {
-        // @todo (INTEGRATED-452)
         if ($phonenumber instanceof Phonenumber) {
-            return $this->phonenumbers->remove($phonenumber);
+            return $this->phonenumbers->removeElement($phonenumber);
         }
 
         $return = false;
 
         foreach ($this->phonenumbers as $obj) {
             if (strcasecmp($phonenumber, $obj->getNumber()) === 0) {
-                $return = $this->phonenumbers->remove($obj);
+                $return = $this->phonenumbers->removeElement($obj);
             }
         }
 

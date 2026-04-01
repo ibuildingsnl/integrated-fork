@@ -11,6 +11,7 @@
         <service id="integrated_page.form.type.page" class="Integrated\Bundle\PageBundle\Form\Type\PageType" public="true">
             <argument type="service" id="channel.context" />
             <argument type="service" id="integrated_page.theme_resolver" />
+            <argument>%integrated_page.default_paginated_noindex%</argument>
 
             <tag name="form.type" />
         </service>

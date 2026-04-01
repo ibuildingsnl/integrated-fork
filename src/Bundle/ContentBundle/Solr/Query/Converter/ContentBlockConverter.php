@@ -34,7 +34,12 @@ class ContentBlockConverter
             $settings['order'] = $filters['order'] ?? '';
         }
 
-        $settings['facets'] = $this->getFacets($block, $request->query->all());
+        $settings['facet_selection_modes'] = $this->getFacetSelectionModes($block, $options['facet_selection_modes'] ?? []);
+        $settings['facets'] = $this->normalizeFacetSelections(
+            $this->getFacets($block, $request->query->all()),
+            $settings['facet_selection_modes']
+        );
+        $settings['facet_operators'] = $this->getFacetOperators($block, $options['facet_operators'] ?? []);
         $settings['filters'] = $options['filters'] ?? [];
         $settings['relation'] = $request->query->all('relation');
 
@@ -66,6 +71,73 @@ class ContentBlockConverter
 
         foreach ($facetFields as $field) {
             $facets[$field] = $values[$field] ?? [];
+        }
+
+        return $facets;
+    }
+
+    protected function getFacetOperators(ContentBlock $block, mixed $operators = []): array
+    {
+        if (!\is_array($operators)) {
+            return [];
+        }
+
+        $allowedFields = array_map(static fn ($field): string => trim((string) $field), $block->getFacetFields());
+        $allowedFields = array_values(array_filter($allowedFields));
+
+        $result = [];
+        foreach ($operators as $field => $operator) {
+            $field = trim((string) $field);
+            if ('' === $field || !\in_array($field, $allowedFields, true)) {
+                continue;
+            }
+
+            $operator = strtolower(trim((string) $operator));
+            if (!\in_array($operator, ['and', 'or'], true)) {
+                $operator = 'or';
+            }
+
+            $result[$field] = $operator;
+        }
+
+        return $result;
+    }
+
+    protected function getFacetSelectionModes(ContentBlock $block, mixed $selectionModes = []): array
+    {
+        if (!\is_array($selectionModes)) {
+            return [];
+        }
+
+        $allowedFields = array_map(static fn ($field): string => trim((string) $field), $block->getFacetFields());
+        $allowedFields = array_values(array_filter($allowedFields));
+
+        $result = [];
+        foreach ($selectionModes as $field => $selectionMode) {
+            $field = trim((string) $field);
+            if ('' === $field || !\in_array($field, $allowedFields, true)) {
+                continue;
+            }
+
+            $selectionMode = strtolower(trim((string) $selectionMode));
+            if (!\in_array($selectionMode, ['single', 'multi'], true)) {
+                $selectionMode = 'single';
+            }
+
+            $result[$field] = $selectionMode;
+        }
+
+        return $result;
+    }
+
+    protected function normalizeFacetSelections(array $facets, array $selectionModes): array
+    {
+        foreach ($facets as $field => $values) {
+            if ('single' !== ($selectionModes[$field] ?? 'multi')) {
+                continue;
+            }
+
+            $facets[$field] = \count($values) > 1 ? [reset($values)] : $values;
         }
 
         return $facets;

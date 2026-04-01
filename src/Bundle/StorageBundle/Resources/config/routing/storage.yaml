@@ -1,0 +1,16 @@
+integrated_storage_file:
+  path: '/storage/{id}.{ext}'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\StorageBundle\Controller\FileController::file'
+  requirements:
+    ext: '^[a-zA-Z-_0-9]+$'
+integrated_storage_file_resize:
+  path: '/storage/{id}.{ext}/resize/{width}/{height}'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\StorageBundle\Controller\FileController::file'
+  requirements:
+    ext: '^[a-zA-Z-_0-9]+$'
+    width: '\d+'
+    height: '\d+'

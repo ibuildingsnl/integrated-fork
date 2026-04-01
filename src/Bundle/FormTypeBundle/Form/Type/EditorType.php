@@ -34,7 +34,7 @@ class EditorType extends AbstractType
         $this->contentStyles = $contentStyles;
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['mode'] = $options['mode'];
         $view->vars['content_styles'] = $this->contentStyles;
@@ -44,6 +44,7 @@ class EditorType extends AbstractType
     {
         $resolver->setDefaults([
             'mode' => 'default',
+            'empty_data' => '',
         ]);
 
         $resolver->setAllowedTypes('mode', 'string');

@@ -20,6 +20,24 @@
         overflow-y: auto;
         border-top-right-radius: 1rem;
 
+        &::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 8px;
+            width: 10px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #325767;
+            border-radius: 6px;
+            border: 3px solid transparent;
+            width: 8px;
+            background-clip: content-box;
+        }
+
         .sidebar-menu-wrapper {
             padding: 1rem;
             @include media(max-md) {

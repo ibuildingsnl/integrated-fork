@@ -26,6 +26,14 @@
                 <source>New block</source>
                 <target>Nieuw blok</target>
             </trans-unit>
+            <trans-unit id="7">
+                <source>Filter by block name</source>
+                <target>Filter op bloknaam</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>Unused</source>
+                <target>Ongebruikt</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

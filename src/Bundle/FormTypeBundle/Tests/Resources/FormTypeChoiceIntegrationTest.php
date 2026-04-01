@@ -51,6 +51,8 @@ class FormTypeChoiceIntegrationTest extends TestCase
         $this->assertStringContainsString("search_context: 'filterable_content_choice',", $script);
         $this->assertStringContainsString("channels: getFilterValue(\$widget, 'channel'),", $script);
         $this->assertStringContainsString("contenttypes: getFilterValue(\$widget, 'content-type') || \$element.data('types'),", $script);
+        $this->assertStringNotContainsString("\$element.val(null).trigger('change.select2');", $script);
+        $this->assertStringContainsString("\$element.select2('close');", $script);
     }
 
     public function testFilterableContentChoiceWidgetRendersFilterSelects(): void
@@ -64,6 +66,8 @@ class FormTypeChoiceIntegrationTest extends TestCase
         $this->assertStringContainsString('{% if show_channel_filter|default(false) or show_content_type_filter|default(false) %}', $template);
         $this->assertStringContainsString('data-filter-role="channel"', $template);
         $this->assertStringContainsString('data-filter-role="content-type"', $template);
+        $this->assertStringContainsString('{% for group in content_type_choice_groups|default([]) %}', $template);
+        $this->assertStringContainsString('<optgroup label="{{ group.label }}">', $template);
     }
 
     public function testMediaControllerNormalizesContentTypesWithHelper(): void

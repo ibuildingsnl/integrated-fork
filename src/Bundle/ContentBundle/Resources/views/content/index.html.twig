@@ -23,6 +23,19 @@
 {% block content_items %}
     <section class="section-white section-radius">
         {% set media_gallery_classes = ["Image", "Video", "File"] %}
+        {% set showSeoColumn = false %}
+        {% for seoColumnCandidate in pager.getItems() %}
+            {% set seoCandidateType = contentTypes|filter(t => t.id == seoColumnCandidate.type_name)|first %}
+            {% if seoCandidateType and seoCandidateType.hasField('seoMetadata') %}
+                {% set seoCandidateHasMetadata = attribute(seoColumnCandidate, 'has_seo_metadata')|default(false) %}
+                {% if seoCandidateHasMetadata is iterable %}
+                    {% set seoCandidateHasMetadata = seoCandidateHasMetadata|first %}
+                {% endif %}
+                {% if seoCandidateHasMetadata in [true, 1, '1', 'true'] %}
+                    {% set showSeoColumn = true %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
         <table class="table">
             <thead>
             <tr>
@@ -38,9 +51,11 @@
                 <th class="pub-date">
                     <span>{% trans %}Publication date{% endtrans %}</span>
                 </th>
-                <th class="seo">
-                    <span>SEO</span>
-                </th>
+                {% if showSeoColumn %}
+                    <th class="seo">
+                        <span>SEO</span>
+                    </th>
+                {% endif %}
                 <th class="state">
                     <span>{% trans %}Status{% endtrans %}</span>
                 </th>
@@ -157,27 +172,29 @@
                             {{ content.pub_time|format_date('long') }}
                         {% endif %}
                     </td>
-                    <td class="seo">
-                        {% set hasSeoMetadata = content.has_seo_metadata|default(false) %}
-                        {% if hasSeoMetadata is iterable %}
-                            {% set hasSeoMetadata = hasSeoMetadata|first %}
-                        {% endif %}
-                        {% if hasSeoMetadata in [true, 1, '1', 'true'] %}
-                            {% set seoScore = content.seo_score|default('feedback') %}
-                            {% set readabilityScore = content.readability_score|default('feedback') %}
-                            {% if seoScore is iterable %}
-                                {% set seoScore = seoScore|first %}
+                    {% if showSeoColumn %}
+                        <td class="seo">
+                            {% set hasSeoMetadata = attribute(content, 'has_seo_metadata')|default(false) %}
+                            {% if hasSeoMetadata is iterable %}
+                                {% set hasSeoMetadata = hasSeoMetadata|first %}
                             {% endif %}
-                            {% if readabilityScore is iterable %}
-                                {% set readabilityScore = readabilityScore|first %}
+                            {% if type and type.hasField('seoMetadata') and hasSeoMetadata in [true, 1, '1', 'true'] %}
+                                {% set seoScore = attribute(content, 'seo_score')|default('feedback') %}
+                                {% set readabilityScore = attribute(content, 'readability_score')|default('feedback') %}
+                                {% if seoScore is iterable %}
+                                    {% set seoScore = seoScore|first %}
+                                {% endif %}
+                                {% if readabilityScore is iterable %}
+                                    {% set readabilityScore = readabilityScore|first %}
+                                {% endif %}
+                                <span class="btn btn-white no-icon seo-button readability-{{ readabilityScore }} seo-{{ seoScore }}">
+                                    SEO
+                                </span>
+                            {% else %}
+                                -
                             {% endif %}
-                            <span class="btn btn-white no-icon seo-button readability-{{ readabilityScore }} seo-{{ seoScore }}">
-                                SEO
-                            </span>
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
+                        </td>
+                    {% endif %}
                     <td class="state">
                         {% set published = content.published|default(false) %}
                         {% if published is iterable %}
@@ -233,7 +250,7 @@
     {{ parent() }}
     <script>
         (function() {
-            var POLL_DELAY = 15000;
+            var POLL_DELAY = 30000;
             var STORE_KEY = '__integratedContentNavigatorLockPolling';
             var BOOTSTRAP_KEY = '__integratedContentNavigatorLockBootstrap';
             var endpoint = '{{ path('integrated_content_content_locks_status')|e('js') }}';
@@ -271,6 +288,9 @@
 
                 var toKey = function(type, id) {
                     return String(type) + '|' + String(id);
+                };
+                var isDocumentHidden = function() {
+                    return document.visibilityState === 'hidden';
                 };
 
                 var renderLock = function(row, lockData) {
@@ -313,7 +333,7 @@
                 };
 
                 var scheduleNext = function() {
-                    if (state.stopped) {
+                    if (state.stopped || isDocumentHidden()) {
                         return;
                     }
                     state.timer = window.setTimeout(fetchLocks, POLL_DELAY);
@@ -330,13 +350,23 @@
                     }
                     document.removeEventListener('turbo:before-cache', onBeforeCache);
                     window.removeEventListener('pagehide', onPageHide);
+                    document.removeEventListener('visibilitychange', onVisibilityChange);
                     if (window[STORE_KEY] === state) {
                         delete window[STORE_KEY];
                     }
                 };
 
                 var fetchLocks = function() {
+                    if (state.timer) {
+                        window.clearTimeout(state.timer);
+                        state.timer = null;
+                    }
+
                     if (state.stopped) {
+                        return;
+                    }
+
+                    if (isDocumentHidden()) {
                         return;
                     }
 
@@ -373,11 +403,29 @@
                 var onPageHide = function() {
                     stop();
                 };
+                var onVisibilityChange = function() {
+                    if (state.stopped) {
+                        return;
+                    }
+
+                    if (isDocumentHidden()) {
+                        if (state.timer) {
+                            window.clearTimeout(state.timer);
+                            state.timer = null;
+                        }
+                        return;
+                    }
+
+                    if (!state.timer) {
+                        fetchLocks();
+                    }
+                };
 
                 state.stop = stop;
 
                 document.addEventListener('turbo:before-cache', onBeforeCache);
                 window.addEventListener('pagehide', onPageHide);
+                document.addEventListener('visibilitychange', onVisibilityChange);
                 fetchLocks();
             };
 

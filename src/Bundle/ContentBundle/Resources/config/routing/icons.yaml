@@ -1,0 +1,5 @@
+integrated_content_icon_index:
+  path: '/icons'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\IconController::index'

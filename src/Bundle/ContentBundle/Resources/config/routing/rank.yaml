@@ -1,0 +1,5 @@
+integrated_content_rank_lookup:
+  path: '/lookup'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\RankController::lookup'
+    _format: 'json'

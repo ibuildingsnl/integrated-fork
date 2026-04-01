@@ -25,15 +25,19 @@ use Integrated\Bundle\PageBundle\Form\Type\PageType;
 use Integrated\Bundle\PageBundle\Services\PageCopy\PageCopyRequestFactory;
 use Integrated\Bundle\PageBundle\Services\PageCopyService;
 use Integrated\Bundle\PageBundle\Services\RouteCache;
+use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Knp\Component\Pager\PaginatorInterface;
 use MongoDB\BSON\Regex;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\UriSigner;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class PageController extends AbstractController
 {
@@ -48,6 +52,7 @@ class PageController extends AbstractController
     private PageCopyService $pageCopyService;
     private PageCopyRequestFactory $pageCopyRequestFactory;
     private RouteCache $routeCache;
+    private ?ThemeManager $themeManager;
     private UriSigner $uriSigner;
     /** @var array<int, string>|null */
     private ?array $allExistingWebsiteChannelIds = null;
@@ -59,6 +64,7 @@ class PageController extends AbstractController
         PageCopyRequestFactory $pageCopyRequestFactory,
         RouteCache $routeCache,
         UriSigner $uriSigner,
+        ?ThemeManager $themeManager = null,
     ) {
         $this->documentManager = $documentManager;
         $this->paginator = $paginator;
@@ -66,6 +72,7 @@ class PageController extends AbstractController
         $this->pageCopyRequestFactory = $pageCopyRequestFactory;
         $this->routeCache = $routeCache;
         $this->uriSigner = $uriSigner;
+        $this->themeManager = $themeManager;
     }
 
     public function index(Request $request): Response
@@ -127,6 +134,7 @@ class PageController extends AbstractController
             'lastPage' => $this->getLastEditPage($request->getSession()),
             'previewLinks' => $this->buildPreviewLinks($pagination, $request),
             'orphanChannelPageIds' => $this->getOrphanChannelPageIds($pagination),
+            'deletableContentTypePageIds' => $this->getDeletableContentTypePageIds($pagination),
             'activeFilterData' => $activeFilterData,
             'noneFilterActive' => \in_array(self::CHANNEL_NONE_VALUE, $selectedChannels, true),
         ]);
@@ -338,12 +346,13 @@ class PageController extends AbstractController
                     return $this->redirect($request->query->get('returnUrl'));
                 }
 
-                return $this->redirectToRoute('integrated_page_page_index');
+                return $this->redirectToRoute('integrated_page_page_edit', ['id' => $page->getId()]);
             }
         }
 
         return $this->render('@IntegratedPage/page/new.html.twig', [
             'form' => $form,
+            'previewLink' => null,
         ]);
     }
 
@@ -362,6 +371,7 @@ class PageController extends AbstractController
             }
 
             if ($form->isValid()) {
+                $this->documentManager->persist($page);
                 $this->documentManager->flush();
 
                 $this->routeCache->clear();
@@ -370,17 +380,29 @@ class PageController extends AbstractController
 
                 $this->setLastEditPage($request->getSession(), $page);
 
-                return $this->redirectToRoute('integrated_page_page_index');
+                return $this->redirectToRoute('integrated_page_page_edit', ['id' => $page->getId()]);
             }
         }
 
         return $this->render('@IntegratedPage/page/edit.html.twig', [
             'page' => $page,
             'form' => $form,
+            'previewLink' => $this->buildPreviewLink($page, $request),
         ]);
     }
 
-    public function delete(Request $request, Page $page): Response
+    public function seoContent(Page $page): JsonResponse
+    {
+        if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        return new JsonResponse([
+            'content' => $this->extractSeoRenderableContent($this->renderSeoPageHtml($page)),
+        ]);
+    }
+
+    public function delete(Request $request, AbstractPage $page): Response
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -482,6 +504,7 @@ class PageController extends AbstractController
         $messages = [];
 
         foreach ($form->getErrors(true, true) as $error) {
+            /** @var FormError $error */
             $message = trim((string) $error->getMessage());
             if ($message === '') {
                 continue;
@@ -635,6 +658,125 @@ class PageController extends AbstractController
         return $builder->getForm();
     }
 
+    private function extractSeoRenderableContent(string $html): string
+    {
+        $dom = new \DOMDocument();
+        $internalErrors = libxml_use_internal_errors(true);
+        $loaded = $dom->loadHTML('<?xml encoding="utf-8" ?>'.$html, \LIBXML_NOERROR | \LIBXML_NOWARNING);
+        libxml_clear_errors();
+        libxml_use_internal_errors($internalErrors);
+
+        if (!$loaded) {
+            return trim(strip_tags($html));
+        }
+
+        $xpath = new \DOMXPath($dom);
+        foreach ($xpath->query('//script|//style|//noscript') ?: [] as $node) {
+            if (!$node instanceof \DOMNode) {
+                continue;
+            }
+
+            $parentNode = $node->parentNode;
+            if ($parentNode instanceof \DOMNode) {
+                $parentNode->removeChild($node);
+            }
+        }
+
+        foreach ([
+            '//main',
+            '//article',
+            '//*[contains(@class, "content-wrapper")]',
+            '//body',
+        ] as $query) {
+            $nodeList = $xpath->query($query);
+            if (!$nodeList || 0 === $nodeList->length) {
+                continue;
+            }
+
+            $node = $nodeList->item(0);
+            if ($node instanceof \DOMNode) {
+                return $this->innerHtml($node);
+            }
+        }
+
+        return trim(strip_tags($html));
+    }
+
+    private function innerHtml(?\DOMNode $node): string
+    {
+        if (!$node instanceof \DOMNode) {
+            return '';
+        }
+
+        $html = '';
+        foreach ($node->childNodes as $child) {
+            $html .= $node->ownerDocument?->saveHTML($child) ?? '';
+        }
+
+        return trim($html);
+    }
+
+    private function renderSeoPageHtml(Page $page): string
+    {
+        $requestStack = $this->container->get('request_stack');
+        \assert($requestStack instanceof RequestStack);
+
+        $currentRequest = $requestStack->getCurrentRequest();
+        if (!$currentRequest instanceof Request) {
+            return $this->renderSeoPageHtmlFromTemplate($page);
+        }
+
+        $kernel = $this->container->get('http_kernel');
+        \assert($kernel instanceof HttpKernelInterface);
+
+        $seoRequest = Request::create(
+            $this->buildAbsolutePageUrl($page, $currentRequest),
+            Request::METHOD_GET,
+            [],
+            $currentRequest->cookies->all(),
+            [],
+            [
+                'HTTP_HOST' => (string) ($page->getDomain() ?: $currentRequest->getHost()),
+                'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest',
+                'HTTPS' => $currentRequest->isSecure() ? 'on' : 'off',
+            ]
+        );
+        $seoRequest->headers->set('X-Requested-With', 'XMLHttpRequest');
+        $seoRequest->setLocale($currentRequest->getLocale());
+
+        if ($currentRequest->hasSession()) {
+            $seoRequest->setSession($currentRequest->getSession());
+        }
+
+        $response = $kernel->handle($seoRequest, HttpKernelInterface::SUB_REQUEST, false);
+        if (!$response->isSuccessful()) {
+            throw $this->createNotFoundException(\sprintf(
+                'Unable to render page SEO content (HTTP %d).',
+                $response->getStatusCode()
+            ));
+        }
+
+        $content = $response->getContent();
+
+        return \is_string($content) ? $content : '';
+    }
+
+    private function renderSeoPageHtmlFromTemplate(Page $page): string
+    {
+        $themeManager = $this->themeManager;
+        if (null === $themeManager) {
+            $themeManager = $this->container->get('integrated_theme.templating.theme_manager');
+            \assert($themeManager instanceof ThemeManager);
+        }
+
+        return $this->renderView(
+            $themeManager->locateTemplate($page->getLayout()),
+            [
+                'page' => $page,
+            ]
+        );
+    }
+
     private function displayPathErrors(Builder $builder): void
     {
         $paths = [];
@@ -686,10 +828,9 @@ class PageController extends AbstractController
     private function buildPreviewLinks(iterable $pages, Request $request): array
     {
         $links = [];
-        $expires = time() + self::PREVIEW_LINK_TTL_SECONDS;
 
         foreach ($pages as $page) {
-            if (!$page instanceof Page || !$page->isDisabled()) {
+            if (!$page instanceof Page) {
                 continue;
             }
 
@@ -698,14 +839,34 @@ class PageController extends AbstractController
                 continue;
             }
 
-            $url = $this->buildAbsolutePageUrl($page, $request, [
-                self::PREVIEW_EXPIRES_PARAM => $expires,
-            ]);
+            $link = $this->buildPreviewLink($page, $request);
+            if (null === $link) {
+                continue;
+            }
 
-            $links[$id] = $this->uriSigner->sign($url);
+            $links[$id] = $link;
         }
 
         return $links;
+    }
+
+    private function buildPreviewLink(Page $page, Request $request): ?string
+    {
+        if (!$page->isDisabled()) {
+            return null;
+        }
+
+        $id = (string) $page->getId();
+        if ($id === '') {
+            return null;
+        }
+
+        $expires = time() + self::PREVIEW_LINK_TTL_SECONDS;
+        $url = $this->buildAbsolutePageUrl($page, $request, [
+            self::PREVIEW_EXPIRES_PARAM => $expires,
+        ]);
+
+        return $this->uriSigner->sign($url);
     }
 
     /**
@@ -771,6 +932,62 @@ class PageController extends AbstractController
         }
 
         return $orphanPageIds;
+    }
+
+    /**
+     * @param iterable<mixed> $pages
+     *
+     * @return array<string, bool>
+     */
+    private function getDeletableContentTypePageIds(iterable $pages): array
+    {
+        $pageIdsByCombination = [];
+
+        foreach ($pages as $page) {
+            if (!$page instanceof ContentTypePage) {
+                continue;
+            }
+
+            $pageId = (string) $page->getId();
+            $channelId = $this->resolveChannelId($page->getChannel());
+            $contentTypeId = (string) $page->getContentType()->getId();
+
+            if ($pageId === '' || $channelId === null || $contentTypeId === '') {
+                continue;
+            }
+
+            $combinationKey = $channelId.'::'.$contentTypeId;
+            $pageIdsByCombination[$combinationKey][] = $pageId;
+        }
+
+        $deletablePageIds = [];
+
+        foreach ($pageIdsByCombination as $combinationKey => $pageIds) {
+            if (\count($pageIds) > 1) {
+                foreach ($pageIds as $pageId) {
+                    $deletablePageIds[$pageId] = true;
+                }
+
+                continue;
+            }
+
+            [$channelId, $contentTypeId] = explode('::', $combinationKey, 2);
+            $duplicateCount = $this->normalizeCountValue(
+                $this->documentManager
+                    ->createQueryBuilder(ContentTypePage::class)
+                    ->field('channel.$id')->equals($channelId)
+                    ->field('contentType.$id')->equals($contentTypeId)
+                    ->count()
+                    ->getQuery()
+                    ->execute()
+            );
+
+            if ($duplicateCount > 1) {
+                $deletablePageIds[$pageIds[0]] = true;
+            }
+        }
+
+        return $deletablePageIds;
     }
 
     /**

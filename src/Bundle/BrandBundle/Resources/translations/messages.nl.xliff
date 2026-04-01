@@ -26,6 +26,14 @@
                 <source>No brands added</source>
                 <target>Geen merken beschikbaar</target>
             </trans-unit>
+            <trans-unit id="7">
+                <source>Missing theme blocks</source>
+                <target>Ontbrekende theme blocks</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>These blocks are referenced by the current channel theme or its fallback themes, but do not exist yet.</source>
+                <target>Deze blocks worden gebruikt in het huidige kanaalthema of de fallback-thema's, maar bestaan nog niet.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -1221,7 +1221,8 @@
                 $blockTarget = $blockTarget.parentNode;
             }
 
-            var pageId = document.querySelector('[data-action="integrated-website-page-save"]').dataset.id;
+            var saveActionNode = document.querySelector('[data-action="integrated-website-page-save"]');
+            var pageId = saveActionNode ? saveActionNode.dataset.id : null;
 
             createBlockEditor(
                 '{{ path('integrated_block_inline_text_block_new', {'id': 'page-id', '_format':'iframe.html'}) }}'.replace('page-id', pageId),

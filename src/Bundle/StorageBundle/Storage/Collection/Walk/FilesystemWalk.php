@@ -23,12 +23,12 @@ use Integrated\Common\Storage\ManagerInterface;
 class FilesystemWalk
 {
     /**
-     * @const string
+     * @var string
      */
     public const ADD = 'add';
 
     /**
-     * @const string
+     * @var string
      */
     public const REMOVE = 'remove';
 

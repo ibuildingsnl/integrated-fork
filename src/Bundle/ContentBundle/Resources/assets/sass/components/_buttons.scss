@@ -14,6 +14,7 @@ button * {
     border: 1px solid;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     border-radius: 8px;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -22,13 +23,14 @@ button * {
     appearance: none;
     cursor: pointer;
     white-space: nowrap;
+    gap: 8px;
 
     &:visited {
         color: inherit;
     }
 
     &.space-between {
-        display: flex;
+        display: inline-flex;
         justify-content: space-between;
     }
 
@@ -39,17 +41,6 @@ button * {
 
     &.svg {
         padding-left: 0.5rem;
-    }
-
-    span {
-        margin-right: 1rem;
-    }
-
-    &.icon-left {
-        span {
-            margin-left: 1rem;
-            margin-right: 0;
-        }
     }
 
     &.no-icon {

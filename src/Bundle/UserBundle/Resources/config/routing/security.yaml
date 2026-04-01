@@ -1,0 +1,22 @@
+integrated_user_login:
+  path: '/login'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\SecurityController::login'
+integrated_user_check:
+  path: '/login-check'
+integrated_user_logout:
+  path: '/logout'
+integrated_user_two_factor:
+  path: 'login/authenticator'
+  defaults:
+    _controller: 'scheb_two_factor.form_controller::form'
+integrated_user_two_factor_check:
+  path: 'login/authenticator-check'
+integrated_user_password_reset:
+  path: '/login/reset-password'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\SecurityController::passwordReset'
+integrated_user_password_change:
+  path: '/login/change-password/{id}/{timestamp}/{key}'
+  defaults:
+    _controller: 'Integrated\Bundle\UserBundle\Controller\SecurityController::passwordChange'

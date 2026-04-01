@@ -8,8 +8,12 @@
     {% for facetName, facet in facets %}
         {% if facet.values.values|default|length %}
             {% set activeFilters = app.request.query.all[facetName]|default([]) %}
+            {% set isSingleSelect = 'single' == block.getSelectionMode() %}
             {% if activeFilters is not iterable %}
                 {% set activeFilters = activeFilters is empty ? [] : [activeFilters] %}
+            {% endif %}
+            {% if isSingleSelect %}
+                {% set activeFilters = activeFilters|slice(0, 1) %}
             {% endif %}
 
             <div class="panel-body">
@@ -33,7 +37,11 @@
                         {% set newParam = {(facetName): activeFilters|unset_value(name)} %}
                     {% else %}
                         {% set active = false %}
-                        {% set newParam = {(facetName): activeFilters|merge([name])} %}
+                        {% if isSingleSelect %}
+                            {% set newParam = {(facetName): [name]} %}
+                        {% else %}
+                            {% set newParam = {(facetName): activeFilters|merge([name])} %}
+                        {% endif %}
                     {% endif %}
                     {% set params = app.request.query.all|merge(app.request.attributes.get('_route_params'))|merge(newParam) %}
 

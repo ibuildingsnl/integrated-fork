@@ -46,9 +46,27 @@
             {% set fileRaw = media.file.path %}
         {% elseif media.file.url is defined %}
             {% set fileRaw = media.file.url %}
+        {% else %}
+            {% for value in media.file %}
+                {% if fileRaw == '' and value is not iterable and value is not same as(null) %}
+                    {% set fileRaw = value %}
+                {% endif %}
+            {% endfor %}
         {% endif %}
     {% elseif media.file is not same as(null) %}
         {% set fileRaw = media.file %}
+    {% endif %}
+{% endif %}
+{% if fileRaw == '' %}
+    {% set rawImagePath = media.image_string is defined ? media.image_string : (media.imageString is defined ? media.imageString : (media.image is defined ? media.image : '')) %}
+    {% if rawImagePath is iterable %}
+        {% for value in rawImagePath %}
+            {% if fileRaw == '' and value is not iterable and value is not same as(null) %}
+                {% set fileRaw = value %}
+            {% endif %}
+        {% endfor %}
+    {% elseif rawImagePath is not same as(null) %}
+        {% set fileRaw = rawImagePath %}
     {% endif %}
 {% endif %}
 {% set filePath = fileRaw|trim %}
@@ -69,13 +87,25 @@
 {% set thumbnail = filePath ? integrated_image(filePath).cropResize(200, 200) : 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==' %}
 {% set filetypeCandidate = filePath|split('.')|last|lower %}
 {% set filetype = filetypeCandidate matches '/^[a-z0-9]{1,5}$/' ? filetypeCandidate : '' %}
-{% set mimeType = '' %}
+{% set rawMimeType = '' %}
 {% if media.file is defined and media.file is iterable and media.file.metadata is defined and media.file.metadata.mimeType is defined %}
-    {% set mimeType = media.file.metadata.mimeType %}
+    {% set rawMimeType = media.file.metadata.mimeType %}
 {% elseif media.mimeType is defined %}
-    {% set mimeType = media.mimeType %}
+    {% set rawMimeType = media.mimeType %}
 {% elseif media.mime is defined %}
-    {% set mimeType = media.mime %}
+    {% set rawMimeType = media.mime %}
+{% elseif media.mimetype_string is defined %}
+    {% set rawMimeType = media.mimetype_string %}
+{% endif %}
+{% set mimeType = '' %}
+{% if rawMimeType is iterable %}
+    {% for value in rawMimeType %}
+        {% if mimeType == '' and value is not iterable and value is not same as(null) %}
+            {% set mimeType = value %}
+        {% endif %}
+    {% endfor %}
+{% else %}
+    {% set mimeType = rawMimeType %}
 {% endif %}
 
 <li class="media-item ui-widget-content ui-corner-tr grid {{ contentType }}{% if contentId in (selected_ids|default([])) %} selected{% endif %}"

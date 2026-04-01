@@ -28,6 +28,8 @@ use Twig\TwigFunction;
  */
 class MenuExtension extends AbstractExtension
 {
+    private const PREVIEW_DRAFT_MENU_ATTRIBUTE = 'integrated_website_draft_menu_payload';
+
     /**
      * @var IntegratedMenuProvider
      */
@@ -116,9 +118,15 @@ class MenuExtension extends AbstractExtension
             $options['editMode'] = true;
         }
 
-        if ($this->provider->has($name)) {
+        $menu = null;
+        $draftMenuPayload = $this->resolveDraftMenuPayload((string) $name);
+        if ($draftMenuPayload !== null) {
+            $menu = $this->factory->fromArray($draftMenuPayload);
+        }
+
+        if (!$menu && $this->provider->has($name)) {
             $menu = $this->provider->get($name, $options);
-        } else {
+        } elseif (!$menu) {
             $menu = $this->factory->createItem($name);
         }
 
@@ -215,5 +223,22 @@ class MenuExtension extends AbstractExtension
     public function getName()
     {
         return 'integrated_website_menu';
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function resolveDraftMenuPayload(string $menuName): ?array
+    {
+        if (!$this->request instanceof Request) {
+            return null;
+        }
+
+        $draftMenus = $this->request->attributes->get(self::PREVIEW_DRAFT_MENU_ATTRIBUTE);
+        if (!\is_array($draftMenus) || !isset($draftMenus[$menuName]) || !\is_array($draftMenus[$menuName])) {
+            return null;
+        }
+
+        return $draftMenus[$menuName];
     }
 }

@@ -1,0 +1,27 @@
+integrated_content_content_type_index:
+  path: '/'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentTypeController::index'
+integrated_content_content_type_select:
+  path: '/select'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentTypeController::select'
+integrated_content_content_type_new:
+  path: '/new'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentTypeController::new'
+integrated_content_content_type_edit:
+  path: '/{id}'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentTypeController::edit'
+integrated_content_content_type_delete:
+  path: '/{id}/delete'
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentTypeController::delete'
+integrated_content_content_type_show:
+  path: '/{id}/show'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\ContentTypeController::show'

@@ -26,7 +26,7 @@ const errorResult = {
 };
 
 const useAnalysis = () => {
-    const { configuration } = useConfiguration();
+    const { configuration, editorFieldMapping } = useConfiguration();
     const { translations } = useI18n();
     const editorData = useRecoilValue(editorState);
     const isLoading = useRecoilValue(pageIsLoadingState);
@@ -91,9 +91,16 @@ const useAnalysis = () => {
                     const readabilityScore = results.result.readability.score;
                     const readabilityRating = isNaN(readabilityScore) ? 'none' : scoreToRating(readabilityScore / 10);
 
-                    document.querySelector('#integrated_content_seoMetadata_readabilityScore').value = readabilityRating;
-                    document.querySelector('#integrated_content_seoMetadata_seoScore').value = seoRating;
-                    document.querySelector('.seo-button').className = 'btn btn-white seo-button readability-' + readabilityRating + ' seo-' + seoRating;
+                    if (editorFieldMapping.readabilityScore) {
+                        editorFieldMapping.readabilityScore.value = readabilityRating;
+                    }
+                    if (editorFieldMapping.seoScore) {
+                        editorFieldMapping.seoScore.value = seoRating;
+                    }
+                    const seoButton = document.querySelector('.seo-button');
+                    if (seoButton) {
+                        seoButton.className = 'btn btn-white seo-button readability-' + readabilityRating + ' seo-' + seoRating;
+                    }
 
                     setAnalysisResults((prev) => ({
                         ...prev,

@@ -1,0 +1,3 @@
+import_01_website:
+  resource: '@IntegratedPageBundle/Resources/config/routing/website.yaml'
+  prefix: '/'

@@ -281,7 +281,7 @@ class UserController extends AbstractController
                 ]);
                 $this->addFlash('success', \sprintf('The changes to the user %s are saved', $user->getUserIdentifier()));
 
-                return $this->redirectToRoute('integrated_user_user_index');
+                return $this->redirectToRoute('integrated_user_user_edit', ['id' => $user->getId()]);
             }
         }
 
@@ -439,7 +439,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    protected function createNewForm(): Form
+    protected function createNewForm(): FormInterface
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -454,7 +454,7 @@ class UserController extends AbstractController
         return $form;
     }
 
-    protected function createEditForm(UserInterface $user): Form
+    protected function createEditForm(UserInterface $user): FormInterface
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -469,7 +469,7 @@ class UserController extends AbstractController
         return $form;
     }
 
-    protected function createDeleteForm(UserInterface $user): Form
+    protected function createDeleteForm(UserInterface $user): FormInterface
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();

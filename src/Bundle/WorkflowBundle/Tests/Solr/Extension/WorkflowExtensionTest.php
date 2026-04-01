@@ -12,14 +12,16 @@
 namespace Integrated\Bundle\WorkflowBundle\Tests\Solr\Extension;
 
 use Doctrine\Persistence\ObjectRepository;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Entity\Workflow\State;
 use Integrated\Bundle\WorkflowBundle\Solr\Extension\WorkflowExtension;
-use Integrated\Common\Content\ContentInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
+use Integrated\Common\Security\PermissionInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -297,6 +299,9 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
 
         $container->set('security_workflow_read', 'this-should-be-removed');
         $container->set('security_workflow_write', 'this-should-be-removed');
+        $container->set('security_content_type_required', 'this-should-be-removed');
+        $container->set('security_content_type_read', 'this-should-be-removed');
+        $container->set('security_content_type_write', 'this-should-be-removed');
 
         $this->resolver->expects($this->never())
             ->method('hasType')
@@ -305,6 +310,54 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
         $this->getInstance()->build($container, $this->getContent());
 
         self::assertEquals([], $container->toArray());
+    }
+
+    public function testBuildAddsSeparateContentTypeVisibilityGateWhenEnabled(): void
+    {
+        $content = $this->getChannelableContent([$this->getChannel([
+            self::getPermission('brand', true, true),
+        ])]);
+        $container = $this->getContainer();
+
+        $this->resolver->expects($this->atLeastOnce())
+            ->method('hasType')
+            ->willReturn(true);
+
+        $this->resolver->expects($this->atLeastOnce())
+            ->method('getType')
+            ->with($this->equalTo('this-is-the-content-type'))
+            ->willReturn($this->getContentType(
+                'this-is-the-workflow-id',
+                true,
+                [
+                    self::getPermission('newsletter', true, true),
+                ],
+            ));
+
+        $this->workflow->expects($this->atLeastOnce())
+            ->method('findOneBy')
+            ->with($this->identicalTo(['content' => $content]))
+            ->willReturn($this->getWorkflow());
+
+        $this->definition->expects($this->once())
+            ->method('find')
+            ->with($this->equalTo('this-is-the-workflow-id'))
+            ->willReturn($this->getDefinition(self::getState([
+                self::getPermission('newsletter', true, true),
+            ])));
+
+        $this->getInstance()->build($container, $content);
+
+        self::assertEquals([
+            'security_content_type_required' => [0 => '1'],
+            'security_content_type_read' => [0 => 'newsletter'],
+            'security_content_type_write' => [0 => 'newsletter'],
+            'security_workflow_read' => [0 => 'brand'],
+            'security_workflow_write' => [0 => 'brand'],
+            'workflow_deadline' => [0 => 2],
+            'workflow_state' => [0 => ''],
+            'facet_workflow_state' => [0 => ''],
+        ], $container->toArray());
     }
 
     public function testGetName()
@@ -321,11 +374,11 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ContentInterface
+     * @return Content
      */
     protected function getContent()
     {
-        $mock = $this->createMock(ContentInterface::class);
+        $mock = $this->createMock(Content::class);
         $mock->expects($this->atLeastOnce())
             ->method('getContentType')
             ->willReturn('this-is-the-content-type');
@@ -334,21 +387,55 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $workflow
+     * @param PermissionInterface[] $permissions
      *
      * @return ContentTypeInterface
      */
-    protected function getContentType($workflow = null)
+    protected function getContentType($workflow = null, bool $requireContentTypePermissionForVisibility = false, array $permissions = [])
     {
         $mock = $this->createMock(ContentTypeInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getOption')
-            ->with($this->equalTo('workflow'))
-            ->willReturn($workflow);
+            ->willReturnCallback(static function (string $name) use ($workflow, $requireContentTypePermissionForVisibility) {
+                return match ($name) {
+                    'workflow' => $workflow,
+                    'require_content_type_permission_for_visibility' => $requireContentTypePermissionForVisibility,
+                    default => null,
+                };
+            });
 
         $mock->expects($this->any())
             ->method('getPermissions')
-            ->willReturn([]);
+            ->willReturn($permissions);
+
+        return $mock;
+    }
+
+    /**
+     * @param ChannelInterface[] $channels
+     */
+    protected function getChannelableContent(array $channels): Content
+    {
+        $mock = $this->createMock(Content::class);
+        $mock->expects($this->atLeastOnce())
+            ->method('getContentType')
+            ->willReturn('this-is-the-content-type');
+        $mock->expects($this->atLeastOnce())
+            ->method('getChannels')
+            ->willReturn($channels);
+
+        return $mock;
+    }
+
+    /**
+     * @param PermissionInterface[] $permissions
+     */
+    protected function getChannel(array $permissions): ChannelInterface
+    {
+        $mock = $this->createMock(ChannelInterface::class);
+        $mock->expects($this->atLeastOnce())
+            ->method('getPermissions')
+            ->willReturn($permissions);
 
         return $mock;
     }

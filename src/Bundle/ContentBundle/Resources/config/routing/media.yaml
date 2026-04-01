@@ -1,0 +1,46 @@
+integrated_content_media_index:
+  path: '/'
+  methods: ['GET', 'POST']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\MediaController::index'
+integrated_content_media_edit_image:
+  path: '/edit_image/{id}'
+  methods: ['GET', 'POST']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\MediaController::editImage'
+    format: ''
+  requirements:
+    id: '[\w-]+'
+integrated_content_media_edit_image_iframe:
+  path: '/edit_image_iframe/{id}'
+  methods: ['GET', 'POST']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\MediaController::editImage'
+    format: '_iframe'
+  requirements:
+    id: '[\w-]+'
+integrated_content_media_select_one:
+  path: '/select_one'
+  methods: ['GET', 'POST']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\MediaController::selectOne'
+integrated_content_media_select_multiple:
+  path: '/select_multiple'
+  methods: ['GET', 'POST']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\MediaController::selectMultiple'
+integrated_content_media_manage_relations:
+  path: '/manage_relations'
+  methods: ['GET', 'PUT']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\MediaController::manageRelations'
+integrated_content_media_upload_file:
+  path: '/upload_file'
+  methods: ['POST']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\MediaController::uploadFile'
+integrated_content_media_bulkdelete:
+  path: '/bulk_delete'
+  methods: ['GET', 'PUT']
+  defaults:
+    _controller: 'Integrated\Bundle\ContentBundle\Controller\MediaController::bulkDelete'

@@ -28,7 +28,6 @@ use Integrated\Common\Channel\Events as ChannelEvents;
 use Integrated\Common\Content\Form\Events as ContentEvents;
 use Integrated\Common\Security\Resolver\PermissionResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormInterface;
@@ -38,8 +37,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ChannelController extends AbstractController
 {
-    private const CHANNELS_CACHE_NAMESPACE = 'integrated_content_fragments_channels';
-
     private DocumentManager $documentManager;
     private SearchContentReferenced $searchContentReferenced;
     private EventDispatcherInterface $dispatcher;
@@ -340,22 +337,9 @@ class ChannelController extends AbstractController
             ]);
         }
 
-        $cache = new FilesystemAdapter(self::CHANNELS_CACHE_NAMESPACE);
-        $cacheItem = $cache->getItem('channels_'.md5((string) $user->getId()));
-
-        if ($cacheItem->isHit()) {
-            return new Response((string) $cacheItem->get());
-        }
-
-        $html = $this->renderView('@IntegratedContent/partials/block.websites.html.twig', [
+        return new Response($this->renderView('@IntegratedContent/partials/block.websites.html.twig', [
             'channels' => $this->getAllowedChannels($user),
-        ]);
-
-        $cacheItem->set($html);
-        $cacheItem->expiresAfter(86400);
-        $cache->save($cacheItem);
-
-        return new Response($html);
+        ]));
     }
 
     /**

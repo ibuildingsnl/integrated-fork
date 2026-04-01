@@ -101,10 +101,16 @@ class ImageExtension extends AbstractExtension
     public function webImage($image)
     {
         if ($image instanceof StorageInterface) {
+            $metadata = $image->getMetadata();
+
             try {
                 // Returns the image in a webformat
                 return $this->imageHandling->open($this->webFormatConverter->convert($image)->getPathname());
             } catch (\Exception $e) {
+                if (strtolower((string) $metadata->getExtension()) === 'pdf') {
+                    return $this->safeOpen('bundles/integratedintegrated/images/fallbacks/pdf-fallback.jpg');
+                }
+
                 $image = $image->getIdentifier();
             }
         }
@@ -123,6 +129,10 @@ class ImageExtension extends AbstractExtension
             try {
                 $image = $this->webFormatConverter->convert($image)->getPathname();
             } catch (\Exception $e) {
+                if (strtolower((string) $metadata->getExtension()) === 'pdf') {
+                    return $this->safeOpen('bundles/integratedintegrated/images/fallbacks/pdf-fallback.jpg');
+                }
+
                 $image = $image->getIdentifier();
             }
 
@@ -146,7 +156,9 @@ class ImageExtension extends AbstractExtension
 
         $extension = pathinfo($image, \PATHINFO_EXTENSION);
         if (strtolower($extension) === 'pdf') {
-            return $this->safeOpen('bundles/integratedintegrated/images/fallbacks/pdf-fallback.jpg');
+            $preview = $this->renderLocalPdfPreview($image);
+
+            return $this->safeOpen($preview ?: 'bundles/integratedintegrated/images/fallbacks/pdf-fallback.jpg');
         }
         if (file_exists($image)) {
             $mime = mime_content_type($image);
@@ -224,6 +236,46 @@ class ImageExtension extends AbstractExtension
         } catch (\Throwable $e) {
             return $this->safeOpen('bundles/integratedintegrated/images/fallbacks/fallback.jpg');
         }
+    }
+
+    private function renderLocalPdfPreview(string $image): ?string
+    {
+        $resolved = $this->resolveLocalPath($image);
+
+        if ($resolved === '' || filter_var($resolved, \FILTER_VALIDATE_URL) || !is_file($resolved)) {
+            return null;
+        }
+
+        $targetDirectory = $this->resolveLocalPath('cache/pdf-preview');
+        $target = \sprintf(
+            '%s/%s.jpg',
+            rtrim($targetDirectory, '/'),
+            sha1($resolved.'|'.(string) filemtime($resolved))
+        );
+
+        if (is_file($target)) {
+            return $target;
+        }
+
+        if (!is_dir($targetDirectory) && !@mkdir($targetDirectory, 0777, true) && !is_dir($targetDirectory)) {
+            return null;
+        }
+
+        try {
+            $imagick = new \Imagick();
+            $imagick->setResolution(144, 144);
+            $imagick->readImage(\sprintf('%s[0]', $resolved));
+            $imagick->setIteratorIndex(0);
+            $imagick->setImageBackgroundColor('white');
+            $imagick = $imagick->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
+            $imagick->setImageFormat('jpg');
+            $imagick->writeImage($target);
+            $imagick->clear();
+        } catch (\Throwable) {
+            return null;
+        }
+
+        return is_file($target) ? $target : null;
     }
 
     private function resolveLocalPath(string $path): string

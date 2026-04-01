@@ -11,6 +11,7 @@ window.popupShown = false;
 const CONTENT_NAVIGATOR_OPEN_FACETS_KEY = 'contentNavigator.openFacets.v1';
 const CONTENT_NAVIGATOR_ASIDE_SCROLL_KEY = 'contentNavigator.asideScrollTop.v1';
 const FLASH_MESSAGES_PERSIST_KEY = 'integrated.flashMessages.persist.v1';
+const DISMISSIBLE_ALERT_TIMEOUT_MS = 10000;
 const SIDEBAR_MENU_SCROLL_KEY = 'integrated.sidebarMenu.scrollTop.v2';
 const SIDEBAR_MENU_OPEN_ITEMS_KEY = 'integrated.sidebarMenu.openItems.v2';
 const OPTIONS_SIDEBAR_HIDDEN_KEY = 'integrated.optionsSidebar.hidden.v1';
@@ -880,22 +881,55 @@ function resetPopupState() {
 }
 
 function initDismissibleAlerts() {
-    var dismissibleAlerts = document.querySelectorAll('.alert-dismissible');
+    var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+    var dismissibleAlerts = [];
 
-    setTimeout(function() {
-        dismissibleAlerts.forEach(function(alert) {
-            if (!(alert instanceof HTMLElement)) {
-                return;
-            }
+    if (root instanceof HTMLElement && root.classList.contains('alert-dismissible')) {
+        dismissibleAlerts = [root];
+    } else if (root && typeof root.querySelectorAll === 'function') {
+        dismissibleAlerts = Array.from(root.querySelectorAll('.alert-dismissible'));
+    }
 
-            var role = String(alert.getAttribute('role') || '').toLowerCase();
-            if (role === 'alert' || alert.classList.contains('alert-danger') || alert.getAttribute('data-persist') === '1') {
+    dismissibleAlerts.forEach(function(alert) {
+        if (!(alert instanceof HTMLElement) || alert.dataset.dismissibleAlertBound === 'true') {
+            return;
+        }
+
+        var role = String(alert.getAttribute('role') || '').toLowerCase();
+        if (role === 'alert' || alert.classList.contains('alert-danger') || alert.getAttribute('data-persist') === '1') {
+            return;
+        }
+
+        alert.dataset.dismissibleAlertBound = 'true';
+        window.setTimeout(function() {
+            if (!alert.isConnected) {
                 return;
             }
 
             alert.remove();
+        }, DISMISSIBLE_ALERT_TIMEOUT_MS);
+    });
+
+    var flashContainer = document.getElementById('flash-messages');
+    if (!(flashContainer instanceof HTMLElement) || flashContainer.dataset.boundDismissibleAlertObserver === 'true') {
+        return;
+    }
+
+    var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            mutation.addedNodes.forEach(function(node) {
+                if (node instanceof HTMLElement) {
+                    initDismissibleAlerts(node);
+                }
+            });
         });
-    }, 10000);
+    });
+
+    observer.observe(flashContainer, {
+        childList: true,
+        subtree: true,
+    });
+    flashContainer.dataset.boundDismissibleAlertObserver = 'true';
 }
 
 function clearBoundInitializationFlags() {
@@ -910,6 +944,7 @@ function clearBoundInitializationFlags() {
         '[data-bound-aside-holder]',
         '[data-bound-editor-section]',
         '[data-bound-facet-persistence-change]',
+        '[data-bound-dismissible-alert-observer]',
     ];
 
     document.querySelectorAll(selectors.join(',')).forEach((element) => {
@@ -923,6 +958,7 @@ function clearBoundInitializationFlags() {
         element.removeAttribute('data-bound-aside-holder');
         element.removeAttribute('data-bound-editor-section');
         element.removeAttribute('data-bound-facet-persistence-change');
+        element.removeAttribute('data-bound-dismissible-alert-observer');
     });
 }
 
@@ -952,7 +988,17 @@ function stashFlashMessagesForNextVisit() {
     const alerts = Array.from(flashContainer.children).filter((child) => {
         return child instanceof HTMLElement && child.classList.contains('alert');
     });
-    const payload = alerts.map((alert) => alert.outerHTML);
+    const payload = alerts.map((alert) => {
+        const snapshot = alert.cloneNode(true);
+
+        if (snapshot instanceof HTMLElement) {
+            snapshot.removeAttribute('data-dismissible-alert-bound');
+
+            return snapshot.outerHTML;
+        }
+
+        return alert.outerHTML;
+    });
 
     if (payload.length === 0) {
         window.sessionStorage.removeItem(FLASH_MESSAGES_PERSIST_KEY);
@@ -1004,6 +1050,8 @@ function restoreFlashMessagesFromPreviousVisit() {
         if (!(alert instanceof HTMLElement) || !alert.classList.contains('alert')) {
             return;
         }
+
+        alert.removeAttribute('data-dismissible-alert-bound');
 
         const signature = flashMessageSignature(alert);
         const exists = Array.from(flashContainer.children).some((child) => {

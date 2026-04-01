@@ -22,7 +22,7 @@ use Integrated\Common\Storage\Reader\ReaderInterface;
 interface ManagerInterface
 {
     /**
-     * @const string
+     * @var string
      */
     public const LOG_PREFIX = 'IntegratedStorage: ';
 

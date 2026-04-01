@@ -5,6 +5,7 @@ namespace Integrated\Bundle\BrandBundle\Tests\Controller;
 use Integrated\Bundle\BrandBundle\Controller\ConnectorController;
 use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
+use Integrated\Bundle\BrandBundle\Provider\ConnectorMissingThemeBlocksProvider;
 use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigManagerInterface;
@@ -24,6 +25,7 @@ class ConnectorControllerTest extends TestCase
             $configs,
             $this->createMock(RegistryInterface::class),
             $this->createMock(EventDispatcherInterface::class),
+            $this->createMock(ConnectorMissingThemeBlocksProvider::class),
         );
 
         $brand = new Brand();
