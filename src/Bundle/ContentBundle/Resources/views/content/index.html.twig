@@ -250,7 +250,7 @@
     {{ parent() }}
     <script>
         (function() {
-            var POLL_DELAY = 15000;
+            var POLL_DELAY = 30000;
             var STORE_KEY = '__integratedContentNavigatorLockPolling';
             var BOOTSTRAP_KEY = '__integratedContentNavigatorLockBootstrap';
             var endpoint = '{{ path('integrated_content_content_locks_status')|e('js') }}';
@@ -288,6 +288,9 @@
 
                 var toKey = function(type, id) {
                     return String(type) + '|' + String(id);
+                };
+                var isDocumentHidden = function() {
+                    return document.visibilityState === 'hidden';
                 };
 
                 var renderLock = function(row, lockData) {
@@ -330,7 +333,7 @@
                 };
 
                 var scheduleNext = function() {
-                    if (state.stopped) {
+                    if (state.stopped || isDocumentHidden()) {
                         return;
                     }
                     state.timer = window.setTimeout(fetchLocks, POLL_DELAY);
@@ -347,13 +350,23 @@
                     }
                     document.removeEventListener('turbo:before-cache', onBeforeCache);
                     window.removeEventListener('pagehide', onPageHide);
+                    document.removeEventListener('visibilitychange', onVisibilityChange);
                     if (window[STORE_KEY] === state) {
                         delete window[STORE_KEY];
                     }
                 };
 
                 var fetchLocks = function() {
+                    if (state.timer) {
+                        window.clearTimeout(state.timer);
+                        state.timer = null;
+                    }
+
                     if (state.stopped) {
+                        return;
+                    }
+
+                    if (isDocumentHidden()) {
                         return;
                     }
 
@@ -390,11 +403,29 @@
                 var onPageHide = function() {
                     stop();
                 };
+                var onVisibilityChange = function() {
+                    if (state.stopped) {
+                        return;
+                    }
+
+                    if (isDocumentHidden()) {
+                        if (state.timer) {
+                            window.clearTimeout(state.timer);
+                            state.timer = null;
+                        }
+                        return;
+                    }
+
+                    if (!state.timer) {
+                        fetchLocks();
+                    }
+                };
 
                 state.stop = stop;
 
                 document.addEventListener('turbo:before-cache', onBeforeCache);
                 window.addEventListener('pagehide', onPageHide);
+                document.addEventListener('visibilitychange', onVisibilityChange);
                 fetchLocks();
             };
 
