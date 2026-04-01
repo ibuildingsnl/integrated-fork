@@ -6,8 +6,8 @@ namespace Integrated\Bundle\FormTypeBundle\Form\Type;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
-use Integrated\Common\Content\Channel\ChannelManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -26,7 +26,6 @@ class FilterableContentChoiceType extends ContentChoiceType
         string $repositoryClass,
         string $route,
         ?array $params,
-        private readonly ChannelManagerInterface $channelManager,
         private readonly ContentTypeManager $contentTypeManager,
         private readonly array $excludedContentTypeKeys = [],
     ) {
@@ -48,7 +47,8 @@ class FilterableContentChoiceType extends ContentChoiceType
         parent::buildView($view, $form, $options);
 
         $channels = [];
-        foreach ($this->channelManager->findBy(['type.name' => 'Website']) as $channel) {
+        $channelRepository = $this->dm->getRepository(Channel::class);
+        foreach ($channelRepository->findBy(['type.name' => 'Website'], ['name' => 'ASC']) as $channel) {
             $channels[] = [
                 'value' => $channel->getId(),
                 'label' => $channel->getName(),
@@ -67,8 +67,6 @@ class FilterableContentChoiceType extends ContentChoiceType
                 'group' => is_a((string) $contentType->getClass(), Taxonomy::class, true) ? 'taxonomy' : 'content',
             ];
         }
-
-        usort($contentTypes, static fn (array $left, array $right): int => strcmp((string) $left['label'], (string) $right['label']));
 
         $view->vars['show_channel_filter'] = (bool) $options['show_channel_filter'];
         $view->vars['show_content_type_filter'] = (bool) $options['show_content_type_filter'];

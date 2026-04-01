@@ -72,7 +72,6 @@
             <argument type="collection">
                 <argument key="_format">json</argument>
             </argument>
-            <argument type="service" id="integrated_content.channel.manager" />
             <argument type="service" id="integrated_content.content_type.manager" />
             <argument>%integrated_form_type.filterable_content_choice.excluded_content_type_keys%</argument>
 

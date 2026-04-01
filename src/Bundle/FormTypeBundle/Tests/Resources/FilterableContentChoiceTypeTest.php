@@ -12,7 +12,6 @@ use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\FilterableContentChoiceType;
-use Integrated\Common\Content\Channel\ChannelManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormView;
 
@@ -20,8 +19,7 @@ final class FilterableContentChoiceTypeTest extends TestCase
 {
     public function testOnlyWebsiteChannelsAreExposedToTheWidget(): void
     {
-        $channelManager = $this->createMock(ChannelManagerInterface::class);
-        $channelManager->method('findBy')->with(['type.name' => 'Website'])->willReturn([
+        $documentManager = $this->createDocumentManagerWithWebsiteChannels([
             $this->createChannel('website', 'Website NL', 'Website'),
         ]);
 
@@ -29,11 +27,10 @@ final class FilterableContentChoiceTypeTest extends TestCase
         $contentTypeManager->method('getAll')->willReturn([]);
 
         $type = new FilterableContentChoiceType(
-            $this->createMock(DocumentManager::class),
+            $documentManager,
             'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content',
             'integrated_content_content_index',
             ['_format' => 'json'],
-            $channelManager,
             $contentTypeManager,
             [],
         );
@@ -65,18 +62,16 @@ final class FilterableContentChoiceTypeTest extends TestCase
 
     public function testFilterVisibilityCanBeDisabledPerOption(): void
     {
-        $channelManager = $this->createMock(ChannelManagerInterface::class);
-        $channelManager->method('findBy')->with(['type.name' => 'Website'])->willReturn([]);
+        $documentManager = $this->createDocumentManagerWithWebsiteChannels([]);
 
         $contentTypeManager = $this->createMock(ContentTypeManager::class);
         $contentTypeManager->method('getAll')->willReturn([]);
 
         $type = new FilterableContentChoiceType(
-            $this->createMock(DocumentManager::class),
+            $documentManager,
             'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content',
             'integrated_content_content_index',
             ['_format' => 'json'],
-            $channelManager,
             $contentTypeManager,
             [],
         );
@@ -105,8 +100,7 @@ final class FilterableContentChoiceTypeTest extends TestCase
 
     public function testContentTypeChoicesExcludeSpecificTypesAndGroupContentAndTaxonomies(): void
     {
-        $channelManager = $this->createMock(ChannelManagerInterface::class);
-        $channelManager->method('findBy')->with(['type.name' => 'Website'])->willReturn([]);
+        $documentManager = $this->createDocumentManagerWithWebsiteChannels([]);
 
         $contentTypeManager = $this->createMock(ContentTypeManager::class);
         $contentTypeManager->method('getAll')->willReturn([
@@ -118,11 +112,10 @@ final class FilterableContentChoiceTypeTest extends TestCase
         ]);
 
         $type = new FilterableContentChoiceType(
-            $this->createMock(DocumentManager::class),
+            $documentManager,
             'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content',
             'integrated_content_content_index',
             ['_format' => 'json'],
-            $channelManager,
             $contentTypeManager,
             ['Media Taxonomy', 'WoodWing Post', 'Nieuwsbrief'],
         );
@@ -177,5 +170,27 @@ final class FilterableContentChoiceTypeTest extends TestCase
             ->setId($id)
             ->setName($name)
             ->setClass($class);
+    }
+
+    /**
+     * @param list<Channel> $channels
+     */
+    private function createDocumentManagerWithWebsiteChannels(array $channels): DocumentManager
+    {
+        $repository = $this->createMock(\Doctrine\Persistence\ObjectRepository::class);
+        $repository
+            ->expects(self::once())
+            ->method('findBy')
+            ->with(['type.name' => 'Website'], ['name' => 'ASC'])
+            ->willReturn($channels);
+
+        $documentManager = $this->createMock(DocumentManager::class);
+        $documentManager
+            ->expects(self::once())
+            ->method('getRepository')
+            ->with(Channel::class)
+            ->willReturn($repository);
+
+        return $documentManager;
     }
 }
