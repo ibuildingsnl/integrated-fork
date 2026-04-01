@@ -6,6 +6,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BrandBundle\Controller\ChannelLinkController;
 use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
+use Integrated\Bundle\BrandBundle\Provider\AvailableConnectorsProvider;
 use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
@@ -24,7 +25,7 @@ class ChannelLinkControllerTest extends TestCase
             $this->createMock(EventDispatcherInterface::class),
             $this->createMock(Flusher::class),
             $this->createMock(DocumentManager::class),
-            $this->createMock(RegistryInterface::class),
+            $this->createAvailableConnectorsProvider(),
         );
 
         $brand = new Brand();
@@ -42,7 +43,7 @@ class ChannelLinkControllerTest extends TestCase
             $this->createMock(EventDispatcherInterface::class),
             $this->createMock(Flusher::class),
             $this->createMock(DocumentManager::class),
-            $this->createMock(RegistryInterface::class),
+            $this->createAvailableConnectorsProvider(),
         );
 
         $brand = new Brand();
@@ -51,6 +52,14 @@ class ChannelLinkControllerTest extends TestCase
 
         $this->expectException(NotFoundHttpException::class);
         $controller->removeChannel(Request::create('/'), $brand, $unknownLink);
+    }
+
+    private function createAvailableConnectorsProvider(): AvailableConnectorsProvider
+    {
+        $registry = $this->createMock(RegistryInterface::class);
+        $registry->method('getAdapters')->willReturn([]);
+
+        return new AvailableConnectorsProvider($registry);
     }
 }
 

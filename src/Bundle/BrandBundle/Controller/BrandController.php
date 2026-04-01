@@ -8,10 +8,10 @@ use Integrated\Bundle\BrandBundle\Event\BrandAddedEvent;
 use Integrated\Bundle\BrandBundle\Event\BrandRemovedEvent;
 use Integrated\Bundle\BrandBundle\Event\BrandUpdatedEvent;
 use Integrated\Bundle\BrandBundle\Form\Type\BrandType;
+use Integrated\Bundle\BrandBundle\Provider\AvailableConnectorsProvider;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
-use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Services\Flusher;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -23,7 +23,7 @@ class BrandController extends AbstractController
     public function __construct(
         private readonly BrandRepository $brands,
         private readonly ChannelTypeRegistry $linkTypeRegistry,
-        private readonly RegistryInterface $adapterRegistry,
+        private readonly AvailableConnectorsProvider $availableConnectorsProvider,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly Flusher $flusher,
     ) {
@@ -66,7 +66,7 @@ class BrandController extends AbstractController
         return $this->render('@IntegratedBrand/brand/edit.html.twig', [
             'form' => $form,
             'linkTypes' => $this->linkTypeRegistry->allTypes(),
-            'availableConnectors' => $this->getAvailableConnectors(),
+            'availableConnectors' => $this->availableConnectorsProvider->getAvailableConnectors(),
         ]);
     }
 
@@ -103,7 +103,7 @@ class BrandController extends AbstractController
         return $this->render('@IntegratedBrand/brand/edit.html.twig', [
             'form' => $form,
             'linkTypes' => $this->linkTypeRegistry->allTypes(),
-            'availableConnectors' => $this->getAvailableConnectors(),
+            'availableConnectors' => $this->availableConnectorsProvider->getAvailableConnectors(),
             'brand' => $brand,
         ]);
     }
@@ -144,19 +144,5 @@ class BrandController extends AbstractController
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
-    }
-
-    /**
-     * @return string[]
-     */
-    private function getAvailableConnectors(): array
-    {
-        $available = [];
-
-        foreach ($this->adapterRegistry->getAdapters() as $adapter) {
-            $available[] = $adapter->getManifest()->getName();
-        }
-
-        return array_values(array_unique($available));
     }
 }
