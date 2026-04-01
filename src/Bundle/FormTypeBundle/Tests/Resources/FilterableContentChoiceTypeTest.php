@@ -21,9 +21,8 @@ final class FilterableContentChoiceTypeTest extends TestCase
     public function testOnlyWebsiteChannelsAreExposedToTheWidget(): void
     {
         $channelManager = $this->createMock(ChannelManagerInterface::class);
-        $channelManager->method('findAll')->willReturn([
+        $channelManager->method('findBy')->with(['type.name' => 'Website'])->willReturn([
             $this->createChannel('website', 'Website NL', 'Website'),
-            $this->createChannel('newsletter', 'Nieuwsbrief', 'Newsletter'),
         ]);
 
         $contentTypeManager = $this->createMock(ContentTypeManager::class);
@@ -67,7 +66,7 @@ final class FilterableContentChoiceTypeTest extends TestCase
     public function testFilterVisibilityCanBeDisabledPerOption(): void
     {
         $channelManager = $this->createMock(ChannelManagerInterface::class);
-        $channelManager->method('findAll')->willReturn([]);
+        $channelManager->method('findBy')->with(['type.name' => 'Website'])->willReturn([]);
 
         $contentTypeManager = $this->createMock(ContentTypeManager::class);
         $contentTypeManager->method('getAll')->willReturn([]);
@@ -107,7 +106,7 @@ final class FilterableContentChoiceTypeTest extends TestCase
     public function testContentTypeChoicesExcludeSpecificTypesAndGroupContentAndTaxonomies(): void
     {
         $channelManager = $this->createMock(ChannelManagerInterface::class);
-        $channelManager->method('findAll')->willReturn([]);
+        $channelManager->method('findBy')->with(['type.name' => 'Website'])->willReturn([]);
 
         $contentTypeManager = $this->createMock(ContentTypeManager::class);
         $contentTypeManager->method('getAll')->willReturn([

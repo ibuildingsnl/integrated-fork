@@ -14,6 +14,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FilterableContentChoiceType extends ContentChoiceType
 {
+    /** @var array<string, true> */
+    private array $excludedContentTypeKeyLookup;
+
     /**
      * @param array<string, mixed>|null $params
      * @param list<string>              $excludedContentTypeKeys
@@ -28,6 +31,16 @@ class FilterableContentChoiceType extends ContentChoiceType
         private readonly array $excludedContentTypeKeys = [],
     ) {
         parent::__construct($dm, $repositoryClass, $route, $params);
+
+        $this->excludedContentTypeKeyLookup = [];
+        foreach ($this->excludedContentTypeKeys as $excludedContentTypeKey) {
+            $normalizedKey = $this->normalizeContentTypeKey((string) $excludedContentTypeKey);
+            if ($normalizedKey === '') {
+                continue;
+            }
+
+            $this->excludedContentTypeKeyLookup[$normalizedKey] = true;
+        }
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
@@ -35,11 +48,7 @@ class FilterableContentChoiceType extends ContentChoiceType
         parent::buildView($view, $form, $options);
 
         $channels = [];
-        foreach ($this->channelManager->findAll() as $channel) {
-            if (!$channel->getType() || $channel->getType()->getName() !== 'Website') {
-                continue;
-            }
-
+        foreach ($this->channelManager->findBy(['type.name' => 'Website']) as $channel) {
             $channels[] = [
                 'value' => $channel->getId(),
                 'label' => $channel->getName(),
@@ -59,7 +68,6 @@ class FilterableContentChoiceType extends ContentChoiceType
             ];
         }
 
-        usort($channels, static fn (array $left, array $right): int => strcmp((string) $left['label'], (string) $right['label']));
         usort($contentTypes, static fn (array $left, array $right): int => strcmp((string) $left['label'], (string) $right['label']));
 
         $view->vars['show_channel_filter'] = (bool) $options['show_channel_filter'];
@@ -111,10 +119,9 @@ class FilterableContentChoiceType extends ContentChoiceType
     {
         $normalizedId = $this->normalizeContentTypeKey($id);
         $normalizedName = $this->normalizeContentTypeKey($name);
-        $excludedKeys = array_map($this->normalizeContentTypeKey(...), $this->excludedContentTypeKeys);
 
-        return \in_array($normalizedId, $excludedKeys, true)
-            || \in_array($normalizedName, $excludedKeys, true);
+        return isset($this->excludedContentTypeKeyLookup[$normalizedId])
+            || isset($this->excludedContentTypeKeyLookup[$normalizedName]);
     }
 
     private function normalizeContentTypeKey(string $value): string
