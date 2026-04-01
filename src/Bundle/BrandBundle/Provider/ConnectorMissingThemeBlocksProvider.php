@@ -54,10 +54,6 @@ class ConnectorMissingThemeBlocksProvider
 
             $normalizedUsages = [];
             foreach ($usages as $usage) {
-                if (!\is_array($usage)) {
-                    continue;
-                }
-
                 $themeId = trim((string) ($usage['theme'] ?? ''));
                 if ($themeId === '' || !\in_array($themeId, $themeChain, true)) {
                     continue;
