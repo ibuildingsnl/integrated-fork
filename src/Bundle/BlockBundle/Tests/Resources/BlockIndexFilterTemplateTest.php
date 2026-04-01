@@ -19,14 +19,17 @@ final class BlockIndexFilterTemplateTest extends TestCase
     public function testBlockIndexTemplateAutoSubmitsSearchWithoutDedicatedSubmitField(): void
     {
         $template = file_get_contents(__DIR__.'/../../Resources/views/block/index.html.twig');
+        $script = file_get_contents(__DIR__.'/../../Resources/public/js/block_index.js');
         $formType = file_get_contents(__DIR__.'/../../Form/Type/BlockFilterType.php');
 
         self::assertIsString($template);
+        self::assertIsString($script);
         self::assertIsString($formType);
-        self::assertStringContainsString('function bindFilterQueryAutoSubmit()', $template);
-        self::assertStringContainsString('input[name="integrated_block_filter[q]"]', $template);
-        self::assertStringContainsString('window.setTimeout(function () {', $template);
-        self::assertStringContainsString('bindFilterQueryAutoSubmit();', $template);
+        self::assertStringContainsString("bundles/integratedblock/js/block_index.js", $template);
+        self::assertStringContainsString('function bindFilterQueryAutoSubmit()', $script);
+        self::assertStringContainsString('input[name="integrated_block_filter[q]"]', $script);
+        self::assertStringContainsString('window.setTimeout(function () {', $script);
+        self::assertStringContainsString('window.__integratedBlockIndexInteractionsBound', $script);
         self::assertStringNotContainsString("add('submit', SubmitType::class", $formType);
         self::assertStringNotContainsString('SubmitType;', $formType);
     }
