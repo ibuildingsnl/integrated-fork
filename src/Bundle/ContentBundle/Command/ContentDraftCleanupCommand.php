@@ -78,7 +78,7 @@ class ContentDraftCleanupCommand extends Command
             ->getQuery()
             ->execute();
 
-        if (!\is_iterable($result)) {
+        if (!is_iterable($result)) {
             $result = [];
         }
 

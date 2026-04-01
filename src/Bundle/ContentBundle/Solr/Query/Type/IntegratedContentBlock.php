@@ -68,7 +68,7 @@ class IntegratedContentBlock extends AbstractType
             }
             if (\count($values)) {
                 if ('and' === ($options['facet_operators'][$field] ?? 'or')) {
-                    foreach (array_values($values) as $index => $facetValue) {
+                    foreach ($values as $index => $facetValue) {
                         $query
                             ->createFilterQuery($field.'_'.$index)
                             ->setQuery($field.': (%1%)', [$escape($facetValue)])

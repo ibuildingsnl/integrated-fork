@@ -87,7 +87,7 @@ final class ConnectorMissingThemeBlocksProviderTest extends TestCase
             ->expects(self::once())
             ->method('findBy')
             ->with(self::callback(static function (array $criteria): bool {
-                if (!isset($criteria['id']['$in']) || !is_array($criteria['id']['$in'])) {
+                if (!isset($criteria['id']['$in']) || !\is_array($criteria['id']['$in'])) {
                     return false;
                 }
 

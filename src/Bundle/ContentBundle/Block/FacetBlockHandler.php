@@ -92,6 +92,11 @@ class FacetBlockHandler extends BlockHandler
         $resolver->setAllowedTypes('filters', 'array');
     }
 
+    /**
+     * @param array<string, string> $existing
+     *
+     * @return array<string, string>
+     */
     private function getFacetOperators(FacetBlock $block, array $existing): array
     {
         $operators = $existing;
@@ -108,6 +113,11 @@ class FacetBlockHandler extends BlockHandler
         return $operators;
     }
 
+    /**
+     * @param array<string, string> $existing
+     *
+     * @return array<string, string>
+     */
     private function getFacetSelectionModes(FacetBlock $block, array $existing): array
     {
         $selectionModes = $existing;

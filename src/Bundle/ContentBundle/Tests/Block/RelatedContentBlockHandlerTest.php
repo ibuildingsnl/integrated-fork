@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Integrated\Bundle\ContentBundle\Tests\Block;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Query\Builder;
 use Integrated\Bundle\ContentBundle\Block\RelatedContentBlockHandler;
 use Integrated\Bundle\ContentBundle\Document\Block\RelatedContentBlock;
 use Integrated\Bundle\ContentBundle\Document\Content\ContentRepository;
@@ -32,6 +33,7 @@ final class RelatedContentBlockHandlerTest extends TestCase
         self::assertSame(2, $request->query->get('related-content-page'));
 
         $paginator = $this->createMock(PaginatorInterface::class);
+        $queryBuilder = $this->createMock(Builder::class);
         $paginator
             ->expects(self::once())
             ->method('paginate')
@@ -60,7 +62,8 @@ final class RelatedContentBlockHandlerTest extends TestCase
             $paginator,
             $this->createMock(RequestStack::class),
             $this->createMock(DocumentManager::class),
-            $this->createMock(ContentRepository::class)
+            $this->createMock(ContentRepository::class),
+            $queryBuilder
         );
 
         $pagination = $handler->getPagination($block, $request);
@@ -85,6 +88,7 @@ final class RelatedContentBlockHandlerTest extends TestCase
         ]);
 
         $paginator = $this->createMock(PaginatorInterface::class);
+        $queryBuilder = $this->createMock(Builder::class);
         $paginator
             ->expects(self::once())
             ->method('paginate')
@@ -113,7 +117,8 @@ final class RelatedContentBlockHandlerTest extends TestCase
             $paginator,
             $this->createMock(RequestStack::class),
             $this->createMock(DocumentManager::class),
-            $this->createMock(ContentRepository::class)
+            $this->createMock(ContentRepository::class),
+            $queryBuilder
         );
 
         $pagination = $handler->getPagination($block, $request);
@@ -130,8 +135,21 @@ final class RelatedContentBlockHandlerTest extends TestCase
 
 final class TestableRelatedContentBlockHandler extends RelatedContentBlockHandler
 {
-    protected function getQuery(RelatedContentBlock $block, mixed $document): ?\Doctrine\ODM\MongoDB\Query\Builder
+    public function __construct(
+        PaginatorInterface $paginator,
+        RequestStack $requestStack,
+        DocumentManager $dm,
+        ContentRepository $contentRepository,
+        private readonly Builder $queryBuilder,
+    ) {
+        parent::__construct($paginator, $requestStack, $dm, $contentRepository);
+    }
+
+    /**
+     * @return Builder
+     */
+    protected function getQuery(RelatedContentBlock $block, mixed $document)
     {
-        return null;
+        return $this->queryBuilder;
     }
 }

@@ -40,19 +40,22 @@ class ConnectorMissingThemeBlocksProvider
 
         $relevantUsages = [];
         $channelId = (string) $channel->getId();
+        /** @var array<string, array<string, array<string, string>>>|null $templateUsages */
+        $templateUsages = $this->blockUsageProvider->getTemplateUsagesPerBlock();
 
-        foreach ($this->blockUsageProvider->getTemplateUsagesPerBlock() as $blockId => $usages) {
-            if (!is_string($blockId) || $blockId === '' || !is_array($usages)) {
+        if (!\is_array($templateUsages)) {
+            return [];
+        }
+
+        foreach ($templateUsages as $blockId => $usages) {
+            if ($blockId === '') {
                 continue;
             }
 
+            $normalizedUsages = [];
             foreach ($usages as $usage) {
-                if (!is_array($usage)) {
-                    continue;
-                }
-
                 $themeId = trim((string) ($usage['theme'] ?? ''));
-                if ($themeId === '' || !in_array($themeId, $themeChain, true)) {
+                if ($themeId === '' || !\in_array($themeId, $themeChain, true)) {
                     continue;
                 }
 
@@ -61,7 +64,11 @@ class ConnectorMissingThemeBlocksProvider
                     continue;
                 }
 
-                $relevantUsages[$blockId][] = $usage;
+                $normalizedUsages[] = $usage;
+            }
+
+            if ($normalizedUsages !== []) {
+                $relevantUsages[$blockId] = $normalizedUsages;
             }
         }
 
@@ -108,10 +115,6 @@ class ConnectorMissingThemeBlocksProvider
         $existing = [];
 
         foreach ($blocks as $block) {
-            if (!$block instanceof Block) {
-                continue;
-            }
-
             $blockId = trim((string) $block->getId());
             if ($blockId === '') {
                 continue;
@@ -137,7 +140,7 @@ class ConnectorMissingThemeBlocksProvider
 
         while ($queue !== []) {
             $currentThemeId = array_shift($queue);
-            if (!is_string($currentThemeId) || $currentThemeId === '' || isset($resolved[$currentThemeId])) {
+            if ($currentThemeId === '' || isset($resolved[$currentThemeId])) {
                 continue;
             }
 
@@ -145,7 +148,7 @@ class ConnectorMissingThemeBlocksProvider
             $theme = $this->themeManager->getTheme($currentThemeId);
 
             foreach ($theme->getFallback() as $fallbackThemeId) {
-                if (is_string($fallbackThemeId) && $fallbackThemeId !== '') {
+                if (\is_string($fallbackThemeId) && $fallbackThemeId !== '') {
                     $queue[] = $fallbackThemeId;
                 }
             }

@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Block;
 
-use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
 use Integrated\Bundle\BlockBundle\Block\BlockHandler;
+use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
 use Integrated\Bundle\ContentBundle\Document\Block\FacetBlock;
 use Integrated\Bundle\ContentBundle\Solr\Query\Provider\IntegratedContentBlock;
@@ -88,6 +88,11 @@ class ContentBlockHandler extends BlockHandler
         $resolver->setAllowedTypes('exclude', 'bool');
     }
 
+    /**
+     * @param array<string, mixed> $options
+     *
+     * @return array<string, mixed>
+     */
     private function resolveFacetOptions(ContentBlock $block, Request $request, array $options): array
     {
         if (!$this->blockRepository instanceof BlockRepository) {
@@ -117,7 +122,7 @@ class ContentBlockHandler extends BlockHandler
             }
 
             $linkedBlock = $pageBlock->getBlock();
-            if (!$linkedBlock instanceof ContentBlock || $linkedBlock->getId() !== $block->getId()) {
+            if ($linkedBlock->getId() !== $block->getId()) {
                 continue;
             }
 

@@ -4,6 +4,7 @@ namespace Integrated\Bundle\ContentBundle\Tests\EventListener;
 
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\EventListener\ContentChannelIntegrationListener;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -11,7 +12,8 @@ class ContentChannelIntegrationListenerTest extends TestCase
 {
     public function testGetChannelsLoadsAllChannelsWhenIdsAreOmitted(): void
     {
-        $expected = [new \stdClass()];
+        $channel = $this->createMock(ChannelInterface::class);
+        $expected = [$channel];
 
         $repository = $this->createMock(ObjectRepository::class);
         $repository
@@ -50,7 +52,8 @@ class ContentChannelIntegrationListenerTest extends TestCase
 
     public function testGetChannelsBuildsOrCriteriaForSpecificIds(): void
     {
-        $expected = [new \stdClass()];
+        $channel = $this->createMock(ChannelInterface::class);
+        $expected = [$channel];
 
         $repository = $this->createMock(ObjectRepository::class);
         $repository

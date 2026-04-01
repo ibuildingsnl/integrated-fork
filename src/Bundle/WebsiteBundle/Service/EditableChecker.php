@@ -12,11 +12,11 @@
 namespace Integrated\Bundle\WebsiteBundle\Service;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\WebsiteBundle\Routing\ContentTypePageLoader;
 use Integrated\Bundle\WebsiteBundle\Routing\PageLoader;
 use Integrated\Common\Security\PermissionInterface;
-use Doctrine\Persistence\ObjectRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;

@@ -20,7 +20,7 @@ final class PageIndexTemplateTest extends TestCase
         $this->assertStringContainsString('{% trans %}Scheduled{% endtrans %}', $template);
         $this->assertStringContainsString('{% trans %}Expired{% endtrans %}', $template);
         $this->assertStringContainsString('{% trans %}System page{% endtrans %}', $template);
-        $this->assertStringContainsString("deletableContentTypePageIds[page.id]|default(false)", $template);
+        $this->assertStringContainsString('deletableContentTypePageIds[page.id]|default(false)', $template);
         $this->assertStringContainsString('bindPageFilterAutoSubmit', $template);
         $this->assertStringContainsString("document.addEventListener('turbo:load', bindPageFilterAutoSubmit);", $template);
         $this->assertStringContainsString('form.requestSubmit ? form.requestSubmit() : form.submit();', $template);

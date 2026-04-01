@@ -391,7 +391,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
      *
      * @return ContentTypeInterface
      */
-    protected function getContentType($workflow = null, bool $requireContentTypePermissionForVisibility = false, array $permissions = [])
+    protected function getContentType(mixed $workflow = null, bool $requireContentTypePermissionForVisibility = false, array $permissions = [])
     {
         $mock = $this->createMock(ContentTypeInterface::class);
         $mock->expects($this->atLeastOnce())
