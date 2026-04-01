@@ -6,8 +6,8 @@ namespace Integrated\Bundle\FormTypeBundle\Form\Type;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
+use Integrated\Common\Content\Channel\ChannelManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -26,6 +26,7 @@ class FilterableContentChoiceType extends ContentChoiceType
         string $repositoryClass,
         string $route,
         ?array $params,
+        private readonly ChannelManagerInterface $channelManager,
         private readonly ContentTypeManager $contentTypeManager,
         private readonly array $excludedContentTypeKeys = [],
     ) {
@@ -47,8 +48,7 @@ class FilterableContentChoiceType extends ContentChoiceType
         parent::buildView($view, $form, $options);
 
         $channels = [];
-        $channelRepository = $this->dm->getRepository(Channel::class);
-        foreach ($channelRepository->findBy(['type.name' => 'Website'], ['name' => 'ASC']) as $channel) {
+        foreach ($this->channelManager->findBy(['type.name' => 'Website']) as $channel) {
             $channels[] = [
                 'value' => $channel->getId(),
                 'label' => $channel->getName(),
