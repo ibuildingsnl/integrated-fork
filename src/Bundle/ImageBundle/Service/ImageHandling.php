@@ -155,9 +155,20 @@ class ImageHandling
         $image->setActualCacheDir($this->webDirectory.'/'.$this->cacheDirectory);
 
         $image->setFileCallback(function ($file) {
+            if ($this->usesUnversionedAssetPackage($file)) {
+                return $this->assetsPackages->getUrl($file, 'unversioned');
+            }
+
             return $this->assetsPackages->getUrl($file);
         });
 
         return $image;
+    }
+
+    private function usesUnversionedAssetPackage(string $file): bool
+    {
+        $normalized = ltrim($file, '/');
+
+        return str_starts_with($normalized, 'cache/') || str_starts_with($normalized, 'files/');
     }
 }
