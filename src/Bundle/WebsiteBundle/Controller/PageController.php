@@ -14,6 +14,7 @@ namespace Integrated\Bundle\WebsiteBundle\Controller;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\EventListener\WebsiteToolbarListener;
+use Integrated\Bundle\WebsiteBundle\Service\FacetQueryCanonicalizer;
 use Integrated\Common\Security\PermissionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -30,12 +31,14 @@ class PageController extends AbstractController
     private ThemeManager $themeManager;
     private WebsiteToolbarListener $websiteToolbarListener;
     private UriSigner $uriSigner;
+    private FacetQueryCanonicalizer $facetQueryCanonicalizer;
 
-    public function __construct(ThemeManager $themeManager, WebsiteToolbarListener $websiteToolbarListener, UriSigner $uriSigner)
+    public function __construct(ThemeManager $themeManager, WebsiteToolbarListener $websiteToolbarListener, UriSigner $uriSigner, FacetQueryCanonicalizer $facetQueryCanonicalizer)
     {
         $this->themeManager = $themeManager;
         $this->websiteToolbarListener = $websiteToolbarListener;
         $this->uriSigner = $uriSigner;
+        $this->facetQueryCanonicalizer = $facetQueryCanonicalizer;
     }
 
     public function show(Request $request, Page $page): Response
@@ -66,6 +69,12 @@ class PageController extends AbstractController
         if (!$isPublic) {
             $this->websiteToolbarListener->setToolbarMessage(self::DRAFT_NOTICE_TEXT);
         }
+
+        if (null !== $normalizedPath = $this->facetQueryCanonicalizer->getNormalizedPath($page, $request)) {
+            return new RedirectResponse($normalizedPath);
+        }
+
+        $request->attributes->set('_integrated_page_document', $page);
 
         $response = $this->render($this->themeManager->locateTemplate($page->getLayout()), [
             'page' => $page,

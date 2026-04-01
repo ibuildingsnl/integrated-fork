@@ -11,6 +11,7 @@
         <service id="integrated_content.block_handler.content" class="Integrated\Bundle\ContentBundle\Block\ContentBlockHandler">
             <argument type="service" id="Integrated\Bundle\ContentBundle\Solr\Query\Provider\IntegratedContentBlock" />
             <argument type="service" id="request_stack" />
+            <argument type="service" id="Integrated\Bundle\BlockBundle\Document\Block\BlockRepository" />
             <tag name="integrated.block" type="content" />
         </service>
 

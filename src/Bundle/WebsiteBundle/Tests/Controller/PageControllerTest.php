@@ -9,6 +9,8 @@ use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\Controller\PageController;
 use Integrated\Bundle\WebsiteBundle\EventListener\WebsiteToolbarListener;
+use Integrated\Bundle\WebsiteBundle\Service\FacetQueryCanonicalizer;
+use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
 use Integrated\Common\Security\PermissionInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -25,12 +27,14 @@ class PageControllerTest extends TestCase
     /** @var WebsiteToolbarListener&MockObject */
     private WebsiteToolbarListener $websiteToolbarListener;
     private UriSigner $uriSigner;
+    private FacetQueryCanonicalizer $facetQueryCanonicalizer;
 
     protected function setUp(): void
     {
         $this->themeManager = $this->createMock(ThemeManager::class);
         $this->websiteToolbarListener = $this->createMock(WebsiteToolbarListener::class);
         $this->uriSigner = new UriSigner('website-preview-test-secret');
+        $this->facetQueryCanonicalizer = $this->createFacetQueryCanonicalizer();
     }
 
     public function testShowThrowsNotFoundForDisabledPageWithoutAdminRole(): void
@@ -437,6 +441,31 @@ class PageControllerTest extends TestCase
         self::assertStringNotContainsString('integrated-draft-notice', (string) $response->getContent());
     }
 
+    public function testShowRedirectsToNormalizedSingleSelectFacetUrl(): void
+    {
+        $page = new Page();
+        $page->setLayout('default.html.twig');
+        $page->setDisabled(false);
+        $page->setPath('/bedrijvengids');
+
+        $request = Request::create('https://example.test/bedrijvengids?facet_company_category%5B0%5D=Automatisering&facet_company_category%5B1%5D=Dienstverlening');
+
+        $this->themeManager->expects($this->never())->method('locateTemplate');
+        $this->websiteToolbarListener->expects($this->never())->method('setToolbarMessage');
+        $this->facetQueryCanonicalizer = $this->createFacetQueryCanonicalizer('/bedrijvengids?facet_company_category%5B0%5D=Automatisering');
+
+        $controller = $this->createController([
+            'ROLE_WEBSITE_MANAGER' => false,
+            'ROLE_ADMIN' => false,
+        ]);
+
+        $response = $controller->show($request, $page);
+
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertSame(Response::HTTP_FOUND, $response->getStatusCode());
+        self::assertSame('/bedrijvengids?facet_company_category%5B0%5D=Automatisering', $response->headers->get('Location'));
+    }
+
     /**
      * @param array<int|string, bool> $grants
      */
@@ -445,14 +474,15 @@ class PageControllerTest extends TestCase
         $themeManager = $this->themeManager;
         $websiteToolbarListener = $this->websiteToolbarListener;
         $uriSigner = $this->uriSigner;
+        $facetQueryCanonicalizer = $this->facetQueryCanonicalizer;
 
-        return new class($themeManager, $websiteToolbarListener, $uriSigner, $grants) extends PageController {
+        return new class($themeManager, $websiteToolbarListener, $uriSigner, $facetQueryCanonicalizer, $grants) extends PageController {
             /**
              * @param array<int|string, bool> $grants
              */
-            public function __construct(ThemeManager $themeManager, WebsiteToolbarListener $websiteToolbarListener, UriSigner $uriSigner, private readonly array $grants)
+            public function __construct(ThemeManager $themeManager, WebsiteToolbarListener $websiteToolbarListener, UriSigner $uriSigner, FacetQueryCanonicalizer $facetQueryCanonicalizer, private readonly array $grants)
             {
-                parent::__construct($themeManager, $websiteToolbarListener, $uriSigner);
+                parent::__construct($themeManager, $websiteToolbarListener, $uriSigner, $facetQueryCanonicalizer);
             }
 
             protected function isGranted(mixed $attribute, mixed $subject = null): bool
@@ -486,5 +516,22 @@ class PageControllerTest extends TestCase
         $signed = $this->uriSigner->sign($unsigned);
 
         return Request::create($signed);
+    }
+
+    private function createFacetQueryCanonicalizer(?string $normalizedPath = null): FacetQueryCanonicalizer
+    {
+        $repository = $this->createStub(BlockRepository::class);
+
+        return new class($repository, $normalizedPath) extends FacetQueryCanonicalizer {
+            public function __construct(BlockRepository $repository, private readonly ?string $normalizedPath)
+            {
+                parent::__construct($repository);
+            }
+
+            public function getNormalizedPath(Page $page, Request $request): ?string
+            {
+                return $this->normalizedPath;
+            }
+        };
     }
 }

@@ -43,6 +43,10 @@
         <service id="Integrated\Bundle\WebsiteBundle\Service\SeoPlaceholderResolver">
         </service>
 
+        <service id="Integrated\Bundle\WebsiteBundle\Service\FacetQueryCanonicalizer">
+            <argument type="service" id="Integrated\Bundle\BlockBundle\Document\Block\BlockRepository" />
+        </service>
+
         <service id="Integrated\Bundle\WebsiteBundle\Twig\Extension\PageSeoExtension">
             <argument type="service" id="Integrated\Bundle\WebsiteBundle\Service\PageSeoMetadataResolver" />
             <argument type="service" id="Integrated\Bundle\WebsiteBundle\Service\SeoPlaceholderResolver" />

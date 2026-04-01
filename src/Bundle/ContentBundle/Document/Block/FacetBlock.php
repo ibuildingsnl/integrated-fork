@@ -23,6 +23,11 @@ use Integrated\Common\Form\Mapping\Attributes as Type;
 #[Type\Document('Facet block')]
 class FacetBlock extends Block
 {
+    public const OPERATOR_OR = 'or';
+    public const OPERATOR_AND = 'and';
+    public const SELECTION_MODE_SINGLE = 'single';
+    public const SELECTION_MODE_MULTI = 'multi';
+
     /**
      * @var ContentBlock
      */
@@ -45,6 +50,34 @@ class FacetBlock extends Block
         'allow_delete' => true,
     ])]
     protected $fields;
+
+    /**
+     * @var string
+     */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: [
+        'priority' => 495,
+        'placeholder' => false,
+        'required' => false,
+        'choices' => [
+            'Or' => self::OPERATOR_OR,
+            'And' => self::OPERATOR_AND,
+        ],
+    ])]
+    protected $operator = self::OPERATOR_OR;
+
+    /**
+     * @var string
+     */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: [
+        'priority' => 494,
+        'placeholder' => false,
+        'required' => false,
+        'choices' => [
+            'Single select' => self::SELECTION_MODE_SINGLE,
+            'Multi select' => self::SELECTION_MODE_MULTI,
+        ],
+    ])]
+    protected $selectionMode = self::SELECTION_MODE_SINGLE;
 
     public function __construct($id = null)
     {
@@ -85,6 +118,38 @@ class FacetBlock extends Block
     public function setFields(array $fields)
     {
         $this->fields = new ArrayCollection($fields);
+
+        return $this;
+    }
+
+    public function getOperator(): string
+    {
+        return $this->operator;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setOperator(?string $operator)
+    {
+        $operator = strtolower(trim((string) $operator));
+        $this->operator = \in_array($operator, [self::OPERATOR_OR, self::OPERATOR_AND], true) ? $operator : self::OPERATOR_OR;
+
+        return $this;
+    }
+
+    public function getSelectionMode(): string
+    {
+        return $this->selectionMode;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setSelectionMode(?string $selectionMode)
+    {
+        $selectionMode = strtolower(trim((string) $selectionMode));
+        $this->selectionMode = \in_array($selectionMode, [self::SELECTION_MODE_SINGLE, self::SELECTION_MODE_MULTI], true) ? $selectionMode : self::SELECTION_MODE_SINGLE;
 
         return $this;
     }
