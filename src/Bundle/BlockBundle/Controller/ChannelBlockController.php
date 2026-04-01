@@ -13,7 +13,7 @@ namespace Integrated\Bundle\BlockBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
-use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
+use Integrated\Bundle\BlockBundle\Security\AllowedBlockClassProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,14 +22,12 @@ use Symfony\Component\HttpFoundation\Response;
 class ChannelBlockController extends AbstractController
 {
     private DocumentManager $manager;
-    private MetadataFactoryInterface $metadataFactory;
-    /** @var array<string, bool>|null */
-    private ?array $allowedBlockClasses = null;
+    private AllowedBlockClassProvider $allowedBlockClassProvider;
 
-    public function __construct(DocumentManager $documentManager, MetadataFactoryInterface $metadataFactory)
+    public function __construct(DocumentManager $documentManager, AllowedBlockClassProvider $allowedBlockClassProvider)
     {
         $this->manager = $documentManager;
-        $this->metadataFactory = $metadataFactory;
+        $this->allowedBlockClassProvider = $allowedBlockClassProvider;
     }
 
     public function new(Request $request): Response
@@ -50,7 +48,7 @@ class ChannelBlockController extends AbstractController
             || $class === ''
             || !class_exists($class)
             || !is_subclass_of($class, Block::class)
-            || !$this->isAllowedBlockClass($class)
+            || !$this->allowedBlockClassProvider->isAllowed($class)
         ) {
             throw $this->createNotFoundException(\sprintf('Invalid block "%s"', (string) $class));
         }
@@ -68,25 +66,5 @@ class ChannelBlockController extends AbstractController
         $this->manager->flush();
 
         return new JsonResponse(['result' => 'ok']);
-    }
-
-    private function isAllowedBlockClass(string $class): bool
-    {
-        $class = ltrim($class, '\\');
-        $classKey = strtolower($class);
-
-        if ($this->allowedBlockClasses !== null) {
-            return isset($this->allowedBlockClasses[$classKey]);
-        }
-
-        $this->allowedBlockClasses = [];
-        foreach ($this->metadataFactory->getAllMetadata() as $metadata) {
-            $metadataClass = trim((string) $metadata->getClass());
-            if ($metadataClass !== '') {
-                $this->allowedBlockClasses[strtolower(ltrim($metadataClass, '\\'))] = true;
-            }
-        }
-
-        return isset($this->allowedBlockClasses[$classKey]);
     }
 }

@@ -51,6 +51,10 @@
             <argument type="service" id="integrated_block.provider.block_usage" />
         </service>
 
+        <service id="Integrated\Bundle\BlockBundle\Security\AllowedBlockClassProvider">
+            <argument type="service" id="integrated_block.metadata.factory" />
+        </service>
+
         <service id="Integrated\Bundle\BlockBundle\Document\Block\BlockRepository"></service>
 
     </services>

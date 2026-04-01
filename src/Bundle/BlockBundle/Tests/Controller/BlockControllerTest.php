@@ -13,6 +13,7 @@ use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
 use Integrated\Bundle\BlockBundle\Document\Block\TextBlock;
 use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
+use Integrated\Bundle\BlockBundle\Security\AllowedBlockClassProvider;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Security\Permissions;
@@ -176,13 +177,16 @@ final class BlockControllerTest extends TestCase
         PaginatorInterface $paginator,
         ?MetadataFactoryInterface $metadataFactory = null,
     ): TestableBlockController {
+        $metadataFactory ??= $this->createStub(MetadataFactoryInterface::class);
+
         return new TestableBlockController(
-            $metadataFactory ?? $this->createStub(MetadataFactoryInterface::class),
+            $metadataFactory,
             $documentManager,
             $paginator,
             $this->createStub(FilterQueryProvider::class),
             $this->createStub(EventDispatcherInterface::class),
-            $this->createStub(BlockRepository::class)
+            $this->createStub(BlockRepository::class),
+            new AllowedBlockClassProvider($metadataFactory),
         );
     }
 
