@@ -107,22 +107,6 @@
 {% block javascript %}
 {{ parent() }}
 
-<script>
-const setDisplayFor = function(suffix, display) {
-  document.querySelectorAll('[data-channel-'+suffix+']').forEach((el) => el.style.display = display);
-}
-const addOrChooseChannel = function() {
-    if (document.querySelector('[data-choose-channel]').checked) {
-        setDisplayFor('choose', 'block');
-        setDisplayFor('new', 'none');
-    } else {
-        setDisplayFor('choose', 'none');
-        setDisplayFor('new', 'block');
-    }
-}
-document.querySelector('[data-choose-channel]').addEventListener('change', addOrChooseChannel);
-addOrChooseChannel();
-</script>
-
+<script src="{{ asset('bundles/integratedbrand/js/channel_add.js') }}" defer data-turbo-track="reload"></script>
 <script src="{{ asset('bundles/integratedcontent/js/channel.js') }}" defer data-turbo-track="reload"></script>
 {% endblock javascript %}
