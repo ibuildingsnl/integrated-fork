@@ -67,6 +67,10 @@
             <tag name="form.type" />
         </service>
 
+        <service id="integrated_brand.form.channel.link.edit.type" class="Integrated\Bundle\BrandBundle\Form\Type\ChannelLinkEditType">
+            <tag name="form.type" />
+        </service>
+
         <service id="integrated_brand.event_listener.configure_menu_subscriber" class="Integrated\Bundle\BrandBundle\EventListener\ConfigureMenuSubscriber">
             <argument type="service" id="security.authorization_checker" />
             <tag name="kernel.event_subscriber" />
