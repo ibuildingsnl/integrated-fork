@@ -55,6 +55,8 @@
             <argument type="service" id="integrated_block.metadata.factory" />
         </service>
 
+        <service id="Integrated\Bundle\BlockBundle\Security\AllowedBlockClassInstantiator" />
+
         <service id="Integrated\Bundle\BlockBundle\Document\Block\BlockRepository"></service>
 
     </services>

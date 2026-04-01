@@ -17,7 +17,8 @@ use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
 use Integrated\Bundle\BlockBundle\Form\Type\BlockEditType;
 use Integrated\Bundle\BlockBundle\Form\Type\BlockFilterType;
 use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
-use Integrated\Bundle\BlockBundle\Security\AllowedBlockClassProvider;
+use Integrated\Bundle\BlockBundle\Security\AllowedBlockClassInstantiator;
+use Integrated\Bundle\BlockBundle\Security\InvalidBlockClassException;
 use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
@@ -44,7 +45,7 @@ class BlockController extends AbstractController
         private FilterQueryProvider $provider,
         private EventDispatcherInterface $dispatcher,
         private BlockRepository $blockRepository,
-        private AllowedBlockClassProvider $allowedBlockClassProvider,
+        private AllowedBlockClassInstantiator $allowedBlockClassInstantiator,
     ) {
     }
 
@@ -97,20 +98,10 @@ class BlockController extends AbstractController
 
         $class = $request->get('class');
 
-        if (
-            !\is_string($class)
-            || $class === ''
-            || !class_exists($class)
-            || !is_subclass_of($class, Block::class)
-            || !$this->allowedBlockClassProvider->isAllowed($class)
-        ) {
-            throw $this->createNotFoundException(\sprintf('Invalid block "%s"', (string) $class));
-        }
-
         try {
-            $block = new $class();
-        } catch (\Throwable) {
-            throw $this->createNotFoundException(\sprintf('Invalid block "%s"', $class));
+            $block = $this->allowedBlockClassInstantiator->instantiate($class);
+        } catch (InvalidBlockClassException $exception) {
+            throw $this->createNotFoundException($exception->getMessage(), $exception);
         }
 
         $form = $this->createForm(

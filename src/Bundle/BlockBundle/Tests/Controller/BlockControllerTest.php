@@ -13,6 +13,7 @@ use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
 use Integrated\Bundle\BlockBundle\Document\Block\TextBlock;
 use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
+use Integrated\Bundle\BlockBundle\Security\AllowedBlockClassInstantiator;
 use Integrated\Bundle\BlockBundle\Security\AllowedBlockClassProvider;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
@@ -176,7 +177,7 @@ final class BlockControllerTest extends TestCase
             $this->createStub(FilterQueryProvider::class),
             $this->createStub(EventDispatcherInterface::class),
             $this->createStub(BlockRepository::class),
-            new AllowedBlockClassProvider($metadataFactory),
+            new AllowedBlockClassInstantiator(new AllowedBlockClassProvider($metadataFactory)),
         );
     }
 
