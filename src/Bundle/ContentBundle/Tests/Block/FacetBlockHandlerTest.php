@@ -71,17 +71,35 @@ final class FacetBlockHandlerTest extends TestCase
 
         $handler = new TestableFacetBlockHandler($registry, $requestStack);
 
-        $parameters = $handler->execute($facetBlock, []);
+        $handler->execute($facetBlock, []);
+        $parameters = $handler->getCapturedParameters();
 
-        self::assertIsArray($parameters);
         self::assertArrayHasKey('facets', $parameters);
     }
 }
 
 final class TestableFacetBlockHandler extends FacetBlockHandler
 {
+    /**
+     * @var array<string, mixed>
+     */
+    private array $capturedParameters = [];
+
+    /**
+     * @param array<string, mixed> $parameters
+     */
     public function render(array $parameters = [])
     {
-        return $parameters;
+        $this->capturedParameters = $parameters;
+
+        return null;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getCapturedParameters(): array
+    {
+        return $this->capturedParameters;
     }
 }

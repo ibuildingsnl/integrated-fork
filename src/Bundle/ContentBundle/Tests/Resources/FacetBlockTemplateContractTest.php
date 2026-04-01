@@ -14,7 +14,7 @@ final class FacetBlockTemplateContractTest extends TestCase
 
         self::assertIsString($template);
         self::assertStringContainsString("{% set isSingleSelect = 'single' == block.getSelectionMode() %}", $template);
-        self::assertStringContainsString("{% set activeFilters = activeFilters|slice(0, 1) %}", $template);
-        self::assertStringContainsString("{% set newParam = {(facetName): [name]} %}", $template);
+        self::assertStringContainsString('{% set activeFilters = activeFilters|slice(0, 1) %}', $template);
+        self::assertStringContainsString('{% set newParam = {(facetName): [name]} %}', $template);
     }
 }

@@ -76,6 +76,9 @@ class ContentBlockConverter
         return $facets;
     }
 
+    /**
+     * @return array<string, string>
+     */
     protected function getFacetOperators(ContentBlock $block, mixed $operators = []): array
     {
         if (!\is_array($operators)) {
@@ -103,6 +106,9 @@ class ContentBlockConverter
         return $result;
     }
 
+    /**
+     * @return array<string, string>
+     */
     protected function getFacetSelectionModes(ContentBlock $block, mixed $selectionModes = []): array
     {
         if (!\is_array($selectionModes)) {
@@ -130,6 +136,12 @@ class ContentBlockConverter
         return $result;
     }
 
+    /**
+     * @param array<string, array<mixed>> $facets
+     * @param array<string, string>       $selectionModes
+     *
+     * @return array<string, array<mixed>>
+     */
     protected function normalizeFacetSelections(array $facets, array $selectionModes): array
     {
         foreach ($facets as $field => $values) {
