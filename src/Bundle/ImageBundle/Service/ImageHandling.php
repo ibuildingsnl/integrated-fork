@@ -151,7 +151,10 @@ class ImageHandling
         $image = new $handlerClass($file, $w, $h, $this->throwException, $this->fallbackImage);
 
         $image->setCacheDir($this->cacheDirectory);
-        $image->setCacheDirMode($this->cacheDirMode);
+        $cacheSystem = method_exists($image, 'getCacheSystem') ? $image->getCacheSystem() : null;
+        if (\is_object($cacheSystem) && method_exists($cacheSystem, 'setDirectoryMode')) {
+            $image->setCacheDirMode($this->cacheDirMode);
+        }
         $image->setActualCacheDir($this->webDirectory.'/'.$this->cacheDirectory);
 
         $image->setFileCallback(function ($file) {

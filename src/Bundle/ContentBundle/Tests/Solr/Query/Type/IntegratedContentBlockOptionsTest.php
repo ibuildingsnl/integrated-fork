@@ -161,7 +161,7 @@ class IntegratedContentBlockOptionsTest extends TestCase
         $facet = $query->getFacetSet()->getFacet('facet_company_category');
 
         self::assertInstanceOf(Field::class, $facet);
-        self::assertSame([], $facet->getExcludes());
+        self::assertSame([], $this->getFacetExcludes($facet));
         self::assertSame(1, $facet->getMinCount());
     }
 
@@ -185,7 +185,7 @@ class IntegratedContentBlockOptionsTest extends TestCase
         $facet = $query->getFacetSet()->getFacet('facet_company_category');
 
         self::assertInstanceOf(Field::class, $facet);
-        self::assertSame(['facet_company_category'], $facet->getExcludes());
+        self::assertSame(['facet_company_category'], $this->getFacetExcludes($facet));
         self::assertSame(1, $facet->getMinCount());
     }
 
@@ -278,5 +278,17 @@ class IntegratedContentBlockOptionsTest extends TestCase
         (new IntegratedContentBlock($manager, $sortOptions))->configureOptions($resolver);
 
         return $resolver;
+    }
+
+    private function getFacetExcludes(Field $facet): array
+    {
+        if (method_exists($facet, 'getExcludes')) {
+            /** @var array $excludes */
+            $excludes = $facet->getExcludes();
+
+            return $excludes;
+        }
+
+        return $facet->getLocalParameters()->getExcludes();
     }
 }
