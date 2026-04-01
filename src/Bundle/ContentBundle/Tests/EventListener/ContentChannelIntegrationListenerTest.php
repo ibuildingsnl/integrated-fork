@@ -79,7 +79,7 @@ final class TestableContentChannelIntegrationListener extends ContentChannelInte
     /**
      * @param array<int, string>|null $ids
      *
-     * @return array<int, \Integrated\Common\Content\Channel\ChannelInterface>
+     * @return array<int, ChannelInterface>
      */
     public function exposedGetChannels(?array $ids = null): array
     {

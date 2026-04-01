@@ -27,8 +27,7 @@ class ChannelBlockController extends AbstractController
     public function __construct(
         DocumentManager $documentManager,
         AllowedBlockClassInstantiator $allowedBlockClassInstantiator,
-    )
-    {
+    ) {
         $this->manager = $documentManager;
         $this->allowedBlockClassInstantiator = $allowedBlockClassInstantiator;
     }

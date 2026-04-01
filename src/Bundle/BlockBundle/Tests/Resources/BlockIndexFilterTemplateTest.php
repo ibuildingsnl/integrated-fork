@@ -25,7 +25,7 @@ final class BlockIndexFilterTemplateTest extends TestCase
         self::assertIsString($template);
         self::assertIsString($script);
         self::assertIsString($formType);
-        self::assertStringContainsString("bundles/integratedblock/js/block_index.js", $template);
+        self::assertStringContainsString('bundles/integratedblock/js/block_index.js', $template);
         self::assertStringContainsString('function bindFilterQueryAutoSubmit()', $script);
         self::assertStringContainsString('input[name="integrated_block_filter[q]"]', $script);
         self::assertStringContainsString('window.setTimeout(function () {', $script);
