@@ -11,17 +11,18 @@
         <prototype namespace="Integrated\Bundle\BlockBundle\Controller\" resource="../../Controller" />
 
         <service id="Integrated\Bundle\BlockBundle\Controller\BlockController">
-            <argument key="$metadataFactory" type="service" id="integrated_block.metadata.factory"/>
-            <argument key="$documentManager" type="service" id="doctrine_mongodb.odm.document_manager"/>
-            <argument key="$paginator" type="service" id="knp_paginator"/>
-            <argument key="$provider" type="service" id="integrated_block.provider.filter_query"/>
-            <argument key="$dispatcher" type="service" id="integrated_content.form.factory.event_dispatcher"/>
-            <argument key="$allowedBlockClassInstantiator" type="service" id="Integrated\Bundle\BlockBundle\Security\AllowedBlockClassInstantiator"/>
+            <argument type="service" id="integrated_block.metadata.factory"/>
+            <argument type="service" id="doctrine_mongodb.odm.document_manager"/>
+            <argument type="service" id="knp_paginator"/>
+            <argument type="service" id="integrated_block.provider.filter_query"/>
+            <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
+            <argument type="service" id="Integrated\Bundle\BlockBundle\Document\Block\BlockRepository"/>
+            <argument type="service" id="Integrated\Bundle\BlockBundle\Security\AllowedBlockClassInstantiator"/>
         </service>
 
         <service id="Integrated\Bundle\BlockBundle\Controller\ChannelBlockController">
-            <argument key="$documentManager" type="service" id="doctrine_mongodb.odm.document_manager"/>
-            <argument key="$allowedBlockClassInstantiator" type="service" id="Integrated\Bundle\BlockBundle\Security\AllowedBlockClassInstantiator"/>
+            <argument type="service" id="doctrine_mongodb.odm.document_manager"/>
+            <argument type="service" id="Integrated\Bundle\BlockBundle\Security\AllowedBlockClassInstantiator"/>
         </service>
 
     </services>
