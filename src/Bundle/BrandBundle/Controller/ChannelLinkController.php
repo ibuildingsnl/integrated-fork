@@ -100,9 +100,11 @@ class ChannelLinkController extends AbstractController
         $this->checkPermissions();
         $this->assertLinkBelongsToBrand($brand, $link);
 
-        $form = $this->createForm(ChannelLinkEditType::class, $link, [
+        $form = $this->createForm(ChannelLinkEditType::class, $link->channel, [
             'method' => 'PUT',
+            'can_change_type' => false,
             'brand_name' => $brand->getName(),
+            'link_default' => (bool) $link->default,
         ]);
         $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
@@ -113,6 +115,8 @@ class ChannelLinkController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $link->default = (bool) $form->get('linkDefault')->getData();
+
             $this->flusher->flush(); // flush here too, because it doesn't get a uuid on create
             if ($link->channel instanceof Channel) {
                 $this->dispatcher->dispatch(new ChannelEvent($link->channel), Events::CHANNEL_UPDATED);

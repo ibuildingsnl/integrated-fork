@@ -547,6 +547,19 @@
     {% endapply %}
 {% endblock %}
 
+{% block _channel_link_edit_domains_entry_widget %}
+    {% apply spaceless %}
+        {% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' form-control')|trim }) %}
+        <input type="text" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+        <label class="radiobutton-container primary-domain">
+            <input class="primary-domain-radio" type="radio" name="check_primary_domain" disabled>
+            <span class="radiobutton"></span>
+            <div class="background"></div>
+            <span class="radiobutton-label">{{ 'Primary domain'|trans }}</span>
+        </label>
+    {% endapply %}
+{% endblock %}
+
 {% block integrated_content_actions_row %}
     {% apply spaceless %}
         <section class="section-white">
