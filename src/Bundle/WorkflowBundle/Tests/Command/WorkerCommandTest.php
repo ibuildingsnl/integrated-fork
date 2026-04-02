@@ -19,6 +19,50 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class WorkerCommandTest extends TestCase
 {
+    public function testExecuteProcessesChannelDeleteMessages(): void
+    {
+        $queue = $this->createMock(QueueInterface::class);
+        $input = $this->createMock(InputInterface::class);
+        $output = $this->createMock(OutputInterface::class);
+
+        $command = new class($queue, sys_get_temp_dir()) extends WorkerCommand {
+            /** @var array<int, array{command: string, arguments: array<int, string>}> */
+            public array $executedCommands = [];
+
+            /**
+             * @param array<string, mixed> $data
+             */
+            public function invokeHandleQueuePayload(array $data, InputInterface $input, OutputInterface $output): void
+            {
+                $this->handleQueuePayload($data, $input, $output);
+            }
+
+            /**
+             * @param array<int, string> $arguments
+             */
+            protected function executeCommand(InputInterface $input, OutputInterface $output, string $command, array $arguments = []): void
+            {
+                $this->executedCommands[] = [
+                    'command' => $command,
+                    'arguments' => $arguments,
+                ];
+            }
+        };
+
+        $command->invokeHandleQueuePayload([
+            'command' => 'channel-delete',
+            'args' => [
+                'channel_id' => 'bakkers-in-bedrijf',
+                'delete_referenced' => true,
+            ],
+        ], $input, $output);
+
+        $this->assertCount(1, $command->executedCommands);
+        $this->assertSame('integrated:content:channel:delete', $command->executedCommands[0]['command']);
+        $this->assertContains('--channel-id=bakkers-in-bedrijf', $command->executedCommands[0]['arguments']);
+        $this->assertContains('--delete-referenced', $command->executedCommands[0]['arguments']);
+    }
+
     public function testExecuteCommandRunsSubprocessOnce(): void
     {
         $tmp = sys_get_temp_dir().'/integrated-workflow-worker-'.bin2hex(random_bytes(8));

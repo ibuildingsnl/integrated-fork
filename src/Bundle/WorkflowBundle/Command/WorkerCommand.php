@@ -60,31 +60,7 @@ The <info>%command.name%</info> .
 
         try {
             foreach ($this->queue->pull($input->getOption('batch')) as $message) {
-                $data = (array) $message->getPayload();
-
-                $data['command'] = isset($data['command']) ? $data['command'] : null;
-                $data['args'] = isset($data['args']) ? $data['args'] : null;
-
-                if ($data['command']) {
-                    switch ($data['command']) {
-                        case 'index':
-                            $data['args'] = \is_array($data['args']) ? $data['args'] : [$data['args']];
-                            $data['args'] = array_filter(array_map('trim', $data['args']));
-
-                            if ($data['args']) {
-                                $this->executeCommand($input, $output, 'workflow:index', array_merge(['--ignore'], $data['args']));
-                            }
-                            break;
-
-                        case 'index-full':
-                            $this->executeCommand($input, $output, 'workflow:index', ['--full']);
-                            break;
-
-                        default:
-                            $output->writeln('Unknow command: '.$data['command']);
-                            break;
-                    }
-                } // ignore empty commands
+                $this->handleQueuePayload((array) $message->getPayload(), $input, $output);
 
                 $message->delete();
             }
@@ -100,6 +76,57 @@ The <info>%command.name%</info> .
     }
 
     /**
+     * @param array<string, mixed> $data
+     */
+    protected function handleQueuePayload(array $data, InputInterface $input, OutputInterface $output): void
+    {
+        $data['command'] = $data['command'] ?? null;
+        $data['args'] = $data['args'] ?? null;
+
+        if (!$data['command']) {
+            return;
+        }
+
+        switch ($data['command']) {
+            case 'index':
+                $data['args'] = \is_array($data['args']) ? $data['args'] : [$data['args']];
+                $data['args'] = array_filter(array_map('trim', $data['args']));
+
+                if ($data['args']) {
+                    $this->executeCommand($input, $output, 'workflow:index', array_merge(['--ignore'], $data['args']));
+                }
+                break;
+
+            case 'index-full':
+                $this->executeCommand($input, $output, 'workflow:index', ['--full']);
+                break;
+
+            case 'channel-delete':
+                $args = \is_array($data['args']) ? $data['args'] : [];
+                $channelId = trim((string) ($args['channel_id'] ?? $args[0] ?? ''));
+                if ($channelId === '') {
+                    $output->writeln('Missing "channel_id" for command "channel-delete"');
+                    break;
+                }
+                $deleteReferenced = filter_var(
+                    $args['delete_referenced'] ?? false,
+                    \FILTER_VALIDATE_BOOLEAN,
+                    \FILTER_NULL_ON_FAILURE
+                ) ?? false;
+                $arguments = ['--channel-id='.$channelId];
+                if ($deleteReferenced) {
+                    $arguments[] = '--delete-referenced';
+                }
+                $this->executeCommand($input, $output, 'integrated:content:channel:delete', $arguments);
+                break;
+
+            default:
+                $output->writeln('Unknow command: '.$data['command']);
+                break;
+        }
+    }
+
+    /**
      * @param string[] $arguments
      *
      * @throws \Exception
@@ -111,6 +138,7 @@ The <info>%command.name%</info> .
             ['php', 'bin/console', $command, '-e', $input->getOption('env'), ...$arguments],
             $this->workingDirectory
         );
+        $process->setTimeout(0);
         $process->run(function ($type, $buffer) use ($output): void {
             if (Process::ERR === $type) {
                 $output->write($buffer);

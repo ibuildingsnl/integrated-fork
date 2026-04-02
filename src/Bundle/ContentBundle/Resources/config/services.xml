@@ -60,6 +60,19 @@
             <tag name="console.command" />
         </service>
 
+        <service id="Integrated\Bundle\ContentBundle\Services\ChannelDeletionProcessor">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="integrated_content.services.search.content.referenced" />
+            <argument type="service" id="event_dispatcher" />
+        </service>
+
+        <service id="Integrated\Bundle\ContentBundle\Command\ChannelDeleteCommand">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="Integrated\Bundle\ContentBundle\Services\ChannelDeletionProcessor" />
+            <argument type="service" id="logger" />
+            <tag name="console.command" />
+        </service>
+
         <service id="integrated_content.services.main_flusher" class="Integrated\Common\Services\MainFlusher">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_solr.indexer.mongodb.subscriber" />
