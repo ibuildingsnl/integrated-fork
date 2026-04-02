@@ -63,6 +63,7 @@
         <service id="Integrated\Bundle\ContentBundle\Services\ChannelDeletionProcessor">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_content.services.search.content.referenced" />
+            <argument type="service" id="Integrated\Bundle\ContentBundle\Services\ContentReverseReferenceCleaner" />
             <argument type="service" id="event_dispatcher" />
         </service>
 

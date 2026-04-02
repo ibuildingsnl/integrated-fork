@@ -22,6 +22,7 @@ final class ChannelDeletionProcessor
     public function __construct(
         private readonly DocumentManager $documentManager,
         private readonly SearchContentReferenced $searchContentReferenced,
+        private readonly ContentReverseReferenceCleaner $contentReverseReferenceCleaner,
         private readonly EventDispatcherInterface $dispatcher,
     ) {
     }
@@ -66,6 +67,8 @@ final class ChannelDeletionProcessor
 
                         continue;
                     }
+
+                    $this->contentReverseReferenceCleaner->cleanup($document);
 
                     if ($this->dispatcher->hasListeners(ContentEvents::CONTENT_DELETED)) {
                         $this->dispatcher->dispatch(
