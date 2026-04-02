@@ -26,6 +26,7 @@
             <argument type="service" id="twig" />
             <argument type="service" id="integrated_website.service.editable_checker" />
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="Integrated\Bundle\BlockBundle\Service\RuntimeBlockUsageCollector" />
             <tag name="kernel.event_subscriber" />
         </service>
 

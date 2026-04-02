@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\WebsiteBundle\EventListener;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\BlockBundle\Service\RuntimeBlockUsageCollector;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\WebsiteBundle\Service\EditableChecker;
@@ -27,16 +28,23 @@ class WebsiteToolbarListener implements EventSubscriberInterface
     private Environment $twig;
     private EditableChecker $websiteEditableChecker;
     private DocumentManager $manager;
+    private RuntimeBlockUsageCollector $runtimeBlockUsageCollector;
 
     private string $toolbarMessage = '';
 
     private ?Content $contentItem = null;
 
-    public function __construct(Environment $twig, EditableChecker $websiteEditableChecker, DocumentManager $manager)
+    public function __construct(
+        Environment $twig,
+        EditableChecker $websiteEditableChecker,
+        DocumentManager $manager,
+        RuntimeBlockUsageCollector $runtimeBlockUsageCollector,
+    )
     {
         $this->twig = $twig;
         $this->websiteEditableChecker = $websiteEditableChecker;
         $this->manager = $manager;
+        $this->runtimeBlockUsageCollector = $runtimeBlockUsageCollector;
     }
 
     public static function getSubscribedEvents(): array
@@ -68,6 +76,7 @@ class WebsiteToolbarListener implements EventSubscriberInterface
                     'layoutEditable' => $this->websiteEditableChecker->checkEditable(),
                     'content' => $this->contentItem,
                     'page' => $this->manager->getRepository(AbstractPage::class)->find($request->attributes->get('page')),
+                    'usedBlocks' => $this->runtimeBlockUsageCollector->all(),
                 ]
             );
 

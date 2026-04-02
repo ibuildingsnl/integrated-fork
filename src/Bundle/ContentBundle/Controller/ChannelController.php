@@ -14,6 +14,7 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
+use Integrated\Bundle\BlockBundle\Service\RuntimeBlockUsageCollector;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
@@ -34,21 +35,28 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class ChannelController extends AbstractController
 {
     private DocumentManager $documentManager;
     private SearchContentReferenced $searchContentReferenced;
     private EventDispatcherInterface $dispatcher;
+    private RuntimeBlockUsageCollector $runtimeBlockUsageCollector;
+    private RequestStack $requestStack;
 
     public function __construct(
         DocumentManager $documentManager,
         SearchContentReferenced $searchContentReferenced,
         EventDispatcherInterface $dispatcher,
+        RuntimeBlockUsageCollector $runtimeBlockUsageCollector,
+        RequestStack $requestStack,
     ) {
         $this->searchContentReferenced = $searchContentReferenced;
         $this->documentManager = $documentManager;
         $this->dispatcher = $dispatcher;
+        $this->runtimeBlockUsageCollector = $runtimeBlockUsageCollector;
+        $this->requestStack = $requestStack;
     }
 
     public function index(): Response
@@ -327,18 +335,27 @@ class ChannelController extends AbstractController
             || $request->getRequestFormat() === 'turbo-stream';
     }
 
-    public function getChannels(): Response
+    public function getChannels(Request $request): Response
     {
+        $showBlocks = $this->shouldShowBlocks($request);
+        $usedBlocks = $showBlocks
+            ? $this->normalizeUsedBlocks($request->attributes->get('usedBlocks', $this->runtimeBlockUsageCollector->all()))
+            : [];
+
         $user = $this->getUser();
 
         if (!$user instanceof UserInterface) {
             return $this->render('@IntegratedContent/partials/block.websites.html.twig', [
                 'channels' => [],
+                'showBlocks' => $showBlocks,
+                'usedBlocks' => $usedBlocks,
             ]);
         }
 
         return new Response($this->renderView('@IntegratedContent/partials/block.websites.html.twig', [
             'channels' => $this->getAllowedChannels($user),
+            'showBlocks' => $showBlocks,
+            'usedBlocks' => $usedBlocks,
         ]));
     }
 
@@ -359,5 +376,63 @@ class ChannelController extends AbstractController
         }
 
         return $allowed;
+    }
+
+    /**
+     * @param mixed $blocks
+     *
+     * @return array<int, array{id: string, title: string, type: string}>
+     */
+    private function normalizeUsedBlocks(mixed $blocks): array
+    {
+        if (!\is_array($blocks)) {
+            return [];
+        }
+
+        $normalized = [];
+
+        foreach ($blocks as $block) {
+            if (!\is_array($block) || !\array_key_exists('id', $block)) {
+                continue;
+            }
+
+            $id = trim((string) $block['id']);
+            if ($id === '') {
+                continue;
+            }
+
+            $normalized[] = [
+                'id' => $id,
+                'title' => trim((string) ($block['title'] ?? '')),
+                'type' => trim((string) ($block['type'] ?? '')),
+            ];
+        }
+
+        return $normalized;
+    }
+
+    private function shouldShowBlocks(Request $request): bool
+    {
+        $canManagePages = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_WEBSITE_MANAGER');
+        if (!$canManagePages) {
+            return false;
+        }
+
+        if ((bool) $request->attributes->get('showBlocks', false)) {
+            return true;
+        }
+
+        foreach ([$request, $this->requestStack->getMainRequest()] as $candidate) {
+            if (!$candidate instanceof Request) {
+                continue;
+            }
+
+            $editorMode = strtolower(trim((string) $candidate->query->get('integrated_website_edit', '')));
+            if (\in_array($editorMode, ['1', 'true', 'yes', 'on'], true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
