@@ -47,7 +47,7 @@ final class ContentImageListenerTest extends TestCase
                     return $context['document'] === $document;
                 })
             )
-            ->willReturnCallback(static fn (string $template, array $context): string => sprintf(
+            ->willReturnCallback(static fn (string $template, array $context): string => \sprintf(
                 '<img data-loading="%s" data-fetchpriority="%s" data-decoding="%s">',
                 $context['loading'],
                 $context['fetchPriority'],
