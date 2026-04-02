@@ -9,12 +9,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class AnonymousPageCacheSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly AuthorizationCheckerInterface $authorizationChecker,
         private readonly int $ttl = 600,
     ) {
     }
@@ -35,7 +33,7 @@ final class AnonymousPageCacheSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($this->authorizationChecker->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+        if ($this->hasAuthenticationHints($request)) {
             return;
         }
 
@@ -81,5 +79,15 @@ final class AnonymousPageCacheSubscriber implements EventSubscriberInterface
         $route = (string) $request->attributes->get('_route', '');
 
         return str_starts_with($route, ContentTypePageLoader::ROUTE_PREFIX.'_');
+    }
+
+    private function hasAuthenticationHints(Request $request): bool
+    {
+        $sessionCookieName = session_name();
+        if (\is_string($sessionCookieName) && $sessionCookieName !== '' && $request->cookies->has($sessionCookieName)) {
+            return true;
+        }
+
+        return $request->cookies->has('REMEMBERME');
     }
 }
