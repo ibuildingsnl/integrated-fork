@@ -107,12 +107,47 @@
             {% endif %}
             <div class="{{ class }}">
         {% endif %}
-        {% set channel_brand_profile = _channel is defined and _channel ? (_channel|integrated_brand_profile) : null %}
+        {% set editor_document_node = form.parent.vars.data|default(null) %}
+        {% set editor_channel = null %}
+        {% if form.parent.channel is defined %}
+            {% set editor_channel = form.parent.channel.vars.data|default(null) %}
+        {% endif %}
+        {% if not editor_channel and form.parent.primaryChannel is defined %}
+            {% set editor_primary_channel_value = form.parent.primaryChannel.vars.data|default(null) %}
+            {% if editor_primary_channel_value %}
+                {% if editor_primary_channel_value.id is defined %}
+                    {% set editor_channel = editor_primary_channel_value %}
+                {% elseif editor_primary_channel_value is not iterable %}
+                    {% set editor_channel = editor_primary_channel_value|integrated_channel %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+        {% if not editor_channel and editor_document_node %}
+            {% if attribute(editor_document_node, 'channel') is defined and attribute(editor_document_node, 'channel') is not null %}
+                {% set editor_document_channel = attribute(editor_document_node, 'channel') %}
+                {% if editor_document_channel.id is defined %}
+                    {% set editor_channel = editor_document_channel %}
+                {% elseif editor_document_channel is not iterable %}
+                    {% set editor_channel = editor_document_channel|integrated_channel %}
+                {% endif %}
+            {% elseif attribute(editor_document_node, 'primaryChannel') is defined and attribute(editor_document_node, 'primaryChannel') is not null %}
+                {% set editor_document_primary_channel = attribute(editor_document_node, 'primaryChannel') %}
+                {% if editor_document_primary_channel.id is defined %}
+                    {% set editor_channel = editor_document_primary_channel %}
+                {% elseif editor_document_primary_channel is not iterable %}
+                    {% set editor_channel = editor_document_primary_channel|integrated_channel %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+        {% if not editor_channel and _channel is defined and _channel %}
+            {% set editor_channel = _channel %}
+        {% endif %}
+        {% set channel_brand_profile = editor_channel ? (editor_channel|integrated_brand_profile) : null %}
         {% set channel_brand_color = channel_brand_profile.color|default('#d2312f') %}
         {% set channel_brand_secondary_color = channel_brand_profile.secondaryColor|default(channel_brand_profile.secondarycolor|default(channel_brand_color)) %}
         {% set channel_brand_color_dark = channel_brand_color|darken(20) %}
         {% set channel_brand_secondary_color_dark = channel_brand_secondary_color|darken(20) %}
-        {% set content_style = ':root{--td-color-accent:' ~ channel_brand_color ~ ';--td-color-accent-secondary:' ~ channel_brand_secondary_color ~ ';--td-color-accent-dark:' ~ channel_brand_color_dark ~ ';--td-color-accent-secondary-dark:' ~ channel_brand_secondary_color_dark ~ ';}' %}
+        {% set content_style = ':root{--editor-color-primary:' ~ channel_brand_color ~ ';--editor-color-secondary:' ~ channel_brand_secondary_color ~ ';--editor-color-primary-dark:' ~ channel_brand_color_dark ~ ';--editor-color-secondary-dark:' ~ channel_brand_secondary_color_dark ~ ';}' %}
         <div id="{{ id }}_container">
                 <textarea id="{{ id }}" name="{{ full_name }}" class="form-control integrated_tinymce"
                           data-content_css="{{ content_styles.content_css|merge([asset(styles)])|join(',') }}"

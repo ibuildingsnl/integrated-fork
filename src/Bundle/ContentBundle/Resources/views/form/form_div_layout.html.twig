@@ -45,9 +45,29 @@
     {% apply spaceless %}
         <div class="checkbox">
             {% if element.vars.label is not same as(false) %}
+                {% set option_channel = null %}
+                {% if element.vars.value is defined and element.vars.value is not empty %}
+                    {% set option_channel_value = element.vars.value %}
+                    {% if option_channel_value.id is defined %}
+                        {% set option_channel = option_channel_value %}
+                    {% elseif option_channel_value is not iterable %}
+                        {% set option_channel = option_channel_value|integrated_channel %}
+                    {% endif %}
+                {% endif %}
+                {% set option_brand_profile = option_channel ? (option_channel|integrated_brand_profile) : null %}
+                {% set option_brand_color = option_brand_profile.color|default('') %}
+                {% set option_brand_secondary_color = option_brand_profile.secondaryColor|default(option_brand_profile.secondarycolor|default(option_brand_color)) %}
+                {% set option_brand_color_dark = option_brand_color ? (option_brand_color|darken(20)) : '' %}
+                {% set option_brand_secondary_color_dark = option_brand_secondary_color ? (option_brand_secondary_color|darken(20)) : '' %}
                 <label class="checkbox-container" for="{{ element.vars.id }}">
                     <input id="{{ element.vars.id }}" name="{{ element.vars.full_name }}"
-                           type="checkbox" {% if element.vars.value is defined %} value="{{ element.vars.value }}"{% endif %}{% if element.vars.checked %} checked="checked"{% endif %}/>
+                           type="checkbox"
+                           {% if element.vars.value is defined %} value="{{ element.vars.value }}"{% endif %}
+                           {% if option_brand_color %} data-channel-brand-color="{{ option_brand_color }}"{% endif %}
+                           {% if option_brand_secondary_color %} data-channel-brand-secondary-color="{{ option_brand_secondary_color }}"{% endif %}
+                           {% if option_brand_color_dark %} data-channel-brand-color-dark="{{ option_brand_color_dark }}"{% endif %}
+                           {% if option_brand_secondary_color_dark %} data-channel-brand-secondary-color-dark="{{ option_brand_secondary_color_dark }}"{% endif %}
+                           {% if element.vars.checked %} checked="checked"{% endif %}/>
                     <span class="checkmark"></span>
                     <div class="background"></div>
                     {{ element.vars.label|trans({}, translation_domain) }}
@@ -251,81 +271,125 @@
     </div>
 
     <script type="text/javascript">
-        document.addEventListener('DOMContentLoaded', function(event) {
+        (function initIntegratedAuthorWidget() {
+            var fieldSelector = '#{{ id }}';
 
-            $('.change-name-author').each(function() {
-                var id = $(this).attr('name');
+            function setupAuthorWidget() {
+                if (!window.jQuery || !window.jQuery.fn || typeof window.jQuery.fn.select2 !== 'function') {
+                    return;
+                }
 
-                $(this).attr('name', '{{ full_name }}[types][' + id + ']');
-            });
+                var $ = window.jQuery;
+                var $field = $(fieldSelector);
+                if (!$field.length) {
+                    return;
+                }
 
-            $("#{{ id }}").select2({
-                multiple: true,
-                ajax: {
-                    url: "{{ path('integrated_content_content_index', { 'contenttypes': contentTypes|keys, '_format': 'json' })|raw }}",
-                    dataType: 'json',
-                    data: function(term, page) {
-                        query = term.term ? term.term + '*' : '';
-                        return {
-                            q: query,
-                            page_limit: 10,
-                        };
-                    },
-                    processResults: function(data) {
-                        $.map(data.items, function(item) {
-                            var value = item.title;
-                            if (this.authorValues === undefined) {
-                                this.authorValues = {};
-                            }
-                            if (this.authorValues[value] === undefined) {
-                                this.authorValues[value] = 1;
-                            } else {
-                                this.authorValues[value] = this.authorValues[value] + 1;
-                            }
-                        });
-                        return {
-                            results: $.map(data.items, function(item) {
-                                title = item.title;
+                $('.change-name-author').each(function() {
+                    var currentName = $(this).attr('name');
+                    $(this).attr('name', '{{ full_name }}[types][' + currentName + ']');
+                });
+
+                if (!$field.hasClass('select2-hidden-accessible')) {
+                    $field.select2({
+                        multiple: true,
+                        ajax: {
+                            url: "{{ path('integrated_content_content_index', { 'contenttypes': contentTypes|keys, '_format': 'json' })|raw }}",
+                            dataType: 'json',
+                            data: function(term, page) {
+                                query = term.term ? term.term + '*' : '';
                                 return {
-                                    text: title,
-                                    id: item.id,
+                                    q: query,
+                                    page_limit: 10,
                                 };
-                            }),
-                        };
-                    },
-                },
-                dropdownCssClass: 'bigdrop',
-            }).on('change', function(e) {
-                if (e.hasOwnProperty('added')) {
+                            },
+                            processResults: function(data) {
+                                $.map(data.items, function(item) {
+                                    var value = item.title;
+                                    if (this.authorValues === undefined) {
+                                        this.authorValues = {};
+                                    }
+                                    if (this.authorValues[value] === undefined) {
+                                        this.authorValues[value] = 1;
+                                    } else {
+                                        this.authorValues[value] = this.authorValues[value] + 1;
+                                    }
+                                });
+                                return {
+                                    results: $.map(data.items, function(item) {
+                                        title = item.title;
+                                        return {
+                                            text: title,
+                                            id: item.id,
+                                        };
+                                    }),
+                                };
+                            },
+                        },
+                        dropdownCssClass: 'bigdrop',
+                    });
                 }
 
-                if (e.hasOwnProperty('removed')) {
-                    $('#type_' + e.removed.id).remove();
+                $field
+                    .off('change.integratedAuthorWidget select2:select.integratedAuthorWidget select2:unselect.integratedAuthorWidget')
+                    .on('change.integratedAuthorWidget', function(e) {
+                        if (e.hasOwnProperty('removed')) {
+                            $('#type_' + e.removed.id).remove();
+                        }
+                    })
+                    .on('select2:select.integratedAuthorWidget', function(e) {
+                        var data = e.params.data;
+                        if ($('#type_' + data.id).length > 0) {
+                            return;
+                        }
+
+                        $('#authorTypes').
+                            append('<div id="type_' + data.id +
+                                '" style="margin-top: 10px;" class="input-group input-group"><span class="input-group-addon">' +
+                                data.text +
+                                '</span><input type="text" class="form-control type-text" name="{{ full_name }}[types][' +
+                                data.id + ']" placeholder="Type" /></div>');
+
+                    })
+                    .on('select2:unselect.integratedAuthorWidget', function(e) {
+                        var id = e.params.data.id;
+                        $('#type_' + id).remove();
+                    });
+
+                $('#types-btn')
+                    .off('click.integratedAuthorWidget')
+                    .on('click.integratedAuthorWidget', function() {
+                        $('#authorTypes').toggle();
+                    });
+
+                {% if value is not empty %}
+                {% autoescape false %}
+                $field.select2('data', {{ value|json_encode() }});
+                {% endautoescape %}
+                {% endif %}
+            }
+
+            function scheduleAuthorWidgetSetup() {
+                if (typeof window.IntegratedJQReady === 'function') {
+                    window.IntegratedJQReady(function() {
+                        setupAuthorWidget();
+                    });
+                } else {
+                    setupAuthorWidget();
                 }
-            }).on('select2:select', function(e) {
-                var data = e.params.data;
-                $('#authorTypes').
-                    append('<div id="type_' + data.id +
-                        '" style="margin-top: 10px;" class="input-group input-group"><span class="input-group-addon">' +
-                        data.text +
-                        '</span><input type="text" class="form-control type-text" name="{{ full_name }}[types][' +
-                        data.id + ']" placeholder="Type" /></div>');
 
-            }).on('select2:unselect', function(e) {
-                var id = e.params.data.id;
-                $('#type_' + id).remove();
-            });
+                window.requestAnimationFrame(setupAuthorWidget);
+                window.setTimeout(setupAuthorWidget, 80);
+            }
 
-            $('#types-btn').on('click', function(e) {
-                $('#authorTypes').toggle();
-            });
+            document.addEventListener('DOMContentLoaded', scheduleAuthorWidgetSetup);
+            document.addEventListener('turbo:load', scheduleAuthorWidgetSetup);
+            document.addEventListener('turbo:render', scheduleAuthorWidgetSetup);
+            document.addEventListener('turbo:frame-load', scheduleAuthorWidgetSetup);
+            document.addEventListener('turbo:frame-render', scheduleAuthorWidgetSetup);
 
-            {% if value is not empty %}
-            {% autoescape false %}
-            $("#{{ id }}").select2('data', {{ value|json_encode() }});
-            {% endautoescape %}
-            {% endif %}
-        });
+            scheduleAuthorWidgetSetup();
+        })();
     </script>
 {% endblock %}
 
