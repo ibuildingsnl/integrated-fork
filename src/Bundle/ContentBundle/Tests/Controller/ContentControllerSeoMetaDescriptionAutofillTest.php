@@ -49,7 +49,7 @@ final class ContentControllerSeoMetaDescriptionAutofillTest extends TestCase
         $description = (string) $article->getSeoMetadata()?->getMetadescription();
         self::assertNotSame('', $description);
         self::assertStringNotContainsString('<p>', $description);
-        self::assertLessThanOrEqual(156, function_exists('mb_strlen') ? mb_strlen($description) : strlen($description));
+        self::assertLessThanOrEqual(156, \function_exists('mb_strlen') ? mb_strlen($description) : \strlen($description));
     }
 
     public function testAutofillDoesNotOverrideExistingSeoDescription(): void

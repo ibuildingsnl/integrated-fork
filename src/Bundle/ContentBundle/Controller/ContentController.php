@@ -799,16 +799,16 @@ class ContentController extends AbstractController
 
     private function stringLength(string $value): int
     {
-        if (function_exists('mb_strlen')) {
+        if (\function_exists('mb_strlen')) {
             return (int) mb_strlen($value);
         }
 
-        return strlen($value);
+        return \strlen($value);
     }
 
     private function stringSlice(string $value, int $length): string
     {
-        if (function_exists('mb_substr')) {
+        if (\function_exists('mb_substr')) {
             return (string) mb_substr($value, 0, $length);
         }
 

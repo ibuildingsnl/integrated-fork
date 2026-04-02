@@ -40,7 +40,7 @@ class ContentImageListener
             $content = preg_replace_callback(
                 '/\<img.*?data\-integrated\-id\="(.+?)".*?\>/',
                 function ($matches) use (&$imageIndex) {
-                    $imageIndex++;
+                    ++$imageIndex;
 
                     return $this->findImages($matches, $imageIndex);
                 },
