@@ -14,6 +14,7 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\SeoMeta;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
@@ -78,6 +79,7 @@ class ContentController extends AbstractController
     private const CONTENT_LOCK_TIMEOUT_SECONDS = 15;
     private const ASSIGNED_STATUS_CACHE_TTL_SECONDS = 10;
     private const ASSIGNED_STATUS_LIMIT = 25;
+    private const SEO_META_DESCRIPTION_MAX_LENGTH = 156;
     private const NAVIGATOR_EXCLUDED_CONTENT_CLASSES = [
         Image::class,
         File::class,
@@ -334,6 +336,8 @@ class ContentController extends AbstractController
             }
 
             if ($form->isValid() && $this->guardRequiredDepublicationDate($form, $contentType, $content)) {
+                $this->applyAutoSeoMetaDescriptionAutofill($content);
+
                 if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
                     $this->dispatcher->dispatch(
                         new ValidationEvent(
@@ -550,6 +554,8 @@ class ContentController extends AbstractController
                     && $form->isValid()
                     && $this->guardRequiredDepublicationDate($form, $contentType, $content)
                 ) {
+                    $this->applyAutoSeoMetaDescriptionAutofill($content);
+
                     if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
                         $this->dispatcher->dispatch(
                             new ValidationEvent(
@@ -717,6 +723,96 @@ class ContentController extends AbstractController
         $accept = (string) $request->headers->get('Accept');
 
         return str_contains($accept, 'text/vnd.turbo-stream.html');
+    }
+
+    private function applyAutoSeoMetaDescriptionAutofill(object $content): void
+    {
+        if (!method_exists($content, 'getSeoMetadata')) {
+            return;
+        }
+
+        $seoMeta = $content->getSeoMetadata();
+        if (!$seoMeta instanceof SeoMeta) {
+            return;
+        }
+
+        $existingMetaDescription = trim((string) $seoMeta->getMetadescription());
+        if ($existingMetaDescription !== '') {
+            return;
+        }
+
+        $candidate = $this->buildAutoSeoMetaDescription($content);
+        if ($candidate === null) {
+            return;
+        }
+
+        $seoMeta->setMetadescription($candidate);
+    }
+
+    private function buildAutoSeoMetaDescription(object $content): ?string
+    {
+        $getters = ['getIntro', 'getDescription', 'getContent'];
+
+        foreach ($getters as $getter) {
+            if (!method_exists($content, $getter)) {
+                continue;
+            }
+
+            $value = $content->{$getter}();
+            $normalized = $this->normalizeSeoDescriptionText((string) $value);
+
+            if ($normalized === '') {
+                continue;
+            }
+
+            return $this->truncateSeoDescription($normalized, self::SEO_META_DESCRIPTION_MAX_LENGTH);
+        }
+
+        return null;
+    }
+
+    private function normalizeSeoDescriptionText(string $value): string
+    {
+        $text = html_entity_decode($value, \ENT_QUOTES | \ENT_HTML5, 'UTF-8');
+        $text = strip_tags($text);
+        $text = preg_replace('/\s+/u', ' ', $text);
+
+        return trim((string) $text);
+    }
+
+    private function truncateSeoDescription(string $value, int $maxLength): string
+    {
+        if ($this->stringLength($value) <= $maxLength) {
+            return $value;
+        }
+
+        $slice = $this->stringSlice($value, $maxLength + 1);
+        $withoutTrailingWord = preg_replace('/\s+\S*$/u', '', $slice);
+        $trimmed = trim((string) $withoutTrailingWord);
+
+        if ($trimmed === '') {
+            return trim($this->stringSlice($value, $maxLength));
+        }
+
+        return $trimmed;
+    }
+
+    private function stringLength(string $value): int
+    {
+        if (function_exists('mb_strlen')) {
+            return (int) mb_strlen($value);
+        }
+
+        return strlen($value);
+    }
+
+    private function stringSlice(string $value, int $length): string
+    {
+        if (function_exists('mb_substr')) {
+            return (string) mb_substr($value, 0, $length);
+        }
+
+        return substr($value, 0, $length);
     }
 
     /**
