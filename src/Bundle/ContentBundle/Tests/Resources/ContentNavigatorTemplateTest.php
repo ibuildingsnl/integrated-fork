@@ -18,6 +18,7 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString("{% set isPublishable = published in [true, 1, '1', 'true'] and channelCount > 0 %}", $template);
         $this->assertStringContainsString('{% set hasPublicationDate = content.pub_time is defined %}', $template);
         $this->assertStringContainsString('{% set isPlanned = isPublishable and hasPublicationDate and not hasStarted %}', $template);
+        $this->assertStringContainsString('bundles/integratedcontent/js/content_index_lock_polling.js', $template);
     }
 
     public function testIndexTemplatesUseSolrNativeChannelFallbackForMissingFacetBrands(): void

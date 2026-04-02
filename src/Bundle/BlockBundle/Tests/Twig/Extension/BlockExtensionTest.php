@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Integrated\Bundle\BlockBundle\Tests\Twig\Extension;
 
 use Integrated\Bundle\BlockBundle\Provider\BlockUsageProvider;
+use Integrated\Bundle\BlockBundle\Service\RuntimeBlockUsageCollector;
 use Integrated\Bundle\BlockBundle\Templating\BlockManager;
 use Integrated\Bundle\BlockBundle\Twig\Extension\BlockExtension;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
@@ -32,7 +33,8 @@ class BlockExtensionTest extends TestCase
             $this->createMock(MetadataFactoryInterface::class),
             $this->createMock(ChannelContextInterface::class),
             $this->createMock(LoggerInterface::class),
-            'test'
+            'test',
+            new RuntimeBlockUsageCollector()
         );
 
         $block = $this->createMock(BlockInterface::class);
@@ -57,7 +59,8 @@ class BlockExtensionTest extends TestCase
             $this->createMock(MetadataFactoryInterface::class),
             $this->createMock(ChannelContextInterface::class),
             $this->createMock(LoggerInterface::class),
-            'test'
+            'test',
+            new RuntimeBlockUsageCollector()
         );
 
         $block = $this->createMock(BlockInterface::class);
@@ -82,7 +85,8 @@ class BlockExtensionTest extends TestCase
             $this->createMock(MetadataFactoryInterface::class),
             $this->createMock(ChannelContextInterface::class),
             $this->createMock(LoggerInterface::class),
-            'test'
+            'test',
+            new RuntimeBlockUsageCollector()
         );
 
         $block = $this->createMock(BlockInterface::class);
@@ -113,7 +117,8 @@ class BlockExtensionTest extends TestCase
             $this->createMock(MetadataFactoryInterface::class),
             $this->createMock(ChannelContextInterface::class),
             $this->createMock(LoggerInterface::class),
-            'test'
+            'test',
+            new RuntimeBlockUsageCollector()
         );
 
         self::assertSame('custom-class', $extension->getBlockCssClass('block-id'));
@@ -135,7 +140,8 @@ class BlockExtensionTest extends TestCase
             $this->createMock(MetadataFactoryInterface::class),
             $this->createMock(ChannelContextInterface::class),
             $this->createMock(LoggerInterface::class),
-            'test'
+            'test',
+            new RuntimeBlockUsageCollector()
         );
 
         self::assertSame('', $extension->getBlockCssClass('block-id'));

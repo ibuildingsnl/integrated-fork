@@ -1,10 +1,12 @@
 window.IntegratedJQReady(function ($) {
     var $primaryChannel = $('.primary-channel'),
         $channelInputs = $('.channel-options input'),
+        TINYMCE_BRAND_THEME_EVENT = 'integrated:editor-brand-theme',
         $primarySelector = $('<a href="#">').addClass('primary-channel-selector')
             .text(' (' + $primaryChannel.data('make-primary-text') + ')');
 
     updateChannelSelectors();
+    syncTinyMceBrandTheme();
 
     function updateChannelSelectors()
     {
@@ -22,6 +24,60 @@ window.IntegratedJQReady(function ($) {
                 }
             }
         });
+
+        syncTinyMceBrandTheme();
+    }
+
+    function getPrimaryChannelInput() {
+        var primaryValue = String($primaryChannel.val() || '').trim();
+        var $selectedInput = $();
+
+        if (primaryValue !== '') {
+            $selectedInput = $channelInputs.filter(':checked').filter(function() {
+                return String($(this).val() || '').trim() === primaryValue;
+            }).first();
+        }
+
+        if ($selectedInput.length === 0) {
+            $selectedInput = $channelInputs.filter(':checked').first();
+        }
+
+        return $selectedInput;
+    }
+
+    function buildTinyMceContentStyle($input) {
+        if (!$input || !$input.length) {
+            return '';
+        }
+
+        var accent = String($input.attr('data-channel-brand-color') || '').trim();
+        var secondary = String($input.attr('data-channel-brand-secondary-color') || accent).trim();
+        var accentDark = String($input.attr('data-channel-brand-color-dark') || '').trim();
+        var secondaryDark = String($input.attr('data-channel-brand-secondary-color-dark') || accentDark).trim();
+
+        if (!accent || !secondary || !accentDark || !secondaryDark) {
+            return '';
+        }
+
+        return ':root{'
+            + '--editor-color-primary:' + accent + ';'
+            + '--editor-color-secondary:' + secondary + ';'
+            + '--editor-color-primary-dark:' + accentDark + ';'
+            + '--editor-color-secondary-dark:' + secondaryDark + ';'
+            + '}';
+    }
+
+    function syncTinyMceBrandTheme() {
+        var contentStyle = buildTinyMceContentStyle(getPrimaryChannelInput());
+        if (!contentStyle) {
+            return;
+        }
+
+        document.dispatchEvent(new CustomEvent(TINYMCE_BRAND_THEME_EVENT, {
+            detail: {
+                contentStyle: contentStyle
+            }
+        }));
     }
 
     $channelInputs.change(function () {

@@ -36,10 +36,13 @@ class ContentImageListener
     public function replaceImages(ContentRenderEvent $contentEvent): void
     {
         try {
+            $imageIndex = 0;
             $content = preg_replace_callback(
                 '/\<img.*?data\-integrated\-id\="(.+?)".*?\>/',
-                function ($matches) {
-                    return $this->findImages($matches);
+                function ($matches) use (&$imageIndex) {
+                    ++$imageIndex;
+
+                    return $this->findImages($matches, $imageIndex);
                 },
                 $contentEvent->getContent()
             );
@@ -52,13 +55,16 @@ class ContentImageListener
         }
     }
 
-    protected function findImages(array $matches): ?string
+    protected function findImages(array $matches, int $imageIndex = 1): ?string
     {
         if ($file = $this->objectManager->find(Content::class, $matches[1])) {
             $class = '';
             $width = '';
             $height = '';
             $style = '';
+            $loading = $imageIndex === 1 ? 'eager' : 'lazy';
+            $fetchPriority = $imageIndex === 1 ? 'high' : 'low';
+            $decoding = 'async';
             if (preg_match('/class="(.*?)"/', $matches[0], $imgClass)) {
                 $class = $imgClass[1];
             }
@@ -72,7 +78,7 @@ class ContentImageListener
                 $style = $imgStyle[1];
             }
 
-            return $this->getTemplate($file, $class, $width, $height, $style);
+            return $this->getTemplate($file, $class, $width, $height, $style, $loading, $decoding, $fetchPriority);
         }
 
         return $matches[0];
@@ -84,11 +90,23 @@ class ContentImageListener
         string $width = '',
         string $height = '',
         string $style = '',
+        string $loading = 'lazy',
+        string $decoding = 'async',
+        string $fetchPriority = 'low',
     ): ?string {
         if ($template = $this->getViewFromClass($class)) {
             return $this->templating->render(
                 $template,
-                ['document' => $file, 'class' => $class, 'width' => $width, 'height' => $height, 'style' => $style]
+                [
+                    'document' => $file,
+                    'class' => $class,
+                    'width' => $width,
+                    'height' => $height,
+                    'style' => $style,
+                    'loading' => $loading,
+                    'decoding' => $decoding,
+                    'fetchPriority' => $fetchPriority,
+                ]
             );
         }
 

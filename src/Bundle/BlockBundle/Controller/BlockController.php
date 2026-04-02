@@ -17,6 +17,8 @@ use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
 use Integrated\Bundle\BlockBundle\Form\Type\BlockEditType;
 use Integrated\Bundle\BlockBundle\Form\Type\BlockFilterType;
 use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
+use Integrated\Bundle\BlockBundle\Security\AllowedBlockClassInstantiator;
+use Integrated\Bundle\BlockBundle\Security\InvalidBlockClassException;
 use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
@@ -36,9 +38,6 @@ class BlockController extends AbstractController
 {
     use PaginationQueryTrait;
 
-    /** @var array<string, bool>|null */
-    private ?array $allowedBlockClasses = null;
-
     public function __construct(
         private MetadataFactoryInterface $metadataFactory,
         private DocumentManager $documentManager,
@@ -46,6 +45,7 @@ class BlockController extends AbstractController
         private FilterQueryProvider $provider,
         private EventDispatcherInterface $dispatcher,
         private BlockRepository $blockRepository,
+        private AllowedBlockClassInstantiator $allowedBlockClassInstantiator,
     ) {
     }
 
@@ -98,20 +98,10 @@ class BlockController extends AbstractController
 
         $class = $request->get('class');
 
-        if (
-            !\is_string($class)
-            || $class === ''
-            || !class_exists($class)
-            || !is_subclass_of($class, Block::class)
-            || !$this->isAllowedBlockClass($class)
-        ) {
-            throw $this->createNotFoundException(\sprintf('Invalid block "%s"', (string) $class));
-        }
-
         try {
-            $block = new $class();
-        } catch (\Throwable) {
-            throw $this->createNotFoundException(\sprintf('Invalid block "%s"', $class));
+            $block = $this->allowedBlockClassInstantiator->instantiate($class);
+        } catch (InvalidBlockClassException $exception) {
+            throw $this->createNotFoundException($exception->getMessage(), $exception);
         }
 
         $form = $this->createForm(
@@ -290,24 +280,5 @@ class BlockController extends AbstractController
             'content' => $content,
             'pagination' => $pagination,
         ]);
-    }
-
-    private function isAllowedBlockClass(string $class): bool
-    {
-        $classKey = strtolower(ltrim($class, '\\'));
-
-        if ($this->allowedBlockClasses !== null) {
-            return isset($this->allowedBlockClasses[$classKey]);
-        }
-
-        $this->allowedBlockClasses = [];
-        foreach ($this->metadataFactory->getAllMetadata() as $metadata) {
-            $metadataClass = trim((string) $metadata->getClass());
-            if ($metadataClass !== '') {
-                $this->allowedBlockClasses[strtolower(ltrim($metadataClass, '\\'))] = true;
-            }
-        }
-
-        return isset($this->allowedBlockClasses[$classKey]);
     }
 }

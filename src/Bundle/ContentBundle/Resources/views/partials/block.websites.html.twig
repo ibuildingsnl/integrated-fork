@@ -17,3 +17,32 @@
         {% endfor %}
     </ul>
 </li>
+
+{% if showBlocks|default(false) %}
+    <li class="website-list dropdown close-outside top-bar">
+        <a data-toggle="dropdown" role="button" id="drop_2"
+           class="btn btn-white">
+            <span>{% trans %}Blokken{% endtrans %}</span>
+            <i class="iconoir-nav-arrow-down"></i>
+        </a>
+        <ul aria-labelledby="drop_2" role="menu" class="dropdown-menu" id="menu_2">
+            {% if usedBlocks|default([]) is empty %}
+                <li>
+                    <span style="display: block; padding: 8px 16px;">{% trans %}Geen blokken op deze pagina{% endtrans %}</span>
+                </li>
+            {% else %}
+                {% for block in usedBlocks %}
+                    <li>
+                        <a target="_blank" rel="noopener noreferrer" data-turbo="false"
+                           href="{{ path('integrated_block_block_edit', {'id': block.id}) }}">
+                            {{ block.title|default(block.id)|trim|default(block.id) }}
+                            {% if block.type|default('') is not empty %}
+                                <small>({{ block.type }})</small>
+                            {% endif %}
+                        </a>
+                    </li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+    </li>
+{% endif %}

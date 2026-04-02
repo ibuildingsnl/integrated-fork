@@ -83,7 +83,10 @@
         <div class="integrated-website-toolbar-tools">
             <div class="integrated-website-toolbar-left">
                 {% block website_navigation_buttons %}
-                    {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ChannelController::getChannels')) }}
+                    {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ChannelController::getChannels', {
+                        'showBlocks': isEditorMode,
+                        'usedBlocks': usedBlocks|default([])
+                    })) }}
                 {% endblock website_navigation_buttons %}
                 <div class="new-contenttype close-outside dropdown top-bar">
                     <a href="#" class="btn btn-green icon-right"

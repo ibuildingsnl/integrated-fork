@@ -13,6 +13,8 @@ use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
 use Integrated\Bundle\BlockBundle\Document\Block\TextBlock;
 use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
+use Integrated\Bundle\BlockBundle\Security\AllowedBlockClassInstantiator;
+use Integrated\Bundle\BlockBundle\Security\AllowedBlockClassProvider;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Security\Permissions;
@@ -21,6 +23,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use MongoDB\Collection;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -80,11 +83,9 @@ final class BlockControllerTest extends TestCase
         self::assertSame($pagination, $controller->lastParameters['pagination']);
     }
 
-    public function testUsedByFallsBackToDefaultsForArrayPaginationQueryValues(): void
+    public function testUsedByRejectsArrayPaginationQueryValues(): void
     {
         $content = (new Article())->setId('content-id');
-        $query = $this->createBuilderQueryResult();
-        $pagination = $this->createMock(PaginationInterface::class);
         $queryBuilder = $this->createMock(Builder::class);
         $queryBuilder
             ->method('field')
@@ -96,7 +97,7 @@ final class BlockControllerTest extends TestCase
             ->willReturnSelf();
         $queryBuilder
             ->method('getQuery')
-            ->willReturn($query);
+            ->willReturn($this->createBuilderQueryResult());
 
         $documentManager = $this->createMock(DocumentManager::class);
         $documentManager
@@ -106,15 +107,7 @@ final class BlockControllerTest extends TestCase
             ->willReturn($queryBuilder);
 
         $paginator = $this->createMock(PaginatorInterface::class);
-        $paginator
-            ->expects(self::once())
-            ->method('paginate')
-            ->with(
-                $query,
-                self::callback(fn (mixed $page): bool => \is_int($page) && 1 === $page),
-                self::callback(fn (mixed $limit): bool => \is_int($limit) && 15 === $limit)
-            )
-            ->willReturn($pagination);
+        $paginator->expects(self::never())->method('paginate');
 
         $controller = $this->createController($documentManager, $paginator);
         $controller->setPermission('ROLE_WEBSITE_MANAGER', false);
@@ -124,10 +117,9 @@ final class BlockControllerTest extends TestCase
         $request = new Request(['page' => ['2'], 'limit' => ['5']]);
         $request->setRequestFormat('json');
 
-        $response = $controller->usedBy($content, $request);
+        $this->expectException(BadRequestException::class);
 
-        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
-        self::assertSame($pagination, $controller->lastParameters['pagination']);
+        $controller->usedBy($content, $request);
     }
 
     public function testUsedByDeniesNonAdminUserWithoutEditPermission(): void
@@ -176,13 +168,16 @@ final class BlockControllerTest extends TestCase
         PaginatorInterface $paginator,
         ?MetadataFactoryInterface $metadataFactory = null,
     ): TestableBlockController {
+        $metadataFactory ??= $this->createStub(MetadataFactoryInterface::class);
+
         return new TestableBlockController(
-            $metadataFactory ?? $this->createStub(MetadataFactoryInterface::class),
+            $metadataFactory,
             $documentManager,
             $paginator,
             $this->createStub(FilterQueryProvider::class),
             $this->createStub(EventDispatcherInterface::class),
-            $this->createStub(BlockRepository::class)
+            $this->createStub(BlockRepository::class),
+            new AllowedBlockClassInstantiator(new AllowedBlockClassProvider($metadataFactory)),
         );
     }
 

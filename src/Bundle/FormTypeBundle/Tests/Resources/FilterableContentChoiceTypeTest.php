@@ -21,10 +21,22 @@ final class FilterableContentChoiceTypeTest extends TestCase
     public function testOnlyWebsiteChannelsAreExposedToTheWidget(): void
     {
         $channelManager = $this->createMock(ChannelManagerInterface::class);
-        $channelManager->method('findAll')->willReturn([
-            $this->createChannel('website', 'Website NL', 'Website'),
-            $this->createChannel('newsletter', 'Nieuwsbrief', 'Newsletter'),
-        ]);
+        $channelManager->method('findBy')->willReturnCallback(
+            function (array $criteria): array {
+                if ($criteria === ['type.$id' => 'website']) {
+                    return [
+                        $this->createChannel('website', 'Website NL', 'Website'),
+                    ];
+                }
+
+                if ($criteria === ['type.name' => 'Website']) {
+                    return [];
+                }
+
+                return [];
+            }
+        );
+        $channelManager->expects(self::never())->method('findAll');
 
         $contentTypeManager = $this->createMock(ContentTypeManager::class);
         $contentTypeManager->method('getAll')->willReturn([]);
@@ -67,7 +79,8 @@ final class FilterableContentChoiceTypeTest extends TestCase
     public function testFilterVisibilityCanBeDisabledPerOption(): void
     {
         $channelManager = $this->createMock(ChannelManagerInterface::class);
-        $channelManager->method('findAll')->willReturn([]);
+        $channelManager->method('findBy')->willReturn([]);
+        $channelManager->expects(self::once())->method('findAll')->willReturn([]);
 
         $contentTypeManager = $this->createMock(ContentTypeManager::class);
         $contentTypeManager->method('getAll')->willReturn([]);
@@ -107,7 +120,8 @@ final class FilterableContentChoiceTypeTest extends TestCase
     public function testContentTypeChoicesExcludeSpecificTypesAndGroupContentAndTaxonomies(): void
     {
         $channelManager = $this->createMock(ChannelManagerInterface::class);
-        $channelManager->method('findAll')->willReturn([]);
+        $channelManager->method('findBy')->willReturn([]);
+        $channelManager->expects(self::once())->method('findAll')->willReturn([]);
 
         $contentTypeManager = $this->createMock(ContentTypeManager::class);
         $contentTypeManager->method('getAll')->willReturn([

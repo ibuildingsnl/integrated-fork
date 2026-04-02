@@ -32,13 +32,13 @@ const SeoTab = () => {
     const [mode, setMode] = useState(DEFAULT_MODE);
     const replacementValues = useMemo(
         () => ({
-            title: configuration.title,
+            title: editorData.sourceTitle || configuration.title || '',
             siteTitle: configuration.brandName,
             separator: configuration.titleSeparator,
             slug: editorData.slug || configuration.uriPathSegment,
             channel: configuration.channelName || configuration.brandName,
         }),
-        [configuration.brandName, configuration.channelName, configuration.title, configuration.titleSeparator, configuration.uriPathSegment, editorData.slug],
+        [configuration.brandName, configuration.channelName, configuration.title, configuration.titleSeparator, configuration.uriPathSegment, editorData.slug, editorData.sourceTitle],
     );
     const replacementVariables = useMemo(
         () => mapSeoPlaceholdersToReplacementVariables(configuration, replacementValues),
@@ -60,7 +60,12 @@ const SeoTab = () => {
                 updateEditorData(key, data);
             }
 
-            const event = new CustomEvent('editorChange');
+            const event = new CustomEvent('editorChange', {
+                detail: {
+                    key: key,
+                    value: data,
+                },
+            });
             document.dispatchEvent(event);
         },
         [updateEditorData],
@@ -82,7 +87,7 @@ const SeoTab = () => {
             };
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [configuration.baseUrl, configuration.brandName, configuration.channelName, configuration.pageUrl, configuration.title, configuration.titleSeparator, configuration.uriPathSegment, editorData.slug, titleTemplate],
+        [configuration.baseUrl, configuration.brandName, configuration.channelName, configuration.pageUrl, configuration.title, configuration.titleSeparator, configuration.uriPathSegment, editorData.slug, editorData.sourceTitle, titleTemplate],
     );
 
     return (

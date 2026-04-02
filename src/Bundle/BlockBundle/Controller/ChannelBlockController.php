@@ -12,8 +12,8 @@
 namespace Integrated\Bundle\BlockBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\BlockBundle\Document\Block\Block;
-use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
+use Integrated\Bundle\BlockBundle\Security\AllowedBlockClassInstantiator;
+use Integrated\Bundle\BlockBundle\Security\InvalidBlockClassException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,14 +22,14 @@ use Symfony\Component\HttpFoundation\Response;
 class ChannelBlockController extends AbstractController
 {
     private DocumentManager $manager;
-    private MetadataFactoryInterface $metadataFactory;
-    /** @var array<string, bool>|null */
-    private ?array $allowedBlockClasses = null;
+    private AllowedBlockClassInstantiator $allowedBlockClassInstantiator;
 
-    public function __construct(DocumentManager $documentManager, MetadataFactoryInterface $metadataFactory)
-    {
+    public function __construct(
+        DocumentManager $documentManager,
+        AllowedBlockClassInstantiator $allowedBlockClassInstantiator,
+    ) {
         $this->manager = $documentManager;
-        $this->metadataFactory = $metadataFactory;
+        $this->allowedBlockClassInstantiator = $allowedBlockClassInstantiator;
     }
 
     public function new(Request $request): Response
@@ -45,20 +45,10 @@ class ChannelBlockController extends AbstractController
         $id = $request->request->get('id');
         $name = $request->request->get('name');
 
-        if (
-            !\is_string($class)
-            || $class === ''
-            || !class_exists($class)
-            || !is_subclass_of($class, Block::class)
-            || !$this->isAllowedBlockClass($class)
-        ) {
-            throw $this->createNotFoundException(\sprintf('Invalid block "%s"', (string) $class));
-        }
-
         try {
-            $block = new $class($id);
-        } catch (\Throwable) {
-            throw $this->createNotFoundException(\sprintf('Invalid block "%s"', $class));
+            $block = $this->allowedBlockClassInstantiator->instantiate($class, $id);
+        } catch (InvalidBlockClassException $exception) {
+            throw $this->createNotFoundException($exception->getMessage(), $exception);
         }
 
         $block->setTitle($name);
@@ -68,25 +58,5 @@ class ChannelBlockController extends AbstractController
         $this->manager->flush();
 
         return new JsonResponse(['result' => 'ok']);
-    }
-
-    private function isAllowedBlockClass(string $class): bool
-    {
-        $class = ltrim($class, '\\');
-        $classKey = strtolower($class);
-
-        if ($this->allowedBlockClasses !== null) {
-            return isset($this->allowedBlockClasses[$classKey]);
-        }
-
-        $this->allowedBlockClasses = [];
-        foreach ($this->metadataFactory->getAllMetadata() as $metadata) {
-            $metadataClass = trim((string) $metadata->getClass());
-            if ($metadataClass !== '') {
-                $this->allowedBlockClasses[strtolower(ltrim($metadataClass, '\\'))] = true;
-            }
-        }
-
-        return isset($this->allowedBlockClasses[$classKey]);
     }
 }

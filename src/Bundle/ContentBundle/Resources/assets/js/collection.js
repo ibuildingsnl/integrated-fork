@@ -17,8 +17,7 @@ function normalizeTinyMceStyleFormats(styles = []) {
         }
 
         if (newStyle.inline === 'a' && !newStyle.selector) {
-            newStyle.selector = 'a';
-            delete newStyle.inline;
+            newStyle.inline = 'span';
         }
 
         return newStyle;
@@ -187,8 +186,6 @@ $('[data-prototype]').each(function(index, elm) {
                     {title: 'Heading 4', block: 'h4'},
                     {title: 'Heading 5', block: 'h5'},
                     {title: 'Preformatted (fixed font)', block: 'pre'},
-                    {title: 'Superscript', icon: 'superscript', inline: 'sup'},
-                    {title: 'Subscript', icon: 'subscript', inline: 'sub'},
                 ];
 
                 style_formats = style_formats.concat(normalizeTinyMceStyleFormats(editor.data('format_styles') || []));

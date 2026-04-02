@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\BlockBundle\Twig\Extension;
 
 use Integrated\Bundle\BlockBundle\Provider\BlockUsageProvider;
+use Integrated\Bundle\BlockBundle\Service\RuntimeBlockUsageCollector;
 use Integrated\Bundle\BlockBundle\Templating\BlockManager;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
@@ -68,6 +69,8 @@ class BlockExtension extends AbstractExtension
      */
     private $environment;
 
+    private RuntimeBlockUsageCollector $runtimeBlockUsageCollector;
+
     public function __construct(
         BlockManager $blockManager,
         ThemeManager $themeManager,
@@ -76,6 +79,7 @@ class BlockExtension extends AbstractExtension
         ChannelContextInterface $channelContext,
         LoggerInterface $logger,
         string $environment,
+        RuntimeBlockUsageCollector $runtimeBlockUsageCollector,
     ) {
         $this->blockManager = $blockManager;
         $this->themeManager = $themeManager;
@@ -84,6 +88,7 @@ class BlockExtension extends AbstractExtension
         $this->channelContext = $channelContext;
         $this->logger = $logger;
         $this->environment = $environment;
+        $this->runtimeBlockUsageCollector = $runtimeBlockUsageCollector;
     }
 
     public function getFunctions()
@@ -128,9 +133,11 @@ class BlockExtension extends AbstractExtension
         if ($block instanceof BlockInterface) {
             $id = $block->getId();
         } else {
-            $id = $block;
+            $id = (string) $block;
             $block = $this->blockManager->getBlock($id);
         }
+
+        $this->registerRuntimeUsage($id, $block instanceof BlockInterface ? $block : null);
 
         try {
             $options['data'] = $options['data'] ?? null;
@@ -172,8 +179,12 @@ class BlockExtension extends AbstractExtension
         $id = $id.'_'.$this->channelContext->getChannel()->getId();
         $name = $name.' '.$this->channelContext->getChannel()->getName();
 
+        $this->runtimeBlockUsageCollector->register($id, $name, $class);
+
         $block = $this->blockManager->getBlock($id);
         if ($block) {
+            $this->registerRuntimeUsage($id, $block);
+
             return $environment->render($this->themeManager->locateTemplate('blocks/channel.html.twig'), [
                 'id' => $id,
                 'content' => $this->renderBlock($environment, $block, $options),
@@ -314,5 +325,14 @@ class BlockExtension extends AbstractExtension
     public function getName()
     {
         return 'integrated_block_block';
+    }
+
+    private function registerRuntimeUsage(string $id, ?BlockInterface $block = null): void
+    {
+        $this->runtimeBlockUsageCollector->register(
+            $id,
+            $block?->getTitle(),
+            $block?->getType()
+        );
     }
 }

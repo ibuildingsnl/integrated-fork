@@ -23,7 +23,7 @@
         <service id="Integrated\Bundle\BrandBundle\Controller\BrandController">
             <argument type="service" id="integrated_brand.brand.repository" />
             <argument type="service" id="integrated_channel.channel_type.registry" />
-            <argument type="service" id="integrated_channel.adapter.registry" />
+            <argument type="service" id="Integrated\Bundle\BrandBundle\Provider\AvailableConnectorsProvider" />
             <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
             <argument type="service" id="integrated_content.services.flusher"/>
         </service>
@@ -33,7 +33,7 @@
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="integrated_content.services.flusher"/>
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
-            <argument type="service" id="integrated_channel.adapter.registry" />
+            <argument type="service" id="Integrated\Bundle\BrandBundle\Provider\AvailableConnectorsProvider" />
         </service>
 
         <service id="Integrated\Bundle\BrandBundle\Controller\ConnectorController">
@@ -50,6 +50,10 @@
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
         </service>
 
+        <service id="Integrated\Bundle\BrandBundle\Provider\AvailableConnectorsProvider">
+            <argument type="service" id="integrated_channel.adapter.registry" />
+        </service>
+
         <service id="Integrated\Bundle\BrandBundle\Form\Type\BrandChoiceType">
             <argument type="service" id="integrated_brand.brand.repository" />
 
@@ -60,6 +64,10 @@
             <argument type="service" id="translator"/>
             <argument type="service" id="integrated_channel.channel_type.registry" />
 
+            <tag name="form.type" />
+        </service>
+
+        <service id="integrated_brand.form.channel.link.edit.type" class="Integrated\Bundle\BrandBundle\Form\Type\ChannelLinkEditType">
             <tag name="form.type" />
         </service>
 

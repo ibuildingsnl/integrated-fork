@@ -16,8 +16,11 @@
             <argument type="service" id="integrated_content.channel.context"/>
             <argument type="service" id="logger"/>
             <argument>%kernel.environment%</argument>
+            <argument type="service" id="Integrated\Bundle\BlockBundle\Service\RuntimeBlockUsageCollector" />
             <tag name="twig.extension" />
         </service>
+
+        <service id="Integrated\Bundle\BlockBundle\Service\RuntimeBlockUsageCollector" />
 
         <service id="integrated_block.layout_locator" class="Integrated\Bundle\BlockBundle\Locator\LayoutLocator">
             <argument type="service" id="integrated_theme.templating.theme_manager" />
@@ -50,6 +53,12 @@
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_block.provider.block_usage" />
         </service>
+
+        <service id="Integrated\Bundle\BlockBundle\Security\AllowedBlockClassProvider">
+            <argument type="service" id="integrated_block.metadata.factory" />
+        </service>
+
+        <service id="Integrated\Bundle\BlockBundle\Security\AllowedBlockClassInstantiator" />
 
         <service id="Integrated\Bundle\BlockBundle\Document\Block\BlockRepository"></service>
 

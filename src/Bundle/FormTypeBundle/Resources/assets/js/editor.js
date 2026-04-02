@@ -49,6 +49,9 @@ function extractEmbeddableUrl(input) {
     return container.textContent ? container.textContent.trim() : input;
 }
 
+const TINYMCE_BRAND_THEME_EVENT = 'integrated:editor-brand-theme';
+const TINYMCE_PREVIEW_STYLE_ID = 'integrated-tinymce-button-preview-style';
+
 function normalizeTinyMceStyleFormats(styles = []) {
     return styles.map((style) => {
         const newStyle = {...style};
@@ -62,12 +65,217 @@ function normalizeTinyMceStyleFormats(styles = []) {
         }
 
         if (newStyle.inline === 'a' && !newStyle.selector) {
-            newStyle.selector = 'a';
-            delete newStyle.inline;
+            newStyle.inline = 'span';
         }
 
         return newStyle;
     });
+}
+
+function parseTinyMceContentStyleVariables(contentStyle = '') {
+    const variables = {};
+
+    for (const match of String(contentStyle || '').matchAll(/(--td-color-[a-z-]+)\s*:\s*([^;]+)\s*;/g)) {
+        const property = String(match[1] || '').trim();
+        const value = String(match[2] || '').trim();
+
+        if (!property || !value) {
+            continue;
+        }
+
+        variables[property] = value;
+    }
+
+    return variables;
+}
+
+function applyTinyMceContentStyleVariables(target, variables = {}) {
+    if (!target || !target.style) {
+        return;
+    }
+
+    Object.entries(variables).forEach(([property, value]) => {
+        target.style.setProperty(property, value);
+    });
+}
+
+function ensureTinyMceToolbarPreviewStyles() {
+    if (document.getElementById(TINYMCE_PREVIEW_STYLE_ID)) {
+        return;
+    }
+
+    const style = document.createElement('style');
+    style.id = TINYMCE_PREVIEW_STYLE_ID;
+    style.textContent = `
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label {
+            line-height: 1.35 !important;
+        }
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label h1,
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label h2,
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label h3,
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label h4,
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label h5,
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label blockquote,
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label cite,
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .intro,
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .kader,
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .kaderkop {
+            margin: 0 !important;
+        }
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label h1 {
+            font-size: 1.05rem !important;
+            font-weight: 700 !important;
+            line-height: 1.2 !important;
+        }
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label h2 {
+            font-size: 1rem !important;
+            font-weight: 700 !important;
+            line-height: 1.2 !important;
+        }
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label h3 {
+            font-size: 0.95rem !important;
+            font-weight: 650 !important;
+            line-height: 1.2 !important;
+        }
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label h4,
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label h5 {
+            font-size: 0.9rem !important;
+            font-weight: 600 !important;
+            line-height: 1.2 !important;
+        }
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label blockquote {
+            border-left: 2px solid #cbd5e1 !important;
+            color: #475569 !important;
+            font-size: 0.9rem !important;
+            padding-left: 0.5rem !important;
+        }
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label cite {
+            color: #64748b !important;
+            font-size: 0.85rem !important;
+            font-style: italic !important;
+        }
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .intro,
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .kader,
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .kaderkop {
+            background: #f7f7f8 !important;
+            border-radius: 6px !important;
+            display: inline-block !important;
+            font-size: 0.9rem !important;
+            line-height: 1.25 !important;
+            padding: 0.125rem 0.5rem !important;
+        }
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .btn {
+            align-items: center;
+            appearance: none;
+            border: 1px solid transparent !important;
+            border-radius: 999px !important;
+            cursor: pointer;
+            display: inline-flex !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            line-height: 1.2 !important;
+            padding: 0.1rem 0.45rem !important;
+            text-decoration: none !important;
+        }
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .btn-gray,
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .btn-gray:visited {
+            background-color: #8f9195 !important;
+            border-color: #8f9195 !important;
+            color: #fff !important;
+        }
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .btn-gray:hover,
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .btn-gray:active {
+            background-color: #74767a !important;
+            border-color: #74767a !important;
+            color: #fff !important;
+        }
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .btn-primary,
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .btn-primary:visited {
+            background-color: var(--editor-color-primary, #d2312f) !important;
+            border-color: var(--editor-color-primary, #d2312f) !important;
+            color: #fff !important;
+        }
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .btn-primary:hover,
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .btn-primary:active {
+            background-color: var(--editor-color-primary-dark, #a72826) !important;
+            border-color: var(--editor-color-primary-dark, #a72826) !important;
+            color: #fff !important;
+        }
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .btn-secondary,
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .btn-secondary:visited {
+            background-color: var(--editor-color-secondary, #d2312f) !important;
+            border-color: var(--editor-color-secondary, #d2312f) !important;
+            color: #fff !important;
+        }
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .btn-secondary:hover,
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .btn-secondary:active {
+            background-color: var(--editor-color-secondary-dark, #a72826) !important;
+            border-color: var(--editor-color-secondary-dark, #a72826) !important;
+            color: #fff !important;
+        }
+        .tox-tinymce-aux .tox-collection__item .tox-collection__item-label .btn.btn-l {
+            font-size: 0.8rem !important;
+            padding: 0.1rem 0.45rem !important;
+        }
+    `;
+
+    document.head.appendChild(style);
+}
+
+function applyTinyMceBrandTheme(contentStyle = '') {
+    const variables = parseTinyMceContentStyleVariables(contentStyle);
+    if (Object.keys(variables).length === 0) {
+        return;
+    }
+
+    ensureTinyMceToolbarPreviewStyles();
+    applyTinyMceContentStyleVariables(document.documentElement, variables);
+    applyTinyMceContentStyleVariables(document.querySelector('.tox-tinymce-aux'), variables);
+}
+
+function applyTinyMceBrandThemeToEditor(editor, contentStyle = '') {
+    const variables = parseTinyMceContentStyleVariables(contentStyle);
+    if (!editor || Object.keys(variables).length === 0) {
+        return;
+    }
+
+    applyTinyMceContentStyleVariables(editor.getBody && editor.getBody(), variables);
+
+    const doc = editor.getDoc ? editor.getDoc() : null;
+    if (doc && doc.documentElement) {
+        applyTinyMceContentStyleVariables(doc.documentElement, variables);
+    }
+}
+
+function bindTinyMceBrandThemeUpdates() {
+    if (document.body?.dataset.boundTinyMceBrandThemeUpdates === 'true') {
+        return;
+    }
+
+    document.addEventListener(TINYMCE_BRAND_THEME_EVENT, function(event) {
+        const contentStyle = String(event?.detail?.contentStyle || '').trim();
+        if (!contentStyle) {
+            return;
+        }
+
+        document.querySelectorAll('.integrated_tinymce').forEach((field) => {
+            field.setAttribute('data-content_style', contentStyle);
+        });
+
+        applyTinyMceBrandTheme(contentStyle);
+
+        if (typeof tinymce === 'undefined' || !Array.isArray(tinymce.editors)) {
+            return;
+        }
+
+        tinymce.editors.forEach((editor) => {
+            applyTinyMceBrandThemeToEditor(editor, contentStyle);
+        });
+    });
+
+    if (document.body) {
+        document.body.dataset.boundTinyMceBrandThemeUpdates = 'true';
+    }
 }
 
 function getTinyMceStyleClasses(style) {
@@ -295,8 +503,12 @@ function normalizeTinyMceWrappedLists(editor, wrapperStyles = []) {
 }
 
 function initTinyMceEditors(root = document) {
+    bindTinyMceBrandThemeUpdates();
+    ensureTinyMceToolbarPreviewStyles();
+
     $('.integrated_tinymce', root).each(function(key, elem){
         const element = $(elem);
+        const currentContentStyle = String(element.data('content_style') || '').trim();
         let existingEditor = elem.id ? tinymce.get(elem.id) : null;
 
         if (existingEditor) {
@@ -334,14 +546,13 @@ function initTinyMceEditors(root = document) {
         {title: 'Heading 5', block: 'h5' },
         {title: 'Blockquote', format: 'blockquote'},
         {title: 'Cite', format: 'cite'},
-        {title: 'Superscript', icon: 'superscript', inline: 'sup'},
-        {title: 'Subscript', icon: 'subscript', inline: 'sub'},
     ];
 
     let custom_styles = element.data('format_styles') || [];
 
     style_formats = style_formats.concat(normalizeTinyMceStyleFormats(custom_styles));
     const wrapperDivStyles = getTinyMceWrapperDivStyles(style_formats);
+    applyTinyMceBrandTheme(currentContentStyle);
 
     tinymce.init({
         target: elem,
@@ -357,7 +568,7 @@ function initTinyMceEditors(root = document) {
         menubar: 'edit view insert format tools table',
         branding: false,
         toolbar:
-            "styles | bold italic underline subscript superscript | bullist numlist | alignleft aligncenter alignright alignjustify | " +
+            "styles | bold italic underline | bullist numlist | alignleft aligncenter alignright alignjustify | " +
             "integratedArticleLinkSearch anchor table charmap | integratedimage integratedgallery integratedvideo image media | print | " +
             "pastetext searchreplace | code fullscreen ",
         contextmenu: 'integratedArticleLinkSearch',
@@ -946,6 +1157,7 @@ function initTinyMceEditors(root = document) {
 
             editor.on('init change SetContent ExecCommand', normalizeWrappedLists);
             editor.on('init SetContent', function() {
+                applyTinyMceBrandThemeToEditor(editor, currentContentStyle);
                 hydrateFacebookEmbedPreviews(editor.getBody());
             });
             editor.on('GetContent', function(event) {

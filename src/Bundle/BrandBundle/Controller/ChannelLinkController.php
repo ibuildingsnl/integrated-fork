@@ -6,19 +6,18 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
 use Integrated\Bundle\BrandBundle\Event\BrandUpdatedEvent;
+use Integrated\Bundle\BrandBundle\Form\Type\ChannelLinkEditType;
 use Integrated\Bundle\BrandBundle\Form\Type\ChannelLinkType;
+use Integrated\Bundle\BrandBundle\Provider\AvailableConnectorsProvider;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
-use Integrated\Bundle\ContentBundle\Form\Type\ChannelType as ChannelFormType;
 use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
-use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Event\ChannelEvent;
 use Integrated\Common\Channel\Events;
 use Integrated\Common\Services\Flusher;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,7 +29,7 @@ class ChannelLinkController extends AbstractController
         private readonly EventDispatcherInterface $dispatcher,
         private readonly Flusher $flusher,
         private readonly DocumentManager $dm,
-        private readonly RegistryInterface $adapterRegistry,
+        private readonly AvailableConnectorsProvider $availableConnectorsProvider,
     ) {
     }
 
@@ -101,22 +100,11 @@ class ChannelLinkController extends AbstractController
         $this->checkPermissions();
         $this->assertLinkBelongsToBrand($brand, $link);
 
-        $form = $this->createForm(ChannelFormType::class, $link->channel, [
+        $form = $this->createForm(ChannelLinkEditType::class, $link->channel, [
             'method' => 'PUT',
             'can_change_type' => false,
-        ]);
-        $form->add('linkDefault', CheckboxType::class, [
-            'required' => false,
-            'mapped' => false,
-            'data' => $link->default,
-            'label' => 'Enabled by default for %name% brand',
-            'label_translation_parameters' => ['%name%' => $brand->getName()],
-            'attr' => [
-                'align_with_widget' => true,
-                'label_col' => 'w-full',
-                'location' => 'editor',
-                'style' => 'inline',
-            ],
+            'brand_name' => $brand->getName(),
+            'link_default' => (bool) $link->default,
         ]);
         $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
@@ -145,7 +133,7 @@ class ChannelLinkController extends AbstractController
             'channel' => $link->channel,
             'link' => $link,
             'brand' => $brand,
-            'availableConnectors' => $this->getAvailableConnectors(),
+            'availableConnectors' => $this->availableConnectorsProvider->getAvailableConnectors(),
             'form' => $form,
         ]);
     }
@@ -195,19 +183,5 @@ class ChannelLinkController extends AbstractController
         if (!$brand->hasChannelLink($link)) {
             throw $this->createNotFoundException('Channel link not found for this brand.');
         }
-    }
-
-    /**
-     * @return string[]
-     */
-    private function getAvailableConnectors(): array
-    {
-        $available = [];
-
-        foreach ($this->adapterRegistry->getAdapters() as $adapter) {
-            $available[] = $adapter->getManifest()->getName();
-        }
-
-        return array_values(array_unique($available));
     }
 }

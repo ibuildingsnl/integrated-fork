@@ -132,7 +132,8 @@ class MediaController extends AbstractController
         $menu = $this->mediaGalleryMenu->createMenu();
 
         $options = $request->query->all();
-        $options['sort'] = 'created';
+        // Use the concrete Solr sort field to guarantee "newest first" ordering in media library.
+        $options['sort'] = 'pub_created';
         $options['contenttypes'] = [];
         foreach ($contentTypes as $contentType) {
             $options['contenttypes'][] = $contentType->getId();
