@@ -15,6 +15,6 @@ final class WebsiteToolbarBlocksDropdownContractTest extends TestCase
         self::assertIsString($template);
         self::assertStringContainsString("'showBlocks': isEditorMode", $template);
         self::assertStringContainsString("'usedBlocks': usedBlocks|default([])", $template);
-        self::assertStringContainsString("ChannelController::getChannels", $template);
+        self::assertStringContainsString('ChannelController::getChannels', $template);
     }
 }

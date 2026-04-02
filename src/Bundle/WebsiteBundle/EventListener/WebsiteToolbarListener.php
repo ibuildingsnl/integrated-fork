@@ -39,8 +39,7 @@ class WebsiteToolbarListener implements EventSubscriberInterface
         EditableChecker $websiteEditableChecker,
         DocumentManager $manager,
         RuntimeBlockUsageCollector $runtimeBlockUsageCollector,
-    )
-    {
+    ) {
         $this->twig = $twig;
         $this->websiteEditableChecker = $websiteEditableChecker;
         $this->manager = $manager;

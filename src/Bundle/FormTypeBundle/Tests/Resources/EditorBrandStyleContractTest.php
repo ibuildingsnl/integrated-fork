@@ -51,14 +51,14 @@ final class EditorBrandStyleContractTest extends TestCase
 
         self::assertStringContainsString("const TINYMCE_BRAND_THEME_EVENT = 'integrated:editor-brand-theme';", $editorSource);
         self::assertStringContainsString('ensureTinyMceToolbarPreviewStyles()', $editorSource);
-        self::assertStringContainsString("document.addEventListener(TINYMCE_BRAND_THEME_EVENT", $editorSource);
-        self::assertStringContainsString("applyTinyMceBrandThemeToEditor(editor, currentContentStyle);", $editorSource);
-        self::assertStringContainsString(".tox-tinymce-aux .tox-collection__item .tox-collection__item-label h1", $editorSource);
+        self::assertStringContainsString('document.addEventListener(TINYMCE_BRAND_THEME_EVENT', $editorSource);
+        self::assertStringContainsString('applyTinyMceBrandThemeToEditor(editor, currentContentStyle);', $editorSource);
+        self::assertStringContainsString('.tox-tinymce-aux .tox-collection__item .tox-collection__item-label h1', $editorSource);
         self::assertStringContainsString('border-radius: 999px !important;', $editorSource);
 
-        self::assertStringContainsString("data-channel-brand-color=\"{{ option_brand_color }}\"", $contentFormSource);
-        self::assertStringContainsString("data-channel-brand-secondary-color=\"{{ option_brand_secondary_color }}\"", $contentFormSource);
-        self::assertStringContainsString("document.dispatchEvent(new CustomEvent(TINYMCE_BRAND_THEME_EVENT", $primaryChannelSource);
+        self::assertStringContainsString('data-channel-brand-color="{{ option_brand_color }}"', $contentFormSource);
+        self::assertStringContainsString('data-channel-brand-secondary-color="{{ option_brand_secondary_color }}"', $contentFormSource);
+        self::assertStringContainsString('document.dispatchEvent(new CustomEvent(TINYMCE_BRAND_THEME_EVENT', $primaryChannelSource);
 
         self::assertStringContainsString('form.parent.primaryChannel is defined', $formThemeSource);
         self::assertStringContainsString('editor_primary_channel_value|integrated_channel', $formThemeSource);

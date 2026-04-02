@@ -12,9 +12,9 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\BlockBundle\Service\RuntimeBlockUsageCollector;
 use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
-use Integrated\Bundle\BlockBundle\Service\RuntimeBlockUsageCollector;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
@@ -34,8 +34,8 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 
 class ChannelController extends AbstractController
 {
@@ -379,8 +379,6 @@ class ChannelController extends AbstractController
     }
 
     /**
-     * @param mixed $blocks
-     *
      * @return array<int, array{id: string, title: string, type: string}>
      */
     private function normalizeUsedBlocks(mixed $blocks): array
