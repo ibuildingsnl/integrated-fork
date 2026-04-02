@@ -405,10 +405,11 @@
     {% if form.parent.channel is defined %}
         {% set pageChannel = form.parent.channel.vars.data|default(null) %}
     {% endif %}
-    {% if not pageChannel and documentNode and documentNode.slug is not defined %}
-        {% set pageChannel = attribute(documentNode, 'channel')|default(null) %}
-    {% elseif not pageChannel and documentNode %}
-        {% set pageChannel = attribute(documentNode, 'primaryChannel')|default(null) %}
+    {% if not pageChannel and form.parent.primaryChannel is defined %}
+        {% set pageChannel = form.parent.primaryChannel.vars.data|default(null) %}
+    {% endif %}
+    {% if not pageChannel and _channel is defined and _channel %}
+        {% set pageChannel = _channel %}
     {% endif %}
 
     {% if documentNode.featuredImage.file is defined and documentNode.featuredImage.file is not null %}
@@ -493,6 +494,8 @@
                          'focusKeyword': '#' ~ form.focusKeyphrase.vars.id,
                          'slug': form.parent.slug is defined ? '#' ~ form.parent.slug.vars.id : (form.parent.path is defined ? '#' ~ form.parent.path.vars.id : null),
                          'content': form.parent.content is defined ? '#' ~ form.parent.content.vars.id : null,
+                         'intro': form.parent.intro is defined ? '#' ~ form.parent.intro.vars.id : null,
+                         'pageDescription': form.parent.description is defined ? '#' ~ form.parent.description.vars.id : null,
                          'seoScore': '#' ~ form.seoScore.vars.id,
                          'readabilityScore': '#' ~ form.readabilityScore.vars.id
                      },

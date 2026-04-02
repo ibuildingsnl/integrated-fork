@@ -122,23 +122,6 @@
                 {% endif %}
             {% endif %}
         {% endif %}
-        {% if not editor_channel and editor_document_node %}
-            {% if attribute(editor_document_node, 'channel') is defined and attribute(editor_document_node, 'channel') is not null %}
-                {% set editor_document_channel = attribute(editor_document_node, 'channel') %}
-                {% if editor_document_channel.id is defined %}
-                    {% set editor_channel = editor_document_channel %}
-                {% elseif editor_document_channel is not iterable %}
-                    {% set editor_channel = editor_document_channel|integrated_channel %}
-                {% endif %}
-            {% elseif attribute(editor_document_node, 'primaryChannel') is defined and attribute(editor_document_node, 'primaryChannel') is not null %}
-                {% set editor_document_primary_channel = attribute(editor_document_node, 'primaryChannel') %}
-                {% if editor_document_primary_channel.id is defined %}
-                    {% set editor_channel = editor_document_primary_channel %}
-                {% elseif editor_document_primary_channel is not iterable %}
-                    {% set editor_channel = editor_document_primary_channel|integrated_channel %}
-                {% endif %}
-            {% endif %}
-        {% endif %}
         {% if not editor_channel and _channel is defined and _channel %}
             {% set editor_channel = _channel %}
         {% endif %}

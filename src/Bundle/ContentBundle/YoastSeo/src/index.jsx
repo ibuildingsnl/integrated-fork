@@ -25,6 +25,8 @@ function AppInitializer() {
     const seoScoreField = selectField('seoScore');
     const readabilityScoreField = selectField('readabilityScore');
     const contentField = selectField('content');
+    const introField = selectField('intro');
+    const pageDescriptionField = selectField('pageDescription');
 
     if (!snippetEditorContainer || !titleField || !uriPathSegmentField || !titleOverrideField || !descriptionField || !focusKeywordField) {
         return null;
@@ -39,6 +41,8 @@ function AppInitializer() {
         seoScore: seoScoreField,
         readabilityScore: readabilityScoreField,
         content: contentField,
+        intro: introField,
+        pageDescription: pageDescriptionField,
     };
 
     useEffect(() => {

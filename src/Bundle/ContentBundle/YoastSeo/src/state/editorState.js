@@ -4,6 +4,7 @@ const editorState = atom({
     key: 'editorState',
     default: {
         title: '',
+        sourceTitle: '',
         description: '',
         slug: '',
         url: '',
