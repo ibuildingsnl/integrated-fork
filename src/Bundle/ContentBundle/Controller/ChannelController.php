@@ -13,20 +13,14 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BlockBundle\Service\RuntimeBlockUsageCollector;
-use Integrated\Bundle\BrandBundle\Document\Brand;
-use Integrated\Bundle\BrandBundle\Document\ChannelLink;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Integrated\Bundle\ContentBundle\Document\Content\Publication;
-use Integrated\Bundle\ContentBundle\Event\ContentDeletedEvent;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\ChannelType;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
-use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\Channel\Event\ChannelEvent;
 use Integrated\Common\Channel\Events as ChannelEvents;
-use Integrated\Common\Content\Form\Events as ContentEvents;
+use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Security\Resolver\PermissionResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -42,6 +36,7 @@ class ChannelController extends AbstractController
     private DocumentManager $documentManager;
     private SearchContentReferenced $searchContentReferenced;
     private EventDispatcherInterface $dispatcher;
+    private QueueInterface $workflowQueue;
     private RuntimeBlockUsageCollector $runtimeBlockUsageCollector;
     private RequestStack $requestStack;
 
@@ -49,12 +44,14 @@ class ChannelController extends AbstractController
         DocumentManager $documentManager,
         SearchContentReferenced $searchContentReferenced,
         EventDispatcherInterface $dispatcher,
+        QueueInterface $workflowQueue,
         RuntimeBlockUsageCollector $runtimeBlockUsageCollector,
         RequestStack $requestStack,
     ) {
         $this->searchContentReferenced = $searchContentReferenced;
         $this->documentManager = $documentManager;
         $this->dispatcher = $dispatcher;
+        $this->workflowQueue = $workflowQueue;
         $this->runtimeBlockUsageCollector = $runtimeBlockUsageCollector;
         $this->requestStack = $requestStack;
     }
@@ -188,89 +185,16 @@ class ChannelController extends AbstractController
                         'referenced' => $referenced,
                     ]);
                 }
-
-                foreach ($referencedDocuments as $document) {
-                    if ($document instanceof Content) {
-                        $channels = $document->getChannels();
-                        $onlyThisChannel = \count($channels) <= 1;
-                        if (!$onlyThisChannel) {
-                            $document->removeChannel($channel);
-                            $primary = $document->getPrimaryChannel();
-                            if ($primary && $primary->getId() === $channel->getId()) {
-                                $document->setPrimaryChannel(null);
-                            }
-                            $this->documentManager->persist($document);
-                            continue;
-                        }
-
-                        if ($this->dispatcher->hasListeners(ContentEvents::CONTENT_DELETED)) {
-                            $this->dispatcher->dispatch(
-                                new ContentDeletedEvent($document),
-                                ContentEvents::CONTENT_DELETED
-                            );
-                        }
-                        $this->documentManager->remove($document);
-                        continue;
-                    }
-
-                    if ($document instanceof AbstractPage) {
-                        $this->documentManager->remove($document);
-                        continue;
-                    }
-
-                    if ($document instanceof ChannelLink) {
-                        continue;
-                    }
-
-                    if (method_exists($document, 'removeChannel')) {
-                        $document->removeChannel($channel);
-                        if (method_exists($document, 'getPrimaryChannel') && method_exists($document, 'setPrimaryChannel')) {
-                            $primary = $document->getPrimaryChannel();
-                            if ($primary && $primary->getId() === $channel->getId()) {
-                                $document->setPrimaryChannel(null);
-                            }
-                        }
-                        $this->documentManager->persist($document);
-                    }
-                }
             }
+            $this->workflowQueue->push([
+                'command' => 'channel-delete',
+                'args' => [
+                    'channel_id' => (string) $channel->getId(),
+                    'delete_referenced' => true,
+                ],
+            ]);
 
-            $publications = $this->documentManager->getRepository(Publication::class)
-                ->createQueryBuilder()
-                ->field('channel.$id')
-                ->equals($channel->getId())
-                ->getQuery()
-                ->toArray();
-
-            foreach ($publications as $publication) {
-                $this->documentManager->remove($publication);
-            }
-
-            $brands = $this->documentManager->getRepository(Brand::class)->findAll();
-            foreach ($brands as $brand) {
-                $changed = false;
-                foreach ($brand->getChannelLinks()->toArray() as $link) {
-                    if (!$link->channel) {
-                        $brand->removeChannelLink($link);
-                        $changed = true;
-                        continue;
-                    }
-                    if ($link->channel->getId() === $channel->getId()) {
-                        $brand->removeChannelLink($link);
-                        $changed = true;
-                    }
-                }
-                if ($changed) {
-                    $this->documentManager->persist($brand);
-                }
-            }
-
-            $this->documentManager->remove($channel);
-            $this->documentManager->flush();
-
-            $this->dispatcher->dispatch(new ChannelEvent($channel), ChannelEvents::CHANNEL_DELETED);
-
-            $this->addFlash('success', 'Channel deleted');
+            $this->addFlash('success', 'Channel deletion has been queued and will be processed in the background.');
 
             return $this->redirectToRoute('integrated_content_channel_index', [], Response::HTTP_SEE_OTHER);
         }

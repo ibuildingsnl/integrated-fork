@@ -61,6 +61,7 @@
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_content.services.search.content.referenced" />
             <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="integrated_queue.workflow" />
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Controller\MediaController" autowire="true" autoconfigure="true">
