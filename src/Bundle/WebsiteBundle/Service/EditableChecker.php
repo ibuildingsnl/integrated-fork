@@ -52,6 +52,10 @@ class EditableChecker
             return false;
         }
 
+        if (!$this->hasAuthenticationHints()) {
+            return false;
+        }
+
         if (null === $this->tokenStorage->getToken()) {
             return false;
         }
@@ -90,5 +94,19 @@ class EditableChecker
         }
 
         return $this->authorizationChecker->isGranted(PermissionInterface::WRITE, $page->getChannel());
+    }
+
+    private function hasAuthenticationHints(): bool
+    {
+        if (null === $this->request) {
+            return false;
+        }
+
+        $sessionCookieName = session_name();
+        if (\is_string($sessionCookieName) && $sessionCookieName !== '' && $this->request->cookies->has($sessionCookieName)) {
+            return true;
+        }
+
+        return $this->request->cookies->has('REMEMBERME');
     }
 }

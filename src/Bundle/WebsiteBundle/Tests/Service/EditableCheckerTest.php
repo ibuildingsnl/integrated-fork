@@ -59,7 +59,9 @@ class EditableCheckerTest extends TestCase
         $page = $this->createPage();
         $channel = $page->getChannel();
 
-        $this->requestStack->push($this->createPageRequest());
+        $request = $this->createPageRequest();
+        $request->cookies->set(session_name(), 'sess-123');
+        $this->requestStack->push($request);
         $this->tokenStorage
             ->method('getToken')
             ->willReturn($this->createMock(TokenInterface::class));
@@ -89,7 +91,9 @@ class EditableCheckerTest extends TestCase
         $page = $this->createPage();
         $channel = $page->getChannel();
 
-        $this->requestStack->push($this->createPageRequest());
+        $request = $this->createPageRequest();
+        $request->cookies->set(session_name(), 'sess-123');
+        $this->requestStack->push($request);
         $this->tokenStorage
             ->method('getToken')
             ->willReturn($this->createMock(TokenInterface::class));
@@ -108,6 +112,24 @@ class EditableCheckerTest extends TestCase
 
                 return false;
             });
+
+        $checker = $this->createChecker();
+
+        self::assertFalse($checker->checkEditable());
+    }
+
+    public function testCheckEditableReturnsFalseWithoutAuthenticationHintCookies(): void
+    {
+        $this->requestStack->push($this->createPageRequest());
+        $this->tokenStorage
+            ->expects($this->never())
+            ->method('getToken');
+        $this->authorizationChecker
+            ->expects($this->never())
+            ->method('isGranted');
+        $this->pageRepository
+            ->expects($this->never())
+            ->method('find');
 
         $checker = $this->createChecker();
 
