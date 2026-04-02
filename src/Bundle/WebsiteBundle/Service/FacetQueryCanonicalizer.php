@@ -22,8 +22,8 @@ class FacetQueryCanonicalizer
             return null;
         }
 
-        $singleSelectFields = $this->getSingleSelectFacetFields($page);
-        if ([] === $singleSelectFields) {
+        $facetFieldSelectionModes = $this->getFacetFieldSelectionModes($page);
+        if ([] === $facetFieldSelectionModes) {
             return null;
         }
 
@@ -31,7 +31,7 @@ class FacetQueryCanonicalizer
         $normalizedQuery = $query;
         $changed = false;
 
-        foreach ($singleSelectFields as $field) {
+        foreach ($facetFieldSelectionModes as $field => $selectionMode) {
             if (!\array_key_exists($field, $normalizedQuery)) {
                 continue;
             }
@@ -44,8 +44,8 @@ class FacetQueryCanonicalizer
                 continue;
             }
 
-            $normalizedValues = [$values[0]];
-            if ($normalizedValues !== $this->sanitizeFacetValues($normalizedQuery[$field])) {
+            $normalizedValues = $this->normalizeFacetValues($values, $selectionMode);
+            if ($normalizedValues !== $values) {
                 $changed = true;
             }
 
@@ -62,28 +62,30 @@ class FacetQueryCanonicalizer
     }
 
     /**
-     * @return list<string>
+     * @return array<string, string>
      */
-    private function getSingleSelectFacetFields(Page $page): array
+    private function getFacetFieldSelectionModes(Page $page): array
     {
         $fields = [];
 
         foreach ($page->getBlockIds() as $blockId) {
             $block = $this->blockRepository->find($blockId);
 
-            if (!$block instanceof FacetBlock || FacetBlock::SELECTION_MODE_SINGLE !== $block->getSelectionMode()) {
+            if (!$block instanceof FacetBlock) {
                 continue;
             }
 
             foreach ($block->getFields() as $field) {
                 $fieldName = trim((string) $field->getField());
                 if ('' !== $fieldName) {
-                    $fields[$fieldName] = true;
+                    if (!isset($fields[$fieldName])) {
+                        $fields[$fieldName] = $block->getSelectionMode();
+                    }
                 }
             }
         }
 
-        return array_keys($fields);
+        return $fields;
     }
 
     /**
@@ -112,5 +114,21 @@ class FacetQueryCanonicalizer
         }
 
         return array_values(array_unique($result));
+    }
+
+    /**
+     * @param list<string> $values
+     *
+     * @return list<string>
+     */
+    private function normalizeFacetValues(array $values, string $selectionMode): array
+    {
+        if (FacetBlock::SELECTION_MODE_SINGLE === $selectionMode) {
+            return [$values[0]];
+        }
+
+        sort($values, \SORT_NATURAL | \SORT_FLAG_CASE);
+
+        return array_values($values);
     }
 }

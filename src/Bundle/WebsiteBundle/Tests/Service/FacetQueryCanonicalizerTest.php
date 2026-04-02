@@ -43,7 +43,7 @@ final class FacetQueryCanonicalizerTest extends TestCase
         self::assertSame('/bedrijvengids?facet_company_category%5B0%5D=Automatisering&sort=title', $normalizedPath);
     }
 
-    public function testMultiSelectFacetFieldsDoNotTriggerNormalization(): void
+    public function testMultiSelectFacetFieldsDoNotTriggerNormalizationWhenAlreadyCanonical(): void
     {
         $facetBlock = new FacetBlock('facet-block');
         $facetBlock->setBlock(new ContentBlock());
@@ -69,5 +69,33 @@ final class FacetQueryCanonicalizerTest extends TestCase
         $normalizedPath = (new FacetQueryCanonicalizer($repository))->getNormalizedPath($page, $request);
 
         self::assertNull($normalizedPath);
+    }
+
+    public function testMultiSelectFacetFieldsAreDeduplicatedAndSorted(): void
+    {
+        $facetBlock = new FacetBlock('facet-block');
+        $facetBlock->setBlock(new ContentBlock());
+        $facetBlock->setSelectionMode(FacetBlock::SELECTION_MODE_MULTI);
+
+        $field = new FacetField();
+        $field->setField('facet_company_category');
+        $field->setName('Company category');
+        $facetBlock->setFields([$field]);
+
+        $page = new Page();
+        $page->setPath('/bedrijvengids');
+        $page->setBlockIds(['facet-block']);
+
+        $repository = $this->createMock(BlockRepository::class);
+        $repository->expects(self::once())
+            ->method('find')
+            ->with('facet-block')
+            ->willReturn($facetBlock);
+
+        $request = Request::create('https://example.test/bedrijvengids?facet_company_category%5B0%5D=Dienstverlening&facet_company_category%5B1%5D=Automatisering&facet_company_category%5B2%5D=Dienstverlening');
+
+        $normalizedPath = (new FacetQueryCanonicalizer($repository))->getNormalizedPath($page, $request);
+
+        self::assertSame('/bedrijvengids?facet_company_category%5B0%5D=Automatisering&facet_company_category%5B1%5D=Dienstverlening', $normalizedPath);
     }
 }
