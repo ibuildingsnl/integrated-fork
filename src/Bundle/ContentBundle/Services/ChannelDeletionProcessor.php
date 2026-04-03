@@ -27,24 +27,9 @@ final class ChannelDeletionProcessor
     ) {
     }
 
-    /**
-     * @return array{
-     *   removed_content: int,
-     *   detached_content: int,
-     *   removed_pages: int,
-     *   removed_publications: int,
-     *   updated_brands: int
-     * }
-     */
-    public function process(Channel $channel, bool $deleteReferenced): array
+    public function process(Channel $channel, bool $deleteReferenced): ChannelDeletionReport
     {
-        $summary = [
-            'removed_content' => 0,
-            'detached_content' => 0,
-            'removed_pages' => 0,
-            'removed_publications' => 0,
-            'updated_brands' => 0,
-        ];
+        $report = new ChannelDeletionReport($channel->getId());
 
         $referencedDocuments = $this->searchContentReferenced->getReferencedDocuments($channel);
         if (!$deleteReferenced && \count($referencedDocuments) > 0) {
@@ -57,34 +42,42 @@ final class ChannelDeletionProcessor
                     $channels = $document->getChannels();
                     $onlyThisChannel = \count($channels) <= 1;
                     if (!$onlyThisChannel) {
-                        $document->removeChannel($channel);
-                        $primary = $document->getPrimaryChannel();
-                        if ($primary && $primary->getId() === $channel->getId()) {
-                            $document->setPrimaryChannel(null);
-                        }
-                        $this->documentManager->persist($document);
-                        ++$summary['detached_content'];
+                        $this->safeDocumentStep($document, 'detach', $report, function () use ($document, $channel, $report): void {
+                            $document->removeChannel($channel);
+                            $primary = $document->getPrimaryChannel();
+                            if ($primary && $primary->getId() === $channel->getId()) {
+                                $document->setPrimaryChannel(null);
+                            }
+
+                            $this->documentManager->persist($document);
+                            $report->markDetachedContent();
+                        });
 
                         continue;
                     }
 
-                    $this->contentReverseReferenceCleaner->cleanup($document);
+                    $this->safeDocumentStep($document, 'delete', $report, function () use ($document, $report): void {
+                        $this->contentReverseReferenceCleaner->cleanup($document);
 
-                    if ($this->dispatcher->hasListeners(ContentEvents::CONTENT_DELETED)) {
-                        $this->dispatcher->dispatch(
-                            new ContentDeletedEvent($document),
-                            ContentEvents::CONTENT_DELETED
-                        );
-                    }
-                    $this->documentManager->remove($document);
-                    ++$summary['removed_content'];
+                        if ($this->dispatcher->hasListeners(ContentEvents::CONTENT_DELETED)) {
+                            $this->dispatcher->dispatch(
+                                new ContentDeletedEvent($document),
+                                ContentEvents::CONTENT_DELETED
+                            );
+                        }
+
+                        $this->documentManager->remove($document);
+                        $report->markRemovedContent();
+                    });
 
                     continue;
                 }
 
                 if ($document instanceof AbstractPage) {
-                    $this->documentManager->remove($document);
-                    ++$summary['removed_pages'];
+                    $this->safeDocumentStep($document, 'delete', $report, function () use ($document, $report): void {
+                        $this->documentManager->remove($document);
+                        $report->markRemovedPage();
+                    });
 
                     continue;
                 }
@@ -94,14 +87,17 @@ final class ChannelDeletionProcessor
                 }
 
                 if (method_exists($document, 'removeChannel')) {
-                    $document->removeChannel($channel);
-                    if (method_exists($document, 'getPrimaryChannel') && method_exists($document, 'setPrimaryChannel')) {
-                        $primary = $document->getPrimaryChannel();
-                        if ($primary && $primary->getId() === $channel->getId()) {
-                            $document->setPrimaryChannel(null);
+                    $this->safeDocumentStep($document, 'update', $report, function () use ($document, $channel): void {
+                        $document->removeChannel($channel);
+                        if (method_exists($document, 'getPrimaryChannel') && method_exists($document, 'setPrimaryChannel')) {
+                            $primary = $document->getPrimaryChannel();
+                            if ($primary && $primary->getId() === $channel->getId()) {
+                                $document->setPrimaryChannel(null);
+                            }
                         }
-                    }
-                    $this->documentManager->persist($document);
+
+                        $this->documentManager->persist($document);
+                    });
                 }
             }
         }
@@ -114,8 +110,10 @@ final class ChannelDeletionProcessor
             ->toArray();
 
         foreach ($publications as $publication) {
-            $this->documentManager->remove($publication);
-            ++$summary['removed_publications'];
+            $this->safeDocumentStep($publication, 'delete', $report, function () use ($publication, $report): void {
+                $this->documentManager->remove($publication);
+                $report->markRemovedPublication();
+            });
         }
 
         $brands = $this->documentManager->getRepository(Brand::class)->findAll();
@@ -134,16 +132,50 @@ final class ChannelDeletionProcessor
                 }
             }
             if ($changed) {
-                $this->documentManager->persist($brand);
-                ++$summary['updated_brands'];
+                $this->safeDocumentStep($brand, 'update', $report, function () use ($brand, $report): void {
+                    $this->documentManager->persist($brand);
+                    $report->markUpdatedBrand();
+                });
             }
         }
 
         $this->documentManager->remove($channel);
         $this->documentManager->flush();
+        $report->markRemovedChannel();
 
         $this->dispatcher->dispatch(new ChannelEvent($channel), ChannelEvents::CHANNEL_DELETED);
 
-        return $summary;
+        return $report;
+    }
+
+    /**
+     * @param callable(): void $operation
+     */
+    private function safeDocumentStep(object $document, string $step, ChannelDeletionReport $report, callable $operation): void
+    {
+        try {
+            $operation();
+        } catch (\Throwable $exception) {
+            $class = $document::class;
+            $id = $this->resolveDocumentId($document);
+
+            $report->addWarning(new ChannelDeletionWarning(
+                $step,
+                $class,
+                $id,
+                $exception->getMessage(),
+                $exception::class
+            ));
+            $report->addSkippedDocument($class, $id);
+        }
+    }
+
+    private function resolveDocumentId(object $document): string
+    {
+        if (!method_exists($document, 'getId')) {
+            return '';
+        }
+
+        return (string) $document->getId();
     }
 }
