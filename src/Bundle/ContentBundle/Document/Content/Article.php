@@ -223,6 +223,10 @@ class Article extends Content implements RankableInterface
 
     public function getAuthors(): array
     {
+        if (!$this->authors instanceof ArrayCollection) {
+            return [];
+        }
+
         return $this->authors->toArray();
     }
 
@@ -237,6 +241,10 @@ class Article extends Content implements RankableInterface
 
     public function addAuthor(Embedded\Author $author): void
     {
+        if (!$this->authors instanceof ArrayCollection) {
+            $this->authors = new ArrayCollection();
+        }
+
         if (!$this->authors->contains($author)) {
             $this->authors->add($author);
         }
@@ -244,6 +252,10 @@ class Article extends Content implements RankableInterface
 
     public function removeAuthor(Embedded\Author $author): bool
     {
+        if (!$this->authors instanceof ArrayCollection) {
+            return false;
+        }
+
         return $this->authors->removeElement($author);
     }
 

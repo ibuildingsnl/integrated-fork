@@ -25,6 +25,7 @@ final class ChannelDeletionProcessor
         private readonly SearchContentReferenced $searchContentReferenced,
         private readonly ContentReverseReferenceCleaner $contentReverseReferenceCleaner,
         private readonly EventDispatcherInterface $dispatcher,
+        private readonly ?ChannelDeletionSelfHealer $selfHealer = null,
     ) {
     }
 
@@ -74,6 +75,7 @@ final class ChannelDeletionProcessor
                     $cleanup = null;
 
                     try {
+                        $this->selfHealer?->heal($document, $report);
                         $cleanup = $this->contentReverseReferenceCleaner->cleanupWithoutFlush($document);
                         $this->safeWarningStep($document, 'dispatch', $report, function () use ($document): void {
                             if (!$this->dispatcher->hasListeners(ContentEvents::CONTENT_DELETED)) {
