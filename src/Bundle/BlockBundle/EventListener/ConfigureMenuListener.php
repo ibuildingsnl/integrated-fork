@@ -69,6 +69,12 @@ class ConfigureMenuListener implements EventSubscriberInterface
 
     public function onMenuConfigure(ConfigureMenuEvent $event)
     {
+        $menu = $event->getMenu();
+
+        if ($menu->getName() !== self::MENU) {
+            return;
+        }
+
         if (!$this->authorizationChecker->isGranted(self::ROLE_WEBSITE_MANAGER)
             && !$this->authorizationChecker->isGranted(self::ROLE_ADMIN)) {
             $session = $this->requestStack->getSession();
@@ -82,12 +88,6 @@ class ConfigureMenuListener implements EventSubscriberInterface
             if (!$hasBlocks) {
                 return;
             }
-        }
-
-        $menu = $event->getMenu();
-
-        if ($menu->getName() !== self::MENU) {
-            return;
         }
 
         if (!$label = $menu->getChild(self::MENU_WEBSITE)) {

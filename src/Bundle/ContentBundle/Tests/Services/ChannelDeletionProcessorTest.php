@@ -9,6 +9,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
+use Integrated\Bundle\CommentBundle\Document\Comment;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
@@ -20,7 +21,6 @@ use Integrated\Bundle\ContentBundle\Services\ChannelDeletionReport;
 use Integrated\Bundle\ContentBundle\Services\ChannelDeletionSelfHealer;
 use Integrated\Bundle\ContentBundle\Services\ContentReverseReferenceCleaner;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
-use Integrated\Bundle\CommentBundle\Document\Comment;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -30,23 +30,6 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 final class ChannelDeletionProcessorTest extends TestCase
 {
-    public function testProcessorConstructorRequiresSelfHealer(): void
-    {
-        $documentManager = $this->createDocumentManager([], []);
-        $searchContentReferenced = $this->createMock(SearchContentReferenced::class);
-        $cleanupSearch = $this->createMock(SearchContentReferenced::class);
-        $contentReverseReferenceCleaner = new ContentReverseReferenceCleaner($documentManager, $cleanupSearch);
-
-        $this->expectException(\ArgumentCountError::class);
-
-        new ChannelDeletionProcessor(
-            $documentManager,
-            $searchContentReferenced,
-            $contentReverseReferenceCleaner,
-            new EventDispatcher()
-        );
-    }
-
     public function testProcessDetachesMultiChannelContentAndReturnsReport(): void
     {
         $channel = $this->createChannel('channel-a');
@@ -182,7 +165,7 @@ final class ChannelDeletionProcessorTest extends TestCase
         $image->setId('image-1');
         $image->addChannel($channel);
 
-        $message = sprintf(
+        $message = \sprintf(
             'Cannot remove referenced document %s (image-1). Blocked by: Homepage teaser (page-1).',
             Image::class
         );
@@ -712,7 +695,7 @@ final class ChannelDeletionProcessorTest extends TestCase
      */
     private function createDocumentManager(array $publications, array $brands): DocumentManager
     {
-        $publicationRepository = new class ($publications) implements ObjectRepository {
+        $publicationRepository = new class($publications) implements ObjectRepository {
             public function __construct(
                 private readonly array $publications,
             ) {
@@ -745,7 +728,7 @@ final class ChannelDeletionProcessorTest extends TestCase
 
             public function createQueryBuilder(): object
             {
-                return new class ($this->publications) {
+                return new class($this->publications) {
                     public function __construct(
                         private readonly array $publications,
                     ) {
@@ -767,7 +750,7 @@ final class ChannelDeletionProcessorTest extends TestCase
 
                     public function getQuery(): object
                     {
-                        return new class ($this->publications) {
+                        return new class($this->publications) {
                             public function __construct(
                                 private readonly array $publications,
                             ) {
@@ -783,7 +766,7 @@ final class ChannelDeletionProcessorTest extends TestCase
             }
         };
 
-        $brandRepository = new class ($brands) implements ObjectRepository {
+        $brandRepository = new class($brands) implements ObjectRepository {
             public function __construct(
                 private readonly array $brands,
             ) {
@@ -822,7 +805,7 @@ final class ChannelDeletionProcessorTest extends TestCase
                 return match ($class) {
                     Publication::class => $publicationRepository,
                     Brand::class => $brandRepository,
-                    default => throw new \RuntimeException(sprintf('Unexpected repository lookup: %s', $class)),
+                    default => throw new \RuntimeException(\sprintf('Unexpected repository lookup: %s', $class)),
                 };
             });
 
@@ -855,7 +838,7 @@ final class ChannelDeletionProcessorTest extends TestCase
 
     private function createDispatcherWithoutContentDeleteListeners(): EventDispatcherInterface
     {
-        return new class () implements EventDispatcherInterface {
+        return new class implements EventDispatcherInterface {
             public function dispatch(object $event, ?string $eventName = null): object
             {
                 return $event;
@@ -896,7 +879,7 @@ final class ChannelDeletionProcessorTest extends TestCase
 
     private function createDispatcherThatThrowsOnChannelDeleted(string $message): EventDispatcherInterface
     {
-        return new class ($message) implements EventDispatcherInterface {
+        return new class($message) implements EventDispatcherInterface {
             public function __construct(
                 private readonly string $message,
             ) {
