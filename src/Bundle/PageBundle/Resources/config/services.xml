@@ -22,6 +22,8 @@
             <argument type="service" id="cache.app" />
         </service>
 
+        <service id="Integrated\Bundle\PageBundle\EventListener\ThemeCacheInvalidationSubscriber" />
+
         <service id="integrated_page.grid.factory" class="Integrated\Bundle\PageBundle\Grid\GridFactory" public="true">
         </service>
 

@@ -82,6 +82,28 @@ class ThemeResolverTest extends TestCase
         self::assertSame('twindigital', $cachedThemeResolver->getTheme($channel));
     }
 
+    public function testInvalidateForChannelIdForcesFreshResolution(): void
+    {
+        $cache = new ArrayAdapter();
+        $channel = $this->createChannel('bakkersinbedrijf');
+        $themeManager = $this->createThemeManager(['twindigital']);
+
+        $resolver = $this->createMock(ResolverInterface::class);
+        $resolver
+            ->expects($this->exactly(2))
+            ->method('getConfigs')
+            ->with($channel)
+            ->willReturn([
+                $this->createConfig('website', 'twindigital'),
+            ]);
+
+        $themeResolver = new ThemeResolver($resolver, $themeManager, $cache);
+
+        self::assertSame('twindigital', $themeResolver->getTheme($channel));
+        $themeResolver->invalidateForChannelId('bakkersinbedrijf');
+        self::assertSame('twindigital', $themeResolver->getTheme($channel));
+    }
+
     private function createChannel(string $id): ChannelInterface
     {
         $channel = $this->createMock(ChannelInterface::class);

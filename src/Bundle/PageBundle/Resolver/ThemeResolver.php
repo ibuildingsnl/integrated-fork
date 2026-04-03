@@ -22,7 +22,7 @@ use Psr\Cache\CacheItemPoolInterface;
 class ThemeResolver
 {
     private const THEME_CACHE_KEY_PREFIX = 'integrated_page_theme_';
-    private const THEME_CACHE_TTL_SECONDS = 300;
+    private const THEME_CACHE_TTL_SECONDS = 86400;
 
     /**
      * @var ResolverInterface
@@ -81,6 +81,35 @@ class ThemeResolver
         }
 
         return 'default';
+    }
+
+    public function invalidateForChannel(ChannelInterface $channel): void
+    {
+        $channelId = trim((string) $channel->getId());
+        if ('' === $channelId) {
+            return;
+        }
+
+        $this->invalidateForChannelId($channelId);
+    }
+
+    public function invalidateForChannelId(string $channelId): void
+    {
+        $normalizedChannelId = trim($channelId);
+        if ('' === $normalizedChannelId || null === $this->cache) {
+            return;
+        }
+
+        $this->cache->deleteItem($this->getThemeCacheKey($normalizedChannelId));
+    }
+
+    public function clearCache(): void
+    {
+        if (null === $this->cache) {
+            return;
+        }
+
+        $this->cache->clear();
     }
 
     private function findThemeFromCache(string $channelId): ?string
