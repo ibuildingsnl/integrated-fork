@@ -88,9 +88,14 @@ final class ChannelDeleteCommand extends Command
 
     private static function formatReportLine(ChannelDeletionReport $report, bool $verbose): string
     {
+        $summaryPrefix = match ($report->getStatus()) {
+            'failed' => \sprintf('Channel "%s" deletion failed.', $report->getChannelId()),
+            default => \sprintf('Channel "%s" deleted.', $report->getChannelId()),
+        };
+
         $line = \sprintf(
-            'Channel "%s" deleted. status=%s removed_content=%d detached_content=%d removed_pages=%d removed_publications=%d updated_brands=%d warnings=%d',
-            $report->getChannelId(),
+            '%s status=%s removed_content=%d detached_content=%d removed_pages=%d removed_publications=%d updated_brands=%d warnings=%d',
+            $summaryPrefix,
             $report->getStatus(),
             $report->getRemovedContent(),
             $report->getDetachedContent(),

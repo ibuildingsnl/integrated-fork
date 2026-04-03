@@ -137,6 +137,8 @@ class WorkerCommandTest extends TestCase
 
         $this->assertSame(Command::FAILURE, $exitCode);
         $this->assertStringContainsString('status=failed', $line);
+        $this->assertStringContainsString('Channel "channel-failed" deletion failed.', $line);
+        $this->assertStringNotContainsString('Channel "channel-failed" deleted.', $line);
     }
 
     public function testExecuteProcessesChannelDeleteMessages(): void
