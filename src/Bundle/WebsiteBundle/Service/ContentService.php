@@ -55,7 +55,7 @@ class ContentService
             throw new NotFoundHttpException();
         }
 
-        if ($this->authorizationChecker->isGranted('ROLE_SCOPE_INTEGRATED') && $this->authorizationChecker->isGranted(Permissions::VIEW, $content)) {
+        if ($this->authorizationChecker->isGranted('ROLE_SCOPE_INTEGRATED') && $this->authorizationChecker->isGranted(Permissions::EDIT, $content)) {
             $this->websiteToolbarListener->setContentItem($content);
             if (!$content->isPublished()) {
                 $this->websiteToolbarListener->setToolbarMessage('This item is currently unpublished');

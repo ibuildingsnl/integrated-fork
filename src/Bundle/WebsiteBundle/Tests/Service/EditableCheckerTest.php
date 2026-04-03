@@ -71,9 +71,13 @@ class EditableCheckerTest extends TestCase
             ->with('page-id')
             ->willReturn($page);
         $this->authorizationChecker
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(4))
             ->method('isGranted')
             ->willReturnCallback(static function (mixed $attribute, mixed $subject = null) use ($channel): bool {
+                if ($attribute === 'ROLE_SCOPE_INTEGRATED') {
+                    return true;
+                }
+
                 if ($attribute === PermissionInterface::WRITE && $subject === $channel) {
                     return true;
                 }
@@ -103,11 +107,45 @@ class EditableCheckerTest extends TestCase
             ->with('page-id')
             ->willReturn($page);
         $this->authorizationChecker
+            ->expects($this->exactly(4))
+            ->method('isGranted')
+            ->willReturnCallback(static function (mixed $attribute, mixed $subject = null) use ($channel): bool {
+                if ($attribute === 'ROLE_SCOPE_INTEGRATED') {
+                    return true;
+                }
+
+                if ($attribute === PermissionInterface::WRITE && $subject === $channel) {
+                    return false;
+                }
+
+                return false;
+            });
+
+        $checker = $this->createChecker();
+
+        self::assertFalse($checker->checkEditable());
+    }
+
+    public function testCheckEditableReturnsFalseWithoutIntegratedScopeEvenWhenChannelWriteWouldPass(): void
+    {
+        $page = $this->createPage();
+        $channel = $page->getChannel();
+
+        $request = $this->createPageRequest();
+        $request->cookies->set(session_name(), 'sess-123');
+        $this->requestStack->push($request);
+        $this->tokenStorage
+            ->method('getToken')
+            ->willReturn($this->createMock(TokenInterface::class));
+        $this->pageRepository
+            ->expects($this->never())
+            ->method('find');
+        $this->authorizationChecker
             ->expects($this->exactly(3))
             ->method('isGranted')
             ->willReturnCallback(static function (mixed $attribute, mixed $subject = null) use ($channel): bool {
                 if ($attribute === PermissionInterface::WRITE && $subject === $channel) {
-                    return false;
+                    return true;
                 }
 
                 return false;
