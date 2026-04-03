@@ -58,6 +58,10 @@ class WebsiteConfigurationListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event)
     {
+        if (!$event->isMainRequest()) {
+            return;
+        }
+
         $channel = $this->context->getChannel();
 
         if (!$channel instanceof ChannelInterface) {

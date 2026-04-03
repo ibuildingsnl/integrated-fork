@@ -48,6 +48,10 @@ class RequestChannelInjectionListener implements EventSubscriberInterface
 
     public function onRequest(RequestEvent $event)
     {
+        if (!$event->isMainRequest()) {
+            return;
+        }
+
         $channel = $this->getManager()->findByDomain($event->getRequest()->getHost());
         $this->getContext()->setChannel($channel);
 

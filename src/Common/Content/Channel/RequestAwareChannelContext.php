@@ -42,6 +42,16 @@ class RequestAwareChannelContext implements ChannelContextInterface
     private $attribute;
 
     /**
+     * @var string
+     */
+    private $resolvedAttribute;
+
+    /**
+     * @var string
+     */
+    private $channelAttribute;
+
+    /**
      * @param string $attribute
      */
     public function __construct(ChannelManagerInterface $manager, RequestStack $stack, $attribute = '_channel')
@@ -49,6 +59,8 @@ class RequestAwareChannelContext implements ChannelContextInterface
         $this->manager = $manager;
         $this->stack = $stack;
         $this->attribute = $attribute;
+        $this->resolvedAttribute = $attribute.'_resolved';
+        $this->channelAttribute = $attribute.'_object';
     }
 
     public function getChannel()
@@ -59,11 +71,19 @@ class RequestAwareChannelContext implements ChannelContextInterface
             return null;
         }
 
+        if ($request->attributes->get($this->resolvedAttribute, false)) {
+            return $request->attributes->get($this->channelAttribute);
+        }
+
         if (!$request->attributes->has($this->attribute)) {
             return null;
         }
 
-        return $this->manager->find($request->attributes->get($this->attribute));
+        $channel = $this->manager->find($request->attributes->get($this->attribute));
+        $request->attributes->set($this->resolvedAttribute, true);
+        $request->attributes->set($this->channelAttribute, $channel);
+
+        return $channel;
     }
 
     public function setChannel(?ChannelInterface $channel = null)
@@ -76,8 +96,12 @@ class RequestAwareChannelContext implements ChannelContextInterface
 
         if ($channel) {
             $request->attributes->set($this->attribute, $channel->getId());
+            $request->attributes->set($this->resolvedAttribute, true);
+            $request->attributes->set($this->channelAttribute, $channel);
         } else {
             $request->attributes->remove($this->attribute);
+            $request->attributes->remove($this->resolvedAttribute);
+            $request->attributes->remove($this->channelAttribute);
         }
     }
 
