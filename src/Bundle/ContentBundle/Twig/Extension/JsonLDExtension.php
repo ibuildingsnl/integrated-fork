@@ -30,7 +30,7 @@ class JsonLDExtension extends AbstractExtension
         $this->serializer = $serializer;
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('json_ld', $this->encode(...), ['is_safe' => ['html']]),
@@ -51,7 +51,7 @@ class JsonLDExtension extends AbstractExtension
         return '';
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'integrated_content_json_ld_extension';
     }

@@ -147,7 +147,7 @@ class ContentFormType extends AbstractType
         }
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $dispatcher = $this->getEventDispatcher();
 
@@ -171,7 +171,7 @@ class ContentFormType extends AbstractType
         );
     }
 
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $dispatcher = $this->getEventDispatcher();
 

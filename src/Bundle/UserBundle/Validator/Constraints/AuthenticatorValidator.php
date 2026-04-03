@@ -25,7 +25,7 @@ class AuthenticatorValidator extends ConstraintValidator
         $this->translationDomain = $translationDomain;
     }
 
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof Authenticator) {
             throw new UnexpectedTypeException($constraint, Authenticator::class);

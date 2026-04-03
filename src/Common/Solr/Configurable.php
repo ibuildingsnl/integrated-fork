@@ -93,7 +93,7 @@ class Configurable
      *
      * @codeCoverageIgnore
      */
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
     }
 }

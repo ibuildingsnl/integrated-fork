@@ -116,7 +116,7 @@ class BlockHandler implements BlockHandlerInterface
     /**
      * Configures the options for this block handler.
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'gridLevel' => 0,

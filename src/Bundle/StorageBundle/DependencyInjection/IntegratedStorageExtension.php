@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\Extension\Extension;
 
 /**
  * @author Johnny Borg <johnny@e-active.nl>
@@ -28,7 +28,7 @@ class IntegratedStorageExtension extends Extension implements PrependExtensionIn
      */
     protected $formTemplate = '@IntegratedStorage/form/form_div_layout.html.twig';
 
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration(new Configuration(), $configs);
 
@@ -52,7 +52,7 @@ class IntegratedStorageExtension extends Extension implements PrependExtensionIn
             ->replaceArgument(1, $config['decision_map']);
     }
 
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         foreach ($container->getExtensions() as $name => $extension) {
             switch ($name) {

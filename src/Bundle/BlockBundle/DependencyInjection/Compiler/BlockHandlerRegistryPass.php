@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class BlockHandlerRegistryPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (!$container->hasDefinition('integrated_block.registry.block_handler')) {
             return;

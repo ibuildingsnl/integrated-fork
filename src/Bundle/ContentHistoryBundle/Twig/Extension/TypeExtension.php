@@ -19,7 +19,7 @@ use Twig\TwigFilter;
  */
 class TypeExtension extends AbstractExtension
 {
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('get_type', $this->getType(...)),
@@ -43,7 +43,7 @@ class TypeExtension extends AbstractExtension
         return $value::class;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'integrated_content_history_type';
     }

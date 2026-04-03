@@ -52,7 +52,7 @@ class GridExtension extends AbstractExtension
         $this->resolver->setAllowedTypes('template', ['null', 'string']);
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction(
@@ -91,7 +91,7 @@ class GridExtension extends AbstractExtension
         return '';
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'integrated_website_grid';
     }

@@ -100,7 +100,7 @@ class LoginFormType extends AbstractType
         }
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['full_name'] = ''; // field names should not be prefixed
     }

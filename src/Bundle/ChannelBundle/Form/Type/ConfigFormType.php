@@ -88,7 +88,7 @@ class ConfigFormType extends AbstractType
         }
     }
 
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         // Add some extra block prefixes to the options options view. This will
         // allow for more templating options for the options field.

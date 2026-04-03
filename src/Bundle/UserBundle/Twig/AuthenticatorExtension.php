@@ -28,7 +28,7 @@ class AuthenticatorExtension extends AbstractExtension
         $this->authenticator = $authenticator;
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('integrated_user_authenticator_qr_code', $this->getQRCode(...)),

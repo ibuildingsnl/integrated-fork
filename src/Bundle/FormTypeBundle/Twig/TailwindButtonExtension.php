@@ -29,7 +29,7 @@ class TailwindButtonExtension extends AbstractExtension
         $this->iconExtension = $iconExtension;
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('button', $this->buttonFunction(...), ['is_safe' => ['html']]),
@@ -83,7 +83,7 @@ class TailwindButtonExtension extends AbstractExtension
         return $result;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'braincrafted_tailwind_button';
     }

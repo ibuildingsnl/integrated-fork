@@ -59,7 +59,7 @@ class BulkActionsType extends AbstractType
         $builder->addEventSubscriber(new BulkActionsMapperListener($mapping, $options['readonly']));
     }
 
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         if (!$options['readonly']) {
             return;

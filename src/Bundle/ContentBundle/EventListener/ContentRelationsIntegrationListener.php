@@ -47,7 +47,7 @@ class ContentRelationsIntegrationListener implements EventSubscriberInterface
         ];
     }
 
-    public function buildForm(BuilderEvent $event)
+    public function buildForm(BuilderEvent $event): void
     {
         $event->getBuilder()->add($this->name, $this->type, ['content_type' => $event->getContentType()]);
     }

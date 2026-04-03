@@ -25,7 +25,7 @@ class ContentPathExtension extends AbstractExtension
     /**
      * @return array
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('integrated_content_path', $this->getContentPath(...)),

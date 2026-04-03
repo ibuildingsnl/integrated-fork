@@ -51,7 +51,7 @@ class OnTheFlyFormatConverterValidator extends ConstraintValidator
         $this->webFormats = new ArrayCollection($webFormats);
     }
 
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (null === $value) {
             return;

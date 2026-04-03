@@ -59,7 +59,7 @@ class ImageExtension extends AbstractExtension
         $this->imageMimicHandling = $imageMimicHandling;
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('integrated_image', $this->image(...), ['is_safe' => ['html']]),
@@ -211,7 +211,7 @@ class ImageExtension extends AbstractExtension
         return null;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'integrated_image_json';
     }

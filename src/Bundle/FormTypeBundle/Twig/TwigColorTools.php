@@ -7,7 +7,7 @@ use Twig\TwigFilter;
 
 class TwigColorTools extends AbstractExtension
 {
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('lighten', $this->lighten(...)),

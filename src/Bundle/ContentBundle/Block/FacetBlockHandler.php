@@ -81,7 +81,7 @@ class FacetBlockHandler extends BlockHandler
         ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'filters' => [], // add extra filters (overwrites search selection)

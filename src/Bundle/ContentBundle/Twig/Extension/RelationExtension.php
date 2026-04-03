@@ -26,7 +26,7 @@ class RelationExtension extends AbstractExtension
         $this->manager = $manager;
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('integrated_relation', $this->getRelation(...)),

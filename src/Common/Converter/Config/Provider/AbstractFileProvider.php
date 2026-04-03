@@ -63,7 +63,7 @@ abstract class AbstractFileProvider implements TypeProviderInterface
     /**
      * Load the types if not already loaded.
      */
-    protected function initialize()
+    protected function initialize(): void
     {
         if ($this->types === null) {
             $this->types = [];

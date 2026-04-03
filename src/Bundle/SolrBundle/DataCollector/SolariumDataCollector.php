@@ -47,7 +47,7 @@ class SolariumDataCollector extends AbstractPlugin implements DataCollectorInter
         }
     }
 
-    public function collect(Request $request, Response $response, ?\Throwable $exception = null)
+    public function collect(Request $request, Response $response, ?\Throwable $exception = null): void
     {
         $time = 0;
 
@@ -102,7 +102,7 @@ class SolariumDataCollector extends AbstractPlugin implements DataCollectorInter
         return 'solr';
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->data = [];
     }

@@ -22,7 +22,7 @@ use Twig\TwigFunction;
  */
 class TailwindLabelExtension extends AbstractExtension
 {
-    public function getFunctions()
+    public function getFunctions(): array
     {
         $options = ['pre_escape' => 'html', 'is_safe' => ['html']];
 
@@ -107,7 +107,7 @@ class TailwindLabelExtension extends AbstractExtension
         return $this->labelFunction($text, 'info');
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'braincrafted_tailwind_label';
     }

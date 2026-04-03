@@ -34,7 +34,7 @@ abstract class ManagerValidator extends ConstraintValidator
      * @throws UnexpectedTypeException
      * @throws ConstraintDefinitionException
      */
-    public function validate(mixed $value, Constraint $constraint)
+    public function validate(mixed $value, Constraint $constraint): void
     {
         if (!$constraint instanceof ManagerConstraint) {
             throw new UnexpectedTypeException($constraint, ManagerConstraint::class);

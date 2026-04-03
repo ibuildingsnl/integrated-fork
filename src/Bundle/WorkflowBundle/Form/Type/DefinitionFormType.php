@@ -58,7 +58,7 @@ class DefinitionFormType extends AbstractType
         $builder->addEventSubscriber(new ExtractDefaultStateFromCollectionListener());
     }
 
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $child = $view->children['states'];
 

@@ -38,7 +38,7 @@ class TailwindIconExtension extends AbstractExtension
         $this->iconTag = 'i';
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter(
@@ -49,7 +49,7 @@ class TailwindIconExtension extends AbstractExtension
         ];
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction(
@@ -99,7 +99,7 @@ class TailwindIconExtension extends AbstractExtension
         return \sprintf('<%1$s class="%2$s %2$s-%3$s"></%1$s>', $this->iconTag, $iconSet, $icon);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'braincrafted_tailwind_icon';
     }

@@ -13,6 +13,7 @@ namespace Integrated\Bundle\AssetBundle\Twig\TokenParser;
 
 use Integrated\Bundle\AssetBundle\Manager\AssetManager;
 use Integrated\Bundle\AssetBundle\Twig\Node\AssetNode;
+use Twig\Node\Node;
 use Twig\Token;
 use Twig\TokenParser\AbstractTokenParser;
 
@@ -41,7 +42,7 @@ class AssetTokenParser extends AbstractTokenParser
         $this->extension = $extension;
     }
 
-    public function parse(Token $token)
+    public function parse(Token $token): Node
     {
         $assets = [];
         $inline = false;
@@ -89,7 +90,7 @@ class AssetTokenParser extends AbstractTokenParser
         return $token->test(['end'.$this->getTag()]);
     }
 
-    public function getTag()
+    public function getTag(): string
     {
         return $this->tag;
     }

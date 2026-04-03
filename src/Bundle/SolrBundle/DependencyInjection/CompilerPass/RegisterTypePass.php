@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class RegisterTypePass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (!$container->hasDefinition('integrated_solr.converter.type.registry_builder')) {
             return;

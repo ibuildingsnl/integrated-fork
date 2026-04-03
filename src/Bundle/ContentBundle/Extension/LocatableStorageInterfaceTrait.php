@@ -35,8 +35,7 @@ trait LocatableStorageInterfaceTrait
         return \strlen($this->getPathname()) > ($offset + 1);
     }
 
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         if (0 === $offset) {
             return '@';

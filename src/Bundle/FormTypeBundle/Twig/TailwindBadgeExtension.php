@@ -22,7 +22,7 @@ use Twig\TwigFunction;
  */
 class TailwindBadgeExtension extends AbstractExtension
 {
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction(
@@ -45,7 +45,7 @@ class TailwindBadgeExtension extends AbstractExtension
         return \sprintf('<span class="badge">%s</span>', $text);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'braincrafted_tailwind_badge';
     }

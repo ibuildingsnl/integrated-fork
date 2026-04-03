@@ -77,7 +77,7 @@ class FileType extends AbstractType
         return 'integrated_file';
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $data = $form->getData();
 

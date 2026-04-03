@@ -38,7 +38,7 @@ class UrlExtension extends AbstractExtension
         $this->solrUrlExtractor = $solrUrlExtractor;
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('integrated_url', $this->getUrl(...)),
@@ -61,7 +61,7 @@ class UrlExtension extends AbstractExtension
         return $this->solrUrlExtractor->getUrl($document, $channelId);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'integrated_page_url';
     }

@@ -75,7 +75,7 @@ class ContentBlockHandler extends BlockHandler
         return $this->provider->get($block, $request->duplicate(), $this->resolveFacetOptions($block, $request, $options));
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'filters' => [],   // add extra filters (overwrites search selection)

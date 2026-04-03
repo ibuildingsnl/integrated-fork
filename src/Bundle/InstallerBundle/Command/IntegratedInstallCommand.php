@@ -45,7 +45,7 @@ class IntegratedInstallCommand extends Command
         );
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $this->findExecutable();
     }

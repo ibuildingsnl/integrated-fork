@@ -53,7 +53,7 @@ class BreadcrumbExtension extends AbstractExtension
         $this->template = $template;
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction(
@@ -101,7 +101,7 @@ class BreadcrumbExtension extends AbstractExtension
         return $this->breadcrumbResolver->getBreadcrumb();
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'integrated_breadcrumb_menu';
     }

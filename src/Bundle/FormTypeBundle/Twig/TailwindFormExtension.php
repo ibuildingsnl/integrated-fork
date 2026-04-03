@@ -46,7 +46,7 @@ class TailwindFormExtension extends AbstractExtension
     /** @var array */
     private $settingsStack = [];
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('tailwind_set_style', $this->setStyle(...)),
@@ -90,7 +90,7 @@ class TailwindFormExtension extends AbstractExtension
         ];
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'braincrafted_tailwind_form';
     }
