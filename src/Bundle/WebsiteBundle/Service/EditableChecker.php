@@ -63,6 +63,12 @@ class EditableChecker
         $route = (string) $this->request->attributes->get('_route', '');
         $hasGlobalWebsiteAccess = $this->authorizationChecker->isGranted('ROLE_WEBSITE_MANAGER')
             || $this->authorizationChecker->isGranted('ROLE_ADMIN');
+        $hasIntegratedScope = $this->authorizationChecker->isGranted('ROLE_SCOPE_INTEGRATED');
+
+        if (!$hasGlobalWebsiteAccess && !$hasIntegratedScope) {
+            return false;
+        }
+
         $hasChannelWriteAccess = $this->hasChannelWriteAccessForCurrentPage();
 
         if ($routeObject = $this->router->getRouteCollection()->get($route)) {
