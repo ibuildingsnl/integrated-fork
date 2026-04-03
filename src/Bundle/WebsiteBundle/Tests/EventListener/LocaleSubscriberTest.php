@@ -7,6 +7,7 @@ namespace Integrated\Bundle\WebsiteBundle\Tests\EventListener;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\WebsiteBundle\EventListener\LocaleSubscriber;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
+use Integrated\Common\Content\Channel\ChannelManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,6 +68,27 @@ final class LocaleSubscriberTest extends TestCase
         self::assertSame('en', $request->getLocale());
     }
 
+    public function testSubscriberSupportsLegacyChannelManagerWiring(): void
+    {
+        $channel = new Channel();
+        $channel->setLanguage('nl');
+
+        /** @var ChannelManagerInterface&MockObject $manager */
+        $manager = $this->createMock(ChannelManagerInterface::class);
+        $manager
+            ->expects($this->once())
+            ->method('findByDomain')
+            ->with('example.test')
+            ->willReturn($channel);
+
+        $subscriber = new LocaleSubscriber($manager);
+        $request = Request::create('https://example.test/news');
+
+        $subscriber->onKernelRequest($this->createEvent($request, HttpKernelInterface::MAIN_REQUEST));
+
+        self::assertSame('nl', $request->getLocale());
+    }
+
     private function createEvent(Request $request, int $requestType): RequestEvent
     {
         return new RequestEvent(
@@ -76,4 +98,3 @@ final class LocaleSubscriberTest extends TestCase
         );
     }
 }
-
