@@ -12,15 +12,15 @@ use Ramsey\Uuid\Uuid;
 class BrandProfile
 {
     private string $id;
-    public string $name;
-    public string $color;
-    public string $secondaryColor;
+    public string $name = '';
+    public string $color = '';
+    public string $secondaryColor = '';
     public ?Image $logo = null;
     public ?Image $favicon = null;
-    public ?string $vat;
-    public ?string $companyId;
-    public ?string $analytics;
-    public ?string $analyticsPropertyId;
+    public ?string $vat = null;
+    public ?string $companyId = null;
+    public ?string $analytics = null;
+    public ?string $analyticsPropertyId = null;
     private Collection $socials;
     private Collection $contacts;
 
