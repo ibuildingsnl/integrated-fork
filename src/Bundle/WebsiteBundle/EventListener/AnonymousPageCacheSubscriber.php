@@ -10,11 +10,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 final class AnonymousPageCacheSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly int $ttl = 600,
+        private readonly ?TokenStorageInterface $tokenStorage = null,
     ) {
     }
 
@@ -34,7 +36,7 @@ final class AnonymousPageCacheSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($this->hasAuthenticationHints($request)) {
+        if ($this->isAuthenticatedRequest($request)) {
             return;
         }
 
@@ -78,18 +80,44 @@ final class AnonymousPageCacheSubscriber implements EventSubscriberInterface
             return false;
         }
 
+        if ($request->query->getBoolean('integrated_website_edit')) {
+            return false;
+        }
+
         $route = (string) $request->attributes->get('_route', '');
 
         return str_starts_with($route, ContentTypePageLoader::ROUTE_PREFIX.'_');
     }
 
-    private function hasAuthenticationHints(Request $request): bool
+    private function isAuthenticatedRequest(Request $request): bool
     {
+        $hasSessionCookie = false;
         $sessionCookieName = session_name();
         if (\is_string($sessionCookieName) && $sessionCookieName !== '' && $request->cookies->has($sessionCookieName)) {
+            $hasSessionCookie = true;
+        }
+
+        $hasRememberMeCookie = $request->cookies->has('REMEMBERME');
+        if (!$hasSessionCookie && !$hasRememberMeCookie) {
+            return false;
+        }
+
+        $token = $this->tokenStorage?->getToken();
+        if ($token === null) {
+            return $hasRememberMeCookie;
+        }
+
+        $user = $token->getUser();
+        if (\is_object($user)) {
             return true;
         }
 
-        return $request->cookies->has('REMEMBERME');
+        if (!\is_string($user)) {
+            return false;
+        }
+
+        $normalized = strtolower(trim($user));
+
+        return $normalized !== '' && $normalized !== 'anon.' && $normalized !== 'anonymous';
     }
 }
