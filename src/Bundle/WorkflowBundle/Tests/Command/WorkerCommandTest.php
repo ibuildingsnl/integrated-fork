@@ -25,6 +25,7 @@ use Integrated\Bundle\ContentBundle\Services\ContentReverseReferenceCleaner;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\WorkflowBundle\Command\WorkerCommand;
 use Integrated\Common\Queue\QueueInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -252,7 +253,7 @@ PHPFILE;
     private function createChannelDeleteCommand(
         ChannelDeletionProcessor $processor,
         ?Channel $channel,
-        LoggerInterface $logger
+        LoggerInterface $logger,
     ): ChannelDeleteCommand {
         $documentManager = $this->createMock(DocumentManager::class);
         $documentManager
@@ -389,11 +390,13 @@ PHPFILE;
     /**
      * @param array<int, object> $publications
      * @param array<int, object> $brands
+     *
+     * @return DocumentManager&MockObject
      */
     private function createDocumentManagerForProcessor(
         Channel $channel,
         array $publications = [],
-        array $brands = []
+        array $brands = [],
     ): DocumentManager {
         $publicationQuery = $this->getMockBuilder(\stdClass::class)
             ->addMethods(['toArray'])

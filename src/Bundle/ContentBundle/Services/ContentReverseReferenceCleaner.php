@@ -149,7 +149,7 @@ final class ContentReverseReferenceCleaner
             }
 
             if ($this->removeReferenceFromContentRelation($relation, $target)) {
-                if (count($relation->getReferences()) === 0) {
+                if (\count($relation->getReferences()) === 0) {
                     $document->removeRelation($relation);
                 }
 
@@ -174,7 +174,7 @@ final class ContentReverseReferenceCleaner
             }
 
             if ($relation->removeReference($target)) {
-                if (count($relation->getReferences()) === 0) {
+                if (\count($relation->getReferences()) === 0) {
                     $document->removeRelation($relation);
                 }
 
@@ -184,7 +184,7 @@ final class ContentReverseReferenceCleaner
 
         if ($document instanceof ContentItemsBlock) {
             $items = $this->filterOutContent($document->getItems(), $target);
-            if (count($items) !== count($document->getItems())) {
+            if (\count($items) !== \count($document->getItems())) {
                 $document->setItems($items);
                 ++$changed;
             }
@@ -192,7 +192,7 @@ final class ContentReverseReferenceCleaner
 
         if ($document instanceof HtmlBlock) {
             $requiredItems = $this->filterOutContent($document->getRequiredItems(), $target);
-            if (count($requiredItems) !== count($document->getRequiredItems())) {
+            if (\count($requiredItems) !== \count($document->getRequiredItems())) {
                 $document->setRequiredItems($requiredItems);
                 ++$changed;
             }
@@ -200,7 +200,7 @@ final class ContentReverseReferenceCleaner
 
         if ($document instanceof TextBlock) {
             $requiredItems = $this->filterOutContent($document->getRequiredItems(), $target);
-            if (count($requiredItems) !== count($document->getRequiredItems())) {
+            if (\count($requiredItems) !== \count($document->getRequiredItems())) {
                 $document->setRequiredItems($requiredItems);
                 ++$changed;
             }
@@ -218,7 +218,7 @@ final class ContentReverseReferenceCleaner
         $changed = 0;
 
         $selection = $document->getSelection();
-        if (count($selection) > count($this->filterOutContent($selection, $target))) {
+        if (\count($selection) > \count($this->filterOutContent($selection, $target))) {
             $document->removeSelection($target);
             ++$changed;
         }
@@ -229,7 +229,7 @@ final class ContentReverseReferenceCleaner
             }
 
             $references = iterator_to_array($action->getReferences());
-            if (count($references) > count($this->filterOutContent($references, $target))) {
+            if (\count($references) > \count($this->filterOutContent($references, $target))) {
                 $action->removeReference($target);
                 ++$changed;
             }
@@ -385,7 +385,7 @@ final class ContentReverseReferenceCleaner
      */
     private function runRollbacks(array $rollbacks): void
     {
-        for ($i = count($rollbacks) - 1; $i >= 0; --$i) {
+        for ($i = \count($rollbacks) - 1; $i >= 0; --$i) {
             $rollbacks[$i]();
         }
     }

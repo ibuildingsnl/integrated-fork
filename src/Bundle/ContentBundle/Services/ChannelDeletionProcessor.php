@@ -213,7 +213,7 @@ final class ChannelDeletionProcessor
     }
 
     /**
-     * @param callable(): mixed $snapshotFactory
+     * @param callable(): mixed     $snapshotFactory
      * @param callable(mixed): void $operation
      * @param callable(mixed): bool $rollback
      */
@@ -223,7 +223,7 @@ final class ChannelDeletionProcessor
         ChannelDeletionReport $report,
         callable $snapshotFactory,
         callable $operation,
-        callable $rollback
+        callable $rollback,
     ): void {
         $snapshotCaptured = false;
         $snapshot = null;
@@ -249,9 +249,8 @@ final class ChannelDeletionProcessor
         string $step,
         ChannelDeletionReport $report,
         callable $operation,
-        bool $recordSkippedDocument = false
-    ): void
-    {
+        bool $recordSkippedDocument = false,
+    ): void {
         try {
             $operation();
         } catch (\Throwable $exception) {
@@ -264,7 +263,7 @@ final class ChannelDeletionProcessor
         string $step,
         ChannelDeletionReport $report,
         \Throwable $exception,
-        bool $recordSkippedDocument
+        bool $recordSkippedDocument,
     ): void {
         $class = $document::class;
         $id = $this->resolveDocumentId($document);

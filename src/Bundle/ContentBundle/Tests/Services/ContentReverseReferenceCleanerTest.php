@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Integrated\Bundle\ContentBundle\Tests\Services;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BlockBundle\Document\Block\ContentItemsBlock;
 use Integrated\Bundle\BlockBundle\Document\Block\Embedded\Relation as BlockRelation;
