@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Integrated\Bundle\ContentBundle\Tests\Services;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\BrandBundle\Document\Brand;
@@ -15,6 +16,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Services\ChannelDeletionProcessor;
 use Integrated\Bundle\ContentBundle\Services\ChannelDeletionReport;
+use Integrated\Bundle\ContentBundle\Services\ChannelDeletionSelfHealer;
 use Integrated\Bundle\ContentBundle\Services\ContentReverseReferenceCleaner;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\CommentBundle\Document\Comment;
@@ -26,6 +28,23 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 final class ChannelDeletionProcessorTest extends TestCase
 {
+    public function testProcessorConstructorRequiresSelfHealer(): void
+    {
+        $documentManager = $this->createDocumentManager([], []);
+        $searchContentReferenced = $this->createMock(SearchContentReferenced::class);
+        $cleanupSearch = $this->createMock(SearchContentReferenced::class);
+        $contentReverseReferenceCleaner = new ContentReverseReferenceCleaner($documentManager, $cleanupSearch);
+
+        $this->expectException(\ArgumentCountError::class);
+
+        new ChannelDeletionProcessor(
+            $documentManager,
+            $searchContentReferenced,
+            $contentReverseReferenceCleaner,
+            new EventDispatcher()
+        );
+    }
+
     public function testProcessDetachesMultiChannelContentAndReturnsReport(): void
     {
         $channel = $this->createChannel('channel-a');
@@ -65,7 +84,7 @@ final class ChannelDeletionProcessorTest extends TestCase
             ->method('getReferencedDocuments');
         $contentReverseReferenceCleaner = new ContentReverseReferenceCleaner($documentManager, $cleanupSearch);
 
-        $processor = new ChannelDeletionProcessor(
+        $processor = $this->createProcessor(
             $documentManager,
             $searchContentReferenced,
             $contentReverseReferenceCleaner,
@@ -129,7 +148,7 @@ final class ChannelDeletionProcessorTest extends TestCase
 
         $dispatcher = $this->createDispatcherWithoutContentDeleteListeners();
 
-        $processor = new ChannelDeletionProcessor(
+        $processor = $this->createProcessor(
             $documentManager,
             $searchContentReferenced,
             $contentReverseReferenceCleaner,
@@ -218,7 +237,7 @@ final class ChannelDeletionProcessorTest extends TestCase
 
         $dispatcher = $this->createDispatcherWithoutContentDeleteListeners();
 
-        $processor = new ChannelDeletionProcessor(
+        $processor = $this->createProcessor(
             $documentManager,
             $searchContentReferenced,
             $contentReverseReferenceCleaner,
@@ -275,7 +294,7 @@ final class ChannelDeletionProcessorTest extends TestCase
             ->method('getReferencedDocuments');
         $contentReverseReferenceCleaner = new ContentReverseReferenceCleaner($documentManager, $cleanupSearch);
 
-        $processor = new ChannelDeletionProcessor(
+        $processor = $this->createProcessor(
             $documentManager,
             $searchContentReferenced,
             $contentReverseReferenceCleaner,
@@ -322,7 +341,7 @@ final class ChannelDeletionProcessorTest extends TestCase
             ->method('getReferencedDocuments');
         $contentReverseReferenceCleaner = new ContentReverseReferenceCleaner($documentManager, $cleanupSearch);
 
-        $processor = new ChannelDeletionProcessor(
+        $processor = $this->createProcessor(
             $documentManager,
             $searchContentReferenced,
             $contentReverseReferenceCleaner,
@@ -391,7 +410,7 @@ final class ChannelDeletionProcessorTest extends TestCase
             ->method('getReferencedDocuments');
         $contentReverseReferenceCleaner = new ContentReverseReferenceCleaner($documentManager, $cleanupSearch);
 
-        $processor = new ChannelDeletionProcessor(
+        $processor = $this->createProcessor(
             $documentManager,
             $searchContentReferenced,
             $contentReverseReferenceCleaner,
@@ -441,7 +460,7 @@ final class ChannelDeletionProcessorTest extends TestCase
             ->method('getReferencedDocuments');
         $contentReverseReferenceCleaner = new ContentReverseReferenceCleaner($documentManager, $cleanupSearch);
 
-        $processor = new ChannelDeletionProcessor(
+        $processor = $this->createProcessor(
             $documentManager,
             $searchContentReferenced,
             $contentReverseReferenceCleaner,
@@ -493,7 +512,7 @@ final class ChannelDeletionProcessorTest extends TestCase
             ->method('getReferencedDocuments');
         $contentReverseReferenceCleaner = new ContentReverseReferenceCleaner($documentManager, $cleanupSearch);
 
-        $processor = new ChannelDeletionProcessor(
+        $processor = $this->createProcessor(
             $documentManager,
             $searchContentReferenced,
             $contentReverseReferenceCleaner,
@@ -540,7 +559,7 @@ final class ChannelDeletionProcessorTest extends TestCase
 
         $dispatcher = $this->createDispatcherThatThrowsOnChannelDeleted('listener failed');
 
-        $processor = new ChannelDeletionProcessor(
+        $processor = $this->createProcessor(
             $documentManager,
             $searchContentReferenced,
             $contentReverseReferenceCleaner,
@@ -556,6 +575,61 @@ final class ChannelDeletionProcessorTest extends TestCase
         self::assertSame(Channel::class, $report->getWarnings()[0]->getDocumentClass());
         self::assertSame('channel-a', $report->getWarnings()[0]->getDocumentId());
         self::assertSame([], $report->getSkippedDocuments());
+    }
+
+    public function testProcessInvokesSelfHealerForSingleChannelArticleDeletion(): void
+    {
+        $channel = $this->createChannel('channel-a');
+
+        $content = new Article();
+        $content->setId('content-1');
+        $content->addChannel($channel);
+
+        $authorsProperty = new \ReflectionProperty(Article::class, 'authors');
+        $authorsProperty->setAccessible(true);
+        $authorsProperty->setValue($content, null);
+
+        $documentManager = $this->createDocumentManager([], []);
+        $documentManager
+            ->expects($this->exactly(2))
+            ->method('remove')
+            ->willReturnCallback(function (object $document) use ($content, $channel): void {
+                if ($document === $content) {
+                    throw new \RuntimeException('delete failed');
+                }
+
+                self::assertSame($channel, $document);
+            });
+
+        $documentManager
+            ->expects($this->once())
+            ->method('flush');
+
+        $searchContentReferenced = $this->createMock(SearchContentReferenced::class);
+        $searchContentReferenced
+            ->expects($this->once())
+            ->method('getReferencedDocuments')
+            ->with($channel)
+            ->willReturn([$content]);
+
+        $cleanupSearch = $this->createMock(SearchContentReferenced::class);
+        $cleanupSearch
+            ->expects($this->once())
+            ->method('getReferencedDocuments')
+            ->with($content)
+            ->willReturn([]);
+        $contentReverseReferenceCleaner = new ContentReverseReferenceCleaner($documentManager, $cleanupSearch);
+
+        $processor = $this->createProcessor(
+            $documentManager,
+            $searchContentReferenced,
+            $contentReverseReferenceCleaner,
+            $this->createDispatcherWithoutContentDeleteListeners()
+        );
+
+        $processor->process($channel, true);
+
+        self::assertInstanceOf(ArrayCollection::class, $authorsProperty->getValue($content));
     }
 
     /**
@@ -681,6 +755,21 @@ final class ChannelDeletionProcessorTest extends TestCase
             });
 
         return $documentManager;
+    }
+
+    private function createProcessor(
+        DocumentManager $documentManager,
+        SearchContentReferenced $searchContentReferenced,
+        ContentReverseReferenceCleaner $contentReverseReferenceCleaner,
+        EventDispatcherInterface $dispatcher,
+    ): ChannelDeletionProcessor {
+        return new ChannelDeletionProcessor(
+            $documentManager,
+            $searchContentReferenced,
+            $contentReverseReferenceCleaner,
+            $dispatcher,
+            new ChannelDeletionSelfHealer()
+        );
     }
 
     private function createChannel(string $id): Channel
