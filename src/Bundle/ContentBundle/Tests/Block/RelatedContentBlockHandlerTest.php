@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Integrated\Bundle\ContentBundle\Tests\Block;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Query\Builder;
 use Integrated\Bundle\ContentBundle\Block\RelatedContentBlockHandler;
 use Integrated\Bundle\ContentBundle\Document\Block\RelatedContentBlock;
 use Integrated\Bundle\ContentBundle\Document\Content\ContentRepository;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\Pagination\SlidingPagination;
 use Knp\Component\Pager\PaginatorInterface;
 use PHPUnit\Framework\TestCase;
@@ -33,12 +33,13 @@ final class RelatedContentBlockHandlerTest extends TestCase
         self::assertSame(2, $request->query->get('related-content-page'));
 
         $paginator = $this->createMock(PaginatorInterface::class);
-        $queryBuilder = $this->createMock(Builder::class);
         $paginator
             ->expects(self::once())
             ->method('paginate')
             ->with(
-                self::isType('object'),
+                self::callback(static function (mixed $target): bool {
+                    return \is_array($target) && 3 === \count($target);
+                }),
                 self::callback(static fn (mixed $page): bool => 1 === $page),
                 self::callback(static fn (mixed $limit): bool => 3 === $limit),
                 self::callback(static function (array $options): bool {
@@ -63,12 +64,12 @@ final class RelatedContentBlockHandlerTest extends TestCase
             $this->createMock(RequestStack::class),
             $this->createMock(DocumentManager::class),
             $this->createMock(ContentRepository::class),
-            $queryBuilder
+            ['first', 'second', 'third', 'fourth']
         );
 
         $pagination = $handler->getPagination($block, $request);
 
-        self::assertInstanceOf(SlidingPagination::class, $pagination);
+        self::assertInstanceOf(PaginationInterface::class, $pagination);
         self::assertCount(3, $pagination);
         self::assertSame(1, $pagination->getCurrentPageNumber());
         self::assertSame(3, $pagination->getTotalItemCount());
@@ -88,7 +89,7 @@ final class RelatedContentBlockHandlerTest extends TestCase
         ]);
 
         $paginator = $this->createMock(PaginatorInterface::class);
-        $queryBuilder = $this->createMock(Builder::class);
+        $queryBuilder = $this->createMock(\Doctrine\ODM\MongoDB\Query\Builder::class);
         $paginator
             ->expects(self::once())
             ->method('paginate')
@@ -140,13 +141,13 @@ final class TestableRelatedContentBlockHandler extends RelatedContentBlockHandle
         RequestStack $requestStack,
         DocumentManager $dm,
         ContentRepository $contentRepository,
-        private readonly Builder $queryBuilder,
+        private readonly mixed $queryBuilder,
     ) {
         parent::__construct($paginator, $requestStack, $dm, $contentRepository);
     }
 
     /**
-     * @return Builder
+     * @return mixed
      */
     protected function getQuery(RelatedContentBlock $block, mixed $document)
     {
