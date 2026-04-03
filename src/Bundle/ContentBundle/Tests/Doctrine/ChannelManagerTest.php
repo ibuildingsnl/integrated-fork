@@ -11,6 +11,7 @@ use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 final class ChannelManagerTest extends TestCase
 {
@@ -98,6 +99,82 @@ final class ChannelManagerTest extends TestCase
         $manager = $this->createManager($repository);
 
         self::assertNull($manager->findByDomain('localhost'));
+    }
+
+    public function testFindByDomainUsesPersistentCacheAcrossManagerInstances(): void
+    {
+        $channel = $this->createMock(ChannelInterface::class);
+        $channel
+            ->expects($this->once())
+            ->method('getId')
+            ->willReturn('channel-id');
+
+        /** @var ObjectRepository&MockObject $repository */
+        $repository = $this->createMock(ObjectRepository::class);
+        $repository
+            ->expects($this->exactly(2))
+            ->method('getClassName')
+            ->willReturn(Channel::class);
+        $repository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->with(['domains' => 'example.com'])
+            ->willReturn($channel);
+        $repository
+            ->expects($this->once())
+            ->method('find')
+            ->with('channel-id')
+            ->willReturn($channel);
+
+        $cache = new ArrayAdapter();
+
+        /** @var ObjectManager&MockObject $objectManager */
+        $objectManager = $this->createMock(ObjectManager::class);
+        $objectManager
+            ->expects($this->exactly(2))
+            ->method('getRepository')
+            ->with(Channel::class)
+            ->willReturn($repository);
+
+        $managerOne = new ChannelManager($objectManager, Channel::class, $cache);
+        $managerTwo = new ChannelManager($objectManager, Channel::class, $cache);
+
+        self::assertSame($channel, $managerOne->findByDomain('example.com'));
+        self::assertSame($channel, $managerTwo->findByDomain('example.com'));
+    }
+
+    public function testFindByDomainCachesMissesAcrossManagerInstances(): void
+    {
+        /** @var ObjectRepository&MockObject $repository */
+        $repository = $this->createMock(ObjectRepository::class);
+        $repository
+            ->expects($this->exactly(2))
+            ->method('getClassName')
+            ->willReturn(Channel::class);
+        $repository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->with(['domains' => 'localhost'])
+            ->willReturn(null);
+        $repository
+            ->expects($this->never())
+            ->method('find');
+
+        $cache = new ArrayAdapter();
+
+        /** @var ObjectManager&MockObject $objectManager */
+        $objectManager = $this->createMock(ObjectManager::class);
+        $objectManager
+            ->expects($this->exactly(2))
+            ->method('getRepository')
+            ->with(Channel::class)
+            ->willReturn($repository);
+
+        $managerOne = new ChannelManager($objectManager, Channel::class, $cache);
+        $managerTwo = new ChannelManager($objectManager, Channel::class, $cache);
+
+        self::assertNull($managerOne->findByDomain('localhost'));
+        self::assertNull($managerTwo->findByDomain('localhost'));
     }
 
     /**
