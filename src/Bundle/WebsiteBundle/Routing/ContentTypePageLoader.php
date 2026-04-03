@@ -54,7 +54,7 @@ class ContentTypePageLoader extends Loader
 
         $routes = new RouteCollection();
 
-        $pages = $this->dm->getRepository(ContentTypePage::class)->findAll();
+        $pages = $this->getPages();
 
         /** @var ContentTypePage $page */
         foreach ($pages as $page) {
@@ -83,6 +83,17 @@ class ContentTypePageLoader extends Loader
     public function supports($resource, $type = null): bool
     {
         return self::ROUTE_PREFIX === $type;
+    }
+
+    /**
+     * @return iterable<ContentTypePage>
+     */
+    protected function getPages(): iterable
+    {
+        return $this->dm->createQueryBuilder(ContentTypePage::class)
+            ->select(['id', 'path', 'controllerService', 'controllerAction', 'channel'])
+            ->getQuery()
+            ->getIterator();
     }
 
     private function getController(ContentTypePage $page): string

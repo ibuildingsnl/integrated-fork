@@ -49,7 +49,7 @@ class PageLoader implements LoaderInterface
 
         $routes = new RouteCollection();
 
-        $pages = $this->dm->getRepository(Page::class)->findAll();
+        $pages = $this->getPages();
 
         /** @var Page $page */
         foreach ($pages as $page) {
@@ -84,6 +84,17 @@ class PageLoader implements LoaderInterface
     public function supports($resource, $type = null): bool
     {
         return 'integrated_website_page' === $type;
+    }
+
+    /**
+     * @return iterable<Page>
+     */
+    protected function getPages(): iterable
+    {
+        return $this->dm->createQueryBuilder(Page::class)
+            ->select(['id', 'path', 'channel'])
+            ->getQuery()
+            ->getIterator();
     }
 
     public function getResolver(): LoaderResolverInterface
