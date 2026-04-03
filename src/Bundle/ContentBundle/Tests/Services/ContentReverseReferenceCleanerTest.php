@@ -14,8 +14,10 @@ use Integrated\Bundle\ContentBundle\Document\Bulk\Action\RelationAction;
 use Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation as ContentRelation;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Services\ContentReverseReferenceCleaner;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
+use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -225,5 +227,54 @@ final class ContentReverseReferenceCleanerTest extends TestCase
         self::assertCount(1, $bulkAction->getSelection());
         self::assertCount(1, iterator_to_array($relationAction->getReferences()));
         self::assertTrue(\in_array($comment, $persisted, true));
+    }
+
+    public function testCleanupOnlyTouchesSupportedReverseReferenceDocuments(): void
+    {
+        $target = new Image();
+        $target->setId('image-1');
+
+        $contentReferrer = new Article();
+        $contentReferrer->setId('article-2');
+        $relation = (new ContentRelation())
+            ->setRelationId('rel-1')
+            ->setRelationType('related')
+            ->addReference($target);
+        $contentReferrer->addRelation($relation);
+
+        $page = new CleanerTestPage();
+        $page->setId('page-1');
+
+        $this->searchContentReferenced
+            ->expects($this->once())
+            ->method('getReferencedDocuments')
+            ->with($target)
+            ->willReturn([$contentReferrer, $page]);
+
+        $this->documentManager
+            ->expects($this->once())
+            ->method('persist')
+            ->with($this->identicalTo($contentReferrer));
+
+        $this->documentManager
+            ->expects($this->never())
+            ->method('remove');
+
+        $this->documentManager
+            ->expects($this->once())
+            ->method('flush');
+
+        $cleaner = new ContentReverseReferenceCleaner($this->documentManager, $this->searchContentReferenced);
+
+        self::assertSame(1, $cleaner->cleanup($target));
+        self::assertCount(0, $contentReferrer->getReferencesByRelationType('related'));
+    }
+}
+
+final class CleanerTestPage extends AbstractPage
+{
+    public function setId(string $id): void
+    {
+        $this->id = $id;
     }
 }

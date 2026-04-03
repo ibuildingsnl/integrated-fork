@@ -34,25 +34,7 @@ final class ContentReverseReferenceCleaner
         $changed = 0;
 
         foreach ($this->searchContentReferenced->getReferencedDocuments($content) as $document) {
-            if ($document instanceof Content) {
-                $changed += $this->cleanupContentRelations($document, $content);
-                continue;
-            }
-
-            if ($document instanceof Block) {
-                $changed += $this->cleanupBlockRelations($document, $content);
-                continue;
-            }
-
-            if ($document instanceof BulkAction) {
-                $changed += $this->cleanupBulkAction($document, $content);
-                continue;
-            }
-
-            if ($document instanceof Comment) {
-                $this->documentManager->remove($document);
-                ++$changed;
-            }
+            $changed += $this->cleanupKnownReverseReference($document, $content);
         }
 
         if ($changed > 0) {
@@ -72,32 +54,13 @@ final class ContentReverseReferenceCleaner
 
         try {
             foreach ($this->searchContentReferenced->getReferencedDocuments($content) as $document) {
-                if ($document instanceof Content) {
-                    $rollbacks[] = $this->snapshotContentRelations($document);
-                    $changed += $this->cleanupContentRelations($document, $content);
-
+                $preparedCleanup = $this->prepareKnownReverseReferenceCleanup($document, $content);
+                if ($preparedCleanup === null) {
                     continue;
                 }
 
-                if ($document instanceof Block) {
-                    $rollbacks[] = $this->snapshotBlock($document);
-                    $changed += $this->cleanupBlockRelations($document, $content);
-
-                    continue;
-                }
-
-                if ($document instanceof BulkAction) {
-                    $rollbacks[] = $this->snapshotBulkAction($document);
-                    $changed += $this->cleanupBulkAction($document, $content);
-
-                    continue;
-                }
-
-                if ($document instanceof Comment) {
-                    $rollbacks[] = $this->snapshotCommentRemoval($document);
-                    $this->documentManager->remove($document);
-                    ++$changed;
-                }
+                $rollbacks[] = $preparedCleanup['rollback'];
+                $changed += $preparedCleanup['cleanup']();
             }
         } catch (\Throwable $exception) {
             $this->runRollbacks($rollbacks);
@@ -111,6 +74,69 @@ final class ContentReverseReferenceCleaner
                 $this->runRollbacks($rollbacks);
             },
         ];
+    }
+
+    private function cleanupKnownReverseReference(object $document, Content $target): int
+    {
+        if ($document instanceof Content) {
+            return $this->cleanupContentRelations($document, $target);
+        }
+
+        if ($document instanceof Block) {
+            return $this->cleanupBlockRelations($document, $target);
+        }
+
+        if ($document instanceof BulkAction) {
+            return $this->cleanupBulkAction($document, $target);
+        }
+
+        if ($document instanceof Comment) {
+            $this->documentManager->remove($document);
+
+            return 1;
+        }
+
+        return 0;
+    }
+
+    /**
+     * @return array{cleanup: \Closure(): int, rollback: \Closure(): void}|null
+     */
+    private function prepareKnownReverseReferenceCleanup(object $document, Content $target): ?array
+    {
+        if ($document instanceof Content) {
+            return [
+                'cleanup' => fn (): int => $this->cleanupContentRelations($document, $target),
+                'rollback' => $this->snapshotContentRelations($document),
+            ];
+        }
+
+        if ($document instanceof Block) {
+            return [
+                'cleanup' => fn (): int => $this->cleanupBlockRelations($document, $target),
+                'rollback' => $this->snapshotBlock($document),
+            ];
+        }
+
+        if ($document instanceof BulkAction) {
+            return [
+                'cleanup' => fn (): int => $this->cleanupBulkAction($document, $target),
+                'rollback' => $this->snapshotBulkAction($document),
+            ];
+        }
+
+        if ($document instanceof Comment) {
+            return [
+                'cleanup' => function () use ($document): int {
+                    $this->documentManager->remove($document);
+
+                    return 1;
+                },
+                'rollback' => $this->snapshotCommentRemoval($document),
+            ];
+        }
+
+        return null;
     }
 
     private function cleanupContentRelations(Content $document, Content $target): int

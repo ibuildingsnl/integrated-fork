@@ -13,6 +13,7 @@ use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Services\ChannelDeletionProcessor;
 use Integrated\Bundle\ContentBundle\Services\ChannelDeletionReport;
@@ -25,6 +26,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 final class ChannelDeletionProcessorTest extends TestCase
 {
@@ -170,6 +172,76 @@ final class ChannelDeletionProcessorTest extends TestCase
         self::assertSame(Article::class, $report->getWarnings()[0]->getDocumentClass());
         self::assertSame('content-1', $report->getWarnings()[0]->getDocumentId());
         self::assertSame('delete', $report->getWarnings()[0]->getStep());
+    }
+
+    public function testProcessTurnsReferencedImageDeleteAbortIntoWarningAndMarksChannelRemoved(): void
+    {
+        $channel = $this->createChannel('channel-a');
+
+        $image = new Image();
+        $image->setId('image-1');
+        $image->addChannel($channel);
+
+        $message = sprintf(
+            'Cannot remove referenced document %s (image-1). Blocked by: Homepage teaser (page-1).',
+            Image::class
+        );
+
+        $documentManager = $this->createDocumentManager([], []);
+        $documentManager
+            ->expects($this->exactly(2))
+            ->method('remove')
+            ->willReturnCallback(function (object $document) use ($image, $channel, $message): void {
+                if ($document === $image) {
+                    throw new AccessDeniedException($message);
+                }
+
+                self::assertSame($channel, $document);
+            });
+
+        $documentManager
+            ->expects($this->once())
+            ->method('flush');
+
+        $searchContentReferenced = $this->createMock(SearchContentReferenced::class);
+        $searchContentReferenced
+            ->expects($this->once())
+            ->method('getReferencedDocuments')
+            ->with($channel)
+            ->willReturn([$image]);
+
+        $cleanupSearch = $this->createMock(SearchContentReferenced::class);
+        $cleanupSearch
+            ->expects($this->once())
+            ->method('getReferencedDocuments')
+            ->with($image)
+            ->willReturn([]);
+        $contentReverseReferenceCleaner = new ContentReverseReferenceCleaner($documentManager, $cleanupSearch);
+
+        $processor = $this->createProcessor(
+            $documentManager,
+            $searchContentReferenced,
+            $contentReverseReferenceCleaner,
+            $this->createDispatcherWithoutContentDeleteListeners()
+        );
+
+        $report = $processor->process($channel, true);
+
+        self::assertTrue($report->isRemovedChannel());
+        self::assertSame('success_with_warnings', $report->getStatus());
+        self::assertSame(1, $report->getWarningCount());
+        self::assertSame(0, $report->getRemovedContent());
+        self::assertSame([
+            [
+                'class' => Image::class,
+                'id' => 'image-1',
+            ],
+        ], $report->getSkippedDocuments());
+        self::assertSame('delete', $report->getWarnings()[0]->getStep());
+        self::assertSame(Image::class, $report->getWarnings()[0]->getDocumentClass());
+        self::assertSame('image-1', $report->getWarnings()[0]->getDocumentId());
+        self::assertSame(AccessDeniedException::class, $report->getWarnings()[0]->getExceptionClass());
+        self::assertSame($message, $report->getWarnings()[0]->getMessage());
     }
 
     public function testProcessRestoresDeferredReverseReferenceCleanupWhenSingleChannelDeleteFails(): void
