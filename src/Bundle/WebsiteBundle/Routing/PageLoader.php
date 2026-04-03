@@ -76,6 +76,8 @@ class PageLoader implements LoaderInterface
             $routes->add(self::ROUTE_PREFIX.$page->getId(), $route);
         }
 
+        $this->loaded = true;
+
         return $routes;
     }
 
