@@ -141,6 +141,25 @@ class WorkerCommandTest extends TestCase
         $this->assertStringNotContainsString('Channel "channel-failed" deleted.', $line);
     }
 
+    public function testChannelDeleteCommandTreatsUnknownStatusAsFailure(): void
+    {
+        $commandReflection = new \ReflectionClass(ChannelDeleteCommand::class);
+        $normalizeStatus = $commandReflection->getMethod('normalizeStatus');
+        $normalizeStatus->setAccessible(true);
+        $resolveExitCodeForStatus = $commandReflection->getMethod('resolveExitCodeForStatus');
+        $resolveExitCodeForStatus->setAccessible(true);
+        $formatSummaryPrefix = $commandReflection->getMethod('formatSummaryPrefix');
+        $formatSummaryPrefix->setAccessible(true);
+
+        $status = $normalizeStatus->invoke(null, 'unexpected_status');
+        $exitCode = $resolveExitCodeForStatus->invoke(null, 'unexpected_status');
+        $summaryPrefix = $formatSummaryPrefix->invoke(null, 'unexpected_status', 'channel-unknown');
+
+        $this->assertSame('failed', $status);
+        $this->assertSame(Command::FAILURE, $exitCode);
+        $this->assertSame('Channel "channel-unknown" deletion failed.', $summaryPrefix);
+    }
+
     public function testExecuteProcessesChannelDeleteMessages(): void
     {
         $queue = $this->createMock(QueueInterface::class);

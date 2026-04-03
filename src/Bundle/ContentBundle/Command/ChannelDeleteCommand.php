@@ -67,9 +67,10 @@ final class ChannelDeleteCommand extends Command
             return self::FAILURE;
         }
 
+        $status = self::normalizeStatus($report->getStatus());
         $line = self::formatReportLine($report, $output->isVerbose());
 
-        match ($report->getStatus()) {
+        match ($status) {
             'success' => $output->writeln('<info>'.$line.'</info>'),
             'success_with_warnings' => $output->writeln('<comment>'.$line.'</comment>'),
             default => $output->writeln('<error>'.$line.'</error>'),
@@ -80,7 +81,12 @@ final class ChannelDeleteCommand extends Command
 
     private static function resolveExitCode(ChannelDeletionReport $report): int
     {
-        return match ($report->getStatus()) {
+        return self::resolveExitCodeForStatus($report->getStatus());
+    }
+
+    private static function resolveExitCodeForStatus(string $status): int
+    {
+        return match (self::normalizeStatus($status)) {
             'failed' => self::FAILURE,
             default => self::SUCCESS,
         };
@@ -88,15 +94,13 @@ final class ChannelDeleteCommand extends Command
 
     private static function formatReportLine(ChannelDeletionReport $report, bool $verbose): string
     {
-        $summaryPrefix = match ($report->getStatus()) {
-            'failed' => \sprintf('Channel "%s" deletion failed.', $report->getChannelId()),
-            default => \sprintf('Channel "%s" deleted.', $report->getChannelId()),
-        };
+        $status = self::normalizeStatus($report->getStatus());
+        $summaryPrefix = self::formatSummaryPrefix($status, $report->getChannelId());
 
         $line = \sprintf(
             '%s status=%s removed_content=%d detached_content=%d removed_pages=%d removed_publications=%d updated_brands=%d warnings=%d',
             $summaryPrefix,
-            $report->getStatus(),
+            $status,
             $report->getRemovedContent(),
             $report->getDetachedContent(),
             $report->getRemovedPages(),
@@ -121,5 +125,21 @@ final class ChannelDeleteCommand extends Command
         );
 
         return $line.' warning_summary="'.implode('; ', $warningSummary).'"';
+    }
+
+    private static function formatSummaryPrefix(string $status, string $channelId): string
+    {
+        return match (self::normalizeStatus($status)) {
+            'failed' => \sprintf('Channel "%s" deletion failed.', $channelId),
+            default => \sprintf('Channel "%s" deleted.', $channelId),
+        };
+    }
+
+    private static function normalizeStatus(string $status): string
+    {
+        return match ($status) {
+            'success', 'success_with_warnings', 'failed' => $status,
+            default => 'failed',
+        };
     }
 }
