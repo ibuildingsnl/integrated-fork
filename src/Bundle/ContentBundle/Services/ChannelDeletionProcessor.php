@@ -118,32 +118,37 @@ final class ChannelDeletionProcessor
 
         $brands = $this->documentManager->getRepository(Brand::class)->findAll();
         foreach ($brands as $brand) {
-            $changed = false;
-            foreach ($brand->getChannelLinks()->toArray() as $link) {
-                if (!$link->channel) {
-                    $brand->removeChannelLink($link);
-                    $changed = true;
+            $this->safeDocumentStep($brand, 'update', $report, function () use ($brand, $channel, $report): void {
+                $changed = false;
+                foreach ($brand->getChannelLinks()->toArray() as $link) {
+                    if (!$link->channel) {
+                        $brand->removeChannelLink($link);
+                        $changed = true;
 
-                    continue;
+                        continue;
+                    }
+                    if ($link->channel->getId() === $channel->getId()) {
+                        $brand->removeChannelLink($link);
+                        $changed = true;
+                    }
                 }
-                if ($link->channel->getId() === $channel->getId()) {
-                    $brand->removeChannelLink($link);
-                    $changed = true;
+
+                if (!$changed) {
+                    return;
                 }
-            }
-            if ($changed) {
-                $this->safeDocumentStep($brand, 'update', $report, function () use ($brand, $report): void {
-                    $this->documentManager->persist($brand);
-                    $report->markUpdatedBrand();
-                });
-            }
+
+                $this->documentManager->persist($brand);
+                $report->markUpdatedBrand();
+            });
         }
 
         $this->documentManager->remove($channel);
         $this->documentManager->flush();
         $report->markRemovedChannel();
 
-        $this->dispatcher->dispatch(new ChannelEvent($channel), ChannelEvents::CHANNEL_DELETED);
+        $this->safeWarningStep($channel, 'dispatch', $report, function () use ($channel): void {
+            $this->dispatcher->dispatch(new ChannelEvent($channel), ChannelEvents::CHANNEL_DELETED);
+        });
 
         return $report;
     }
@@ -152,6 +157,20 @@ final class ChannelDeletionProcessor
      * @param callable(): void $operation
      */
     private function safeDocumentStep(object $document, string $step, ChannelDeletionReport $report, callable $operation): void
+    {
+        $this->safeWarningStep($document, $step, $report, $operation, true);
+    }
+
+    /**
+     * @param callable(): void $operation
+     */
+    private function safeWarningStep(
+        object $document,
+        string $step,
+        ChannelDeletionReport $report,
+        callable $operation,
+        bool $recordSkippedDocument = false
+    ): void
     {
         try {
             $operation();
@@ -166,7 +185,9 @@ final class ChannelDeletionProcessor
                 $exception->getMessage(),
                 $exception::class
             ));
-            $report->addSkippedDocument($class, $id);
+            if ($recordSkippedDocument) {
+                $report->addSkippedDocument($class, $id);
+            }
         }
     }
 

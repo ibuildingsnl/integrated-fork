@@ -267,6 +267,103 @@ final class ChannelDeletionProcessorTest extends TestCase
         ], $report->getSkippedDocuments());
     }
 
+    public function testProcessTurnsBrandIterationFailureIntoWarningAndSkip(): void
+    {
+        $channel = $this->createChannel('channel-a');
+        $brand = new ThrowingBrand('brand-throw', 'getChannelLinks failed');
+
+        $documentManager = $this->createDocumentManager([], [$brand]);
+        $documentManager
+            ->expects($this->never())
+            ->method('persist');
+
+        $documentManager
+            ->expects($this->once())
+            ->method('remove')
+            ->with($this->identicalTo($channel));
+
+        $documentManager
+            ->expects($this->once())
+            ->method('flush');
+
+        $searchContentReferenced = $this->createMock(SearchContentReferenced::class);
+        $searchContentReferenced
+            ->expects($this->once())
+            ->method('getReferencedDocuments')
+            ->with($channel)
+            ->willReturn([]);
+
+        $cleanupSearch = $this->createMock(SearchContentReferenced::class);
+        $cleanupSearch
+            ->expects($this->never())
+            ->method('getReferencedDocuments');
+        $contentReverseReferenceCleaner = new ContentReverseReferenceCleaner($documentManager, $cleanupSearch);
+
+        $processor = new ChannelDeletionProcessor(
+            $documentManager,
+            $searchContentReferenced,
+            $contentReverseReferenceCleaner,
+            new EventDispatcher()
+        );
+
+        $report = $processor->process($channel, true);
+
+        self::assertTrue($report->isRemovedChannel());
+        self::assertSame(1, $report->getWarningCount());
+        self::assertSame([
+            ['class' => ThrowingBrand::class, 'id' => 'brand-throw'],
+        ], $report->getSkippedDocuments());
+        self::assertSame('update', $report->getWarnings()[0]->getStep());
+        self::assertSame(ThrowingBrand::class, $report->getWarnings()[0]->getDocumentClass());
+    }
+
+    public function testProcessTurnsChannelDeletedListenerFailureIntoWarning(): void
+    {
+        $channel = $this->createChannel('channel-a');
+
+        $documentManager = $this->createDocumentManager([], []);
+        $documentManager
+            ->expects($this->once())
+            ->method('remove')
+            ->with($this->identicalTo($channel));
+
+        $documentManager
+            ->expects($this->once())
+            ->method('flush');
+
+        $searchContentReferenced = $this->createMock(SearchContentReferenced::class);
+        $searchContentReferenced
+            ->expects($this->once())
+            ->method('getReferencedDocuments')
+            ->with($channel)
+            ->willReturn([]);
+
+        $cleanupSearch = $this->createMock(SearchContentReferenced::class);
+        $cleanupSearch
+            ->expects($this->never())
+            ->method('getReferencedDocuments');
+        $contentReverseReferenceCleaner = new ContentReverseReferenceCleaner($documentManager, $cleanupSearch);
+
+        $dispatcher = $this->createDispatcherThatThrowsOnChannelDeleted('listener failed');
+
+        $processor = new ChannelDeletionProcessor(
+            $documentManager,
+            $searchContentReferenced,
+            $contentReverseReferenceCleaner,
+            $dispatcher
+        );
+
+        $report = $processor->process($channel, true);
+
+        self::assertTrue($report->isRemovedChannel());
+        self::assertSame('success_with_warnings', $report->getStatus());
+        self::assertSame(1, $report->getWarningCount());
+        self::assertSame('dispatch', $report->getWarnings()[0]->getStep());
+        self::assertSame(Channel::class, $report->getWarnings()[0]->getDocumentClass());
+        self::assertSame('channel-a', $report->getWarnings()[0]->getDocumentId());
+        self::assertSame([], $report->getSkippedDocuments());
+    }
+
     /**
      * @param Publication[] $publications
      * @param Brand[]       $brands
@@ -441,6 +538,56 @@ final class ChannelDeletionProcessorTest extends TestCase
             }
         };
     }
+
+    private function createDispatcherThatThrowsOnChannelDeleted(string $message): EventDispatcherInterface
+    {
+        return new class ($message) implements EventDispatcherInterface {
+            public function __construct(
+                private readonly string $message,
+            ) {
+            }
+
+            public function dispatch(object $event, ?string $eventName = null): object
+            {
+                if ($eventName === \Integrated\Common\Channel\Events::CHANNEL_DELETED) {
+                    throw new \RuntimeException($this->message);
+                }
+
+                return $event;
+            }
+
+            public function addListener(string $eventName, callable $listener, int $priority = 0): void
+            {
+            }
+
+            public function addSubscriber(\Symfony\Component\EventDispatcher\EventSubscriberInterface $subscriber): void
+            {
+            }
+
+            public function removeListener(string $eventName, callable $listener): void
+            {
+            }
+
+            public function removeSubscriber(\Symfony\Component\EventDispatcher\EventSubscriberInterface $subscriber): void
+            {
+            }
+
+            public function getListeners(?string $eventName = null): array
+            {
+                return [];
+            }
+
+            public function getListenerPriority(string $eventName, callable $listener): ?int
+            {
+                return null;
+            }
+
+            public function hasListeners(?string $eventName = null): bool
+            {
+                return false;
+            }
+        };
+    }
 }
 
 final class TestPage extends AbstractPage
@@ -448,5 +595,21 @@ final class TestPage extends AbstractPage
     public function setId(string $id): void
     {
         $this->id = $id;
+    }
+}
+
+final class ThrowingBrand extends Brand
+{
+    public function __construct(
+        string $id,
+        private readonly string $message,
+    ) {
+        parent::__construct();
+        $this->setId($id);
+    }
+
+    public function getChannelLinks(): \Doctrine\Common\Collections\Collection
+    {
+        throw new \RuntimeException($this->message);
     }
 }
