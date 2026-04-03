@@ -31,6 +31,11 @@ class ChannelManager implements ChannelManagerInterface
      */
     private $repository;
 
+    /**
+     * @var array<string, ChannelInterface|null>
+     */
+    private array $domainLookupCache = [];
+
     public function __construct(ObjectManager $om, $class)
     {
         $this->om = $om;
@@ -99,13 +104,28 @@ class ChannelManager implements ChannelManagerInterface
 
     public function findByDomain($criteria)
     {
-        $channel = $this->repository->findOneBy(['domains' => $criteria]);
-        if (!$channel) {
-            // find a fallback with/without www.
-            $channel = $this->repository->findOneBy(
-                ['domains' => (stripos($criteria, 'www.')) ? str_ireplace('www.', '', $criteria) : 'www.'.$criteria]
-            );
+        $domain = $this->normalizeDomain((string) $criteria);
+
+        if ('' === $domain) {
+            return null;
         }
+
+        if (\array_key_exists($domain, $this->domainLookupCache)) {
+            return $this->domainLookupCache[$domain];
+        }
+
+        $channel = $this->repository->findOneBy(['domains' => $domain]);
+
+        if (!$channel) {
+            $fallbackDomain = $this->getFallbackDomain($domain);
+
+            if (null !== $fallbackDomain) {
+                $channel = $this->repository->findOneBy(['domains' => $fallbackDomain]);
+                $this->domainLookupCache[$fallbackDomain] = $channel;
+            }
+        }
+
+        $this->domainLookupCache[$domain] = $channel;
 
         return $channel;
     }
@@ -123,5 +143,25 @@ class ChannelManager implements ChannelManagerInterface
     public function getClassName()
     {
         return $this->repository->getClassName();
+    }
+
+    private function normalizeDomain(string $domain): string
+    {
+        return strtolower(trim($domain));
+    }
+
+    private function getFallbackDomain(string $domain): ?string
+    {
+        if (!str_contains($domain, '.')) {
+            return null;
+        }
+
+        if (str_starts_with($domain, 'www.')) {
+            $fallbackDomain = substr($domain, 4);
+
+            return '' !== $fallbackDomain ? $fallbackDomain : null;
+        }
+
+        return 'www.'.$domain;
     }
 }
