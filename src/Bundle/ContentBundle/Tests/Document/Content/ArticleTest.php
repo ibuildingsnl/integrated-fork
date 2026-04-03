@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Content;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author;
@@ -68,6 +69,15 @@ class ArticleTest extends TestCase
         $this->assertSame($authors, $this->article->getAuthors());
     }
 
+    public function testGetAuthorsReturnsEmptyArrayForLegacyNullCollection(): void
+    {
+        $reflection = new \ReflectionProperty(Article::class, 'authors');
+        $reflection->setAccessible(true);
+        $reflection->setValue($this->article, null);
+
+        $this->assertSame([], $this->article->getAuthors());
+    }
+
     /**
      * Test addAuthor function.
      */
@@ -80,6 +90,20 @@ class ArticleTest extends TestCase
         $this->article->addAuthor($author);
 
         // Asserts
+        $this->assertCount(1, $this->article->getAuthors());
+    }
+
+    public function testAddAuthorReinitializesLegacyNullCollection(): void
+    {
+        $author = $this->createMock(Author::class);
+        $reflection = new \ReflectionProperty(Article::class, 'authors');
+        $reflection->setAccessible(true);
+        $reflection->setValue($this->article, null);
+
+        $this->article->addAuthor($author);
+
+        $authors = $reflection->getValue($this->article);
+        $this->assertInstanceOf(ArrayCollection::class, $authors);
         $this->assertCount(1, $this->article->getAuthors());
     }
 
@@ -124,6 +148,17 @@ class ArticleTest extends TestCase
 
         // Assert
         $this->assertFalse($this->article->removeAuthor($author));
+    }
+
+    public function testRemoveAuthorHandlesLegacyNullCollectionSafely(): void
+    {
+        $author = $this->createMock(Author::class);
+        $reflection = new \ReflectionProperty(Article::class, 'authors');
+        $reflection->setAccessible(true);
+        $reflection->setValue($this->article, null);
+
+        $this->assertFalse($this->article->removeAuthor($author));
+        $this->assertNull($reflection->getValue($this->article));
     }
 
     /**

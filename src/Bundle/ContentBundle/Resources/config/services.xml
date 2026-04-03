@@ -11,6 +11,7 @@
         <service id="integrated_content.services.search.content.referenced" class="Integrated\Bundle\ContentBundle\Services\SearchContentReferenced" public="true">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
         </service>
+        <service id="Integrated\Bundle\ContentBundle\Services\SearchContentReferenced" alias="integrated_content.services.search.content.referenced" />
 
         <service id="Integrated\Bundle\ContentBundle\Services\ArticleSearchService">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
@@ -60,10 +61,19 @@
             <tag name="console.command" />
         </service>
 
+        <service id="Integrated\Bundle\ContentBundle\Services\ContentReverseReferenceCleaner">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="integrated_content.services.search.content.referenced" />
+        </service>
+
+        <service id="Integrated\Bundle\ContentBundle\Services\ChannelDeletionSelfHealer" />
+
         <service id="Integrated\Bundle\ContentBundle\Services\ChannelDeletionProcessor">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_content.services.search.content.referenced" />
+            <argument type="service" id="Integrated\Bundle\ContentBundle\Services\ContentReverseReferenceCleaner" />
             <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="Integrated\Bundle\ContentBundle\Services\ChannelDeletionSelfHealer" />
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Command\ChannelDeleteCommand">

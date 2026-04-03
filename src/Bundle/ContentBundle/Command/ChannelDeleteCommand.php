@@ -7,6 +7,7 @@ namespace Integrated\Bundle\ContentBundle\Command;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Services\ChannelDeletionProcessor;
+use Integrated\Bundle\ContentBundle\Services\ChannelDeletionReport;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -54,7 +55,7 @@ final class ChannelDeleteCommand extends Command
         $deleteReferenced = (bool) $input->getOption('delete-referenced');
 
         try {
-            $summary = $this->channelDeletionProcessor->process($channel, $deleteReferenced);
+            $report = $this->channelDeletionProcessor->process($channel, $deleteReferenced);
         } catch (\Throwable $exception) {
             $this->logger->error('Background channel deletion failed', [
                 'channel_id' => $channelId,
@@ -66,16 +67,79 @@ final class ChannelDeleteCommand extends Command
             return self::FAILURE;
         }
 
-        $output->writeln(\sprintf(
-            'Channel "%s" deleted. removed_content=%d detached_content=%d removed_pages=%d removed_publications=%d updated_brands=%d',
-            $channelId,
-            $summary['removed_content'],
-            $summary['detached_content'],
-            $summary['removed_pages'],
-            $summary['removed_publications'],
-            $summary['updated_brands']
-        ));
+        $status = self::normalizeStatus($report->getStatus());
+        $line = self::formatReportLine($report, $output->isVerbose());
 
-        return self::SUCCESS;
+        match ($status) {
+            'success' => $output->writeln('<info>'.$line.'</info>'),
+            'success_with_warnings' => $output->writeln('<comment>'.$line.'</comment>'),
+            default => $output->writeln('<error>'.$line.'</error>'),
+        };
+
+        return self::resolveExitCode($report);
+    }
+
+    private static function resolveExitCode(ChannelDeletionReport $report): int
+    {
+        return self::resolveExitCodeForStatus($report->getStatus());
+    }
+
+    private static function resolveExitCodeForStatus(string $status): int
+    {
+        return match (self::normalizeStatus($status)) {
+            'failed' => self::FAILURE,
+            default => self::SUCCESS,
+        };
+    }
+
+    private static function formatReportLine(ChannelDeletionReport $report, bool $verbose): string
+    {
+        $status = self::normalizeStatus($report->getStatus());
+        $summaryPrefix = self::formatSummaryPrefix($status, $report->getChannelId());
+
+        $line = \sprintf(
+            '%s status=%s removed_content=%d detached_content=%d removed_pages=%d removed_publications=%d updated_brands=%d warnings=%d',
+            $summaryPrefix,
+            $status,
+            $report->getRemovedContent(),
+            $report->getDetachedContent(),
+            $report->getRemovedPages(),
+            $report->getRemovedPublications(),
+            $report->getUpdatedBrands(),
+            $report->getWarningCount()
+        );
+
+        if (!$verbose || $report->getWarnings() === []) {
+            return $line;
+        }
+
+        $warningSummary = array_map(
+            static fn ($warning): string => \sprintf(
+                '%s %s(%s): %s',
+                $warning->getStep(),
+                $warning->getDocumentClass(),
+                $warning->getDocumentId(),
+                $warning->getMessage()
+            ),
+            $report->getWarnings()
+        );
+
+        return $line.' warning_summary="'.implode('; ', $warningSummary).'"';
+    }
+
+    private static function formatSummaryPrefix(string $status, string $channelId): string
+    {
+        return match (self::normalizeStatus($status)) {
+            'failed' => \sprintf('Channel "%s" deletion failed.', $channelId),
+            default => \sprintf('Channel "%s" deleted.', $channelId),
+        };
+    }
+
+    private static function normalizeStatus(string $status): string
+    {
+        return match ($status) {
+            'success', 'success_with_warnings', 'failed' => $status,
+            default => 'failed',
+        };
     }
 }

@@ -27,6 +27,11 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 #[AsDocumentListener(event: Events::preRemove)]
 class CheckReferencedListener
 {
+    public function __construct(
+        private readonly SearchContentReferenced $searchContentReferenced,
+    ) {
+    }
+
     /**
      * @throws AccessDeniedException
      */
@@ -35,11 +40,85 @@ class CheckReferencedListener
         $document = $args->getDocument();
 
         if ($document instanceof Content || $document instanceof SearchSelection) {
-            $dm = $args->getDocumentManager();
-            $searchReferenced = new SearchContentReferenced($dm);
-            if ($searchReferenced->getReferenced($document)) {
-                throw new AccessDeniedException();
+            $referenced = $this->searchContentReferenced->getReferenced($document);
+            if ($referenced !== []) {
+                throw new AccessDeniedException($this->buildMessage($document, $referenced));
             }
         }
+    }
+
+    /**
+     * @param array<string, array<string, mixed>> $referenced
+     */
+    private function buildMessage(object $document, array $referenced): string
+    {
+        $documentLabel = $this->describeDocument($document);
+        $blockedBy = [];
+
+        foreach (array_slice($referenced, 0, 5) as $reference) {
+            $name = trim((string) ($reference['name'] ?? ''));
+            $id = trim((string) ($reference['id'] ?? ''));
+
+            if ($name !== '' && $id !== '') {
+                $blockedBy[] = sprintf('%s (%s)', $name, $id);
+                continue;
+            }
+
+            if ($name !== '') {
+                $blockedBy[] = $name;
+                continue;
+            }
+
+            if ($id !== '') {
+                $blockedBy[] = $id;
+            }
+        }
+
+        if ($blockedBy === []) {
+            return sprintf('Cannot remove referenced document %s.', $documentLabel);
+        }
+
+        $suffix = count($referenced) > count($blockedBy)
+            ? sprintf(' and %d more', count($referenced) - count($blockedBy))
+            : '';
+
+        return sprintf(
+            'Cannot remove referenced document %s. Blocked by: %s%s.',
+            $documentLabel,
+            implode(', ', $blockedBy),
+            $suffix
+        );
+    }
+
+    private function describeDocument(object $document): string
+    {
+        $class = $document::class;
+        $id = is_callable([$document, 'getId']) ? trim((string) $document->getId()) : '';
+
+        if ($document instanceof Content && is_callable([$document, 'getTitle'])) {
+            $title = trim((string) $document->getTitle());
+            if ($title !== '' && $id !== '') {
+                return sprintf('%s "%s" (%s)', $class, $title, $id);
+            }
+            if ($title !== '') {
+                return sprintf('%s "%s"', $class, $title);
+            }
+        }
+
+        if ($document instanceof SearchSelection && is_callable([$document, 'getTitle'])) {
+            $title = trim((string) $document->getTitle());
+            if ($title !== '' && $id !== '') {
+                return sprintf('%s "%s" (%s)', $class, $title, $id);
+            }
+            if ($title !== '') {
+                return sprintf('%s "%s"', $class, $title);
+            }
+        }
+
+        if ($id !== '') {
+            return sprintf('%s (%s)', $class, $id);
+        }
+
+        return $class;
     }
 }
