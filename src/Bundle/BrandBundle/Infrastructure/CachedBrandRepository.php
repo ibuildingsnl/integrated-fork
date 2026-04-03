@@ -6,7 +6,6 @@ namespace Integrated\Bundle\BrandBundle\Infrastructure;
 
 use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
-use Psr\Cache\CacheItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
 final class CachedBrandRepository implements BrandRepository
@@ -22,11 +21,9 @@ final class CachedBrandRepository implements BrandRepository
     /** @return Brand[] */
     public function all(): array
     {
-        return $this->cache->get(self::ALL_CACHE_KEY, function (CacheItemInterface $item): array {
-            $item->expiresAfter(3600);
-
-            return $this->inner->all();
-        });
+        // Do not cross-request cache ODM documents/proxies: serializing them can
+        // produce incomplete reference state (e.g. missing profile fields).
+        return $this->inner->all();
     }
 
     public function find(string $id): ?Brand

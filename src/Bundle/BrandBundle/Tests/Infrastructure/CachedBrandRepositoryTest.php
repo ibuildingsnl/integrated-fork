@@ -8,49 +8,45 @@ use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Bundle\BrandBundle\Infrastructure\CachedBrandRepository;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Contracts\Cache\CacheInterface;
 
 final class CachedBrandRepositoryTest extends TestCase
 {
-    public function testAllCachesAcrossRequestsViaCachePool(): void
+    public function testAllDelegatesToInnerRepository(): void
     {
         $inner = $this->createMock(BrandRepository::class);
+        $cache = $this->createMock(CacheInterface::class);
         $brand = new Brand();
 
         $inner
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('all')
             ->willReturn([$brand]);
 
-        $repository = new CachedBrandRepository($inner, new ArrayAdapter());
+        $repository = new CachedBrandRepository($inner, $cache);
 
         self::assertEquals([$brand], $repository->all());
         self::assertEquals([$brand], $repository->all());
     }
 
-    public function testAddClearsCachedAllResult(): void
+    public function testAddClearsAllCacheKey(): void
     {
         $inner = $this->createMock(BrandRepository::class);
-        $firstBrand = new Brand();
-        $updatedBrand = new Brand();
+        $cache = $this->createMock(CacheInterface::class);
         $newBrand = new Brand();
-
-        $inner
-            ->expects(self::exactly(2))
-            ->method('all')
-            ->willReturnOnConsecutiveCalls([$firstBrand], [$updatedBrand]);
 
         $inner
             ->expects(self::once())
             ->method('add')
             ->with($newBrand);
 
-        $repository = new CachedBrandRepository($inner, new ArrayAdapter());
+        $cache
+            ->expects(self::once())
+            ->method('delete')
+            ->with(CachedBrandRepository::ALL_CACHE_KEY)
+            ->willReturn(true);
 
-        self::assertEquals([$firstBrand], $repository->all());
-
+        $repository = new CachedBrandRepository($inner, $cache);
         $repository->add($newBrand);
-
-        self::assertEquals([$updatedBrand], $repository->all());
     }
 }
