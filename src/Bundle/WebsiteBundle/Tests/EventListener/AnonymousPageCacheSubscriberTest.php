@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 final class AnonymousPageCacheSubscriberTest extends TestCase
@@ -38,6 +39,7 @@ final class AnonymousPageCacheSubscriberTest extends TestCase
         self::assertTrue((bool) $response->headers->getCacheControlDirective('public'));
         self::assertSame(600, (int) $response->headers->getCacheControlDirective('max-age'));
         self::assertSame(600, (int) $response->headers->getCacheControlDirective('s-maxage'));
+        self::assertSame('1', $response->headers->get(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER));
     }
 
     public function testSubscriberSkipsAuthenticatedRequest(): void

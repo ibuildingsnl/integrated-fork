@@ -8,6 +8,7 @@ use Integrated\Bundle\WebsiteBundle\Routing\ContentTypePageLoader;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 final class AnonymousPageCacheSubscriber implements EventSubscriberInterface
@@ -64,6 +65,7 @@ final class AnonymousPageCacheSubscriber implements EventSubscriberInterface
         $response->setPublic();
         $response->setMaxAge($ttl);
         $response->setSharedMaxAge($ttl);
+        $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, '1');
     }
 
     private function isCacheableRequest(Request $request): bool
