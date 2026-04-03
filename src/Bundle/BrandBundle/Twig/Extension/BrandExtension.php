@@ -6,13 +6,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\BrandProfile;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
+use Integrated\Bundle\BrandBundle\Infrastructure\CachedBrandRepository;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Common\Content\Channel\ChannelInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
 class BrandExtension extends AbstractExtension
 {
+    private const CHANNEL_LOOKUP_CACHE_TTL_SECONDS = 86400;
+
     /** @var Brand[]|null */
     private ?array $allBrands = null;
 
@@ -28,8 +33,15 @@ class BrandExtension extends AbstractExtension
     /** @var array<string, ArrayCollection> */
     private array $otherBrandsByChannel = [];
 
+    /** @var array<string, Brand|null> */
+    private array $brandById = [];
+
+    /** @var array<string, string>|null */
+    private ?array $channelToBrandMap = null;
+
     public function __construct(
         private readonly BrandRepository $brands,
+        private readonly ?CacheInterface $cache = null,
     ) {
     }
 
@@ -58,8 +70,27 @@ class BrandExtension extends AbstractExtension
             return $this->brandByChannel[$channelKey];
         }
 
+        $channelId = (string) ($channel->getId() ?? '');
+        if (null !== $this->cache && $channelId !== '') {
+            $brandId = $this->getChannelToBrandMap()[$channelId] ?? null;
+            if (\is_string($brandId) && $brandId !== '') {
+                $brand = $this->brandById[$brandId] ??= $this->brands->find($brandId);
+
+                return $this->brandByChannel[$channelKey] = $brand;
+            }
+        }
+
         foreach ($this->getBrands() as $brand) {
             if ($brand->hasChannel($channel)) {
+                try {
+                    $brandId = (string) $brand->getId();
+                    if ($brandId !== '') {
+                        $this->brandById[$brandId] = $brand;
+                    }
+                } catch (\TypeError) {
+                    // Unsaved brands in tests can have null ids; skip id-based memoization.
+                }
+
                 return $this->brandByChannel[$channelKey] = $brand;
             }
         }
@@ -138,5 +169,60 @@ class BrandExtension extends AbstractExtension
     private function getChannelCacheKey(ChannelInterface $channel): string
     {
         return (string) ($channel->getId() ?? spl_object_id($channel));
+    }
+
+    /** @return array<string, string> */
+    private function getChannelToBrandMap(): array
+    {
+        if (null !== $this->channelToBrandMap) {
+            return $this->channelToBrandMap;
+        }
+
+        if (null === $this->cache) {
+            return $this->channelToBrandMap = $this->buildChannelToBrandMap();
+        }
+
+        $map = $this->cache->get(
+            CachedBrandRepository::CHANNEL_LOOKUP_CACHE_KEY,
+            function (ItemInterface $item): array {
+                $item->expiresAfter(self::CHANNEL_LOOKUP_CACHE_TTL_SECONDS);
+
+                return $this->buildChannelToBrandMap();
+            }
+        );
+
+        if (!\is_array($map)) {
+            return $this->channelToBrandMap = [];
+        }
+
+        return $this->channelToBrandMap = $map;
+    }
+
+    /** @return array<string, string> */
+    private function buildChannelToBrandMap(): array
+    {
+        $map = [];
+
+        foreach ($this->getBrands() as $brand) {
+            $brandId = (string) $brand->getId();
+            if ($brandId === '') {
+                continue;
+            }
+
+            $this->brandById[$brandId] = $brand;
+
+            foreach ($brand->getChannelLinks() as $channelLink) {
+                $channel = $channelLink->channel;
+                $channelId = $channel ? (string) ($channel->getId() ?? '') : '';
+
+                if ($channelId === '' || \array_key_exists($channelId, $map)) {
+                    continue;
+                }
+
+                $map[$channelId] = $brandId;
+            }
+        }
+
+        return $map;
     }
 }

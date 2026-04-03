@@ -11,6 +11,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 final class CachedBrandRepository implements BrandRepository
 {
     public const ALL_CACHE_KEY = 'integrated_brand.repository.all.v1';
+    public const CHANNEL_LOOKUP_CACHE_KEY = 'integrated_brand.repository.channel_lookup.v1';
 
     public function __construct(
         private readonly BrandRepository $inner,

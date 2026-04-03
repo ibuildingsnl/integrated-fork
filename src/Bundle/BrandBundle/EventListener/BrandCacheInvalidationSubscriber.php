@@ -30,5 +30,6 @@ final class BrandCacheInvalidationSubscriber implements EventSubscriberInterface
     public function invalidate(): void
     {
         $this->cache->delete(CachedBrandRepository::ALL_CACHE_KEY);
+        $this->cache->delete(CachedBrandRepository::CHANNEL_LOOKUP_CACHE_KEY);
     }
 }

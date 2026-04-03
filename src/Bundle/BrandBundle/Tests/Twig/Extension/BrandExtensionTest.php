@@ -9,10 +9,12 @@ use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\BrandProfile;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
+use Integrated\Bundle\BrandBundle\Infrastructure\CachedBrandRepository;
 use Integrated\Bundle\BrandBundle\Twig\Extension\BrandExtension;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use PHPUnit\Framework\TestCase;
+use Symfony\Contracts\Cache\CacheInterface;
 
 final class BrandExtensionTest extends TestCase
 {
@@ -89,5 +91,39 @@ final class BrandExtensionTest extends TestCase
         self::assertSame($first, $second);
         self::assertCount(1, $first);
         self::assertSame($otherBrand, $first->first());
+    }
+
+    public function testUsesPersistentChannelLookupCacheToAvoidFullBrandScan(): void
+    {
+        $websiteChannel = new Channel();
+        $websiteChannel->setId('website_channel');
+
+        $profile = new BrandProfile();
+        $profile->name = 'Test brand';
+
+        $brand = new Brand($profile);
+        $brand->setId('brand_id');
+
+        $repository = $this->createMock(BrandRepository::class);
+        $repository
+            ->expects(self::never())
+            ->method('all');
+        $repository
+            ->expects(self::once())
+            ->method('find')
+            ->with('brand_id')
+            ->willReturn($brand);
+
+        $cache = $this->createMock(CacheInterface::class);
+        $cache
+            ->expects(self::once())
+            ->method('get')
+            ->with(CachedBrandRepository::CHANNEL_LOOKUP_CACHE_KEY, self::isType('callable'))
+            ->willReturn(['website_channel' => 'brand_id']);
+
+        $extension = new BrandExtension($repository, $cache);
+
+        self::assertSame($brand, $extension->getBrandForChannel($websiteChannel));
+        self::assertSame($brand, $extension->getBrandForChannel($websiteChannel));
     }
 }

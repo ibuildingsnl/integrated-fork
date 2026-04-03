@@ -13,14 +13,27 @@ final class BrandCacheInvalidationSubscriberTest extends TestCase
 {
     public function testInvalidateDeletesBrandCacheKey(): void
     {
+        $deletedKeys = [];
+
         $cache = $this->createMock(CacheInterface::class);
         $cache
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('delete')
-            ->with(CachedBrandRepository::ALL_CACHE_KEY)
-            ->willReturn(true);
+            ->willReturnCallback(function (string $key) use (&$deletedKeys): bool {
+                $deletedKeys[] = $key;
+
+                return true;
+            });
 
         $subscriber = new BrandCacheInvalidationSubscriber($cache);
         $subscriber->invalidate();
+
+        self::assertSame(
+            [
+                CachedBrandRepository::ALL_CACHE_KEY,
+                CachedBrandRepository::CHANNEL_LOOKUP_CACHE_KEY,
+            ],
+            $deletedKeys
+        );
     }
 }

@@ -119,6 +119,7 @@
 
         <service id="Integrated\Bundle\BrandBundle\Twig\Extension\BrandExtension">
             <argument type="service" id="integrated_brand.brand.repository" />
+            <argument type="service" id="cache.app" />
 
             <tag name="twig.extension"/>
         </service>
