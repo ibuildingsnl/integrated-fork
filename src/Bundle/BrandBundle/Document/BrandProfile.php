@@ -36,6 +36,16 @@ class BrandProfile
         return $this->id;
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
     public function getLogo(): ?Image
     {
         return $this->logo;
@@ -74,6 +84,16 @@ class BrandProfile
     public function setSecondaryColor(?string $secondaryColor): void
     {
         $this->secondaryColor = $secondaryColor;
+    }
+
+    public function getAnalytics(): ?string
+    {
+        return $this->analytics;
+    }
+
+    public function setAnalytics(?string $analytics): void
+    {
+        $this->analytics = $analytics;
     }
 
     /** @return Contact[] */

@@ -48,7 +48,7 @@ class Brand
 
     public function getName(): string
     {
-        return $this->profile?->name ?: '';
+        return $this->profile?->getName() ?: '';
     }
 
     /** @return string[] */
