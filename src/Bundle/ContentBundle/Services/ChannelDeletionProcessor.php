@@ -71,22 +71,30 @@ final class ChannelDeletionProcessor
                         continue;
                     }
 
-                    $this->contentReverseReferenceCleaner->cleanup($document);
-                    $this->safeWarningStep($document, 'dispatch', $report, function () use ($document): void {
-                        if (!$this->dispatcher->hasListeners(ContentEvents::CONTENT_DELETED)) {
-                            return;
-                        }
+                    $cleanup = null;
 
-                        $this->dispatcher->dispatch(
-                            new ContentDeletedEvent($document),
-                            ContentEvents::CONTENT_DELETED
-                        );
-                    });
+                    try {
+                        $cleanup = $this->contentReverseReferenceCleaner->cleanupWithoutFlush($document);
+                        $this->safeWarningStep($document, 'dispatch', $report, function () use ($document): void {
+                            if (!$this->dispatcher->hasListeners(ContentEvents::CONTENT_DELETED)) {
+                                return;
+                            }
 
-                    $this->safeDocumentStep($document, 'delete', $report, function () use ($document, $report): void {
+                            $this->dispatcher->dispatch(
+                                new ContentDeletedEvent($document),
+                                ContentEvents::CONTENT_DELETED
+                            );
+                        });
+
                         $this->documentManager->remove($document);
                         $report->markRemovedContent();
-                    });
+                    } catch (\Throwable $exception) {
+                        if ($cleanup !== null) {
+                            ($cleanup['rollback'])();
+                        }
+
+                        $this->recordWarning($document, 'delete', $report, $exception, true);
+                    }
 
                     continue;
                 }

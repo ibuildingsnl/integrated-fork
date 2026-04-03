@@ -17,6 +17,7 @@ use Integrated\Bundle\ContentBundle\Services\ChannelDeletionProcessor;
 use Integrated\Bundle\ContentBundle\Services\ChannelDeletionReport;
 use Integrated\Bundle\ContentBundle\Services\ContentReverseReferenceCleaner;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
+use Integrated\Bundle\CommentBundle\Document\Comment;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -150,6 +151,88 @@ final class ChannelDeletionProcessorTest extends TestCase
         self::assertSame(Article::class, $report->getWarnings()[0]->getDocumentClass());
         self::assertSame('content-1', $report->getWarnings()[0]->getDocumentId());
         self::assertSame('delete', $report->getWarnings()[0]->getStep());
+    }
+
+    public function testProcessRestoresDeferredReverseReferenceCleanupWhenSingleChannelDeleteFails(): void
+    {
+        $channel = $this->createChannel('channel-a');
+
+        $content = new Article();
+        $content->setId('content-1');
+        $content->addChannel($channel);
+
+        $contentReferrer = new Article();
+        $contentReferrer->setId('article-2');
+        $relation = (new \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation())
+            ->setRelationId('rel-1')
+            ->setRelationType('related')
+            ->addReference($content);
+        $contentReferrer->addRelation($relation);
+
+        $comment = new Comment();
+        $comment->setId('comment-1');
+        $comment->setContent($content);
+
+        $documentManager = $this->createDocumentManager([], []);
+        $persisted = [];
+        $documentManager
+            ->expects($this->exactly(2))
+            ->method('persist')
+            ->willReturnCallback(function (object $document) use (&$persisted): void {
+                $persisted[] = $document;
+            });
+
+        $documentManager
+            ->expects($this->exactly(3))
+            ->method('remove')
+            ->willReturnCallback(function (object $document) use ($content, $comment, $channel): void {
+                if ($document === $comment) {
+                    return;
+                }
+
+                if ($document === $content) {
+                    throw new \RuntimeException('delete failed');
+                }
+
+                self::assertSame($channel, $document);
+            });
+
+        $documentManager
+            ->expects($this->once())
+            ->method('flush');
+
+        $searchContentReferenced = $this->createMock(SearchContentReferenced::class);
+        $searchContentReferenced
+            ->expects($this->once())
+            ->method('getReferencedDocuments')
+            ->with($channel)
+            ->willReturn([$content]);
+
+        $cleanupSearch = $this->createMock(SearchContentReferenced::class);
+        $cleanupSearch
+            ->expects($this->once())
+            ->method('getReferencedDocuments')
+            ->with($content)
+            ->willReturn([$contentReferrer, $comment]);
+        $contentReverseReferenceCleaner = new ContentReverseReferenceCleaner($documentManager, $cleanupSearch);
+
+        $dispatcher = $this->createDispatcherWithoutContentDeleteListeners();
+
+        $processor = new ChannelDeletionProcessor(
+            $documentManager,
+            $searchContentReferenced,
+            $contentReverseReferenceCleaner,
+            $dispatcher
+        );
+
+        $report = $processor->process($channel, true);
+
+        self::assertSame(0, $report->getRemovedContent());
+        self::assertSame(1, $report->getWarningCount());
+        self::assertTrue($report->isRemovedChannel());
+        self::assertCount(1, $contentReferrer->getReferencesByRelationType('related'));
+        self::assertTrue(\in_array($contentReferrer, $persisted, true));
+        self::assertTrue(\in_array($comment, $persisted, true));
     }
 
     public function testProcessRestoresMultiChannelContentStateWhenDetachPersistFails(): void

@@ -138,4 +138,92 @@ final class ContentReverseReferenceCleanerTest extends TestCase
 
         self::assertSame(0, $cleaner->cleanup($target));
     }
+
+    public function testCleanupWithoutFlushCanRollbackReverseReferenceChanges(): void
+    {
+        $target = new Article();
+        $target->setId('target-1');
+
+        $contentReferrer = new Article();
+        $contentReferrer->setId('article-2');
+        $relation = (new ContentRelation())
+            ->setRelationId('rel-1')
+            ->setRelationType('related')
+            ->addReference($target);
+        $contentReferrer->addRelation($relation);
+
+        $htmlBlock = new HtmlBlock();
+        $htmlBlock->setId('block-1');
+        $htmlBlock->setRequiredItems([$target]);
+        $blockRelation = (new BlockRelation())
+            ->setRelationId('rel-2')
+            ->setRelationType('related');
+        $blockRelation->addReference($target);
+        $htmlBlock->addRelation($blockRelation);
+
+        $contentItemsBlock = new ContentItemsBlock();
+        $contentItemsBlock->setId('block-2');
+        $contentItemsBlock->setItems([$target]);
+
+        $bulkAction = new BulkAction();
+        $bulkAction->addSelection($target);
+        $relationAction = new RelationAction();
+        $relationAction->addReference($target);
+        $bulkAction->addAction($relationAction);
+
+        $comment = new Comment();
+        $comment->setId('comment-1');
+        $comment->setContent($target);
+
+        $this->searchContentReferenced
+            ->expects($this->once())
+            ->method('getReferencedDocuments')
+            ->with($target)
+            ->willReturn([
+                $contentReferrer,
+                $htmlBlock,
+                $contentItemsBlock,
+                $bulkAction,
+                $comment,
+            ]);
+
+        $persisted = [];
+        $this->documentManager
+            ->expects($this->exactly(5))
+            ->method('persist')
+            ->willReturnCallback(function (object $document) use (&$persisted): void {
+                $persisted[] = $document;
+            });
+
+        $this->documentManager
+            ->expects($this->once())
+            ->method('remove')
+            ->with($comment);
+
+        $this->documentManager
+            ->expects($this->never())
+            ->method('flush');
+
+        $cleaner = new ContentReverseReferenceCleaner($this->documentManager, $this->searchContentReferenced);
+
+        $result = $cleaner->cleanupWithoutFlush($target);
+
+        self::assertSame(7, $result['changed']);
+        self::assertCount(0, $contentReferrer->getReferencesByRelationType('related'));
+        self::assertCount(0, $htmlBlock->getRequiredItems());
+        self::assertCount(0, $htmlBlock->getRelations());
+        self::assertCount(0, $contentItemsBlock->getItems());
+        self::assertCount(0, $bulkAction->getSelection());
+        self::assertCount(0, iterator_to_array($relationAction->getReferences()));
+
+        $result['rollback']();
+
+        self::assertCount(1, $contentReferrer->getReferencesByRelationType('related'));
+        self::assertCount(1, $htmlBlock->getRequiredItems());
+        self::assertCount(1, $htmlBlock->getRelations());
+        self::assertCount(1, $contentItemsBlock->getItems());
+        self::assertCount(1, $bulkAction->getSelection());
+        self::assertCount(1, iterator_to_array($relationAction->getReferences()));
+        self::assertTrue(\in_array($comment, $persisted, true));
+    }
 }
