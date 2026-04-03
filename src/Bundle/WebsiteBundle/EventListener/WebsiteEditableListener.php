@@ -47,14 +47,14 @@ class WebsiteEditableListener implements EventSubscriberInterface
 
     public function onController(ControllerEvent $event)
     {
-        if (!$this->websiteEditableChecker->checkEditable()) {
-            return;
-        }
-
         $request = $event->getRequest();
 
         if (!$request->query->get('integrated_website_edit')) {
             // edit mode is off
+            return;
+        }
+
+        if (!$this->websiteEditableChecker->checkEditable()) {
             return;
         }
 
