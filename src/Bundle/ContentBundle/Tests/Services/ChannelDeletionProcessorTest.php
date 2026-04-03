@@ -152,6 +152,65 @@ final class ChannelDeletionProcessorTest extends TestCase
         self::assertSame('delete', $report->getWarnings()[0]->getStep());
     }
 
+    public function testProcessRestoresMultiChannelContentStateWhenDetachPersistFails(): void
+    {
+        $channel = $this->createChannel('channel-a');
+        $otherChannel = $this->createChannel('channel-b');
+
+        $content = new Article();
+        $content->setId('content-1');
+        $content->addChannel($channel);
+        $content->addChannel($otherChannel);
+        $content->setPrimaryChannel($channel);
+
+        $documentManager = $this->createDocumentManager([], []);
+        $documentManager
+            ->expects($this->once())
+            ->method('persist')
+            ->with($this->identicalTo($content))
+            ->willThrowException(new \RuntimeException('persist failed'));
+
+        $documentManager
+            ->expects($this->once())
+            ->method('remove')
+            ->with($this->identicalTo($channel));
+
+        $documentManager
+            ->expects($this->once())
+            ->method('flush');
+
+        $searchContentReferenced = $this->createMock(SearchContentReferenced::class);
+        $searchContentReferenced
+            ->expects($this->once())
+            ->method('getReferencedDocuments')
+            ->with($channel)
+            ->willReturn([$content]);
+
+        $cleanupSearch = $this->createMock(SearchContentReferenced::class);
+        $cleanupSearch
+            ->expects($this->never())
+            ->method('getReferencedDocuments');
+        $contentReverseReferenceCleaner = new ContentReverseReferenceCleaner($documentManager, $cleanupSearch);
+
+        $processor = new ChannelDeletionProcessor(
+            $documentManager,
+            $searchContentReferenced,
+            $contentReverseReferenceCleaner,
+            new EventDispatcher()
+        );
+
+        $report = $processor->process($channel, true);
+
+        self::assertTrue($report->isRemovedChannel());
+        self::assertSame(1, $report->getWarningCount());
+        self::assertTrue($content->hasChannel($channel));
+        self::assertTrue($content->hasChannel($otherChannel));
+        self::assertSame($channel, $content->getPrimaryChannel());
+        self::assertSame([
+            ['class' => Article::class, 'id' => 'content-1'],
+        ], $report->getSkippedDocuments());
+    }
+
     public function testProcessOnlyFailsWhenChannelRemovalFails(): void
     {
         $channel = $this->createChannel('channel-a');
@@ -315,6 +374,58 @@ final class ChannelDeletionProcessorTest extends TestCase
         ], $report->getSkippedDocuments());
         self::assertSame('update', $report->getWarnings()[0]->getStep());
         self::assertSame(ThrowingBrand::class, $report->getWarnings()[0]->getDocumentClass());
+    }
+
+    public function testProcessRestoresBrandLinksWhenRemovalFailsMidUpdate(): void
+    {
+        $channel = $this->createChannel('channel-a');
+        $link = new ChannelLink(new ChannelType('website', 'Website'), $channel, true);
+        $brand = new PartiallyFailingBrand('brand-rollback');
+        $brand->addChannelLink($link);
+
+        $documentManager = $this->createDocumentManager([], [$brand]);
+        $documentManager
+            ->expects($this->never())
+            ->method('persist');
+
+        $documentManager
+            ->expects($this->once())
+            ->method('remove')
+            ->with($this->identicalTo($channel));
+
+        $documentManager
+            ->expects($this->once())
+            ->method('flush');
+
+        $searchContentReferenced = $this->createMock(SearchContentReferenced::class);
+        $searchContentReferenced
+            ->expects($this->once())
+            ->method('getReferencedDocuments')
+            ->with($channel)
+            ->willReturn([]);
+
+        $cleanupSearch = $this->createMock(SearchContentReferenced::class);
+        $cleanupSearch
+            ->expects($this->never())
+            ->method('getReferencedDocuments');
+        $contentReverseReferenceCleaner = new ContentReverseReferenceCleaner($documentManager, $cleanupSearch);
+
+        $processor = new ChannelDeletionProcessor(
+            $documentManager,
+            $searchContentReferenced,
+            $contentReverseReferenceCleaner,
+            new EventDispatcher()
+        );
+
+        $report = $processor->process($channel, true);
+
+        self::assertTrue($report->isRemovedChannel());
+        self::assertSame(1, $report->getWarningCount());
+        self::assertTrue($brand->hasChannelLink($link));
+        self::assertCount(1, $brand->getChannelLinks());
+        self::assertSame([
+            ['class' => PartiallyFailingBrand::class, 'id' => 'brand-rollback'],
+        ], $report->getSkippedDocuments());
     }
 
     public function testProcessTurnsChannelDeletedListenerFailureIntoWarning(): void
@@ -611,5 +722,29 @@ final class ThrowingBrand extends Brand
     public function getChannelLinks(): \Doctrine\Common\Collections\Collection
     {
         throw new \RuntimeException($this->message);
+    }
+}
+
+final class PartiallyFailingBrand extends Brand
+{
+    private bool $hasThrown = false;
+
+    public function __construct(string $id)
+    {
+        parent::__construct();
+        $this->setId($id);
+    }
+
+    public function removeChannelLink(ChannelLink $link): void
+    {
+        parent::removeChannelLink($link);
+
+        if ($this->hasThrown) {
+            return;
+        }
+
+        $this->hasThrown = true;
+
+        throw new \RuntimeException('removeChannelLink failed');
     }
 }

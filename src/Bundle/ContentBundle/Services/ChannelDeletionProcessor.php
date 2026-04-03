@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Integrated\Bundle\ContentBundle\Services;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
@@ -42,30 +43,47 @@ final class ChannelDeletionProcessor
                     $channels = $document->getChannels();
                     $onlyThisChannel = \count($channels) <= 1;
                     if (!$onlyThisChannel) {
-                        $this->safeDocumentStep($document, 'detach', $report, function () use ($document, $channel, $report): void {
-                            $document->removeChannel($channel);
-                            $primary = $document->getPrimaryChannel();
-                            if ($primary && $primary->getId() === $channel->getId()) {
-                                $document->setPrimaryChannel(null);
-                            }
+                        $this->safeMutationStep(
+                            $document,
+                            'detach',
+                            $report,
+                            fn (): array => [
+                                'channels' => $document->getChannels(),
+                                'primary_channel' => $document->getPrimaryChannel(),
+                            ],
+                            function (array $snapshot) use ($document, $channel, $report): void {
+                                $document->removeChannel($channel);
+                                $primary = $snapshot['primary_channel'];
+                                if ($primary && $primary->getId() === $channel->getId()) {
+                                    $document->setPrimaryChannel(null);
+                                }
 
-                            $this->documentManager->persist($document);
-                            $report->markDetachedContent();
-                        });
+                                $this->documentManager->persist($document);
+                                $report->markDetachedContent();
+                            },
+                            fn (array $snapshot): bool => $this->restoreDocumentChannelState(
+                                $document,
+                                $snapshot['channels'],
+                                $snapshot['primary_channel']
+                            )
+                        );
 
                         continue;
                     }
 
-                    $this->safeDocumentStep($document, 'delete', $report, function () use ($document, $report): void {
-                        $this->contentReverseReferenceCleaner->cleanup($document);
-
-                        if ($this->dispatcher->hasListeners(ContentEvents::CONTENT_DELETED)) {
-                            $this->dispatcher->dispatch(
-                                new ContentDeletedEvent($document),
-                                ContentEvents::CONTENT_DELETED
-                            );
+                    $this->contentReverseReferenceCleaner->cleanup($document);
+                    $this->safeWarningStep($document, 'dispatch', $report, function () use ($document): void {
+                        if (!$this->dispatcher->hasListeners(ContentEvents::CONTENT_DELETED)) {
+                            return;
                         }
 
+                        $this->dispatcher->dispatch(
+                            new ContentDeletedEvent($document),
+                            ContentEvents::CONTENT_DELETED
+                        );
+                    });
+
+                    $this->safeDocumentStep($document, 'delete', $report, function () use ($document, $report): void {
                         $this->documentManager->remove($document);
                         $report->markRemovedContent();
                     });
@@ -87,17 +105,29 @@ final class ChannelDeletionProcessor
                 }
 
                 if (method_exists($document, 'removeChannel')) {
-                    $this->safeDocumentStep($document, 'update', $report, function () use ($document, $channel): void {
-                        $document->removeChannel($channel);
-                        if (method_exists($document, 'getPrimaryChannel') && method_exists($document, 'setPrimaryChannel')) {
-                            $primary = $document->getPrimaryChannel();
-                            if ($primary && $primary->getId() === $channel->getId()) {
+                    $this->safeMutationStep(
+                        $document,
+                        'update',
+                        $report,
+                        fn (): array => [
+                            'channels' => method_exists($document, 'getChannels') ? (array) $document->getChannels() : [],
+                            'primary_channel' => method_exists($document, 'getPrimaryChannel') ? $document->getPrimaryChannel() : null,
+                        ],
+                        function (array $snapshot) use ($document, $channel): void {
+                            $document->removeChannel($channel);
+                            $primary = $snapshot['primary_channel'];
+                            if ($primary && method_exists($document, 'setPrimaryChannel') && $primary->getId() === $channel->getId()) {
                                 $document->setPrimaryChannel(null);
                             }
-                        }
 
-                        $this->documentManager->persist($document);
-                    });
+                            $this->documentManager->persist($document);
+                        },
+                        fn (array $snapshot): bool => $this->restoreDocumentChannelState(
+                            $document,
+                            $snapshot['channels'],
+                            $snapshot['primary_channel']
+                        )
+                    );
                 }
             }
         }
@@ -118,28 +148,39 @@ final class ChannelDeletionProcessor
 
         $brands = $this->documentManager->getRepository(Brand::class)->findAll();
         foreach ($brands as $brand) {
-            $this->safeDocumentStep($brand, 'update', $report, function () use ($brand, $channel, $report): void {
-                $changed = false;
-                foreach ($brand->getChannelLinks()->toArray() as $link) {
-                    if (!$link->channel) {
-                        $brand->removeChannelLink($link);
-                        $changed = true;
+            $this->safeMutationStep(
+                $brand,
+                'update',
+                $report,
+                fn (): array => $brand->getChannelLinks()->toArray(),
+                function (array $links) use ($brand, $channel, $report): void {
+                    $changed = false;
+                    foreach ($links as $link) {
+                        if (!$link instanceof ChannelLink) {
+                            continue;
+                        }
 
-                        continue;
+                        if (!$link->channel) {
+                            $brand->removeChannelLink($link);
+                            $changed = true;
+
+                            continue;
+                        }
+                        if ($link->channel->getId() === $channel->getId()) {
+                            $brand->removeChannelLink($link);
+                            $changed = true;
+                        }
                     }
-                    if ($link->channel->getId() === $channel->getId()) {
-                        $brand->removeChannelLink($link);
-                        $changed = true;
+
+                    if (!$changed) {
+                        return;
                     }
-                }
 
-                if (!$changed) {
-                    return;
-                }
-
-                $this->documentManager->persist($brand);
-                $report->markUpdatedBrand();
-            });
+                    $this->documentManager->persist($brand);
+                    $report->markUpdatedBrand();
+                },
+                fn (array $links): bool => $this->restoreBrandChannelLinks($brand, $links)
+            );
         }
 
         $this->documentManager->remove($channel);
@@ -162,6 +203,35 @@ final class ChannelDeletionProcessor
     }
 
     /**
+     * @param callable(): mixed $snapshotFactory
+     * @param callable(mixed): void $operation
+     * @param callable(mixed): bool $rollback
+     */
+    private function safeMutationStep(
+        object $document,
+        string $step,
+        ChannelDeletionReport $report,
+        callable $snapshotFactory,
+        callable $operation,
+        callable $rollback
+    ): void {
+        $snapshotCaptured = false;
+        $snapshot = null;
+
+        try {
+            $snapshot = $snapshotFactory();
+            $snapshotCaptured = true;
+            $operation($snapshot);
+        } catch (\Throwable $exception) {
+            if ($snapshotCaptured && !$rollback($snapshot)) {
+                throw $exception;
+            }
+
+            $this->recordWarning($document, $step, $report, $exception, true);
+        }
+    }
+
+    /**
      * @param callable(): void $operation
      */
     private function safeWarningStep(
@@ -175,20 +245,86 @@ final class ChannelDeletionProcessor
         try {
             $operation();
         } catch (\Throwable $exception) {
-            $class = $document::class;
-            $id = $this->resolveDocumentId($document);
-
-            $report->addWarning(new ChannelDeletionWarning(
-                $step,
-                $class,
-                $id,
-                $exception->getMessage(),
-                $exception::class
-            ));
-            if ($recordSkippedDocument) {
-                $report->addSkippedDocument($class, $id);
-            }
+            $this->recordWarning($document, $step, $report, $exception, $recordSkippedDocument);
         }
+    }
+
+    private function recordWarning(
+        object $document,
+        string $step,
+        ChannelDeletionReport $report,
+        \Throwable $exception,
+        bool $recordSkippedDocument
+    ): void {
+        $class = $document::class;
+        $id = $this->resolveDocumentId($document);
+
+        $report->addWarning(new ChannelDeletionWarning(
+            $step,
+            $class,
+            $id,
+            $exception->getMessage(),
+            $exception::class
+        ));
+        if ($recordSkippedDocument) {
+            $report->addSkippedDocument($class, $id);
+        }
+    }
+
+    /**
+     * @param array<int, object> $channels
+     */
+    private function restoreDocumentChannelState(object $document, array $channels, ?object $primaryChannel): bool
+    {
+        if (method_exists($document, 'removeChannels') && method_exists($document, 'addChannel')) {
+            $document->removeChannels();
+            foreach ($channels as $channel) {
+                $document->addChannel($channel);
+            }
+            if (method_exists($document, 'setPrimaryChannel')) {
+                $document->setPrimaryChannel($primaryChannel);
+            }
+
+            return true;
+        }
+
+        $channelsRestored = $this->writeObjectProperty($document, 'channels', new ArrayCollection($channels));
+        $primaryRestored = true;
+
+        if (method_exists($document, 'setPrimaryChannel')) {
+            $document->setPrimaryChannel($primaryChannel);
+        } else {
+            $primaryRestored = $this->writeObjectProperty($document, 'primaryChannel', $primaryChannel);
+        }
+
+        return $channelsRestored && $primaryRestored;
+    }
+
+    /**
+     * @param array<int, ChannelLink> $links
+     */
+    private function restoreBrandChannelLinks(Brand $brand, array $links): bool
+    {
+        return $this->writeObjectProperty($brand, 'channelLinks', new ArrayCollection($links));
+    }
+
+    private function writeObjectProperty(object $document, string $property, mixed $value): bool
+    {
+        $reflection = new \ReflectionObject($document);
+
+        do {
+            if ($reflection->hasProperty($property)) {
+                $reflectionProperty = $reflection->getProperty($property);
+                $reflectionProperty->setAccessible(true);
+                $reflectionProperty->setValue($document, $value);
+
+                return true;
+            }
+
+            $reflection = $reflection->getParentClass();
+        } while ($reflection !== false);
+
+        return false;
     }
 
     private function resolveDocumentId(object $document): string
