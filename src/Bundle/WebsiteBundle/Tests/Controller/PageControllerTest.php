@@ -441,6 +441,35 @@ class PageControllerTest extends TestCase
         self::assertStringNotContainsString('integrated-draft-notice', (string) $response->getContent());
     }
 
+    public function testShowThrowsNotFoundWhenLayoutTemplateCannotBeResolved(): void
+    {
+        $page = new Page();
+        $page->setLayout('content/missing/layout.html.twig');
+        $page->setDisabled(false);
+        $page->setPath('/published-page');
+
+        $this->themeManager
+            ->expects($this->once())
+            ->method('locateTemplate')
+            ->with('content/missing/layout.html.twig')
+            ->willReturn(null);
+        $this->themeManager
+            ->expects($this->once())
+            ->method('getActiveTheme')
+            ->willReturn('default');
+        $this->websiteToolbarListener->expects($this->never())->method('setToolbarMessage');
+
+        $controller = $this->createController([
+            'ROLE_WEBSITE_MANAGER' => false,
+            'ROLE_ADMIN' => false,
+        ]);
+
+        $this->expectException(NotFoundHttpException::class);
+        $this->expectExceptionMessage('Unable to resolve page layout template');
+
+        $controller->show(Request::create('https://example.test/published-page'), $page);
+    }
+
     public function testShowRedirectsToNormalizedSingleSelectFacetUrl(): void
     {
         $page = new Page();

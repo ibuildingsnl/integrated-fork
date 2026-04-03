@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Integrated\Bundle\WebsiteBundle\EventListener;
 
 use Integrated\Bundle\WebsiteBundle\Routing\ContentTypePageLoader;
+use Integrated\Bundle\WebsiteBundle\Routing\PageLoader;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -86,7 +87,8 @@ final class AnonymousPageCacheSubscriber implements EventSubscriberInterface
 
         $route = (string) $request->attributes->get('_route', '');
 
-        return str_starts_with($route, ContentTypePageLoader::ROUTE_PREFIX.'_');
+        return str_starts_with($route, ContentTypePageLoader::ROUTE_PREFIX.'_')
+            || str_starts_with($route, PageLoader::ROUTE_PREFIX);
     }
 
     private function isAuthenticatedRequest(Request $request): bool

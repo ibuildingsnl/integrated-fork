@@ -21,6 +21,7 @@
             <argument type="service" id="integrated_theme.templating.theme_manager" />
             <argument type="service" id="cache.app" />
         </service>
+        <service id="Integrated\Bundle\PageBundle\Resolver\ThemeResolver" alias="integrated_page.theme_resolver" />
 
         <service id="Integrated\Bundle\PageBundle\EventListener\ThemeCacheInvalidationSubscriber" />
 
