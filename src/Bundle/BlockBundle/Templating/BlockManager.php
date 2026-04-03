@@ -54,6 +54,11 @@ class BlockManager
      */
     protected $document;
 
+    /**
+     * @var array<string, Block|null>
+     */
+    private array $blockCache = [];
+
     public function __construct(BlockHandlerRegistryInterface $blockRegistry, ThemeManager $themeManager, DocumentManager $dm, Environment $twig)
     {
         $this->blockRegistry = $blockRegistry;
@@ -114,7 +119,13 @@ class BlockManager
      */
     public function getBlock($id)
     {
-        return $this->repository->find($id);
+        $id = (string) $id;
+
+        if (\array_key_exists($id, $this->blockCache)) {
+            return $this->blockCache[$id];
+        }
+
+        return $this->blockCache[$id] = $this->repository->find($id);
     }
 
     /**
