@@ -282,9 +282,11 @@ class ContentSubscriber implements ContentSubscriberInterface
             }
         }
 
-        if ($data['deadline'] !== $state->getDeadline()) {
-            $log->setDeadline($data['deadline']);
-            $state->setDeadline($data['deadline']);
+        $deadline = $this->normalizeDeadline($data['deadline'] ?? null);
+
+        if ($this->hasDeadlineChanged($deadline, $state->getDeadline())) {
+            $log->setDeadline($deadline);
+            $state->setDeadline($deadline);
 
             $persist = true;
         }
@@ -482,6 +484,24 @@ class ContentSubscriber implements ContentSubscriberInterface
         }
 
         return false;
+    }
+
+    private function normalizeDeadline(mixed $deadline): ?\DateTime
+    {
+        if (!$deadline instanceof \DateTimeInterface) {
+            return null;
+        }
+
+        return \DateTime::createFromInterface($deadline);
+    }
+
+    private function hasDeadlineChanged(?\DateTimeInterface $submittedDeadline, ?\DateTimeInterface $currentDeadline): bool
+    {
+        if ($submittedDeadline === null || $currentDeadline === null) {
+            return $submittedDeadline !== $currentDeadline;
+        }
+
+        return $submittedDeadline->format('U.u') !== $currentDeadline->format('U.u');
     }
 
     private function invalidateNavdropdownCache(): void
