@@ -177,6 +177,43 @@ final class ChannelManagerTest extends TestCase
         self::assertNull($managerTwo->findByDomain('localhost'));
     }
 
+    public function testInvalidateDomainLookupCacheForcesFreshLookup(): void
+    {
+        $firstChannel = $this->createMock(ChannelInterface::class);
+
+        $secondChannel = $this->createMock(ChannelInterface::class);
+
+        /** @var ObjectRepository&MockObject $repository */
+        $repository = $this->createMock(ObjectRepository::class);
+        $repository
+            ->expects($this->once())
+            ->method('getClassName')
+            ->willReturn(Channel::class);
+        $repository
+            ->expects($this->exactly(2))
+            ->method('findOneBy')
+            ->with(['domains' => 'example.com'])
+            ->willReturnOnConsecutiveCalls($firstChannel, $secondChannel);
+
+        $cache = new ArrayAdapter();
+
+        /** @var ObjectManager&MockObject $objectManager */
+        $objectManager = $this->createMock(ObjectManager::class);
+        $objectManager
+            ->expects($this->once())
+            ->method('getRepository')
+            ->with(Channel::class)
+            ->willReturn($repository);
+
+        $manager = new ChannelManager($objectManager, Channel::class, $cache);
+
+        self::assertSame($firstChannel, $manager->findByDomain('example.com'));
+
+        $manager->invalidateDomainLookupCache();
+
+        self::assertSame($secondChannel, $manager->findByDomain('example.com'));
+    }
+
     /**
      * @param ObjectRepository&MockObject $repository
      */

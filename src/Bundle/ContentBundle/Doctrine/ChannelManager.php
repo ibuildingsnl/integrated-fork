@@ -23,8 +23,10 @@ use Psr\Cache\CacheItemPoolInterface;
 class ChannelManager implements ChannelManagerInterface
 {
     private const DOMAIN_LOOKUP_CACHE_KEY_PREFIX = 'integrated_content_channel_domain_';
+    private const DOMAIN_LOOKUP_CACHE_VERSION_KEY = 'integrated_content_channel_domain_version';
+    private const DOMAIN_LOOKUP_CACHE_VERSION_DEFAULT = 'v1';
     private const DOMAIN_LOOKUP_CACHE_MISS = '__null__';
-    private const DOMAIN_LOOKUP_CACHE_TTL_SECONDS = 300;
+    private const DOMAIN_LOOKUP_CACHE_TTL_SECONDS = 86400;
 
     /**
      * @var ObjectManager
@@ -42,6 +44,7 @@ class ChannelManager implements ChannelManagerInterface
     private array $domainLookupCache = [];
 
     private ?CacheItemPoolInterface $cache;
+    private ?string $domainLookupCacheVersion = null;
 
     public function __construct(ObjectManager $om, $class, ?CacheItemPoolInterface $cache = null)
     {
@@ -154,6 +157,12 @@ class ChannelManager implements ChannelManagerInterface
         return $channel;
     }
 
+    public function invalidateDomainLookupCache(): void
+    {
+        $this->domainLookupCache = [];
+        $this->domainLookupCacheVersion = $this->bumpDomainLookupCacheVersion();
+    }
+
     public function findByName($criteria)
     {
         return $this->repository->findOneBy(['shortName' => $criteria]);
@@ -223,7 +232,54 @@ class ChannelManager implements ChannelManagerInterface
 
     private function getDomainLookupCacheKey(string $domain): string
     {
-        return self::DOMAIN_LOOKUP_CACHE_KEY_PREFIX.md5($domain);
+        return self::DOMAIN_LOOKUP_CACHE_KEY_PREFIX.$this->getDomainLookupCacheVersion().'_'.md5($domain);
+    }
+
+    private function getDomainLookupCacheVersion(): string
+    {
+        if (null !== $this->domainLookupCacheVersion) {
+            return $this->domainLookupCacheVersion;
+        }
+
+        if (null === $this->cache) {
+            $this->domainLookupCacheVersion = self::DOMAIN_LOOKUP_CACHE_VERSION_DEFAULT;
+
+            return $this->domainLookupCacheVersion;
+        }
+
+        $cacheItem = $this->cache->getItem(self::DOMAIN_LOOKUP_CACHE_VERSION_KEY);
+
+        if ($cacheItem->isHit()) {
+            $cachedValue = $cacheItem->get();
+
+            if (\is_string($cachedValue) && '' !== $cachedValue) {
+                $this->domainLookupCacheVersion = $cachedValue;
+
+                return $this->domainLookupCacheVersion;
+            }
+
+            $this->cache->deleteItem($cacheItem->getKey());
+        }
+
+        $cacheItem->set(self::DOMAIN_LOOKUP_CACHE_VERSION_DEFAULT);
+        $this->cache->save($cacheItem);
+
+        $this->domainLookupCacheVersion = self::DOMAIN_LOOKUP_CACHE_VERSION_DEFAULT;
+
+        return $this->domainLookupCacheVersion;
+    }
+
+    private function bumpDomainLookupCacheVersion(): string
+    {
+        $version = bin2hex(random_bytes(8));
+
+        if (null !== $this->cache) {
+            $cacheItem = $this->cache->getItem(self::DOMAIN_LOOKUP_CACHE_VERSION_KEY);
+            $cacheItem->set($version);
+            $this->cache->save($cacheItem);
+        }
+
+        return $version;
     }
 
     private function getFallbackDomain(string $domain): ?string
