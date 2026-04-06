@@ -52,16 +52,29 @@ class RequestChannelInjectionListener implements EventSubscriberInterface
             return;
         }
 
-        $channel = $this->getManager()->findByDomain($event->getRequest()->getHost());
+        $request = $event->getRequest();
+        $channel = $this->getManager()->findByDomain($request->getHost());
         $this->getContext()->setChannel($channel);
+
+        // Safeguard for route conditions that depend on request.attributes._channel.
+        // Some runtime paths rely on direct request attributes, not only ChannelContext.
+        if ($channel) {
+            $request->attributes->set('_channel', $channel->getId());
+            $request->attributes->set('_channel_resolved', true);
+            $request->attributes->set('_channel_object', $channel);
+        } else {
+            $request->attributes->remove('_channel');
+            $request->attributes->remove('_channel_resolved');
+            $request->attributes->remove('_channel_object');
+        }
 
         if ($channel
             && $channel->getPrimaryDomain()
-            && strcasecmp($channel->getPrimaryDomain(), $event->getRequest()->getHost()) !== 0
+            && strcasecmp($channel->getPrimaryDomain(), $request->getHost()) !== 0
             && $channel->getPrimaryDomainRedirect()
-            && $event->getRequest()->getMethod() == 'GET'
+            && $request->getMethod() == 'GET'
         ) {
-            $url = $event->getRequest()->getScheme().'://'.$channel->getPrimaryDomain().$event->getRequest()->getRequestUri();
+            $url = $request->getScheme().'://'.$channel->getPrimaryDomain().$request->getRequestUri();
             $event->setResponse(new RedirectResponse($url, \Symfony\Component\HttpFoundation\Response::HTTP_MOVED_PERMANENTLY));
         }
     }
