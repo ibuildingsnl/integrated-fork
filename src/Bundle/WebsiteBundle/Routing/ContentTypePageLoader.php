@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\WebsiteBundle\Routing;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
 use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\Routing\Route;
