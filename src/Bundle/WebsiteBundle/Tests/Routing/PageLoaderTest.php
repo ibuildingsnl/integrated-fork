@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Integrated\Bundle\WebsiteBundle\Tests\Routing;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\WebsiteBundle\Routing\PageLoader;
 use PHPUnit\Framework\TestCase;
 
@@ -13,17 +12,17 @@ class PageLoaderTest extends TestCase
 {
     public function testLoadIncludesDisabledPagesInRouteCollection(): void
     {
-        $page = new Page();
-        $page->setPath('/draft-page');
-        $page->setLayout('default.html.twig');
-        $page->setDisabled(true);
-        $this->setDocumentId($page, 'draft-page-id');
+        $page = [
+            '_id' => 'draft-page-id',
+            'path' => '/draft-page',
+            'channel' => ['$id' => 'channel-1'],
+        ];
 
         $loader = new class($this->createMock(DocumentManager::class), [$page]) extends PageLoader {
-            /** @var array<int, Page> */
+            /** @var array<int, array<string, mixed>> */
             private array $pages;
 
-            /** @param array<int, Page> $pages */
+            /** @param array<int, array<string, mixed>> $pages */
             public function __construct(DocumentManager $dm, array $pages)
             {
                 parent::__construct($dm);
@@ -42,18 +41,6 @@ class PageLoaderTest extends TestCase
         self::assertNotNull($route);
         self::assertSame('/draft-page', $route->getPath());
         self::assertSame('draft-page-id', $route->getDefault('page'));
-    }
-
-    private function setDocumentId(Page $page, string $id): void
-    {
-        $reflection = new \ReflectionObject($page);
-        while ($reflection && !$reflection->hasProperty('id')) {
-            $reflection = $reflection->getParentClass();
-        }
-
-        self::assertNotFalse($reflection);
-        $property = $reflection->getProperty('id');
-        $property->setAccessible(true);
-        $property->setValue($page, $id);
+        self::assertSame('request.attributes.get("_channel") == "channel-1"', $route->getCondition());
     }
 }

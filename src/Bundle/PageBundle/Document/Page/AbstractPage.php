@@ -29,6 +29,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 abstract class AbstractPage
 {
+    public const DEFAULT_LAYOUT = 'default.html.twig';
+
     /**
      * @var string
      */
@@ -44,7 +46,7 @@ abstract class AbstractPage
      * @var string
      */
     #[Assert\NotBlank]
-    protected $layout;
+    protected $layout = self::DEFAULT_LAYOUT;
 
     /**
      * @var Collection<Grid>
@@ -121,7 +123,8 @@ abstract class AbstractPage
      */
     public function setLayout($layout)
     {
-        $this->layout = $layout;
+        $layout = trim((string) $layout);
+        $this->layout = '' !== $layout ? $layout : self::DEFAULT_LAYOUT;
 
         return $this;
     }

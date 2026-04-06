@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\WebsiteBundle\Routing;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
 use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\Routing\Route;
@@ -56,24 +55,27 @@ class ContentTypePageLoader extends Loader
 
         $pages = $this->getPages();
 
-        /** @var ContentTypePage $page */
         foreach ($pages as $page) {
-            if (!$page->getControllerService()) {
+            $controllerService = trim((string) ($page['controllerService'] ?? ''));
+            if ($controllerService === '') {
                 continue;
             }
 
+            $pageId = trim((string) ($page['_id'] ?? ''));
+            $channelId = $this->extractReferenceId($page['channel'] ?? null);
+
             $route = new Route(
-                $this->urlResolver->getRoutePath($page),
-                ['_controller' => $this->getController($page), 'page' => $page->getId()],
+                $this->getRoutePath((string) ($page['path'] ?? '')),
+                ['_controller' => $this->getController($controllerService, (string) ($page['controllerAction'] ?? '')), 'page' => $pageId],
                 [],
                 [],
                 '',
                 [],
                 [],
-                'request.attributes.get("_channel") == "'.$page->getChannel()->getId().'"'
+                $channelId !== null ? 'request.attributes.get("_channel") == "'.$channelId.'"' : ''
             );
 
-            $routes->add($this->urlResolver->getRouteName($page), $route);
+            $routes->add($this->getRouteName($pageId), $route);
         }
         $this->loaded = true;
 
@@ -86,22 +88,53 @@ class ContentTypePageLoader extends Loader
     }
 
     /**
-     * @return iterable<ContentTypePage>
+     * @return iterable<array<string, mixed>>
      */
     protected function getPages(): iterable
     {
         return $this->dm->createQueryBuilder(ContentTypePage::class)
             ->select(['id', 'path', 'controllerService', 'controllerAction', 'channel'])
+            ->hydrate(false)
             ->getQuery()
             ->getIterator();
     }
 
-    private function getController(ContentTypePage $page): string
+    private function getController(string $controllerService, string $controllerAction): string
     {
-        if ($page->getControllerAction() === '__invoke') {
-            return $page->getControllerService();
+        if ($controllerAction === '__invoke') {
+            return $controllerService;
         }
 
-        return \sprintf('%s::%s', $page->getControllerService(), $page->getControllerAction());
+        return \sprintf('%s::%s', $controllerService, $controllerAction);
+    }
+
+    private function getRoutePath(string $path): string
+    {
+        return preg_replace_callback(
+            '/(#)([\s\S]+?)(#)/',
+            static fn (array $matches): string => \sprintf('{%s}', $matches[2]),
+            $path
+        );
+    }
+
+    private function getRouteName(string $pageId): string
+    {
+        return \sprintf('%s_%s', self::ROUTE_PREFIX, $pageId);
+    }
+
+    private function extractReferenceId(mixed $reference): ?string
+    {
+        if (!\is_array($reference)) {
+            return null;
+        }
+
+        $id = $reference['$id'] ?? null;
+        if ($id === null) {
+            return null;
+        }
+
+        $id = trim((string) $id);
+
+        return $id !== '' ? $id : null;
     }
 }

@@ -5,58 +5,28 @@ declare(strict_types=1);
 namespace Integrated\Bundle\WebsiteBundle\Tests\Routing;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
-use Integrated\Bundle\PageBundle\Services\UrlResolver;
 use Integrated\Bundle\WebsiteBundle\Routing\ContentTypePageLoader;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 final class ContentTypePageLoaderTest extends TestCase
 {
     public function testLoadBuildsRoutesFromLightweightQueryResults(): void
     {
-        $channel = new Channel();
-        $channel->setId('bakkersinbedrijf');
-
-        /** @var ContentTypePage&MockObject $page */
-        $page = $this->getMockBuilder(ContentTypePage::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getControllerService', 'getControllerAction', 'getChannel'])
-            ->getMock();
-        $page
-            ->expects($this->exactly(2))
-            ->method('getControllerService')
-            ->willReturn('App\\Controller\\NewsController');
-        $page
-            ->expects($this->exactly(2))
-            ->method('getControllerAction')
-            ->willReturn('show');
-        $page
-            ->expects($this->once())
-            ->method('getChannel')
-            ->willReturn($channel);
-
-        /** @var UrlResolver&MockObject $urlResolver */
-        $urlResolver = $this->createMock(UrlResolver::class);
-
-        $urlResolver
-            ->expects($this->once())
-            ->method('getRoutePath')
-            ->with($page)
-            ->willReturn('/artikelen/{slug}');
-        $urlResolver
-            ->expects($this->once())
-            ->method('getRouteName')
-            ->with($page)
-            ->willReturn(ContentTypePageLoader::ROUTE_PREFIX.'_news_page');
+        $urlResolver = $this->createStub(\Integrated\Bundle\PageBundle\Services\UrlResolver::class);
+        $page = [
+            '_id' => 'news_page',
+            'path' => '/artikelen/#slug#',
+            'controllerService' => 'App\\Controller\\NewsController',
+            'controllerAction' => 'show',
+            'channel' => ['$id' => 'bakkersinbedrijf'],
+        ];
 
         $loader = new class($this->createMock(DocumentManager::class), $urlResolver, [$page]) extends ContentTypePageLoader {
-            /** @var array<int, ContentTypePage> */
+            /** @var array<int, array<string, mixed>> */
             private array $pages;
 
-            /** @param array<int, ContentTypePage> $pages */
-            public function __construct(DocumentManager $dm, UrlResolver $urlResolver, array $pages)
+            /** @param array<int, array<string, mixed>> $pages */
+            public function __construct(DocumentManager $dm, \Integrated\Bundle\PageBundle\Services\UrlResolver $urlResolver, array $pages)
             {
                 parent::__construct($dm, $urlResolver);
                 $this->pages = $pages;
@@ -79,28 +49,21 @@ final class ContentTypePageLoaderTest extends TestCase
 
     public function testLoadSkipsPagesWithoutControllerService(): void
     {
-        /** @var ContentTypePage&MockObject $page */
-        $page = $this->getMockBuilder(ContentTypePage::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getControllerService'])
-            ->getMock();
-        $page
-            ->expects($this->once())
-            ->method('getControllerService')
-            ->willReturn('');
-
-        /** @var UrlResolver&MockObject $urlResolver */
-        $urlResolver = $this->createMock(UrlResolver::class);
-
-        $urlResolver->expects($this->never())->method('getRoutePath');
-        $urlResolver->expects($this->never())->method('getRouteName');
+        $urlResolver = $this->createStub(\Integrated\Bundle\PageBundle\Services\UrlResolver::class);
+        $page = [
+            '_id' => 'empty',
+            'path' => '/artikelen/#slug#',
+            'controllerService' => '',
+            'controllerAction' => 'show',
+            'channel' => ['$id' => 'bakkersinbedrijf'],
+        ];
 
         $loader = new class($this->createMock(DocumentManager::class), $urlResolver, [$page]) extends ContentTypePageLoader {
-            /** @var array<int, ContentTypePage> */
+            /** @var array<int, array<string, mixed>> */
             private array $pages;
 
-            /** @param array<int, ContentTypePage> $pages */
-            public function __construct(DocumentManager $dm, UrlResolver $urlResolver, array $pages)
+            /** @param array<int, array<string, mixed>> $pages */
+            public function __construct(DocumentManager $dm, \Integrated\Bundle\PageBundle\Services\UrlResolver $urlResolver, array $pages)
             {
                 parent::__construct($dm, $urlResolver);
                 $this->pages = $pages;
