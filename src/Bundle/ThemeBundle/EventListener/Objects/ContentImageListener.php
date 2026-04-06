@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ThemeBundle\EventListener\Objects;
 
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Event\ContentRenderEvent;
 use Integrated\Bundle\SlugBundle\Slugger\SluggerInterface;
@@ -25,7 +25,7 @@ class ContentImageListener
 {
     public function __construct(
         private readonly ThemeManager $themeManager,
-        private readonly ObjectManager $objectManager,
+        private readonly DocumentManager $documentManager,
         private readonly Environment $templating,
         private readonly SluggerInterface $slugger,
         private readonly string $env,
@@ -37,12 +37,13 @@ class ContentImageListener
     {
         try {
             $imageIndex = 0;
+            $documents = $this->loadImages($contentEvent->getContent());
             $content = preg_replace_callback(
                 '/\<img.*?data\-integrated\-id\="(.+?)".*?\>/',
-                function ($matches) use (&$imageIndex) {
+                function ($matches) use (&$imageIndex, $documents) {
                     ++$imageIndex;
 
-                    return $this->findImages($matches, $imageIndex);
+                    return $this->findImages($matches, $documents, $imageIndex);
                 },
                 $contentEvent->getContent()
             );
@@ -55,9 +56,42 @@ class ContentImageListener
         }
     }
 
-    protected function findImages(array $matches, int $imageIndex = 1): ?string
+    /**
+     * @return array<string, Content>
+     */
+    protected function loadImages(string $content): array
     {
-        if ($file = $this->objectManager->find(Content::class, $matches[1])) {
+        if (!preg_match_all('/\<img.*?data\-integrated\-id\="(.+?)".*?\>/', $content, $matches)) {
+            return [];
+        }
+
+        $ids = array_values(array_unique(array_filter(array_map('trim', $matches[1]))));
+        if ($ids === []) {
+            return [];
+        }
+
+        $documents = $this->documentManager
+            ->getRepository(Content::class)
+            ->findBy(['_id' => ['$in' => $ids]]);
+
+        $indexedDocuments = [];
+
+        foreach ($documents as $document) {
+            if ($document instanceof Content) {
+                $indexedDocuments[(string) $document->getId()] = $document;
+            }
+        }
+
+        return $indexedDocuments;
+    }
+
+    /**
+     * @param array<string, Content> $documents
+     */
+    protected function findImages(array $matches, array $documents, int $imageIndex = 1): ?string
+    {
+        $file = $documents[$matches[1]] ?? null;
+        if ($file instanceof Content) {
             $class = '';
             $width = '';
             $height = '';
