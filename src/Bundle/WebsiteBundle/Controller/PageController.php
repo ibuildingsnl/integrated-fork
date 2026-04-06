@@ -146,7 +146,7 @@ class PageController extends AbstractController
         $layout = trim((string) $page->getLayout());
         if ('' === $layout) {
             throw new NotFoundHttpException(
-                sprintf(
+                \sprintf(
                     'Unable to resolve page layout template for page "%s" (path "%s"): layout is empty.',
                     trim((string) $page->getId()),
                     trim((string) $page->getPath())
@@ -155,9 +155,9 @@ class PageController extends AbstractController
         }
 
         $template = $this->themeManager->locateTemplate($layout);
-        if (!is_string($template) || '' === trim($template)) {
+        if ('' === trim((string) $template)) {
             throw new NotFoundHttpException(
-                sprintf(
+                \sprintf(
                     'Unable to resolve page layout template for page "%s" (path "%s", layout "%s", active theme "%s").',
                     trim((string) $page->getId()),
                     trim((string) $page->getPath()),

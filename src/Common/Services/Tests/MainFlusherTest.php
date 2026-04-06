@@ -46,7 +46,7 @@ class MainFlusherTest extends \PHPUnit\Framework\TestCase
             /**
              * @return void
              */
-            protected function configureOptions(OptionsResolver $resolver)
+            protected function configureOptions(OptionsResolver $resolver): void
             {
                 $resolver->setDefaults(['queue.size' => 5000]);
             }

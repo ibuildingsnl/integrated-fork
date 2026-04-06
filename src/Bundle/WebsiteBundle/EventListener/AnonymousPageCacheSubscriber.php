@@ -94,8 +94,8 @@ final class AnonymousPageCacheSubscriber implements EventSubscriberInterface
     private function isAuthenticatedRequest(Request $request): bool
     {
         $hasSessionCookie = false;
-        $sessionCookieName = session_name();
-        if (\is_string($sessionCookieName) && $sessionCookieName !== '' && $request->cookies->has($sessionCookieName)) {
+        $sessionCookieName = (string) session_name();
+        if ($sessionCookieName !== '' && $request->cookies->has($sessionCookieName)) {
             $hasSessionCookie = true;
         }
 
@@ -109,17 +109,10 @@ final class AnonymousPageCacheSubscriber implements EventSubscriberInterface
             return $hasRememberMeCookie;
         }
 
-        $user = $token->getUser();
-        if (\is_object($user)) {
+        if (\is_object($token->getUser())) {
             return true;
         }
 
-        if (!\is_string($user)) {
-            return false;
-        }
-
-        $normalized = strtolower(trim($user));
-
-        return $normalized !== '' && $normalized !== 'anon.' && $normalized !== 'anonymous';
+        return false;
     }
 }

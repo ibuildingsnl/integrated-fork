@@ -23,8 +23,8 @@ use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DefaultController extends AbstractController
 {
@@ -299,6 +299,9 @@ class DefaultController extends AbstractController
         return $response;
     }
 
+    /**
+     * @param list<string> $parts
+     */
     private function buildResponseCacheKey(string $scope, Request $request, array $parts): string
     {
         return 'integrated_sitemap_response_'.sha1(implode('|', [

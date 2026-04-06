@@ -64,6 +64,9 @@ class RobotsController extends AbstractController
         return $request->getHost();
     }
 
+    /**
+     * @param list<string> $parts
+     */
     private function buildResponseCacheKey(string $scope, Request $request, array $parts): string
     {
         return 'integrated_sitemap_response_'.sha1(implode('|', [

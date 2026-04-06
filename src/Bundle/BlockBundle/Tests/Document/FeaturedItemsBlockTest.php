@@ -15,6 +15,7 @@ final class FeaturedItemsBlockTest extends TestCase
         $block = new FeaturedItemsBlock();
 
         $collection = new class {
+            /** @return array<int, mixed> */
             public function toArray(): array
             {
                 throw new \ErrorException('Undefined array key "$id"');

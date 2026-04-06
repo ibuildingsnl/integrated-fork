@@ -13,8 +13,8 @@ namespace Integrated\Bundle\ThemeBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\Loader;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>

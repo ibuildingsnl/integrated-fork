@@ -83,7 +83,7 @@ final class AnonymousPageCacheSubscriberTest extends TestCase
 
         $request = Request::create('https://example.test/articles/test');
         $request->attributes->set('_route', ContentTypePageLoader::ROUTE_PREFIX.'_abc123');
-        $request->cookies->set(session_name(), 'sess-123');
+        $request->cookies->set($this->getSessionCookieName(), 'sess-123');
         $response = new Response('<html><body>ok</body></html>', 200, [
             'Content-Type' => 'text/html; charset=UTF-8',
         ]);
@@ -113,7 +113,7 @@ final class AnonymousPageCacheSubscriberTest extends TestCase
 
         $request = Request::create('https://example.test/articles/test');
         $request->attributes->set('_route', ContentTypePageLoader::ROUTE_PREFIX.'_abc123');
-        $request->cookies->set(session_name(), 'sess-123');
+        $request->cookies->set($this->getSessionCookieName(), 'sess-123');
         $response = new Response('<html><body>ok</body></html>', 200, [
             'Content-Type' => 'text/html; charset=UTF-8',
         ]);
@@ -224,5 +224,14 @@ final class AnonymousPageCacheSubscriberTest extends TestCase
 
         self::assertNull($response->headers->getCacheControlDirective('public'));
         self::assertNull($response->headers->getCacheControlDirective('s-maxage'));
+    }
+
+    private function getSessionCookieName(): string
+    {
+        $sessionCookieName = session_name();
+
+        self::assertIsString($sessionCookieName);
+
+        return $sessionCookieName;
     }
 }

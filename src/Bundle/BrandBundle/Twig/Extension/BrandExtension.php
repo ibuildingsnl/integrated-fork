@@ -30,7 +30,7 @@ class BrandExtension extends AbstractExtension
     /** @var array<string, Channel|null> */
     private array $websiteChannelByChannel = [];
 
-    /** @var array<string, ArrayCollection> */
+    /** @var array<string, ArrayCollection<int, Brand>> */
     private array $otherBrandsByChannel = [];
 
     /** @var array<string, Brand|null> */
@@ -190,10 +190,6 @@ class BrandExtension extends AbstractExtension
                 return $this->buildChannelToBrandMap();
             }
         );
-
-        if (!\is_array($map)) {
-            return $this->channelToBrandMap = [];
-        }
 
         return $this->channelToBrandMap = $map;
     }

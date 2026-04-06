@@ -105,7 +105,7 @@ class ChannelManager implements ChannelManagerInterface
 
     public function find($id)
     {
-        return $this->repository->find($id);
+        return $this->normalizeChannel($this->repository->find($id));
     }
 
     public function findAll()
@@ -133,14 +133,14 @@ class ChannelManager implements ChannelManagerInterface
             return $cached;
         }
 
-        $channel = $this->repository->findOneBy(['domains' => $domain]);
+        $channel = $this->normalizeChannel($this->repository->findOneBy(['domains' => $domain]));
         $fallbackDomain = null;
 
         if (!$channel) {
             $fallbackDomain = $this->getFallbackDomain($domain);
 
             if (null !== $fallbackDomain) {
-                $channel = $this->repository->findOneBy(['domains' => $fallbackDomain]);
+                $channel = $this->normalizeChannel($this->repository->findOneBy(['domains' => $fallbackDomain]));
                 $this->domainLookupCache[$fallbackDomain] = $channel;
                 $this->saveDomainToPersistentCache($fallbackDomain, $channel);
             }
@@ -165,7 +165,7 @@ class ChannelManager implements ChannelManagerInterface
 
     public function findByName($criteria)
     {
-        return $this->repository->findOneBy(['shortName' => $criteria]);
+        return $this->normalizeChannel($this->repository->findOneBy(['shortName' => $criteria]));
     }
 
     public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null)
@@ -207,9 +207,9 @@ class ChannelManager implements ChannelManagerInterface
             return false;
         }
 
-        $channel = $this->find($cachedValue);
+        $channel = $this->normalizeChannel($this->find($cachedValue));
 
-        if ($channel instanceof ChannelInterface) {
+        if (null !== $channel) {
             return $channel;
         }
 
@@ -295,5 +295,10 @@ class ChannelManager implements ChannelManagerInterface
         }
 
         return 'www.'.$domain;
+    }
+
+    private function normalizeChannel(mixed $channel): ?ChannelInterface
+    {
+        return $channel instanceof ChannelInterface ? $channel : null;
     }
 }

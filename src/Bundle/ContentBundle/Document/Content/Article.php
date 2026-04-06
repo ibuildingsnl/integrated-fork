@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\SeoMeta;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
@@ -82,7 +83,7 @@ class Article extends Content implements RankableInterface
     protected $featuredImage;
 
     /**
-     * @var ArrayCollection Embedded\Author[]
+     * @var Collection<int, Embedded\Author>|null
      */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\AuthorType', options: [
         'priority' => 460,
@@ -223,7 +224,7 @@ class Article extends Content implements RankableInterface
 
     public function getAuthors(): array
     {
-        if (!$this->authors instanceof ArrayCollection) {
+        if (!$this->authors instanceof Collection) {
             return [];
         }
 
@@ -241,7 +242,7 @@ class Article extends Content implements RankableInterface
 
     public function addAuthor(Embedded\Author $author): void
     {
-        if (!$this->authors instanceof ArrayCollection) {
+        if (!$this->authors instanceof Collection) {
             $this->authors = new ArrayCollection();
         }
 
@@ -252,7 +253,7 @@ class Article extends Content implements RankableInterface
 
     public function removeAuthor(Embedded\Author $author): bool
     {
-        if (!$this->authors instanceof ArrayCollection) {
+        if (!$this->authors instanceof Collection) {
             return false;
         }
 

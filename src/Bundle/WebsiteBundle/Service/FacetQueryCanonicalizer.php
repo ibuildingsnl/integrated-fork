@@ -135,6 +135,6 @@ class FacetQueryCanonicalizer
 
         sort($values, \SORT_NATURAL | \SORT_FLAG_CASE);
 
-        return array_values($values);
+        return $values;
     }
 }

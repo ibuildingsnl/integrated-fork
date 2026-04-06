@@ -186,7 +186,7 @@ class RequestAwareChannelContextTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->getInstance()->getChannel());
     }
 
-    public function testGetChannelCachesResolvedChannel()
+    public function testGetChannelCachesResolvedChannel(): void
     {
         $request = new Request();
         $request->attributes->set('_channel', 'this-is-the-id');
@@ -207,7 +207,7 @@ class RequestAwareChannelContextTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($channel, $instance->getChannel());
     }
 
-    public function testSetChannelStoresResolvedObjectForLaterRead()
+    public function testSetChannelStoresResolvedObjectForLaterRead(): void
     {
         $request = new Request();
 

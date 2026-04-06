@@ -69,7 +69,7 @@ final class RelatedContentBlockHandlerTest extends TestCase
 
         $pagination = $handler->getPagination($block, $request);
 
-        self::assertInstanceOf(PaginationInterface::class, $pagination);
+        self::assertInstanceOf(SlidingPagination::class, $pagination);
         self::assertCount(3, $pagination);
         self::assertSame(1, $pagination->getCurrentPageNumber());
         self::assertSame(3, $pagination->getTotalItemCount());
@@ -146,9 +146,6 @@ final class TestableRelatedContentBlockHandler extends RelatedContentBlockHandle
         parent::__construct($paginator, $requestStack, $dm, $contentRepository);
     }
 
-    /**
-     * @return mixed
-     */
     protected function getQuery(RelatedContentBlock $block, mixed $document)
     {
         return $this->queryBuilder;

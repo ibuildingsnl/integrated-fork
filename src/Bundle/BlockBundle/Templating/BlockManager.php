@@ -125,7 +125,9 @@ class BlockManager
             return $this->blockCache[$id];
         }
 
-        return $this->blockCache[$id] = $this->repository->find($id);
+        $block = $this->repository->find($id);
+
+        return $this->blockCache[$id] = $block instanceof Block ? $block : null;
     }
 
     /**

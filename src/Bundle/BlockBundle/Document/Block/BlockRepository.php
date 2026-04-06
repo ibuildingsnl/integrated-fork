@@ -95,15 +95,15 @@ class BlockRepository extends ServiceDocumentRepository
         }
 
         $result = $this->createQueryBuilder()
-            ->field('_id')->in(array_values($ids))
+            ->field('_id')->in($ids)
             ->getQuery()
             ->execute();
 
         if ($result instanceof \Traversable) {
-            return array_values(iterator_to_array($result, false));
+            return iterator_to_array($result, false);
         }
 
-        return is_array($result) ? array_values($result) : [];
+        return \is_array($result) ? array_values($result) : [];
     }
 
     /**

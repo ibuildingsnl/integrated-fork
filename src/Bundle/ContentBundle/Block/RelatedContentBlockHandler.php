@@ -23,7 +23,6 @@ use Integrated\Common\Block\BlockInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Traversable;
 
 /**
  * Related content block handler.
@@ -207,8 +206,11 @@ class RelatedContentBlockHandler extends BlockHandler
         $items = new ArrayCollection();
         $allowedItems = [];
 
-        foreach ($query->getQuery()->execute() as $item) {
-            $allowedItems[$item->getId()] = true;
+        $result = $query->getQuery()->execute();
+        if (\is_iterable($result)) {
+            foreach ($result as $item) {
+                $allowedItems[$item->getId()] = true;
+            }
         }
 
         foreach ($document->getReferencesByRelationId($block->getRelation()->getId()) as $content) {
@@ -224,20 +226,24 @@ class RelatedContentBlockHandler extends BlockHandler
 
     /**
      * Avoids the expensive paginator count query when the block is capped to a single page.
-     *
-     * @param mixed $target
-     *
-     * @return mixed
      */
-    private function materializeSinglePageTarget($target, int $maxItems)
+    /**
+     * @param Builder|iterable<mixed>|mixed $target
+     *
+     * @return array<int, mixed>|mixed
+     */
+    private function materializeSinglePageTarget(mixed $target, int $maxItems): mixed
     {
         if ($target instanceof Builder) {
             $query = clone $target;
             $query->limit($maxItems);
 
             $items = [];
-            foreach ($query->getQuery()->execute() as $item) {
-                $items[] = $item;
+            $result = $query->getQuery()->execute();
+            if (\is_iterable($result)) {
+                foreach ($result as $item) {
+                    $items[] = $item;
+                }
             }
 
             return $items;
@@ -247,7 +253,7 @@ class RelatedContentBlockHandler extends BlockHandler
             return \array_slice($target, 0, $maxItems);
         }
 
-        if ($target instanceof Traversable) {
+        if (\is_iterable($target)) {
             $items = [];
             foreach ($target as $item) {
                 $items[] = $item;

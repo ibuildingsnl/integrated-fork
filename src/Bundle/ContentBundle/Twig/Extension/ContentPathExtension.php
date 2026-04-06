@@ -22,9 +22,6 @@ class ContentPathExtension extends AbstractExtension
         $this->documentManager = $documentManager;
     }
 
-    /**
-     * @return array
-     */
     public function getFunctions(): array
     {
         return [

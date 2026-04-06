@@ -19,7 +19,7 @@ final class ChannelManagerTest extends TestCase
     {
         $channel = $this->createMock(ChannelInterface::class);
 
-        /** @var ObjectRepository&MockObject $repository */
+        /** @var ObjectRepository<Channel>&MockObject $repository */
         $repository = $this->createMock(ObjectRepository::class);
         $repository
             ->expects($this->once())
@@ -53,7 +53,7 @@ final class ChannelManagerTest extends TestCase
     {
         $channel = $this->createMock(ChannelInterface::class);
 
-        /** @var ObjectRepository&MockObject $repository */
+        /** @var ObjectRepository<Channel>&MockObject $repository */
         $repository = $this->createMock(ObjectRepository::class);
         $repository
             ->expects($this->once())
@@ -84,7 +84,7 @@ final class ChannelManagerTest extends TestCase
 
     public function testFindByDomainSkipsFallbackForLocalhostStyleHosts(): void
     {
-        /** @var ObjectRepository&MockObject $repository */
+        /** @var ObjectRepository<Channel>&MockObject $repository */
         $repository = $this->createMock(ObjectRepository::class);
         $repository
             ->expects($this->once())
@@ -109,7 +109,7 @@ final class ChannelManagerTest extends TestCase
             ->method('getId')
             ->willReturn('channel-id');
 
-        /** @var ObjectRepository&MockObject $repository */
+        /** @var ObjectRepository<Channel>&MockObject $repository */
         $repository = $this->createMock(ObjectRepository::class);
         $repository
             ->expects($this->exactly(2))
@@ -145,7 +145,7 @@ final class ChannelManagerTest extends TestCase
 
     public function testFindByDomainCachesMissesAcrossManagerInstances(): void
     {
-        /** @var ObjectRepository&MockObject $repository */
+        /** @var ObjectRepository<Channel>&MockObject $repository */
         $repository = $this->createMock(ObjectRepository::class);
         $repository
             ->expects($this->exactly(2))
@@ -183,7 +183,7 @@ final class ChannelManagerTest extends TestCase
 
         $secondChannel = $this->createMock(ChannelInterface::class);
 
-        /** @var ObjectRepository&MockObject $repository */
+        /** @var ObjectRepository<Channel>&MockObject $repository */
         $repository = $this->createMock(ObjectRepository::class);
         $repository
             ->expects($this->once())
@@ -215,7 +215,7 @@ final class ChannelManagerTest extends TestCase
     }
 
     /**
-     * @param ObjectRepository&MockObject $repository
+     * @param ObjectRepository<Channel>&MockObject $repository
      */
     private function createManager(ObjectRepository $repository): ChannelManager
     {

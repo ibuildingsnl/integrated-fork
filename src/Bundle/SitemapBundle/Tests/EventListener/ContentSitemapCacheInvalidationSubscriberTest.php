@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Integrated\Bundle\SitemapBundle\Tests\EventListener;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Event\PreUpdateEventArgs;
-use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\SitemapBundle\EventListener\ContentSitemapCacheInvalidationSubscriber;

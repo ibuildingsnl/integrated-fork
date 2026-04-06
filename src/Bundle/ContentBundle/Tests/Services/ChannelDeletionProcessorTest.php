@@ -696,6 +696,7 @@ final class ChannelDeletionProcessorTest extends TestCase
     private function createDocumentManager(array $publications, array $brands): DocumentManager
     {
         $publicationRepository = new class($publications) implements ObjectRepository {
+            /** @param Publication[] $publications */
             public function __construct(
                 private readonly array $publications,
             ) {
@@ -729,6 +730,7 @@ final class ChannelDeletionProcessorTest extends TestCase
             public function createQueryBuilder(): object
             {
                 return new class($this->publications) {
+                    /** @param Publication[] $publications */
                     public function __construct(
                         private readonly array $publications,
                     ) {
@@ -751,11 +753,13 @@ final class ChannelDeletionProcessorTest extends TestCase
                     public function getQuery(): object
                     {
                         return new class($this->publications) {
+                            /** @param Publication[] $publications */
                             public function __construct(
                                 private readonly array $publications,
                             ) {
                             }
 
+                            /** @return Publication[] */
                             public function toArray(): array
                             {
                                 return $this->publications;
@@ -767,6 +771,7 @@ final class ChannelDeletionProcessorTest extends TestCase
         };
 
         $brandRepository = new class($brands) implements ObjectRepository {
+            /** @param Brand[] $brands */
             public function __construct(
                 private readonly array $brands,
             ) {
@@ -946,6 +951,9 @@ final class ThrowingBrand extends Brand
         $this->setId($id);
     }
 
+    /**
+     * @return \Doctrine\Common\Collections\Collection<int, ChannelLink>
+     */
     public function getChannelLinks(): \Doctrine\Common\Collections\Collection
     {
         throw new \RuntimeException($this->message);

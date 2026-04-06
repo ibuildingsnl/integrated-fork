@@ -9,9 +9,9 @@ use Integrated\Bundle\ContentBundle\Document\Content\News;
 use Integrated\Bundle\ContentBundle\Event\ContentDeletedEvent;
 use Integrated\Bundle\ContentBundle\Event\ContentDistributedEvent;
 use Integrated\Bundle\SitemapBundle\Service\SitemapCacheVersionManager;
+use Integrated\Common\Channel\ChannelManagerInterface;
 use Integrated\Common\Channel\Event\ChannelEvent;
 use Integrated\Common\Channel\Events as ChannelEvents;
-use Integrated\Common\Channel\ChannelManagerInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\Form\Events as ContentEvents;
 use Integrated\Common\ContentType\Event\ContentTypeEvent;
@@ -59,10 +59,6 @@ final class SitemapCacheInvalidationSubscriber implements EventSubscriberInterfa
         $isNewsType = News::class === trim((string) $event->getContentType()->getClass());
 
         foreach ($this->channelManager->findAll() as $channel) {
-            if (!$channel instanceof ChannelInterface) {
-                continue;
-            }
-
             $channelId = trim((string) $channel->getId());
             if ('' === $channelId) {
                 continue;
@@ -103,11 +99,9 @@ final class SitemapCacheInvalidationSubscriber implements EventSubscriberInterfa
     {
         $channelIds = [];
         foreach ((array) $content->getChannels() as $channel) {
-            if ($channel instanceof ChannelInterface) {
-                $channelId = trim((string) $channel->getId());
-                if ('' !== $channelId) {
-                    $channelIds[$channelId] = true;
-                }
+            $channelId = trim((string) $channel->getId());
+            if ('' !== $channelId) {
+                $channelIds[$channelId] = true;
             }
         }
 

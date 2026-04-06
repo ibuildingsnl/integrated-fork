@@ -45,7 +45,8 @@ class ContentSubscriberDeadlineTest extends TestCase
 
         $subscriber->postUpdate($event);
 
-        self::assertEquals('2026-04-04 10:30:00', $existingState->getDeadline()?->format('Y-m-d H:i:s'));
+        self::assertInstanceOf(\DateTime::class, $existingState->getDeadline());
+        self::assertEquals('2026-04-04 10:30:00', $existingState->getDeadline()->format('Y-m-d H:i:s'));
     }
 
     public function testPostUpdateNormalizesImmutableDeadlineBeforePersistingLogAndState(): void
@@ -82,30 +83,16 @@ class ContentSubscriberDeadlineTest extends TestCase
 
         self::assertInstanceOf(Log::class, $persistedLog);
         self::assertInstanceOf(\DateTime::class, $persistedLog->getDeadline());
-        self::assertSame('2026-04-05 15:45:00', $persistedLog->getDeadline()?->format('Y-m-d H:i:s'));
+        self::assertSame('2026-04-05 15:45:00', $persistedLog->getDeadline()->format('Y-m-d H:i:s'));
         self::assertInstanceOf(\DateTime::class, $existingState->getDeadline());
-        self::assertSame('2026-04-05 15:45:00', $existingState->getDeadline()?->format('Y-m-d H:i:s'));
+        self::assertSame('2026-04-05 15:45:00', $existingState->getDeadline()->format('Y-m-d H:i:s'));
     }
 
     private function createSubscriber(EntityManagerInterface $entityManager, ?State $state): ContentSubscriber
     {
         $workflow = $this->createMock(Definition::class);
 
-        return new class(
-            $this->createStub(UserManagerInterface::class),
-            $this->createStub(EventDispatcherInterface::class),
-            $this->createStub(TokenStorageInterface::class),
-            $this->createStub(ResolverInterface::class),
-            $entityManager,
-            $this->createStub(DocumentManager::class),
-            $this->createStub(MailerInterface::class),
-            $this->createStub(RouterInterface::class),
-            $this->createStub(ThemeManager::class),
-            'noreply@example.test',
-            $this->createStub(RequestStack::class),
-            $workflow,
-            $state
-        ) extends ContentSubscriber {
+        return new class($this->createStub(UserManagerInterface::class), $this->createStub(EventDispatcherInterface::class), $this->createStub(TokenStorageInterface::class), $this->createStub(ResolverInterface::class), $entityManager, $this->createStub(DocumentManager::class), $this->createStub(MailerInterface::class), $this->createStub(RouterInterface::class), $this->createStub(ThemeManager::class), 'noreply@example.test', $this->createStub(RequestStack::class), $workflow, $state) extends ContentSubscriber {
             public function __construct(
                 UserManagerInterface $userManager,
                 EventDispatcherInterface $eventDispatcher,
@@ -136,7 +123,7 @@ class ContentSubscriberDeadlineTest extends TestCase
                 );
             }
 
-            protected function getWorkflow(object $object): ?Definition
+            protected function getWorkflow(object $object): Definition
             {
                 return $this->workflow;
             }

@@ -98,6 +98,7 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
 
         $request = $this->getInstance()->deserialize($this->getSerialized());
 
+        self::assertInstanceOf(Request::class, $request);
         self::assertSame($content, $request->content);
         self::assertEquals(self::TEST_STATE, $request->state);
         self::assertSame($channel, $request->channel);

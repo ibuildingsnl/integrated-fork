@@ -77,9 +77,7 @@ class ContentImageListener
         $indexedDocuments = [];
 
         foreach ($documents as $document) {
-            if ($document instanceof Content) {
-                $indexedDocuments[(string) $document->getId()] = $document;
-            }
+            $indexedDocuments[(string) $document->getId()] = $document;
         }
 
         return $indexedDocuments;

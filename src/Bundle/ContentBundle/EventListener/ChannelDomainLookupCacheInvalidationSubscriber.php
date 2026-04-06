@@ -13,7 +13,6 @@ namespace Integrated\Bundle\ContentBundle\EventListener;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use Doctrine\ODM\MongoDB\Event\PostUpdateEventArgs;
 use Doctrine\ODM\MongoDB\Events;
 use Integrated\Bundle\ContentBundle\Doctrine\ChannelManager;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -38,7 +37,7 @@ class ChannelDomainLookupCacheInvalidationSubscriber implements EventSubscriber
         $this->invalidateIfChannel($args->getDocument());
     }
 
-    public function postUpdate(PostUpdateEventArgs $args): void
+    public function postUpdate(LifecycleEventArgs $args): void
     {
         $this->invalidateIfChannel($args->getDocument());
     }

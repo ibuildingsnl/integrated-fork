@@ -184,10 +184,7 @@ class UrlResolver
     {
         $channelId = $this->resolveChannelId($channelId);
 
-        if (
-            isset($this->contentTypePages[$channelId])
-            && \array_key_exists((string) $contentTypeId, $this->contentTypePages[$channelId])
-        ) {
+        if (isset($this->contentTypePages[$channelId][$contentTypeId])) {
             return $this->contentTypePages[$channelId][$contentTypeId];
         }
 
@@ -197,9 +194,9 @@ class UrlResolver
                 'contentType.$id' => $contentTypeId,
             ]);
 
-        $this->contentTypePages[$channelId][$contentTypeId] = $page;
+        $this->contentTypePages[$channelId][$contentTypeId] = $page instanceof ContentTypePage ? $page : null;
 
-        return $page;
+        return $this->contentTypePages[$channelId][$contentTypeId];
     }
 
     /**

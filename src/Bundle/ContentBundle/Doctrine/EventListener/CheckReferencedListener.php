@@ -93,9 +93,9 @@ class CheckReferencedListener
     private function describeDocument(object $document): string
     {
         $class = $document::class;
-        $id = \is_callable([$document, 'getId']) ? trim((string) $document->getId()) : '';
+        $id = method_exists($document, 'getId') ? trim((string) $document->getId()) : '';
 
-        if ($document instanceof Content && \is_callable([$document, 'getTitle'])) {
+        if ($document instanceof Content && method_exists($document, 'getTitle')) {
             $title = trim((string) $document->getTitle());
             if ($title !== '' && $id !== '') {
                 return \sprintf('%s "%s" (%s)', $class, $title, $id);
@@ -105,7 +105,7 @@ class CheckReferencedListener
             }
         }
 
-        if ($document instanceof SearchSelection && \is_callable([$document, 'getTitle'])) {
+        if ($document instanceof SearchSelection) {
             $title = trim((string) $document->getTitle());
             if ($title !== '' && $id !== '') {
                 return \sprintf('%s "%s" (%s)', $class, $title, $id);
