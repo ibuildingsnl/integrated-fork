@@ -34,6 +34,7 @@ final class CachedBrandRepositoryTest extends TestCase
         $inner = $this->createMock(BrandRepository::class);
         $cache = $this->createMock(CacheInterface::class);
         $newBrand = new Brand();
+        $deletedKeys = [];
 
         $inner
             ->expects(self::once())
@@ -41,12 +42,56 @@ final class CachedBrandRepositoryTest extends TestCase
             ->with($newBrand);
 
         $cache
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('delete')
-            ->with(CachedBrandRepository::ALL_CACHE_KEY)
-            ->willReturn(true);
+            ->willReturnCallback(function (string $key) use (&$deletedKeys): bool {
+                $deletedKeys[] = $key;
+
+                return true;
+            });
 
         $repository = new CachedBrandRepository($inner, $cache);
         $repository->add($newBrand);
+
+        self::assertSame(
+            [
+                CachedBrandRepository::ALL_CACHE_KEY,
+                CachedBrandRepository::CHANNEL_LOOKUP_CACHE_KEY,
+            ],
+            $deletedKeys
+        );
+    }
+
+    public function testRemoveClearsAllCacheKeys(): void
+    {
+        $inner = $this->createMock(BrandRepository::class);
+        $cache = $this->createMock(CacheInterface::class);
+        $brand = new Brand();
+        $deletedKeys = [];
+
+        $inner
+            ->expects(self::once())
+            ->method('remove')
+            ->with($brand);
+
+        $cache
+            ->expects(self::exactly(2))
+            ->method('delete')
+            ->willReturnCallback(function (string $key) use (&$deletedKeys): bool {
+                $deletedKeys[] = $key;
+
+                return true;
+            });
+
+        $repository = new CachedBrandRepository($inner, $cache);
+        $repository->remove($brand);
+
+        self::assertSame(
+            [
+                CachedBrandRepository::ALL_CACHE_KEY,
+                CachedBrandRepository::CHANNEL_LOOKUP_CACHE_KEY,
+            ],
+            $deletedKeys
+        );
     }
 }

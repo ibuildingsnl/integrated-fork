@@ -47,5 +47,6 @@ final class CachedBrandRepository implements BrandRepository
     public function clearAllCache(): void
     {
         $this->cache->delete(self::ALL_CACHE_KEY);
+        $this->cache->delete(self::CHANNEL_LOOKUP_CACHE_KEY);
     }
 }
