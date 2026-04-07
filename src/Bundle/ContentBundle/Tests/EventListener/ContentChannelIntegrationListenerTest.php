@@ -169,7 +169,7 @@ final class TestableContentChannelIntegrationListener extends ContentChannelInte
     }
 
     /**
-     * @param array<int, string>|null $ids
+     * @param list<string>|null $ids
      *
      * @return array<int, ChannelInterface>
      */
@@ -178,6 +178,11 @@ final class TestableContentChannelIntegrationListener extends ContentChannelInte
         return $this->getChannels($ids);
     }
 
+    /**
+     * @param list<string>|null $ids
+     *
+     * @return array<int, ChannelInterface>
+     */
     protected function getChannels(?array $ids = null): array
     {
         if ($ids === null && $this->channels !== null) {

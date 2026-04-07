@@ -12,6 +12,9 @@ use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 
 final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
 {
+    /**
+     * @param ObjectRepository<Taxonomy> $doctrineRepo
+     */
     public function __construct(
         private readonly DocumentManager $manager,
         private readonly ObjectRepository $doctrineRepo,
@@ -51,7 +54,9 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
 
     public function byId(string $id): ?Taxonomy
     {
-        return $this->doctrineRepo->find($id);
+        $taxonomy = $this->doctrineRepo->find($id);
+
+        return $taxonomy instanceof Taxonomy ? $taxonomy : null;
     }
 
     public function byType(string $contentType): array
@@ -168,6 +173,7 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
     }
 
     /**
+     * @param array<string, mixed> $row
      * @param array<string, Channel> $channelsById
      */
     private function buildIndexTaxonomy(array $row, array $channelsById): ?Taxonomy
@@ -232,7 +238,7 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
      */
     private function extractReferenceIds(mixed $references): array
     {
-        if (!\is_iterable($references)) {
+        if (!is_iterable($references)) {
             return [];
         }
 

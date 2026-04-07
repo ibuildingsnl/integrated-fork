@@ -5,6 +5,7 @@ namespace Integrated\Bundle\TaxonomyBundle\Services;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class TaxonomyIndexer implements TaxonomyOverview
@@ -55,7 +56,7 @@ final class TaxonomyIndexer implements TaxonomyOverview
                 $usageCounts,
                 $options->includeUsageCounts,
             ),
-            array_slice($entries, $options->offset, $options->limit),
+            \array_slice($entries, $options->offset, $options->limit),
         );
     }
 
@@ -85,7 +86,7 @@ final class TaxonomyIndexer implements TaxonomyOverview
     }
 
     /**
-     * @param array<string, Taxonomy[]> $byParent
+     * @param array<string, Taxonomy[]>                         $byParent
      * @param array<int, array{taxonomy: Taxonomy, depth: int}> $entries
      *
      * @return array<int, array{taxonomy: Taxonomy, depth: int}>
@@ -204,7 +205,7 @@ final class TaxonomyIndexer implements TaxonomyOverview
     private function visibilitySignature(Taxonomy $taxonomy): string
     {
         $channelIds = array_map(
-            static fn (mixed $channel): string => trim((string) $channel?->getId()),
+            static fn (ChannelInterface $channel): string => trim((string) $channel->getId()),
             $taxonomy->getChannels()
         );
         $channelIds = array_values(array_filter($channelIds, static fn (string $id): bool => '' !== $id));

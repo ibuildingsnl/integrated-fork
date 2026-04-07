@@ -209,7 +209,9 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
     }
 
     /**
-     * @return ChannelInterface[]
+     * @param list<string>|null $ids
+     *
+     * @return array<int, ChannelInterface>
      */
     protected function getChannels(?array $ids = null): array
     {
@@ -249,6 +251,9 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
         return array_values(array_filter($channels, static fn (mixed $channel): bool => $channel instanceof ChannelInterface));
     }
 
+    /**
+     * @param list<string>|null $ids
+     */
     private function getChannelsCacheKey(?array $ids): string
     {
         if ($ids === null) {

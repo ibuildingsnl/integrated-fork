@@ -14,6 +14,7 @@ namespace Integrated\Bundle\FormTypeBundle\Form\Type\RelationChoice\EventListene
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation as EmbeddedRelation;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\FormTypeBundle\Form\Type\RelationChoice\RelationReferencesType;
@@ -31,9 +32,7 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
         return [FormEvents::PRE_SET_DATA => 'preSetData'];
     }
 
-    /**
-     * @var \Doctrine\ODM\MongoDB\Repository\DocumentRepository
-     */
+    /** @var ObjectRepository<Relation> */
     protected $repo;
 
     /**
@@ -106,14 +105,14 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
      * @param string $relationId
      * @param object $formData
      *
-     * @return Relation|object
+     * @return Relation
      *
      * @throws \Exception
      */
     protected function findRelation($relationId, $formData)
     {
         $relation = $this->getRelation($relationId);
-        if (!$relation instanceof Relation) {
+        if ($relation === null) {
             throw new \Exception(\sprintf('RelationId "%s" is not found', $relationId));
         }
 
@@ -159,10 +158,6 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
         }
 
         foreach ($this->repo->findBy($criteria) as $relation) {
-            if (!$relation instanceof Relation) {
-                continue;
-            }
-
             $this->setRelation($relation->getId(), $relation);
         }
     }
@@ -176,6 +171,9 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
             }
 
             $relation = $this->getRelation($embeddedRelation->getRelationId());
+            if (!$relation instanceof Relation) {
+                continue;
+            }
             $contentTypes = [];
 
             foreach ($relation->getTargets() as $target) {
@@ -202,12 +200,11 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
         $this->relations->set($relationId, $relation);
     }
 
-    /**
-     * @return Relation $relation
-     */
-    public function getRelation($id)
+    public function getRelation($id): ?Relation
     {
-        return $this->relations->get($id);
+        $relation = $this->relations->get($id);
+
+        return $relation instanceof Relation ? $relation : null;
     }
 
     /**

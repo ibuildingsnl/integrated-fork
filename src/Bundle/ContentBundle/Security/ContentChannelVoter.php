@@ -65,6 +65,9 @@ class ContentChannelVoter implements VoterInterface
         return \in_array($attribute, $this->permissions);
     }
 
+    /**
+     * @param array<int, int|string> $attributes
+     */
     public function vote(TokenInterface $token, mixed $content, array $attributes, ?Vote $vote = null): int
     {
         if (!$content instanceof ChannelableInterface) {
@@ -121,7 +124,7 @@ class ContentChannelVoter implements VoterInterface
         return $result;
     }
 
-    private function decideChannelPermission(TokenInterface $token, string $permission, mixed $channel): bool
+    private function decideChannelPermission(TokenInterface $token, int|string $permission, mixed $channel): bool
     {
         $cacheKey = $this->buildDecisionCacheKey($token, $permission, $channel);
 
@@ -132,7 +135,7 @@ class ContentChannelVoter implements VoterInterface
         return $this->channelDecisionCache[$cacheKey] = $this->decisionManager->decide($token, [$permission], $channel);
     }
 
-    private function buildDecisionCacheKey(TokenInterface $token, string $permission, mixed $channel): string
+    private function buildDecisionCacheKey(TokenInterface $token, int|string $permission, mixed $channel): string
     {
         $channelId = \is_object($channel) && method_exists($channel, 'getId')
             ? trim((string) $channel->getId())
@@ -142,6 +145,6 @@ class ContentChannelVoter implements VoterInterface
             $channelId = \is_object($channel) ? 'obj:'.spl_object_id($channel) : 'scalar:'.serialize($channel);
         }
 
-        return spl_object_id($token).'|'.$permission.'|'.$channelId;
+        return spl_object_id($token).'|'.(string) $permission.'|'.$channelId;
     }
 }
