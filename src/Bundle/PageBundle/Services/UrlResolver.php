@@ -194,9 +194,6 @@ class UrlResolver
         return $this->contentTypePages[$channelCacheKey][$contentTypeId];
     }
 
-    /**
-     * @param string|null $channelId
-     */
     private function resolveChannelId(?string $channelId = null): ?string
     {
         if (null !== $channelId) {
