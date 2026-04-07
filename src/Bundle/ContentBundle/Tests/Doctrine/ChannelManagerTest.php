@@ -103,11 +103,11 @@ final class ChannelManagerTest extends TestCase
 
     public function testFindByDomainUsesPersistentCacheAcrossManagerInstances(): void
     {
-        $channel = $this->createMock(ChannelInterface::class);
-        $channel
-            ->expects($this->once())
-            ->method('getId')
-            ->willReturn('channel-id');
+        $channel = new Channel();
+        $channel->setId('channel-id');
+        $channel->setName('Example Channel');
+        $channel->setPrimaryDomain('example.com');
+        $channel->setPrimaryDomainRedirect(true);
 
         /** @var ObjectRepository<Channel>&MockObject $repository */
         $repository = $this->createMock(ObjectRepository::class);
@@ -140,7 +140,10 @@ final class ChannelManagerTest extends TestCase
         $managerTwo = new ChannelManager($objectManager, Channel::class, $cache);
 
         self::assertSame($channel, $managerOne->findByDomain('example.com'));
-        self::assertSame($channel, $managerTwo->findByDomain('example.com'));
+
+        $cached = $managerTwo->findByDomain('example.com');
+        self::assertNotNull($cached);
+        self::assertSame($channel, $cached);
     }
 
     public function testFindByDomainCachesMissesAcrossManagerInstances(): void

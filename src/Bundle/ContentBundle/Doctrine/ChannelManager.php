@@ -201,6 +201,16 @@ class ChannelManager implements ChannelManagerInterface
             return null;
         }
 
+        if (\is_array($cachedValue)) {
+            $cachedValue = $cachedValue['id'] ?? null;
+
+            if (!\is_string($cachedValue) || '' === $cachedValue) {
+                $this->cache->deleteItem($cacheItem->getKey());
+
+                return false;
+            }
+        }
+
         if (!\is_string($cachedValue) || '' === $cachedValue) {
             $this->cache->deleteItem($cacheItem->getKey());
 
@@ -225,7 +235,7 @@ class ChannelManager implements ChannelManagerInterface
         }
 
         $cacheItem = $this->cache->getItem($this->getDomainLookupCacheKey($domain));
-        $cacheItem->set($channel ? (string) $channel->getId() : self::DOMAIN_LOOKUP_CACHE_MISS);
+        $cacheItem->set($channel ? $channel->getId() : self::DOMAIN_LOOKUP_CACHE_MISS);
         $cacheItem->expiresAfter(self::DOMAIN_LOOKUP_CACHE_TTL_SECONDS);
         $this->cache->save($cacheItem);
     }

@@ -204,6 +204,20 @@ trait ContentTestTrait
         Assert::assertNotContains($channel2, $content->getChannels());
     }
 
+    public function testHasChannelMatchesByChannelIdWhenInstanceDiffers(): void
+    {
+        $content = $this->getContent();
+
+        $original = new Channel();
+        $original->setId('channel-a');
+        $content->addChannel($original);
+
+        $differentInstanceSameId = new Channel();
+        $differentInstanceSameId->setId('channel-a');
+
+        Assert::assertTrue($content->hasChannel($differentInstanceSameId));
+    }
+
     /**
      * Test getCustomFields functions.
      */
