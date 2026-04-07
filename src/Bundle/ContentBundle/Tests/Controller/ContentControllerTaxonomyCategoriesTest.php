@@ -25,7 +25,7 @@ final class ContentControllerTaxonomyCategoriesTest extends TestCase
         $targetType = $this->createMock(ContentTypeInterface::class);
         $targetType->method('getId')->willReturn('dossier');
 
-        $content = new class() {
+        $content = new class {
             public function getContentType(): string
             {
                 return 'news';

@@ -62,22 +62,7 @@ final class ContentSubscriberAssignedStatusInvalidationTest extends TestCase
     ): ContentSubscriber {
         $workflow = $this->createMock(Definition::class);
 
-        return new class(
-            $this->createStub(UserManagerInterface::class),
-            $this->createStub(EventDispatcherInterface::class),
-            $this->createStub(TokenStorageInterface::class),
-            $this->createStub(ResolverInterface::class),
-            $entityManager,
-            $this->createStub(DocumentManager::class),
-            $this->createStub(MailerInterface::class),
-            $this->createStub(RouterInterface::class),
-            $this->createStub(ThemeManager::class),
-            $assignedStatusCacheInvalidator,
-            'noreply@example.test',
-            $this->createStub(RequestStack::class),
-            $workflow,
-            $state
-        ) extends ContentSubscriber {
+        return new class($this->createStub(UserManagerInterface::class), $this->createStub(EventDispatcherInterface::class), $this->createStub(TokenStorageInterface::class), $this->createStub(ResolverInterface::class), $entityManager, $this->createStub(DocumentManager::class), $this->createStub(MailerInterface::class), $this->createStub(RouterInterface::class), $this->createStub(ThemeManager::class), $assignedStatusCacheInvalidator, 'noreply@example.test', $this->createStub(RequestStack::class), $workflow, $state) extends ContentSubscriber {
             public function __construct(
                 UserManagerInterface $userManager,
                 EventDispatcherInterface $eventDispatcher,

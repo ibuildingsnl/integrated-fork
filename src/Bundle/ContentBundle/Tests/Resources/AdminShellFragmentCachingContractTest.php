@@ -57,7 +57,7 @@ final class AdminShellFragmentCachingContractTest extends TestCase
         $this->assertStringContainsString('<ul class="header-nav">', $navdropdownsTemplate);
         $this->assertStringContainsString("{% if is_granted('ROLE_ADMIN') and queuecount > 0 %}", $navdropdownsTemplate);
         $this->assertStringNotContainsString("{% if is_granted('ROLE_ADMIN') %}", $navdropdownsTemplate);
-        $this->assertStringNotContainsString("{% if queuecount == 0 %}hidden{% endif %}", $navdropdownsTemplate);
+        $this->assertStringNotContainsString('{% if queuecount == 0 %}hidden{% endif %}', $navdropdownsTemplate);
         $this->assertStringNotContainsString('data-assigned-status-url=', $navdropdownsTemplate);
         $this->assertStringNotContainsString('data-assigned-poll-interval=', $navdropdownsTemplate);
         $this->assertStringNotContainsString('function scheduleAssignedStatus(delay)', $navdropdownsTemplate);

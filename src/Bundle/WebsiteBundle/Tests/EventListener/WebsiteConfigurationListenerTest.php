@@ -6,9 +6,9 @@ namespace Integrated\Bundle\WebsiteBundle\Tests\EventListener;
 
 use Integrated\Bundle\PageBundle\Resolver\ThemeResolver;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
+use Integrated\Bundle\WebsiteBundle\EventListener\WebsiteConfigurationListener;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
-use Integrated\Bundle\WebsiteBundle\EventListener\WebsiteConfigurationListener;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
