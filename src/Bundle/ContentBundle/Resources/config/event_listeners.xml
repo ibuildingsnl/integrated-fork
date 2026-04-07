@@ -45,7 +45,7 @@
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_image.twig_extension" />
 
-            <tag name="integrated_content.form.event_subscriber" />
+            <tag name="kernel.event_subscriber" />
         </service>
 
     </services>
