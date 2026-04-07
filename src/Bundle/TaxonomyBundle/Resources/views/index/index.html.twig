@@ -1,7 +1,12 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Taxonomy index{% endtrans %}{% endblock title %}
 {% block content %}
-    <div class="taxonomy-index">
+    <div
+        class="taxonomy-index"
+        data-taxonomy-usage-url="{{ usage_count_url }}"
+        data-taxonomy-page="{{ current_page }}"
+        data-taxonomy-limit="{{ page_limit }}"
+    >
         <div class="flex flex-wrap">
             {% block form_start %}
                 {{ form_start(form) }}
@@ -88,8 +93,8 @@
                                 <td>
                                     {{ item.slug }}
                                 </td>
-                                <td>
-                                    {{ "(%d)"|trans|format(item.count) }}
+                                <td data-taxonomy-usage-count-id="{{ item.taxonomyId }}">
+                                    <span data-taxonomy-usage-count>(...)</span>
                                 </td>
                             </tr>
                         {% else %}
@@ -273,4 +278,90 @@
 
 {% block webpack_js %}
     <script src="{{ asset('bundles/integratedintegrated/edit.js') }}" defer data-turbo-track="reload"></script>
+    <script>
+        (function() {
+            function initializeTaxonomyUsageCounts() {
+                var root = document.querySelector('.taxonomy-index[data-taxonomy-usage-url]');
+                if (!root || root.dataset.taxonomyUsageInitialized === 'true') {
+                    return;
+                }
+
+                var usageUrl = root.dataset.taxonomyUsageUrl || '';
+                var countCells = Array.prototype.slice.call(root.querySelectorAll('[data-taxonomy-usage-count-id]'));
+                if (!usageUrl || !countCells.length) {
+                    return;
+                }
+
+                root.dataset.taxonomyUsageInitialized = 'true';
+                var storageKey = 'integrated.taxonomy.usage-counts';
+                var cachedCounts = {};
+
+                try {
+                    cachedCounts = JSON.parse(window.sessionStorage.getItem('integrated.taxonomy.usage-counts') || '{}') || {};
+                } catch (error) {
+                    cachedCounts = {};
+                }
+
+                countCells.forEach(function(cell) {
+                    var cachedCount = cachedCounts[cell.dataset.taxonomyUsageCountId];
+                    if (cachedCount === undefined) {
+                        return;
+                    }
+
+                    var target = cell.querySelector('[data-taxonomy-usage-count]');
+                    if (!target) {
+                        return;
+                    }
+
+                    target.textContent = '(' + cachedCount + ')';
+                });
+
+                var params = new URLSearchParams();
+                params.set('page', root.dataset.taxonomyPage || '1');
+                params.set('limit', root.dataset.taxonomyLimit || '50');
+
+                countCells.forEach(function(cell) {
+                    params.append('ids[]', cell.dataset.taxonomyUsageCountId);
+                });
+
+                fetch(usageUrl + '?' + params.toString(), {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                })
+                    .then(function(response) {
+                        if (!response.ok) {
+                            throw new Error('Failed to load taxonomy usage counts');
+                        }
+
+                        return response.json();
+                    })
+                    .then(function(payload) {
+                        var counts = payload.counts || {};
+
+                        countCells.forEach(function(cell) {
+                            var target = cell.querySelector('[data-taxonomy-usage-count]');
+                            if (!target) {
+                                return;
+                            }
+
+                            var count = counts[cell.dataset.taxonomyUsageCountId] || 0;
+                            target.textContent = '(' + count + ')';
+                            cachedCounts[cell.dataset.taxonomyUsageCountId] = count;
+                        });
+
+                        try {
+                            window.sessionStorage.setItem('integrated.taxonomy.usage-counts', JSON.stringify(cachedCounts));
+                        } catch (error) {
+                        }
+                    })
+                    .catch(function() {
+                        root.dataset.taxonomyUsageInitialized = '';
+                    });
+            }
+
+            document.addEventListener('DOMContentLoaded', initializeTaxonomyUsageCounts);
+            window.addEventListener('turbo:load', initializeTaxonomyUsageCounts);
+        })();
+    </script>
 {% endblock %}

@@ -13,6 +13,7 @@ namespace Integrated\Bundle\WorkflowBundle\Tests\Security;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
+use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\UserBundle\Model\GroupableInterface;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
@@ -237,6 +238,18 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
         $this->setUpMetadata($class, false);
 
         $this->assertEquals(VoterInterface::ACCESS_ABSTAIN, $this->getInstance()->vote($this->getToken(), $content, []));
+    }
+
+    public function testVoteTaxonomyAlwaysAbstains(): void
+    {
+        $this->manager->expects($this->never())->method($this->anything());
+        $this->resolver->expects($this->never())->method($this->anything());
+        $this->metadata->expects($this->never())->method($this->anything());
+
+        $taxonomy = new Taxonomy();
+        $taxonomy->setContentType('taxonomy');
+
+        $this->assertEquals(VoterInterface::ACCESS_ABSTAIN, $this->getInstance()->vote($this->getToken(), $taxonomy, []));
     }
 
     public function testVoteNoWorkflowContentType()

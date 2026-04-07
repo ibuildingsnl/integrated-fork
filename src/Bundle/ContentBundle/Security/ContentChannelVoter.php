@@ -23,6 +23,9 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 class ContentChannelVoter implements VoterInterface
 {
+    /** @var array<string, bool> */
+    private array $channelDecisionCache = [];
+
     /**
      * @var AccessDecisionManagerInterface
      */
@@ -95,7 +98,7 @@ class ContentChannelVoter implements VoterInterface
             switch ($attribute) {
                 case $this->permissions['view']:
                     foreach ($content->getChannels() as $channel) {
-                        if ($this->decisionManager->decide($token, [PermissionInterface::READ], $channel)) {
+                        if ($this->decideChannelPermission($token, PermissionInterface::READ, $channel)) {
                             // Being in one of the group is enough to read
                             return VoterInterface::ACCESS_GRANTED;
                         }
@@ -106,7 +109,7 @@ class ContentChannelVoter implements VoterInterface
                 case $this->permissions['edit']:
                 case $this->permissions['delete']:
                     foreach ($content->getChannels() as $channel) {
-                        if (!$this->decisionManager->decide($token, [PermissionInterface::WRITE], $channel)) {
+                        if (!$this->decideChannelPermission($token, PermissionInterface::WRITE, $channel)) {
                             // Need all channels to write
                             return VoterInterface::ACCESS_DENIED;
                         }
@@ -116,5 +119,29 @@ class ContentChannelVoter implements VoterInterface
         }
 
         return $result;
+    }
+
+    private function decideChannelPermission(TokenInterface $token, string $permission, mixed $channel): bool
+    {
+        $cacheKey = $this->buildDecisionCacheKey($token, $permission, $channel);
+
+        if (isset($this->channelDecisionCache[$cacheKey])) {
+            return $this->channelDecisionCache[$cacheKey];
+        }
+
+        return $this->channelDecisionCache[$cacheKey] = $this->decisionManager->decide($token, [$permission], $channel);
+    }
+
+    private function buildDecisionCacheKey(TokenInterface $token, string $permission, mixed $channel): string
+    {
+        $channelId = \is_object($channel) && method_exists($channel, 'getId')
+            ? trim((string) $channel->getId())
+            : '';
+
+        if ('' === $channelId) {
+            $channelId = \is_object($channel) ? 'obj:'.spl_object_id($channel) : 'scalar:'.serialize($channel);
+        }
+
+        return spl_object_id($token).'|'.$permission.'|'.$channelId;
     }
 }

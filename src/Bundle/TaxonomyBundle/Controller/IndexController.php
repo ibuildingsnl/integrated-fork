@@ -19,12 +19,15 @@ use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 final class IndexController extends AbstractController
 {
+    private const PAGE_LIMIT = 50;
+
     public function __construct(
         private readonly TaxonomyOverview $indexer,
         private readonly ResolverInterface $typeResolver,
@@ -108,7 +111,7 @@ final class IndexController extends AbstractController
 
         $filter = $this->resolveFilter($request);
         $page = $request->query->getInt('page', 1);
-        $limit = 50;
+        $limit = self::PAGE_LIMIT;
         $totalItems = $this->indexer->countFor(
             $contentType->getId(),
             $filter,
@@ -125,12 +128,45 @@ final class IndexController extends AbstractController
                     fn () => $totalItems,
                     fn ($offset, $limit) => $this->indexer->overviewFor(
                         $contentType->getId(),
-                        new TaxonomyOptions($filter, $offset, $limit),
+                        new TaxonomyOptions($filter, $offset, $limit, false),
                     ),
                 ),
                 $page,
                 $limit,
             ),
+            'usage_count_url' => $this->generateUrl('integrated_taxonomy_usage_counts', ['type' => $contentType->getId()]),
+            'current_page' => $page,
+            'page_limit' => $limit,
+        ]);
+    }
+
+    public function usageCounts(Request $request, string $type): Response
+    {
+        $contentType = $this->typeResolver->getType($type);
+        $content = $contentType->create();
+
+        if (!$this->isGranted(Permissions::CREATE, $content)) {
+            throw new AccessDeniedException();
+        }
+
+        $ids = $request->query->all('ids');
+        $taxonomyIds = [];
+
+        foreach ($ids as $id) {
+            if (!\is_scalar($id)) {
+                continue;
+            }
+
+            $value = trim((string) $id);
+            if ('' === $value) {
+                continue;
+            }
+
+            $taxonomyIds[$value] = $value;
+        }
+
+        return new JsonResponse([
+            'counts' => $this->taxonomies->countUsagesFor($taxonomyIds),
         ]);
     }
 

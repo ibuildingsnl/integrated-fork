@@ -14,6 +14,7 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
     private array $usages = [];
     private int $usageLookupCalls = 0;
     private int $usageBatchLookupCalls = 0;
+    private int $byTypeCalls = 0;
 
     public function __construct(
         private readonly ?AuthorizationCheckerInterface $authorization = null,
@@ -54,7 +55,17 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
 
     public function byType(string $contentType): array
     {
-        return array_filter($this->taxonomies, fn (Taxonomy $t) => $t->getContentType() === $contentType);
+        ++$this->byTypeCalls;
+
+        return array_values(array_filter(
+            $this->taxonomies,
+            fn (Taxonomy $t) => $t->getContentType() === $contentType
+        ));
+    }
+
+    public function byTypeForIndex(string $contentType): array
+    {
+        return $this->byType($contentType);
     }
 
     public function count(string $contentType): int
@@ -109,5 +120,10 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
     public function getUsageBatchLookupCalls(): int
     {
         return $this->usageBatchLookupCalls;
+    }
+
+    public function getByTypeCalls(): int
+    {
+        return $this->byTypeCalls;
     }
 }

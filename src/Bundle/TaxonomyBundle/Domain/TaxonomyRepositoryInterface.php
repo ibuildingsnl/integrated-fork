@@ -17,6 +17,9 @@ interface TaxonomyRepositoryInterface
     /** @return Taxonomy[] */
     public function byType(string $contentType): array;
 
+    /** @return Taxonomy[] */
+    public function byTypeForIndex(string $contentType): array;
+
     public function count(string $contentType): int;
 
     public function add(Taxonomy $taxonomy): void;
