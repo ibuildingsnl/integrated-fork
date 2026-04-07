@@ -63,27 +63,53 @@ class ScopeListener extends AbstractListener implements FirewallListenerInterfac
             return;
         }
 
-        $scope = $user->getScope();
+        if (!$user->isEnabled()) {
+            $this->tokenStorage->setToken(null);
 
-        if (!$scope instanceof Scope || !$scope->isAdmin()) {
             return;
         }
 
-        if ($currentToken && \in_array('ROLE_SCOPE_INTEGRATED', $currentToken->getRoleNames(), true)) {
+        $expectedRoles = $this->normalizeExpectedRoles($user);
+
+        if ($currentToken && $this->normalizeRoles($currentToken->getRoleNames()) === $expectedRoles) {
             return;
         }
-
-        $roles = $user->getRoles();
-
-        $roles[] = 'ROLE_SCOPE_INTEGRATED';
-        $roles = array_unique($roles);
 
         $token = new UsernamePasswordToken(
             $user,
             $this->providerKey,
-            $roles
+            $expectedRoles
         );
+        $token->setAttributes($currentToken?->getAttributes() ?? []);
 
         $this->tokenStorage->setToken($token);
+    }
+
+    /**
+     * @return string[]
+     */
+    private function normalizeExpectedRoles(UserInterface $user): array
+    {
+        $roles = $user->getRoles();
+        $scope = $user->getScope();
+
+        if ($scope instanceof Scope && $scope->isAdmin()) {
+            $roles[] = 'ROLE_SCOPE_INTEGRATED';
+        }
+
+        return $this->normalizeRoles($roles);
+    }
+
+    /**
+     * @param string[] $roles
+     *
+     * @return string[]
+     */
+    private function normalizeRoles(array $roles): array
+    {
+        $roles = array_values(array_unique($roles));
+        sort($roles);
+
+        return $roles;
     }
 }

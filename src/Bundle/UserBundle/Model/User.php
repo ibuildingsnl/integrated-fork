@@ -400,9 +400,7 @@ class User implements UserInterface
         return $user->getUserIdentifier() === $this->getUserIdentifier()
             && $user->getPassword() === $this->getPassword()
             && $user->getSalt() === $this->getSalt()
-            && $this->getEnabledSnapshot($user) === $this->getEnabledSnapshot($this)
-            && $this->getRoleSnapshot($user) === $this->getRoleSnapshot($this)
-            && $this->getScopeFingerprintSnapshot($user) === $this->getScopeFingerprintSnapshot($this);
+            && $this->getEnabledSnapshot($user) === $this->getEnabledSnapshot($this);
     }
 
     private function normalizeRoles(array $roles): array

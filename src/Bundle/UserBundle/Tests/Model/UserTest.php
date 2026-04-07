@@ -18,20 +18,20 @@ final class UserTest extends TestCase
         self::assertSame('', $user->getUserIdentifier());
     }
 
-    public function testIsEqualToReturnsFalseWhenRolesChange(): void
+    public function testIsEqualToIgnoresRoleChangesForTokenRefresh(): void
     {
         $current = $this->createUserWithRoleAndScope('ROLE_ADMIN', true);
         $refreshed = $this->createUserWithRoleAndScope('ROLE_USER_MANAGER', true);
 
-        self::assertFalse($current->isEqualTo($refreshed));
+        self::assertTrue($current->isEqualTo($refreshed));
     }
 
-    public function testIsEqualToReturnsFalseWhenScopePrivilegesChange(): void
+    public function testIsEqualToIgnoresScopePrivilegeChangesForTokenRefresh(): void
     {
         $current = $this->createUserWithRoleAndScope('ROLE_USER_MANAGER', true);
         $refreshed = $this->createUserWithRoleAndScope('ROLE_USER_MANAGER', false);
 
-        self::assertFalse($current->isEqualTo($refreshed));
+        self::assertTrue($current->isEqualTo($refreshed));
     }
 
     public function testIsEqualToReturnsTrueWhenSecurityStateMatches(): void
@@ -62,7 +62,19 @@ final class UserTest extends TestCase
 
         $changed = $this->createUserWithRoleAndScope('ROLE_USER_MANAGER', true);
 
-        self::assertFalse($sessionUser->isEqualTo($changed));
+        self::assertTrue($sessionUser->isEqualTo($changed));
+    }
+
+    public function testSerializedUserIsNotEqualWhenEnabledStateChanges(): void
+    {
+        $current = $this->createUserWithRoleAndScope('ROLE_ADMIN', true);
+
+        $sessionUser = new User();
+        $sessionUser->__unserialize($current->__serialize());
+
+        $current->setEnabled(false);
+
+        self::assertFalse($sessionUser->isEqualTo($current));
     }
 
     private function createUserWithRoleAndScope(string $role, bool $isAdminScope): User
