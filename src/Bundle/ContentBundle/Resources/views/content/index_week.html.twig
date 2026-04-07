@@ -166,7 +166,7 @@
                     {% set calendarState = 'concept' %}
                 {% endif %}
 
-                <a class="calendar-item {{ calendarState }}" href="{{ editLink }}" target="_blank" data-turbo-frame="_top"
+                <a class="calendar-item {{ calendarState }}" href="{{ editLink }}" target="_blank" data-turbo-frame="_top" data-turbo-prefetch="false"
                    data-id="{{ content.type_id }}" data-type="{{ type }}" data-brands="{{ displayChannelNames|join(', ')|default('') }}"
                    data-premium="{% if content.premium|default(false) %}true{% else %}false{% endif %}"
                    data-title="Edit {{ type }}" data-time="{{ date(content.pub_time)|date('Hi') }}">
