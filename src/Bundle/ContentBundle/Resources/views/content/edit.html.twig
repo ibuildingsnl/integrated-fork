@@ -8,7 +8,7 @@
 {% endblock title %}
 
 {% block content %}
-    <div id="content-edit-page">
+    <div id="content-edit-page" data-inline-workflow-state-init="true">
         {% block filters %}
             <div class="filters_row"></div>
         {% endblock %}
@@ -872,6 +872,12 @@
                 return;
             }
 
+            if ($workflowRoot.attr('data-workflow-state-initialized') === 'true') {
+                return;
+            }
+
+            $workflowRoot.attr('data-workflow-state-initialized', 'true');
+
             if (!$assigned.hasClass('select2-hidden-accessible')) {
                 $assigned.select2();
             }
@@ -901,8 +907,15 @@
                     status = currentStateId;
                 }
 
+                var requestSignature = [workflowId || '', status || '', contentType || ''].join(':');
+                if ($workflowRoot.attr('data-workflow-pending-signature') === requestSignature
+                    || $workflowRoot.attr('data-workflow-last-applied-signature') === requestSignature) {
+                    return;
+                }
+
                 var selectedNextState = $nextStatusSelect.val() || '';
                 $assigned.attr('disabled', 'disabled');
+                $workflowRoot.attr('data-workflow-pending-signature', requestSignature);
 
                 $.ajax({
                     url: stateChangeUrl,
@@ -970,7 +983,14 @@
                                 $inputs.trigger('change.select2');
                             }
                         });
+
+                        $workflowRoot.attr('data-workflow-last-applied-signature', requestSignature);
                     },
+                    complete: function() {
+                        if ($workflowRoot.attr('data-workflow-pending-signature') === requestSignature) {
+                            $workflowRoot.removeAttr('data-workflow-pending-signature');
+                        }
+                    }
                 });
             };
 
@@ -988,7 +1008,6 @@
 
         function scheduleWorkflowInit() {
             window.requestAnimationFrame(initializeWorkflowSection);
-            window.setTimeout(initializeWorkflowSection, 50);
         }
 
         document.addEventListener('DOMContentLoaded', scheduleWorkflowInit);

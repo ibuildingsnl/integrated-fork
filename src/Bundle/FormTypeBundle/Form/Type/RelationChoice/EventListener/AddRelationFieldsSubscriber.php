@@ -14,6 +14,7 @@ namespace Integrated\Bundle\FormTypeBundle\Form\Type\RelationChoice\EventListene
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation as EmbeddedRelation;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\FormTypeBundle\Form\Type\RelationChoice\RelationReferencesType;
@@ -31,9 +32,7 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
         return [FormEvents::PRE_SET_DATA => 'preSetData'];
     }
 
-    /**
-     * @var \Doctrine\ODM\MongoDB\Repository\DocumentRepository
-     */
+    /** @var ObjectRepository<Relation> */
     protected $repo;
 
     /**
@@ -81,6 +80,8 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
             $relationIds[] = $relation->getRelationId();
         }
 
+        $this->preloadRelations($this->options['relations']);
+
         foreach ($this->options['relations'] as $relationId) {
             $relation = $this->findRelation($relationId, $event->getForm()->getParent()->getData());
 
@@ -104,14 +105,14 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
      * @param string $relationId
      * @param object $formData
      *
-     * @return Relation|object
+     * @return Relation
      *
      * @throws \Exception
      */
     protected function findRelation($relationId, $formData)
     {
-        $relation = $this->repo->find($relationId);
-        if (!$relation instanceof Relation) {
+        $relation = $this->getRelation($relationId);
+        if ($relation === null) {
             throw new \Exception(\sprintf('RelationId "%s" is not found', $relationId));
         }
 
@@ -133,6 +134,34 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
         return $relation;
     }
 
+    /**
+     * @param array<int, string> $relationIds
+     */
+    protected function preloadRelations(array $relationIds): void
+    {
+        $missingRelationIds = [];
+
+        foreach ($relationIds as $relationId) {
+            if (!$this->relations->containsKey($relationId)) {
+                $missingRelationIds[] = $relationId;
+            }
+        }
+
+        if ([] === $missingRelationIds) {
+            return;
+        }
+
+        $criteria = ['$or' => []];
+
+        foreach ($missingRelationIds as $relationId) {
+            $criteria['$or'][] = ['id' => $relationId];
+        }
+
+        foreach ($this->repo->findBy($criteria) as $relation) {
+            $this->setRelation($relation->getId(), $relation);
+        }
+    }
+
     protected function addFormFields(FormEvent $event)
     {
         /** @var EmbeddedRelation $embeddedRelation */
@@ -142,6 +171,9 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
             }
 
             $relation = $this->getRelation($embeddedRelation->getRelationId());
+            if (!$relation instanceof Relation) {
+                continue;
+            }
             $contentTypes = [];
 
             foreach ($relation->getTargets() as $target) {
@@ -168,12 +200,11 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
         $this->relations->set($relationId, $relation);
     }
 
-    /**
-     * @return Relation $relation
-     */
-    public function getRelation($id)
+    public function getRelation($id): ?Relation
     {
-        return $this->relations->get($id);
+        $relation = $this->relations->get($id);
+
+        return $relation instanceof Relation ? $relation : null;
     }
 
     /**

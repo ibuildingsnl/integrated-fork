@@ -4,12 +4,17 @@ namespace Integrated\Bundle\TaxonomyBundle\Infrastructure;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Persistence\ObjectRepository;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 
 final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
 {
+    /**
+     * @param ObjectRepository<Taxonomy> $doctrineRepo
+     */
     public function __construct(
         private readonly DocumentManager $manager,
         private readonly ObjectRepository $doctrineRepo,
@@ -49,12 +54,47 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
 
     public function byId(string $id): ?Taxonomy
     {
-        return $this->doctrineRepo->find($id);
+        $taxonomy = $this->doctrineRepo->find($id);
+
+        return $taxonomy instanceof Taxonomy ? $taxonomy : null;
     }
 
     public function byType(string $contentType): array
     {
         return $this->doctrineRepo->findBy(['contentType' => $contentType]);
+    }
+
+    public function byTypeForIndex(string $contentType): array
+    {
+        $rows = $this->manager->createQueryBuilder(Taxonomy::class)
+            ->field('contentType')
+            ->equals($contentType)
+            ->select(['contentType', 'title', 'description', 'slug', 'rank', 'parent_id', 'link_to_channel', 'channels'])
+            ->hydrate(false)
+            ->getQuery()
+            ->getIterator();
+
+        $items = [];
+        $channelIds = [];
+
+        foreach ($rows as $row) {
+            if (!\is_array($row)) {
+                continue;
+            }
+
+            $items[] = $row;
+
+            foreach ($this->extractReferenceIds($row['channels'] ?? []) as $channelId) {
+                $channelIds[$channelId] = $channelId;
+            }
+        }
+
+        $channelsById = $this->getChannelsById(array_values($channelIds));
+
+        return array_values(array_filter(array_map(
+            fn (array $row): ?Taxonomy => $this->buildIndexTaxonomy($row, $channelsById),
+            $items
+        )));
     }
 
     public function count(string $contentType): int
@@ -130,5 +170,104 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
         }
 
         return $counts;
+    }
+
+    /**
+     * @param array<string, mixed> $row
+     * @param array<string, Channel> $channelsById
+     */
+    private function buildIndexTaxonomy(array $row, array $channelsById): ?Taxonomy
+    {
+        $id = trim((string) ($row['_id'] ?? ''));
+        if ('' === $id) {
+            return null;
+        }
+
+        $taxonomy = new Taxonomy();
+        $taxonomy->setId($id);
+        $taxonomy->setContentType(trim((string) ($row['contentType'] ?? '')));
+        $taxonomy->setTitle((string) ($row['title'] ?? ''));
+        $taxonomy->setDescription((string) ($row['description'] ?? ''));
+        $taxonomy->setSlug((string) ($row['slug'] ?? ''));
+        $taxonomy->setRank($this->normalizeNullableString($row['rank'] ?? null));
+        $taxonomy->setParentID($this->normalizeNullableString($row['parent_id'] ?? null));
+        $taxonomy->setLinkToChannel($this->normalizeNullableString($row['link_to_channel'] ?? null));
+
+        $channels = [];
+        foreach ($this->extractReferenceIds($row['channels'] ?? []) as $channelId) {
+            if (isset($channelsById[$channelId])) {
+                $channels[] = $channelsById[$channelId];
+            }
+        }
+        $taxonomy->setChannels($channels);
+
+        return $taxonomy;
+    }
+
+    /**
+     * @param array<string> $channelIds
+     *
+     * @return array<string, Channel>
+     */
+    private function getChannelsById(array $channelIds): array
+    {
+        if ([] === $channelIds) {
+            return [];
+        }
+
+        $repository = $this->manager->getRepository(Channel::class);
+        $channels = $repository instanceof ChannelRepository
+            ? $repository->findByIds($channelIds)
+            : $repository->findBy(['id' => ['$in' => $channelIds]]);
+
+        $channelsById = [];
+
+        foreach ($channels as $channel) {
+            if (!$channel instanceof Channel || null === $channel->getId()) {
+                continue;
+            }
+
+            $channelsById[$channel->getId()] = $channel;
+        }
+
+        return $channelsById;
+    }
+
+    /**
+     * @return string[]
+     */
+    private function extractReferenceIds(mixed $references): array
+    {
+        if (!is_iterable($references)) {
+            return [];
+        }
+
+        $ids = [];
+
+        foreach ($references as $reference) {
+            if (!\is_array($reference)) {
+                continue;
+            }
+
+            $id = trim((string) ($reference['$id'] ?? ''));
+            if ('' === $id) {
+                continue;
+            }
+
+            $ids[$id] = $id;
+        }
+
+        return array_values($ids);
+    }
+
+    private function normalizeNullableString(mixed $value): ?string
+    {
+        if (!\is_scalar($value)) {
+            return null;
+        }
+
+        $normalized = trim((string) $value);
+
+        return '' !== $normalized ? $normalized : null;
     }
 }

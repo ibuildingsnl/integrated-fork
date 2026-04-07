@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\ContentType;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Common\ContentType\ContentTypeFieldInterface;
 
@@ -148,5 +149,24 @@ class ContentTypeTest extends \PHPUnit\Framework\TestCase
     {
         $createdAt = new \DateTime();
         $this->assertSame($createdAt, $this->contentType->setCreatedAt($createdAt)->getCreatedAt());
+    }
+
+    public function testTaxonomyContentTypeDoesNotExposeWorkflowOption(): void
+    {
+        $this->contentType->setOption('workflow', 'workflow-id');
+        $this->contentType->setClass(Taxonomy::class);
+
+        $this->assertFalse($this->contentType->hasOption('workflow'));
+        $this->assertNull($this->contentType->getOption('workflow'));
+        $this->assertArrayNotHasKey('workflow', $this->contentType->getOptions());
+    }
+
+    public function testSettingWorkflowOptionOnTaxonomyContentTypeIsIgnored(): void
+    {
+        $this->contentType->setClass(Taxonomy::class);
+        $this->contentType->setOption('workflow', 'workflow-id');
+
+        $this->assertFalse($this->contentType->hasOption('workflow'));
+        $this->assertNull($this->contentType->getOption('workflow'));
     }
 }

@@ -5,12 +5,17 @@ namespace Integrated\Bundle\TaxonomyBundle\Services;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class TaxonomyIndexer implements TaxonomyOverview
 {
     /** @var array<string, array<string, Taxonomy[]>> */
     private array $byParentCache = [];
+    /** @var array<string, array<int, array{taxonomy: Taxonomy, depth: int}>> */
+    private array $entriesCache = [];
+    /** @var array<string, bool> */
+    private array $viewableCache = [];
 
     public function __construct(
         private readonly TaxonomyRepositoryInterface $taxonomies,
@@ -31,88 +36,33 @@ final class TaxonomyIndexer implements TaxonomyOverview
     public function overviewFor(string $contentType, ?TaxonomyOptions $options = null): array
     {
         $options ??= new TaxonomyOptions();
-        $root = $options->root ?: 'root';
-        $filtered = $root !== 'root';
+        $entries = $this->entriesFor($contentType, $options->root ?: 'root');
 
-        $taxonomy = $this->taxonomies->byId($root);
-
-        if (!$taxonomy && $filtered) {
+        if ([] === $entries) {
             return [];
         }
 
-        $byParent = $this->listByParent($contentType);
         $usageCounts = $options->includeUsageCounts
-            ? $this->taxonomies->countUsagesFor($this->collectTaxonomyIds($byParent, $root, $filtered))
+            ? $this->taxonomies->countUsagesFor(array_map(
+                static fn (array $entry): string => (string) $entry['taxonomy']->getId(),
+                $entries,
+            ))
             : [];
 
-        return $this->slice($options, ...$this->toSortedIndex(
-            $byParent,
-            $root,
-            $filtered ? 1 : 0,
-            $filtered ? [$this->toIndexed($taxonomy, 0, $usageCounts, $options->includeUsageCounts)] : [],
-            $usageCounts,
-            $options->includeUsageCounts,
-        ));
+        return array_map(
+            fn (array $entry): IndexedItem => $this->toIndexed(
+                $entry['taxonomy'],
+                $entry['depth'],
+                $usageCounts,
+                $options->includeUsageCounts,
+            ),
+            \array_slice($entries, $options->offset, $options->limit),
+        );
     }
 
     public function countFor(string $contentType, string $filter = 'root'): int
     {
-        $root = $filter ?: 'root';
-        $filtered = $root !== 'root';
-
-        $taxonomy = $this->taxonomies->byId($root);
-        if (!$taxonomy && $filtered) {
-            return 0;
-        }
-
-        $byParent = $this->listByParent($contentType);
-        $descendants = $this->countByParent($byParent, $root);
-
-        return $filtered ? 1 + $descendants : $descendants;
-    }
-
-    /**
-     * @param Taxonomy[][] $byParent
-     */
-    private function countByParent(array $byParent, ?string $key): int
-    {
-        $visited = [];
-
-        $countByParent = function (?string $current) use (&$countByParent, $byParent, &$visited): int {
-            if (null === $current || !isset($byParent[$current])) {
-                return 0;
-            }
-
-            $visitedKey = 'node:'.$current;
-            if (isset($visited[$visitedKey])) {
-                return 0;
-            }
-            $visited[$visitedKey] = true;
-
-            $count = 0;
-            foreach ($byParent[$current] as $taxonomy) {
-                $taxonomyId = trim((string) $taxonomy->getId());
-                if ('' === $taxonomyId || isset($visited['node:'.$taxonomyId])) {
-                    continue;
-                }
-
-                ++$count;
-                $count += $countByParent($taxonomyId);
-            }
-
-            return $count;
-        };
-
-        if (null === $key) {
-            return 0;
-        }
-
-        return $countByParent($key);
-    }
-
-    private function slice(TaxonomyOptions $options, IndexedItem ...$items): array
-    {
-        return \array_slice($items, $options->offset, $options->limit);
+        return \count($this->entriesFor($contentType, $filter ?: 'root'));
     }
 
     /** @return Taxonomy[][] */
@@ -124,8 +74,8 @@ final class TaxonomyIndexer implements TaxonomyOverview
 
         $byParent = [];
 
-        foreach ($this->taxonomies->byType($contentType) as $taxonomy) {
-            if ($this->authorization->isGranted('view', $taxonomy)) {
+        foreach ($this->taxonomies->byTypeForIndex($contentType) as $taxonomy) {
+            if ($this->canView($taxonomy)) {
                 $byParent[$taxonomy->getParentID() ?: 'root'][$taxonomy->getId()] = $taxonomy;
             }
         }
@@ -136,23 +86,20 @@ final class TaxonomyIndexer implements TaxonomyOverview
     }
 
     /**
-     * @param array<string, Taxonomy[]> $byParent
-     * @param array<string, int>        $usageCounts
-     * @param IndexedItem[]             $sorted
+     * @param array<string, Taxonomy[]>                         $byParent
+     * @param array<int, array{taxonomy: Taxonomy, depth: int}> $entries
      *
-     * @return IndexedItem[]
+     * @return array<int, array{taxonomy: Taxonomy, depth: int}>
      */
-    private function toSortedIndex(
+    private function buildEntries(
         array $byParent,
         ?string $key,
         int $depth,
-        array $sorted,
-        array $usageCounts,
-        bool $includeUsageCounts,
+        array $entries,
     ): array {
         $visited = [];
 
-        $walk = function (?string $current, int $currentDepth, bool $virtualRoot = false) use (&$walk, &$sorted, &$visited, $byParent, $usageCounts, $includeUsageCounts): void {
+        $walk = function (?string $current, int $currentDepth, bool $virtualRoot = false) use (&$walk, &$entries, &$visited, $byParent): void {
             if (null === $current || !isset($byParent[$current])) {
                 return;
             }
@@ -172,55 +119,17 @@ final class TaxonomyIndexer implements TaxonomyOverview
                     continue;
                 }
 
-                $sorted[] = $this->toIndexed($taxonomy, $currentDepth, $usageCounts, $includeUsageCounts);
+                $entries[] = [
+                    'taxonomy' => $taxonomy,
+                    'depth' => $currentDepth,
+                ];
                 $walk($taxonomyId, $currentDepth + 1, false);
             }
         };
 
         $walk($key, $depth, 'root' === $key);
 
-        return $sorted;
-    }
-
-    /**
-     * @param Taxonomy[][] $byParent
-     *
-     * @return string[]
-     */
-    private function collectTaxonomyIds(array $byParent, string $root, bool $filtered): array
-    {
-        $ids = [];
-        $visited = [];
-
-        if ($filtered && 'root' !== $root) {
-            $ids[$root] = true;
-        }
-
-        $walk = function (?string $current, bool $virtualRoot = false) use (&$walk, $byParent, &$ids, &$visited): void {
-            if (null === $current || !isset($byParent[$current])) {
-                return;
-            }
-
-            $visitedKey = $virtualRoot ? '__root__' : 'node:'.$current;
-            if (isset($visited[$visitedKey])) {
-                return;
-            }
-            $visited[$visitedKey] = true;
-
-            foreach ($byParent[$current] as $taxonomy) {
-                $id = trim((string) $taxonomy->getId());
-                if ('' === $id) {
-                    continue;
-                }
-
-                $ids[$id] = true;
-                $walk($id);
-            }
-        };
-
-        $walk($root, 'root' === $root);
-
-        return array_keys($ids);
+        return $entries;
     }
 
     /**
@@ -253,5 +162,55 @@ final class TaxonomyIndexer implements TaxonomyOverview
         }
 
         return strcmp((string) $a->getId(), (string) $b->getId());
+    }
+
+    /**
+     * @return array<int, array{taxonomy: Taxonomy, depth: int}>
+     */
+    private function entriesFor(string $contentType, string $root): array
+    {
+        $cacheKey = $contentType.'|'.$root;
+        if (isset($this->entriesCache[$cacheKey])) {
+            return $this->entriesCache[$cacheKey];
+        }
+
+        $filtered = 'root' !== $root;
+        $taxonomy = $filtered ? $this->taxonomies->byId($root) : null;
+        if ($filtered && !$taxonomy) {
+            return $this->entriesCache[$cacheKey] = [];
+        }
+
+        $entries = $filtered
+            ? [['taxonomy' => $taxonomy, 'depth' => 0]]
+            : [];
+
+        return $this->entriesCache[$cacheKey] = $this->buildEntries(
+            $this->listByParent($contentType),
+            $root,
+            $filtered ? 1 : 0,
+            $entries,
+        );
+    }
+
+    private function canView(Taxonomy $taxonomy): bool
+    {
+        $signature = $this->visibilitySignature($taxonomy);
+        if (isset($this->viewableCache[$signature])) {
+            return $this->viewableCache[$signature];
+        }
+
+        return $this->viewableCache[$signature] = $this->authorization->isGranted('view', $taxonomy);
+    }
+
+    private function visibilitySignature(Taxonomy $taxonomy): string
+    {
+        $channelIds = array_map(
+            static fn (ChannelInterface $channel): string => trim((string) $channel->getId()),
+            $taxonomy->getChannels()
+        );
+        $channelIds = array_values(array_filter($channelIds, static fn (string $id): bool => '' !== $id));
+        sort($channelIds);
+
+        return $taxonomy->getContentType().'|'.implode('|', $channelIds);
     }
 }

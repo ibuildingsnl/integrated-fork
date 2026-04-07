@@ -4,3 +4,10 @@ integrated_taxonomy_index:
   defaults:
     _controller: 'Integrated\Bundle\TaxonomyBundle\Controller\IndexController::index'
     _format: 'html'
+
+integrated_taxonomy_usage_counts:
+  path: '/taxonomy/{type}/usage-counts'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\TaxonomyBundle\Controller\IndexController::usageCounts'
+    _format: 'json'

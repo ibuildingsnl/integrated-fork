@@ -24,6 +24,7 @@ class LockingAssetsTest extends TestCase
         $template = file_get_contents(__DIR__.'/../../Resources/views/locking.refresh.html.twig');
 
         self::assertIsString($template);
+        self::assertStringContainsString('var POLL_DELAY = 20000;', $template);
         self::assertStringContainsString("method: 'POST'", $template);
         self::assertStringContainsString("path('integrated_locking_api_release')", $template);
         self::assertStringContainsString("document.addEventListener('turbo:before-cache'", $template);

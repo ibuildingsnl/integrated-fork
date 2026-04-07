@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\TaxonomyBundle\Tests\Features;
 
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
@@ -14,6 +15,7 @@ use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManager;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Strategy\AffirmativeStrategy;
 
 final class TaxonomyIndexingTest extends TestCase
@@ -199,6 +201,53 @@ final class TaxonomyIndexingTest extends TestCase
         self::assertSame(0, $list[0]->getCount());
         self::assertSame(0, $list[1]->getCount());
         self::assertSame(0, $list[2]->getCount());
+    }
+
+    public function testCountAndOverviewReuseTheSameIndexedTreeWhenUsageCountsAreSkipped(): void
+    {
+        $this->add(
+            $this->taxonomy('foo', 'Foo'),
+            $this->taxonomy('bar', 'Bar', 'bar', null, 'foo'),
+            $this->taxonomy('baz', 'Baz'),
+        );
+
+        self::assertSame(3, $this->indexer->countFor('taxonomy'));
+
+        $list = $this->indexer->overviewFor('taxonomy', (new TaxonomyOptions())->withoutUsageCounts());
+
+        self::assertCount(3, $list);
+        self::assertSame(1, $this->taxonomies->getByTypeCalls());
+    }
+
+    public function testOverviewReusesVisibilityDecisionForSharedChannelSets(): void
+    {
+        $repository = new MemoryTaxonomyRepository();
+        $authorization = $this->createMock(AuthorizationCheckerInterface::class);
+        $authorization
+            ->expects(self::exactly(2))
+            ->method('isGranted')
+            ->with('view', self::isInstanceOf(Taxonomy::class))
+            ->willReturn(true);
+
+        $channelA = new Channel();
+        $channelA->setId('a');
+        $channelB = new Channel();
+        $channelB->setId('b');
+
+        $foo = $this->taxonomy('foo', 'Foo');
+        $foo->addChannel($channelA);
+        $bar = $this->taxonomy('bar', 'Bar');
+        $bar->addChannel($channelA);
+        $baz = $this->taxonomy('baz', 'Baz');
+        $baz->addChannel($channelB);
+
+        $repository->add($foo);
+        $repository->add($bar);
+        $repository->add($baz);
+
+        $indexer = new TaxonomyIndexer($repository, $authorization);
+
+        self::assertCount(3, $indexer->overviewFor('taxonomy', (new TaxonomyOptions())->withoutUsageCounts()));
     }
 
     public function testIndexingMultipleChildrenWithRankedGrandchildrenAndUsageCounts()

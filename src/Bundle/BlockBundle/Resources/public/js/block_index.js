@@ -6,42 +6,60 @@
         window.__integratedBlockIndexInteractionsBound = true;
 
         function bindFilterFormAutoSubmit() {
-            document.querySelectorAll('form[name="integrated_block_filter"]').forEach(function (form) {
-                if (form.dataset.boundFilterAutoSubmit === 'true') {
+            if (document.body.dataset.boundFilterAutoSubmit === 'true') {
+                return;
+            }
+
+            document.addEventListener('change', function (event) {
+                var target = event.target;
+                if (!(target instanceof Element)) {
                     return;
                 }
 
-                form.addEventListener('change', function () {
-                    form.requestSubmit ? form.requestSubmit() : form.submit();
-                });
-                form.dataset.boundFilterAutoSubmit = 'true';
+                var form = target.closest('form[name="integrated_block_filter"]');
+                if (!form) {
+                    return;
+                }
+
+                if (target.matches('input[name="integrated_block_filter[q]"]')) {
+                    return;
+                }
+
+                form.requestSubmit ? form.requestSubmit() : form.submit();
             });
+
+            document.body.dataset.boundFilterAutoSubmit = 'true';
         }
 
         function bindFilterQueryAutoSubmit() {
-            document.querySelectorAll('form[name="integrated_block_filter"]').forEach(function (form) {
-                if (form.dataset.boundFilterQueryAutoSubmit === 'true') {
+            if (document.body.dataset.boundFilterQueryAutoSubmit === 'true') {
+                return;
+            }
+
+            document.addEventListener('input', function (event) {
+                var target = event.target;
+                if (!(target instanceof Element) || !target.matches('input[name="integrated_block_filter[q]"]')) {
                     return;
                 }
 
-                var input = form.querySelector('input[name="integrated_block_filter[q]"]');
-                if (!input) {
+                var form = target.closest('form[name="integrated_block_filter"]');
+                if (!form) {
                     return;
                 }
 
-                var debounceTimer = null;
-                input.addEventListener('input', function () {
-                    if (debounceTimer) {
-                        window.clearTimeout(debounceTimer);
-                    }
+                var debounceTimer = form.__integratedFilterDebounceTimer || null;
+                if (debounceTimer) {
+                    window.clearTimeout(debounceTimer);
+                }
 
-                    debounceTimer = window.setTimeout(function () {
-                        form.requestSubmit ? form.requestSubmit() : form.submit();
-                    }, 250);
-                });
+                debounceTimer = window.setTimeout(function () {
+                    form.requestSubmit ? form.requestSubmit() : form.submit();
+                }, 250);
 
-                form.dataset.boundFilterQueryAutoSubmit = 'true';
+                form.__integratedFilterDebounceTimer = debounceTimer;
             });
+
+            document.body.dataset.boundFilterQueryAutoSubmit = 'true';
         }
 
         function normalizeBlockFilterSearchValue(value) {

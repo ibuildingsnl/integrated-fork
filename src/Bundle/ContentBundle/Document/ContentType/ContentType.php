@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Document\ContentType;
 
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
+use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\ContentType\ContentTypeFieldInterface;
 use Integrated\Common\ContentType\ContentTypeInterface;
@@ -28,6 +29,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ContentType implements ContentTypeInterface
 {
     use PermissionTrait;
+
+    private const WORKFLOW_OPTION = 'workflow';
 
     /**
      * @var string
@@ -123,6 +126,10 @@ class ContentType implements ContentTypeInterface
     {
         $this->class = $class;
 
+        if ($this->isTaxonomyClass()) {
+            unset($this->options[self::WORKFLOW_OPTION]);
+        }
+
         return $this;
     }
 
@@ -194,7 +201,14 @@ class ContentType implements ContentTypeInterface
 
     public function getOptions()
     {
-        return $this->options;
+        if (!$this->isTaxonomyClass()) {
+            return $this->options;
+        }
+
+        $options = $this->options;
+        unset($options[self::WORKFLOW_OPTION]);
+
+        return $options;
     }
 
     /**
@@ -217,6 +231,10 @@ class ContentType implements ContentTypeInterface
 
     public function getOption($name)
     {
+        if ($name === self::WORKFLOW_OPTION && $this->isTaxonomyClass()) {
+            return null;
+        }
+
         if (isset($this->options[$name])) {
             return $this->options[$name];
         }
@@ -234,6 +252,12 @@ class ContentType implements ContentTypeInterface
      */
     public function setOption($name, $value = null)
     {
+        if ($name === self::WORKFLOW_OPTION && $this->isTaxonomyClass()) {
+            unset($this->options[$name]);
+
+            return $this;
+        }
+
         if ($value === null) {
             unset($this->options[$name]);
         } else {
@@ -245,6 +269,10 @@ class ContentType implements ContentTypeInterface
 
     public function hasOption($name)
     {
+        if ($name === self::WORKFLOW_OPTION && $this->isTaxonomyClass()) {
+            return false;
+        }
+
         return isset($this->options[$name]);
     }
 
@@ -256,6 +284,11 @@ class ContentType implements ContentTypeInterface
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    private function isTaxonomyClass(): bool
+    {
+        return $this->class === Taxonomy::class;
     }
 
     /**

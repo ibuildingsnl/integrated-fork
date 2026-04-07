@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Extension\EventListener;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\WorkflowBundle\Form\Type\DefinitionType;
 use Integrated\Common\Content\Extension\Event\MetadataEvent;
 use Integrated\Common\Content\Extension\Event\Subscriber\MetadataSubscriberInterface;
@@ -47,6 +48,10 @@ class MetadataSubscriber implements MetadataSubscriberInterface
     public function process(MetadataEvent $event)
     {
         $metadata = $event->getMetadata();
+
+        if ($metadata->isTypeOf(Taxonomy::class)) {
+            return;
+        }
 
         $attr = $metadata->newOption('workflow');
 

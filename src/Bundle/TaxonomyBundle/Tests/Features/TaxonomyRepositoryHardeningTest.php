@@ -23,4 +23,16 @@ final class TaxonomyRepositoryHardeningTest extends TestCase
         $this->assertStringNotContainsString('->getPlugin(\'postbigrequest\')', $repository);
         $this->assertStringNotContainsString('->select($query)', $repository);
     }
+
+    public function testIndexReadsUseProjectedMongoRowsBeforeRebuildingTaxonomies(): void
+    {
+        $repository = file_get_contents(__DIR__.'/../../Infrastructure/ODMTaxonomyRepository.php');
+
+        $this->assertIsString($repository);
+        $this->assertStringContainsString('public function byTypeForIndex(string $contentType): array', $repository);
+        $this->assertStringContainsString('->select([\'contentType\', \'title\', \'description\', \'slug\', \'rank\', \'parent_id\', \'link_to_channel\', \'channels\'])', $repository);
+        $this->assertStringContainsString('->hydrate(false)', $repository);
+        $this->assertStringContainsString('buildIndexTaxonomy', $repository);
+        $this->assertStringContainsString('getChannelsById', $repository);
+    }
 }
