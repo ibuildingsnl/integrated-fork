@@ -30,7 +30,8 @@ final class TaxonomyIndexer implements TaxonomyOverview
     /** @return IndexedItem[] */
     public function overviewFor(string $contentType, ?TaxonomyOptions $options = null): array
     {
-        $root = $options?->root ?: 'root';
+        $options ??= new TaxonomyOptions();
+        $root = $options->root ?: 'root';
         $filtered = $root !== 'root';
 
         $taxonomy = $this->taxonomies->byId($root);
@@ -40,14 +41,17 @@ final class TaxonomyIndexer implements TaxonomyOverview
         }
 
         $byParent = $this->listByParent($contentType);
-        $usageCounts = $this->taxonomies->countUsagesFor($this->collectTaxonomyIds($byParent, $root, $filtered));
+        $usageCounts = $options->includeUsageCounts
+            ? $this->taxonomies->countUsagesFor($this->collectTaxonomyIds($byParent, $root, $filtered))
+            : [];
 
-        return $this->slice($options ?: new TaxonomyOptions(), ...$this->toSortedIndex(
+        return $this->slice($options, ...$this->toSortedIndex(
             $byParent,
             $root,
             $filtered ? 1 : 0,
-            $filtered ? [$this->toIndexed($taxonomy, 0, $usageCounts)] : [],
+            $filtered ? [$this->toIndexed($taxonomy, 0, $usageCounts, $options->includeUsageCounts)] : [],
             $usageCounts,
+            $options->includeUsageCounts,
         ));
     }
 
@@ -138,11 +142,18 @@ final class TaxonomyIndexer implements TaxonomyOverview
      *
      * @return IndexedItem[]
      */
-    private function toSortedIndex(array $byParent, ?string $key, int $depth, array $sorted, array $usageCounts): array
+    private function toSortedIndex(
+        array $byParent,
+        ?string $key,
+        int $depth,
+        array $sorted,
+        array $usageCounts,
+        bool $includeUsageCounts
+    ): array
     {
         $visited = [];
 
-        $walk = function (?string $current, int $currentDepth, bool $virtualRoot = false) use (&$walk, &$sorted, &$visited, $byParent, $usageCounts): void {
+        $walk = function (?string $current, int $currentDepth, bool $virtualRoot = false) use (&$walk, &$sorted, &$visited, $byParent, $usageCounts, $includeUsageCounts): void {
             if (null === $current || !isset($byParent[$current])) {
                 return;
             }
@@ -162,7 +173,7 @@ final class TaxonomyIndexer implements TaxonomyOverview
                     continue;
                 }
 
-                $sorted[] = $this->toIndexed($taxonomy, $currentDepth, $usageCounts);
+                $sorted[] = $this->toIndexed($taxonomy, $currentDepth, $usageCounts, $includeUsageCounts);
                 $walk($taxonomyId, $currentDepth + 1, false);
             }
         };
@@ -216,10 +227,17 @@ final class TaxonomyIndexer implements TaxonomyOverview
     /**
      * @param array<string, int> $usageCounts
      */
-    private function toIndexed(Taxonomy $taxonomy, int $depth = 0, array $usageCounts = []): IndexedItem
+    private function toIndexed(
+        Taxonomy $taxonomy,
+        int $depth = 0,
+        array $usageCounts = [],
+        bool $includeUsageCounts = true
+    ): IndexedItem
     {
         $id = (string) $taxonomy->getId();
-        $count = $usageCounts[$id] ?? $this->taxonomies->countUsages($taxonomy);
+        $count = $includeUsageCounts
+            ? ($usageCounts[$id] ?? $this->taxonomies->countUsages($taxonomy))
+            : 0;
 
         return IndexedItem::basedOn($taxonomy, $count, $depth);
     }

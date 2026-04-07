@@ -182,6 +182,25 @@ final class TaxonomyIndexingTest extends TestCase
         self::assertSame(0, $this->taxonomies->getUsageLookupCalls());
     }
 
+    public function testOverviewCanSkipUsageLookupWhenCountsAreNotNeeded(): void
+    {
+        $this->setUsages(['foo' => 1, 'bar' => 2, 'baz' => 3]);
+        $this->add(
+            $this->taxonomy('foo', 'Foo'),
+            $this->taxonomy('bar', 'Bar'),
+            $this->taxonomy('baz', 'Baz'),
+        );
+
+        $list = $this->indexer->overviewFor('taxonomy', (new TaxonomyOptions())->withoutUsageCounts());
+
+        self::assertCount(3, $list);
+        self::assertSame(0, $this->taxonomies->getUsageBatchLookupCalls());
+        self::assertSame(0, $this->taxonomies->getUsageLookupCalls());
+        self::assertSame(0, $list[0]->getCount());
+        self::assertSame(0, $list[1]->getCount());
+        self::assertSame(0, $list[2]->getCount());
+    }
+
     public function testIndexingMultipleChildrenWithRankedGrandchildrenAndUsageCounts()
     {
         $this->setUsages([

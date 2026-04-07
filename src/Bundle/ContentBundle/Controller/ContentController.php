@@ -35,6 +35,7 @@ use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOptions;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Content\ContentInterface;
@@ -442,7 +443,10 @@ class ContentController extends AbstractController
         $taxonomyCategories = [];
         foreach ($contentRelations as $contentRelation) {
             foreach ($contentRelation->getTargets() as $target) {
-                $taxonomyCategories[$contentRelation->getId()] = $this->taxonomyIndexer->overviewFor($target->getId());
+                $taxonomyCategories[$contentRelation->getId()] = $this->taxonomyIndexer->overviewFor(
+                    $target->getId(),
+                    (new TaxonomyOptions())->withoutUsageCounts()
+                );
             }
         }
 
