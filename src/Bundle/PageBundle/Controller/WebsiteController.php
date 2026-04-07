@@ -14,14 +14,40 @@ namespace Integrated\Bundle\PageBundle\Controller;
 use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\PageBundle\Form\Type\PageType;
+use Integrated\Bundle\WebsiteBundle\Service\EditableChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class WebsiteController extends AbstractController
 {
+    public function __construct(
+        private readonly ?EditableChecker $editableChecker = null,
+    ) {
+    }
+
     public function createPage(Request $request): Response
     {
+        if (!$request->query->getBoolean('integrated_website_edit')) {
+            return new Response('');
+        }
+
+        $editableChecker = $this->editableChecker;
+        if (
+            $editableChecker === null
+            && isset($this->container)
+            && $this->container->has('integrated_website.service.editable_checker')
+        ) {
+            $candidate = $this->container->get('integrated_website.service.editable_checker');
+            if ($candidate instanceof EditableChecker) {
+                $editableChecker = $candidate;
+            }
+        }
+
+        if ($editableChecker instanceof EditableChecker && !$editableChecker->checkEditable()) {
+            return new Response('');
+        }
+
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             return new Response('');
         }
