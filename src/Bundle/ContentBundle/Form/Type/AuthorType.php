@@ -25,7 +25,7 @@ class AuthorType extends AbstractType
         $builder->addModelTransformer($transformer);
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['contentTypes'] = ['author' => 'Author'];
     }

@@ -49,21 +49,20 @@ class PageLoader implements LoaderInterface
 
         $routes = new RouteCollection();
 
-        $pages = $this->dm->getRepository(Page::class)->findAll();
+        $pages = $this->getPages();
 
-        /** @var Page $page */
         foreach ($pages as $page) {
             $condition = '';
-
-            if ($channel = $page->getChannel()) {
-                $condition = 'request.attributes.get("_channel") == "'.$channel->getId().'"';
+            $channelId = $this->extractReferenceId($page['channel'] ?? null);
+            if ($channelId !== null) {
+                $condition = 'request.attributes.get("_channel") == "'.$channelId.'"';
             }
 
             $route = new Route(
-                $page->getPath(),
+                (string) ($page['path'] ?? ''),
                 [
                     '_controller' => 'Integrated\Bundle\WebsiteBundle\Controller\PageController::show',
-                    'page' => $page->getId(),
+                    'page' => (string) ($page['_id'] ?? ''),
                 ],
                 [],
                 [],
@@ -73,8 +72,10 @@ class PageLoader implements LoaderInterface
                 $condition
             );
 
-            $routes->add(self::ROUTE_PREFIX.$page->getId(), $route);
+            $routes->add(self::ROUTE_PREFIX.(string) ($page['_id'] ?? ''), $route);
         }
+
+        $this->loaded = true;
 
         return $routes;
     }
@@ -82,6 +83,34 @@ class PageLoader implements LoaderInterface
     public function supports($resource, $type = null): bool
     {
         return 'integrated_website_page' === $type;
+    }
+
+    /**
+     * @return iterable<array<string, mixed>>
+     */
+    protected function getPages(): iterable
+    {
+        return $this->dm->createQueryBuilder(Page::class)
+            ->select(['id', 'path', 'channel'])
+            ->hydrate(false)
+            ->getQuery()
+            ->getIterator();
+    }
+
+    private function extractReferenceId(mixed $reference): ?string
+    {
+        if (!\is_array($reference)) {
+            return null;
+        }
+
+        $id = $reference['$id'] ?? null;
+        if ($id === null) {
+            return null;
+        }
+
+        $id = trim((string) $id);
+
+        return $id !== '' ? $id : null;
     }
 
     public function getResolver(): LoaderResolverInterface

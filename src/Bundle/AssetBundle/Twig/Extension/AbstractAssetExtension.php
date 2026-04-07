@@ -32,14 +32,14 @@ abstract class AbstractAssetExtension extends AbstractExtension
         $this->manager = $manager;
     }
 
-    public function getTokenParsers()
+    public function getTokenParsers(): array
     {
         return [
             new AssetTokenParser($this->getTag(), static::class),
         ];
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction(

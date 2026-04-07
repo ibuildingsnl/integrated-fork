@@ -21,7 +21,7 @@ class SessionController extends AbstractController
 {
     public function enterSession(string $sessionId, Request $request): Response
     {
-        $page = $request->get('path', '/');
+        $page = (string) $request->query->get('path', '/');
 
         $response = new RedirectResponse($page);
 

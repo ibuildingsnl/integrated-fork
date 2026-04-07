@@ -60,7 +60,7 @@ class EditableCheckerTest extends TestCase
         $channel = $page->getChannel();
 
         $request = $this->createPageRequest();
-        $request->cookies->set(session_name(), 'sess-123');
+        $request->cookies->set($this->getSessionCookieName(), 'sess-123');
         $this->requestStack->push($request);
         $this->tokenStorage
             ->method('getToken')
@@ -96,7 +96,7 @@ class EditableCheckerTest extends TestCase
         $channel = $page->getChannel();
 
         $request = $this->createPageRequest();
-        $request->cookies->set(session_name(), 'sess-123');
+        $request->cookies->set($this->getSessionCookieName(), 'sess-123');
         $this->requestStack->push($request);
         $this->tokenStorage
             ->method('getToken')
@@ -132,7 +132,7 @@ class EditableCheckerTest extends TestCase
         $channel = $page->getChannel();
 
         $request = $this->createPageRequest();
-        $request->cookies->set(session_name(), 'sess-123');
+        $request->cookies->set($this->getSessionCookieName(), 'sess-123');
         $this->requestStack->push($request);
         $this->tokenStorage
             ->method('getToken')
@@ -202,5 +202,14 @@ class EditableCheckerTest extends TestCase
         $page->setChannel(new Channel());
 
         return $page;
+    }
+
+    private function getSessionCookieName(): string
+    {
+        $sessionCookieName = session_name();
+
+        self::assertIsString($sessionCookieName);
+
+        return $sessionCookieName;
     }
 }

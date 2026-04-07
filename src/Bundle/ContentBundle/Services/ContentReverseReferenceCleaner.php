@@ -16,6 +16,7 @@ use Integrated\Bundle\ContentBundle\Document\Bulk\Action\RelationAction;
 use Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation as ContentRelation;
+use Integrated\Common\Content\ContentInterface;
 
 final class ContentReverseReferenceCleaner
 {
@@ -243,9 +244,9 @@ final class ContentReverseReferenceCleaner
     }
 
     /**
-     * @param iterable<Content> $contents
+     * @param iterable<ContentInterface> $contents
      *
-     * @return array<int, Content>
+     * @return array<int, ContentInterface>
      */
     private function filterOutContent(iterable $contents, Content $target): array
     {
@@ -253,10 +254,6 @@ final class ContentReverseReferenceCleaner
         $targetId = (string) $target->getId();
 
         foreach ($contents as $content) {
-            if (!$content instanceof Content) {
-                continue;
-            }
-
             if ((string) $content->getId() === $targetId) {
                 continue;
             }

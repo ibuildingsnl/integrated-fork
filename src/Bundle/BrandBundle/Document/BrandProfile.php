@@ -12,15 +12,15 @@ use Ramsey\Uuid\Uuid;
 class BrandProfile
 {
     private string $id;
-    public string $name;
-    public string $color;
-    public string $secondaryColor;
+    public string $name = '';
+    public string $color = '';
+    public string $secondaryColor = '';
     public ?Image $logo = null;
     public ?Image $favicon = null;
-    public ?string $vat;
-    public ?string $companyId;
-    public ?string $analytics;
-    public ?string $analyticsPropertyId;
+    public ?string $vat = null;
+    public ?string $companyId = null;
+    public ?string $analytics = null;
+    public ?string $analyticsPropertyId = null;
     private Collection $socials;
     private Collection $contacts;
 
@@ -34,6 +34,16 @@ class BrandProfile
     public function getId(): string
     {
         return $this->id;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
     }
 
     public function getLogo(): ?Image
@@ -74,6 +84,16 @@ class BrandProfile
     public function setSecondaryColor(?string $secondaryColor): void
     {
         $this->secondaryColor = $secondaryColor;
+    }
+
+    public function getAnalytics(): ?string
+    {
+        return $this->analytics;
+    }
+
+    public function setAnalytics(?string $analytics): void
+    {
+        $this->analytics = $analytics;
     }
 
     /** @return Contact[] */

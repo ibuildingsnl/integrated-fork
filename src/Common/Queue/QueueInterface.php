@@ -57,10 +57,10 @@ interface QueueInterface extends \Countable
     /**
      * Push the payload to the queue.
      *
-     * @param string|\Serializable $payload
-     * @param int                  $delay    Delay in seconds
-     * @param int                  $priority A priority number from -10 to and including 10
-     * @param int                  $attempt  The amount of times the message has been rescheduled
+     * @param mixed $payload  The payload; it must be serializable by the backing provider
+     * @param int   $delay    Delay in seconds
+     * @param int   $priority A priority number from -10 to and including 10
+     * @param int   $attempt  The amount of times the message has been rescheduled
      */
     public function push($payload, $delay = 0, $priority = self::PRIORITY_MEDIUM, $attempt = 0);
 

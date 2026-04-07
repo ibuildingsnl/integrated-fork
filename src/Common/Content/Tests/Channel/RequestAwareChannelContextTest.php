@@ -186,6 +186,49 @@ class RequestAwareChannelContextTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->getInstance()->getChannel());
     }
 
+    public function testGetChannelCachesResolvedChannel(): void
+    {
+        $request = new Request();
+        $request->attributes->set('_channel', 'this-is-the-id');
+
+        $this->stack->expects($this->any())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $channel = $this->createMock('Integrated\\Common\\Content\\Channel\\ChannelInterface');
+
+        $this->manager->expects($this->once())
+            ->method('find')
+            ->with($this->equalTo('this-is-the-id'))
+            ->willReturn($channel);
+
+        $instance = $this->getInstance();
+        $this->assertSame($channel, $instance->getChannel());
+        $this->assertSame($channel, $instance->getChannel());
+    }
+
+    public function testSetChannelStoresResolvedObjectForLaterRead(): void
+    {
+        $request = new Request();
+
+        $this->stack->expects($this->any())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $channel = $this->createMock('Integrated\\Common\\Content\\Channel\\ChannelInterface');
+        $channel->expects($this->atLeastOnce())
+            ->method('getId')
+            ->willReturn('this-is-the-id');
+
+        $this->manager->expects($this->never())
+            ->method('find');
+
+        $instance = $this->getInstance();
+        $instance->setChannel($channel);
+
+        $this->assertSame($channel, $instance->getChannel());
+    }
+
     /**
      * @param string $attribute
      *

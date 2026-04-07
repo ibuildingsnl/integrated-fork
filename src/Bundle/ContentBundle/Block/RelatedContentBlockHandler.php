@@ -32,6 +32,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class RelatedContentBlockHandler extends BlockHandler
 {
     /**
+     * Protect related-content blocks from pathological deep pagination requests
+     * (commonly bot-driven query params such as "...-page=4000").
+     */
+    private const MAX_UNCAPPED_PAGE = 50;
+
+    /**
      * @var PaginatorInterface
      */
     private $paginator;
@@ -103,8 +109,18 @@ class RelatedContentBlockHandler extends BlockHandler
             $page = 1;
         }
 
+        if ($maxItems > 0 && $itemsPerPage > 0) {
+            $maxPageByCap = (int) ceil($maxItems / $itemsPerPage);
+            if ($maxPageByCap > 0 && $page > $maxPageByCap) {
+                $page = $maxPageByCap;
+            }
+        } elseif ($page > self::MAX_UNCAPPED_PAGE) {
+            $page = 1;
+        }
+
         if ($maxItems > 0 && $maxItems <= $itemsPerPage) {
             $page = 1;
+            $target = $this->materializeSinglePageTarget($target, $maxItems);
         }
 
         $pagination = $this->paginator->paginate(
@@ -120,9 +136,10 @@ class RelatedContentBlockHandler extends BlockHandler
         if ($maxItems > 0) {
             if ($maxItems <= $itemsPerPage) {
                 $pagination->setCurrentPageNumber(1);
+                $pagination->setTotalItemCount(\count($pagination));
+            } else {
+                $pagination->setTotalItemCount(min($maxItems, $pagination->getTotalItemCount()));
             }
-
-            $pagination->setTotalItemCount(min($maxItems, $pagination->getTotalItemCount()));
         }
 
         return $pagination;
@@ -204,12 +221,15 @@ class RelatedContentBlockHandler extends BlockHandler
         $items = new ArrayCollection();
         $allowedItems = [];
 
-        foreach ($query->getQuery()->execute() as $item) {
-            $allowedItems[] = $item->getId();
+        $result = $query->getQuery()->execute();
+        if (is_iterable($result)) {
+            foreach ($result as $item) {
+                $allowedItems[$item->getId()] = true;
+            }
         }
 
         foreach ($document->getReferencesByRelationId($block->getRelation()->getId()) as $content) {
-            if (!\in_array($content->getId(), $allowedItems)) {
+            if (!isset($allowedItems[$content->getId()])) {
                 continue;
             }
 
@@ -217,5 +237,49 @@ class RelatedContentBlockHandler extends BlockHandler
         }
 
         return $items;
+    }
+
+    /**
+     * Avoids the expensive paginator count query when the block is capped to a single page.
+     */
+    /**
+     * @param Builder|iterable<mixed>|mixed $target
+     *
+     * @return array<int, mixed>|mixed
+     */
+    private function materializeSinglePageTarget(mixed $target, int $maxItems): mixed
+    {
+        if ($target instanceof Builder) {
+            $query = clone $target;
+            $query->limit($maxItems);
+
+            $items = [];
+            $result = $query->getQuery()->execute();
+            if (is_iterable($result)) {
+                foreach ($result as $item) {
+                    $items[] = $item;
+                }
+            }
+
+            return $items;
+        }
+
+        if (\is_array($target)) {
+            return \array_slice($target, 0, $maxItems);
+        }
+
+        if (is_iterable($target)) {
+            $items = [];
+            foreach ($target as $item) {
+                $items[] = $item;
+                if (\count($items) >= $maxItems) {
+                    break;
+                }
+            }
+
+            return $items;
+        }
+
+        return $target;
     }
 }

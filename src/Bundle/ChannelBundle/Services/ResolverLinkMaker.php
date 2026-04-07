@@ -26,11 +26,16 @@ final class ResolverLinkMaker implements LinkMaker
         }
 
         if ($channel instanceof ChannelInterface) {
-            return (
-                $content->hasChannel($channel)
-                    ? $channel->getPrimaryDomain()
-                    : $content->getPrimaryChannel()->getPrimaryDomain()
-            ).$this->urlResolver->generateUrl($content, $channel->getId());
+            $domain = $content->hasChannel($channel)
+                ? $channel->getPrimaryDomain()
+                : $content->getPrimaryChannel()->getPrimaryDomain();
+
+            $path = $this->urlResolver->generateUrl($content, $channel->getId());
+            if (!\is_string($domain) || $domain === '' || !\is_string($path)) {
+                return '';
+            }
+
+            return $domain.$path;
         } else {
             return '';
         }

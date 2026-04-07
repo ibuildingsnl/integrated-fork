@@ -56,29 +56,60 @@ class ScopeListener extends AbstractListener implements FirewallListenerInterfac
 
     public function authenticate(RequestEvent $event): void
     {
-        $user = $this->tokenStorage->getToken()->getUser();
+        $currentToken = $this->tokenStorage->getToken();
+        $user = $currentToken?->getUser();
 
         if (!$user instanceof UserInterface) {
             return;
         }
 
-        $scope = $user->getScope();
+        if (!$user->isEnabled()) {
+            $this->tokenStorage->setToken(null);
 
-        if (!$scope instanceof Scope || !$scope->isAdmin()) {
             return;
         }
 
-        $roles = $user->getRoles();
+        $expectedRoles = $this->normalizeExpectedRoles($user);
 
-        $roles[] = 'ROLE_SCOPE_INTEGRATED';
-        $roles = array_unique($roles);
+        if ($currentToken && $this->normalizeRoles($currentToken->getRoleNames()) === $expectedRoles) {
+            return;
+        }
 
         $token = new UsernamePasswordToken(
             $user,
             $this->providerKey,
-            $roles
+            $expectedRoles
         );
+        $token->setAttributes($currentToken?->getAttributes() ?? []);
 
         $this->tokenStorage->setToken($token);
+    }
+
+    /**
+     * @return string[]
+     */
+    private function normalizeExpectedRoles(UserInterface $user): array
+    {
+        $roles = $user->getRoles();
+        $scope = $user->getScope();
+
+        if ($scope instanceof Scope && $scope->isAdmin()) {
+            $roles[] = 'ROLE_SCOPE_INTEGRATED';
+        }
+
+        return $this->normalizeRoles($roles);
+    }
+
+    /**
+     * @param string[] $roles
+     *
+     * @return string[]
+     */
+    private function normalizeRoles(array $roles): array
+    {
+        $roles = array_values(array_unique($roles));
+        sort($roles);
+
+        return $roles;
     }
 }

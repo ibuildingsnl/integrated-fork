@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Integrated\Bundle\ThemeBundle\Tests\EventListener\Objects;
 
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Event\ContentRenderEvent;
 use Integrated\Bundle\SlugBundle\Slugger\SluggerInterface;
@@ -18,21 +19,37 @@ final class ContentImageListenerTest extends TestCase
     public function testReplaceImagesMarksFirstInlineImageAsEagerAndLaterImagesAsLazy(): void
     {
         $themeManager = $this->createMock(ThemeManager::class);
-        $objectManager = $this->createMock(ObjectManager::class);
+        $documentManager = $this->createMock(DocumentManager::class);
+        $repository = $this->createMock(ObjectRepository::class);
         $templating = $this->createMock(Environment::class);
         $slugger = $this->createMock(SluggerInterface::class);
-        $document = $this->createMock(Content::class);
+        $firstDocument = $this->createMock(Content::class);
+        $secondDocument = $this->createMock(Content::class);
+
+        $firstDocument
+            ->method('getId')
+            ->willReturn('first');
+
+        $secondDocument
+            ->method('getId')
+            ->willReturn('second');
 
         $themeManager
             ->method('locateTemplate')
             ->with('objects/image/default.html.twig')
             ->willReturn('@Theme/objects/image/default.html.twig');
 
-        $objectManager
-            ->expects(self::exactly(2))
-            ->method('find')
+        $documentManager
+            ->expects(self::once())
+            ->method('getRepository')
             ->with(Content::class)
-            ->willReturn($document);
+            ->willReturn($repository);
+
+        $repository
+            ->expects(self::once())
+            ->method('findBy')
+            ->with(['_id' => ['$in' => ['first', 'second']]])
+            ->willReturn([$firstDocument, $secondDocument]);
 
         $renderCalls = [];
 
@@ -41,10 +58,10 @@ final class ContentImageListenerTest extends TestCase
             ->method('render')
             ->with(
                 '@Theme/objects/image/default.html.twig',
-                self::callback(function (array $context) use (&$renderCalls, $document): bool {
+                self::callback(function (array $context) use (&$renderCalls, $firstDocument, $secondDocument): bool {
                     $renderCalls[] = $context;
 
-                    return $context['document'] === $document;
+                    return \in_array($context['document'], [$firstDocument, $secondDocument], true);
                 })
             )
             ->willReturnCallback(static fn (string $template, array $context): string => \sprintf(
@@ -56,7 +73,7 @@ final class ContentImageListenerTest extends TestCase
 
         $listener = new ContentImageListener(
             $themeManager,
-            $objectManager,
+            $documentManager,
             $templating,
             $slugger,
             'test'

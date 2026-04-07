@@ -21,10 +21,7 @@ class DocumentExtension extends AbstractExtension
         $this->documentManager = $documentManager;
     }
 
-    /**
-     * @return array
-     */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('integrated_document', $this->getDocument(...)),

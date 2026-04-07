@@ -21,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class FileLocatorOverwritePass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (!$container->hasDefinition('integrated_storage.file_locator')) {
             return;

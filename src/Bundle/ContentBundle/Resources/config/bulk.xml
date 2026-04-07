@@ -89,6 +89,7 @@
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="integrated_content.resolver" />
             <argument type="service" id="Integrated\Bundle\UserBundle\Model\UserManagerInterface" />
+            <argument type="service" id="Integrated\Bundle\ContentBundle\Services\AssignedStatusCacheInvalidator" />
 
             <tag name="integrated_content.bulk.handler" class="Integrated\Bundle\ContentBundle\Bulk\WorkflowAssignHandler" />
         </service>

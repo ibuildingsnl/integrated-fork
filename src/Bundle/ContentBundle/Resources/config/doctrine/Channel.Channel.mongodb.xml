@@ -37,6 +37,15 @@
             <lifecycle-callback type="preUpdate" method="defaultPrimaryDomain" />
         </lifecycle-callbacks>
 
+        <indexes>
+            <index>
+                <key name="domains" order="asc" />
+            </index>
+            <index>
+                <key name="primaryDomain" order="asc" />
+            </index>
+        </indexes>
+
     </document>
 
 </doctrine-mongo-mapping>

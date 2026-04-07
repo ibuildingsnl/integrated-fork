@@ -31,7 +31,7 @@
         </service>
 
         <service id="integrated_website.anonymous_page_cache" class="Integrated\Bundle\WebsiteBundle\EventListener\AnonymousPageCacheSubscriber">
-            <argument>600</argument>
+            <argument>1800</argument>
             <tag name="kernel.event_subscriber" />
         </service>
 

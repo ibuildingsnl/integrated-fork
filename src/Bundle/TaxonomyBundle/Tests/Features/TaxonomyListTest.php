@@ -148,6 +148,25 @@ final class TaxonomyListTest extends TestCase
         self::assertSame(0, $this->taxonomies->getUsageLookupCalls());
     }
 
+    public function testListCanSkipUsageLookupWhenCountsAreNotNeeded(): void
+    {
+        $this->setUsages(['foo' => 3, 'bar' => 2, 'baz' => 1]);
+        $this->add(
+            $this->taxonomy('foo', 'Foo'),
+            $this->taxonomy('bar', 'Bar'),
+            $this->taxonomy('baz', 'Baz'),
+        );
+
+        $list = $this->list->overviewFor('tag', TaxonomyOptions::page(1, 10)->withoutUsageCounts());
+
+        self::assertCount(3, $list);
+        self::assertSame(0, $this->taxonomies->getUsageBatchLookupCalls());
+        self::assertSame(0, $this->taxonomies->getUsageLookupCalls());
+        self::assertSame(0, $list[0]->getCount());
+        self::assertSame(0, $list[1]->getCount());
+        self::assertSame(0, $list[2]->getCount());
+    }
+
     private function add(Taxonomy ...$taxonomies): void
     {
         foreach ($taxonomies as $taxonomy) {

@@ -23,6 +23,7 @@ use Integrated\Common\Channel\Events as ChannelEvents;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Security\Resolver\PermissionResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormInterface;
@@ -33,6 +34,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ChannelController extends AbstractController
 {
+    private const CHANNELS_CACHE_NAMESPACE = 'integrated_content_fragments_channels';
+    private const CHANNELS_CACHE_TTL_SECONDS = 86400;
+
     private DocumentManager $documentManager;
     private SearchContentReferenced $searchContentReferenced;
     private EventDispatcherInterface $dispatcher;
@@ -154,7 +158,7 @@ class ChannelController extends AbstractController
         $referenced = $this->searchContentReferenced->getReferenced($channel);
         $referencedDocuments = $this->searchContentReferenced->getReferencedDocuments($channel);
 
-        $form = $this->createDeleteForm($channel->getId(), \count($referenced) === 0);
+        $form = $this->createDeleteForm((string) $channel->getId(), \count($referenced) === 0);
         $form->handleRequest($request);
 
         if ($form->get('actions')->getData() == 'cancel') {
@@ -267,20 +271,48 @@ class ChannelController extends AbstractController
             : [];
 
         $user = $this->getUser();
+        $userId = $user instanceof UserInterface ? (string) $user->getId() : 'anonymous';
+        $sessionId = $request->hasSession() ? (string) $request->getSession()->getId() : '';
+        $cacheKey = 'channels_'.md5(json_encode([
+            'user' => $userId,
+            'locale' => $request->getLocale(),
+            'session' => $sessionId,
+            'showBlocks' => $showBlocks,
+            'usedBlocks' => $usedBlocks,
+        ], \JSON_THROW_ON_ERROR));
+
+        $cache = new FilesystemAdapter(self::CHANNELS_CACHE_NAMESPACE);
+        $cacheItem = $cache->getItem($cacheKey);
+
+        if ($cacheItem->isHit()) {
+            return new Response((string) $cacheItem->get());
+        }
 
         if (!$user instanceof UserInterface) {
-            return $this->render('@IntegratedContent/partials/block.websites.html.twig', [
+            $html = $this->renderView('@IntegratedContent/partials/block.websites.html.twig', [
                 'channels' => [],
                 'showBlocks' => $showBlocks,
                 'usedBlocks' => $usedBlocks,
             ]);
+
+            $cacheItem->set($html);
+            $cacheItem->expiresAfter(self::CHANNELS_CACHE_TTL_SECONDS);
+            $cache->save($cacheItem);
+
+            return new Response($html);
         }
 
-        return new Response($this->renderView('@IntegratedContent/partials/block.websites.html.twig', [
+        $html = $this->renderView('@IntegratedContent/partials/block.websites.html.twig', [
             'channels' => $this->getAllowedChannels($user),
             'showBlocks' => $showBlocks,
             'usedBlocks' => $usedBlocks,
-        ]));
+        ]);
+
+        $cacheItem->set($html);
+        $cacheItem->expiresAfter(self::CHANNELS_CACHE_TTL_SECONDS);
+        $cache->save($cacheItem);
+
+        return new Response($html);
     }
 
     /**

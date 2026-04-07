@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Integrated\Bundle\ContentBundle\Bulk\WorkflowAssignHandler;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Services\AssignedStatusCacheInvalidator;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
@@ -66,7 +67,13 @@ class WorkflowAssignHandlerTest extends TestCase
         $userManager = $this->createMock(UserManagerInterface::class);
         $userManager->method('find')->with('u1')->willReturn($assigned);
 
-        $handler = new WorkflowAssignHandler($entityManager, $resolver, $userManager, 'u1');
+        $handler = new WorkflowAssignHandler(
+            $entityManager,
+            $resolver,
+            $userManager,
+            $this->createStub(AssignedStatusCacheInvalidator::class),
+            'u1'
+        );
         $handler->execute($content);
 
         self::assertInstanceOf(WorkflowState::class, $persistedState);
@@ -122,12 +129,79 @@ class WorkflowAssignHandlerTest extends TestCase
         $userManager = $this->createMock(UserManagerInterface::class);
         $userManager->method('find')->with('u1')->willReturn($assigned);
 
-        $handler = new WorkflowAssignHandler($entityManager, $resolver, $userManager, 'u1');
+        $handler = new WorkflowAssignHandler(
+            $entityManager,
+            $resolver,
+            $userManager,
+            $this->createStub(AssignedStatusCacheInvalidator::class),
+            'u1'
+        );
         $handler->execute($content);
 
         self::assertTrue((bool) $content->isDisabled());
         self::assertSame($workflow->getId(), $content->getMetadata()->get('workflow'));
         self::assertSame($conceptState->getId(), $content->getMetadata()->get('workflow_state'));
+    }
+
+    public function testAssignmentChangeInvalidatesAssignedStatusForOldAndNewUser(): void
+    {
+        $content = $this->createContent(disabled: false);
+
+        $workflow = new Definition();
+        $conceptState = (new Definition\State())->setName('concept')->setPublishable(false);
+        $workflow->addState($conceptState);
+        $workflow->setDefault($conceptState);
+
+        $currentAssigned = $this->createUser('old-user');
+        $newAssigned = $this->createUser('new-user');
+
+        $existingState = new WorkflowState();
+        $existingState->setContent($content);
+        $existingState->setState($conceptState);
+        $existingState->setAssigned($currentAssigned);
+
+        $workflowStateRepository = $this->createMock(EntityRepository::class);
+        $workflowStateRepository
+            ->method('findOneBy')
+            ->with(['content' => $content])
+            ->willReturn($existingState);
+
+        $workflowDefinitionRepository = $this->createMock(EntityRepository::class);
+        $workflowDefinitionRepository
+            ->method('find')
+            ->with($workflow->getId())
+            ->willReturn($workflow);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager
+            ->method('getRepository')
+            ->willReturnMap([
+                [WorkflowState::class, $workflowStateRepository],
+                [Definition::class, $workflowDefinitionRepository],
+            ]);
+        $entityManager->expects(self::once())->method('flush');
+
+        $resolver = $this->createMock(ResolverInterface::class);
+        $resolver->method('hasType')->with('article')->willReturn(true);
+        $resolver->method('getType')->with('article')->willReturn($this->createContentType($workflow->getId()));
+
+        $userManager = $this->createMock(UserManagerInterface::class);
+        $userManager->method('find')->with('new-user')->willReturn($newAssigned);
+
+        $invalidator = $this->createMock(AssignedStatusCacheInvalidator::class);
+        $invalidator
+            ->expects(self::once())
+            ->method('invalidateUsers')
+            ->with(['old-user', 'new-user']);
+
+        $handler = new WorkflowAssignHandler(
+            $entityManager,
+            $resolver,
+            $userManager,
+            $invalidator,
+            'new-user'
+        );
+        $handler->execute($content);
     }
 
     private function createContentType(string $workflowId): ContentTypeInterface

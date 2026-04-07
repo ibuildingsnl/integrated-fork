@@ -76,7 +76,8 @@ class PageController extends AbstractController
 
         $request->attributes->set('_integrated_page_document', $page);
 
-        $response = $this->render($this->themeManager->locateTemplate($page->getLayout()), [
+        $layoutTemplate = $this->resolveLayoutTemplate($page);
+        $response = $this->render($layoutTemplate, [
             'page' => $page,
         ]);
 
@@ -138,6 +139,35 @@ class PageController extends AbstractController
         }
 
         return true;
+    }
+
+    private function resolveLayoutTemplate(Page $page): string
+    {
+        $layout = trim((string) $page->getLayout());
+        if ('' === $layout) {
+            throw new NotFoundHttpException(
+                \sprintf(
+                    'Unable to resolve page layout template for page "%s" (path "%s"): layout is empty.',
+                    trim((string) $page->getId()),
+                    trim((string) $page->getPath())
+                )
+            );
+        }
+
+        $template = $this->themeManager->locateTemplate($layout);
+        if ('' === trim((string) $template)) {
+            throw new NotFoundHttpException(
+                \sprintf(
+                    'Unable to resolve page layout template for page "%s" (path "%s", layout "%s", active theme "%s").',
+                    trim((string) $page->getId()),
+                    trim((string) $page->getPath()),
+                    $layout,
+                    trim((string) $this->themeManager->getActiveTheme())
+                )
+            );
+        }
+
+        return $template;
     }
 
     private function isExpired(Page $page, \DateTimeInterface $now): bool

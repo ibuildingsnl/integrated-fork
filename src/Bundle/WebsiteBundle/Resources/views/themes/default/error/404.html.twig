@@ -8,17 +8,32 @@
 
         <p>{% trans %}The page could not be found.{% endtrans %}</p>
 
+        {% if app.request.attributes.get('integrated_block_edit') %}
+            <div id="panel-create-page" class="mt-5">
+            </div>
+            <script>
+                fetch('{{ path('integrated_page_website_create_page', {
+                    'path': app.request.pathinfo,
+                    'integrated_website_edit': app.request.query.get('integrated_website_edit')
+                }) }}')
+                    .then(function(response) {
+                        if (!response.ok) {
+                            return '';
+                        }
 
-        <div id="panel-create-page" class="mt-5">
-        </div>
-        <script>
-            fetch('{{ path('integrated_page_website_create_page', {'path': app.request.pathinfo }) }}')
-                .then(function(response) {
-                    return response.text();
-                })
-                .then(function(body) {
-                    document.querySelector('#panel-create-page').innerHTML = body;
-                });
-        </script>
+                        return response.text();
+                    })
+                    .then(function(body) {
+                        if (!body) {
+                            return;
+                        }
+
+                        document.querySelector('#panel-create-page').innerHTML = body;
+                    })
+                    .catch(function() {
+                        // Keep the 404 page stable when the optional editor helper fails.
+                    });
+            </script>
+        {% endif %}
     </div>
 {% endblock %}

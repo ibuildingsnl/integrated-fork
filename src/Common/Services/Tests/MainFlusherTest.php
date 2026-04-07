@@ -43,10 +43,7 @@ class MainFlusherTest extends \PHPUnit\Framework\TestCase
         $indexer = new class extends Configurable implements IndexerInterface {
             public int $executeCalls = 0;
 
-            /**
-             * @return void
-             */
-            protected function configureOptions(OptionsResolver $resolver)
+            protected function configureOptions(OptionsResolver $resolver): void
             {
                 $resolver->setDefaults(['queue.size' => 5000]);
             }

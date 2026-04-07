@@ -14,11 +14,14 @@ namespace Integrated\Bundle\SitemapBundle\Controller;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Integrated\Bundle\ContentBundle\Document\Content\News;
+use Integrated\Bundle\SitemapBundle\Service\SitemapCacheVersionManager;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class NewsController extends AbstractController
@@ -26,15 +29,23 @@ class NewsController extends AbstractController
     private const PAGE_SIZE = 1000;
     private const MAX_PAGE = 50000;
     private const NEWS_LOOKBACK = '-2 days';
-    private const CACHE_TTL = 300;
+    private const CACHE_TTL = 3600;
 
     private DocumentManager $manager;
     private ChannelContextInterface $context;
+    private CacheItemPoolInterface $cache;
+    private SitemapCacheVersionManager $cacheVersionManager;
 
-    public function __construct(DocumentManager $manager, ChannelContextInterface $context)
-    {
+    public function __construct(
+        DocumentManager $manager,
+        ChannelContextInterface $context,
+        CacheItemPoolInterface $cache,
+        SitemapCacheVersionManager $cacheVersionManager,
+    ) {
         $this->manager = $manager;
         $this->context = $context;
+        $this->cache = $cache;
+        $this->cacheVersionManager = $cacheVersionManager;
     }
 
     public function index(Request $request): Response
@@ -51,8 +62,19 @@ class NewsController extends AbstractController
     {
         $page = $this->getValidatedPage($page);
         $channel = $this->getChannelOr404();
-        $now = new \DateTimeImmutable();
         $channelId = (string) $channel->getId();
+        $cacheKey = $this->buildResponseCacheKey('news', $request, [
+            $channelId,
+            (string) $this->cacheVersionManager->getChannelVersion($channelId),
+            (string) $this->cacheVersionManager->getChannelNewsVersion($channelId),
+            (string) $page,
+        ]);
+
+        if ($response = $this->getCachedResponse($cacheKey, $request)) {
+            return $response;
+        }
+
+        $now = new \DateTimeImmutable();
 
         $documents = $this->createPublishedNewsQueryBuilder($channelId, $now)
             ->select('contentType', 'slug', 'publishTime', 'title', 'createdAt', 'updatedAt')
@@ -67,6 +89,8 @@ class NewsController extends AbstractController
             'locale' => $this->getParameter('kernel.default_locale'),
             'documents' => $documents,
         ]);
+
+        $this->saveResponseToCache($cacheKey, $response, $now, self::CACHE_TTL);
 
         return $this->withCacheHeaders($request, $response, $now);
     }
@@ -114,10 +138,61 @@ class NewsController extends AbstractController
         $response->setMaxAge(self::CACHE_TTL);
         $response->setSharedMaxAge(self::CACHE_TTL);
         $response->headers->addCacheControlDirective('stale-while-revalidate', (string) self::CACHE_TTL);
+        $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, '1');
         $response->setLastModified(\DateTimeImmutable::createFromInterface($generatedAt));
         $response->setEtag(sha1((string) $response->getContent()));
         $response->isNotModified($request);
 
         return $response;
+    }
+
+    /**
+     * @param list<string> $parts
+     */
+    private function buildResponseCacheKey(string $scope, Request $request, array $parts): string
+    {
+        return 'integrated_sitemap_response_'.sha1(implode('|', [
+            $scope,
+            $request->getSchemeAndHttpHost(),
+            $request->getBaseUrl(),
+            $request->getLocale(),
+            ...$parts,
+        ]));
+    }
+
+    private function getCachedResponse(string $cacheKey, Request $request): ?Response
+    {
+        $item = $this->cache->getItem($cacheKey);
+        if (!$item->isHit()) {
+            return null;
+        }
+
+        $payload = $item->get();
+        if (!\is_array($payload) || !isset($payload['content'], $payload['generated_at'])) {
+            $this->cache->deleteItem($cacheKey);
+
+            return null;
+        }
+
+        $response = new Response((string) $payload['content']);
+        if (isset($payload['content_type']) && \is_string($payload['content_type']) && '' !== $payload['content_type']) {
+            $response->headers->set('Content-Type', $payload['content_type']);
+        }
+
+        $generatedAt = (new \DateTimeImmutable())->setTimestamp(max(1, (int) $payload['generated_at']));
+
+        return $this->withCacheHeaders($request, $response, $generatedAt);
+    }
+
+    private function saveResponseToCache(string $cacheKey, Response $response, \DateTimeImmutable $generatedAt, int $ttl): void
+    {
+        $item = $this->cache->getItem($cacheKey);
+        $item->set([
+            'content' => (string) $response->getContent(),
+            'content_type' => $response->headers->get('Content-Type'),
+            'generated_at' => $generatedAt->getTimestamp(),
+        ]);
+        $item->expiresAfter($ttl);
+        $this->cache->save($item);
     }
 }

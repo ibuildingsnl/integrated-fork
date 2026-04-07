@@ -19,6 +19,7 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString('{% set hasPublicationDate = content.pub_time is defined %}', $template);
         $this->assertStringContainsString('{% set isPlanned = isPublishable and hasPublicationDate and not hasStarted %}', $template);
         $this->assertStringContainsString('bundles/integratedcontent/js/content_index_lock_polling.js', $template);
+        $this->assertStringContainsString('<div class="locked-info">', $template);
     }
 
     public function testIndexTemplatesUseSolrNativeChannelFallbackForMissingFacetBrands(): void
@@ -59,6 +60,7 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString('{% if showSeoColumn %}', $indexTemplate);
         $this->assertStringContainsString('<span>SEO</span>', $indexTemplate);
         $this->assertStringContainsString("type.hasField('seoMetadata')", $indexTemplate);
+        $this->assertStringContainsString('data-turbo-prefetch="false"', $indexTemplate);
 
         $this->assertStringContainsString('{% set showSeoColumn = false %}', $weekTemplate);
         $this->assertStringContainsString('{% set seoCandidateType = contentTypes|filter(t => t.id == seoColumnCandidate.type_name)|first %}', $weekTemplate);
@@ -66,5 +68,6 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString('{% if showSeoColumn %}', $weekTemplate);
         $this->assertStringContainsString('<span class="btn btn-white no-icon seo-button readability-', $weekTemplate);
         $this->assertStringContainsString("type.hasField('seoMetadata')", $weekTemplate);
+        $this->assertStringContainsString('data-turbo-prefetch="false"', $weekTemplate);
     }
 }

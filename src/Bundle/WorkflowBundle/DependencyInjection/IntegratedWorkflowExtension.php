@@ -13,16 +13,16 @@ namespace Integrated\Bundle\WorkflowBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class IntegratedWorkflowExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * Load the configuration.
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
@@ -50,7 +50,7 @@ class IntegratedWorkflowExtension extends Extension implements PrependExtensionI
         $container->setParameter('integrated_workflow_email', $config['email']);
     }
 
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         $this->configureTwigBundle($container);
     }

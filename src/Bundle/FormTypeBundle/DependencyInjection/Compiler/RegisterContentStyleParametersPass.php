@@ -28,7 +28,7 @@ class RegisterContentStyleParametersPass implements CompilerPassInterface
     /** @var array */
     private $parameters;
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $this->parameters = [self::CONTENT_CSS => [], self::STYLE_FORMAT => []];
 

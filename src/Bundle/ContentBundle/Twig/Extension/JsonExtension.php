@@ -19,7 +19,7 @@ use Twig\TwigFilter;
  */
 class JsonExtension extends AbstractExtension
 {
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('json_decode', $this->decode(...), ['is_safe' => ['html']]),
@@ -34,7 +34,7 @@ class JsonExtension extends AbstractExtension
         return json_decode($value, true);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'integrated_content_json_extension';
     }

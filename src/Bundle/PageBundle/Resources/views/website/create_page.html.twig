@@ -1,12 +1,143 @@
-{% form_theme form with ['form_table_layout.html.twig'] only %}
+{% form_theme form with ['@IntegratedPage/form/form_div_layout.html.twig'] %}
 
 <style>
-#integrated_page_page td {
-    padding: 5px;
-    padding-right: 15px;
-}
+    .integrated-page-website-create-page {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        border: 1px solid rgba(17, 24, 39, 0.12);
+        border-radius: 1rem;
+        background: #fff;
+        box-shadow: 0 18px 45px rgba(17, 24, 39, 0.08);
+        color: #111827;
+    }
+
+    .integrated-page-website-create-page__eyebrow {
+        margin: 0 0 0.5rem;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #6b7280;
+    }
+
+    .integrated-page-website-create-page__title {
+        margin: 0;
+        font-size: 1.5rem;
+        line-height: 1.2;
+    }
+
+    .integrated-page-website-create-page__path {
+        margin-top: 0.4rem;
+        font-size: 0.95rem;
+        color: #4b5563;
+        word-break: break-word;
+    }
+
+    .integrated-page-website-create-page__form {
+        margin-top: 1.5rem;
+    }
+
+    .integrated-page-website-create-page .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .integrated-page-website-create-page label {
+        display: block;
+        margin-bottom: 0.35rem;
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .integrated-page-website-create-page input[type="text"],
+    .integrated-page-website-create-page input[type="url"],
+    .integrated-page-website-create-page textarea,
+    .integrated-page-website-create-page select {
+        width: 100%;
+        min-height: 2.75rem;
+        padding: 0.7rem 0.9rem;
+        border: 1px solid rgba(17, 24, 39, 0.18);
+        border-radius: 0.75rem;
+        background: #fff;
+        color: #111827;
+        box-sizing: border-box;
+    }
+
+    .integrated-page-website-create-page textarea {
+        min-height: 8rem;
+        resize: vertical;
+    }
+
+    .integrated-page-website-create-page .input-group {
+        display: flex;
+        align-items: stretch;
+    }
+
+    .integrated-page-website-create-page .input-group-addon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 2.75rem;
+        padding: 0 0.9rem;
+        border: 1px solid rgba(17, 24, 39, 0.18);
+        border-right: 0;
+        border-radius: 0.75rem 0 0 0.75rem;
+        background: #f3f4f6;
+        color: #4b5563;
+        box-sizing: border-box;
+    }
+
+    .integrated-page-website-create-page .input-group input {
+        border-radius: 0 0.75rem 0.75rem 0;
+    }
+
+    .integrated-page-website-create-page .help-block,
+    .integrated-page-website-create-page .invalid-feedback,
+    .integrated-page-website-create-page .form-error-message {
+        display: block;
+        margin-top: 0.35rem;
+        color: #b42318;
+        font-size: 0.9rem;
+    }
+
+    .integrated-page-website-create-page__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+        margin-top: 1.5rem;
+    }
+
+    .integrated-page-website-create-page__actions .btn,
+    .integrated-page-website-create-page__actions button,
+    .integrated-page-website-create-page__actions input[type="submit"] {
+        appearance: none;
+        min-height: 2.75rem;
+        padding: 0.7rem 1.2rem;
+        border: 0;
+        border-radius: 999px;
+        background: #111827;
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+    }
 </style>
+
 <div class="integrated-page-website-create-page">
-    <h2>{% trans %}Create a new page on{% endtrans %} "{{ app.request.query.get('path') }}"</h2>
-    {{ form(form) }}
+    <p class="integrated-page-website-create-page__eyebrow">{% trans %}Page not found{% endtrans %}</p>
+    <h2 class="integrated-page-website-create-page__title">{% trans %}Create a new page here{% endtrans %}</h2>
+    <p class="integrated-page-website-create-page__path">{{ app.request.query.get('path') }}</p>
+
+    {{ form_start(form, { attr: { class: 'integrated-page-website-create-page__form' } }) }}
+        {{ form_errors(form) }}
+
+        {% for field in form %}
+            {% if field.vars.name != 'actions' %}
+                {{ form_row(field) }}
+            {% endif %}
+        {% endfor %}
+
+        <div class="integrated-page-website-create-page__actions">
+            {{ form_widget(form.actions) }}
+        </div>
+    {{ form_end(form) }}
 </div>

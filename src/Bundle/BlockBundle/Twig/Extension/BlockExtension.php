@@ -91,7 +91,7 @@ class BlockExtension extends AbstractExtension
         $this->runtimeBlockUsageCollector = $runtimeBlockUsageCollector;
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction(
@@ -113,7 +113,7 @@ class BlockExtension extends AbstractExtension
         ];
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('integrated_block_type', $this->getBlockTypeName(...)),
@@ -322,7 +322,7 @@ class BlockExtension extends AbstractExtension
         return $array;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'integrated_block_block';
     }

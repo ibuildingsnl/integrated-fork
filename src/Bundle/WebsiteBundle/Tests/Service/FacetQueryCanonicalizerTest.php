@@ -32,9 +32,9 @@ final class FacetQueryCanonicalizerTest extends TestCase
 
         $repository = $this->createMock(BlockRepository::class);
         $repository->expects(self::once())
-            ->method('find')
-            ->with('facet-block')
-            ->willReturn($facetBlock);
+            ->method('findByIds')
+            ->with(['facet-block'])
+            ->willReturn([$facetBlock]);
 
         $request = Request::create('https://example.test/bedrijvengids?facet_company_category%5B0%5D=Automatisering&facet_company_category%5B1%5D=Dienstverlening&sort=title');
 
@@ -60,9 +60,9 @@ final class FacetQueryCanonicalizerTest extends TestCase
 
         $repository = $this->createMock(BlockRepository::class);
         $repository->expects(self::once())
-            ->method('find')
-            ->with('facet-block')
-            ->willReturn($facetBlock);
+            ->method('findByIds')
+            ->with(['facet-block'])
+            ->willReturn([$facetBlock]);
 
         $request = Request::create('https://example.test/bedrijvengids?facet_company_category%5B0%5D=Automatisering&facet_company_category%5B1%5D=Dienstverlening');
 
@@ -88,14 +88,31 @@ final class FacetQueryCanonicalizerTest extends TestCase
 
         $repository = $this->createMock(BlockRepository::class);
         $repository->expects(self::once())
-            ->method('find')
-            ->with('facet-block')
-            ->willReturn($facetBlock);
+            ->method('findByIds')
+            ->with(['facet-block'])
+            ->willReturn([$facetBlock]);
 
         $request = Request::create('https://example.test/bedrijvengids?facet_company_category%5B0%5D=Dienstverlening&facet_company_category%5B1%5D=Automatisering&facet_company_category%5B2%5D=Dienstverlening');
 
         $normalizedPath = (new FacetQueryCanonicalizer($repository))->getNormalizedPath($page, $request);
 
         self::assertSame('/bedrijvengids?facet_company_category%5B0%5D=Automatisering&facet_company_category%5B1%5D=Dienstverlening', $normalizedPath);
+    }
+
+    public function testNoQueryStringSkipsBlockResolutionCompletely(): void
+    {
+        $page = new Page();
+        $page->setPath('/bedrijvengids');
+        $page->setBlockIds(['facet-block']);
+
+        $repository = $this->createMock(BlockRepository::class);
+        $repository->expects(self::never())
+            ->method('findByIds');
+
+        $request = Request::create('https://example.test/bedrijvengids');
+
+        $normalizedPath = (new FacetQueryCanonicalizer($repository))->getNormalizedPath($page, $request);
+
+        self::assertNull($normalizedPath);
     }
 }

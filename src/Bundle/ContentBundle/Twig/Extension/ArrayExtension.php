@@ -19,7 +19,7 @@ use Twig\TwigFilter;
  */
 class ArrayExtension extends AbstractExtension
 {
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('unset_value', $this->unsetValue(...)),
@@ -37,7 +37,7 @@ class ArrayExtension extends AbstractExtension
         return array_diff($array, [$value]);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'integrated_content_array_extension';
     }

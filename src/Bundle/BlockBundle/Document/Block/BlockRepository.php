@@ -84,6 +84,29 @@ class BlockRepository extends ServiceDocumentRepository
     }
 
     /**
+     * @param array<int, mixed> $ids
+     *
+     * @return array<int, Block>
+     */
+    public function findByIds(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        $result = $this->createQueryBuilder()
+            ->field('_id')->in($ids)
+            ->getQuery()
+            ->execute();
+
+        if ($result instanceof \Traversable) {
+            return iterator_to_array($result, false);
+        }
+
+        return \is_array($result) ? array_values($result) : [];
+    }
+
+    /**
      * @return \Doctrine\ODM\MongoDB\Query\Query
      *
      * @internal heavy fallback query for legacy pages without denormalized block ids

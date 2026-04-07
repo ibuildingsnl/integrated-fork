@@ -71,7 +71,7 @@ class Indexer extends Configurable implements IndexerInterface
         $this->batch = $batch ?: new Batch();
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'queue.size' => 5000,

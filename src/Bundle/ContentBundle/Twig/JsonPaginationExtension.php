@@ -31,7 +31,7 @@ class JsonPaginationExtension extends AbstractExtension
         $this->generator = $generator;
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('json_pagination', [$this, 'paginate', ['is_safe' => 'json']]),
@@ -97,7 +97,7 @@ class JsonPaginationExtension extends AbstractExtension
         return $return;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'integrated_content_json_pagination_extension';
     }

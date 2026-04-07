@@ -32,7 +32,7 @@ class UniqueEntryValidator extends ConstraintValidator
      */
     private $accessor;
 
-    public function validate($entries, Constraint $constraint)
+    public function validate($entries, Constraint $constraint): void
     {
         if (!$constraint instanceof UniqueEntry) {
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\\UniqueEntry');

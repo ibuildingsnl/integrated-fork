@@ -27,12 +27,14 @@ use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
 use Integrated\Bundle\ContentBundle\Provider\MediaProvider;
+use Integrated\Bundle\ContentBundle\Services\AssignedStatusCacheInvalidator;
 use Integrated\Bundle\ContentBundle\Services\CalendarOptions;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOptions;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
@@ -74,10 +76,7 @@ class ContentController extends AbstractController
 {
     use PaginationQueryTrait;
 
-    private const NAVDROPDOWNS_CACHE_NAMESPACE = 'integrated_content_fragments_navdropdowns';
-    private const ASSIGNED_STATUS_CACHE_NAMESPACE = 'integrated_content_assigned_status';
     private const CONTENT_LOCK_TIMEOUT_SECONDS = 15;
-    private const ASSIGNED_STATUS_CACHE_TTL_SECONDS = 10;
     private const ASSIGNED_STATUS_LIMIT = 25;
     private const SEO_META_DESCRIPTION_MAX_LENGTH = 156;
     private const NAVIGATOR_EXCLUDED_CONTENT_CLASSES = [
@@ -432,19 +431,27 @@ class ContentController extends AbstractController
 
     private function getTaxonomyCategories($content): array
     {
-        $contentRelations = [];
         $contentType = $this->contentTypeManager->getType($content->getContentType());
-        $relations = $this->documentManager->getRepository($this->relationClass)->findAll();
-        foreach ($relations as $relation) {
-            if ($relation->hasSource($contentType) && $relation->getType() == 'taxonomy_category') {
-                $contentRelations[] = $relation;
-            }
-        }
+        $contentRelations = $this->documentManager
+            ->getRepository($this->relationClass)
+            ->findBy([
+                'sources.$id' => $contentType->getId(),
+                'type' => 'taxonomy_category',
+            ]);
 
         $taxonomyCategories = [];
+        $overviewByTarget = [];
         foreach ($contentRelations as $contentRelation) {
             foreach ($contentRelation->getTargets() as $target) {
-                $taxonomyCategories[$contentRelation->getId()] = $this->taxonomyIndexer->overviewFor($target->getId());
+                $targetId = (string) $target->getId();
+                if (!\array_key_exists($targetId, $overviewByTarget)) {
+                    $overviewByTarget[$targetId] = $this->taxonomyIndexer->overviewFor(
+                        $targetId,
+                        (new TaxonomyOptions())->withoutUsageCounts()
+                    );
+                }
+
+                $taxonomyCategories[$contentRelation->getId()] = $overviewByTarget[$targetId];
             }
         }
 
@@ -1048,15 +1055,12 @@ class ContentController extends AbstractController
         $resources = \is_array($filter->resources) ? $filter->resources : [$filter->resources];
 
         foreach ($iterator as $data) {
-            if (!\is_array($data)) {
+            $resource = $this->extractNavigatorLockResourceData($data);
+            if (null === $resource) {
                 continue;
             }
-            $type = isset($data['type_class']) ? (string) $data['type_class'] : '';
-            $id = isset($data['type_id']) ? (string) $data['type_id'] : '';
-            if ($type === '' || $id === '') {
-                continue;
-            }
-            $resources[] = new Resource($type, $id);
+
+            $resources[] = new Resource($resource['type'], $resource['id']);
         }
         $filter->resources = $resources;
 
@@ -1089,6 +1093,32 @@ class ContentController extends AbstractController
         }
 
         return $results;
+    }
+
+    /**
+     * @return array{type: string, id: string}|null
+     */
+    private function extractNavigatorLockResourceData(mixed $data): ?array
+    {
+        $type = '';
+        $id = '';
+
+        if (\is_array($data) || $data instanceof \ArrayAccess) {
+            $type = isset($data['type_class']) ? (string) $data['type_class'] : '';
+            $id = isset($data['type_id']) ? (string) $data['type_id'] : '';
+        } elseif (\is_object($data)) {
+            $type = isset($data->type_class) ? (string) $data->type_class : '';
+            $id = isset($data->type_id) ? (string) $data->type_id : '';
+        }
+
+        if ('' === $type || '' === $id) {
+            return null;
+        }
+
+        return [
+            'type' => $type,
+            'id' => $id,
+        ];
     }
 
     public function locksStatus(Request $request): JsonResponse
@@ -1249,37 +1279,20 @@ class ContentController extends AbstractController
 
     public function navdropdowns(Request $request): Response
     {
-        $user = $this->getUser();
-        $userId = $user instanceof UserInterface ? (string) $user->getId() : 'anonymous';
-
-        $queueStatus = $this->getQueueStatus($request);
-        $queuecount = $queueStatus['queuecount'];
-        $assignedContent = $this->getAssignedContent();
-        $assignedCount = \count($assignedContent);
-
-        $cache = new FilesystemAdapter(self::NAVDROPDOWNS_CACHE_NAMESPACE);
-        $cacheItem = $cache->getItem('navdropdowns_'.md5($userId.'|'.$request->getLocale().'|'.$queuecount.'|'.$assignedCount));
-
-        if ($cacheItem->isHit()) {
-            return new Response((string) $cacheItem->get());
-        }
-
         $email = '';
+        $assignedStatus = $this->getAssignedStatusPayload();
+        $queueStatus = $this->isGranted('ROLE_ADMIN')
+            ? $this->getQueueStatus($request)
+            : ['queuecount' => 0, 'queuepercentage' => 100];
 
         $avatarurl = '//www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s=45';
 
-        $html = $this->renderView('@IntegratedContent/content/navdropdowns.html.twig', [
+        return $this->render('@IntegratedContent/content/navdropdowns.html.twig', [
             'avatarurl' => $avatarurl,
-            'queuecount' => $queuecount,
+            'queuecount' => $queueStatus['queuecount'],
             'queuepercentage' => $queueStatus['queuepercentage'],
-            'assignedContent' => $assignedContent,
+            'assignedContent' => $assignedStatus['items'],
         ]);
-
-        $cacheItem->set($html);
-        $cacheItem->expiresAfter(86400);
-        $cache->save($cacheItem);
-
-        return new Response($html);
     }
 
     public function assignedStatus(): JsonResponse
@@ -1289,51 +1302,7 @@ class ContentController extends AbstractController
             return new JsonResponse([], Response::HTTP_FORBIDDEN);
         }
 
-        $cache = new FilesystemAdapter(self::ASSIGNED_STATUS_CACHE_NAMESPACE);
-        $cacheItem = $cache->getItem('assigned_status_'.md5((string) $user->getId()));
-
-        $payload = $cacheItem->isHit() ? $cacheItem->get() : null;
-        if (!\is_array($payload) || !isset($payload['count'], $payload['items'])) {
-            $items = array_map(function (array $document): array {
-                $contentId = (string) ($document['type_id'] ?? '');
-                $title = (string) ($document['title'] ?? '');
-
-                $statusColor = '#6c7b89';
-                $statusIcon = '';
-
-                if (isset($document['workflow_color_string'])) {
-                    $colors = (array) $document['workflow_color_string'];
-                    $firstColor = reset($colors);
-                    if ($firstColor) {
-                        $statusColor = (string) $firstColor;
-                    }
-                }
-
-                if (isset($document['workflow_icon_string'])) {
-                    $icons = (array) $document['workflow_icon_string'];
-                    $firstIcon = reset($icons);
-                    if ($firstIcon) {
-                        $statusIcon = (string) $firstIcon;
-                    }
-                }
-
-                return [
-                    'id' => $contentId,
-                    'title' => $title,
-                    'status_color' => $statusColor,
-                    'status_icon' => $statusIcon,
-                    'edit_url' => $contentId !== '' ? $this->generateUrl('integrated_content_content_edit', ['id' => $contentId]) : '#',
-                ];
-            }, $this->getAssignedContent());
-
-            $payload = [
-                'count' => \count($items),
-                'items' => $items,
-            ];
-            $cacheItem->set($payload);
-            $cacheItem->expiresAfter(self::ASSIGNED_STATUS_CACHE_TTL_SECONDS);
-            $cache->save($cacheItem);
-        }
+        $payload = $this->getAssignedStatusPayload();
 
         $response = new JsonResponse($payload);
 
@@ -1342,6 +1311,107 @@ class ContentController extends AbstractController
         $response->headers->addCacheControlDirective('max-age', '0');
 
         return $response;
+    }
+
+    /**
+     * @return array{count: int, items: array<int, array{id: string, title: string, status_color: string, status_icon: string, edit_url: string}>}
+     */
+    private function getAssignedStatusPayload(): array
+    {
+        $user = $this->getUser();
+        if (!$user instanceof UserInterface) {
+            return [
+                'count' => 0,
+                'items' => [],
+            ];
+        }
+
+        $cache = new FilesystemAdapter(AssignedStatusCacheInvalidator::CACHE_NAMESPACE);
+        $cacheItem = $cache->getItem(AssignedStatusCacheInvalidator::getCacheItemKey((string) $user->getId()));
+
+        $payload = $cacheItem->isHit() ? $cacheItem->get() : null;
+        if (\is_array($payload)) {
+            $normalizedPayload = $this->normalizeAssignedStatusPayload($payload);
+            if ($normalizedPayload !== null) {
+                return $normalizedPayload;
+            }
+        }
+
+        $items = array_map(function (array $document): array {
+            $contentId = (string) ($document['type_id'] ?? '');
+            $title = (string) ($document['title'] ?? '');
+
+            $statusColor = '#6c7b89';
+            $statusIcon = '';
+
+            if (isset($document['workflow_color_string'])) {
+                $colors = (array) $document['workflow_color_string'];
+                $firstColor = reset($colors);
+                if ($firstColor) {
+                    $statusColor = (string) $firstColor;
+                }
+            }
+
+            if (isset($document['workflow_icon_string'])) {
+                $icons = (array) $document['workflow_icon_string'];
+                $firstIcon = reset($icons);
+                if ($firstIcon) {
+                    $statusIcon = (string) $firstIcon;
+                }
+            }
+
+            return [
+                'id' => $contentId,
+                'title' => $title,
+                'status_color' => $statusColor,
+                'status_icon' => $statusIcon,
+                'edit_url' => $contentId !== '' ? $this->generateUrl('integrated_content_content_edit', ['id' => $contentId]) : '#',
+            ];
+        }, $this->getAssignedContent());
+
+        $payload = [
+            'count' => \count($items),
+            'items' => $items,
+        ];
+        $cacheItem->set($payload);
+        $cache->save($cacheItem);
+
+        return $this->normalizeAssignedStatusPayload($payload) ?? [
+            'count' => 0,
+            'items' => [],
+        ];
+    }
+
+    /**
+     * @param array<mixed> $payload
+     *
+     * @return array{count: int, items: array<int, array{id: string, title: string, status_color: string, status_icon: string, edit_url: string}>}|null
+     */
+    private function normalizeAssignedStatusPayload(array $payload): ?array
+    {
+        if (!\array_key_exists('items', $payload) || !\is_array($payload['items'])) {
+            return null;
+        }
+
+        $items = [];
+        foreach ($payload['items'] as $item) {
+            if (!\is_array($item)) {
+                continue;
+            }
+
+            $items[] = [
+                'id' => (string) ($item['id'] ?? ''),
+                'title' => (string) ($item['title'] ?? ''),
+                'status_color' => (string) ($item['status_color'] ?? '#6c7b89'),
+                'status_icon' => (string) ($item['status_icon'] ?? ''),
+                'edit_url' => (string) ($item['edit_url'] ?? '#'),
+            ];
+        }
+
+        return [
+            'count' => \count($items),
+            'items' => $items,
+        ];
     }
 
     public function queueStatus(Request $request): JsonResponse

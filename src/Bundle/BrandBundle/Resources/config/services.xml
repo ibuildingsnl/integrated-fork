@@ -20,6 +20,11 @@
             <argument type="service" id="integrated_brand.brand.odm.repository" />
         </service>
 
+        <service id="integrated_brand.brand.cached_repository" class="Integrated\Bundle\BrandBundle\Infrastructure\CachedBrandRepository" decorates="integrated_brand.brand.repository">
+            <argument type="service" id="integrated_brand.brand.cached_repository.inner" />
+            <argument type="service" id="cache.app" />
+        </service>
+
         <service id="Integrated\Bundle\BrandBundle\Controller\BrandController">
             <argument type="service" id="integrated_brand.brand.repository" />
             <argument type="service" id="integrated_channel.channel_type.registry" />
@@ -97,6 +102,11 @@
             <tag name="kernel.event_subscriber"/>
         </service>
 
+        <service id="integrated_brand.event_listener.brand_cache_invalidation" class="Integrated\Bundle\BrandBundle\EventListener\BrandCacheInvalidationSubscriber">
+            <argument type="service" id="cache.app" />
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
         <service id="integrated_brand.solr.brand.extension" class="Integrated\Bundle\BrandBundle\Solr\Extension\BrandExtension">
             <argument type="service" id="integrated_brand.brand.repository" />
 
@@ -109,6 +119,7 @@
 
         <service id="Integrated\Bundle\BrandBundle\Twig\Extension\BrandExtension">
             <argument type="service" id="integrated_brand.brand.repository" />
+            <argument type="service" id="cache.app" />
 
             <tag name="twig.extension"/>
         </service>

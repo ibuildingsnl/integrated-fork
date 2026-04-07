@@ -30,7 +30,7 @@ class ThemeExtension extends AbstractExtension
         $this->themeManager = $themeManager;
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('integrated_active_theme', $this->getActiveTheme(...)),
@@ -49,7 +49,7 @@ class ThemeExtension extends AbstractExtension
         return $this->themeManager->locateTemplate($template);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'integrated_theme_theme';
     }

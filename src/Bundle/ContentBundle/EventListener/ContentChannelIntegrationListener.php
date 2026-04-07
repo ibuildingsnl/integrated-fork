@@ -56,7 +56,7 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
         ];
     }
 
-    public function buildForm(BuilderEvent $event)
+    public function buildForm(BuilderEvent $event): void
     {
         $options = $this->getConfig($event->getContentType()->getOption('channels'));
 

@@ -540,7 +540,26 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     public function hasChannel(ChannelInterface $channel)
     {
-        return $this->channels->contains($channel);
+        if ($this->channels->contains($channel)) {
+            return true;
+        }
+
+        $channelId = $channel->getId();
+        if (!\is_string($channelId) || '' === $channelId) {
+            return false;
+        }
+
+        foreach ($this->channels as $existingChannel) {
+            if (!$existingChannel instanceof ChannelInterface) {
+                continue;
+            }
+
+            if ($existingChannel->getId() === $channelId) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function removeChannel(ChannelInterface $channel)

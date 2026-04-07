@@ -72,7 +72,7 @@ class ContentChoiceType extends AbstractType
         }
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $varNames = ['multiple', 'route', 'params', 'allow_clear'];
         foreach ($varNames as $varName) {

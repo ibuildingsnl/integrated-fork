@@ -29,7 +29,7 @@ class ContentBrandIntegrationListener implements EventSubscriberInterface
         ];
     }
 
-    public function buildForm(BuilderEvent $event)
+    public function buildForm(BuilderEvent $event): void
     {
         $form = $event->getBuilder();
         $content = $form->getData();

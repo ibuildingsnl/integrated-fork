@@ -12,6 +12,8 @@
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_content.channel.context" />
             <argument type="service" id="Integrated\Bundle\ContentBundle\Services\ContentTypeInformation"/>
+            <argument type="service" id="cache.app" />
+            <argument type="service" id="Integrated\Bundle\SitemapBundle\Service\SitemapCacheVersionManager" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
@@ -20,12 +22,35 @@
         <service id="Integrated\Bundle\SitemapBundle\Controller\NewsController">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_content.channel.context" />
+            <argument type="service" id="cache.app" />
+            <argument type="service" id="Integrated\Bundle\SitemapBundle\Service\SitemapCacheVersionManager" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
         </service>
 
-        <service id="Integrated\Bundle\SitemapBundle\Controller\RobotsController" />
+        <service id="Integrated\Bundle\SitemapBundle\Controller\RobotsController">
+            <argument type="service" id="cache.app" />
+            <argument type="service" id="Integrated\Bundle\SitemapBundle\Service\SitemapCacheVersionManager" />
+        </service>
+
+        <service id="Integrated\Bundle\SitemapBundle\Service\SitemapCacheVersionManager">
+            <argument type="service" id="cache.app" />
+        </service>
+
+        <service id="Integrated\Bundle\SitemapBundle\EventListener\SitemapCacheInvalidationSubscriber">
+            <argument type="service" id="Integrated\Bundle\SitemapBundle\Service\SitemapCacheVersionManager" />
+            <argument type="service" id="integrated_content.channel.manager" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <service id="Integrated\Bundle\SitemapBundle\EventListener\PageSitemapCacheInvalidationSubscriber">
+            <argument type="service" id="Integrated\Bundle\SitemapBundle\Service\SitemapCacheVersionManager" />
+        </service>
+
+        <service id="Integrated\Bundle\SitemapBundle\EventListener\ContentSitemapCacheInvalidationSubscriber">
+            <argument type="service" id="Integrated\Bundle\SitemapBundle\Service\SitemapCacheVersionManager" />
+        </service>
 
     </services>
 

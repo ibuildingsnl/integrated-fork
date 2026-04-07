@@ -12,9 +12,11 @@ use Doctrine\ODM\MongoDB\Query\Query;
 use Integrated\Bundle\ContentBundle\Services\ContentTypeInformation;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\SitemapBundle\Controller\DefaultController;
+use Integrated\Bundle\SitemapBundle\Service\SitemapCacheVersionManager;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -149,7 +151,10 @@ final class DefaultControllerPageLifecycleTest extends TestCase
         ChannelContextInterface $context,
         ContentTypeInformation $contentTypeInformation,
     ): RenderCaptureController {
-        return new RenderCaptureController($manager, $context, $contentTypeInformation);
+        $cache = new ArrayAdapter();
+        $cacheVersionManager = new SitemapCacheVersionManager($cache);
+
+        return new RenderCaptureController($manager, $context, $contentTypeInformation, $cache, $cacheVersionManager);
     }
 
     private function createChannelContext(string $channelId): ChannelContextInterface

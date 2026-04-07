@@ -280,15 +280,14 @@ class IntegratedContentBlockOptionsTest extends TestCase
         return $resolver;
     }
 
+    /**
+     * @return array<int, string>
+     */
     private function getFacetExcludes(Field $facet): array
     {
-        if (method_exists($facet, 'getExcludes')) {
-            /** @var array $excludes */
-            $excludes = $facet->getExcludes();
+        /** @var array<int, string> $excludes */
+        $excludes = $facet->getExcludes();
 
-            return $excludes;
-        }
-
-        return $facet->getLocalParameters()->getExcludes();
+        return $excludes;
     }
 }

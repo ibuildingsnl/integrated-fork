@@ -52,7 +52,7 @@ class ContentParentIDType extends AbstractType
         $this->params = $params;
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         foreach ($this::VARNAMES as $varName) {
             $view->vars[$varName] = $options[$varName];

@@ -49,7 +49,7 @@
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Services\CalendarOptions">
-            <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
+            <argument type="service" id="event_dispatcher"/>
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Services\PublicationSettingsProviderInterface"
@@ -67,6 +67,8 @@
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Services\ChannelDeletionSelfHealer" />
+
+        <service id="Integrated\Bundle\ContentBundle\Services\AssignedStatusCacheInvalidator" />
 
         <service id="Integrated\Bundle\ContentBundle\Services\ChannelDeletionProcessor">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />

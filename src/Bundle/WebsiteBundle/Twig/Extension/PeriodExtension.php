@@ -20,10 +20,7 @@ use Twig\TwigFunction;
  */
 class PeriodExtension extends AbstractExtension
 {
-    /**
-     * @return array
-     */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction(

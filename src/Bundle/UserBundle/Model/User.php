@@ -90,6 +90,21 @@ class User implements UserInterface
      */
     protected $relation_instance;
 
+    /**
+     * @var string[]|null
+     */
+    private $serializedRoleNames;
+
+    /**
+     * @var string|null
+     */
+    private $serializedScopeFingerprint;
+
+    /**
+     * @var bool|null
+     */
+    private $serializedEnabled;
+
     public function __construct()
     {
         $this->groups = new ArrayCollection();
@@ -99,11 +114,16 @@ class User implements UserInterface
 
     public function serialize()
     {
+        [$enabled, $roles, $scopeFingerprint] = $this->getSerializedSecurityState();
+
         return serialize([
             $this->id,
             $this->username,
             $this->password,
             $this->salt,
+            $enabled,
+            $roles,
+            $scopeFingerprint,
         ]);
     }
 
@@ -111,11 +131,19 @@ class User implements UserInterface
     {
         $data = unserialize($serialized);
 
+        $enabled = $data[4] ?? null;
+        $roles = $data[5] ?? null;
+        $scopeFingerprint = $data[6] ?? null;
+
         list(
             $this->id,
             $this->username,
             $this->password,
             $this->salt) = $data;
+
+        $this->serializedEnabled = is_bool($enabled) ? $enabled : null;
+        $this->serializedRoleNames = is_array($roles) ? array_values($roles) : null;
+        $this->serializedScopeFingerprint = is_string($scopeFingerprint) ? $scopeFingerprint : null;
     }
 
     public function getId()
@@ -178,6 +206,8 @@ class User implements UserInterface
 
     public function addGroup(GroupInterface $group)
     {
+        $this->ensureCollectionsInitialized();
+
         if (!$this->groups->contains($group)) {
             $this->groups->add($group);
         }
@@ -185,6 +215,7 @@ class User implements UserInterface
 
     public function removeGroup(GroupInterface $group)
     {
+        $this->ensureCollectionsInitialized();
         $this->groups->removeElement($group);
     }
 
@@ -193,11 +224,13 @@ class User implements UserInterface
      */
     public function hasGroup(GroupInterface $group)
     {
+        $this->ensureCollectionsInitialized();
         return $this->groups->contains($group);
     }
 
     public function getGroups()
     {
+        $this->ensureCollectionsInitialized();
         return $this->groups->toArray();
     }
 
@@ -215,6 +248,8 @@ class User implements UserInterface
 
     public function addRole(RoleInterface $role)
     {
+        $this->ensureCollectionsInitialized();
+
         if (!$this->roles->contains($role)) {
             $this->roles->add($role);
         }
@@ -222,6 +257,7 @@ class User implements UserInterface
 
     public function removeRole(RoleInterface $role)
     {
+        $this->ensureCollectionsInitialized();
         $this->roles->removeElement($role);
     }
 
@@ -230,11 +266,14 @@ class User implements UserInterface
      */
     public function hasRole(RoleInterface $role)
     {
+        $this->ensureCollectionsInitialized();
         return $this->roles->contains($role);
     }
 
     public function getRoles(): array
     {
+        $this->ensureCollectionsInitialized();
+
         $roles = [];
 
         if ($this->enabled) {
@@ -354,16 +393,87 @@ class User implements UserInterface
 
     public function isEqualTo(BaseUserInterface $user): bool
     {
-        return $user->getUserIdentifier() === $this->getUserIdentifier();
+        if (!$user instanceof self) {
+            return false;
+        }
+
+        return $user->getUserIdentifier() === $this->getUserIdentifier()
+            && $user->getPassword() === $this->getPassword()
+            && $user->getSalt() === $this->getSalt()
+            && $this->getEnabledSnapshot($user) === $this->getEnabledSnapshot($this);
+    }
+
+    private function normalizeRoles(array $roles): array
+    {
+        $roles = array_values(array_unique($roles));
+        sort($roles);
+
+        return $roles;
+    }
+
+    private function getScopeFingerprint(self $user): string
+    {
+        $scope = $user->getScope();
+        if (!$scope instanceof ScopeInterface) {
+            return '';
+        }
+
+        return sprintf('%s:%d', (string) $scope->getId(), $scope->isAdmin() ? 1 : 0);
+    }
+
+    private function getEnabledSnapshot(self $user): bool
+    {
+        return $user->serializedEnabled ?? $user->isEnabled();
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getRoleSnapshot(self $user): array
+    {
+        return $this->normalizeRoles($user->serializedRoleNames ?? $user->getRoles());
+    }
+
+    private function getScopeFingerprintSnapshot(self $user): string
+    {
+        return $user->serializedScopeFingerprint ?? $this->getScopeFingerprint($user);
+    }
+
+    /**
+     * @return array{0: bool, 1: string[], 2: string}
+     */
+    private function getSerializedSecurityState(): array
+    {
+        return [
+            $this->isEnabled(),
+            $this->normalizeRoles($this->getRoles()),
+            $this->getScopeFingerprint($this),
+        ];
+    }
+
+    private function ensureCollectionsInitialized(): void
+    {
+        if (!$this->groups instanceof Collection) {
+            $this->groups = new ArrayCollection();
+        }
+
+        if (!$this->roles instanceof Collection) {
+            $this->roles = new ArrayCollection();
+        }
     }
 
     public function __serialize(): array
     {
+        [$enabled, $roles, $scopeFingerprint] = $this->getSerializedSecurityState();
+
         return [
             $this->id,
             $this->username,
             $this->password,
             $this->salt,
+            $enabled,
+            $roles,
+            $scopeFingerprint,
         ];
     }
 
@@ -374,5 +484,9 @@ class User implements UserInterface
             $this->username,
             $this->password,
             $this->salt) = $data;
+
+        $this->serializedEnabled = isset($data[4]) && is_bool($data[4]) ? $data[4] : null;
+        $this->serializedRoleNames = isset($data[5]) && is_array($data[5]) ? array_values($data[5]) : null;
+        $this->serializedScopeFingerprint = isset($data[6]) && is_string($data[6]) ? $data[6] : null;
     }
 }

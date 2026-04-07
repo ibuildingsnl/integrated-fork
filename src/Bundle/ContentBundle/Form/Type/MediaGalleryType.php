@@ -28,7 +28,7 @@ class MediaGalleryType extends AbstractType
         $builder->addModelTransformer(new ImageTransformer($this->repository));
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['attr']['data-multiple'] = '';
     }

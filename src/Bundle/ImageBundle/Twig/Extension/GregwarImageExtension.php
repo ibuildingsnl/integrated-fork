@@ -33,7 +33,7 @@ class GregwarImageExtension extends AbstractExtension
         $this->webDir = $webDir;
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('image', $this->image(...), ['is_safe' => ['html']]),
@@ -75,7 +75,7 @@ class GregwarImageExtension extends AbstractExtension
         return $this->imageHandling->create($width, $height);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'image';
     }

@@ -12,6 +12,8 @@
 namespace Integrated\Bundle\ContentBundle\Bulk;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Integrated\Bundle\ContentBundle\Services\AssignedStatusCacheInvalidator;
+use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
@@ -29,6 +31,7 @@ class WorkflowAssignHandler implements HandlerInterface
     private EntityManagerInterface $entityManager;
     private ResolverInterface $resolver;
     private UserManagerInterface $userManager;
+    private AssignedStatusCacheInvalidator $assignedStatusCacheInvalidator;
     private ?string $assignedId;
     private bool $navdropdownCacheInvalidated = false;
     private bool $assignedResolved = false;
@@ -42,11 +45,13 @@ class WorkflowAssignHandler implements HandlerInterface
         EntityManagerInterface $entityManager,
         ResolverInterface $resolver,
         UserManagerInterface $userManager,
+        AssignedStatusCacheInvalidator $assignedStatusCacheInvalidator,
         ?string $assignedId,
     ) {
         $this->entityManager = $entityManager;
         $this->resolver = $resolver;
         $this->userManager = $userManager;
+        $this->assignedStatusCacheInvalidator = $assignedStatusCacheInvalidator;
         $this->assignedId = $assignedId;
     }
 
@@ -103,10 +108,23 @@ class WorkflowAssignHandler implements HandlerInterface
             return;
         }
 
+        $affectedAssignedUserIds = $this->getAffectedAssignedUserIds($currentAssigned, $assigned);
         $state->setAssigned($assigned);
         $this->syncContentWithState($content, $workflow, $state->getState());
         $this->entityManager->flush();
+        $this->assignedStatusCacheInvalidator->invalidateUsers($affectedAssignedUserIds);
         $this->invalidateNavdropdownCache();
+    }
+
+    /**
+     * @return array<int, string|null>
+     */
+    private function getAffectedAssignedUserIds(UserInterface|GroupInterface|null $currentAssigned, ?UserInterface $assigned): array
+    {
+        return [
+            $currentAssigned instanceof UserInterface || $currentAssigned instanceof GroupInterface ? (string) $currentAssigned->getId() : null,
+            $assigned instanceof UserInterface ? (string) $assigned->getId() : null,
+        ];
     }
 
     private function resolveAssignedUser(): ?UserInterface

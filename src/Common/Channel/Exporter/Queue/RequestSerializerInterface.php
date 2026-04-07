@@ -24,7 +24,7 @@ interface RequestSerializerInterface
     /**
      * @param string $data
      *
-     * @return string|Request
+     * @return string|Request|null
      */
     public function deserialize($data);
 }

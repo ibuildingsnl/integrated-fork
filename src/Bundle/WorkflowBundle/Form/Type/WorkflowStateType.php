@@ -50,7 +50,7 @@ class WorkflowStateType extends AbstractType
         $builder->addEventSubscriber(new WorkflowStateListener($options['workflow']));
     }
 
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         if (!$form->has('current')) {
             return;

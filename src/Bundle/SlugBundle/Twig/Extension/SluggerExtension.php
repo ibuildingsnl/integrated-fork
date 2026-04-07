@@ -30,7 +30,7 @@ class SluggerExtension extends AbstractExtension
         $this->slugger = $slugger;
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('slugify', $this->slugify(...)),
@@ -48,7 +48,7 @@ class SluggerExtension extends AbstractExtension
         return $this->slugger->slugify($string, $delimiter);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'integrated_content_slugger_extension';
     }

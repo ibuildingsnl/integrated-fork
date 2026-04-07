@@ -16,17 +16,17 @@ use Integrated\Common\Channel\Connector\Config\Options;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
 class IntegratedChannelExtension extends Extension implements PrependExtensionInterface
 {
-    public function load(array $config, ContainerBuilder $container)
+    public function load(array $config, ContainerBuilder $container): void
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
@@ -105,7 +105,7 @@ class IntegratedChannelExtension extends Extension implements PrependExtensionIn
         }
     }
 
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         foreach ($container->getExtensions() as $name => $extension) {
             switch ($name) {

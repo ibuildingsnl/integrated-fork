@@ -35,9 +35,14 @@ class UrlResolver
     protected $channelContext;
 
     /**
-     * @var ContentTypePage[]
+     * @var array<string, array<string, ContentTypePage|null>>
      */
-    protected $contentTypePages = [];
+    protected array $contentTypePages = [];
+
+    /**
+     * @var array<string, string|null>
+     */
+    private array $generatedUrls = [];
 
     /**
      * @var RouterInterface
@@ -85,28 +90,31 @@ class UrlResolver
         return \sprintf('%s_%s', ContentTypePageLoader::ROUTE_PREFIX, $page->getId());
     }
 
-    /**
-     * @param null $channelId
-     *
-     * @return string|null
-     */
-    public function generateUrl(ContentInterface $document, $channelId = null, bool $fallback = true)
+    public function generateUrl(ContentInterface $document, ?string $channelId = null, bool $fallback = true): ?string
     {
-        $page = $this->getContentTypePageById($document->getContentType(), $channelId);
+        $channelId = $this->resolveChannelId($channelId);
+        $cacheKey = $this->getGeneratedUrlCacheKey($document, $channelId, $fallback);
+        $contentTypeId = (string) $document->getContentType();
+
+        if (\array_key_exists($cacheKey, $this->generatedUrls)) {
+            return $this->generatedUrls[$cacheKey];
+        }
+
+        $page = $this->getContentTypePageById($contentTypeId, $channelId);
 
         if ($page instanceof ContentTypePage) {
-            return $this->getContentTypePageUrl($page, $document);
+            return $this->generatedUrls[$cacheKey] = $this->getContentTypePageUrl($page, $document);
         }
 
         if (!$fallback) {
-            return null;
+            return $this->generatedUrls[$cacheKey] = null;
         }
 
         // fallback /app_*.php/content/contentType/slug, in production /content/contentType/slug
-        return \sprintf(
+        return $this->generatedUrls[$cacheKey] = \sprintf(
             '%s/content/%s/%s',
             $this->router->getContext()->getBaseUrl(),
-            $document->getContentType(),
+            $contentTypeId,
             // todo INTEGRATED-440 add Slug to ContentInterface
             $document->getSlug()
         );
@@ -165,31 +173,52 @@ class UrlResolver
         return $relationIds;
     }
 
-    /**
-     * @return ContentTypePage
-     */
-    protected function getContentTypePageById($contentTypeId, $channelId = null)
+    protected function getContentTypePageById(string $contentTypeId, ?string $channelId = null): ?ContentTypePage
     {
-        if (null === $channelId) {
-            $channel = $this->channelContext->getChannel();
+        $resolvedChannelId = $this->resolveChannelId($channelId);
+        $channelCacheKey = $resolvedChannelId ?? '_null';
+        $channelPages = $this->contentTypePages[$channelCacheKey] ?? [];
 
-            if ($channel instanceof Channel) {
-                $channelId = $channel->getId();
-            }
-        }
-
-        if (isset($this->contentTypePages[$channelId][$contentTypeId])) {
-            return $this->contentTypePages[$channelId][$contentTypeId];
+        if (\array_key_exists($contentTypeId, $channelPages)) {
+            return $channelPages[$contentTypeId];
         }
 
         $page = $this->dm->getRepository(ContentTypePage::class)
             ->findOneBy([
-                'channel.$id' => $channelId,
+                'channel.$id' => $resolvedChannelId,
                 'contentType.$id' => $contentTypeId,
             ]);
 
-        $this->contentTypePages[$channelId][$contentTypeId] = $page;
+        $this->contentTypePages[$channelCacheKey][$contentTypeId] = $page instanceof ContentTypePage ? $page : null;
 
-        return $page;
+        return $this->contentTypePages[$channelCacheKey][$contentTypeId];
+    }
+
+    /**
+     * @param string|null $channelId
+     */
+    private function resolveChannelId(?string $channelId = null): ?string
+    {
+        if (null !== $channelId) {
+            return (string) $channelId;
+        }
+
+        $channel = $this->channelContext->getChannel();
+
+        if ($channel instanceof Channel) {
+            return $channel->getId();
+        }
+
+        return null;
+    }
+
+    private function getGeneratedUrlCacheKey(ContentInterface $document, ?string $channelId, bool $fallback): string
+    {
+        return implode(':', [
+            $channelId ?? '_null',
+            (string) $document->getContentType(),
+            (string) ($document->getId() ?? $document->getSlug()),
+            $fallback ? '1' : '0',
+        ]);
     }
 }

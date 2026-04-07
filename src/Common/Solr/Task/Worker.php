@@ -51,7 +51,7 @@ class Worker extends Configurable
         $this->queue = $queue;
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'tasks' => 1000,

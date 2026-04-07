@@ -20,6 +20,7 @@
             <argument type="service" id="mailer"/>
             <argument type="service" id="router.default" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
+            <argument type="service" id="Integrated\Bundle\ContentBundle\Services\AssignedStatusCacheInvalidator" />
             <argument>%integrated_workflow_email%</argument>
             <argument type="service" id="request_stack" />
         </service>

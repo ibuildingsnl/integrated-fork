@@ -50,7 +50,13 @@ class FeaturedItemsBlock extends Block
      */
     public function getItems()
     {
-        $items = $this->items->toArray();
+        try {
+            $items = $this->items->toArray();
+        } catch (\Throwable) {
+            // Legacy block data can contain malformed Mongo references; skip the
+            // block items instead of failing the entire page render.
+            return [];
+        }
 
         usort($items, function ($a, $b) {
             return $a->getOrder() - $b->getOrder();

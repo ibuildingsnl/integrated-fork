@@ -51,7 +51,7 @@ class ContentRankType extends AbstractType
         $this->params = $params;
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $varNames = ['route', 'params', 'allow_clear'];
         foreach ($varNames as $varName) {

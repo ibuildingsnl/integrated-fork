@@ -22,6 +22,10 @@ class FacetQueryCanonicalizer
             return null;
         }
 
+        if ($request->query->count() === 0) {
+            return null;
+        }
+
         $facetFieldSelectionModes = $this->getFacetFieldSelectionModes($page);
         if ([] === $facetFieldSelectionModes) {
             return null;
@@ -67,10 +71,12 @@ class FacetQueryCanonicalizer
     private function getFacetFieldSelectionModes(Page $page): array
     {
         $fields = [];
+        $blockIds = $page->getBlockIds();
+        if ($blockIds === []) {
+            return $fields;
+        }
 
-        foreach ($page->getBlockIds() as $blockId) {
-            $block = $this->blockRepository->find($blockId);
-
+        foreach ($this->blockRepository->findByIds($blockIds) as $block) {
             if (!$block instanceof FacetBlock) {
                 continue;
             }
@@ -129,6 +135,6 @@ class FacetQueryCanonicalizer
 
         sort($values, \SORT_NATURAL | \SORT_FLAG_CASE);
 
-        return array_values($values);
+        return $values;
     }
 }

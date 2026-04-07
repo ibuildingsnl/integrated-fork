@@ -19,7 +19,11 @@
         <service id="integrated_page.theme_resolver" class="Integrated\Bundle\PageBundle\Resolver\ThemeResolver" public="true">
             <argument type="service" id="integrated_channel.config.resolver" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
+            <argument type="service" id="cache.app" />
         </service>
+        <service id="Integrated\Bundle\PageBundle\Resolver\ThemeResolver" alias="integrated_page.theme_resolver" />
+
+        <service id="Integrated\Bundle\PageBundle\EventListener\ThemeCacheInvalidationSubscriber" />
 
         <service id="integrated_page.grid.factory" class="Integrated\Bundle\PageBundle\Grid\GridFactory" public="true">
         </service>

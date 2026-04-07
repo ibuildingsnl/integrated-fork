@@ -1,10 +1,7 @@
 <ul class="header-nav">
     {% block navbar_assignee %}
         {% if app.user %}
-            <li class="dropdown-assigned-to-me dropdown close-outside top-bar hidden-xs {% if assignedContent|length == 0 %}hidden{% endif %}"
-                data-assigned-status-url="{{ path('integrated_content_content_assigned_status') }}"
-                data-assigned-poll-interval="30000"
-                data-assigned-header="{% trans %}Assigned to me{% endtrans %}:">
+            <li class="dropdown-assigned-to-me dropdown close-outside top-bar hidden-xs {% if assignedContent|length == 0 %}hidden{% endif %}">
                 <a class="btn btn-orange icon-left" data-toggle="dropdown">
                     <i class="iconoir-bell-notification"></i>
                     <span class="js-assigned-count">{{ assignedContent|length }}</span>
@@ -18,17 +15,9 @@
                                 </li>
                                 {% for doc in assignedContent %}
                                     <li class="assigned-item">
-                                        <a href="{{ path('integrated_content_content_edit', {id: doc.type_id}) }}" data-turbo-frame="_top">
-                                            {% if doc.workflow_color_string is defined %}
-                                                {% set status_color = doc.workflow_color_string|first %}
-                                            {% else %}
-                                                {% set status_color = '#6c7b89' %}
-                                            {% endif %}
-                                            {% if doc.workflow_icon_string is defined %}
-                                                {% set status_icon = doc.workflow_icon_string|first %}
-                                            {% else %}
-                                                {% set status_icon = '' %}
-                                            {% endif %}
+                                        <a href="{{ doc.edit_url|default('#') }}" data-turbo-frame="_top">
+                                            {% set status_color = doc.status_color|default('#6c7b89') %}
+                                            {% set status_icon = doc.status_icon|default('') %}
                                             <div class="workflow-status" style="background-color:{{ status_color|alpha(12) }};border-color:{{ status_color|alpha(45) }};color:{{ status_color }};">
                                                 <i class="iconoir-{{ status_icon }}"></i>
                                             </div>
@@ -41,159 +30,12 @@
                     </li>
                 </ul>
             </li>
-
-            <script>
-                (function () {
-                    if (window.__integratedAssignedPollerInitialized) {
-                        return;
-                    }
-                    window.__integratedAssignedPollerInitialized = true;
-
-                    var assignedNode = document.querySelector('.dropdown-assigned-to-me[data-assigned-status-url]');
-                    if (!assignedNode) {
-                        return;
-                    }
-
-                    var assignedUrl = assignedNode.getAttribute('data-assigned-status-url');
-                    var assignedPollInterval = parseInt(assignedNode.getAttribute('data-assigned-poll-interval') || '30000', 10);
-                    var assignedHeader = assignedNode.getAttribute('data-assigned-header') || 'Assigned to me:';
-                    var assignedCountNode = assignedNode.querySelector('.js-assigned-count');
-                    var assignedListNode = assignedNode.querySelector('.js-assigned-list');
-                    var assignedRequestRunning = false;
-
-                    function escapeHtml(value) {
-                        return String(value)
-                            .replace(/&/g, '&amp;')
-                            .replace(/</g, '&lt;')
-                            .replace(/>/g, '&gt;')
-                            .replace(/"/g, '&quot;')
-                            .replace(/'/g, '&#039;');
-                    }
-
-                    function normalizeHexColor(value) {
-                        var raw = String(value || '').trim();
-                        if (!raw) {
-                            return '';
-                        }
-                        var match = raw.match(/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/);
-                        if (!match) {
-                            return '';
-                        }
-                        var hex = match[1].toLowerCase();
-                        if (hex.length === 3) {
-                            hex = hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2);
-                        }
-                        return '#' + hex;
-                    }
-
-                    function rgbaFromHex(hexColor, alpha) {
-                        var hex = normalizeHexColor(hexColor).replace('#', '');
-                        if (!hex) {
-                            return '';
-                        }
-
-                        var red = parseInt(hex.substring(0, 2), 16);
-                        var green = parseInt(hex.substring(2, 4), 16);
-                        var blue = parseInt(hex.substring(4, 6), 16);
-
-                        return 'rgba(' + red + ', ' + green + ', ' + blue + ', ' + alpha + ')';
-                    }
-
-                    function workflowStatusStyle(color) {
-                        var baseColor = normalizeHexColor(color) || '#6c7b89';
-
-                        return 'background-color:' + rgbaFromHex(baseColor, 0.12) +
-                            ';border-color:' + rgbaFromHex(baseColor, 0.45) +
-                            ';color:' + baseColor + ';';
-                    }
-
-                    function renderAssignedItems(items) {
-                        if (!assignedListNode) {
-                            return;
-                        }
-
-                        var html = '<li class="header">' + escapeHtml(assignedHeader) + '</li>';
-                        for (var i = 0; i < items.length; i++) {
-                            var item = items[i];
-                            html += '<li class="assigned-item">';
-                            html += '<a href="' + escapeHtml(item.edit_url || '#') + '" data-turbo-frame="_top">';
-                            html += '<div class="workflow-status" style="' + workflowStatusStyle(item.status_color || '#6c7b89') + '">';
-                            html += '<i class="iconoir-' + escapeHtml(item.status_icon || '') + '"></i>';
-                            html += '</div>';
-                            html += '<span class="item-title">' + escapeHtml(item.title || '') + '</span>';
-                            html += '</a>';
-                            html += '</li>';
-                        }
-
-                        assignedListNode.innerHTML = html;
-                    }
-
-                    function applyAssignedStatus(status) {
-                        var assignedCount = parseInt(status.count || 0, 10);
-                        var assignedItems = Array.isArray(status.items) ? status.items : [];
-
-                        if (assignedCount <= 0) {
-                            assignedNode.classList.add('hidden');
-                            if (assignedCountNode) {
-                                assignedCountNode.textContent = '0';
-                            }
-                            return;
-                        }
-
-                        assignedNode.classList.remove('hidden');
-
-                        if (assignedCountNode) {
-                            assignedCountNode.textContent = String(assignedCount);
-                        }
-
-                        renderAssignedItems(assignedItems);
-                    }
-
-                    function pollAssignedStatus() {
-                        if (assignedRequestRunning || document.visibilityState === 'hidden') {
-                            return;
-                        }
-
-                        assignedRequestRunning = true;
-
-                        fetch(assignedUrl, {
-                            credentials: 'same-origin',
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        })
-                            .then(function (response) {
-                                if (!response.ok) {
-                                    throw new Error('Assigned status request failed');
-                                }
-
-                                return response.json();
-                            })
-                            .then(applyAssignedStatus)
-                            .catch(function () {
-                            })
-                            .finally(function () {
-                                assignedRequestRunning = false;
-                            });
-                    }
-
-                    pollAssignedStatus();
-                    window.setInterval(pollAssignedStatus, assignedPollInterval);
-                    document.addEventListener('visibilitychange', function () {
-                        if (document.visibilityState === 'visible') {
-                            pollAssignedStatus();
-                        }
-                    });
-                })();
-            </script>
         {% endif %}
     {% endblock navbar_assignee %}
 
     {% block navbar_queue %}
-        {% if is_granted('ROLE_ADMIN') %}
-            <li class="dropdown-queue dropdown close-outside top-bar hidden-xs {% if queuecount == 0 %}hidden{% endif %}"
-                data-queue-status-url="{{ path('integrated_content_content_queue_status') }}"
-                data-queue-poll-interval="30000">
+        {% if is_granted('ROLE_ADMIN') and queuecount > 0 %}
+            <li class="dropdown-queue dropdown close-outside top-bar hidden-xs">
                 <a class="btn btn-green icon-left" data-toggle="dropdown">
                     <i class="iconoir-database-backup"></i>
                     <span class="js-queue-count">{{ queuecount }}</span>
@@ -220,88 +62,6 @@
                     </li>
                 </ul>
             </li>
-
-            <script>
-                (function () {
-                    if (window.__integratedQueuePollerInitialized) {
-                        return;
-                    }
-                    window.__integratedQueuePollerInitialized = true;
-
-                    var queueNode = document.querySelector('.dropdown-queue[data-queue-status-url]');
-                    if (!queueNode) {
-                        return;
-                    }
-
-                    var queueUrl = queueNode.getAttribute('data-queue-status-url');
-                    var queuePollInterval = parseInt(queueNode.getAttribute('data-queue-poll-interval') || '30000', 10);
-                    var queueCountNode = queueNode.querySelector('.js-queue-count');
-                    var queueProgressNode = queueNode.querySelector('.js-queue-progress');
-                    var queuePercentageNode = queueNode.querySelector('.js-queue-percentage');
-                    var queueRequestRunning = false;
-
-                    function applyQueueStatus(status) {
-                        var queueCount = parseInt(status.queuecount || 0, 10);
-                        var queuePercentage = parseInt(status.queuepercentage || 0, 10);
-
-                        if (queueCount <= 0) {
-                            queueNode.classList.add('hidden');
-                            return;
-                        }
-
-                        queueNode.classList.remove('hidden');
-
-                        if (queueCountNode) {
-                            queueCountNode.textContent = String(queueCount);
-                        }
-
-                        if (queueProgressNode) {
-                            queueProgressNode.style.width = queuePercentage + '%';
-                            queueProgressNode.setAttribute('aria-valuenow', String(queuePercentage));
-                        }
-
-                        if (queuePercentageNode) {
-                            queuePercentageNode.textContent = queuePercentage + '%';
-                        }
-                    }
-
-                    function pollQueueStatus() {
-                        if (queueRequestRunning || document.visibilityState === 'hidden') {
-                            return;
-                        }
-
-                        queueRequestRunning = true;
-
-                        fetch(queueUrl, {
-                            credentials: 'same-origin',
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        })
-                            .then(function (response) {
-                                if (!response.ok) {
-                                    throw new Error('Queue status request failed');
-                                }
-
-                                return response.json();
-                            })
-                            .then(applyQueueStatus)
-                            .catch(function () {
-                            })
-                            .finally(function () {
-                                queueRequestRunning = false;
-                            });
-                    }
-
-                    pollQueueStatus();
-                    window.setInterval(pollQueueStatus, queuePollInterval);
-                    document.addEventListener('visibilitychange', function () {
-                        if (document.visibilityState === 'visible') {
-                            pollQueueStatus();
-                        }
-                    });
-                })();
-            </script>
         {% endif %}
     {% endblock navbar_queue %}
 

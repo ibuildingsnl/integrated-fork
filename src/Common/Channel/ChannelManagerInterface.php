@@ -43,7 +43,7 @@ interface ChannelManagerInterface
     /**
      * Finds the user by its identifier.
      *
-     * @return ChannelInterface
+     * @return ChannelInterface|null
      */
     public function find($id);
 
@@ -59,7 +59,7 @@ interface ChannelManagerInterface
      *
      * @param string $criteria
      *
-     * @return ChannelInterface
+     * @return ChannelInterface|null
      */
     public function findByDomain($criteria);
 
@@ -68,7 +68,7 @@ interface ChannelManagerInterface
      *
      * @param string $criteria
      *
-     * @return ChannelInterface
+     * @return ChannelInterface|null
      */
     public function findByName($criteria);
 

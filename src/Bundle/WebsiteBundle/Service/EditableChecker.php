@@ -108,8 +108,8 @@ class EditableChecker
             return false;
         }
 
-        $sessionCookieName = session_name();
-        if (\is_string($sessionCookieName) && $sessionCookieName !== '' && $this->request->cookies->has($sessionCookieName)) {
+        $sessionCookieName = (string) session_name();
+        if ($sessionCookieName !== '' && $this->request->cookies->has($sessionCookieName)) {
             return true;
         }
 

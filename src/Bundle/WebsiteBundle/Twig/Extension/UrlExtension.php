@@ -14,6 +14,7 @@ namespace Integrated\Bundle\WebsiteBundle\Twig\Extension;
 use Integrated\Bundle\PageBundle\Services\SolrUrlExtractor;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
 use Integrated\Common\Content\ContentInterface;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -38,7 +39,7 @@ class UrlExtension extends AbstractExtension
         $this->solrUrlExtractor = $solrUrlExtractor;
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('integrated_url', $this->getUrl(...)),
@@ -53,15 +54,21 @@ class UrlExtension extends AbstractExtension
      */
     public function getUrl($document, $channelId = null, $fallback = true)
     {
-        if ($document instanceof ContentInterface) {
-            return $this->urlResolver->generateUrl($document, $channelId, $fallback);
-        }
+        try {
+            if ($document instanceof ContentInterface) {
+                return $this->urlResolver->generateUrl($document, $channelId, $fallback);
+            }
 
-        // probably solr document
-        return $this->solrUrlExtractor->getUrl($document, $channelId);
+            // probably solr document
+            return $this->solrUrlExtractor->getUrl($document, $channelId);
+        } catch (RouteNotFoundException $e) {
+            // Missing content-type page routes should not break rendering contexts
+            // like admin content edit toolbars.
+            return null;
+        }
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'integrated_page_url';
     }

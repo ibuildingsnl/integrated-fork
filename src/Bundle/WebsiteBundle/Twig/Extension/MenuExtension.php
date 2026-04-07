@@ -91,7 +91,7 @@ class MenuExtension extends AbstractExtension
         ]);
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction(
@@ -220,7 +220,7 @@ class MenuExtension extends AbstractExtension
         }
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'integrated_website_menu';
     }

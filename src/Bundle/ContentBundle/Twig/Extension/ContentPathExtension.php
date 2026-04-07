@@ -22,10 +22,7 @@ class ContentPathExtension extends AbstractExtension
         $this->documentManager = $documentManager;
     }
 
-    /**
-     * @return array
-     */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('integrated_content_path', $this->getContentPath(...)),
