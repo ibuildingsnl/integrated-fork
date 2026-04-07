@@ -31,7 +31,7 @@ final class ChannelDeletionProcessor
 
     public function process(Channel $channel, bool $deleteReferenced): ChannelDeletionReport
     {
-        $report = new ChannelDeletionReport($channel->getId());
+        $report = new ChannelDeletionReport((string) $channel->getId());
 
         $referencedDocuments = $this->searchContentReferenced->getReferencedDocuments($channel);
         if (!$deleteReferenced && \count($referencedDocuments) > 0) {

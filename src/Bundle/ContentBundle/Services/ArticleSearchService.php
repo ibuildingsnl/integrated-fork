@@ -68,12 +68,15 @@ class ArticleSearchService implements ArticleSearchServiceInterface
         }
 
         $channels = array_filter($this->getAllowedChannels($user), static function (Channel $channel): bool {
-            return $channel->getPrimaryDomain() !== null && $channel->getPrimaryDomain() !== '';
+            return $channel->getPrimaryDomain() !== null
+                && $channel->getPrimaryDomain() !== ''
+                && \is_string($channel->getId())
+                && $channel->getId() !== '';
         });
 
         return array_values(array_map(static function (Channel $channel): array {
             return [
-                'key' => $channel->getId(),
+                'key' => (string) $channel->getId(),
                 'label' => str_replace(' Website', '', (string) $channel->getName()),
             ];
         }, $channels));

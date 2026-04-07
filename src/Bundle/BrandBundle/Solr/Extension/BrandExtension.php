@@ -47,10 +47,13 @@ class BrandExtension implements TypeExtensionInterface
                 continue;
             }
 
+            $channelName = $channel->getName();
+            $channelLabel = \is_string($channelName) && $channelName !== '' ? $channelName : (string) ($channel->getId() ?? '');
+
             $this->addWebsiteChannelPresentation(
                 $container,
                 $channel,
-                $channel->getName() ?: $channel->getId(),
+                $channelLabel,
                 null,
                 $indexedWebsiteChannels
             );
@@ -76,7 +79,7 @@ class BrandExtension implements TypeExtensionInterface
             return;
         }
 
-        $channelId = trim($channel->getId());
+        $channelId = trim((string) $channel->getId());
         if ($channelId === '' || isset($indexedWebsiteChannels[$channelId])) {
             return;
         }

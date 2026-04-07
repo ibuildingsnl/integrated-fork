@@ -52,6 +52,7 @@ class PageCopyService
         if ($targetChannel === null) {
             throw new \Exception('Channel not found');
         }
+        $targetChannelId = (string) $targetChannel->getId();
 
         $result = $this->documentManager->getRepository(Page::class)->findBy(
             [
@@ -67,20 +68,20 @@ class PageCopyService
         foreach ($result as $page) {
             $pageInstruction = $request->getPageInstruction((string) $page->getId());
             if ($pageInstruction instanceof PageCopyInstruction) {
-                $existingPage = $this->findExistingTargetPage($targetChannel->getId(), (string) $page->getPath(), $existingPages);
+                $existingPage = $this->findExistingTargetPage($targetChannelId, (string) $page->getPath(), $existingPages);
 
                 if ($existingPage !== null) {
                     if (!$pageInstruction->shouldOverwrite()) {
                         throw new \InvalidArgumentException(\sprintf(
                             'Target page "%s" already exists in channel "%s".',
                             (string) $page->getPath(),
-                            (string) $targetChannel->getId()
+                            $targetChannelId
                         ));
                     }
 
                     $this->documentManager->remove($existingPage);
                     $this->documentManager->flush();
-                    $existingPages[$targetChannel->getId().'|'.(string) $page->getPath()] = null;
+                    $existingPages[$targetChannelId.'|'.(string) $page->getPath()] = null;
                 }
 
                 $this->documentManager->detach($page);

@@ -22,8 +22,8 @@ use Integrated\Common\Channel\Event\ChannelEvent;
 use Integrated\Common\Channel\Events as ChannelEvents;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Security\Resolver\PermissionResolver;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormInterface;
@@ -158,7 +158,7 @@ class ChannelController extends AbstractController
         $referenced = $this->searchContentReferenced->getReferenced($channel);
         $referencedDocuments = $this->searchContentReferenced->getReferencedDocuments($channel);
 
-        $form = $this->createDeleteForm($channel->getId(), \count($referenced) === 0);
+        $form = $this->createDeleteForm((string) $channel->getId(), \count($referenced) === 0);
         $form->handleRequest($request);
 
         if ($form->get('actions')->getData() == 'cancel') {

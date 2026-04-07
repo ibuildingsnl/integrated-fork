@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Bulk;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Integrated\Bundle\ContentBundle\Services\AssignedStatusCacheInvalidator;
+use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
@@ -118,10 +119,10 @@ class WorkflowAssignHandler implements HandlerInterface
     /**
      * @return array<int, string|null>
      */
-    private function getAffectedAssignedUserIds(?UserInterface $currentAssigned, ?UserInterface $assigned): array
+    private function getAffectedAssignedUserIds(UserInterface|GroupInterface|null $currentAssigned, ?UserInterface $assigned): array
     {
         return [
-            $currentAssigned instanceof UserInterface ? (string) $currentAssigned->getId() : null,
+            $currentAssigned instanceof UserInterface || $currentAssigned instanceof GroupInterface ? (string) $currentAssigned->getId() : null,
             $assigned instanceof UserInterface ? (string) $assigned->getId() : null,
         ];
     }

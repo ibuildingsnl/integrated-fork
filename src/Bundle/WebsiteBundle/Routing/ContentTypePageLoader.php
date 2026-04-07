@@ -111,11 +111,13 @@ class ContentTypePageLoader extends Loader
 
     private function getRoutePath(string $path): string
     {
-        return preg_replace_callback(
+        $routePath = preg_replace_callback(
             '/(#)([\s\S]+?)(#)/',
             static fn (array $matches): string => \sprintf('{%s}', $matches[2]),
             $path
         );
+
+        return \is_string($routePath) ? $routePath : $path;
     }
 
     private function getRouteName(string $pageId): string

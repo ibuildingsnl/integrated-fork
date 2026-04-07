@@ -27,15 +27,15 @@ use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
 use Integrated\Bundle\ContentBundle\Provider\MediaProvider;
-use Integrated\Bundle\ContentBundle\Services\CalendarOptions;
 use Integrated\Bundle\ContentBundle\Services\AssignedStatusCacheInvalidator;
+use Integrated\Bundle\ContentBundle\Services\CalendarOptions;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
-use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOptions;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Content\ContentInterface;
@@ -444,7 +444,7 @@ class ContentController extends AbstractController
         foreach ($contentRelations as $contentRelation) {
             foreach ($contentRelation->getTargets() as $target) {
                 $targetId = (string) $target->getId();
-                if (!array_key_exists($targetId, $overviewByTarget)) {
+                if (!\array_key_exists($targetId, $overviewByTarget)) {
                     $overviewByTarget[$targetId] = $this->taxonomyIndexer->overviewFor(
                         $targetId,
                         (new TaxonomyOptions())->withoutUsageCounts()
@@ -1330,48 +1330,88 @@ class ContentController extends AbstractController
         $cacheItem = $cache->getItem(AssignedStatusCacheInvalidator::getCacheItemKey((string) $user->getId()));
 
         $payload = $cacheItem->isHit() ? $cacheItem->get() : null;
-        if (!\is_array($payload) || !isset($payload['count'], $payload['items'])) {
-            $items = array_map(function (array $document): array {
-                $contentId = (string) ($document['type_id'] ?? '');
-                $title = (string) ($document['title'] ?? '');
-
-                $statusColor = '#6c7b89';
-                $statusIcon = '';
-
-                if (isset($document['workflow_color_string'])) {
-                    $colors = (array) $document['workflow_color_string'];
-                    $firstColor = reset($colors);
-                    if ($firstColor) {
-                        $statusColor = (string) $firstColor;
-                    }
-                }
-
-                if (isset($document['workflow_icon_string'])) {
-                    $icons = (array) $document['workflow_icon_string'];
-                    $firstIcon = reset($icons);
-                    if ($firstIcon) {
-                        $statusIcon = (string) $firstIcon;
-                    }
-                }
-
-                return [
-                    'id' => $contentId,
-                    'title' => $title,
-                    'status_color' => $statusColor,
-                    'status_icon' => $statusIcon,
-                    'edit_url' => $contentId !== '' ? $this->generateUrl('integrated_content_content_edit', ['id' => $contentId]) : '#',
-                ];
-            }, $this->getAssignedContent());
-
-            $payload = [
-                'count' => \count($items),
-                'items' => $items,
-            ];
-            $cacheItem->set($payload);
-            $cache->save($cacheItem);
+        if (\is_array($payload)) {
+            $normalizedPayload = $this->normalizeAssignedStatusPayload($payload);
+            if ($normalizedPayload !== null) {
+                return $normalizedPayload;
+            }
         }
 
-        return $payload;
+        $items = array_map(function (array $document): array {
+            $contentId = (string) ($document['type_id'] ?? '');
+            $title = (string) ($document['title'] ?? '');
+
+            $statusColor = '#6c7b89';
+            $statusIcon = '';
+
+            if (isset($document['workflow_color_string'])) {
+                $colors = (array) $document['workflow_color_string'];
+                $firstColor = reset($colors);
+                if ($firstColor) {
+                    $statusColor = (string) $firstColor;
+                }
+            }
+
+            if (isset($document['workflow_icon_string'])) {
+                $icons = (array) $document['workflow_icon_string'];
+                $firstIcon = reset($icons);
+                if ($firstIcon) {
+                    $statusIcon = (string) $firstIcon;
+                }
+            }
+
+            return [
+                'id' => $contentId,
+                'title' => $title,
+                'status_color' => $statusColor,
+                'status_icon' => $statusIcon,
+                'edit_url' => $contentId !== '' ? $this->generateUrl('integrated_content_content_edit', ['id' => $contentId]) : '#',
+            ];
+        }, $this->getAssignedContent());
+
+        $payload = [
+            'count' => \count($items),
+            'items' => $items,
+        ];
+        $cacheItem->set($payload);
+        $cache->save($cacheItem);
+
+        return $this->normalizeAssignedStatusPayload($payload) ?? [
+            'count' => 0,
+            'items' => [],
+        ];
+    }
+
+    /**
+     * @param array<mixed> $payload
+     *
+     * @return array{count: int, items: array<int, array{id: string, title: string, status_color: string, status_icon: string, edit_url: string}>}|null
+     */
+    private function normalizeAssignedStatusPayload(array $payload): ?array
+    {
+        if (!\array_key_exists('items', $payload) || !\is_array($payload['items'])) {
+            return null;
+        }
+
+        $items = [];
+        foreach ($payload['items'] as $item) {
+            if (!\is_array($item)) {
+                continue;
+            }
+
+            $items[] = [
+                'id' => (string) ($item['id'] ?? ''),
+                'title' => (string) ($item['title'] ?? ''),
+                'status_color' => (string) ($item['status_color'] ?? '#6c7b89'),
+                'status_icon' => (string) ($item['status_icon'] ?? ''),
+                'edit_url' => (string) ($item['edit_url'] ?? '#'),
+            ];
+        }
+
+        return [
+            'count' => \count($items),
+            'items' => $items,
+        ];
     }
 
     public function queueStatus(Request $request): JsonResponse
