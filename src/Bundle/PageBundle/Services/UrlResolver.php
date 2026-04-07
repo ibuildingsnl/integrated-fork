@@ -35,9 +35,9 @@ class UrlResolver
     protected $channelContext;
 
     /**
-     * @var ContentTypePage[]
+     * @var array<string, array<string, ContentTypePage|null>>
      */
-    protected $contentTypePages = [];
+    protected array $contentTypePages = [];
 
     /**
      * @var array<string, string|null>
@@ -90,21 +90,17 @@ class UrlResolver
         return \sprintf('%s_%s', ContentTypePageLoader::ROUTE_PREFIX, $page->getId());
     }
 
-    /**
-     * @param null $channelId
-     *
-     * @return string|null
-     */
-    public function generateUrl(ContentInterface $document, $channelId = null, bool $fallback = true)
+    public function generateUrl(ContentInterface $document, ?string $channelId = null, bool $fallback = true): ?string
     {
         $channelId = $this->resolveChannelId($channelId);
         $cacheKey = $this->getGeneratedUrlCacheKey($document, $channelId, $fallback);
+        $contentTypeId = (string) $document->getContentType();
 
         if (\array_key_exists($cacheKey, $this->generatedUrls)) {
             return $this->generatedUrls[$cacheKey];
         }
 
-        $page = $this->getContentTypePageById($document->getContentType(), $channelId);
+        $page = $this->getContentTypePageById($contentTypeId, $channelId);
 
         if ($page instanceof ContentTypePage) {
             return $this->generatedUrls[$cacheKey] = $this->getContentTypePageUrl($page, $document);
@@ -118,7 +114,7 @@ class UrlResolver
         return $this->generatedUrls[$cacheKey] = \sprintf(
             '%s/content/%s/%s',
             $this->router->getContext()->getBaseUrl(),
-            $document->getContentType(),
+            $contentTypeId,
             // todo INTEGRATED-440 add Slug to ContentInterface
             $document->getSlug()
         );
@@ -177,32 +173,31 @@ class UrlResolver
         return $relationIds;
     }
 
-    /**
-     * @return ContentTypePage
-     */
-    protected function getContentTypePageById($contentTypeId, $channelId = null)
+    protected function getContentTypePageById(string $contentTypeId, ?string $channelId = null): ?ContentTypePage
     {
-        $channelId = $this->resolveChannelId($channelId);
+        $resolvedChannelId = $this->resolveChannelId($channelId);
+        $channelCacheKey = $resolvedChannelId ?? '_null';
+        $channelPages = $this->contentTypePages[$channelCacheKey] ?? [];
 
-        if (isset($this->contentTypePages[$channelId][$contentTypeId])) {
-            return $this->contentTypePages[$channelId][$contentTypeId];
+        if (\array_key_exists($contentTypeId, $channelPages)) {
+            return $channelPages[$contentTypeId];
         }
 
         $page = $this->dm->getRepository(ContentTypePage::class)
             ->findOneBy([
-                'channel.$id' => $channelId,
+                'channel.$id' => $resolvedChannelId,
                 'contentType.$id' => $contentTypeId,
             ]);
 
-        $this->contentTypePages[$channelId][$contentTypeId] = $page instanceof ContentTypePage ? $page : null;
+        $this->contentTypePages[$channelCacheKey][$contentTypeId] = $page instanceof ContentTypePage ? $page : null;
 
-        return $this->contentTypePages[$channelId][$contentTypeId];
+        return $this->contentTypePages[$channelCacheKey][$contentTypeId];
     }
 
     /**
      * @param string|null $channelId
      */
-    private function resolveChannelId($channelId = null): ?string
+    private function resolveChannelId(?string $channelId = null): ?string
     {
         if (null !== $channelId) {
             return (string) $channelId;
