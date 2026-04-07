@@ -12,8 +12,8 @@
 namespace Integrated\Bundle\WorkflowBundle\Form\Type;
 
 use Integrated\Bundle\FormTypeBundle\Form\Type\Select2Type;
-use Integrated\Bundle\UserBundle\Doctrine\UserManager;
 use Integrated\Bundle\WorkflowBundle\Form\EventListener\WorkflowDefaultDataListener;
+use Integrated\Bundle\WorkflowBundle\Service\WorkflowAssigneeChoiceProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -28,9 +28,9 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 class WorkflowFormType extends AbstractType
 {
     /**
-     * @var UserManager
+     * @var WorkflowAssigneeChoiceProvider
      */
-    private $userManager;
+    private $assigneeChoiceProvider;
 
     /**
      * @var TokenStorageInterface
@@ -40,9 +40,9 @@ class WorkflowFormType extends AbstractType
     /**
      * WorkflowFormType constructor.
      */
-    public function __construct(UserManager $userManager, TokenStorageInterface $tokenStorage)
+    public function __construct(WorkflowAssigneeChoiceProvider $assigneeChoiceProvider, TokenStorageInterface $tokenStorage)
     {
-        $this->userManager = $userManager;
+        $this->assigneeChoiceProvider = $assigneeChoiceProvider;
         $this->tokenStorage = $tokenStorage;
     }
 
@@ -75,7 +75,7 @@ class WorkflowFormType extends AbstractType
                 'placeholder' => 'Not Assigned',
                 'required' => false,
                 'attr' => ['class' => 'assigned-choice'],
-                'choices' => $this->getAssigned(),
+                'choices' => $this->assigneeChoiceProvider->getChoices(),
             ]
         );
 
@@ -94,28 +94,6 @@ class WorkflowFormType extends AbstractType
 
         $builder->addEventSubscriber(new WorkflowDefaultDataListener($this->tokenStorage));
     }
-
-    /**
-     * @return array
-     */
-    public function getAssigned()
-    {
-        $builder = $this->userManager->createQueryBuilder();
-
-        $builder->join('User.scope', 'us');
-        $builder->where('us.admin = 1');
-
-        $query = $builder->getQuery();
-
-        $users = [];
-
-        foreach ($query->getArrayResult() as $item) {
-            $users[$item['username']] = $item['id'];
-        }
-
-        return $users;
-    }
-
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired('workflow');

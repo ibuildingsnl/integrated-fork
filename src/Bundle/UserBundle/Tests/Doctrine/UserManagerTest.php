@@ -9,6 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 use Integrated\Bundle\UserBundle\Doctrine\UserManager;
 use Integrated\Bundle\UserBundle\Model\ScopeInterface;
 use Integrated\Bundle\UserBundle\Model\User;
+use Integrated\Bundle\WorkflowBundle\Service\WorkflowAssigneeChoiceCacheInvalidator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
@@ -50,7 +51,7 @@ class UserManagerTest extends TestCase
         $em = $this->createMock(EntityManagerInterface::class);
         $em->method('getRepository')->with(User::class)->willReturn($repository);
 
-        $manager = new UserManager($em, User::class, $this->createMock(PasswordHasherFactoryInterface::class));
+        $manager = new UserManager($em, User::class, $this->createMock(PasswordHasherFactoryInterface::class), $this->createMock(WorkflowAssigneeChoiceCacheInvalidator::class));
         $manager->findEnabledByUsernameOrEmailAndScope('user@example.com');
 
         self::assertContains('(User.username = :identifier OR User.email = :identifier)', $where);
@@ -93,10 +94,44 @@ class UserManagerTest extends TestCase
         $scope = $this->createMock(ScopeInterface::class);
         $scope->method('getId')->willReturn(42);
 
-        $manager = new UserManager($em, User::class, $this->createMock(PasswordHasherFactoryInterface::class));
+        $manager = new UserManager($em, User::class, $this->createMock(PasswordHasherFactoryInterface::class), $this->createMock(WorkflowAssigneeChoiceCacheInvalidator::class));
         $manager->findEnabledByUsernameOrEmailAndScope('admin@example.com', $scope);
 
         self::assertContains('(User.scope = :scope)', $andWhere);
         self::assertSame(42, $params['scope'] ?? null);
+    }
+
+    public function testPersistInvalidatesWorkflowAssigneeChoices(): void
+    {
+        $repository = $this->createMock(EntityRepository::class);
+        $repository->method('getClassName')->willReturn(User::class);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getRepository')->with(User::class)->willReturn($repository);
+        $em->expects(self::once())->method('persist');
+        $em->expects(self::once())->method('flush');
+
+        $invalidator = $this->createMock(WorkflowAssigneeChoiceCacheInvalidator::class);
+        $invalidator->expects(self::once())->method('invalidate');
+
+        $manager = new UserManager($em, User::class, $this->createMock(PasswordHasherFactoryInterface::class), $invalidator);
+        $manager->persist(new User());
+    }
+
+    public function testRemoveInvalidatesWorkflowAssigneeChoices(): void
+    {
+        $repository = $this->createMock(EntityRepository::class);
+        $repository->method('getClassName')->willReturn(User::class);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getRepository')->with(User::class)->willReturn($repository);
+        $em->expects(self::once())->method('remove');
+        $em->expects(self::once())->method('flush');
+
+        $invalidator = $this->createMock(WorkflowAssigneeChoiceCacheInvalidator::class);
+        $invalidator->expects(self::once())->method('invalidate');
+
+        $manager = new UserManager($em, User::class, $this->createMock(PasswordHasherFactoryInterface::class), $invalidator);
+        $manager->remove(new User());
     }
 }

@@ -27,9 +27,18 @@
         </service>
 
         <service id="integrated_workflow.form.workflow.type" class="Integrated\Bundle\WorkflowBundle\Form\Type\WorkflowFormType">
-            <argument type="service" id="integrated_user.user.manager"/>
+            <argument type="service" id="Integrated\Bundle\WorkflowBundle\Service\WorkflowAssigneeChoiceProvider"/>
             <argument type="service" id="security.token_storage"/>
             <tag name="form.type"/>
+        </service>
+
+        <service id="Integrated\Bundle\WorkflowBundle\Service\WorkflowAssigneeChoiceProvider">
+            <argument type="service" id="integrated_user.user.manager"/>
+            <argument type="service" id="cache.app"/>
+        </service>
+
+        <service id="Integrated\Bundle\WorkflowBundle\Service\WorkflowAssigneeChoiceCacheInvalidator">
+            <argument type="service" id="cache.app"/>
         </service>
 
         <service id="integrated_workflow.form.workflow.state.type" class="Integrated\Bundle\WorkflowBundle\Form\Type\WorkflowStateType" public="true">

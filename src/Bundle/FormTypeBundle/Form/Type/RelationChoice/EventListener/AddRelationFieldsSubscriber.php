@@ -81,6 +81,8 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
             $relationIds[] = $relation->getRelationId();
         }
 
+        $this->preloadRelations($this->options['relations']);
+
         foreach ($this->options['relations'] as $relationId) {
             $relation = $this->findRelation($relationId, $event->getForm()->getParent()->getData());
 
@@ -110,7 +112,7 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
      */
     protected function findRelation($relationId, $formData)
     {
-        $relation = $this->repo->find($relationId);
+        $relation = $this->getRelation($relationId);
         if (!$relation instanceof Relation) {
             throw new \Exception(\sprintf('RelationId "%s" is not found', $relationId));
         }
@@ -131,6 +133,38 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
         $this->setRelation($relationId, $relation);
 
         return $relation;
+    }
+
+    /**
+     * @param array<int, string> $relationIds
+     */
+    protected function preloadRelations(array $relationIds): void
+    {
+        $missingRelationIds = [];
+
+        foreach ($relationIds as $relationId) {
+            if (!$this->relations->containsKey($relationId)) {
+                $missingRelationIds[] = $relationId;
+            }
+        }
+
+        if ([] === $missingRelationIds) {
+            return;
+        }
+
+        $criteria = ['$or' => []];
+
+        foreach ($missingRelationIds as $relationId) {
+            $criteria['$or'][] = ['id' => $relationId];
+        }
+
+        foreach ($this->repo->findBy($criteria) as $relation) {
+            if (!$relation instanceof Relation) {
+                continue;
+            }
+
+            $this->setRelation($relation->getId(), $relation);
+        }
     }
 
     protected function addFormFields(FormEvent $event)

@@ -55,6 +55,17 @@ class ContentEditStatusStreamFlowTest extends TestCase
         $this->assertStringContainsString('window.schedulePublicationSettingsInit()', $template);
     }
 
+    public function testEditTemplateInitializesWorkflowSectionIdempotently(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/content/edit.html.twig');
+
+        $this->assertIsString($template);
+        $this->assertStringContainsString("\$workflowRoot.attr('data-workflow-state-initialized') === 'true'", $template);
+        $this->assertStringContainsString("\$workflowRoot.attr('data-workflow-state-initialized', 'true');", $template);
+        $this->assertStringContainsString('window.requestAnimationFrame(initializeWorkflowSection);', $template);
+        $this->assertStringNotContainsString('window.setTimeout(initializeWorkflowSection, 50);', $template);
+    }
+
     public function testStatusOptionsUsePublishableWorkflowStateForPlannedContent(): void
     {
         $template = file_get_contents(__DIR__.'/../../Resources/views/content/partial/status_options.html.twig');

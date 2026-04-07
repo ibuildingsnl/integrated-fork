@@ -32,6 +32,11 @@ class WorkflowStateType extends AbstractType
      */
     private $repository;
 
+    /**
+     * @var array<string, Definition|null>
+     */
+    private array $workflowCache = [];
+
     public function __construct(ObjectRepository $repository)
     {
         $this->repository = $repository;
@@ -74,7 +79,12 @@ class WorkflowStateType extends AbstractType
     {
         $workflowNormalizer = function (Options $options, $workflow) {
             if (\is_string($workflow)) {
-                $workflow = $this->repository->find($workflow);
+                if (!array_key_exists($workflow, $this->workflowCache)) {
+                    $resolvedWorkflow = $this->repository->find($workflow);
+                    $this->workflowCache[$workflow] = $resolvedWorkflow instanceof Definition ? $resolvedWorkflow : null;
+                }
+
+                $workflow = $this->workflowCache[$workflow];
             }
 
             if (!$workflow instanceof Definition) {

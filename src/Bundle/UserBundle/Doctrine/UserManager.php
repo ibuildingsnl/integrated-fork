@@ -18,6 +18,7 @@ use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Model\ScopeInterface;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
+use Integrated\Bundle\WorkflowBundle\Service\WorkflowAssigneeChoiceCacheInvalidator;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
 /**
@@ -40,7 +41,9 @@ class UserManager implements UserManagerInterface
      */
     private $hasherFactory;
 
-    public function __construct(EntityManagerInterface $om, string $class, PasswordHasherFactoryInterface $hasherFactory)
+    private WorkflowAssigneeChoiceCacheInvalidator $workflowAssigneeChoiceCacheInvalidator;
+
+    public function __construct(EntityManagerInterface $om, string $class, PasswordHasherFactoryInterface $hasherFactory, WorkflowAssigneeChoiceCacheInvalidator $workflowAssigneeChoiceCacheInvalidator)
     {
         $this->om = $om;
         $this->repository = $this->om->getRepository($class);
@@ -50,6 +53,7 @@ class UserManager implements UserManagerInterface
         }
 
         $this->hasherFactory = $hasherFactory;
+        $this->workflowAssigneeChoiceCacheInvalidator = $workflowAssigneeChoiceCacheInvalidator;
     }
 
     /**
@@ -82,6 +86,8 @@ class UserManager implements UserManagerInterface
         if ($flush) {
             $this->om->flush();
         }
+
+        $this->workflowAssigneeChoiceCacheInvalidator->invalidate();
     }
 
     public function remove(UserInterface $user, $flush = true)
@@ -91,6 +97,8 @@ class UserManager implements UserManagerInterface
         if ($flush) {
             $this->om->flush();
         }
+
+        $this->workflowAssigneeChoiceCacheInvalidator->invalidate();
     }
 
     public function clear()

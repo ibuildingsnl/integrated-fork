@@ -14,6 +14,7 @@
             <argument type="service" id="integrated_user.doctrine.object_manager"/>
             <argument>Integrated\Bundle\UserBundle\Model\User</argument>
             <argument type="service" id="security.password_hasher_factory"/>
+            <argument type="service" id="Integrated\Bundle\WorkflowBundle\Service\WorkflowAssigneeChoiceCacheInvalidator"/>
         </service>
 
         <service id="Integrated\Bundle\UserBundle\Doctrine\UserManager" alias="integrated_user.user.manager.doctrine"/>
@@ -33,6 +34,7 @@
         <service id="integrated_user.scope.manager.doctrine" class="Integrated\Bundle\UserBundle\Doctrine\ScopeManager">
             <argument type="service" id="integrated_user.doctrine.object_manager"/>
             <argument>Integrated\Bundle\UserBundle\Model\Scope</argument>
+            <argument type="service" id="Integrated\Bundle\WorkflowBundle\Service\WorkflowAssigneeChoiceCacheInvalidator"/>
         </service>
 
         <service id="integrated_user.ip_list.manager.doctrine" class="Integrated\Bundle\UserBundle\Doctrine\IpListManager">

@@ -872,6 +872,12 @@
                 return;
             }
 
+            if ($workflowRoot.attr('data-workflow-state-initialized') === 'true') {
+                return;
+            }
+
+            $workflowRoot.attr('data-workflow-state-initialized', 'true');
+
             if (!$assigned.hasClass('select2-hidden-accessible')) {
                 $assigned.select2();
             }
@@ -988,7 +994,6 @@
 
         function scheduleWorkflowInit() {
             window.requestAnimationFrame(initializeWorkflowSection);
-            window.setTimeout(initializeWorkflowSection, 50);
         }
 
         document.addEventListener('DOMContentLoaded', scheduleWorkflowInit);

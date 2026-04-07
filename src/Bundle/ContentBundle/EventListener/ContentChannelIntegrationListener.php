@@ -31,6 +31,11 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class ContentChannelIntegrationListener implements EventSubscriberInterface
 {
     /**
+     * @var array<string, array<int, ChannelInterface>>
+     */
+    private array $channelsCache = [];
+
+    /**
      * @var ObjectRepository<ChannelInterface>
      */
     private $repository;
@@ -95,37 +100,50 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
             $enforce = [];
             $default = [];
             $notPermitted = [];
+            $choiceAttributes = [];
 
             foreach ($choices as $index => $value) {
                 $authorizedRead = $this->authorizationChecker->isGranted(PermissionInterface::READ, $value);
                 $authorizedWrite = $this->authorizationChecker->isGranted(PermissionInterface::WRITE, $value);
+                $channelId = $value->getId();
 
-                if (isset($channels[$value->getId()])) {
-                    if ($channels[$value->getId()]) {
-                        $enforce[$value->getId()] = $value;
-                        $default[$value->getId()] = $value;
+                if (isset($channels[$channelId])) {
+                    if ($channels[$channelId]) {
+                        $enforce[$channelId] = $value;
+                        $default[$channelId] = $value;
                     } elseif ($authorizedWrite) {
-                        $default[$value->getId()] = $value;
+                        $default[$channelId] = $value;
                     }
                 }
 
                 if (!$authorizedWrite) {
-                    $notPermitted[$value->getId()] = $value;
+                    $notPermitted[$channelId] = $value;
+                    $choiceAttributes[$channelId] = ['disabled' => 'disabled'];
+                } else {
+                    $choiceAttributes[$channelId] = [
+                        'data-channel-selector' => $channelId,
+                        'data-channel-name' => $value->getName(),
+                    ];
                 }
 
-                if (!$authorizedRead && !isset($enforce[$value->getId()])) {
+                if (!$authorizedRead && !isset($enforce[$channelId])) {
                     unset($choices[$index]);
                 }
 
                 if (isset($options['restricted']) && \count($options['restricted']) > 0 && !\in_array(
-                    $value->getId(),
+                    $channelId,
                     $options['restricted']
                 )) {
                     unset($choices[$index]);
                 }
+
+                if (isset($enforce[$channelId])) {
+                    $choiceAttributes[$channelId]['disabled'] = 'disabled';
+                }
             }
 
             unset($channels);
+            $choices = array_values($choices);
 
             $operand = ChannelEnforcerListener::SET;
 
@@ -149,16 +167,9 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
                         'state' => 'show search',
                         'icon' => 'network-reverse',
                     ],
-                    'choice_attr' => function ($value) use ($enforce) {
-                        if ($value instanceof Channel) {
-                            if (!$this->authorizationChecker->isGranted(PermissionInterface::WRITE, $value)) {
-                                return ['disabled' => 'disabled'];
-                            }
-
-                            return [
-                                'data-channel-selector' => $value->getId(),
-                                'data-channel-name' => $value->getName(),
-                            ] + (isset($enforce[$value->getId()]) ? ['disabled' => 'disabled'] : []);
+                    'choice_attr' => static function ($value) use ($choiceAttributes) {
+                        if ($value instanceof ChannelInterface) {
+                            return $choiceAttributes[$value->getId()] ?? [];
                         }
 
                         return [];
@@ -202,8 +213,13 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
      */
     protected function getChannels(?array $ids = null): array
     {
+        $cacheKey = $this->getChannelsCacheKey($ids);
+        if (array_key_exists($cacheKey, $this->channelsCache)) {
+            return $this->channelsCache[$cacheKey];
+        }
+
         if ($ids === null) {
-            return $this->filterChannels($this->repository->findAll());
+            return $this->channelsCache[$cacheKey] = $this->filterChannels($this->repository->findAll());
         }
 
         if ($ids === []) {
@@ -216,7 +232,7 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
             $criteria['$or'][] = ['id' => $id];
         }
 
-        return $this->filterChannels($this->repository->findBy($criteria));
+        return $this->channelsCache[$cacheKey] = $this->filterChannels($this->repository->findBy($criteria));
     }
 
     /**
@@ -231,5 +247,21 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
         }
 
         return array_values(array_filter($channels, static fn (mixed $channel): bool => $channel instanceof ChannelInterface));
+    }
+
+    private function getChannelsCacheKey(?array $ids): string
+    {
+        if ($ids === null) {
+            return '__all__';
+        }
+
+        if ($ids === []) {
+            return '__empty__';
+        }
+
+        $normalized = array_values(array_unique($ids));
+        sort($normalized);
+
+        return implode('|', $normalized);
     }
 }
