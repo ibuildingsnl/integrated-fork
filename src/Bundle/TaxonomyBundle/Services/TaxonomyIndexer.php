@@ -148,9 +148,8 @@ final class TaxonomyIndexer implements TaxonomyOverview
         int $depth,
         array $sorted,
         array $usageCounts,
-        bool $includeUsageCounts
-    ): array
-    {
+        bool $includeUsageCounts,
+    ): array {
         $visited = [];
 
         $walk = function (?string $current, int $currentDepth, bool $virtualRoot = false) use (&$walk, &$sorted, &$visited, $byParent, $usageCounts, $includeUsageCounts): void {
@@ -231,9 +230,8 @@ final class TaxonomyIndexer implements TaxonomyOverview
         Taxonomy $taxonomy,
         int $depth = 0,
         array $usageCounts = [],
-        bool $includeUsageCounts = true
-    ): IndexedItem
-    {
+        bool $includeUsageCounts = true,
+    ): IndexedItem {
         $id = (string) $taxonomy->getId();
         $count = $includeUsageCounts
             ? ($usageCounts[$id] ?? $this->taxonomies->countUsages($taxonomy))
