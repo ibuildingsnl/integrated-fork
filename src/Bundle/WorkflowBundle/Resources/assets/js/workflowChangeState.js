@@ -1,4 +1,8 @@
 $(document).ready(function () {
+    if (document.querySelector('#content-edit-page[data-inline-workflow-state-init="true"] #content-workflow-section .workflow')) {
+        return;
+    }
+
     var $nextStatus = $('.next-status-choice');
     var $assigned = $('.assigned-choice');
 

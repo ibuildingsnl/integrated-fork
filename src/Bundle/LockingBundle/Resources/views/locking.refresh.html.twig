@@ -3,7 +3,7 @@
 <script type="application/javascript">
 
     (function(refreshUrl, releaseUrl, id) {
-        var POLL_DELAY = 10000;
+        var POLL_DELAY = 20000;
         var TERMINAL_STATUSES = {'401': true, '403': true, '404': true, '409': true, '423': true};
         var STORE_KEY = '__integratedLockPolling';
         var pageStore = window[STORE_KEY] || (window[STORE_KEY] = {});

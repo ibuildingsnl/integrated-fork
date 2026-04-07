@@ -23,6 +23,7 @@ class ContentEditStatusStreamFlowTest extends TestCase
         $template = file_get_contents(__DIR__.'/../../Resources/views/content/edit.html.twig');
 
         $this->assertIsString($template);
+        $this->assertStringContainsString('id="content-edit-page" data-inline-workflow-state-init="true"', $template);
         $this->assertStringContainsString('@IntegratedContent/content/partial/workflow_info.html.twig', $template);
         $this->assertStringContainsString('@IntegratedContent/content/partial/status_options.html.twig', $template);
         $this->assertStringContainsString('id="content-history-section"', $template);
@@ -62,6 +63,8 @@ class ContentEditStatusStreamFlowTest extends TestCase
         $this->assertIsString($template);
         $this->assertStringContainsString("\$workflowRoot.attr('data-workflow-state-initialized') === 'true'", $template);
         $this->assertStringContainsString("\$workflowRoot.attr('data-workflow-state-initialized', 'true');", $template);
+        $this->assertStringContainsString("data-workflow-pending-signature", $template);
+        $this->assertStringContainsString("data-workflow-last-applied-signature", $template);
         $this->assertStringContainsString('window.requestAnimationFrame(initializeWorkflowSection);', $template);
         $this->assertStringNotContainsString('window.setTimeout(initializeWorkflowSection, 50);', $template);
     }

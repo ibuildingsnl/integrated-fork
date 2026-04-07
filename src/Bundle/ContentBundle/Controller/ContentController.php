@@ -76,7 +76,7 @@ class ContentController extends AbstractController
 {
     use PaginationQueryTrait;
 
-    private const CONTENT_LOCK_TIMEOUT_SECONDS = 15;
+    private const CONTENT_LOCK_TIMEOUT_SECONDS = 45;
     private const ASSIGNED_STATUS_LIMIT = 25;
     private const SEO_META_DESCRIPTION_MAX_LENGTH = 156;
     private const NAVIGATOR_EXCLUDED_CONTENT_CLASSES = [
