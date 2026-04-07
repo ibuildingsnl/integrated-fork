@@ -431,22 +431,27 @@ class ContentController extends AbstractController
 
     private function getTaxonomyCategories($content): array
     {
-        $contentRelations = [];
         $contentType = $this->contentTypeManager->getType($content->getContentType());
-        $relations = $this->documentManager->getRepository($this->relationClass)->findAll();
-        foreach ($relations as $relation) {
-            if ($relation->hasSource($contentType) && $relation->getType() == 'taxonomy_category') {
-                $contentRelations[] = $relation;
-            }
-        }
+        $contentRelations = $this->documentManager
+            ->getRepository($this->relationClass)
+            ->findBy([
+                'sources.$id' => $contentType->getId(),
+                'type' => 'taxonomy_category',
+            ]);
 
         $taxonomyCategories = [];
+        $overviewByTarget = [];
         foreach ($contentRelations as $contentRelation) {
             foreach ($contentRelation->getTargets() as $target) {
-                $taxonomyCategories[$contentRelation->getId()] = $this->taxonomyIndexer->overviewFor(
-                    $target->getId(),
-                    (new TaxonomyOptions())->withoutUsageCounts()
-                );
+                $targetId = (string) $target->getId();
+                if (!array_key_exists($targetId, $overviewByTarget)) {
+                    $overviewByTarget[$targetId] = $this->taxonomyIndexer->overviewFor(
+                        $targetId,
+                        (new TaxonomyOptions())->withoutUsageCounts()
+                    );
+                }
+
+                $taxonomyCategories[$contentRelation->getId()] = $overviewByTarget[$targetId];
             }
         }
 
