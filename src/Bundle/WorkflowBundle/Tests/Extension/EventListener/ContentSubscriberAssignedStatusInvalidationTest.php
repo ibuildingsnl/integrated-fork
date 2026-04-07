@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Integrated\Bundle\WorkflowBundle\Tests\Extension\EventListener;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Integrated\Bundle\ContentBundle\Services\AssignedStatusCacheInvalidator;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
+use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
-use Integrated\Bundle\WorkflowBundle\Entity\Workflow\Log;
 use Integrated\Bundle\WorkflowBundle\Entity\Workflow\State;
 use Integrated\Bundle\WorkflowBundle\Extension\EventListener\ContentSubscriber;
 use Integrated\Common\Content\ContentInterface;
@@ -21,79 +23,61 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class ContentSubscriberDeadlineTest extends TestCase
+final class ContentSubscriberAssignedStatusInvalidationTest extends TestCase
 {
-    public function testPostUpdateDoesNotTreatEquivalentImmutableDeadlineAsChange(): void
+    public function testPostUpdateInvalidatesAssignedStatusForCurrentAssignee(): void
     {
-        $deadline = new \DateTime('2026-04-04 10:30:00');
-        $existingState = new State();
-        $existingState->setDeadline($deadline);
+        $assigned = $this->createUser('assigned-user');
+
+        $workflowState = new State();
+        $workflowState->setAssigned($assigned);
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $entityManager->expects(self::never())->method('persist');
         $entityManager->expects(self::once())->method('flush');
 
-        $subscriber = $this->createSubscriber($entityManager, $existingState);
+        $invalidator = $this->createMock(AssignedStatusCacheInvalidator::class);
+        $invalidator
+            ->expects(self::once())
+            ->method('invalidateUsers')
+            ->with(['assigned-user']);
+
+        $subscriber = $this->createSubscriber($entityManager, $invalidator, $workflowState);
 
         $content = $this->createMock(ContentInterface::class);
         $event = new ContentEvent($content);
         $event->setData([
             'comment' => '',
             'state' => null,
-            'assigned' => null,
-            'deadline' => new \DateTimeImmutable('2026-04-04 10:30:00'),
+            'assigned' => $assigned,
+            'deadline' => null,
         ]);
 
         $subscriber->postUpdate($event);
-
-        self::assertInstanceOf(\DateTime::class, $existingState->getDeadline());
-        self::assertEquals('2026-04-04 10:30:00', $existingState->getDeadline()->format('Y-m-d H:i:s'));
     }
 
-    public function testPostUpdateNormalizesImmutableDeadlineBeforePersistingLogAndState(): void
-    {
-        $existingState = new State();
-        $persistedLog = null;
-
-        $entityManager = $this->createMock(EntityManagerInterface::class);
-        $entityManager->expects(self::once())
-            ->method('persist')
-            ->with(self::callback(function (object $entity) use (&$persistedLog): bool {
-                if (!$entity instanceof Log) {
-                    return false;
-                }
-
-                $persistedLog = $entity;
-
-                return true;
-            }));
-        $entityManager->expects(self::once())->method('flush');
-
-        $subscriber = $this->createSubscriber($entityManager, $existingState);
-
-        $content = $this->createMock(ContentInterface::class);
-        $event = new ContentEvent($content);
-        $event->setData([
-            'comment' => '',
-            'state' => null,
-            'assigned' => null,
-            'deadline' => new \DateTimeImmutable('2026-04-05 15:45:00'),
-        ]);
-
-        $subscriber->postUpdate($event);
-
-        self::assertInstanceOf(Log::class, $persistedLog);
-        self::assertInstanceOf(\DateTime::class, $persistedLog->getDeadline());
-        self::assertSame('2026-04-05 15:45:00', $persistedLog->getDeadline()->format('Y-m-d H:i:s'));
-        self::assertInstanceOf(\DateTime::class, $existingState->getDeadline());
-        self::assertSame('2026-04-05 15:45:00', $existingState->getDeadline()->format('Y-m-d H:i:s'));
-    }
-
-    private function createSubscriber(EntityManagerInterface $entityManager, ?State $state): ContentSubscriber
-    {
+    private function createSubscriber(
+        EntityManagerInterface $entityManager,
+        AssignedStatusCacheInvalidator $assignedStatusCacheInvalidator,
+        ?State $state,
+    ): ContentSubscriber {
         $workflow = $this->createMock(Definition::class);
 
-        return new class($this->createStub(UserManagerInterface::class), $this->createStub(EventDispatcherInterface::class), $this->createStub(TokenStorageInterface::class), $this->createStub(ResolverInterface::class), $entityManager, $this->createStub(DocumentManager::class), $this->createStub(MailerInterface::class), $this->createStub(RouterInterface::class), $this->createStub(ThemeManager::class), $this->createStub(AssignedStatusCacheInvalidator::class), 'noreply@example.test', $this->createStub(RequestStack::class), $workflow, $state) extends ContentSubscriber {
+        return new class(
+            $this->createStub(UserManagerInterface::class),
+            $this->createStub(EventDispatcherInterface::class),
+            $this->createStub(TokenStorageInterface::class),
+            $this->createStub(ResolverInterface::class),
+            $entityManager,
+            $this->createStub(DocumentManager::class),
+            $this->createStub(MailerInterface::class),
+            $this->createStub(RouterInterface::class),
+            $this->createStub(ThemeManager::class),
+            $assignedStatusCacheInvalidator,
+            'noreply@example.test',
+            $this->createStub(RequestStack::class),
+            $workflow,
+            $state
+        ) extends ContentSubscriber {
             public function __construct(
                 UserManagerInterface $userManager,
                 EventDispatcherInterface $eventDispatcher,
@@ -136,5 +120,16 @@ class ContentSubscriberDeadlineTest extends TestCase
                 return $this->workflowState;
             }
         };
+    }
+
+    private function createUser(string $id): User
+    {
+        $user = new User();
+
+        $reflection = new \ReflectionProperty(User::class, 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($user, $id);
+
+        return $user;
     }
 }

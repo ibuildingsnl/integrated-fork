@@ -68,6 +68,8 @@
 
         <service id="Integrated\Bundle\ContentBundle\Services\ChannelDeletionSelfHealer" />
 
+        <service id="Integrated\Bundle\ContentBundle\Services\AssignedStatusCacheInvalidator" />
+
         <service id="Integrated\Bundle\ContentBundle\Services\ChannelDeletionProcessor">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_content.services.search.content.referenced" />

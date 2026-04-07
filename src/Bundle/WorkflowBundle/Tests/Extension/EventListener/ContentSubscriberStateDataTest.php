@@ -6,6 +6,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Integrated\Bundle\ContentBundle\Services\AssignedStatusCacheInvalidator;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
@@ -52,7 +53,7 @@ class ContentSubscriberStateDataTest extends TestCase
             ->with(State::class)
             ->willReturn($stateRepository);
 
-        $subscriber = new class($this->createStub(UserManagerInterface::class), $this->createStub(EventDispatcherInterface::class), $this->createStub(TokenStorageInterface::class), $this->createStub(ResolverInterface::class), $entityManager, $this->createStub(DocumentManager::class), $this->createStub(MailerInterface::class), $this->createStub(RouterInterface::class), $this->createStub(ThemeManager::class), 'noreply@example.test', $this->createStub(RequestStack::class)) extends ContentSubscriber {
+        $subscriber = new class($this->createStub(UserManagerInterface::class), $this->createStub(EventDispatcherInterface::class), $this->createStub(TokenStorageInterface::class), $this->createStub(ResolverInterface::class), $entityManager, $this->createStub(DocumentManager::class), $this->createStub(MailerInterface::class), $this->createStub(RouterInterface::class), $this->createStub(ThemeManager::class), $this->createStub(AssignedStatusCacheInvalidator::class), 'noreply@example.test', $this->createStub(RequestStack::class)) extends ContentSubscriber {
             /**
              * @return array{state: State, assigned: string|null, deadline: \DateTimeInterface|null}|null
              */

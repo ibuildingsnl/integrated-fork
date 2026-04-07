@@ -60,6 +60,7 @@
                     var assignedCountNode = assignedNode.querySelector('.js-assigned-count');
                     var assignedListNode = assignedNode.querySelector('.js-assigned-list');
                     var assignedRequestRunning = false;
+                    var assignedPollTimer = null;
 
                     function escapeHtml(value) {
                         return String(value)
@@ -149,6 +150,22 @@
                         renderAssignedItems(assignedItems);
                     }
 
+                    function clearAssignedTimer() {
+                        if (assignedPollTimer) {
+                            window.clearTimeout(assignedPollTimer);
+                            assignedPollTimer = null;
+                        }
+                    }
+
+                    function scheduleAssignedStatus(delay) {
+                        clearAssignedTimer();
+                        if (document.visibilityState === 'hidden') {
+                            return;
+                        }
+
+                        assignedPollTimer = window.setTimeout(pollAssignedStatus, delay);
+                    }
+
                     function pollAssignedStatus() {
                         if (assignedRequestRunning || document.visibilityState === 'hidden') {
                             return;
@@ -174,14 +191,16 @@
                             })
                             .finally(function () {
                                 assignedRequestRunning = false;
+                                scheduleAssignedStatus(assignedPollInterval);
                             });
                     }
 
-                    pollAssignedStatus();
-                    window.setInterval(pollAssignedStatus, assignedPollInterval);
+                    scheduleAssignedStatus(assignedPollInterval);
                     document.addEventListener('visibilitychange', function () {
                         if (document.visibilityState === 'visible') {
                             pollAssignedStatus();
+                        } else {
+                            clearAssignedTimer();
                         }
                     });
                 })();
@@ -193,7 +212,8 @@
         {% if is_granted('ROLE_ADMIN') %}
             <li class="dropdown-queue dropdown close-outside top-bar hidden-xs {% if queuecount == 0 %}hidden{% endif %}"
                 data-queue-status-url="{{ path('integrated_content_content_queue_status') }}"
-                data-queue-poll-interval="30000">
+                data-queue-poll-interval="30000"
+                data-queue-idle-poll-interval="300000">
                 <a class="btn btn-green icon-left" data-toggle="dropdown">
                     <i class="iconoir-database-backup"></i>
                     <span class="js-queue-count">{{ queuecount }}</span>
@@ -235,10 +255,13 @@
 
                     var queueUrl = queueNode.getAttribute('data-queue-status-url');
                     var queuePollInterval = parseInt(queueNode.getAttribute('data-queue-poll-interval') || '30000', 10);
+                    var queueIdlePollInterval = parseInt(queueNode.getAttribute('data-queue-idle-poll-interval') || '300000', 10);
                     var queueCountNode = queueNode.querySelector('.js-queue-count');
                     var queueProgressNode = queueNode.querySelector('.js-queue-progress');
                     var queuePercentageNode = queueNode.querySelector('.js-queue-percentage');
                     var queueRequestRunning = false;
+                    var queuePollTimer = null;
+                    var nextQueuePollDelay = queueIdlePollInterval;
 
                     function applyQueueStatus(status) {
                         var queueCount = parseInt(status.queuecount || 0, 10);
@@ -246,10 +269,12 @@
 
                         if (queueCount <= 0) {
                             queueNode.classList.add('hidden');
+                            nextQueuePollDelay = queueIdlePollInterval;
                             return;
                         }
 
                         queueNode.classList.remove('hidden');
+                        nextQueuePollDelay = queuePollInterval;
 
                         if (queueCountNode) {
                             queueCountNode.textContent = String(queueCount);
@@ -263,6 +288,22 @@
                         if (queuePercentageNode) {
                             queuePercentageNode.textContent = queuePercentage + '%';
                         }
+                    }
+
+                    function clearQueueTimer() {
+                        if (queuePollTimer) {
+                            window.clearTimeout(queuePollTimer);
+                            queuePollTimer = null;
+                        }
+                    }
+
+                    function scheduleQueueStatus(delay) {
+                        clearQueueTimer();
+                        if (document.visibilityState === 'hidden') {
+                            return;
+                        }
+
+                        queuePollTimer = window.setTimeout(pollQueueStatus, delay);
                     }
 
                     function pollQueueStatus() {
@@ -290,14 +331,16 @@
                             })
                             .finally(function () {
                                 queueRequestRunning = false;
+                                scheduleQueueStatus(nextQueuePollDelay);
                             });
                     }
 
-                    pollQueueStatus();
-                    window.setInterval(pollQueueStatus, queuePollInterval);
+                    scheduleQueueStatus(queuePollInterval);
                     document.addEventListener('visibilitychange', function () {
                         if (document.visibilityState === 'visible') {
                             pollQueueStatus();
+                        } else {
+                            clearQueueTimer();
                         }
                     });
                 })();

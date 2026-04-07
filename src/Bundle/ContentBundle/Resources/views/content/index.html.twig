@@ -88,15 +88,13 @@
                                 {% if locks[content.type_id].user is defined and locks[content.type_id].user is not empty %}
                                     <div class="locked-info">
                                         <span class="locked-text">
-                                            <i class="iconoir-lock"></i>&nbsp;
-                                            {% trans %}This item is locked by{% endtrans %} {{ locks[content.type_id].user }}
+                                            <i class="iconoir-lock"></i><span>{% trans %}This item is locked by{% endtrans %} {{ locks[content.type_id].user }}</span>
                                         </span>
                                     </div>
                                 {% else %}
                                     <div class="locked-info">
                                         <span class="locked-text">
-                                            <i class="iconoir-lock"></i>&nbsp;
-                                            {% trans %}This item is locked{% endtrans %}
+                                            <i class="iconoir-lock"></i><span>{% trans %}This item is locked{% endtrans %}</span>
                                         </span>
                                     </div>
                                 {% endif %}

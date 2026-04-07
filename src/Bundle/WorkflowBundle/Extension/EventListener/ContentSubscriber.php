@@ -16,6 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
+use Integrated\Bundle\ContentBundle\Services\AssignedStatusCacheInvalidator;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\UserBundle\Model\Group;
 use Integrated\Bundle\UserBundle\Model\User;
@@ -60,6 +61,7 @@ class ContentSubscriber implements ContentSubscriberInterface
         private readonly MailerInterface $mailer,
         private readonly RouterInterface $router,
         private readonly ThemeManager $themeManager,
+        private readonly AssignedStatusCacheInvalidator $assignedStatusCacheInvalidator,
         private readonly string $fromEmail,
         private readonly RequestStack $requestStack,
     ) {
@@ -211,6 +213,7 @@ class ContentSubscriber implements ContentSubscriberInterface
 
         $persist = false;
         $assignedChanged = false;
+        $assignedStatusUserIds = $this->getAssignedStatusUserIds($state->getAssigned());
 
         $log = new Log();
         $log->setUser($this->getUser());
@@ -235,6 +238,7 @@ class ContentSubscriber implements ContentSubscriberInterface
         if ($data['assigned'] !== $state->getAssigned()) {
             $state->setAssigned($data['assigned']);
             $assignedChanged = true;
+            $assignedStatusUserIds = array_merge($assignedStatusUserIds, $this->getAssignedStatusUserIds($data['assigned']));
 
             // sent mail when user changed
 
@@ -298,6 +302,8 @@ class ContentSubscriber implements ContentSubscriberInterface
         }
 
         $this->entityManager->flush();
+
+        $this->assignedStatusCacheInvalidator->invalidateUsers($assignedStatusUserIds);
 
         if ($persist || $assignedChanged) {
             $this->invalidateNavdropdownCache();
@@ -507,5 +513,17 @@ class ContentSubscriber implements ContentSubscriberInterface
     private function invalidateNavdropdownCache(): void
     {
         (new FilesystemAdapter(self::NAVDROPDOWNS_CACHE_NAMESPACE))->clear();
+    }
+
+    /**
+     * @return array<int, string|null>
+     */
+    private function getAssignedStatusUserIds(mixed $assigned): array
+    {
+        if (!$assigned instanceof UserInterface) {
+            return [];
+        }
+
+        return [(string) $assigned->getId()];
     }
 }

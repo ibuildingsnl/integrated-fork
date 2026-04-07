@@ -1,5 +1,6 @@
 function initContentIndexLockPolling() {
     var POLL_DELAY = 30000;
+    var INITIAL_POLL_DELAY = 30000;
     var STORE_KEY = '__integratedContentNavigatorLockPolling';
     var BOOTSTRAP_KEY = '__integratedContentNavigatorLockBootstrap';
 
@@ -60,6 +61,7 @@ function initContentIndexLockPolling() {
 
             var info = document.createElement('div');
             info.className = 'locked-info';
+            info.setAttribute('data-turbo-temporary', 'true');
 
             var text = document.createElement('span');
             text.className = 'locked-text';
@@ -67,16 +69,28 @@ function initContentIndexLockPolling() {
             var icon = document.createElement('i');
             icon.className = 'iconoir-lock';
             text.appendChild(icon);
-            text.appendChild(document.createTextNode('\u00A0'));
+            var label = document.createElement('span');
 
             if (lockData.user) {
-                text.appendChild(document.createTextNode(lockedByText + ' ' + lockData.user));
+                label.appendChild(document.createTextNode(lockedByText + ' ' + lockData.user));
             } else {
-                text.appendChild(document.createTextNode(lockedText));
+                label.appendChild(document.createTextNode(lockedText));
             }
 
+            text.appendChild(label);
             info.appendChild(text);
             slot.appendChild(info);
+        };
+
+        var clearTemporaryLocks = function () {
+            rows.forEach(function (row) {
+                var slot = row.querySelector('[data-lock-slot]');
+                if (slot) {
+                    Array.prototype.slice.call(slot.querySelectorAll('[data-turbo-temporary="true"]')).forEach(function (node) {
+                        node.remove();
+                    });
+                }
+            });
         };
 
         var updateLocks = function (locks) {
@@ -86,12 +100,12 @@ function initContentIndexLockPolling() {
             });
         };
 
-        var scheduleNext = function () {
+        var scheduleNext = function (delay) {
             if (state.stopped || isDocumentHidden()) {
                 return;
             }
 
-            state.timer = window.setTimeout(fetchLocks, POLL_DELAY);
+            state.timer = window.setTimeout(fetchLocks, typeof delay === 'number' ? delay : POLL_DELAY);
         };
 
         var stop = function () {
@@ -151,6 +165,7 @@ function initContentIndexLockPolling() {
         };
 
         var onBeforeCache = function () {
+            clearTemporaryLocks();
             stop();
         };
         var onPageHide = function () {
@@ -180,7 +195,7 @@ function initContentIndexLockPolling() {
         document.addEventListener('turbo:before-cache', onBeforeCache);
         window.addEventListener('pagehide', onPageHide);
         document.addEventListener('visibilitychange', onVisibilityChange);
-        fetchLocks();
+        scheduleNext(INITIAL_POLL_DELAY);
     };
 
     if (!window[BOOTSTRAP_KEY]) {
@@ -196,5 +211,4 @@ function initContentIndexLockPolling() {
     initLockPolling();
 }
 
-document.addEventListener('DOMContentLoaded', initContentIndexLockPolling);
 document.addEventListener('turbo:load', initContentIndexLockPolling);

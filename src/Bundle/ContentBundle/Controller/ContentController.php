@@ -28,6 +28,7 @@ use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
 use Integrated\Bundle\ContentBundle\Provider\MediaProvider;
 use Integrated\Bundle\ContentBundle\Services\CalendarOptions;
+use Integrated\Bundle\ContentBundle\Services\AssignedStatusCacheInvalidator;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
@@ -75,9 +76,7 @@ class ContentController extends AbstractController
     use PaginationQueryTrait;
 
     private const NAVDROPDOWNS_CACHE_NAMESPACE = 'integrated_content_fragments_navdropdowns';
-    private const ASSIGNED_STATUS_CACHE_NAMESPACE = 'integrated_content_assigned_status';
     private const CONTENT_LOCK_TIMEOUT_SECONDS = 15;
-    private const ASSIGNED_STATUS_CACHE_TTL_SECONDS = 10;
     private const ASSIGNED_STATUS_LIMIT = 25;
     private const SEO_META_DESCRIPTION_MAX_LENGTH = 156;
     private const NAVIGATOR_EXCLUDED_CONTENT_CLASSES = [
@@ -1048,15 +1047,12 @@ class ContentController extends AbstractController
         $resources = \is_array($filter->resources) ? $filter->resources : [$filter->resources];
 
         foreach ($iterator as $data) {
-            if (!\is_array($data)) {
+            $resource = $this->extractNavigatorLockResourceData($data);
+            if (null === $resource) {
                 continue;
             }
-            $type = isset($data['type_class']) ? (string) $data['type_class'] : '';
-            $id = isset($data['type_id']) ? (string) $data['type_id'] : '';
-            if ($type === '' || $id === '') {
-                continue;
-            }
-            $resources[] = new Resource($type, $id);
+
+            $resources[] = new Resource($resource['type'], $resource['id']);
         }
         $filter->resources = $resources;
 
@@ -1089,6 +1085,32 @@ class ContentController extends AbstractController
         }
 
         return $results;
+    }
+
+    /**
+     * @return array{type: string, id: string}|null
+     */
+    private function extractNavigatorLockResourceData(mixed $data): ?array
+    {
+        $type = '';
+        $id = '';
+
+        if (\is_array($data) || $data instanceof \ArrayAccess) {
+            $type = isset($data['type_class']) ? (string) $data['type_class'] : '';
+            $id = isset($data['type_id']) ? (string) $data['type_id'] : '';
+        } elseif (\is_object($data)) {
+            $type = isset($data->type_class) ? (string) $data->type_class : '';
+            $id = isset($data->type_id) ? (string) $data->type_id : '';
+        }
+
+        if ('' === $type || '' === $id) {
+            return null;
+        }
+
+        return [
+            'type' => $type,
+            'id' => $id,
+        ];
     }
 
     public function locksStatus(Request $request): JsonResponse
@@ -1252,13 +1274,8 @@ class ContentController extends AbstractController
         $user = $this->getUser();
         $userId = $user instanceof UserInterface ? (string) $user->getId() : 'anonymous';
 
-        $queueStatus = $this->getQueueStatus($request);
-        $queuecount = $queueStatus['queuecount'];
-        $assignedContent = $this->getAssignedContent();
-        $assignedCount = \count($assignedContent);
-
         $cache = new FilesystemAdapter(self::NAVDROPDOWNS_CACHE_NAMESPACE);
-        $cacheItem = $cache->getItem('navdropdowns_'.md5($userId.'|'.$request->getLocale().'|'.$queuecount.'|'.$assignedCount));
+        $cacheItem = $cache->getItem('navdropdowns_'.md5($userId.'|'.$request->getLocale()));
 
         if ($cacheItem->isHit()) {
             return new Response((string) $cacheItem->get());
@@ -1270,9 +1287,9 @@ class ContentController extends AbstractController
 
         $html = $this->renderView('@IntegratedContent/content/navdropdowns.html.twig', [
             'avatarurl' => $avatarurl,
-            'queuecount' => $queuecount,
-            'queuepercentage' => $queueStatus['queuepercentage'],
-            'assignedContent' => $assignedContent,
+            'queuecount' => 0,
+            'queuepercentage' => 100,
+            'assignedContent' => [],
         ]);
 
         $cacheItem->set($html);
@@ -1289,8 +1306,8 @@ class ContentController extends AbstractController
             return new JsonResponse([], Response::HTTP_FORBIDDEN);
         }
 
-        $cache = new FilesystemAdapter(self::ASSIGNED_STATUS_CACHE_NAMESPACE);
-        $cacheItem = $cache->getItem('assigned_status_'.md5((string) $user->getId()));
+        $cache = new FilesystemAdapter(AssignedStatusCacheInvalidator::CACHE_NAMESPACE);
+        $cacheItem = $cache->getItem(AssignedStatusCacheInvalidator::getCacheItemKey((string) $user->getId()));
 
         $payload = $cacheItem->isHit() ? $cacheItem->get() : null;
         if (!\is_array($payload) || !isset($payload['count'], $payload['items'])) {
@@ -1331,7 +1348,6 @@ class ContentController extends AbstractController
                 'items' => $items,
             ];
             $cacheItem->set($payload);
-            $cacheItem->expiresAfter(self::ASSIGNED_STATUS_CACHE_TTL_SECONDS);
             $cache->save($cacheItem);
         }
 

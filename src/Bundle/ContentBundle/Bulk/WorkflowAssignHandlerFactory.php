@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Bulk;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Integrated\Bundle\ContentBundle\Services\AssignedStatusCacheInvalidator;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Bulk\Action\HandlerFactoryInterface;
 use Integrated\Common\ContentType\ResolverInterface;
@@ -22,16 +23,19 @@ class WorkflowAssignHandlerFactory implements HandlerFactoryInterface
     private EntityManagerInterface $entityManager;
     private ResolverInterface $resolver;
     private UserManagerInterface $userManager;
+    private AssignedStatusCacheInvalidator $assignedStatusCacheInvalidator;
     private OptionsResolver $optionsResolver;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         ResolverInterface $resolver,
         UserManagerInterface $userManager,
+        AssignedStatusCacheInvalidator $assignedStatusCacheInvalidator,
     ) {
         $this->entityManager = $entityManager;
         $this->resolver = $resolver;
         $this->userManager = $userManager;
+        $this->assignedStatusCacheInvalidator = $assignedStatusCacheInvalidator;
         $this->optionsResolver = new OptionsResolver();
         $this->optionsResolver
             ->setDefaults(['assigned' => null])
@@ -49,6 +53,7 @@ class WorkflowAssignHandlerFactory implements HandlerFactoryInterface
             $this->entityManager,
             $this->resolver,
             $this->userManager,
+            $this->assignedStatusCacheInvalidator,
             $options['assigned']
         );
     }
