@@ -75,7 +75,6 @@ class ContentController extends AbstractController
 {
     use PaginationQueryTrait;
 
-    private const NAVDROPDOWNS_CACHE_NAMESPACE = 'integrated_content_fragments_navdropdowns';
     private const CONTENT_LOCK_TIMEOUT_SECONDS = 15;
     private const ASSIGNED_STATUS_LIMIT = 25;
     private const SEO_META_DESCRIPTION_MAX_LENGTH = 156;
@@ -1271,32 +1270,20 @@ class ContentController extends AbstractController
 
     public function navdropdowns(Request $request): Response
     {
-        $user = $this->getUser();
-        $userId = $user instanceof UserInterface ? (string) $user->getId() : 'anonymous';
-
-        $cache = new FilesystemAdapter(self::NAVDROPDOWNS_CACHE_NAMESPACE);
-        $cacheItem = $cache->getItem('navdropdowns_'.md5($userId.'|'.$request->getLocale()));
-
-        if ($cacheItem->isHit()) {
-            return new Response((string) $cacheItem->get());
-        }
-
         $email = '';
+        $assignedStatus = $this->getAssignedStatusPayload();
+        $queueStatus = $this->isGranted('ROLE_ADMIN')
+            ? $this->getQueueStatus($request)
+            : ['queuecount' => 0, 'queuepercentage' => 100];
 
         $avatarurl = '//www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s=45';
 
-        $html = $this->renderView('@IntegratedContent/content/navdropdowns.html.twig', [
+        return $this->render('@IntegratedContent/content/navdropdowns.html.twig', [
             'avatarurl' => $avatarurl,
-            'queuecount' => 0,
-            'queuepercentage' => 100,
-            'assignedContent' => [],
+            'queuecount' => $queueStatus['queuecount'],
+            'queuepercentage' => $queueStatus['queuepercentage'],
+            'assignedContent' => $assignedStatus['items'],
         ]);
-
-        $cacheItem->set($html);
-        $cacheItem->expiresAfter(86400);
-        $cache->save($cacheItem);
-
-        return new Response($html);
     }
 
     public function assignedStatus(): JsonResponse
@@ -1304,6 +1291,30 @@ class ContentController extends AbstractController
         $user = $this->getUser();
         if (!$user instanceof UserInterface) {
             return new JsonResponse([], Response::HTTP_FORBIDDEN);
+        }
+
+        $payload = $this->getAssignedStatusPayload();
+
+        $response = new JsonResponse($payload);
+
+        $response->setPrivate();
+        $response->headers->addCacheControlDirective('no-store', true);
+        $response->headers->addCacheControlDirective('max-age', '0');
+
+        return $response;
+    }
+
+    /**
+     * @return array{count: int, items: array<int, array{id: string, title: string, status_color: string, status_icon: string, edit_url: string}>}
+     */
+    private function getAssignedStatusPayload(): array
+    {
+        $user = $this->getUser();
+        if (!$user instanceof UserInterface) {
+            return [
+                'count' => 0,
+                'items' => [],
+            ];
         }
 
         $cache = new FilesystemAdapter(AssignedStatusCacheInvalidator::CACHE_NAMESPACE);
@@ -1351,13 +1362,7 @@ class ContentController extends AbstractController
             $cache->save($cacheItem);
         }
 
-        $response = new JsonResponse($payload);
-
-        $response->setPrivate();
-        $response->headers->addCacheControlDirective('no-store', true);
-        $response->headers->addCacheControlDirective('max-age', '0');
-
-        return $response;
+        return $payload;
     }
 
     public function queueStatus(Request $request): JsonResponse

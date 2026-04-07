@@ -101,8 +101,7 @@
                         </div>
                     {% endblock navbar_content_type %}
                     {% include '@IntegratedContent/partials/block.search.html.twig' %}
-                    <div id="topbar-navdropdowns-fragment"
-                         data-turbo-permanent>
+                    <div id="topbar-navdropdowns-fragment">
                         {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ContentController::navdropdowns')) }}
                     </div>
                 </div>

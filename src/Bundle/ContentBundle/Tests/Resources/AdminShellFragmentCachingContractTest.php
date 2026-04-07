@@ -20,19 +20,33 @@ final class AdminShellFragmentCachingContractTest extends TestCase
         $this->assertStringContainsString('$cacheItem->isHit()', $controller);
     }
 
-    public function testNavdropdownsCacheBypassesInitialQueueAndAssignedLookups(): void
+    public function testNavdropdownsRenderUsesFreshQueueStatusAndAssignedStatusPayload(): void
     {
         $controller = file_get_contents(__DIR__.'/../../Controller/ContentController.php');
 
         $this->assertIsString($controller);
-        $this->assertStringContainsString("\$cacheItem = \$cache->getItem('navdropdowns_'.md5(\$userId.'|'.\$request->getLocale()));", $controller);
-        $this->assertStringContainsString("if (\$cacheItem->isHit()) {\n            return new Response((string) \$cacheItem->get());\n        }", $controller);
-        $this->assertStringContainsString("'queuecount' => 0", $controller);
-        $this->assertStringContainsString("'queuepercentage' => 100", $controller);
-        $this->assertStringContainsString("'assignedContent' => []", $controller);
+        $this->assertStringContainsString('$assignedStatus = $this->getAssignedStatusPayload();', $controller);
+        $this->assertStringContainsString('$queueStatus = $this->isGranted(\'ROLE_ADMIN\')', $controller);
+        $this->assertStringContainsString('$this->getQueueStatus($request)', $controller);
+        $this->assertStringContainsString("'queuecount' => \$queueStatus['queuecount']", $controller);
+        $this->assertStringContainsString("'queuepercentage' => \$queueStatus['queuepercentage']", $controller);
+        $this->assertStringContainsString("'assignedContent' => \$assignedStatus['items']", $controller);
+        $this->assertStringNotContainsString("\$cacheItem = \$cache->getItem('navdropdowns_'.md5(\$userId.'|'.\$request->getLocale()));", $controller);
     }
 
-    public function testAdminStatusPollersUseTimeoutSchedulingWithDeferredFirstPoll(): void
+    public function testTopbarNavdropdownsFragmentIsNotTurboPermanent(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../Resources/views/base.html.twig');
+
+        $this->assertIsString($template);
+        $this->assertStringContainsString('<div id="topbar-navdropdowns-fragment"', $template);
+        $this->assertStringNotContainsString('<div id="topbar-navdropdowns-fragment"
+                         data-turbo-permanent>', $template);
+        $this->assertStringNotContainsString('id="topbar-navdropdowns-fragment"
+                         data-turbo-permanent', $template);
+    }
+
+    public function testAdminTopbarNoLongerPollsAssignedOrQueueStatus(): void
     {
         $navdropdownsTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/navdropdowns.html.twig');
         $lockPollingScript = file_get_contents(__DIR__.'/../../Resources/public/js/content_index_lock_polling.js');
@@ -40,16 +54,15 @@ final class AdminShellFragmentCachingContractTest extends TestCase
         $this->assertIsString($navdropdownsTemplate);
         $this->assertIsString($lockPollingScript);
         $this->assertStringContainsString('<ul class="header-nav">', $navdropdownsTemplate);
-        $this->assertStringContainsString('data-assigned-poll-interval="30000"', $navdropdownsTemplate);
-        $this->assertStringContainsString('data-queue-poll-interval="30000"', $navdropdownsTemplate);
-        $this->assertStringContainsString('data-queue-idle-poll-interval="300000"', $navdropdownsTemplate);
-        $this->assertStringContainsString('function scheduleAssignedStatus(delay)', $navdropdownsTemplate);
-        $this->assertStringContainsString('function scheduleQueueStatus(delay)', $navdropdownsTemplate);
-        $this->assertStringContainsString('scheduleAssignedStatus(assignedPollInterval);', $navdropdownsTemplate);
-        $this->assertStringContainsString('scheduleQueueStatus(queuePollInterval);', $navdropdownsTemplate);
-        $this->assertStringContainsString('var nextQueuePollDelay = queueIdlePollInterval;', $navdropdownsTemplate);
-        $this->assertStringContainsString('nextQueuePollDelay = queueIdlePollInterval;', $navdropdownsTemplate);
-        $this->assertStringContainsString('nextQueuePollDelay = queuePollInterval;', $navdropdownsTemplate);
+        $this->assertStringNotContainsString('data-assigned-status-url=', $navdropdownsTemplate);
+        $this->assertStringNotContainsString('data-assigned-poll-interval=', $navdropdownsTemplate);
+        $this->assertStringNotContainsString('function scheduleAssignedStatus(delay)', $navdropdownsTemplate);
+        $this->assertStringNotContainsString('pollAssignedStatus()', $navdropdownsTemplate);
+        $this->assertStringNotContainsString('data-queue-status-url=', $navdropdownsTemplate);
+        $this->assertStringNotContainsString('data-queue-poll-interval=', $navdropdownsTemplate);
+        $this->assertStringNotContainsString('data-queue-idle-poll-interval=', $navdropdownsTemplate);
+        $this->assertStringNotContainsString('function scheduleQueueStatus(delay)', $navdropdownsTemplate);
+        $this->assertStringNotContainsString('pollQueueStatus()', $navdropdownsTemplate);
         $this->assertStringContainsString('var POLL_DELAY = 30000;', $lockPollingScript);
         $this->assertStringContainsString('var INITIAL_POLL_DELAY = 30000;', $lockPollingScript);
         $this->assertStringContainsString("info.setAttribute('data-turbo-temporary', 'true');", $lockPollingScript);
