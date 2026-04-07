@@ -132,6 +132,82 @@ final class RelatedContentBlockHandlerTest extends TestCase
         self::assertArrayNotHasKey('next', $pagination->getPaginationData());
         self::assertSame(1, $pagination->getPaginationData()['previous']);
     }
+
+    public function testGetPaginationClampsPageToCapWhenMaxItemsIsConfigured(): void
+    {
+        $block = new RelatedContentBlock();
+        $block->setId('related-content');
+        $block->setItemsPerPage(10);
+        $block->setMaxItems(25);
+
+        $request = new Request([
+            'related-content-page' => 999,
+        ]);
+
+        $paginator = $this->createMock(PaginatorInterface::class);
+        $queryBuilder = $this->createMock(\Doctrine\ODM\MongoDB\Query\Builder::class);
+        $paginator
+            ->expects(self::once())
+            ->method('paginate')
+            ->with(
+                self::isType('object'),
+                self::identicalTo(3),
+                self::identicalTo(10),
+                self::callback(static function (array $options): bool {
+                    return ($options['pageParameterName'] ?? null) === 'related-content-page'
+                        && ($options['maxItems'] ?? null) === 25;
+                })
+            )
+            ->willReturn($this->createMock(PaginationInterface::class));
+
+        $handler = new TestableRelatedContentBlockHandler(
+            $paginator,
+            $this->createMock(RequestStack::class),
+            $this->createMock(DocumentManager::class),
+            $this->createMock(ContentRepository::class),
+            $queryBuilder
+        );
+
+        $handler->getPagination($block, $request);
+    }
+
+    public function testGetPaginationResetsAbsurdUncappedPageToFirstPage(): void
+    {
+        $block = new RelatedContentBlock();
+        $block->setId('related-content');
+        $block->setItemsPerPage(10);
+        $block->setMaxItems(0);
+
+        $request = new Request([
+            'related-content-page' => 9999,
+        ]);
+
+        $paginator = $this->createMock(PaginatorInterface::class);
+        $queryBuilder = $this->createMock(\Doctrine\ODM\MongoDB\Query\Builder::class);
+        $paginator
+            ->expects(self::once())
+            ->method('paginate')
+            ->with(
+                self::isType('object'),
+                self::identicalTo(1),
+                self::identicalTo(10),
+                self::callback(static function (array $options): bool {
+                    return ($options['pageParameterName'] ?? null) === 'related-content-page'
+                        && ($options['maxItems'] ?? null) === 0;
+                })
+            )
+            ->willReturn($this->createMock(PaginationInterface::class));
+
+        $handler = new TestableRelatedContentBlockHandler(
+            $paginator,
+            $this->createMock(RequestStack::class),
+            $this->createMock(DocumentManager::class),
+            $this->createMock(ContentRepository::class),
+            $queryBuilder
+        );
+
+        $handler->getPagination($block, $request);
+    }
 }
 
 final class TestableRelatedContentBlockHandler extends RelatedContentBlockHandler

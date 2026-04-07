@@ -32,6 +32,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class RelatedContentBlockHandler extends BlockHandler
 {
     /**
+     * Protect related-content blocks from pathological deep pagination requests
+     * (commonly bot-driven query params such as "...-page=4000").
+     */
+    private const MAX_UNCAPPED_PAGE = 50;
+
+    /**
      * @var PaginatorInterface
      */
     private $paginator;
@@ -100,6 +106,15 @@ class RelatedContentBlockHandler extends BlockHandler
         $maxItems = $block->getMaxItems();
         $page = (int) $request->query->get($pageParam, 1);
         if ($page < 1) {
+            $page = 1;
+        }
+
+        if ($maxItems > 0 && $itemsPerPage > 0) {
+            $maxPageByCap = (int) ceil($maxItems / $itemsPerPage);
+            if ($maxPageByCap > 0 && $page > $maxPageByCap) {
+                $page = $maxPageByCap;
+            }
+        } elseif ($page > self::MAX_UNCAPPED_PAGE) {
             $page = 1;
         }
 
@@ -207,7 +222,7 @@ class RelatedContentBlockHandler extends BlockHandler
         $allowedItems = [];
 
         $result = $query->getQuery()->execute();
-        if (\is_iterable($result)) {
+        if (is_iterable($result)) {
             foreach ($result as $item) {
                 $allowedItems[$item->getId()] = true;
             }
@@ -240,7 +255,7 @@ class RelatedContentBlockHandler extends BlockHandler
 
             $items = [];
             $result = $query->getQuery()->execute();
-            if (\is_iterable($result)) {
+            if (is_iterable($result)) {
                 foreach ($result as $item) {
                     $items[] = $item;
                 }
@@ -253,7 +268,7 @@ class RelatedContentBlockHandler extends BlockHandler
             return \array_slice($target, 0, $maxItems);
         }
 
-        if (\is_iterable($target)) {
+        if (is_iterable($target)) {
             $items = [];
             foreach ($target as $item) {
                 $items[] = $item;
