@@ -14,7 +14,7 @@ namespace Integrated\Bundle\BlockBundle\Provider;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BlockBundle\Document\Block\ContainerBlock;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Bundle\PageBundle\Document\Page\Page;
+use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -24,7 +24,7 @@ use Symfony\Contracts\Cache\ItemInterface;
  */
 class BlockUsageProvider
 {
-    public const CACHE_KEY = 'integrated_block.provider.block_usage.v2';
+    public const CACHE_KEY = 'integrated_block.provider.block_usage.v3';
 
     /**
      * @var DocumentManager
@@ -237,7 +237,7 @@ class BlockUsageProvider
         $blockContainers = [];
         $blockTemplates = [];
 
-        $pages = $this->manager->createQueryBuilder(Page::class)
+        $pages = $this->manager->createQueryBuilder(AbstractPage::class)
             ->hydrate(false)
             ->select(['title', 'channel', 'locked', 'blockIds', 'grids'])
             ->getQuery()
