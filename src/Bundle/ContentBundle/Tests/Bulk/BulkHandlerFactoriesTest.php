@@ -21,6 +21,7 @@ use Integrated\Bundle\ContentBundle\Bulk\WorkflowAssignHandlerFactory;
 use Integrated\Bundle\ContentBundle\Bulk\WorkflowStateHandler;
 use Integrated\Bundle\ContentBundle\Bulk\WorkflowStateHandlerFactory;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Services\AssignedStatusCacheInvalidator;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 use PHPUnit\Framework\TestCase;
@@ -204,7 +205,8 @@ class BulkHandlerFactoriesTest extends TestCase
         $factory = new WorkflowAssignHandlerFactory(
             $this->createMock(EntityManagerInterface::class),
             $this->createMock(ResolverInterface::class),
-            $this->createMock(UserManagerInterface::class)
+            $this->createMock(UserManagerInterface::class),
+            $this->createStub(AssignedStatusCacheInvalidator::class),
         );
 
         $handler = $factory->createHandler(['assigned' => 'user-1']);
@@ -217,7 +219,8 @@ class BulkHandlerFactoriesTest extends TestCase
         $factory = new WorkflowAssignHandlerFactory(
             $this->createMock(EntityManagerInterface::class),
             $this->createMock(ResolverInterface::class),
-            $this->createMock(UserManagerInterface::class)
+            $this->createMock(UserManagerInterface::class),
+            $this->createStub(AssignedStatusCacheInvalidator::class),
         );
 
         $handler = $factory->createHandler(['assigned' => null]);
