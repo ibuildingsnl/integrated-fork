@@ -13,9 +13,9 @@ namespace Integrated\Bundle\WorkflowBundle\Security;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
-use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
+use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\UserBundle\Model\GroupableInterface;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Bundle\UserBundle\Model\UserInterface;

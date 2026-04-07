@@ -11,11 +11,11 @@ use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Bundle\TaxonomyBundle\Tests\Features\Doubles\MemoryTaxonomyRepository;
 use Integrated\Bundle\UserBundle\Model\User;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManager;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Strategy\AffirmativeStrategy;
 
 final class TaxonomyIndexingTest extends TestCase
