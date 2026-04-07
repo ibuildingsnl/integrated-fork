@@ -79,7 +79,7 @@ class WorkflowStateType extends AbstractType
     {
         $workflowNormalizer = function (Options $options, $workflow) {
             if (\is_string($workflow)) {
-                if (!array_key_exists($workflow, $this->workflowCache)) {
+                if (!\array_key_exists($workflow, $this->workflowCache)) {
                     $resolvedWorkflow = $this->repository->find($workflow);
                     $this->workflowCache[$workflow] = $resolvedWorkflow instanceof Definition ? $resolvedWorkflow : null;
                 }

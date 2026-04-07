@@ -94,6 +94,7 @@ class WorkflowFormType extends AbstractType
 
         $builder->addEventSubscriber(new WorkflowDefaultDataListener($this->tokenStorage));
     }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired('workflow');

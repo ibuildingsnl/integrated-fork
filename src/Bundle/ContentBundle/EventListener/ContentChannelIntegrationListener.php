@@ -214,7 +214,7 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
     protected function getChannels(?array $ids = null): array
     {
         $cacheKey = $this->getChannelsCacheKey($ids);
-        if (array_key_exists($cacheKey, $this->channelsCache)) {
+        if (\array_key_exists($cacheKey, $this->channelsCache)) {
             return $this->channelsCache[$cacheKey];
         }
 

@@ -3,16 +3,16 @@
 namespace Integrated\Bundle\ContentBundle\Tests\EventListener;
 
 use Doctrine\Persistence\ObjectRepository;
+use Integrated\Bundle\ContentBundle\EventListener\ContentChannelIntegrationListener;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\Form\Event\BuilderEvent;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\Form\Mapping\MetadataInterface;
-use Integrated\Bundle\ContentBundle\EventListener\ContentChannelIntegrationListener;
-use Integrated\Common\Content\Channel\ChannelInterface;
+use Integrated\Common\Security\PermissionInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Integrated\Common\Security\PermissionInterface;
 
 class ContentChannelIntegrationListenerTest extends TestCase
 {
@@ -89,10 +89,12 @@ class ContentChannelIntegrationListenerTest extends TestCase
         $authorizationChecker
             ->expects(self::exactly(2))
             ->method('isGranted')
-            ->willReturnMap([
-                [PermissionInterface::READ, $channel, true],
-                [PermissionInterface::WRITE, $channel, true],
-            ]);
+            ->willReturnCallback(static function (mixed $attribute, mixed $subject) use ($channel): bool {
+                self::assertSame($channel, $subject);
+                self::assertContains($attribute, [PermissionInterface::READ, PermissionInterface::WRITE]);
+
+                return true;
+            });
 
         $listener = new TestableContentChannelIntegrationListener(
             $this->createMock(ObjectRepository::class),
