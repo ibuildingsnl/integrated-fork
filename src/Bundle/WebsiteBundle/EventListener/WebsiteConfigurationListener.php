@@ -52,7 +52,9 @@ class WebsiteConfigurationListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::REQUEST => ['onKernelRequest', 32],
+            // Run before RouterListener (default priority 32) so themed error pages
+            // also render when routing fails with a NotFound exception.
+            KernelEvents::REQUEST => ['onKernelRequest', 33],
         ];
     }
 
