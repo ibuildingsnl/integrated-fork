@@ -15,7 +15,7 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class AssignedStatusCacheInvalidator
 {
-    public const CACHE_NAMESPACE = 'integrated_content_assigned_status';
+    public const CACHE_NAMESPACE = 'integrated_content_assigned_status_v2';
 
     public static function getCacheItemKey(string $userId): string
     {

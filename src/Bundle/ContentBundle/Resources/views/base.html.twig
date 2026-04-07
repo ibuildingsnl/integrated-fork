@@ -115,7 +115,7 @@
                 <div id="dropdown_overlay" class="modal_overlay hide" style=""></div>
             {% endblock dropdown_overlay %}
             {% block sidebar_menu %}
-                <div class="sidebar-menu close-outside">
+                <div class="sidebar-menu close-outside" data-turbo-prefetch="false">
                     {% include '@IntegratedContent/partials/block.navigation.html.twig' %}
                 </div>
             {% endblock sidebar_menu %}

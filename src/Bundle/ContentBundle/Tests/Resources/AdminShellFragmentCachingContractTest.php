@@ -40,6 +40,7 @@ final class AdminShellFragmentCachingContractTest extends TestCase
 
         $this->assertIsString($template);
         $this->assertStringContainsString('<div id="topbar-navdropdowns-fragment"', $template);
+        $this->assertStringContainsString('<div class="sidebar-menu close-outside" data-turbo-prefetch="false">', $template);
         $this->assertStringNotContainsString('<div id="topbar-navdropdowns-fragment"
                          data-turbo-permanent>', $template);
         $this->assertStringNotContainsString('id="topbar-navdropdowns-fragment"
@@ -54,6 +55,9 @@ final class AdminShellFragmentCachingContractTest extends TestCase
         $this->assertIsString($navdropdownsTemplate);
         $this->assertIsString($lockPollingScript);
         $this->assertStringContainsString('<ul class="header-nav">', $navdropdownsTemplate);
+        $this->assertStringContainsString("{% if is_granted('ROLE_ADMIN') and queuecount > 0 %}", $navdropdownsTemplate);
+        $this->assertStringNotContainsString("{% if is_granted('ROLE_ADMIN') %}", $navdropdownsTemplate);
+        $this->assertStringNotContainsString("{% if queuecount == 0 %}hidden{% endif %}", $navdropdownsTemplate);
         $this->assertStringNotContainsString('data-assigned-status-url=', $navdropdownsTemplate);
         $this->assertStringNotContainsString('data-assigned-poll-interval=', $navdropdownsTemplate);
         $this->assertStringNotContainsString('function scheduleAssignedStatus(delay)', $navdropdownsTemplate);

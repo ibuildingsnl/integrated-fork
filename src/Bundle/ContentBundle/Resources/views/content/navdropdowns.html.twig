@@ -34,8 +34,8 @@
     {% endblock navbar_assignee %}
 
     {% block navbar_queue %}
-        {% if is_granted('ROLE_ADMIN') %}
-            <li class="dropdown-queue dropdown close-outside top-bar hidden-xs {% if queuecount == 0 %}hidden{% endif %}">
+        {% if is_granted('ROLE_ADMIN') and queuecount > 0 %}
+            <li class="dropdown-queue dropdown close-outside top-bar hidden-xs">
                 <a class="btn btn-green icon-left" data-toggle="dropdown">
                     <i class="iconoir-database-backup"></i>
                     <span class="js-queue-count">{{ queuecount }}</span>
