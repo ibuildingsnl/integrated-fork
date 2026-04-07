@@ -56,7 +56,8 @@ class ScopeListener extends AbstractListener implements FirewallListenerInterfac
 
     public function authenticate(RequestEvent $event): void
     {
-        $user = $this->tokenStorage->getToken()->getUser();
+        $currentToken = $this->tokenStorage->getToken();
+        $user = $currentToken?->getUser();
 
         if (!$user instanceof UserInterface) {
             return;
@@ -65,6 +66,10 @@ class ScopeListener extends AbstractListener implements FirewallListenerInterfac
         $scope = $user->getScope();
 
         if (!$scope instanceof Scope || !$scope->isAdmin()) {
+            return;
+        }
+
+        if ($currentToken && \in_array('ROLE_SCOPE_INTEGRATED', $currentToken->getRoleNames(), true)) {
             return;
         }
 
