@@ -211,7 +211,7 @@ class ConnectorController extends AbstractController
             ->sort('id', 'asc')
             ->getQuery()
             ->execute();
-        if (!\is_iterable($result)) {
+        if (!is_iterable($result)) {
             return [];
         }
 
