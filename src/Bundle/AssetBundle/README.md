@@ -1,6 +1,26 @@
 # IntegratedAssetBundle #
 This bundle provides asset management
 
+## Operations Runbook
+
+### Purpose
+- Collect and render stylesheet/javascript assets in Twig
+- Support inline and external asset registration via `integrated_stylesheets` / `integrated_javascripts`
+
+### Commands
+This bundle does not expose standalone console commands.
+
+### Cron And Workers
+No cron/worker processes required.
+
+### Verification
+- Render `{{ integrated_stylesheets() }}` and `{{ integrated_javascripts() }}` in a layout.
+- Add inline and external assets and verify output ordering (`mode='prepend'` etc.).
+
+### Troubleshooting
+- Missing rendered assets: ensure Twig extension from AssetBundle is loaded and template tags are used correctly.
+- Unexpected order: check `mode` usage and template inheritance order.
+
 ## Requirements ##
 * See the require section in the composer.json
 

@@ -292,16 +292,40 @@ class Parser
             return null;
         }
 
-        if (!preg_match('/^(a|O|s|b|i|d):/', $value)) {
+        // Only allow scalar/array/null payload roots; object payloads are rejected.
+        if (!preg_match('/^(a|s|b|i|d|N):/', $value)) {
             return null;
         }
 
-        $decoded = @unserialize($value);
+        $decoded = @unserialize($value, ['allowed_classes' => false]);
         if ($decoded === false && $value !== 'b:0;') {
             return null;
         }
 
+        if ($this->containsObject($decoded)) {
+            return null;
+        }
+
         return $decoded;
+    }
+
+    private function containsObject(mixed $value): bool
+    {
+        if (\is_object($value)) {
+            return true;
+        }
+
+        if (!\is_array($value)) {
+            return false;
+        }
+
+        foreach ($value as $item) {
+            if ($this->containsObject($item)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function tryJsonDecode(string $value): mixed

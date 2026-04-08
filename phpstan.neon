@@ -10,4 +10,5 @@ parameters:
       - src/Bundle/ContentBundle/YoastSeo/node_modules/*
   scanFiles:
     - phpstan-stubs/live-component-attributes.stub.php
+    - phpstan-stubs/security-vote.stub.php
   reportUnmatchedIgnoredErrors: false

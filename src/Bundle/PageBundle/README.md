@@ -1,6 +1,36 @@
 # IntegratedPageBundle #
 This bundle provides page management
 
+## Operations Runbook
+
+### Purpose
+- Page CRUD and content-type page management in admin
+- Website route resolution for pages and content-type pages
+- URL resolution support via page services
+
+### Commands
+This bundle does not expose standalone console commands.
+
+### Routes
+- Admin imports:
+  - `/page/*`
+  - `/content-type-page/*`
+- Website import:
+  - page routing under `/` via `routing.website.yaml`
+
+### Cron And Workers
+No dedicated cron/worker processes.
+
+### Verification
+- Open admin page manager and create/edit a page.
+- Verify page route resolves on website frontend.
+- Verify content-type controller tags (`integrated_page.contenttype_controller`) map correctly.
+
+### Troubleshooting
+- Content-type page not generated: verify content type has channels enabled and controller tag/class mapping exists.
+- Route misses after edit: clear route caches and validate page route cache services.
+- Theme/template mismatch on page render: verify channel/theme context and page template configuration.
+
 ## Requirements ##
 * See the require section in the composer.json
 

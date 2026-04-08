@@ -15,6 +15,7 @@
 
         <service id="Integrated\Bundle\UserBundle\Service\KeyGenerator">
             <argument type="service" id="integrated_user.user.manager" />
+            <argument>%kernel.secret%</argument>
         </service>
 
         <service id="Integrated\Bundle\UserBundle\Service\Mailer">

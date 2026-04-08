@@ -1,39 +1,88 @@
-# IntegratedChannelBundle #
-Provides the possibility to use and configure connectors on Integrated installation, which get or distribute content
+# Integrated Channel Bundle
 
-## Requirements ##
-* See the require section in the composer.json
+## Purpose
+Provides channel connector configuration and queue-based content distribution/export.
 
-## Documentation ##
-* [Integrated for developers website](http://www.integratedfordevelopers.com "Integrated for developers website")
+Core responsibilities:
+- connector config CRUD in admin
+- adapter registration and config resolution
+- channel distribution queue handling
+- export worker command for queued channel messages
 
-## Installation ##
-This bundle can be installed following these steps:
+## Install
+In this repository the bundle is already wired through `integrated/integrated`.
 
-### Install using composer ###
+For host applications:
+- ensure bundle registration in `config/bundles.php`
+- ensure routing import is active for connector config pages
+- ensure queue provider used by `integrated_queue.factory` is configured
 
-    $ php composer.phar require integrated/channel-bundle:~0.3
+Legacy host-app setup (pre-Flex/AppKernel style):
 
-### Enable the bundle ###
+```php
+// app/AppKernel.php
+new Integrated\Bundle\ChannelBundle\IntegratedChannelBundle()
+```
 
-    // app/AppKernel.php
-    public function registerBundles()
-    {
-        return array(
-            // ...
-            new Integrated\Bundle\ChannelBundle\IntegratedChannelBundle()
-            // ...
-        );
-    }
+## Config
+Main config node: `integrated_channel`.
 
-## License ##
-This bundle is under the MIT license. See the complete license in the bundle:
+Example:
 
-    LICENSE
+```yaml
+# config/packages/integrated_channel.yaml
+integrated_channel:
+  configs:
+    example_connector:
+      enabled: true
+      adaptor: app.channel_adapter.example
+      options: { }
+      channel: [main]
+```
 
-## Contributing ##
-Pull requests are welcome. Please see our [CONTRIBUTING guide](http://www.integratedfordevelopers.com/contributing "CONTRIBUTING guide").
+Notes:
+- `channel` accepts string or list and is normalized to an array.
+- Twig form theme `@IntegratedChannel/form/options.html.twig` is prepended automatically.
+- Queue name for distribution/export is `channel-distribution`.
 
-## About ##
-This bundle is part of the Integrated project. You can read more about this project on the
-[Integrated for developers](http://www.integratedfordevelopers.com "Integrated for developers") website.
+Admin config routes (via bundle routing import):
+- `/connector/config/`
+- `/connector/config/new/{adapter}`
+- `/connector/config/{id}`
+
+## Commands
+- `php bin/console channel:export [--full] [--daemon] [--wait=<ms>]`
+
+Command behavior:
+- default mode: execute one exporter pass (`exportMessages()`)
+- `--full`: keep running until queue is empty
+- `--daemon`: run continuously until stopped
+- `--wait`: sleep between loops for `--full`/`--daemon`
+
+## Cron And Workers
+Recommended production scheduler:
+
+```cron
+*/5 * * * * cd /path/to/app && php bin/console channel:export --env=prod -q
+```
+
+For high-throughput channels:
+
+```cron
+*/5 * * * * cd /path/to/app && php bin/console channel:export --full --env=prod -q
+```
+
+## Verification
+- Queue one known export payload.
+- Run `php bin/console channel:export --env=prod`.
+- Confirm processed message count in output/logs.
+- Verify downstream connector side-effects (API push, feed write, etc.).
+
+## Troubleshooting
+- Export keeps failing: inspect application logs for `Channel Export Error`.
+- Queue not draining: use `--full` and verify no parallel workers are contending.
+- Connector form issues: validate adapter service id and required options in config.
+- No messages exported: confirm distribution listeners are creating queue payloads.
+
+## License
+MIT. See `LICENSE`.

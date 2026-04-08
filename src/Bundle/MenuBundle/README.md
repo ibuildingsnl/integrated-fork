@@ -1,6 +1,26 @@
 #IntegratedMenuBundle#
 This bundle provides some extra functionality for the [KnpMenuBundle](https://github.com/KnpLabs/KnpMenuBundle).
 
+## Operations Runbook
+
+### Purpose
+- Extend KnpMenu with event-driven menu contributions
+- Provide database-backed menu providers for editable navigation
+
+### Commands
+This bundle does not expose standalone console commands.
+
+### Cron And Workers
+No dedicated cron worker.
+
+### Verification
+- Confirm menu events are dispatched and listeners can extend admin/frontend navigation.
+- Verify database-backed menu items render as expected in consuming bundles.
+
+### Troubleshooting
+- Missing menu items: verify provider registration and doctrine mapping for menu entities/documents.
+- Frontend editing integration issues: verify WebsiteBundle and MenuBundle provider wiring.
+
 ##Features##
 This bundle has the following features:
 

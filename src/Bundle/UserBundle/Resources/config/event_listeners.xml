@@ -53,6 +53,12 @@
             <tag name="kernel.event_subscriber" />
         </service>
 
+        <service id="Integrated\Bundle\UserBundle\EventListener\LoginThrottleSubscriber">
+            <argument type="service" id="cache.app" />
+
+            <tag name="kernel.event_subscriber" />
+        </service>
+
     </services>
 
 </container>

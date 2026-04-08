@@ -14,6 +14,18 @@
             <argument type="service" id="integrated_user.user.manager" />
             <argument type="service" id="Integrated\Bundle\UserBundle\Service\Mailer" />
             <argument type="service" id="Integrated\Bundle\UserBundle\Service\KeyGenerator" />
+            <argument type="service" id="cache.app" />
+
+            <tag name="controller.service_arguments" />
+            <tag name="container.service_subscriber" />
+        </service>
+
+        <service id="Integrated\Bundle\UserBundle\Controller\Website\SecurityController">
+            <argument type="service" id="integrated_user.user.manager" />
+            <argument type="service" id="Integrated\Bundle\UserBundle\Service\Mailer" />
+            <argument type="service" id="Integrated\Bundle\UserBundle\Service\KeyGenerator" />
+            <argument type="service" id="integrated_theme.templating.theme_manager" />
+            <argument type="service" id="cache.app" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />

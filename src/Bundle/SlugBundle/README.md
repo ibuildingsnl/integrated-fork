@@ -1,6 +1,27 @@
 # IntegratedSlugBundle #
 Provides a slugger which can generate a slug from a string and event listeners to auto-generate slugs on chosen fields
 
+## Operations Runbook
+
+### Purpose
+- Generate and normalize slugs from source fields/methods
+- Auto-apply slug updates through listeners/mapping metadata
+
+### Commands
+This bundle does not expose standalone console commands.
+
+### Cron And Workers
+No dedicated cron worker.
+
+### Verification
+- Create/update documents with slug mapping and verify slug field output.
+- Test multi-field and custom-separator behavior from mapping examples.
+
+### Troubleshooting
+- Slug not updating: verify slug mapping metadata on target field and source field/method names.
+- Unexpected separator/output: validate mapping options and normalization logic.
+- Duplicate collisions: verify higher-level uniqueness constraints in consuming document/storage layer.
+
 ## Requirements ##
 * See the require section in the composer.json
 

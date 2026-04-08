@@ -302,6 +302,22 @@
                 <source>Hide password</source>
                 <target>Verberg wachtwoord</target>
             </trans-unit>
+            <trans-unit id="77">
+                <source>Too many login attempts. Please try again later.</source>
+                <target>Te veel inlogpogingen. Probeer het later opnieuw.</target>
+            </trans-unit>
+            <trans-unit id="78">
+                <source>Too many password reset attempts. Please wait a few minutes and try again.</source>
+                <target>Te veel pogingen om je wachtwoord te resetten. Wacht een paar minuten en probeer het opnieuw.</target>
+            </trans-unit>
+            <trans-unit id="79">
+                <source>Too many login attempts. Please wait 15 minutes and try again.</source>
+                <target>Te veel inlogpogingen. Wacht 15 minuten en probeer het opnieuw.</target>
+            </trans-unit>
+            <trans-unit id="80">
+                <source>Too many password reset attempts. Please wait 15 minutes and try again.</source>
+                <target>Te veel pogingen om je wachtwoord te resetten. Wacht 15 minuten en probeer het opnieuw.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

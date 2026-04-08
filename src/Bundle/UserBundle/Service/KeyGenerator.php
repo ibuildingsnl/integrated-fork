@@ -20,15 +20,17 @@ class KeyGenerator
      * @var UserManager
      */
     private $userManager;
+    private string $secret;
 
-    public function __construct(UserManager $userManager)
+    public function __construct(UserManager $userManager, string $secret)
     {
         $this->userManager = $userManager;
+        $this->secret = $secret;
     }
 
     public function generateKey(int $timestamp, UserInterface $user): string
     {
-        return sha1($timestamp.$user->getPassword().$user->getId());
+        return $this->buildSignature($timestamp, $user);
     }
 
     public function isValidKey(int $id, int $timestamp, string $key): bool
@@ -41,6 +43,15 @@ class KeyGenerator
             return false;
         }
 
-        return $key === sha1($timestamp.$user->getPassword().$user->getId());
+        return hash_equals($this->buildSignature($timestamp, $user), $key);
+    }
+
+    private function buildSignature(int $timestamp, UserInterface $user): string
+    {
+        return hash_hmac(
+            'sha256',
+            $timestamp.'|'.$user->getPassword().'|'.$user->getId(),
+            $this->secret
+        );
     }
 }

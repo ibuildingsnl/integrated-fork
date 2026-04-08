@@ -1,47 +1,67 @@
-# IntegratedLockingBundle #
-Provides an interface to manage database locks and keep a lock active by Ajax request.
+# Integrated Locking Bundle
 
-## Requirements ##
-* See the require section in the composer.json
+## Purpose
+Provides lock management for editor flows and lock refresh/release APIs used by the admin UI.
 
-## Documentation ##
-* [Integrated for developers website](http://integratedfordevelopers.com/content/documentation "Integrated for developers website")
+Core responsibilities:
+- persist lock state via DBAL lock manager
+- expose lock refresh endpoint for active editor sessions
+- expose lock release endpoint on page unload/navigation
+- provide cleanup commands for expired locks
 
-## Installation ##
-This bundle can be installed following these steps:
+## Install
+In this repository the bundle is already wired through `integrated/integrated`.
 
-### Install using composer ###
+For host applications:
+- ensure bundle registration in `config/bundles.php`
+- ensure DB schema includes lock storage used by `Integrated\Common\Locks\Provider\DBAL\Manager`
 
-    $ php composer.phar require integrated/locking-bundle:~0.2
+Legacy host-app setup (pre-Flex/AppKernel style):
 
-### Enable the bundle ###
+```php
+// app/AppKernel.php
+new Integrated\Bundle\LockingBundle\IntegratedLockingBundle()
+```
 
-    // app/AppKernel.php
-    public function registerBundles()
-    {
-        return array(
-            // ...
-            new Integrated\Bundle\LockingBundle\IntegratedLockingBundle()
-            // ...
-        );
-    }
+## Config
+This bundle does not define a dedicated Symfony config tree.
 
-### Initiate the database ###
+Operational defaults are wired through services:
+- DB connection service alias: `integrated_locking.dbal.connection` -> `database_connection`
+- lock manager service: `integrated_locking.dbal.manager`
+- lock table name default: `locks`
 
-    $ php bin/console init:locking
+Public API routes:
+- `POST /_locking/api/refresh`
+- `POST /_locking/api/release`
 
-### Add lock cleaning to crontab ###
+## Commands
+- `php bin/console locking:dbal:clean`
+- `php bin/console locking:clear`
 
-    $ php bin/console locking:dbal:clean
+Command behavior:
+- `locking:dbal:clean`: removes expired locks (safe routine cleanup)
+- `locking:clear`: removes all locks (operational emergency/reset)
 
-## License ##
-This bundle is under the MIT license. See the complete license in the bundle:
+## Cron And Workers
+Recommended production cleanup cron:
 
-    LICENSE
+```cron
+*/5 * * * * cd /path/to/app && php bin/console locking:dbal:clean --env=prod -q
+```
 
-## Contributing ##
-Pull requests are welcome. Please see our [CONTRIBUTING guide](http://www.integratedfordevelopers.com/contributing "CONTRIBUTING guide").
+Increase frequency if editor lock churn is high.
 
-## About ##
-This bundle is part of the Integrated project. You can read more about this project on the
-[Integrated for developers](http://www.integratedfordevelopers.com "Integrated for developers") website.
+## Verification
+- Create an edit lock in admin and confirm periodic refresh calls return `200`.
+- Run `php bin/console locking:dbal:clean --env=prod` and confirm expired entries are removed.
+- Use `locking:clear` only for controlled reset and validate locks are recreated on next edit.
+
+## Troubleshooting
+- `403 Locking is not enabled`: lock manager service is missing or disabled.
+- `423 The lock belongs to another user`: lock ownership mismatch by design.
+- Frequent stale lock warnings: check client refresh cadence and cleanup cron health.
+- Missing command from older docs: `init:locking` is legacy and not provided by this bundle in current versions.
+
+## License
+MIT. See `LICENSE`.
