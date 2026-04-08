@@ -245,6 +245,43 @@ php bin/console list
 php bin/console list | grep -E 'integrated|solr|workflow|locking|storage|channel|user|scraper'
 ```
 
+## Operations Cron Matrix (Typical)
+
+Use as baseline and tune per workload:
+
+```cron
+# Solr indexing pipeline
+* * * * * cd /path/to/app && php bin/console solr:indexer:run --full --env=prod -q
+* * * * * cd /path/to/app && php bin/console solr:worker:run --tasks=1000 --env=prod -q
+
+# Workflow queue processing
+* * * * * cd /path/to/app && php bin/console workflow:worker:run --batch=10 --env=prod -q
+
+# Channel export
+*/5 * * * * cd /path/to/app && php bin/console channel:export --env=prod -q
+
+# Lock cleanup
+*/5 * * * * cd /path/to/app && php bin/console locking:dbal:clean --env=prod -q
+
+# Draft cleanup
+0 2 * * * cd /path/to/app && php bin/console integrated:content:draft:cleanup --env=prod -q
+```
+
+For newsletter cron and adapter behavior, see package-level READMEs:
+- `../newsletter/README.md`
+- `../sendinblue/README.md`
+
+## Bundle Runbook Index
+
+Operational bundle runbooks:
+- `src/Bundle/SolrBundle/README.md`
+- `src/Bundle/WorkflowBundle/README.md`
+- `src/Bundle/LockingBundle/README.md`
+- `src/Bundle/ChannelBundle/README.md`
+- `src/Bundle/ContentBundle/README.md`
+- `src/Bundle/StorageBundle/README.md`
+- `src/Bundle/InstallerBundle/README.md`
+
 ## CI Parity
 
 `jenkins.build` runs roughly:

@@ -1,6 +1,36 @@
 # IntegratedWebsiteBundle #
 This bundle provides a website front-end for content in Integrated and also the capabilities to edit pages and navigation.
 
+## Operations Runbook
+
+### Purpose
+- Frontend rendering for Integrated content/page routes
+- Website-level menu/grid/session/search-selection routes
+- JSON and RSS endpoints for content/search selections
+- Website connector registration for channel integrations
+
+### Commands
+This bundle does not expose standalone console commands.
+
+### Key Routes
+- JSON feed: `/content/json/{id}`
+- RSS feed: `/content/rss/{id}`
+- Related content block JSON: `/related_content_block/json`
+- Additional website routes are imported via `Resources/config/routing.yaml`
+
+### Cron And Workers
+No direct cron/worker process for this bundle.
+
+### Verification
+- Resolve a page route on website frontend.
+- Verify JSON endpoint response for a known selection id.
+- Verify RSS endpoint response for a known selection id.
+
+### Troubleshooting
+- Website route missing: verify `routing.website.yaml` aggregate imports include Page/Website bundles.
+- Connector behavior missing: verify `integrated_website.connector.website_adapter` registration.
+- Production exception page mismatch: check `IntegratedWebsiteExtension::prepend()` behavior for non-dev environments.
+
 ## Requirements ##
 * See the require section in the composer.json
 

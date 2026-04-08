@@ -1,6 +1,35 @@
 # IntegratedCommentBundle #
 This bundle provides block management
 
+## Operations Runbook
+
+### Purpose
+- Add inline editor comments to content fields (including TinyMCE)
+- Persist/retrieve/delete comment threads and replies
+- Provide Twig filter support for comment marker stripping
+
+### Commands
+This bundle does not expose standalone console commands.
+
+### Routes
+- `/comment/new/{content}/{field}`
+- `/comment/delete/{comment}` (`POST`)
+- `/comment/delete/{comment}/{replyId}` (`POST`)
+- `/comment/{comment}`
+
+### Cron And Workers
+No dedicated cron worker.
+
+### Verification
+- Add/edit content comments in admin editor.
+- Delete comment and reply flows via comment routes.
+- Verify `remove_comments` Twig filter strips marker comments from rendered output.
+
+### Troubleshooting
+- Comment markers visible in output: apply `|remove_comments` in rendering path where raw content is shown.
+- Delete endpoint fails: verify CSRF/method and route wiring in admin UI.
+- TinyMCE integration mismatch: ensure editor plugin/event listener assets are loaded.
+
 ## Requirements ##
 * See the require section in the composer.json
 

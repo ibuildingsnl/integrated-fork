@@ -3,6 +3,34 @@ Integrated User Bundle
 
 This bundle provides user authentication, profile/group/scope management, password reset and website login flows.
 
+## Operations Runbook
+
+### Commands
+- `php bin/console user:create <username> <password> [scope] [roles] [email]`
+- `php bin/console user:password:change <username> <password> [scope]`
+
+### Config Highlights
+Main config node: `integrated_user`.
+Most used section is two-factor configuration:
+- `integrated_user.two_factor.firewall.*`
+- `integrated_user.two_factor.whitelist`
+- `integrated_user.two_factor.whitelist_provider`
+
+### Cron And Workers
+No dedicated cron worker commands for this bundle.
+
+### Verification
+- Create a user:
+  - `php bin/console user:create test-user 'StrongPass123!' Integrated ROLE_USER test@example.org`
+- Rotate password:
+  - `php bin/console user:password:change test-user 'NewStrongPass123!' Integrated`
+- Verify login throttling and reset throttling via UI flows.
+
+### Troubleshooting
+- User create fails validation: inspect command output for validator errors.
+- Scope not found on password change: pass a valid scope or create scope first.
+- Two-factor activation route mismatch: verify `integrated_user.two_factor.firewall` route names in config.
+
 ### Required Project Config
 
 For the security hardening in this bundle (login throttle + password reset throttle + HMAC reset links), make sure the host project has:

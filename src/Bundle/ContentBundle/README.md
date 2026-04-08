@@ -1,89 +1,103 @@
-# IntegratedContentBundle #
-This bundle provides the document structure for Integrated.
+# Integrated Content Bundle
 
-## Requirements ##
-* See the require section in the composer.json
+## Purpose
+Core content domain bundle for Integrated CMS.
 
-## Features ##
-* Document structure
-* Base templates for Integrated
+It provides:
+- content, media, channel, relation and content-type admin routes
+- content repositories, metadata and form integrations
+- Solr integration hooks and serialization services
+- editor locking/UI integration points and content lifecycle listeners
 
-## Documentation ##
-* [Integrated for Developers](http://integratedfordevelopers.com/ "Integrated for Developers")
+## Install
+In this repository the bundle is already wired through `integrated/integrated`.
 
-## Installation ##
-This bundle can be installed following these steps:
+For host applications:
+- ensure bundle registration in `config/bundles.php`
+- import bundle routing (normally through `IntegratedIntegratedBundle` admin aggregate routes)
 
-### Install using composer ###
+Legacy host-app setup (pre-Flex/AppKernel style):
 
-    $ php composer.phar require integrated/content-bundle
+```php
+// app/AppKernel.php
+new Integrated\Bundle\ContentBundle\IntegratedContentBundle()
+```
 
-### Enable the bundle ###
+```yaml
+# app/config/routing.yml
+integrated_content:
+  resource: "@IntegratedContentBundle/Resources/config/routing.xml"
+```
 
-    // app/AppKernel.php
-    public function registerBundles()
-    {
-        return array(
-            // ...
-            new Integrated\Bundle\ContentBundle\IntegratedContentBundle()
-            // ...
-        );
-    }
+## Config
+This bundle does not expose a dedicated `Configuration` tree.
 
-### Import the routing ###
+Operational behavior is primarily service-driven (`Resources/config/*.xml`), including:
+- routing imports under `/content`, `/contenttype`, `/channel`, `/media`, `/relation`, etc.
+- repository and resolver wiring for content retrieval and publication behavior
+- editor and channel integration listeners
 
-    # app/config/routing.yml
-    integrated_content:
-        resource: @IntegratedContentBundle/Resources/config/routing.xml
+Legacy note:
+- older host apps that still use Assetic/SpBower can keep an `integrated_css` / `integrated_js` pipeline.
+- for this repository and modern setups, Encore-based asset handling is the active path.
 
-### Configuring the assets ###
+Legacy Assetic/SpBower snippet (kept for compatibility projects):
 
-The IntegratedContentBundle uses the [SpBowerBundle](https://github.com/Spea/SpBowerBundle) for handling the external
-resources.
+```yaml
+# app/config/config.yml
+sp_bower:
+  bundles:
+    IntegratedContentBundle: ~
 
-	# app/config/config.yml
-	sp_bower:
-        bundles:
-            IntegratedContentBundle: ~
+assetic:
+  filters:
+    sass:
+      bin: /usr/bin/sass
+      apply_to: "\.scss$"
+      style: compressed
+  assets:
+    integrated_css:
+      inputs:
+        - @IntegratedContentBundle/Resources/public/sass/main.scss
+      filters:
+        - sass
+      output: css/main.css
+    integrated_js:
+      inputs:
+        # Add your custom javascript files here
+```
 
-The base template of the ContentBundle uses two [named assets](http://symfony.com/doc/current/cookbook/assetic/asset_management.html#using-named-assets):
+## Commands
+- `php bin/console integrated:content:draft:cleanup [--draft-max-age-days=<n>] [--version-max-age-days=<n>] [--max-versions=<n>] [--dry-run]`
+- `php bin/console integrated:content:channel:delete --channel-id=<id> [--delete-referenced]`
 
-1. `integrated_js`
-2. `integrated_css`
+Command intent:
+- `integrated:content:draft:cleanup` prunes stale draft documents and old draft versions.
+- `integrated:content:channel:delete` performs channel deletion with reporting and optional removal of referenced documents.
 
-These two named assets must be defined in the `app/config/config.yml`.
+## Cron And Workers
+Recommended periodic maintenance:
 
-The IntegratedContentBundle uses [Sass](http://sass-lang.com/) for generating the stylesheet, in order to use these 
-files a Sass filter can be used:
+```cron
+# prune stale drafts and oversized draft version history
+0 2 * * * cd /path/to/app && php bin/console integrated:content:draft:cleanup --env=prod -q
+```
 
-	# app/config/config.yml
-	assetic:
-		# ...
-		filters:
-			sass:
-				bin: /usr/bin/sass
-				apply_to: "\.scss$"
-				style: compressed
-		# ...
-		assets:
-			integrated_css:
-				inputs:
-					- @IntegratedContentBundle/Resources/public/sass/main.scss
-				filters:
-					- sass
-				output: css/main.css
-			integrated_js:
-				inputs:
-					# Add your custom javascript files here
+`integrated:content:channel:delete` is usually invoked operationally or by workflow queue handlers, not by fixed cron.
 
-## License ##
-This bundle is under the MIT license. See the complete license in the bundle:
+## Verification
+- Dry-run draft cleanup:
+  - `php bin/console integrated:content:draft:cleanup --dry-run --env=prod`
+- Execute cleanup:
+  - `php bin/console integrated:content:draft:cleanup --env=prod`
+- Channel delete validation:
+  - `php bin/console integrated:content:channel:delete --channel-id=<id> --env=prod`
 
-    LICENSE
+## Troubleshooting
+- Missing `--channel-id`: command returns failure by design.
+- Channel no longer exists: command exits successfully and logs skip message.
+- Large cleanup runtime: start with `--dry-run` and tune age/version options before write run.
+- Unexpected UI behavior around content locks/queues: verify related Locking/Workflow/Solr workers are active.
 
-## Contributing ##
-Pull requests are welcome. Please see our [CONTRIBUTING guide](http://integratedfordevelopers.com/contributing "CONTRIBUTING guide").
-
-## About ##
-This bundle is part of the Integrated project. You can read more about this project on the
-[Integrated for Developers](http://integratedfordevelopers.com/ "Integrated for Developers") website.
+## License
+MIT. See `LICENSE`.

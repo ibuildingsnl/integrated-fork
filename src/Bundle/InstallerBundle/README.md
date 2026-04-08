@@ -1,28 +1,60 @@
-# InstallerBundle
+# Integrated Installer Bundle
 
-`InstallerBundle` orchestrates project bootstrap and install tasks.
+## Purpose
+Orchestrates installation/bootstrap steps for Integrated host applications.
 
-## Key features
+Main responsibilities:
+- validate runtime prerequisites
+- clear cache and install assets
+- run SQL and MongoDB migration steps through installer command flow
 
-- Command: `integrated:install`
-- Step-based execution (`--step[]`):
-  - `tests`
-  - `cache`
-  - `assets`
-  - `migrations`
+## Install
+In this repository the bundle is already part of `integrated/integrated`.
 
-## Main entry points
+For host applications:
+- ensure bundle registration in `config/bundles.php`
+- run installer from host app root: `php bin/console integrated:install`
 
-- Command: `Command/IntegratedInstallCommand.php`
-- DI extension: `DependencyInjection/IntegratedInstallerExtension.php`
-- Services: `Resources/config/services.xml`
+## Config
+This bundle has no end-user config tree.
 
-## Tests
+It wires migration infrastructure internally:
+- custom SQL migration metadata table: `integrated_migration_versions`
+- installer-prefixed Doctrine migration command aliases
 
-- `Test/`
+Main entry points:
+- `Command/IntegratedInstallCommand.php`
+- `Command/IntegratedMongoDBMigrateCommand.php`
+- `DependencyInjection/IntegratedInstallerExtension.php`
+- `Resources/config/command.xml`
 
-## Suggested improvements
+## Commands
+- `php bin/console integrated:install [--step=<step>]...`
+- `php bin/console integrated:install:mongodb:migrate` (hidden helper command)
+- `php bin/console integrated:install:database:migrate` (installer-prefixed Doctrine migration command)
 
-1. Improve per-step failure signaling (strict exit codes).
-2. Add idempotency tests for repeated installs.
-3. Add clearer CI-oriented command output sections.
+Supported `integrated:install --step` values:
+- `tests`
+- `cache`
+- `assets`
+- `migrations`
+
+If no step is provided, all steps are executed in sequence.
+
+## Cron And Workers
+No recurring worker is required for this bundle.
+Run installer commands during deploy/bootstrap flows, not as periodic cron jobs.
+
+## Verification
+- Full install check: `php bin/console integrated:install --env=prod`
+- Migration-only check: `php bin/console integrated:install --step=migrations --env=prod`
+- Confirm command exits non-zero on failed sub-steps in CI
+
+## Troubleshooting
+- `Could not open input file: /bin/console`: run command from project root and ensure relative path `bin/console` exists.
+- Asset install fails during deploy: verify all package config options are valid before `assets:install`.
+- Solr test step fails: verify Solr endpoint reachability and credentials used by `integrated_solr`.
+- Mongo migrate step fails: verify MongoDB ODM connection and migration classes are available.
+
+## License
+MIT. See `LICENSE`.

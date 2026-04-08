@@ -106,7 +106,7 @@ class SecurityController extends AbstractController
             $windowResetAt = $now + self::PASSWORD_RESET_WINDOW_SECONDS;
         }
 
-        $count++;
+        ++$count;
 
         $cacheItem->set([
             'count' => $count,

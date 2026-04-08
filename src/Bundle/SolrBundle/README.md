@@ -1,49 +1,91 @@
-# IntegratedSolrBundle #
-Adds support for Solr configuration and indexing of your documents or entities
+# Integrated Solr Bundle
 
-## Requirements ##
-* See the require section in the composer.json
+## Purpose
+Provides Solr indexing and worker processing for Integrated content.
 
-## Documentation ##
-* [Integrated for developers website](http://www.integratedfordevelopers.com "Integrated for developers website")
+This bundle exposes:
+- queueing commands to stage index jobs
+- indexer commands to transform queue jobs into Solr documents
+- worker commands to execute queued Solr tasks
 
-### Commands ###
-* The command **solr:indexer:queue** will queue up all the documents to be indexed
-* The command **solr:indexer:run** will tranform the queued up documents to a solr compatible format and send them to solr for indexing.
-* The command **solr:worker:run** will start a worker run and will process up to end of the queue or 1000 tasks, whichever comes first.
+## Install
+In this repository the bundle is already wired through `integrated/integrated`.
 
-It's recommended to the execute **solr:indexer:run** and **solr:worker:run** as automated tasks by configuring them as cronjobs.
+For host applications:
+- install package dependency that includes this bundle
+- ensure bundle registration in Symfony (`config/bundles.php`)
+- ensure routing aggregation from `IntegratedIntegratedBundle` is enabled
 
-## Installation ##
-This bundle can be installed following these steps:
+Legacy host-app setup (pre-Flex/AppKernel style):
 
-### Install using composer ###
+```php
+// app/AppKernel.php
+new Integrated\Bundle\SolrBundle\IntegratedSolrBundle()
+```
 
-    $ php composer.phar require integrated/solr-bundle:~0.3
+Historical note:
+- older docs referenced `init:queue`; queue bootstrap is now handled through current queue/service wiring and installer flow.
 
-### Enable the bundle ###
+## Config
+Main config node: `integrated_solr`.
 
-    // app/AppKernel.php
-    public function registerBundles()
-    {
-        return array(
-            // ...
-            new Integrated\Bundle\SolrBundle\IntegratedSolrBundle()
-            // ...
-        );
-    }
+Example:
 
-### Setup the queue ###
-The solr bundle requires a queue to work properly, so if not already done setup the queue by executing the **init:queue** command.
+```yaml
+# config/packages/integrated_solr.yaml
+integrated_solr:
+  timeout: 200
+  endpoints:
+    default:
+      scheme: http
+      host: localhost
+      port: 8983
+      path: ""
+      core: integrated
+      username: null
+      password: null
+```
 
-## License ##
-This bundle is under the MIT license. See the complete license in the bundle:
+Operational notes:
+- the default queue provider is DBAL (`integrated_queue.dbal.provider`)
+- DB table defaults are `queue` (queue provider) and queue names `solr-indexer` / `solr-worker`
 
-    LICENSE
+## Commands
+- `php bin/console solr:indexer:queue [id ...] [--full] [--delete] [--commit] [--ignore]`
+- `php bin/console solr:indexer:run [processes] [--full] [--daemon] [--wait=<ms>] [--blocking]`
+- `php bin/console solr:worker:run [--tasks=<n>]`
 
-## Contributing ##
-Pull requests are welcome. Please see our [CONTRIBUTING guide](http://www.integratedfordevelopers.com/contributing "CONTRIBUTING guide").
+Quick command intent:
+- `solr:indexer:queue`: enqueue (re)index, delete, or commit jobs
+- `solr:indexer:run`: process indexer queue into Solr worker tasks
+- `solr:worker:run`: execute Solr worker tasks against Solarium client
 
-## About ##
-This bundle is part of the Integrated project. You can read more about this project on the
-[Integrated for developers](http://www.integratedfordevelopers.com/ "Integrated for developers") website.
+## Cron And Workers
+Recommended production pattern:
+
+```cron
+# keep converting index queue messages into worker tasks
+* * * * * cd /path/to/app && php bin/console solr:indexer:run --full --env=prod -q
+
+# execute worker tasks (set --tasks to cap work per run)
+* * * * * cd /path/to/app && php bin/console solr:worker:run --tasks=1000 --env=prod -q
+```
+
+Optional:
+- use `solr:indexer:run <processes> --blocking` for parallel catch-up runs
+- use `solr:indexer:queue --full` for a full reindex trigger
+
+## Verification
+- Queue content: `php bin/console solr:indexer:queue --full --env=prod`
+- Process queue once: `php bin/console solr:indexer:run --env=prod`
+- Execute worker once: `php bin/console solr:worker:run --env=prod`
+- Confirm no queue growth after steady-state runs
+
+## Troubleshooting
+- Lock conflicts on `solr:indexer:run`/`solr:worker:run`: another process is active; avoid overlapping cron jobs.
+- Queue keeps growing: verify both indexer and worker cron entries are active.
+- Solr connection failures: verify `integrated_solr.endpoints.*` and timeout.
+- Unexpected memory growth on large runs: use shorter runs (`--tasks`) or process mode with limited parallelism.
+
+## License
+MIT. See `LICENSE`.

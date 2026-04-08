@@ -1,35 +1,80 @@
 # Integrated Workflow Bundle
 
-This bundle will intergrate workflow into the content bundle. The bundle is still work in progess so
-for now this readme will only contain instructions to get the bundle workin.
+## Purpose
+Integrates workflow definitions and workflow state transitions into content editing and indexing.
 
-## Installation ##
+This bundle provides:
+- workflow definitions and state entities
+- admin workflow routes (`/workflow/*`)
+- queue-driven workflow worker processing
+- reindex triggers for content affected by workflow changes
 
-The following thing should be done in any order but I would recommend doing the first one first or
-else you get errors when adding the entities.
+## Install
+In this repository the bundle is already wired through `integrated/integrated`.
 
-* Add the bundle to the AppKernel
-* Add the routing
+For host applications:
+- ensure bundle registration in `config/bundles.php`
+- ensure workflow routing import is enabled
+- run database migrations for workflow entities
 
-	intergrated_workflow:
-		resource: "@IntegratedWorkflowBundle/Resources/config/routing.xml"
+Legacy host-app setup (pre-Flex/AppKernel style):
 
-* The bundle got entities so execute the Doctrine commands
+```yaml
+# app/config/routing.yml
+intergrated_workflow:
+  resource: "@IntegratedWorkflowBundle/Resources/config/routing.xml"
+```
 
-	php bin/console doctrine:schema:update
+```yaml
+# optional security recommendation from legacy docs
+access_decision_manager:
+  strategy: unanimous
+```
 
-* There are no config options for now but it is recommend to add this to the security config
+## Config
+Main config node: `integrated_workflow`.
 
-    access_decision_manager:
-        # strategy can be: affirmative, unanimous or consensus
-        strategy: unanimous
+```yaml
+# config/packages/integrated_workflow.yaml
+integrated_workflow:
+  email: "mailer@integratedforpublishers.com"
+```
 
-Well that is it.
+Operational notes:
+- queue name for worker processing is `workflow-worker` (`integrated_queue.workflow`)
+- bundle prepends Twig form theme `@IntegratedWorkflow/form/form_div_layout.html.twig`
 
-## Scheduled Tasks ##
+## Commands
+- `php bin/console workflow:index [id ...] [--full] [--ignore]`
+- `php bin/console workflow:worker:run [--batch=<n>]`
 
-The console command **workflow:worker:run** is recommanded to be scheduled to run atleast **once every 
-minute**. This needs to be done to done to make sure that changed to workflows reflect into the reindex 
-of the affected content.
+Command behavior:
+- `workflow:index` resolves workflow definitions to affected content types and dispatches `solr:indexer:queue`.
+- `workflow:worker:run` pulls queue payloads and runs child console commands for:
+  - workflow index updates
+  - full workflow index updates
+  - optional channel-delete integration payloads
 
-**Pro tip:** activate the quiet mode to suppress output.
+## Cron And Workers
+Recommended production scheduler:
+
+```cron
+# process workflow queue continuously in small batches
+* * * * * cd /path/to/app && php bin/console workflow:worker:run --batch=10 --env=prod -q
+```
+
+If workflow changes must be reflected faster, lower cron interval via external scheduler or increase batch size carefully.
+
+## Verification
+- Trigger full workflow index: `php bin/console workflow:index --full --env=prod`
+- Process queued workflow messages: `php bin/console workflow:worker:run --env=prod`
+- Confirm related content gets queued for Solr indexing (`solr:indexer:queue`)
+
+## Troubleshooting
+- `workflow:index` fails on unknown ids: use valid ids or `--ignore`.
+- Worker appears idle: verify queue `workflow-worker` is receiving messages.
+- Reindex not visible: ensure Solr commands (`solr:indexer:run`, `solr:worker:run`) are also scheduled.
+- Duplicate worker runs: command is lock-protected; keep a single scheduler entry.
+
+## License
+MIT. See `LICENSE`.

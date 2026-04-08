@@ -1,6 +1,35 @@
 # IntegratedBlockBundle #
 This bundle provides block management
 
+## Operations Runbook
+
+### Purpose
+- Block CRUD and block-type management in admin
+- Channel block and inline text block route integration
+- Block handler/metadata/form wiring for page/content rendering
+
+### Commands
+This bundle does not expose standalone console commands.
+
+### Routes
+Primary admin route prefixes:
+- `/block`
+- `/block/channel-block`
+- `/block/inline-text`
+
+### Cron And Workers
+No dedicated cron worker.
+
+### Verification
+- Create/edit/delete block items in admin.
+- Verify blocks render in pages/content where referenced.
+- Verify channel-specific block behavior for channel block routes.
+
+### Troubleshooting
+- Block form missing fields: verify form/metadata service wiring.
+- Route not found for block actions: verify bundle routing import order.
+- Render mismatch: validate block handler registrations and template overrides.
+
 ## Requirements ##
 * See the require section in the composer.json
 
