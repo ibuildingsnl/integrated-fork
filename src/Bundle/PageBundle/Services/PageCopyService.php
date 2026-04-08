@@ -22,8 +22,8 @@ use Integrated\Bundle\PageBundle\Document\Page\Grid\ItemsInterface;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\PageBundle\Services\PageCopy\PageBlockCloner;
 use Integrated\Bundle\PageBundle\Services\PageCopy\PageCopyInstruction;
-use Integrated\Bundle\PageBundle\Services\PageCopy\PageCopyResult;
 use Integrated\Bundle\PageBundle\Services\PageCopy\PageCopyRequest;
+use Integrated\Bundle\PageBundle\Services\PageCopy\PageCopyResult;
 
 class PageCopyService
 {
