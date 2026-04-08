@@ -573,7 +573,7 @@ class BlockController extends AbstractController
             ->sort('name', 'asc')
             ->getQuery()
             ->execute();
-        if (!\is_iterable($result)) {
+        if (!is_iterable($result)) {
             return [];
         }
 
