@@ -32,7 +32,7 @@ final class PageCopyRequestFactory
             }
 
             $blockInstructions = [];
-            $copyAction = trim((string) ($pageData['copyAction'] ?? PageCopyInstruction::ACTION_CREATE));
+            $copyAction = $this->resolveCopyAction($pageData);
             $blocks = \is_array($pageData['blocks'] ?? null) ? $pageData['blocks'] : [];
             foreach ($blocks as $blockKey => $blockData) {
                 if (!\is_string($blockKey) || !\is_array($blockData)) {
@@ -88,5 +88,22 @@ final class PageCopyRequestFactory
         }
 
         return \in_array(strtolower(trim((string) $value)), ['1', 'true', 'on', 'yes'], true);
+    }
+
+    /**
+     * @param array<string, mixed> $pageData
+     */
+    private function resolveCopyAction(array $pageData): string
+    {
+        $overwrite = $this->isSelected($pageData['overwrite'] ?? null);
+        if ($overwrite) {
+            return PageCopyInstruction::ACTION_OVERWRITE;
+        }
+
+        $copyAction = trim((string) ($pageData['copyAction'] ?? PageCopyInstruction::ACTION_CREATE));
+
+        return $copyAction === PageCopyInstruction::ACTION_OVERWRITE
+            ? PageCopyInstruction::ACTION_OVERWRITE
+            : PageCopyInstruction::ACTION_CREATE;
     }
 }

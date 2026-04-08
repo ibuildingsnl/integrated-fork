@@ -33,7 +33,9 @@ final class PageCopyTemplateTest extends TestCase
         $this->assertStringContainsString('queue-summary', $template);
         $this->assertStringContainsString('overwriteCount', $template);
         $this->assertStringContainsString('data-page-copy-action', $formTheme);
-        $this->assertStringContainsString('{% if copyAction == \'overwrite\' %}', $formTheme);
+        $this->assertStringContainsString('currentCopyAction', $formTheme);
+        $this->assertStringContainsString('overwriteAvailable', $formTheme);
+        $this->assertStringContainsString('page-copy-action-selector', $formTheme);
         $this->assertStringContainsString('{% trans %}Overwrite{% endtrans %}', $formTheme);
         $this->assertStringContainsString('{% trans %}Create{% endtrans %}', $formTheme);
     }
@@ -102,6 +104,7 @@ final class PageCopyTemplateTest extends TestCase
         $this->assertStringContainsString('data-page-copy-search', $pageTemplate);
         $this->assertStringContainsString('data-page-copy-replace', $pageTemplate);
         $this->assertStringContainsString('data-page-copy-apply-replace', $pageTemplate);
+        $this->assertStringContainsString('data-page-copy-check-all', $pageTemplate);
         $this->assertStringContainsString('data-page-copy-clone-all', $template);
     }
 
@@ -128,10 +131,13 @@ final class PageCopyTemplateTest extends TestCase
         $this->assertStringContainsString('applyPageCopySearchReplace', $pageTemplate);
         $this->assertStringContainsString('syncPageCopyCloneAllButtonState', $pageTemplate);
         $this->assertStringContainsString('cloneAllPageCopyBlocks', $pageTemplate);
+        $this->assertStringContainsString('setAllPageCopySelections', $pageTemplate);
         $this->assertStringContainsString('normalizePageCopyCloneInputs', $pageTemplate);
         $this->assertStringContainsString('input.dataset.proposedBlockId', $pageTemplate);
         $this->assertStringContainsString('data-page-copy-clone-all', $pageTemplate);
+        $this->assertStringContainsString('data-page-copy-check-all', $pageTemplate);
         $this->assertStringContainsString("event.target.closest('[data-page-copy-clone-all]')", $pageTemplate);
+        $this->assertStringContainsString("event.target.closest('[data-page-copy-check-all]')", $pageTemplate);
         $this->assertStringContainsString("event.target.closest('[data-page-copy-apply-replace]')", $pageTemplate);
         $this->assertStringContainsString("pageCopyForm.addEventListener('submit'", $pageTemplate);
     }
@@ -149,13 +155,18 @@ final class PageCopyTemplateTest extends TestCase
     public function testPageCopyTypeUsesDataHooksInsteadOfInlineRefreshSubmit(): void
     {
         $formType = file_get_contents(__DIR__.'/../../Form/Type/PageCopyType.php');
+        $pageFormType = file_get_contents(__DIR__.'/../../Form/Type/PageCopyPageType.php');
         $template = file_get_contents(__DIR__.'/../../Resources/views/page/copy.html.twig');
 
         $this->assertIsString($formType);
+        $this->assertIsString($pageFormType);
         $this->assertIsString($template);
         $this->assertStringNotContainsString('document.page_copy.submit();', $formType);
         $this->assertStringContainsString('data-page-copy-source-channel', $formType);
         $this->assertStringContainsString('data-page-copy-target-channel', $formType);
+        $this->assertStringContainsString('data-page-copy-overwrite-toggle', $pageFormType);
+        $this->assertStringContainsString('allowOverwrite', $pageFormType);
+        $this->assertStringContainsString('CheckboxSwitcherType::class', $pageFormType);
         $this->assertStringContainsString('submitPageCopyRefresh', $template);
         $this->assertStringContainsString("querySelector('select[data-page-copy-source-channel]')", $template);
         $this->assertStringContainsString("querySelector('select[data-page-copy-target-channel]')", $template);

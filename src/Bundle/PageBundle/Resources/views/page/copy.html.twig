@@ -7,7 +7,9 @@
         {% set overwriteCount = 0 %}
         {% if form.pages is defined %}
             {% for pageField in form.pages %}
-                {% if pageField.vars.copyAction|default('') == 'overwrite' %}
+                {% if pageField.overwrite is defined and pageField.overwrite.vars.checked %}
+                    {% set overwriteCount = overwriteCount + 1 %}
+                {% elseif pageField.copyAction is defined and pageField.copyAction.vars.value|default('') == 'overwrite' %}
                     {% set overwriteCount = overwriteCount + 1 %}
                 {% endif %}
             {% endfor %}
@@ -45,6 +47,11 @@
                         </div>
                     {% endif %}
                     {% if form.pages is defined %}
+                        <div class="form-item form-actions__item form-actions__item--submit-like">
+                            <button type="button" class="btn btn-select" data-page-copy-check-all>
+                                {% trans %}Check all{% endtrans %}
+                            </button>
+                        </div>
                         <div class="form-item form-actions__item">
                             <label class="control-label" for="page-copy-search">{% trans %}Search{% endtrans %}</label>
                             <input type="text" id="page-copy-search" class="form-control" data-page-copy-search>
@@ -208,6 +215,19 @@
         });
     }
 
+    function setAllPageCopySelections(selected) {
+        document.querySelectorAll('[data-page-copy-panel]').forEach(function(panel) {
+            var select = panel.querySelector('[data-page-copy-select]');
+            if (!select) {
+                return;
+            }
+
+            select.checked = selected;
+            syncPageCopyPanelSelectedState(panel, selected);
+            syncPageCopyCloneAllButtonState(panel);
+        });
+    }
+
     function normalizePageCopyCloneInputs(scope) {
         (scope || document).querySelectorAll('[data-page-copy-block-operation] select').forEach(function(select) {
             if (select.value !== 'clone') {
@@ -356,6 +376,19 @@
         });
 
         window.__integratedPageCopyDelegatedSearchReplaceBound = true;
+    }
+
+    if (!window.__integratedPageCopyDelegatedCheckAllBound) {
+        document.addEventListener('click', function(event) {
+            var button = event.target instanceof Element ? event.target.closest('[data-page-copy-check-all]') : null;
+            if (!(button instanceof HTMLButtonElement)) {
+                return;
+            }
+
+            setAllPageCopySelections(true);
+        });
+
+        window.__integratedPageCopyDelegatedCheckAllBound = true;
     }
 
     document.addEventListener('DOMContentLoaded', initializePageCopyPanels);
