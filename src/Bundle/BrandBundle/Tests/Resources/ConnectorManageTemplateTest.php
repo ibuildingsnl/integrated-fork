@@ -18,5 +18,8 @@ final class ConnectorManageTemplateTest extends TestCase
         self::assertStringContainsString('{% for missingBlock in missingConnectorBlocks %}', $template);
         self::assertStringContainsString('{{ missingBlock.id }}', $template);
         self::assertStringContainsString('{% for usage in missingBlock.usages %}', $template);
+        self::assertStringContainsString('{% if missingBlock.duplicateCandidates is defined and missingBlock.duplicateCandidates is not empty %}', $template);
+        self::assertStringContainsString("path('integrated_block_block_duplicate'", $template);
+        self::assertStringContainsString('{% trans with {\'%id%\': candidate.id} %}Duplicate from %id%{% endtrans %}', $template);
     }
 }

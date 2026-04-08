@@ -34,6 +34,18 @@
                 <source>These blocks are referenced by the current channel theme or its fallback themes, but do not exist yet.</source>
                 <target>Deze blocks worden gebruikt in het huidige kanaalthema of de fallback-thema's, maar bestaan nog niet.</target>
             </trans-unit>
+            <trans-unit id="9">
+                <source>Duplicate from existing block</source>
+                <target>Dupliceren vanaf bestaand block</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>Duplicate from %id%</source>
+                <target>Dupliceren vanaf %id%</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>No matching source blocks found.</source>
+                <target>Geen passend bronblock gevonden.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

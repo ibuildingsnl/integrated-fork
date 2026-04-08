@@ -46,6 +46,7 @@
             <argument type="service" id="integrated_channel.adapter.registry" />
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="Integrated\Bundle\BrandBundle\Provider\ConnectorMissingThemeBlocksProvider" />
+            <argument type="service" id="Integrated\Bundle\BlockBundle\Document\Block\BlockRepository" />
         </service>
 
         <service id="Integrated\Bundle\BrandBundle\Provider\ConnectorMissingThemeBlocksProvider">

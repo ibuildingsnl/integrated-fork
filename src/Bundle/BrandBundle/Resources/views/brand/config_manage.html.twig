@@ -107,6 +107,24 @@
                                         </div>
                                     {% endfor %}
                                 </div>
+                                <div class="help-block">
+                                    {% if missingBlock.duplicateCandidates is defined and missingBlock.duplicateCandidates is not empty %}
+                                        <div class="text-muted">{% trans %}Duplicate from existing block{% endtrans %}:</div>
+                                        {% for candidate in missingBlock.duplicateCandidates %}
+                                            <div>
+                                                <a href="{{ path('integrated_block_block_duplicate', {
+                                                    id: candidate.id,
+                                                    target_channel: missingBlocksTargetChannelId,
+                                                    target_id: missingBlock.id
+                                                }) }}">
+                                                    {% trans with {'%id%': candidate.id} %}Duplicate from %id%{% endtrans %}
+                                                </a>
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="text-muted">{% trans %}No matching source blocks found.{% endtrans %}</div>
+                                    {% endif %}
+                                </div>
                             </li>
                         {% endfor %}
                     </ul>
