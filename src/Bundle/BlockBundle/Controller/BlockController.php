@@ -431,7 +431,7 @@ class BlockController extends AbstractController
                     continue;
                 }
 
-                if (method_exists($property, 'isInitialized') && !$property->isInitialized($sourceBlock)) {
+                if (!$property->isInitialized($sourceBlock)) {
                     continue;
                 }
 
@@ -455,6 +455,9 @@ class BlockController extends AbstractController
         $property->setValue($block, new ArrayCollection());
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     private function addDuplicateIdValidationError(FormInterface $form, Block $block): void
     {
         $id = trim((string) $block->getId());
@@ -525,10 +528,6 @@ class BlockController extends AbstractController
         usort($channelIds, static fn (string $left, string $right): int => \strlen($right) <=> \strlen($left));
 
         foreach ($channelIds as $channelId) {
-            if ($channelId === '') {
-                continue;
-            }
-
             if (preg_match('/(^|_)'.preg_quote($channelId, '/').'(?=_|$)/', $blockId) === 1) {
                 return $channelId;
             }
@@ -536,7 +535,7 @@ class BlockController extends AbstractController
 
         $parts = explode('_', $blockId, 2);
 
-        return trim((string) ($parts[0] ?? ''));
+        return trim($parts[0]);
     }
 
     private function swapChannelInBlockId(string $blockId, string $sourceChannelId, string $targetChannelId): string
@@ -552,7 +551,7 @@ class BlockController extends AbstractController
 
         $swappedId = preg_replace_callback(
             '/(^|_)'.preg_quote($sourceChannelId, '/').'(?=_|$)/',
-            static fn (array $match): string => (string) ($match[1] ?? '').$targetChannelId,
+            static fn (array $match): string => $match[1].$targetChannelId,
             $blockId,
             1
         );
@@ -574,6 +573,9 @@ class BlockController extends AbstractController
             ->sort('name', 'asc')
             ->getQuery()
             ->execute();
+        if (!\is_iterable($result)) {
+            return [];
+        }
 
         $channels = [];
         foreach ($result as $channel) {
