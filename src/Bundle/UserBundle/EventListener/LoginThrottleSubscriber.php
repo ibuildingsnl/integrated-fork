@@ -5,8 +5,8 @@ namespace Integrated\Bundle\UserBundle\EventListener;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Http\Event\LoginFailureEvent;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
@@ -58,10 +58,18 @@ class LoginThrottleSubscriber implements EventSubscriberInterface
 
         $blockedUntil = (int) ($state['blocked_until'] ?? 0);
         if ($blockedUntil > $now) {
-            throw new TooManyRequestsHttpException(
-                $blockedUntil - $now,
-                'Too many login attempts. Please try again later.'
-            );
+            if ($request->hasSession()) {
+                $session = $request->getSession();
+                if (!$session->isStarted()) {
+                    $session->start();
+                }
+                $session->getFlashBag()->add(
+                    'warning',
+                    'Too many login attempts. Please try again later.'
+                );
+            }
+
+            $event->setResponse(new RedirectResponse($this->resolveLoginPath($request), 303));
         }
     }
 
@@ -126,6 +134,13 @@ class LoginThrottleSubscriber implements EventSubscriberInterface
         $username = $this->normalizeUsername($request->request->get('_username'));
 
         return self::CACHE_KEY_PREFIX.hash('sha256', $path.'|'.$ip.'|'.$username);
+    }
+
+    private function resolveLoginPath(Request $request): string
+    {
+        return str_starts_with($request->getPathInfo(), '/admin/')
+            ? '/admin/login'
+            : '/login';
     }
 
     private function normalizeUsername(mixed $username): string
