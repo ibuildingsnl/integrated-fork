@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\BlockBundle\Controller;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
@@ -390,14 +392,18 @@ class BlockController extends AbstractController
 
     private function createDuplicateBlock(Block $sourceBlock, string $targetChannelId): Block
     {
+        $preparedBlock = clone $sourceBlock;
+        $this->normalizeClonedCollectionProperties($sourceBlock, $preparedBlock);
+
         $copy = null;
         try {
-            $unserialized = unserialize(serialize($sourceBlock), ['allowed_classes' => true]);
+            $unserialized = unserialize(serialize($preparedBlock), ['allowed_classes' => true]);
             $copy = $unserialized;
         } catch (\Throwable) {
             $copy = null;
         }
-        $block = $copy instanceof Block ? $copy : clone $sourceBlock;
+        $block = $copy instanceof Block ? $copy : $preparedBlock;
+        $this->resetDuplicateBlockRelations($block);
 
         $sourceId = trim((string) $sourceBlock->getId());
         $sourceTitle = trim((string) $sourceBlock->getTitle());
@@ -409,6 +415,44 @@ class BlockController extends AbstractController
         $block->setLocked(false);
 
         return $block;
+    }
+
+    private function normalizeClonedCollectionProperties(Block $sourceBlock, Block $clonedBlock): void
+    {
+        $reflectionClass = new \ReflectionClass($sourceBlock);
+
+        do {
+            foreach ($reflectionClass->getProperties() as $property) {
+                if ($property->isStatic()) {
+                    continue;
+                }
+
+                if ($property->getDeclaringClass()->getName() !== $reflectionClass->getName()) {
+                    continue;
+                }
+
+                if (method_exists($property, 'isInitialized') && !$property->isInitialized($sourceBlock)) {
+                    continue;
+                }
+
+                $property->setAccessible(true);
+                $sourceValue = $property->getValue($sourceBlock);
+                if (!$sourceValue instanceof Collection) {
+                    continue;
+                }
+
+                $property->setValue($clonedBlock, new ArrayCollection($sourceValue->toArray()));
+            }
+
+            $reflectionClass = $reflectionClass->getParentClass();
+        } while ($reflectionClass instanceof \ReflectionClass);
+    }
+
+    private function resetDuplicateBlockRelations(Block $block): void
+    {
+        $property = new \ReflectionProperty(Block::class, 'relations');
+        $property->setAccessible(true);
+        $property->setValue($block, new ArrayCollection());
     }
 
     private function addDuplicateIdValidationError(FormInterface $form, Block $block): void

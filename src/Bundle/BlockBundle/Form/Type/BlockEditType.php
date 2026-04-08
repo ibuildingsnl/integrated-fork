@@ -104,9 +104,9 @@ class BlockEditType extends AbstractType
         }
 
         if ($options['method'] == 'PUT') {
-            $builder->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
-        } else {
             $builder->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
+        } else {
+            $builder->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
         }
     }
 

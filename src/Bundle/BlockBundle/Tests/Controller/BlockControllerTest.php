@@ -11,6 +11,7 @@ use Doctrine\ODM\MongoDB\Query\Query;
 use Integrated\Bundle\BlockBundle\Controller\BlockController;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
+use Integrated\Bundle\BlockBundle\Document\Block\Embedded\Relation as EmbeddedRelation;
 use Integrated\Bundle\BlockBundle\Document\Block\TextBlock;
 use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
 use Integrated\Bundle\BlockBundle\Security\AllowedBlockClassInstantiator;
@@ -161,6 +162,42 @@ final class BlockControllerTest extends TestCase
         $this->expectException(NotFoundHttpException::class);
 
         $controller->new(new Request(['class' => TextBlock::class]));
+    }
+
+    public function testCreateDuplicateBlockClearsRelationsAndDecouplesCollectionProperties(): void
+    {
+        $sourceBlock = new TextBlock();
+        $sourceBlock->setId('text_block_source');
+        $sourceBlock->setTitle('Source block');
+        $sourceBlock->setContent('Source content');
+        $sourceBlock->addRelation((new EmbeddedRelation())->setRelationId('relation-id')->setRelationType('relation-type'));
+        $sourceBlock->setRequiredItems([(new Article())->setId('content-id')]);
+
+        $controller = $this->createController(
+            $this->createMock(DocumentManager::class),
+            $this->createMock(PaginatorInterface::class)
+        );
+
+        $method = new \ReflectionMethod(BlockController::class, 'createDuplicateBlock');
+        $method->setAccessible(true);
+        $duplicate = $method->invoke($controller, $sourceBlock, '');
+
+        self::assertInstanceOf(TextBlock::class, $duplicate);
+        self::assertSame('text_block_source_copy', $duplicate->getId());
+        self::assertSame('Source block (copy)', $duplicate->getTitle());
+        self::assertCount(1, $sourceBlock->getRelations());
+        self::assertCount(0, $duplicate->getRelations());
+
+        $requiredItemsProperty = new \ReflectionProperty(TextBlock::class, 'requiredItems');
+        $requiredItemsProperty->setAccessible(true);
+        self::assertNotSame(
+            $requiredItemsProperty->getValue($sourceBlock),
+            $requiredItemsProperty->getValue($duplicate)
+        );
+
+        $duplicate->setRequiredItems([]);
+        self::assertCount(1, $sourceBlock->getRequiredItems());
+        self::assertCount(0, $duplicate->getRequiredItems());
     }
 
     private function createController(
