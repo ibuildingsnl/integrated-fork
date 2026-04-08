@@ -4,8 +4,11 @@ namespace Integrated\Bundle\UserBundle\EventListener;
 
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Http\Event\LoginFailureEvent;
@@ -58,16 +61,10 @@ class LoginThrottleSubscriber implements EventSubscriberInterface
 
         $blockedUntil = (int) ($state['blocked_until'] ?? 0);
         if ($blockedUntil > $now) {
-            if ($request->hasSession()) {
-                $session = $request->getSession();
-                if (!$session->isStarted()) {
-                    $session->start();
-                }
-                $session->getFlashBag()->add(
-                    'warning',
-                    'Too many login attempts. Please wait 15 minutes and try again.'
-                );
-            }
+            $this->addWarningFlash(
+                $request,
+                'Too many login attempts. Please wait 15 minutes and try again.'
+            );
 
             $event->setResponse(new RedirectResponse($this->resolveLoginPath($request), 303));
         }
@@ -92,7 +89,7 @@ class LoginThrottleSubscriber implements EventSubscriberInterface
             $windowResetAt = $now + self::WINDOW_SECONDS;
         }
 
-        $count++;
+        ++$count;
         $blockedUntil = (int) ($state['blocked_until'] ?? 0);
         if ($count >= self::MAX_ATTEMPTS) {
             $blockedUntil = max($blockedUntil, $now + self::BLOCK_SECONDS);
@@ -150,6 +147,34 @@ class LoginThrottleSubscriber implements EventSubscriberInterface
         }
 
         return strtolower(trim((string) $username));
+    }
+
+    private function addWarningFlash(Request $request, string $message): void
+    {
+        if (!$request->hasSession()) {
+            return;
+        }
+
+        $session = $request->getSession();
+        $this->startSessionIfNeeded($session);
+
+        if ($session instanceof FlashBagAwareSessionInterface) {
+            $session->getFlashBag()->add('warning', $message);
+
+            return;
+        }
+
+        $flashBag = $session->getBag('flashes');
+        if ($flashBag instanceof FlashBagInterface) {
+            $flashBag->add('warning', $message);
+        }
+    }
+
+    private function startSessionIfNeeded(SessionInterface $session): void
+    {
+        if (!$session->isStarted()) {
+            $session->start();
+        }
     }
 
     /** @return array{count?: int, window_reset_at?: int, blocked_until?: int} */
