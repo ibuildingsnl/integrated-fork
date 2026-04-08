@@ -34,6 +34,46 @@
                 <source>Unused</source>
                 <target>Ongebruikt</target>
             </trans-unit>
+            <trans-unit id="9">
+                <source>Duplicate block</source>
+                <target>Blok dupliceren</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>Source block</source>
+                <target>Bronblok</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>Target channel</source>
+                <target>Doelkanaal</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>Select a channel</source>
+                <target>Selecteer een kanaal</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>Selecting a channel updates the suggested block id. You can still edit the id manually.</source>
+                <target>Bij het selecteren van een kanaal wordt het voorgestelde blok-id bijgewerkt. Je kunt het id nog steeds handmatig aanpassen.</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>Block id is required.</source>
+                <target>Blok-id is verplicht.</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>Checking block id…</source>
+                <target>Blok-id controleren…</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>Could not validate block id.</source>
+                <target>Blok-id kon niet worden gevalideerd.</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>Block id already exists.</source>
+                <target>Blok-id bestaat al.</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>Block id is available.</source>
+                <target>Blok-id is beschikbaar.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

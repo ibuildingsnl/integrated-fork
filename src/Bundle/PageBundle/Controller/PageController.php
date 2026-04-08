@@ -471,7 +471,7 @@ class PageController extends AbstractController
             if ($data['action'] != 'refresh') {
                 try {
                     $requestModel = $this->pageCopyRequestFactory->createFromFormData($data);
-                    $this->pageCopyService->copyPages($requestModel);
+                    $copyResult = $this->pageCopyService->copyPages($requestModel);
                 } catch (\InvalidArgumentException $exception) {
                     $form->addError(new FormError($exception->getMessage()));
                     $this->addFlash('warning', $exception->getMessage());
@@ -481,7 +481,29 @@ class PageController extends AbstractController
                     ]);
                 }
 
-                $this->addFlash('success', 'Pages copied');
+                if ($copyResult->hasSkippedExistingPages()) {
+                    $message = $this->buildPageCopyConflictMessage(
+                        (string) $requestModel->getTargetChannelId(),
+                        $copyResult->getSkippedExistingPaths()
+                    );
+
+                    if ($copyResult->getCopiedPages() === 0) {
+                        $form->addError(new FormError($message));
+                        $this->addFlash('warning', $message);
+
+                        return $this->render('@IntegratedPage/page/copy.html.twig', [
+                            'form' => $form,
+                        ]);
+                    }
+
+                    $this->addFlash('warning', $message);
+                }
+
+                if ($copyResult->getCopiedPages() > 0) {
+                    $this->addFlash('success', 'Pages copied');
+                } else {
+                    $this->addFlash('warning', 'No pages were copied');
+                }
 
                 return $this->redirectToRoute('integrated_page_page_index');
             }
@@ -516,6 +538,23 @@ class PageController extends AbstractController
         foreach (array_keys($messages) as $message) {
             $this->addFlash('warning', $message);
         }
+    }
+
+    /**
+     * @param list<string> $paths
+     */
+    private function buildPageCopyConflictMessage(string $targetChannelId, array $paths): string
+    {
+        $formattedPaths = array_map(
+            static fn (string $path): string => $path === '' ? '/' : $path,
+            $paths
+        );
+
+        return \sprintf(
+            'Target page(s) %s already exist in channel "%s". Select overwrite for these page(s) and try again.',
+            implode(', ', $formattedPaths),
+            $targetChannelId
+        );
     }
 
     public function deleteWithoutChannel(Request $request, string $id): Response

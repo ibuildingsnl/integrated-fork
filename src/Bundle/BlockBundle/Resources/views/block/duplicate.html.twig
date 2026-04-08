@@ -1,0 +1,216 @@
+{% extends '@IntegratedBlock/block/new.html.twig' %}
+{% block title %}{% trans %}Duplicate block{% endtrans %}{% endblock title %}
+
+{% block editor_heading %}{% trans %}Duplicate block{% endtrans %}{% endblock %}
+
+{% block editor_intro %}
+    <div class="mb-3">
+        <div class="form-item w-full flex flex-wrap" location="editor">
+            <label class="control-label w-full md:w-3/12 xl:w-2/12 3xl:w-1/12">{% trans %}Source block{% endtrans %}</label>
+            <div class="w-full md:w-9/12 xl:w-10/12 3xl:w-11/12 widget">
+                <p class="text-muted mb-0">
+                    <code data-duplicate-source-id>{{ sourceBlock.id }}</code>
+                    {% if sourceBlock.title %}
+                        ({{ sourceBlock.title }})
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        <div class="form-item w-full flex flex-wrap" location="editor">
+            <label class="control-label w-full md:w-3/12 xl:w-2/12 3xl:w-1/12" for="duplicate_target_channel">{% trans %}Target channel{% endtrans %}</label>
+            <div class="w-full md:w-9/12 xl:w-10/12 3xl:w-11/12 widget">
+                <select
+                    id="duplicate_target_channel"
+                    name="target_channel"
+                    class="form-control"
+                    data-duplicate-target-channel
+                    data-source-channel-id="{{ sourceChannelId }}"
+                    data-original-source-id="{{ sourceBlock.id }}"
+                    data-id-availability-url="{{ idAvailabilityUrl }}"
+                >
+                    <option value="">{% trans %}Select a channel{% endtrans %}</option>
+                    {% for channelId, channelName in availableChannels %}
+                        <option value="{{ channelId }}"{% if selectedTargetChannelId == channelId %} selected{% endif %}>
+                            {{ channelName }} ({{ channelId }})
+                        </option>
+                    {% endfor %}
+                </select>
+                <span class="help-block" role="note">
+                    {% trans %}Selecting a channel updates the suggested block id. You can still edit the id manually.{% endtrans %}
+                </span>
+                <p class="help-block mb-0 duplicate-id-status" data-duplicate-id-status aria-live="polite"></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block style %}
+    {{ parent() }}
+    <style>
+        .duplicate-id-status.duplicate-id-status--error {
+            color: #b31818 !important;
+            font-weight: 700;
+        }
+
+        .duplicate-id-status.duplicate-id-status--ok {
+            color: #01ac32 !important;
+        }
+
+        .duplicate-id-status.duplicate-id-status--neutral {
+            color: #666 !important;
+        }
+    </style>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script>
+    (function() {
+        function swapChannelInId(originalId, sourceChannelId, targetChannelId) {
+            if (!originalId) {
+                return targetChannelId ? targetChannelId + '_copy' : 'block_copy';
+            }
+
+            if (!targetChannelId) {
+                return originalId + '_copy';
+            }
+
+            if (sourceChannelId) {
+                var escapedSource = sourceChannelId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                var tokenRegex = new RegExp('(^|_)' + escapedSource + '(?=_|$)');
+                if (tokenRegex.test(originalId)) {
+                    return originalId.replace(tokenRegex, function(match, prefix) {
+                        return (prefix || '') + targetChannelId;
+                    });
+                }
+            }
+
+            return targetChannelId + '_' + originalId;
+        }
+
+        function initDuplicateHelpers() {
+            var channelSelect = document.querySelector('[data-duplicate-target-channel]');
+            if (!(channelSelect instanceof HTMLSelectElement)) {
+                return;
+            }
+
+            var blockContainer = document.getElementById('integrated_block_block');
+            var idInput = blockContainer ? blockContainer.querySelector('input[name$="[id]"]') : null;
+            var statusNode = document.querySelector('[data-duplicate-id-status]');
+            if (!(idInput instanceof HTMLInputElement) || !(statusNode instanceof HTMLElement)) {
+                return;
+            }
+
+            var sourceChannelId = channelSelect.dataset.sourceChannelId || '';
+            var originalSourceId = channelSelect.dataset.originalSourceId || '';
+            var idAvailabilityUrl = channelSelect.dataset.idAvailabilityUrl || '';
+            var lastSuggestedId = idInput.value || '';
+            var requestTimer = null;
+
+            function setStatus(message, state, emphasize) {
+                statusNode.textContent = message;
+                statusNode.classList.remove(
+                    'duplicate-id-status--error',
+                    'duplicate-id-status--ok',
+                    'duplicate-id-status--neutral',
+                    'font-bold'
+                );
+                if (state === 'error') {
+                    statusNode.classList.add('duplicate-id-status--error');
+                } else if (state === 'ok') {
+                    statusNode.classList.add('duplicate-id-status--ok');
+                } else {
+                    statusNode.classList.add('duplicate-id-status--neutral');
+                }
+
+                if (emphasize) {
+                    statusNode.classList.add('font-bold');
+                }
+            }
+
+            function checkIdAvailability() {
+                var currentId = idInput.value.trim();
+                if (currentId === '') {
+                    setStatus('{{ "Block id is required."|trans }}', 'error');
+                    return;
+                }
+
+                if (!idAvailabilityUrl) {
+                    return;
+                }
+
+                setStatus('{{ "Checking block id…"|trans }}', 'neutral');
+                fetch(idAvailabilityUrl + '?id=' + encodeURIComponent(currentId), {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(function(response) {
+                    return response.ok ? response.json() : null;
+                })
+                .then(function(payload) {
+                    if (!payload || payload.valid === false) {
+                        setStatus('{{ "Could not validate block id."|trans }}', 'error');
+                        return;
+                    }
+
+                    if (payload.exists) {
+                        setStatus('{{ "Block id already exists."|trans }}', 'error', true);
+                        return;
+                    }
+
+                    setStatus('{{ "Block id is available."|trans }}', 'ok');
+                })
+                .catch(function() {
+                    setStatus('{{ "Could not validate block id."|trans }}', 'error');
+                });
+            }
+
+            function scheduleAvailabilityCheck() {
+                if (requestTimer) {
+                    window.clearTimeout(requestTimer);
+                }
+
+                requestTimer = window.setTimeout(checkIdAvailability, 220);
+            }
+
+            function updateIdFromChannel() {
+                var targetChannelId = channelSelect.value || '';
+                var suggestedId = swapChannelInId(originalSourceId, sourceChannelId, targetChannelId);
+
+                idInput.value = suggestedId;
+                lastSuggestedId = suggestedId;
+                scheduleAvailabilityCheck();
+            }
+
+            if (!channelSelect.dataset.duplicateHelpersBound) {
+                channelSelect.addEventListener('change', updateIdFromChannel);
+                idInput.addEventListener('input', function() {
+                    if (idInput.value !== lastSuggestedId) {
+                        lastSuggestedId = '';
+                    }
+
+                    scheduleAvailabilityCheck();
+                });
+
+                channelSelect.dataset.duplicateHelpersBound = 'true';
+            }
+
+            if (channelSelect.value) {
+                updateIdFromChannel();
+            } else {
+                scheduleAvailabilityCheck();
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDuplicateHelpers);
+        } else {
+            initDuplicateHelpers();
+        }
+
+        document.addEventListener('turbo:load', initDuplicateHelpers);
+        document.addEventListener('turbo:frame-load', initDuplicateHelpers);
+    })();
+    </script>
+{% endblock %}

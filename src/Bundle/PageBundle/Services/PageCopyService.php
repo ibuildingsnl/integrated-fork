@@ -23,6 +23,7 @@ use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\PageBundle\Services\PageCopy\PageBlockCloner;
 use Integrated\Bundle\PageBundle\Services\PageCopy\PageCopyInstruction;
 use Integrated\Bundle\PageBundle\Services\PageCopy\PageCopyRequest;
+use Integrated\Bundle\PageBundle\Services\PageCopy\PageCopyResult;
 
 class PageCopyService
 {
@@ -46,7 +47,7 @@ class PageCopyService
      * @throws MongoDBExceptionAlias
      * @throws MappingExceptionAlias
      */
-    public function copyPages(PageCopyRequest $request)
+    public function copyPages(PageCopyRequest $request): PageCopyResult
     {
         $targetChannel = $this->documentManager->getRepository(Channel::class)->find($request->getTargetChannelId());
         if ($targetChannel === null) {
@@ -63,6 +64,7 @@ class PageCopyService
         $existingPages = [];
         $existingBlocks = [];
         $copiedPages = 0;
+        $skippedExistingPages = [];
 
         /** @var Page $page */
         foreach ($result as $page) {
@@ -72,11 +74,9 @@ class PageCopyService
 
                 if ($existingPage !== null) {
                     if (!$pageInstruction->shouldOverwrite()) {
-                        throw new \InvalidArgumentException(\sprintf(
-                            'Target page "%s" already exists in channel "%s".',
-                            (string) $page->getPath(),
-                            $targetChannelId
-                        ));
+                        $skippedExistingPages[] = (string) $page->getPath();
+
+                        continue;
                     }
 
                     $this->documentManager->remove($existingPage);
@@ -105,6 +105,8 @@ class PageCopyService
         if ($copiedPages > 0) {
             $this->routeCache->clear();
         }
+
+        return new PageCopyResult($copiedPages, $skippedExistingPages);
     }
 
     /**

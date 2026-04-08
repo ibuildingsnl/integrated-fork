@@ -128,7 +128,7 @@ final class PageCopyServiceTest extends TestCase
         );
     }
 
-    public function testCreateActionRejectsExistingTargetPageWithoutRemovingIt(): void
+    public function testCreateActionSkipsExistingTargetPageWithoutRemovingIt(): void
     {
         $operations = [];
         $service = $this->createService($this->createConfiguredDocumentManager([
@@ -147,23 +147,21 @@ final class PageCopyServiceTest extends TestCase
             },
         ]));
 
-        try {
-            $service->copyPages($this->createRequest([
-                'sourceChannel' => 'source',
-                'targetChannel' => 'target',
-                'pages' => [
-                    'pagesource-page' => [
-                        'selected' => true,
-                        'copyAction' => 'create',
-                        'blocks' => [],
-                    ],
+        $result = $service->copyPages($this->createRequest([
+            'sourceChannel' => 'source',
+            'targetChannel' => 'target',
+            'pages' => [
+                'pagesource-page' => [
+                    'selected' => true,
+                    'copyAction' => 'create',
+                    'blocks' => [],
                 ],
-            ]));
-            self::fail('Expected create action to reject an existing target page.');
-        } catch (\InvalidArgumentException $exception) {
-            self::assertStringContainsString('already exists', $exception->getMessage());
-        }
+            ],
+        ]));
 
+        self::assertSame(0, $result->getCopiedPages());
+        self::assertTrue($result->hasSkippedExistingPages());
+        self::assertSame(['/page'], $result->getSkippedExistingPaths());
         self::assertNotContains('remove', $operations);
         self::assertNotContains('persist_page', $operations);
     }

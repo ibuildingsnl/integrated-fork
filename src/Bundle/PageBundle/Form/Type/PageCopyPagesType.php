@@ -41,10 +41,12 @@ class PageCopyPagesType extends AbstractType
         /** @var Page $page */
         foreach ($result as $page) {
             $targetPage = $this->documentManager->getRepository(Page::class)->findOneBy(['channel.$id' => $options['targetChannel'], 'path' => $page->getPath()]);
+            $hasExistingTargetPage = $targetPage !== null;
 
             $builder->add('page'.$page->getId(), PageCopyPageType::class, [
                 'page' => $page,
-                'copyAction' => ($targetPage === null) ? 'create' : 'overwrite',
+                'copyAction' => $hasExistingTargetPage ? 'overwrite' : 'create',
+                'allowOverwrite' => $hasExistingTargetPage,
                 'channel' => $options['channel'],
                 'targetChannel' => $options['targetChannel'],
             ]);

@@ -21,6 +21,8 @@
         {% if form.vars.errors|length > 0 %}
             {% set isExpanded = true %}
         {% endif %}
+        {% set overwriteAvailable = form.overwrite is defined %}
+        {% set currentCopyAction = overwriteAvailable and form.overwrite.vars.checked ? 'overwrite' : 'create' %}
         {% for blockField in form.blocks %}
             {% if blockField.vars.errors|length > 0
                 or blockField.operation.vars.errors|length > 0
@@ -52,13 +54,20 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
-                        <span class="label {% if copyAction == 'overwrite' %}label-warning{% else %}label-success{% endif %}" data-page-copy-action>
-                            {% if copyAction == 'overwrite' %}
+                        <span class="label {% if currentCopyAction == 'overwrite' %}label-warning{% else %}label-success{% endif %}" data-page-copy-action>
+                            {% if currentCopyAction == 'overwrite' %}
                                 {% trans %}Overwrite{% endtrans %}
                             {% else %}
                                 {% trans %}Create{% endtrans %}
                             {% endif %}
                         </span>
+                        {% if overwriteAvailable %}
+                            <div class="page-copy-action-selector flex items-center gap-2">
+                                <label class="checkbox-switcher" for="{{ form.overwrite.vars.id }}">
+                                    {{ form_widget(form.overwrite) }}
+                                </label>
+                            </div>
+                        {% endif %}
                         {% if blockCount > 0 %}
                             <button type="button" class="btn btn-white no-icon" data-page-copy-clone-all{% if not form.selected.vars.data %} disabled{% endif %}>
                                 {% trans %}Clone all blocks{% endtrans %}

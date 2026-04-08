@@ -20,6 +20,7 @@ use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
 use Integrated\Bundle\BlockBundle\Security\AllowedBlockClassInstantiator;
 use Integrated\Bundle\BlockBundle\Security\InvalidBlockClassException;
 use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
 use Integrated\Bundle\UserBundle\Model\User;
@@ -30,7 +31,9 @@ use Integrated\Common\Security\Permissions;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -155,7 +158,7 @@ class BlockController extends AbstractController
             BlockEditType::class,
             $block,
             [
-                'method' => 'POST',
+                'method' => 'PUT',
                 'data_class' => $block::class,
                 'type' => $block->getType(),
             ]
@@ -240,6 +243,85 @@ class BlockController extends AbstractController
         ]);
     }
 
+    public function duplicate(Request $request, Block $sourceBlock): Response
+    {
+        if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
+            $user = $this->getUser();
+            if (!$user instanceof User || !$sourceBlock->allowsGroupAccess($user->getGroups())) {
+                throw $this->createAccessDeniedException();
+            }
+        }
+
+        $targetChannelId = trim((string) (
+            $request->query->get('target_channel')
+            ?? $request->request->get('target_channel')
+            ?? $request->query->get('channel_id')
+            ?? ''
+        ));
+        $targetId = trim((string) (
+            $request->query->get('target_id')
+            ?? $request->request->get('target_id')
+            ?? ''
+        ));
+        $availableChannels = $this->getWebsiteChannelChoices();
+        $sourceChannelId = $this->detectSourceChannelId((string) $sourceBlock->getId(), array_keys($availableChannels));
+        if ($targetChannelId !== '' && !isset($availableChannels[$targetChannelId])) {
+            $targetChannelId = '';
+        }
+
+        $block = $this->createDuplicateBlock($sourceBlock, $targetChannelId);
+        if ($targetId !== '') {
+            $block->setId($targetId);
+        }
+
+        $form = $this->createForm(
+            BlockEditType::class,
+            $block,
+            [
+                'method' => 'POST',
+                'data_class' => $block::class,
+                'type' => $block->getType(),
+            ]
+        );
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            if ($form->get('actions')->getData() == 'cancel') {
+                return $this->redirectToRoute('integrated_block_block_index');
+            }
+
+            $postedTargetChannelId = trim((string) ($request->request->get('target_channel') ?? ''));
+            if ($postedTargetChannelId !== '' && isset($availableChannels[$postedTargetChannelId])) {
+                $targetChannelId = $postedTargetChannelId;
+            }
+
+            $this->addDuplicateIdValidationError($form, $block);
+
+            if ($form->isValid()) {
+                if ($this->dispatcher->hasListeners(Events::BLOCK_VALIDATE)) {
+                    $this->dispatcher->dispatch(new BlockEvent($block), Events::BLOCK_VALIDATE);
+                }
+
+                $this->documentManager->persist($block);
+                $this->documentManager->flush();
+
+                $this->addFlash('success', 'Block duplicated');
+
+                return $this->redirectToRoute('integrated_block_block_edit', ['id' => $block->getId()]);
+            }
+        }
+
+        return $this->render('@IntegratedBlock/block/duplicate.html.twig', [
+            'sourceBlock' => $sourceBlock,
+            'form' => $form,
+            'sourceChannelId' => $sourceChannelId,
+            'selectedTargetChannelId' => $targetChannelId,
+            'availableChannels' => $availableChannels,
+            'idAvailabilityUrl' => $this->generateUrl('integrated_block_block_id_availability'),
+        ]);
+    }
+
     private function createDeleteForm($id): FormInterface
     {
         $builder = $this->createFormBuilder();
@@ -280,5 +362,189 @@ class BlockController extends AbstractController
             'content' => $content,
             'pagination' => $pagination,
         ]);
+    }
+
+    public function idAvailability(Request $request): JsonResponse
+    {
+        if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $id = trim((string) $request->query->get('id', ''));
+        if ($id === '') {
+            return new JsonResponse([
+                'id' => $id,
+                'exists' => false,
+                'valid' => false,
+            ]);
+        }
+
+        $existing = $this->documentManager->getRepository(Block::class)->find($id);
+
+        return new JsonResponse([
+            'id' => $id,
+            'exists' => $existing instanceof Block,
+            'valid' => true,
+        ]);
+    }
+
+    private function createDuplicateBlock(Block $sourceBlock, string $targetChannelId): Block
+    {
+        $copy = null;
+        try {
+            $unserialized = unserialize(serialize($sourceBlock), ['allowed_classes' => true]);
+            $copy = $unserialized;
+        } catch (\Throwable) {
+            $copy = null;
+        }
+        $block = $copy instanceof Block ? $copy : clone $sourceBlock;
+
+        $sourceId = trim((string) $sourceBlock->getId());
+        $sourceTitle = trim((string) $sourceBlock->getTitle());
+
+        $block->setId($this->buildDuplicateBlockId($sourceId, $targetChannelId));
+        $block->setTitle($this->buildDuplicateBlockTitle($sourceTitle, $sourceId));
+        $block->setCreatedAt(new \DateTime());
+        $block->setUpdatedAt(new \DateTime());
+        $block->setLocked(false);
+
+        return $block;
+    }
+
+    private function addDuplicateIdValidationError(FormInterface $form, Block $block): void
+    {
+        $id = trim((string) $block->getId());
+
+        if ($id === '') {
+            $error = new FormError('Block id is required.');
+            if ($form->has('id')) {
+                $form->get('id')->addError($error);
+            } else {
+                $form->addError($error);
+            }
+
+            return;
+        }
+
+        $existing = $this->documentManager->getRepository(Block::class)->find($id);
+        if ($existing instanceof Block) {
+            $error = new FormError(\sprintf('Block id "%s" already exists.', $id));
+            if ($form->has('id')) {
+                $form->get('id')->addError($error);
+            } else {
+                $form->addError($error);
+            }
+        }
+    }
+
+    private function buildDuplicateBlockId(string $sourceId, string $targetChannelId): string
+    {
+        $sourceId = trim($sourceId);
+        $targetChannelId = trim($targetChannelId);
+
+        if ($sourceId === '') {
+            return $targetChannelId !== '' ? $targetChannelId.'_copy' : 'block_copy';
+        }
+
+        if ($targetChannelId !== '') {
+            $detectedSourceChannelId = $this->detectSourceChannelId($sourceId);
+            if ($detectedSourceChannelId !== '' && $detectedSourceChannelId !== $targetChannelId) {
+                $swappedId = $this->swapChannelInBlockId($sourceId, $detectedSourceChannelId, $targetChannelId);
+                if ($swappedId !== '') {
+                    return $swappedId;
+                }
+            }
+        }
+
+        return $sourceId.'_copy';
+    }
+
+    private function buildDuplicateBlockTitle(string $sourceTitle, string $sourceId): string
+    {
+        $baseTitle = $sourceTitle !== '' ? $sourceTitle : $sourceId;
+
+        return $baseTitle !== '' ? $baseTitle.' (copy)' : 'Copy';
+    }
+
+    /**
+     * @param list<string>|null $knownChannelIds
+     */
+    private function detectSourceChannelId(string $blockId, ?array $knownChannelIds = null): string
+    {
+        $blockId = trim($blockId);
+        if ($blockId === '') {
+            return '';
+        }
+
+        $channelIds = $knownChannelIds ?? array_keys($this->getWebsiteChannelChoices());
+        $channelIds = array_values(array_filter($channelIds, static fn (string $channelId): bool => trim($channelId) !== ''));
+        usort($channelIds, static fn (string $left, string $right): int => \strlen($right) <=> \strlen($left));
+
+        foreach ($channelIds as $channelId) {
+            if ($channelId === '') {
+                continue;
+            }
+
+            if (preg_match('/(^|_)'.preg_quote($channelId, '/').'(?=_|$)/', $blockId) === 1) {
+                return $channelId;
+            }
+        }
+
+        $parts = explode('_', $blockId, 2);
+
+        return trim((string) ($parts[0] ?? ''));
+    }
+
+    private function swapChannelInBlockId(string $blockId, string $sourceChannelId, string $targetChannelId): string
+    {
+        $blockId = trim($blockId);
+        if ($blockId === '') {
+            return $targetChannelId !== '' ? $targetChannelId.'_copy' : 'block_copy';
+        }
+
+        if ($sourceChannelId === '' || $targetChannelId === '' || $sourceChannelId === $targetChannelId) {
+            return $blockId;
+        }
+
+        $swappedId = preg_replace_callback(
+            '/(^|_)'.preg_quote($sourceChannelId, '/').'(?=_|$)/',
+            static fn (array $match): string => (string) ($match[1] ?? '').$targetChannelId,
+            $blockId,
+            1
+        );
+        if (\is_string($swappedId) && $swappedId !== '' && $swappedId !== $blockId) {
+            return $swappedId;
+        }
+
+        return $targetChannelId.'_'.$blockId;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function getWebsiteChannelChoices(): array
+    {
+        $result = $this->documentManager
+            ->createQueryBuilder(Channel::class)
+            ->field('type.$id')->equals('website')
+            ->sort('name', 'asc')
+            ->getQuery()
+            ->execute();
+
+        $channels = [];
+        foreach ($result as $channel) {
+            if (!$channel instanceof Channel) {
+                continue;
+            }
+
+            $channelId = trim((string) $channel->getId());
+            if ($channelId === '') {
+                continue;
+            }
+
+            $channels[$channelId] = trim((string) $channel->getName()) ?: $channelId;
+        }
+
+        return $channels;
     }
 }
