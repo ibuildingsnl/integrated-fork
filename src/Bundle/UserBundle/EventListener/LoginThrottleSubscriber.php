@@ -65,7 +65,7 @@ class LoginThrottleSubscriber implements EventSubscriberInterface
                 }
                 $session->getFlashBag()->add(
                     'warning',
-                    'Too many login attempts. Please try again later.'
+                    'Too many login attempts. Please wait 15 minutes and try again.'
                 );
             }
 

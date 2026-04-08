@@ -70,7 +70,7 @@ class SecurityController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             if (!$this->consumePasswordResetToken($request, (string) $form->get('email')->getData())) {
-                $this->addFlash('warning', 'Too many password reset attempts. Please wait a few minutes and try again.');
+                $this->addFlash('warning', 'Too many password reset attempts. Please wait 15 minutes and try again.');
 
                 return $this->redirectToRoute('integrated_user_password_reset');
             }
