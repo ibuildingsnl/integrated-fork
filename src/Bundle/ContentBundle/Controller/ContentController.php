@@ -671,36 +671,6 @@ class ContentController extends AbstractController
             // not lost and there is a new change to get a lock on the content.
         }
 
-        if ($locking['locked'] && !$locking['pending']) {
-            // the document is locked so display display a error message explaining that
-            // the user can not edit this page will the lock is there.
-
-            if ($locking['owner']) {
-                $text = 'The document is currently locked by your self in a different browser or tab and can not be edited until this lock is released.';
-            } elseif ($locking['user']) {
-                $user = $locking['user']->getUsername();
-
-                // we got a basic user name now try to get a better one
-
-                if (method_exists($locking['user'], 'getRelation')) {
-                    if ($relation = $locking['user']->getRelation()) {
-                        if (method_exists($relation, '__toString')) {
-                            $user = (string) $relation;
-                        }
-                    }
-                }
-
-                $text = \sprintf(
-                    'The document is currently locked by %s, the document can not be edited until this lock is released.',
-                    $user
-                );
-            } else {
-                $text = 'The document is currently locked and can not be edited until this lock is released.';
-            }
-
-            $this->addFlash('danger', $text);
-        }
-
         if ($request->query->getBoolean('frame')) {
             $renderTo = '@IntegratedContent/content/edit.iframe.html.twig';
         } elseif ($request->get('_route') == 'integrated_content_content_edit_iframe') {

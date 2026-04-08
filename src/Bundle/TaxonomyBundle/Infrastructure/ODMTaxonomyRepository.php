@@ -173,7 +173,7 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
     }
 
     /**
-     * @param array<string, mixed> $row
+     * @param array<string, mixed>   $row
      * @param array<string, Channel> $channelsById
      */
     private function buildIndexTaxonomy(array $row, array $channelsById): ?Taxonomy

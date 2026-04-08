@@ -1514,6 +1514,10 @@
                 <source>Add Tag</source>
                 <target>Tag toevoegen</target>
             </trans-unit>
+            <trans-unit id="384">
+                <source>I want to watch</source>
+                <target>Ik wil meekijken</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
