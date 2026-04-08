@@ -18,7 +18,6 @@ use Integrated\Common\Security\Permissions;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 class ContentChannelVoter implements VoterInterface
@@ -68,7 +67,7 @@ class ContentChannelVoter implements VoterInterface
     /**
      * @param array<int, int|string> $attributes
      */
-    public function vote(TokenInterface $token, mixed $content, array $attributes, ?Vote $vote = null): int
+    public function vote(TokenInterface $token, mixed $content, array $attributes, mixed $vote = null): int
     {
         if (!$content instanceof ChannelableInterface) {
             return VoterInterface::ACCESS_ABSTAIN;

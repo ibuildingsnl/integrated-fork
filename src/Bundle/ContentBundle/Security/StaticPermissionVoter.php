@@ -14,7 +14,6 @@ namespace Integrated\Bundle\ContentBundle\Security;
 use Integrated\Common\Security\Permissions;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 /**
@@ -67,7 +66,7 @@ class StaticPermissionVoter implements VoterInterface
         return true;
     }
 
-    public function vote(TokenInterface $token, mixed $object, array $attributes, ?Vote $vote = null): int
+    public function vote(TokenInterface $token, mixed $object, array $attributes, mixed $vote = null): int
     {
         foreach ($attributes as $attribute) {
             if ($this->supportsAttribute($attribute)) {
