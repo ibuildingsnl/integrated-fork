@@ -25,6 +25,11 @@
                 <div class="content-lock-overlay" data-content-lock-overlay>
                     <div class="content-lock-overlay__message">
                         {% trans %}This item is currently locked and cannot be edited until the lock is released.{% endtrans %}
+                        <div class="content-lock-overlay__actions mt-4">
+                            <button type="button" class="btn btn-white" data-content-lock-watch>
+                                {% trans %}I want to watch{% endtrans %}
+                            </button>
+                        </div>
                     </div>
                 </div>
             {% endif %}
@@ -381,6 +386,7 @@
         var LOCK_REFRESH_URL = "{{ path('integrated_locking_api_refresh')|e('js') }}";
         var LOCK_POLLING_KEY = '__integratedEditLockPolling';
         var LOCKED_ITEM_MESSAGE = "{{ 'This item is currently locked and cannot be edited until the lock is released.'|trans|e('js') }}";
+        var LOCK_WATCH_BUTTON_TEXT = "{{ 'I want to watch'|trans|e('js') }}";
         var LOCK_ACQUIRE_FAILED_MESSAGE = "{{ 'The lock could not be acquired, please reload and try again.'|trans|e('js') }}";
         var lockPollingStore = window[LOCK_POLLING_KEY] || (window[LOCK_POLLING_KEY] = {});
 
@@ -453,12 +459,31 @@
                 overlayMessage.className = 'content-lock-overlay__message';
                 overlay.appendChild(overlayMessage);
 
+                var overlayActions = document.createElement('div');
+                overlayActions.className = 'content-lock-overlay__actions mt-4';
+
+                var overlayWatchButton = document.createElement('button');
+                overlayWatchButton.type = 'button';
+                overlayWatchButton.className = 'btn btn-white';
+                overlayWatchButton.setAttribute('data-content-lock-watch', '1');
+                overlayWatchButton.textContent = LOCK_WATCH_BUTTON_TEXT;
+
+                overlayActions.appendChild(overlayWatchButton);
+                overlayMessage.appendChild(overlayActions);
+
                 wrapper.appendChild(overlay);
             }
 
             var messageNode = overlay.querySelector('.content-lock-overlay__message');
             if (messageNode) {
-                messageNode.textContent = message || LOCKED_ITEM_MESSAGE;
+                var messageTextNode = messageNode.firstChild;
+
+                if (!messageTextNode || messageTextNode.nodeType !== Node.TEXT_NODE) {
+                    messageTextNode = document.createTextNode('');
+                    messageNode.insertBefore(messageTextNode, messageNode.firstChild);
+                }
+
+                messageTextNode.nodeValue = message || LOCKED_ITEM_MESSAGE;
             }
         }
 
@@ -472,6 +497,16 @@
             if (overlay) {
                 overlay.remove();
             }
+        }
+
+        function enableLockWatchMode(form) {
+            if (form.getAttribute('data-lock-watch') === '1') {
+                return;
+            }
+
+            form.setAttribute('data-lock-watch', '1');
+            clearLockOverlay(form);
+            setSaveButtonDisabled(true);
         }
 
         function setFormActionLock(form, lockId) {
@@ -729,6 +764,24 @@
                     setSaveButtonDisabled(true);
                 });
         }
+
+        document.addEventListener('click', function (event) {
+            var watchButton = event.target instanceof Element
+                ? event.target.closest('[data-content-lock-watch]')
+                : null;
+
+            if (!watchButton) {
+                return;
+            }
+
+            var form = document.querySelector('form.content-form[data-lock-init-url]');
+            if (!form) {
+                return;
+            }
+
+            event.preventDefault();
+            enableLockWatchMode(form);
+        });
 
         document.addEventListener('DOMContentLoaded', initLockOnLoad);
         document.addEventListener('turbo:load', initLockOnLoad);

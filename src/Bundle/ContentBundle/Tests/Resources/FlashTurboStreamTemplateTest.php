@@ -15,5 +15,7 @@ class FlashTurboStreamTemplateTest extends TestCase
         $this->assertIsString($template);
         $this->assertStringContainsString('<turbo-stream action="append" target="flash-messages">', $template);
         $this->assertStringNotContainsString('<turbo-stream action="replace" target="flash-messages">', $template);
+        $this->assertStringContainsString('{{ message|trans }}', $template);
+        $this->assertStringNotContainsString('data-content-lock-watch', $template);
     }
 }

@@ -29,6 +29,10 @@ class ContentEditStatusStreamFlowTest extends TestCase
         $this->assertStringContainsString('id="content-history-section"', $template);
         $this->assertStringContainsString('turbo:before-stream-render', $template);
         $this->assertStringContainsString('response.next_states', $template);
+        $this->assertStringContainsString('data-content-lock-watch', $template);
+        $this->assertStringContainsString('I want to watch', $template);
+        $this->assertStringContainsString('<div class="content-lock-overlay__message">', $template);
+        $this->assertStringContainsString('<div class="content-lock-overlay__actions mt-4">', $template);
     }
 
     public function testStatusOptionsTurboStreamTemplateReplacesWorkflowStatusAndHistoryTargets(): void
@@ -63,10 +67,15 @@ class ContentEditStatusStreamFlowTest extends TestCase
         $this->assertIsString($template);
         $this->assertStringContainsString("\$workflowRoot.attr('data-workflow-state-initialized') === 'true'", $template);
         $this->assertStringContainsString("\$workflowRoot.attr('data-workflow-state-initialized', 'true');", $template);
-        $this->assertStringContainsString("data-workflow-pending-signature", $template);
-        $this->assertStringContainsString("data-workflow-last-applied-signature", $template);
+        $this->assertStringContainsString('data-workflow-pending-signature', $template);
+        $this->assertStringContainsString('data-workflow-last-applied-signature', $template);
         $this->assertStringContainsString('window.requestAnimationFrame(initializeWorkflowSection);', $template);
         $this->assertStringNotContainsString('window.setTimeout(initializeWorkflowSection, 50);', $template);
+        $this->assertStringContainsString('function enableLockWatchMode(form)', $template);
+        $this->assertStringContainsString("event.target.closest('[data-content-lock-watch]')", $template);
+        $this->assertStringContainsString('overlayMessage.appendChild(overlayActions);', $template);
+        $this->assertStringContainsString('document.createTextNode', $template);
+        $this->assertStringNotContainsString('messageNode.textContent = message || LOCKED_ITEM_MESSAGE;', $template);
     }
 
     public function testStatusOptionsUsePublishableWorkflowStateForPlannedContent(): void
