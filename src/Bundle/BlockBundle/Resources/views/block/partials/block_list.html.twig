@@ -19,6 +19,15 @@
                     {% set usedContainerBlocks = integrated_find_container_blocks(block) %}
                     {% set usedTemplateUsages = integrated_find_template_usages(block) %}
                     {% set usedChannels = integrated_find_channels(block) %}
+                    {% set selectedChannels = facetFilter.vars.value.channels|default([]) %}
+                    {% if selectedChannels is not iterable %}
+                        {% set selectedChannels = [selectedChannels] %}
+                    {% endif %}
+                    {% set duplicateTargetChannel = selectedChannels|length == 1 ? selectedChannels|first : null %}
+                    {% set duplicateRouteParams = {'id': block.id} %}
+                    {% if duplicateTargetChannel %}
+                        {% set duplicateRouteParams = duplicateRouteParams|merge({'target_channel': duplicateTargetChannel}) %}
+                    {% endif %}
                     {% set usedOnCount = usedPages|length + usedContainerBlocks|length + usedTemplateUsages|length %}
                     <tr class="has-options">
                         <td>
@@ -31,6 +40,10 @@
                                 <a href="{{ path('integrated_block_block_edit', { 'id': block.id}) }}"
                                    title="{% trans %}Edit{% endtrans %}">
                                     {% trans %}Edit{% endtrans %}
+                                </a>
+                                | <a href="{{ path('integrated_block_block_duplicate', duplicateRouteParams) }}"
+                                     title="{% trans %}Duplicate{% endtrans %}">
+                                    {% trans %}Duplicate{% endtrans %}
                                 </a>
                                 {% if not block.locked and (is_granted('ROLE_ADMIN') or is_granted('ROLE_WEBSITE_MANAGER')) %}
                                     {% if not usedPages and not usedContainerBlocks and not usedTemplateUsages %}

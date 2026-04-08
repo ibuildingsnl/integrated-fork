@@ -12,6 +12,14 @@ integrated_block_block_new:
     _format: 'html'
   requirements:
     _format: 'html|iframe.html'
+integrated_block_block_id_availability:
+  path: '/id-availability/{_format}'
+  methods: ['GET']
+  defaults:
+    _controller: 'Integrated\Bundle\BlockBundle\Controller\BlockController::idAvailability'
+    _format: 'json'
+  requirements:
+    _format: 'json'
 integrated_block_block_show:
   path: '/{id}'
   methods: ['GET']
@@ -25,6 +33,13 @@ integrated_block_block_edit:
     _format: 'html'
   requirements:
     _format: 'html|iframe.html'
+integrated_block_block_duplicate:
+  path: '/{id}/duplicate/{_format}'
+  defaults:
+    _controller: 'Integrated\Bundle\BlockBundle\Controller\BlockController::duplicate'
+    _format: 'html'
+  requirements:
+    _format: 'html'
 integrated_block_block_delete:
   path: '/{id}/delete'
   defaults:
