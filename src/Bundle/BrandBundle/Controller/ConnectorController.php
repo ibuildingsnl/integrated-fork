@@ -166,16 +166,15 @@ class ConnectorController extends AbstractController
      */
     private function enrichMissingBlocksWithDuplicateCandidates(array $missingBlocks, string $targetChannelId): array
     {
-        if ($targetChannelId === '' || $missingBlocks === []) {
-            return $missingBlocks;
+        if ($missingBlocks === []) {
+            return [];
         }
 
         foreach ($missingBlocks as $index => $missingBlock) {
-            $missingBlockId = trim((string) ($missingBlock['id'] ?? ''));
-            $missingBlocks[$index]['duplicateCandidates'] = $this->findDuplicateCandidatesForMissingBlock(
-                $missingBlockId,
-                $targetChannelId
-            );
+            $missingBlockId = trim($missingBlock['id']);
+            $missingBlocks[$index]['duplicateCandidates'] = $targetChannelId === ''
+                ? []
+                : $this->findDuplicateCandidatesForMissingBlock($missingBlockId, $targetChannelId);
         }
 
         return $missingBlocks;
@@ -212,6 +211,9 @@ class ConnectorController extends AbstractController
             ->sort('id', 'asc')
             ->getQuery()
             ->execute();
+        if (!\is_iterable($result)) {
+            return [];
+        }
 
         $candidates = [];
 
@@ -239,7 +241,7 @@ class ConnectorController extends AbstractController
             }
 
             $middlePart = substr($candidateId, \strlen($prefix), $middleLength);
-            if (!\is_string($middlePart) || trim($middlePart, '_') === '' || $middlePart === $targetChannelId) {
+            if (trim($middlePart, '_') === '' || $middlePart === $targetChannelId) {
                 continue;
             }
 
@@ -278,11 +280,10 @@ class ConnectorController extends AbstractController
             return null;
         }
 
-        $fullMatch = (string) ($matches[0][0] ?? '');
-        $matchOffset = (int) ($matches[0][1] ?? -1);
-        $leftBoundary = (string) ($matches[1][0] ?? '');
+        $matchOffset = (int) $matches[0][1];
+        $leftBoundary = (string) $matches[1][0];
 
-        if ($fullMatch === '' || $matchOffset < 0) {
+        if ($matchOffset < 0) {
             return null;
         }
 
