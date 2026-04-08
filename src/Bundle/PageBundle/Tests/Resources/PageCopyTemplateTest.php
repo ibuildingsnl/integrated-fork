@@ -137,7 +137,7 @@ final class PageCopyTemplateTest extends TestCase
         $this->assertStringContainsString('data-page-copy-clone-all', $pageTemplate);
         $this->assertStringContainsString('data-page-copy-check-all', $pageTemplate);
         $this->assertStringContainsString("event.target.closest('[data-page-copy-clone-all]')", $pageTemplate);
-        $this->assertStringContainsString("event.target.closest('[data-page-copy-check-all]')", $pageTemplate);
+        $this->assertStringContainsString("event.target.matches('[data-page-copy-check-all]')", $pageTemplate);
         $this->assertStringContainsString("event.target.closest('[data-page-copy-apply-replace]')", $pageTemplate);
         $this->assertStringContainsString("pageCopyForm.addEventListener('submit'", $pageTemplate);
     }

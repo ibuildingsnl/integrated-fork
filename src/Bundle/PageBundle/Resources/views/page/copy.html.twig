@@ -47,11 +47,6 @@
                         </div>
                     {% endif %}
                     {% if form.pages is defined %}
-                        <div class="form-item form-actions__item form-actions__item--submit-like">
-                            <button type="button" class="btn btn-select" data-page-copy-check-all>
-                                {% trans %}Check all{% endtrans %}
-                            </button>
-                        </div>
                         <div class="form-item form-actions__item">
                             <label class="control-label" for="page-copy-search">{% trans %}Search{% endtrans %}</label>
                             <input type="text" id="page-copy-search" class="form-control" data-page-copy-search>
@@ -69,6 +64,21 @@
                 </div>
                 {% if form.pages is defined %}
                     <div class="queue-summary" data-page-copy-summary>
+                        <div class="inline-flex items-center gap-2">
+                            <label class="checkbox-switcher" for="page-copy-check-all-toggle">
+                                <input
+                                    type="checkbox"
+                                    id="page-copy-check-all-toggle"
+                                    class="switch-input"
+                                    data-page-copy-check-all
+                                    aria-label="{% trans %}Check all{% endtrans %}"
+                                />
+                                <span class="switch-label" data-on="{% trans %}Yes{% endtrans %}" data-off="{% trans %}No{% endtrans %}"></span>
+                                <span class="switch-handle"></span>
+                            </label>
+                            <small class="text-gray-500">{% trans %}Check all{% endtrans %}</small>
+                        </div>
+                        <span>|</span>
                         <strong>{% trans %}Pages found{% endtrans %}:</strong> {{ pageCount }}
                         <span>|</span>
                         <strong>{% trans %}Overwrites{% endtrans %}:</strong> {{ overwriteCount }}
@@ -226,6 +236,32 @@
             syncPageCopyPanelSelectedState(panel, selected);
             syncPageCopyCloneAllButtonState(panel);
         });
+
+        syncPageCopyCheckAllToggleState();
+    }
+
+    function areAllPageCopySelectionsSelected() {
+        var selects = document.querySelectorAll('[data-page-copy-select]');
+        if (selects.length === 0) {
+            return false;
+        }
+
+        return Array.prototype.every.call(selects, function(select) {
+            return select.checked;
+        });
+    }
+
+    function syncPageCopyCheckAllToggleState() {
+        var allSelected = areAllPageCopySelectionsSelected();
+
+        document.querySelectorAll('[data-page-copy-check-all]').forEach(function(toggle) {
+            if (!(toggle instanceof HTMLInputElement)) {
+                return;
+            }
+
+            toggle.checked = allSelected;
+            toggle.setAttribute('aria-checked', allSelected ? 'true' : 'false');
+        });
     }
 
     function normalizePageCopyCloneInputs(scope) {
@@ -290,6 +326,7 @@
                 select.addEventListener('change', function() {
                     syncPageCopyPanelSelectedState(panel, select.checked);
                     syncPageCopyCloneAllButtonState(panel);
+                    syncPageCopyCheckAllToggleState();
                 });
             }
 
@@ -336,6 +373,8 @@
 
             pageCopyForm.dataset.pageCopySubmitNormalized = 'true';
         }
+
+        syncPageCopyCheckAllToggleState();
     }
 
     if (!window.__integratedPageCopyDelegatedSelectionBound) {
@@ -347,6 +386,7 @@
             var panel = event.target.closest('[data-page-copy-panel]');
             syncPageCopyPanelSelectedState(panel, event.target.checked);
             syncPageCopyCloneAllButtonState(panel);
+            syncPageCopyCheckAllToggleState();
         });
 
         window.__integratedPageCopyDelegatedSelectionBound = true;
@@ -379,13 +419,12 @@
     }
 
     if (!window.__integratedPageCopyDelegatedCheckAllBound) {
-        document.addEventListener('click', function(event) {
-            var button = event.target instanceof Element ? event.target.closest('[data-page-copy-check-all]') : null;
-            if (!(button instanceof HTMLButtonElement)) {
+        document.addEventListener('change', function(event) {
+            if (!(event.target instanceof HTMLInputElement) || !event.target.matches('[data-page-copy-check-all]')) {
                 return;
             }
 
-            setAllPageCopySelections(true);
+            setAllPageCopySelections(event.target.checked);
         });
 
         window.__integratedPageCopyDelegatedCheckAllBound = true;
