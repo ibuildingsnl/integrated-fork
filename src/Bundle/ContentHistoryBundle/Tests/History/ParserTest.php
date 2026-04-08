@@ -158,4 +158,18 @@ class ParserTest extends TestCase
         self::assertStringContainsString('Featured image:', $rows[0]['new']);
         self::assertStringContainsString('#new-image-id', $rows[0]['new']);
     }
+
+    public function testItDoesNotUnserializeObjectPayloads(): void
+    {
+        $parser = new Parser();
+
+        $rows = $parser->getReadableChangesetFromArray([
+            'payload' => 'O:8:"stdClass":0:{}',
+            'nested' => 'a:1:{i:0;O:8:"stdClass":0:{}}',
+        ]);
+
+        self::assertCount(2, $rows);
+        self::assertSame('O:8:"stdClass":0:{}', $rows[0]['new']);
+        self::assertSame('a:1:{i:0;O:8:"stdClass":0:{}}', $rows[1]['new']);
+    }
 }

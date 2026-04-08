@@ -17,21 +17,26 @@ use Integrated\Bundle\UserBundle\Form\Type\PasswordChangeType;
 use Integrated\Bundle\UserBundle\Form\Type\PasswordResetType;
 use Integrated\Bundle\UserBundle\Service\KeyGenerator;
 use Integrated\Bundle\UserBundle\Service\Mailer;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class SecurityController extends AbstractController
 {
+    private const PASSWORD_RESET_MAX_ATTEMPTS = 5;
+    private const PASSWORD_RESET_WINDOW_SECONDS = 900;
     private UserManager $userManager;
     private Mailer $mailer;
     private KeyGenerator $keyGenerator;
+    private CacheItemPoolInterface $passwordResetThrottleCache;
 
-    public function __construct(UserManager $userManager, Mailer $mailer, KeyGenerator $keyGenerator)
+    public function __construct(UserManager $userManager, Mailer $mailer, KeyGenerator $keyGenerator, CacheItemPoolInterface $passwordResetThrottleCache)
     {
         $this->userManager = $userManager;
         $this->mailer = $mailer;
         $this->keyGenerator = $keyGenerator;
+        $this->passwordResetThrottleCache = $passwordResetThrottleCache;
     }
 
     public function login(): Response
@@ -64,6 +69,12 @@ class SecurityController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if (!$this->consumePasswordResetToken($request, (string) $form->get('email')->getData())) {
+                $this->addFlash('warning', 'Too many password reset attempts. Please wait a few minutes and try again.');
+
+                return $this->redirectToRoute('integrated_user_password_reset');
+            }
+
             if ($user = $this->userManager->findEnabledByUsernameOrEmailAndScope($form->get('email')->getData())) {
                 if ($user->isEnabled()) {
                     $this->mailer->sendPasswordResetMail($user);
@@ -76,6 +87,35 @@ class SecurityController extends AbstractController
         }
 
         return $this->render('@IntegratedUser/security/password_reset.html.twig', ['form' => $form]);
+    }
+
+    private function consumePasswordResetToken(Request $request, string $email): bool
+    {
+        $clientIp = (string) ($request->getClientIp() ?? 'unknown');
+        $normalizedEmail = strtolower(trim($email));
+        $cacheKey = 'integrated_user_password_reset_'.hash('sha256', $clientIp.'|'.$normalizedEmail);
+        $now = time();
+
+        $cacheItem = $this->passwordResetThrottleCache->getItem($cacheKey);
+        $payload = $cacheItem->isHit() && \is_array($cacheItem->get()) ? $cacheItem->get() : [];
+
+        $count = (int) ($payload['count'] ?? 0);
+        $windowResetAt = (int) ($payload['window_reset_at'] ?? 0);
+        if ($windowResetAt <= $now) {
+            $count = 0;
+            $windowResetAt = $now + self::PASSWORD_RESET_WINDOW_SECONDS;
+        }
+
+        $count++;
+
+        $cacheItem->set([
+            'count' => $count,
+            'window_reset_at' => $windowResetAt,
+        ]);
+        $cacheItem->expiresAt((new \DateTimeImmutable())->setTimestamp($windowResetAt));
+        $this->passwordResetThrottleCache->save($cacheItem);
+
+        return $count <= self::PASSWORD_RESET_MAX_ATTEMPTS;
     }
 
     public function passwordChange(Request $request, int $id, int $timestamp, string $key): Response
