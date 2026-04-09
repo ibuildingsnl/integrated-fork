@@ -37,19 +37,9 @@ final class WebsiteChannelResolver
         );
         usort(
             $channels,
-            static function (ChannelInterface $left, ChannelInterface $right): int {
-                $leftName = trim((string) ($left->getName() ?? ''));
-                $rightName = trim((string) ($right->getName() ?? ''));
-                $nameComparison = strcasecmp($leftName, $rightName);
-                if ($nameComparison !== 0) {
-                    return $nameComparison;
-                }
-
-                $leftId = trim((string) ($left->getId() ?? ''));
-                $rightId = trim((string) ($right->getId() ?? ''));
-
-                return strcmp($leftId, $rightId);
-            }
+            static fn (ChannelInterface $left, ChannelInterface $right): int =>
+                strcasecmp((string) $left->getName(), (string) $right->getName())
+                ?: strcmp((string) $left->getId(), (string) $right->getId())
         );
 
         $this->websiteChannels = $channels;
