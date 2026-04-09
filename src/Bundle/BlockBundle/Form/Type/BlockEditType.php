@@ -64,7 +64,8 @@ class BlockEditType extends AbstractType
 
             // The id field is rendered disabled in edit forms and is therefore not posted.
             // Keep the existing id so the mapper does not try to write null.
-            if ((!isset($data['id']) || $data['id'] === '') && $block->getId()) {
+            // Some compact block forms (e.g. inline text save flow) do not include an id field.
+            if ($event->getForm()->has('id') && (!isset($data['id']) || $data['id'] === '') && $block->getId()) {
                 $data['id'] = $block->getId();
                 $event->setData($data);
             }
