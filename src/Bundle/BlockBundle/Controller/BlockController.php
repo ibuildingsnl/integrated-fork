@@ -22,8 +22,8 @@ use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
 use Integrated\Bundle\BlockBundle\Security\AllowedBlockClassInstantiator;
 use Integrated\Bundle\BlockBundle\Security\InvalidBlockClassException;
 use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Services\WebsiteChannelResolver;
 use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Content\Form\Event\BlockEvent;
@@ -51,6 +51,7 @@ class BlockController extends AbstractController
         private EventDispatcherInterface $dispatcher,
         private BlockRepository $blockRepository,
         private AllowedBlockClassInstantiator $allowedBlockClassInstantiator,
+        private WebsiteChannelResolver $websiteChannelResolver,
     ) {
     }
 
@@ -567,30 +568,6 @@ class BlockController extends AbstractController
      */
     private function getWebsiteChannelChoices(): array
     {
-        $result = $this->documentManager
-            ->createQueryBuilder(Channel::class)
-            ->field('type.$id')->equals('website')
-            ->sort('name', 'asc')
-            ->getQuery()
-            ->execute();
-        if (!is_iterable($result)) {
-            return [];
-        }
-
-        $channels = [];
-        foreach ($result as $channel) {
-            if (!$channel instanceof Channel) {
-                continue;
-            }
-
-            $channelId = trim((string) $channel->getId());
-            if ($channelId === '') {
-                continue;
-            }
-
-            $channels[$channelId] = trim((string) $channel->getName()) ?: $channelId;
-        }
-
-        return $channels;
+        return $this->websiteChannelResolver->getWebsiteChannelChoices();
     }
 }

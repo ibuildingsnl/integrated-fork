@@ -7,8 +7,7 @@ namespace Integrated\Bundle\FormTypeBundle\Form\Type;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
-use Integrated\Common\Content\Channel\ChannelInterface;
-use Integrated\Common\Content\Channel\ChannelManagerInterface;
+use Integrated\Bundle\ContentBundle\Services\WebsiteChannelResolver;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -27,7 +26,7 @@ class FilterableContentChoiceType extends ContentChoiceType
         string $repositoryClass,
         string $route,
         ?array $params,
-        private readonly ChannelManagerInterface $channelManager,
+        private readonly WebsiteChannelResolver $websiteChannelResolver,
         private readonly ContentTypeManager $contentTypeManager,
         private readonly array $excludedContentTypeKeys = [],
     ) {
@@ -49,7 +48,7 @@ class FilterableContentChoiceType extends ContentChoiceType
         parent::buildView($view, $form, $options);
 
         $channels = [];
-        foreach ($this->getWebsiteChannels() as $channel) {
+        foreach ($this->websiteChannelResolver->getWebsiteChannels() as $channel) {
             $channels[] = [
                 'value' => $channel->getId(),
                 'label' => $channel->getName(),
@@ -80,10 +79,12 @@ class FilterableContentChoiceType extends ContentChoiceType
     {
         parent::configureOptions($resolver);
 
-        $resolver->setDefaults([
-            'show_channel_filter' => true,
-            'show_content_type_filter' => true,
-        ]);
+        $resolver->setDefaults(
+            [
+                'show_channel_filter' => true,
+                'show_content_type_filter' => true,
+            ]
+        );
     }
 
     public function getBlockPrefix(): string
@@ -120,7 +121,7 @@ class FilterableContentChoiceType extends ContentChoiceType
         $normalizedName = $this->normalizeContentTypeKey($name);
 
         return isset($this->excludedContentTypeKeyLookup[$normalizedId])
-            || isset($this->excludedContentTypeKeyLookup[$normalizedName]);
+               || isset($this->excludedContentTypeKeyLookup[$normalizedName]);
     }
 
     private function normalizeContentTypeKey(string $value): string
@@ -128,41 +129,4 @@ class FilterableContentChoiceType extends ContentChoiceType
         return strtolower(trim(str_replace('-', '_', $value)));
     }
 
-    /**
-     * Support both DBRef (`type.$id`) and legacy embedded (`type.name`) channel type schemas.
-     *
-     * @return list<ChannelInterface>
-     */
-    private function getWebsiteChannels(): array
-    {
-        $channels = $this->channelManager->findBy(['type.$id' => 'website']);
-        if ($channels === []) {
-            $channels = $this->channelManager->findBy(['type.name' => 'Website']);
-        }
-
-        if ($channels === []) {
-            $channels = array_values(array_filter(
-                $this->channelManager->findAll(),
-                static function (ChannelInterface $channel): bool {
-                    $type = $channel->getType();
-                    if ($type === null) {
-                        return false;
-                    }
-
-                    if (strtolower((string) $type->getId()) === 'website') {
-                        return true;
-                    }
-
-                    return strtolower((string) $type->getName()) === 'website';
-                }
-            ));
-        }
-
-        usort($channels, static fn (ChannelInterface $left, ChannelInterface $right): int => strcasecmp(
-            (string) $left->getName(),
-            (string) $right->getName(),
-        ));
-
-        return $channels;
-    }
 }

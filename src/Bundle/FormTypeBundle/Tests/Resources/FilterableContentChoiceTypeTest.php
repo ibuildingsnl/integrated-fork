@@ -11,8 +11,8 @@ use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
+use Integrated\Bundle\ContentBundle\Services\WebsiteChannelResolver;
 use Integrated\Bundle\FormTypeBundle\Form\Type\FilterableContentChoiceType;
-use Integrated\Common\Content\Channel\ChannelManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormView;
 
@@ -20,23 +20,28 @@ final class FilterableContentChoiceTypeTest extends TestCase
 {
     public function testOnlyWebsiteChannelsAreExposedToTheWidget(): void
     {
-        $channelManager = $this->createMock(ChannelManagerInterface::class);
-        $channelManager->method('findBy')->willReturnCallback(
-            function (array $criteria): array {
-                if ($criteria === ['type.$id' => 'website']) {
+        $channelManager = $this->createMock(\Integrated\Common\Content\Channel\ChannelManagerInterface::class);
+        $channelManager->expects(self::once())
+            ->method('findBy')
+            ->willReturnCallback(function (array $criteria): array {
+                if (
+                    $criteria === [
+                        '$or' => [
+                            ['type.$id' => 'website'],
+                            ['type.name' => 'Website'],
+                        ],
+                    ]
+                ) {
                     return [
                         $this->createChannel('website', 'Website NL', 'Website'),
                     ];
                 }
 
-                if ($criteria === ['type.name' => 'Website']) {
-                    return [];
-                }
-
                 return [];
-            }
-        );
+            });
         $channelManager->expects(self::never())->method('findAll');
+
+        $websiteChannelResolver = new WebsiteChannelResolver($channelManager);
 
         $contentTypeManager = $this->createMock(ContentTypeManager::class);
         $contentTypeManager->method('getAll')->willReturn([]);
@@ -46,7 +51,7 @@ final class FilterableContentChoiceTypeTest extends TestCase
             'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content',
             'integrated_content_content_index',
             ['_format' => 'json'],
-            $channelManager,
+            $websiteChannelResolver,
             $contentTypeManager,
             [],
         );
@@ -78,9 +83,11 @@ final class FilterableContentChoiceTypeTest extends TestCase
 
     public function testFilterVisibilityCanBeDisabledPerOption(): void
     {
-        $channelManager = $this->createMock(ChannelManagerInterface::class);
-        $channelManager->method('findBy')->willReturn([]);
-        $channelManager->expects(self::once())->method('findAll')->willReturn([]);
+        $channelManager = $this->createMock(\Integrated\Common\Content\Channel\ChannelManagerInterface::class);
+        $channelManager->expects(self::once())->method('findBy')->willReturn([]);
+        $channelManager->expects(self::never())->method('findAll');
+
+        $websiteChannelResolver = new WebsiteChannelResolver($channelManager);
 
         $contentTypeManager = $this->createMock(ContentTypeManager::class);
         $contentTypeManager->method('getAll')->willReturn([]);
@@ -90,7 +97,7 @@ final class FilterableContentChoiceTypeTest extends TestCase
             'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content',
             'integrated_content_content_index',
             ['_format' => 'json'],
-            $channelManager,
+            $websiteChannelResolver,
             $contentTypeManager,
             [],
         );
@@ -119,9 +126,11 @@ final class FilterableContentChoiceTypeTest extends TestCase
 
     public function testContentTypeChoicesExcludeSpecificTypesAndGroupContentAndTaxonomies(): void
     {
-        $channelManager = $this->createMock(ChannelManagerInterface::class);
-        $channelManager->method('findBy')->willReturn([]);
-        $channelManager->expects(self::once())->method('findAll')->willReturn([]);
+        $channelManager = $this->createMock(\Integrated\Common\Content\Channel\ChannelManagerInterface::class);
+        $channelManager->expects(self::once())->method('findBy')->willReturn([]);
+        $channelManager->expects(self::never())->method('findAll');
+
+        $websiteChannelResolver = new WebsiteChannelResolver($channelManager);
 
         $contentTypeManager = $this->createMock(ContentTypeManager::class);
         $contentTypeManager->method('getAll')->willReturn([
@@ -137,7 +146,7 @@ final class FilterableContentChoiceTypeTest extends TestCase
             'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content',
             'integrated_content_content_index',
             ['_format' => 'json'],
-            $channelManager,
+            $websiteChannelResolver,
             $contentTypeManager,
             ['Media Taxonomy', 'WoodWing Post', 'Nieuwsbrief'],
         );
