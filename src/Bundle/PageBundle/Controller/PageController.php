@@ -14,7 +14,7 @@ namespace Integrated\Bundle\PageBundle\Controller;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Services\WebsiteChannelResolver;
 use Integrated\Bundle\IntegratedBundle\Controller\PaginationQueryTrait;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
@@ -54,6 +54,7 @@ class PageController extends AbstractController
     private RouteCache $routeCache;
     private ?ThemeManager $themeManager;
     private UriSigner $uriSigner;
+    private WebsiteChannelResolver $websiteChannelResolver;
     /** @var array<int, string>|null */
     private ?array $allExistingWebsiteChannelIds = null;
 
@@ -64,6 +65,7 @@ class PageController extends AbstractController
         PageCopyRequestFactory $pageCopyRequestFactory,
         RouteCache $routeCache,
         UriSigner $uriSigner,
+        WebsiteChannelResolver $websiteChannelResolver,
         ?ThemeManager $themeManager = null,
     ) {
         $this->documentManager = $documentManager;
@@ -72,6 +74,7 @@ class PageController extends AbstractController
         $this->pageCopyRequestFactory = $pageCopyRequestFactory;
         $this->routeCache = $routeCache;
         $this->uriSigner = $uriSigner;
+        $this->websiteChannelResolver = $websiteChannelResolver;
         $this->themeManager = $themeManager;
     }
 
@@ -1078,7 +1081,7 @@ class PageController extends AbstractController
         ];
 
         $channelChoices = [];
-        $channels = $this->documentManager->getRepository(Channel::class)->findBy(['type.$id' => 'website']);
+        $channels = $this->websiteChannelResolver->getWebsiteChannels();
 
         $noneBuilder = $this->documentManager->createQueryBuilder(AbstractPage::class);
         $this->applySearchFilter($noneBuilder, $query);
@@ -1129,18 +1132,7 @@ class PageController extends AbstractController
             return $this->allExistingWebsiteChannelIds;
         }
 
-        $channelIds = [];
-        $channels = $this->documentManager->getRepository(Channel::class)->findBy(['type.$id' => 'website']);
-        foreach ($channels as $channel) {
-            $channelId = $this->resolveChannelId($channel);
-            if (null === $channelId) {
-                continue;
-            }
-
-            $channelIds[] = $channelId;
-        }
-
-        $this->allExistingWebsiteChannelIds = array_values(array_unique($channelIds));
+        $this->allExistingWebsiteChannelIds = $this->websiteChannelResolver->getWebsiteChannelIds();
 
         return $this->allExistingWebsiteChannelIds;
     }
