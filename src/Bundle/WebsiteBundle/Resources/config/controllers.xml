@@ -38,6 +38,7 @@
             <argument type="service" id="integrated_menu.provider.integrated_menu_provider" />
             <argument type="service" id="integrated.menu_factory.database" />
             <argument type="service" id="channel.context" />
+            <argument type="service" id="event_dispatcher" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />

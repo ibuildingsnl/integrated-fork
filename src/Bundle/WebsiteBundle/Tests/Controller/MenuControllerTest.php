@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Integrated\Bundle\WebsiteBundle\Tests\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\MenuBundle\Document\Menu;
+use Integrated\Bundle\MenuBundle\Event\MenuChangedEvent;
 use Integrated\Bundle\MenuBundle\Menu\DatabaseMenuFactory;
 use Integrated\Bundle\MenuBundle\Provider\IntegratedMenuProvider;
 use Integrated\Bundle\WebsiteBundle\Controller\MenuController;
@@ -12,6 +14,7 @@ use Integrated\Common\Content\Channel\ChannelContextInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class MenuControllerTest extends TestCase
 {
@@ -23,6 +26,8 @@ class MenuControllerTest extends TestCase
     private DatabaseMenuFactory $menuFactory;
     /** @var ChannelContextInterface&MockObject */
     private ChannelContextInterface $channelContext;
+    /** @var EventDispatcherInterface&MockObject */
+    private EventDispatcherInterface $eventDispatcher;
 
     protected function setUp(): void
     {
@@ -30,13 +35,14 @@ class MenuControllerTest extends TestCase
         $this->menuProvider = $this->createMock(IntegratedMenuProvider::class);
         $this->menuFactory = $this->createMock(DatabaseMenuFactory::class);
         $this->channelContext = $this->createMock(ChannelContextInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function testSaveStripsPlaceholderItemsBeforePersistence(): void
     {
         $captured = [];
-        $menu = new class {
-            public ?object $channel = null;
+        $menu = new class('main', $this->createMock(DatabaseMenuFactory::class)) extends Menu {
+            public $channel = null;
 
             public function getName(): string
             {
@@ -69,6 +75,10 @@ class MenuControllerTest extends TestCase
 
         $this->documentManager->expects($this->once())->method('persist')->with($menu);
         $this->documentManager->expects($this->once())->method('flush');
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(static fn (object $event): bool => $event instanceof MenuChangedEvent && $event->getMenu() === $menu));
 
         $controller = $this->createController();
         $controller->save($this->createSaveRequest([
@@ -100,8 +110,8 @@ class MenuControllerTest extends TestCase
     public function testSaveKeepsHeadingItemWithoutUrl(): void
     {
         $captured = [];
-        $menu = new class {
-            public ?object $channel = null;
+        $menu = new class('main', $this->createMock(DatabaseMenuFactory::class)) extends Menu {
+            public $channel = null;
 
             public function getName(): string
             {
@@ -134,6 +144,10 @@ class MenuControllerTest extends TestCase
 
         $this->documentManager->expects($this->once())->method('persist')->with($menu);
         $this->documentManager->expects($this->once())->method('flush');
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(static fn (object $event): bool => $event instanceof MenuChangedEvent && $event->getMenu() === $menu));
 
         $controller = $this->createController();
         $controller->save($this->createSaveRequest([
@@ -166,7 +180,7 @@ class MenuControllerTest extends TestCase
 
     private function createController(): MenuController
     {
-        return new class($this->documentManager, $this->menuProvider, $this->menuFactory, $this->channelContext) extends MenuController {
+        return new class($this->documentManager, $this->menuProvider, $this->menuFactory, $this->channelContext, $this->eventDispatcher) extends MenuController {
             protected function isGranted(mixed $attribute, mixed $subject = null): bool
             {
                 return true;

@@ -12,6 +12,8 @@
 namespace Integrated\Bundle\WebsiteBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\MenuBundle\Event\MenuChangedEvent;
+use Integrated\Bundle\MenuBundle\Document\Menu;
 use Integrated\Bundle\MenuBundle\Menu\DatabaseMenuFactory;
 use Integrated\Bundle\MenuBundle\Provider\IntegratedMenuProvider;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
@@ -19,6 +21,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class MenuController extends AbstractController
 {
@@ -26,17 +29,20 @@ class MenuController extends AbstractController
     private IntegratedMenuProvider $menuProvider;
     private DatabaseMenuFactory $menuFactory;
     private ChannelContextInterface $channelContext;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         DocumentManager $documentManager,
         IntegratedMenuProvider $menuProvider,
         DatabaseMenuFactory $menuFactory,
         ChannelContextInterface $channelContext,
+        EventDispatcherInterface $eventDispatcher,
     ) {
         $this->documentManager = $documentManager;
         $this->menuProvider = $menuProvider;
         $this->menuFactory = $menuFactory;
         $this->channelContext = $channelContext;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function renderMenu(Request $request): Response
@@ -72,6 +78,7 @@ class MenuController extends AbstractController
         }
 
         $data = (array) json_decode($request->getContent(), true);
+        $changedMenus = [];
 
         if (isset($data['menu'])) {
             foreach ((array) $data['menu'] as $array) { // support multiple menu's
@@ -84,15 +91,25 @@ class MenuController extends AbstractController
                     if ($this->menuProvider->has($menu->getName())) {
                         $menu2 = $this->menuProvider->get($menu->getName());
                         $menu2->setChildren($menu->getChildren());
+                        if ($menu2 instanceof Menu) {
+                            $changedMenus[] = $menu2;
+                        }
                     } else {
                         $menu->setChannel($this->channelContext->getChannel());
 
                         $this->documentManager->persist($menu);
+                        if ($menu instanceof Menu) {
+                            $changedMenus[] = $menu;
+                        }
                     }
                 }
             }
 
             $this->documentManager->flush();
+
+            foreach ($changedMenus as $menu) {
+                $this->eventDispatcher->dispatch(new MenuChangedEvent($menu));
+            }
         }
 
         return new JsonResponse();
