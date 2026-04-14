@@ -15,22 +15,27 @@ use Integrated\Bundle\ContentBundle\Document\Content\JobPosting;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\Service\ContentService;
+use Integrated\Bundle\WebsiteBundle\Service\ContentDocumentResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class JobPostingController extends AbstractController
 {
     private ContentService $contentService;
     private ThemeManager $themeManager;
+    private ContentDocumentResolver $contentDocumentResolver;
 
-    public function __construct(ContentService $contentService, ThemeManager $themeManager)
+    public function __construct(ContentService $contentService, ThemeManager $themeManager, ContentDocumentResolver $contentDocumentResolver)
     {
         $this->contentService = $contentService;
         $this->themeManager = $themeManager;
+        $this->contentDocumentResolver = $contentDocumentResolver;
     }
 
-    public function show(ContentTypePage $page, JobPosting $jobPosting): Response
+    public function show(ContentTypePage $page, Request $request): Response
     {
+        $jobPosting = $this->contentDocumentResolver->resolve($request, JobPosting::class);
         $this->contentService->prepare($jobPosting);
 
         return $this->render($this->themeManager->locateTemplate('content/jobposting/show/'.$page->getLayout()), [
@@ -39,13 +44,13 @@ class JobPostingController extends AbstractController
         ]);
     }
 
-    public function showAction(ContentTypePage $page, JobPosting $jobPosting): Response
+    public function showAction(ContentTypePage $page, Request $request): Response
     {
-        return $this->show($page, $jobPosting);
+        return $this->show($page, $request);
     }
 
-    public function showA(ContentTypePage $page, JobPosting $jobPosting): Response
+    public function showA(ContentTypePage $page, Request $request): Response
     {
-        return $this->show($page, $jobPosting);
+        return $this->show($page, $request);
     }
 }

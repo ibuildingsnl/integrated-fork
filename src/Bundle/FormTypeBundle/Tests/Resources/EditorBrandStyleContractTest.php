@@ -16,10 +16,12 @@ final class EditorBrandStyleContractTest extends TestCase
         self::assertIsString($editorSource);
         self::assertIsString($collectionSource);
 
-        self::assertStringContainsString("newStyle.inline = 'span';", $editorSource);
-        self::assertStringNotContainsString("newStyle.selector = 'a,span';", $editorSource);
-        self::assertStringContainsString("newStyle.inline = 'span';", $collectionSource);
-        self::assertStringNotContainsString("newStyle.selector = 'a,span';", $collectionSource);
+        self::assertStringContainsString("newStyle.selector = 'a';", $editorSource);
+        self::assertStringContainsString('delete newStyle.inline;', $editorSource);
+        self::assertStringNotContainsString("newStyle.inline = 'span';", $editorSource);
+        self::assertStringContainsString("newStyle.selector = 'a';", $collectionSource);
+        self::assertStringContainsString('delete newStyle.inline;', $collectionSource);
+        self::assertStringNotContainsString("newStyle.inline = 'span';", $collectionSource);
     }
 
     public function testEditorDoesNotExposeSuperscriptOrSubscriptStyles(): void

@@ -510,7 +510,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     public function setChannels(iterable $channels)
     {
-        $this->channels->clear();
+        $this->getChannelCollection()->clear();
         $this->channels = new ArrayCollection();
 
         foreach ($channels as $channel) {
@@ -522,13 +522,15 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     public function getChannels()
     {
-        return $this->channels?->toArray();
+        return $this->getChannelCollection()->toArray();
     }
 
     public function addChannel(ChannelInterface $channel)
     {
-        if (!$this->channels->contains($channel)) {
-            $this->channels->add($channel);
+        $channels = $this->getChannelCollection();
+
+        if (!$channels->contains($channel)) {
+            $channels->add($channel);
         }
 
         if (null === $this->primaryChannel) {
@@ -540,7 +542,9 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     public function hasChannel(ChannelInterface $channel)
     {
-        if ($this->channels->contains($channel)) {
+        $channels = $this->getChannelCollection();
+
+        if ($channels->contains($channel)) {
             return true;
         }
 
@@ -549,7 +553,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
             return false;
         }
 
-        foreach ($this->channels as $existingChannel) {
+        foreach ($channels as $existingChannel) {
             if (!$existingChannel instanceof ChannelInterface) {
                 continue;
             }
@@ -564,15 +568,17 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     public function removeChannel(ChannelInterface $channel)
     {
-        $this->channels->removeElement($channel);
+        $this->getChannelCollection()->removeElement($channel);
 
         return $this;
     }
 
     public function removeChannels()
     {
-        foreach ($this->channels as $channel) {
-            $this->channels->removeElement($channel);
+        $channels = $this->getChannelCollection();
+
+        foreach ($channels as $channel) {
+            $channels->removeElement($channel);
         }
 
         return $this;
@@ -583,9 +589,11 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      */
     public function getPrimaryChannel()
     {
-        if (null === $this->primaryChannel && $this->channels->count()
-            || !$this->channels->contains($this->primaryChannel) && $this->channels->count()) {
-            return $this->channels->first();
+        $channels = $this->getChannelCollection();
+
+        if ((null === $this->primaryChannel && $channels->count())
+            || (!$channels->contains($this->primaryChannel) && $channels->count())) {
+            return $channels->first();
         }
 
         return $this->primaryChannel;
@@ -637,6 +645,18 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         $this->copyrightRestrictions = $copyrightRestrictions;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, ChannelInterface>
+     */
+    private function getChannelCollection(): Collection
+    {
+        if (!$this->channels instanceof Collection) {
+            $this->channels = new ArrayCollection();
+        }
+
+        return $this->channels;
     }
 
     public function getShortClassname(): string

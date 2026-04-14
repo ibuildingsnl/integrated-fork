@@ -17,7 +17,8 @@ is installed.
 6. Symfony Console Commands (provided by this package)
 7. CI Parity
 8. Development Notes
-9. License
+9. Engineering Guardrails
+10. License
 
 ## Overview
 
@@ -313,6 +314,24 @@ php vendor/bin/phpstan analyse --no-progress --configuration=phpstan.lowest.neon
 - Prefer explicit error handling in critical runtime paths (queueing, locking,
   indexing, flushing).
 - Run targeted checks during development, then full checks before release.
+
+## Engineering Guardrails
+
+To keep the codebase maintainable across all bundles and avoid speculative
+complexity, use:
+
+- Policy: `docs/engineering/pragmatic-complexity-policy.md`
+- Rollout playbook: `docs/engineering/simplification-rollout-playbook.md`
+- PR gate template: `.github/pull_request_template.md`
+- Smell scan helper: `scripts/engineering/complexity-smell-scan.sh`
+
+Example:
+
+```bash
+./scripts/engineering/complexity-smell-scan.sh
+./scripts/engineering/complexity-smell-scan.sh --by-bundle
+./scripts/engineering/complexity-smell-scan.sh --details
+```
 
 ## License
 

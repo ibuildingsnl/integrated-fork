@@ -15,22 +15,27 @@ use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\Service\ContentService;
+use Integrated\Bundle\WebsiteBundle\Service\ContentDocumentResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class TaxonomyController extends AbstractController
 {
     private ContentService $contentService;
     private ThemeManager $themeManager;
+    private ContentDocumentResolver $contentDocumentResolver;
 
-    public function __construct(ContentService $contentService, ThemeManager $themeManager)
+    public function __construct(ContentService $contentService, ThemeManager $themeManager, ContentDocumentResolver $contentDocumentResolver)
     {
         $this->contentService = $contentService;
         $this->themeManager = $themeManager;
+        $this->contentDocumentResolver = $contentDocumentResolver;
     }
 
-    public function show(ContentTypePage $page, Taxonomy $taxonomy): Response
+    public function show(ContentTypePage $page, Request $request): Response
     {
+        $taxonomy = $this->contentDocumentResolver->resolve($request, Taxonomy::class);
         $this->contentService->prepare($taxonomy);
 
         return $this->render($this->themeManager->locateTemplate('content/taxonomy/show/'.$page->getLayout()), [
@@ -39,8 +44,8 @@ class TaxonomyController extends AbstractController
         ]);
     }
 
-    public function showAction(ContentTypePage $page, Taxonomy $taxonomy): Response
+    public function showAction(ContentTypePage $page, Request $request): Response
     {
-        return $this->show($page, $taxonomy);
+        return $this->show($page, $request);
     }
 }

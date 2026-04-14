@@ -15,22 +15,27 @@ use Integrated\Bundle\ContentBundle\Document\Content\Relation\Company;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\Service\ContentService;
+use Integrated\Bundle\WebsiteBundle\Service\ContentDocumentResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class CompanyController extends AbstractController
 {
     private ContentService $contentService;
     private ThemeManager $themeManager;
+    private ContentDocumentResolver $contentDocumentResolver;
 
-    public function __construct(ContentService $contentService, ThemeManager $themeManager)
+    public function __construct(ContentService $contentService, ThemeManager $themeManager, ContentDocumentResolver $contentDocumentResolver)
     {
         $this->contentService = $contentService;
         $this->themeManager = $themeManager;
+        $this->contentDocumentResolver = $contentDocumentResolver;
     }
 
-    public function show(ContentTypePage $page, Company $company): Response
+    public function show(ContentTypePage $page, Request $request): Response
     {
+        $company = $this->contentDocumentResolver->resolve($request, Company::class);
         $this->contentService->prepare($company);
 
         return $this->render($this->themeManager->locateTemplate('content/company/show/'.$page->getLayout()), [
@@ -39,8 +44,8 @@ class CompanyController extends AbstractController
         ]);
     }
 
-    public function showAction(ContentTypePage $page, Company $company): Response
+    public function showAction(ContentTypePage $page, Request $request): Response
     {
-        return $this->show($page, $company);
+        return $this->show($page, $request);
     }
 }
