@@ -17,6 +17,8 @@ use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
 use Integrated\Bundle\BlockBundle\Security\AllowedBlockClassInstantiator;
 use Integrated\Bundle\BlockBundle\Security\AllowedBlockClassProvider;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
+use Integrated\Bundle\ContentBundle\Services\WebsiteChannelResolver;
+use Integrated\Common\Content\Channel\ChannelManagerInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Security\Permissions;
 use Knp\Component\Pager\Pagination\PaginationInterface;
@@ -215,6 +217,7 @@ final class BlockControllerTest extends TestCase
             $this->createStub(EventDispatcherInterface::class),
             $this->createStub(BlockRepository::class),
             new AllowedBlockClassInstantiator(new AllowedBlockClassProvider($metadataFactory)),
+            new WebsiteChannelResolver($this->createStub(ChannelManagerInterface::class)),
         );
     }
 
