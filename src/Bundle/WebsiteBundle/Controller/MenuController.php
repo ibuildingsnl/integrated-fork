@@ -90,6 +90,10 @@ class MenuController extends AbstractController
                 if ($menu = $this->menuFactory->fromArray($sanitized)) {
                     if ($this->menuProvider->has($menu->getName())) {
                         $menu2 = $this->menuProvider->get($menu->getName());
+                        if (!$menu2 instanceof Menu) {
+                            continue;
+                        }
+
                         $menu2->setChildren($menu->getChildren());
                         $changedMenus[] = $menu2;
                     } else {

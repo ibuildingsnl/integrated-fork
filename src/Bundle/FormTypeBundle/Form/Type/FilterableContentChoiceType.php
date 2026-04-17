@@ -128,5 +128,4 @@ class FilterableContentChoiceType extends ContentChoiceType
     {
         return strtolower(trim(str_replace('-', '_', $value)));
     }
-
 }

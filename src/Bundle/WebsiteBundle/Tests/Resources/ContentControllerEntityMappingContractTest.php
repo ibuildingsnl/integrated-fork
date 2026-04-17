@@ -17,7 +17,7 @@ final class ContentControllerEntityMappingContractTest extends TestCase
         self::assertIsString($controller);
         self::assertStringContainsString('ContentTypePage $page, Request $request', $controller);
         self::assertStringContainsString('ContentDocumentResolver', $controller);
-        self::assertStringContainsString("\$".$documentArgument." = \$this->contentDocumentResolver->resolve(\$request,", $controller);
+        self::assertStringContainsString('$'.$documentArgument.' = $this->contentDocumentResolver->resolve($request,', $controller);
     }
 
     /**
