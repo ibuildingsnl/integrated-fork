@@ -10,11 +10,13 @@ use Integrated\Bundle\MenuBundle\Event\MenuChangedEvent;
 use Integrated\Bundle\MenuBundle\Menu\DatabaseMenuFactory;
 use Integrated\Bundle\MenuBundle\Provider\IntegratedMenuProvider;
 use Integrated\Bundle\WebsiteBundle\Controller\MenuController;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
+use Knp\Menu\ItemInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class MenuControllerTest extends TestCase
 {
@@ -42,25 +44,23 @@ class MenuControllerTest extends TestCase
     {
         $captured = [];
         $menu = new class('main', $this->createMock(DatabaseMenuFactory::class)) extends Menu {
-            public $channel = null;
-
             public function getName(): string
             {
                 return 'main';
             }
 
-            /** @return array<int, mixed> */
+            /** @return array<string, ItemInterface> */
             public function getChildren(): array
             {
                 return [];
             }
 
-            public function setChannel(object $channel): void
+            public function setChannel(ChannelInterface $channel): static
             {
-                $this->channel = $channel;
+                return parent::setChannel($channel);
             }
         };
-        $channel = new \stdClass();
+        $channel = $this->createMock(ChannelInterface::class);
 
         $this->channelContext->method('getChannel')->willReturn($channel);
         $this->menuProvider->method('has')->with('main')->willReturn(false);
@@ -104,32 +104,30 @@ class MenuControllerTest extends TestCase
         self::assertSame('main', $captured['name']);
         self::assertCount(1, $captured['children']);
         self::assertSame('Real item', $captured['children'][0]['name']);
-        self::assertSame($channel, $menu->channel);
+        self::assertSame($channel, $menu->getChannel());
     }
 
     public function testSaveKeepsHeadingItemWithoutUrl(): void
     {
         $captured = [];
         $menu = new class('main', $this->createMock(DatabaseMenuFactory::class)) extends Menu {
-            public $channel = null;
-
             public function getName(): string
             {
                 return 'main';
             }
 
-            /** @return array<int, mixed> */
+            /** @return array<string, ItemInterface> */
             public function getChildren(): array
             {
                 return [];
             }
 
-            public function setChannel(object $channel): void
+            public function setChannel(ChannelInterface $channel): static
             {
-                $this->channel = $channel;
+                return parent::setChannel($channel);
             }
         };
-        $channel = new \stdClass();
+        $channel = $this->createMock(ChannelInterface::class);
 
         $this->channelContext->method('getChannel')->willReturn($channel);
         $this->menuProvider->method('has')->with('main')->willReturn(false);
@@ -169,7 +167,7 @@ class MenuControllerTest extends TestCase
         self::assertSame('Section heading', $captured['children'][0]['name']);
         self::assertSame('2', (string) $captured['children'][0]['typeLink']);
         self::assertSame('', (string) $captured['children'][0]['uri']);
-        self::assertSame($channel, $menu->channel);
+        self::assertSame($channel, $menu->getChannel());
     }
 
     /** @param array<string, mixed> $payload */

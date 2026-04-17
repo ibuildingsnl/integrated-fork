@@ -12,16 +12,16 @@
 namespace Integrated\Bundle\WebsiteBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\MenuBundle\Event\MenuChangedEvent;
 use Integrated\Bundle\MenuBundle\Document\Menu;
+use Integrated\Bundle\MenuBundle\Event\MenuChangedEvent;
 use Integrated\Bundle\MenuBundle\Menu\DatabaseMenuFactory;
 use Integrated\Bundle\MenuBundle\Provider\IntegratedMenuProvider;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class MenuController extends AbstractController
 {
@@ -91,16 +91,12 @@ class MenuController extends AbstractController
                     if ($this->menuProvider->has($menu->getName())) {
                         $menu2 = $this->menuProvider->get($menu->getName());
                         $menu2->setChildren($menu->getChildren());
-                        if ($menu2 instanceof Menu) {
-                            $changedMenus[] = $menu2;
-                        }
+                        $changedMenus[] = $menu2;
                     } else {
                         $menu->setChannel($this->channelContext->getChannel());
 
                         $this->documentManager->persist($menu);
-                        if ($menu instanceof Menu) {
-                            $changedMenus[] = $menu;
-                        }
+                        $changedMenus[] = $menu;
                     }
                 }
             }

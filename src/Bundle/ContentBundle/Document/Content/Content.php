@@ -554,10 +554,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         }
 
         foreach ($channels as $existingChannel) {
-            if (!$existingChannel instanceof ChannelInterface) {
-                continue;
-            }
-
             if ($existingChannel->getId() === $channelId) {
                 return true;
             }
@@ -593,7 +589,9 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
         if ((null === $this->primaryChannel && $channels->count())
             || (!$channels->contains($this->primaryChannel) && $channels->count())) {
-            return $channels->first();
+            $firstChannel = $channels->first();
+
+            return $firstChannel === false ? null : $firstChannel;
         }
 
         return $this->primaryChannel;
@@ -652,7 +650,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      */
     private function getChannelCollection(): Collection
     {
-        if (!$this->channels instanceof Collection) {
+        if (null === $this->channels) {
             $this->channels = new ArrayCollection();
         }
 

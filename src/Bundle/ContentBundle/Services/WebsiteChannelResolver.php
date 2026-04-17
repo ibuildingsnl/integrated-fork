@@ -26,19 +26,15 @@ final class WebsiteChannelResolver
             return $this->websiteChannels;
         }
 
-        $channels = $this->channelManager->findBy(
-            [
-                '$or' => [
-                    ['type.$id' => 'website'],
-                    ['type.name' => 'Website'],
-                ],
+        $channels = $this->channelManager->findBy([
+            '$or' => [
+                ['type.$id' => 'website'],
+                ['type.name' => 'Website'],
             ],
-            ['name' => 'asc']
-        );
+        ]);
         usort(
             $channels,
-            static fn (ChannelInterface $left, ChannelInterface $right): int =>
-                strcasecmp((string) $left->getName(), (string) $right->getName())
+            static fn (ChannelInterface $left, ChannelInterface $right): int => strcasecmp((string) $left->getName(), (string) $right->getName())
                 ?: strcmp((string) $left->getId(), (string) $right->getId())
         );
 
