@@ -38,6 +38,7 @@
             <argument type="service" id="integrated_menu.provider.integrated_menu_provider" />
             <argument type="service" id="integrated.menu_factory.database" />
             <argument type="service" id="channel.context" />
+            <argument type="service" id="event_dispatcher" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
@@ -76,6 +77,7 @@
         <service id="integrated_website.controller.content.article" class="Integrated\Bundle\WebsiteBundle\Controller\Content\ArticleController">
             <argument type="service" id="integrated_website.service.content_service" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
+            <argument type="service" id="Integrated\Bundle\WebsiteBundle\Service\ContentDocumentResolver" />
 
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\Article" />
             <tag name="controller.service_arguments" />
@@ -85,6 +87,7 @@
         <service id="integrated_website.controller.content.news" class="Integrated\Bundle\WebsiteBundle\Controller\Content\NewsController">
             <argument type="service" id="integrated_website.service.content_service" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
+            <argument type="service" id="Integrated\Bundle\WebsiteBundle\Service\ContentDocumentResolver" />
 
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\News" />
             <tag name="controller.service_arguments" />
@@ -94,6 +97,7 @@
         <service id="integrated_website.controller.content.company" class="Integrated\Bundle\WebsiteBundle\Controller\Content\CompanyController">
             <argument type="service" id="integrated_website.service.content_service" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
+            <argument type="service" id="Integrated\Bundle\WebsiteBundle\Service\ContentDocumentResolver" />
 
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\Relation\Company" />
             <tag name="controller.service_arguments" />
@@ -103,6 +107,7 @@
         <service id="integrated_website.controller.content.event" class="Integrated\Bundle\WebsiteBundle\Controller\Content\EventController">
             <argument type="service" id="integrated_website.service.content_service" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
+            <argument type="service" id="Integrated\Bundle\WebsiteBundle\Service\ContentDocumentResolver" />
 
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\Event" />
             <tag name="controller.service_arguments" />
@@ -112,6 +117,7 @@
         <service id="integrated_website.controller.content.job_posting" class="Integrated\Bundle\WebsiteBundle\Controller\Content\JobPostingController">
             <argument type="service" id="integrated_website.service.content_service" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
+            <argument type="service" id="Integrated\Bundle\WebsiteBundle\Service\ContentDocumentResolver" />
 
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\JobPosting" />
             <tag name="controller.service_arguments" />
@@ -121,6 +127,7 @@
         <service id="integrated_website.controller.content.person" class="Integrated\Bundle\WebsiteBundle\Controller\Content\PersonController">
             <argument type="service" id="integrated_website.service.content_service" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
+            <argument type="service" id="Integrated\Bundle\WebsiteBundle\Service\ContentDocumentResolver" />
 
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\Relation\Person" />
             <tag name="controller.service_arguments" />
@@ -130,6 +137,7 @@
         <service id="integrated_website.controller.content.taxonomy" class="Integrated\Bundle\WebsiteBundle\Controller\Content\TaxonomyController">
             <argument type="service" id="integrated_website.service.content_service" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
+            <argument type="service" id="Integrated\Bundle\WebsiteBundle\Service\ContentDocumentResolver" />
 
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\Taxonomy" />
             <tag name="controller.service_arguments" />

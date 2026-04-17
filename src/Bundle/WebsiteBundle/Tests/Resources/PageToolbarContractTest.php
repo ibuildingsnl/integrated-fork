@@ -32,6 +32,8 @@ final class PageToolbarContractTest extends TestCase
         $this->assertStringContainsString('[data-action="integrated-website-page-save"]', $gridScript);
         $this->assertStringContainsString('integrated_website_menu_save', $script);
         $this->assertStringContainsString('integrated_website_grid_save', $script);
+        $this->assertStringContainsString('Integrated.Menu.isDirty(item)', $script);
+        $this->assertStringContainsString('if (!menus.length) {', $script);
         $this->assertStringNotContainsString('integrated_website_page_draft_save', $script);
         $this->assertStringNotContainsString('integrated_website_page_draft_publish', $script);
         $this->assertStringNotContainsString('integrated_website_page_draft_preview_link', $script);

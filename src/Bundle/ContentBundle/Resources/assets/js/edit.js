@@ -587,6 +587,62 @@ function updatePublicationCount() {
     }
 }
 
+function capturePublishTimeSnapshot(boundary) {
+    const publishTimeRoot = document.querySelector('#integrated_content_publishTime');
+    const dateInput = document.querySelector(`#integrated_content_publishTime_${boundary}_date`);
+    const timeInput = document.querySelector(`#integrated_content_publishTime_${boundary}_time`);
+    if (!publishTimeRoot || !dateInput || !timeInput) {
+        return null;
+    }
+
+    publishTimeRoot.dataset[`prev${boundary}Date`] = dateInput.value || '';
+    publishTimeRoot.dataset[`prev${boundary}Time`] = timeInput.value || '';
+
+    return {
+        publishTimeRoot,
+        dateInput,
+        timeInput,
+    };
+}
+
+function syncPublicationDateTimeFields(boundary) {
+    const publishTimeRoot = document.querySelector('#integrated_content_publishTime');
+    const dateInput = document.querySelector(`#integrated_content_publishTime_${boundary}_date`);
+    const timeInput = document.querySelector(`#integrated_content_publishTime_${boundary}_time`);
+    if (!publishTimeRoot || !dateInput || !timeInput) {
+        return;
+    }
+
+    const prevDate = publishTimeRoot.dataset[`prev${boundary}Date`] || '';
+    const prevTime = publishTimeRoot.dataset[`prev${boundary}Time`] || '';
+    const newDate = dateInput.value || '';
+    const newTime = timeInput.value || '';
+    if (!prevDate || !prevTime || !newDate || !newTime) {
+        return;
+    }
+
+    const prevDateTime = `${prevDate} ${prevTime}`;
+    const newDateText = `${newDate.split('-').reverse().join('-')} ${newTime}`;
+
+    document.querySelectorAll('.publication-settings').forEach(function(setting) {
+        const settingDateInput = setting.querySelector(`input[name*="[settings][time][${boundary}][date]"]`);
+        const settingTimeInput = setting.querySelector(`input[name*="[settings][time][${boundary}][time]"]`);
+        const settingDateText = setting.querySelector(`.${boundary} .date-text`);
+        if (!settingDateInput || !settingTimeInput || !settingDateText) {
+            return;
+        }
+
+        const currentDateTime = `${settingDateInput.value} ${settingTimeInput.value}`;
+        if (currentDateTime !== prevDateTime) {
+            return;
+        }
+
+        settingDateInput.value = newDate;
+        settingTimeInput.value = newTime;
+        settingDateText.textContent = newDateText;
+    });
+}
+
 function setPublicationDateTimes(){
     if (document.body.dataset.boundSetPublicationDateTimes !== 'true') {
         document.addEventListener('click', function(e) {
@@ -595,15 +651,9 @@ function setPublicationDateTimes(){
                 return;
             }
 
-            const dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
-            const timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
-            const publishTimeRoot = document.querySelector('#integrated_content_publishTime');
-            if (!dateInput || !timeInput || !publishTimeRoot) {
+            if (!capturePublishTimeSnapshot('startDate')) {
                 return;
             }
-
-            publishTimeRoot.dataset.prevDate = dateInput.value || '';
-            publishTimeRoot.dataset.prevTime = timeInput.value || '';
         });
 
         document.addEventListener('click', function(e) {
@@ -612,40 +662,29 @@ function setPublicationDateTimes(){
                 return;
             }
 
-            const dateInput = document.querySelector('#integrated_content_publishTime_startDate_date');
-            const timeInput = document.querySelector('#integrated_content_publishTime_startDate_time');
-            const publishTimeRoot = document.querySelector('#integrated_content_publishTime');
-            if (!dateInput || !timeInput || !publishTimeRoot) {
+            syncPublicationDateTimeFields('startDate');
+            updatePublicationsAndChannels();
+            prepDateTimeFields();
+        });
+
+        document.addEventListener('click', function(e) {
+            const dateTextButton = e.target.closest('#integrated_content_publishTime .endDate .date-text');
+            if (!dateTextButton) {
                 return;
             }
 
-            const prevDate = publishTimeRoot.dataset.prevDate || '';
-            const prevTime = publishTimeRoot.dataset.prevTime || '';
-            const newDate = dateInput.value || '';
-            const newTime = timeInput.value || '';
-            if (!newDate || !newTime) {
+            if (!capturePublishTimeSnapshot('endDate')) {
+                return;
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            const okDateButton = e.target.closest('#integrated_content_publishTime .endDate .ok-date');
+            if (!okDateButton) {
                 return;
             }
 
-            const prevFormattedDateTime = `${prevDate} ${prevTime}`;
-            const newFormattedDateTime = `${newDate.split('-').reverse().join('-')} ${newTime}`;
-
-            document.querySelectorAll('.publication-settings').forEach(setting => {
-                const settingDateText = setting.querySelector('.date-text');
-                const settingDateInput = setting.querySelector('input[type="date"]');
-                const settingTimeInput = setting.querySelector('input[type="time"]');
-                if (!settingDateInput || !settingTimeInput || !settingDateText) {
-                    return;
-                }
-
-                const currentDateTime = `${settingDateInput.value} ${settingTimeInput.value}`;
-                if (currentDateTime === prevFormattedDateTime) {
-                    settingDateText.textContent = newFormattedDateTime;
-                    settingDateInput.value = newDate;
-                    settingTimeInput.value = newTime;
-                }
-            });
-
+            syncPublicationDateTimeFields('endDate');
             updatePublicationsAndChannels();
             prepDateTimeFields();
         });

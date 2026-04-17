@@ -34,6 +34,10 @@
             <argument id="integrated_website.website_toolbar" type="service"/>
         </service>
 
+        <service id="Integrated\Bundle\WebsiteBundle\Service\ContentDocumentResolver">
+            <argument type="service" id="Integrated\Bundle\ContentBundle\Document\Content\ContentRepository" />
+        </service>
+
         <service id="Integrated\Bundle\WebsiteBundle\Service\PageSeoMetadataResolver">
             <argument type="service" id="request_stack" />
             <argument>%integrated_page.default_paginated_noindex%</argument>

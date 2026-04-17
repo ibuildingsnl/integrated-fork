@@ -4,6 +4,12 @@
 
 {{ include('@IntegratedContent/content/flash.turbo_stream.html.twig') }}
 
+<turbo-stream action="replace" target="toolbar">
+    <template>
+        {{ include('@IntegratedContent/partials/block.toolbar.html.twig') }}
+    </template>
+</turbo-stream>
+
 <turbo-stream action="replace" target="content-workflow-section">
     <template>
         {{ include('@IntegratedContent/content/partial/workflow_info.html.twig') }}

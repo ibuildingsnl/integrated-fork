@@ -655,6 +655,7 @@ class ContentController extends AbstractController
                 if ($this->isTurboStreamRequest($request) && !$request->query->getBoolean('frame')) {
                     $content = $this->renderView('@IntegratedContent/content/edit.status_options.turbo_stream.html.twig', [
                         'content' => $content,
+                        'type' => $contentType,
                         'locking' => $locking,
                         'form' => $form->createView(),
                         'publications' => $this->getPublications($content),

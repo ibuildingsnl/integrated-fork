@@ -40,6 +40,8 @@ class ContentEditStatusStreamFlowTest extends TestCase
         $template = file_get_contents(__DIR__.'/../../Resources/views/content/edit.status_options.turbo_stream.html.twig');
 
         $this->assertIsString($template);
+        $this->assertStringContainsString('target="toolbar"', $template);
+        $this->assertStringContainsString('@IntegratedContent/partials/block.toolbar.html.twig', $template);
         $this->assertStringContainsString('target="content-workflow-section"', $template);
         $this->assertStringContainsString('@IntegratedContent/content/partial/workflow_info.html.twig', $template);
         $this->assertStringContainsString('target="content-status-options"', $template);
@@ -55,8 +57,12 @@ class ContentEditStatusStreamFlowTest extends TestCase
         $template = file_get_contents(__DIR__.'/../../Resources/views/content/edit.html.twig');
 
         $this->assertIsString($template);
-        $this->assertStringContainsString("streamTarget !== 'content-workflow-section' && streamTarget !== 'content-publications-section'", $template);
+        $this->assertStringContainsString("streamTarget !== 'content-workflow-section'", $template);
+        $this->assertStringContainsString("&& streamTarget !== 'content-publications-section'", $template);
+        $this->assertStringContainsString("&& streamTarget !== 'toolbar'", $template);
         $this->assertStringContainsString("if (streamTarget === 'content-publications-section')", $template);
+        $this->assertStringContainsString("if (streamTarget === 'toolbar')", $template);
+        $this->assertStringContainsString("document.dispatchEvent(new Event('turbo:render'));", $template);
         $this->assertStringContainsString('window.schedulePublicationSettingsInit()', $template);
     }
 

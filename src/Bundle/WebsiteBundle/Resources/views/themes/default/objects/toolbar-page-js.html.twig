@@ -40,9 +40,23 @@
         var saveMenus = function () {
             var menus = [];
 
-            document.querySelectorAll('.integrated-website-menu').forEach(item =>
-                menus.push(Integrated.Menu.create(item).getData())
-            );
+            document.querySelectorAll('.integrated-website-menu').forEach(function(item) {
+                if (!Integrated.Menu || typeof Integrated.Menu.isDirty !== 'function' || !Integrated.Menu.isDirty(item)) {
+                    return;
+                }
+
+                var payload = Integrated.Menu.create(item).getData();
+                if (!payload || !payload.name) {
+                    return;
+                }
+
+                menus.push(payload);
+            });
+
+            if (!menus.length) {
+                handleSuccess();
+                return;
+            }
 
             fetch('{{ path('integrated_website_menu_save') }}', {
                 method: 'POST',

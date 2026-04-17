@@ -1072,7 +1072,11 @@
             }
 
             var streamTarget = streamElement.getAttribute('target');
-            if (streamTarget !== 'content-workflow-section' && streamTarget !== 'content-publications-section') {
+            if (
+                streamTarget !== 'content-workflow-section'
+                && streamTarget !== 'content-publications-section'
+                && streamTarget !== 'toolbar'
+            ) {
                 return;
             }
 
@@ -1089,6 +1093,10 @@
                     } else {
                         window.dispatchEvent(new CustomEvent('updatePublicationItems'));
                     }
+                }
+
+                if (streamTarget === 'toolbar') {
+                    document.dispatchEvent(new Event('turbo:render'));
                 }
             };
         });

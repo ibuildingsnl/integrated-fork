@@ -65,7 +65,8 @@ function normalizeTinyMceStyleFormats(styles = []) {
         }
 
         if (newStyle.inline === 'a' && !newStyle.selector) {
-            newStyle.inline = 'span';
+            newStyle.selector = 'a';
+            delete newStyle.inline;
         }
 
         return newStyle;

@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace Integrated\Bundle\WebsiteBundle\Tests\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\MenuBundle\Document\Menu;
+use Integrated\Bundle\MenuBundle\Event\MenuChangedEvent;
 use Integrated\Bundle\MenuBundle\Menu\DatabaseMenuFactory;
 use Integrated\Bundle\MenuBundle\Provider\IntegratedMenuProvider;
 use Integrated\Bundle\WebsiteBundle\Controller\MenuController;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
+use Knp\Menu\ItemInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class MenuControllerTest extends TestCase
@@ -23,6 +28,8 @@ class MenuControllerTest extends TestCase
     private DatabaseMenuFactory $menuFactory;
     /** @var ChannelContextInterface&MockObject */
     private ChannelContextInterface $channelContext;
+    /** @var EventDispatcherInterface&MockObject */
+    private EventDispatcherInterface $eventDispatcher;
 
     protected function setUp(): void
     {
@@ -30,31 +37,30 @@ class MenuControllerTest extends TestCase
         $this->menuProvider = $this->createMock(IntegratedMenuProvider::class);
         $this->menuFactory = $this->createMock(DatabaseMenuFactory::class);
         $this->channelContext = $this->createMock(ChannelContextInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function testSaveStripsPlaceholderItemsBeforePersistence(): void
     {
         $captured = [];
-        $menu = new class {
-            public ?object $channel = null;
-
+        $menu = new class('main', $this->createMock(DatabaseMenuFactory::class)) extends Menu {
             public function getName(): string
             {
                 return 'main';
             }
 
-            /** @return array<int, mixed> */
+            /** @return array<string, ItemInterface> */
             public function getChildren(): array
             {
                 return [];
             }
 
-            public function setChannel(object $channel): void
+            public function setChannel(ChannelInterface $channel): static
             {
-                $this->channel = $channel;
+                return parent::setChannel($channel);
             }
         };
-        $channel = new \stdClass();
+        $channel = $this->createMock(ChannelInterface::class);
 
         $this->channelContext->method('getChannel')->willReturn($channel);
         $this->menuProvider->method('has')->with('main')->willReturn(false);
@@ -69,6 +75,10 @@ class MenuControllerTest extends TestCase
 
         $this->documentManager->expects($this->once())->method('persist')->with($menu);
         $this->documentManager->expects($this->once())->method('flush');
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(static fn (object $event): bool => $event instanceof MenuChangedEvent && $event->getMenu() === $menu));
 
         $controller = $this->createController();
         $controller->save($this->createSaveRequest([
@@ -94,32 +104,30 @@ class MenuControllerTest extends TestCase
         self::assertSame('main', $captured['name']);
         self::assertCount(1, $captured['children']);
         self::assertSame('Real item', $captured['children'][0]['name']);
-        self::assertSame($channel, $menu->channel);
+        self::assertSame($channel, $menu->getChannel());
     }
 
     public function testSaveKeepsHeadingItemWithoutUrl(): void
     {
         $captured = [];
-        $menu = new class {
-            public ?object $channel = null;
-
+        $menu = new class('main', $this->createMock(DatabaseMenuFactory::class)) extends Menu {
             public function getName(): string
             {
                 return 'main';
             }
 
-            /** @return array<int, mixed> */
+            /** @return array<string, ItemInterface> */
             public function getChildren(): array
             {
                 return [];
             }
 
-            public function setChannel(object $channel): void
+            public function setChannel(ChannelInterface $channel): static
             {
-                $this->channel = $channel;
+                return parent::setChannel($channel);
             }
         };
-        $channel = new \stdClass();
+        $channel = $this->createMock(ChannelInterface::class);
 
         $this->channelContext->method('getChannel')->willReturn($channel);
         $this->menuProvider->method('has')->with('main')->willReturn(false);
@@ -134,6 +142,10 @@ class MenuControllerTest extends TestCase
 
         $this->documentManager->expects($this->once())->method('persist')->with($menu);
         $this->documentManager->expects($this->once())->method('flush');
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(static fn (object $event): bool => $event instanceof MenuChangedEvent && $event->getMenu() === $menu));
 
         $controller = $this->createController();
         $controller->save($this->createSaveRequest([
@@ -155,7 +167,7 @@ class MenuControllerTest extends TestCase
         self::assertSame('Section heading', $captured['children'][0]['name']);
         self::assertSame('2', (string) $captured['children'][0]['typeLink']);
         self::assertSame('', (string) $captured['children'][0]['uri']);
-        self::assertSame($channel, $menu->channel);
+        self::assertSame($channel, $menu->getChannel());
     }
 
     /** @param array<string, mixed> $payload */
@@ -166,7 +178,7 @@ class MenuControllerTest extends TestCase
 
     private function createController(): MenuController
     {
-        return new class($this->documentManager, $this->menuProvider, $this->menuFactory, $this->channelContext) extends MenuController {
+        return new class($this->documentManager, $this->menuProvider, $this->menuFactory, $this->channelContext, $this->eventDispatcher) extends MenuController {
             protected function isGranted(mixed $attribute, mixed $subject = null): bool
             {
                 return true;

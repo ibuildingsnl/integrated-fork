@@ -7,6 +7,7 @@
         var workspaceOriginalParent = null;
         var workspaceOriginalNextSibling = null;
         var workspaceVisualMirrorList = null;
+        var workspaceDirty = false;
         var markEditorReady = function(moduleName) {
             if (
                 window.IntegratedEditorLoader &&
@@ -257,6 +258,26 @@
             root.querySelectorAll('[data-action="integrated-website-menu-item-add"]').forEach(function(node) {
                 node.remove();
             });
+        };
+
+        var setMenuDirty = function(menuRoot, dirty) {
+            if (!menuRoot) {
+                return;
+            }
+
+            menuRoot.dataset.integratedMenuDirty = dirty ? '1' : '0';
+        };
+
+        var isMenuDirty = function(menuRoot) {
+            if (!menuRoot) {
+                return false;
+            }
+
+            if (builderPanel && workspaceCurrentMenu === menuRoot && workspaceDirty) {
+                return true;
+            }
+
+            return menuRoot.dataset.integratedMenuDirty === '1';
         };
 
         var normalizeHasChildrenClasses = function(root) {
@@ -563,10 +584,12 @@
             this.element.classList.remove('integrated-menu-node-settings-open');
             decorateWorkspaceNode(this.element);
             this.element.classList.add('integrated-menu-node-settings-open');
+            workspaceDirty = true;
         };
 
         Item.prototype.remove = function() {
             this.element.remove();
+            workspaceDirty = true;
             ensureEmptyMenuAction(this.menu.element);
         };
 
@@ -721,6 +744,7 @@
                     onEnd: function(evt) {
                         if (evt) {
                             applyWordpressLikeDepth(evt);
+                            workspaceDirty = true;
                         }
                         clearDropTargets(root);
                         dragPointerX = null;
@@ -1132,6 +1156,7 @@
             var panel = getBuilderPanel();
 
             workspaceCurrentMenu = menuRoot;
+            workspaceDirty = isMenuDirty(menuRoot);
             workspaceActiveList = null;
             workspaceOriginalParent = null;
             workspaceOriginalNextSibling = null;
@@ -1269,6 +1294,10 @@
 
             // Rebuild canonical markup from backend renderer using an explicit workspace snapshot.
             if (workspaceCurrentMenu) {
+                if (workspaceDirty) {
+                    setMenuDirty(workspaceCurrentMenu, true);
+                }
+
                 var menu = new Menu(workspaceCurrentMenu);
                 var payload = {
                     data: buildMenuDataFromList(workspaceCurrentMenu, workspaceActiveList || getDirectMenuList(workspaceCurrentMenu)),
@@ -1284,6 +1313,7 @@
             workspaceOriginalParent = null;
             workspaceOriginalNextSibling = null;
             workspaceVisualMirrorList = null;
+            workspaceDirty = false;
         };
 
         var init = function() {
@@ -1298,10 +1328,13 @@
                     ensureRootListForMenu(item);
                     initializeSortable(item);
                     ensureEmptyMenuAction(item);
+                    setMenuDirty(item, false);
                     return;
                 }
 
-                loadPromises.push(menu.load(script.innerHTML));
+                loadPromises.push(menu.load(script.innerHTML).then(function() {
+                    setMenuDirty(item, false);
+                }));
                 script.parentNode.removeChild(script);
             });
 
@@ -1604,6 +1637,9 @@
             Menu: {
                 create: function(element) {
                     return new Menu(element);
+                },
+                isDirty: function(element) {
+                    return isMenuDirty(element);
                 },
                 updateLinkType: function() {
                     var typeUrl = document.getElementById('typeLinkUri');

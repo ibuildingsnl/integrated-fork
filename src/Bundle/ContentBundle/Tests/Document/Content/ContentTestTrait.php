@@ -218,6 +218,16 @@ trait ContentTestTrait
         Assert::assertTrue($content->hasChannel($differentInstanceSameId));
     }
 
+    public function testGetPrimaryChannelHandlesMissingChannelsCollection(): void
+    {
+        $content = $this->getContent();
+        $reflection = new \ReflectionProperty($content, 'channels');
+        $reflection->setValue($content, null);
+
+        Assert::assertNull($content->getPrimaryChannel());
+        Assert::assertSame([], $content->getChannels());
+    }
+
     /**
      * Test getCustomFields functions.
      */

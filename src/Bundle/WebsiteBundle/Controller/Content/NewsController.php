@@ -14,23 +14,28 @@ namespace Integrated\Bundle\WebsiteBundle\Controller\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\News;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
+use Integrated\Bundle\WebsiteBundle\Service\ContentDocumentResolver;
 use Integrated\Bundle\WebsiteBundle\Service\ContentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class NewsController extends AbstractController
 {
     private ContentService $contentService;
     private ThemeManager $themeManager;
+    private ContentDocumentResolver $contentDocumentResolver;
 
-    public function __construct(ContentService $contentService, ThemeManager $themeManager)
+    public function __construct(ContentService $contentService, ThemeManager $themeManager, ContentDocumentResolver $contentDocumentResolver)
     {
         $this->contentService = $contentService;
         $this->themeManager = $themeManager;
+        $this->contentDocumentResolver = $contentDocumentResolver;
     }
 
-    public function show(ContentTypePage $page, News $news): Response
+    public function show(ContentTypePage $page, Request $request): Response
     {
+        $news = $this->contentDocumentResolver->resolve($request, News::class);
         $this->contentService->prepare($news);
 
         return $this->render($this->themeManager->locateTemplate('content/news/show/'.$page->getLayout()), [
@@ -39,8 +44,8 @@ class NewsController extends AbstractController
         ]);
     }
 
-    public function showAction(ContentTypePage $page, News $news): Response
+    public function showAction(ContentTypePage $page, Request $request): Response
     {
-        return $this->show($page, $news);
+        return $this->show($page, $request);
     }
 }
