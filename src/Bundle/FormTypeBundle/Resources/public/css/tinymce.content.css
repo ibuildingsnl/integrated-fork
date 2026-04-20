@@ -26,8 +26,7 @@ h2,h3,h4,h5,h6 {
 }
 
 img {
-    max-width:768px;
-    width:100%;
+    height: auto;
 }
 
 .mce-content-body:not([dir=rtl])[data-mce-placeholder]:not(.mce-visualblocks)::before {
