@@ -488,7 +488,7 @@
         'class' : (attr.class|default('') ~ ' form-control integrated_content_choice integrated_content_parent_choice')|trim,
     }) %}
     {% set currentData = integrated_document(data) %}
-    {% set parentPath = integrated_content_path(currentData)|join(' > ') %}
+    {% set parentPath = currentData ? (integrated_content_path(currentData)|join(' > ')) : '' %}
 
     {% apply spaceless %}
         <select {{ block('widget_attributes') }}>
@@ -497,7 +497,7 @@
                     {% if parentPath is defined and parentPath != "" %}
                         {{ parentPath }} >
                     {% endif %}
-                    {{ currentData.title }}
+                    {{ currentData ? currentData.title : data }}
                 </option>
             {% endif %}
         </select>
