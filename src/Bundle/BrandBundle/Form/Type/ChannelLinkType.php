@@ -36,8 +36,10 @@ class ChannelLinkType extends AbstractType
             'required' => false,
             'label' => $this->translator->trans('Enabled by default for %name% brand', ['%name%' => $options['brand_name']]),
         ]);
+        $link = $builder->getData();
         $builder->add('channel', ChannelType::class, [
             'data_class' => Channel::class,
+            'data' => $link instanceof ChannelLink ? $link->channel : null,
             'label' => $this->translator->trans('Channel'),
             'can_change_type' => false,
             'lock_name' => (bool) $options['channel_name_locked'],
