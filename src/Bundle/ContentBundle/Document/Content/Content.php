@@ -517,6 +517,8 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
             $this->addChannel($channel); // type check
         }
 
+        $this->primaryChannel = $this->resolvePrimaryChannel($this->primaryChannel);
+
         return $this;
     }
 
@@ -565,6 +567,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     public function removeChannel(ChannelInterface $channel)
     {
         $this->getChannelCollection()->removeElement($channel);
+        $this->primaryChannel = $this->resolvePrimaryChannel($this->primaryChannel);
 
         return $this;
     }
@@ -576,6 +579,8 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         foreach ($channels as $channel) {
             $channels->removeElement($channel);
         }
+
+        $this->primaryChannel = null;
 
         return $this;
     }
@@ -602,7 +607,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      */
     public function setPrimaryChannel(?ChannelInterface $primaryChannel = null)
     {
-        $this->primaryChannel = $primaryChannel;
+        $this->primaryChannel = $this->resolvePrimaryChannel($primaryChannel);
 
         return $this;
     }
@@ -655,6 +660,32 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         }
 
         return $this->channels;
+    }
+
+    private function resolvePrimaryChannel(?ChannelInterface $primaryChannel = null): ?ChannelInterface
+    {
+        $channels = $this->getChannelCollection();
+
+        if (0 === $channels->count()) {
+            return null;
+        }
+
+        if (null !== $primaryChannel) {
+            foreach ($channels as $channel) {
+                if ($channel === $primaryChannel) {
+                    return $channel;
+                }
+
+                $primaryChannelId = $primaryChannel->getId();
+                if (\is_string($primaryChannelId) && '' !== $primaryChannelId && $channel->getId() === $primaryChannelId) {
+                    return $channel;
+                }
+            }
+        }
+
+        $firstChannel = $channels->first();
+
+        return $firstChannel === false ? null : $firstChannel;
     }
 
     public function getShortClassname(): string

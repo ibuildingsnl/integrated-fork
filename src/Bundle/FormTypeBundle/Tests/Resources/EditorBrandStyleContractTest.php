@@ -61,6 +61,8 @@ final class EditorBrandStyleContractTest extends TestCase
         self::assertStringContainsString('data-channel-brand-color="{{ option_brand_color }}"', $contentFormSource);
         self::assertStringContainsString('data-channel-brand-secondary-color="{{ option_brand_secondary_color }}"', $contentFormSource);
         self::assertStringContainsString('document.dispatchEvent(new CustomEvent(TINYMCE_BRAND_THEME_EVENT', $primaryChannelSource);
+        self::assertStringContainsString('normalizePrimaryChannelSelection();', $primaryChannelSource);
+        self::assertStringContainsString('$primaryChannel.val($selectedInput.val());', $primaryChannelSource);
 
         self::assertStringContainsString('form.parent.primaryChannel is defined', $formThemeSource);
         self::assertStringContainsString('editor_primary_channel_value|integrated_channel', $formThemeSource);
