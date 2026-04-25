@@ -150,9 +150,7 @@ function resetSubmitButtons(root) {
 }
 
 document.addEventListener('turbo:submit-end', function(event) {
-    if (event.detail && event.detail.success) {
-        resetSubmitButtons(event.target);
-    }
+    resetSubmitButtons(event.target);
 });
 
 document.addEventListener('turbo:render', function() {
