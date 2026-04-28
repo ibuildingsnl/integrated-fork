@@ -25,6 +25,11 @@
 
         <service id="Integrated\Bundle\PageBundle\EventListener\ThemeCacheInvalidationSubscriber" />
 
+        <service id="Integrated\Bundle\PageBundle\Twig\Extension\PageEditorExtension">
+            <argument type="service" id="event_dispatcher" />
+            <tag name="twig.extension"/>
+        </service>
+
         <service id="integrated_page.grid.factory" class="Integrated\Bundle\PageBundle\Grid\GridFactory" public="true">
         </service>
 

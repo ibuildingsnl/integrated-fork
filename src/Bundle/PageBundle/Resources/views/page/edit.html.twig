@@ -63,6 +63,14 @@
                         <span>{% trans %}Options{% endtrans %}</span>
                     </div>
 
+                    {% block editor_sidebar_extensions %}
+                        {% if pageDocument %}
+                            {{ integrated_page_editor_sidebar_extensions(pageDocument, form, {
+                                route: app.request.attributes.get('_route'),
+                            }) }}
+                        {% endif %}
+                    {% endblock %}
+
                     <div class="aside-item-wrapper show">
                         <div class="aside-item-header">
                             <h3 class="aside-item-title">

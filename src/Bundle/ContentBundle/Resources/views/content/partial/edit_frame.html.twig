@@ -74,6 +74,14 @@
                             {% endfor %}
                         {% endblock %}
 
+                        {% block editor_sidebar_extensions %}
+                            {{ integrated_content_editor_sidebar_extensions(content, type, {
+                                view: 'content_edit_frame',
+                                form: form,
+                                locking: locking|default(null),
+                            }) }}
+                        {% endblock %}
+
                         {% set optionFields = form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
                         {% set remainingOptions = optionFields|filter(row => row.vars.name not in ['premium', 'featured', 'featured_expiration']) %}
 
