@@ -240,6 +240,28 @@ class IntegratedContentBlockOptionsTest extends TestCase
         self::assertSame('desc', $options['order']);
     }
 
+    public function testCustomSearchSelectionSortsAreAppliedInOrder(): void
+    {
+        $resolver = $this->createResolver();
+        $type = $this->createType();
+
+        $options = $resolver->resolve([
+            'sorts' => [
+                'profile_type_sort_text' => 'desc',
+                'title_sort' => 'asc',
+            ],
+        ]);
+
+        $query = new Query();
+        $this->createContentType()->build($query, $options);
+        $type->build($query, $options);
+
+        self::assertSame([
+            'profile_type_sort_text' => 'desc',
+            'title_sort' => 'asc',
+        ], $query->getSorts());
+    }
+
     private function createType(): IntegratedContentBlock
     {
         $sortOptions = new SortOptions([
@@ -256,6 +278,18 @@ class IntegratedContentBlockOptionsTest extends TestCase
             ->willReturn($repository);
 
         return new IntegratedContentBlock($manager, $sortOptions);
+    }
+
+    private function createContentType(): Content
+    {
+        $sortOptions = new SortOptions([
+            new SortOption('rel', 'Relevance', 'score', 'desc'),
+            new SortOption('time', 'Publication date', 'pub_time', 'desc'),
+        ]);
+
+        $manager = $this->createMock(DocumentManager::class);
+
+        return new Content($sortOptions, $manager);
     }
 
     private function createResolver(): OptionsResolver

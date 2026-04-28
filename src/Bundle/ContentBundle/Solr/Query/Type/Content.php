@@ -36,7 +36,11 @@ class Content extends AbstractType
             }
         }
 
-        $query->addSort($options['sort'], $options['order']);
+        if (\count($options['sorts'])) {
+            $query->addSorts($options['sorts']);
+        } else {
+            $query->addSort($options['sort'], $options['order']);
+        }
 
         if ($options['ids']) {
             $query->createFilterQuery('ids')
@@ -151,6 +155,7 @@ class Content extends AbstractType
             'q' => '',
             'sort' => '',
             'order' => '',
+            'sorts' => [],
             'ids' => '',
             'created' => null,
             'search_context' => '',
@@ -209,6 +214,27 @@ class Content extends AbstractType
             }
 
             return $this->sorting->getByField($options['sort'])->order;
+        });
+
+        $resolver->setNormalizer('sorts', function (Options $options, $value): array {
+            if (!\is_array($value)) {
+                return [];
+            }
+
+            $sorts = [];
+
+            foreach ($value as $field => $order) {
+                $field = trim((string) $field);
+                $order = strtolower(trim((string) $order));
+
+                if ('' === $field || !\in_array($order, ['asc', 'desc'], true)) {
+                    continue;
+                }
+
+                $sorts[$field] = $order;
+            }
+
+            return $sorts;
         });
 
         $resolver->setNormalizer('ids', function (Options $options, $value) {
