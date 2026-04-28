@@ -68,7 +68,7 @@ class SearchSelectionType extends AbstractType
             'row_attr' => [
                 'class' => 'search-selection-custom-sort-row',
             ],
-            'help' => 'How custom sorting works: 1) Select "Custom" in "Sort by". 2) Enter only the Solr field name (no "custom:" prefix), for example publication_start_vismagazine_index_date. 3) Choose ascending or descending in "Sort order". The value is stored as custom:<field>.',
+            'help' => 'How custom sorting works: 1) Select "Custom" in "Sort by". 2) Enter a Solr sort expression without the "custom:" prefix, for example publication_start_vismagazine_index_date or profile_type_sort_text desc, title_sort asc. 3) Use "Sort order" only for a single custom field without an explicit direction.',
         ]);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event): void {

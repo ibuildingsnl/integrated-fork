@@ -74,6 +74,31 @@ class ContentOptionsTest extends TestCase
         self::assertSame('asc', $options['order']);
     }
 
+    public function testCustomMultiSortIsAppliedInOrder(): void
+    {
+        $resolver = new OptionsResolver();
+        $type = $this->createType();
+        $type->configureOptions($resolver);
+
+        $options = $resolver->resolve([
+            'q' => '',
+            'sort' => 'custom:profile_type_sort_text desc, title_sort asc',
+            'sorts' => [
+                'profile_type_sort_text' => 'desc',
+                'title_sort' => 'asc',
+            ],
+            'order' => '',
+        ]);
+
+        $query = new Query();
+        $type->build($query, $options);
+
+        self::assertSame([
+            'profile_type_sort_text' => 'desc',
+            'title_sort' => 'asc',
+        ], $query->getSorts());
+    }
+
     public function testRelevanceSortForcesDescendingOrder(): void
     {
         $resolver = new OptionsResolver();

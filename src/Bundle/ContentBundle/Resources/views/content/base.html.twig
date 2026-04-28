@@ -162,7 +162,9 @@
                             </div>
                             <form>
                                 <input type="hidden" value="{{ params['q'] }}" name="q"/>
-                                <input type="hidden" value="{{ params['sort'] }}" name="sort"/>
+                                {% if integrated_search_sorting_option(params['sort']) %}
+                                    <input type="hidden" value="{{ params['sort'] }}" name="sort"/>
+                                {% endif %}
                                 <input type="hidden" value="{{ queryParams['view']|default }}" name="view"/>
                                 <input type="hidden" value="{{ queryParams['week']|default }}" name="week"/>
                                 <input type="hidden" value="{{ queryParams['month']|default }}" name="month"/>

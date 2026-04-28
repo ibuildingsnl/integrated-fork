@@ -75,6 +75,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class ContentController extends AbstractController
 {
     use PaginationQueryTrait;
+    use SearchSelectionSortingSettingsTrait;
 
     private const CONTENT_LOCK_TIMEOUT_SECONDS = 45;
     private const ASSIGNED_STATUS_LIMIT = 25;
@@ -145,6 +146,7 @@ class ContentController extends AbstractController
         }
 
         $options = $this->applyNavigatorContentTypeFilter($request, $options);
+        $options = $this->applyCustomSorts($options);
 
         $newSelection = false;
         if (!$selection) {
@@ -1747,39 +1749,6 @@ class ContentController extends AbstractController
     public function mediaTypesAction(?string $filter = null): Response
     {
         return $this->mediaTypes($filter);
-    }
-
-    /**
-     * @param FormInterface<mixed> $searchSelectionForm
-     * @param array<string, mixed> $filters
-     *
-     * @return array<string, mixed>
-     */
-    private function applySearchSelectionSortingSettings(FormInterface $searchSelectionForm, array $filters): array
-    {
-        $sort = trim((string) $searchSelectionForm->get('sort')->getData());
-        $order = strtolower(trim((string) $searchSelectionForm->get('order')->getData()));
-        $customSort = trim((string) $searchSelectionForm->get('customSort')->getData());
-        $customSortEnabled = '__custom__' === $sort;
-
-        // Keep custom sort simple and explicit to avoid unsafe query fragments.
-        $customSort = preg_replace('/[^a-zA-Z0-9_]/', '', $customSort) ?? '';
-
-        if ($customSortEnabled && '' !== $customSort) {
-            $filters['sort'] = 'custom:'.$customSort;
-        } elseif ('' !== $sort && !$customSortEnabled) {
-            $filters['sort'] = $sort;
-        } else {
-            unset($filters['sort']);
-        }
-
-        if (\in_array($order, ['asc', 'desc'], true)) {
-            $filters['order'] = $order;
-        } else {
-            unset($filters['order']);
-        }
-
-        return $filters;
     }
 
     public function mediaTypes(?string $filter = null): Response
