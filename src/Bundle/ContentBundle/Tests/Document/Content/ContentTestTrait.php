@@ -71,6 +71,23 @@ trait ContentTestTrait
         Assert::assertEquals($relations, $content->getRelations());
     }
 
+    public function testRelationsAccessorsHandleLegacyNullCollection(): void
+    {
+        $content = $this->getContent();
+        $reflection = new \ReflectionProperty(Content::class, 'relations');
+        $reflection->setAccessible(true);
+        $reflection->setValue($content, null);
+
+        Assert::assertSame([], $content->getRelations());
+        Assert::assertNull($content->getRelation('dossier'));
+
+        $relation = (new Relation())->setRelationId('dossier');
+        $content->addRelation($relation);
+
+        Assert::assertSame($relation, $content->getRelation('dossier'));
+        Assert::assertSame([$relation], $content->getRelations());
+    }
+
     /**
      * Test removeReference function.
      */
