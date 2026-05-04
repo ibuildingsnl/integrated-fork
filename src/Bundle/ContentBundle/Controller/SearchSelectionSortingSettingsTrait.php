@@ -95,7 +95,7 @@ trait SearchSelectionSortingSettingsTrait
             }
 
             $tokens = preg_split('/\s+/', $part);
-            if (!\is_array($tokens) || [] === $tokens) {
+            if (false === $tokens) {
                 continue;
             }
 

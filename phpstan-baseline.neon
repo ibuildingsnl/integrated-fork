@@ -3541,12 +3541,6 @@ parameters:
 			path: src/Bundle/ContentBundle/Document/Content/Content.php
 
 		-
-			message: '#^Property Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content\:\:\$primaryChannel \(Integrated\\Common\\Content\\Channel\\ChannelInterface\) does not accept Integrated\\Common\\Content\\Channel\\ChannelInterface\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Bundle/ContentBundle/Document/Content/Content.php
-
-		-
 			message: '#^Property Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content\:\:\$publishTime \(Integrated\\Bundle\\ContentBundle\\Document\\Content\\Embedded\\PublishTime\) does not accept Integrated\\Common\\Content\\PublishTimeInterface\.$#'
 			identifier: assign.propertyType
 			count: 1

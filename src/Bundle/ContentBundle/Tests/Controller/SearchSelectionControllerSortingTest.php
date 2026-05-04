@@ -48,6 +48,8 @@ final class SearchSelectionControllerSortingTest extends TestCase
     }
 
     /**
+     * @param FormInterface<mixed> $form
+     *
      * @return array<string, mixed>
      */
     private function applySortingSettings(FormInterface $form): array
@@ -85,6 +87,9 @@ final class SearchSelectionControllerSortingTest extends TestCase
         return $method->invoke($controller, $options);
     }
 
+    /**
+     * @return FormInterface<mixed>
+     */
     private function createSortingForm(string $sort, string $order, string $customSort): FormInterface
     {
         $form = $this->createMock(FormInterface::class);
@@ -97,6 +102,9 @@ final class SearchSelectionControllerSortingTest extends TestCase
         return $form;
     }
 
+    /**
+     * @return FormInterface<mixed>
+     */
     private function createFormField(string $data): FormInterface
     {
         $field = $this->createMock(FormInterface::class);

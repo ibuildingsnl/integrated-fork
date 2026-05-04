@@ -49,7 +49,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     protected $channels;
 
     /**
-     * @var ChannelInterface
+     * @var ChannelInterface|null
      */
     protected $primaryChannel;
 
