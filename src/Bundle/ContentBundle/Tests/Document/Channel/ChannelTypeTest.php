@@ -22,6 +22,19 @@ final class ChannelTypeTest extends TestCase
         self::assertNull($channelType->getIcon());
     }
 
+    public function testGettersHandleLegacyHydratedDocumentWithoutRequiredFields(): void
+    {
+        $reflection = new \ReflectionClass(ChannelType::class);
+        $channelType = $reflection->newInstanceWithoutConstructor();
+
+        self::assertSame('', $channelType->getId());
+        self::assertSame('', $channelType->getName());
+        self::assertTrue($channelType->canBePrimary());
+        self::assertTrue($channelType->canBeSetGlobally());
+        self::assertNull($channelType->getConnector());
+        self::assertNull($channelType->getPublicationSettingsForm());
+    }
+
     private function setProperty(object $object, string $property, mixed $value): void
     {
         $reflection = new \ReflectionProperty($object, $property);

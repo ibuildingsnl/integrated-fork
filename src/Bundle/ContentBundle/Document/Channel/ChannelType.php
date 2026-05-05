@@ -20,32 +20,32 @@ class ChannelType
 
     public function getId(): string
     {
-        return $this->id;
+        return isset($this->id) ? $this->id : '';
     }
 
     public function getName(): string
     {
-        return $this->name;
+        return isset($this->name) ? $this->name : '';
     }
 
     public function canBePrimary(): bool
     {
-        return $this->canBePrimary;
+        return isset($this->canBePrimary) ? $this->canBePrimary : true;
     }
 
     public function canBeSetGlobally(): bool
     {
-        return $this->canBeSetGlobally;
+        return isset($this->canBeSetGlobally) ? $this->canBeSetGlobally : true;
     }
 
     public function getConnector(): ?string
     {
-        return $this->connector;
+        return isset($this->connector) ? $this->connector : null;
     }
 
     public function getPublicationSettingsForm(): ?string
     {
-        return $this->publicationSettingsForm;
+        return isset($this->publicationSettingsForm) ? $this->publicationSettingsForm : null;
     }
 
     public function getIcon(): ?string
