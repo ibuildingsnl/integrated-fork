@@ -14,6 +14,13 @@ use PHPUnit\Framework\TestCase;
 
 final class AbstractPageBlockIdsTest extends TestCase
 {
+    public function testStringCastReturnsEmptyStringWhenPathIsNotInitialized(): void
+    {
+        $page = new Page();
+
+        self::assertSame('', (string) $page);
+    }
+
     public function testUpdateBlockIdsFromGridsCollectsNestedBlocksWithoutDuplicates(): void
     {
         $blockA = new TextBlock();

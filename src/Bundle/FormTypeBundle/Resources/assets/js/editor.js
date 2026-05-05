@@ -73,6 +73,33 @@ function normalizeTinyMceStyleFormats(styles = []) {
     });
 }
 
+function deduplicateTinyMceStyleFormats(styles = []) {
+    const seen = new Set();
+
+    return styles.filter((style) => {
+        if (!style || typeof style !== 'object') {
+            return false;
+        }
+
+        const signature = [
+            style.title || '',
+            style.format || '',
+            style.block || '',
+            style.inline || '',
+            style.selector || '',
+            style.classes || '',
+            style.wrapper === true ? '1' : '0'
+        ].map((value) => String(value).trim()).join('|');
+
+        if (seen.has(signature)) {
+            return false;
+        }
+
+        seen.add(signature);
+        return true;
+    });
+}
+
 function parseTinyMceContentStyleVariables(contentStyle = '') {
     const variables = {};
 
@@ -551,7 +578,9 @@ function initTinyMceEditors(root = document) {
 
     let custom_styles = element.data('format_styles') || [];
 
-    style_formats = style_formats.concat(normalizeTinyMceStyleFormats(custom_styles));
+    style_formats = deduplicateTinyMceStyleFormats(
+        style_formats.concat(normalizeTinyMceStyleFormats(custom_styles))
+    );
     const wrapperDivStyles = getTinyMceWrapperDivStyles(style_formats);
     applyTinyMceBrandTheme(currentContentStyle);
 

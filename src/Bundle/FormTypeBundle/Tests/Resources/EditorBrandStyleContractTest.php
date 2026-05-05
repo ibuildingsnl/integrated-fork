@@ -39,6 +39,15 @@ final class EditorBrandStyleContractTest extends TestCase
         self::assertStringNotContainsString("title: 'Subscript'", $collectionSource);
     }
 
+    public function testEditorDeduplicatesCollectedStyleFormats(): void
+    {
+        $editorSource = file_get_contents(__DIR__.'/../../Resources/assets/js/editor.js');
+
+        self::assertIsString($editorSource);
+        self::assertStringContainsString('function deduplicateTinyMceStyleFormats(styles = [])', $editorSource);
+        self::assertStringContainsString('style_formats = deduplicateTinyMceStyleFormats(', $editorSource);
+    }
+
     public function testEditorBindsToolbarPreviewThemeAndPrimaryChannelSync(): void
     {
         $editorSource = file_get_contents(__DIR__.'/../../Resources/assets/js/editor.js');

@@ -62,6 +62,14 @@ final class PageBlockClonerTest extends TestCase
         self::assertSame($copiedPage, $cloned->getPage());
     }
 
+    public function testInlineTextBlockStringCastFallsBackToTitleWhenIdIsMissing(): void
+    {
+        $page = new Page();
+        $block = new InlineTextBlock($page);
+
+        self::assertSame('inline block', (string) $block);
+    }
+
     public function testClonesContentBlockSubclass(): void
     {
         $source = new class extends ContentBlock {};

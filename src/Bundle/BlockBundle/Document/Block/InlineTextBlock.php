@@ -106,6 +106,6 @@ class InlineTextBlock extends Block
      */
     public function __toString()
     {
-        return $this->getId();
+        return parent::__toString();
     }
 }
