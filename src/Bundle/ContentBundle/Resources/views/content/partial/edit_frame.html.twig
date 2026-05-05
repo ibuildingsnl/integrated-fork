@@ -84,59 +84,11 @@
 
                         {% set optionFields = form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
                         {% set remainingOptions = optionFields|filter(row => row.vars.name not in ['premium', 'featured', 'featured_expiration']) %}
+                        {% set customOptionFields = form.children.customFields is defined ? form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) : [] %}
+                        {% set premiumDelayFields = customOptionFields|filter(f => f.vars.name == 'promo-days') %}
+                        {% set remainingCustomOptionFields = customOptionFields|filter(f => f.vars.name != 'promo-days') %}
 
-                        {% if form.premium is defined %}
-                            <div class="aside-item-wrapper">
-                                <div class="aside-item-header">
-                                    <h3 class="aside-item-title">
-                                        <i class="iconoir-half-cookie"></i>
-                                        <span class="aside-item-icon">{% trans %}Premium{% endtrans %}</span>
-                                    </h3>
-                                    <i class="iconoir-nav-arrow-up"></i>
-                                </div>
-                                <div class="aside-item-list">
-                                    <div class="aside-item-list-container">
-                                        {{ form_row(form.premium, { 'style': 'inline', 'label_col': 'w-full', 'widget_col': 'w-full' }) }}
-                                    </div>
-                                </div>
-                            </div>
-                        {% endif %}
-
-                        {% if form.featured is defined %}
-                            <div class="aside-item-wrapper">
-                                <div class="aside-item-header">
-                                    <h3 class="aside-item-title">
-                                        <i class="iconoir-star"></i>
-                                        <span class="aside-item-icon">{% trans %}Featured{% endtrans %}</span>
-                                    </h3>
-                                    <i class="iconoir-nav-arrow-up"></i>
-                                </div>
-                                <div class="aside-item-list">
-                                    <div class="aside-item-list-container">
-                                        {{ form_row(form.featured, { 'style': 'inline', 'label_col': 'w-full', 'widget_col': 'w-full' }) }}
-                                        {% if form.featured_expiration is defined %}
-                                            <div data-featured-expiration-container style="{% if not form.featured.vars.data|default(false) %}display: none;{% endif %}">
-                                                <div class="form-group w-full flex flex-wrap{% if form.featured_expiration.vars.errors|length > 0 %} has-error{% endif %}">
-                                                    <label class="control-label w-full" for="{{ form.featured_expiration.vars.id }}">
-                                                        {% trans %}Featured expires in x days{% endtrans %}
-                                                    </label>
-                                                    <div class="w-full widget">
-                                                        {{ form_widget(form.featured_expiration, {
-                                                            attr: form.featured_expiration.vars.attr|merge({
-                                                                placeholder: 'Featured expires in x days'|trans
-                                                            })
-                                                        }) }}
-                                                        {{ form_errors(form.featured_expiration) }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        {% endif %}
-
-                        {% if remainingOptions|length > 0 %}
+                        {% if form.premium is defined or form.featured is defined or remainingOptions|length > 0 or premiumDelayFields|length > 0 or remainingCustomOptionFields|length > 0 %}
                             <div class="aside-item-wrapper">
                                 <div class="aside-item-header">
                                     <h3 class="aside-item-title">
@@ -147,8 +99,44 @@
                                 </div>
                                 <div class="aside-item-list">
                                     <div class="aside-item-list-container">
+                                        {% if form.premium is defined %}
+                                            {{ form_row(form.premium, { 'style': 'inline', 'label_col': 'w-full', 'widget_col': 'w-full' }) }}
+                                            {% for field in premiumDelayFields %}
+                                                <div data-content-option-field-for="{{ form.premium.vars.id }}" style="margin-bottom: .5rem !important;">
+                                                    {{ form_row(field, { 'style': 'inline', 'label_col': 'w-full', 'widget_col': 'w-full' }) }}
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                        {% if form.featured is defined %}
+                                            {{ form_row(form.featured, { 'style': 'inline', 'label_col': 'w-full', 'widget_col': 'w-full' }) }}
+                                            {% if form.featured_expiration is defined %}
+                                                <div data-featured-expiration-container data-content-option-field-for="{{ form.featured.vars.id }}" style="{% if not form.featured.vars.data|default(false) %}display: none;{% endif %}">
+                                                    <div class="form-group w-full flex flex-wrap{% if form.featured_expiration.vars.errors|length > 0 %} has-error{% endif %}">
+                                                        <label class="control-label w-full" for="{{ form.featured_expiration.vars.id }}">
+                                                            {% trans %}Featured expires in x days{% endtrans %}
+                                                        </label>
+                                                        <div class="w-full widget">
+                                                            {{ form_widget(form.featured_expiration, {
+                                                                attr: form.featured_expiration.vars.attr|merge({
+                                                                    placeholder: 'Featured expires in x days'|trans
+                                                                })
+                                                            }) }}
+                                                            {{ form_errors(form.featured_expiration) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
                                         {% for child in remainingOptions %}
                                             {{ form_row(child, { 'style': 'inline', 'label_col': 'w-full', 'widget_col': 'w-full' }) }}
+                                        {% endfor %}
+                                        {% if form.premium is not defined %}
+                                            {% for field in premiumDelayFields %}
+                                                {{ form_row(field, { 'style': 'inline', 'label_col': 'w-full', 'widget_col': 'w-full' }) }}
+                                            {% endfor %}
+                                        {% endif %}
+                                        {% for field in remainingCustomOptionFields %}
+                                            {{ form_row(field, { 'style': 'inline', 'label_col': 'w-full', 'widget_col': 'w-full' }) }}
                                         {% endfor %}
                                     </div>
                                 </div>
