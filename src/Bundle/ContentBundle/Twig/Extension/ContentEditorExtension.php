@@ -40,10 +40,14 @@ class ContentEditorExtension extends AbstractExtension
      * @param array<string, mixed> $context
      */
     public function renderEditorSidebarExtensions(
-        ContentInterface $content,
+        ?ContentInterface $content,
         ?ContentTypeInterface $contentType = null,
         array $context = [],
     ): string {
+        if ($content === null) {
+            return '';
+        }
+
         return $this->eventDispatcher
             ->dispatch(
                 new ContentEditorExtensionEvent($content, $contentType, $context),

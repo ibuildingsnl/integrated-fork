@@ -63,10 +63,19 @@ class FacetBlockHandler extends BlockHandler
         }
 
         $facets = [];
+        $orderedFacets = [];
         foreach ($block->getFields() as $field) {
+            $fieldName = $field->getField();
+            $facetValues = $this->getFacetValues($facetSet->getFacet($fieldName));
+
             $facets[$field->getField()] = [
                 'name' => $field->getName(),
-                'values' => $facetSet->getFacet($field->getField()),
+                'values' => $facetValues,
+            ];
+
+            $orderedFacets[$fieldName] = [
+                'name' => $field->getName(),
+                'values' => $this->sortFacetValuesByYearIssue($facetValues),
             ];
         }
 
@@ -77,6 +86,7 @@ class FacetBlockHandler extends BlockHandler
         return $this->render([
             'block' => $block,
             'facets' => $facets,
+            'orderedFacets' => $orderedFacets,
             'options' => $options,
         ]);
     }
@@ -132,5 +142,78 @@ class FacetBlockHandler extends BlockHandler
         }
 
         return $selectionModes;
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    private function getFacetValues(mixed $facet): array
+    {
+        if (\is_object($facet) && method_exists($facet, 'getValues')) {
+            $facet = $facet->getValues();
+        }
+
+        if (!\is_iterable($facet)) {
+            return [];
+        }
+
+        $values = [];
+        foreach ($facet as $name => $count) {
+            $name = trim((string) $name);
+            if ($name === '') {
+                continue;
+            }
+
+            $values[$name] = (int) $count;
+        }
+
+        return $values;
+    }
+
+    /**
+     * @param array<string, int> $facetValues
+     *
+     * @return array<string, int>
+     */
+    private function sortFacetValuesByYearIssue(array $facetValues): array
+    {
+        $rows = [];
+        foreach ($facetValues as $name => $count) {
+            $issue = -1;
+            $year = 0;
+            $special = true;
+
+            if (preg_match('/Nummer\s+(\d+)\s+van\s+(\d{4})/i', $name, $matches) === 1) {
+                $issue = (int) $matches[1];
+                $year = (int) $matches[2];
+                $special = false;
+            } elseif (preg_match('/(\d{4})/', $name, $matches) === 1) {
+                $issue = 0;
+                $year = (int) $matches[1];
+                $special = false;
+            }
+
+            $rows[] = [
+                'name' => $name,
+                'count' => $count,
+                'issue' => $issue,
+                'year' => $year,
+                'special' => $special,
+            ];
+        }
+
+        usort($rows, static function (array $left, array $right): int {
+            return ($left['special'] <=> $right['special'])
+                ?: ($right['year'] <=> $left['year'])
+                ?: ($right['issue'] <=> $left['issue'])
+                ?: strnatcasecmp($left['name'], $right['name']);
+        });
+
+        $sorted = [];
+        foreach ($rows as $row) {
+            $sorted[$row['name']] = $row['count'];
+        }
+
+        return $sorted;
     }
 }

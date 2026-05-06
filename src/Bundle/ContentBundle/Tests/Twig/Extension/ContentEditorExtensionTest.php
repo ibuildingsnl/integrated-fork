@@ -38,4 +38,19 @@ final class ContentEditorExtensionTest extends TestCase
             $extension->renderEditorSidebarExtensions($content, $contentType, ['mode' => 'edit'])
         );
     }
+
+    public function testRenderEditorSidebarExtensionsSkipsMissingContent(): void
+    {
+        $dispatcher = new EventDispatcher();
+        $dispatcher->addListener(
+            ContentEditorExtensionEvent::SIDEBAR,
+            static function (): void {
+                self::fail('Sidebar extensions should not be dispatched without content.');
+            }
+        );
+
+        $extension = new ContentEditorExtension($dispatcher);
+
+        self::assertSame('', $extension->renderEditorSidebarExtensions(null));
+    }
 }
