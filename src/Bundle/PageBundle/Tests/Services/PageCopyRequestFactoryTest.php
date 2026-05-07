@@ -83,4 +83,32 @@ final class PageCopyRequestFactoryTest extends TestCase
             ],
         ]);
     }
+
+    public function testUsesSubmittedSourceBlockIdWhenFormNameWasSanitized(): void
+    {
+        $factory = new PageCopyRequestFactory();
+
+        $request = $factory->createFromFormData([
+            'sourceChannel' => 'source',
+            'targetChannel' => 'target',
+            'pages' => [
+                'pagepage-a' => [
+                    'selected' => true,
+                    'blocks' => [
+                        'block_dans_colofon_text__' => [
+                            'sourceBlockId' => 'dans_colofon_text_!',
+                            'operation' => 'clone',
+                            'newBlockId' => 'target-block',
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $pageInstruction = $request->getPageInstruction('page-a');
+
+        self::assertNotNull($pageInstruction);
+        self::assertNotNull($pageInstruction->getBlockInstruction('dans_colofon_text_!'));
+        self::assertNull($pageInstruction->getBlockInstruction('dans_colofon_text__'));
+    }
 }

@@ -26,5 +26,6 @@ class SitemapTemplateTest extends TestCase
         self::assertStringContainsString('document.path is defined', $template);
         self::assertStringContainsString("document.path starts with('/')", $template);
         self::assertStringContainsString('integrated_url(document)', $template);
+        self::assertStringNotContainsString('document.publishTime', $template);
     }
 }

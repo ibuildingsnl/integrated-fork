@@ -7,10 +7,12 @@
             : integrated_url(document)
         %}
         {% if location %}
-            {% set lastModified = document.updatedAt ?? document.publishTime.startDate ?? document.createdAt %}
+            {% set lastModified = document.updatedAt ?? document.createdAt ?? null %}
             <url>
                 <loc>{{ absolute_url(location) }}</loc>
-                <lastmod>{{ lastModified|date('c') }}</lastmod>
+                {% if lastModified %}
+                    <lastmod>{{ lastModified|date('c') }}</lastmod>
+                {% endif %}
             </url>
         {% endif %}
     {% endfor %}

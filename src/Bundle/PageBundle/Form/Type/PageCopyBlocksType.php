@@ -19,8 +19,12 @@ class PageCopyBlocksType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $usedNames = [];
+
         foreach ($options['blocks'] as $id => $block) {
-            $builder->add('block_'.$id, PageCopyBlockType::class, [
+            $name = $this->createSafeBlockFormName((string) $id, $usedNames);
+
+            $builder->add($name, PageCopyBlockType::class, [
                 'block' => $block,
                 'channel' => $options['channel'],
                 'targetChannel' => $options['targetChannel'],
@@ -34,5 +38,28 @@ class PageCopyBlocksType extends AbstractType
         $resolver->setAllowedTypes('blocks', 'array');
         $resolver->setAllowedTypes('channel', 'string');
         $resolver->setAllowedTypes('targetChannel', 'string');
+    }
+
+    /**
+     * @param array<string, true> $usedNames
+     */
+    private function createSafeBlockFormName(string $id, array &$usedNames): string
+    {
+        $name = 'block_'.preg_replace('/[^A-Za-z0-9_:-]/', '_', $id);
+
+        if (!preg_match('/^[A-Za-z0-9_]/', $name)) {
+            $name = '_'.$name;
+        }
+
+        if (!isset($usedNames[$name])) {
+            $usedNames[$name] = true;
+
+            return $name;
+        }
+
+        $name .= '_'.substr(sha1($id), 0, 8);
+        $usedNames[$name] = true;
+
+        return $name;
     }
 }

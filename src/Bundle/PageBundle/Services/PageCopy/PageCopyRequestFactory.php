@@ -39,7 +39,7 @@ final class PageCopyRequestFactory
                     continue;
                 }
 
-                $blockId = $this->extractId($blockKey, 'block_');
+                $blockId = $this->resolveBlockId($blockKey, $blockData);
                 if ($blockId === '') {
                     continue;
                 }
@@ -75,6 +75,21 @@ final class PageCopyRequestFactory
         }
 
         return trim(substr($key, \strlen($prefix)));
+    }
+
+    /**
+     * @param array<string, mixed> $blockData
+     */
+    private function resolveBlockId(string $blockKey, array $blockData): string
+    {
+        if (\is_scalar($blockData['sourceBlockId'] ?? null)) {
+            $blockId = trim((string) $blockData['sourceBlockId']);
+            if ($blockId !== '') {
+                return $blockId;
+            }
+        }
+
+        return $this->extractId($blockKey, 'block_');
     }
 
     private function isSelected(mixed $value): bool

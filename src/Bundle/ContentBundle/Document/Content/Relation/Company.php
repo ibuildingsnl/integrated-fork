@@ -93,9 +93,9 @@ class Company extends Relation
         return $this->website;
     }
 
-    public function setWebsite(string $website): static
+    public function setWebsite(?string $website): static
     {
-        $this->website = $website;
+        $this->website = $website ?? '';
 
         return $this;
     }
