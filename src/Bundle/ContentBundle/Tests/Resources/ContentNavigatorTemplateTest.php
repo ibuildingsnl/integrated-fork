@@ -22,6 +22,20 @@ class ContentNavigatorTemplateTest extends TestCase
         $this->assertStringContainsString('<div class="locked-info">', $template);
     }
 
+    public function testIndexTemplateHandlesCustomSearchSelectionSortWithoutRegisteredSortOption(): void
+    {
+        $indexTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/index.html.twig');
+        $baseTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/base.html.twig');
+
+        $this->assertIsString($indexTemplate);
+        $this->assertIsString($baseTemplate);
+
+        $this->assertStringContainsString('{% set currentSortOption = integrated_search_sorting_option(params.sort) %}', $indexTemplate);
+        $this->assertStringContainsString("{% set currentSortLabel = currentSortOption ? currentSortOption.label|trans : 'Custom sorting'|trans %}", $indexTemplate);
+        $this->assertStringNotContainsString('integrated_search_sorting_option(params.sort).label', $indexTemplate);
+        $this->assertStringContainsString("{% if integrated_search_sorting_option(params['sort']) %}", $baseTemplate);
+    }
+
     public function testIndexTemplatesUseSolrNativeChannelFallbackForMissingFacetBrands(): void
     {
         $indexTemplate = file_get_contents(__DIR__.'/../../Resources/views/content/index.html.twig');

@@ -39,6 +39,8 @@ class FormTypeChoiceIntegrationTest extends TestCase
 
         $this->assertIsString($template);
         $this->assertStringContainsString('integrated_content_parent_choice', $template);
+        $this->assertStringContainsString("{% set parentPath = currentData ? (integrated_content_path(currentData)|join(' > ')) : '' %}", $template);
+        $this->assertStringContainsString('{{ currentData ? currentData.title : data }}', $template);
     }
 
     public function testFilterableContentChoiceScriptAddsChannelAndContentTypeFilters(): void

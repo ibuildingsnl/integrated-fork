@@ -11,11 +11,15 @@ use Integrated\Common\Content\Form\Event\FieldEvent;
 use Integrated\Common\Form\Mapping\Metadata\Field;
 use Integrated\Common\Form\Mapping\MetadataInterface;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 final class TaxonomyParentRequiredSubscriberTest extends TestCase
 {
-    public function testMarksParentFieldAsRequiredWhenOptionIsEnabled(): void
+    public function testAddsConditionalParentConstraintWhenOptionIsEnabled(): void
     {
         $subscriber = new TaxonomyParentRequiredSubscriber();
         $field = (new Field('parent_id'))->setOptions([
@@ -28,9 +32,47 @@ final class TaxonomyParentRequiredSubscriberTest extends TestCase
 
         $options = $field->getOptions();
 
-        self::assertTrue($options['required']);
-        self::assertFalse($options['allow_clear']);
-        self::assertTrue($this->containsNotBlankConstraint($options['constraints'] ?? []));
+        self::assertFalse($options['required']);
+        self::assertTrue($options['allow_clear']);
+        self::assertFalse($this->containsNotBlankConstraint($options['constraints'] ?? []));
+        self::assertTrue($this->containsConditionalParentConstraint($options['constraints'] ?? []));
+    }
+
+    public function testConditionalParentConstraintAllowsMissingParentWhenLinkToChannelIsFilled(): void
+    {
+        $taxonomy = new Taxonomy();
+        $taxonomy->setLinkToChannel('website');
+
+        $form = $this->createMock(FormInterface::class);
+        $form->method('getData')->willReturn($taxonomy);
+
+        $context = $this->createMock(ExecutionContextInterface::class);
+        $context->method('getRoot')->willReturn($form);
+        $context->expects(self::never())->method('buildViolation');
+
+        TaxonomyParentRequiredSubscriber::validateParentWhenChannelNotLinked('', $context);
+    }
+
+    public function testConditionalParentConstraintRequiresParentWhenLinkToChannelIsEmpty(): void
+    {
+        $taxonomy = new Taxonomy();
+        $taxonomy->setLinkToChannel(null);
+
+        $form = $this->createMock(FormInterface::class);
+        $form->method('getData')->willReturn($taxonomy);
+
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
+        $builder->expects(self::once())->method('addViolation');
+
+        $context = $this->createMock(ExecutionContextInterface::class);
+        $context->method('getRoot')->willReturn($form);
+        $context
+            ->expects(self::once())
+            ->method('buildViolation')
+            ->with('This value should not be blank.')
+            ->willReturn($builder);
+
+        TaxonomyParentRequiredSubscriber::validateParentWhenChannelNotLinked('', $context);
     }
 
     public function testLeavesParentFieldUntouchedWhenOptionIsDisabled(): void
@@ -83,6 +125,24 @@ final class TaxonomyParentRequiredSubscriberTest extends TestCase
     {
         foreach ($constraints as $constraint) {
             if ($constraint instanceof NotBlank) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param array<int, mixed> $constraints
+     */
+    private function containsConditionalParentConstraint(array $constraints): bool
+    {
+        foreach ($constraints as $constraint) {
+            if (!$constraint instanceof Callback) {
+                continue;
+            }
+
+            if ([TaxonomyParentRequiredSubscriber::class, 'validateParentWhenChannelNotLinked'] === $constraint->callback) {
                 return true;
             }
         }

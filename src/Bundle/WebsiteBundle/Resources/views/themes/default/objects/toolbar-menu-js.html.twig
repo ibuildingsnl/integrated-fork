@@ -309,6 +309,190 @@
             return toNodeArray(element.closestChildren('.integrated-website-menu-item'));
         };
 
+        var getDirectEditableChildren = function(element) {
+            if (!element || !element.children) {
+                return [];
+            }
+
+            return toNodeArray(element.children).filter(function(child) {
+                return child.dataset && child.dataset.action === 'integrated-website-menu-item-edit';
+            });
+        };
+
+        var getMenuListDepth = function(list) {
+            var depth = 0;
+            var currentList = list;
+
+            while (currentList && currentList.parentElement) {
+                var parent = currentList.parentElement;
+                if (!parent.classList || !parent.classList.contains('integrated-website-menu-item')) {
+                    break;
+                }
+
+                depth++;
+                currentList = parent.closest('.integrated-website-menu-list');
+            }
+
+            return depth;
+        };
+
+        var getNodeSubtreeDepth = function(node) {
+            if (!node) {
+                return 0;
+            }
+
+            var childList = node.querySelector(':scope > .integrated-website-menu-list');
+            var children = childList ? getDirectEditableChildren(childList) : [];
+            if (!children.length) {
+                return 0;
+            }
+
+            var maxDepth = 0;
+            children.forEach(function(child) {
+                maxDepth = Math.max(maxDepth, 1 + getNodeSubtreeDepth(child));
+            });
+
+            return maxDepth;
+        };
+
+        var canMoveNodeToDepth = function(node, targetDepth) {
+            return targetDepth <= 2 && targetDepth + getNodeSubtreeDepth(node) <= 2;
+        };
+
+        var getImmediateParentItem = function(node) {
+            if (!node || !node.parentElement) {
+                return null;
+            }
+
+            return node.parentElement.closest('.integrated-website-menu-item[data-action="integrated-website-menu-item-edit"]');
+        };
+
+        var getNodeLabel = function(node) {
+            ensureNodeData(node);
+
+            var data = node && node.data ? node.data : {};
+            var label = String(data.name || '').trim();
+            if (label) {
+                return label;
+            }
+
+            var anchor = node ? node.querySelector(':scope > a') : null;
+            label = anchor ? anchor.textContent.trim() : '';
+
+            return label || '{% trans %}Untitled{% endtrans %}';
+        };
+
+        var getNodeId = function(node) {
+            ensureNodeData(node);
+
+            if (!node.data) {
+                node.data = {};
+            }
+
+            if (!node.data.id) {
+                node.data.id = 'tmp-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+            }
+
+            return String(node.data.id);
+        };
+
+        var findEditableNodeById = function(rootList, id) {
+            if (!rootList || !id) {
+                return null;
+            }
+
+            var found = null;
+            rootList.querySelectorAll('.integrated-website-menu-item[data-action="integrated-website-menu-item-edit"]').forEach(function(candidate) {
+                if (found) {
+                    return;
+                }
+
+                if (getNodeId(candidate) === String(id)) {
+                    found = candidate;
+                }
+            });
+
+            return found;
+        };
+
+        var ensureNodeChildList = function(node) {
+            var childList = node.querySelector(':scope > .integrated-website-menu-list');
+            if (!childList) {
+                childList = document.createElement('ul');
+                childList.className = 'integrated-website-menu-list integrated-menu-tree-list';
+                childList.dataset.integratedOriginalClass = 'integrated-website-menu-list';
+                childList.dataset.integratedSyntheticList = '1';
+                node.appendChild(childList);
+            }
+
+            if (childList.dataset.integratedSortable !== '1' && typeof initializeSortable === 'function') {
+                initializeSortable(childList);
+            }
+
+            return childList;
+        };
+
+        var buildParentOptions = function(node) {
+            var rootList = getTopLevelListFromElement(node);
+            var currentParent = getImmediateParentItem(node);
+            var currentParentId = currentParent ? getNodeId(currentParent) : '';
+            var options = '<option value=""' + (currentParentId === '' ? ' selected="selected"' : '') + '>{% trans %}Geen hoofd{% endtrans %}</option>';
+
+            if (!rootList) {
+                return options;
+            }
+
+            rootList.querySelectorAll('.integrated-website-menu-item[data-action="integrated-website-menu-item-edit"]').forEach(function(candidate) {
+                if (candidate === node || node.contains(candidate)) {
+                    return;
+                }
+
+                var candidateList = candidate.parentElement;
+                var targetDepth = getMenuListDepth(candidateList) + 1;
+                if (!canMoveNodeToDepth(node, targetDepth)) {
+                    return;
+                }
+
+                var candidateId = getNodeId(candidate);
+                var selected = candidateId === currentParentId ? ' selected="selected"' : '';
+                var prefix = new Array(getMenuListDepth(candidateList) + 1).join('-- ');
+                options += '<option value="' + escapeHtml(candidateId) + '"' + selected + '>' + escapeHtml(prefix + getNodeLabel(candidate)) + '</option>';
+            });
+
+            return options;
+        };
+
+        var buildOrderOptions = function(node) {
+            var list = node && node.parentElement ? node.parentElement : null;
+            var siblings = list ? getDirectEditableChildren(list) : [];
+            var currentIndex = siblings.indexOf(node);
+            var html = '';
+
+            siblings.forEach(function(_, index) {
+                html += '<option value="' + index + '"' + (index === currentIndex ? ' selected="selected"' : '') + '>' + (index + 1) + ' {% trans %}van{% endtrans %} ' + siblings.length + '</option>';
+            });
+
+            return html;
+        };
+
+        var getPreviousEditableSibling = function(node) {
+            var previous = node ? node.previousElementSibling : null;
+            while (previous && (!previous.dataset || previous.dataset.action !== 'integrated-website-menu-item-edit')) {
+                previous = previous.previousElementSibling;
+            }
+
+            return previous;
+        };
+
+        var getNextEditableSibling = function(node) {
+            var next = node ? node.nextElementSibling : null;
+            while (next && (!next.dataset || next.dataset.action !== 'integrated-website-menu-item-edit')) {
+                next = next.nextElementSibling;
+            }
+
+            return next;
+        };
+
         var normalizeWorkspaceListClass = function(list) {
             if (!list) {
                 return;
@@ -630,19 +814,7 @@
             };
 
             var ensureChildList = function(node) {
-                var childList = node.querySelector(':scope > .integrated-website-menu-list');
-                if (!childList) {
-                    childList = document.createElement('ul');
-                    childList.className = 'integrated-website-menu-list integrated-menu-tree-list';
-                    childList.dataset.integratedOriginalClass = 'integrated-website-menu-list';
-                    node.appendChild(childList);
-                }
-
-                if (childList.dataset.integratedSortable !== '1') {
-                    initializeSortable(childList);
-                }
-
-                return childList;
+                return ensureNodeChildList(node);
             };
 
             var applyWordpressLikeDepth = function(evt) {
@@ -870,6 +1042,11 @@
             var uriFieldClass = typeLink === '0' ? '' : ' style="display:none"';
             var targetBlankFieldClass = typeLink === '2' ? ' style="display:none"' : '';
             var websiteMode = node.dataset.integratedSearchWebsiteMode || 'current';
+            var previousSibling = getPreviousEditableSibling(node);
+            var canMoveUnderPrevious = previousSibling && canMoveNodeToDepth(node, getMenuListDepth(previousSibling.parentElement) + 1);
+            var moveUnderLabel = previousSibling
+                ? '{% trans %}Onder{% endtrans %} ' + getNodeLabel(previousSibling)
+                : '{% trans %}Onder hoofd{% endtrans %}';
 
             var html = '' +
                 '<div class="integrated-menu-node-shell">' +
@@ -895,6 +1072,15 @@
                         '<label class="integrated-menu-setting-search-wrap"' + searchFieldClass + '>{% trans %}Search selection{% endtrans %}<select class="integrated-menu-setting-search integrated-form-control">' + renderSearchSelectionOptions(data.searchSelection || '', websiteMode) + '</select></label>' +
                         '<label class="integrated-menu-setting-maxitems-wrap"' + searchFieldClass + '>{% trans %}Number of items{% endtrans %}<input type="number" min="1" class="integrated-menu-setting-maxitems integrated-form-control" value="' + escapeHtml((typeof data.maxItems === 'undefined' || data.maxItems === null) ? '' : data.maxItems) + '" /></label>' +
                         '<label class="integrated-menu-setting-targetblank"' + targetBlankFieldClass + '><input type="checkbox" class="integrated-menu-setting-targetblank-input"' + (data.targetBlank ? ' checked="checked"' : '') + ' /> {% trans %}Open in new tab{% endtrans %}</label>' +
+                        '<label class="integrated-menu-setting-parent-wrap">{% trans %}Menu hoofd{% endtrans %}<select class="integrated-menu-setting-parent integrated-form-control">' + buildParentOptions(node) + '</select></label>' +
+                        '<label class="integrated-menu-setting-order-wrap">{% trans %}Menu volgorde{% endtrans %}<select class="integrated-menu-setting-order integrated-form-control">' + buildOrderOptions(node) + '</select></label>' +
+                    '</div>' +
+                    '<div class="integrated-menu-node-move-row">' +
+                        '<span>{% trans %}Verplaatsen{% endtrans %}</span>' +
+                        '<button type="button" class="integrated-menu-node-link-action" data-action="integrated-website-menu-item-move-up">{% trans %}Eén omhoog{% endtrans %}</button>' +
+                        '<button type="button" class="integrated-menu-node-link-action" data-action="integrated-website-menu-item-move-down">{% trans %}Eén omlaag{% endtrans %}</button>' +
+                        '<button type="button" class="integrated-menu-node-link-action" data-action="integrated-website-menu-item-move-under-previous"' + (canMoveUnderPrevious ? '' : ' disabled="disabled"') + '>' + escapeHtml(moveUnderLabel) + '</button>' +
+                        '<button type="button" class="integrated-menu-node-link-action" data-action="integrated-website-menu-item-move-top">{% trans %}Naar boven{% endtrans %}</button>' +
                     '</div>' +
                     '<div class="integrated-menu-node-settings-actions">' +
                         '<button type="button" class="btn btn-green" data-action="integrated-website-menu-item-inline-save">{% trans %}Save{% endtrans %}</button>' +
@@ -1194,6 +1380,133 @@
                 maxItems: selectedType === '1' ? (maxItemsInput.value || '') : '',
                 targetBlank: selectedType === '2' ? false : !!targetBlankInput.checked
             };
+        };
+
+        var syncNodeDataFromInputs = function(node) {
+            var payload = getNodeInputPayload(node);
+            if (!payload) {
+                return;
+            }
+
+            ensureNodeData(node);
+            var data = node.data || {};
+            for (var key in payload) {
+                if (Object.prototype.hasOwnProperty.call(payload, key)) {
+                    data[key] = payload[key];
+                }
+            }
+            node.data = data;
+        };
+
+        var refreshMovedNode = function(node) {
+            var root = getMenuRootFromElement(node);
+            decorateWorkspaceNode(node);
+            openNodeSettings(root, node);
+            normalizeHasChildrenClasses(root);
+            ensureEmptyMenuAction(root);
+            workspaceDirty = true;
+        };
+
+        var moveNodeToParent = function(node, parentId) {
+            var rootList = getTopLevelListFromElement(node);
+            if (!rootList) {
+                return;
+            }
+
+            var targetList = rootList;
+            if (parentId) {
+                var parentNode = findEditableNodeById(rootList, parentId);
+                if (!parentNode || parentNode === node || node.contains(parentNode)) {
+                    return;
+                }
+
+                var targetDepth = getMenuListDepth(parentNode.parentElement) + 1;
+                if (!canMoveNodeToDepth(node, targetDepth)) {
+                    return;
+                }
+
+                targetList = ensureNodeChildList(parentNode);
+            } else if (!canMoveNodeToDepth(node, 0)) {
+                return;
+            }
+
+            syncNodeDataFromInputs(node);
+            targetList.appendChild(node);
+            refreshMovedNode(node);
+        };
+
+        var moveNodeToOrder = function(node, index) {
+            var list = node && node.parentElement ? node.parentElement : null;
+            if (!list) {
+                return;
+            }
+
+            var targetIndex = parseInt(index, 10);
+            if (isNaN(targetIndex)) {
+                return;
+            }
+
+            syncNodeDataFromInputs(node);
+            var siblings = getDirectEditableChildren(list).filter(function(sibling) {
+                return sibling !== node;
+            });
+            var beforeNode = siblings[targetIndex] || null;
+
+            if (beforeNode) {
+                list.insertBefore(node, beforeNode);
+            } else {
+                list.appendChild(node);
+            }
+
+            refreshMovedNode(node);
+        };
+
+        var moveNodeOneStep = function(node, direction) {
+            var sibling = direction < 0 ? getPreviousEditableSibling(node) : getNextEditableSibling(node);
+            if (!sibling || !node.parentElement) {
+                return;
+            }
+
+            syncNodeDataFromInputs(node);
+            if (direction < 0) {
+                node.parentElement.insertBefore(node, sibling);
+            } else {
+                node.parentElement.insertBefore(sibling, node);
+            }
+
+            refreshMovedNode(node);
+        };
+
+        var moveNodeToTop = function(node) {
+            var list = node && node.parentElement ? node.parentElement : null;
+            if (!list) {
+                return;
+            }
+
+            var first = getDirectEditableChildren(list)[0] || null;
+            if (!first || first === node) {
+                return;
+            }
+
+            syncNodeDataFromInputs(node);
+            list.insertBefore(node, first);
+            refreshMovedNode(node);
+        };
+
+        var moveNodeUnderPrevious = function(node) {
+            var previous = getPreviousEditableSibling(node);
+            if (!previous) {
+                return;
+            }
+
+            var targetDepth = getMenuListDepth(previous.parentElement) + 1;
+            if (!canMoveNodeToDepth(node, targetDepth)) {
+                return;
+            }
+
+            syncNodeDataFromInputs(node);
+            ensureNodeChildList(previous).appendChild(node);
+            refreshMovedNode(node);
         };
 
         var isValidNodePayload = function(payload) {
@@ -1505,6 +1818,41 @@
             return false;
         };
 
+        var handleMoveClick = function(e) {
+            var moveTrigger = e.target.closest('[data-action^="integrated-website-menu-item-move-"]');
+            if (!moveTrigger) {
+                return false;
+            }
+
+            stopEvent(e);
+
+            if (moveTrigger.disabled) {
+                return true;
+            }
+
+            var moveNode = moveTrigger.closest('.integrated-website-menu-item[data-action="integrated-website-menu-item-edit"]');
+            if (!moveNode) {
+                return true;
+            }
+
+            switch (moveTrigger.dataset.action) {
+                case 'integrated-website-menu-item-move-up':
+                    moveNodeOneStep(moveNode, -1);
+                    break;
+                case 'integrated-website-menu-item-move-down':
+                    moveNodeOneStep(moveNode, 1);
+                    break;
+                case 'integrated-website-menu-item-move-under-previous':
+                    moveNodeUnderPrevious(moveNode);
+                    break;
+                case 'integrated-website-menu-item-move-top':
+                    moveNodeToTop(moveNode);
+                    break;
+            }
+
+            return true;
+        };
+
         var handleRowSettingsToggleClick = function(e) {
             var rowNode = e.target.closest('[data-action="integrated-website-menu-item-edit"]');
             if (!rowNode || e.target.closest('.integrated-menu-node-settings') || e.target.closest('.integrated-menu-add-button') || e.target.closest('.integrated-menu-drag-handle')) {
@@ -1528,6 +1876,7 @@
             if (handlePageMenuNodeClick(e)) { return; }
             if (handleToggleClick(e)) { return; }
             if (handleSettingsToggleClick(e)) { return; }
+            if (handleMoveClick(e)) { return; }
             if (handleInlineSaveClick(e)) { return; }
             if (handleInlineRemoveClick(e)) { return; }
             handleRowSettingsToggleClick(e);
@@ -1555,6 +1904,24 @@
         };
 
         var handleTypeChange = function(e) {
+            var parentChange = e.target.closest('.integrated-menu-setting-parent');
+            if (parentChange) {
+                var parentNode = parentChange.closest('.integrated-website-menu-item[data-action="integrated-website-menu-item-edit"]');
+                if (parentNode) {
+                    moveNodeToParent(parentNode, parentChange.value || '');
+                }
+                return;
+            }
+
+            var orderChange = e.target.closest('.integrated-menu-setting-order');
+            if (orderChange) {
+                var orderNode = orderChange.closest('.integrated-website-menu-item[data-action="integrated-website-menu-item-edit"]');
+                if (orderNode) {
+                    moveNodeToOrder(orderNode, orderChange.value);
+                }
+                return;
+            }
+
             var websiteChange = e.target.closest('.integrated-menu-setting-search-website');
             if (websiteChange) {
                 var websiteNode = websiteChange.closest('.integrated-website-menu-item[data-action="integrated-website-menu-item-edit"]');

@@ -2,10 +2,12 @@
 {% block title %}{% trans %}Content navigator{% endtrans %}{% endblock title %}
 {% form_theme searchSelectionForm with '@IntegratedFormType/form/form_div_layout.html.twig' %}
 {% block options_start %}
+    {% set currentSortOption = integrated_search_sorting_option(params.sort) %}
+    {% set currentSortLabel = currentSortOption ? currentSortOption.label|trans : 'Custom sorting'|trans %}
     <li class="dropdown close-outside" data-underlay="no">
         <a data-toggle="dropdown" role="button" id="sorting-list"
            class="btn btn-select space-between"><span>{% trans %}Sort by{% endtrans %}
-                                : {{ integrated_search_sorting_option(params.sort).label|trans }}</span>
+                                : {{ currentSortLabel }}</span>
             <i class="iconoir-nav-arrow-down"></i>
         </a>
         <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">

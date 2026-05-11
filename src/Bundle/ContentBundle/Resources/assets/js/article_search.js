@@ -4,16 +4,32 @@ tinymce.PluginManager.add('articlelinksearch', (editor, url) => {
     const hostname = window.location.hostname;
     const protocol = window.location.protocol;
 
+    const findClosestAnchor = function (node) {
+        let element = null;
+
+        if (node) {
+            element = node.nodeType === 1 ? node : node.parentElement;
+
+            if (!element && node.parentNode && node.parentNode.nodeType === 1) {
+                element = node.parentNode;
+            }
+        }
+
+        while (element) {
+            if (element.nodeName.toUpperCase() === 'A') {
+                return element;
+            }
+
+            element = element.parentElement;
+        }
+
+        return null;
+    };
+
     const openDialog = function () {
         let data;
         let selectedNode = editor.selection.getNode();
-        let anchorNode = null;
-
-        if (selectedNode.nodeName.toUpperCase() === 'A') {
-            anchorNode = selectedNode;
-        } else if (selectedNode.parentNode && selectedNode.parentNode.nodeName.toUpperCase() === 'A') {
-            anchorNode = selectedNode.parentNode;
-        }
+        let anchorNode = findClosestAnchor(selectedNode);
 
         if (anchorNode) {
             data = {
@@ -37,11 +53,11 @@ tinymce.PluginManager.add('articlelinksearch', (editor, url) => {
             onMessage(instance, data) {
                 switch(data.mceAction) {
                     case 'linkMakerReplace':
-                        if(selectedNode.nodeName.toLocaleUpperCase() === 'A') {
-                            selectedNode.innerText = data.linkText;
-                            editor.dom.setAttrib(selectedNode, 'href', data.href);
-                            editor.dom.setAttrib(selectedNode, 'title', data.title || null);
-                            editor.dom.setAttrib(selectedNode, 'target', data.newTab ? '_blank' : '');
+                        if(anchorNode) {
+                            anchorNode.textContent = data.linkText;
+                            editor.dom.setAttrib(anchorNode, 'href', data.href);
+                            editor.dom.setAttrib(anchorNode, 'title', data.title || null);
+                            editor.dom.setAttrib(anchorNode, 'target', data.newTab ? '_blank' : '');
                             break;
                         }
                         break;
@@ -70,19 +86,24 @@ tinymce.PluginManager.add('articlelinksearch', (editor, url) => {
     editor.ui.registry.addContextMenu('integratedArticleLinkSearch', {
         update: (element) => {
             let items = [];
+            let anchor = findClosestAnchor(element);
+            let elementName = element && element.nodeName ? element.nodeName.toUpperCase() : '';
+            let parentName = element && element.parentElement && element.parentElement.nodeName
+                ? element.parentElement.nodeName.toUpperCase()
+                : '';
 
-             if (element.nodeName.toLocaleUpperCase() === 'A') {
-                 items.push('integratedArticleLinkSearch');
-                 items.push('unlink');
-             } else {
-                 if(element.nodeName.toLocaleUpperCase() === 'P' || element.parentElement.nodeName.toLocaleUpperCase() === 'P') {
-                     if(editor.selection.getContent({format: "text"}).length === 0) {
-                         return;
-                     }
+            if (anchor) {
+                items.push('integratedArticleLinkSearch');
+                items.push('unlink');
+            } else {
+                if(elementName === 'P' || parentName === 'P') {
+                    if(editor.selection.getContent({format: "text"}).length === 0) {
+                        return;
+                    }
 
-                     items.push('integratedArticleLinkSearch');
-                 }
-             }
+                    items.push('integratedArticleLinkSearch');
+                }
+            }
 
             return items.join(' ');
         },

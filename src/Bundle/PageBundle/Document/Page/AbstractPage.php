@@ -366,6 +366,6 @@ abstract class AbstractPage
      */
     public function __toString()
     {
-        return $this->getPath();
+        return (string) $this->getPath();
     }
 }

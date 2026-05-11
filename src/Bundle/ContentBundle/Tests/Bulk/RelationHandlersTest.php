@@ -58,7 +58,7 @@ class RelationHandlersTest extends TestCase
         $handler = new RelationAddHandler($relation, [], true);
         $handler->execute($content);
 
-        self::assertFalse($content->getRelation('dossier'));
+        self::assertNull($content->getRelation('dossier'));
     }
 
     public function testRelationFactoryDoesNotReturnNoopWhenReplaceExistingIsEnabledWithoutNewReferences(): void

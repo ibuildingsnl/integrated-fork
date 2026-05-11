@@ -21,6 +21,7 @@ import useAnalysis from '../hooks/useAnalysis';
 import analysisState from '../state/analysisState';
 
 const META_DESCRIPTION_MAX_LENGTH = 156;
+const EXTERNAL_SEO_UPDATE_EVENT = 'integrated:yoast-seo:update';
 
 const IntegratedYoastApp = () => {
     const {configuration, editorFieldMapping} = useConfiguration();
@@ -163,8 +164,59 @@ const IntegratedYoastApp = () => {
             }
         };
 
+        const handleExternalSeoMetadataUpdate = (event) => {
+            const detail = event && event.detail ? event.detail : {};
+            const updates = {
+                ...(detail.fields || {}),
+                ...(detail.values || {}),
+            };
+            const nextEditorData = {};
+
+            if (detail.field) {
+                updates[detail.field] = detail.value;
+            }
+
+            Object.keys(updates).forEach((field) => {
+                const value = typeof updates[field] === 'string' ? updates[field] : '';
+
+                if (field === 'seoMetadata.metaTitle' || field === 'metaTitle' || field === 'title') {
+                    nextEditorData.title = value;
+                    if (editorFieldMapping.titleOverride) {
+                        editorFieldMapping.titleOverride.value = value;
+                    }
+                }
+
+                if (field === 'seoMetadata.metaDescription' || field === 'metaDescription' || field === 'description') {
+                    nextEditorData.description = value;
+                    descriptionManuallyEditedRef.current = value.trim() !== '';
+                    if (editorFieldMapping.description) {
+                        editorFieldMapping.description.value = value;
+                    }
+                }
+
+                if (field === 'seoMetadata.focusKeyphrase' || field === 'focusKeyphrase' || field === 'focusKeyword') {
+                    nextEditorData.focusKeyword = value;
+                    if (editorFieldMapping.focusKeyword) {
+                        editorFieldMapping.focusKeyword.value = value;
+                    }
+                }
+            });
+
+            if (Object.keys(nextEditorData).length === 0) {
+                return;
+            }
+
+            setEditorData((prev) => ({
+                ...prev,
+                ...nextEditorData,
+            }));
+
+            debouncedLoadPageContent();
+        };
+
         document.addEventListener('editorChange', handleEditorLinkState);
         document.addEventListener('editorChange', handleDescriptionLinkState);
+        document.addEventListener(EXTERNAL_SEO_UPDATE_EVENT, handleExternalSeoMetadataUpdate);
 
         if (titleInput && titleOverrideInput) {
             titleInput.addEventListener('input', syncTitleOverride);
@@ -192,6 +244,7 @@ const IntegratedYoastApp = () => {
         return () => {
             document.removeEventListener('editorChange', handleEditorLinkState);
             document.removeEventListener('editorChange', handleDescriptionLinkState);
+            document.removeEventListener(EXTERNAL_SEO_UPDATE_EVENT, handleExternalSeoMetadataUpdate);
             if (titleInput && titleOverrideInput) {
                 titleInput.removeEventListener('input', syncTitleOverride);
                 titleInput.removeEventListener('change', syncTitleOverride);

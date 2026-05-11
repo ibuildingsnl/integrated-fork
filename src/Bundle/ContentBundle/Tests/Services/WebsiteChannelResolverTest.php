@@ -48,18 +48,19 @@ final class WebsiteChannelResolverTest extends TestCase
         $channelManager = $this->createMock(ChannelManagerInterface::class);
         $channelManager->expects(self::once())
             ->method('findBy')
-            ->with(
-                [
-                    '$or' => [
-                        ['type.$id' => 'website'],
-                        ['type.name' => 'Website'],
+            ->willReturnCallback(function (array $criteria): array {
+                self::assertSame(
+                    [
+                        '$or' => [
+                            ['type.$id' => 'website'],
+                            ['type.name' => 'Website'],
+                        ],
                     ],
-                ],
-                ['name' => 'asc']
-            )
-            ->willReturn(
-                [$this->createChannel('website_nl', '', 'website', 'Website')]
-            );
+                    $criteria
+                );
+
+                return [$this->createChannel('website_nl', '', 'website', 'Website')];
+            });
         $channelManager->expects(self::never())->method('findAll');
 
         $resolver = new WebsiteChannelResolver($channelManager);

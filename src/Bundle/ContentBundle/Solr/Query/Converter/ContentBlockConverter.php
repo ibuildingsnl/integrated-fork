@@ -32,6 +32,10 @@ class ContentBlockConverter
             $settings['params'] = $selection->getInternalParams();
             $settings['sort'] = $filters['sort'] ?? '';
             $settings['order'] = $filters['order'] ?? '';
+
+            if (\is_string($settings['sort']) && str_starts_with(strtolower(trim($settings['sort'])), 'custom:')) {
+                $settings['sorts'] = $this->parseCustomSorts(substr(trim($settings['sort']), 7));
+            }
         }
 
         $settings['facet_selection_modes'] = $this->getFacetSelectionModes($block, $options['facet_selection_modes'] ?? []);
@@ -153,5 +157,36 @@ class ContentBlockConverter
         }
 
         return $facets;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function parseCustomSorts(string $sort): array
+    {
+        $sorts = [];
+
+        foreach (explode(',', $sort) as $part) {
+            $part = trim($part);
+            if ('' === $part) {
+                continue;
+            }
+
+            $pieces = preg_split('/\s+/', $part);
+            if (!\is_array($pieces) || \count($pieces) < 2) {
+                continue;
+            }
+
+            $order = strtolower((string) array_pop($pieces));
+            $field = implode(' ', $pieces);
+
+            if (!\in_array($order, ['asc', 'desc'], true) || !preg_match('/^[A-Za-z0-9_.-]+$/', $field)) {
+                continue;
+            }
+
+            $sorts[$field] = $order;
+        }
+
+        return $sorts;
     }
 }

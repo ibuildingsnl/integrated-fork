@@ -5,11 +5,13 @@ window.IntegratedJQReady(function ($) {
         $primarySelector = $('<a href="#">').addClass('primary-channel-selector')
             .text(' (' + $primaryChannel.data('make-primary-text') + ')');
 
+    normalizePrimaryChannelSelection();
     updateChannelSelectors();
     syncTinyMceBrandTheme();
 
     function updateChannelSelectors()
     {
+        normalizePrimaryChannelSelection();
         $('.primary-channel-selector').remove();
         $('.is-primary-channel').removeClass('is-primary-channel');
 
@@ -43,6 +45,18 @@ window.IntegratedJQReady(function ($) {
         }
 
         return $selectedInput;
+    }
+
+    function normalizePrimaryChannelSelection() {
+        var $selectedInput = getPrimaryChannelInput();
+
+        if ($selectedInput.length === 0) {
+            $primaryChannel.val('');
+
+            return;
+        }
+
+        $primaryChannel.val($selectedInput.val());
     }
 
     function buildTinyMceContentStyle($input) {

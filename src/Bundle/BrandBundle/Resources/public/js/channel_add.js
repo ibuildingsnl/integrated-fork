@@ -30,3 +30,4 @@ function initBrandChannelAddToggle() {
 
 document.addEventListener('DOMContentLoaded', initBrandChannelAddToggle);
 document.addEventListener('turbo:load', initBrandChannelAddToggle);
+initBrandChannelAddToggle();

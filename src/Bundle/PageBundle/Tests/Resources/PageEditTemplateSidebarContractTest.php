@@ -33,6 +33,8 @@ final class PageEditTemplateSidebarContractTest extends TestCase
         $this->assertStringContainsString('bundles/integratedintegrated/edit.js', $template);
         $this->assertStringContainsString('bundles/integratedintegrated/edit.css', $template);
         $this->assertStringContainsString('Page settings', $template);
+        $this->assertStringContainsString('{% block editor_sidebar_extensions %}', $template);
+        $this->assertStringContainsString('integrated_page_editor_sidebar_extensions(pageDocument, form', $template);
         $this->assertStringContainsString("['canonicalUrl', 'robotsDirective', 'twitterCard', 'paginationNoindexEnabled', 'hideFromSitemap']", $template);
         $this->assertStringNotContainsString("['canonicalUrl', 'robotsDirective', 'twitterCard', 'paginationNoindexEnabled', 'hideFromSitemap', 'disabled']", $template);
         $this->assertStringContainsString("form_row(attribute(form, fieldName), {'style': 'horizontal', 'state': 'show'})", $template);

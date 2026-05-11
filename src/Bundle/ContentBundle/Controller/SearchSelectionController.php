@@ -30,6 +30,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class SearchSelectionController extends AbstractController
 {
     use PaginationQueryTrait;
+    use SearchSelectionSortingSettingsTrait;
 
     private RequestStack $requestStack;
     private DocumentManager $documentManager;
@@ -248,38 +249,6 @@ class SearchSelectionController extends AbstractController
         }
 
         return $user;
-    }
-
-    /**
-     * @param FormInterface<mixed> $form
-     * @param array<string, mixed> $filters
-     *
-     * @return array<string, mixed>
-     */
-    private function applySearchSelectionSortingSettings(FormInterface $form, array $filters): array
-    {
-        $sort = trim((string) $form->get('sort')->getData());
-        $order = strtolower(trim((string) $form->get('order')->getData()));
-        $customSort = trim((string) $form->get('customSort')->getData());
-        $customSortEnabled = '__custom__' === $sort;
-
-        $customSort = preg_replace('/[^a-zA-Z0-9_]/', '', $customSort) ?? '';
-
-        if ($customSortEnabled && '' !== $customSort) {
-            $filters['sort'] = 'custom:'.$customSort;
-        } elseif ('' !== $sort && !$customSortEnabled) {
-            $filters['sort'] = $sort;
-        } else {
-            unset($filters['sort']);
-        }
-
-        if (\in_array($order, ['asc', 'desc'], true)) {
-            $filters['order'] = $order;
-        } else {
-            unset($filters['order']);
-        }
-
-        return $filters;
     }
 
     private function assertSearchSelectionAccess(SearchSelection $searchSelection): void

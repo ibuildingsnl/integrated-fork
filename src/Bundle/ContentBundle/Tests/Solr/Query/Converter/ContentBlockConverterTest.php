@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Integrated\Bundle\ContentBundle\Tests\Solr\Query\Converter;
 
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
+use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Solr\Query\Converter\ContentBlockConverter;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,5 +56,27 @@ final class ContentBlockConverterTest extends TestCase
         self::assertSame([
             'facet_company_category' => 'single',
         ], $settings['facet_selection_modes']);
+    }
+
+    public function testConvertKeepsFullCustomSearchSelectionSortExpression(): void
+    {
+        $selection = new SearchSelection();
+        $selection->setFilters([
+            'sort' => 'custom:profile_type_sort_text desc, title_sort asc',
+        ]);
+
+        $block = new ContentBlock();
+        $block->setSearchSelection($selection);
+
+        $request = new Request();
+        $request->attributes->set('_channel', 'main');
+
+        $settings = (new ContentBlockConverter())->convert($block, $request);
+
+        self::assertSame('custom:profile_type_sort_text desc, title_sort asc', $settings['sort']);
+        self::assertSame([
+            'profile_type_sort_text' => 'desc',
+            'title_sort' => 'asc',
+        ], $settings['sorts']);
     }
 }

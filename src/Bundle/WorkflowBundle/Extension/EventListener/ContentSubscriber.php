@@ -34,6 +34,7 @@ use Integrated\Common\Content\MetadataInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Security\PermissionInterface;
 use Integrated\Common\Workflow\Event\WorkflowStateChangedEvent;
+use Integrated\Common\Workflow\Event\WorkflowStateChangingEvent;
 use Integrated\Common\Workflow\Events as WorkflowEvents;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -142,9 +143,11 @@ class ContentSubscriber implements ContentSubscriberInterface
         }
 
         $data = \is_array($data = $event->getData()) ? array_filter($data) : []; // filter out empty fields
+        $workflowState = $this->getState($content);
+
         $data += [
             'comment' => '',
-            'state' => ($state = $this->getState($content)) ? $state->getState() : null,
+            'state' => $workflowState ? $workflowState->getState() : null,
             'assigned' => null,
             'deadline' => null,
         ];
@@ -161,6 +164,18 @@ class ContentSubscriber implements ContentSubscriberInterface
 
         if ($data['assigned'] && !$this->hasAssignedAccess($data['assigned'], $data['state'], $content)) {
             $data['assigned'] = null;
+        }
+
+        if ($workflowState && $data['state'] instanceof Definition\State && $data['state'] !== $workflowState->getState()) {
+            $stateChangingEvent = $this->eventDispatcher->dispatch(
+                new WorkflowStateChangingEvent($content, $workflowState, $data['state'], $data),
+                WorkflowEvents::STATE_CHANGING
+            );
+
+            if ($stateChangingEvent->isDenied()) {
+                $data['state'] = $workflowState->getState();
+                $data['workflow_state_denial_message'] = $stateChangingEvent->getMessage();
+            }
         }
 
         $event->setData($data);

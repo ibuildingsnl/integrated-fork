@@ -71,6 +71,23 @@ trait ContentTestTrait
         Assert::assertEquals($relations, $content->getRelations());
     }
 
+    public function testRelationsAccessorsHandleLegacyNullCollection(): void
+    {
+        $content = $this->getContent();
+        $reflection = new \ReflectionProperty(Content::class, 'relations');
+        $reflection->setAccessible(true);
+        $reflection->setValue($content, null);
+
+        Assert::assertSame([], $content->getRelations());
+        Assert::assertNull($content->getRelation('dossier'));
+
+        $relation = (new Relation())->setRelationId('dossier');
+        $content->addRelation($relation);
+
+        Assert::assertSame($relation, $content->getRelation('dossier'));
+        Assert::assertSame([$relation], $content->getRelations());
+    }
+
     /**
      * Test removeReference function.
      */
@@ -228,6 +245,46 @@ trait ContentTestTrait
         Assert::assertSame([], $content->getChannels());
     }
 
+    public function testSetChannelsFallsBackPrimaryChannelToFirstSelectedChannelWhenCurrentPrimaryIsInvalid(): void
+    {
+        $content = $this->getContent();
+
+        $invalidPrimary = new Channel();
+        $invalidPrimary->setId('stale-primary');
+
+        $firstChannel = new Channel();
+        $firstChannel->setId('automationnl');
+
+        $secondChannel = new Channel();
+        $secondChannel->setId('bakkersinbedrijf');
+
+        $content->setPrimaryChannel($invalidPrimary);
+        $content->setChannels([$firstChannel, $secondChannel]);
+
+        Assert::assertSame($firstChannel, $content->getPrimaryChannel());
+        Assert::assertSame($firstChannel, $this->getStoredPrimaryChannel($content));
+    }
+
+    public function testSetPrimaryChannelFallsBackToFirstSelectedChannelWhenGivenChannelIsNotSelected(): void
+    {
+        $content = $this->getContent();
+
+        $firstChannel = new Channel();
+        $firstChannel->setId('automationnl');
+
+        $secondChannel = new Channel();
+        $secondChannel->setId('bakkersinbedrijf');
+
+        $invalidPrimary = new Channel();
+        $invalidPrimary->setId('stale-primary');
+
+        $content->setChannels([$firstChannel, $secondChannel]);
+        $content->setPrimaryChannel($invalidPrimary);
+
+        Assert::assertSame($firstChannel, $content->getPrimaryChannel());
+        Assert::assertSame($firstChannel, $this->getStoredPrimaryChannel($content));
+    }
+
     /**
      * Test getCustomFields functions.
      */
@@ -246,6 +303,13 @@ trait ContentTestTrait
             'single' => [[new Channel()]],
             'multiple' => [[new Channel(), new Channel()]],
         ];
+    }
+
+    private function getStoredPrimaryChannel(Content $content): ?Channel
+    {
+        $reflection = new \ReflectionProperty($content, 'primaryChannel');
+
+        return $reflection->getValue($content);
     }
 
     /**

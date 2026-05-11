@@ -20,36 +20,41 @@ class ChannelType
 
     public function getId(): string
     {
-        return $this->id;
+        return $this->isInitialized('id') ? $this->id : '';
     }
 
     public function getName(): string
     {
-        return $this->name;
+        return $this->isInitialized('name') ? $this->name : '';
     }
 
     public function canBePrimary(): bool
     {
-        return $this->canBePrimary;
+        return $this->isInitialized('canBePrimary') ? $this->canBePrimary : true;
     }
 
     public function canBeSetGlobally(): bool
     {
-        return $this->canBeSetGlobally;
+        return $this->isInitialized('canBeSetGlobally') ? $this->canBeSetGlobally : true;
     }
 
     public function getConnector(): ?string
     {
-        return $this->connector;
+        return $this->isInitialized('connector') ? $this->connector : null;
     }
 
     public function getPublicationSettingsForm(): ?string
     {
-        return $this->publicationSettingsForm;
+        return $this->isInitialized('publicationSettingsForm') ? $this->publicationSettingsForm : null;
     }
 
     public function getIcon(): ?string
     {
         return $this->icon;
+    }
+
+    private function isInitialized(string $property): bool
+    {
+        return (new \ReflectionProperty($this, $property))->isInitialized($this);
     }
 }

@@ -49,7 +49,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     protected $channels;
 
     /**
-     * @var ChannelInterface
+     * @var ChannelInterface|null
      */
     protected $primaryChannel;
 
@@ -210,11 +210,12 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     public function getRelations()
     {
-        return $this->relations->toArray();
+        return $this->getRelationCollection()->toArray();
     }
 
     public function setRelations(iterable $relations)
     {
+        $this->getRelationCollection()->clear();
         $this->relations = new ArrayCollection();
 
         foreach ($relations as $relation) {
@@ -236,13 +237,13 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
                 $new->setRelationType($exist->getRelationType());
                 $new->addReferences($exist->getReferences());
 
-                $this->relations->remove($exist);
-                $this->relations->add($exist = $new);
+                $this->getRelationCollection()->removeElement($exist);
+                $this->getRelationCollection()->add($exist = $new);
             }
 
             $exist->addReferences($relation->getReferences());
         } else {
-            $this->relations->add($relation);
+            $this->getRelationCollection()->add($relation);
         }
 
         return $this;
@@ -250,22 +251,18 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     public function removeRelation(RelationInterface $relation)
     {
-        $this->relations->removeElement($relation);
+        $this->getRelationCollection()->removeElement($relation);
 
         return $this;
     }
 
     public function getRelation($relationId)
     {
-        return $this->relations->filter(function ($relation) use ($relationId) {
-            if ($relation instanceof RelationInterface) {
-                if ($relation->getRelationId() == $relationId) {
-                    return true;
-                }
-            }
-
-            return false;
+        $relation = $this->getRelationCollection()->filter(function (RelationInterface $relation) use ($relationId) {
+            return $relation->getRelationId() == $relationId;
         })->first();
+
+        return $relation === false ? null : $relation;
     }
 
     /**
@@ -273,14 +270,8 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      */
     public function getRelationsByRelationType($relationType)
     {
-        return $this->relations->filter(function ($relation) use ($relationType) {
-            if ($relation instanceof RelationInterface) {
-                if ($relation->getRelationType() == $relationType) {
-                    return true;
-                }
-            }
-
-            return false;
+        return $this->getRelationCollection()->filter(function (RelationInterface $relation) use ($relationType) {
+            return $relation->getRelationType() == $relationType;
         })->toArray();
     }
 
@@ -517,6 +508,8 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
             $this->addChannel($channel); // type check
         }
 
+        $this->primaryChannel = $this->resolvePrimaryChannel($this->primaryChannel);
+
         return $this;
     }
 
@@ -565,6 +558,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     public function removeChannel(ChannelInterface $channel)
     {
         $this->getChannelCollection()->removeElement($channel);
+        $this->primaryChannel = $this->resolvePrimaryChannel($this->primaryChannel);
 
         return $this;
     }
@@ -576,6 +570,8 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         foreach ($channels as $channel) {
             $channels->removeElement($channel);
         }
+
+        $this->primaryChannel = null;
 
         return $this;
     }
@@ -602,7 +598,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      */
     public function setPrimaryChannel(?ChannelInterface $primaryChannel = null)
     {
-        $this->primaryChannel = $primaryChannel;
+        $this->primaryChannel = $this->resolvePrimaryChannel($primaryChannel);
 
         return $this;
     }
@@ -655,6 +651,44 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         }
 
         return $this->channels;
+    }
+
+    /**
+     * @return Collection<int, RelationInterface>
+     */
+    private function getRelationCollection(): Collection
+    {
+        if (null === $this->relations) {
+            $this->relations = new ArrayCollection();
+        }
+
+        return $this->relations;
+    }
+
+    private function resolvePrimaryChannel(?ChannelInterface $primaryChannel = null): ?ChannelInterface
+    {
+        $channels = $this->getChannelCollection();
+
+        if (0 === $channels->count()) {
+            return null;
+        }
+
+        if (null !== $primaryChannel) {
+            foreach ($channels as $channel) {
+                if ($channel === $primaryChannel) {
+                    return $channel;
+                }
+
+                $primaryChannelId = $primaryChannel->getId();
+                if (\is_string($primaryChannelId) && '' !== $primaryChannelId && $channel->getId() === $primaryChannelId) {
+                    return $channel;
+                }
+            }
+        }
+
+        $firstChannel = $channels->first();
+
+        return $firstChannel === false ? null : $firstChannel;
     }
 
     public function getShortClassname(): string
