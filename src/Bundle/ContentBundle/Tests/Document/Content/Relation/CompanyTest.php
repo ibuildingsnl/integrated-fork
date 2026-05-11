@@ -50,7 +50,7 @@ class CompanyTest extends TestCase
         $this->assertEquals($website, $this->company->setWebsite($website)->getWebsite());
     }
 
-    public function testSetWebsiteAcceptsNull()
+    public function testSetWebsiteAcceptsNull(): void
     {
         $this->assertSame('', $this->company->setWebsite(null)->getWebsite());
     }

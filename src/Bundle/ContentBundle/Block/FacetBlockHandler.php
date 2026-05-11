@@ -153,7 +153,7 @@ class FacetBlockHandler extends BlockHandler
             $facet = $facet->getValues();
         }
 
-        if (!\is_iterable($facet)) {
+        if (!is_iterable($facet)) {
             return [];
         }
 
