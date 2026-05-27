@@ -12,6 +12,42 @@ use PHPUnit\Framework\TestCase;
 
 final class ImageExtensionPdfFallbackTest extends TestCase
 {
+    public function testStringTiffPathUsesGeneratedWebPreview(): void
+    {
+        if (!\extension_loaded('imagick') || !\in_array('TIFF', (new \Imagick())->queryFormats(), true)) {
+            self::markTestSkipped('Imagick with TIFF support is required for TIFF preview generation.');
+        }
+
+        $tiffPath = sys_get_temp_dir().'/image-extension-preview-test.tif';
+        $imagick = new \Imagick();
+        $imagick->newImage(10, 10, new \ImagickPixel('red'));
+        $imagick->setImageFormat('tiff');
+        $imagick->writeImage($tiffPath);
+        $imagick->clear();
+
+        $imageHandler = $this->createMock(ImageHandler::class);
+        $imageHandling = $this->createMock(ImageHandling::class);
+        $imageHandling
+            ->expects(self::once())
+            ->method('open')
+            ->with(self::callback(static fn (string $path): bool => str_contains($path, 'cache/image-preview/') && str_ends_with($path, '.png')))
+            ->willReturn($imageHandler);
+
+        $extension = new ImageExtension(
+            $imageHandling,
+            $this->createMock(GregwarImageExtension::class),
+            $this->createMock(WebFormatConverter::class),
+            [],
+            $this->createMock(ImageHandling::class)
+        );
+
+        try {
+            self::assertSame($imageHandler, $extension->image($tiffPath));
+        } finally {
+            @unlink($tiffPath);
+        }
+    }
+
     public function testStringPdfPathUsesGeneratedPreviewWhenGhostscriptIsAvailable(): void
     {
         if (!\extension_loaded('imagick') || !is_file('/usr/bin/gs')) {

@@ -154,11 +154,16 @@ class ImageExtension extends AbstractExtension
             return $this->safeOpenMimic($image);
         }
 
-        $extension = pathinfo($image, \PATHINFO_EXTENSION);
-        if (strtolower($extension) === 'pdf') {
+        $extension = strtolower(pathinfo($image, \PATHINFO_EXTENSION));
+        if ($extension === 'pdf') {
             $preview = $this->renderLocalPdfPreview($image);
 
             return $this->safeOpen($preview ?: 'bundles/integratedintegrated/images/fallbacks/pdf-fallback.jpg');
+        }
+        if (\in_array($extension, ['tif', 'tiff'], true)) {
+            $preview = $this->renderLocalImagePreview($image, 'png');
+
+            return $this->safeOpen($preview ?: 'bundles/integratedintegrated/images/fallbacks/fallback.jpg');
         }
         if (file_exists($image)) {
             $mime = mime_content_type($image);
@@ -269,6 +274,46 @@ class ImageExtension extends AbstractExtension
             $imagick->setImageBackgroundColor('white');
             $imagick = $imagick->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
             $imagick->setImageFormat('jpg');
+            $imagick->writeImage($target);
+            $imagick->clear();
+        } catch (\Throwable) {
+            return null;
+        }
+
+        return is_file($target) ? $target : null;
+    }
+
+    private function renderLocalImagePreview(string $image, string $format): ?string
+    {
+        $resolved = $this->resolveLocalPath($image);
+
+        if ($resolved === '' || filter_var($resolved, \FILTER_VALIDATE_URL) || !is_file($resolved) || !class_exists(\Imagick::class)) {
+            return null;
+        }
+
+        $targetDirectory = $this->resolveLocalPath('cache/image-preview');
+        $target = \sprintf(
+            '%s/%s.%s',
+            rtrim($targetDirectory, '/'),
+            sha1($resolved.'|'.(string) filemtime($resolved).'|'.$format),
+            $format
+        );
+
+        if (is_file($target)) {
+            return $target;
+        }
+
+        if (!is_dir($targetDirectory) && !@mkdir($targetDirectory, 0777, true) && !is_dir($targetDirectory)) {
+            return null;
+        }
+
+        try {
+            $imagick = new \Imagick();
+            $imagick->readImage(\sprintf('%s[0]', $resolved));
+            $imagick->setIteratorIndex(0);
+            $imagick->setImageBackgroundColor('white');
+            $imagick = $imagick->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
+            $imagick->setImageFormat($format);
             $imagick->writeImage($target);
             $imagick->clear();
         } catch (\Throwable) {
