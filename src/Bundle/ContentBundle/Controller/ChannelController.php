@@ -35,7 +35,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ChannelController extends AbstractController
 {
     private const CHANNELS_CACHE_NAMESPACE = 'integrated_content_fragments_channels';
-    private const CHANNELS_CACHE_TTL_SECONDS = 86400;
+    private const CHANNELS_CACHE_TTL_SECONDS = 300;
 
     private DocumentManager $documentManager;
     private SearchContentReferenced $searchContentReferenced;
@@ -271,18 +271,8 @@ class ChannelController extends AbstractController
             : [];
 
         $user = $this->getUser();
-        $userId = $user instanceof UserInterface ? (string) $user->getId() : 'anonymous';
-        $sessionId = $request->hasSession() ? (string) $request->getSession()->getId() : '';
-        $cacheKey = 'channels_'.md5(json_encode([
-            'user' => $userId,
-            'locale' => $request->getLocale(),
-            'session' => $sessionId,
-            'showBlocks' => $showBlocks,
-            'usedBlocks' => $usedBlocks,
-        ], \JSON_THROW_ON_ERROR));
-
         $cache = new FilesystemAdapter(self::CHANNELS_CACHE_NAMESPACE);
-        $cacheItem = $cache->getItem($cacheKey);
+        $cacheItem = $cache->getItem($this->buildChannelsCacheKey($user, $request, $showBlocks, $usedBlocks));
 
         if ($cacheItem->isHit()) {
             return new Response((string) $cacheItem->get());
@@ -313,6 +303,23 @@ class ChannelController extends AbstractController
         $cache->save($cacheItem);
 
         return new Response($html);
+    }
+
+    /**
+     * @param array<int, array{id: string, title: string, type: string}> $usedBlocks
+     */
+    private function buildChannelsCacheKey(mixed $user, Request $request, bool $showBlocks, array $usedBlocks): string
+    {
+        $userId = $user instanceof UserInterface ? (string) $user->getId() : 'anonymous';
+        $sessionId = $request->hasSession() ? (string) $request->getSession()->getId() : '';
+
+        return 'channels_'.md5(json_encode([
+            'user' => $userId,
+            'locale' => $request->getLocale(),
+            'session' => $sessionId,
+            'showBlocks' => $showBlocks,
+            'usedBlocks' => $usedBlocks,
+        ], \JSON_THROW_ON_ERROR));
     }
 
     /**

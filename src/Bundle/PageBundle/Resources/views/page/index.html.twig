@@ -4,6 +4,40 @@
 {% block content %}
     <div class="row flex flex-wrap">
         <div class="index-wrapper">
+            {% if lastPage %}
+                {% if (lastPage.domain == app.request.httphost) %}
+                    {% set lastUrl = lastPage.path %}
+                    {% set editUrl = lastPage.path ~ '?integrated_website_edit=1' %}
+                {% else %}
+                    {% set lastUrl = integrated_session_bridge_url(lastPage.domain, app.session.id, lastPage.path) %}
+                    {% set editUrl = integrated_session_bridge_url(lastPage.domain, app.session.id, lastPage.path ~ '?integrated_website_edit=1') %}
+                {% endif %}
+                {#        //TODO: FIX THIS #}
+                <div class="alert alert-info alert-inline">
+                    <div class="flex justify-between">
+                        <span class="flex items-center"><b class="mr-2">{% trans %}Last changed{% endtrans %}:</b> "{{ lastPage.title }}" {% trans %}on{% endtrans %} "{{ lastPage.channel.name }}"</span>
+                        <ul class="options-no-bg flex">
+                            <li>
+                                <a href="{{ lastUrl }}" class="btn btn-select btn-green mr-2" target="_blank" rel="noopener noreferrer" data-turbo="false">
+                                    {% trans %}Open page{% endtrans %}
+                                </a>
+                            </li>
+                            <li class="dropdown close-outside" data-underlay="no">
+                                <a href="#" data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
+                                    <span class="flex items-center">{% trans %}Options{% endtrans %}</span>
+                                    <i class="iconoir-nav-arrow-down"></i>
+                                </a>
+                                <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
+                                    <li><a href="{{ editUrl }}" target="_blank" rel="noopener noreferrer" data-turbo="false">{% trans %}Edit page{% endtrans %}</a></li>
+                                    <li>
+                                        <a href="{{ path('integrated_page_page_edit', {'id': lastPage.id}) }}">{% trans %}Edit page properties{% endtrans %}</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
             <div class="page-title flex justify-between flex-wrap">
                 <div class="flex items-center">
                     <h1 class="heading">{% trans %}Pages{% endtrans %}</h1>
@@ -78,7 +112,7 @@
                                     {% if (page.domain == app.request.httphost) %}
                                     <a href="{{ page.path }}" title="{% trans %}Open page{% endtrans %}" target="_blank" rel="noopener noreferrer" data-turbo="false">
                                         {% else %}
-                                        <a href="//{{ page.domain }}{{ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': page.path}) }}"
+                                        <a href="{{ integrated_session_bridge_url(page.domain, app.session.id, page.path) }}"
                                            title="{% trans %}Open page{% endtrans %}" target="_blank" rel="noopener noreferrer" data-turbo="false">
                                             {% endif %}
                                             {% endif %}
