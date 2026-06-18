@@ -6,19 +6,13 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
-use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
-use Integrated\Common\Solr\Search\QueryFactoryInterface;
-use Solarium\Core\Client\ClientInterface;
-use Solarium\QueryType\Select\Result\Document;
 
 final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
 {
     public function __construct(
         private readonly DocumentManager $manager,
         private readonly ObjectRepository $doctrineRepo,
-        private readonly QueryFactoryInterface $queryFactory,
-        private readonly ClientInterface $solrClient,
     ) {
     }
 
@@ -29,30 +23,28 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
 
     public function paged(string $contentType, int $offset, int $limit): array
     {
-        $this->solrClient->getPlugin('postbigrequest');
-
-        $query = $this->queryFactory
-            ->createQuery(IntegratedContent::class, [
-                'contenttypes' => [$contentType],
-                'sort' => 'title',
-            ])
+        $result = $this->manager->createQueryBuilder(Taxonomy::class)
+            ->field('contentType')
+            ->equals($contentType)
+            ->sort('rank', 'asc')
+            ->sort('title', 'asc')
+            ->skip($offset)
+            ->limit($limit)
             ->getQuery()
-            ->setStart($offset)
-            ->setRows($limit);
+            ->execute();
 
-        /** @var Document[] $items */
-        $items = $this->solrClient->select($query)->getDocuments();
-
-        return array_map(fn (Document $document) => $this->load($document, $contentType), $items);
-    }
-
-    private function load(Document $document, string $type): Taxonomy
-    {
-        try {
-            return $this->byId($document['type_id']);
-        } catch (\TypeError $e) {
-            throw new \RuntimeException("$type item `{$document['type_id']}` not found in database");
+        if (\is_array($result)) {
+            $items = $result;
+        } elseif ($result instanceof \Traversable) {
+            $items = iterator_to_array($result, false);
+        } elseif (\is_object($result) && method_exists($result, 'toArray')) {
+            /** @var array<int, mixed> $items */
+            $items = $result->toArray();
+        } else {
+            $items = [];
         }
+
+        return array_values(array_filter($items, static fn (mixed $item): bool => $item instanceof Taxonomy));
     }
 
     public function byId(string $id): ?Taxonomy
