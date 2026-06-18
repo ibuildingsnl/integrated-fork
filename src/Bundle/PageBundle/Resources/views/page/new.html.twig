@@ -34,7 +34,7 @@
                     {% if pageChannel.primaryDomain == app.request.httphost %}
                         {% set pageOpenUrl = pagePath %}
                     {% else %}
-                        {% set pageOpenUrl = '//' ~ pageChannel.primaryDomain ~ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': pagePath}) %}
+                        {% set pageOpenUrl = integrated_session_bridge_url(pageChannel.primaryDomain, app.session.id, pagePath) %}
                     {% endif %}
                 {% endif %}
                 {% set now = date() %}
