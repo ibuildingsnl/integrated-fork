@@ -241,12 +241,19 @@ class PageController extends AbstractController
             return;
         }
 
+        $knownWebsiteChannelIds = $this->getAllExistingWebsiteChannelIds();
+        if ($selectedChannelIds === [] && $knownWebsiteChannelIds === []) {
+            return;
+        }
+
         $channelExpr = $builder->expr();
         if ($selectedChannelIds !== []) {
             $channelExpr->addOr($builder->expr()->field('channel.$id')->in($selectedChannelIds));
         }
 
-        $channelExpr->addOr($builder->expr()->field('channel.$id')->notIn($this->getAllExistingWebsiteChannelIds()));
+        if ($knownWebsiteChannelIds !== []) {
+            $channelExpr->addOr($builder->expr()->field('channel.$id')->notIn($knownWebsiteChannelIds));
+        }
         $builder->addAnd($channelExpr);
     }
 

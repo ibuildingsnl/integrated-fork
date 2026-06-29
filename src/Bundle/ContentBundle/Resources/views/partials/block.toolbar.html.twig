@@ -19,7 +19,7 @@
                         {% set url = integrated_url(content, channel.id, false) %}
                         {% if domain != "" and url %}
                             {% if domain != app.request.httphost %}
-                                {% set url = "//" ~ domain ~ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': url}) %}
+                                {% set url = integrated_session_bridge_url(domain, app.session.id, url) %}
                             {% endif %}
                             {% set previewLinks = previewLinks|merge([{
                                 url: url,
@@ -70,8 +70,8 @@
                         {% set pageOpenUrl = pagePath %}
                         {% set pageEditUrl = pagePath ~ '?integrated_website_edit=1' %}
                     {% else %}
-                        {% set pageOpenUrl = '//' ~ pageChannel.primaryDomain ~ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': pagePath}) %}
-                        {% set pageEditUrl = '//' ~ pageChannel.primaryDomain ~ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': pagePath ~ '?integrated_website_edit=1'}) %}
+                        {% set pageOpenUrl = integrated_session_bridge_url(pageChannel.primaryDomain, app.session.id, pagePath) %}
+                        {% set pageEditUrl = integrated_session_bridge_url(pageChannel.primaryDomain, app.session.id, pagePath ~ '?integrated_website_edit=1') %}
                     {% endif %}
                 {% endif %}
 

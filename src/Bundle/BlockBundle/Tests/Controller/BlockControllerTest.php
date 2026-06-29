@@ -11,6 +11,8 @@ use Doctrine\ODM\MongoDB\Query\Query;
 use Integrated\Bundle\BlockBundle\Controller\BlockController;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
+use Integrated\Bundle\BlockBundle\Document\Block\ContainerBlock;
+use Integrated\Bundle\BlockBundle\Document\Block\Embedded\BlockSize;
 use Integrated\Bundle\BlockBundle\Document\Block\Embedded\Relation as EmbeddedRelation;
 use Integrated\Bundle\BlockBundle\Document\Block\TextBlock;
 use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
@@ -200,6 +202,36 @@ final class BlockControllerTest extends TestCase
         $duplicate->setRequiredItems([]);
         self::assertCount(1, $sourceBlock->getRequiredItems());
         self::assertCount(0, $duplicate->getRequiredItems());
+    }
+
+    public function testCreateDuplicateBlockKeepsContainerChildBlockReferences(): void
+    {
+        $childBlock = new TextBlock();
+        $childBlock->setId('nieuws_home_grid');
+        $childBlock->setTitle('Nieuws home grid');
+
+        $sourceItem = (new BlockSize())->setBlock($childBlock)->setOrder(1);
+        $sourceBlock = new ContainerBlock();
+        $sourceBlock->setId('container_source');
+        $sourceBlock->setTitle('Container source');
+        $sourceBlock->setItems([$sourceItem]);
+
+        $controller = $this->createController(
+            $this->createMock(DocumentManager::class),
+            $this->createMock(PaginatorInterface::class)
+        );
+
+        $method = new \ReflectionMethod(BlockController::class, 'createDuplicateBlock');
+        $method->setAccessible(true);
+        $duplicate = $method->invoke($controller, $sourceBlock, '');
+
+        self::assertInstanceOf(ContainerBlock::class, $duplicate);
+        self::assertSame('container_source_copy', $duplicate->getId());
+
+        $duplicateItems = $duplicate->getItems();
+        self::assertCount(1, $duplicateItems);
+        self::assertNotSame($sourceItem, $duplicateItems[0]);
+        self::assertSame($childBlock, $duplicateItems[0]->getBlock());
     }
 
     private function createController(

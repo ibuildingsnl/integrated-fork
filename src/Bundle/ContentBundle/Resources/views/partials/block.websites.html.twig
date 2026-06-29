@@ -8,7 +8,7 @@
         {% for channel in channels %}
             {% set domain = channel.primaryDomain|default(channel.domains|first)|default("") %}
             {% if (domain != "") %}
-                {% set url = "//" ~ domain ~ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': '/'}) %}
+                {% set url = integrated_session_bridge_url(domain, app.session.id, '/') %}
                 <li>
                     <a target="_blank" rel="noopener noreferrer" data-turbo="false"
                        href="{{ url }}">{% trans %}Go to{% endtrans %} {{ channel.name }}</a>

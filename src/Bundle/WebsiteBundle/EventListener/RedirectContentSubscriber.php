@@ -17,11 +17,13 @@ use Integrated\Bundle\PageBundle\Services\UrlResolver;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Content\ContentInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Exception\ExceptionInterface;
+use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 
 /**
@@ -102,11 +104,25 @@ class RedirectContentSubscriber implements EventSubscriberInterface
         }
 
         try {
-            $this->matcher->match($url);
+            $this->matchGeneratedUrl($url, $request);
         } catch (ExceptionInterface $e) {
             return;
         }
 
         $event->setResponse(new RedirectResponse($url, \Symfony\Component\HttpFoundation\Response::HTTP_MOVED_PERMANENTLY));
+    }
+
+    private function matchGeneratedUrl(string $url, Request $request): void
+    {
+        if (!$this->matcher instanceof RequestMatcherInterface) {
+            $this->matcher->match($url);
+
+            return;
+        }
+
+        $matchRequest = Request::create($url, 'GET', [], [], [], $request->server->all());
+        $matchRequest->attributes->replace($request->attributes->all());
+
+        $this->matcher->matchRequest($matchRequest);
     }
 }

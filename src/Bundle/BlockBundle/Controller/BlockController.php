@@ -16,6 +16,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\BlockRepository;
+use Integrated\Bundle\BlockBundle\Document\Block\ContainerBlock;
+use Integrated\Bundle\BlockBundle\Document\Block\Embedded\BlockSize;
 use Integrated\Bundle\BlockBundle\Form\Type\BlockEditType;
 use Integrated\Bundle\BlockBundle\Form\Type\BlockFilterType;
 use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
@@ -404,6 +406,7 @@ class BlockController extends AbstractController
             $copy = null;
         }
         $block = $copy instanceof Block ? $copy : $preparedBlock;
+        $this->preserveContainerChildBlockReferences($sourceBlock, $block);
         $this->resetDuplicateBlockRelations($block);
 
         $sourceId = trim((string) $sourceBlock->getId());
@@ -416,6 +419,29 @@ class BlockController extends AbstractController
         $block->setLocked(false);
 
         return $block;
+    }
+
+    private function preserveContainerChildBlockReferences(Block $sourceBlock, Block $clonedBlock): void
+    {
+        if (!$sourceBlock instanceof ContainerBlock || !$clonedBlock instanceof ContainerBlock) {
+            return;
+        }
+
+        $sourceItems = $sourceBlock->getItems();
+        $clonedItems = $clonedBlock->getItems();
+
+        foreach ($clonedItems as $index => $clonedItem) {
+            $sourceItem = $sourceItems[$index] ?? null;
+
+            if (!$sourceItem instanceof BlockSize || !$clonedItem instanceof BlockSize) {
+                continue;
+            }
+
+            $childBlock = $sourceItem->getBlock();
+            if ($childBlock instanceof Block) {
+                $clonedItem->setBlock($childBlock);
+            }
+        }
     }
 
     private function normalizeClonedCollectionProperties(Block $sourceBlock, Block $clonedBlock): void
