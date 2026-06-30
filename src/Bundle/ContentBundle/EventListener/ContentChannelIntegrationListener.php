@@ -31,7 +31,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class ContentChannelIntegrationListener implements EventSubscriberInterface
 {
     /**
-     * @var ObjectRepository
+     * @var ObjectRepository<ChannelInterface>
      */
     private $repository;
 
@@ -40,6 +40,9 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
      */
     private $authorizationChecker;
 
+    /**
+     * @param ObjectRepository<ChannelInterface> $repository
+     */
     public function __construct(ObjectRepository $repository, AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->repository = $repository;
@@ -194,13 +197,17 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
      */
     protected function getChannels(?array $ids = null): array
     {
+        if ($ids === null) {
+            return $this->repository->findAll();
+        }
+
         if ($ids === []) {
             return [];
         }
 
         $criteria = ['$or' => []];
 
-        foreach ($ids ?: [] as $id) {
+        foreach ($ids as $id) {
             $criteria['$or'][] = ['id' => $id];
         }
 
