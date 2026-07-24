@@ -25,7 +25,7 @@
 
 		<field name="deadline" column="deadline" type="datetime" nullable="true" />
 
-		<one-to-many field="logs" target-entity="Integrated\Bundle\WorkflowBundle\Entity\Workflow\Log" mapped-by="state" />
+		<one-to-many field="logs" target-entity="Integrated\Bundle\WorkflowBundle\Entity\Workflow\Log" mapped-by="owner" />
 
 		<many-to-one field="state" target-entity="Integrated\Bundle\WorkflowBundle\Entity\Definition\State" />
 
