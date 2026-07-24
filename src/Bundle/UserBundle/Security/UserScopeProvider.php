@@ -24,11 +24,11 @@ class UserScopeProvider extends UserProvider
         parent::__construct($manager);
     }
 
-    public function loadUserByUsername($username)
+    public function loadUserByIdentifier(string $identifier): \Symfony\Component\Security\Core\User\UserInterface
     {
-        if (!$user = $this->manager->findEnabledByUsernameAndScope($username, $this->context->getScope())) {
-            $exception = new UserNotFoundException(sprintf('No user with the username "%s" exists', $username));
-            $exception->setUserIdentifier($username);
+        if (!$user = $this->manager->findEnabledByUsernameAndScope($identifier, $this->context->getScope())) {
+            $exception = new UserNotFoundException(sprintf('No user with the username "%s" exists', $identifier));
+            $exception->setUserIdentifier($identifier);
 
             throw $exception;
         }

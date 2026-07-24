@@ -151,7 +151,7 @@ class User implements UserInterface
     /**
      * {@inheritdoc}
      */
-    public function getUserIdentifier()
+    public function getUserIdentifier(): string
     {
         return $this->username;
     }
@@ -275,7 +275,7 @@ class User implements UserInterface
     /**
      * {@inheritdoc}
      */
-    public function getRoles()
+    public function getRoles(): array
     {
         $roles = [];
 
@@ -397,7 +397,7 @@ class User implements UserInterface
         );
     }
 
-    public function isEqualTo(BaseUserInterface $user)
+    public function isEqualTo(BaseUserInterface $user): bool
     {
         return $user->getUserIdentifier() === $this->getUserIdentifier();
     }

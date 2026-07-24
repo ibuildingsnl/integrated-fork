@@ -55,14 +55,14 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadUserByUsername($username)
+    public function loadUserByIdentifier(string $identifier): UserInterface
     {
         /** @var User $user */
-        $user = $this->manager->findEnabledByUsernameAndScope($username);
+        $user = $this->manager->findEnabledByUsernameAndScope($identifier);
 
         if (!$user) {
-            $exception = new UserNotFoundException(sprintf('No user with the username "%s" exists', $username));
-            $exception->setUserIdentifier($username);
+            $exception = new UserNotFoundException(sprintf('No user with the username "%s" exists', $identifier));
+            $exception->setUserIdentifier($identifier);
 
             throw $exception;
         }
@@ -118,7 +118,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
     /**
      * {@inheritdoc}
      */
-    public function upgradePassword(PasswordAuthenticatedUserInterface|UserInterface $user, string $newHashedPassword)
+    public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
         if (!$this->supportsClass(\get_class($user))) {
             return;
