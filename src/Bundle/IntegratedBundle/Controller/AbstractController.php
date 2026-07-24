@@ -49,7 +49,7 @@ class AbstractController extends BaseAbstractController
         return $this->container->get('translator');
     }
 
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
             'doctrine' => '?'.ORMManagerRegistry::class,
