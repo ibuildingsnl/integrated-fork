@@ -63,7 +63,7 @@ class Router implements RouterInterface, RequestMatcherInterface, WarmableInterf
     /**
      * {@inheritdoc}
      */
-    public function getContext()
+    public function getContext(): RequestContext
     {
         return $this->context;
     }
@@ -71,7 +71,7 @@ class Router implements RouterInterface, RequestMatcherInterface, WarmableInterf
     /**
      * {@inheritdoc}
      */
-    public function match($pathinfo)
+    public function match($pathinfo): array
     {
         return $this->getMatcher()->match($pathinfo);
     }
@@ -79,7 +79,7 @@ class Router implements RouterInterface, RequestMatcherInterface, WarmableInterf
     /**
      * {@inheritdoc}
      */
-    public function matchRequest(Request $request)
+    public function matchRequest(Request $request): array
     {
         $matcher = $this->getMatcher();
 
@@ -93,7 +93,7 @@ class Router implements RouterInterface, RequestMatcherInterface, WarmableInterf
     /**
      * {@inheritdoc}
      */
-    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
+    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH): string
     {
         return $this->getGenerator()->generate($name, $parameters, $referenceType);
     }

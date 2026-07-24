@@ -47,7 +47,7 @@ class UrlGenerator implements UrlGeneratorInterface
     /**
      * {@inheritdoc}
      */
-    public function getContext()
+    public function getContext(): RequestContext
     {
         return $this->context;
     }
@@ -55,7 +55,7 @@ class UrlGenerator implements UrlGeneratorInterface
     /**
      * {@inheritdoc}
      */
-    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
+    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH): string
     {
         if ($name instanceof ContentInterface) {
             return $this->doGenerate($name, $parameters, $referenceType);
