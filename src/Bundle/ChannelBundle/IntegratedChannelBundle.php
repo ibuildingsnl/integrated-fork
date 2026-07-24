@@ -17,6 +17,7 @@ use Integrated\Bundle\ChannelBundle\DependencyInjection\Compiler\RegisterConfigP
 use Integrated\Bundle\ChannelBundle\DependencyInjection\Compiler\RegisterConfigResolverPass;
 use Integrated\Bundle\ChannelBundle\DependencyInjection\IntegratedChannelExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -43,7 +44,7 @@ class IntegratedChannelBundle extends Bundle
     /**
      * {@inheritdoc}
      */
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return new IntegratedChannelExtension();
     }

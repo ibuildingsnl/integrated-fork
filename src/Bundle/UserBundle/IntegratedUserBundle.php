@@ -19,6 +19,7 @@ use Integrated\Bundle\UserBundle\DependencyInjection\Security\IpListFactory;
 use Integrated\Bundle\UserBundle\DependencyInjection\Security\ScopeFactory;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -47,7 +48,7 @@ class IntegratedUserBundle extends Bundle
     /**
      * @return IntegratedUserExtension
      */
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return new IntegratedUserExtension();
     }

@@ -14,6 +14,7 @@ namespace Integrated\Bundle\FormTypeBundle;
 use Integrated\Bundle\FormTypeBundle\DependencyInjection\Compiler\RegisterContentStyleParametersPass;
 use Integrated\Bundle\FormTypeBundle\DependencyInjection\IntegratedFormTypeExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -32,7 +33,7 @@ class IntegratedFormTypeBundle extends Bundle
     /**
      * {@inheritdoc}
      */
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return new IntegratedFormTypeExtension();
     }

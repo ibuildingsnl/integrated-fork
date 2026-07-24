@@ -25,6 +25,7 @@ use Integrated\Common\Bulk\DependencyInjection\FactoryRegistryBuilderPass;
 use Integrated\Common\Mapping\Registry\DriverRegistryPass;
 use Integrated\Common\Normalizer\DependencyInjection\RegistryBuilderPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -59,7 +60,7 @@ class IntegratedContentBundle extends Bundle
     /**
      * {@inheritdoc}
      */
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return new IntegratedContentExtension();
     }

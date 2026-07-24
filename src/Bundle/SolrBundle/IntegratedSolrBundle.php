@@ -17,6 +17,7 @@ use Integrated\Bundle\SolrBundle\DependencyInjection\CompilerPass\RegisterTypePa
 use Integrated\Bundle\SolrBundle\DependencyInjection\IntegratedSolrExtension;
 use Integrated\Common\Solr\Search\DependencyInjection\RegisterQueryTypePass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -43,7 +44,7 @@ class IntegratedSolrBundle extends Bundle
     /**
      * {@inheritdoc}
      */
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return new IntegratedSolrExtension();
     }
