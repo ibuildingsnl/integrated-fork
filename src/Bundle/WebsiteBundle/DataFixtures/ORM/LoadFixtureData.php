@@ -39,7 +39,7 @@ class LoadFixtureData implements ContainerAwareInterface, ORMFixtureInterface
     /**
      * {@inheritdoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $files = [];
 

@@ -38,7 +38,7 @@ class LoadFixtureData implements ContainerAwareInterface, ODMFixtureInterface
     /**
      * {@inheritdoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         if (!$this->loader) {
             throw new \Exception('Nelmio\Alice is required to load fixtures');
