@@ -39,7 +39,6 @@ class IntegratedContentExtension extends Extension implements PrependExtensionIn
         $loader->load('controller.xml');
 
         $loader->load('channel.xml');
-        $loader->load('converters.xml');
         $loader->load('extensions.xml');
 
         $loader->load('paginator.xml');

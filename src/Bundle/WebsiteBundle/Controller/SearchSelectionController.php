@@ -14,7 +14,6 @@ namespace Integrated\Bundle\WebsiteBundle\Controller;
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Provider\SolariumProvider;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -34,9 +33,7 @@ class SearchSelectionController extends AbstractController
     }
 
     /**
-     * @Template
-     *
-     * @return array
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function rss(Request $request, SearchSelection $selection)
     {

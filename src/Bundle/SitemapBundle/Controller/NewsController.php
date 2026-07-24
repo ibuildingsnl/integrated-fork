@@ -14,9 +14,9 @@ namespace Integrated\Bundle\SitemapBundle\Controller;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Integrated\Bundle\ContentBundle\Document\Content\News;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -45,11 +45,9 @@ class NewsController extends AbstractController
     }
 
     /**
-     * @Template
-     *
      * @throws \Exception
      */
-    public function index(): array
+    public function index(): Response
     {
         $channel = $this->context->getChannel();
 
@@ -74,10 +72,10 @@ class NewsController extends AbstractController
             ->getQuery()
             ->getIterator();
 
-        return [
+        return $this->render('@IntegratedSitemap/news/index.xml.twig', [
             'channel' => $channel,
             'locale' => $this->getParameter('kernel.default_locale'),
             'documents' => $documents,
-        ];
+        ]);
     }
 }

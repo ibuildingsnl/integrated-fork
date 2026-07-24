@@ -11,18 +11,24 @@
 
 namespace Integrated\Bundle\SitemapBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\Response;
+use Twig\Environment;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
 class RobotsController
 {
-    /**
-     * @Template
-     */
-    public function index(): array
+    public function __construct(private readonly Environment $twig)
     {
-        return [];
+    }
+
+    public function index(): Response
+    {
+        return new Response(
+            $this->twig->render('@IntegratedSitemap/robots/index.txt.twig', []),
+            200,
+            ['Content-Type' => 'text/plain']
+        );
     }
 }

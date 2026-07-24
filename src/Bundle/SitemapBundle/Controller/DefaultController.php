@@ -15,9 +15,9 @@ use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Services\ContentTypeInformation;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -53,11 +53,9 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @Template
-     *
      * @throws \Exception
      */
-    public function index(): array
+    public function index(): Response
     {
         $channel = $this->context->getChannel();
 
@@ -84,17 +82,15 @@ class DefaultController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        return [
+        return $this->render('@IntegratedSitemap/default/index.xml.twig', [
             'count' => min(ceil($count / 50000), 50000),
-        ];
+        ]);
     }
 
     /**
-     * @Template
-     *
      * @throws \Exception
      */
-    public function list($page): array
+    public function list($page): Response
     {
         $channel = $this->context->getChannel();
 
@@ -127,8 +123,8 @@ class DefaultController extends AbstractController
             ->getQuery()
             ->getIterator();
 
-        return [
+        return $this->render('@IntegratedSitemap/default/list.xml.twig', [
             'documents' => $documents,
-        ];
+        ]);
     }
 }
