@@ -26,7 +26,7 @@ class JsonLDEncoder extends JsonEncoder
     /**
      * {@inheritdoc}
      */
-    public function supportsEncoding($format)
+    public function supportsEncoding(string $format): bool
     {
         return self::FORMAT === $format;
     }
@@ -34,7 +34,7 @@ class JsonLDEncoder extends JsonEncoder
     /**
      * {@inheritdoc}
      */
-    public function supportsDecoding($format)
+    public function supportsDecoding(string $format): bool
     {
         return self::FORMAT === $format;
     }
