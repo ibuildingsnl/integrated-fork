@@ -6,7 +6,8 @@
     <entity name="Integrated\Bundle\WorkflowBundle\Entity\Definition" table="workflow_definition">
 
 		<id name="id" column="id" type="string" length="36">
-			<generator strategy="UUID" />
+			<generator strategy="CUSTOM" />
+			<custom-id-generator class="Integrated\Common\Doctrine\Id\UuidGenerator" />
 		</id>
 
 		<field name="name" column="name" type="string" length="255" unique="true" />
