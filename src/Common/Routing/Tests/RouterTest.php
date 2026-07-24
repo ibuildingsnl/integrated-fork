@@ -81,9 +81,9 @@ class RouterTest extends TestCase
             ->with($this->identicalTo($this->context));
 
         $response = [
-            new \stdClass(),
-            new \stdClass(),
-            new \stdClass(),
+            ['_route' => 'path1'],
+            ['_route' => 'path2'],
+            ['_route' => 'path3'],
         ];
 
         $this->router->expects($this->exactly(3))
@@ -112,9 +112,9 @@ class RouterTest extends TestCase
             ->with($this->identicalTo($this->context));
 
         $response = [
-            new \stdClass(),
-            new \stdClass(),
-            new \stdClass(),
+            ['_route' => 'path1'],
+            ['_route' => 'path2'],
+            ['_route' => 'path3'],
         ];
 
         $request = [
@@ -145,9 +145,9 @@ class RouterTest extends TestCase
             ->with($this->identicalTo($this->context));
 
         $response = [
-            new \stdClass(),
-            new \stdClass(),
-            new \stdClass(),
+            ['_route' => 'path1'],
+            ['_route' => 'path2'],
+            ['_route' => 'path3'],
         ];
 
         $request = [
