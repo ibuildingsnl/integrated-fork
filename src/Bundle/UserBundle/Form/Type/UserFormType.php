@@ -165,7 +165,10 @@ class UserFormType extends AbstractType
             return function (FormInterface $form) use ($previous) {
                 $resolve = function (FormInterface $form) use ($previous) {
                     if ($form->has('enabled') && $form->get('enabled')->getData() == false) {
-                        return false;
+                        // Symfony's FormValidator casts a callable's return value with
+                        // (array) $groups, so returning false here would become [false]
+                        // instead of disabling validation; use an empty array instead.
+                        return [];
                     }
 
                     return $previous;
