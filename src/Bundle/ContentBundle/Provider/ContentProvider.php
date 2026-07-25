@@ -92,7 +92,7 @@ class ContentProvider
                 }
             }
         } else {
-            $contentType = $request->query->get('contenttypes');
+            $contentType = $request->query->all()['contenttypes'] ?? null;
         }
 
         $helper = $query->getHelper();
@@ -102,7 +102,7 @@ class ContentProvider
 
         // If the request query contains a properties parameter we need to fetch all the targets of the relation in order
         // to filter on these targets.
-        $propertiesfilter = $request->query->get('properties');
+        $propertiesfilter = $request->query->all()['properties'] ?? null;
         if (\is_array($propertiesfilter)) {
             $query
                 ->createFilterQuery('properties')
@@ -114,7 +114,7 @@ class ContentProvider
         foreach ($this->dm->getRepository(Relation::class)->findAll() as $relation) {
             $name = preg_replace('/[^a-zA-Z]/', '', $relation->getName());
             $facetTitles[$name] = $relation->getName();
-            $relationfilter = $request->query->get($name);
+            $relationfilter = $request->query->all()[$name] ?? null;
 
             if (\is_array($relationfilter)) {
                 $query
