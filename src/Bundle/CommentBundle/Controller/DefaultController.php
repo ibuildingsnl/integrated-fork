@@ -152,7 +152,7 @@ class DefaultController extends AbstractController
     /**
      * @return UserInterface|null
      */
-    protected function getUser()
+    protected function getUser(): ?UserInterface
     {
         if (null === $token = $this->tokenStorage->getToken()) {
             return null;
