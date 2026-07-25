@@ -20,7 +20,6 @@
 
         <service id="Integrated\Bundle\InstallerBundle\Install\MySQLMigrations">
             <argument id="doctrine.orm.entity_manager" type="service"/>
-            <argument id="service_container" type="service"/>
         </service>
 
         <service id="Integrated\Bundle\InstallerBundle\Install\MongoDBMigrations">

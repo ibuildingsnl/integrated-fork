@@ -2,10 +2,11 @@
 
 namespace Integrated\Bundle\InstallerBundle\Install;
 
-use Doctrine\Migrations\Configuration\Configuration;
+use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
+use Doctrine\Migrations\Configuration\Migration\ConfigurationArray;
+use Doctrine\Migrations\DependencyFactory;
+use Doctrine\Migrations\MigratorConfiguration;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class MySQLMigrations
 {
@@ -21,38 +22,40 @@ class MySQLMigrations
     protected $entityManager;
 
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * Migrations constructor.
      */
-    public function __construct(EntityManager $entityManager, ContainerInterface $container)
+    public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->container = $container;
     }
 
     public function execute()
     {
         $directory = realpath(__DIR__.self::DOCTRINE_MIGRATIONS_DIRECTORY);
 
-        $configuration = new Configuration($this->entityManager->getConnection());
-        $configuration->setMigrationsNamespace(self::DOCTRINE_MIGRATIONS_NAMESPACE);
-        $configuration->setMigrationsDirectory($directory);
-        $configuration->registerMigrationsFromDirectory($directory);
-        $configuration->setName(self::DOCTRINE_MIGRATIONS_NAME);
-        $configuration->setMigrationsTableName(self::DOCTRINE_MIGRATIONS_TABLE);
+        $configuration = new ConfigurationArray([
+            'migrations_paths' => [
+                self::DOCTRINE_MIGRATIONS_NAMESPACE => $directory,
+            ],
+            'table_storage' => [
+                'table_name' => self::DOCTRINE_MIGRATIONS_TABLE,
+            ],
+        ]);
 
-        $to = $configuration->getLatestVersion();
-        $versions = $configuration->getMigrationsToExecute(self::DOCTRINE_MIGRATIONS_DIRECTION_UP, $to);
-        foreach ($versions as $version) {
-            $migration = $version->getMigration();
-            if ($migration instanceof ContainerAwareInterface) {
-                $migration->setContainer($this->container);
-            }
-            $version->execute(self::DOCTRINE_MIGRATIONS_DIRECTION_UP);
+        $dependencyFactory = DependencyFactory::fromEntityManager(
+            $configuration,
+            new ExistingEntityManager($this->entityManager)
+        );
+
+        $dependencyFactory->getMetadataStorage()->ensureInitialized();
+
+        $version = $dependencyFactory->getVersionAliasResolver()->resolveVersionAlias('latest');
+        $plan = $dependencyFactory->getMigrationPlanCalculator()->getPlanUntilVersion($version);
+
+        if (\count($plan) === 0) {
+            return;
         }
+
+        $dependencyFactory->getMigrator()->migrate($plan, new MigratorConfiguration());
     }
 }
