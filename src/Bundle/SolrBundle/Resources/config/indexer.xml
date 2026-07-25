@@ -14,7 +14,6 @@
             </call>
 
             <tag name="monolog.logger" channel="solr" />
-            <tag name="kernel.event_subscriber" />
         </service>
 
         <service id="integrated_solr.indexer.mongodb.subscriber" class="Integrated\MongoDB\Solr\Indexer\QueueSubscriber" public="true">

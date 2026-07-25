@@ -17,7 +17,6 @@
             <argument type="service" id="integrated_content.channel.manager"/>
             <argument type="service" id="integrated_content.channel.context"/>
 
-            <tag name="kernel.event_subscriber"/>
         </service>
 
         <service id="channel.context" alias="integrated_content.channel.context" public="true"/>

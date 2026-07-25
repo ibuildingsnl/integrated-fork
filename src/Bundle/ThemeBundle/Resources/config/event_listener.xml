@@ -10,7 +10,6 @@
 
         <service id="Integrated\Bundle\ThemeBundle\EventListener\ConfigureMenuSubscriber">
             <argument type="service" id="security.authorization_checker" />
-            <tag name="kernel.event_subscriber" />
         </service>
 
         <service id="integrated_theme.event_listener.content_image_listener" class="Integrated\Bundle\ThemeBundle\EventListener\Objects\ContentImageListener">

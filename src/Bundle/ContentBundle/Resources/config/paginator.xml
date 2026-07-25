@@ -9,7 +9,6 @@
         <defaults autowire="true" autoconfigure="true"/>
 
         <service id="integrated_content.subscriber.paginate_solarium_query" class="Integrated\Bundle\ContentBundle\EventListener\PaginateSolariumQuerySubscriber">
-            <tag name="kernel.event_subscriber" />
         </service>
 
     </services>

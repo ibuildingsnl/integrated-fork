@@ -14,7 +14,6 @@
             </call>
 
             <tag name="monolog.logger" channel="solr" />
-            <tag name="kernel.event_subscriber" />
         </service>
 
         <service id="integrated_solr.worker.handler.registry_builder" class="Integrated\Common\Solr\Task\RegistryBuilder" />

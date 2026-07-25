@@ -16,17 +16,14 @@
 
         <service id="integrated_content_history.event_listener.content_subscriber" class="Integrated\Bundle\ContentHistoryBundle\EventListener\ContentSubscriber">
             <argument type="service" id="doctrine_mongodb.odm.document_manager"/>
-            <tag name="kernel.event_subscriber"/>
         </service>
 
         <service id="integrated_content_history.event_listener.request_subscriber" class="Integrated\Bundle\ContentHistoryBundle\EventListener\RequestSubscriber">
             <argument type="service" id="request_stack"/>
-            <tag name="kernel.event_subscriber"/>
         </service>
 
         <service id="integrated_content_history.event_listener.user_subscriber" class="Integrated\Bundle\ContentHistoryBundle\EventListener\UserSubscriber">
             <argument type="service" id="security.token_storage"/>
-            <tag name="kernel.event_subscriber"/>
         </service>
 
     </services>

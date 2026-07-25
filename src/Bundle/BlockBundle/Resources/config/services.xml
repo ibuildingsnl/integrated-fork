@@ -28,7 +28,6 @@
             <argument type="service" id="security.token_storage" />
             <argument type="service" id="integrated_block.provider.filter_query" />
 
-            <tag name="kernel.event_subscriber" />
         </service>
 
         <service id="integrated_block.provider.block_usage" class="Integrated\Bundle\BlockBundle\Provider\BlockUsageProvider">
