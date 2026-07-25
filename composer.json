@@ -68,6 +68,7 @@
         "symfony/serializer": "^5.4 || ^6.4",
         "symfony/translation": "^5.4 || ^6.4",
         "symfony/twig-bundle": "^5.4 || ^6.4",
+        "symfony/uid": "^5.4 || ^6.4",
         "symfony/validator": "^5.4 || ^6.4",
         "twig/extra-bundle": "^3.3",
         "twig/intl-extra": "^3.3",

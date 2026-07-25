@@ -13,7 +13,7 @@ namespace Integrated\Common\Doctrine\Id;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Id\AbstractIdGenerator;
-use Ramsey\Uuid\Uuid;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * Generates a UUID (v4) in PHP.
@@ -26,6 +26,6 @@ class UuidGenerator extends AbstractIdGenerator
 {
     public function generateId(EntityManagerInterface $em, $entity): string
     {
-        return Uuid::uuid4()->toString();
+        return Uuid::v4()->toRfc4122();
     }
 }
