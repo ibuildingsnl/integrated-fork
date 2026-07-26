@@ -27,7 +27,7 @@
         "doctrine/doctrine-bundle": "^2.4.3",
         "doctrine/doctrine-fixtures-bundle": "^3.4.0",
         "doctrine/migrations": "^3.0",
-        "doctrine/mongodb-odm-bundle": "~4.3",
+        "doctrine/mongodb-odm-bundle": "^4.3 || ^5.0",
         "doctrine/orm": "^2.13.0",
         "endroid/qr-code-bundle": "^4.0",
         "excelwebzone/recaptcha-bundle": "^1.5",
