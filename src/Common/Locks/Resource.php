@@ -13,7 +13,7 @@ namespace Integrated\Common\Locks;
 
 use Integrated\Common\Locks\Exception\InvalidArgumentException;
 use Integrated\Common\Locks\Exception\InvalidObjectException;
-use Doctrine\Common\Util\ClassUtils;
+use Integrated\Common\Util\ClassUtils;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 

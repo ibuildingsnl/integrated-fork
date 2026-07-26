@@ -30,7 +30,7 @@ use Integrated\Common\Security\Permission;
 use Integrated\Common\Security\Permissions;
 use Integrated\Common\Security\Resolver\PermissionResolver;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Doctrine\Common\Util\ClassUtils;
+use Integrated\Common\Util\ClassUtils;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 

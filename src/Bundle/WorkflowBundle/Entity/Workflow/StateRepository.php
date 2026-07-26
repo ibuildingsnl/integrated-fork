@@ -15,7 +15,7 @@ use Doctrine\ORM\EntityRepository;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\Content\ContentInterface;
-use Doctrine\Common\Util\ClassUtils;
+use Integrated\Common\Util\ClassUtils;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -25,7 +25,7 @@ class StateRepository extends EntityRepository
     /**
      * {@inheritdoc}
      */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    public function findBy(array $criteria, array|null $orderBy = null, int|null $limit = null, int|null $offset = null): array
     {
         return parent::findBy($this->convertCriteria($criteria), $orderBy, $limit, $offset);
     }
@@ -33,7 +33,7 @@ class StateRepository extends EntityRepository
     /**
      * {@inheritdoc}
      */
-    public function findOneBy(array $criteria, array $orderBy = null)
+    public function findOneBy(array $criteria, array|null $orderBy = null): object|null
     {
         return parent::findOneBy($this->convertCriteria($criteria), $orderBy);
     }

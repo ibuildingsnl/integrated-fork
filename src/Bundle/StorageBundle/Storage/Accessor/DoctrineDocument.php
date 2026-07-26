@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Accessor;
 
-use Doctrine\Common\Util\ClassUtils;
+use Integrated\Common\Util\ClassUtils;
 
 /**
  * @author Johnny Borg <johnny@e-active.nl>

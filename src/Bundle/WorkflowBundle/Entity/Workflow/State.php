@@ -17,7 +17,7 @@ use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Common\Content\ContentInterface;
-use Doctrine\Common\Util\ClassUtils;
+use Integrated\Common\Util\ClassUtils;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>

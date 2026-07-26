@@ -13,7 +13,7 @@ namespace Integrated\Common\Channel\Exporter\Queue;
 
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\ChannelManagerInterface;
-use Doctrine\Common\Util\ClassUtils;
+use Integrated\Common\Util\ClassUtils;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**

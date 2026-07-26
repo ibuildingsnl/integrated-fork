@@ -32,9 +32,4 @@ interface ConfigManagerInterface extends ConfigRepositoryInterface
      * Remove the user from the manager.
      */
     public function remove(ConfigInterface $object);
-
-    /**
-     * Delete all the managed objects.
-     */
-    public function clear();
 }

@@ -26,7 +26,7 @@ class ConfigRepository extends EntityRepository implements ConfigManagerInterfac
      */
     public function create()
     {
-        return $this->_class->getReflectionClass()->newInstance();
+        return $this->getClassMetadata()->getReflectionClass()->newInstance();
     }
 
     /**
@@ -34,16 +34,16 @@ class ConfigRepository extends EntityRepository implements ConfigManagerInterfac
      */
     public function persist(ConfigInterface $object, $flush = true)
     {
-        if (!$this->_class->getReflectionClass()->isInstance($object)) {
+        if (!$this->getClassMetadata()->getReflectionClass()->isInstance($object)) {
             throw new \InvalidArgumentException(
                 sprintf('The object (%s) is not a instance of %s', \get_class($object), $this->getClassName())
             );
         }
 
-        $this->_em->persist($object);
+        $this->getEntityManager()->persist($object);
 
         if ($flush) {
-            $this->_em->flush();
+            $this->getEntityManager()->flush();
         }
     }
 
@@ -52,16 +52,16 @@ class ConfigRepository extends EntityRepository implements ConfigManagerInterfac
      */
     public function remove(ConfigInterface $object, $flush = true)
     {
-        if (!$this->_class->getReflectionClass()->isInstance($object)) {
+        if (!$this->getClassMetadata()->getReflectionClass()->isInstance($object)) {
             throw new \InvalidArgumentException(
                 sprintf('The object (%s) is not a instance of %s', \get_class($object), $this->getClassName())
             );
         }
 
-        $this->_em->remove($object);
+        $this->getEntityManager()->remove($object);
 
         if ($flush) {
-            $this->_em->flush();
+            $this->getEntityManager()->flush();
         }
     }
 
@@ -84,7 +84,7 @@ class ConfigRepository extends EntityRepository implements ConfigManagerInterfac
             $criteria = $criteria->getId();
         }
 
-        $expr = $this->_em->getExpressionBuilder();
+        $expr = $this->getEntityManager()->getExpressionBuilder();
 
         return $this->createQueryBuilder('r')
             ->where($expr->like('r.channels', $expr->literal('%'.json_encode($criteria).'%')))

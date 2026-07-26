@@ -12,7 +12,7 @@
 namespace Integrated\Bundle\StorageBundle\Storage;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Util\ClassUtils;
+use Integrated\Common\Util\ClassUtils;
 use Integrated\Common\Storage\DecisionInterface;
 use Integrated\Common\Storage\FilesystemRegistryInterface;
 

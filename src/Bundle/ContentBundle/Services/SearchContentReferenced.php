@@ -121,7 +121,7 @@ class SearchContentReferenced
      *
      * @return array
      *
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
+     * @throws \Doctrine\Persistence\Mapping\MappingException
      * @throws \Exception
      */
     public function getDeletedInfo($document, DocumentManager $documentManager)

@@ -12,7 +12,7 @@
 namespace Integrated\Bundle\StorageBundle\EventListener\Doctrine\ODM;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Common\Proxy\Proxy;
+use Doctrine\Persistence\Proxy;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Event\PreFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events;
