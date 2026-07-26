@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\HttpFoundation\RequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcher\PathRequestMatcher;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
@@ -67,7 +67,7 @@ class IntegratedUserExtension extends Extension
         $matchers = [];
 
         foreach ($config['whitelist'] as $path) {
-            $matchers[] = new Definition(RequestMatcher::class, [$path]);
+            $matchers[] = new Definition(PathRequestMatcher::class, [$path]);
         }
 
         $container->getDefinition('integrated_user.two_factor.whitelist_matcher')->setArgument(0, $matchers);

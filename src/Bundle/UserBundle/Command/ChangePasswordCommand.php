@@ -144,10 +144,8 @@ The <info>%command.name%</info> command replaces the password of the user
             ->leftJoin('User.scope', 'Scope')
             ->where('User.username = :username')
             ->andWhere('User.scope = :scope')
-            ->setParameters([
-                'username' => $username,
-                'scope' => (int) $scope->getId(),
-            ])
+            ->setParameter('username', $username)
+            ->setParameter('scope', (int) $scope->getId())
             ->getQuery()
             ->getOneOrNullResult()
         ;
