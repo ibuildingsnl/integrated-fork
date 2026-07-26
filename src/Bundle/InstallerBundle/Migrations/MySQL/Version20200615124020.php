@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Integrated\Bundle\InstallerBundle\Migrations\MySQL;
 
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -11,7 +12,7 @@ final class Version20200615124020 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf(!$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform, 'Migration can only be executed safely on \'mysql\'.');
 
         $this->skipIf(
             $schema->hasTable('security_users'),
@@ -166,7 +167,7 @@ final class Version20200615124020 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf(!$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform, 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE workflow_history DROP FOREIGN KEY FK_25F6E6FB7E3C61F9');
         $this->addSql('ALTER TABLE workflow_definition_states DROP FOREIGN KEY FK_27407B632C7C2CBA');
