@@ -14,17 +14,13 @@ namespace Integrated\Bundle\ContentBundle\DataFixtures\MongoDB;
 use Doctrine\Bundle\MongoDBBundle\Fixture\ODMFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Nelmio\Alice\Loader\SimpleFilesLoader;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Finder\Finder;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class LoadFixtureData implements ContainerAwareInterface, ODMFixtureInterface
+class LoadFixtureData implements ODMFixtureInterface
 {
-    use ContainerAwareTrait;
-
     /**
      * @var SimpleFilesLoader|null
      */
@@ -56,13 +52,5 @@ class LoadFixtureData implements ContainerAwareInterface, ODMFixtureInterface
         }
 
         $manager->flush();
-    }
-
-    /**
-     * @return SimpleFilesLoader
-     */
-    private function getLoader()
-    {
-        return $this->container->get('nelmio_alice.files_loader.simple');
     }
 }

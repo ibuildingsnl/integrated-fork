@@ -19,7 +19,7 @@ use Integrated\Common\Solr\Search\Type\AbstractTypeExtension;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class WorkflowExtension extends AbstractTypeExtension
 {

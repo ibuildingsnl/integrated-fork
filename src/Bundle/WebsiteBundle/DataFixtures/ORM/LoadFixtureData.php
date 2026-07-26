@@ -15,17 +15,13 @@ use Doctrine\Bundle\FixturesBundle\ORMFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Integrated\Bundle\ChannelBundle\Model\Options;
 use Nelmio\Alice\Loader\SimpleFilesLoader;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Finder\Finder;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class LoadFixtureData implements ContainerAwareInterface, ORMFixtureInterface
+class LoadFixtureData implements ORMFixtureInterface
 {
-    use ContainerAwareTrait;
-
     /**
      * @var SimpleFilesLoader
      */

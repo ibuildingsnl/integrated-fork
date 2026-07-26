@@ -14,17 +14,13 @@ namespace Integrated\Bundle\StorageBundle\DataFixtures\MongoDB;
 use Doctrine\Bundle\MongoDBBundle\Fixture\ODMFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Nelmio\Alice\Loader\SimpleFilesLoader;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Finder\Finder;
 
 /**
  * @author Johnny Borg <johnny@e-active.nl>
  */
-class LoadFixtureData implements ContainerAwareInterface, ODMFixtureInterface
+class LoadFixtureData implements ODMFixtureInterface
 {
-    use ContainerAwareTrait;
-
     /**
      * @var SimpleFilesLoader|null
      */

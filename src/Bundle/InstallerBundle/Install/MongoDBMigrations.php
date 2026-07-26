@@ -6,7 +6,7 @@ use AntiMattr\MongoDB\Migrations\Configuration\Configuration;
 use AntiMattr\MongoDB\Migrations\Migration;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Integrated\Bundle\InstallerBundle\Doctrine\ODM\Migration\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class MongoDBMigrations

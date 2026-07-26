@@ -17,7 +17,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -60,10 +60,10 @@ class SecurityLoginListener implements EventSubscriberInterface
 
         $error = null;
 
-        if ($request->attributes->has(Security::AUTHENTICATION_ERROR)) {
-            $error = $request->attributes->get(Security::AUTHENTICATION_ERROR);
-        } elseif ($session && $session->has(Security::AUTHENTICATION_ERROR)) {
-            $error = $session->remove(Security::AUTHENTICATION_ERROR);
+        if ($request->attributes->has(SecurityRequestAttributes::AUTHENTICATION_ERROR)) {
+            $error = $request->attributes->get(SecurityRequestAttributes::AUTHENTICATION_ERROR);
+        } elseif ($session && $session->has(SecurityRequestAttributes::AUTHENTICATION_ERROR)) {
+            $error = $session->remove(SecurityRequestAttributes::AUTHENTICATION_ERROR);
         }
 
         if ($error instanceof AuthenticationException) {
@@ -76,7 +76,7 @@ class SecurityLoginListener implements EventSubscriberInterface
             ));
         }
 
-        $event->setData(['_username' => $session && $session->has(Security::LAST_USERNAME) ? $session->get(Security::LAST_USERNAME) : '']);
+        $event->setData(['_username' => $session && $session->has(SecurityRequestAttributes::LAST_USERNAME) ? $session->get(SecurityRequestAttributes::LAST_USERNAME) : '']);
     }
 
     /**
