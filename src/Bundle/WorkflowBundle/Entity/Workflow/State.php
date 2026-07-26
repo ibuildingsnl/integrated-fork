@@ -17,7 +17,7 @@ use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Common\Content\ContentInterface;
-use Symfony\Component\Security\Acl\Util\ClassUtils;
+use Doctrine\Common\Util\ClassUtils;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -131,7 +131,7 @@ class State
 
         if ($content instanceof ContentInterface) {
             $this->content_id = $content->getId();
-            $this->content_class = ClassUtils::getRealClass($content);
+            $this->content_class = ClassUtils::getClass($content);
             $this->content_instance = $content;
         }
 
@@ -171,7 +171,7 @@ class State
     {
         if ($assigned instanceof UserInterface || $assigned instanceof GroupInterface) {
             $this->assigned_id = $assigned->getId();
-            $this->assigned_class = ClassUtils::getRealClass($assigned);
+            $this->assigned_class = ClassUtils::getClass($assigned);
             $this->assigned_type = $assigned instanceof UserInterface ? 'user' : 'group';
             $this->assigned_instance = $assigned;
         } else {

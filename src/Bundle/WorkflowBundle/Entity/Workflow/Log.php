@@ -13,7 +13,7 @@ namespace Integrated\Bundle\WorkflowBundle\Entity\Workflow;
 
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
-use Symfony\Component\Security\Acl\Util\ClassUtils;
+use Doctrine\Common\Util\ClassUtils;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -143,7 +143,7 @@ class Log
     {
         if ($user instanceof UserInterface) {
             $this->user_id = $user->getId();
-            $this->user_class = ClassUtils::getRealClass($user);
+            $this->user_class = ClassUtils::getClass($user);
             $this->user_instance = $user;
         } else {
             $this->user_id = null;

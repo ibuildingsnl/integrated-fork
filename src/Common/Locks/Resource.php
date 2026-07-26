@@ -13,7 +13,7 @@ namespace Integrated\Common\Locks;
 
 use Integrated\Common\Locks\Exception\InvalidArgumentException;
 use Integrated\Common\Locks\Exception\InvalidObjectException;
-use Symfony\Component\Security\Acl\Util\ClassUtils;
+use Doctrine\Common\Util\ClassUtils;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -63,9 +63,9 @@ class Resource implements ResourceInterface
 
         try {
             if ($object instanceof ResourceIdentifierInterface) {
-                return new self(ClassUtils::getRealClass($object), $object->getIdentifier());
+                return new self(ClassUtils::getClass($object), $object->getIdentifier());
             } elseif (method_exists($object, 'getId')) {
-                return new self(ClassUtils::getRealClass($object), $object->getId());
+                return new self(ClassUtils::getClass($object), $object->getId());
             }
         } catch (\InvalidArgumentException $e) {
             throw new InvalidObjectException($e->getMessage(), 0, $e);
@@ -76,7 +76,7 @@ class Resource implements ResourceInterface
 
     public static function fromAccount(UserInterface $user)
     {
-        return new self(ClassUtils::getRealClass($user), $user->getUserIdentifier());
+        return new self(ClassUtils::getClass($user), $user->getUserIdentifier());
     }
 
     public static function fromToken(TokenInterface $token)
@@ -87,7 +87,7 @@ class Resource implements ResourceInterface
             return self::fromAccount($user);
         }
 
-        return new self(\is_object($user) ? ClassUtils::getRealClass($user) : ClassUtils::getRealClass($token), (string) $user);
+        return new self(ClassUtils::getClass(\is_object($user) ? $user : $token), (string) $user);
     }
 
     /**

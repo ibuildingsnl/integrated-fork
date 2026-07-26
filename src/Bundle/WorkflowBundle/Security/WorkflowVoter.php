@@ -30,7 +30,7 @@ use Integrated\Common\Security\Permission;
 use Integrated\Common\Security\Permissions;
 use Integrated\Common\Security\Resolver\PermissionResolver;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Acl\Util\ClassUtils;
+use Doctrine\Common\Util\ClassUtils;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
@@ -128,7 +128,7 @@ class WorkflowVoter implements VoterInterface
         // if the workflow even exists. If any of those condition are negative
         // then the voter wil abstain from voting.
 
-        $class = ClassUtils::getRealClass($object);
+        $class = ClassUtils::getClass($object);
 
         if (!$this->getMetadata($class)->hasOption('workflow')) {
             return VoterInterface::ACCESS_ABSTAIN;

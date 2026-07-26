@@ -13,7 +13,7 @@ namespace Integrated\Common\Channel\Exporter\Queue;
 
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\ChannelManagerInterface;
-use Symfony\Component\Security\Acl\Util\ClassUtils;
+use Doctrine\Common\Util\ClassUtils;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -64,7 +64,7 @@ class RequestSerializer implements RequestSerializerInterface
         return json_encode([
             'content' => [
                 'data' => $this->getSerializer()->serialize($data->content, 'json'),
-                'type' => ClassUtils::getRealClass($data->content),
+                'type' => ClassUtils::getClass($data->content),
             ],
             'state' => $data->state,
             'channel' => $data->channel instanceof ChannelInterface ? $data->channel->getId() : null,

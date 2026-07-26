@@ -15,7 +15,7 @@ use Doctrine\ORM\EntityRepository;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\Content\ContentInterface;
-use Symfony\Component\Security\Acl\Util\ClassUtils;
+use Doctrine\Common\Util\ClassUtils;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -43,7 +43,7 @@ class StateRepository extends EntityRepository
         if (isset($criteria['content'])) {
             if ($criteria['content'] instanceof ContentInterface) {
                 $criteria['content_id'] = $criteria['content']->getId();
-                $criteria['content_class'] = ClassUtils::getRealClass($criteria['content']);
+                $criteria['content_class'] = ClassUtils::getClass($criteria['content']);
 
                 unset($criteria['content']);
             }
@@ -52,7 +52,7 @@ class StateRepository extends EntityRepository
         if (isset($criteria['assigned'])) {
             if ($criteria['assigned'] instanceof UserInterface || $criteria['assigned'] instanceof GroupInterface) {
                 $criteria['assigned_id'] = $criteria['assigned']->getId();
-                $criteria['assigned_class'] = ClassUtils::getRealClass($criteria['assigned']);
+                $criteria['assigned_class'] = ClassUtils::getClass($criteria['assigned']);
 
                 unset($criteria['assigned']);
             }
