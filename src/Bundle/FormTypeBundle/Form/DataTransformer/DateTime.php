@@ -22,7 +22,7 @@ class DateTime implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function transform($datetime)
+    public function transform($datetime): mixed
     {
         if ($datetime instanceof \DateTimeInterface) {
             if ($datetime->getTimestamp() <= 0) {
@@ -42,7 +42,7 @@ class DateTime implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function reverseTransform($string)
+    public function reverseTransform($string): mixed
     {
         if (null !== $string && '' !== $string) {
             if ($object = \DateTime::createFromFormat('d-m-Y H:i', $string)) {

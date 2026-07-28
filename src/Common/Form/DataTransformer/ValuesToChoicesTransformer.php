@@ -36,7 +36,7 @@ class ValuesToChoicesTransformer implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function transform($values)
+    public function transform($values): mixed
     {
         if (null === $values) {
             return [];
@@ -52,7 +52,7 @@ class ValuesToChoicesTransformer implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function reverseTransform($values)
+    public function reverseTransform($values): mixed
     {
         if (null === $values) {
             return [];

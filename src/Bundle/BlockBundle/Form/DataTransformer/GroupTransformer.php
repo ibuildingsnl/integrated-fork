@@ -29,7 +29,7 @@ class GroupTransformer implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function transform($groupsIds)
+    public function transform($groupsIds): mixed
     {
         if ($groupsIds === null) {
             return null;
@@ -48,7 +48,7 @@ class GroupTransformer implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function reverseTransform($groups)
+    public function reverseTransform($groups): mixed
     {
         return $groups;
     }

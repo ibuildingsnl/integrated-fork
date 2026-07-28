@@ -35,7 +35,7 @@ class ContentTypeField implements DataTransformerInterface
      *
      * @return array
      */
-    public function transform($field)
+    public function transform($field): mixed
     {
         if ($field instanceof Field) {
             $options = $field->getOptions();
@@ -54,7 +54,7 @@ class ContentTypeField implements DataTransformerInterface
      *
      * @return Field|null
      */
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (\is_array($value)) {
             if (!empty($value['enabled'])) {

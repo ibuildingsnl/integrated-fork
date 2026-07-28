@@ -28,7 +28,7 @@ class CollectionToDocumentTransformer implements DataTransformerInterface
      *
      * @throws TransformationFailedException
      */
-    public function transform($value)
+    public function transform($value): mixed
     {
         if (null === $value) {
             return null;
@@ -56,7 +56,7 @@ class CollectionToDocumentTransformer implements DataTransformerInterface
      *
      * @return ArrayCollection
      */
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (null !== $value) {
             if (\is_object($value)) {

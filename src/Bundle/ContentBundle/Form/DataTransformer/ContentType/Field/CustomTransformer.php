@@ -24,7 +24,7 @@ class CustomTransformer implements DataTransformerInterface
      *
      * @return array
      */
-    public function transform($field)
+    public function transform($field): mixed
     {
         if ($field instanceof CustomField) {
             $options = $field->getOptions();
@@ -45,7 +45,7 @@ class CustomTransformer implements DataTransformerInterface
      *
      * @return CustomField|null
      */
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (\is_array($value)) {
             if (!isset($value['label'])) {

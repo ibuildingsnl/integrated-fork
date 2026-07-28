@@ -38,7 +38,7 @@ class PermissionTransformer implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function transform($value)
+    public function transform($value): mixed
     {
         $permissionClass = $this->getPermissionClass();
 
@@ -84,7 +84,7 @@ class PermissionTransformer implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (!\is_array($value)) {
             return new ArrayCollection();

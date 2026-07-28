@@ -18,7 +18,7 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 
 class IpAddressTransformer implements DataTransformerInterface
 {
-    public function transform($value)
+    public function transform($value): mixed
     {
         if (null === $value) {
             return null;
@@ -29,7 +29,7 @@ class IpAddressTransformer implements DataTransformerInterface
         throw new TransformationFailedException(sprintf('Expected %s, "%s" given', IP::class, \gettype($value)));
     }
 
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (null === $value) {
             return null;

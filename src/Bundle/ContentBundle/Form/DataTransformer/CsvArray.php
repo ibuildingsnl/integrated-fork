@@ -24,7 +24,7 @@ class CsvArray implements DataTransformerInterface
      *
      * @return mixed
      */
-    public function transform($value)
+    public function transform($value): mixed
     {
         if (empty($value)) {
             $value = [];
@@ -38,7 +38,7 @@ class CsvArray implements DataTransformerInterface
      *
      * @return array
      */
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (empty($value)) {
             $value = '';

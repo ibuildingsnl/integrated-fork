@@ -21,7 +21,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher as BaseEventDispatcher;
  */
 class EventDispatcher extends BaseEventDispatcher
 {
-    public function addListener($eventName, $listener, $priority = 0)
+    public function addListener($eventName, $listener, $priority = 0): void
     {
         if (\is_array($listener) && $listener[0] instanceof EventSubscriberInterface) {
             if ($listener[0] instanceof ContentSubscriberInterface) {

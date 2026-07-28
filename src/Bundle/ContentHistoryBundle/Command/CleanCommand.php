@@ -57,7 +57,7 @@ class CleanCommand extends Command
      *
      * @throws \InvalidArgumentException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $clean = $input->getOption('clean');
         $cleanTable = [];

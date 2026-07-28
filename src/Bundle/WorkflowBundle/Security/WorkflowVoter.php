@@ -108,7 +108,7 @@ class WorkflowVoter implements VoterInterface
     /**
      * {@inheritdoc}
      */
-    public function vote(TokenInterface $token, $object, array $attributes)
+    public function vote(TokenInterface $token, $object, array $attributes): int
     {
         if (!$object instanceof ContentInterface) {
             return VoterInterface::ACCESS_ABSTAIN;

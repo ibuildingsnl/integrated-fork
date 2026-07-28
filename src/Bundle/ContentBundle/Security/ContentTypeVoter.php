@@ -71,7 +71,7 @@ class ContentTypeVoter implements VoterInterface
     /**
      * {@inheritdoc}
      */
-    public function vote(TokenInterface $token, $contentType, array $attributes)
+    public function vote(TokenInterface $token, $contentType, array $attributes): int
     {
         if (!$contentType instanceof ContentTypeInterface) {
             return VoterInterface::ACCESS_ABSTAIN;

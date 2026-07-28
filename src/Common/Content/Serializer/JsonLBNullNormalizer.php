@@ -26,7 +26,7 @@ class JsonLBNullNormalizer implements NormalizerInterface
     /**
      * {@inheritdoc}
      */
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($object, $format = null, array $context = []): array|\ArrayObject|bool|float|int|string|null
     {
         return null;
     }
@@ -34,8 +34,17 @@ class JsonLBNullNormalizer implements NormalizerInterface
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         return self::FORMAT === $format;
+    }
+
+    /**
+     * @return array<string, bool|null>
+     */
+    public function getSupportedTypes(?string $format): array
+    {
+        // Support is decided per object, so the result must not be cached.
+        return ['*' => false];
     }
 }

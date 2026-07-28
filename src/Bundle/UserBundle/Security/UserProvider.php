@@ -73,7 +73,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
     /**
      * {@inheritdoc}
      */
-    public function refreshUser(UserInterface $user)
+    public function refreshUser(UserInterface $user): UserInterface
     {
         if (!$this->supportsClass($user)) {
             throw new UnsupportedUserException(
@@ -106,7 +106,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
     /**
      * {@inheritdoc}
      */
-    public function supportsClass($class)
+    public function supportsClass($class): bool
     {
         if (\is_object($class)) {
             $class = \get_class($class);

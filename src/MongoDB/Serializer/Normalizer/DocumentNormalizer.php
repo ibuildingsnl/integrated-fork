@@ -44,7 +44,7 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
     /**
      * {@inheritdoc}
      */
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize($data, $class, $format = null, array $context = []): mixed
     {
         try {
             $document = $this->getDocumentManager()->getRepository($class)->find($data);
@@ -58,7 +58,7 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
     /**
      * {@inheritdoc}
      */
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($object, $format = null, array $context = []): array|\ArrayObject|bool|float|int|string|null
     {
         $meta = $this->getDocumentManager()->getClassMetadata(\get_class($object));
 
@@ -74,7 +74,7 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, $type, $format = null, array $context = []): bool
     {
         if (!\is_array($data)) {
             return false;
@@ -86,7 +86,7 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         if (!\is_object($data)) {
             return false;
@@ -114,5 +114,14 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
         }
 
         return false;
+    }
+
+    /**
+     * @return array<string, bool|null>
+     */
+    public function getSupportedTypes(?string $format): array
+    {
+        // Support is decided per object, so the result must not be cached.
+        return ['*' => false];
     }
 }

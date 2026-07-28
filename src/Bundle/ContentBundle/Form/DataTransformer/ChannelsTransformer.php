@@ -21,7 +21,7 @@ class ChannelsTransformer implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function transform($value)
+    public function transform($value): mixed
     {
         $result = [
             'options' => null,
@@ -72,7 +72,7 @@ class ChannelsTransformer implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         $result = [
             'disabled' => 0,

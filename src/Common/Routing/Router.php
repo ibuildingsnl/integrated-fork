@@ -55,7 +55,7 @@ class Router implements RouterInterface, RequestMatcherInterface, WarmableInterf
     /**
      * {@inheritdoc}
      */
-    public function setContext(RequestContext $context)
+    public function setContext(RequestContext $context): void
     {
         $this->context = $context;
     }
@@ -101,7 +101,7 @@ class Router implements RouterInterface, RequestMatcherInterface, WarmableInterf
     /**
      * {@inheritdoc}
      */
-    public function getRouteCollection()
+    public function getRouteCollection(): \Symfony\Component\Routing\RouteCollection
     {
         return $this->router->getRouteCollection();
     }
@@ -126,7 +126,7 @@ class Router implements RouterInterface, RequestMatcherInterface, WarmableInterf
         return $this->generator;
     }
 
-    public function warmUp(string $cacheDir): array
+    public function warmUp(string $cacheDir, ?string $buildDir = null): array
     {
         return [];
     }

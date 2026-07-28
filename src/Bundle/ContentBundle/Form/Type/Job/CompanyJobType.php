@@ -35,7 +35,7 @@ class CompanyJobType extends BaseType
         $this->contentTypeManager = $contentTypeManager;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('company', ContentChoiceType::class, [
             'params' => ['_format' => 'json', 'contenttypes' => $this->getContentTypes()],
@@ -60,7 +60,7 @@ class CompanyJobType extends BaseType
         }, $contentTypes);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('data_class', Job::class);
     }

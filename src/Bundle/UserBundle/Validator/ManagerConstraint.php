@@ -26,7 +26,7 @@ abstract class ManagerConstraint extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getRequiredOptions()
+    public function getRequiredOptions(): array
     {
         return ['manger'];
     }
@@ -34,7 +34,7 @@ abstract class ManagerConstraint extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getDefaultOption()
+    public function getDefaultOption(): string|null
     {
         return 'manger';
     }
@@ -42,7 +42,7 @@ abstract class ManagerConstraint extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getTargets()
+    public function getTargets(): array|string
     {
         return Constraint::CLASS_CONSTRAINT;
     }

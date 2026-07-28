@@ -22,7 +22,7 @@ class MaxDateTimeTransformer implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function transform($dateTime)
+    public function transform($dateTime): mixed
     {
         if ($dateTime == new \DateTime(PublishTimeInterface::DATE_MAX)) {
             return null; // hide max date
@@ -34,7 +34,7 @@ class MaxDateTimeTransformer implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function reverseTransform($dateTime)
+    public function reverseTransform($dateTime): mixed
     {
         return $dateTime;
     }

@@ -64,7 +64,7 @@ class ScopeFactory implements AuthenticatorFactoryInterface, FirewallListenerFac
     /**
      * {@inheritdoc}
      */
-    public function addConfiguration(NodeDefinition $node)
+    public function addConfiguration(NodeDefinition $node): void
     {
     }
 }

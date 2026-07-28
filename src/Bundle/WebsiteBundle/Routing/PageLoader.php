@@ -44,7 +44,7 @@ class PageLoader implements LoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function load($resource, $type = null)
+    public function load($resource, $type = null): mixed
     {
         if (true === $this->loaded) {
             throw new \RuntimeException('Page loader is already added');
@@ -85,7 +85,7 @@ class PageLoader implements LoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function supports($resource, $type = null)
+    public function supports($resource, $type = null): bool
     {
         return 'integrated_website_page' === $type;
     }
@@ -93,7 +93,7 @@ class PageLoader implements LoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function getResolver()
+    public function getResolver(): LoaderResolverInterface
     {
         return new LoaderResolver();
     }
@@ -101,7 +101,7 @@ class PageLoader implements LoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function setResolver(LoaderResolverInterface $resolver)
+    public function setResolver(LoaderResolverInterface $resolver): void
     {
     }
 }

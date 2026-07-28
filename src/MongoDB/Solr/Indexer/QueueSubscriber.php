@@ -75,7 +75,7 @@ class QueueSubscriber implements EventSubscriber, QueueAwareInterface, Serialize
     /**
      * {@inheritdoc}
      */
-    public function setSerializer(SerializerInterface $serializer)
+    public function setSerializer(SerializerInterface $serializer): void
     {
         $this->serializer = $serializer;
     }

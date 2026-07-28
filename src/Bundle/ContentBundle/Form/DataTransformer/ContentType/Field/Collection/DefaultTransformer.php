@@ -24,7 +24,7 @@ class DefaultTransformer implements DataTransformerInterface
      *
      * @return array $return
      */
-    public function transform($fields)
+    public function transform($fields): mixed
     {
         $return = [];
         if (\is_array($fields) || $fields instanceof \Traversable) {
@@ -43,7 +43,7 @@ class DefaultTransformer implements DataTransformerInterface
      *
      * @return mixed|null
      */
-    public function reverseTransform($values)
+    public function reverseTransform($values): mixed
     {
         if (\is_array($values) || $values instanceof \ArrayAccess) {
             foreach ($values as $key => $value) {

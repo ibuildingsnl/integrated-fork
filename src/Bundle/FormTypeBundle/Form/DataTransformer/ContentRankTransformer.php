@@ -36,7 +36,7 @@ class ContentRankTransformer implements DataTransformerInterface
      *
      * @throws TransformationFailedException
      */
-    public function transform($value)
+    public function transform($value): mixed
     {
         if (null === $value) {
             return null;
@@ -54,7 +54,7 @@ class ContentRankTransformer implements DataTransformerInterface
      *
      * @throws TransformationFailedException
      */
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (null === $value || \is_string($value)) {
             return $value;

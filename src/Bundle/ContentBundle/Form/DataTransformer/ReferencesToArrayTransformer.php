@@ -35,7 +35,7 @@ class ReferencesToArrayTransformer implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function transform($value)
+    public function transform($value): mixed
     {
         $array = [];
 
@@ -55,7 +55,7 @@ class ReferencesToArrayTransformer implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (!$value) {
             return new ArrayCollection();

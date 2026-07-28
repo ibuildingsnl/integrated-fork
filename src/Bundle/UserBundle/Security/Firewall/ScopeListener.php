@@ -54,7 +54,7 @@ class ScopeListener extends AbstractListener implements FirewallListenerInterfac
         return !(!$token instanceof TokenInterface || $token instanceof TwoFactorTokenInterface) && $user instanceof UserInterface;
     }
 
-    public function authenticate(RequestEvent $event)
+    public function authenticate(RequestEvent $event): void
     {
         $token = $this->tokenStorage->getToken();
         $user = $token->getUser();

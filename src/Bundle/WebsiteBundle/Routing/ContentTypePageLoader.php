@@ -50,7 +50,7 @@ class ContentTypePageLoader extends Loader
     /**
      * {@inheritdoc}
      */
-    public function load($resource, $type = null)
+    public function load($resource, $type = null): mixed
     {
         if (true === $this->loaded) {
             throw new \RuntimeException('Page loader is already added');
@@ -95,7 +95,7 @@ class ContentTypePageLoader extends Loader
     /**
      * {@inheritdoc}
      */
-    public function supports($resource, $type = null)
+    public function supports($resource, $type = null): bool
     {
         return self::ROUTE_PREFIX === $type;
     }

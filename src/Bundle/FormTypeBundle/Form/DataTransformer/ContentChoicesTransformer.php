@@ -38,7 +38,7 @@ class ContentChoicesTransformer implements DataTransformerInterface
      *
      * @throws TransformationFailedException
      */
-    public function transform($value)
+    public function transform($value): mixed
     {
         if (\is_string($value) || \is_object($value)) {
             throw new TransformationFailedException(sprintf('Expected array, "%s" given', \gettype($value)));
@@ -66,7 +66,7 @@ class ContentChoicesTransformer implements DataTransformerInterface
      *
      * @throws TransformationFailedException
      */
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (null === $value || $value == '') {
             return [];
