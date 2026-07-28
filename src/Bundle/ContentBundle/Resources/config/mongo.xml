@@ -36,36 +36,36 @@
         <service id="integrated_content.odm.mongo.mapping.discriminator_map.listener" class="Integrated\Doctrine\ODM\MongoDB\Mapping\DiscriminatorMapMetadataSubscriber">
             <argument type="service" id="integrated_content.odm.mongo.mapping.discriminator_map.resolver" />
 
-            <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="loadClassMetadata" connection="default" />
         </service>
 
 
         <service id="integrated_content.odm.mongo.cleanreferences.listener" class="Integrated\Bundle\ContentBundle\Doctrine\EventListener\CleanReferencesListener">
-            <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="preRemove" connection="default" />
         </service>
 
         <service id="integrated_content.odm.mongo.clean_relations.listener" class="Integrated\Bundle\ContentBundle\Doctrine\EventListener\CleanRelationsListener">
-            <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="preRemove" connection="default" />
         </service>
 
         <service id="integrated_content.odm.mongo.checkreferenced.listener" class="Integrated\Bundle\ContentBundle\Doctrine\EventListener\CheckReferencedListener">
-            <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="preRemove" connection="default" />
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Doctrine\EventListener\DocumentNotFoundListener">
-            <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="documentNotFound" connection="default" />
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Doctrine\EventListener\UpdateAuthorRelationListener">
-            <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="onFlush" connection="default" />
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Doctrine\EventListener\UpdateRankListener">
-            <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="onFlush" connection="default" />
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Doctrine\EventListener\UpdateStorageMetadataListener">
-            <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="onFlush" connection="default" />
         </service>
 
 	</services>

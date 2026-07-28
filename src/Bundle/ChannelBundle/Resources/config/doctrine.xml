@@ -15,7 +15,9 @@
             <argument type="service" id="integrated_channel.queue" />
             <argument type="service" id="integrated_channel.queue.serializer" />
 
-            <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="postRemove" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="postPersist" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="postUpdate" connection="default" />
         </service>
 
     </services>

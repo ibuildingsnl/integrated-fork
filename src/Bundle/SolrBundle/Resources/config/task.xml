@@ -11,13 +11,14 @@
         <service id="integrated_solr.task.reference_queue_handler.mongodb_reference_subscriber" class="Integrated\Common\Solr\Task\Tasks\Doctrine\EventListener\MongoDBReferencesListener">
             <argument type="service" id="integrated_queue.solr_worker" />
 
-            <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="postPersist" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="postUpdate" connection="default" />
         </service>
 
         <service id="integrated_solr.task.content_type_queue_handler.mongodb_reference_subscriber" class="Integrated\Common\Solr\Task\Tasks\Doctrine\EventListener\MongoDBContentTypeListener">
             <argument type="service" id="integrated_queue.solr_worker" />
 
-            <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="postUpdate" connection="default" />
         </service>
 
         <service id="integrated_solr.task.reference_queue_handler.mongodb_provider.repository" class="Doctrine\ODM\MongoDB\Repository\DocumentRepository" public="false">

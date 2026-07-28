@@ -12,20 +12,21 @@
             <argument type="service" id="doctrine" on-invalid="ignore"/>
             <argument type="service" id="doctrine_mongodb" on-invalid="ignore"/>
 
-            <tag name="doctrine.event_subscriber" connection="default"/>
+            <tag name="doctrine.event_listener" event="postLoad" connection="default" />
         </service>
 
         <service id="integrated_workflow.doctrine.log_user.listener" class="Integrated\Bundle\WorkflowBundle\Doctrine\EventListener\WorkflowLogInstanceInjectionListener">
             <argument type="service" id="doctrine" on-invalid="ignore"/>
 
-            <tag name="doctrine.event_subscriber" connection="default"/>
+            <tag name="doctrine.event_listener" event="postLoad" connection="default" />
         </service>
 
         <service id="integrated_workflow.doctrine.queue.listener" class="Integrated\Bundle\WorkflowBundle\Doctrine\EventListener\ContainerAwareQueueListener">
             <argument type="service" id="service_container"/>
             <argument type="string">integrated_queue.workflow</argument> <!-- should be a config option -->
 
-            <tag name="doctrine.event_subscriber" connection="default"/>
+            <tag name="doctrine.event_listener" event="postPersist" connection="default" />
+            <tag name="doctrine.event_listener" event="postUpdate" connection="default" />
         </service>
 
     </services>

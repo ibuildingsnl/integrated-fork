@@ -28,7 +28,8 @@
         </service>
 
         <service id="integrated_page.event_listener.grid_item" class="Integrated\Bundle\PageBundle\EventListener\GridItemSubscriber">
-            <tag name="doctrine_mongodb.odm.event_subscriber" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="preRemove" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="preUpdate" />
         </service>
 
     </services>

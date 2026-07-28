@@ -15,7 +15,7 @@
 
         <service id="integrated_user.extension.user_relation" class="Integrated\Bundle\UserBundle\Doctrine\Subscriber\OrmRelationSubscriber">
             <argument type="service" id="doctrine_mongodb" on-invalid="ignore"/>
-            <tag name="doctrine.event_subscriber" connection="default"/>
+            <tag name="doctrine.event_listener" event="postLoad" connection="default" />
         </service>
 
     </services>

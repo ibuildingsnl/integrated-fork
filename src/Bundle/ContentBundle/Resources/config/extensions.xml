@@ -22,7 +22,13 @@
             <call method="setDispatcher">
                 <argument type="service" id="integrated_content.extension.dispatcher"/>
             </call>
-            <tag name="doctrine_mongodb.odm.event_subscriber" connection="default"/>
+            <tag name="doctrine_mongodb.odm.event_listener" event="preRemove" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="postRemove" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="prePersist" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="postPersist" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="preFlush" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="postUpdate" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="postLoad" connection="default" />
         </service>
 
         <service id="integrated_content.extension.adaptor.metadata" class="Integrated\Common\Content\Extension\Adaptor\Metadata\MetadataFactoryAdaptor">

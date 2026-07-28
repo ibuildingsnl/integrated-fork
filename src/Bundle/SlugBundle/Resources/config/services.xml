@@ -24,8 +24,12 @@
             <argument type="service" id="Integrated\Bundle\SlugBundle\Mapping\MetadataFactory" />
             <argument type="service" id="integrated_slug.slugger" />
 
-            <tag name="doctrine_mongodb.odm.event_subscriber" />
-            <tag name="doctrine.event_subscriber" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="prePersist" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="postPersist" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="preUpdate" />
+            <tag name="doctrine.event_listener" event="prePersist" />
+            <tag name="doctrine.event_listener" event="postPersist" />
+            <tag name="doctrine.event_listener" event="preUpdate" />
         </service>
 
         <service id="integrated_slug.twig.slugger_extension" class="Integrated\Bundle\SlugBundle\Twig\Extension\SluggerExtension">

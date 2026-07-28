@@ -11,7 +11,7 @@
         <service id="integrated_content_history.event_listener.content_history_subscriber" class="Integrated\Bundle\ContentHistoryBundle\EventListener\ContentHistorySubscriber">
             <argument type="service" id="event_dispatcher"/>
             <argument>Integrated\Bundle\ContentHistoryBundle\Document\ContentHistory</argument>
-            <tag name="doctrine_mongodb.odm.event_subscriber"/>
+            <tag name="doctrine_mongodb.odm.event_listener" event="onFlush" />
         </service>
 
         <service id="integrated_content_history.event_listener.content_subscriber" class="Integrated\Bundle\ContentHistoryBundle\EventListener\ContentSubscriber">

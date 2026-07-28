@@ -20,7 +20,9 @@
             <argument type="service" id="integrated_solr.queue.indexer" /> <!-- should be a config option -->
             <argument type="service" id="integrated_solr.indexer.serializer" />
 
-            <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="postPersist" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="postUpdate" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="postRemove" connection="default" />
         </service>
 
         <service id="integrated_solr.indexer.command_factory" class="Integrated\Common\Solr\Indexer\CommandFactory">

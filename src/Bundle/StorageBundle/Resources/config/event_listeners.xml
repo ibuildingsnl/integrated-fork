@@ -13,7 +13,8 @@
             <argument type="string">integrated_storage.manager</argument>
             <argument type="string">integrated_storage.intent_writer</argument>
 
-            <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="prePersist" connection="default" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="preFlush" connection="default" />
         </service>
 
     </services>
