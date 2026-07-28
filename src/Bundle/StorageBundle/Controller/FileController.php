@@ -11,9 +11,9 @@
 
 namespace Integrated\Bundle\StorageBundle\Controller;
 
-use Gregwar\ImageBundle\Services\ImageHandling;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ImageBundle\Converter\WebFormatConverter;
+use Integrated\Bundle\ImageBundle\Image\LiipImageHandling;
 use Integrated\Bundle\StorageBundle\Storage\Accessor\DoctrineDocument;
 use Integrated\Bundle\StorageBundle\Storage\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
@@ -37,11 +37,11 @@ class FileController
     private $webFormatConverter;
 
     /**
-     * @var ImageHandling
+     * @var LiipImageHandling
      */
     private $imageHandling;
 
-    public function __construct(MetadataFactoryInterface $metadata, WebFormatConverter $webFormatConverter, ImageHandling $imageHandling)
+    public function __construct(MetadataFactoryInterface $metadata, WebFormatConverter $webFormatConverter, LiipImageHandling $imageHandling)
     {
         $this->metadata = $metadata;
         $this->webFormatConverter = $webFormatConverter;
@@ -64,7 +64,7 @@ class FileController
                         $file = $this->webFormatConverter->convert($storage)->getPathname();
 
                         return new RedirectResponse(
-                            $this->imageHandling->open($file)->resize($width, $height, '#ffffff'),
+                            (string) $this->imageHandling->open($file)->resize($width, $height),
                             Response::HTTP_MOVED_PERMANENTLY
                         );
                     }

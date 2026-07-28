@@ -1,5 +1,5 @@
 # IntegratedImageBundle #
-Overwrites Gregwar\ImageBundle to provide additional functionality
+Image handling on top of LiipImagineBundle
 
 ## Requirements ##
 * See the require section in the composer.json

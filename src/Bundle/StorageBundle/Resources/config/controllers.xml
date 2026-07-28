@@ -11,7 +11,7 @@
         <service id="integrated_storage.controller_file" class="Integrated\Bundle\StorageBundle\Controller\FileController">
             <argument type="service" id="integrated_storage.metadata" />
             <argument type="service" id="integrated_image.converter_web_format" />
-            <argument type="service" id="image.handling" />
+            <argument type="service" id="integrated_image.liip_image_handling" />
 
             <tag name="controller.service_arguments" />
         </service>
