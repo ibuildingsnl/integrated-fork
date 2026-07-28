@@ -17,11 +17,8 @@
         <defaults autowire="true" autoconfigure="true"/>
 
         <service id="integrated_image.twig_extension" class="Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension" public="true">
-            <argument type="service" id="image.handling" />
-            <argument type="service" id="twig.extension.image" />
+            <argument type="service" id="integrated_image.liip_image_handling" />
             <argument type="service" id="integrated_image.converter_web_format" />
-            <argument>%integrated_image.twig_mimic_formats%</argument>
-            <argument type="service" id="integrated_image.image_mimic_handling" />
 
             <tag name="twig.extension" />
         </service>

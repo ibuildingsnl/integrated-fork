@@ -13,13 +13,14 @@ namespace Integrated\Bundle\ImageBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * @author Johnny Borg <johnny@e-active.nl>
  */
-class IntegratedImageExtension extends Extension
+class IntegratedImageExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * {@inheritdoc}
@@ -33,5 +34,29 @@ class IntegratedImageExtension extends Extension
         $loader->load('services.xml');
         $loader->load('twig.xml');
         $loader->load('validator.xml');
+        $loader->load('liip.xml');
+    }
+
+    /**
+     * Registers the base filter sets the image handling applies its runtime
+     * configuration to. The application may override them by declaring filter
+     * sets with the same name.
+     */
+    public function prepend(ContainerBuilder $container): void
+    {
+        if (!$container->hasExtension('liip_imagine')) {
+            return;
+        }
+
+        $filterSets = [];
+
+        foreach (['inset', 'outbound'] as $mode) {
+            $filters = ['thumbnail' => ['size' => [1000, 1000], 'mode' => $mode]];
+
+            $filterSets['integrated_'.$mode] = ['filters' => $filters];
+            $filterSets['integrated_'.$mode.'_jpeg'] = ['format' => 'jpg', 'filters' => $filters];
+        }
+
+        $container->prependExtensionConfig('liip_imagine', ['filter_sets' => $filterSets]);
     }
 }

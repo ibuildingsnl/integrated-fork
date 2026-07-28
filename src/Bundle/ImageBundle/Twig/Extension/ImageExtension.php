@@ -11,11 +11,11 @@
 
 namespace Integrated\Bundle\ImageBundle\Twig\Extension;
 
-use Gregwar\ImageBundle\Extensions\ImageTwig;
-use Gregwar\ImageBundle\Services\ImageHandling;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage;
 use Integrated\Bundle\ImageBundle\Converter\WebFormatConverter;
 use Integrated\Bundle\ImageBundle\Factory\StorageModelFactory;
+use Integrated\Bundle\ImageBundle\Image\ImageUrl;
+use Integrated\Bundle\ImageBundle\Image\LiipImageHandling;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -25,38 +25,10 @@ use Twig\TwigFunction;
  */
 class ImageExtension extends AbstractExtension
 {
-    /**
-     * @var ImageHandling
-     */
-    private $imageHandling;
-
-    /**
-     * @var WebFormatConverter
-     */
-    private $webFormatConverter;
-
-    /**
-     * @var ImageTwig
-     */
-    private $imageTwig;
-
-    /**
-     * @var array
-     */
-    private $mimicFormats;
-
-    /**
-     * @var ImageHandling
-     */
-    private $imageMimicHandling;
-
-    public function __construct(ImageHandling $imageHandling, ImageTwig $imageTwig, WebFormatConverter $webFormatConverter, array $mimicFormats, ImageHandling $imageMimicHandling)
-    {
-        $this->imageHandling = $imageHandling;
-        $this->webFormatConverter = $webFormatConverter;
-        $this->imageTwig = $imageTwig;
-        $this->mimicFormats = $mimicFormats;
-        $this->imageMimicHandling = $imageMimicHandling;
+    public function __construct(
+        private LiipImageHandling $imageHandling,
+        private WebFormatConverter $webFormatConverter,
+    ) {
     }
 
     /**
@@ -74,10 +46,7 @@ class ImageExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * @return \Gregwar\ImageBundle\ImageHandler
-     */
-    public function imageJson($image)
+    public function imageJson($image): ImageUrl
     {
         if ($json = json_decode($image)) {
             $storageModel = StorageModelFactory::json($json);
@@ -89,19 +58,12 @@ class ImageExtension extends AbstractExtension
                 // Set the fallback image
                 $image = $storageModel->getIdentifier();
             }
-
-            if (\in_array($storageModel->getMetadata()->getExtension(), $this->mimicFormats)) {
-                return $this->imageMimicHandling->open($image);
-            }
         }
 
         return $this->imageHandling->open($image);
     }
 
-    /**
-     * @return \Gregwar\ImageBundle\ImageHandler
-     */
-    public function webImage($image)
+    public function webImage($image): ImageUrl
     {
         if ($image instanceof StorageInterface) {
             try {
@@ -112,37 +74,20 @@ class ImageExtension extends AbstractExtension
             }
         }
 
-        return $this->imageTwig->webImage($image);
+        return $this->imageHandling->webImage((string) $image);
     }
 
-    /**
-     * @return \Gregwar\ImageBundle\ImageHandler
-     */
-    public function image($image)
+    public function image($image): ImageUrl
     {
         if ($image instanceof StorageInterface) {
-            $metadata = $image->getMetadata();
-
             try {
                 $image = $this->webFormatConverter->convert($image)->getPathname();
             } catch (\Exception $e) {
                 $image = $image->getIdentifier();
             }
-
-            if (\in_array($metadata->getExtension(), $this->mimicFormats)) {
-                return $this->imageMimicHandling->open($image);
-            }
-        } elseif (filter_var($image, \FILTER_VALIDATE_URL)) {
-            return $this->imageMimicHandling->open($image);
-        }
-
-        // detect json format
-        if (strpos($image, '{') === 0) {
+        } elseif (\is_string($image) && strpos($image, '{') === 0) {
+            // detect json format
             return $this->imageJson($image);
-        }
-
-        if (\in_array(pathinfo($image, \PATHINFO_EXTENSION), $this->mimicFormats)) {
-            return $this->imageMimicHandling->open($image);
         }
 
         return $this->imageHandling->open($image);

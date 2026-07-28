@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+
+        <!-- Absolute paths that are configured as liip_imagine data roots. Images
+             handed to the image handling are made relative to one of these. -->
+        <parameter key="integrated_image.liip.data_roots" type="collection">
+            <parameter>%kernel.project_dir%/public</parameter>
+        </parameter>
+
+        <!-- Web accessible URL of the image served when the source cannot be resolved. -->
+        <parameter key="integrated_image.liip.fallback_image"></parameter>
+
+        <!-- Prefixed to the URL of images that are served untouched. -->
+        <parameter key="integrated_image.liip.public_prefix"></parameter>
+
+    </parameters>
+
+    <services>
+
+        <defaults autowire="false" autoconfigure="false"/>
+
+        <service id="integrated_image.liip_image_handling" class="Integrated\Bundle\ImageBundle\Image\LiipImageHandling">
+            <argument type="service" id="liip_imagine.cache.manager" />
+            <argument type="service" id="file_locator" />
+            <argument type="service" id="integrated_image.converter_web_format" />
+            <argument>%integrated_image.liip.data_roots%</argument>
+            <argument>%integrated_image.twig_mimic_formats%</argument>
+            <argument>%integrated_image.liip.fallback_image%</argument>
+            <argument>%integrated_image.liip.public_prefix%</argument>
+        </service>
+
+        <service id="Integrated\Bundle\ImageBundle\Image\LiipImageHandling" alias="integrated_image.liip_image_handling" public="true" />
+
+    </services>
+
+</container>
