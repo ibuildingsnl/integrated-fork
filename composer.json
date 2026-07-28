@@ -29,7 +29,7 @@
         "doctrine/mongodb-odm-bundle": "^4.3 || ^5.0",
         "doctrine/orm": "^2.13 || ^3.0",
         "endroid/qr-code-bundle": "^4.0 || ^5.0 || ^6.0 || ^7.0",
-        "excelwebzone/recaptcha-bundle": "^1.5",
+        "isometriks/spam-bundle": "^1.2",
         "knplabs/knp-gaufrette-bundle": "~0.5",
         "knplabs/knp-menu-bundle": "^3.2",
         "knplabs/knp-paginator-bundle": "^5.0 || ^6.0",

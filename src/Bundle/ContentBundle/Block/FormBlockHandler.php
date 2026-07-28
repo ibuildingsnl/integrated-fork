@@ -13,8 +13,6 @@ namespace Integrated\Bundle\ContentBundle\Block;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use EWZ\Bundle\RecaptchaBundle\Form\Type\EWZRecaptchaType;
-use EWZ\Bundle\RecaptchaBundle\Validator\Constraints\IsTrue as RecaptchaTrue;
 use Integrated\Bundle\BlockBundle\Block\BlockHandler;
 use Integrated\Bundle\ContentBundle\Document\Block\FormBlock;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
@@ -156,6 +154,13 @@ class FormBlockHandler extends BlockHandler
      */
     protected function createForm($data = null, array $options = [], FormBlock $block = null)
     {
+        if (null !== $block && $block->isRecaptcha()) {
+            // Spam protection is provided by IsometriksSpamBundle. The honeypot field has to be
+            // configured on the root form, so it is passed as an option instead of being added.
+            $options['honeypot'] = true;
+            $options['honeypot_field'] = 'confirm_email_address';
+        }
+
         $form = $this->formFactory->createBuilder(ContentFormType::class, $data, $options);
 
         // remove irrelevant fields
@@ -180,16 +185,6 @@ class FormBlockHandler extends BlockHandler
             $form->add('content', TextareaType::class, [
                 'mapped' => true,
                 'label' => 'Description',
-            ]);
-        }
-
-        if (null !== $block && $block->isRecaptcha()) {
-            $form->add('recaptcha', EWZRecaptchaType::class, [
-                'mapped' => false,
-                'label' => ' ',
-                'constraints' => [
-                    new RecaptchaTrue(),
-                ],
             ]);
         }
 
