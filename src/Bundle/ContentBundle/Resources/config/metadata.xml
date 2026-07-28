@@ -10,24 +10,17 @@
 
         <service id="integrated_content.metadata.driver.registry" class="Integrated\Common\Mapping\Registry\DriverRegistry" />
 
-        <service id="integrated_content.metadata.driver.annotation.mapping" class="Doctrine\Persistence\Mapping\Driver\MappingDriver" public="false">
+        <service id="integrated_content.metadata.driver.mapping" class="Doctrine\Persistence\Mapping\Driver\MappingDriver" public="false">
             <factory service="doctrine_mongodb.odm.default_configuration" method="getMetadataDriverImpl" />
         </service>
 
-        <service id="integrated_content.metadata.driver.annotation" class="Integrated\Common\Form\Mapping\Driver\AnnotationDriver">
-            <argument type="service" id="integrated_content.metadata.driver.annotation.mapping"/>
-            <argument type="service" id="annotation_reader"/>
-
-            <tag name="integrated.mapping.driver" />
-        </service>
-
         <service id="integrated_content.metadata.driver.attribute" class="Integrated\Common\Form\Mapping\Driver\AttributeDriver">
-            <argument type="service" id="integrated_content.metadata.driver.annotation.mapping"/>
+            <argument type="service" id="integrated_content.metadata.driver.mapping"/>
 
             <tag name="integrated.mapping.driver" />
         </service>
 
-        <service id="integrated_content.metadata.driver" alias="integrated_content.metadata.driver.annotation" />
+        <service id="integrated_content.metadata.driver" alias="integrated_content.metadata.driver.attribute" />
 
         <service id="integrated_content.metadata.factory.event_dispatcher" class="Symfony\Component\EventDispatcher\EventDispatcher" public="false" />
 
