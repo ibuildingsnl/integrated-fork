@@ -20,6 +20,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\UnitOfWork as ORMUnitOfWork;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\ManagerEventArgs;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\SlugBundle\Mapping\MetadataFactoryInterface;
@@ -64,9 +65,8 @@ class SluggableSubscriber implements EventSubscriber
     {
         return [
             'prePersist',
-            'postPersist',
+            'onFlush',
             'preUpdate',
-            // 'onFlush', // @todo implement to support update after a persist (INTEGRATED-294)
         ];
     }
 
@@ -76,10 +76,33 @@ class SluggableSubscriber implements EventSubscriber
         $this->handleEvent($args, 'prePersist');
     }
 
-    public function postPersist(LifecycleEventArgs $args)
+    /**
+     * Generates the slugs that are derived from the identifier.
+     *
+     * These cannot be generated in prePersist, because the identifier is only
+     * assigned after that event has been dispatched. They used to be generated
+     * in postPersist, but by then the insert has already been written, so the
+     * recomputed change set was silently dropped and the slug never reached
+     * the database. onFlush is the last point at which a change set can still
+     * be altered, and the identifier is already available there.
+     */
+    public function onFlush(ManagerEventArgs $args)
     {
-        // used for id in slug
-        $this->handleEvent($args, 'postPersist');
+        $om = $args->getObjectManager();
+        $uow = $om->getUnitOfWork();
+
+        if ($uow instanceof ODMUnitOfWork) {
+            $objects = array_merge($uow->getScheduledDocumentInsertions(), $uow->getScheduledDocumentUpserts());
+        } elseif ($uow instanceof ORMUnitOfWork) {
+            $objects = $uow->getScheduledEntityInsertions();
+        } else {
+            return;
+        }
+
+        foreach ($objects as $object) {
+            // used for id in slug
+            $this->handleObject($om, $object, 'postPersist');
+        }
     }
 
     public function preUpdate(LifecycleEventArgs $args)
@@ -92,8 +115,15 @@ class SluggableSubscriber implements EventSubscriber
      */
     protected function handleEvent(LifecycleEventArgs $args, $event)
     {
-        $object = $args->getObject();
-        $om = $args->getObjectManager();
+        $this->handleObject($args->getObjectManager(), $args->getObject(), $event);
+    }
+
+    /**
+     * @param object $object
+     * @param string $event
+     */
+    protected function handleObject(ObjectManager $om, $object, $event)
+    {
         $class = \get_class($object);
 
         if (!$om instanceof DocumentManager && !$om instanceof EntityManagerInterface) {
