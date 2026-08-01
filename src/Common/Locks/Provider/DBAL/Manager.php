@@ -127,9 +127,10 @@ class Manager implements ManagerInterface
             $builder
                 ->select('l.*')
                 ->from($this->options['lock_table_name'], 'l')
-                ->where('l.id = '.$builder->createPositionalParameter($lock));
+                ->where('l.id = '.$builder->createPositionalParameter($lock))
+                ->forUpdate();
 
-            if ($data = $this->connection->fetchAssociative($builder->getSQL().' '.$this->platform->getForUpdateSQL(), array_values($builder->getParameters()))) {
+            if ($data = $builder->executeQuery()->fetchAssociative()) {
                 if ($data['timeout'] !== null) {
                     $data['expires'] = time() + $data['timeout'];
 
