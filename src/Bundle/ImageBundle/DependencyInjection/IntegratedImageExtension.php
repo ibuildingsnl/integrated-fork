@@ -50,6 +50,13 @@ class IntegratedImageExtension extends Extension implements PrependExtensionInte
 
         $filterSets = [];
 
+        // Used when a template renders an image without asking for a transformation.
+        // The image is passed through unchanged, but LiipImagine still publishes it
+        // to the public cache directory, which is what makes storage backed images
+        // reachable: their local copy lives in the (non public) integrated cache dir.
+        $filterSets['integrated_original'] = ['filters' => []];
+        $filterSets['integrated_original_jpeg'] = ['format' => 'jpg', 'filters' => []];
+
         foreach (['inset', 'outbound'] as $mode) {
             $filters = ['thumbnail' => ['size' => [1000, 1000], 'mode' => $mode]];
 

@@ -116,11 +116,7 @@ class ImageUrl implements \Stringable
 
     public function getUrl(): string
     {
-        if ($this->passthrough || $this->mode === null) {
-            return (string) ($this->original ?? $this->path);
-        }
-
-        if ($this->path === null) {
+        if ($this->passthrough || $this->path === null) {
             return (string) $this->original;
         }
 
@@ -171,10 +167,11 @@ class ImageUrl implements \Stringable
 
     /**
      * Name of the base filter set the runtime configuration is applied to, see
-     * IntegratedImageExtension::prepend().
+     * IntegratedImageExtension::prepend(). Without a transformation the image is
+     * published unchanged, so call sites always end up with a public URL.
      */
     private function getFilterName(): string
     {
-        return 'integrated_'.$this->mode.($this->format === null ? '' : '_'.$this->format);
+        return 'integrated_'.($this->mode ?? 'original').($this->format === null ? '' : '_'.$this->format);
     }
 }
