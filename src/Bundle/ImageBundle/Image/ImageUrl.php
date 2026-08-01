@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ImageBundle\Image;
 
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Liip\ImagineBundle\Imagine\Data\DataManager;
 
 /**
  * A lazily rendered image URL backed by LiipImagine.
@@ -49,12 +50,19 @@ class ImageUrl implements \Stringable
      *                              or null when the image could not be resolved.
      * @param string|null $original Absolute or root relative URL of the untouched image,
      *                              used for pass-through (mimic) formats and as fallback.
+     * @param string|null $source   Absolute path of the source image, used to determine
+     *                              whether it is small enough to be transformed.
+     * @param int $maxSourcePixels  Number of pixels a source image may have before it is
+     *                              published untransformed, or 0 to always transform.
      */
     public function __construct(
         private CacheManager $cacheManager,
+        private DataManager $dataManager,
         private ?string $path,
         private ?string $original = null,
         private bool $passthrough = false,
+        private ?string $source = null,
+        private int $maxSourcePixels = 0,
     ) {
     }
 
@@ -121,12 +129,63 @@ class ImageUrl implements \Stringable
         }
 
         try {
+            // Transforming an image means decoding it, which for a large enough
+            // source exhausts the memory limit. Publishing it untransformed only
+            // copies the file, so it always fits.
+            if ($this->isUntransformed() || $this->exceedsPixelBudget()) {
+                return self::toRelativeUrl($this->publishOriginal());
+            }
+
             return self::toRelativeUrl(
                 $this->cacheManager->getBrowserPath($this->path, $this->getFilterName(), $this->runtimeConfig)
             );
         } catch (\Exception) {
             return (string) $this->original;
         }
+    }
+
+    /**
+     * Whether the image is handed out as it is stored, so it can be published
+     * without ever loading it into the image library.
+     */
+    private function isUntransformed(): bool
+    {
+        return $this->mode === null && $this->format === null;
+    }
+
+    /**
+     * Copies the source image into the LiipImagine cache and returns its URL.
+     * Nothing is decoded, the stored bytes are the bytes of the source file.
+     */
+    private function publishOriginal(): string
+    {
+        $filter = 'integrated_original';
+
+        if (!$this->cacheManager->isStored($this->path, $filter)) {
+            $this->cacheManager->store($this->dataManager->find($filter, $this->path), $this->path, $filter);
+        }
+
+        return $this->cacheManager->resolve($this->path, $filter);
+    }
+
+    /**
+     * Whether the source image has more pixels than the image library is able to
+     * decode within the memory limit. Reading the image header is cheap, the
+     * pixels themselves are not read.
+     */
+    private function exceedsPixelBudget(): bool
+    {
+        if ($this->maxSourcePixels <= 0 || $this->source === null) {
+            return false;
+        }
+
+        $size = @getimagesize($this->source);
+
+        if ($size === false) {
+            return false;
+        }
+
+        return $size[0] * $size[1] > $this->maxSourcePixels;
     }
 
     /**

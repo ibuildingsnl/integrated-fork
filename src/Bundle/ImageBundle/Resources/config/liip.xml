@@ -18,6 +18,12 @@
         <!-- Prefixed to the URL of images that are served untouched. -->
         <parameter key="integrated_image.liip.public_prefix"></parameter>
 
+        <!-- Source images with more pixels than this are published untransformed
+             instead of being decoded, which would exhaust the memory limit. GD
+             needs four bytes per pixel, so 24 megapixels is roughly 96 MB. Set
+             to 0 to transform every image regardless of its size. -->
+        <parameter key="integrated_image.liip.max_source_pixels">24000000</parameter>
+
     </parameters>
 
     <services>
@@ -26,12 +32,14 @@
 
         <service id="integrated_image.liip_image_handling" class="Integrated\Bundle\ImageBundle\Image\LiipImageHandling">
             <argument type="service" id="liip_imagine.cache.manager" />
+            <argument type="service" id="liip_imagine.data.manager" />
             <argument type="service" id="file_locator" />
             <argument type="service" id="integrated_image.converter_web_format" />
             <argument>%integrated_image.liip.data_roots%</argument>
             <argument>%integrated_image.twig_mimic_formats%</argument>
             <argument>%integrated_image.liip.fallback_image%</argument>
             <argument>%integrated_image.liip.public_prefix%</argument>
+            <argument>%integrated_image.liip.max_source_pixels%</argument>
         </service>
 
         <service id="Integrated\Bundle\ImageBundle\Image\LiipImageHandling" alias="integrated_image.liip_image_handling" public="true" />

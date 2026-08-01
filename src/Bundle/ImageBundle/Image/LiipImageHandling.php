@@ -14,6 +14,7 @@ namespace Integrated\Bundle\ImageBundle\Image;
 use Integrated\Bundle\ImageBundle\Converter\WebFormatConverter;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Liip\ImagineBundle\Imagine\Data\DataManager;
 use Symfony\Component\Config\FileLocatorInterface;
 
 /**
@@ -27,17 +28,21 @@ use Symfony\Component\Config\FileLocatorInterface;
 class LiipImageHandling
 {
     /**
-     * @param string[] $dataRoots     Absolute paths configured as LiipImagine data roots.
-     * @param string[] $mimicFormats  Extensions that must be served untouched, e.g. svg.
+     * @param string[] $dataRoots        Absolute paths configured as LiipImagine data roots.
+     * @param string[] $mimicFormats     Extensions that must be served untouched, e.g. svg.
+     * @param int      $maxSourcePixels  Number of pixels a source image may have before it is
+     *                                   published untransformed, or 0 to always transform.
      */
     public function __construct(
         private CacheManager $cacheManager,
+        private DataManager $dataManager,
         private FileLocatorInterface $fileLocator,
         private WebFormatConverter $webFormatConverter,
         private array $dataRoots,
         private array $mimicFormats = [],
         private string $fallbackImage = '',
         private string $publicPrefix = '',
+        private int $maxSourcePixels = 0,
     ) {
     }
 
@@ -93,7 +98,15 @@ class LiipImageHandling
             return $this->passthrough($this->toPublicUrl($file));
         }
 
-        return new ImageUrl($this->cacheManager, $relative, $this->toPublicUrl($file));
+        return new ImageUrl(
+            $this->cacheManager,
+            $this->dataManager,
+            $relative,
+            $this->toPublicUrl($file),
+            false,
+            $file,
+            $this->maxSourcePixels
+        );
     }
 
     /**
@@ -129,7 +142,7 @@ class LiipImageHandling
 
     private function passthrough(?string $url): ImageUrl
     {
-        return new ImageUrl($this->cacheManager, null, $url ?: $this->fallbackImage, true);
+        return new ImageUrl($this->cacheManager, $this->dataManager, null, $url ?: $this->fallbackImage, true);
     }
 
     private function isMimicFormat(string $file): bool
