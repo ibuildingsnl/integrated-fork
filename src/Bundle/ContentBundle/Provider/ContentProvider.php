@@ -139,7 +139,7 @@ class ContentProvider
             $this->addWorkflowFilter($query);
         }
 
-        $activeChannels = $request->query->get('channels');
+        $activeChannels = $request->query->all('channels');
         if (\is_array($activeChannels)) {
             if (\count($activeChannels)) {
                 $query
@@ -149,7 +149,7 @@ class ContentProvider
             }
         }
 
-        $activeStates = $request->query->get('workflow_state');
+        $activeStates = $request->query->all('workflow_state');
         if (\is_array($activeStates)) {
             if (\count($activeStates)) {
                 $query
@@ -159,7 +159,7 @@ class ContentProvider
             }
         }
 
-        $activeAssigned = $request->query->get('workflow_assigned');
+        $activeAssigned = $request->query->all('workflow_assigned');
         if (\is_array($activeAssigned)) {
             if (\count($activeAssigned)) {
                 $query
@@ -169,7 +169,7 @@ class ContentProvider
             }
         }
 
-        $activeAuthors = $request->query->get('authors');
+        $activeAuthors = $request->query->all('authors');
         if (\is_array($activeAuthors)) {
             if (\count($activeAuthors)) {
                 $query
@@ -179,7 +179,7 @@ class ContentProvider
             }
         }
 
-        $hasFields = $request->query->get('hasFields');
+        $hasFields = $request->query->all('hasFields');
         if (\is_array($hasFields)) {
             foreach ($hasFields as $field) {
                 $query
