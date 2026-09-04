@@ -17,7 +17,7 @@
     </route>
 
     <route id="integrated_user_iplist_edit" path="/{id}" methods="GET">
-        <default key="_controller">Integrated\Bundle\UserBundle\Controller\IpListController:edit</default>
+        <default key="_controller">Integrated\Bundle\UserBundle\Controller\IpListController::edit</default>
     </route>
 
     <route id="integrated_user_iplist_edit_rest" path="/{id}" methods="PUT">

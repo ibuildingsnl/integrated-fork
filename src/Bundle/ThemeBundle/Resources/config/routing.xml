@@ -17,7 +17,7 @@
     </route>
 
     <route id="integrated_theme_scraper_delete" path="/scraper/{id}/delete">
-        <default key="_controller">Integrated\Bundle\ThemeBundle\Controller\ScraperController::delete</default>
+        <default key="_controller">Integrated\Bundle\ThemeBundle\Controller\ScraperController::deleteAction</default>
     </route>
 
 </routes>
