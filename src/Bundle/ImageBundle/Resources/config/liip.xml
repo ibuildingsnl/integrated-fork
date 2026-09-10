@@ -18,6 +18,11 @@
         <!-- Prefixed to the URL of images that are served untouched. -->
         <parameter key="integrated_image.liip.public_prefix"></parameter>
 
+        <!-- Directory that is served over http. Images that are served untouched but
+             live outside of it, such as the local copies of remotely stored files,
+             are published through the image cache instead of linked to directly. -->
+        <parameter key="integrated_image.liip.web_root">%kernel.project_dir%/public</parameter>
+
         <!-- Source images with more pixels than this are published untransformed
              instead of being decoded, which would exhaust the memory limit. GD
              needs four bytes per pixel, so 24 megapixels is roughly 96 MB. Set
@@ -40,6 +45,7 @@
             <argument>%integrated_image.liip.fallback_image%</argument>
             <argument>%integrated_image.liip.public_prefix%</argument>
             <argument>%integrated_image.liip.max_source_pixels%</argument>
+            <argument>%integrated_image.liip.web_root%</argument>
         </service>
 
         <service id="Integrated\Bundle\ImageBundle\Image\LiipImageHandling" alias="integrated_image.liip_image_handling" public="true" />

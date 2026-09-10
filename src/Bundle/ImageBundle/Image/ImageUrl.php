@@ -54,6 +54,8 @@ class ImageUrl implements \Stringable
      *                              whether it is small enough to be transformed.
      * @param int $maxSourcePixels  Number of pixels a source image may have before it is
      *                              published untransformed, or 0 to always transform.
+     * @param bool $mimic           Whether the image is handed out in its own format, which
+     *                              makes every transformation a no-op.
      */
     public function __construct(
         private CacheManager $cacheManager,
@@ -63,6 +65,7 @@ class ImageUrl implements \Stringable
         private bool $passthrough = false,
         private ?string $source = null,
         private int $maxSourcePixels = 0,
+        private bool $mimic = false,
     ) {
     }
 
@@ -117,6 +120,11 @@ class ImageUrl implements \Stringable
     public function jpeg(?int $quality = null): self
     {
         $clone = clone $this;
+
+        if ($clone->mimic) {
+            return $clone;
+        }
+
         $clone->format = 'jpeg';
 
         return $clone;
@@ -211,7 +219,7 @@ class ImageUrl implements \Stringable
     {
         $clone = clone $this;
 
-        if ($clone->passthrough) {
+        if ($clone->passthrough || $clone->mimic) {
             return $clone;
         }
 
