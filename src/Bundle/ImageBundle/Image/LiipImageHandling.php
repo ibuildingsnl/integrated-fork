@@ -32,6 +32,9 @@ class LiipImageHandling
      * @param string[] $mimicFormats     Extensions that must be served untouched, e.g. svg.
      * @param int      $maxSourcePixels  Number of pixels a source image may have before it is
      *                                   published untransformed, or 0 to always transform.
+     * @param string   $webRoot          Absolute path of the directory that is served over http,
+     *                                   used to tell published files from files that still have
+     *                                   to be handed out through the image cache.
      */
     public function __construct(
         private CacheManager $cacheManager,
@@ -43,6 +46,7 @@ class LiipImageHandling
         private string $fallbackImage = '',
         private string $publicPrefix = '',
         private int $maxSourcePixels = 0,
+        private string $webRoot = '',
     ) {
     }
 
@@ -89,7 +93,7 @@ class LiipImageHandling
         }
 
         if ($this->isMimicFormat($file)) {
-            return $this->passthrough($this->toPublicUrl($file));
+            return $this->mimic($file);
         }
 
         $relative = $this->makeRelative($file);
@@ -143,6 +147,54 @@ class LiipImageHandling
     private function passthrough(?string $url): ImageUrl
     {
         return new ImageUrl($this->cacheManager, $this->dataManager, null, $url ?: $this->fallbackImage, true);
+    }
+
+    /**
+     * Hands out a file whose format is never touched.
+     *
+     * A published file is served straight from its own URL, but a file that only
+     * exists on disk, such as the local copy of a remote file in the storage
+     * cache, has to be published through the image cache first. It is copied
+     * byte for byte, so the format is still left alone.
+     */
+    private function mimic(string $file): ImageUrl
+    {
+        if ($this->isPublished($file)) {
+            return $this->passthrough($this->toPublicUrl($file));
+        }
+
+        $relative = $this->makeRelative($file);
+
+        if ($relative === null) {
+            return $this->passthrough($this->toPublicUrl($file));
+        }
+
+        return new ImageUrl(
+            $this->cacheManager,
+            $this->dataManager,
+            $relative,
+            $this->toPublicUrl($file),
+            false,
+            $file,
+            0,
+            true
+        );
+    }
+
+    /**
+     * Whether the file is already reachable over http, either because it is not
+     * a file on disk at all, and therefore is a URL, or because it lives inside
+     * the directory that is served.
+     */
+    private function isPublished(string $file): bool
+    {
+        if (!is_file($file)) {
+            return true;
+        }
+
+        $root = rtrim($this->webRoot, '/');
+
+        return $root !== '' && str_starts_with($file, $root.'/');
     }
 
     private function isMimicFormat(string $file): bool
